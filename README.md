@@ -2,14 +2,14 @@
 
 README tổng hợp của cả dự án, viết để một phiên chat Claude hoặc Claude Code mới đọc là nắm được: dự án là gì, gồm những phần nào, chạy ra sao, đã chốt những gì và còn gì chưa làm.
 
-Cập nhật: 2026-11-01. Add-on **1.7.0**, bộ `kotoba_daily` bản có `tien_do.json` / số rút gọn / số kỳ truyện.
+Cập nhật: 2026-11-01. Add-on **1.8.0**, bộ `kotoba_daily` bản có `tien_do.json` / số rút gọn / số kỳ truyện.
 
 ---
 
 ## 0. Đọc nhanh (cho phiên chat mới)
 
 **Hai phần của dự án**
-1. **Add-on Anki ことば畑** (gói `kotoba_batake`, bản 1.7.0): biến deck từ vựng tiếng Nhật thành khu vườn pixel. Mỗi note là một cây lớn theo độ bền trí nhớ FSRS. Có xu, nhà, cửa hàng, mini-game, nhiệm vụ, và từ 1.6 có **báo 畑新聞** và **chép chính tả hằng ngày**.
+1. **Add-on Anki ことば畑** (gói `kotoba_batake`, bản 1.8.0): biến deck từ vựng tiếng Nhật thành khu vườn pixel. Mỗi note là một cây lớn theo độ bền trí nhớ FSRS. Có xu, nhà, cửa hàng, mini-game, nhiệm vụ, từ 1.6 có **báo 畑新聞** và **chép chính tả hằng ngày**, từ 1.8 có **giao diện Mùa & Lễ hội** (Tết, Giáng sinh, hoa anh đào, lá đỏ…).
 2. **Bộ `kotoba_daily`**: script Python và prompt để **Claude Code** (tác vụ lịch của Claude Desktop) mỗi sáng tự viết một số báo tiếng Nhật chỉ dùng ngữ pháp và từ vựng người học đã học, kèm audio VOICEVOX. Add-on đọc báo từ thư mục này.
 
 **Người dùng**
@@ -65,8 +65,14 @@ Claude Code (6:00, tự chạy)                 Add-on ことば畑 (khi mở An
 ### 2.4 Năm mini-game (không ghi vào FSRS, tối đa 40 xu/ngày)
 Nghe tìm cây (`listen`), Chợ sáng (`market`), Đuổi quạ (`crow`, gõ romaji/kana/kanji, 4 tốc độ), Lật cặp (`memory`), Điền vào câu (`cloze`, dùng câu ví dụ của note).
 
-### 2.5 Nhà & Cửa hàng (7 tab)
-Xây nhà 8 bậc (3.430 xu) → 3 kiểu nhà (minka, chashitsu, lâu đài mini); 39 món trang trí / nội thất (14 món mới ở 1.7: hướng dương, chong chóng gió, nhà chim, giếng, xích đu, đài phun nước, ikebana, đèn andon, radio, bể cá, bếp irori, lịch treo tường hiện đúng ngày, tranh chữ 学, tranh sóng lừng) và 6 món hiếm; 6 vùng mở lần lượt (Bãi biển 2.000, Đền trên núi 3.000, Phố lễ hội 4.000, và 1.7: **Rừng tre** 5.000, **Suối nước nóng** 6.000, **Ga làng quê** 7.000 có tàu chạy qua, mỗi vùng 6 món); tủ đồ StackChan (17 món đồ mặc, 7 biểu cảm); Xưởng chế tác (vẽ pixel 16/24/32 hoặc chuyển ảnh, 10 hiệu ứng, vẽ đối xứng, lật dọc, dịch hình); Kho đồ. Thẻ trong cửa hàng có dòng ✦ mô tả hiệu ứng và nhãn **Mới**. Tổng mua hết khoảng 55.000 xu (bản 1.6: 31.000).
+### 2.5 Nhà & Cửa hàng (8 tab)
+Xây nhà 8 bậc (3.430 xu) → 3 kiểu nhà (minka, chashitsu, lâu đài mini); 39 món trang trí / nội thất (14 món mới ở 1.7: hướng dương, chong chóng gió, nhà chim, giếng, xích đu, đài phun nước, ikebana, đèn andon, radio, bể cá, bếp irori, lịch treo tường hiện đúng ngày, tranh chữ 学, tranh sóng lừng) và 6 món hiếm; 6 vùng mở lần lượt (Bãi biển 2.000, Đền trên núi 3.000, Phố lễ hội 4.000, và 1.7: **Rừng tre** 5.000, **Suối nước nóng** 6.000, **Ga làng quê** 7.000 có tàu chạy qua, mỗi vùng 6 món); tủ đồ StackChan (17 món đồ mặc, 7 biểu cảm); Xưởng chế tác (vẽ pixel 16/24/32 hoặc chuyển ảnh, 10 hiệu ứng, vẽ đối xứng, lật dọc, dịch hình); Kho đồ. Thẻ trong cửa hàng có dòng ✦ mô tả hiệu ứng và nhãn **Mới** (từ 1.8 chỉ dành cho đồ theo mùa). Tổng mua hết khoảng 55.000 xu (bản 1.6: 31.000), chưa tính Mùa & Lễ hội (14 chủ đề × 1000 xu).
+
+### 2.5b Mùa & Lễ hội (tab thứ 8, từ 1.8)
+- **14 chủ đề**: 4 mùa (Xuân, Hạ, Thu, Đông) + Tết Nguyên Đán, Giáng sinh, お正月, Trung thu · お月見, Halloween, Mùa lá đỏ 紅葉, Thất Tịch 七夕, Lễ hội mùa hè 夏祭り, Mùa mưa 梅雨, Hoa anh đào 花見. Mỗi chủ đề kèm 2–4 món đồ (tổng 40 món: 36 ngoài trời, 4 trong nhà).
+- **Mở khoá**: 1000 xu **hoặc** chuỗi ngày ôn liên tiếp (mùa 7 ngày, lễ hội 10 ngày; mỗi lần đổi dùng hết chuỗi đang có). Mở là được tặng các món của chủ đề; mua thêm được khi đã mở. Có nút **Xem thử** trước khi mở.
+- **Tự động theo lịch** (mặc định), hoặc chọn tay / tắt. Lịch: Giáng sinh 15/11–31/12, お正月 1–15/1, Tết từ 21 ngày trước mùng 1 tới rằm tháng Giêng, Trung thu 14 ngày trước – 3 ngày sau rằm tháng Tám (Tết và Trung thu tính bằng **âm lịch Việt Nam**), Halloween tháng 10, Mùa lá đỏ 1/11–10/12, Thất Tịch 25/6–7/7, Lễ hội mùa hè 15/7–31/8, Mùa mưa 1/6–10/7, Hoa anh đào 20/3–15/4, 4 mùa theo tháng. Trùng nhau thì lễ hội thắng mùa (thứ tự trong `season_core.THEMES`).
+- **Đổi gì**: dải trang trí trên cùng trang, hạt rơi ở nền trang và trên ruộng, màu trang / chữ ことば畑 / cỏ ruộng; ở sân, mọi vùng và trong phòng: dây trang trí (đèn Noel, đèn lồng Tết, shimenawa, cờ Halloween, đèn ông sao…), màu đồi và đất, tuyết phủ (đông, Giáng sinh), hạt bay, trăng rằm có thỏ, trăng Halloween, Ngân Hà, pháo hoa đêm (Tết, lễ hội hè), diều, xe tuần lộc bay; thời tiết tự đổi nghiêng theo mùa; nhạc vườn riêng cho Giáng sinh, Tết, Halloween; chip chủ đề trên thanh trên cùng (chưa mở thì nhấp nháy mời mở khi lễ đang tới); linh vật chào theo mùa.
 
 ### 2.6 Trời, thời tiết, âm thanh
 Giờ thật / giờ game / cố định, 6 buổi trong ngày, thời tiết đổi mỗi 3 giờ (mưa, giông, tuyết theo mùa), ban đêm có đèn và đom đóm. Âm thanh 8-bit và 3 bản nhạc nền chiptune tự soạn, **phát ngay khi mở vườn** (1.7). Hiệu ứng 1.7: vũng nước gợn sóng ở lớp mặt đất (không đè nhà), giọt nước bắn, cầu vồng khi vừa tạnh, tuyết đọng trên mái và đồ vật, giông làm đồ đung đưa mạnh, chim bay ban ngày, sao băng đêm quang, hạt theo mùa thật (hoa xuân, chuồn chuồn hè, lá đỏ thu).
@@ -172,12 +178,14 @@ Nhân vật (trong `truyen.md`): **スタックちゃん** (robot của khu vư�
 │          sync_did_finish        menu: Tools → ことば畑                │
 │   STATE = garden_core.GardenState   PAPER = paper_core.PaperState    │
 │ garden_core.py  logic thuần (không import aqt → test được)           │
+│ season_core.py  Mùa & Lễ hội: lịch (âm lịch VN), chủ đề, 40 món      │
 │ paper_core.py   báo & chép chính tả (không import aqt)               │
 └──────────────┬───────────────────────────────▲───────────────────────┘
    web.eval("Garden.fn(<json>)")               │ pycmd("nhóm:việc:tham_số")
 ┌──────────────▼───────────────────────────────┴───────────────────────┐
 │ web/*.js (mỗi file là một IIFE gắn vào biến toàn cục), nạp theo thứ tự│
-│ sky.js → fx.js → music.js → games.js → home.js → craft.js → paper.js │
+│ sky.js → season.js → fx.js → music.js → games.js → season_art.js →  │
+│ home.js → craft.js → paper.js                                         │
 │ → garden.js (Garden: điều phối, nhận mọi lệnh từ Python)             │
 └───────────────────────────────────────────────────────────────────────┘
 ```
@@ -192,18 +200,21 @@ Nguyên tắc:
 
 | File | Dòng | Vai trò |
 |---|---|---|
-| `__init__.py` | ~735 | Cửa sổ, `refresh()`, ôn thẻ trong vườn, cầu nối (`_on_bridge`, `_on_game`, `_on_home`, `_on_craft`, `_on_paper`), phát audio báo, ghi `tien_do.json`, hook, menu |
-| `garden_core.py` | ~1880 | Cân bằng game, `CATALOG` (+ `ITEM_DESC`), cửa hàng / vùng / kiểu nhà / tủ đồ / xưởng, nhận diện trường note, `build_garden`, giai đoạn, nhiệm vụ (`_make_quests` nhận thêm `extra`), `GardenState` (+ `add_coins`), tách / gộp khoá mở rộng (`split_ext`, `merge_ext`, `LEGACY_*`) |
+| `__init__.py` | ~750 | Cửa sổ, `refresh()`, ôn thẻ trong vườn, cầu nối (`_on_bridge`, `_on_game`, `_on_home`, `_on_craft`, `_on_paper`), phát audio báo, ghi `tien_do.json`, hook, menu |
+| `garden_core.py` | ~2040 | Cân bằng game, `CATALOG` (+ `ITEM_DESC`, gộp `SEASON_ITEMS`), cửa hàng / vùng / kiểu nhà / tủ đồ / xưởng, nhận diện trường note, `build_garden`, giai đoạn, nhiệm vụ (`_make_quests` nhận thêm `extra`), `GardenState` (+ `add_coins`), tách / gộp khoá mở rộng (`split_ext`, `merge_ext`, `LEGACY_*`), Mùa & Lễ hội (`split_season`, `merge_season`, `_tier`, `unlock_theme`, `set_theme`) |
+| `season_core.py` | ~410 | Mùa & Lễ hội, thuần Python: âm lịch Việt Nam (`lunar_to_solar`, `tet_date`, `mid_autumn_date`), `THEMES` (thứ tự = ưu tiên), `SEASON_ITEMS`, `themes_view`, `clean_season`, `active_theme`, `streak_available` |
 | `paper_core.py` | ~890 | Cú pháp furigana, `clean_issue`, `Library` (đọc thư mục báo, cache theo mtime, chặn đường dẫn audio và symlink ra ngoài), `issue_view`, chấm câu hỏi / chép, lượt chép hằng ngày (`build_daily`, `DICT_REVIEW_MAX=2`, `DICT_PAPER_MAX=4`), hàng ôn 1/3/7 ngày, `PaperState`, `progress_payload` / `write_progress` |
 | `config.json` / `config.md` | | Cấu hình mặc định và hướng dẫn (Tools → Add-ons → Config) |
 | `web/body.html` | ~210 | Khung HTML: thanh trên, bảng ôn, game, Nhà + Xưởng, bảng 新聞 (`#kb-paper`), sân, ruộng |
 | `web/garden.css` | ~1180 | Toàn bộ CSS kiểu pixel (phần báo có tiền tố `kb-p-`) |
 | `web/garden.js` | ~970 | `Garden`: ruộng, thẻ ghim, bảng ôn, phím tắt, nhạc, chip báo (`drawPaperChip`), `openPaper` |
 | `web/paper.js` | ~600 | `GardenPaper`: 3 tab Báo / Chép chính tả / Kệ báo, tra từ, câu hỏi, chép (romaji qua `GardenGames._typedKana`) |
-| `web/home.js` | ~3470 | `GardenHome`: sprite (`SPR`, `FRAMES`, `BASE`), nhà, 7 cảnh ngoài trời + phòng, thời tiết theo lớp (vũng nước ở lớp mặt đất), đặt đồ, 7 tab cửa hàng; cờ hòm thư theo báo, bấm hòm thư mở báo (`mainItemAt`); nút đổi cảnh ◂ ▸ (`cycleMain`) |
+| `web/home.js` | ~3620 | `GardenHome`: sprite (`SPR`, `FRAMES`, `BASE`), nhà, 7 cảnh ngoài trời + phòng, thời tiết theo lớp (vũng nước ở lớp mặt đất), đặt đồ, 8 tab cửa hàng (tab Mùa & Lễ hội: `renderSeason`, `themeCard`); cờ hòm thư theo báo, bấm hòm thư mở báo (`mainItemAt`); nút đổi cảnh ◂ ▸ (`cycleMain`) |
 | `web/games.js` | ~1760 | `GardenGames`: 5 mini-game, romaji → kana |
 | `web/fx.js` | ~900 | `GardenFX`: StackChan, hạt, âm thanh 8-bit |
-| `web/sky.js`, `web/music.js`, `web/craft.js` | | Trời & thời tiết; nhạc chiptune; trình vẽ pixel |
+| `web/season.js` | ~630 | `GardenSeason` (1.8): chủ đề đang dùng + xem thử, bảng giao diện `VIS`, `themeSky()`, dây trang trí `GARLAND`, hạt bay theo thời gian, pháo hoa, Ngân Hà, trăng to, dải trang trí trên cùng, hạt nền trang, cỏ ruộng, chip chủ đề |
+| `web/season_art.js` | ~870 | `GardenSeasonArt` (1.8): sprite + chuyển động của 40 món theo mùa, cắm vào home.js qua `install()` |
+| `web/sky.js`, `web/music.js`, `web/craft.js` | | Trời & thời tiết (nghiêng theo chủ đề); nhạc chiptune (+ bản Giáng sinh / Tết / Halloween); trình vẽ pixel |
 
 ### 4.2 Cầu nối JS → Python (`pycmd`)
 
@@ -213,6 +224,7 @@ Nguyên tắc:
 | `rv:start` / `rv:show:<gõ>` / `rv:ans:<1-4>` / `rv:stop`, `play:<q\|a>:<n>` | ôn thẻ trong vườn |
 | `game:open`/`stop`/`audio:<nid>`/`exaudio:<nid>`/`reward:<game>:<điểm>:<xu>[:<thắng>]` | mini-game |
 | `home:buy` / `build` / `place` / `move` / `take` / `zone` / `style:*` / `wear:*` / `face:*` / `craft:*` | Nhà & cửa hàng |
+| `home:theme:buy:<id>` / `theme:streak:<id>` / `theme:use:<id>` / `theme:auto` / `theme:off` | Mùa & Lễ hội: mở bằng xu / bằng chuỗi (Python tự tính chuỗi từ revlog), chọn tay, tự động, tắt |
 | `craft:save:<json>`, `craft:pick`, `win:full` | xưởng, chọn ảnh, F11 |
 | `paper:index`, `paper:issue:<ngày>` | kệ báo; mở một số (đánh dấu đã đọc, ghi lại `tien_do.json`) |
 | `paper:q:{d,i,c}` | trả lời câu hỏi |
@@ -239,8 +251,9 @@ Audio báo phát bằng `aqt.sound.av_player.play_file(đường_dẫn_tuyệt_�
 | `kotoba_batake_px` | điểm ảnh nén của món tự làm (RLE, bảng 32 màu) | `user_files/craft_px.json` |
 | `kotoba_batake_paper` (1.6) | `read` {ngày: {q, ct, coins, bonus}}, `dict` {day, items, res, coins, bonus}, `queue` {id câu: {due, box}}, `seen`, `miss` {từ: ngày} | `user_files/paper.json` |
 | `kotoba_batake_ext` (1.7) | phần mới mà bản ≤ 1.6.1 không hiểu: `owned` đồ mới, `zones` vùng mới, `places` {cảnh: [đồ mới hoặc đồ ở vùng mới]}, `craft_fx` {cid: {fx, was}} | `user_files/ext.json` |
+| `kotoba_batake_season` (1.8) | `unlocked` chủ đề đã mở, `mode` auto/pick/off, `pick`, `free_day` (ngày Anki của lần đổi chuỗi gần nhất), `owned` / `places` của **đồ theo mùa** | `user_files/season.json` |
 
-Khoá báo **tách riêng** để bản cũ của add-on trên máy khác (vốn làm sạch và xoá khoá lạ trong ví) không xoá mất. Từ 1.7 đồ / vùng / hiệu ứng mới cũng vậy: ví chỉ giữ thứ bản 1.6.1 hiểu (`LEGACY_ITEMS`, `LEGACY_ZONES`, `LEGACY_FX`), phần mới ở `kotoba_batake_ext`; `load()` gộp lại (phần mới xếp sau), `save()` tách ra. Bản cũ đặt đồ vào ô của đồ mới thì đồ mới tự về kho. Collection có ví nhưng thiếu khoá mở rộng (vd. tải về từ máy chưa cài 1.7) thì không lấy `ext.json` của máy này. Id câu chép: `p:<ngày>:<i>` (câu trong báo) hoặc `n:<nid>` (câu ví dụ của note). Ghi `col.set_config` không xoá undo.
+Khoá báo **tách riêng** để bản cũ của add-on trên máy khác (vốn làm sạch và xoá khoá lạ trong ví) không xoá mất. Từ 1.7 đồ / vùng / hiệu ứng mới cũng vậy: ví chỉ giữ thứ bản 1.6.1 hiểu (`LEGACY_ITEMS`, `LEGACY_ZONES`, `LEGACY_FX`), phần mới ở `kotoba_batake_ext`; `load()` gộp lại (phần mới xếp sau), `save()` tách ra. Bản cũ đặt đồ vào ô của đồ mới thì đồ mới tự về kho. Collection có ví nhưng thiếu khoá mở rộng (vd. tải về từ máy chưa cài 1.7) thì không lấy `ext.json` của máy này. Từ 1.8 có thêm tầng thứ ba: đồ theo mùa và cài đặt Mùa & Lễ hội chỉ nằm ở `kotoba_batake_season` (không ở ví, không ở `ext`), nên bản 1.6.1 và 1.7.0 ở máy khác không xoá; thứ tự chuẩn món đặt: ví → ext → season (`_tier`). Khi lưu, phần của `kotoba_batake_season` mà bản này không hiểu (của bản mới hơn) được giữ nguyên (`keep_foreign_season`). Id câu chép: `p:<ngày>:<i>` (câu trong báo) hoặc `n:<nid>` (câu ví dụ của note). Ghi `col.set_config` không xoá undo.
 
 ### 5.3 File trao đổi giữa add-on và `kotoba_daily`
 
@@ -317,6 +330,7 @@ Add-on chỉ **ghi đúng một file** trong `bao_dir`: `tien_do.json`.
 - **Furigana ngày tháng** theo quy tắc ở mục 3.4.
 - **Nội dung báo hoàn toàn mới**, không chép đoạn văn, ví dụ hay tên nhân vật của giáo trình (cả trong `vi_du` của file chương).
 - **Báo có thể còn chỗ chưa tự nhiên**, nhất là kính ngữ. Trang báo luôn ghi dòng này; gặp chỗ nghi ngờ thì hỏi thầy cô.
+- **Mùa & Lễ hội (1.8)** — người dùng giao cho Claude tự chọn, đã chọn như sau: mỗi chủ đề 1000 xu hoặc chuỗi 7 ngày (mùa) / 10 ngày (lễ hội); **mở là tặng luôn các món** của chủ đề (mua thêm khi đã mở); một chuỗi chỉ đổi được một chủ đề (`free_day`), ôn tiếp đủ ngày lại đổi được; mặc định **tự động theo lịch**, chỉ áp dụng chủ đề **đã mở** (chưa mở thì chỉ có chip mời + "Xem thử"); lễ hội ưu tiên hơn mùa, Giáng sinh ưu tiên hơn Mùa lá đỏ; Giáng sinh 15/11–31/12 đúng ý người dùng; Tết theo âm lịch Việt Nam, từ 21 ngày trước mùng 1 tới rằm tháng Giêng; mở chủ đề trái mùa thì dùng luôn (chuyển sang chọn tay); nhãn "Mới" chỉ cho đồ của bản mới nhất.
 
 ---
 
@@ -338,13 +352,15 @@ Add-on chỉ **ghi đúng một file** trong `bao_dir`: `tien_do.json`.
 
 Biến môi trường: `KB_ADDON` (thư mục add-on), `KB_KIT` (thư mục `kotoba_daily`), `KB_ORIG_CORE` (`garden_core.py` của 1.5).
 
+**Bộ test 1.8** (thêm vào bộ 1.7, đều qua): `test_season.py ADDON V170 ORIG` (250: lịch 14 chủ đề theo ngày mốc, Tết / Trung thu âm lịch 25 năm, mở khoá xu / chuỗi, lưu 3 tầng, chạy `garden_core.py` của **1.7.0 và 1.6.1 thật** trên cùng collection để chứng minh không mất chủ đề / đồ theo mùa; bản 1.8 cũng giữ nguyên phần lạ của bản mới hơn); `season_bridge.js` (đổi chuỗi qua cầu nối thật với revlog giả, mini-game khi có chủ đề); `season_shop.js` (23: tab Mùa & Lễ hội qua giao diện thật); `season_more.js` (nhạc theo chủ đề, hiệu năng 3–6,4 ms/khung, ảnh phòng / vùng); `season_narrow.js` (5 cỡ cửa sổ); `season_ui.js` (ảnh 14 chủ đề ngày / đêm). Bộ 1.7 chạy lại vẫn qua (`regress.js` đổi một kiểm tra vì vùng của 1.7 không còn nhãn "Mới").
+
 **Bộ test 1.7** (viết lại từ đầu trong phiên 1.7 vì các bộ cũ không có trong repo; 195 kiểm tra, đều qua): `harness.py` + `stubs/aqt/` (aqt giả, `answer_card` chạy thật) + `server.py` (phục vụ trang đúng như `stdHtml`, `pycmd` → `__init__.py` thật trên collection Anki thật); `test_ext.py` (109: khoá mở rộng, chạy `garden_core.py` của 1.6.1 thật trên cùng collection để chứng minh bản cũ không xoá đồ / vùng mới); `regress.js` (42: nhạc, ôn thẻ thật, game, báo, nhiệm vụ, cài đặt, F11, mở vùng mới qua giao diện, mua / đặt / di chuyển / cất, nút ◂ ▸, quét vẽ 7 cảnh × 5 giờ × 5 thời tiết, cửa sổ hẹp); `craft_test.js` (44: toàn bộ luồng Xưởng + công cụ mới); `music_test.js`, `perf.js` (≤ 5 ms/khung mọi cảnh), `clip_check.js`, các script chụp ảnh `zones.js` / `panel.js` / `sheet.js` / `fx_test.js`.
 
 **Đóng gói add-on**
 ```bash
 # tăng "mod" (unix time) và "human_version" trong manifest.json
 find kotoba_batake -name __pycache__ -prune -exec rm -rf {} +
-rm -f kotoba_batake/user_files/state.json* kotoba_batake/user_files/craft_px.json* kotoba_batake/user_files/paper.json*
+rm -f kotoba_batake/user_files/state.json* kotoba_batake/user_files/craft_px.json* kotoba_batake/user_files/paper.json* kotoba_batake/user_files/ext.json* kotoba_batake/user_files/season.json*
 (cd kotoba_batake && zip -r -X -q ../out/kotoba_batake.ankiaddon . -x "*.pyc")
 # giải nén ra thư mục tạm, chạy lại test trên bản giải nén (KB_ADDON=<thư mục giải nén>)
 ```
@@ -405,7 +421,7 @@ Các ý dưới đây đã được bàn với người dùng nhưng **chưa là
 - **Giống cây cho ruộng**: anh đào, tre, hướng dương, lúa, bonsai…; mỗi giống 5 hình; gán theo deck hoặc tag; về sau cho tự vẽ.
 - **Thú nuôi** (mèo, gà, cá koi): cho ăn vài xu mỗi ngày; quên cho ăn thì chúng chỉ đi chơi, không chết.
 - **Làng & hàng xóm**: xây nhà cho dân làng, nhà sau đắt gấp 1,5 lần nhà trước; dân làng nói câu ví dụ lấy từ những từ đã học.
-- **Chợ theo mùa**: món giới hạn theo lịch thật (Tết, hanami, Tanabata, Obon, Trung thu).
+- ~~**Chợ theo mùa**~~: đã làm ở 1.8 dưới dạng **Mùa & Lễ hội** (giao diện + 40 món theo 14 chủ đề). Có thể làm tiếp: mỗi năm thêm vài món mới cho từng lễ, chủ đề Setsubun / Hinamatsuri / Kodomo no hi / Valentine.
 - **Máy gacha**: nếu làm thì phải có bảo hiểm, và trùng món thì đổi lại một phần xu.
 - **Vé nghỉ giữ chuỗi ngày**: chỉ giữ con số chuỗi, không đụng lịch ôn.
 
@@ -428,6 +444,7 @@ Các ý dưới đây đã được bàn với người dùng nhưng **chưa là
 - **1.6**: báo 畑新聞 (hòm thư, chip, phím B, furigana, tra từ, giọng đọc, truyện dài kỳ, câu hỏi, kệ báo đọc bù); chép chính tả hằng ngày (gõ romaji được, ôn câu sai 1/3/7 ngày); 2 loại nhiệm vụ mới; ghi `tien_do.json`; khoá collection riêng `kotoba_batake_paper`.
 - **1.6.1**: lượt chép hằng ngày ưu tiên câu từ báo (tối đa 4).
 - **1.7.0**: sửa vũng nước khi mưa / giông vẽ đè lên nhà; sửa nhạc nền chỉ bật sau lần bấm đầu tiên; sửa chip "Báo · Chép" bị cắt ở cửa sổ thấp (1366×768, 1280×800). Thêm 3 vùng (Rừng tre, Suối nước nóng, Ga làng quê có tàu chạy qua), 32 món mới, mô tả hiệu ứng + nhãn "Mới", nút ◂ ▸ / phím ← → đổi cảnh, biểu tượng cửa hàng to hơn; hiệu ứng trời (gợn vũng nước, giọt bắn, cầu vồng, tuyết đọng, gió giông, chim, sao băng, hạt theo mùa); Xưởng thêm 5 hiệu ứng, vẽ đối xứng, lật dọc, dịch hình, sửa vài lỗi nhỏ. Phần mới lưu ở khoá riêng `kotoba_batake_ext`.
+- **1.8.0**: **Mùa & Lễ hội** — 14 giao diện theo mùa / lễ hội (4 mùa, Tết, Giáng sinh, お正月, Trung thu, Halloween, Mùa lá đỏ, Thất Tịch, Lễ hội mùa hè, Mùa mưa, Hoa anh đào), mở bằng 1000 xu hoặc chuỗi 7 / 10 ngày ôn, tự đổi theo lịch (Tết, Trung thu theo âm lịch VN) hoặc chọn tay / tắt, xem thử; giao diện đổi cả trang, ruộng, sân, vùng, phòng (dây trang trí, tuyết phủ, hạt rơi, trăng rằm, Ngân Hà, pháo hoa, diều, xe tuần lộc…), thời tiết nghiêng theo mùa, 3 bản nhạc vườn mới, chip chủ đề, linh vật chào; 40 món theo mùa có hoạt hình. Khoá riêng `kotoba_batake_season`.
 
 **Bộ `kotoba_daily`**
 - **Bản đầu**: lộ trình, trích chương, `pham_vi.py`, `kiemtra.py`, `render.py`, `doc_voicevox.py`, prompt hằng ngày, số báo mẫu.
