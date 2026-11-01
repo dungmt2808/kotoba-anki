@@ -2,14 +2,14 @@
 
 README tổng hợp của cả dự án, viết để một phiên chat Claude hoặc Claude Code mới đọc là nắm được: dự án là gì, gồm những phần nào, chạy ra sao, đã chốt những gì và còn gì chưa làm.
 
-Cập nhật: 2026-11-01. Add-on **1.9.0**, bộ `kotoba_daily` bản có `tien_do.json` / số rút gọn / số kỳ truyện.
+Cập nhật: 2026-11-01. Add-on **1.10.0**, bộ `kotoba_daily` bản có `tien_do.json` / số rút gọn / số kỳ truyện.
 
 ---
 
 ## 0. Đọc nhanh (cho phiên chat mới)
 
 **Hai phần của dự án**
-1. **Add-on Anki ことば畑** (gói `kotoba_batake`, bản 1.9.0): biến deck tiếng Nhật (từ vựng, chữ Hán, ngữ pháp) thành khu vườn pixel. Mỗi note là một cây lớn theo độ bền trí nhớ FSRS. Có xu, nhà, cửa hàng, mini-game, nhiệm vụ, từ 1.6 có **báo 畑新聞** và **chép chính tả hằng ngày**, từ 1.8 có **giao diện Mùa & Lễ hội** (Tết, Giáng sinh, hoa anh đào, lá đỏ…), từ 1.9 có **Cấu hình trường theo loại note** và trò chơi theo loại note (từ vựng / chữ Hán / ngữ pháp).
+1. **Add-on Anki ことば畑** (gói `kotoba_batake`, bản 1.10.0): biến deck tiếng Nhật (từ vựng, chữ Hán, ngữ pháp) thành khu vườn pixel. Mỗi note là một cây lớn theo độ bền trí nhớ FSRS. Có xu, nhà, cửa hàng, mini-game, nhiệm vụ, từ 1.6 có **báo 畑新聞** và **chép chính tả hằng ngày**, từ 1.8 có **giao diện Mùa & Lễ hội** (Tết, Giáng sinh, hoa anh đào, lá đỏ…), từ 1.9 có **Cấu hình trường theo loại note** và trò chơi theo loại note (từ vựng / chữ Hán / ngữ pháp), từ 1.10 có **nút mở nhanh** (thanh trên cùng của Anki, Ctrl+Shift+K, biểu tượng ngoài Anki) và Mùa & Lễ hội phủ cả các vùng lẫn màn trò chơi.
 2. **Bộ `kotoba_daily`**: script Python và prompt để **Claude Code** (tác vụ lịch của Claude Desktop) mỗi sáng tự viết một số báo tiếng Nhật chỉ dùng ngữ pháp và từ vựng người học đã học, kèm audio VOICEVOX. Add-on đọc báo từ thư mục này.
 
 **Người dùng**
@@ -28,7 +28,7 @@ Cập nhật: 2026-11-01. Add-on **1.9.0**, bộ `kotoba_daily` bản có `tien_
 
 ## 1. Giới thiệu
 
-**ことば畑** mở bằng menu Tools → ことば畑 · Vườn từ vựng. Mỗi note của deck là một cây có 5 giai đoạn: Hạt giống → Mầm → Cây non → Ra hoa → Ra quả. Giai đoạn tính từ độ bền FSRS của thẻ yếu nhất. Cây khát khi có thẻ đến hạn và héo khi độ nhớ thấp. Ôn thẻ (trong vườn hoặc ở màn ôn thường của Anki) thì được xu. Xu dùng để xây nhà, trang trí, mở vùng mới, mua đồ cho linh vật StackChan và tự chế tác đồ pixel.
+**ことば畑** mở bằng menu Tools → ことば畑 · Vườn từ vựng, từ 1.10 còn bằng nút **ことば畑** trên thanh trên cùng của Anki, phím **Ctrl+Shift+K**, hoặc **biểu tượng ngoài Anki** (màn hình nền / menu ứng dụng). Mỗi note của deck là một cây có 5 giai đoạn: Hạt giống → Mầm → Cây non → Ra hoa → Ra quả. Giai đoạn tính từ độ bền FSRS của thẻ yếu nhất. Cây khát khi có thẻ đến hạn và héo khi độ nhớ thấp. Ôn thẻ (trong vườn hoặc ở màn ôn thường của Anki) thì được xu. Xu dùng để xây nhà, trang trí, mở vùng mới, mua đồ cho linh vật StackChan và tự chế tác đồ pixel.
 
 **畑新聞** là tờ báo làng của khu vườn. Mỗi sáng Claude Code đọc phạm vi đã học (giáo trình + tiến độ trong Anki), viết một số báo có tin làng, một kỳ truyện dài kỳ, お知らせ hoặc một cột ngắn, câu hỏi đọc hiểu và câu chép chính tả. Mọi chữ Hán đều có furigana. Báo vào hòm thư ngoài sân. Bấm vào từ để tra nghĩa, nghe giọng VOICEVOX, trả lời và chép để nhận xu.
 
@@ -45,6 +45,11 @@ Claude Code (6:00, tự chạy)                 Add-on ことば畑 (khi mở An
 ---
 
 ## 2. Chức năng của add-on (đã có)
+
+### 2.0 Mở nhanh (từ 1.10)
+- Nút **ことば畑** (mầm pixel) trên thanh trên cùng của Anki, cạnh Bộ thẻ · Thêm · Duyệt · Thống kê · Đồng bộ (`toolbar_button`, mặc định bật). Phím **Ctrl+Shift+K** (macOS ⌘⇧K).
+- **Biểu tượng ngoài Anki**: Tools → *ことば畑 · Tạo biểu tượng trên màn hình nền* (hoặc trong vườn ⚙ → *Tạo biểu tượng…*). Ubuntu: `kotoba-batake.desktop` ở màn hình nền + menu ứng dụng (thêm vào Dock được); Windows: `ことば畑.lnk` ở màn hình nền + menu Start (ghim vào thanh tác vụ được); macOS: `ことば畑.app` ở màn hình nền. Bấm là Anki tự mở (hoặc nhảy lên nếu đang chạy) và vào thẳng vườn.
+- Cách làm: biểu tượng mở file vé `user_files/kotoba_batake_open.apkg` bằng Anki (như bấm đúp một file .apkg); add-on bọc `mw.handleImport`: gặp đúng file vé thì mở vườn, file khác vẫn nhập như cũ (`launcher.py`).
 
 ### 2.1 Khu vườn (màn chính)
 - Tối đa `max_plants` cây (mặc định 400, ưu tiên cây đã học). Bấm cây để ghim thẻ thông tin: chữ, cách đọc, nghĩa, Hán Việt, nút nghe, số ngày tới hạn.
@@ -91,6 +96,7 @@ Xây nhà 8 bậc (3.430 xu) → 3 kiểu nhà (minka, chashitsu, lâu đài min
 - **Mở khoá**: 1000 xu **hoặc** chuỗi ngày ôn liên tiếp (mùa 7 ngày, lễ hội 10 ngày; mỗi lần đổi dùng hết chuỗi đang có). Mở là được tặng các món của chủ đề; mua thêm được khi đã mở. Có nút **Xem thử** trước khi mở.
 - **Tự động theo lịch** (mặc định), hoặc chọn tay / tắt. Lịch: Giáng sinh 15/11–31/12, お正月 1–15/1, Tết từ 21 ngày trước mùng 1 tới rằm tháng Giêng, Trung thu 14 ngày trước – 3 ngày sau rằm tháng Tám (Tết và Trung thu tính bằng **âm lịch Việt Nam**), Halloween tháng 10, Mùa lá đỏ 1/11–10/12, Thất Tịch 25/6–7/7, Lễ hội mùa hè 15/7–31/8, Mùa mưa 1/6–10/7, Hoa anh đào 20/3–15/4, 4 mùa theo tháng. Trùng nhau thì lễ hội thắng mùa (thứ tự trong `season_core.THEMES`).
 - **Đổi gì**: dải trang trí trên cùng trang, hạt rơi ở nền trang và trên ruộng, màu trang / chữ ことば畑 / cỏ ruộng; ở sân, mọi vùng và trong phòng: dây trang trí (đèn Noel, đèn lồng Tết, shimenawa, cờ Halloween, đèn ông sao…), màu đồi và đất, tuyết phủ (đông, Giáng sinh), hạt bay, trăng rằm có thỏ, trăng Halloween, Ngân Hà, pháo hoa đêm (Tết, lễ hội hè), diều, xe tuần lộc bay; thời tiết tự đổi nghiêng theo mùa; nhạc vườn riêng cho Giáng sinh, Tết, Halloween; chip chủ đề trên thanh trên cùng (chưa mở thì nhấp nháy mời mở khi lễ đang tới); linh vật chào theo mùa.
+- **1.10**: cây và đất riêng của từng vùng theo chủ đề (rừng ở Đền đỏ / cam mùa thu và lá đỏ, điểm hoa mùa hoa anh đào / Tết, tuyết trên ngọn; Suối nước nóng cỏ xanh mùa xuân hè, cỏ úa mùa thu, tuyết mùa đông — không có chủ đề thì vẫn tuyết như cũ; lúa ở Ga làng quê chín theo chủ đề; cỏ Rừng tre / Ga pha màu đất chủ đề). **Màn trò chơi** theo giờ + thời tiết + chủ đề: Chợ sáng và Đuổi quạ có đêm (sao, trăng, trời dịu hơn vườn để vẫn đọc rõ), mây / mưa / tuyết, đất phủ tuyết, dây trang trí, hạt bay, pháo hoa; menu và 3 trò còn lại có nền pha màu chủ đề + hạt bay phía sau.
 
 ### 2.6 Trời, thời tiết, âm thanh
 Giờ thật / giờ game / cố định, 6 buổi trong ngày, thời tiết đổi mỗi 3 giờ (mưa, giông, tuyết theo mùa), ban đêm có đèn và đom đóm. Âm thanh 8-bit và 3 bản nhạc nền chiptune tự soạn, **phát ngay khi mở vườn** (1.7). Hiệu ứng 1.7: vũng nước gợn sóng ở lớp mặt đất (không đè nhà), giọt nước bắn, cầu vồng khi vừa tạnh, tuyết đọng trên mái và đồ vật, giông làm đồ đung đưa mạnh, chim bay ban ngày, sao băng đêm quang, hạt theo mùa thật (hoa xuân, chuồn chuồn hè, lá đỏ thu).
@@ -219,7 +225,9 @@ Nguyên tắc:
 
 | File | Dòng | Vai trò |
 |---|---|---|
-| `__init__.py` | ~800 | Cửa sổ, `refresh()`, ôn thẻ trong vườn, cầu nối (`_on_bridge`, `_on_game`, `_on_home`, `_on_craft`, `_on_paper`, `_on_fields`), phát audio báo, ghi `tien_do.json`, hook, menu; `config()` gộp `_fields` |
+| `__init__.py` | ~900 | Cửa sổ, `refresh()`, ôn thẻ trong vườn, cầu nối (`_on_bridge`, `_on_game`, `_on_home`, `_on_craft`, `_on_paper`, `_on_fields`), phát audio báo, ghi `tien_do.json`, hook, menu; `config()` gộp `_fields`; 1.10: phím tắt `SHORTCUT`, nút trên thanh trên cùng (`_toolbar_links`, `_toolbar_content`), bọc `mw.handleImport` (`_install_ticket_handler`), `create_desktop_icon` |
+| `launcher.py` | ~260 | Mở nhanh từ ngoài Anki (1.10, thuần Python): file vé `kotoba_batake_open.apkg`, `is_ticket`, `create()` tạo biểu tượng Windows (PowerShell → `.lnk` chạy `explorer.exe "vé"`, dự phòng `.url`) / macOS (`osacompile` → `.app`, thay `applet.icns`) / Linux (`.desktop` đúng đặc tả + `gio set metadata::trusted`) |
+| `icons/` | | Biểu tượng mầm pixel: `kotoba.png` (Linux), `kotoba.ico` (Windows), `kotoba.icns` (macOS), `toolbar.png` (nút trên thanh Anki); vẽ bằng `tools/make_icons.py` lúc phát triển |
 | `fields_core.py` | ~280 | Cấu hình trường (1.9, thuần Python): `KINDS`, `ROLES` (vai trò + bắt buộc theo loại note), `GAME_MODES` (khớp `MODES` của games.js), `guess_kind`, `clean_store`, `conf_problem`, `validate_save`, `FieldStore` |
 | `garden_core.py` | ~2300 | Cân bằng game, `CATALOG` (+ `ITEM_DESC`, gộp `SEASON_ITEMS`), cửa hàng / vùng / kiểu nhà / tủ đồ / xưởng, nhận diện trường note (1.9: `note_roles` theo cấu hình hoặc đoán, `fields_panel`, `guess_config`, `grammar_candidates`), `build_garden` (+ `note_types`, `kind` của cây), giai đoạn, nhiệm vụ (`_make_quests` nhận thêm `extra`), `GardenState` (+ `add_coins`), tách / gộp khoá mở rộng (`split_ext`, `merge_ext`, `LEGACY_*`), Mùa & Lễ hội (`split_season`, `merge_season`, `_tier`, `unlock_theme`, `set_theme`) |
 | `season_core.py` | ~410 | Mùa & Lễ hội, thuần Python: âm lịch Việt Nam (`lunar_to_solar`, `tet_date`, `mid_autumn_date`), `THEMES` (thứ tự = ưu tiên), `SEASON_ITEMS`, `themes_view`, `clean_season`, `active_theme`, `streak_available` |
@@ -230,10 +238,10 @@ Nguyên tắc:
 | `web/garden.js` | ~970 | `Garden`: ruộng, thẻ ghim, bảng ôn, phím tắt, nhạc, chip báo (`drawPaperChip`), `openPaper` |
 | `web/paper.js` | ~600 | `GardenPaper`: 3 tab Báo / Chép chính tả / Kệ báo, tra từ, câu hỏi, chép (romaji qua `GardenGames._typedKana`) |
 | `web/home.js` | ~3620 | `GardenHome`: sprite (`SPR`, `FRAMES`, `BASE`), nhà, 7 cảnh ngoài trời + phòng, thời tiết theo lớp (vũng nước ở lớp mặt đất), đặt đồ, 8 tab cửa hàng (tab Mùa & Lễ hội: `renderSeason`, `themeCard`); cờ hòm thư theo báo, bấm hòm thư mở báo (`mainItemAt`); nút đổi cảnh ◂ ▸ (`cycleMain`) |
-| `web/games.js` | ~2040 | `GardenGames`: 5 mini-game, romaji → kana; 1.9: chọn loại note, bảng `MODES` (chế độ từng trò theo loại), `poolFor(def, kind, mode)`, lý do thiếu trường (`lackText`), `supportFor` |
+| `web/games.js` | ~2160 | `GardenGames`: 5 mini-game, romaji → kana; 1.9: chọn loại note, bảng `MODES` (chế độ từng trò theo loại), `poolFor(def, kind, mode)`, lý do thiếu trường (`lackText`), `supportFor`; 1.10: `skyNow`, `paintSky`, `paintWeather` (trời / thời tiết của Chợ sáng, Đuổi quạ), `drawSeasonLayer` (nền theo chủ đề của menu và các trò còn lại) |
 | `web/fields.js` | ~310 | `GardenFields` (1.9): bảng Cấu hình trường |
 | `web/fx.js` | ~900 | `GardenFX`: StackChan, hạt, âm thanh 8-bit |
-| `web/season.js` | ~630 | `GardenSeason` (1.8): chủ đề đang dùng + xem thử, bảng giao diện `VIS`, `themeSky()`, dây trang trí `GARLAND`, hạt bay theo thời gian, pháo hoa, Ngân Hà, trăng to, dải trang trí trên cùng, hạt nền trang, cỏ ruộng, chip chủ đề |
+| `web/season.js` | ~650 | `GardenSeason` (1.8): chủ đề đang dùng + xem thử, bảng giao diện `VIS`, (1.10) `FOLIAGE` / `foliage()` cây và đất riêng của các vùng, `themeSky()`, dây trang trí `GARLAND`, hạt bay theo thời gian, pháo hoa, Ngân Hà, trăng to, dải trang trí trên cùng, hạt nền trang, cỏ ruộng, chip chủ đề |
 | `web/season_art.js` | ~870 | `GardenSeasonArt` (1.8): sprite + chuyển động của 40 món theo mùa, cắm vào home.js qua `install()` |
 | `web/sky.js`, `web/music.js`, `web/craft.js` | | Trời & thời tiết (nghiêng theo chủ đề); nhạc chiptune (+ bản Giáng sinh / Tết / Halloween); trình vẽ pixel |
 
@@ -247,6 +255,7 @@ Nguyên tắc:
 | `home:buy` / `build` / `place` / `move` / `take` / `zone` / `style:*` / `wear:*` / `face:*` / `craft:*` | Nhà & cửa hàng |
 | `home:theme:buy:<id>` / `theme:streak:<id>` / `theme:use:<id>` / `theme:auto` / `theme:off` | Mùa & Lễ hội: mở bằng xu / bằng chuỗi (Python tự tính chuỗi từ revlog), chọn tay, tự động, tắt |
 | `craft:save:<json>`, `craft:pick`, `win:full` | xưởng, chọn ảnh, F11 |
+| `app:icon` | 1.10: tạo biểu tượng ngoài Anki (`launcher.create`) → `Garden.appIcon({ok, kind, paths, msg})` |
 | `fields:open`, `fields:save:{mid,kind,f}`, `fields:game:<game>:<loại>:<chế độ>` | 1.9: dữ liệu bảng Cấu hình trường; lưu cấu hình một loại note (Python kiểm tra loại, trường bắt buộc, trường có thật); lưu chế độ trò chơi |
 | `paper:index`, `paper:issue:<ngày>` | kệ báo; mở một số (đánh dấu đã đọc, ghi lại `tien_do.json`) |
 | `paper:q:{d,i,c}` | trả lời câu hỏi |
@@ -254,7 +263,7 @@ Nguyên tắc:
 | `paper:play:{d,k:bai\|ct,i,j,s}`, `dict:play:{id,s}` | phát audio: file báo là đường dẫn tuyệt đối đã kiểm tra; câu ví dụ deck là tên file media |
 | `dict:open`, `paper:stop` | lượt chép hôm nay; dừng audio |
 
-Python → JS: `render`, `showCard`, `showAnswer`, `reviewDone`, `celebrate`, `gameSaved`, `home`, `homeError`, `craftImage`, `fieldsData`, `fieldsSaved`, `fieldsError`, `gameModes`, `paperIndex`, `paperIssue`, `paperSummary`, `dictShow`, `paperResult`, `paperError`, `toast`, `flip`, `key`, `fit`.
+Python → JS: `render`, `showCard`, `showAnswer`, `reviewDone`, `celebrate`, `gameSaved`, `home`, `homeError`, `craftImage`, `fieldsData`, `fieldsSaved`, `fieldsError`, `gameModes`, `appIcon`, `paperIndex`, `paperIssue`, `paperSummary`, `dictShow`, `paperResult`, `paperError`, `toast`, `flip`, `key`, `fit`.
 
 Audio báo phát bằng `aqt.sound.av_player.play_file(đường_dẫn_tuyệt_đối)`. Đây là cách chính thức: `SoundOrVideoTag.path()` của Anki 26.9.3 nhận đường dẫn tuyệt đối.
 
@@ -263,7 +272,7 @@ Audio báo phát bằng `aqt.sound.av_player.play_file(đường_dẫn_tuyệt_�
 ## 5. Dữ liệu & lưu trữ
 
 ### 5.1 Cấu hình add-on (`config.json`)
-`word_field`… `example_audio_field` (ép tên trường, trống = tự nhận diện; từ 1.9 chỉ dùng cho loại note chưa cấu hình trong bảng Cấu hình trường), `stage_days` [3, 21, 90], `wilt_retrievability` 0.7, `max_plants` 400, `daily_goal` 30, `daily_bonus` 15, `game_daily_coins` 40, `effects`, `sound`, `music`, `music_volume`, `show_tooltips`, `open_maximized`, **`bao_dir`** ("" = chưa nối báo).
+`word_field`… `example_audio_field` (ép tên trường, trống = tự nhận diện; từ 1.9 chỉ dùng cho loại note chưa cấu hình trong bảng Cấu hình trường), `stage_days` [3, 21, 90], `wilt_retrievability` 0.7, `max_plants` 400, `daily_goal` 30, `daily_bonus` 15, `game_daily_coins` 40, `effects`, `sound`, `music`, `music_volume`, `show_tooltips`, `open_maximized`, `toolbar_button` (1.10, nút ことば畑 trên thanh Anki), **`bao_dir`** ("" = chưa nối báo).
 
 ### 5.2 Khoá trong cấu hình collection (đồng bộ AnkiWeb)
 
@@ -354,6 +363,8 @@ Add-on chỉ **ghi đúng một file** trong `bao_dir`: `tien_do.json`.
 - **Nội dung báo hoàn toàn mới**, không chép đoạn văn, ví dụ hay tên nhân vật của giáo trình (cả trong `vi_du` của file chương).
 - **Báo có thể còn chỗ chưa tự nhiên**, nhất là kính ngữ. Trang báo luôn ghi dòng này; gặp chỗ nghi ngờ thì hỏi thầy cô.
 - **Cấu hình trường (1.9)** — người dùng yêu cầu bắt buộc: Từ vựng = Từ + Nghĩa, Chữ Hán = Kanji + Hán Việt, Ngữ pháp = Cấu trúc + Nghĩa. Phần còn lại người dùng giao cho Claude tự chọn, đã chọn: cấu hình **theo loại note (note type)**, lưu trong collection (đồng bộ); thêm loại **Khác** (không vào trò chơi); loại note chưa cấu hình **vẫn chạy bằng cách đoán** như cũ (không chặn) nhưng có chip ⚠ + thông báo bấm được; đã cấu hình thì **không đoán thêm** trường nào; kanji có 2 ô Âm On (hoặc On/Kun chung) + Âm Kun riêng; Hán Việt cùng trường với Nghĩa kiểu "Sức mạnh (Lực)" thì tách ngoặc; trò chơi chơi **một loại note mỗi ván** (chọn ở đầu menu); Đuổi quạ không dùng cho ngữ pháp; Nghe tìm cây với ngữ pháp = nghe câu ví dụ → chọn mẫu; chế độ mặc định: Lật cặp kanji = Kanji ↔ Hán Việt, Chợ sáng kanji = Hán Việt → Kanji, từ vựng giữ như bản cũ (Trộn).
+- **Mở nhanh (1.10)** — người dùng hỏi có cách nào có icon bấm là vào add-on, không phải vào Tools. Đã chọn: nút ことば畑 trên thanh trên cùng của Anki (bật mặc định, tắt bằng `toolbar_button`) + phím Ctrl+Shift+K + biểu tượng ngoài Anki **chỉ tạo khi người dùng bấm** (không tự ghi file lên màn hình nền). Biểu tượng dùng **đường mở file .apkg có sẵn của Anki** (file vé + bọc `mw.handleImport`) thay vì tìm đường dẫn chương trình Anki (khác nhau theo bản cài / launcher) hay sửa tham số dòng lệnh của Anki. Windows chạy qua `explorer.exe` để ghim được vào thanh tác vụ.
+- **Mùa & Lễ hội ở vùng và trò chơi (1.10)** — không có chủ đề thì mọi cảnh giữ y như cũ (Suối nước nóng vẫn giữa tuyết, lúa theo tháng thật). Trò chơi theo giờ của vườn nhưng **ban đêm sáng dịu hơn vườn** để quạ và chữ vẫn rõ; menu / Nghe tìm cây / Lật cặp / Điền vào câu chỉ đổi nền nhạt + hạt bay phía sau, không đổi màu thẻ để không khó đọc.
 - **Mùa & Lễ hội (1.8)** — người dùng giao cho Claude tự chọn, đã chọn như sau: mỗi chủ đề 1000 xu hoặc chuỗi 7 ngày (mùa) / 10 ngày (lễ hội); **mở là tặng luôn các món** của chủ đề (mua thêm khi đã mở); một chuỗi chỉ đổi được một chủ đề (`free_day`), ôn tiếp đủ ngày lại đổi được; mặc định **tự động theo lịch**, chỉ áp dụng chủ đề **đã mở** (chưa mở thì chỉ có chip mời + "Xem thử"); lễ hội ưu tiên hơn mùa, Giáng sinh ưu tiên hơn Mùa lá đỏ; Giáng sinh 15/11–31/12 đúng ý người dùng; Tết theo âm lịch Việt Nam, từ 21 ngày trước mùng 1 tới rằm tháng Giêng; mở chủ đề trái mùa thì dùng luôn (chuyển sang chọn tay); nhãn "Mới" chỉ cho đồ của bản mới nhất.
 
 ---
@@ -376,6 +387,8 @@ Add-on chỉ **ghi đúng một file** trong `bao_dir`: `tien_do.json`.
 
 Biến môi trường: `KB_ADDON` (thư mục add-on), `KB_KIT` (thư mục `kotoba_daily`), `KB_ORIG_CORE` (`garden_core.py` của 1.5).
 
+**Bộ test 1.10** (thêm vào, đều qua; chạy cả bộ bằng `run_all.sh ADDON PORT OUT`): `test_launch110.py ADDON AQT_DIR` (81: menu + phím tắt, link trên thanh trên cùng y như `Toolbar.create_link`, CSS chỉ ở `TopToolbar`, tắt được; file vé, bọc `mw.handleImport`; đọc mã nguồn **aqt 26.9.3 thật** để chắc mọi đường mở file — Anki đang chạy, chưa chạy, đang chọn hồ sơ — đều qua `self.handleImport`; Linux tạo `.desktop` thật và chạy bằng `gio launch` (GLib) với đường dẫn có dấu cách / `$` / `"`; Windows giải mã lệnh PowerShell đã sinh; macOS giả lập `osacompile` và chạy phần shell của AppleScript); `f_season110.js` (nút ⚙ Tạo biểu tượng, bảng ⚙ cuộn được, trò chơi ngày / đêm / tuyết / dây đèn lồng, lớp nền chủ đề, ô đáp án Điền vào câu, cây / đất của vùng theo chủ đề, hiệu năng). Bộ 1.7 / 1.8 / 1.9 chạy lại đều qua.
+
 **Bộ test 1.9** (thêm vào, đều qua): `extra_models.py` (5 loại note mẫu: kanji On/Kun riêng, ngữ pháp có audio ví dụ, kanji "Sức mạnh (Lực)", tiếng Anh Front/Back/Sentence, tên trường lạ); `test_fields19.py ADDON OLD18` (86: chưa cấu hình thì đọc note **giống hệt `garden_core.py` của 1.8**, đoán loại / trường, lưu qua cầu nối thật kèm mọi lỗi, đã cấu hình thì không đoán thêm, On/Kun, tách ngoặc Hán Việt, cloze ngữ pháp, chép chính tả theo trường đã chọn, đổi tên trường, chế độ trò chơi hợp lệ / bị chặn, giữ khoá lạ, `MODES` JS khớp `GAME_MODES` Python, bản 1.8 không đụng khoá mới); `f_games.js` (chơi thử **mọi trò × mọi chế độ × 3 loại note** qua giao diện thật, chế độ còn sau khi tải lại, deck trộn 2 loại); `f_panel.js` (bảng Cấu hình trường: chip, thông báo, gợi ý, đổi loại, bắt buộc, lưu, hoàn tác, Esc, nút ở ⚙ / menu game, đổi tên trường, 2 cỡ cửa sổ); `f_extra.js` (bấm thông báo, đổi deck khi bảng mở, cây ngữ pháp). Bộ 1.7 / 1.8 chạy lại đều qua.
 
 **Bộ test 1.8** (thêm vào bộ 1.7, đều qua): `test_season.py ADDON V170 ORIG` (250: lịch 14 chủ đề theo ngày mốc, Tết / Trung thu âm lịch 25 năm, mở khoá xu / chuỗi, lưu 3 tầng, chạy `garden_core.py` của **1.7.0 và 1.6.1 thật** trên cùng collection để chứng minh không mất chủ đề / đồ theo mùa; bản 1.8 cũng giữ nguyên phần lạ của bản mới hơn); `season_bridge.js` (đổi chuỗi qua cầu nối thật với revlog giả, mini-game khi có chủ đề); `season_shop.js` (23: tab Mùa & Lễ hội qua giao diện thật); `season_more.js` (nhạc theo chủ đề, hiệu năng 3–6,4 ms/khung, ảnh phòng / vùng); `season_narrow.js` (5 cỡ cửa sổ); `season_ui.js` (ảnh 14 chủ đề ngày / đêm). Bộ 1.7 chạy lại vẫn qua (`regress.js` đổi một kiểm tra vì vùng của 1.7 không còn nhãn "Mới").
@@ -386,7 +399,7 @@ Biến môi trường: `KB_ADDON` (thư mục add-on), `KB_KIT` (thư mục `kot
 ```bash
 # tăng "mod" (unix time) và "human_version" trong manifest.json
 find kotoba_batake -name __pycache__ -prune -exec rm -rf {} +
-rm -f kotoba_batake/user_files/state.json* kotoba_batake/user_files/craft_px.json* kotoba_batake/user_files/paper.json* kotoba_batake/user_files/ext.json* kotoba_batake/user_files/season.json* kotoba_batake/user_files/fields.json*
+rm -f kotoba_batake/user_files/state.json* kotoba_batake/user_files/craft_px.json* kotoba_batake/user_files/paper.json* kotoba_batake/user_files/ext.json* kotoba_batake/user_files/season.json* kotoba_batake/user_files/fields.json* kotoba_batake/user_files/kotoba_batake_open.apkg
 (cd kotoba_batake && zip -r -X -q ../out/kotoba_batake.ankiaddon . -x "*.pyc")
 # giải nén ra thư mục tạm, chạy lại test trên bản giải nén (KB_ADDON=<thư mục giải nén>)
 ```
@@ -406,6 +419,7 @@ rm -f kotoba_batake/user_files/state.json* kotoba_batake/user_files/craft_px.jso
 - **`tien_do.sap_quen` chỉ lấy theo deck đang xem.**
 - **Đuổi quạ** không phóng to phần vẽ trên màn hình lớn (tránh pixel nhoè).
 - **Cấu hình trường** gắn với id loại note + tên trường: đổi tên trường thì phải chọn lại (vườn báo). Một ván trò chơi chỉ dùng một loại note.
+- **Biểu tượng ngoài Anki (1.10)**: Ubuntu / Linux đã thử bằng `gio launch` (GLib thật); Windows / macOS chỉ kiểm bằng giả lập (lệnh PowerShell / AppleScript sinh ra). Cần Anki được đăng ký mở file .apkg (bộ cài làm sẵn); Linux ưu tiên lệnh `anki` trong PATH, không có thì `xdg-open`. Anki ở chế độ an toàn (tắt add-on) mà bấm biểu tượng thì Anki báo file vé không phải deck. Nếu Anki hỏi chọn hồ sơ khi mở bằng biểu tượng, chọn xong là vào vườn.
 - **Chất lượng tiếng Nhật do AI viết** có thể còn gượng; `kiemtra.py` chỉ bắt lỗi hình thức (furigana, phạm vi từ, cấu trúc), không bắt lỗi ngữ pháp.
 
 ---
@@ -472,6 +486,7 @@ Các ý dưới đây đã được bàn với người dùng nhưng **chưa là
 - **1.6.1**: lượt chép hằng ngày ưu tiên câu từ báo (tối đa 4).
 - **1.7.0**: sửa vũng nước khi mưa / giông vẽ đè lên nhà; sửa nhạc nền chỉ bật sau lần bấm đầu tiên; sửa chip "Báo · Chép" bị cắt ở cửa sổ thấp (1366×768, 1280×800). Thêm 3 vùng (Rừng tre, Suối nước nóng, Ga làng quê có tàu chạy qua), 32 món mới, mô tả hiệu ứng + nhãn "Mới", nút ◂ ▸ / phím ← → đổi cảnh, biểu tượng cửa hàng to hơn; hiệu ứng trời (gợn vũng nước, giọt bắn, cầu vồng, tuyết đọng, gió giông, chim, sao băng, hạt theo mùa); Xưởng thêm 5 hiệu ứng, vẽ đối xứng, lật dọc, dịch hình, sửa vài lỗi nhỏ. Phần mới lưu ở khoá riêng `kotoba_batake_ext`.
 - **1.9.0**: **Cấu hình trường theo loại note** (bảng pixel chọn loại Từ vựng / Chữ Hán / Ngữ pháp / Khác và trường cho từng vai trò, bắt buộc Từ + Nghĩa / Kanji + Hán Việt / Cấu trúc + Nghĩa, gợi ý tự động, note mẫu, chip ⚠ + thông báo khi có loại note chưa cấu hình); **trò chơi theo loại note** với chế độ riêng (Lật cặp Kanji ↔ Hán Việt / Nghĩa / On/Kun, Chợ sáng Hán Việt → Kanji…, nghe câu ví dụ → chọn mẫu ngữ pháp, điền mẫu ngữ pháp vào câu), thiếu trường thì báo lý do; cây ngữ pháp có cách dùng + nghe ví dụ. Khoá riêng `kotoba_batake_fields`.
+- **1.10.0**: **Mở nhanh** — nút ことば畑 (mầm pixel) trên thanh trên cùng của Anki, phím Ctrl+Shift+K, **biểu tượng ngoài Anki** (Ubuntu: màn hình nền + menu ứng dụng; Windows: màn hình nền + menu Start; macOS: ứng dụng nhỏ) bấm là vào thẳng vườn; biểu tượng pixel mới. **Mùa & Lễ hội phủ hết**: cây / đất riêng của 6 vùng theo chủ đề; màn trò chơi theo giờ, thời tiết, chủ đề (trước đó trò chơi luôn là ban ngày có mặt trời dù vườn đang đêm). Sửa: bảng ⚙ tràn ở cửa sổ thấp (giờ cuộn được), ô đáp án Điền vào câu quá cao chữ nhỏ, gợi ý Đuổi quạ khó đọc trên trời tối.
 - **1.8.0**: **Mùa & Lễ hội** — 14 giao diện theo mùa / lễ hội (4 mùa, Tết, Giáng sinh, お正月, Trung thu, Halloween, Mùa lá đỏ, Thất Tịch, Lễ hội mùa hè, Mùa mưa, Hoa anh đào), mở bằng 1000 xu hoặc chuỗi 7 / 10 ngày ôn, tự đổi theo lịch (Tết, Trung thu theo âm lịch VN) hoặc chọn tay / tắt, xem thử; giao diện đổi cả trang, ruộng, sân, vùng, phòng (dây trang trí, tuyết phủ, hạt rơi, trăng rằm, Ngân Hà, pháo hoa, diều, xe tuần lộc…), thời tiết nghiêng theo mùa, 3 bản nhạc vườn mới, chip chủ đề, linh vật chào; 40 món theo mùa có hoạt hình. Khoá riêng `kotoba_batake_season`.
 
 **Bộ `kotoba_daily`**
