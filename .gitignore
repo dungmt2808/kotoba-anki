@@ -1,1 +1,8 @@
-.vscode/
+# Bỏ qua tất cả
+/*
+
+# Trừ các mục sau
+!/.gitignore
+!/*.ankiaddon
+!/giao_trinh/
+!/kotoba_daily/
