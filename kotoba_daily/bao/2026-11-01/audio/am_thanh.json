@@ -1,0 +1,37 @@
+{
+ "giong": 2,
+ "credit": "VOICEVOX:四国めたん",
+ "bai": [
+  [
+   "audio/bai_1_1.wav",
+   "audio/bai_1_2.wav"
+  ],
+  [
+   "audio/bai_2_1.wav",
+   "audio/bai_2_2.wav"
+  ],
+  [
+   "audio/bai_3_1.wav",
+   "audio/bai_3_2.wav",
+   "audio/bai_3_3.wav"
+  ],
+  [
+   "audio/bai_4_1.wav"
+  ]
+ ],
+ "chinh_ta": [
+  {
+   "thuong": "audio/ct_1.wav",
+   "cham": "audio/ct_1_cham.wav"
+  },
+  {
+   "thuong": "audio/ct_2.wav",
+   "cham": "audio/ct_2_cham.wav"
+  },
+  {
+   "thuong": "audio/ct_3.wav",
+   "cham": "audio/ct_3_cham.wav"
+  }
+ ],
+ "canh_bao": []
+}

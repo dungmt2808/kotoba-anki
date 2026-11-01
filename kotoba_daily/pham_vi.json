@@ -19,11 +19,127 @@
   }
  ],
  "cai_dat": {
-  "tu_moi_toi_da": 3,
+  "tu_moi_toi_da": 5,
   "tin_that": true
  },
- "so_bao_tiep_theo": 1,
+ "so_bao_tiep_theo": 2,
  "trong_tam": [
+  {
+   "bai": "gungun_n4:25",
+   "chu_de": "Quyết định và thay đổi thói quen: 〜にする, 〜ことにする, 〜ことになる, 〜ようにする, 〜ようになる; dự định",
+   "tu_vung": [
+    "再来週",
+    "新年会",
+    "石けん",
+    "睡眠",
+    "不足",
+    "睡眠不足",
+    "運動不足",
+    "ネクタイ",
+    "テーマ",
+    "スパゲッティ",
+    "パスタ",
+    "ステーキ",
+    "サンドイッチ",
+    "冷たい",
+    "急",
+    "大事",
+    "決める",
+    "禁煙する",
+    "早起きする",
+    "賛成する",
+    "離婚する",
+    "以前から",
+    "〜かな",
+    "納豆",
+    "暖房",
+    "水道",
+    "アイデア",
+    "〜代",
+    "電気代",
+    "水道代",
+    "無駄",
+    "踊る",
+    "年を取る",
+    "あいさつする",
+    "チャレンジする",
+    "チェックする",
+    "録音する",
+    "予習する",
+    "大体",
+    "すっかり",
+    "できるだけ",
+    "なるべく",
+    "最初は",
+    "大学院",
+    "郊外",
+    "連休",
+    "山登り",
+    "説明会",
+    "忘年会",
+    "ピンク",
+    "渡す",
+    "乗り換える",
+    "受ける",
+    "進学する",
+    "キャンセルする",
+    "就職する",
+    "ひさしぶりに〜",
+    "〜、よろしく"
+   ],
+   "ngu_phap": [
+    "gungun_n4:25-1",
+    "gungun_n4:25-2",
+    "gungun_n4:25-3",
+    "gungun_n4:25-4",
+    "gungun_n4:25-5",
+    "gungun_n4:25-6",
+    "gungun_n4:25-7",
+    "gungun_n4:25-8",
+    "gungun_n4:25-9",
+    "gungun_n4:25-10"
+   ]
+  },
+  {
+   "bai": "gungun_n4:26",
+   "chu_de": "Lời khuyên 〜ほうがいい, liệt kê 〜たり, phát hiện 〜たら〜た, chưa làm 〜ていない, thời điểm 〜ところだ",
+   "tu_vung": [
+    "警察",
+    "論文",
+    "豚肉",
+    "午前中",
+    "現金",
+    "腰",
+    "カーテン",
+    "覚める",
+    "知らせる",
+    "出発する",
+    "実験する",
+    "整理する",
+    "ジョギングする",
+    "しっかり",
+    "旅行会社",
+    "眠る",
+    "迎えに行く",
+    "選ぶ",
+    "向かう",
+    "戻る",
+    "申し込む",
+    "降りる",
+    "修理する",
+    "支度する",
+    "ちょうど",
+    "お気をつけて"
+   ],
+   "ngu_phap": [
+    "gungun_n4:26-1",
+    "gungun_n4:26-2",
+    "gungun_n4:26-3",
+    "gungun_n4:26-4",
+    "gungun_n4:26-5",
+    "gungun_n4:26-6"
+   ]
+  },
   {
    "bai": "gungun_n4:27",
    "chu_de": "Cấm đoán, bắt buộc và dạng rút gọn; 〜てしまう, 〜ておく, 〜てくる, 〜ていく",
@@ -1391,97 +1507,113 @@
    "id": "gungun_n4:25-1",
    "mau": "Nにする",
    "nghia": "Chọn N, quyết định N",
-   "bai": "gungun_n4:25"
+   "bai": "gungun_n4:25",
+   "vi_du": "飲み物は紅茶にします。"
   },
   {
    "id": "gungun_n4:25-2",
    "mau": "Vる/Vない＋ことにする",
    "nghia": "Quyết định V, quyết định không V: do tự mình quyết định",
-   "bai": "gungun_n4:25"
+   "bai": "gungun_n4:25",
+   "vi_du": "来年、日本へ留学することにしました。"
   },
   {
    "id": "gungun_n4:25-3",
    "mau": "Vる/Vない＋ことになる",
    "nghia": "Được quyết định là ~: kết quả không do ý mình",
-   "bai": "gungun_n4:25"
+   "bai": "gungun_n4:25",
+   "vi_du": "四月から大阪で働くことになりました。"
   },
   {
    "id": "gungun_n4:25-4",
    "mau": "Vる/Vない＋ようにする",
    "nghia": "Cố gắng V, cố gắng không V: tạo thói quen, ようにしている là đang duy trì",
-   "bai": "gungun_n4:25"
+   "bai": "gungun_n4:25",
+   "vi_du": "毎日野菜を食べるようにしています。"
   },
   {
    "id": "gungun_n4:25-5",
    "mau": "Vる/Vない＋ようにしてください",
    "nghia": "Xin hãy cố gắng V, cố gắng đừng V",
-   "bai": "gungun_n4:25"
+   "bai": "gungun_n4:25",
+   "vi_du": "授業に遅れないようにしてください。"
   },
   {
    "id": "gungun_n4:25-6",
    "mau": "Vる＋ようになる",
    "nghia": "Bắt đầu (có thói quen) V, trở nên có thể V",
-   "bai": "gungun_n4:25"
+   "bai": "gungun_n4:25",
+   "vi_du": "漢字が読めるようになりました。"
   },
   {
    "id": "gungun_n4:25-7",
    "mau": "Vない → Vなくなる",
    "nghia": "Không còn V nữa, không còn V được nữa",
-   "bai": "gungun_n4:25"
+   "bai": "gungun_n4:25",
+   "vi_du": "最近、テレビを見なくなりました。"
   },
   {
    "id": "gungun_n4:25-8",
    "mau": "Nの/Vる＋予定だ",
    "nghia": "Dự định ~, theo kế hoạch ~: lịch trình đã định",
-   "bai": "gungun_n4:25"
+   "bai": "gungun_n4:25",
+   "vi_du": "来週、東京へ出張する予定です。"
   },
   {
    "id": "gungun_n4:25-9",
    "mau": "Vる/Vない＋つもりだ",
    "nghia": "Định V, định không V: ý định của bản thân",
-   "bai": "gungun_n4:25"
+   "bai": "gungun_n4:25",
+   "vi_du": "夏休みは国に帰るつもりです。"
   },
   {
    "id": "gungun_n4:25-10",
    "mau": "Vよう＋と思っている",
    "nghia": "Định V, đang tính V: ý định chưa chắc chắn",
-   "bai": "gungun_n4:25"
+   "bai": "gungun_n4:25",
+   "vi_du": "車を買おうと思っています。"
   },
   {
    "id": "gungun_n4:26-1",
    "mau": "Vた/Vない＋ほうがいい",
    "nghia": "Nên V, không nên V: khuyên, có ý cảnh báo",
-   "bai": "gungun_n4:26"
+   "bai": "gungun_n4:26",
+   "vi_du": "今日は早く寝たほうがいいですよ。"
   },
   {
    "id": "gungun_n4:26-2",
    "mau": "V1たり、V2たりする",
    "nghia": "Lúc thì V1, lúc thì V2: liệt kê hành động tiêu biểu",
-   "bai": "gungun_n4:26"
+   "bai": "gungun_n4:26",
+   "vi_du": "休みの日は掃除したり、洗濯したりします。"
   },
   {
    "id": "gungun_n4:26-3",
    "mau": "V1たら、V2た",
    "nghia": "V1 thì (bất ngờ) V2: phát hiện điều ngoài dự đoán",
-   "bai": "gungun_n4:26"
+   "bai": "gungun_n4:26",
+   "vi_du": "箱を開けたら、猫がいました。"
   },
   {
    "id": "gungun_n4:26-4",
    "mau": "(まだ)Vていない",
    "nghia": "Vẫn chưa V: chưa xảy ra nhưng dự định sẽ làm",
-   "bai": "gungun_n4:26"
+   "bai": "gungun_n4:26",
+   "vi_du": "宿題はまだしていません。"
   },
   {
    "id": "gungun_n4:26-5",
    "mau": "Vる＋ところだ",
    "nghia": "Sắp V, chuẩn bị V: ngay trước khi làm",
-   "bai": "gungun_n4:26"
+   "bai": "gungun_n4:26",
+   "vi_du": "今から出かけるところです。"
   },
   {
    "id": "gungun_n4:26-6",
    "mau": "Vている/Vた＋ところだ",
    "nghia": "Đúng lúc đang V, vừa mới V xong",
-   "bai": "gungun_n4:26"
+   "bai": "gungun_n4:26",
+   "vi_du": "今、昼ご飯を食べているところです。"
   },
   {
    "id": "gungun_n4:27-1",
@@ -11639,9 +11771,11 @@
   "cach_viet": "day_du"
  },
  "truyen": {
-  "ky_tiep_theo": 1,
-  "ky_cuoi_ngay": ""
+  "ky_tiep_theo": 2,
+  "ky_cuoi_ngay": "2026-11-01"
  },
- "lich_su_gan_day": [],
+ "lich_su_gan_day": [
+  "- 2026-11-01 | số 1 | mẫu: gungun_n4:25-2, gungun_n4:27-5, gungun_n4:29-3, gungun_n4:16-3 | từ ôn: お客様, 支度する, 渡す, 相談する, 会場, だんだん | Từ hôm nay đến 15/11 có thể ngắm hoa cúc ở Shinjuku Gyoen, còn làng ことば村 sẽ nướng khoai ngày 3/11. Truyện kỳ 1: Lin nhầm kính ngữ với vị khách đầu tiên, và ông cụ mang theo một tấm bản đồ cũ."
+ ],
  "thieu": []
 }

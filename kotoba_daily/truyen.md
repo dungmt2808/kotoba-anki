@@ -16,3 +16,5 @@ File này giúp các số báo kể tiếp một câu chuyện liền mạch. Cl
 
 ## Đã xảy ra
 (chưa có kỳ nào)
+- Kỳ 1 (2026-11-01): Lin đến làm ở ことば屋. Với vị khách đầu tiên, Lin nói nhầm お書きします thay vì お書きください và được はなさん nhắc. Nhân vật mới: ông cụ đội mũ (khách trọ).
+- Ông cụ đưa ra tấm bản đồ cũ có vòng tròn đỏ giữa núi và muốn đến đó. Lin hỏi はなさん; はなさん nhìn bản đồ rồi nói nhỏ 「あら、ここは……」 (bỏ ngỏ: chỗ đó là đâu).

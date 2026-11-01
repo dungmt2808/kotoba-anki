@@ -22,8 +22,8 @@
     }
 ],
 "cai_dat": {
-    "so_chuong_trong_tam": 3,
-    "tu_moi_toi_da": 3,
+    "so_chuong_trong_tam": 5,
+    "tu_moi_toi_da": 5,
     "tin_that": true,
     "khi_ton": "rut_gon",
     "giong": 2

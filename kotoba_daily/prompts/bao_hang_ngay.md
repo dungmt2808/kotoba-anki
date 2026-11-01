@@ -81,6 +81,7 @@ Tổng độ dài các đoạn (ký tự tiếng Nhật, không tính đánh d�
 - Mọi chữ Hán đều có furigana: `[漢字|かんじ]` hoặc `{表記|よみ|từ gốc}`.
 - Okurigana nằm ngoài ngoặc: `{泊|と|泊まる}まり`, `[言|い]いました`. Một cặp ngoặc có thể bao nhiều chữ Hán liền nhau: `[今週末|こんしゅうまつ]`.
 - Trong `{表記|よみ|từ gốc}`, từ gốc viết đúng như cột "từ" trong `tu_vung` của `pham_vi.json`, kể cả `〜` và `する`: `{名|めい|〜名}`, `{発表|はっぴょう|発表する}`. Từ katakana để trống cách đọc: `{コート||コート}`.
+- Ngày giờ và số đếm: số Ả Rập để ngoài, chỉ bọc chữ Hán: `11[月|がつ]19[日|にち]`, `2[時|じ]`, `5[人|にん]`. Chỉ khi cả cụm đọc đặc biệt mới bọc cả số: `[3日|みっか]`, `[24日|にじゅうよっか]`, `[1日|ついたち]`, `[20日|はつか]`. (Furigana dài trùm cả cụm làm chữ bị giãn.)
 - Tiểu từ, kana, dấu câu và số Ả Rập để ngoài ngoặc. Không dùng `[ ] { } |` cho việc khác; trích lời dùng 「」.
 - Đánh dấu cả trong tiêu đề, câu hỏi, lựa chọn và câu chép chính tả.
 
