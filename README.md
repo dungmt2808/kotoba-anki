@@ -2,14 +2,14 @@
 
 README tổng hợp của cả dự án, viết để một phiên chat Claude hoặc Claude Code mới đọc là nắm được: dự án là gì, gồm những phần nào, chạy ra sao, đã chốt những gì và còn gì chưa làm.
 
-Cập nhật: 2026-11-01. Add-on **1.6.1**, bộ `kotoba_daily` bản có `tien_do.json` / số rút gọn / số kỳ truyện.
+Cập nhật: 2026-11-01. Add-on **1.7.0**, bộ `kotoba_daily` bản có `tien_do.json` / số rút gọn / số kỳ truyện.
 
 ---
 
 ## 0. Đọc nhanh (cho phiên chat mới)
 
 **Hai phần của dự án**
-1. **Add-on Anki ことば畑** (gói `kotoba_batake`, bản 1.6.1): biến deck từ vựng tiếng Nhật thành khu vườn pixel. Mỗi note là một cây lớn theo độ bền trí nhớ FSRS. Có xu, nhà, cửa hàng, mini-game, nhiệm vụ, và từ 1.6 có **báo 畑新聞** và **chép chính tả hằng ngày**.
+1. **Add-on Anki ことば畑** (gói `kotoba_batake`, bản 1.7.0): biến deck từ vựng tiếng Nhật thành khu vườn pixel. Mỗi note là một cây lớn theo độ bền trí nhớ FSRS. Có xu, nhà, cửa hàng, mini-game, nhiệm vụ, và từ 1.6 có **báo 畑新聞** và **chép chính tả hằng ngày**.
 2. **Bộ `kotoba_daily`**: script Python và prompt để **Claude Code** (tác vụ lịch của Claude Desktop) mỗi sáng tự viết một số báo tiếng Nhật chỉ dùng ngữ pháp và từ vựng người học đã học, kèm audio VOICEVOX. Add-on đọc báo từ thư mục này.
 
 **Người dùng**
@@ -50,7 +50,8 @@ Claude Code (6:00, tự chạy)                 Add-on ことば畑 (khi mở An
 - Tối đa `max_plants` cây (mặc định 400, ưu tiên cây đã học). Bấm cây để ghim thẻ thông tin: chữ, cách đọc, nghĩa, Hán Việt, nút nghe, số ngày tới hạn.
 - Thanh trên: linh vật, chọn deck, xu, số cây khát, ⚙ cài đặt, Nhà, Trò chơi, Tưới ngay.
 - Chip trên sân: thời tiết và giờ, "Hôm nay X/30 lượt · N ngày liền", "Nhiệm vụ 0/3 ▸", "Báo mới N · Chép x/5 ▸".
-- Phím tắt: **R** ôn, **T** trò chơi, **N** nhà, **Q** nhiệm vụ, **B** báo & chép chính tả, **Esc** đóng, **F11** toàn màn hình. Khi đang ôn thẻ thì R/T/N/B không có tác dụng (có chủ ý).
+- Phím tắt: **R** ôn, **T** trò chơi, **N** nhà, **Q** nhiệm vụ, **B** báo & chép chính tả, **← →** đổi cảnh ngoài trời (1.7), **Esc** đóng, **F11** toàn màn hình. Khi đang ôn thẻ thì R/T/N/B không có tác dụng (có chủ ý).
+- Góc dưới trái sân (1.7): nút **◂ Tên cảnh · n/N ▸** đổi nhanh giữa sân nhà và các vùng đã mở. Sân thấp (cửa sổ cao < 860px) thì chip bên phải xếp 2 hàng để không bị cắt.
 
 ### 2.2 Ôn thẻ trong vườn ("Tưới ngay")
 - Dùng scheduler v3 thật của Anki, ghi revlog như ôn bình thường. Thẻ hiện trong một iframe dựng một lần nên lật thẻ không giật. Hỗ trợ `[[type:...]]`, audio, CSS mẫu thẻ, hook `card_will_show`.
@@ -65,10 +66,10 @@ Claude Code (6:00, tự chạy)                 Add-on ことば畑 (khi mở An
 Nghe tìm cây (`listen`), Chợ sáng (`market`), Đuổi quạ (`crow`, gõ romaji/kana/kanji, 4 tốc độ), Lật cặp (`memory`), Điền vào câu (`cloze`, dùng câu ví dụ của note).
 
 ### 2.5 Nhà & Cửa hàng (7 tab)
-Xây nhà 8 bậc (3.430 xu) → 3 kiểu nhà (minka, chashitsu, lâu đài mini); 25 món trang trí và 6 món hiếm; 3 vùng mới mở lần lượt (Bãi biển 2.000, Đền trên núi 3.000, Phố lễ hội 4.000); tủ đồ StackChan (17 món đồ mặc, 7 biểu cảm); Xưởng chế tác (vẽ pixel 16/24/32 hoặc chuyển ảnh, 5 hiệu ứng); Kho đồ. Tổng mua hết khoảng 30.000 xu.
+Xây nhà 8 bậc (3.430 xu) → 3 kiểu nhà (minka, chashitsu, lâu đài mini); 39 món trang trí / nội thất (14 món mới ở 1.7: hướng dương, chong chóng gió, nhà chim, giếng, xích đu, đài phun nước, ikebana, đèn andon, radio, bể cá, bếp irori, lịch treo tường hiện đúng ngày, tranh chữ 学, tranh sóng lừng) và 6 món hiếm; 6 vùng mở lần lượt (Bãi biển 2.000, Đền trên núi 3.000, Phố lễ hội 4.000, và 1.7: **Rừng tre** 5.000, **Suối nước nóng** 6.000, **Ga làng quê** 7.000 có tàu chạy qua, mỗi vùng 6 món); tủ đồ StackChan (17 món đồ mặc, 7 biểu cảm); Xưởng chế tác (vẽ pixel 16/24/32 hoặc chuyển ảnh, 10 hiệu ứng, vẽ đối xứng, lật dọc, dịch hình); Kho đồ. Thẻ trong cửa hàng có dòng ✦ mô tả hiệu ứng và nhãn **Mới**. Tổng mua hết khoảng 55.000 xu (bản 1.6: 31.000).
 
 ### 2.6 Trời, thời tiết, âm thanh
-Giờ thật / giờ game / cố định, 6 buổi trong ngày, thời tiết đổi mỗi 3 giờ (mưa, giông, tuyết theo mùa), ban đêm có đèn và đom đóm. Âm thanh 8-bit và 3 bản nhạc nền chiptune tự soạn.
+Giờ thật / giờ game / cố định, 6 buổi trong ngày, thời tiết đổi mỗi 3 giờ (mưa, giông, tuyết theo mùa), ban đêm có đèn và đom đóm. Âm thanh 8-bit và 3 bản nhạc nền chiptune tự soạn, **phát ngay khi mở vườn** (1.7). Hiệu ứng 1.7: vũng nước gợn sóng ở lớp mặt đất (không đè nhà), giọt nước bắn, cầu vồng khi vừa tạnh, tuyết đọng trên mái và đồ vật, giông làm đồ đung đưa mạnh, chim bay ban ngày, sao băng đêm quang, hạt theo mùa thật (hoa xuân, chuồn chuồn hè, lá đỏ thu).
 
 ### 2.7 Báo 畑新聞 & chép chính tả (bản 1.6, 1.6.1)
 - Nối báo bằng config `bao_dir` (đường dẫn thư mục `kotoba_daily`, có thể dùng `~`). Chưa nối thì tab Báo hiện hướng dẫn; tab Chép chính tả vẫn chạy bằng câu ví dụ trong deck.
@@ -192,14 +193,14 @@ Nguyên tắc:
 | File | Dòng | Vai trò |
 |---|---|---|
 | `__init__.py` | ~735 | Cửa sổ, `refresh()`, ôn thẻ trong vườn, cầu nối (`_on_bridge`, `_on_game`, `_on_home`, `_on_craft`, `_on_paper`), phát audio báo, ghi `tien_do.json`, hook, menu |
-| `garden_core.py` | ~1650 | Cân bằng game, `CATALOG`, cửa hàng / vùng / kiểu nhà / tủ đồ / xưởng, nhận diện trường note, `build_garden`, giai đoạn, nhiệm vụ (`_make_quests` nhận thêm `extra`), `GardenState` (+ `add_coins`) |
+| `garden_core.py` | ~1880 | Cân bằng game, `CATALOG` (+ `ITEM_DESC`), cửa hàng / vùng / kiểu nhà / tủ đồ / xưởng, nhận diện trường note, `build_garden`, giai đoạn, nhiệm vụ (`_make_quests` nhận thêm `extra`), `GardenState` (+ `add_coins`), tách / gộp khoá mở rộng (`split_ext`, `merge_ext`, `LEGACY_*`) |
 | `paper_core.py` | ~890 | Cú pháp furigana, `clean_issue`, `Library` (đọc thư mục báo, cache theo mtime, chặn đường dẫn audio và symlink ra ngoài), `issue_view`, chấm câu hỏi / chép, lượt chép hằng ngày (`build_daily`, `DICT_REVIEW_MAX=2`, `DICT_PAPER_MAX=4`), hàng ôn 1/3/7 ngày, `PaperState`, `progress_payload` / `write_progress` |
 | `config.json` / `config.md` | | Cấu hình mặc định và hướng dẫn (Tools → Add-ons → Config) |
 | `web/body.html` | ~210 | Khung HTML: thanh trên, bảng ôn, game, Nhà + Xưởng, bảng 新聞 (`#kb-paper`), sân, ruộng |
 | `web/garden.css` | ~1180 | Toàn bộ CSS kiểu pixel (phần báo có tiền tố `kb-p-`) |
 | `web/garden.js` | ~970 | `Garden`: ruộng, thẻ ghim, bảng ôn, phím tắt, nhạc, chip báo (`drawPaperChip`), `openPaper` |
 | `web/paper.js` | ~600 | `GardenPaper`: 3 tab Báo / Chép chính tả / Kệ báo, tra từ, câu hỏi, chép (romaji qua `GardenGames._typedKana`) |
-| `web/home.js` | ~2340 | `GardenHome`: sprite, nhà, 4 cảnh ngoài trời + phòng, đặt đồ, 7 tab cửa hàng; cờ hòm thư theo báo, bấm hòm thư mở báo (`mainItemAt`) |
+| `web/home.js` | ~3470 | `GardenHome`: sprite (`SPR`, `FRAMES`, `BASE`), nhà, 7 cảnh ngoài trời + phòng, thời tiết theo lớp (vũng nước ở lớp mặt đất), đặt đồ, 7 tab cửa hàng; cờ hòm thư theo báo, bấm hòm thư mở báo (`mainItemAt`); nút đổi cảnh ◂ ▸ (`cycleMain`) |
 | `web/games.js` | ~1760 | `GardenGames`: 5 mini-game, romaji → kana |
 | `web/fx.js` | ~900 | `GardenFX`: StackChan, hạt, âm thanh 8-bit |
 | `web/sky.js`, `web/music.js`, `web/craft.js` | | Trời & thời tiết; nhạc chiptune; trình vẽ pixel |
@@ -237,8 +238,9 @@ Audio báo phát bằng `aqt.sound.av_player.play_file(đường_dẫn_tuyệt_�
 | `kotoba_batake_state` | ví: xu, nhà, đồ đặt ở từng cảnh, tủ đồ, xưởng, nhiệm vụ, kỷ lục game | `user_files/state.json` |
 | `kotoba_batake_px` | điểm ảnh nén của món tự làm (RLE, bảng 32 màu) | `user_files/craft_px.json` |
 | `kotoba_batake_paper` (1.6) | `read` {ngày: {q, ct, coins, bonus}}, `dict` {day, items, res, coins, bonus}, `queue` {id câu: {due, box}}, `seen`, `miss` {từ: ngày} | `user_files/paper.json` |
+| `kotoba_batake_ext` (1.7) | phần mới mà bản ≤ 1.6.1 không hiểu: `owned` đồ mới, `zones` vùng mới, `places` {cảnh: [đồ mới hoặc đồ ở vùng mới]}, `craft_fx` {cid: {fx, was}} | `user_files/ext.json` |
 
-Khoá báo **tách riêng** để bản cũ của add-on trên máy khác (vốn làm sạch và xoá khoá lạ trong ví) không xoá mất. Id câu chép: `p:<ngày>:<i>` (câu trong báo) hoặc `n:<nid>` (câu ví dụ của note). Ghi `col.set_config` không xoá undo.
+Khoá báo **tách riêng** để bản cũ của add-on trên máy khác (vốn làm sạch và xoá khoá lạ trong ví) không xoá mất. Từ 1.7 đồ / vùng / hiệu ứng mới cũng vậy: ví chỉ giữ thứ bản 1.6.1 hiểu (`LEGACY_ITEMS`, `LEGACY_ZONES`, `LEGACY_FX`), phần mới ở `kotoba_batake_ext`; `load()` gộp lại (phần mới xếp sau), `save()` tách ra. Bản cũ đặt đồ vào ô của đồ mới thì đồ mới tự về kho. Collection có ví nhưng thiếu khoá mở rộng (vd. tải về từ máy chưa cài 1.7) thì không lấy `ext.json` của máy này. Id câu chép: `p:<ngày>:<i>` (câu trong báo) hoặc `n:<nid>` (câu ví dụ của note). Ghi `col.set_config` không xoá undo.
 
 ### 5.3 File trao đổi giữa add-on và `kotoba_daily`
 
@@ -336,6 +338,8 @@ Add-on chỉ **ghi đúng một file** trong `bao_dir`: `tien_do.json`.
 
 Biến môi trường: `KB_ADDON` (thư mục add-on), `KB_KIT` (thư mục `kotoba_daily`), `KB_ORIG_CORE` (`garden_core.py` của 1.5).
 
+**Bộ test 1.7** (viết lại từ đầu trong phiên 1.7 vì các bộ cũ không có trong repo; 195 kiểm tra, đều qua): `harness.py` + `stubs/aqt/` (aqt giả, `answer_card` chạy thật) + `server.py` (phục vụ trang đúng như `stdHtml`, `pycmd` → `__init__.py` thật trên collection Anki thật); `test_ext.py` (109: khoá mở rộng, chạy `garden_core.py` của 1.6.1 thật trên cùng collection để chứng minh bản cũ không xoá đồ / vùng mới); `regress.js` (42: nhạc, ôn thẻ thật, game, báo, nhiệm vụ, cài đặt, F11, mở vùng mới qua giao diện, mua / đặt / di chuyển / cất, nút ◂ ▸, quét vẽ 7 cảnh × 5 giờ × 5 thời tiết, cửa sổ hẹp); `craft_test.js` (44: toàn bộ luồng Xưởng + công cụ mới); `music_test.js`, `perf.js` (≤ 5 ms/khung mọi cảnh), `clip_check.js`, các script chụp ảnh `zones.js` / `panel.js` / `sheet.js` / `fx_test.js`.
+
 **Đóng gói add-on**
 ```bash
 # tăng "mod" (unix time) và "human_version" trong manifest.json
@@ -352,7 +356,7 @@ rm -f kotoba_batake/user_files/state.json* kotoba_batake/user_files/craft_px.jso
 
 ## 9. Hạn chế đã biết / chưa kiểm tra trên máy thật
 
-- **Chưa chạy trên Anki thật**, chỉ kiểm bằng giả lập. Các phần chưa thử thật: cửa sổ trên GNOME/Wayland, phát WAV bằng `av_player`, VOICEVOX thật (`doc_voicevox.py` mới thử với máy chủ giả), `getFile`, dán ảnh Ctrl+V, kéo thả ảnh.
+- **Chưa chạy trên Anki thật**, chỉ kiểm bằng giả lập. Các phần chưa thử thật: cửa sổ trên GNOME/Wayland, phát WAV bằng `av_player`, VOICEVOX thật (`doc_voicevox.py` mới thử với máy chủ giả), `getFile`, dán ảnh Ctrl+V, kéo thả ảnh, và (1.7) nhạc tự phát nhờ `AnkiWebView.setPlaybackRequiresGesture(False)` — cùng cách màn ôn thẻ của Anki dùng; nếu QtWebEngine vẫn chặn thì nhạc bật ở thao tác đầu tiên như trước.
 - **Điện thoại**: AnkiDroid / AnkiMobile không chạy add-on. Lượt ôn trên điện thoại vẫn làm cây lớn, nhưng không được xu hay nhiệm vụ. Báo chỉ đọc được trên máy có thư mục `kotoba_daily` (hoặc mở `bao.html`).
 - **Nhiều máy tính**: phải cập nhật add-on ở mọi máy. Muốn đọc báo ở máy khác thì đồng bộ thư mục `kotoba_daily` (ví dụ Syncthing).
 - **Câu ví dụ trong deck không có bản đọc chậm.**
@@ -423,6 +427,7 @@ Các ý dưới đây đã được bàn với người dùng nhưng **chưa là
 - **1.5**: hiệu ứng đồ vật, nảy khi đặt đồ, sửa lỗi cảnh màn chính và xưởng, tối ưu.
 - **1.6**: báo 畑新聞 (hòm thư, chip, phím B, furigana, tra từ, giọng đọc, truyện dài kỳ, câu hỏi, kệ báo đọc bù); chép chính tả hằng ngày (gõ romaji được, ôn câu sai 1/3/7 ngày); 2 loại nhiệm vụ mới; ghi `tien_do.json`; khoá collection riêng `kotoba_batake_paper`.
 - **1.6.1**: lượt chép hằng ngày ưu tiên câu từ báo (tối đa 4).
+- **1.7.0**: sửa vũng nước khi mưa / giông vẽ đè lên nhà; sửa nhạc nền chỉ bật sau lần bấm đầu tiên; sửa chip "Báo · Chép" bị cắt ở cửa sổ thấp (1366×768, 1280×800). Thêm 3 vùng (Rừng tre, Suối nước nóng, Ga làng quê có tàu chạy qua), 32 món mới, mô tả hiệu ứng + nhãn "Mới", nút ◂ ▸ / phím ← → đổi cảnh, biểu tượng cửa hàng to hơn; hiệu ứng trời (gợn vũng nước, giọt bắn, cầu vồng, tuyết đọng, gió giông, chim, sao băng, hạt theo mùa); Xưởng thêm 5 hiệu ứng, vẽ đối xứng, lật dọc, dịch hình, sửa vài lỗi nhỏ. Phần mới lưu ở khoá riêng `kotoba_batake_ext`.
 
 **Bộ `kotoba_daily`**
 - **Bản đầu**: lộ trình, trích chương, `pham_vi.py`, `kiemtra.py`, `render.py`, `doc_voicevox.py`, prompt hằng ngày, số báo mẫu.
