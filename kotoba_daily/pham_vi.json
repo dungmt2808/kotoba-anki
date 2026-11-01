@@ -25,6 +25,116 @@
  "so_bao_tiep_theo": 1,
  "trong_tam": [
   {
+   "bai": "gungun_n4:27",
+   "chu_de": "Cấm đoán, bắt buộc và dạng rút gọn; 〜てしまう, 〜ておく, 〜てくる, 〜ていく",
+   "tu_vung": [
+    "元の場所",
+    "元の所",
+    "講義",
+    "意見",
+    "蓋",
+    "缶",
+    "悪口",
+    "ルール",
+    "ラベル",
+    "ヘルメット",
+    "ペットボトル",
+    "サービス",
+    "〜以下",
+    "〜以上",
+    "〜以内",
+    "渡る",
+    "戻す",
+    "剥がす",
+    "はっきり",
+    "もう",
+    "充電器",
+    "暗証番号",
+    "乗り場",
+    "シャンプー",
+    "リンス",
+    "ドイツ",
+    "ペット",
+    "最悪",
+    "迷う",
+    "残る",
+    "終わらせる",
+    "充電する",
+    "復習する",
+    "そのままにする",
+    "つい",
+    "駐車場",
+    "様子",
+    "物価",
+    "世界中",
+    "留学生",
+    "健康",
+    "会場",
+    "和食",
+    "筆箱",
+    "ストーブ",
+    "ガイドブック",
+    "インフルエンザ",
+    "アラーム",
+    "気がつく",
+    "決まる",
+    "離れる",
+    "少しずつ",
+    "だんだん",
+    "できる"
+   ],
+   "ngu_phap": [
+    "gungun_n4:27-1",
+    "gungun_n4:27-2",
+    "gungun_n4:27-3",
+    "gungun_n4:27-4",
+    "gungun_n4:27-5",
+    "gungun_n4:27-6",
+    "gungun_n4:27-7",
+    "gungun_n4:27-8"
+   ]
+  },
+  {
+   "bai": "gungun_n4:28",
+   "chu_de": "Thể sai khiến, thể bị động sai khiến và 〜させてもらう",
+   "tu_vung": [
+    "課題",
+    "生徒",
+    "教育",
+    "塾",
+    "技術",
+    "息子",
+    "娘",
+    "後輩",
+    "自由",
+    "悲しむ",
+    "拾う",
+    "学ぶ",
+    "迎えに来る",
+    "経験する",
+    "〜部",
+    "上司",
+    "体育",
+    "バイオリン",
+    "バレエ",
+    "高級",
+    "頼む",
+    "写す",
+    "感動する",
+    "まず",
+    "他にも"
+   ],
+   "ngu_phap": [
+    "gungun_n4:28-1",
+    "gungun_n4:28-2",
+    "gungun_n4:28-3",
+    "gungun_n4:28-4",
+    "gungun_n4:28-5",
+    "gungun_n4:28-6",
+    "gungun_n4:28-7"
+   ]
+  },
+  {
    "bai": "gungun_n4:29",
    "chu_de": "Kính ngữ: xin phép làm gì, khiêm nhường ngữ, tôn kính ngữ, yêu cầu lịch sự, 〜なさい",
    "tu_vung": [
@@ -71,6 +181,1413 @@
   }
  ],
  "ngu_phap": [
+  {
+   "id": "gungun_n5:1-1",
+   "mau": "(N1は)N2です",
+   "nghia": "N1 là N2: câu khẳng định với danh từ, dùng để giới thiệu, nêu thông tin",
+   "bai": "gungun_n5:1"
+  },
+  {
+   "id": "gungun_n5:1-2",
+   "mau": "(N1は)N2ですか → はい、そうです / いいえ、N3です",
+   "nghia": "N1 có phải là N2 không? Câu hỏi Có/Không, thêm か cuối câu và trả lời bằng はい hoặc いいえ",
+   "bai": "gungun_n5:1"
+  },
+  {
+   "id": "gungun_n5:1-3",
+   "mau": "Nも〜",
+   "nghia": "N cũng ~: も thay cho は khi nội dung giống điều vừa nói",
+   "bai": "gungun_n5:1"
+  },
+  {
+   "id": "gungun_n5:1-4",
+   "mau": "(N1は)N2じゃありません",
+   "nghia": "N1 không phải là N2: phủ định của câu danh từ",
+   "bai": "gungun_n5:1"
+  },
+  {
+   "id": "gungun_n5:1-5",
+   "mau": "Nは何時から何時までですか → 〜から〜までです",
+   "nghia": "N từ mấy giờ đến mấy giờ? Hỏi và trả lời khoảng thời gian",
+   "bai": "gungun_n5:1"
+  },
+  {
+   "id": "gungun_n5:1-6",
+   "mau": "(Nは)いくらですか → Nは(số tiền)です",
+   "nghia": "N bao nhiêu tiền? Hỏi và trả lời giá tiền",
+   "bai": "gungun_n5:1"
+  },
+  {
+   "id": "gungun_n5:1-7",
+   "mau": "(N1は)何ですか → (N1は)N2です",
+   "nghia": "N1 là cái gì? Hỏi tên đồ vật, nghề nghiệp",
+   "bai": "gungun_n5:1"
+  },
+  {
+   "id": "gungun_n5:1-8",
+   "mau": "〜ね",
+   "nghia": "~ nhỉ: đặt cuối câu để tìm sự đồng cảm của người nghe",
+   "bai": "gungun_n5:1"
+  },
+  {
+   "id": "gungun_n5:1-9",
+   "mau": "〜よね / 〜よ",
+   "nghia": "~ đúng không nhỉ (よね: xác nhận điều mình nghĩ là đúng), ~ đấy (よ: báo điều người nghe chưa biết)",
+   "bai": "gungun_n5:1"
+  },
+  {
+   "id": "gungun_n5:2-1",
+   "mau": "(N1は)N2でした",
+   "nghia": "N1 đã là N2: khẳng định quá khứ của câu danh từ",
+   "bai": "gungun_n5:2"
+  },
+  {
+   "id": "gungun_n5:2-2",
+   "mau": "(N1は)N2じゃありませんでした / じゃなかったです / ではありませんでした",
+   "nghia": "N1 đã không phải là N2: phủ định quá khứ của câu danh từ",
+   "bai": "gungun_n5:2"
+  },
+  {
+   "id": "gungun_n5:2-3",
+   "mau": "N1(chủ sở hữu)のN2です / 誰のN2ですか",
+   "nghia": "N2 của N1: の chỉ chủ sở hữu, hỏi bằng 誰の",
+   "bai": "gungun_n5:2"
+  },
+  {
+   "id": "gungun_n5:2-4",
+   "mau": "N1(nội dung)のN2です / 何のN2ですか",
+   "nghia": "N2 về N1: の chỉ nội dung, hỏi bằng 何の",
+   "bai": "gungun_n5:2"
+  },
+  {
+   "id": "gungun_n5:2-5",
+   "mau": "N1(xuất xứ)のN2です / どこのN2ですか",
+   "nghia": "N2 của, từ N1: の chỉ xuất xứ, hỏi bằng どこの",
+   "bai": "gungun_n5:2"
+  },
+  {
+   "id": "gungun_n5:2-6",
+   "mau": "N1(nguyên liệu)のN2です / 何のN2ですか",
+   "nghia": "N2 làm từ N1: の chỉ nguyên liệu",
+   "bai": "gungun_n5:2"
+  },
+  {
+   "id": "gungun_n5:2-7",
+   "mau": "N1(nơi sở thuộc)のN2",
+   "nghia": "N2 của, thuộc cơ quan, tổ chức N1",
+   "bai": "gungun_n5:2"
+  },
+  {
+   "id": "gungun_n5:2-8",
+   "mau": "(N1は)N2でN3です",
+   "nghia": "N1 là N2 và là N3: で nối hai danh từ cùng nói về một chủ thể",
+   "bai": "gungun_n5:2"
+  },
+  {
+   "id": "gungun_n5:3-1",
+   "mau": "(Nは)Aいです",
+   "nghia": "N có tính chất A: câu khẳng định với tính từ đuôi い",
+   "bai": "gungun_n5:3"
+  },
+  {
+   "id": "gungun_n5:3-2",
+   "mau": "(Nは)Aいくないです",
+   "nghia": "N không A: phủ định tính từ đuôi い (bỏ い, thêm くない)",
+   "bai": "gungun_n5:3"
+  },
+  {
+   "id": "gungun_n5:3-3",
+   "mau": "(Nは)Aなです",
+   "nghia": "N có tính chất A: câu khẳng định với tính từ đuôi な",
+   "bai": "gungun_n5:3"
+  },
+  {
+   "id": "gungun_n5:3-4",
+   "mau": "(Nは)Aなじゃないです",
+   "nghia": "N không A: phủ định tính từ đuôi な",
+   "bai": "gungun_n5:3"
+  },
+  {
+   "id": "gungun_n5:3-5",
+   "mau": "(Nは)Aい/Aなですか",
+   "nghia": "N có A không? Câu hỏi với tính từ",
+   "bai": "gungun_n5:3"
+  },
+  {
+   "id": "gungun_n5:3-6",
+   "mau": "(Nは)Aいくて＋Aい/Aなです",
+   "nghia": "N vừa A vừa A: nối tính từ đuôi い với tính từ khác",
+   "bai": "gungun_n5:3"
+  },
+  {
+   "id": "gungun_n5:3-7",
+   "mau": "(Nは)Aなで＋Aい/Aなです",
+   "nghia": "N vừa A vừa A: nối tính từ đuôi な với tính từ khác",
+   "bai": "gungun_n5:3"
+  },
+  {
+   "id": "gungun_n5:3-8",
+   "mau": "(Nは)どうですか",
+   "nghia": "N thì thế nào? Hỏi cảm nhận, đánh giá",
+   "bai": "gungun_n5:3"
+  },
+  {
+   "id": "gungun_n5:3-9",
+   "mau": "(Nは)〜が、〜",
+   "nghia": "N thì ~ nhưng ~: が nối hai vế trái ý, cách nói lịch sự",
+   "bai": "gungun_n5:3"
+  },
+  {
+   "id": "gungun_n5:3-10",
+   "mau": "(Nは)Aいかったです / Aいくなかったです",
+   "nghia": "N đã A, đã không A: quá khứ của tính từ đuôi い",
+   "bai": "gungun_n5:3"
+  },
+  {
+   "id": "gungun_n5:3-11",
+   "mau": "(Nは)Aなでした / Aなじゃなかったです",
+   "nghia": "N đã A, đã không A: quá khứ của tính từ đuôi な",
+   "bai": "gungun_n5:3"
+  },
+  {
+   "id": "gungun_n5:3-12",
+   "mau": "Aい/Aな Nです / どんなNですか",
+   "nghia": "Tính từ đứng trước để bổ nghĩa danh từ; hỏi đặc điểm bằng どんなN",
+   "bai": "gungun_n5:3"
+  },
+  {
+   "id": "gungun_n5:3-13",
+   "mau": "N1で từ để hỏi が一番Aですか → (N1で)N2が一番Aです",
+   "nghia": "Trong N1 thì cái gì A nhất? So sánh nhất",
+   "bai": "gungun_n5:3"
+  },
+  {
+   "id": "gungun_n5:3-14",
+   "mau": "N1とN2(と)、どっち/どちらがAですか → N1/N2のほうがAです",
+   "nghia": "N1 và N2 cái nào A hơn? So sánh giữa hai đối tượng",
+   "bai": "gungun_n5:3"
+  },
+  {
+   "id": "gungun_n5:3-15",
+   "mau": "(N1は)N2よりAです",
+   "nghia": "N1 A hơn N2: so sánh hơn",
+   "bai": "gungun_n5:3"
+  },
+  {
+   "id": "gungun_n5:4-1",
+   "mau": "(N1は)từ để hỏi/N2/Aな？",
+   "nghia": "Câu hỏi thân mật với danh từ, tính từ đuôi な: bỏ です, lên giọng cuối câu",
+   "bai": "gungun_n5:4"
+  },
+  {
+   "id": "gungun_n5:4-2",
+   "mau": "(N1は)N2/Aな(だよ/だね/だよね)",
+   "nghia": "Khẳng định thể thường của danh từ, tính từ đuôi な: dùng だ, thường kèm よ, ね, よね",
+   "bai": "gungun_n5:4"
+  },
+  {
+   "id": "gungun_n5:4-3",
+   "mau": "❶(N1は)N2/Aなじゃない ❷(N1は)N2/Aなじゃない？",
+   "nghia": "❶ Không phải N2, không A (phủ định thể thường) ❷ Chẳng phải ~ sao? (xác nhận, lên giọng cuối câu)",
+   "bai": "gungun_n5:4"
+  },
+  {
+   "id": "gungun_n5:4-4",
+   "mau": "(N1は)N2/Aなだった？ / だった",
+   "nghia": "Đã là N2, đã A: quá khứ thể thường, lên giọng thành câu hỏi",
+   "bai": "gungun_n5:4"
+  },
+  {
+   "id": "gungun_n5:4-5",
+   "mau": "(N1は)N2/Aなじゃなかった",
+   "nghia": "Đã không phải N2, đã không A: phủ định quá khứ thể thường",
+   "bai": "gungun_n5:4"
+  },
+  {
+   "id": "gungun_n5:4-6",
+   "mau": "(Nは)Aい？",
+   "nghia": "N có A không? Câu hỏi thân mật với tính từ đuôi い, bỏ です",
+   "bai": "gungun_n5:4"
+  },
+  {
+   "id": "gungun_n5:4-7",
+   "mau": "(Nは)Aい",
+   "nghia": "N A: khẳng định thể thường của tính từ đuôi い",
+   "bai": "gungun_n5:4"
+  },
+  {
+   "id": "gungun_n5:4-8",
+   "mau": "(Nは)〜けど、〜",
+   "nghia": "~ nhưng ~: けど nối hai vế trái ý, thân mật hơn が",
+   "bai": "gungun_n5:4"
+  },
+  {
+   "id": "gungun_n5:4-9",
+   "mau": "(Nは)Aいかった",
+   "nghia": "N đã A: quá khứ thể thường của tính từ đuôi い",
+   "bai": "gungun_n5:4"
+  },
+  {
+   "id": "gungun_n5:4-10",
+   "mau": "(Nは)Aいくない",
+   "nghia": "N không A: phủ định thể thường của tính từ đuôi い",
+   "bai": "gungun_n5:4"
+  },
+  {
+   "id": "gungun_n5:4-11",
+   "mau": "(Nは)Aいくなかった",
+   "nghia": "N đã không A: phủ định quá khứ thể thường của tính từ đuôi い",
+   "bai": "gungun_n5:4"
+  },
+  {
+   "id": "gungun_n5:5-1",
+   "mau": "N(đồ vật)(は)ありますか → はい、あります / いいえ、ないです・ありません",
+   "nghia": "Có N (đồ vật) không? Hỏi sự tồn tại của đồ vật",
+   "bai": "gungun_n5:5"
+  },
+  {
+   "id": "gungun_n5:5-2",
+   "mau": "N1(đồ vật)はN2(địa điểm)です / N1はN2にあります",
+   "nghia": "N1 ở N2: nói vị trí của đồ vật",
+   "bai": "gungun_n5:5"
+  },
+  {
+   "id": "gungun_n5:5-3",
+   "mau": "N1(địa điểm)にN2(vật, địa điểm)があります",
+   "nghia": "Ở N1 có N2",
+   "bai": "gungun_n5:5"
+  },
+  {
+   "id": "gungun_n5:5-4",
+   "mau": "N(người, động vật)(は)いますか → はい、います / いいえ、いないです・いません",
+   "nghia": "Có N (người, con vật) không?",
+   "bai": "gungun_n5:5"
+  },
+  {
+   "id": "gungun_n5:5-5",
+   "mau": "N1(người, động vật)はN2(địa điểm)です / N1はN2にいます",
+   "nghia": "N1 ở N2: nói vị trí của người, con vật",
+   "bai": "gungun_n5:5"
+  },
+  {
+   "id": "gungun_n5:5-6",
+   "mau": "N1(địa điểm)にN2(người, động vật)がいます",
+   "nghia": "Ở N1 có N2 (người, con vật)",
+   "bai": "gungun_n5:5"
+  },
+  {
+   "id": "gungun_n5:5-7",
+   "mau": "Nには / にも〜",
+   "nghia": "Ở N thì có ~, ở N cũng có ~: nhấn mạnh địa điểm khi so với nơi khác",
+   "bai": "gungun_n5:5"
+  },
+  {
+   "id": "gungun_n5:5-8",
+   "mau": "N1とN2",
+   "nghia": "N1 và N2: と nối các danh từ cùng loại, liệt kê đầy đủ",
+   "bai": "gungun_n5:5"
+  },
+  {
+   "id": "gungun_n5:5-9",
+   "mau": "Số lượng từ＋います/あります",
+   "nghia": "Có (số lượng) người, con vật, đồ vật: số lượng từ đứng ngay trước động từ",
+   "bai": "gungun_n5:5"
+  },
+  {
+   "id": "gungun_n5:6-1",
+   "mau": "Vます / Vました",
+   "nghia": "V (hiện tại, tương lai, thói quen), đã V (quá khứ)",
+   "bai": "gungun_n5:6"
+  },
+  {
+   "id": "gungun_n5:6-2",
+   "mau": "〜時にV / 何時にVか",
+   "nghia": "V vào lúc ~ giờ: に chỉ mốc thời gian",
+   "bai": "gungun_n5:6"
+  },
+  {
+   "id": "gungun_n5:6-3",
+   "mau": "〜時間/分V / 何時間/何分Vか",
+   "nghia": "V trong ~ tiếng, ~ phút: chỉ khoảng thời gian, không dùng に",
+   "bai": "gungun_n5:6"
+  },
+  {
+   "id": "gungun_n5:6-4",
+   "mau": "〜から〜までV / 〜から〜までVか",
+   "nghia": "V từ ~ đến ~: điểm bắt đầu và kết thúc",
+   "bai": "gungun_n5:6"
+  },
+  {
+   "id": "gungun_n5:6-5",
+   "mau": "Vません / Vませんでした",
+   "nghia": "Không V, đã không V",
+   "bai": "gungun_n5:6"
+  },
+  {
+   "id": "gungun_n5:6-6",
+   "mau": "N(địa điểm)へ/に帰ります",
+   "nghia": "Về, trở về N",
+   "bai": "gungun_n5:6"
+  },
+  {
+   "id": "gungun_n5:6-7",
+   "mau": "N(địa điểm)へ/に行きます",
+   "nghia": "Đi đến N",
+   "bai": "gungun_n5:6"
+  },
+  {
+   "id": "gungun_n5:6-8",
+   "mau": "N(địa điểm)へ/に来ます",
+   "nghia": "Đến N (về phía người nói)",
+   "bai": "gungun_n5:6"
+  },
+  {
+   "id": "gungun_n5:6-9",
+   "mau": "NをV / 何をVか",
+   "nghia": "V (tác động đến) N: を chỉ đối tượng, hỏi bằng 何を",
+   "bai": "gungun_n5:6"
+  },
+  {
+   "id": "gungun_n5:6-10",
+   "mau": "N(địa điểm)でV / どこでVか",
+   "nghia": "V ở, tại N: で chỉ nơi diễn ra hành động",
+   "bai": "gungun_n5:6"
+  },
+  {
+   "id": "gungun_n5:6-11",
+   "mau": "NとV / 誰とVか",
+   "nghia": "V cùng với N",
+   "bai": "gungun_n5:6"
+  },
+  {
+   "id": "gungun_n5:6-12",
+   "mau": "N1とかN2(とか)〜 / N1やN2(など)〜",
+   "nghia": "N1, N2...: liệt kê vài ví dụ tiêu biểu, không đầy đủ",
+   "bai": "gungun_n5:6"
+  },
+  {
+   "id": "gungun_n5:7-1",
+   "mau": "どこ/誰/何＋か(trợ từ)＋Vか",
+   "nghia": "Có V đâu đó, ai đó, cái gì đó không? Hỏi về điều chưa xác định",
+   "bai": "gungun_n5:7"
+  },
+  {
+   "id": "gungun_n5:7-2",
+   "mau": "どこ/誰/何＋(trợ từ)も＋V(phủ định)",
+   "nghia": "Chẳng V đâu, ai, gì cả: phủ định hoàn toàn",
+   "bai": "gungun_n5:7"
+  },
+  {
+   "id": "gungun_n5:7-3",
+   "mau": "Nを(số lượng từ)ください/お願いします",
+   "nghia": "Cho tôi (số lượng) N: gọi món, mua hàng",
+   "bai": "gungun_n5:7"
+  },
+  {
+   "id": "gungun_n5:7-4",
+   "mau": "(Khoảng thời gian＋に)＋tần suất/số lượng＋V",
+   "nghia": "V ~ lần trong khoảng thời gian: diễn tả tần suất",
+   "bai": "gungun_n5:7"
+  },
+  {
+   "id": "gungun_n5:7-5",
+   "mau": "Vませんか / Vましょう / Vましょうか",
+   "nghia": "Cùng V không? (mời), cùng V nào (hô hào, nhận lời), cùng V nhé? (đề nghị)",
+   "bai": "gungun_n5:7"
+  },
+  {
+   "id": "gungun_n5:7-6",
+   "mau": "Nが欲しいです",
+   "nghia": "Muốn có N",
+   "bai": "gungun_n5:7"
+  },
+  {
+   "id": "gungun_n5:7-7",
+   "mau": "(N1へ/に)＋Vます/N2に＋行きます/来ます/帰ります",
+   "nghia": "Đi, đến, về (N1) để V, để N2: chỉ mục đích di chuyển",
+   "bai": "gungun_n5:7"
+  },
+  {
+   "id": "gungun_n5:7-8",
+   "mau": "NがVたいです",
+   "nghia": "Muốn V: mong muốn của người nói",
+   "bai": "gungun_n5:7"
+  },
+  {
+   "id": "gungun_n5:7-9",
+   "mau": "Vます＋方",
+   "nghia": "Cách V",
+   "bai": "gungun_n5:7"
+  },
+  {
+   "id": "gungun_n5:8-1",
+   "mau": "(Nは)〜がV(thể khả năng)",
+   "nghia": "N có thể V: nói về năng lực, khả năng",
+   "bai": "gungun_n5:8"
+  },
+  {
+   "id": "gungun_n5:8-2",
+   "mau": "N(phương tiện, công cụ)でV / 何でVか",
+   "nghia": "V bằng N: で chỉ phương tiện, công cụ",
+   "bai": "gungun_n5:8"
+  },
+  {
+   "id": "gungun_n5:8-3",
+   "mau": "Số tiền/khoảng thời gian＋かかります/くらいです",
+   "nghia": "Tốn, mất ~ (tiền, thời gian)",
+   "bai": "gungun_n5:8"
+  },
+  {
+   "id": "gungun_n5:8-4",
+   "mau": "Số tiền/khoảng thời gianで＋V / いくら/どのくらい＋で＋Vか",
+   "nghia": "V với (số tiền), trong (khoảng thời gian): で chỉ giới hạn, thường đi với thể khả năng",
+   "bai": "gungun_n5:8"
+  },
+  {
+   "id": "gungun_n5:8-5",
+   "mau": "N1はN2が好き/嫌い/上手/下手/得意/苦手＋だ/です",
+   "nghia": "N1 thích, ghét, giỏi, kém N2: đối tượng đứng trước が",
+   "bai": "gungun_n5:8"
+  },
+  {
+   "id": "gungun_n5:8-6",
+   "mau": "〜から、〜",
+   "nghia": "Vì ~ nên ~: から nêu lý do",
+   "bai": "gungun_n5:8"
+  },
+  {
+   "id": "gungun_n5:8-7",
+   "mau": "N1はN2がAです",
+   "nghia": "N1 có N2 mang đặc điểm A: nói đặc điểm, tính chất",
+   "bai": "gungun_n5:8"
+  },
+  {
+   "id": "gungun_n5:8-8",
+   "mau": "N1がN2/Aです / N1がVます",
+   "nghia": "が đánh dấu thông tin mới, điều muốn nhấn mạnh; bắt buộc dùng sau từ để hỏi",
+   "bai": "gungun_n5:8"
+  },
+  {
+   "id": "gungun_n5:9-1",
+   "mau": "Vます → Vる",
+   "nghia": "Thể từ điển: dạng thường, khẳng định, không quá khứ của động từ",
+   "bai": "gungun_n5:9"
+  },
+  {
+   "id": "gungun_n5:9-2",
+   "mau": "Vますか → Vる？",
+   "nghia": "Câu hỏi thân mật với thể từ điển: bỏ か, lên giọng cuối câu",
+   "bai": "gungun_n5:9"
+  },
+  {
+   "id": "gungun_n5:9-3",
+   "mau": "Vる＋こと/N＋ができる",
+   "nghia": "Có thể V, có thể làm N: năng lực hoặc điều kiện cho phép",
+   "bai": "gungun_n5:9"
+  },
+  {
+   "id": "gungun_n5:9-4",
+   "mau": "〜Vる＋ことです",
+   "nghia": "~ là việc V: danh từ hóa động từ để nói sở thích, công việc",
+   "bai": "gungun_n5:9"
+  },
+  {
+   "id": "gungun_n5:9-5",
+   "mau": "Vません → Vない",
+   "nghia": "Thể ない: dạng thường, phủ định của động từ",
+   "bai": "gungun_n5:9"
+  },
+  {
+   "id": "gungun_n5:9-6",
+   "mau": "(一緒に)Vませんか → (一緒に)Vない？",
+   "nghia": "Cùng V không? Rủ thân mật bằng thể ない, lên giọng cuối câu",
+   "bai": "gungun_n5:9"
+  },
+  {
+   "id": "gungun_n5:9-7",
+   "mau": "V(khả năng)ます → V(khả năng)る / V(khả năng)ません → V(khả năng)ない",
+   "nghia": "Thể thường hiện tại của động từ khả năng",
+   "bai": "gungun_n5:9"
+  },
+  {
+   "id": "gungun_n5:9-8",
+   "mau": "Vました → Vた",
+   "nghia": "Thể た: quá khứ thể thường của động từ",
+   "bai": "gungun_n5:9"
+  },
+  {
+   "id": "gungun_n5:9-9",
+   "mau": "V(khả năng)ました → V(khả năng)た / V(khả năng)ませんでした → V(khả năng)なかった",
+   "nghia": "Thể thường quá khứ của động từ khả năng",
+   "bai": "gungun_n5:9"
+  },
+  {
+   "id": "gungun_n5:9-10",
+   "mau": "〜Vたい (thể thường)",
+   "nghia": "Muốn V ở thể thường: Vたい, Vたくない, Vたかった, Vたくなかった",
+   "bai": "gungun_n5:9"
+  },
+  {
+   "id": "gungun_n5:10-1",
+   "mau": "Vましょう → Vよう",
+   "nghia": "Thể ý chí: thể thường của Vましょう, dùng để rủ thân mật hoặc tự quyết",
+   "bai": "gungun_n5:10"
+  },
+  {
+   "id": "gungun_n5:10-2",
+   "mau": "V1る/Nの＋前に、V2",
+   "nghia": "Trước khi V1, N thì V2",
+   "bai": "gungun_n5:10"
+  },
+  {
+   "id": "gungun_n5:10-3",
+   "mau": "V1た/Nの＋後で、V2",
+   "nghia": "Sau khi V1, N thì V2",
+   "bai": "gungun_n5:10"
+  },
+  {
+   "id": "gungun_n5:10-4",
+   "mau": "V1たら、V2",
+   "nghia": "Sau khi V1 thì V2 (theo ý chí, dự định)",
+   "bai": "gungun_n5:10"
+  },
+  {
+   "id": "gungun_n5:10-5",
+   "mau": "Vた＋ばかりだ",
+   "nghia": "Vừa mới V, theo cảm nhận của người nói",
+   "bai": "gungun_n5:10"
+  },
+  {
+   "id": "gungun_n5:10-6",
+   "mau": "Vた＋ことがあります",
+   "nghia": "Đã từng V: nói về kinh nghiệm",
+   "bai": "gungun_n5:10"
+  },
+  {
+   "id": "gungun_n5:11-1",
+   "mau": "ば形 (thể ば)",
+   "nghia": "Cách chia thể điều kiện ば của động từ và tính từ đuôi い",
+   "bai": "gungun_n5:11"
+  },
+  {
+   "id": "gungun_n5:11-2",
+   "mau": "Vば/Aいければ、〜",
+   "nghia": "Nếu ~ thì ~: câu điều kiện với động từ, tính từ đuôi い",
+   "bai": "gungun_n5:11"
+  },
+  {
+   "id": "gungun_n5:11-3",
+   "mau": "Từ nghi vấn＋Vば、〜か",
+   "nghia": "Nên V (thế nào, khi nào, ở đâu...) thì ~? Xin lời khuyên, hỏi cách làm",
+   "bai": "gungun_n5:11"
+  },
+  {
+   "id": "gungun_n5:11-4",
+   "mau": "Vなければ、〜",
+   "nghia": "Nếu không V thì không ~: câu điều kiện phủ định",
+   "bai": "gungun_n5:11"
+  },
+  {
+   "id": "gungun_n5:11-5",
+   "mau": "Vなければいけません / Vないといけません",
+   "nghia": "Phải V: nghĩa vụ, việc bắt buộc",
+   "bai": "gungun_n5:11"
+  },
+  {
+   "id": "gungun_n5:11-6",
+   "mau": "Vなきゃ、〜",
+   "nghia": "Nếu không V thì không ~: cách nói thân mật của Vなければ",
+   "bai": "gungun_n5:11"
+  },
+  {
+   "id": "gungun_n5:11-7",
+   "mau": "Vなきゃいけない",
+   "nghia": "Phải V: cách nói thân mật của Vなければいけません",
+   "bai": "gungun_n5:11"
+  },
+  {
+   "id": "gungun_n5:12-1",
+   "mau": "て形 (thể て)",
+   "nghia": "Cách chia thể て của động từ, nền tảng của nhiều mẫu câu",
+   "bai": "gungun_n5:12"
+  },
+  {
+   "id": "gungun_n5:12-2",
+   "mau": "V1て、V2て、〜",
+   "nghia": "V1 rồi V2 rồi...: nối các hành động theo thứ tự",
+   "bai": "gungun_n5:12"
+  },
+  {
+   "id": "gungun_n5:12-3",
+   "mau": "V1てからV2",
+   "nghia": "Sau khi V1 xong thì mới V2: nhấn mạnh thứ tự",
+   "bai": "gungun_n5:12"
+  },
+  {
+   "id": "gungun_n5:12-4",
+   "mau": "(Nは)Vています (hành động đang diễn ra)",
+   "nghia": "N đang V",
+   "bai": "gungun_n5:12"
+  },
+  {
+   "id": "gungun_n5:12-5",
+   "mau": "NがVています (hiện tượng xảy ra trước mắt)",
+   "nghia": "N đang V: tả điều đang thấy, đang nghe trước mắt",
+   "bai": "gungun_n5:12"
+  },
+  {
+   "id": "gungun_n5:12-6",
+   "mau": "(Nは)Vています (thói quen, hành động lặp lại)",
+   "nghia": "N thường V",
+   "bai": "gungun_n5:12"
+  },
+  {
+   "id": "gungun_n5:12-7",
+   "mau": "NがVています (trạng thái, kết quả của hành động)",
+   "nghia": "N ở trạng thái do V để lại: kết quả của hành động vẫn còn",
+   "bai": "gungun_n5:12"
+  },
+  {
+   "id": "gungun_n5:12-8",
+   "mau": "(Nは)Vています (trạng thái duy trì trong thời gian dài)",
+   "nghia": "N V trong thời gian dài: nơi sống, nghề nghiệp, tình trạng",
+   "bai": "gungun_n5:12"
+  },
+  {
+   "id": "gungun_n5:12-9",
+   "mau": "Nを知っていますか → はい、知っています / いいえ、知りません・知りませんでした",
+   "nghia": "Có biết N không? Trả lời phủ định dùng 知りません, không dùng 知っていません",
+   "bai": "gungun_n5:12"
+  },
+  {
+   "id": "gungun_n5:13-1",
+   "mau": "N1でも(N2でも)いい/大丈夫です・構わないです/構いません・V(thể khả năng)",
+   "nghia": "N1 (hay N2) cũng được: chấp nhận phương án dù không phải tối ưu",
+   "bai": "gungun_n5:13"
+  },
+  {
+   "id": "gungun_n5:13-2",
+   "mau": "Vてもいいですか → はい、大丈夫です・どうぞ / すみません、(〜は)ちょっと…",
+   "nghia": "V có được không? Xin phép và cách trả lời",
+   "bai": "gungun_n5:13"
+  },
+  {
+   "id": "gungun_n5:13-3",
+   "mau": "Vてもいいです",
+   "nghia": "V cũng được: cho phép",
+   "bai": "gungun_n5:13"
+  },
+  {
+   "id": "gungun_n5:13-4",
+   "mau": "Vなくてもいいです",
+   "nghia": "Không cần V cũng được",
+   "bai": "gungun_n5:13"
+  },
+  {
+   "id": "gungun_n5:13-5",
+   "mau": "Vて＋ください(→Vて) / Vない＋で＋ください(→Vないで)",
+   "nghia": "Hãy V, xin đừng V; dạng thân mật bỏ ください",
+   "bai": "gungun_n5:13"
+  },
+  {
+   "id": "gungun_n5:13-6",
+   "mau": "Vて＋くれますか(→Vてくれる？)",
+   "nghia": "Bạn V cho tôi được không? Nhờ người ngang hàng, thân mật",
+   "bai": "gungun_n5:13"
+  },
+  {
+   "id": "gungun_n5:13-7",
+   "mau": "Vて＋くれませんか / Vて＋くださいませんか",
+   "nghia": "Bạn có thể V cho tôi không? Nhờ vả lịch sự hơn",
+   "bai": "gungun_n5:13"
+  },
+  {
+   "id": "gungun_n5:13-8",
+   "mau": "N1は/が(私に)N2をくれる/くださる",
+   "nghia": "N1 cho tôi N2; くださる dùng khi N1 là người trên",
+   "bai": "gungun_n5:13"
+  },
+  {
+   "id": "gungun_n5:13-9",
+   "mau": "Nは/が(私に)〜Vてくれる/Vてくださる",
+   "nghia": "N làm V cho tôi",
+   "bai": "gungun_n5:13"
+  },
+  {
+   "id": "gungun_n5:13-10",
+   "mau": "N1は/がN2にN3をあげる/さしあげる",
+   "nghia": "N1 cho, tặng N2 N3; さしあげる dùng khi N2 là người trên",
+   "bai": "gungun_n5:13"
+  },
+  {
+   "id": "gungun_n5:13-11",
+   "mau": "N1は/がN2にVて＋あげる/さしあげる",
+   "nghia": "N1 làm V cho N2",
+   "bai": "gungun_n5:13"
+  },
+  {
+   "id": "gungun_n5:14-1",
+   "mau": "Vましょうか / Vようか",
+   "nghia": "Để tôi V nhé? Đề xuất giúp đỡ, Vようか là dạng thân mật",
+   "bai": "gungun_n5:14"
+  },
+  {
+   "id": "gungun_n5:14-2",
+   "mau": "N/số từ＋しか〜ない",
+   "nghia": "Chỉ N: luôn đi với phủ định, hàm ý ít, không đủ",
+   "bai": "gungun_n5:14"
+  },
+  {
+   "id": "gungun_n5:14-3",
+   "mau": "N/số từ＋だけ〜",
+   "nghia": "Chỉ ~: giới hạn một cách trung lập",
+   "bai": "gungun_n5:14"
+  },
+  {
+   "id": "gungun_n5:14-4",
+   "mau": "N(chủ đề)は〜",
+   "nghia": "N thì ~: đưa N lên làm chủ đề của câu",
+   "bai": "gungun_n5:14"
+  },
+  {
+   "id": "gungun_n5:14-5",
+   "mau": "N1は〜が/けど、N2は〜",
+   "nghia": "N1 thì ~ nhưng N2 thì ~: đối chiếu hai chủ đề",
+   "bai": "gungun_n5:14"
+  },
+  {
+   "id": "gungun_n5:14-6",
+   "mau": "Aい/Aな＋さ",
+   "nghia": "Danh từ hóa tính từ, chỉ mức độ, tính chất",
+   "bai": "gungun_n5:14"
+  },
+  {
+   "id": "gungun_n5:14-7",
+   "mau": "Thể thường / Aな/N＋なら",
+   "nghia": "Nếu ~ thì ~: nhắc lại chủ đề đối phương nói rồi khuyên, đề nghị",
+   "bai": "gungun_n5:14"
+  },
+  {
+   "id": "gungun_n5:14-8",
+   "mau": "N/Aな＋なら",
+   "nghia": "Nếu ~ thì ~: nêu điều kiện với danh từ, tính từ đuôi な",
+   "bai": "gungun_n5:14"
+  },
+  {
+   "id": "gungun_n4:15-1",
+   "mau": "Thể thường/N/Aな＋でしょう/だろう (phán đoán)",
+   "nghia": "Chắc là ~: phán đoán, dự báo, không dùng cho hành động có ý chí của chính mình",
+   "bai": "gungun_n4:15"
+  },
+  {
+   "id": "gungun_n4:15-2",
+   "mau": "Thể thường/N/Aな＋でしょう (xác nhận)",
+   "nghia": "~ phải không? Xác nhận, kêu gọi đồng tình, lên giọng cuối câu",
+   "bai": "gungun_n4:15"
+  },
+  {
+   "id": "gungun_n4:15-3",
+   "mau": "Thể thường/N/Aな＋かもしれない",
+   "nghia": "Có lẽ ~, có khi ~ không chừng: khả năng không chắc chắn",
+   "bai": "gungun_n4:15"
+  },
+  {
+   "id": "gungun_n4:15-4",
+   "mau": "Thể thường/N/Aな＋みたいだ",
+   "nghia": "Hình như ~: phán đoán theo cảm nhận, dùng trong văn nói",
+   "bai": "gungun_n4:15"
+  },
+  {
+   "id": "gungun_n4:15-5",
+   "mau": "Thể thường/Nの/Aな＋ようだ",
+   "nghia": "Hình như ~: phán đoán dựa trên quan sát, trang trọng hơn みたいだ",
+   "bai": "gungun_n4:15"
+  },
+  {
+   "id": "gungun_n4:15-6",
+   "mau": "Thể thường/Nの/Aな＋はずだ",
+   "nghia": "Chắc chắn ~ theo lý: phán đoán có căn cứ",
+   "bai": "gungun_n4:15"
+  },
+  {
+   "id": "gungun_n4:16-1",
+   "mau": "Thể thường/N/Aな＋らしい",
+   "nghia": "Nghe nói ~: tin đồn, nguồn không rõ ràng",
+   "bai": "gungun_n4:16"
+  },
+  {
+   "id": "gungun_n4:16-2",
+   "mau": "Thể thường/N/Aな＋みたいだ",
+   "nghia": "Thấy bảo ~: truyền đạt thông tin nghe được, dùng trong văn nói",
+   "bai": "gungun_n4:16"
+  },
+  {
+   "id": "gungun_n4:16-3",
+   "mau": "Thể thường＋そうだ",
+   "nghia": "Nghe nói ~: thuật lại thông tin đã nghe, đã đọc",
+   "bai": "gungun_n4:16"
+  },
+  {
+   "id": "gungun_n4:16-4",
+   "mau": "Thể thường/「〜」＋と言っていました",
+   "nghia": "(Ai đó) đã nói rằng ~: chuyển lời",
+   "bai": "gungun_n4:16"
+  },
+  {
+   "id": "gungun_n4:16-5",
+   "mau": "Thể thường＋し、Thể thường＋し、〜",
+   "nghia": "Vừa ~ lại ~: liệt kê nhiều đặc điểm, lý do",
+   "bai": "gungun_n4:16"
+  },
+  {
+   "id": "gungun_n4:16-6",
+   "mau": "Thể thường＋と思う",
+   "nghia": "Tôi nghĩ là ~: nêu ý kiến, phán đoán của mình",
+   "bai": "gungun_n4:16"
+  },
+  {
+   "id": "gungun_n4:17-1",
+   "mau": "Cách kết hợp với 〜んです(か)",
+   "nghia": "Thể thường＋んです, riêng danh từ và tính từ đuôi な thêm な trước んです",
+   "bai": "gungun_n4:17"
+  },
+  {
+   "id": "gungun_n4:17-2",
+   "mau": "〜んです (bộc bạch thông tin)",
+   "nghia": "Thật ra là ~: kể chuyện của mình, mong người nghe quan tâm",
+   "bai": "gungun_n4:17"
+  },
+  {
+   "id": "gungun_n4:17-3",
+   "mau": "〜んです (trình bày hoàn cảnh, lý do)",
+   "nghia": "(Là vì) ~: giải thích hoàn cảnh, lý do",
+   "bai": "gungun_n4:17"
+  },
+  {
+   "id": "gungun_n4:17-4",
+   "mau": "〜んですが",
+   "nghia": "~ (mở đầu): nêu hoàn cảnh trước khi hỏi, nhờ, xin phép",
+   "bai": "gungun_n4:17"
+  },
+  {
+   "id": "gungun_n4:17-5",
+   "mau": "〜んですか(1) (hỏi thông tin chi tiết về đối phương)",
+   "nghia": "~ vậy? Hỏi thêm về người nghe",
+   "bai": "gungun_n4:17"
+  },
+  {
+   "id": "gungun_n4:17-6",
+   "mau": "〜んです(か)(2) (hỏi thông tin chi tiết về chủ đề đang nói)",
+   "nghia": "~ vậy? Hỏi thêm về điều vừa được nhắc tới",
+   "bai": "gungun_n4:17"
+  },
+  {
+   "id": "gungun_n4:17-7",
+   "mau": "〜んです(か)(3) (hỏi thông tin chi tiết về điều đang xảy ra trước mắt)",
+   "nghia": "~ à? Hỏi, xác nhận điều thấy trước mắt",
+   "bai": "gungun_n4:17"
+  },
+  {
+   "id": "gungun_n4:17-8",
+   "mau": "(Số từ)も〜",
+   "nghia": "Tận ~, những ~: nhấn mạnh số lượng nhiều hơn mức nghĩ",
+   "bai": "gungun_n4:17"
+  },
+  {
+   "id": "gungun_n4:18-1",
+   "mau": "(＋)Aい/Aな＋そう (ー)Aいく＋なさそう / Aなでは/じゃ＋なさそう",
+   "nghia": "Trông có vẻ ~: nhận xét từ bề ngoài, dạng phủ định là trông có vẻ không ~",
+   "bai": "gungun_n4:18"
+  },
+  {
+   "id": "gungun_n4:18-2",
+   "mau": "Vます＋そう",
+   "nghia": "Sắp ~ đến nơi: dấu hiệu ngay trước mắt",
+   "bai": "gungun_n4:18"
+  },
+  {
+   "id": "gungun_n4:18-3",
+   "mau": "(＋)Vます＋そう (ー)Vない＋な(さ)そう",
+   "nghia": "Có vẻ (sẽ) ~: dự đoán từ tình hình hiện tại",
+   "bai": "gungun_n4:18"
+  },
+  {
+   "id": "gungun_n4:18-4",
+   "mau": "Aいく/Aなに/Nに＋V",
+   "nghia": "V sao cho A, thành N: tính từ, danh từ bổ nghĩa cho động từ",
+   "bai": "gungun_n4:18"
+  },
+  {
+   "id": "gungun_n4:18-5",
+   "mau": "Aいく/Aなに/Nに＋する",
+   "nghia": "Làm cho ~: chủ động thay đổi trạng thái",
+   "bai": "gungun_n4:18"
+  },
+  {
+   "id": "gungun_n4:18-6",
+   "mau": "Aいく/Aなに＋なる",
+   "nghia": "Trở nên ~: sự thay đổi trạng thái",
+   "bai": "gungun_n4:18"
+  },
+  {
+   "id": "gungun_n4:19-1",
+   "mau": "(Nは)〜をV(tha động từ)",
+   "nghia": "Ai đó tác động lên đối tượng: tha động từ đi với を",
+   "bai": "gungun_n4:19"
+  },
+  {
+   "id": "gungun_n4:19-2",
+   "mau": "N(は/が)V(tự động từ)",
+   "nghia": "Sự việc tự diễn ra: tự động từ không có đối tượng tác động",
+   "bai": "gungun_n4:19"
+  },
+  {
+   "id": "gungun_n4:19-3",
+   "mau": "NがV(tha động từ)て＋ある",
+   "nghia": "N đang ở trạng thái do ai đó cố ý làm",
+   "bai": "gungun_n4:19"
+  },
+  {
+   "id": "gungun_n4:19-4",
+   "mau": "NをV(tha động từ)て＋ある",
+   "nghia": "N đã được V sẵn: chuẩn bị trước cho mục đích nào đó",
+   "bai": "gungun_n4:19"
+  },
+  {
+   "id": "gungun_n4:20-1",
+   "mau": "Cách tạo Mệnh đề bổ nghĩa cho danh từ (1)",
+   "nghia": "N mà (ai đó) V: N là tân ngữ của mệnh đề đứng trước",
+   "bai": "gungun_n4:20"
+  },
+  {
+   "id": "gungun_n4:20-2",
+   "mau": "Cách tạo Mệnh đề bổ nghĩa cho danh từ (2)",
+   "nghia": "N V: N là chủ ngữ của mệnh đề đứng trước",
+   "bai": "gungun_n4:20"
+  },
+  {
+   "id": "gungun_n4:20-3",
+   "mau": "Cách tạo Mệnh đề bổ nghĩa cho danh từ (3)",
+   "nghia": "N mà ~: N là từ chung chỉ thời gian, nơi chốn, người",
+   "bai": "gungun_n4:20"
+  },
+  {
+   "id": "gungun_n4:20-4",
+   "mau": "Mệnh đề bổ nghĩa danh từ trong các trường hợp cụ thể",
+   "nghia": "Mệnh đề bổ nghĩa gắn cho các thành phần trong câu như chủ ngữ, tân ngữ, dù dài vẫn chỉ là một thành phần",
+   "bai": "gungun_n4:20"
+  },
+  {
+   "id": "gungun_n4:20-5",
+   "mau": "〜声/音/におい/味/感じ＋が＋する",
+   "nghia": "Có tiếng, âm thanh, mùi, vị, cảm giác ~: cảm nhận qua giác quan",
+   "bai": "gungun_n4:20"
+  },
+  {
+   "id": "gungun_n4:20-6",
+   "mau": "(人に)〜が＋見える/聞こえる",
+   "nghia": "(Ai) nhìn thấy, nghe thấy ~ một cách tự nhiên",
+   "bai": "gungun_n4:20"
+  },
+  {
+   "id": "gungun_n4:20-7",
+   "mau": "Nが＋わかる",
+   "nghia": "Hiểu N, biết N: đối tượng đứng trước が",
+   "bai": "gungun_n4:20"
+  },
+  {
+   "id": "gungun_n4:21-1",
+   "mau": "Vる＋の＋が＋A(得意/苦手/速い/遅い)",
+   "nghia": "Giỏi, kém, nhanh, chậm (việc) V",
+   "bai": "gungun_n4:21"
+  },
+  {
+   "id": "gungun_n4:21-2",
+   "mau": "V thể thường＋の＋はAです",
+   "nghia": "Việc V thì A: nhận xét về hành động",
+   "bai": "gungun_n4:21"
+  },
+  {
+   "id": "gungun_n4:21-3",
+   "mau": "Thể thường (Aな/Nな)＋の＋は、〜だ",
+   "nghia": "Cái, người, lúc mà ~ là ~: đưa thông tin muốn nhấn mạnh xuống cuối câu",
+   "bai": "gungun_n4:21"
+  },
+  {
+   "id": "gungun_n4:21-4",
+   "mau": "Thể thường (Aな/Nな)＋の＋は、〜からだ",
+   "nghia": "Sở dĩ ~ là vì ~: nêu nguyên nhân ở cuối câu",
+   "bai": "gungun_n4:21"
+  },
+  {
+   "id": "gungun_n4:21-5",
+   "mau": "Thể thường (Aな/Nな)＋のを知っています(か)",
+   "nghia": "Có biết (việc) ~ không?",
+   "bai": "gungun_n4:21"
+  },
+  {
+   "id": "gungun_n4:21-6",
+   "mau": "V thể thường＋の＋を見る/聞く",
+   "nghia": "Nhìn thấy, nghe thấy (cảnh) ~",
+   "bai": "gungun_n4:21"
+  },
+  {
+   "id": "gungun_n4:21-7",
+   "mau": "Vる＋の＋を忘れる/やめる/諦める",
+   "nghia": "Quên, thôi, từ bỏ (việc) V",
+   "bai": "gungun_n4:21"
+  },
+  {
+   "id": "gungun_n4:22-1",
+   "mau": "Thể mệnh lệnh (命令形)",
+   "nghia": "V đi!: ra lệnh mạnh, dùng khi khẩn cấp, cổ vũ, trên biển báo",
+   "bai": "gungun_n4:22"
+  },
+  {
+   "id": "gungun_n4:22-2",
+   "mau": "Vる＋な",
+   "nghia": "Không được V!: cấm đoán mạnh",
+   "bai": "gungun_n4:22"
+  },
+  {
+   "id": "gungun_n4:22-3",
+   "mau": "Thể mệnh lệnh/Thể cấm đoán/Thể thường/Danh từ＋と書いてある/読む/言う",
+   "nghia": "Được viết là, đọc là, nói là ~",
+   "bai": "gungun_n4:22"
+  },
+  {
+   "id": "gungun_n4:22-4",
+   "mau": "Thể mệnh lệnh/Thể cấm đoán/Thể thường/Danh từ＋と＋いう意味だ",
+   "nghia": "~ có nghĩa là ~: giải thích nghĩa của từ, ký hiệu",
+   "bai": "gungun_n4:22"
+  },
+  {
+   "id": "gungun_n4:22-5",
+   "mau": "Nって〜",
+   "nghia": "N thì ~: nêu chủ đề trong văn nói, tương đương は",
+   "bai": "gungun_n4:22"
+  },
+  {
+   "id": "gungun_n4:22-6",
+   "mau": "Nって＋từ để hỏi？",
+   "nghia": "N là gì? Hỏi nghĩa, thông tin trong văn nói",
+   "bai": "gungun_n4:22"
+  },
+  {
+   "id": "gungun_n4:22-7",
+   "mau": "Thể mệnh lệnh/Thể cấm đoán/Thể thường/Danh từ＋って＋言う/書いてある/読む/(いう)意味",
+   "nghia": "Nói là, ghi là, đọc là, có nghĩa là ~: dạng văn nói của と",
+   "bai": "gungun_n4:22"
+  },
+  {
+   "id": "gungun_n4:23-1",
+   "mau": "Aは/がBに/からNをもらう",
+   "nghia": "A nhận N từ B",
+   "bai": "gungun_n4:23"
+  },
+  {
+   "id": "gungun_n4:23-2",
+   "mau": "Aは/がBに/からNをいただく",
+   "nghia": "A nhận N từ B (người trên): khiêm nhường",
+   "bai": "gungun_n4:23"
+  },
+  {
+   "id": "gungun_n4:23-3",
+   "mau": "Aは/がBに/からVて＋もらう",
+   "nghia": "A được B V cho",
+   "bai": "gungun_n4:23"
+  },
+  {
+   "id": "gungun_n4:23-4",
+   "mau": "Aは/がBに/からVて＋いただく",
+   "nghia": "A được B (người trên) V cho",
+   "bai": "gungun_n4:23"
+  },
+  {
+   "id": "gungun_n4:23-5",
+   "mau": "Vて＋もらえませんか / いただけませんか",
+   "nghia": "Bạn có thể V giúp tôi được không? Nhờ vả lịch sự, với người trên dùng いただけませんか",
+   "bai": "gungun_n4:23"
+  },
+  {
+   "id": "gungun_n4:23-6",
+   "mau": "Vて＋ほしい",
+   "nghia": "Muốn (ai đó) V: mong người khác làm việc gì",
+   "bai": "gungun_n4:23"
+  },
+  {
+   "id": "gungun_n4:23-7",
+   "mau": "Cặp động từ: 貸す↔借りる, 教える↔教わる, 預ける↔預かる",
+   "nghia": "Cùng một sự việc nhìn từ hai phía: AがBにNを貸す thì BがAに/からNを借りる",
+   "bai": "gungun_n4:23"
+  },
+  {
+   "id": "gungun_n4:23-8",
+   "mau": "Thể bị động (受身形)",
+   "nghia": "Cách chia thể bị động Vられる của ba nhóm động từ",
+   "bai": "gungun_n4:23"
+  },
+  {
+   "id": "gungun_n4:23-9",
+   "mau": "Aは/がBをVます → Bは/がAにVられます",
+   "nghia": "B bị, được A V: bị động trực tiếp",
+   "bai": "gungun_n4:23"
+  },
+  {
+   "id": "gungun_n4:23-10",
+   "mau": "Aは/が(Bの)NをVます → Bは/がAにNをVられます",
+   "nghia": "B bị A V (đồ vật, bộ phận của B): thường mang cảm giác phiền",
+   "bai": "gungun_n4:23"
+  },
+  {
+   "id": "gungun_n4:23-11",
+   "mau": "(Aは/が)NをVます → Nは/が(Aによって)Vられます",
+   "nghia": "N được V (bởi A): chủ ngữ là vật, nêu sự thật khách quan",
+   "bai": "gungun_n4:23"
+  },
+  {
+   "id": "gungun_n4:24-1",
+   "mau": "Vて、〜 / N/Aなで、〜 / Aいくて、〜",
+   "nghia": "Vì ~ nên ~: nguyên nhân dẫn đến kết quả ngoài ý muốn, cảm xúc",
+   "bai": "gungun_n4:24"
+  },
+  {
+   "id": "gungun_n4:24-2",
+   "mau": "V1て/V1ないで、V2",
+   "nghia": "V2 trong trạng thái (có, không) V1",
+   "bai": "gungun_n4:24"
+  },
+  {
+   "id": "gungun_n4:24-3",
+   "mau": "V1ないで、V2",
+   "nghia": "Không V1 mà V2: V2 thay thế cho V1",
+   "bai": "gungun_n4:24"
+  },
+  {
+   "id": "gungun_n4:24-4",
+   "mau": "V1ます＋ながら、V2",
+   "nghia": "Vừa V1 vừa V2: hai hành động đồng thời, V2 là chính",
+   "bai": "gungun_n4:24"
+  },
+  {
+   "id": "gungun_n4:24-5",
+   "mau": "(〜が)Vます＋やすい/にくい",
+   "nghia": "Dễ V, khó V; cũng chỉ khuynh hướng dễ, khó xảy ra",
+   "bai": "gungun_n4:24"
+  },
+  {
+   "id": "gungun_n4:24-6",
+   "mau": "Aい/Aな＋すぎる",
+   "nghia": "Quá ~: vượt mức, thường mang ý tiêu cực",
+   "bai": "gungun_n4:24"
+  },
+  {
+   "id": "gungun_n4:24-7",
+   "mau": "Vます＋すぎる",
+   "nghia": "V quá nhiều, quá mức",
+   "bai": "gungun_n4:24"
+  },
+  {
+   "id": "gungun_n4:25-1",
+   "mau": "Nにする",
+   "nghia": "Chọn N, quyết định N",
+   "bai": "gungun_n4:25"
+  },
+  {
+   "id": "gungun_n4:25-2",
+   "mau": "Vる/Vない＋ことにする",
+   "nghia": "Quyết định V, quyết định không V: do tự mình quyết định",
+   "bai": "gungun_n4:25"
+  },
+  {
+   "id": "gungun_n4:25-3",
+   "mau": "Vる/Vない＋ことになる",
+   "nghia": "Được quyết định là ~: kết quả không do ý mình",
+   "bai": "gungun_n4:25"
+  },
+  {
+   "id": "gungun_n4:25-4",
+   "mau": "Vる/Vない＋ようにする",
+   "nghia": "Cố gắng V, cố gắng không V: tạo thói quen, ようにしている là đang duy trì",
+   "bai": "gungun_n4:25"
+  },
+  {
+   "id": "gungun_n4:25-5",
+   "mau": "Vる/Vない＋ようにしてください",
+   "nghia": "Xin hãy cố gắng V, cố gắng đừng V",
+   "bai": "gungun_n4:25"
+  },
+  {
+   "id": "gungun_n4:25-6",
+   "mau": "Vる＋ようになる",
+   "nghia": "Bắt đầu (có thói quen) V, trở nên có thể V",
+   "bai": "gungun_n4:25"
+  },
+  {
+   "id": "gungun_n4:25-7",
+   "mau": "Vない → Vなくなる",
+   "nghia": "Không còn V nữa, không còn V được nữa",
+   "bai": "gungun_n4:25"
+  },
+  {
+   "id": "gungun_n4:25-8",
+   "mau": "Nの/Vる＋予定だ",
+   "nghia": "Dự định ~, theo kế hoạch ~: lịch trình đã định",
+   "bai": "gungun_n4:25"
+  },
+  {
+   "id": "gungun_n4:25-9",
+   "mau": "Vる/Vない＋つもりだ",
+   "nghia": "Định V, định không V: ý định của bản thân",
+   "bai": "gungun_n4:25"
+  },
+  {
+   "id": "gungun_n4:25-10",
+   "mau": "Vよう＋と思っている",
+   "nghia": "Định V, đang tính V: ý định chưa chắc chắn",
+   "bai": "gungun_n4:25"
+  },
+  {
+   "id": "gungun_n4:26-1",
+   "mau": "Vた/Vない＋ほうがいい",
+   "nghia": "Nên V, không nên V: khuyên, có ý cảnh báo",
+   "bai": "gungun_n4:26"
+  },
+  {
+   "id": "gungun_n4:26-2",
+   "mau": "V1たり、V2たりする",
+   "nghia": "Lúc thì V1, lúc thì V2: liệt kê hành động tiêu biểu",
+   "bai": "gungun_n4:26"
+  },
+  {
+   "id": "gungun_n4:26-3",
+   "mau": "V1たら、V2た",
+   "nghia": "V1 thì (bất ngờ) V2: phát hiện điều ngoài dự đoán",
+   "bai": "gungun_n4:26"
+  },
+  {
+   "id": "gungun_n4:26-4",
+   "mau": "(まだ)Vていない",
+   "nghia": "Vẫn chưa V: chưa xảy ra nhưng dự định sẽ làm",
+   "bai": "gungun_n4:26"
+  },
+  {
+   "id": "gungun_n4:26-5",
+   "mau": "Vる＋ところだ",
+   "nghia": "Sắp V, chuẩn bị V: ngay trước khi làm",
+   "bai": "gungun_n4:26"
+  },
+  {
+   "id": "gungun_n4:26-6",
+   "mau": "Vている/Vた＋ところだ",
+   "nghia": "Đúng lúc đang V, vừa mới V xong",
+   "bai": "gungun_n4:26"
+  },
+  {
+   "id": "gungun_n4:27-1",
+   "mau": "Vては/では・Vちゃ/じゃ＋いけない/だめ",
+   "nghia": "Không được V: cấm đoán, Vちゃ/じゃ là dạng văn nói",
+   "bai": "gungun_n4:27",
+   "vi_du": "ここで泳いじゃだめだよ。"
+  },
+  {
+   "id": "gungun_n4:27-2",
+   "mau": "Vなくては・Vなくちゃ＋いけない/だめ",
+   "nghia": "Phải V: bắt buộc, Vなくちゃ là dạng văn nói",
+   "bai": "gungun_n4:27",
+   "vi_du": "薬を飲まなくちゃいけない。"
+  },
+  {
+   "id": "gungun_n4:27-3",
+   "mau": "Vてしまう＝Vちゃう / Vでしまう＝Vじゃう (tiếc nuối)",
+   "nghia": "Lỡ V mất rồi: hối tiếc về việc đã xảy ra",
+   "bai": "gungun_n4:27",
+   "vi_du": "大事なデータを消しちゃった。"
+  },
+  {
+   "id": "gungun_n4:27-4",
+   "mau": "Vてしまう＝Vちゃう / Vでしまう＝Vじゃう (hoàn thành)",
+   "nghia": "V xong hết: hoàn thành trọn vẹn",
+   "bai": "gungun_n4:27",
+   "vi_du": "この本は一日で読んでしまいました。"
+  },
+  {
+   "id": "gungun_n4:27-5",
+   "mau": "Vて＋おく",
+   "nghia": "V sẵn, V trước: chuẩn bị hoặc giữ nguyên trạng thái",
+   "bai": "gungun_n4:27",
+   "vi_du": "友達が来る前に部屋を掃除しておきます。"
+  },
+  {
+   "id": "gungun_n4:27-6",
+   "mau": "Vて＋くる",
+   "nghia": "Đi V rồi quay lại",
+   "bai": "gungun_n4:27",
+   "vi_du": "ちょっとコンビニで飲み物を買ってきます。"
+  },
+  {
+   "id": "gungun_n4:27-7",
+   "mau": "〜Vていく/〜Vてくる (1)",
+   "nghia": "V đi xa, V đến gần: hướng di chuyển so với người nói",
+   "bai": "gungun_n4:27",
+   "vi_du": "向こうから犬が走ってきました。"
+  },
+  {
+   "id": "gungun_n4:27-8",
+   "mau": "〜Vていく/〜Vてくる (2)",
+   "nghia": "Dần dần ~: thay đổi từ trước đến nay (てくる), từ nay về sau (ていく)",
+   "bai": "gungun_n4:27",
+   "vi_du": "最近、日本語が面白くなってきました。"
+  },
+  {
+   "id": "gungun_n4:28-1",
+   "mau": "Thể sai khiến (使役形)",
+   "nghia": "Cách chia thể sai khiến Vさせる của ba nhóm động từ",
+   "bai": "gungun_n4:28",
+   "vi_du": "先生は学生に本を読ませました。"
+  },
+  {
+   "id": "gungun_n4:28-2",
+   "mau": "Aは/がBをV(tự động từ)させる (bắt ép)",
+   "nghia": "A bắt B V: B đứng trước を khi V là tự động từ",
+   "bai": "gungun_n4:28",
+   "vi_du": "社長は社員を一時間待たせました。"
+  },
+  {
+   "id": "gungun_n4:28-3",
+   "mau": "Aは/がBにNをV(tha động từ)させる (bắt ép)",
+   "nghia": "A bắt B làm N: B đứng trước に khi V là tha động từ",
+   "bai": "gungun_n4:28",
+   "vi_du": "母は子どもに部屋を掃除させました。"
+  },
+  {
+   "id": "gungun_n4:28-4",
+   "mau": "Aは/がBをV(tự động từ)させる / Aは/がBにNをV(tha động từ)させる (cho phép)",
+   "nghia": "A cho, để B V: cho phép, đáp ứng mong muốn của B",
+   "bai": "gungun_n4:28",
+   "vi_du": "親は子どもを公園で遊ばせました。"
+  },
+  {
+   "id": "gungun_n4:28-5",
+   "mau": "Thể bị động sai khiến",
+   "nghia": "Cách chia Vさせられる, nhóm I có thêm dạng rút gọn Vされる",
+   "bai": "gungun_n4:28",
+   "vi_du": "嫌いな野菜を食べさせられました。"
+  },
+  {
+   "id": "gungun_n4:28-6",
+   "mau": "Aは/がBにV(bị động sai khiến)",
+   "nghia": "A bị B bắt V: việc A không muốn làm",
+   "bai": "gungun_n4:28",
+   "vi_du": "私は母に毎日ピアノを練習させられました。"
+  },
+  {
+   "id": "gungun_n4:28-7",
+   "mau": "Aは/がBにVさせて＋もらう",
+   "nghia": "A được B cho phép V: thể hiện lòng biết ơn",
+   "bai": "gungun_n4:28",
+   "vi_du": "父に車を使わせてもらいました。"
+  },
   {
    "id": "gungun_n4:29-1",
    "mau": "Vさせてください",
@@ -123,6 +1640,9828 @@
  ],
  "tu_vung_dang": "[từ, cách đọc, nghĩa, bài]",
  "tu_vung": [
+  [
+   "ベトナム",
+   "",
+   "Việt Nam",
+   "gungun_n5:1"
+  ],
+  [
+   "日本",
+   "にほん",
+   "Nhật Bản",
+   "gungun_n5:1"
+  ],
+  [
+   "中国",
+   "ちゅうごく",
+   "Trung Quốc",
+   "gungun_n5:1"
+  ],
+  [
+   "韓国",
+   "かんこく",
+   "Hàn Quốc",
+   "gungun_n5:1"
+  ],
+  [
+   "タイ",
+   "",
+   "Thái Lan",
+   "gungun_n5:1"
+  ],
+  [
+   "〜人",
+   "〜じん",
+   "người ~",
+   "gungun_n5:1"
+  ],
+  [
+   "私",
+   "わたし",
+   "tôi",
+   "gungun_n5:1"
+  ],
+  [
+   "医者",
+   "いしゃ",
+   "bác sĩ",
+   "gungun_n5:1"
+  ],
+  [
+   "教師",
+   "きょうし",
+   "giáo viên, giảng viên",
+   "gungun_n5:1"
+  ],
+  [
+   "先生",
+   "せんせい",
+   "thầy/cô giáo",
+   "gungun_n5:1"
+  ],
+  [
+   "銀行員",
+   "ぎんこういん",
+   "nhân viên ngân hàng",
+   "gungun_n5:1"
+  ],
+  [
+   "会社員",
+   "かいしゃいん",
+   "nhân viên công ty",
+   "gungun_n5:1"
+  ],
+  [
+   "学生",
+   "がくせい",
+   "học sinh, sinh viên",
+   "gungun_n5:1"
+  ],
+  [
+   "お名前",
+   "おなまえ",
+   "tên, họ tên",
+   "gungun_n5:1"
+  ],
+  [
+   "料理",
+   "りょうり",
+   "món ăn, việc nấu ăn",
+   "gungun_n5:1"
+  ],
+  [
+   "ビール",
+   "",
+   "bia",
+   "gungun_n5:1"
+  ],
+  [
+   "コーヒー",
+   "",
+   "cà phê",
+   "gungun_n5:1"
+  ],
+  [
+   "ジュース",
+   "",
+   "nước hoa quả",
+   "gungun_n5:1"
+  ],
+  [
+   "これ",
+   "",
+   "cái này (gần người nói)",
+   "gungun_n5:1"
+  ],
+  [
+   "それ",
+   "",
+   "cái đó (gần người nghe)",
+   "gungun_n5:1"
+  ],
+  [
+   "あれ",
+   "",
+   "cái kia (xa cả hai)",
+   "gungun_n5:1"
+  ],
+  [
+   "こちら",
+   "",
+   "đây/vị này (lịch sự)",
+   "gungun_n5:1"
+  ],
+  [
+   "そちら",
+   "",
+   "đó/vị đó (lịch sự)",
+   "gungun_n5:1"
+  ],
+  [
+   "あちら",
+   "",
+   "kia/vị kia (lịch sự)",
+   "gungun_n5:1"
+  ],
+  [
+   "はい",
+   "",
+   "vâng, có",
+   "gungun_n5:1"
+  ],
+  [
+   "いいえ",
+   "",
+   "không (phủ định đơn thuần)",
+   "gungun_n5:1"
+  ],
+  [
+   "いえいえ",
+   "",
+   "không có gì / không sao",
+   "gungun_n5:1"
+  ],
+  [
+   "おはようございます",
+   "",
+   "chào buổi sáng",
+   "gungun_n5:1"
+  ],
+  [
+   "こんにちは",
+   "",
+   "chào buổi trưa/chiều",
+   "gungun_n5:1"
+  ],
+  [
+   "こんばんは",
+   "",
+   "chào buổi tối",
+   "gungun_n5:1"
+  ],
+  [
+   "すみません",
+   "",
+   "xin lỗi / cảm ơn",
+   "gungun_n5:1"
+  ],
+  [
+   "はじめまして",
+   "",
+   "rất vui được gặp anh/chị",
+   "gungun_n5:1"
+  ],
+  [
+   "よろしくお願いします",
+   "よろしくおねがいします",
+   "rất mong được giúp đỡ",
+   "gungun_n5:1"
+  ],
+  [
+   "そうです",
+   "",
+   "đúng vậy",
+   "gungun_n5:1"
+  ],
+  [
+   "そうですか",
+   "",
+   "vậy à, thế à?",
+   "gungun_n5:1"
+  ],
+  [
+   "失礼しました",
+   "しつれいしました",
+   "xin lỗi (khi trót thất lễ)",
+   "gungun_n5:1"
+  ],
+  [
+   "大丈夫です",
+   "だいじょうぶです",
+   "không sao đâu",
+   "gungun_n5:1"
+  ],
+  [
+   "ええと...",
+   "",
+   "ờm... (đang suy nghĩ)",
+   "gungun_n5:1"
+  ],
+  [
+   "あっ",
+   "",
+   "A! (ngạc nhiên)",
+   "gungun_n5:1"
+  ],
+  [
+   "今",
+   "いま",
+   "bây giờ",
+   "gungun_n5:1"
+  ],
+  [
+   "朝",
+   "あさ",
+   "buổi sáng",
+   "gungun_n5:1"
+  ],
+  [
+   "夜",
+   "よる",
+   "buổi tối",
+   "gungun_n5:1"
+  ],
+  [
+   "午前",
+   "ごぜん",
+   "sáng (AM)",
+   "gungun_n5:1"
+  ],
+  [
+   "午後",
+   "ごご",
+   "chiều (PM)",
+   "gungun_n5:1"
+  ],
+  [
+   "今日",
+   "きょう",
+   "hôm nay",
+   "gungun_n5:1"
+  ],
+  [
+   "明日",
+   "あした",
+   "ngày mai",
+   "gungun_n5:1"
+  ],
+  [
+   "明後日",
+   "あさって",
+   "ngày kia",
+   "gungun_n5:1"
+  ],
+  [
+   "休み",
+   "やすみ",
+   "nghỉ, ngày nghỉ",
+   "gungun_n5:1"
+  ],
+  [
+   "仕事",
+   "しごと",
+   "công việc",
+   "gungun_n5:1"
+  ],
+  [
+   "学校",
+   "がっこう",
+   "trường học",
+   "gungun_n5:1"
+  ],
+  [
+   "図書館",
+   "としょかん",
+   "thư viện",
+   "gungun_n5:1"
+  ],
+  [
+   "郵便局",
+   "ゆうびんきょく",
+   "bưu điện",
+   "gungun_n5:1"
+  ],
+  [
+   "病院",
+   "びょういん",
+   "bệnh viện",
+   "gungun_n5:1"
+  ],
+  [
+   "銀行",
+   "ぎんこう",
+   "ngân hàng",
+   "gungun_n5:1"
+  ],
+  [
+   "会社",
+   "かいしゃ",
+   "công ty",
+   "gungun_n5:1"
+  ],
+  [
+   "漢字",
+   "かんじ",
+   "chữ Hán",
+   "gungun_n5:1"
+  ],
+  [
+   "ひらがな",
+   "",
+   "chữ hiragana",
+   "gungun_n5:1"
+  ],
+  [
+   "カタカナ",
+   "",
+   "chữ katakana",
+   "gungun_n5:1"
+  ],
+  [
+   "レストラン",
+   "",
+   "nhà hàng",
+   "gungun_n5:1"
+  ],
+  [
+   "スーパー",
+   "",
+   "siêu thị",
+   "gungun_n5:1"
+  ],
+  [
+   "〜語",
+   "〜ご",
+   "tiếng ~",
+   "gungun_n5:1"
+  ],
+  [
+   "日本語",
+   "にほんご",
+   "tiếng Nhật",
+   "gungun_n5:1"
+  ],
+  [
+   "中国語",
+   "ちゅうごくご",
+   "tiếng Trung",
+   "gungun_n5:1"
+  ],
+  [
+   "韓国語",
+   "かんこくご",
+   "tiếng Hàn",
+   "gungun_n5:1"
+  ],
+  [
+   "英語",
+   "えいご",
+   "tiếng Anh",
+   "gungun_n5:1"
+  ],
+  [
+   "タイ語",
+   "たいご",
+   "tiếng Thái",
+   "gungun_n5:1"
+  ],
+  [
+   "フランス語",
+   "ふらんすご",
+   "tiếng Pháp",
+   "gungun_n5:1"
+  ],
+  [
+   "何時",
+   "なんじ",
+   "mấy giờ",
+   "gungun_n5:1"
+  ],
+  [
+   "何分",
+   "なんぷん",
+   "mấy phút",
+   "gungun_n5:1"
+  ],
+  [
+   "違う",
+   "ちがう",
+   "nhầm rồi, không phải",
+   "gungun_n5:1"
+  ],
+  [
+   "ありがとうございます",
+   "",
+   "cảm ơn",
+   "gungun_n5:1"
+  ],
+  [
+   "もしもし",
+   "",
+   "alo",
+   "gungun_n5:1"
+  ],
+  [
+   "辞書",
+   "じしょ",
+   "từ điển",
+   "gungun_n5:1"
+  ],
+  [
+   "かばん",
+   "",
+   "cặp, túi",
+   "gungun_n5:1"
+  ],
+  [
+   "手帳",
+   "てちょう",
+   "sổ tay",
+   "gungun_n5:1"
+  ],
+  [
+   "電子辞書",
+   "でんしじしょ",
+   "kim từ điển",
+   "gungun_n5:1"
+  ],
+  [
+   "市役所",
+   "しやくしょ",
+   "tòa thị chính",
+   "gungun_n5:1"
+  ],
+  [
+   "交番",
+   "こうばん",
+   "đồn cảnh sát",
+   "gungun_n5:1"
+  ],
+  [
+   "大使館",
+   "たいしかん",
+   "đại sứ quán",
+   "gungun_n5:1"
+  ],
+  [
+   "電話番号",
+   "でんわばんごう",
+   "số điện thoại",
+   "gungun_n5:1"
+  ],
+  [
+   "月曜日",
+   "げつようび",
+   "thứ Hai",
+   "gungun_n5:1"
+  ],
+  [
+   "火曜日",
+   "かようび",
+   "thứ Ba",
+   "gungun_n5:1"
+  ],
+  [
+   "水曜日",
+   "すいようび",
+   "thứ Tư",
+   "gungun_n5:1"
+  ],
+  [
+   "木曜日",
+   "もくようび",
+   "thứ Năm",
+   "gungun_n5:1"
+  ],
+  [
+   "金曜日",
+   "きんようび",
+   "thứ Sáu",
+   "gungun_n5:1"
+  ],
+  [
+   "土曜日",
+   "どようび",
+   "thứ Bảy",
+   "gungun_n5:1"
+  ],
+  [
+   "日曜日",
+   "にちようび",
+   "Chủ nhật",
+   "gungun_n5:1"
+  ],
+  [
+   "何曜日",
+   "なんようび",
+   "thứ mấy",
+   "gungun_n5:1"
+  ],
+  [
+   "何",
+   "なに",
+   "cái gì",
+   "gungun_n5:1"
+  ],
+  [
+   "いくら",
+   "",
+   "bao nhiêu tiền",
+   "gungun_n5:1"
+  ],
+  [
+   "〜円",
+   "〜えん",
+   "yên (tiền Nhật)",
+   "gungun_n5:1"
+  ],
+  [
+   "〜ドン",
+   "",
+   "đồng (tiền Việt)",
+   "gungun_n5:1"
+  ],
+  [
+   "万",
+   "まん",
+   "vạn (10.000)",
+   "gungun_n5:1"
+  ],
+  [
+   "本当だ",
+   "ほんとうだ",
+   "đúng thật",
+   "gungun_n5:1"
+  ],
+  [
+   "じゃ",
+   "",
+   "vậy thì / thế thì",
+   "gungun_n5:1"
+  ],
+  [
+   "えっ",
+   "",
+   "Ô (ngạc nhiên)",
+   "gungun_n5:1"
+  ],
+  [
+   "ああ",
+   "",
+   "(thán từ bối rối)",
+   "gungun_n5:1"
+  ],
+  [
+   "バナナ",
+   "",
+   "quả chuối",
+   "gungun_n5:1"
+  ],
+  [
+   "たまご",
+   "",
+   "quả trứng",
+   "gungun_n5:1"
+  ],
+  [
+   "玉ねぎ",
+   "たまねぎ",
+   "hành tây",
+   "gungun_n5:1"
+  ],
+  [
+   "にんじん",
+   "",
+   "cà rốt",
+   "gungun_n5:1"
+  ],
+  [
+   "りんご",
+   "",
+   "táo",
+   "gungun_n5:1"
+  ],
+  [
+   "ホウレン草",
+   "ほうれんそう",
+   "rau chân vịt",
+   "gungun_n5:1"
+  ],
+  [
+   "さしみ",
+   "",
+   "gỏi cá sống",
+   "gungun_n5:1"
+  ],
+  [
+   "牛肉",
+   "ぎゅうにく",
+   "thịt bò",
+   "gungun_n5:1"
+  ],
+  [
+   "ソーセージ",
+   "",
+   "xúc xích",
+   "gungun_n5:1"
+  ],
+  [
+   "クッキー",
+   "",
+   "bánh quy",
+   "gungun_n5:1"
+  ],
+  [
+   "チョコレート",
+   "",
+   "socola",
+   "gungun_n5:1"
+  ],
+  [
+   "牛乳",
+   "ぎゅうにゅう",
+   "sữa bò",
+   "gungun_n5:1"
+  ],
+  [
+   "ティッシュ",
+   "",
+   "khăn giấy",
+   "gungun_n5:1"
+  ],
+  [
+   "昨日",
+   "きのう",
+   "hôm qua",
+   "gungun_n5:2"
+  ],
+  [
+   "一昨日",
+   "おととい",
+   "hôm kia",
+   "gungun_n5:2"
+  ],
+  [
+   "今朝",
+   "けさ",
+   "sáng nay",
+   "gungun_n5:2"
+  ],
+  [
+   "先週",
+   "せんしゅう",
+   "tuần trước",
+   "gungun_n5:2"
+  ],
+  [
+   "今週",
+   "こんしゅう",
+   "tuần này",
+   "gungun_n5:2"
+  ],
+  [
+   "来週",
+   "らいしゅう",
+   "tuần sau",
+   "gungun_n5:2"
+  ],
+  [
+   "誕生日",
+   "たんじょうび",
+   "sinh nhật",
+   "gungun_n5:2"
+  ],
+  [
+   "指輪",
+   "ゆびわ",
+   "nhẫn",
+   "gungun_n5:2"
+  ],
+  [
+   "うち",
+   "",
+   "nhà (tôi/chúng tôi)",
+   "gungun_n5:2"
+  ],
+  [
+   "雨",
+   "あめ",
+   "mưa",
+   "gungun_n5:2"
+  ],
+  [
+   "晴れ",
+   "はれ",
+   "nắng",
+   "gungun_n5:2"
+  ],
+  [
+   "曇り",
+   "くもり",
+   "âm u, nhiều mây",
+   "gungun_n5:2"
+  ],
+  [
+   "アルバイト",
+   "",
+   "làm thêm",
+   "gungun_n5:2"
+  ],
+  [
+   "ゴールデンウィーク",
+   "",
+   "tuần lễ vàng",
+   "gungun_n5:2"
+  ],
+  [
+   "プレゼント",
+   "",
+   "quà tặng",
+   "gungun_n5:2"
+  ],
+  [
+   "ずっと",
+   "",
+   "suốt",
+   "gungun_n5:2"
+  ],
+  [
+   "一日",
+   "ついたち",
+   "ngày mùng 1",
+   "gungun_n5:2"
+  ],
+  [
+   "二日",
+   "ふつか",
+   "ngày mùng 2",
+   "gungun_n5:2"
+  ],
+  [
+   "三日",
+   "みっか",
+   "ngày mùng 3",
+   "gungun_n5:2"
+  ],
+  [
+   "四日",
+   "よっか",
+   "ngày mùng 4",
+   "gungun_n5:2"
+  ],
+  [
+   "五日",
+   "いつか",
+   "ngày mùng 5",
+   "gungun_n5:2"
+  ],
+  [
+   "六日",
+   "むいか",
+   "ngày mùng 6",
+   "gungun_n5:2"
+  ],
+  [
+   "七日",
+   "なのか",
+   "ngày mùng 7",
+   "gungun_n5:2"
+  ],
+  [
+   "八日",
+   "ようか",
+   "ngày mùng 8",
+   "gungun_n5:2"
+  ],
+  [
+   "九日",
+   "ここのか",
+   "ngày mùng 9",
+   "gungun_n5:2"
+  ],
+  [
+   "十日",
+   "とおか",
+   "ngày mùng 10",
+   "gungun_n5:2"
+  ],
+  [
+   "十四日",
+   "じゅうよっか",
+   "ngày 14",
+   "gungun_n5:2"
+  ],
+  [
+   "二十日",
+   "はつか",
+   "ngày 20",
+   "gungun_n5:2"
+  ],
+  [
+   "〜月",
+   "〜がつ",
+   "tháng ~ / ngày ~ ( Số đếm + 月 / Số đếm + 日 )",
+   "gungun_n5:2"
+  ],
+  [
+   "〜日",
+   "〜にち",
+   "tháng ~ / ngày ~ ( Số đếm + 月 / Số đếm + 日 )",
+   "gungun_n5:2"
+  ],
+  [
+   "誰",
+   "だれ",
+   "ai",
+   "gungun_n5:2"
+  ],
+  [
+   "どなた",
+   "",
+   "ai (lịch sự)",
+   "gungun_n5:2"
+  ],
+  [
+   "人",
+   "ひと",
+   "người",
+   "gungun_n5:2"
+  ],
+  [
+   "方",
+   "かた",
+   "vị/ngài",
+   "gungun_n5:2"
+  ],
+  [
+   "本",
+   "ほん",
+   "sách",
+   "gungun_n5:2"
+  ],
+  [
+   "家",
+   "いえ",
+   "nhà",
+   "gungun_n5:2"
+  ],
+  [
+   "鍵",
+   "かぎ",
+   "chìa khóa",
+   "gungun_n5:2"
+  ],
+  [
+   "傘",
+   "かさ",
+   "cái ô",
+   "gungun_n5:2"
+  ],
+  [
+   "車",
+   "くるま",
+   "xe ô tô",
+   "gungun_n5:2"
+  ],
+  [
+   "お菓子",
+   "おかし",
+   "bánh kẹo",
+   "gungun_n5:2"
+  ],
+  [
+   "豆",
+   "まめ",
+   "đậu",
+   "gungun_n5:2"
+  ],
+  [
+   "米",
+   "こめ",
+   "gạo",
+   "gungun_n5:2"
+  ],
+  [
+   "お酒",
+   "おさけ",
+   "rượu",
+   "gungun_n5:2"
+  ],
+  [
+   "ぶどう",
+   "",
+   "nho",
+   "gungun_n5:2"
+  ],
+  [
+   "CD",
+   "",
+   "đĩa CD",
+   "gungun_n5:2"
+  ],
+  [
+   "スマホ",
+   "",
+   "điện thoại thông minh",
+   "gungun_n5:2"
+  ],
+  [
+   "テレビ",
+   "",
+   "tivi",
+   "gungun_n5:2"
+  ],
+  [
+   "パン",
+   "",
+   "bánh mì",
+   "gungun_n5:2"
+  ],
+  [
+   "ケーキ",
+   "",
+   "bánh kem",
+   "gungun_n5:2"
+  ],
+  [
+   "ワイン",
+   "",
+   "rượu vang",
+   "gungun_n5:2"
+  ],
+  [
+   "バイク",
+   "",
+   "xe máy (văn nói)",
+   "gungun_n5:2"
+  ],
+  [
+   "オートバイ",
+   "",
+   "xe máy (báo chí)",
+   "gungun_n5:2"
+  ],
+  [
+   "カメラ",
+   "",
+   "máy ảnh",
+   "gungun_n5:2"
+  ],
+  [
+   "社員",
+   "しゃいん",
+   "nhân viên công ty",
+   "gungun_n5:2"
+  ],
+  [
+   "職員",
+   "しょくいん",
+   "nhân viên, công chức",
+   "gungun_n5:2"
+  ],
+  [
+   "作家",
+   "さっか",
+   "nhà văn, tác giả",
+   "gungun_n5:2"
+  ],
+  [
+   "運転手",
+   "うんてんしゅ",
+   "tài xế",
+   "gungun_n5:2"
+  ],
+  [
+   "大学",
+   "だいがく",
+   "trường đại học",
+   "gungun_n5:2"
+  ],
+  [
+   "昔",
+   "むかし",
+   "ngày xưa",
+   "gungun_n5:2"
+  ],
+  [
+   "エンジニア",
+   "",
+   "kĩ sư",
+   "gungun_n5:2"
+  ],
+  [
+   "ええ",
+   "",
+   "ôi, ối (ngạc nhiên)",
+   "gungun_n5:2"
+  ],
+  [
+   "へえ",
+   "",
+   "(từ cảm thán ngạc nhiên)",
+   "gungun_n5:2"
+  ],
+  [
+   "よかったら",
+   "",
+   "nếu được thì...",
+   "gungun_n5:2"
+  ],
+  [
+   "どうぞ",
+   "",
+   "xin mời",
+   "gungun_n5:2"
+  ],
+  [
+   "国",
+   "くに",
+   "đất nước, quê hương",
+   "gungun_n5:2"
+  ],
+  [
+   "店",
+   "みせ",
+   "cửa hàng",
+   "gungun_n5:3"
+  ],
+  [
+   "店員",
+   "てんいん",
+   "nhân viên cửa hàng",
+   "gungun_n5:3"
+  ],
+  [
+   "部屋",
+   "へや",
+   "căn phòng",
+   "gungun_n5:3"
+  ],
+  [
+   "東京",
+   "とうきょう",
+   "Tokyo",
+   "gungun_n5:3"
+  ],
+  [
+   "町",
+   "まち",
+   "thành phố, thị trấn",
+   "gungun_n5:3"
+  ],
+  [
+   "駅",
+   "えき",
+   "nhà ga",
+   "gungun_n5:3"
+  ],
+  [
+   "こっち",
+   "",
+   "chỗ này",
+   "gungun_n5:3"
+  ],
+  [
+   "そっち",
+   "",
+   "chỗ đó",
+   "gungun_n5:3"
+  ],
+  [
+   "あっち",
+   "",
+   "chỗ kia",
+   "gungun_n5:3"
+  ],
+  [
+   "地下鉄",
+   "ちかてつ",
+   "tàu điện ngầm",
+   "gungun_n5:3"
+  ],
+  [
+   "毎日",
+   "まいにち",
+   "hàng ngày",
+   "gungun_n5:3"
+  ],
+  [
+   "最近",
+   "さいきん",
+   "gần đây",
+   "gungun_n5:3"
+  ],
+  [
+   "ラーメン",
+   "",
+   "mì ramen",
+   "gungun_n5:3"
+  ],
+  [
+   "アパート",
+   "",
+   "chung cư",
+   "gungun_n5:3"
+  ],
+  [
+   "おいしい",
+   "",
+   "ngon",
+   "gungun_n5:3"
+  ],
+  [
+   "高い",
+   "たかい",
+   "cao, đắt",
+   "gungun_n5:3"
+  ],
+  [
+   "安い",
+   "やすい",
+   "rẻ",
+   "gungun_n5:3"
+  ],
+  [
+   "いい",
+   "",
+   "tốt, hay",
+   "gungun_n5:3"
+  ],
+  [
+   "悪い",
+   "わるい",
+   "xấu, dở",
+   "gungun_n5:3"
+  ],
+  [
+   "広い",
+   "ひろい",
+   "rộng",
+   "gungun_n5:3"
+  ],
+  [
+   "狭い",
+   "せまい",
+   "chật, hẹp",
+   "gungun_n5:3"
+  ],
+  [
+   "暑い",
+   "あつい",
+   "nóng",
+   "gungun_n5:3"
+  ],
+  [
+   "寒い",
+   "さむい",
+   "lạnh",
+   "gungun_n5:3"
+  ],
+  [
+   "古い",
+   "ふるい",
+   "cũ",
+   "gungun_n5:3"
+  ],
+  [
+   "新しい",
+   "あたらしい",
+   "mới",
+   "gungun_n5:3"
+  ],
+  [
+   "忙しい",
+   "いそがしい",
+   "bận",
+   "gungun_n5:3"
+  ],
+  [
+   "暇",
+   "ひま",
+   "rảnh rỗi",
+   "gungun_n5:3"
+  ],
+  [
+   "便利",
+   "べんり",
+   "tiện lợi",
+   "gungun_n5:3"
+  ],
+  [
+   "複雑",
+   "ふくざつ",
+   "phức tạp",
+   "gungun_n5:3"
+  ],
+  [
+   "簡単",
+   "かんたん",
+   "đơn giản",
+   "gungun_n5:3"
+  ],
+  [
+   "元気",
+   "げんき",
+   "khỏe mạnh",
+   "gungun_n5:3"
+  ],
+  [
+   "有名",
+   "ゆうめい",
+   "nổi tiếng",
+   "gungun_n5:3"
+  ],
+  [
+   "ハンサム",
+   "",
+   "đẹp trai",
+   "gungun_n5:3"
+  ],
+  [
+   "にぎやか",
+   "",
+   "náo nhiệt, nhộn nhịp",
+   "gungun_n5:3"
+  ],
+  [
+   "静か",
+   "しずか",
+   "yên tĩnh",
+   "gungun_n5:3"
+  ],
+  [
+   "きれい",
+   "",
+   "sạch, đẹp",
+   "gungun_n5:3"
+  ],
+  [
+   "丁寧",
+   "ていねい",
+   "lịch sự, cẩn thận",
+   "gungun_n5:3"
+  ],
+  [
+   "すごく",
+   "",
+   "rất",
+   "gungun_n5:3"
+  ],
+  [
+   "とても",
+   "",
+   "rất",
+   "gungun_n5:3"
+  ],
+  [
+   "まあまあ",
+   "",
+   "tàm tạm",
+   "gungun_n5:3"
+  ],
+  [
+   "ちょっと",
+   "",
+   "một chút",
+   "gungun_n5:3"
+  ],
+  [
+   "少し",
+   "すこし",
+   "một chút",
+   "gungun_n5:3"
+  ],
+  [
+   "あまり",
+   "",
+   "không ~ lắm",
+   "gungun_n5:3"
+  ],
+  [
+   "全然",
+   "ぜんぜん",
+   "hoàn toàn (không)",
+   "gungun_n5:3"
+  ],
+  [
+   "そんなに",
+   "",
+   "đến mức như thế",
+   "gungun_n5:3"
+  ],
+  [
+   "本当に",
+   "ほんとうに",
+   "thật sự",
+   "gungun_n5:3"
+  ],
+  [
+   "それに",
+   "",
+   "hơn nữa",
+   "gungun_n5:3"
+  ],
+  [
+   "でも",
+   "",
+   "nhưng",
+   "gungun_n5:3"
+  ],
+  [
+   "じゃ、また",
+   "",
+   "Hẹn gặp lại.",
+   "gungun_n5:3"
+  ],
+  [
+   "失礼します",
+   "しつれいします",
+   "Tôi xin phép nhé.",
+   "gungun_n5:3"
+  ],
+  [
+   "ええっ",
+   "",
+   "hả? gì?",
+   "gungun_n5:3"
+  ],
+  [
+   "一人暮らし",
+   "ひとりぐらし",
+   "sống một mình",
+   "gungun_n5:3"
+  ],
+  [
+   "生活",
+   "せいかつ",
+   "sinh sống, sinh hoạt",
+   "gungun_n5:3"
+  ],
+  [
+   "授業",
+   "じゅぎょう",
+   "giờ học",
+   "gungun_n5:3"
+  ],
+  [
+   "楽しい",
+   "たのしい",
+   "vui",
+   "gungun_n5:3"
+  ],
+  [
+   "寂しい",
+   "さびしい",
+   "cô đơn",
+   "gungun_n5:3"
+  ],
+  [
+   "小さい",
+   "ちいさい",
+   "nhỏ, bé",
+   "gungun_n5:3"
+  ],
+  [
+   "大きい",
+   "おおきい",
+   "to, lớn",
+   "gungun_n5:3"
+  ],
+  [
+   "かわいい",
+   "",
+   "đáng yêu",
+   "gungun_n5:3"
+  ],
+  [
+   "辛い",
+   "からい",
+   "cay",
+   "gungun_n5:3"
+  ],
+  [
+   "面白い",
+   "おもしろい",
+   "thú vị",
+   "gungun_n5:3"
+  ],
+  [
+   "多い",
+   "おおい",
+   "nhiều",
+   "gungun_n5:3"
+  ],
+  [
+   "明るい",
+   "あかるい",
+   "sáng sủa, lạc quan",
+   "gungun_n5:3"
+  ],
+  [
+   "難しい",
+   "むずかしい",
+   "khó",
+   "gungun_n5:3"
+  ],
+  [
+   "素敵",
+   "すてき",
+   "đẹp, trang nhã",
+   "gungun_n5:3"
+  ],
+  [
+   "親切",
+   "しんせつ",
+   "thân thiện, tốt bụng",
+   "gungun_n5:3"
+  ],
+  [
+   "不思議",
+   "ふしぎ",
+   "kì lạ",
+   "gungun_n5:3"
+  ],
+  [
+   "大変",
+   "たいへん",
+   "vất vả",
+   "gungun_n5:3"
+  ],
+  [
+   "頭がいい",
+   "あたまがいい",
+   "thông minh",
+   "gungun_n5:3"
+  ],
+  [
+   "人が多い",
+   "ひとがおおい",
+   "đông người",
+   "gungun_n5:3"
+  ],
+  [
+   "肉",
+   "にく",
+   "thịt",
+   "gungun_n5:3"
+  ],
+  [
+   "所",
+   "ところ",
+   "nơi, chỗ",
+   "gungun_n5:3"
+  ],
+  [
+   "バーベキュー",
+   "",
+   "nướng thịt ngoài trời/BBQ",
+   "gungun_n5:3"
+  ],
+  [
+   "バーベキュー場",
+   "ばーべきゅーじょう",
+   "khu vực nướng BBQ",
+   "gungun_n5:3"
+  ],
+  [
+   "パーティー",
+   "",
+   "bữa tiệc",
+   "gungun_n5:3"
+  ],
+  [
+   "テスト",
+   "",
+   "bài kiểm tra",
+   "gungun_n5:3"
+  ],
+  [
+   "残念",
+   "ざんねん",
+   "tiếc, đáng tiếc",
+   "gungun_n5:3"
+  ],
+  [
+   "どんな",
+   "",
+   "~ như thế nào",
+   "gungun_n5:3"
+  ],
+  [
+   "そういえば",
+   "",
+   "nói mới nhớ",
+   "gungun_n5:3"
+  ],
+  [
+   "山",
+   "やま",
+   "núi",
+   "gungun_n5:3"
+  ],
+  [
+   "富士山",
+   "ふじさん",
+   "núi Phú Sĩ",
+   "gungun_n5:3"
+  ],
+  [
+   "建物",
+   "たてもの",
+   "tòa nhà",
+   "gungun_n5:3"
+  ],
+  [
+   "歌手",
+   "かしゅ",
+   "ca sĩ",
+   "gungun_n5:3"
+  ],
+  [
+   "一年",
+   "いちねん",
+   "một năm",
+   "gungun_n5:3"
+  ],
+  [
+   "ほう",
+   "",
+   "phía, phương hướng",
+   "gungun_n5:3"
+  ],
+  [
+   "どれ",
+   "",
+   "cái nào (≥ 3 đối tượng)",
+   "gungun_n5:3"
+  ],
+  [
+   "どこ",
+   "",
+   "chỗ nào, ở đâu",
+   "gungun_n5:3"
+  ],
+  [
+   "スカート",
+   "",
+   "chân váy",
+   "gungun_n5:3"
+  ],
+  [
+   "パンツ",
+   "",
+   "quần (short/lót)",
+   "gungun_n5:3"
+  ],
+  [
+   "ズボン",
+   "",
+   "quần dài",
+   "gungun_n5:3"
+  ],
+  [
+   "赤い",
+   "あかい",
+   "màu đỏ",
+   "gungun_n5:3"
+  ],
+  [
+   "黒い",
+   "くろい",
+   "màu đen",
+   "gungun_n5:3"
+  ],
+  [
+   "一番",
+   "いちばん",
+   "nhất, số một",
+   "gungun_n5:3"
+  ],
+  [
+   "多分",
+   "たぶん",
+   "có lẽ",
+   "gungun_n5:3"
+  ],
+  [
+   "いつ",
+   "",
+   "khi nào",
+   "gungun_n5:3"
+  ],
+  [
+   "どちら",
+   "",
+   "cái nào (giữa 2 đối tượng)",
+   "gungun_n5:3"
+  ],
+  [
+   "どっち",
+   "",
+   "cái nào (giữa 2 đối tượng)",
+   "gungun_n5:3"
+  ],
+  [
+   "その中",
+   "そのなか",
+   "trong số đó",
+   "gungun_n5:3"
+  ],
+  [
+   "女の人",
+   "おんなのひと",
+   "phụ nữ, con gái",
+   "gungun_n5:4"
+  ],
+  [
+   "男の人",
+   "おとこのひと",
+   "đàn ông, con trai",
+   "gungun_n5:4"
+  ],
+  [
+   "女優",
+   "じょゆう",
+   "nữ diễn viên",
+   "gungun_n5:4"
+  ],
+  [
+   "子ども",
+   "こども",
+   "con, trẻ con",
+   "gungun_n5:4"
+  ],
+  [
+   "恋人",
+   "こいびと",
+   "người yêu",
+   "gungun_n5:4"
+  ],
+  [
+   "妹",
+   "いもうと",
+   "em gái (của mình)",
+   "gungun_n5:4"
+  ],
+  [
+   "妹さん",
+   "いもうとさん",
+   "em gái (của người khác)",
+   "gungun_n5:4"
+  ],
+  [
+   "試験",
+   "しけん",
+   "kỳ thi, bài thi",
+   "gungun_n5:4"
+  ],
+  [
+   "お祭り",
+   "おまつり",
+   "lễ hội",
+   "gungun_n5:4"
+  ],
+  [
+   "本当",
+   "ほんとう",
+   "thật, sự thật",
+   "gungun_n5:4"
+  ],
+  [
+   "今晩",
+   "こんばん",
+   "tối nay",
+   "gungun_n5:4"
+  ],
+  [
+   "スマホケース",
+   "",
+   "ốp điện thoại",
+   "gungun_n5:4"
+  ],
+  [
+   "デザイン",
+   "",
+   "thiết kế",
+   "gungun_n5:4"
+  ],
+  [
+   "おとなしい",
+   "",
+   "điềm tĩnh, ít nói",
+   "gungun_n5:4"
+  ],
+  [
+   "おしゃべり",
+   "",
+   "hay chuyện, nói nhiều",
+   "gungun_n5:4"
+  ],
+  [
+   "あんまり",
+   "",
+   "không ~ lắm",
+   "gungun_n5:4"
+  ],
+  [
+   "うん",
+   "",
+   "ừ, ừm (suồng sã)",
+   "gungun_n5:4"
+  ],
+  [
+   "ううん",
+   "",
+   "không (thân mật)",
+   "gungun_n5:4"
+  ],
+  [
+   "よく見て",
+   "よくみて",
+   "hãy nhìn kĩ",
+   "gungun_n5:4"
+  ],
+  [
+   "違うよ",
+   "ちがうよ",
+   "không phải đâu",
+   "gungun_n5:4"
+  ],
+  [
+   "〜かな",
+   "",
+   "có phải ~ không nhỉ?",
+   "gungun_n5:4"
+  ],
+  [
+   "本当かな",
+   "ほんとうかな",
+   "có thật không nhỉ?",
+   "gungun_n5:4"
+  ],
+  [
+   "うーん",
+   "",
+   "Hmmm... (khi phân vân)",
+   "gungun_n5:4"
+  ],
+  [
+   "外国",
+   "がいこく",
+   "nước ngoài",
+   "gungun_n5:4"
+  ],
+  [
+   "外国人",
+   "がいこくじん",
+   "người nước ngoài",
+   "gungun_n5:4"
+  ],
+  [
+   "外国語",
+   "がいこくご",
+   "ngoại ngữ",
+   "gungun_n5:4"
+  ],
+  [
+   "外国語大学",
+   "がいこくごだいがく",
+   "đại học Ngoại ngữ",
+   "gungun_n5:4"
+  ],
+  [
+   "髪型",
+   "かみがた",
+   "kiểu tóc",
+   "gungun_n5:4"
+  ],
+  [
+   "美容院",
+   "びよういん",
+   "tiệm làm tóc",
+   "gungun_n5:4"
+  ],
+  [
+   "飲み会",
+   "のみかい",
+   "buổi nhậu",
+   "gungun_n5:4"
+  ],
+  [
+   "駅前",
+   "えきまえ",
+   "trước nhà ga",
+   "gungun_n5:4"
+  ],
+  [
+   "勉強",
+   "べんきょう",
+   "việc học",
+   "gungun_n5:4"
+  ],
+  [
+   "全部",
+   "ぜんぶ",
+   "toàn bộ, tất cả",
+   "gungun_n5:4"
+  ],
+  [
+   "全部で",
+   "ぜんぶで",
+   "tổng cộng là",
+   "gungun_n5:4"
+  ],
+  [
+   "サークル",
+   "",
+   "câu lạc bộ",
+   "gungun_n5:4"
+  ],
+  [
+   "よかったね",
+   "",
+   "tốt rồi nhỉ!",
+   "gungun_n5:4"
+  ],
+  [
+   "〜けど",
+   "",
+   "nhưng mà",
+   "gungun_n5:4"
+  ],
+  [
+   "本屋",
+   "ほんや",
+   "hiệu sách",
+   "gungun_n5:5"
+  ],
+  [
+   "庭",
+   "にわ",
+   "sân vườn",
+   "gungun_n5:5"
+  ],
+  [
+   "公園",
+   "こうえん",
+   "công viên",
+   "gungun_n5:5"
+  ],
+  [
+   "売り場",
+   "うりば",
+   "quầy bán hàng",
+   "gungun_n5:5"
+  ],
+  [
+   "ワイン売り場",
+   "わいんうりば",
+   "quầy rượu vang",
+   "gungun_n5:5"
+  ],
+  [
+   "お菓子売り場",
+   "おかしうりば",
+   "quầy bánh kẹo",
+   "gungun_n5:5"
+  ],
+  [
+   "肉売り場",
+   "にくうりば",
+   "quầy bán thịt",
+   "gungun_n5:5"
+  ],
+  [
+   "はさみ",
+   "",
+   "cái kéo",
+   "gungun_n5:5"
+  ],
+  [
+   "引き出し",
+   "ひきだし",
+   "ngăn kéo",
+   "gungun_n5:5"
+  ],
+  [
+   "机",
+   "つくえ",
+   "cái bàn",
+   "gungun_n5:5"
+  ],
+  [
+   "椅子",
+   "いす",
+   "ghế",
+   "gungun_n5:5"
+  ],
+  [
+   "本棚",
+   "ほんだな",
+   "giá sách",
+   "gungun_n5:5"
+  ],
+  [
+   "冷蔵庫",
+   "れいぞうこ",
+   "tủ lạnh",
+   "gungun_n5:5"
+  ],
+  [
+   "電子レンジ",
+   "でんしれんじ",
+   "lò vi sóng",
+   "gungun_n5:5"
+  ],
+  [
+   "台所",
+   "だいどころ",
+   "nhà bếp",
+   "gungun_n5:5"
+  ],
+  [
+   "財布",
+   "さいふ",
+   "ví tiền",
+   "gungun_n5:5"
+  ],
+  [
+   "自転車",
+   "じてんしゃ",
+   "xe đạp",
+   "gungun_n5:5"
+  ],
+  [
+   "箱",
+   "はこ",
+   "hộp",
+   "gungun_n5:5"
+  ],
+  [
+   "木",
+   "き",
+   "cây",
+   "gungun_n5:5"
+  ],
+  [
+   "前",
+   "まえ",
+   "phía trước",
+   "gungun_n5:5"
+  ],
+  [
+   "後ろ",
+   "うしろ",
+   "phía sau",
+   "gungun_n5:5"
+  ],
+  [
+   "右",
+   "みぎ",
+   "bên phải",
+   "gungun_n5:5"
+  ],
+  [
+   "左",
+   "ひだり",
+   "bên trái",
+   "gungun_n5:5"
+  ],
+  [
+   "上",
+   "うえ",
+   "bên trên",
+   "gungun_n5:5"
+  ],
+  [
+   "下",
+   "した",
+   "bên dưới",
+   "gungun_n5:5"
+  ],
+  [
+   "中",
+   "なか",
+   "bên trong",
+   "gungun_n5:5"
+  ],
+  [
+   "外",
+   "そと",
+   "bên ngoài",
+   "gungun_n5:5"
+  ],
+  [
+   "間",
+   "あいだ",
+   "ở giữa",
+   "gungun_n5:5"
+  ],
+  [
+   "真ん中",
+   "まんなか",
+   "chính giữa",
+   "gungun_n5:5"
+  ],
+  [
+   "横",
+   "よこ",
+   "bên cạnh (ngang)",
+   "gungun_n5:5"
+  ],
+  [
+   "隣",
+   "となり",
+   "sát bên",
+   "gungun_n5:5"
+  ],
+  [
+   "近く",
+   "ちかく",
+   "gần",
+   "gungun_n5:5"
+  ],
+  [
+   "ここ",
+   "",
+   "chỗ này",
+   "gungun_n5:5"
+  ],
+  [
+   "そこ",
+   "",
+   "chỗ đó",
+   "gungun_n5:5"
+  ],
+  [
+   "あそこ",
+   "",
+   "chỗ kia",
+   "gungun_n5:5"
+  ],
+  [
+   "消しゴム",
+   "けしごむ",
+   "cục tẩy",
+   "gungun_n5:5"
+  ],
+  [
+   "ホッチキス",
+   "",
+   "cái dập ghim",
+   "gungun_n5:5"
+  ],
+  [
+   "ノート",
+   "",
+   "vở",
+   "gungun_n5:5"
+  ],
+  [
+   "ソファ",
+   "",
+   "ghế sô pha",
+   "gungun_n5:5"
+  ],
+  [
+   "ベッド",
+   "",
+   "giường",
+   "gungun_n5:5"
+  ],
+  [
+   "ある",
+   "",
+   "Có (đồ vật)",
+   "gungun_n5:5"
+  ],
+  [
+   "ない",
+   "",
+   "không có",
+   "gungun_n5:5"
+  ],
+  [
+   "それから",
+   "",
+   "sau đó",
+   "gungun_n5:5"
+  ],
+  [
+   "あと",
+   "",
+   "và còn",
+   "gungun_n5:5"
+  ],
+  [
+   "〜階",
+   "〜かい",
+   "tầng ~",
+   "gungun_n5:5"
+  ],
+  [
+   "何階",
+   "なんがい",
+   "tầng mấy?",
+   "gungun_n5:5"
+  ],
+  [
+   "申し訳ありません",
+   "もうしわけありません",
+   "Xin lỗi (lịch sự)",
+   "gungun_n5:5"
+  ],
+  [
+   "申し訳ございません",
+   "もうしわけございません",
+   "Xin lỗi (rất lịch sự)",
+   "gungun_n5:5"
+  ],
+  [
+   "映画",
+   "えいが",
+   "phim ảnh",
+   "gungun_n5:5"
+  ],
+  [
+   "教室",
+   "きょうしつ",
+   "lớp học",
+   "gungun_n5:5"
+  ],
+  [
+   "食堂",
+   "しょくどう",
+   "nhà ăn",
+   "gungun_n5:5"
+  ],
+  [
+   "事務所",
+   "じむしょ",
+   "văn phòng",
+   "gungun_n5:5"
+  ],
+  [
+   "窓",
+   "まど",
+   "cửa sổ",
+   "gungun_n5:5"
+  ],
+  [
+   "社長",
+   "しゃちょう",
+   "giám đốc",
+   "gungun_n5:5"
+  ],
+  [
+   "部長",
+   "ぶちょう",
+   "trưởng bộ phận, trưởng ban",
+   "gungun_n5:5"
+  ],
+  [
+   "課長",
+   "かちょう",
+   "trưởng phòng",
+   "gungun_n5:5"
+  ],
+  [
+   "誰か",
+   "だれか",
+   "ai đó",
+   "gungun_n5:5"
+  ],
+  [
+   "猫",
+   "ねこ",
+   "con mèo",
+   "gungun_n5:5"
+  ],
+  [
+   "犬",
+   "いぬ",
+   "con chó",
+   "gungun_n5:5"
+  ],
+  [
+   "鳥",
+   "とり",
+   "con chim",
+   "gungun_n5:5"
+  ],
+  [
+   "怖い",
+   "こわい",
+   "sợ hãi, đáng sợ",
+   "gungun_n5:5"
+  ],
+  [
+   "いる",
+   "",
+   "có, ở (người, động vật)",
+   "gungun_n5:5"
+  ],
+  [
+   "いらっしゃる",
+   "",
+   "có, ở (kính ngữ của います)",
+   "gungun_n5:5"
+  ],
+  [
+   "休憩する",
+   "きゅうけいする",
+   "nghỉ giải lao",
+   "gungun_n5:5"
+  ],
+  [
+   "電話する",
+   "でんわする",
+   "gọi điện thoại",
+   "gungun_n5:5"
+  ],
+  [
+   "なんだ",
+   "",
+   "tưởng gì!",
+   "gungun_n5:5"
+  ],
+  [
+   "お願いします",
+   "おねがいします",
+   "nhờ anh/chị",
+   "gungun_n5:5"
+  ],
+  [
+   "温泉",
+   "おんせん",
+   "suối nước nóng",
+   "gungun_n5:5"
+  ],
+  [
+   "袋",
+   "ふくろ",
+   "túi",
+   "gungun_n5:5"
+  ],
+  [
+   "お皿",
+   "おさら",
+   "đĩa",
+   "gungun_n5:5"
+  ],
+  [
+   "いちご",
+   "",
+   "dâu tây",
+   "gungun_n5:5"
+  ],
+  [
+   "あめ",
+   "",
+   "kẹo",
+   "gungun_n5:5"
+  ],
+  [
+   "大人",
+   "おとな",
+   "người lớn",
+   "gungun_n5:5"
+  ],
+  [
+   "兄",
+   "あに",
+   "anh trai",
+   "gungun_n5:5"
+  ],
+  [
+   "女の子",
+   "おんなのこ",
+   "bé gái",
+   "gungun_n5:5"
+  ],
+  [
+   "男の子",
+   "おとこのこ",
+   "bé trai",
+   "gungun_n5:5"
+  ],
+  [
+   "友達",
+   "ともだち",
+   "bạn bè",
+   "gungun_n5:5"
+  ],
+  [
+   "何歳",
+   "なんさい",
+   "mấy tuổi",
+   "gungun_n5:5"
+  ],
+  [
+   "おいくつ",
+   "",
+   "mấy tuổi (lịch sự)",
+   "gungun_n5:5"
+  ],
+  [
+   "テーブル",
+   "",
+   "cái bàn",
+   "gungun_n5:5"
+  ],
+  [
+   "コップ",
+   "",
+   "cái cốc",
+   "gungun_n5:5"
+  ],
+  [
+   "たくさん",
+   "",
+   "nhiều",
+   "gungun_n5:5"
+  ],
+  [
+   "大勢",
+   "おおぜい",
+   "nhiều (người)",
+   "gungun_n5:5"
+  ],
+  [
+   "1歳",
+   "いっさい",
+   "1 tuổi",
+   "gungun_n5:5"
+  ],
+  [
+   "8歳",
+   "はっさい",
+   "8 tuổi",
+   "gungun_n5:5"
+  ],
+  [
+   "10歳",
+   "じゅっさい",
+   "10 tuổi",
+   "gungun_n5:5"
+  ],
+  [
+   "20歳",
+   "はたち",
+   "20 tuổi",
+   "gungun_n5:5"
+  ],
+  [
+   "1人",
+   "ひとり",
+   "1 người (đặc biệt)",
+   "gungun_n5:5"
+  ],
+  [
+   "2人",
+   "ふたり",
+   "2 người (đặc biệt)",
+   "gungun_n5:5"
+  ],
+  [
+   "4人",
+   "よにん",
+   "4 người (đặc biệt)",
+   "gungun_n5:5"
+  ],
+  [
+   "1匹",
+   "いっぴき",
+   "1 con (đặc biệt)",
+   "gungun_n5:5"
+  ],
+  [
+   "3匹",
+   "さんびき",
+   "3 con (đặc biệt)",
+   "gungun_n5:5"
+  ],
+  [
+   "6匹",
+   "ろっぴき",
+   "6 con (đặc biệt)",
+   "gungun_n5:5"
+  ],
+  [
+   "8匹",
+   "はっぴき",
+   "8 con (đặc biệt)",
+   "gungun_n5:5"
+  ],
+  [
+   "10匹",
+   "じゅっぴき",
+   "10 con (đặc biệt)",
+   "gungun_n5:5"
+  ],
+  [
+   "1つ",
+   "ひとつ",
+   "1 cái (đặc biệt)",
+   "gungun_n5:5"
+  ],
+  [
+   "2つ",
+   "ふたつ",
+   "2 cái (đặc biệt)",
+   "gungun_n5:5"
+  ],
+  [
+   "3つ",
+   "みっつ",
+   "3 cái (đặc biệt)",
+   "gungun_n5:5"
+  ],
+  [
+   "4つ",
+   "よっつ",
+   "4 cái (đặc biệt)",
+   "gungun_n5:5"
+  ],
+  [
+   "5つ",
+   "いつつ",
+   "5 cái (đặc biệt)",
+   "gungun_n5:5"
+  ],
+  [
+   "6つ",
+   "むっつ",
+   "6 cái (đặc biệt)",
+   "gungun_n5:5"
+  ],
+  [
+   "7つ",
+   "ななつ",
+   "7 cái (đặc biệt)",
+   "gungun_n5:5"
+  ],
+  [
+   "8つ",
+   "やっつ",
+   "8 cái (đặc biệt)",
+   "gungun_n5:5"
+  ],
+  [
+   "9つ",
+   "ここのつ",
+   "9 cái (đặc biệt)",
+   "gungun_n5:5"
+  ],
+  [
+   "10",
+   "とお",
+   "10 cái (đặc biệt)",
+   "gungun_n5:5"
+  ],
+  [
+   "天気",
+   "てんき",
+   "thời tiết",
+   "gungun_n5:6"
+  ],
+  [
+   "体調",
+   "たいちょう",
+   "tình trạng cơ thể",
+   "gungun_n5:6"
+  ],
+  [
+   "ご飯",
+   "ごはん",
+   "cơm, bữa cơm",
+   "gungun_n5:6"
+  ],
+  [
+   "毎朝",
+   "まいあさ",
+   "hàng sáng, sáng nào cũng",
+   "gungun_n5:6"
+  ],
+  [
+   "毎晩",
+   "まいばん",
+   "hàng tối, tối nào cũng",
+   "gungun_n5:6"
+  ],
+  [
+   "スケジュール",
+   "",
+   "lịch trình",
+   "gungun_n5:6"
+  ],
+  [
+   "すごい",
+   "",
+   "tuyệt vời, siêu, giỏi",
+   "gungun_n5:6"
+  ],
+  [
+   "働く",
+   "はたらく",
+   "làm việc",
+   "gungun_n5:6"
+  ],
+  [
+   "歩く",
+   "あるく",
+   "đi bộ",
+   "gungun_n5:6"
+  ],
+  [
+   "休む",
+   "やすむ",
+   "nghỉ ngơi",
+   "gungun_n5:6"
+  ],
+  [
+   "遊ぶ",
+   "あそぶ",
+   "chơi",
+   "gungun_n5:6"
+  ],
+  [
+   "寝る",
+   "ねる",
+   "ngủ",
+   "gungun_n5:6"
+  ],
+  [
+   "起きる",
+   "おきる",
+   "thức dậy",
+   "gungun_n5:6"
+  ],
+  [
+   "疲れる",
+   "つかれる",
+   "mệt mỏi",
+   "gungun_n5:6"
+  ],
+  [
+   "出かける",
+   "でかける",
+   "ra ngoài",
+   "gungun_n5:6"
+  ],
+  [
+   "勉強する",
+   "べんきょうする",
+   "học",
+   "gungun_n5:6"
+  ],
+  [
+   "これから",
+   "",
+   "từ giờ (trở đi)",
+   "gungun_n5:6"
+  ],
+  [
+   "いつも",
+   "",
+   "lúc nào cũng",
+   "gungun_n5:6"
+  ],
+  [
+   "ときどき",
+   "",
+   "thỉnh thoảng",
+   "gungun_n5:6"
+  ],
+  [
+   "ゆっくり",
+   "",
+   "từ từ, thong thả",
+   "gungun_n5:6"
+  ],
+  [
+   "〜時間",
+   "〜じかん",
+   "~ tiếng",
+   "gungun_n5:6"
+  ],
+  [
+   "〜くらい",
+   "",
+   "khoảng ~",
+   "gungun_n5:6"
+  ],
+  [
+   "〜ぐらい",
+   "",
+   "khoảng ~",
+   "gungun_n5:6"
+  ],
+  [
+   "気持ちがいい",
+   "きもちがいい",
+   "cảm thấy thoải mái, dễ chịu",
+   "gungun_n5:6"
+  ],
+  [
+   "さあ",
+   "",
+   "nào (thúc giục)",
+   "gungun_n5:6"
+  ],
+  [
+   "問題ない",
+   "もんだいない",
+   "không vấn đề gì",
+   "gungun_n5:6"
+  ],
+  [
+   "実家",
+   "じっか",
+   "nhà (bố mẹ đẻ)",
+   "gungun_n5:6"
+  ],
+  [
+   "寮",
+   "りょう",
+   "kí túc xá",
+   "gungun_n5:6"
+  ],
+  [
+   "写真",
+   "しゃしん",
+   "ảnh",
+   "gungun_n5:6"
+  ],
+  [
+   "お正月",
+   "おしょうがつ",
+   "Tết Dương lịch",
+   "gungun_n5:6"
+  ],
+  [
+   "〜年",
+   "〜ねん",
+   "~ năm",
+   "gungun_n5:6"
+  ],
+  [
+   "毎年",
+   "まいとし",
+   "hằng năm",
+   "gungun_n5:6"
+  ],
+  [
+   "毎月",
+   "まいつき",
+   "hàng tháng",
+   "gungun_n5:6"
+  ],
+  [
+   "毎週",
+   "まいしゅう",
+   "hàng tuần",
+   "gungun_n5:6"
+  ],
+  [
+   "今年",
+   "ことし",
+   "năm nay",
+   "gungun_n5:6"
+  ],
+  [
+   "去年",
+   "きょねん",
+   "năm ngoái",
+   "gungun_n5:6"
+  ],
+  [
+   "一昨年",
+   "おととし",
+   "năm kia",
+   "gungun_n5:6"
+  ],
+  [
+   "来年",
+   "らいねん",
+   "năm sau",
+   "gungun_n5:6"
+  ],
+  [
+   "再来年",
+   "さらいねん",
+   "năm sau nữa",
+   "gungun_n5:6"
+  ],
+  [
+   "今月",
+   "こんげつ",
+   "tháng này",
+   "gungun_n5:6"
+  ],
+  [
+   "先月",
+   "せんげつ",
+   "tháng trước",
+   "gungun_n5:6"
+  ],
+  [
+   "来月",
+   "らいげつ",
+   "tháng sau",
+   "gungun_n5:6"
+  ],
+  [
+   "楽しみ",
+   "たのしみ",
+   "mong đợi, mong chờ",
+   "gungun_n5:6"
+  ],
+  [
+   "わかる",
+   "",
+   "hiểu, biết",
+   "gungun_n5:6"
+  ],
+  [
+   "行く",
+   "いく",
+   "đi",
+   "gungun_n5:6"
+  ],
+  [
+   "帰る",
+   "かえる",
+   "về, trở về",
+   "gungun_n5:6"
+  ],
+  [
+   "来る",
+   "くる",
+   "đến",
+   "gungun_n5:6"
+  ],
+  [
+   "買い物する",
+   "かいものする",
+   "mua sắm",
+   "gungun_n5:6"
+  ],
+  [
+   "もうすぐ",
+   "",
+   "sắp",
+   "gungun_n5:6"
+  ],
+  [
+   "試合",
+   "しあい",
+   "trận đấu",
+   "gungun_n5:6"
+  ],
+  [
+   "もの",
+   "",
+   "đồ vật",
+   "gungun_n5:6"
+  ],
+  [
+   "水",
+   "みず",
+   "nước",
+   "gungun_n5:6"
+  ],
+  [
+   "魚",
+   "さかな",
+   "cá",
+   "gungun_n5:6"
+  ],
+  [
+   "紅茶",
+   "こうちゃ",
+   "hồng trà",
+   "gungun_n5:6"
+  ],
+  [
+   "おにぎり",
+   "",
+   "cơm nắm",
+   "gungun_n5:6"
+  ],
+  [
+   "お寿司",
+   "おすし",
+   "sushi",
+   "gungun_n5:6"
+  ],
+  [
+   "朝ご飯",
+   "あさごはん",
+   "cơm sáng/ bữa sáng",
+   "gungun_n5:6"
+  ],
+  [
+   "昼ご飯",
+   "ひるごはん",
+   "cơm trưa/ bữa trưa",
+   "gungun_n5:6"
+  ],
+  [
+   "晩ご飯",
+   "ばんごはん",
+   "cơm tối/ bữa tối",
+   "gungun_n5:6"
+  ],
+  [
+   "夕飯",
+   "ゆうはん",
+   "cơm tối",
+   "gungun_n5:6"
+  ],
+  [
+   "お土産",
+   "おみやげ",
+   "quà (lưu niệm)",
+   "gungun_n5:6"
+  ],
+  [
+   "家族",
+   "かぞく",
+   "gia đình",
+   "gungun_n5:6"
+  ],
+  [
+   "音楽",
+   "おんがく",
+   "âm nhạc",
+   "gungun_n5:6"
+  ],
+  [
+   "雑誌",
+   "ざっし",
+   "tạp chí",
+   "gungun_n5:6"
+  ],
+  [
+   "靴",
+   "くつ",
+   "giày",
+   "gungun_n5:6"
+  ],
+  [
+   "〜たち",
+   "",
+   "nhóm, bọn, các...",
+   "gungun_n5:6"
+  ],
+  [
+   "デパート",
+   "",
+   "trung tâm mua sắm",
+   "gungun_n5:6"
+  ],
+  [
+   "サッカー",
+   "",
+   "bóng đá",
+   "gungun_n5:6"
+  ],
+  [
+   "眠い",
+   "ねむい",
+   "buồn ngủ",
+   "gungun_n5:6"
+  ],
+  [
+   "一人で",
+   "ひとりで",
+   "một mình",
+   "gungun_n5:6"
+  ],
+  [
+   "買う",
+   "かう",
+   "mua",
+   "gungun_n5:6"
+  ],
+  [
+   "読む",
+   "よむ",
+   "đọc",
+   "gungun_n5:6"
+  ],
+  [
+   "聞く",
+   "きく",
+   "nghe, hỏi",
+   "gungun_n5:6"
+  ],
+  [
+   "飲む",
+   "のむ",
+   "uống",
+   "gungun_n5:6"
+  ],
+  [
+   "食べる",
+   "たべる",
+   "ăn",
+   "gungun_n5:6"
+  ],
+  [
+   "見る",
+   "みる",
+   "xem, nhìn",
+   "gungun_n5:6"
+  ],
+  [
+   "旅行する",
+   "りょこうする",
+   "du lịch",
+   "gungun_n5:6"
+  ],
+  [
+   "夏休み",
+   "なつやすみ",
+   "kì nghỉ hè",
+   "gungun_n5:7"
+  ],
+  [
+   "お盆休み",
+   "おぼんやすみ",
+   "kỳ nghỉ lễ Obon",
+   "gungun_n5:7"
+  ],
+  [
+   "週末",
+   "しゅうまつ",
+   "cuối tuần",
+   "gungun_n5:7"
+  ],
+  [
+   "海",
+   "うみ",
+   "biển",
+   "gungun_n5:7"
+  ],
+  [
+   "喫茶店",
+   "きっさてん",
+   "quán nước, quán giải khát",
+   "gungun_n5:7"
+  ],
+  [
+   "プール",
+   "",
+   "bể bơi",
+   "gungun_n5:7"
+  ],
+  [
+   "スキューバダイビング",
+   "",
+   "lặn biển",
+   "gungun_n5:7"
+  ],
+  [
+   "する",
+   "",
+   "làm",
+   "gungun_n5:7"
+  ],
+  [
+   "とっても",
+   "",
+   "rất (cách nói nhấn mạnh của とても)",
+   "gungun_n5:7"
+  ],
+  [
+   "小説",
+   "しょうせつ",
+   "tiểu thuyết",
+   "gungun_n5:7"
+  ],
+  [
+   "服",
+   "ふく",
+   "quần áo",
+   "gungun_n5:7"
+  ],
+  [
+   "紙",
+   "かみ",
+   "giấy",
+   "gungun_n5:7"
+  ],
+  [
+   "ワイシャツ",
+   "",
+   "áo sơ mi dài tay",
+   "gungun_n5:7"
+  ],
+  [
+   "プリン",
+   "",
+   "bánh pudding",
+   "gungun_n5:7"
+  ],
+  [
+   "スプーン",
+   "",
+   "thìa",
+   "gungun_n5:7"
+  ],
+  [
+   "ペン",
+   "",
+   "bút",
+   "gungun_n5:7"
+  ],
+  [
+   "短い",
+   "みじかい",
+   "ngắn",
+   "gungun_n5:7"
+  ],
+  [
+   "おすすめする",
+   "",
+   "giới thiệu, đề xuất, gợi ý, khuyến nghị",
+   "gungun_n5:7"
+  ],
+  [
+   "どのくらい",
+   "",
+   "bao lâu, bao nhiêu",
+   "gungun_n5:7"
+  ],
+  [
+   "どのぐらい",
+   "",
+   "bao lâu, bao nhiêu",
+   "gungun_n5:7"
+  ],
+  [
+   "よく",
+   "",
+   "thường, hay",
+   "gungun_n5:7"
+  ],
+  [
+   "たまに",
+   "",
+   "thi thoảng, đôi khi",
+   "gungun_n5:7"
+  ],
+  [
+   "半年",
+   "はんとし",
+   "nửa năm",
+   "gungun_n5:7"
+  ],
+  [
+   "〜か月",
+   "〜かげつ",
+   "~ tháng",
+   "gungun_n5:7"
+  ],
+  [
+   "〜週間",
+   "〜しゅうかん",
+   "~ tuần",
+   "gungun_n5:7"
+  ],
+  [
+   "〜冊",
+   "〜さつ",
+   "quyển (đếm sách, vở, tạp chí)",
+   "gungun_n5:7"
+  ],
+  [
+   "〜枚",
+   "〜まい",
+   "tờ, tấm, trang (đếm vật mỏng, dẹt)",
+   "gungun_n5:7"
+  ],
+  [
+   "〜杯",
+   "〜はい",
+   "cốc, ly, tách (đếm đồ có chứa đồ ăn/uống)",
+   "gungun_n5:7"
+  ],
+  [
+   "〜個",
+   "〜こ",
+   "cái, chiếc (đếm đồ vật nhỏ, bao gồm bánh, cục tẩy...)",
+   "gungun_n5:7"
+  ],
+  [
+   "かしこまりました",
+   "",
+   "tôi hiểu rồi ạ (bề dưới nói với bề trên)",
+   "gungun_n5:7"
+  ],
+  [
+   "〜本",
+   "〜ほん",
+   "thanh, chiếc, cái (đếm vật thon dài: bút, ô, chai...)",
+   "gungun_n5:7"
+  ],
+  [
+   "〜台",
+   "〜だい",
+   "chiếc (đếm đồ điện tử, máy móc: ô tô, tivi, máy tính...)",
+   "gungun_n5:7"
+  ],
+  [
+   "お腹",
+   "おなか",
+   "bụng",
+   "gungun_n5:7"
+  ],
+  [
+   "昼",
+   "ひる",
+   "buổi trưa",
+   "gungun_n5:7"
+  ],
+  [
+   "今夜",
+   "こんや",
+   "tối nay, đêm nay",
+   "gungun_n5:7"
+  ],
+  [
+   "電動自転車",
+   "でんどうじてんしゃ",
+   "xe đạp điện",
+   "gungun_n5:7"
+  ],
+  [
+   "自動車",
+   "じどうしゃ",
+   "xe ô tô",
+   "gungun_n5:7"
+  ],
+  [
+   "電気自動車",
+   "でんきじどうしゃ",
+   "xe ô tô điện",
+   "gungun_n5:7"
+  ],
+  [
+   "時計",
+   "とけい",
+   "đồng hồ",
+   "gungun_n5:7"
+  ],
+  [
+   "ラーメン屋",
+   "らーめんや",
+   "quán mì ramen",
+   "gungun_n5:7"
+  ],
+  [
+   "CM",
+   "",
+   "quảng cáo",
+   "gungun_n5:7"
+  ],
+  [
+   "パソコン",
+   "",
+   "máy tính, laptop",
+   "gungun_n5:7"
+  ],
+  [
+   "欲しい",
+   "ほしい",
+   "muốn",
+   "gungun_n5:7"
+  ],
+  [
+   "軽い",
+   "かるい",
+   "nhẹ",
+   "gungun_n5:7"
+  ],
+  [
+   "丈夫",
+   "じょうぶ",
+   "bền, chắc, khoẻ mạnh",
+   "gungun_n5:7"
+  ],
+  [
+   "一緒に",
+   "いっしょに",
+   "cùng nhau",
+   "gungun_n5:7"
+  ],
+  [
+   "空く",
+   "すく",
+   "trống, trống rỗng",
+   "gungun_n5:7"
+  ],
+  [
+   "お腹が空く",
+   "おなかがすく",
+   "đói bụng",
+   "gungun_n5:7"
+  ],
+  [
+   "初めて",
+   "はじめて",
+   "lần đầu tiên",
+   "gungun_n5:7"
+  ],
+  [
+   "映画館",
+   "えいがかん",
+   "rạp chiếu phim",
+   "gungun_n5:7"
+  ],
+  [
+   "冗談",
+   "じょうだん",
+   "nói đùa",
+   "gungun_n5:7"
+  ],
+  [
+   "野菜",
+   "やさい",
+   "rau",
+   "gungun_n5:7"
+  ],
+  [
+   "機械",
+   "きかい",
+   "máy móc",
+   "gungun_n5:7"
+  ],
+  [
+   "ころ",
+   "",
+   "hồi, lúc",
+   "gungun_n5:7"
+  ],
+  [
+   "小さいころ",
+   "ちいさいころ",
+   "lúc nhỏ",
+   "gungun_n5:7"
+  ],
+  [
+   "子供のころ",
+   "こどものころ",
+   "hồi bé",
+   "gungun_n5:7"
+  ],
+  [
+   "学生のころ",
+   "がくせいのころ",
+   "thời sinh viên",
+   "gungun_n5:7"
+  ],
+  [
+   "切符",
+   "きっぷ",
+   "vé (tàu, xe...)",
+   "gungun_n5:7"
+  ],
+  [
+   "チケット",
+   "",
+   "vé (xem phim, ca nhạc...)",
+   "gungun_n5:7"
+  ],
+  [
+   "アクション映画",
+   "あくしょんえいが",
+   "phim hành động",
+   "gungun_n5:7"
+  ],
+  [
+   "トイレ",
+   "",
+   "nhà vệ sinh",
+   "gungun_n5:7"
+  ],
+  [
+   "会う",
+   "あう",
+   "gặp (người)",
+   "gungun_n5:7"
+  ],
+  [
+   "撮る",
+   "とる",
+   "chụp (ảnh)",
+   "gungun_n5:7"
+  ],
+  [
+   "説明する",
+   "せつめいする",
+   "giải thích",
+   "gungun_n5:7"
+  ],
+  [
+   "散歩する",
+   "さんぽする",
+   "đi dạo",
+   "gungun_n5:7"
+  ],
+  [
+   "留学する",
+   "りゅうがくする",
+   "du học",
+   "gungun_n5:7"
+  ],
+  [
+   "食事する",
+   "しょくじする",
+   "dùng bữa",
+   "gungun_n5:7"
+  ],
+  [
+   "ぜひ",
+   "",
+   "nhất định, rất muốn",
+   "gungun_n5:7"
+  ],
+  [
+   "箸",
+   "はし",
+   "đũa",
+   "gungun_n5:8"
+  ],
+  [
+   "故郷",
+   "こきょう",
+   "quê, quê hương",
+   "gungun_n5:8"
+  ],
+  [
+   "電車",
+   "でんしゃ",
+   "tàu điện",
+   "gungun_n5:8"
+  ],
+  [
+   "銭湯",
+   "せんとう",
+   "nhà tắm công cộng",
+   "gungun_n5:8"
+  ],
+  [
+   "こと",
+   "",
+   "việc",
+   "gungun_n5:8"
+  ],
+  [
+   "楽器",
+   "がっき",
+   "nhạc cụ",
+   "gungun_n5:8"
+  ],
+  [
+   "新幹線",
+   "しんかんせん",
+   "tàu shinkansen",
+   "gungun_n5:8"
+  ],
+  [
+   "飛行機",
+   "ひこうき",
+   "máy bay",
+   "gungun_n5:8"
+  ],
+  [
+   "バス",
+   "",
+   "xe buýt",
+   "gungun_n5:8"
+  ],
+  [
+   "タクシー",
+   "",
+   "xe taxi",
+   "gungun_n5:8"
+  ],
+  [
+   "ショッピングモール",
+   "",
+   "trung tâm thương mại",
+   "gungun_n5:8"
+  ],
+  [
+   "スポーツ",
+   "",
+   "thể thao",
+   "gungun_n5:8"
+  ],
+  [
+   "スポーツジム",
+   "",
+   "phòng tập gym",
+   "gungun_n5:8"
+  ],
+  [
+   "ピアノ",
+   "",
+   "piano",
+   "gungun_n5:8"
+  ],
+  [
+   "ギター",
+   "",
+   "đàn ghi-ta",
+   "gungun_n5:8"
+  ],
+  [
+   "パクチー",
+   "",
+   "rau mùi",
+   "gungun_n5:8"
+  ],
+  [
+   "カレー",
+   "",
+   "cà ri",
+   "gungun_n5:8"
+  ],
+  [
+   "重い",
+   "おもい",
+   "nặng",
+   "gungun_n5:8"
+  ],
+  [
+   "色々",
+   "いろいろ",
+   "nhiều, đa dạng (về chủng loại)",
+   "gungun_n5:8"
+  ],
+  [
+   "泳ぐ",
+   "およぐ",
+   "bơi",
+   "gungun_n5:8"
+  ],
+  [
+   "使う",
+   "つかう",
+   "sử dụng",
+   "gungun_n5:8"
+  ],
+  [
+   "運ぶ",
+   "はこぶ",
+   "vận chuyển, bê, vác",
+   "gungun_n5:8"
+  ],
+  [
+   "持つ",
+   "もつ",
+   "có, cầm",
+   "gungun_n5:8"
+  ],
+  [
+   "弾く",
+   "ひく",
+   "đánh, chơi (nhạc cụ)",
+   "gungun_n5:8"
+  ],
+  [
+   "送る",
+   "おくる",
+   "gửi",
+   "gungun_n5:8"
+  ],
+  [
+   "話す",
+   "はなす",
+   "nói chuyện",
+   "gungun_n5:8"
+  ],
+  [
+   "かかる",
+   "",
+   "mất, tốn (thời gian, tiền bạc)",
+   "gungun_n5:8"
+  ],
+  [
+   "やっぱり",
+   "",
+   "quả nhiên",
+   "gungun_n5:8"
+  ],
+  [
+   "いっぱい",
+   "",
+   "đầy",
+   "gungun_n5:8"
+  ],
+  [
+   "いろんな",
+   "",
+   "nhiều (về chủng loại, đứng trước danh từ)",
+   "gungun_n5:8"
+  ],
+  [
+   "〜か〜",
+   "",
+   "hoặc ~",
+   "gungun_n5:8"
+  ],
+  [
+   "そうなんですか",
+   "",
+   "Vậy à?/ Vậy sao?",
+   "gungun_n5:8"
+  ],
+  [
+   "これくらい",
+   "",
+   "Mức này, cỡ này.",
+   "gungun_n5:8"
+  ],
+  [
+   "みんな",
+   "",
+   "mọi người",
+   "gungun_n5:8"
+  ],
+  [
+   "絵",
+   "え",
+   "bức tranh",
+   "gungun_n5:8"
+  ],
+  [
+   "歌",
+   "うた",
+   "bài hát",
+   "gungun_n5:8"
+  ],
+  [
+   "数学",
+   "すうがく",
+   "môn toán",
+   "gungun_n5:8"
+  ],
+  [
+   "人気",
+   "にんき",
+   "sự yêu thích (được yêu thích)",
+   "gungun_n5:8"
+  ],
+  [
+   "卓球",
+   "たっきゅう",
+   "bóng bàn",
+   "gungun_n5:8"
+  ],
+  [
+   "水泳",
+   "すいえい",
+   "bơi lội",
+   "gungun_n5:8"
+  ],
+  [
+   "バドミントン",
+   "",
+   "cầu lông",
+   "gungun_n5:8"
+  ],
+  [
+   "バスケットボール",
+   "",
+   "bóng rổ",
+   "gungun_n5:8"
+  ],
+  [
+   "バレーボール",
+   "",
+   "bóng chuyền",
+   "gungun_n5:8"
+  ],
+  [
+   "ライブ",
+   "",
+   "buổi biểu diễn trực tiếp, live show",
+   "gungun_n5:8"
+  ],
+  [
+   "カラオケ",
+   "",
+   "karaoke",
+   "gungun_n5:8"
+  ],
+  [
+   "ダンス",
+   "",
+   "nhảy, nhảy múa",
+   "gungun_n5:8"
+  ],
+  [
+   "DVD",
+   "",
+   "DVD",
+   "gungun_n5:8"
+  ],
+  [
+   "色",
+   "いろ",
+   "màu, màu sắc",
+   "gungun_n5:8"
+  ],
+  [
+   "何色",
+   "なにいろ",
+   "màu gì",
+   "gungun_n5:8"
+  ],
+  [
+   "赤",
+   "あか",
+   "màu đỏ",
+   "gungun_n5:8"
+  ],
+  [
+   "白",
+   "しろ",
+   "màu trắng",
+   "gungun_n5:8"
+  ],
+  [
+   "青",
+   "あお",
+   "màu xanh",
+   "gungun_n5:8"
+  ],
+  [
+   "黒",
+   "くろ",
+   "màu đen",
+   "gungun_n5:8"
+  ],
+  [
+   "黄色",
+   "きいろ",
+   "màu vàng",
+   "gungun_n5:8"
+  ],
+  [
+   "緑色",
+   "みどりいろ",
+   "màu xanh lá cây",
+   "gungun_n5:8"
+  ],
+  [
+   "ピンク色",
+   "ぴんくいろ",
+   "màu hồng",
+   "gungun_n5:8"
+  ],
+  [
+   "オレンジ色",
+   "おれんじいろ",
+   "màu cam",
+   "gungun_n5:8"
+  ],
+  [
+   "甘い",
+   "あまい",
+   "ngọt",
+   "gungun_n5:8"
+  ],
+  [
+   "かっこいい",
+   "",
+   "ngầu",
+   "gungun_n5:8"
+  ],
+  [
+   "近い",
+   "ちかい",
+   "gần",
+   "gungun_n5:8"
+  ],
+  [
+   "好き",
+   "すき",
+   "thích",
+   "gungun_n5:8"
+  ],
+  [
+   "大好き",
+   "だいすき",
+   "rất thích",
+   "gungun_n5:8"
+  ],
+  [
+   "嫌い",
+   "きらい",
+   "ghét",
+   "gungun_n5:8"
+  ],
+  [
+   "大嫌い",
+   "だいきらい",
+   "rất ghét",
+   "gungun_n5:8"
+  ],
+  [
+   "上手",
+   "じょうず",
+   "giỏi",
+   "gungun_n5:8"
+  ],
+  [
+   "下手",
+   "へた",
+   "kém",
+   "gungun_n5:8"
+  ],
+  [
+   "得意",
+   "とくい",
+   "giỏi, mạnh (sở trường)",
+   "gungun_n5:8"
+  ],
+  [
+   "苦手",
+   "にがて",
+   "không giỏi, yếu, dở, (không thích, sợ)",
+   "gungun_n5:8"
+  ],
+  [
+   "計算する",
+   "けいさんする",
+   "tính toán",
+   "gungun_n5:8"
+  ],
+  [
+   "特に",
+   "とくに",
+   "đặc biệt",
+   "gungun_n5:8"
+  ],
+  [
+   "そうそう",
+   "",
+   "đúng vậy, đúng thế.",
+   "gungun_n5:8"
+  ],
+  [
+   "父",
+   "ちち",
+   "bố của mình",
+   "gungun_n5:8"
+  ],
+  [
+   "お父さん",
+   "おとうさん",
+   "bố (của người khác hoặc gọi thân thiết)",
+   "gungun_n5:8"
+  ],
+  [
+   "母",
+   "はは",
+   "mẹ của mình",
+   "gungun_n5:8"
+  ],
+  [
+   "お母さん",
+   "おかあさん",
+   "mẹ (của người khác hoặc gọi thân thiết)",
+   "gungun_n5:8"
+  ],
+  [
+   "お兄さん",
+   "おにいさん",
+   "anh (của người khác hoặc gọi thân thiết)",
+   "gungun_n5:8"
+  ],
+  [
+   "姉",
+   "あね",
+   "chị gái của mình",
+   "gungun_n5:8"
+  ],
+  [
+   "お姉さん",
+   "おねえさん",
+   "chị (của người khác hoặc gọi thân thiết)",
+   "gungun_n5:8"
+  ],
+  [
+   "弟",
+   "おとうと",
+   "em trai của mình",
+   "gungun_n5:8"
+  ],
+  [
+   "弟さん",
+   "おとうとさん",
+   "em trai của người khác",
+   "gungun_n5:8"
+  ],
+  [
+   "祖父",
+   "そふ",
+   "ông của mình",
+   "gungun_n5:8"
+  ],
+  [
+   "おじいさん",
+   "",
+   "ông (của người khác hoặc gọi thân thiết)",
+   "gungun_n5:8"
+  ],
+  [
+   "祖母",
+   "そぼ",
+   "bà của mình",
+   "gungun_n5:8"
+  ],
+  [
+   "おばあさん",
+   "",
+   "bà (của người khác hoặc gọi thân thiết)",
+   "gungun_n5:8"
+  ],
+  [
+   "頭",
+   "あたま",
+   "đầu",
+   "gungun_n5:8"
+  ],
+  [
+   "背",
+   "せ",
+   "lưng",
+   "gungun_n5:8"
+  ],
+  [
+   "髪",
+   "かみ",
+   "tóc",
+   "gungun_n5:8"
+  ],
+  [
+   "目",
+   "め",
+   "mắt",
+   "gungun_n5:8"
+  ],
+  [
+   "鼻",
+   "はな",
+   "mũi",
+   "gungun_n5:8"
+  ],
+  [
+   "足",
+   "あし",
+   "bàn chân",
+   "gungun_n5:8"
+  ],
+  [
+   "食べ物",
+   "たべもの",
+   "đồ ăn",
+   "gungun_n5:8"
+  ],
+  [
+   "景色",
+   "けしき",
+   "phong cảnh",
+   "gungun_n5:8"
+  ],
+  [
+   "気温",
+   "きおん",
+   "nhiệt độ (bên ngoài)",
+   "gungun_n5:8"
+  ],
+  [
+   "身長",
+   "しんちょう",
+   "chiều cao cơ thể",
+   "gungun_n5:8"
+  ],
+  [
+   "ホテル",
+   "",
+   "khách sạn",
+   "gungun_n5:8"
+  ],
+  [
+   "ドラマ",
+   "",
+   "phim truyền hình",
+   "gungun_n5:8"
+  ],
+  [
+   "アニメ",
+   "",
+   "anime",
+   "gungun_n5:8"
+  ],
+  [
+   "低い",
+   "ひくい",
+   "thấp",
+   "gungun_n5:8"
+  ],
+  [
+   "長い",
+   "ながい",
+   "dài",
+   "gungun_n5:8"
+  ],
+  [
+   "〜センチ",
+   "",
+   "~ cm",
+   "gungun_n5:8"
+  ],
+  [
+   "どの〜",
+   "",
+   "cái nào (đứng trước danh từ)",
+   "gungun_n5:8"
+  ],
+  [
+   "無料",
+   "むりょう",
+   "miễn phí",
+   "gungun_n5:9"
+  ],
+  [
+   "趣味",
+   "しゅみ",
+   "sở thích",
+   "gungun_n5:9"
+  ],
+  [
+   "夢",
+   "ゆめ",
+   "ước mơ, giấc mơ",
+   "gungun_n5:9"
+  ],
+  [
+   "日課",
+   "にっか",
+   "thói quen hàng ngày",
+   "gungun_n5:9"
+  ],
+  [
+   "日記",
+   "にっき",
+   "nhật kí",
+   "gungun_n5:9"
+  ],
+  [
+   "花",
+   "はな",
+   "bông hoa",
+   "gungun_n5:9"
+  ],
+  [
+   "切手",
+   "きって",
+   "con tem",
+   "gungun_n5:9"
+  ],
+  [
+   "自分",
+   "じぶん",
+   "bản thân",
+   "gungun_n5:9"
+  ],
+  [
+   "新聞",
+   "しんぶん",
+   "tờ báo",
+   "gungun_n5:9"
+  ],
+  [
+   "空港",
+   "くうこう",
+   "sân bay",
+   "gungun_n5:9"
+  ],
+  [
+   "飲み物",
+   "のみもの",
+   "đồ uống",
+   "gungun_n5:9"
+  ],
+  [
+   "シャワー",
+   "",
+   "vòi hoa sen",
+   "gungun_n5:9"
+  ],
+  [
+   "コーヒーマシン",
+   "",
+   "máy pha cà phê",
+   "gungun_n5:9"
+  ],
+  [
+   "カフェ",
+   "",
+   "quán cà phê",
+   "gungun_n5:9"
+  ],
+  [
+   "ゲーム",
+   "",
+   "game, trò chơi",
+   "gungun_n5:9"
+  ],
+  [
+   "クラシック",
+   "",
+   "nhạc cổ điển",
+   "gungun_n5:9"
+  ],
+  [
+   "コンサート",
+   "",
+   "buổi hòa nhạc",
+   "gungun_n5:9"
+  ],
+  [
+   "スキー",
+   "",
+   "trượt tuyết",
+   "gungun_n5:9"
+  ],
+  [
+   "シール",
+   "",
+   "nhãn dán",
+   "gungun_n5:9"
+  ],
+  [
+   "描く",
+   "かく",
+   "vẽ",
+   "gungun_n5:9"
+  ],
+  [
+   "書く",
+   "かく",
+   "viết",
+   "gungun_n5:9"
+  ],
+  [
+   "作る",
+   "つくる",
+   "làm, tạo ra",
+   "gungun_n5:9"
+  ],
+  [
+   "登る",
+   "のぼる",
+   "leo (núi)",
+   "gungun_n5:9"
+  ],
+  [
+   "片付ける",
+   "かたづける",
+   "sắp xếp",
+   "gungun_n5:9"
+  ],
+  [
+   "育てる",
+   "そだてる",
+   "nuôi dạy, nuôi dưỡng, nuôi trồng",
+   "gungun_n5:9"
+  ],
+  [
+   "集める",
+   "あつめる",
+   "thu thập, sưu tầm",
+   "gungun_n5:9"
+  ],
+  [
+   "建てる",
+   "たてる",
+   "xây dựng",
+   "gungun_n5:9"
+  ],
+  [
+   "浴びる",
+   "あびる",
+   "tắm",
+   "gungun_n5:9"
+  ],
+  [
+   "運転する",
+   "うんてんする",
+   "lái xe",
+   "gungun_n5:9"
+  ],
+  [
+   "今度",
+   "こんど",
+   "lần tới",
+   "gungun_n5:9"
+  ],
+  [
+   "それと",
+   "",
+   "thêm nữa",
+   "gungun_n5:9"
+  ],
+  [
+   "そうだ",
+   "",
+   "A, đúng rồi! A, phải rồi!",
+   "gungun_n5:9"
+  ],
+  [
+   "字",
+   "じ",
+   "chữ",
+   "gungun_n5:9"
+  ],
+  [
+   "クーポン",
+   "",
+   "phiếu giảm giá",
+   "gungun_n5:9"
+  ],
+  [
+   "ランチ",
+   "",
+   "bữa trưa",
+   "gungun_n5:9"
+  ],
+  [
+   "ニュース",
+   "",
+   "tin tức",
+   "gungun_n5:9"
+  ],
+  [
+   "汚い",
+   "きたない",
+   "bẩn, xấu (chữ viết)",
+   "gungun_n5:9"
+  ],
+  [
+   "歌う",
+   "うたう",
+   "hát",
+   "gungun_n5:9"
+  ],
+  [
+   "そろそろ",
+   "",
+   "sắp, chuẩn bị",
+   "gungun_n5:9"
+  ],
+  [
+   "こんなに",
+   "",
+   "đến mức này, như thế này",
+   "gungun_n5:9"
+  ],
+  [
+   "〜% OFF",
+   "〜ぱーせんとおふ",
+   "giảm ~ %",
+   "gungun_n5:9"
+  ],
+  [
+   "そうか",
+   "",
+   "vậy à, thế à (thân mật)",
+   "gungun_n5:9"
+  ],
+  [
+   "そっか",
+   "",
+   "vậy à, thế à (thân mật)",
+   "gungun_n5:9"
+  ],
+  [
+   "何でしょうか",
+   "なんでしょうか",
+   "đây là cách nói lịch sự của 何ですか",
+   "gungun_n5:9"
+  ],
+  [
+   "最後",
+   "さいご",
+   "cuối cùng",
+   "gungun_n5:9"
+  ],
+  [
+   "夜行バス",
+   "やこうばす",
+   "xe buýt đêm",
+   "gungun_n5:9"
+  ],
+  [
+   "アクセサリー",
+   "",
+   "trang sức, phụ kiện",
+   "gungun_n5:9"
+  ],
+  [
+   "チーズ",
+   "",
+   "phô mai",
+   "gungun_n5:9"
+  ],
+  [
+   "ダイエット",
+   "",
+   "ăn kiêng",
+   "gungun_n5:9"
+  ],
+  [
+   "死ぬ",
+   "しぬ",
+   "chết",
+   "gungun_n5:9"
+  ],
+  [
+   "〜中",
+   "〜ちゅう",
+   "đang~",
+   "gungun_n5:9"
+  ],
+  [
+   "ダイエット中",
+   "だいえっとちゅう",
+   "đang ăn kiêng",
+   "gungun_n5:9"
+  ],
+  [
+   "勉強中",
+   "べんきょうちゅう",
+   "đang học",
+   "gungun_n5:9"
+  ],
+  [
+   "仕事中",
+   "しごとちゅう",
+   "đang làm việc",
+   "gungun_n5:9"
+  ],
+  [
+   "約束",
+   "やくそく",
+   "lời hứa, cuộc hẹn",
+   "gungun_n5:10"
+  ],
+  [
+   "荷物",
+   "にもつ",
+   "hành lý",
+   "gungun_n5:10"
+  ],
+  [
+   "自動販売機",
+   "じどうはんばいき",
+   "máy bán hàng tự động",
+   "gungun_n5:10"
+  ],
+  [
+   "会議",
+   "かいぎ",
+   "cuộc họp",
+   "gungun_n5:10"
+  ],
+  [
+   "歯",
+   "は",
+   "răng",
+   "gungun_n5:10"
+  ],
+  [
+   "宿題",
+   "しゅくだい",
+   "bài về nhà",
+   "gungun_n5:10"
+  ],
+  [
+   "ATM",
+   "",
+   "cây rút tiền",
+   "gungun_n5:10"
+  ],
+  [
+   "コンビニ",
+   "",
+   "cửa hàng tiện lợi",
+   "gungun_n5:10"
+  ],
+  [
+   "磨く",
+   "みがく",
+   "đánh (răng, giày,....)",
+   "gungun_n5:10"
+  ],
+  [
+   "引き出す",
+   "ひきだす",
+   "rút (tiền), kéo ra",
+   "gungun_n5:10"
+  ],
+  [
+   "終わる",
+   "おわる",
+   "kết thúc",
+   "gungun_n5:10"
+  ],
+  [
+   "準備する",
+   "じゅんびする",
+   "chuẩn bị",
+   "gungun_n5:10"
+  ],
+  [
+   "掃除する",
+   "そうじする",
+   "dọn dẹp",
+   "gungun_n5:10"
+  ],
+  [
+   "みんなで",
+   "",
+   "tất cả (mọi người) (cùng thực hiện hành động)",
+   "gungun_n5:10"
+  ],
+  [
+   "曲",
+   "きょく",
+   "ca khúc, khúc nhạc",
+   "gungun_n5:10"
+  ],
+  [
+   "海外",
+   "かいがい",
+   "nước ngoài",
+   "gungun_n5:10"
+  ],
+  [
+   "バンド",
+   "",
+   "nhóm nhạc",
+   "gungun_n5:10"
+  ],
+  [
+   "さっき",
+   "",
+   "lúc nãy, vừa nãy",
+   "gungun_n5:10"
+  ],
+  [
+   "〜度",
+   "〜ど",
+   "lần",
+   "gungun_n5:10"
+  ],
+  [
+   "1度",
+   "いちど",
+   "1 lần",
+   "gungun_n5:10"
+  ],
+  [
+   "一度",
+   "いちど",
+   "1 lần",
+   "gungun_n5:10"
+  ],
+  [
+   "何度も",
+   "なんども",
+   "nhiều lần",
+   "gungun_n5:10"
+  ],
+  [
+   "待つ",
+   "まつ",
+   "chờ",
+   "gungun_n5:10"
+  ],
+  [
+   "着く",
+   "つく",
+   "đến (nơi)",
+   "gungun_n5:10"
+  ],
+  [
+   "始まる",
+   "はじまる",
+   "(~) bắt đầu",
+   "gungun_n5:10"
+  ],
+  [
+   "入る",
+   "はいる",
+   "vào (vào phòng, vào đại học...)",
+   "gungun_n5:10"
+  ],
+  [
+   "遅れる",
+   "おくれる",
+   "muộn",
+   "gungun_n5:10"
+  ],
+  [
+   "慣れる",
+   "なれる",
+   "quen, quen thuộc (với ~ )",
+   "gungun_n5:10"
+  ],
+  [
+   "卒業する",
+   "そつぎょうする",
+   "tốt nghiệp",
+   "gungun_n5:10"
+  ],
+  [
+   "ごめん",
+   "",
+   "xin lỗi",
+   "gungun_n5:10"
+  ],
+  [
+   "ごめんなさい",
+   "",
+   "xin lỗi",
+   "gungun_n5:10"
+  ],
+  [
+   "お待たせ",
+   "おまたせ",
+   "xin lỗi đã để anh/chị/bạn chờ",
+   "gungun_n5:10"
+  ],
+  [
+   "こちらこそ",
+   "",
+   "chính phía tôi ~",
+   "gungun_n5:10"
+  ],
+  [
+   "お腹がいっぱい",
+   "おなかがいっぱい",
+   "no",
+   "gungun_n5:10"
+  ],
+  [
+   "席",
+   "せき",
+   "chỗ ngồi",
+   "gungun_n5:11"
+  ],
+  [
+   "説明書",
+   "せつめいしょ",
+   "sách hướng dẫn",
+   "gungun_n5:11"
+  ],
+  [
+   "両親",
+   "りょうしん",
+   "bố mẹ",
+   "gungun_n5:11"
+  ],
+  [
+   "お風呂",
+   "おふろ",
+   "bồn tắm",
+   "gungun_n5:11"
+  ],
+  [
+   "ドライブ",
+   "",
+   "việc lái xe ô tô đi dạo/ đi chơi xa",
+   "gungun_n5:11"
+  ],
+  [
+   "アプリ",
+   "",
+   "ứng dụng (phần mềm), app",
+   "gungun_n5:11"
+  ],
+  [
+   "遅い",
+   "おそい",
+   "muộn, chậm",
+   "gungun_n5:11"
+  ],
+  [
+   "しょうがない",
+   "",
+   "đành chịu, hết cách",
+   "gungun_n5:11"
+  ],
+  [
+   "言う",
+   "いう",
+   "nói",
+   "gungun_n5:11"
+  ],
+  [
+   "急ぐ",
+   "いそぐ",
+   "khẩn trương, nhanh chóng",
+   "gungun_n5:11"
+  ],
+  [
+   "頑張る",
+   "がんばる",
+   "cố gắng",
+   "gungun_n5:11"
+  ],
+  [
+   "間に合う",
+   "まにあう",
+   "kịp, kịp giờ",
+   "gungun_n5:11"
+  ],
+  [
+   "やる",
+   "",
+   "làm",
+   "gungun_n5:11"
+  ],
+  [
+   "出る",
+   "でる",
+   "lộ ra, lòi ra",
+   "gungun_n5:11"
+  ],
+  [
+   "予約",
+   "よやく",
+   "đặt trước",
+   "gungun_n5:11"
+  ],
+  [
+   "練習",
+   "れんしゅう",
+   "luyện tập",
+   "gungun_n5:11"
+  ],
+  [
+   "安心",
+   "あんしん",
+   "an tâm, yên tâm",
+   "gungun_n5:11"
+  ],
+  [
+   "まだ",
+   "",
+   "vẫn chưa (phủ định), vẫn còn (khẳng định)",
+   "gungun_n5:11"
+  ],
+  [
+   "お疲れ様です",
+   "おつかれさまです",
+   "anh/ chị làm việc vất vả rồi",
+   "gungun_n5:11"
+  ],
+  [
+   "乾杯",
+   "かんぱい",
+   "cạn ly!",
+   "gungun_n5:11"
+  ],
+  [
+   "頑張ってください",
+   "がんばってください",
+   "cố gắng lên",
+   "gungun_n5:11"
+  ],
+  [
+   "世界",
+   "せかい",
+   "thế giới",
+   "gungun_n5:11"
+  ],
+  [
+   "世界一周",
+   "せかいいっしゅう",
+   "vòng quanh thế giới",
+   "gungun_n5:11"
+  ],
+  [
+   "広告",
+   "こうこく",
+   "quảng cáo",
+   "gungun_n5:11"
+  ],
+  [
+   "野球",
+   "やきゅう",
+   "bóng chày",
+   "gungun_n5:11"
+  ],
+  [
+   "健康診断",
+   "けんこうしんだん",
+   "khám sức khỏe",
+   "gungun_n5:11"
+  ],
+  [
+   "病気",
+   "びょうき",
+   "ốm, bệnh",
+   "gungun_n5:11"
+  ],
+  [
+   "全員",
+   "ぜんいん",
+   "tất cả mọi người",
+   "gungun_n5:11"
+  ],
+  [
+   "不合格",
+   "ふごうかく",
+   "không đỗ; trượt",
+   "gungun_n5:11"
+  ],
+  [
+   "資料",
+   "しりょう",
+   "tài liệu",
+   "gungun_n5:11"
+  ],
+  [
+   "世話",
+   "せわ",
+   "chăm sóc",
+   "gungun_n5:11"
+  ],
+  [
+   "薬",
+   "くすり",
+   "thuốc",
+   "gungun_n5:11"
+  ],
+  [
+   "たばこ",
+   "",
+   "thuốc lá",
+   "gungun_n5:11"
+  ],
+  [
+   "お知らせ",
+   "おしらせ",
+   "thông báo",
+   "gungun_n5:11"
+  ],
+  [
+   "手",
+   "て",
+   "tay, bàn tay",
+   "gungun_n5:11"
+  ],
+  [
+   "レポート",
+   "",
+   "báo cáo",
+   "gungun_n5:11"
+  ],
+  [
+   "だめ",
+   "",
+   "không được",
+   "gungun_n5:11"
+  ],
+  [
+   "洗う",
+   "あらう",
+   "rửa",
+   "gungun_n5:11"
+  ],
+  [
+   "吸う",
+   "すう",
+   "hút (thuốc)",
+   "gungun_n5:11"
+  ],
+  [
+   "回す",
+   "まわす",
+   "xoay tròn, vung tròn",
+   "gungun_n5:11"
+  ],
+  [
+   "乗る",
+   "のる",
+   "lên (tàu, xe,..)",
+   "gungun_n5:11"
+  ],
+  [
+   "連れて行く",
+   "つれていく",
+   "dẫn (ai) đi (đến đâu)",
+   "gungun_n5:11"
+  ],
+  [
+   "持っていく",
+   "もっていく",
+   "mang đi, cầm đi",
+   "gungun_n5:11"
+  ],
+  [
+   "晴れる",
+   "はれる",
+   "nắng",
+   "gungun_n5:11"
+  ],
+  [
+   "気を付ける",
+   "きをつける",
+   "chú ý",
+   "gungun_n5:11"
+  ],
+  [
+   "注意",
+   "ちゅうい",
+   "chú ý; nhắc nhở (người khác)",
+   "gungun_n5:11"
+  ],
+  [
+   "合格",
+   "ごうかく",
+   "đỗ",
+   "gungun_n5:11"
+  ],
+  [
+   "残業",
+   "ざんぎょう",
+   "tăng ca",
+   "gungun_n5:11"
+  ],
+  [
+   "出張",
+   "しゅっちょう",
+   "đi công tác",
+   "gungun_n5:11"
+  ],
+  [
+   "一生懸命",
+   "いっしょうけんめい",
+   "chăm chỉ",
+   "gungun_n5:11"
+  ],
+  [
+   "絶対に",
+   "ぜったいに",
+   "nhất định, tuyệt đối",
+   "gungun_n5:11"
+  ],
+  [
+   "いつか",
+   "",
+   "một lúc nào đó",
+   "gungun_n5:11"
+  ],
+  [
+   "そうなんですね",
+   "",
+   "vậy à, thế à",
+   "gungun_n5:11"
+  ],
+  [
+   "そうなんだ",
+   "",
+   "vậy à, thế à (thân mật)",
+   "gungun_n5:11"
+  ],
+  [
+   "生活する",
+   "せいかつする",
+   "sinh sống, sinh hoạt",
+   "gungun_n5:11"
+  ],
+  [
+   "体",
+   "からだ",
+   "cơ thể",
+   "gungun_n5:12"
+  ],
+  [
+   "ハンバーグ",
+   "",
+   "thịt viên rán",
+   "gungun_n5:12"
+  ],
+  [
+   "インターネット",
+   "",
+   "internet",
+   "gungun_n5:12"
+  ],
+  [
+   "置く",
+   "おく",
+   "đặt, để",
+   "gungun_n5:12"
+  ],
+  [
+   "下ろす",
+   "おろす",
+   "rút (tiền)",
+   "gungun_n5:12"
+  ],
+  [
+   "調べる",
+   "しらべる",
+   "tra cứu, tìm hiểu",
+   "gungun_n5:12"
+  ],
+  [
+   "帰ってくる",
+   "かえってくる",
+   "về đến",
+   "gungun_n5:12"
+  ],
+  [
+   "もう",
+   "",
+   "đã, rồi",
+   "gungun_n5:12"
+  ],
+  [
+   "おやすみなさい",
+   "",
+   "chúc ngủ ngon",
+   "gungun_n5:12"
+  ],
+  [
+   "ほら",
+   "",
+   "nào! (kêu gọi sự chú ý)",
+   "gungun_n5:12"
+  ],
+  [
+   "やだ",
+   "",
+   "không thích, không được / thôi chết!",
+   "gungun_n5:12"
+  ],
+  [
+   "空",
+   "そら",
+   "bầu trời",
+   "gungun_n5:12"
+  ],
+  [
+   "雪",
+   "ゆき",
+   "tuyết",
+   "gungun_n5:12"
+  ],
+  [
+   "休憩室",
+   "きゅうけいしつ",
+   "phòng nghỉ",
+   "gungun_n5:12"
+  ],
+  [
+   "風",
+   "かぜ",
+   "gió",
+   "gungun_n5:12"
+  ],
+  [
+   "地面",
+   "じめん",
+   "mặt đất",
+   "gungun_n5:12"
+  ],
+  [
+   "探す",
+   "さがす",
+   "tìm kiếm",
+   "gungun_n5:12"
+  ],
+  [
+   "降る",
+   "ふる",
+   "rơi (mưa, tuyết)",
+   "gungun_n5:12"
+  ],
+  [
+   "飛ぶ",
+   "とぶ",
+   "bay",
+   "gungun_n5:12"
+  ],
+  [
+   "走る",
+   "はしる",
+   "chạy",
+   "gungun_n5:12"
+  ],
+  [
+   "通う",
+   "かよう",
+   "đi lại (thường xuyên đến 1 nơi)",
+   "gungun_n5:12"
+  ],
+  [
+   "泣く",
+   "なく",
+   "khóc",
+   "gungun_n5:12"
+  ],
+  [
+   "笑う",
+   "わらう",
+   "cười",
+   "gungun_n5:12"
+  ],
+  [
+   "曇る",
+   "くもる",
+   "âm u, nhiều mây",
+   "gungun_n5:12"
+  ],
+  [
+   "続く",
+   "つづく",
+   "liên tục",
+   "gungun_n5:12"
+  ],
+  [
+   "吹く",
+   "ふく",
+   "thổi",
+   "gungun_n5:12"
+  ],
+  [
+   "揺れる",
+   "ゆれる",
+   "rung lắc",
+   "gungun_n5:12"
+  ],
+  [
+   "運動する",
+   "うんどうする",
+   "vận động, tập thể dục",
+   "gungun_n5:12"
+  ],
+  [
+   "コピーする",
+   "",
+   "photo",
+   "gungun_n5:12"
+  ],
+  [
+   "体にいい",
+   "からだにいい",
+   "tốt cho cơ thể",
+   "gungun_n5:12"
+  ],
+  [
+   "お先に失礼します",
+   "おさきにしつれいします",
+   "tôi xin phép về trước",
+   "gungun_n5:12"
+  ],
+  [
+   "兄弟",
+   "きょうだい",
+   "anh em",
+   "gungun_n5:12"
+  ],
+  [
+   "独身",
+   "どくしん",
+   "độc thân",
+   "gungun_n5:12"
+  ],
+  [
+   "会長",
+   "かいちょう",
+   "chủ tịch",
+   "gungun_n5:12"
+  ],
+  [
+   "花瓶",
+   "かびん",
+   "bình hoa",
+   "gungun_n5:12"
+  ],
+  [
+   "桜",
+   "さくら",
+   "hoa anh đào",
+   "gungun_n5:12"
+  ],
+  [
+   "虫",
+   "むし",
+   "sâu bọ",
+   "gungun_n5:12"
+  ],
+  [
+   "ごみ",
+   "",
+   "rác",
+   "gungun_n5:12"
+  ],
+  [
+   "落とし物",
+   "おとしもの",
+   "đồ đánh rơi",
+   "gungun_n5:12"
+  ],
+  [
+   "周り",
+   "まわり",
+   "xung quanh",
+   "gungun_n5:12"
+  ],
+  [
+   "太陽",
+   "たいよう",
+   "mặt trời",
+   "gungun_n5:12"
+  ],
+  [
+   "月",
+   "つき",
+   "mặt trăng",
+   "gungun_n5:12"
+  ],
+  [
+   "地球",
+   "ちきゅう",
+   "trái đất",
+   "gungun_n5:12"
+  ],
+  [
+   "床",
+   "ゆか",
+   "sàn nhà",
+   "gungun_n5:12"
+  ],
+  [
+   "パート",
+   "",
+   "làm thêm",
+   "gungun_n5:12"
+  ],
+  [
+   "ドア",
+   "",
+   "cửa",
+   "gungun_n5:12"
+  ],
+  [
+   "シャツ",
+   "",
+   "áo sơ mi",
+   "gungun_n5:12"
+  ],
+  [
+   "ハンカチ",
+   "",
+   "khăn tay, khăn mùi soa",
+   "gungun_n5:12"
+  ],
+  [
+   "習う",
+   "ならう",
+   "học",
+   "gungun_n5:12"
+  ],
+  [
+   "付く",
+   "つく",
+   "có dính, có gắn ~",
+   "gungun_n5:12"
+  ],
+  [
+   "開く",
+   "あく",
+   "~ mở",
+   "gungun_n5:12"
+  ],
+  [
+   "閉まる",
+   "しまる",
+   "~ đóng",
+   "gungun_n5:12"
+  ],
+  [
+   "住む",
+   "すむ",
+   "sống",
+   "gungun_n5:12"
+  ],
+  [
+   "知る",
+   "しる",
+   "biết",
+   "gungun_n5:12"
+  ],
+  [
+   "咲く",
+   "さく",
+   "(hoa) nở",
+   "gungun_n5:12"
+  ],
+  [
+   "立つ",
+   "たつ",
+   "đứng",
+   "gungun_n5:12"
+  ],
+  [
+   "回る",
+   "まわる",
+   "xoay vòng, quay vòng",
+   "gungun_n5:12"
+  ],
+  [
+   "濡れる",
+   "ぬれる",
+   "bị ướt",
+   "gungun_n5:12"
+  ],
+  [
+   "入れる",
+   "いれる",
+   "cho ~ vào",
+   "gungun_n5:12"
+  ],
+  [
+   "落ちる",
+   "おちる",
+   "rơi",
+   "gungun_n5:12"
+  ],
+  [
+   "汚れる",
+   "よごれる",
+   "bị bẩn",
+   "gungun_n5:12"
+  ],
+  [
+   "割れる",
+   "われる",
+   "vỡ",
+   "gungun_n5:12"
+  ],
+  [
+   "破れる",
+   "やぶれる",
+   "rách",
+   "gungun_n5:12"
+  ],
+  [
+   "倒れる",
+   "たおれる",
+   "ngã, đổ, ngất",
+   "gungun_n5:12"
+  ],
+  [
+   "結婚する",
+   "けっこんする",
+   "kết hôn",
+   "gungun_n5:12"
+  ],
+  [
+   "生産する",
+   "せいさんする",
+   "sản xuất",
+   "gungun_n5:12"
+  ],
+  [
+   "きちんと",
+   "",
+   "đầy đủ, cẩn thận",
+   "gungun_n5:12"
+  ],
+  [
+   "仲がいい",
+   "なかがいい",
+   "có mối quan hệ thân thiết",
+   "gungun_n5:12"
+  ],
+  [
+   "ご苦労様です",
+   "ごくろうさまです",
+   "Bạn đã làm việc vất vả rồi",
+   "gungun_n5:12"
+  ],
+  [
+   "カード",
+   "",
+   "thẻ",
+   "gungun_n5:12"
+  ],
+  [
+   "俺",
+   "おれ",
+   "tôi, tớ, tao (nam giới dùng, thân mật)",
+   "gungun_n5:13"
+  ],
+  [
+   "小学生",
+   "しょうがくせい",
+   "học sinh tiểu học",
+   "gungun_n5:13"
+  ],
+  [
+   "内容",
+   "ないよう",
+   "nội dung",
+   "gungun_n5:13"
+  ],
+  [
+   "制服",
+   "せいふく",
+   "đồng phục",
+   "gungun_n5:13"
+  ],
+  [
+   "宅配便",
+   "たくはいびん",
+   "dịch vụ giao hàng tận nhà",
+   "gungun_n5:13"
+  ],
+  [
+   "えんぴつ",
+   "",
+   "bút chì",
+   "gungun_n5:13"
+  ],
+  [
+   "はんこ",
+   "",
+   "con dấu",
+   "gungun_n5:13"
+  ],
+  [
+   "はがき",
+   "",
+   "bưu thiếp",
+   "gungun_n5:13"
+  ],
+  [
+   "メモ",
+   "",
+   "bản ghi nhớ, ghi chép",
+   "gungun_n5:13"
+  ],
+  [
+   "メール",
+   "",
+   "email, tin nhắn",
+   "gungun_n5:13"
+  ],
+  [
+   "サイン",
+   "",
+   "chữ ký",
+   "gungun_n5:13"
+  ],
+  [
+   "Tシャツ",
+   "",
+   "áo phông",
+   "gungun_n5:13"
+  ],
+  [
+   "先",
+   "さき",
+   "nơi, chỗ",
+   "gungun_n5:13"
+  ],
+  [
+   "スーツ",
+   "",
+   "âu phục, com lê",
+   "gungun_n5:13"
+  ],
+  [
+   "ボールペン",
+   "",
+   "bút bi",
+   "gungun_n5:13"
+  ],
+  [
+   "クレジットカード",
+   "",
+   "thẻ tín dụng",
+   "gungun_n5:13"
+  ],
+  [
+   "ドル",
+   "",
+   "đô la",
+   "gungun_n5:13"
+  ],
+  [
+   "楽",
+   "らく",
+   "nhàn, an nhàn, nhàn nhã",
+   "gungun_n5:13"
+  ],
+  [
+   "ふわふわ",
+   "",
+   "mềm, bông xốp",
+   "gungun_n5:13"
+  ],
+  [
+   "触る",
+   "さわる",
+   "sờ, chạm",
+   "gungun_n5:13"
+  ],
+  [
+   "持って帰る",
+   "もってかえる",
+   "mang về",
+   "gungun_n5:13"
+  ],
+  [
+   "取る",
+   "とる",
+   "photo",
+   "gungun_n5:13"
+  ],
+  [
+   "開ける",
+   "あける",
+   "mở",
+   "gungun_n5:13"
+  ],
+  [
+   "覚える",
+   "おぼえる",
+   "nhớ, ghi nhớ",
+   "gungun_n5:13"
+  ],
+  [
+   "早退する",
+   "そうたいする",
+   "về sớm",
+   "gungun_n5:13"
+  ],
+  [
+   "料理する",
+   "りょうりする",
+   "nấu ăn",
+   "gungun_n5:13"
+  ],
+  [
+   "試着する",
+   "しちゃくする",
+   "mặc thử (quần áo)",
+   "gungun_n5:13"
+  ],
+  [
+   "連絡する",
+   "れんらくする",
+   "liên lạc",
+   "gungun_n5:13"
+  ],
+  [
+   "参加する",
+   "さんかする",
+   "tham gia",
+   "gungun_n5:13"
+  ],
+  [
+   "構わない",
+   "かまわない",
+   "không sao, không thành vấn đề",
+   "gungun_n5:13"
+  ],
+  [
+   "構いません",
+   "かまいません",
+   "không sao, không thành vấn đề",
+   "gungun_n5:13"
+  ],
+  [
+   "いかがですか",
+   "",
+   "anh/chị thấy thế nào ạ?",
+   "gungun_n5:13"
+  ],
+  [
+   "いただきます",
+   "",
+   "tôi xin nhận ạ / tôi xin phép dùng bữa",
+   "gungun_n5:13"
+  ],
+  [
+   "商品",
+   "しょうひん",
+   "hàng hóa",
+   "gungun_n5:13"
+  ],
+  [
+   "道",
+   "みち",
+   "đường",
+   "gungun_n5:13"
+  ],
+  [
+   "店長",
+   "てんちょう",
+   "quản lý cửa hàng, chủ cửa hàng",
+   "gungun_n5:13"
+  ],
+  [
+   "先輩",
+   "せんぱい",
+   "đàn anh, tiền bối",
+   "gungun_n5:13"
+  ],
+  [
+   "食器",
+   "しょっき",
+   "dụng cụ đồ ăn (bát đĩa, thìa đũa...)",
+   "gungun_n5:13"
+  ],
+  [
+   "申込書",
+   "もうしこみしょ",
+   "tờ khai đăng ký, đơn đăng ký",
+   "gungun_n5:13"
+  ],
+  [
+   "迷惑",
+   "めいわく",
+   "phiền phức, phiền hà",
+   "gungun_n5:13"
+  ],
+  [
+   "住所",
+   "じゅうしょ",
+   "địa chỉ",
+   "gungun_n5:13"
+  ],
+  [
+   "キッチン",
+   "",
+   "phòng bếp",
+   "gungun_n5:13"
+  ],
+  [
+   "スーツケース",
+   "",
+   "va li",
+   "gungun_n5:13"
+  ],
+  [
+   "手伝う",
+   "てつだう",
+   "giúp đỡ",
+   "gungun_n5:13"
+  ],
+  [
+   "拭く",
+   "ふく",
+   "lau (bàn...)",
+   "gungun_n5:13"
+  ],
+  [
+   "助かる",
+   "たすかる",
+   "được giúp đỡ, May quá! Đỡ quá!",
+   "gungun_n5:13"
+  ],
+  [
+   "並ぶ",
+   "ならぶ",
+   "xếp hàng (ở ~)",
+   "gungun_n5:13"
+  ],
+  [
+   "貸す",
+   "かす",
+   "cho vay, cho mượn, cho thuê",
+   "gungun_n5:13"
+  ],
+  [
+   "止まる",
+   "とまる",
+   "dừng, đỗ, đậu",
+   "gungun_n5:13"
+  ],
+  [
+   "足りる",
+   "たりる",
+   "đủ",
+   "gungun_n5:13"
+  ],
+  [
+   "見せる",
+   "みせる",
+   "cho (ai) xem",
+   "gungun_n5:13"
+  ],
+  [
+   "届ける",
+   "とどける",
+   "gửi, đưa đến (ai đó)",
+   "gungun_n5:13"
+  ],
+  [
+   "つける",
+   "",
+   "bật, mở",
+   "gungun_n5:13"
+  ],
+  [
+   "教える",
+   "おしえる",
+   "dạy, chỉ bảo, cho biết",
+   "gungun_n5:13"
+  ],
+  [
+   "忘れる",
+   "わすれる",
+   "quên",
+   "gungun_n5:13"
+  ],
+  [
+   "持ってくる",
+   "もってくる",
+   "mang đến",
+   "gungun_n5:13"
+  ],
+  [
+   "確認する",
+   "かくにんする",
+   "xác nhận",
+   "gungun_n5:13"
+  ],
+  [
+   "メールする",
+   "",
+   "gửi mail, tin nhắn",
+   "gungun_n5:13"
+  ],
+  [
+   "チーズ！",
+   "",
+   "Lời nói khi hô chụp ảnh",
+   "gungun_n5:13"
+  ],
+  [
+   "腕時計",
+   "うでどけい",
+   "đồng hồ đeo tay",
+   "gungun_n5:13"
+  ],
+  [
+   "親",
+   "おや",
+   "bố mẹ",
+   "gungun_n5:13"
+  ],
+  [
+   "お年玉",
+   "おとしだま",
+   "lì xì, tiền mừng tuổi",
+   "gungun_n5:13"
+  ],
+  [
+   "結婚式",
+   "けっこんしき",
+   "đám cưới",
+   "gungun_n5:13"
+  ],
+  [
+   "果物",
+   "くだもの",
+   "hoa quả",
+   "gungun_n5:13"
+  ],
+  [
+   "彼氏",
+   "かれし",
+   "bạn trai",
+   "gungun_n5:13"
+  ],
+  [
+   "彼女",
+   "かのじょ",
+   "cô ấy, bạn gái",
+   "gungun_n5:13"
+  ],
+  [
+   "焼肉",
+   "やきにく",
+   "thịt nướng",
+   "gungun_n5:13"
+  ],
+  [
+   "この前",
+   "このまえ",
+   "trước đây",
+   "gungun_n5:13"
+  ],
+  [
+   "花束",
+   "はなたば",
+   "bó hoa",
+   "gungun_n5:13"
+  ],
+  [
+   "ありがたい",
+   "",
+   "biết ơn, đáng quý",
+   "gungun_n5:13"
+  ],
+  [
+   "払う",
+   "はらう",
+   "trả, thanh toán",
+   "gungun_n5:13"
+  ],
+  [
+   "起こす",
+   "おこす",
+   "đánh thức",
+   "gungun_n5:13"
+  ],
+  [
+   "褒める",
+   "ほめる",
+   "khen",
+   "gungun_n5:13"
+  ],
+  [
+   "くれる",
+   "",
+   "cho (ai đó cho mình/người thân của mình)",
+   "gungun_n5:13"
+  ],
+  [
+   "あげる",
+   "",
+   "cho",
+   "gungun_n5:13"
+  ],
+  [
+   "案内する",
+   "あんないする",
+   "hướng dẫn",
+   "gungun_n5:13"
+  ],
+  [
+   "応援する",
+   "おうえんする",
+   "cổ vũ, ủng hộ",
+   "gungun_n5:13"
+  ],
+  [
+   "心配する",
+   "しんぱいする",
+   "lo lắng",
+   "gungun_n5:13"
+  ],
+  [
+   "ごちそうする",
+   "",
+   "mời, khao, chiêu đãi",
+   "gungun_n5:13"
+  ],
+  [
+   "招待する",
+   "しょうたいする",
+   "mời, rủ",
+   "gungun_n5:13"
+  ],
+  [
+   "完成する",
+   "かんせいする",
+   "hoàn thành",
+   "gungun_n5:13"
+  ],
+  [
+   "必ず",
+   "かならず",
+   "luôn luôn, nhất định, chắc chắn",
+   "gungun_n5:13"
+  ],
+  [
+   "〜ずつ",
+   "",
+   "mỗi ~",
+   "gungun_n5:13"
+  ],
+  [
+   "どちらかというと",
+   "",
+   "nếu buộc phải nói, nếu phải chọn",
+   "gungun_n5:13"
+  ],
+  [
+   "いいんですか",
+   "",
+   "(thế) có được không ạ?",
+   "gungun_n5:13"
+  ],
+  [
+   "アルバイトする",
+   "",
+   "làm thêm",
+   "gungun_n5:13"
+  ],
+  [
+   "小銭",
+   "こぜに",
+   "tiền lẻ",
+   "gungun_n5:14"
+  ],
+  [
+   "千円札",
+   "せんえんさつ",
+   "tờ 1.000 yên",
+   "gungun_n5:14"
+  ],
+  [
+   "一万円札",
+   "いちまんえんさつ",
+   "tờ 10.000 yên",
+   "gungun_n5:14"
+  ],
+  [
+   "お札",
+   "おさつ",
+   "tờ tiền giấy",
+   "gungun_n5:14"
+  ],
+  [
+   "地図",
+   "ちず",
+   "bản đồ",
+   "gungun_n5:14"
+  ],
+  [
+   "自販機",
+   "じはんき",
+   "máy bán hàng tự động",
+   "gungun_n5:14"
+  ],
+  [
+   "のど",
+   "",
+   "cổ họng",
+   "gungun_n5:14"
+  ],
+  [
+   "〜以上",
+   "〜いじょう",
+   "~ trở lên, trên ~",
+   "gungun_n5:14"
+  ],
+  [
+   "両方",
+   "りょうほう",
+   "cả hai, hai bên",
+   "gungun_n5:14"
+  ],
+  [
+   "半分",
+   "はんぶん",
+   "một nửa",
+   "gungun_n5:14"
+  ],
+  [
+   "デザート",
+   "",
+   "đồ tráng miệng",
+   "gungun_n5:14"
+  ],
+  [
+   "アイスクリーム",
+   "",
+   "kem",
+   "gungun_n5:14"
+  ],
+  [
+   "サラダ",
+   "",
+   "salad",
+   "gungun_n5:14"
+  ],
+  [
+   "イベント",
+   "",
+   "sự kiện",
+   "gungun_n5:14"
+  ],
+  [
+   "ランチセット",
+   "",
+   "suất ăn trưa",
+   "gungun_n5:14"
+  ],
+  [
+   "ジェットコースター",
+   "",
+   "tàu lượn siêu tốc",
+   "gungun_n5:14"
+  ],
+  [
+   "細かい",
+   "こまかい",
+   "nhỏ nhặt, chi tiết, (tiền) lẻ",
+   "gungun_n5:14"
+  ],
+  [
+   "必要",
+   "ひつよう",
+   "cần thiết",
+   "gungun_n5:14"
+  ],
+  [
+   "渇く",
+   "かわく",
+   "khát, khô (cổ)",
+   "gungun_n5:14"
+  ],
+  [
+   "困る",
+   "こまる",
+   "rắc rối, khó khăn, khó xử",
+   "gungun_n5:14"
+  ],
+  [
+   "閉める",
+   "しめる",
+   "đóng",
+   "gungun_n5:14"
+  ],
+  [
+   "営業する",
+   "えいぎょうする",
+   "kinh doanh, buôn bán",
+   "gungun_n5:14"
+  ],
+  [
+   "工事する",
+   "こうじする",
+   "thi công, sửa chữa",
+   "gungun_n5:14"
+  ],
+  [
+   "外出する",
+   "がいしゅつする",
+   "đi ra ngoài",
+   "gungun_n5:14"
+  ],
+  [
+   "もう少し",
+   "もうすこし",
+   "một chút nữa",
+   "gungun_n5:14"
+  ],
+  [
+   "動画",
+   "どうが",
+   "video",
+   "gungun_n5:14"
+  ],
+  [
+   "顔",
+   "かお",
+   "khuôn mặt",
+   "gungun_n5:14"
+  ],
+  [
+   "性格",
+   "せいかく",
+   "tính cách",
+   "gungun_n5:14"
+  ],
+  [
+   "〜前",
+   "〜まえ",
+   "~ trước",
+   "gungun_n5:14"
+  ],
+  [
+   "一年前",
+   "いちねんまえ",
+   "1 năm trước",
+   "gungun_n5:14"
+  ],
+  [
+   "一日前",
+   "いちにちまえ",
+   "1 ngày trước",
+   "gungun_n5:14"
+  ],
+  [
+   "二日前",
+   "ふつかまえ",
+   "2 ngày trước",
+   "gungun_n5:14"
+  ],
+  [
+   "三日前",
+   "みっかまえ",
+   "3 ngày trước",
+   "gungun_n5:14"
+  ],
+  [
+   "パスポート",
+   "",
+   "hộ chiếu",
+   "gungun_n5:14"
+  ],
+  [
+   "テニス",
+   "",
+   "tennis, môn quần vợt",
+   "gungun_n5:14"
+  ],
+  [
+   "おかしい",
+   "",
+   "lạ, kì lạ, buồn cười",
+   "gungun_n5:14"
+  ],
+  [
+   "出す",
+   "だす",
+   "gửi (thư)",
+   "gungun_n5:14"
+  ],
+  [
+   "預ける",
+   "あずける",
+   "gửi, giao phó",
+   "gungun_n5:14"
+  ],
+  [
+   "がっかりする",
+   "",
+   "thất vọng",
+   "gungun_n5:14"
+  ],
+  [
+   "書類",
+   "しょるい",
+   "giấy tờ, hồ sơ",
+   "gungun_n5:14"
+  ],
+  [
+   "手紙",
+   "てがみ",
+   "thư",
+   "gungun_n5:14"
+  ],
+  [
+   "申し込み",
+   "もうしこみ",
+   "sự đăng ký",
+   "gungun_n5:14"
+  ],
+  [
+   "洋服",
+   "ようふく",
+   "quần áo",
+   "gungun_n5:14"
+  ],
+  [
+   "お弁当",
+   "おべんとう",
+   "cơm hộp",
+   "gungun_n5:14"
+  ],
+  [
+   "めがね",
+   "",
+   "kính",
+   "gungun_n5:14"
+  ],
+  [
+   "用事",
+   "ようじ",
+   "việc bận, việc",
+   "gungun_n5:14"
+  ],
+  [
+   "動物",
+   "どうぶつ",
+   "động vật",
+   "gungun_n5:14"
+  ],
+  [
+   "SF",
+   "",
+   "khoa học viễn tưởng",
+   "gungun_n5:14"
+  ],
+  [
+   "飼う",
+   "かう",
+   "nuôi (chó, mèo, thú nuôi...)",
+   "gungun_n5:14"
+  ],
+  [
+   "お願いする",
+   "おねがいする",
+   "nhờ, nhờ vả",
+   "gungun_n5:14"
+  ],
+  [
+   "会話する",
+   "かいわする",
+   "hội thoại, trò chuyện",
+   "gungun_n5:14"
+  ],
+  [
+   "ついでに",
+   "",
+   "nhân tiện",
+   "gungun_n5:14"
+  ],
+  [
+   "もし",
+   "",
+   "nếu",
+   "gungun_n5:14"
+  ],
+  [
+   "了解",
+   "りょうかい",
+   "đã hiểu, đã rõ",
+   "gungun_n5:14"
+  ],
+  [
+   "本物",
+   "ほんもの",
+   "hàng thật, đồ thật",
+   "gungun_n4:15"
+  ],
+  [
+   "彼",
+   "かれ",
+   "anh ấy, ông ấy…",
+   "gungun_n4:15"
+  ],
+  [
+   "台風",
+   "たいふう",
+   "cơn bão",
+   "gungun_n4:15"
+  ],
+  [
+   "洗濯物",
+   "せんたくもの",
+   "đồ bẩn cần giặt/ đồ đã giặt",
+   "gungun_n4:15"
+  ],
+  [
+   "遊園地",
+   "ゆうえんち",
+   "khu giải trí",
+   "gungun_n4:15"
+  ],
+  [
+   "ハイキング",
+   "",
+   "leo núi dã ngoại",
+   "gungun_n4:15"
+  ],
+  [
+   "厳しい",
+   "きびしい",
+   "nghiêm khắc, khắt khe",
+   "gungun_n4:15"
+  ],
+  [
+   "混む",
+   "こむ",
+   "đông đúc, chen lấn",
+   "gungun_n4:15"
+  ],
+  [
+   "上がる",
+   "あがる",
+   "leo lên; tăng lên",
+   "gungun_n4:15"
+  ],
+  [
+   "下がる",
+   "さがる",
+   "giảm xuống; hạ xuống",
+   "gungun_n4:15"
+  ],
+  [
+   "乾く",
+   "かわく",
+   "khô (quần áo, không khí...)",
+   "gungun_n4:15"
+  ],
+  [
+   "止む",
+   "やむ",
+   "dừng; tạnh (mưa)",
+   "gungun_n4:15"
+  ],
+  [
+   "叶う",
+   "かなう",
+   "(ước mơ) thành hiện thực",
+   "gungun_n4:15"
+  ],
+  [
+   "楽しむ",
+   "たのしむ",
+   "tận hưởng; mong chờ",
+   "gungun_n4:15"
+  ],
+  [
+   "返す",
+   "かえす",
+   "trả lại",
+   "gungun_n4:15"
+  ],
+  [
+   "中止",
+   "ちゅうし",
+   "huỷ, huỷ bỏ",
+   "gungun_n4:15"
+  ],
+  [
+   "成功",
+   "せいこう",
+   "thành công",
+   "gungun_n4:15"
+  ],
+  [
+   "失敗",
+   "しっぱい",
+   "thất bại",
+   "gungun_n4:15"
+  ],
+  [
+   "きっと",
+   "",
+   "nhất định, chắc chắn",
+   "gungun_n4:15"
+  ],
+  [
+   "ただいま",
+   "",
+   "tôi đã về rồi đây",
+   "gungun_n4:15"
+  ],
+  [
+   "おかえりなさい",
+   "",
+   "bạn đã về rồi đấy à!",
+   "gungun_n4:15"
+  ],
+  [
+   "風邪",
+   "かぜ",
+   "cảm lạnh, cảm cúm",
+   "gungun_n4:15"
+  ],
+  [
+   "救急車",
+   "きゅうきゅうしゃ",
+   "xe cấp cứu",
+   "gungun_n4:15"
+  ],
+  [
+   "事故",
+   "じこ",
+   "tai nạn",
+   "gungun_n4:15"
+  ],
+  [
+   "雷",
+   "かみなり",
+   "sấm sét",
+   "gungun_n4:15"
+  ],
+  [
+   "留守",
+   "るす",
+   "vắng nhà",
+   "gungun_n4:15"
+  ],
+  [
+   "旅館",
+   "りょかん",
+   "nhà nghỉ /khách sạn kiểu Nhật",
+   "gungun_n4:15"
+  ],
+  [
+   "旅行客",
+   "りょこうきゃく",
+   "khách du lịch",
+   "gungun_n4:15"
+  ],
+  [
+   "入り口",
+   "いりぐち",
+   "lối vào",
+   "gungun_n4:15"
+  ],
+  [
+   "有名人",
+   "ゆうめいじん",
+   "người nổi tiếng",
+   "gungun_n4:15"
+  ],
+  [
+   "調味料",
+   "ちょうみりょう",
+   "gia vị",
+   "gungun_n4:15"
+  ],
+  [
+   "平日",
+   "へいじつ",
+   "ngày thường",
+   "gungun_n4:15"
+  ],
+  [
+   "ガソリン",
+   "",
+   "xăng dầu",
+   "gungun_n4:15"
+  ],
+  [
+   "真っ暗",
+   "まっくら",
+   "tối om",
+   "gungun_n4:15"
+  ],
+  [
+   "同じ",
+   "おなじ",
+   "giống nhau; cùng ~",
+   "gungun_n4:15"
+  ],
+  [
+   "引く",
+   "ひく",
+   "bị (cảm lạnh), trúng (gió)",
+   "gungun_n4:15"
+  ],
+  [
+   "集まる",
+   "あつまる",
+   "tập trung, tập hợp lại",
+   "gungun_n4:15"
+  ],
+  [
+   "差す",
+   "さす",
+   "giương (ô)",
+   "gungun_n4:15"
+  ],
+  [
+   "届く",
+   "とどく",
+   "được gửi đến/ đưa đến",
+   "gungun_n4:15"
+  ],
+  [
+   "なくなる",
+   "",
+   "mất, biến mất, hết",
+   "gungun_n4:15"
+  ],
+  [
+   "ぶつかる",
+   "",
+   "va phải, đụng phải",
+   "gungun_n4:15"
+  ],
+  [
+   "できる",
+   "",
+   "đã xong, đã chín (đồ ăn, sản phẩm)",
+   "gungun_n4:15"
+  ],
+  [
+   "怪我",
+   "けが",
+   "bị thương (ở...)",
+   "gungun_n4:15"
+  ],
+  [
+   "すぐに",
+   "",
+   "ngay lập tức, lập tức",
+   "gungun_n4:15"
+  ],
+  [
+   "だいぶ",
+   "",
+   "khá là, đáng kể",
+   "gungun_n4:15"
+  ],
+  [
+   "もしかしたら",
+   "",
+   "có lẽ",
+   "gungun_n4:15"
+  ],
+  [
+   "お花見",
+   "おはなみ",
+   "sự ngắm hoa (anh đào)",
+   "gungun_n4:16"
+  ],
+  [
+   "最初",
+   "さいしょ",
+   "đầu tiên, lúc đầu",
+   "gungun_n4:16"
+  ],
+  [
+   "今週末",
+   "こんしゅうまつ",
+   "cuối tuần này",
+   "gungun_n4:16"
+  ],
+  [
+   "地震",
+   "じしん",
+   "động đất",
+   "gungun_n4:16"
+  ],
+  [
+   "昼寝",
+   "ひるね",
+   "giấc ngủ trưa",
+   "gungun_n4:16"
+  ],
+  [
+   "嘘",
+   "うそ",
+   "lời nói dối",
+   "gungun_n4:16"
+  ],
+  [
+   "赤ちゃん",
+   "あかちゃん",
+   "em bé, trẻ sơ sinh",
+   "gungun_n4:16"
+  ],
+  [
+   "火事",
+   "かじ",
+   "hoả hoạn, đám cháy",
+   "gungun_n4:16"
+  ],
+  [
+   "教科書",
+   "きょうかしょ",
+   "sách giáo khoa",
+   "gungun_n4:16"
+  ],
+  [
+   "イギリス",
+   "",
+   "nước Anh",
+   "gungun_n4:16"
+  ],
+  [
+   "オリンピック",
+   "",
+   "thế vận hội Olympic",
+   "gungun_n4:16"
+  ],
+  [
+   "ボーナス",
+   "",
+   "tiền thưởng, phần thưởng",
+   "gungun_n4:16"
+  ],
+  [
+   "羨ましい",
+   "うらやましい",
+   "ngưỡng mộ, ghen tị (theo nghĩa tốt)",
+   "gungun_n4:16"
+  ],
+  [
+   "勝つ",
+   "かつ",
+   "thắng, chiến thắng",
+   "gungun_n4:16"
+  ],
+  [
+   "誘う",
+   "さそう",
+   "rủ, mời (ai đến đâu / sự kiện gì)",
+   "gungun_n4:16"
+  ],
+  [
+   "亡くなる",
+   "なくなる",
+   "mất, qua đời",
+   "gungun_n4:16"
+  ],
+  [
+   "別れる",
+   "わかれる",
+   "chia tay (với ai đó)",
+   "gungun_n4:16"
+  ],
+  [
+   "負ける",
+   "まける",
+   "thua, bại trận",
+   "gungun_n4:16"
+  ],
+  [
+   "売れる",
+   "うれる",
+   "bán đắt hàng, bán chạy; nổi tiếng",
+   "gungun_n4:16"
+  ],
+  [
+   "生まれる",
+   "うまれる",
+   "được sinh ra",
+   "gungun_n4:16"
+  ],
+  [
+   "やめる",
+   "",
+   "từ bỏ; nghỉ (việc), bỏ (học, thuốc lá…)",
+   "gungun_n4:16"
+  ],
+  [
+   "優勝する",
+   "ゆうしょうする",
+   "vô địch, chiến thắng giải đấu",
+   "gungun_n4:16"
+  ],
+  [
+   "びっくりする",
+   "",
+   "giật mình, ngạc nhiên",
+   "gungun_n4:16"
+  ],
+  [
+   "しかも",
+   "",
+   "không những thế, hơn nữa (nhấn mạnh điều bổ sung gây ngạc nhiên)",
+   "gungun_n4:16"
+  ],
+  [
+   "まじで",
+   "",
+   "thật á? thật sao? / thật sự!",
+   "gungun_n4:16"
+  ],
+  [
+   "やばい",
+   "",
+   "chết rồi! (kinh ngạc, lo lắng, hoặc tuyệt vời!)",
+   "gungun_n4:16"
+  ],
+  [
+   "エイプリル・フール",
+   "",
+   "ngày Cá tháng Tư",
+   "gungun_n4:16"
+  ],
+  [
+   "お礼",
+   "おれい",
+   "lời cảm ơn; quà cảm ơn",
+   "gungun_n4:16"
+  ],
+  [
+   "電池",
+   "でんち",
+   "cục pin, pin",
+   "gungun_n4:16"
+  ],
+  [
+   "天気予報",
+   "てんきよほう",
+   "dự báo thời tiết",
+   "gungun_n4:16"
+  ],
+  [
+   "交通",
+   "こうつう",
+   "giao thông",
+   "gungun_n4:16"
+  ],
+  [
+   "形",
+   "かたち",
+   "hình dáng, hình dạng",
+   "gungun_n4:16"
+  ],
+  [
+   "将来",
+   "しょうらい",
+   "tương lai",
+   "gungun_n4:16"
+  ],
+  [
+   "痛い",
+   "いたい",
+   "đau, đau đớn",
+   "gungun_n4:16"
+  ],
+  [
+   "速い",
+   "はやい",
+   "nhanh, nhanh chóng",
+   "gungun_n4:16"
+  ],
+  [
+   "危ない",
+   "あぶない",
+   "nguy hiểm",
+   "gungun_n4:16"
+  ],
+  [
+   "引っ越す",
+   "ひっこす",
+   "chuyển nhà",
+   "gungun_n4:16"
+  ],
+  [
+   "引越しする",
+   "ひっこしする",
+   "sự chuyển nhà",
+   "gungun_n4:16"
+  ],
+  [
+   "こうやって",
+   "",
+   "làm như thế này; theo cách này",
+   "gungun_n4:16"
+  ],
+  [
+   "興味",
+   "きょうみ",
+   "hứng thú, sự quan tâm",
+   "gungun_n4:17"
+  ],
+  [
+   "意味",
+   "いみ",
+   "ý nghĩa",
+   "gungun_n4:17"
+  ],
+  [
+   "場所",
+   "ばしょ",
+   "địa điểm, nơi",
+   "gungun_n4:17"
+  ],
+  [
+   "知り合い",
+   "しりあい",
+   "người quen",
+   "gungun_n4:17"
+  ],
+  [
+   "選手",
+   "せんしゅ",
+   "tuyển thủ, vận động viên",
+   "gungun_n4:17"
+  ],
+  [
+   "調子",
+   "ちょうし",
+   "tình trạng (sức khỏe, máy móc...)",
+   "gungun_n4:17"
+  ],
+  [
+   "ミュージカル",
+   "",
+   "nhạc kịch",
+   "gungun_n4:17"
+  ],
+  [
+   "チャット",
+   "",
+   "chat, tán gẫu (qua mạng)",
+   "gungun_n4:17"
+  ],
+  [
+   "遠い",
+   "とおい",
+   "xa",
+   "gungun_n4:17"
+  ],
+  [
+   "早い",
+   "はやい",
+   "sớm, nhanh",
+   "gungun_n4:17"
+  ],
+  [
+   "よろしい",
+   "",
+   "được, tốt (dạng lịch sự của 良い)",
+   "gungun_n4:17"
+  ],
+  [
+   "苦い",
+   "にがい",
+   "(vị) đắng",
+   "gungun_n4:17"
+  ],
+  [
+   "大きな",
+   "おおきな",
+   "to, lớn",
+   "gungun_n4:17"
+  ],
+  [
+   "似合う",
+   "にあう",
+   "hợp với ~, trông đẹp khi mặc/đeo",
+   "gungun_n4:17"
+  ],
+  [
+   "興味がある",
+   "きょうみがある",
+   "có hứng thú với ~",
+   "gungun_n4:17"
+  ],
+  [
+   "始める",
+   "はじめる",
+   "bắt đầu (cái gì đó)",
+   "gungun_n4:17"
+  ],
+  [
+   "注文する",
+   "ちゅうもんする",
+   "gọi món, đặt mua",
+   "gungun_n4:17"
+  ],
+  [
+   "確か",
+   "たしか",
+   "hình như, nếu không nhầm thì ~",
+   "gungun_n4:17"
+  ],
+  [
+   "お大事に",
+   "おだいじに",
+   "Hãy giữ gìn sức khoẻ",
+   "gungun_n4:17"
+  ],
+  [
+   "実は",
+   "じつは",
+   "thật ra ~, thực ra là ~",
+   "gungun_n4:17"
+  ],
+  [
+   "〜市",
+   "〜し",
+   "thành phố ~",
+   "gungun_n4:17"
+  ],
+  [
+   "同僚",
+   "どうりょう",
+   "đồng nghiệp",
+   "gungun_n4:17"
+  ],
+  [
+   "貿易",
+   "ぼうえき",
+   "ngoại thương, thương mại quốc tế",
+   "gungun_n4:17"
+  ],
+  [
+   "着物",
+   "きもの",
+   "kimono (trang phục truyền thống Nhật)",
+   "gungun_n4:17"
+  ],
+  [
+   "具合",
+   "ぐあい",
+   "tình trạng sức khoẻ",
+   "gungun_n4:17"
+  ],
+  [
+   "気分",
+   "きぶん",
+   "tâm trạng, cảm giác (trong người)",
+   "gungun_n4:17"
+  ],
+  [
+   "デート",
+   "",
+   "buổi hẹn hò",
+   "gungun_n4:17"
+  ],
+  [
+   "利用する",
+   "りようする",
+   "sử dụng, tận dụng ~",
+   "gungun_n4:17"
+  ],
+  [
+   "紹介する",
+   "しょうかいする",
+   "giới thiệu ~ (với ai đó)",
+   "gungun_n4:17"
+  ],
+  [
+   "カットする",
+   "",
+   "cắt ~; cắt tóc",
+   "gungun_n4:17"
+  ],
+  [
+   "〜円する",
+   "〜えんする",
+   "tốn (○○ yên)",
+   "gungun_n4:17"
+  ],
+  [
+   "なんで",
+   "",
+   "tại sao, vì sao (thân mật)",
+   "gungun_n4:17"
+  ],
+  [
+   "だから",
+   "",
+   "bởi vậy, vì thế, cho nên",
+   "gungun_n4:17"
+  ],
+  [
+   "どうやって",
+   "",
+   "làm thế nào, bằng cách nào",
+   "gungun_n4:17"
+  ],
+  [
+   "砂",
+   "すな",
+   "cát",
+   "gungun_n4:18"
+  ],
+  [
+   "敬語",
+   "けいご",
+   "kính ngữ",
+   "gungun_n4:18"
+  ],
+  [
+   "ひも",
+   "",
+   "sợi dây",
+   "gungun_n4:18"
+  ],
+  [
+   "コンセント",
+   "",
+   "ổ cắm",
+   "gungun_n4:18"
+  ],
+  [
+   "ボタン",
+   "",
+   "khuy, cúc",
+   "gungun_n4:18"
+  ],
+  [
+   "うれしい",
+   "",
+   "vui vẻ",
+   "gungun_n4:18"
+  ],
+  [
+   "強い",
+   "つよい",
+   "mạnh, mạnh mẽ",
+   "gungun_n4:18"
+  ],
+  [
+   "弱い",
+   "よわい",
+   "yếu, yếu đuối",
+   "gungun_n4:18"
+  ],
+  [
+   "優しい",
+   "やさしい",
+   "tử tế, tốt bụng",
+   "gungun_n4:18"
+  ],
+  [
+   "悲しい",
+   "かなしい",
+   "buồn bã",
+   "gungun_n4:18"
+  ],
+  [
+   "幸せ",
+   "しあわせ",
+   "hạnh phúc",
+   "gungun_n4:18"
+  ],
+  [
+   "真面目",
+   "まじめ",
+   "nghiêm túc, chăm chỉ",
+   "gungun_n4:18"
+  ],
+  [
+   "間違える",
+   "まちがえる",
+   "nhầm ~, làm sai",
+   "gungun_n4:18"
+  ],
+  [
+   "切れる",
+   "きれる",
+   "bị gãy, bị đứt",
+   "gungun_n4:18"
+  ],
+  [
+   "取れる",
+   "とれる",
+   "bung (cúc/khuy) (ボタンが取れる)",
+   "gungun_n4:18"
+  ],
+  [
+   "折れる",
+   "おれる",
+   "gãy (tự nhiên)",
+   "gungun_n4:18"
+  ],
+  [
+   "消える",
+   "きえる",
+   "(điện, đèn...) tắt",
+   "gungun_n4:18"
+  ],
+  [
+   "ゴールする",
+   "",
+   "ghi bàn, ghi điểm, cán đích",
+   "gungun_n4:18"
+  ],
+  [
+   "もう少しで",
+   "もうすこしで",
+   "thêm một chút nữa là...",
+   "gungun_n4:18"
+  ],
+  [
+   "気持ち",
+   "きもち",
+   "cảm xúc, tâm trạng",
+   "gungun_n4:18"
+  ],
+  [
+   "前髪",
+   "まえがみ",
+   "tóc mái",
+   "gungun_n4:18"
+  ],
+  [
+   "くちびる",
+   "",
+   "đôi môi",
+   "gungun_n4:18"
+  ],
+  [
+   "砂糖",
+   "さとう",
+   "đường, đường ăn",
+   "gungun_n4:18"
+  ],
+  [
+   "電気",
+   "でんき",
+   "điện",
+   "gungun_n4:18"
+  ],
+  [
+   "黒板",
+   "こくばん",
+   "bảng đen",
+   "gungun_n4:18"
+  ],
+  [
+   "壁",
+   "かべ",
+   "bức tường",
+   "gungun_n4:18"
+  ],
+  [
+   "温度",
+   "おんど",
+   "nhiệt độ",
+   "gungun_n4:18"
+  ],
+  [
+   "冷房",
+   "れいぼう",
+   "chế độ làm lạnh của điều hoà",
+   "gungun_n4:18"
+  ],
+  [
+   "チラシ",
+   "",
+   "tờ rơi",
+   "gungun_n4:18"
+  ],
+  [
+   "エアコン",
+   "",
+   "điều hòa",
+   "gungun_n4:18"
+  ],
+  [
+   "暗い",
+   "くらい",
+   "tối, u ám",
+   "gungun_n4:18"
+  ],
+  [
+   "暖かい",
+   "あたたかい",
+   "ấm",
+   "gungun_n4:18"
+  ],
+  [
+   "薄い",
+   "うすい",
+   "mỏng, nhạt",
+   "gungun_n4:18"
+  ],
+  [
+   "厚い",
+   "あつい",
+   "dày",
+   "gungun_n4:18"
+  ],
+  [
+   "白い",
+   "しろい",
+   "màu trắng, trắng",
+   "gungun_n4:18"
+  ],
+  [
+   "うるさい",
+   "",
+   "ầm ĩ, ồn ào",
+   "gungun_n4:18"
+  ],
+  [
+   "切る",
+   "きる",
+   "cắt ~",
+   "gungun_n4:18"
+  ],
+  [
+   "塗る",
+   "ぬる",
+   "bôi (thuốc), quét (sơn)",
+   "gungun_n4:18"
+  ],
+  [
+   "折る",
+   "おる",
+   "bẻ, gập",
+   "gungun_n4:18"
+  ],
+  [
+   "冷やす",
+   "ひやす",
+   "làm lạnh",
+   "gungun_n4:18"
+  ],
+  [
+   "分ける",
+   "わける",
+   "chia, phân loại",
+   "gungun_n4:18"
+  ],
+  [
+   "換える",
+   "かえる",
+   "đổi, thay",
+   "gungun_n4:18"
+  ],
+  [
+   "温める",
+   "あたためる",
+   "làm ấm",
+   "gungun_n4:18"
+  ],
+  [
+   "暖める",
+   "あたためる",
+   "làm ấm",
+   "gungun_n4:18"
+  ],
+  [
+   "もっと",
+   "",
+   "hơn, nhiều hơn, thêm",
+   "gungun_n4:18"
+  ],
+  [
+   "なかなか",
+   "",
+   "mãi mà (không) ~",
+   "gungun_n4:18"
+  ],
+  [
+   "〜おめでとう",
+   "",
+   "chúc mừng (về ~)",
+   "gungun_n4:18"
+  ],
+  [
+   "比べて",
+   "くらべて",
+   "so với ~",
+   "gungun_n4:18"
+  ],
+  [
+   "寝室",
+   "しんしつ",
+   "phòng ngủ",
+   "gungun_n4:19"
+  ],
+  [
+   "棚",
+   "たな",
+   "tủ, giá",
+   "gungun_n4:19"
+  ],
+  [
+   "パズル",
+   "",
+   "đồ chơi xếp hình",
+   "gungun_n4:19"
+  ],
+  [
+   "データ",
+   "",
+   "dữ liệu",
+   "gungun_n4:19"
+  ],
+  [
+   "タイマー",
+   "",
+   "hẹn giờ",
+   "gungun_n4:19"
+  ],
+  [
+   "アイドル",
+   "",
+   "thần tượng",
+   "gungun_n4:19"
+  ],
+  [
+   "大切",
+   "たいせつ",
+   "quan trọng",
+   "gungun_n4:19"
+  ],
+  [
+   "育つ",
+   "そだつ",
+   "được nuôi nấng; lớn lên, trưởng thành",
+   "gungun_n4:19"
+  ],
+  [
+   "暖まる",
+   "あたたまる",
+   "ấm lên, nóng lên",
+   "gungun_n4:19"
+  ],
+  [
+   "つく",
+   "",
+   "(điện, đèn…) bật",
+   "gungun_n4:19"
+  ],
+  [
+   "沸かす",
+   "わかす",
+   "làm nóng (bồn tắm); đun (nước sôi)",
+   "gungun_n4:19"
+  ],
+  [
+   "沸く",
+   "わく",
+   "(nước bồn tắm) nóng lên, (nước) sôi lên",
+   "gungun_n4:19"
+  ],
+  [
+   "治る",
+   "なおる",
+   "khỏi (bệnh, ốm)",
+   "gungun_n4:19"
+  ],
+  [
+   "治す",
+   "なおす",
+   "chữa khỏi",
+   "gungun_n4:19"
+  ],
+  [
+   "落とす",
+   "おとす",
+   "làm rơi, đánh rơi",
+   "gungun_n4:19"
+  ],
+  [
+   "汚す",
+   "よごす",
+   "làm bẩn",
+   "gungun_n4:19"
+  ],
+  [
+   "消す",
+   "けす",
+   "tắt / xóa",
+   "gungun_n4:19"
+  ],
+  [
+   "乾かす",
+   "かわかす",
+   "làm khô, hong khô",
+   "gungun_n4:19"
+  ],
+  [
+   "破る",
+   "やぶる",
+   "làm rách",
+   "gungun_n4:19"
+  ],
+  [
+   "売る",
+   "うる",
+   "bán",
+   "gungun_n4:19"
+  ],
+  [
+   "壊す",
+   "こわす",
+   "làm hỏng",
+   "gungun_n4:19"
+  ],
+  [
+   "割る",
+   "わる",
+   "làm vỡ",
+   "gungun_n4:19"
+  ],
+  [
+   "倒す",
+   "たおす",
+   "① chặt đổ, đốn ngã ② đánh gục, hạ gục (ai đó)",
+   "gungun_n4:19"
+  ],
+  [
+   "動く",
+   "うごく",
+   "di chuyển, chuyển động",
+   "gungun_n4:19"
+  ],
+  [
+   "建つ",
+   "たつ",
+   "được xây dựng",
+   "gungun_n4:19"
+  ],
+  [
+   "かける",
+   "",
+   "treo lên",
+   "gungun_n4:19"
+  ],
+  [
+   "冷える",
+   "ひえる",
+   "lạnh",
+   "gungun_n4:19"
+  ],
+  [
+   "捨てる",
+   "すてる",
+   "vứt",
+   "gungun_n4:19"
+  ],
+  [
+   "助ける",
+   "たすける",
+   "giúp đỡ, cứu",
+   "gungun_n4:19"
+  ],
+  [
+   "止める",
+   "とめる",
+   "cản, ngăn, đỗ (xe)",
+   "gungun_n4:19"
+  ],
+  [
+   "緊張する",
+   "きんちょうする",
+   "căng thẳng",
+   "gungun_n4:19"
+  ],
+  [
+   "結構",
+   "けっこう",
+   "khá ~, tương đối ~",
+   "gungun_n4:19"
+  ],
+  [
+   "だって",
+   "",
+   "bởi vì…",
+   "gungun_n4:19"
+  ],
+  [
+   "僕",
+   "ぼく",
+   "tôi, tớ (đại từ nhân xưng của nam giới)",
+   "gungun_n4:19"
+  ],
+  [
+   "予定",
+   "よてい",
+   "dự định, kế hoạch",
+   "gungun_n4:19"
+  ],
+  [
+   "変わる",
+   "かわる",
+   "được thay đổi",
+   "gungun_n4:19"
+  ],
+  [
+   "貼る",
+   "はる",
+   "dán",
+   "gungun_n4:19"
+  ],
+  [
+   "飾る",
+   "かざる",
+   "trang trí",
+   "gungun_n4:19"
+  ],
+  [
+   "植わる",
+   "うわる",
+   "được trồng",
+   "gungun_n4:19"
+  ],
+  [
+   "植える",
+   "うえる",
+   "trồng (cây)",
+   "gungun_n4:19"
+  ],
+  [
+   "並べる",
+   "ならべる",
+   "sắp xếp",
+   "gungun_n4:19"
+  ],
+  [
+   "変える",
+   "かえる",
+   "thay đổi, đổi",
+   "gungun_n4:19"
+  ],
+  [
+   "開始する",
+   "かいしする",
+   "bắt đầu",
+   "gungun_n4:19"
+  ],
+  [
+   "用意する",
+   "よういする",
+   "chuẩn bị",
+   "gungun_n4:19"
+  ],
+  [
+   "ちゃんと",
+   "",
+   "đầy đủ",
+   "gungun_n4:19"
+  ],
+  [
+   "そのままで",
+   "",
+   "để nguyên, giữ nguyên như thế",
+   "gungun_n4:19"
+  ],
+  [
+   "〜っけ",
+   "",
+   "~ ấy nhỉ? (xác nhận lại việc đã nghe nhưng không nhớ rõ)",
+   "gungun_n4:19"
+  ],
+  [
+   "子",
+   "こ",
+   "con, đứa trẻ",
+   "gungun_n4:20"
+  ],
+  [
+   "研究者",
+   "けんきゅうしゃ",
+   "nhà nghiên cứu",
+   "gungun_n4:20"
+  ],
+  [
+   "美術館",
+   "びじゅつかん",
+   "bảo tàng mỹ thuật",
+   "gungun_n4:20"
+  ],
+  [
+   "歴史",
+   "れきし",
+   "lịch sử",
+   "gungun_n4:20"
+  ],
+  [
+   "看護師",
+   "かんごし",
+   "y tá",
+   "gungun_n4:20"
+  ],
+  [
+   "絵本",
+   "えほん",
+   "truyện tranh, truyện ehon",
+   "gungun_n4:20"
+  ],
+  [
+   "化粧品",
+   "けしょうひん",
+   "mỹ phẩm",
+   "gungun_n4:20"
+  ],
+  [
+   "法律",
+   "ほうりつ",
+   "pháp luật",
+   "gungun_n4:20"
+  ],
+  [
+   "お金持ち",
+   "おかねもち",
+   "người giàu có",
+   "gungun_n4:20"
+  ],
+  [
+   "メイド",
+   "",
+   "người giúp việc nhà",
+   "gungun_n4:20"
+  ],
+  [
+   "ドラッグストア",
+   "",
+   "hiệu thuốc",
+   "gungun_n4:20"
+  ],
+  [
+   "見つける",
+   "みつける",
+   "tìm thấy",
+   "gungun_n4:20"
+  ],
+  [
+   "いれる",
+   "",
+   "pha (cà phê) (コーヒーをいれる)",
+   "gungun_n4:20"
+  ],
+  [
+   "研究する",
+   "けんきゅうする",
+   "nghiên cứu",
+   "gungun_n4:20"
+  ],
+  [
+   "輸入する",
+   "ゆにゅうする",
+   "nhập khẩu",
+   "gungun_n4:20"
+  ],
+  [
+   "輸出する",
+   "ゆしゅつする",
+   "xuất khẩu",
+   "gungun_n4:20"
+  ],
+  [
+   "ねえ",
+   "",
+   "này (từ để gọi người thân quen)",
+   "gungun_n4:20"
+  ],
+  [
+   "後で",
+   "あとで",
+   "chốc nữa, lát nữa",
+   "gungun_n4:20"
+  ],
+  [
+   "もしかして",
+   "",
+   "có khi nào, có lẽ nào",
+   "gungun_n4:20"
+  ],
+  [
+   "お邪魔します",
+   "おじゃまします",
+   "tôi xin phép làm phiền nhé",
+   "gungun_n4:20"
+  ],
+  [
+   "理由",
+   "りゆう",
+   "lý do",
+   "gungun_n4:20"
+  ],
+  [
+   "茶色",
+   "ちゃいろ",
+   "màu nâu",
+   "gungun_n4:20"
+  ],
+  [
+   "お年寄り",
+   "おとしより",
+   "người cao tuổi",
+   "gungun_n4:20"
+  ],
+  [
+   "帽子",
+   "ぼうし",
+   "cái mũ",
+   "gungun_n4:20"
+  ],
+  [
+   "上着",
+   "うわぎ",
+   "áo khoác",
+   "gungun_n4:20"
+  ],
+  [
+   "靴下",
+   "くつした",
+   "tất, đôi tất",
+   "gungun_n4:20"
+  ],
+  [
+   "ネックレス",
+   "",
+   "vòng cổ",
+   "gungun_n4:20"
+  ],
+  [
+   "サングラス",
+   "",
+   "kính râm, kính mát",
+   "gungun_n4:20"
+  ],
+  [
+   "ピアス",
+   "",
+   "khuyên tai",
+   "gungun_n4:20"
+  ],
+  [
+   "若い",
+   "わかい",
+   "trẻ",
+   "gungun_n4:20"
+  ],
+  [
+   "茶色い",
+   "ちゃいろい",
+   "(màu) nâu",
+   "gungun_n4:20"
+  ],
+  [
+   "黄色い",
+   "きいろい",
+   "(màu) vàng",
+   "gungun_n4:20"
+  ],
+  [
+   "青い",
+   "あおい",
+   "(màu) xanh da trời",
+   "gungun_n4:20"
+  ],
+  [
+   "外す",
+   "はずす",
+   "tháo ~",
+   "gungun_n4:20"
+  ],
+  [
+   "はく",
+   "",
+   "mặc (quần, váy...); đi (tất, giày ...)",
+   "gungun_n4:20"
+  ],
+  [
+   "巻く",
+   "まく",
+   "quàng, quấn",
+   "gungun_n4:20"
+  ],
+  [
+   "被る",
+   "かぶる",
+   "đội ~",
+   "gungun_n4:20"
+  ],
+  [
+   "減る",
+   "へる",
+   "giảm xuống",
+   "gungun_n4:20"
+  ],
+  [
+   "増える",
+   "ふえる",
+   "tăng lên",
+   "gungun_n4:20"
+  ],
+  [
+   "仕方がない",
+   "しかたがない",
+   "không có cách nào",
+   "gungun_n4:20"
+  ],
+  [
+   "〜について",
+   "",
+   "về ~ (chủ đề, vấn đề nào đó)",
+   "gungun_n4:20"
+  ],
+  [
+   "音",
+   "おと",
+   "âm thanh",
+   "gungun_n4:20"
+  ],
+  [
+   "におい",
+   "",
+   "mùi",
+   "gungun_n4:20"
+  ],
+  [
+   "味",
+   "あじ",
+   "vị",
+   "gungun_n4:20"
+  ],
+  [
+   "感じ",
+   "かんじ",
+   "cảm giác",
+   "gungun_n4:20"
+  ],
+  [
+   "塩",
+   "しお",
+   "muối",
+   "gungun_n4:20"
+  ],
+  [
+   "石",
+   "いし",
+   "cục đá",
+   "gungun_n4:20"
+  ],
+  [
+   "声",
+   "こえ",
+   "giọng nói, tiếng kêu",
+   "gungun_n4:20"
+  ],
+  [
+   "花火",
+   "はなび",
+   "pháo hoa",
+   "gungun_n4:20"
+  ],
+  [
+   "背中",
+   "せなか",
+   "lưng",
+   "gungun_n4:20"
+  ],
+  [
+   "動物園",
+   "どうぶつえん",
+   "vườn bách thú",
+   "gungun_n4:20"
+  ],
+  [
+   "船",
+   "ふね",
+   "thuyền",
+   "gungun_n4:20"
+  ],
+  [
+   "川",
+   "かわ",
+   "dòng sông",
+   "gungun_n4:20"
+  ],
+  [
+   "材料",
+   "ざいりょう",
+   "vật liệu",
+   "gungun_n4:20"
+  ],
+  [
+   "けんか",
+   "",
+   "cãi nhau",
+   "gungun_n4:20"
+  ],
+  [
+   "くさい",
+   "",
+   "hôi, thối",
+   "gungun_n4:20"
+  ],
+  [
+   "変",
+   "へん",
+   "lạ, kỳ quặc",
+   "gungun_n4:20"
+  ],
+  [
+   "焼く",
+   "やく",
+   "nướng",
+   "gungun_n4:20"
+  ],
+  [
+   "聞こえる",
+   "きこえる",
+   "nghe thấy",
+   "gungun_n4:20"
+  ],
+  [
+   "見える",
+   "みえる",
+   "nhìn thấy",
+   "gungun_n4:20"
+  ],
+  [
+   "どうぞ、あがってください",
+   "",
+   "Mời bạn vào nhà.",
+   "gungun_n4:20"
+  ],
+  [
+   "なるほど",
+   "",
+   "Thì ra là vậy!",
+   "gungun_n4:20"
+  ],
+  [
+   "日本食",
+   "にほんしょく",
+   "món ăn Nhật",
+   "gungun_n4:21"
+  ],
+  [
+   "文",
+   "ぶん",
+   "câu văn",
+   "gungun_n4:21"
+  ],
+  [
+   "歯医者",
+   "はいしゃ",
+   "nha sĩ",
+   "gungun_n4:21"
+  ],
+  [
+   "道路",
+   "どうろ",
+   "con đường",
+   "gungun_n4:21"
+  ],
+  [
+   "イタリア",
+   "",
+   "nước Ý",
+   "gungun_n4:21"
+  ],
+  [
+   "ビジネス",
+   "",
+   "kinh doanh",
+   "gungun_n4:21"
+  ],
+  [
+   "メニュー",
+   "",
+   "thực đơn",
+   "gungun_n4:21"
+  ],
+  [
+   "つまらない",
+   "",
+   "chán",
+   "gungun_n4:21"
+  ],
+  [
+   "すばらしい",
+   "",
+   "tuyệt vời",
+   "gungun_n4:21"
+  ],
+  [
+   "恥ずかしい",
+   "はずかしい",
+   "xấu hổ",
+   "gungun_n4:21"
+  ],
+  [
+   "もったいない",
+   "",
+   "lãng phí, phí hoài",
+   "gungun_n4:21"
+  ],
+  [
+   "面倒",
+   "めんどう",
+   "phiền phức",
+   "gungun_n4:21"
+  ],
+  [
+   "無理",
+   "むり",
+   "không thể, quá sức",
+   "gungun_n4:21"
+  ],
+  [
+   "ラッキー",
+   "",
+   "may mắn",
+   "gungun_n4:21"
+  ],
+  [
+   "喜ぶ",
+   "よろこぶ",
+   "vui mừng, phấn khởi",
+   "gungun_n4:21"
+  ],
+  [
+   "しゃべる",
+   "",
+   "nói chuyện",
+   "gungun_n4:21"
+  ],
+  [
+   "考える",
+   "かんがえる",
+   "suy nghĩ",
+   "gungun_n4:21"
+  ],
+  [
+   "続ける",
+   "つづける",
+   "tiếp tục",
+   "gungun_n4:21"
+  ],
+  [
+   "半額",
+   "はんがく",
+   "nửa giá",
+   "gungun_n4:21"
+  ],
+  [
+   "奥さん",
+   "おくさん",
+   "vợ (người khác)",
+   "gungun_n4:21"
+  ],
+  [
+   "島",
+   "しま",
+   "hòn đảo",
+   "gungun_n4:21"
+  ],
+  [
+   "森",
+   "もり",
+   "rừng rậm",
+   "gungun_n4:21"
+  ],
+  [
+   "林",
+   "はやし",
+   "khu rừng",
+   "gungun_n4:21"
+  ],
+  [
+   "番組",
+   "ばんぐみ",
+   "chương trình (truyền hình)",
+   "gungun_n4:21"
+  ],
+  [
+   "セール",
+   "",
+   "giảm giá, sale",
+   "gungun_n4:21"
+  ],
+  [
+   "詳しい",
+   "くわしい",
+   "chi tiết, tường tận",
+   "gungun_n4:21"
+  ],
+  [
+   "見つかる",
+   "みつかる",
+   "tìm thấy",
+   "gungun_n4:21"
+  ],
+  [
+   "鳴く",
+   "なく",
+   "kêu, hót, hú",
+   "gungun_n4:21"
+  ],
+  [
+   "さわぐ",
+   "",
+   "làm ồn, huyên náo",
+   "gungun_n4:21"
+  ],
+  [
+   "光る",
+   "ひかる",
+   "tỏa sáng, phát sáng",
+   "gungun_n4:21"
+  ],
+  [
+   "盗む",
+   "ぬすむ",
+   "ăn cắp, lấy trộm",
+   "gungun_n4:21"
+  ],
+  [
+   "諦める",
+   "あきらめる",
+   "bỏ cuộc, từ bỏ",
+   "gungun_n4:21"
+  ],
+  [
+   "録画する",
+   "ろくがする",
+   "băng ghi hình, sự ghi hình",
+   "gungun_n4:21"
+  ],
+  [
+   "ちなみに",
+   "",
+   "nhân tiện, tiện thể",
+   "gungun_n4:21"
+  ],
+  [
+   "〜側",
+   "〜がわ",
+   "phía ~",
+   "gungun_n4:21"
+  ],
+  [
+   "右側",
+   "みぎがわ",
+   "phía bên phải",
+   "gungun_n4:21"
+  ],
+  [
+   "左側",
+   "ひだりがわ",
+   "phía bên trái",
+   "gungun_n4:21"
+  ],
+  [
+   "熱中症",
+   "ねっちゅうしょう",
+   "say nắng, cảm nắng",
+   "gungun_n4:22"
+  ],
+  [
+   "逆",
+   "ぎゃく",
+   "ngược lại",
+   "gungun_n4:22"
+  ],
+  [
+   "出口",
+   "でぐち",
+   "lối ra",
+   "gungun_n4:22"
+  ],
+  [
+   "見合わせ",
+   "みあわせ",
+   "tạm dừng hoạt động, tạm ngừng chạy",
+   "gungun_n4:22"
+  ],
+  [
+   "税込み",
+   "ぜいこみ",
+   "gồm cả thuế",
+   "gungun_n4:22"
+  ],
+  [
+   "税抜き",
+   "ぜいぬき",
+   "không gồm thuế",
+   "gungun_n4:22"
+  ],
+  [
+   "消費税",
+   "しょうひぜい",
+   "thuế tiêu thụ",
+   "gungun_n4:22"
+  ],
+  [
+   "熱い",
+   "あつい",
+   "nóng (cảm giác khi chạm vào)",
+   "gungun_n4:22"
+  ],
+  [
+   "安全",
+   "あんぜん",
+   "an toàn",
+   "gungun_n4:22"
+  ],
+  [
+   "流す",
+   "ながす",
+   "xả, làm chảy đi",
+   "gungun_n4:22"
+  ],
+  [
+   "近づく",
+   "ちかづく",
+   "đến gần",
+   "gungun_n4:22"
+  ],
+  [
+   "合う",
+   "あう",
+   "khớp, đúng",
+   "gungun_n4:22"
+  ],
+  [
+   "逃げる",
+   "にげる",
+   "chạy trốn",
+   "gungun_n4:22"
+  ],
+  [
+   "火傷する",
+   "やけどする",
+   "bị bỏng",
+   "gungun_n4:22"
+  ],
+  [
+   "飲食する",
+   "いんしょくする",
+   "ăn uống",
+   "gungun_n4:22"
+  ],
+  [
+   "禁止する",
+   "きんしする",
+   "cấm",
+   "gungun_n4:22"
+  ],
+  [
+   "避難する",
+   "ひなんする",
+   "lánh nạn, tránh nạn",
+   "gungun_n4:22"
+  ],
+  [
+   "遅延する",
+   "ちえんする",
+   "chậm trễ, trì hoãn",
+   "gungun_n4:22"
+  ],
+  [
+   "無理する",
+   "むりする",
+   "gắng sức, cố sức",
+   "gungun_n4:22"
+  ],
+  [
+   "わざわざ",
+   "",
+   "cất công",
+   "gungun_n4:22"
+  ],
+  [
+   "どういう",
+   "",
+   "như thế nào",
+   "gungun_n4:22"
+  ],
+  [
+   "強い言葉",
+   "つよいことば",
+   "nặng lời",
+   "gungun_n4:22"
+  ],
+  [
+   "〜ぞ",
+   "",
+   "~ đấy!",
+   "gungun_n4:22"
+  ],
+  [
+   "男性",
+   "だんせい",
+   "nam giới",
+   "gungun_n4:22"
+  ],
+  [
+   "女性",
+   "じょせい",
+   "nữ giới",
+   "gungun_n4:22"
+  ],
+  [
+   "方言",
+   "ほうげん",
+   "tiếng địa phương",
+   "gungun_n4:22"
+  ],
+  [
+   "道具",
+   "どうぐ",
+   "dụng cụ",
+   "gungun_n4:22"
+  ],
+  [
+   "神社",
+   "じんじゃ",
+   "ngôi đền",
+   "gungun_n4:22"
+  ],
+  [
+   "寺",
+   "てら",
+   "ngôi chùa",
+   "gungun_n4:22"
+  ],
+  [
+   "しょうゆ",
+   "",
+   "nước tương shoyu",
+   "gungun_n4:22"
+  ],
+  [
+   "カレンダー",
+   "",
+   "tờ lịch, lịch",
+   "gungun_n4:22"
+  ],
+  [
+   "セロテープ",
+   "",
+   "băng dính trong",
+   "gungun_n4:22"
+  ],
+  [
+   "ソース",
+   "",
+   "nước xốt",
+   "gungun_n4:22"
+  ],
+  [
+   "フォーク",
+   "",
+   "cái nĩa, dĩa",
+   "gungun_n4:22"
+  ],
+  [
+   "バンジージャンプ",
+   "",
+   "nhảy bungee",
+   "gungun_n4:22"
+  ],
+  [
+   "しょっぱい",
+   "",
+   "mặn",
+   "gungun_n4:22"
+  ],
+  [
+   "伝統的な",
+   "でんとうてきな",
+   "tính truyền thống",
+   "gungun_n4:22"
+  ],
+  [
+   "検索する",
+   "けんさくする",
+   "tìm kiếm, tra cứu",
+   "gungun_n4:22"
+  ],
+  [
+   "ラッピングする",
+   "",
+   "bao, gói",
+   "gungun_n4:22"
+  ],
+  [
+   "お祝いする",
+   "おいわいする",
+   "chúc mừng",
+   "gungun_n4:22"
+  ],
+  [
+   "感謝する",
+   "かんしゃする",
+   "cảm ơn, biết ơn (ai) về (điều gì đó)",
+   "gungun_n4:22"
+  ],
+  [
+   "〜用",
+   "〜よう",
+   "dùng cho/ dành cho ~",
+   "gungun_n4:22"
+  ],
+  [
+   "男性用",
+   "だんせいよう",
+   "dùng cho nam giới",
+   "gungun_n4:22"
+  ],
+  [
+   "女性用",
+   "じょせいよう",
+   "dùng cho nữ giới",
+   "gungun_n4:22"
+  ],
+  [
+   "プレゼント用",
+   "ぷれぜんとよう",
+   "dùng để làm quà",
+   "gungun_n4:22"
+  ],
+  [
+   "奥様",
+   "おくさま",
+   "vợ, phu nhân (người khác)",
+   "gungun_n4:23"
+  ],
+  [
+   "夫",
+   "おっと",
+   "chồng (mình)",
+   "gungun_n4:23"
+  ],
+  [
+   "妻",
+   "つま",
+   "vợ (mình)",
+   "gungun_n4:23"
+  ],
+  [
+   "甥",
+   "おい",
+   "cháu trai (con của anh chị em)",
+   "gungun_n4:23"
+  ],
+  [
+   "姪",
+   "めい",
+   "cháu gái (con của anh chị em)",
+   "gungun_n4:23"
+  ],
+  [
+   "手袋",
+   "てぶくろ",
+   "găng tay",
+   "gungun_n4:23"
+  ],
+  [
+   "おもちゃ",
+   "",
+   "đồ chơi",
+   "gungun_n4:23"
+  ],
+  [
+   "ぬいぐるみ",
+   "",
+   "thú nhồi bông",
+   "gungun_n4:23"
+  ],
+  [
+   "みかん",
+   "",
+   "quả quýt",
+   "gungun_n4:23"
+  ],
+  [
+   "〜方",
+   "〜かた",
+   "ngài, vị",
+   "gungun_n4:23"
+  ],
+  [
+   "こちらの方",
+   "こちらのかた",
+   "vị này",
+   "gungun_n4:23"
+  ],
+  [
+   "あの方",
+   "あのかた",
+   "vị đó",
+   "gungun_n4:23"
+  ],
+  [
+   "近所",
+   "きんじょ",
+   "lân cận, hàng xóm",
+   "gungun_n4:23"
+  ],
+  [
+   "作文",
+   "さくぶん",
+   "bài văn",
+   "gungun_n4:23"
+  ],
+  [
+   "作業",
+   "さぎょう",
+   "công việc",
+   "gungun_n4:23"
+  ],
+  [
+   "コーヒーカップ",
+   "",
+   "cốc cà phê",
+   "gungun_n4:23"
+  ],
+  [
+   "シャーペン",
+   "",
+   "bút chì kim",
+   "gungun_n4:23"
+  ],
+  [
+   "セーター",
+   "",
+   "áo len",
+   "gungun_n4:23"
+  ],
+  [
+   "メロン",
+   "",
+   "quả dưa lưới",
+   "gungun_n4:23"
+  ],
+  [
+   "配る",
+   "くばる",
+   "phân phát, phân phối",
+   "gungun_n4:23"
+  ],
+  [
+   "直す",
+   "なおす",
+   "sửa",
+   "gungun_n4:23"
+  ],
+  [
+   "親切にする",
+   "しんせつにする",
+   "đối xử tử tế (với ai)",
+   "gungun_n4:23"
+  ],
+  [
+   "承知しました",
+   "しょうちしました",
+   "Tôi hiểu rồi / Tôi biết rồi ạ",
+   "gungun_n4:23"
+  ],
+  [
+   "よろしくね",
+   "",
+   "Nhờ bạn nhé!",
+   "gungun_n4:23"
+  ],
+  [
+   "給料",
+   "きゅうりょう",
+   "tiền lương",
+   "gungun_n4:23"
+  ],
+  [
+   "折り紙",
+   "おりがみ",
+   "gấp giấy, origami",
+   "gungun_n4:23"
+  ],
+  [
+   "値段",
+   "ねだん",
+   "giá tiền",
+   "gungun_n4:23"
+  ],
+  [
+   "締め切り",
+   "しめきり",
+   "hạn chót, deadline",
+   "gungun_n4:23"
+  ],
+  [
+   "文句",
+   "もんく",
+   "lời phàn nàn",
+   "gungun_n4:23"
+  ],
+  [
+   "保育園",
+   "ほいくえん",
+   "nhà trẻ",
+   "gungun_n4:23"
+  ],
+  [
+   "アドバイス",
+   "",
+   "lời khuyên",
+   "gungun_n4:23"
+  ],
+  [
+   "スピーチ",
+   "",
+   "bài phát biểu",
+   "gungun_n4:23"
+  ],
+  [
+   "教わる",
+   "おそわる",
+   "được dạy",
+   "gungun_n4:23"
+  ],
+  [
+   "預かる",
+   "あずかる",
+   "giữ, trông (giữ hộ người khác)",
+   "gungun_n4:23"
+  ],
+  [
+   "太る",
+   "ふとる",
+   "béo, mập",
+   "gungun_n4:23"
+  ],
+  [
+   "痩せる",
+   "やせる",
+   "gầy",
+   "gungun_n4:23"
+  ],
+  [
+   "翻訳する",
+   "ほんやくする",
+   "biên dịch (ngôn ngữ A) sang (ngôn ngữ B)",
+   "gungun_n4:23"
+  ],
+  [
+   "交換する",
+   "こうかんする",
+   "đổi, trao đổi",
+   "gungun_n4:23"
+  ],
+  [
+   "長生きする",
+   "ながいきする",
+   "sống thọ",
+   "gungun_n4:23"
+  ],
+  [
+   "おわび",
+   "",
+   "lời xin lỗi",
+   "gungun_n4:23"
+  ],
+  [
+   "建築家",
+   "けんちくか",
+   "kiến trúc sư",
+   "gungun_n4:23"
+  ],
+  [
+   "物語",
+   "ものがたり",
+   "truyện cổ tích",
+   "gungun_n4:23"
+  ],
+  [
+   "チーム",
+   "",
+   "đội, team",
+   "gungun_n4:23"
+  ],
+  [
+   "ひどい",
+   "",
+   "quá đáng, quá quắt",
+   "gungun_n4:23"
+  ],
+  [
+   "かむ",
+   "",
+   "cắn",
+   "gungun_n4:23"
+  ],
+  [
+   "なぐる",
+   "",
+   "đấm",
+   "gungun_n4:23"
+  ],
+  [
+   "叱る",
+   "しかる",
+   "mắng mỏ",
+   "gungun_n4:23"
+  ],
+  [
+   "行う",
+   "おこなう",
+   "tiến hành, tổ chức",
+   "gungun_n4:23"
+  ],
+  [
+   "怒る",
+   "おこる",
+   "nổi giận, tức giận",
+   "gungun_n4:23"
+  ],
+  [
+   "踏む",
+   "ふむ",
+   "giẫm",
+   "gungun_n4:23"
+  ],
+  [
+   "ほえる",
+   "",
+   "sủa",
+   "gungun_n4:23"
+  ],
+  [
+   "いじめる",
+   "",
+   "bắt nạt",
+   "gungun_n4:23"
+  ],
+  [
+   "リサイクルする",
+   "",
+   "tái chế",
+   "gungun_n4:23"
+  ],
+  [
+   "発見する",
+   "はっけんする",
+   "phát hiện",
+   "gungun_n4:23"
+  ],
+  [
+   "発明する",
+   "はつめいする",
+   "phát minh",
+   "gungun_n4:23"
+  ],
+  [
+   "開催する",
+   "かいさいする",
+   "tổ chức",
+   "gungun_n4:23"
+  ],
+  [
+   "発売する",
+   "はつばいする",
+   "mở bán",
+   "gungun_n4:23"
+  ],
+  [
+   "勝手に",
+   "かってに",
+   "tự ý, tự tiện (làm gì đó)",
+   "gungun_n4:23"
+  ],
+  [
+   "目玉焼き",
+   "めだまやき",
+   "trứng ốp-la",
+   "gungun_n4:24"
+  ],
+  [
+   "咳",
+   "せき",
+   "ho, cơn ho",
+   "gungun_n4:24"
+  ],
+  [
+   "戦争",
+   "せんそう",
+   "chiến tranh",
+   "gungun_n4:24"
+  ],
+  [
+   "熱",
+   "ねつ",
+   "cơn sốt",
+   "gungun_n4:24"
+  ],
+  [
+   "結果",
+   "けっか",
+   "kết quả",
+   "gungun_n4:24"
+  ],
+  [
+   "階段",
+   "かいだん",
+   "cầu thang",
+   "gungun_n4:24"
+  ],
+  [
+   "エスカレーター",
+   "",
+   "cầu thang cuốn",
+   "gungun_n4:24"
+  ],
+  [
+   "ストレス",
+   "",
+   "căng thẳng",
+   "gungun_n4:24"
+  ],
+  [
+   "真っ黒",
+   "まっくろ",
+   "đen thui, đen sì",
+   "gungun_n4:24"
+  ],
+  [
+   "偉い",
+   "えらい",
+   "giỏi, tuyệt vời; (người) quan trọng, có chức vụ cao",
+   "gungun_n4:24"
+  ],
+  [
+   "転ぶ",
+   "ころぶ",
+   "ngã, lăn",
+   "gungun_n4:24"
+  ],
+  [
+   "驚く",
+   "おどろく",
+   "ngạc nhiên",
+   "gungun_n4:24"
+  ],
+  [
+   "気になる",
+   "きになる",
+   "quan tâm, để tâm đến",
+   "gungun_n4:24"
+  ],
+  [
+   "焼ける",
+   "やける",
+   "cháy, bị cháy",
+   "gungun_n4:24"
+  ],
+  [
+   "掛ける",
+   "かける",
+   "khoá cửa (鍵を掛ける)",
+   "gungun_n4:24"
+  ],
+  [
+   "質問する",
+   "しつもんする",
+   "hỏi, đặt câu hỏi",
+   "gungun_n4:24"
+  ],
+  [
+   "入院する",
+   "にゅういんする",
+   "nhập viện",
+   "gungun_n4:24"
+  ],
+  [
+   "故障する",
+   "こしょうする",
+   "bị hỏng",
+   "gungun_n4:24"
+  ],
+  [
+   "貯金する",
+   "ちょきんする",
+   "tiết kiệm tiền",
+   "gungun_n4:24"
+  ],
+  [
+   "自分で",
+   "じぶんで",
+   "tự mình",
+   "gungun_n4:24"
+  ],
+  [
+   "おかげさまで",
+   "",
+   "ơn trời, nhờ trời",
+   "gungun_n4:24"
+  ],
+  [
+   "ご心配をおかけする",
+   "ごしんぱいをおかけする",
+   "khiến ai đó lo lắng",
+   "gungun_n4:24"
+  ],
+  [
+   "空気",
+   "くうき",
+   "không khí",
+   "gungun_n4:24"
+  ],
+  [
+   "家賃",
+   "やちん",
+   "tiền nhà",
+   "gungun_n4:24"
+  ],
+  [
+   "季節",
+   "きせつ",
+   "mùa",
+   "gungun_n4:24"
+  ],
+  [
+   "画面",
+   "がめん",
+   "màn hình",
+   "gungun_n4:24"
+  ],
+  [
+   "しわ",
+   "",
+   "nếp nhăn",
+   "gungun_n4:24"
+  ],
+  [
+   "疲れ",
+   "つかれ",
+   "sự mệt mỏi",
+   "gungun_n4:24"
+  ],
+  [
+   "汗",
+   "あせ",
+   "mồ hôi",
+   "gungun_n4:24"
+  ],
+  [
+   "骨",
+   "ほね",
+   "xương",
+   "gungun_n4:24"
+  ],
+  [
+   "持ち運び",
+   "もちはこび",
+   "việc mang theo",
+   "gungun_n4:24"
+  ],
+  [
+   "二日酔い",
+   "ふつかよい",
+   "cảm giác nôn nao, khó chịu ngày hôm sau do say rượu",
+   "gungun_n4:24"
+  ],
+  [
+   "ガラス",
+   "",
+   "kính (thủy tinh)",
+   "gungun_n4:24"
+  ],
+  [
+   "ココナッツオイル",
+   "",
+   "dầu dừa",
+   "gungun_n4:24"
+  ],
+  [
+   "コンクリート",
+   "",
+   "bê tông",
+   "gungun_n4:24"
+  ],
+  [
+   "ゴム",
+   "",
+   "gôm, cao su",
+   "gungun_n4:24"
+  ],
+  [
+   "ハンバーガー",
+   "",
+   "bánh hamburger",
+   "gungun_n4:24"
+  ],
+  [
+   "ヒール",
+   "",
+   "gót giày",
+   "gungun_n4:24"
+  ],
+  [
+   "プラスチック",
+   "",
+   "nhựa",
+   "gungun_n4:24"
+  ],
+  [
+   "最高",
+   "さいこう",
+   "cao nhất; tuyệt vời",
+   "gungun_n4:24"
+  ],
+  [
+   "やわらかい",
+   "",
+   "mềm",
+   "gungun_n4:24"
+  ],
+  [
+   "酔う",
+   "よう",
+   "say (tàu, xe...)",
+   "gungun_n4:24"
+  ],
+  [
+   "滑る",
+   "すべる",
+   "trơn trượt",
+   "gungun_n4:24"
+  ],
+  [
+   "燃える",
+   "もえる",
+   "cháy được, bốc cháy",
+   "gungun_n4:24"
+  ],
+  [
+   "冷める",
+   "さめる",
+   "nguội đi, lạnh đi",
+   "gungun_n4:24"
+  ],
+  [
+   "何をやってるの",
+   "なにをやってるの",
+   "(bạn) đang làm cái gì thế!",
+   "gungun_n4:24"
+  ],
+  [
+   "何をやっているんですか",
+   "なにをやっているんですか",
+   "(bạn) đang làm cái gì thế!",
+   "gungun_n4:24"
+  ],
+  [
+   "目が悪い",
+   "めがわるい",
+   "thị lực kém",
+   "gungun_n4:24"
+  ],
+  [
+   "再来週",
+   "さらいしゅう",
+   "tuần sau nữa",
+   "gungun_n4:25"
+  ],
+  [
+   "新年会",
+   "しんねんかい",
+   "tiệc đầu năm",
+   "gungun_n4:25"
+  ],
+  [
+   "石けん",
+   "せっけん",
+   "xà phòng, xà bông",
+   "gungun_n4:25"
+  ],
+  [
+   "睡眠",
+   "すいみん",
+   "giấc ngủ",
+   "gungun_n4:25"
+  ],
+  [
+   "不足",
+   "ふそく",
+   "thiếu, không đủ",
+   "gungun_n4:25"
+  ],
+  [
+   "睡眠不足",
+   "すいみんぶそく",
+   "thiếu ngủ",
+   "gungun_n4:25"
+  ],
+  [
+   "運動不足",
+   "うんどうぶそく",
+   "thiếu vận động",
+   "gungun_n4:25"
+  ],
+  [
+   "ネクタイ",
+   "",
+   "cà-vạt",
+   "gungun_n4:25"
+  ],
+  [
+   "テーマ",
+   "",
+   "chủ đề",
+   "gungun_n4:25"
+  ],
+  [
+   "スパゲッティ",
+   "",
+   "mì Ý (spaghetti - 1 dạng của mì pasta)",
+   "gungun_n4:25"
+  ],
+  [
+   "パスタ",
+   "",
+   "mì pasta",
+   "gungun_n4:25"
+  ],
+  [
+   "ステーキ",
+   "",
+   "steak, bít-tết",
+   "gungun_n4:25"
+  ],
+  [
+   "サンドイッチ",
+   "",
+   "bánh mì kẹp (xăng-uých)",
+   "gungun_n4:25"
+  ],
+  [
+   "冷たい",
+   "つめたい",
+   "lạnh (khi sờ, chạm vào)",
+   "gungun_n4:25"
+  ],
+  [
+   "急",
+   "きゅう",
+   "đột ngột, đột nhiên",
+   "gungun_n4:25"
+  ],
+  [
+   "大事",
+   "だいじ",
+   "quan trọng",
+   "gungun_n4:25"
+  ],
+  [
+   "決める",
+   "きめる",
+   "quyết định",
+   "gungun_n4:25"
+  ],
+  [
+   "禁煙する",
+   "きんえんする",
+   "cấm hút thuốc lá; bỏ thuốc lá",
+   "gungun_n4:25"
+  ],
+  [
+   "早起きする",
+   "はやおきする",
+   "dậy sớm",
+   "gungun_n4:25"
+  ],
+  [
+   "賛成する",
+   "さんせいする",
+   "tán thành",
+   "gungun_n4:25"
+  ],
+  [
+   "離婚する",
+   "りこんする",
+   "ly hôn",
+   "gungun_n4:25"
+  ],
+  [
+   "以前から",
+   "いぜんから",
+   "từ hồi trước",
+   "gungun_n4:25"
+  ],
+  [
+   "納豆",
+   "なっとう",
+   "natto, đậu tương lên men",
+   "gungun_n4:25"
+  ],
+  [
+   "暖房",
+   "だんぼう",
+   "máy sưởi",
+   "gungun_n4:25"
+  ],
+  [
+   "水道",
+   "すいどう",
+   "nước máy",
+   "gungun_n4:25"
+  ],
+  [
+   "アイデア",
+   "",
+   "ý tưởng",
+   "gungun_n4:25"
+  ],
+  [
+   "〜代",
+   "〜だい",
+   "tiền ~",
+   "gungun_n4:25"
+  ],
+  [
+   "電気代",
+   "でんきだい",
+   "tiền điện",
+   "gungun_n4:25"
+  ],
+  [
+   "水道代",
+   "すいどうだい",
+   "tiền nước",
+   "gungun_n4:25"
+  ],
+  [
+   "無駄",
+   "むだ",
+   "lãng phí",
+   "gungun_n4:25"
+  ],
+  [
+   "踊る",
+   "おどる",
+   "nhảy múa",
+   "gungun_n4:25"
+  ],
+  [
+   "年を取る",
+   "としをとる",
+   "già đi",
+   "gungun_n4:25"
+  ],
+  [
+   "あいさつする",
+   "",
+   "chào hỏi",
+   "gungun_n4:25"
+  ],
+  [
+   "チャレンジする",
+   "",
+   "thử sức",
+   "gungun_n4:25"
+  ],
+  [
+   "チェックする",
+   "",
+   "kiểm tra; soát lại",
+   "gungun_n4:25"
+  ],
+  [
+   "録音する",
+   "ろくおんする",
+   "ghi âm",
+   "gungun_n4:25"
+  ],
+  [
+   "予習する",
+   "よしゅうする",
+   "soạn bài, chuẩn bị bài trước",
+   "gungun_n4:25"
+  ],
+  [
+   "大体",
+   "だいたい",
+   "đại khái",
+   "gungun_n4:25"
+  ],
+  [
+   "すっかり",
+   "",
+   "hoàn toàn",
+   "gungun_n4:25"
+  ],
+  [
+   "できるだけ",
+   "",
+   "trong phạm vi có thể, trong khả năng",
+   "gungun_n4:25"
+  ],
+  [
+   "なるべく",
+   "",
+   "(cố gắng ~) hết mức, hết sức có thể",
+   "gungun_n4:25"
+  ],
+  [
+   "最初は",
+   "さいしょは",
+   "đầu tiên thì…, ban đầu thì…",
+   "gungun_n4:25"
+  ],
+  [
+   "大学院",
+   "だいがくいん",
+   "cao học",
+   "gungun_n4:25"
+  ],
+  [
+   "郊外",
+   "こうがい",
+   "ngoại thành, ngoại ô",
+   "gungun_n4:25"
+  ],
+  [
+   "連休",
+   "れんきゅう",
+   "kỳ nghỉ, nghỉ liền nhiều ngày",
+   "gungun_n4:25"
+  ],
+  [
+   "山登り",
+   "やまのぼり",
+   "sự leo núi",
+   "gungun_n4:25"
+  ],
+  [
+   "説明会",
+   "せつめいかい",
+   "buổi giới thiệu/giải thích (về 1 vấn đề nào đó)",
+   "gungun_n4:25"
+  ],
+  [
+   "忘年会",
+   "ぼうねんかい",
+   "tiệc tất niên",
+   "gungun_n4:25"
+  ],
+  [
+   "ピンク",
+   "",
+   "màu hồng",
+   "gungun_n4:25"
+  ],
+  [
+   "渡す",
+   "わたす",
+   "trao, đưa ~",
+   "gungun_n4:25"
+  ],
+  [
+   "乗り換える",
+   "のりかえる",
+   "đổi (tàu, chuyến xe ~)",
+   "gungun_n4:25"
+  ],
+  [
+   "受ける",
+   "うける",
+   "tham dự (kỳ thi) (試験を受ける)",
+   "gungun_n4:25"
+  ],
+  [
+   "進学する",
+   "しんがくする",
+   "học lên ~ (trình độ cao hơn)",
+   "gungun_n4:25"
+  ],
+  [
+   "キャンセルする",
+   "",
+   "huỷ bỏ",
+   "gungun_n4:25"
+  ],
+  [
+   "就職する",
+   "しゅうしょくする",
+   "bắt đầu công việc ở ~, có được công việc ở ~",
+   "gungun_n4:25"
+  ],
+  [
+   "ひさしぶりに〜",
+   "",
+   "lâu lắm mới ~",
+   "gungun_n4:25"
+  ],
+  [
+   "〜、よろしく",
+   "",
+   "hãy ~ / nhớ (làm gì đó)",
+   "gungun_n4:25"
+  ],
+  [
+   "警察",
+   "けいさつ",
+   "cảnh sát",
+   "gungun_n4:26"
+  ],
+  [
+   "論文",
+   "ろんぶん",
+   "bài luận, luận văn",
+   "gungun_n4:26"
+  ],
+  [
+   "豚肉",
+   "ぶたにく",
+   "thịt lợn",
+   "gungun_n4:26"
+  ],
+  [
+   "午前中",
+   "ごぜんちゅう",
+   "trong buổi sáng",
+   "gungun_n4:26"
+  ],
+  [
+   "現金",
+   "げんきん",
+   "tiền mặt",
+   "gungun_n4:26"
+  ],
+  [
+   "腰",
+   "こし",
+   "eo lưng, hông",
+   "gungun_n4:26"
+  ],
+  [
+   "カーテン",
+   "",
+   "rèm",
+   "gungun_n4:26"
+  ],
+  [
+   "覚める",
+   "さめる",
+   "tỉnh dậy, thức dậy (目が覚める)",
+   "gungun_n4:26"
+  ],
+  [
+   "知らせる",
+   "しらせる",
+   "cho biết, thông báo",
+   "gungun_n4:26"
+  ],
+  [
+   "出発する",
+   "しゅっぱつする",
+   "xuất phát",
+   "gungun_n4:26"
+  ],
+  [
+   "実験する",
+   "じっけんする",
+   "thực nghiệm",
+   "gungun_n4:26"
+  ],
+  [
+   "整理する",
+   "せいりする",
+   "chỉnh lý, sắp xếp lại",
+   "gungun_n4:26"
+  ],
+  [
+   "ジョギングする",
+   "",
+   "chạy bộ",
+   "gungun_n4:26"
+  ],
+  [
+   "しっかり",
+   "",
+   "hẳn hoi, chắc chắn, kỹ càng",
+   "gungun_n4:26"
+  ],
+  [
+   "旅行会社",
+   "りょこうがいしゃ",
+   "công ty du lịch",
+   "gungun_n4:26"
+  ],
+  [
+   "眠る",
+   "ねむる",
+   "ngủ",
+   "gungun_n4:26"
+  ],
+  [
+   "迎えに行く",
+   "むかえにいく",
+   "đi đón",
+   "gungun_n4:26"
+  ],
+  [
+   "選ぶ",
+   "えらぶ",
+   "lựa chọn",
+   "gungun_n4:26"
+  ],
+  [
+   "向かう",
+   "むかう",
+   "hướng đến, đi đến ~",
+   "gungun_n4:26"
+  ],
+  [
+   "戻る",
+   "もどる",
+   "trở về, quay lại",
+   "gungun_n4:26"
+  ],
+  [
+   "申し込む",
+   "もうしこむ",
+   "đăng ký vào ~",
+   "gungun_n4:26"
+  ],
+  [
+   "降りる",
+   "おりる",
+   "xuống (tàu, xe…)",
+   "gungun_n4:26"
+  ],
+  [
+   "修理する",
+   "しゅうりする",
+   "sửa chữa, chỉnh sửa",
+   "gungun_n4:26"
+  ],
+  [
+   "支度する",
+   "したくする",
+   "chuẩn bị",
+   "gungun_n4:26"
+  ],
+  [
+   "ちょうど",
+   "",
+   "vừa đủ, vừa khéo",
+   "gungun_n4:26"
+  ],
+  [
+   "お気をつけて",
+   "おきをつけて",
+   "xin hãy cẩn thận",
+   "gungun_n4:26"
+  ],
+  [
+   "元の場所",
+   "もとのばしょ",
+   "chỗ cũ",
+   "gungun_n4:27"
+  ],
+  [
+   "元の所",
+   "もとのところ",
+   "chỗ cũ",
+   "gungun_n4:27"
+  ],
+  [
+   "講義",
+   "こうぎ",
+   "bài giảng (trình độ đại học trở lên)",
+   "gungun_n4:27"
+  ],
+  [
+   "意見",
+   "いけん",
+   "ý kiến",
+   "gungun_n4:27"
+  ],
+  [
+   "蓋",
+   "ふた",
+   "nắp",
+   "gungun_n4:27"
+  ],
+  [
+   "缶",
+   "かん",
+   "cái lon",
+   "gungun_n4:27"
+  ],
+  [
+   "悪口",
+   "わるぐち",
+   "nói xấu",
+   "gungun_n4:27"
+  ],
+  [
+   "ルール",
+   "",
+   "quy tắc, quy định",
+   "gungun_n4:27"
+  ],
+  [
+   "ラベル",
+   "",
+   "nhãn mác",
+   "gungun_n4:27"
+  ],
+  [
+   "ヘルメット",
+   "",
+   "mũ bảo hiểm",
+   "gungun_n4:27"
+  ],
+  [
+   "ペットボトル",
+   "",
+   "chai nhựa",
+   "gungun_n4:27"
+  ],
+  [
+   "サービス",
+   "",
+   "dịch vụ",
+   "gungun_n4:27"
+  ],
+  [
+   "〜以下",
+   "〜いか",
+   "từ ~ trở xuống",
+   "gungun_n4:27"
+  ],
+  [
+   "〜以内",
+   "〜いない",
+   "trong vòng ~",
+   "gungun_n4:27"
+  ],
+  [
+   "渡る",
+   "わたる",
+   "đi qua, băng qua (địa điểm)",
+   "gungun_n4:27"
+  ],
+  [
+   "戻す",
+   "もどす",
+   "để/ cất trở lại",
+   "gungun_n4:27"
+  ],
+  [
+   "剥がす",
+   "はがす",
+   "bóc",
+   "gungun_n4:27"
+  ],
+  [
+   "はっきり",
+   "",
+   "rõ ràng",
+   "gungun_n4:27"
+  ],
+  [
+   "充電器",
+   "じゅうでんき",
+   "củ sạc",
+   "gungun_n4:27"
+  ],
+  [
+   "暗証番号",
+   "あんしょうばんごう",
+   "mật khẩu",
+   "gungun_n4:27"
+  ],
+  [
+   "乗り場",
+   "のりば",
+   "điểm bắt xe (buýt, taxi…)",
+   "gungun_n4:27"
+  ],
+  [
+   "シャンプー",
+   "",
+   "dầu gội",
+   "gungun_n4:27"
+  ],
+  [
+   "リンス",
+   "",
+   "dầu xả",
+   "gungun_n4:27"
+  ],
+  [
+   "ドイツ",
+   "",
+   "nước Đức",
+   "gungun_n4:27"
+  ],
+  [
+   "ペット",
+   "",
+   "thú cưng",
+   "gungun_n4:27"
+  ],
+  [
+   "最悪",
+   "さいあく",
+   "tồi tệ, tệ nhất, xấu nhất",
+   "gungun_n4:27"
+  ],
+  [
+   "迷う",
+   "まよう",
+   "lạc (đường) (道に迷う)",
+   "gungun_n4:27"
+  ],
+  [
+   "残る",
+   "のこる",
+   "còn lại, sót lại",
+   "gungun_n4:27"
+  ],
+  [
+   "終わらせる",
+   "おわらせる",
+   "kết thúc",
+   "gungun_n4:27"
+  ],
+  [
+   "充電する",
+   "じゅうでんする",
+   "sạc điện",
+   "gungun_n4:27"
+  ],
+  [
+   "復習する",
+   "ふくしゅうする",
+   "ôn tập",
+   "gungun_n4:27"
+  ],
+  [
+   "そのままにする",
+   "",
+   "để nguyên như thế",
+   "gungun_n4:27"
+  ],
+  [
+   "つい",
+   "",
+   "lỡ, trót",
+   "gungun_n4:27"
+  ],
+  [
+   "駐車場",
+   "ちゅうしゃじょう",
+   "chỗ gửi xe, bãi đỗ xe",
+   "gungun_n4:27"
+  ],
+  [
+   "様子",
+   "ようす",
+   "trạng thái",
+   "gungun_n4:27"
+  ],
+  [
+   "物価",
+   "ぶっか",
+   "vật giá",
+   "gungun_n4:27"
+  ],
+  [
+   "世界中",
+   "せかいじゅう",
+   "trên toàn thế giới",
+   "gungun_n4:27"
+  ],
+  [
+   "留学生",
+   "りゅうがくせい",
+   "lưu học sinh, du học sinh",
+   "gungun_n4:27"
+  ],
+  [
+   "健康",
+   "けんこう",
+   "sức khoẻ",
+   "gungun_n4:27"
+  ],
+  [
+   "会場",
+   "かいじょう",
+   "hội trường",
+   "gungun_n4:27"
+  ],
+  [
+   "和食",
+   "わしょく",
+   "đồ ăn Nhật",
+   "gungun_n4:27"
+  ],
+  [
+   "筆箱",
+   "ふでばこ",
+   "hộp bút",
+   "gungun_n4:27"
+  ],
+  [
+   "ストーブ",
+   "",
+   "lò sưởi",
+   "gungun_n4:27"
+  ],
+  [
+   "ガイドブック",
+   "",
+   "sách hướng dẫn",
+   "gungun_n4:27"
+  ],
+  [
+   "インフルエンザ",
+   "",
+   "bệnh cúm",
+   "gungun_n4:27"
+  ],
+  [
+   "アラーム",
+   "",
+   "báo thức",
+   "gungun_n4:27"
+  ],
+  [
+   "気がつく",
+   "きがつく",
+   "để ý đến, nhận ra",
+   "gungun_n4:27"
+  ],
+  [
+   "決まる",
+   "きまる",
+   "được quyết định",
+   "gungun_n4:27"
+  ],
+  [
+   "離れる",
+   "はなれる",
+   "rời xa, cách xa",
+   "gungun_n4:27"
+  ],
+  [
+   "少しずつ",
+   "すこしずつ",
+   "từng chút một",
+   "gungun_n4:27"
+  ],
+  [
+   "だんだん",
+   "",
+   "dần dần",
+   "gungun_n4:27"
+  ],
+  [
+   "課題",
+   "かだい",
+   "bài tập; nhiệm vụ",
+   "gungun_n4:28"
+  ],
+  [
+   "生徒",
+   "せいと",
+   "học sinh",
+   "gungun_n4:28"
+  ],
+  [
+   "教育",
+   "きょういく",
+   "giáo dục",
+   "gungun_n4:28"
+  ],
+  [
+   "塾",
+   "じゅく",
+   "trường luyện thi, lớp học thêm",
+   "gungun_n4:28"
+  ],
+  [
+   "技術",
+   "ぎじゅつ",
+   "kỹ thuật",
+   "gungun_n4:28"
+  ],
+  [
+   "息子",
+   "むすこ",
+   "con trai",
+   "gungun_n4:28"
+  ],
+  [
+   "娘",
+   "むすめ",
+   "con gái",
+   "gungun_n4:28"
+  ],
+  [
+   "後輩",
+   "こうはい",
+   "đàn em",
+   "gungun_n4:28"
+  ],
+  [
+   "自由",
+   "じゆう",
+   "tự do",
+   "gungun_n4:28"
+  ],
+  [
+   "悲しむ",
+   "かなしむ",
+   "đau buồn",
+   "gungun_n4:28"
+  ],
+  [
+   "拾う",
+   "ひろう",
+   "nhặt",
+   "gungun_n4:28"
+  ],
+  [
+   "学ぶ",
+   "まなぶ",
+   "học",
+   "gungun_n4:28"
+  ],
+  [
+   "迎えに来る",
+   "むかえにくる",
+   "đến ~ đón ai đó",
+   "gungun_n4:28"
+  ],
+  [
+   "経験する",
+   "けいけんする",
+   "kinh nghiệm, trải nghiệm",
+   "gungun_n4:28"
+  ],
+  [
+   "〜部",
+   "〜ぶ",
+   "~ bản, bộ (đếm hồ sơ, tệp tài liệu...)",
+   "gungun_n4:28"
+  ],
+  [
+   "上司",
+   "じょうし",
+   "cấp trên",
+   "gungun_n4:28"
+  ],
+  [
+   "体育",
+   "たいいく",
+   "thể dục",
+   "gungun_n4:28"
+  ],
+  [
+   "バイオリン",
+   "",
+   "đàn vĩ cầm, violin",
+   "gungun_n4:28"
+  ],
+  [
+   "バレエ",
+   "",
+   "múa ba lê",
+   "gungun_n4:28"
+  ],
+  [
+   "高級",
+   "こうきゅう",
+   "cao cấp",
+   "gungun_n4:28"
+  ],
+  [
+   "頼む",
+   "たのむ",
+   "nhờ ai đó làm gì",
+   "gungun_n4:28"
+  ],
+  [
+   "写す",
+   "うつす",
+   "sao chép, chép bài",
+   "gungun_n4:28"
+  ],
+  [
+   "感動する",
+   "かんどうする",
+   "cảm động",
+   "gungun_n4:28"
+  ],
+  [
+   "まず",
+   "",
+   "trước tiên, trước hết",
+   "gungun_n4:28"
+  ],
+  [
+   "他にも",
+   "ほかにも",
+   "ngoài ra",
+   "gungun_n4:28"
+  ],
   [
    "発表会",
    "はっぴょうかい",
@@ -256,18 +11595,6 @@
    "gungun_n4:29"
   ],
   [
-   "つける",
-   "",
-   "khoanh (丸をつける)",
-   "gungun_n4:29"
-  ],
-  [
-   "掛ける",
-   "かける",
-   "ngồi (lịch sự: お掛けください)",
-   "gungun_n4:29"
-  ],
-  [
    "相談する",
    "そうだんする",
    "bàn bạc, hỏi ý kiến",
@@ -304,7 +11631,7 @@
    "gungun_n4:29"
   ]
  ],
- "kanji": "作低夜家宅客館",
+ "kanji": "力動働知短医皿血工空試計説心思性地池公広去転遠園台始治正政王玉国主住所近辺切勉晩色発黄虫風強油決漢止歩歴史使品号味研丸究谷船里理野若菜番料奥鳥鳴島化便係宿私利科顔題速通週夫鉄妹姉妻天送弟引弱考者都暑開閉問質貸員店度黒点然声仕才事予服報指押洋遅様着有育教数楽薬記起港赤走場室屋堂院降部原反文済対糸緑経紙細練羽習馬駅験作低夜家宅客館",
  "tien_do": {},
  "bao_ton": {
   "so_chua_doc": 0,
@@ -316,146 +11643,5 @@
   "ky_cuoi_ngay": ""
  },
  "lich_su_gan_day": [],
- "thieu": [
-  {
-   "giao_trinh": "gungun_n4",
-   "chuong": 27,
-   "thu_muc": "giao_trinh/GUNGUN_N4"
-  },
-  {
-   "giao_trinh": "gungun_n4",
-   "chuong": 28,
-   "thu_muc": "giao_trinh/GUNGUN_N4"
-  },
-  {
-   "giao_trinh": "gungun_n5",
-   "chuong": 1,
-   "thu_muc": "giao_trinh/GUNGUN_N5"
-  },
-  {
-   "giao_trinh": "gungun_n5",
-   "chuong": 2,
-   "thu_muc": "giao_trinh/GUNGUN_N5"
-  },
-  {
-   "giao_trinh": "gungun_n5",
-   "chuong": 3,
-   "thu_muc": "giao_trinh/GUNGUN_N5"
-  },
-  {
-   "giao_trinh": "gungun_n5",
-   "chuong": 4,
-   "thu_muc": "giao_trinh/GUNGUN_N5"
-  },
-  {
-   "giao_trinh": "gungun_n5",
-   "chuong": 5,
-   "thu_muc": "giao_trinh/GUNGUN_N5"
-  },
-  {
-   "giao_trinh": "gungun_n5",
-   "chuong": 6,
-   "thu_muc": "giao_trinh/GUNGUN_N5"
-  },
-  {
-   "giao_trinh": "gungun_n5",
-   "chuong": 7,
-   "thu_muc": "giao_trinh/GUNGUN_N5"
-  },
-  {
-   "giao_trinh": "gungun_n5",
-   "chuong": 8,
-   "thu_muc": "giao_trinh/GUNGUN_N5"
-  },
-  {
-   "giao_trinh": "gungun_n5",
-   "chuong": 9,
-   "thu_muc": "giao_trinh/GUNGUN_N5"
-  },
-  {
-   "giao_trinh": "gungun_n5",
-   "chuong": 10,
-   "thu_muc": "giao_trinh/GUNGUN_N5"
-  },
-  {
-   "giao_trinh": "gungun_n5",
-   "chuong": 11,
-   "thu_muc": "giao_trinh/GUNGUN_N5"
-  },
-  {
-   "giao_trinh": "gungun_n5",
-   "chuong": 12,
-   "thu_muc": "giao_trinh/GUNGUN_N5"
-  },
-  {
-   "giao_trinh": "gungun_n5",
-   "chuong": 13,
-   "thu_muc": "giao_trinh/GUNGUN_N5"
-  },
-  {
-   "giao_trinh": "gungun_n5",
-   "chuong": 14,
-   "thu_muc": "giao_trinh/GUNGUN_N5"
-  },
-  {
-   "giao_trinh": "gungun_n4",
-   "chuong": 15,
-   "thu_muc": "giao_trinh/GUNGUN_N4"
-  },
-  {
-   "giao_trinh": "gungun_n4",
-   "chuong": 16,
-   "thu_muc": "giao_trinh/GUNGUN_N4"
-  },
-  {
-   "giao_trinh": "gungun_n4",
-   "chuong": 17,
-   "thu_muc": "giao_trinh/GUNGUN_N4"
-  },
-  {
-   "giao_trinh": "gungun_n4",
-   "chuong": 18,
-   "thu_muc": "giao_trinh/GUNGUN_N4"
-  },
-  {
-   "giao_trinh": "gungun_n4",
-   "chuong": 19,
-   "thu_muc": "giao_trinh/GUNGUN_N4"
-  },
-  {
-   "giao_trinh": "gungun_n4",
-   "chuong": 20,
-   "thu_muc": "giao_trinh/GUNGUN_N4"
-  },
-  {
-   "giao_trinh": "gungun_n4",
-   "chuong": 21,
-   "thu_muc": "giao_trinh/GUNGUN_N4"
-  },
-  {
-   "giao_trinh": "gungun_n4",
-   "chuong": 22,
-   "thu_muc": "giao_trinh/GUNGUN_N4"
-  },
-  {
-   "giao_trinh": "gungun_n4",
-   "chuong": 23,
-   "thu_muc": "giao_trinh/GUNGUN_N4"
-  },
-  {
-   "giao_trinh": "gungun_n4",
-   "chuong": 24,
-   "thu_muc": "giao_trinh/GUNGUN_N4"
-  },
-  {
-   "giao_trinh": "gungun_n4",
-   "chuong": 25,
-   "thu_muc": "giao_trinh/GUNGUN_N4"
-  },
-  {
-   "giao_trinh": "gungun_n4",
-   "chuong": 26,
-   "thu_muc": "giao_trinh/GUNGUN_N4"
-  }
- ]
+ "thieu": []
 }
