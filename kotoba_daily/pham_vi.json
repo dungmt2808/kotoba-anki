@@ -1,0 +1,461 @@
+{
+ "_ghi_chu": "File này do tools/pham_vi.py tạo ra, đừng sửa tay.",
+ "trinh_do": "N4",
+ "nen_tang": "N5",
+ "sach": {
+  "gungun_n5": "GUNGUN N5",
+  "gungun_n4": "GUNGUN N4"
+ },
+ "vi_tri": [
+  {
+   "id": "gungun_n5",
+   "ten": "GUNGUN N5",
+   "den": 14
+  },
+  {
+   "id": "gungun_n4",
+   "ten": "GUNGUN N4",
+   "den": 29
+  }
+ ],
+ "cai_dat": {
+  "tu_moi_toi_da": 3,
+  "tin_that": true
+ },
+ "so_bao_tiep_theo": 1,
+ "trong_tam": [
+  {
+   "bai": "gungun_n4:29",
+   "chu_de": "Kính ngữ: xin phép làm gì, khiêm nhường ngữ, tôn kính ngữ, yêu cầu lịch sự, 〜なさい",
+   "tu_vung": [
+    "発表会",
+    "工場",
+    "ニックネーム",
+    "フロント",
+    "ポスター",
+    "コート",
+    "〜名",
+    "支払う",
+    "発表する",
+    "自慢する",
+    "おつり",
+    "金額",
+    "お客様",
+    "保険証",
+    "満席",
+    "丸",
+    "答え",
+    "正しい",
+    "しまう",
+    "泊まる",
+    "過ごす",
+    "確かめる",
+    "つける",
+    "掛ける",
+    "相談する",
+    "見学する",
+    "契約する",
+    "購入する",
+    "少々",
+    "恐れ入ります"
+   ],
+   "ngu_phap": [
+    "gungun_n4:29-1",
+    "gungun_n4:29-2",
+    "gungun_n4:29-3",
+    "gungun_n4:29-4",
+    "gungun_n4:29-5",
+    "gungun_n4:29-6",
+    "gungun_n4:29-7"
+   ]
+  }
+ ],
+ "ngu_phap": [
+  {
+   "id": "gungun_n4:29-1",
+   "mau": "Vさせてください",
+   "nghia": "Hãy để tôi V, xin cho tôi V (xin phép làm điều mình muốn)",
+   "bai": "gungun_n4:29",
+   "vi_du": "その仕事、私にやらせてください。"
+  },
+  {
+   "id": "gungun_n4:29-2",
+   "mau": "Vさせていただけませんか",
+   "nghia": "Có thể cho phép tôi V được không? (rất lịch sự)",
+   "bai": "gungun_n4:29",
+   "vi_du": "ちょっと電話を使わせていただけませんか。"
+  },
+  {
+   "id": "gungun_n4:29-3",
+   "mau": "お Vます / ご N します",
+   "nghia": "Khiêm nhường ngữ: mình làm V cho người trên, khách",
+   "bai": "gungun_n4:29",
+   "vi_du": "資料は明日お送りします。"
+  },
+  {
+   "id": "gungun_n4:29-4",
+   "mau": "お Vます / ご N になる",
+   "nghia": "Tôn kính ngữ: hành động của người trên, khách",
+   "bai": "gungun_n4:29",
+   "vi_du": "先生は何時にお着きになりますか。"
+  },
+  {
+   "id": "gungun_n4:29-5",
+   "mau": "お Vます / ご N ください",
+   "nghia": "Yêu cầu, mời một cách lịch sự",
+   "bai": "gungun_n4:29",
+   "vi_du": "どうぞご自由にお使いください。"
+  },
+  {
+   "id": "gungun_n4:29-6",
+   "mau": "Vます + なさい",
+   "nghia": "Hãy V (người trên ra lệnh, bố mẹ nói với con, đề thi)",
+   "bai": "gungun_n4:29",
+   "vi_du": "もう遅いから、早く寝なさい。"
+  },
+  {
+   "id": "gungun_n4:29-7",
+   "mau": "Dạng đặc biệt: お見えになる, お越しになる, ご覧になる, お休みになる, ご覧ください, お越しください, お持ちください, お掛けください",
+   "nghia": "Tôn kính ngữ và yêu cầu lịch sự dạng đặc biệt của 来る, 見る, 寝る, 持つ, 座る",
+   "bai": "gungun_n4:29",
+   "vi_du": "どうぞ、こちらにお掛けください。"
+  }
+ ],
+ "tu_vung_dang": "[từ, cách đọc, nghĩa, bài]",
+ "tu_vung": [
+  [
+   "発表会",
+   "はっぴょうかい",
+   "buổi trình diễn (của học viên)",
+   "gungun_n4:29"
+  ],
+  [
+   "工場",
+   "こうじょう",
+   "nhà máy, công xưởng",
+   "gungun_n4:29"
+  ],
+  [
+   "ニックネーム",
+   "",
+   "biệt danh",
+   "gungun_n4:29"
+  ],
+  [
+   "フロント",
+   "",
+   "quầy lễ tân",
+   "gungun_n4:29"
+  ],
+  [
+   "ポスター",
+   "",
+   "áp phích, poster",
+   "gungun_n4:29"
+  ],
+  [
+   "コート",
+   "",
+   "áo khoác",
+   "gungun_n4:29"
+  ],
+  [
+   "〜名",
+   "〜めい",
+   "~ người (đếm người, lịch sự)",
+   "gungun_n4:29"
+  ],
+  [
+   "支払う",
+   "しはらう",
+   "chi trả, thanh toán",
+   "gungun_n4:29"
+  ],
+  [
+   "発表する",
+   "はっぴょうする",
+   "phát biểu, trình bày",
+   "gungun_n4:29"
+  ],
+  [
+   "自慢する",
+   "じまんする",
+   "khoe, tự hào",
+   "gungun_n4:29"
+  ],
+  [
+   "おつり",
+   "",
+   "tiền thừa",
+   "gungun_n4:29"
+  ],
+  [
+   "金額",
+   "きんがく",
+   "số tiền",
+   "gungun_n4:29"
+  ],
+  [
+   "お客様",
+   "おきゃくさま",
+   "quý khách",
+   "gungun_n4:29"
+  ],
+  [
+   "保険証",
+   "ほけんしょう",
+   "thẻ bảo hiểm",
+   "gungun_n4:29"
+  ],
+  [
+   "満席",
+   "まんせき",
+   "kín chỗ, hết chỗ",
+   "gungun_n4:29"
+  ],
+  [
+   "丸",
+   "まる",
+   "hình tròn, khoanh tròn",
+   "gungun_n4:29"
+  ],
+  [
+   "答え",
+   "こたえ",
+   "câu trả lời",
+   "gungun_n4:29"
+  ],
+  [
+   "正しい",
+   "ただしい",
+   "đúng, chính xác",
+   "gungun_n4:29"
+  ],
+  [
+   "しまう",
+   "",
+   "cất đi",
+   "gungun_n4:29"
+  ],
+  [
+   "泊まる",
+   "とまる",
+   "trọ lại, nghỉ lại",
+   "gungun_n4:29"
+  ],
+  [
+   "過ごす",
+   "すごす",
+   "trải qua (thời gian)",
+   "gungun_n4:29"
+  ],
+  [
+   "確かめる",
+   "たしかめる",
+   "xác nhận, kiểm tra lại",
+   "gungun_n4:29"
+  ],
+  [
+   "つける",
+   "",
+   "khoanh (丸をつける)",
+   "gungun_n4:29"
+  ],
+  [
+   "掛ける",
+   "かける",
+   "ngồi (lịch sự: お掛けください)",
+   "gungun_n4:29"
+  ],
+  [
+   "相談する",
+   "そうだんする",
+   "bàn bạc, hỏi ý kiến",
+   "gungun_n4:29"
+  ],
+  [
+   "見学する",
+   "けんがくする",
+   "tham quan để học hỏi",
+   "gungun_n4:29"
+  ],
+  [
+   "契約する",
+   "けいやくする",
+   "ký hợp đồng",
+   "gungun_n4:29"
+  ],
+  [
+   "購入する",
+   "こうにゅうする",
+   "mua (trang trọng)",
+   "gungun_n4:29"
+  ],
+  [
+   "少々",
+   "しょうしょう",
+   "một chút (lịch sự)",
+   "gungun_n4:29"
+  ],
+  [
+   "恐れ入ります",
+   "おそれいります",
+   "xin lỗi đã làm phiền (rất lịch sự)",
+   "gungun_n4:29"
+  ]
+ ],
+ "kanji": "作低夜家宅客館",
+ "tien_do": {},
+ "bao_ton": {
+  "so_chua_doc": 0,
+  "khi_ton": "rut_gon",
+  "cach_viet": "day_du"
+ },
+ "truyen": {
+  "ky_tiep_theo": 1,
+  "ky_cuoi_ngay": ""
+ },
+ "lich_su_gan_day": [],
+ "thieu": [
+  {
+   "giao_trinh": "gungun_n4",
+   "chuong": 27,
+   "thu_muc": "giao_trinh/GUNGUN_N4"
+  },
+  {
+   "giao_trinh": "gungun_n4",
+   "chuong": 28,
+   "thu_muc": "giao_trinh/GUNGUN_N4"
+  },
+  {
+   "giao_trinh": "gungun_n5",
+   "chuong": 1,
+   "thu_muc": "giao_trinh/GUNGUN_N5"
+  },
+  {
+   "giao_trinh": "gungun_n5",
+   "chuong": 2,
+   "thu_muc": "giao_trinh/GUNGUN_N5"
+  },
+  {
+   "giao_trinh": "gungun_n5",
+   "chuong": 3,
+   "thu_muc": "giao_trinh/GUNGUN_N5"
+  },
+  {
+   "giao_trinh": "gungun_n5",
+   "chuong": 4,
+   "thu_muc": "giao_trinh/GUNGUN_N5"
+  },
+  {
+   "giao_trinh": "gungun_n5",
+   "chuong": 5,
+   "thu_muc": "giao_trinh/GUNGUN_N5"
+  },
+  {
+   "giao_trinh": "gungun_n5",
+   "chuong": 6,
+   "thu_muc": "giao_trinh/GUNGUN_N5"
+  },
+  {
+   "giao_trinh": "gungun_n5",
+   "chuong": 7,
+   "thu_muc": "giao_trinh/GUNGUN_N5"
+  },
+  {
+   "giao_trinh": "gungun_n5",
+   "chuong": 8,
+   "thu_muc": "giao_trinh/GUNGUN_N5"
+  },
+  {
+   "giao_trinh": "gungun_n5",
+   "chuong": 9,
+   "thu_muc": "giao_trinh/GUNGUN_N5"
+  },
+  {
+   "giao_trinh": "gungun_n5",
+   "chuong": 10,
+   "thu_muc": "giao_trinh/GUNGUN_N5"
+  },
+  {
+   "giao_trinh": "gungun_n5",
+   "chuong": 11,
+   "thu_muc": "giao_trinh/GUNGUN_N5"
+  },
+  {
+   "giao_trinh": "gungun_n5",
+   "chuong": 12,
+   "thu_muc": "giao_trinh/GUNGUN_N5"
+  },
+  {
+   "giao_trinh": "gungun_n5",
+   "chuong": 13,
+   "thu_muc": "giao_trinh/GUNGUN_N5"
+  },
+  {
+   "giao_trinh": "gungun_n5",
+   "chuong": 14,
+   "thu_muc": "giao_trinh/GUNGUN_N5"
+  },
+  {
+   "giao_trinh": "gungun_n4",
+   "chuong": 15,
+   "thu_muc": "giao_trinh/GUNGUN_N4"
+  },
+  {
+   "giao_trinh": "gungun_n4",
+   "chuong": 16,
+   "thu_muc": "giao_trinh/GUNGUN_N4"
+  },
+  {
+   "giao_trinh": "gungun_n4",
+   "chuong": 17,
+   "thu_muc": "giao_trinh/GUNGUN_N4"
+  },
+  {
+   "giao_trinh": "gungun_n4",
+   "chuong": 18,
+   "thu_muc": "giao_trinh/GUNGUN_N4"
+  },
+  {
+   "giao_trinh": "gungun_n4",
+   "chuong": 19,
+   "thu_muc": "giao_trinh/GUNGUN_N4"
+  },
+  {
+   "giao_trinh": "gungun_n4",
+   "chuong": 20,
+   "thu_muc": "giao_trinh/GUNGUN_N4"
+  },
+  {
+   "giao_trinh": "gungun_n4",
+   "chuong": 21,
+   "thu_muc": "giao_trinh/GUNGUN_N4"
+  },
+  {
+   "giao_trinh": "gungun_n4",
+   "chuong": 22,
+   "thu_muc": "giao_trinh/GUNGUN_N4"
+  },
+  {
+   "giao_trinh": "gungun_n4",
+   "chuong": 23,
+   "thu_muc": "giao_trinh/GUNGUN_N4"
+  },
+  {
+   "giao_trinh": "gungun_n4",
+   "chuong": 24,
+   "thu_muc": "giao_trinh/GUNGUN_N4"
+  },
+  {
+   "giao_trinh": "gungun_n4",
+   "chuong": 25,
+   "thu_muc": "giao_trinh/GUNGUN_N4"
+  },
+  {
+   "giao_trinh": "gungun_n4",
+   "chuong": 26,
+   "thu_muc": "giao_trinh/GUNGUN_N4"
+  }
+ ]
+}

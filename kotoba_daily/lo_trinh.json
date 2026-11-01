@@ -1,22 +1,31 @@
 {
- "_ghi_chu": "Bạn sửa file này khi học thêm chương hoặc thêm giáo trình. Xem HUONG_DAN.md, mục 'Khi học thêm'.",
- "nen_tang": "N5",
- "giao_trinh": [
-  {
-   "id": "gungun_n4",
-   "ten": "GUNGUN N4",
-   "trinh_do": "N4",
-   "chuong_dau": 1,
-   "chuong_cuoi": 33,
-   "da_hoc_den": 29,
-   "thu_muc": "SỬA: đường dẫn tới thư mục chứa PDF GUNGUN N4, ví dụ giao_trinh/GUNGUN_N4"
-  }
- ],
- "cai_dat": {
-  "so_chuong_trong_tam": 3,
-  "tu_moi_toi_da": 3,
-  "tin_that": false,
-  "khi_ton": "rut_gon",
-  "giong": 2
- }
+"_ghi_chu": "Bạn sửa file này khi học thêm chương hoặc thêm giáo trình. Xem HUONG_DAN.md, mục 'Khi học thêm'.",
+"nen_tang": "N5",
+"giao_trinh": [
+    {
+        "id": "gungun_n5",
+        "ten": "GUNGUN N5",
+        "trinh_do": "N5",
+        "chuong_dau": 1,
+        "chuong_cuoi": 14,
+        "da_hoc_den": 14,
+        "thu_muc": "giao_trinh/GUNGUN_N5"
+    },
+    {
+        "id": "gungun_n4",
+        "ten": "GUNGUN N4",
+        "trinh_do": "N4",
+        "chuong_dau": 15,
+        "chuong_cuoi": 33,
+        "da_hoc_den": 29,
+        "thu_muc": "giao_trinh/GUNGUN_N4"
+    }
+],
+"cai_dat": {
+    "so_chuong_trong_tam": 3,
+    "tu_moi_toi_da": 3,
+    "tin_that": true,
+    "khi_ton": "rut_gon",
+    "giong": 2
+}
 }
