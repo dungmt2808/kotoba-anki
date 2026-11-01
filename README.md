@@ -2,14 +2,14 @@
 
 README tổng hợp của cả dự án, viết để một phiên chat Claude hoặc Claude Code mới đọc là nắm được: dự án là gì, gồm những phần nào, chạy ra sao, đã chốt những gì và còn gì chưa làm.
 
-Cập nhật: 2026-11-01. Add-on **1.8.0**, bộ `kotoba_daily` bản có `tien_do.json` / số rút gọn / số kỳ truyện.
+Cập nhật: 2026-11-01. Add-on **1.9.0**, bộ `kotoba_daily` bản có `tien_do.json` / số rút gọn / số kỳ truyện.
 
 ---
 
 ## 0. Đọc nhanh (cho phiên chat mới)
 
 **Hai phần của dự án**
-1. **Add-on Anki ことば畑** (gói `kotoba_batake`, bản 1.8.0): biến deck từ vựng tiếng Nhật thành khu vườn pixel. Mỗi note là một cây lớn theo độ bền trí nhớ FSRS. Có xu, nhà, cửa hàng, mini-game, nhiệm vụ, từ 1.6 có **báo 畑新聞** và **chép chính tả hằng ngày**, từ 1.8 có **giao diện Mùa & Lễ hội** (Tết, Giáng sinh, hoa anh đào, lá đỏ…).
+1. **Add-on Anki ことば畑** (gói `kotoba_batake`, bản 1.9.0): biến deck tiếng Nhật (từ vựng, chữ Hán, ngữ pháp) thành khu vườn pixel. Mỗi note là một cây lớn theo độ bền trí nhớ FSRS. Có xu, nhà, cửa hàng, mini-game, nhiệm vụ, từ 1.6 có **báo 畑新聞** và **chép chính tả hằng ngày**, từ 1.8 có **giao diện Mùa & Lễ hội** (Tết, Giáng sinh, hoa anh đào, lá đỏ…), từ 1.9 có **Cấu hình trường theo loại note** và trò chơi theo loại note (từ vựng / chữ Hán / ngữ pháp).
 2. **Bộ `kotoba_daily`**: script Python và prompt để **Claude Code** (tác vụ lịch của Claude Desktop) mỗi sáng tự viết một số báo tiếng Nhật chỉ dùng ngữ pháp và từ vựng người học đã học, kèm audio VOICEVOX. Add-on đọc báo từ thư mục này.
 
 **Người dùng**
@@ -64,6 +64,24 @@ Claude Code (6:00, tự chạy)                 Add-on ことば畑 (khi mở An
 
 ### 2.4 Năm mini-game (không ghi vào FSRS, tối đa 40 xu/ngày)
 Nghe tìm cây (`listen`), Chợ sáng (`market`), Đuổi quạ (`crow`, gõ romaji/kana/kanji, 4 tốc độ), Lật cặp (`memory`), Điền vào câu (`cloze`, dùng câu ví dụ của note).
+
+Từ 1.9: đầu menu chọn **loại note để ôn** (chỉ hiện loại có trong deck); mỗi trò có **chế độ** (nút nhỏ dưới thẻ trò, mục đầu là mặc định, lưu trong collection):
+
+| Trò | Từ vựng | Chữ Hán | Ngữ pháp |
+|---|---|---|---|
+| Nghe tìm cây | Nghe → chọn chữ / nghĩa | Nghe → chọn kanji / Hán Việt | Nghe câu ví dụ → chọn mẫu |
+| Chợ sáng | Trộn / Nghĩa → Từ / Từ → Nghĩa / Cách đọc → Từ | Hán Việt → Kanji / Nghĩa → Kanji / Kanji → Hán Việt / Kanji → On/Kun / Trộn | Trộn / Nghĩa → Mẫu / Mẫu → Nghĩa |
+| Đuổi quạ | Nghĩa → gõ từ / Chữ → gõ cách đọc | Kanji → gõ On/Kun / Hán Việt → gõ âm hoặc chữ | không hỗ trợ |
+| Lật cặp | Trộn / Từ ↔ Nghĩa / Từ ↔ Cách đọc | Kanji ↔ Hán Việt / Nghĩa / On/Kun / Trộn | Mẫu ↔ Nghĩa |
+| Điền vào câu | điền từ | điền chữ Hán vào từ / câu ví dụ | điền mẫu (kể cả mẫu đã chia) |
+
+Thiếu trường cần cho trò / chế độ thì nút đó bị khoá và ghi lý do ("Cần ít nhất 4 chữ có audio (hiện có 0). Chọn trường ở ⚙ Cấu hình trường.").
+
+### 2.4b Cấu hình trường theo loại note (từ 1.9)
+- Bảng **Cấu hình trường** (mở từ chip **⚠ Cấu hình trường ▸** ở góc sân, thông báo bật lên khi deck có loại note chưa cấu hình (bấm vào là mở), ⚙ → *Cấu hình trường…*, hoặc nút trong menu Trò chơi). Mỗi loại note (note type) chọn: **Từ vựng / Chữ Hán / Ngữ pháp / Khác** rồi chọn trường cho từng vai trò, có cột giá trị của 5 note mẫu và dòng "Trên cây: …", dòng "Trò chơi" báo trò nào chơi được.
+- Vai trò: **Từ vựng** — Từ *, Cách đọc (furigana), Nghĩa *, Âm Hán Việt, Câu ví dụ, Dịch câu ví dụ, Audio của từ, Audio câu ví dụ, Loại từ. **Chữ Hán** — Kanji *, Hán Việt *, Nghĩa, Âm On (hoặc On/Kun chung), Âm Kun (nếu tách riêng), Ví dụ, Dịch ví dụ, Audio. **Ngữ pháp** — Cấu trúc *, Nghĩa *, Cách dùng / ghi chú, Ví dụ, Dịch ví dụ, Audio ví dụ. **Khác** — vẫn là cây nhưng không vào trò chơi. (* = bắt buộc.)
+- Điền sẵn theo gợi ý tự động; lưu thì kiểm tra trường bắt buộc; có Hoàn tác / Dùng gợi ý tự động. Loại note chưa cấu hình vẫn chạy bằng cách đoán tên trường như ≤ 1.8; đã cấu hình thì chỉ dùng đúng trường đã chọn. Đổi tên / xoá trường đã chọn → báo lại.
+- Cây ngữ pháp: bấm vào hiện cách dùng và nút ♪ Nghe ví dụ.
 
 ### 2.5 Nhà & Cửa hàng (8 tab)
 Xây nhà 8 bậc (3.430 xu) → 3 kiểu nhà (minka, chashitsu, lâu đài mini); 39 món trang trí / nội thất (14 món mới ở 1.7: hướng dương, chong chóng gió, nhà chim, giếng, xích đu, đài phun nước, ikebana, đèn andon, radio, bể cá, bếp irori, lịch treo tường hiện đúng ngày, tranh chữ 学, tranh sóng lừng) và 6 món hiếm; 6 vùng mở lần lượt (Bãi biển 2.000, Đền trên núi 3.000, Phố lễ hội 4.000, và 1.7: **Rừng tre** 5.000, **Suối nước nóng** 6.000, **Ga làng quê** 7.000 có tàu chạy qua, mỗi vùng 6 món); tủ đồ StackChan (17 món đồ mặc, 7 biểu cảm); Xưởng chế tác (vẽ pixel 16/24/32 hoặc chuyển ảnh, 10 hiệu ứng, vẽ đối xứng, lật dọc, dịch hình); Kho đồ. Thẻ trong cửa hàng có dòng ✦ mô tả hiệu ứng và nhãn **Mới** (từ 1.8 chỉ dành cho đồ theo mùa). Tổng mua hết khoảng 55.000 xu (bản 1.6: 31.000), chưa tính Mùa & Lễ hội (14 chủ đề × 1000 xu).
@@ -179,13 +197,14 @@ Nhân vật (trong `truyen.md`): **スタックちゃん** (robot của khu vư�
 │   STATE = garden_core.GardenState   PAPER = paper_core.PaperState    │
 │ garden_core.py  logic thuần (không import aqt → test được)           │
 │ season_core.py  Mùa & Lễ hội: lịch (âm lịch VN), chủ đề, 40 món      │
+│ fields_core.py  cấu hình trường theo loại note, chế độ trò chơi (1.9)│
 │ paper_core.py   báo & chép chính tả (không import aqt)               │
 └──────────────┬───────────────────────────────▲───────────────────────┘
    web.eval("Garden.fn(<json>)")               │ pycmd("nhóm:việc:tham_số")
 ┌──────────────▼───────────────────────────────┴───────────────────────┐
 │ web/*.js (mỗi file là một IIFE gắn vào biến toàn cục), nạp theo thứ tự│
-│ sky.js → season.js → fx.js → music.js → games.js → season_art.js →  │
-│ home.js → craft.js → paper.js                                         │
+│ sky.js → season.js → fx.js → music.js → games.js → fields.js →      │
+│ season_art.js → home.js → craft.js → paper.js                         │
 │ → garden.js (Garden: điều phối, nhận mọi lệnh từ Python)             │
 └───────────────────────────────────────────────────────────────────────┘
 ```
@@ -200,8 +219,9 @@ Nguyên tắc:
 
 | File | Dòng | Vai trò |
 |---|---|---|
-| `__init__.py` | ~750 | Cửa sổ, `refresh()`, ôn thẻ trong vườn, cầu nối (`_on_bridge`, `_on_game`, `_on_home`, `_on_craft`, `_on_paper`), phát audio báo, ghi `tien_do.json`, hook, menu |
-| `garden_core.py` | ~2040 | Cân bằng game, `CATALOG` (+ `ITEM_DESC`, gộp `SEASON_ITEMS`), cửa hàng / vùng / kiểu nhà / tủ đồ / xưởng, nhận diện trường note, `build_garden`, giai đoạn, nhiệm vụ (`_make_quests` nhận thêm `extra`), `GardenState` (+ `add_coins`), tách / gộp khoá mở rộng (`split_ext`, `merge_ext`, `LEGACY_*`), Mùa & Lễ hội (`split_season`, `merge_season`, `_tier`, `unlock_theme`, `set_theme`) |
+| `__init__.py` | ~800 | Cửa sổ, `refresh()`, ôn thẻ trong vườn, cầu nối (`_on_bridge`, `_on_game`, `_on_home`, `_on_craft`, `_on_paper`, `_on_fields`), phát audio báo, ghi `tien_do.json`, hook, menu; `config()` gộp `_fields` |
+| `fields_core.py` | ~280 | Cấu hình trường (1.9, thuần Python): `KINDS`, `ROLES` (vai trò + bắt buộc theo loại note), `GAME_MODES` (khớp `MODES` của games.js), `guess_kind`, `clean_store`, `conf_problem`, `validate_save`, `FieldStore` |
+| `garden_core.py` | ~2300 | Cân bằng game, `CATALOG` (+ `ITEM_DESC`, gộp `SEASON_ITEMS`), cửa hàng / vùng / kiểu nhà / tủ đồ / xưởng, nhận diện trường note (1.9: `note_roles` theo cấu hình hoặc đoán, `fields_panel`, `guess_config`, `grammar_candidates`), `build_garden` (+ `note_types`, `kind` của cây), giai đoạn, nhiệm vụ (`_make_quests` nhận thêm `extra`), `GardenState` (+ `add_coins`), tách / gộp khoá mở rộng (`split_ext`, `merge_ext`, `LEGACY_*`), Mùa & Lễ hội (`split_season`, `merge_season`, `_tier`, `unlock_theme`, `set_theme`) |
 | `season_core.py` | ~410 | Mùa & Lễ hội, thuần Python: âm lịch Việt Nam (`lunar_to_solar`, `tet_date`, `mid_autumn_date`), `THEMES` (thứ tự = ưu tiên), `SEASON_ITEMS`, `themes_view`, `clean_season`, `active_theme`, `streak_available` |
 | `paper_core.py` | ~890 | Cú pháp furigana, `clean_issue`, `Library` (đọc thư mục báo, cache theo mtime, chặn đường dẫn audio và symlink ra ngoài), `issue_view`, chấm câu hỏi / chép, lượt chép hằng ngày (`build_daily`, `DICT_REVIEW_MAX=2`, `DICT_PAPER_MAX=4`), hàng ôn 1/3/7 ngày, `PaperState`, `progress_payload` / `write_progress` |
 | `config.json` / `config.md` | | Cấu hình mặc định và hướng dẫn (Tools → Add-ons → Config) |
@@ -210,7 +230,8 @@ Nguyên tắc:
 | `web/garden.js` | ~970 | `Garden`: ruộng, thẻ ghim, bảng ôn, phím tắt, nhạc, chip báo (`drawPaperChip`), `openPaper` |
 | `web/paper.js` | ~600 | `GardenPaper`: 3 tab Báo / Chép chính tả / Kệ báo, tra từ, câu hỏi, chép (romaji qua `GardenGames._typedKana`) |
 | `web/home.js` | ~3620 | `GardenHome`: sprite (`SPR`, `FRAMES`, `BASE`), nhà, 7 cảnh ngoài trời + phòng, thời tiết theo lớp (vũng nước ở lớp mặt đất), đặt đồ, 8 tab cửa hàng (tab Mùa & Lễ hội: `renderSeason`, `themeCard`); cờ hòm thư theo báo, bấm hòm thư mở báo (`mainItemAt`); nút đổi cảnh ◂ ▸ (`cycleMain`) |
-| `web/games.js` | ~1760 | `GardenGames`: 5 mini-game, romaji → kana |
+| `web/games.js` | ~2040 | `GardenGames`: 5 mini-game, romaji → kana; 1.9: chọn loại note, bảng `MODES` (chế độ từng trò theo loại), `poolFor(def, kind, mode)`, lý do thiếu trường (`lackText`), `supportFor` |
+| `web/fields.js` | ~310 | `GardenFields` (1.9): bảng Cấu hình trường |
 | `web/fx.js` | ~900 | `GardenFX`: StackChan, hạt, âm thanh 8-bit |
 | `web/season.js` | ~630 | `GardenSeason` (1.8): chủ đề đang dùng + xem thử, bảng giao diện `VIS`, `themeSky()`, dây trang trí `GARLAND`, hạt bay theo thời gian, pháo hoa, Ngân Hà, trăng to, dải trang trí trên cùng, hạt nền trang, cỏ ruộng, chip chủ đề |
 | `web/season_art.js` | ~870 | `GardenSeasonArt` (1.8): sprite + chuyển động của 40 món theo mùa, cắm vào home.js qua `install()` |
@@ -226,13 +247,14 @@ Nguyên tắc:
 | `home:buy` / `build` / `place` / `move` / `take` / `zone` / `style:*` / `wear:*` / `face:*` / `craft:*` | Nhà & cửa hàng |
 | `home:theme:buy:<id>` / `theme:streak:<id>` / `theme:use:<id>` / `theme:auto` / `theme:off` | Mùa & Lễ hội: mở bằng xu / bằng chuỗi (Python tự tính chuỗi từ revlog), chọn tay, tự động, tắt |
 | `craft:save:<json>`, `craft:pick`, `win:full` | xưởng, chọn ảnh, F11 |
+| `fields:open`, `fields:save:{mid,kind,f}`, `fields:game:<game>:<loại>:<chế độ>` | 1.9: dữ liệu bảng Cấu hình trường; lưu cấu hình một loại note (Python kiểm tra loại, trường bắt buộc, trường có thật); lưu chế độ trò chơi |
 | `paper:index`, `paper:issue:<ngày>` | kệ báo; mở một số (đánh dấu đã đọc, ghi lại `tien_do.json`) |
 | `paper:q:{d,i,c}` | trả lời câu hỏi |
 | `paper:ct:{d,i,v}`, `dict:check:{id,v}` | chép chính tả (`v` = các cách hiểu chữ đã gõ) |
 | `paper:play:{d,k:bai\|ct,i,j,s}`, `dict:play:{id,s}` | phát audio: file báo là đường dẫn tuyệt đối đã kiểm tra; câu ví dụ deck là tên file media |
 | `dict:open`, `paper:stop` | lượt chép hôm nay; dừng audio |
 
-Python → JS: `render`, `showCard`, `showAnswer`, `reviewDone`, `celebrate`, `gameSaved`, `home`, `homeError`, `craftImage`, `paperIndex`, `paperIssue`, `paperSummary`, `dictShow`, `paperResult`, `paperError`, `toast`, `flip`, `key`, `fit`.
+Python → JS: `render`, `showCard`, `showAnswer`, `reviewDone`, `celebrate`, `gameSaved`, `home`, `homeError`, `craftImage`, `fieldsData`, `fieldsSaved`, `fieldsError`, `gameModes`, `paperIndex`, `paperIssue`, `paperSummary`, `dictShow`, `paperResult`, `paperError`, `toast`, `flip`, `key`, `fit`.
 
 Audio báo phát bằng `aqt.sound.av_player.play_file(đường_dẫn_tuyệt_đối)`. Đây là cách chính thức: `SoundOrVideoTag.path()` của Anki 26.9.3 nhận đường dẫn tuyệt đối.
 
@@ -241,7 +263,7 @@ Audio báo phát bằng `aqt.sound.av_player.play_file(đường_dẫn_tuyệt_�
 ## 5. Dữ liệu & lưu trữ
 
 ### 5.1 Cấu hình add-on (`config.json`)
-`word_field`… `example_audio_field` (ép tên trường, trống = tự nhận diện), `stage_days` [3, 21, 90], `wilt_retrievability` 0.7, `max_plants` 400, `daily_goal` 30, `daily_bonus` 15, `game_daily_coins` 40, `effects`, `sound`, `music`, `music_volume`, `show_tooltips`, `open_maximized`, **`bao_dir`** ("" = chưa nối báo).
+`word_field`… `example_audio_field` (ép tên trường, trống = tự nhận diện; từ 1.9 chỉ dùng cho loại note chưa cấu hình trong bảng Cấu hình trường), `stage_days` [3, 21, 90], `wilt_retrievability` 0.7, `max_plants` 400, `daily_goal` 30, `daily_bonus` 15, `game_daily_coins` 40, `effects`, `sound`, `music`, `music_volume`, `show_tooltips`, `open_maximized`, **`bao_dir`** ("" = chưa nối báo).
 
 ### 5.2 Khoá trong cấu hình collection (đồng bộ AnkiWeb)
 
@@ -251,6 +273,7 @@ Audio báo phát bằng `aqt.sound.av_player.play_file(đường_dẫn_tuyệt_�
 | `kotoba_batake_px` | điểm ảnh nén của món tự làm (RLE, bảng 32 màu) | `user_files/craft_px.json` |
 | `kotoba_batake_paper` (1.6) | `read` {ngày: {q, ct, coins, bonus}}, `dict` {day, items, res, coins, bonus}, `queue` {id câu: {due, box}}, `seen`, `miss` {từ: ngày} | `user_files/paper.json` |
 | `kotoba_batake_ext` (1.7) | phần mới mà bản ≤ 1.6.1 không hiểu: `owned` đồ mới, `zones` vùng mới, `places` {cảnh: [đồ mới hoặc đồ ở vùng mới]}, `craft_fx` {cid: {fx, was}} | `user_files/ext.json` |
+| `kotoba_batake_fields` (1.9) | `models`: {id loại note: {kind vocab/kanji/grammar/other, `f` {vai trò: tên trường}, name}}, `games`: {trò: {loại: chế độ}} | không (id loại note gắn với collection; chỉ ghi `user_files/fields.json` khi chạy không có collection) |
 | `kotoba_batake_season` (1.8) | `unlocked` chủ đề đã mở, `mode` auto/pick/off, `pick`, `free_day` (ngày Anki của lần đổi chuỗi gần nhất), `owned` / `places` của **đồ theo mùa** | `user_files/season.json` |
 
 Khoá báo **tách riêng** để bản cũ của add-on trên máy khác (vốn làm sạch và xoá khoá lạ trong ví) không xoá mất. Từ 1.7 đồ / vùng / hiệu ứng mới cũng vậy: ví chỉ giữ thứ bản 1.6.1 hiểu (`LEGACY_ITEMS`, `LEGACY_ZONES`, `LEGACY_FX`), phần mới ở `kotoba_batake_ext`; `load()` gộp lại (phần mới xếp sau), `save()` tách ra. Bản cũ đặt đồ vào ô của đồ mới thì đồ mới tự về kho. Collection có ví nhưng thiếu khoá mở rộng (vd. tải về từ máy chưa cài 1.7) thì không lấy `ext.json` của máy này. Từ 1.8 có thêm tầng thứ ba: đồ theo mùa và cài đặt Mùa & Lễ hội chỉ nằm ở `kotoba_batake_season` (không ở ví, không ở `ext`), nên bản 1.6.1 và 1.7.0 ở máy khác không xoá; thứ tự chuẩn món đặt: ví → ext → season (`_tier`). Khi lưu, phần của `kotoba_batake_season` mà bản này không hiểu (của bản mới hơn) được giữ nguyên (`keep_foreign_season`). Id câu chép: `p:<ngày>:<i>` (câu trong báo) hoặc `n:<nid>` (câu ví dụ của note). Ghi `col.set_config` không xoá undo.
@@ -330,6 +353,7 @@ Add-on chỉ **ghi đúng một file** trong `bao_dir`: `tien_do.json`.
 - **Furigana ngày tháng** theo quy tắc ở mục 3.4.
 - **Nội dung báo hoàn toàn mới**, không chép đoạn văn, ví dụ hay tên nhân vật của giáo trình (cả trong `vi_du` của file chương).
 - **Báo có thể còn chỗ chưa tự nhiên**, nhất là kính ngữ. Trang báo luôn ghi dòng này; gặp chỗ nghi ngờ thì hỏi thầy cô.
+- **Cấu hình trường (1.9)** — người dùng yêu cầu bắt buộc: Từ vựng = Từ + Nghĩa, Chữ Hán = Kanji + Hán Việt, Ngữ pháp = Cấu trúc + Nghĩa. Phần còn lại người dùng giao cho Claude tự chọn, đã chọn: cấu hình **theo loại note (note type)**, lưu trong collection (đồng bộ); thêm loại **Khác** (không vào trò chơi); loại note chưa cấu hình **vẫn chạy bằng cách đoán** như cũ (không chặn) nhưng có chip ⚠ + thông báo bấm được; đã cấu hình thì **không đoán thêm** trường nào; kanji có 2 ô Âm On (hoặc On/Kun chung) + Âm Kun riêng; Hán Việt cùng trường với Nghĩa kiểu "Sức mạnh (Lực)" thì tách ngoặc; trò chơi chơi **một loại note mỗi ván** (chọn ở đầu menu); Đuổi quạ không dùng cho ngữ pháp; Nghe tìm cây với ngữ pháp = nghe câu ví dụ → chọn mẫu; chế độ mặc định: Lật cặp kanji = Kanji ↔ Hán Việt, Chợ sáng kanji = Hán Việt → Kanji, từ vựng giữ như bản cũ (Trộn).
 - **Mùa & Lễ hội (1.8)** — người dùng giao cho Claude tự chọn, đã chọn như sau: mỗi chủ đề 1000 xu hoặc chuỗi 7 ngày (mùa) / 10 ngày (lễ hội); **mở là tặng luôn các món** của chủ đề (mua thêm khi đã mở); một chuỗi chỉ đổi được một chủ đề (`free_day`), ôn tiếp đủ ngày lại đổi được; mặc định **tự động theo lịch**, chỉ áp dụng chủ đề **đã mở** (chưa mở thì chỉ có chip mời + "Xem thử"); lễ hội ưu tiên hơn mùa, Giáng sinh ưu tiên hơn Mùa lá đỏ; Giáng sinh 15/11–31/12 đúng ý người dùng; Tết theo âm lịch Việt Nam, từ 21 ngày trước mùng 1 tới rằm tháng Giêng; mở chủ đề trái mùa thì dùng luôn (chuyển sang chọn tay); nhãn "Mới" chỉ cho đồ của bản mới nhất.
 
 ---
@@ -352,6 +376,8 @@ Add-on chỉ **ghi đúng một file** trong `bao_dir`: `tien_do.json`.
 
 Biến môi trường: `KB_ADDON` (thư mục add-on), `KB_KIT` (thư mục `kotoba_daily`), `KB_ORIG_CORE` (`garden_core.py` của 1.5).
 
+**Bộ test 1.9** (thêm vào, đều qua): `extra_models.py` (5 loại note mẫu: kanji On/Kun riêng, ngữ pháp có audio ví dụ, kanji "Sức mạnh (Lực)", tiếng Anh Front/Back/Sentence, tên trường lạ); `test_fields19.py ADDON OLD18` (86: chưa cấu hình thì đọc note **giống hệt `garden_core.py` của 1.8**, đoán loại / trường, lưu qua cầu nối thật kèm mọi lỗi, đã cấu hình thì không đoán thêm, On/Kun, tách ngoặc Hán Việt, cloze ngữ pháp, chép chính tả theo trường đã chọn, đổi tên trường, chế độ trò chơi hợp lệ / bị chặn, giữ khoá lạ, `MODES` JS khớp `GAME_MODES` Python, bản 1.8 không đụng khoá mới); `f_games.js` (chơi thử **mọi trò × mọi chế độ × 3 loại note** qua giao diện thật, chế độ còn sau khi tải lại, deck trộn 2 loại); `f_panel.js` (bảng Cấu hình trường: chip, thông báo, gợi ý, đổi loại, bắt buộc, lưu, hoàn tác, Esc, nút ở ⚙ / menu game, đổi tên trường, 2 cỡ cửa sổ); `f_extra.js` (bấm thông báo, đổi deck khi bảng mở, cây ngữ pháp). Bộ 1.7 / 1.8 chạy lại đều qua.
+
 **Bộ test 1.8** (thêm vào bộ 1.7, đều qua): `test_season.py ADDON V170 ORIG` (250: lịch 14 chủ đề theo ngày mốc, Tết / Trung thu âm lịch 25 năm, mở khoá xu / chuỗi, lưu 3 tầng, chạy `garden_core.py` của **1.7.0 và 1.6.1 thật** trên cùng collection để chứng minh không mất chủ đề / đồ theo mùa; bản 1.8 cũng giữ nguyên phần lạ của bản mới hơn); `season_bridge.js` (đổi chuỗi qua cầu nối thật với revlog giả, mini-game khi có chủ đề); `season_shop.js` (23: tab Mùa & Lễ hội qua giao diện thật); `season_more.js` (nhạc theo chủ đề, hiệu năng 3–6,4 ms/khung, ảnh phòng / vùng); `season_narrow.js` (5 cỡ cửa sổ); `season_ui.js` (ảnh 14 chủ đề ngày / đêm). Bộ 1.7 chạy lại vẫn qua (`regress.js` đổi một kiểm tra vì vùng của 1.7 không còn nhãn "Mới").
 
 **Bộ test 1.7** (viết lại từ đầu trong phiên 1.7 vì các bộ cũ không có trong repo; 195 kiểm tra, đều qua): `harness.py` + `stubs/aqt/` (aqt giả, `answer_card` chạy thật) + `server.py` (phục vụ trang đúng như `stdHtml`, `pycmd` → `__init__.py` thật trên collection Anki thật); `test_ext.py` (109: khoá mở rộng, chạy `garden_core.py` của 1.6.1 thật trên cùng collection để chứng minh bản cũ không xoá đồ / vùng mới); `regress.js` (42: nhạc, ôn thẻ thật, game, báo, nhiệm vụ, cài đặt, F11, mở vùng mới qua giao diện, mua / đặt / di chuyển / cất, nút ◂ ▸, quét vẽ 7 cảnh × 5 giờ × 5 thời tiết, cửa sổ hẹp); `craft_test.js` (44: toàn bộ luồng Xưởng + công cụ mới); `music_test.js`, `perf.js` (≤ 5 ms/khung mọi cảnh), `clip_check.js`, các script chụp ảnh `zones.js` / `panel.js` / `sheet.js` / `fx_test.js`.
@@ -360,7 +386,7 @@ Biến môi trường: `KB_ADDON` (thư mục add-on), `KB_KIT` (thư mục `kot
 ```bash
 # tăng "mod" (unix time) và "human_version" trong manifest.json
 find kotoba_batake -name __pycache__ -prune -exec rm -rf {} +
-rm -f kotoba_batake/user_files/state.json* kotoba_batake/user_files/craft_px.json* kotoba_batake/user_files/paper.json* kotoba_batake/user_files/ext.json* kotoba_batake/user_files/season.json*
+rm -f kotoba_batake/user_files/state.json* kotoba_batake/user_files/craft_px.json* kotoba_batake/user_files/paper.json* kotoba_batake/user_files/ext.json* kotoba_batake/user_files/season.json* kotoba_batake/user_files/fields.json*
 (cd kotoba_batake && zip -r -X -q ../out/kotoba_batake.ankiaddon . -x "*.pyc")
 # giải nén ra thư mục tạm, chạy lại test trên bản giải nén (KB_ADDON=<thư mục giải nén>)
 ```
@@ -379,6 +405,7 @@ rm -f kotoba_batake/user_files/state.json* kotoba_batake/user_files/craft_px.jso
 - **Chép chính tả có thể lấy câu của số báo chưa đọc** (nghe trước khi đọc), người dùng đã đồng ý.
 - **`tien_do.sap_quen` chỉ lấy theo deck đang xem.**
 - **Đuổi quạ** không phóng to phần vẽ trên màn hình lớn (tránh pixel nhoè).
+- **Cấu hình trường** gắn với id loại note + tên trường: đổi tên trường thì phải chọn lại (vườn báo). Một ván trò chơi chỉ dùng một loại note.
 - **Chất lượng tiếng Nhật do AI viết** có thể còn gượng; `kiemtra.py` chỉ bắt lỗi hình thức (furigana, phạm vi từ, cấu trúc), không bắt lỗi ngữ pháp.
 
 ---
@@ -444,6 +471,7 @@ Các ý dưới đây đã được bàn với người dùng nhưng **chưa là
 - **1.6**: báo 畑新聞 (hòm thư, chip, phím B, furigana, tra từ, giọng đọc, truyện dài kỳ, câu hỏi, kệ báo đọc bù); chép chính tả hằng ngày (gõ romaji được, ôn câu sai 1/3/7 ngày); 2 loại nhiệm vụ mới; ghi `tien_do.json`; khoá collection riêng `kotoba_batake_paper`.
 - **1.6.1**: lượt chép hằng ngày ưu tiên câu từ báo (tối đa 4).
 - **1.7.0**: sửa vũng nước khi mưa / giông vẽ đè lên nhà; sửa nhạc nền chỉ bật sau lần bấm đầu tiên; sửa chip "Báo · Chép" bị cắt ở cửa sổ thấp (1366×768, 1280×800). Thêm 3 vùng (Rừng tre, Suối nước nóng, Ga làng quê có tàu chạy qua), 32 món mới, mô tả hiệu ứng + nhãn "Mới", nút ◂ ▸ / phím ← → đổi cảnh, biểu tượng cửa hàng to hơn; hiệu ứng trời (gợn vũng nước, giọt bắn, cầu vồng, tuyết đọng, gió giông, chim, sao băng, hạt theo mùa); Xưởng thêm 5 hiệu ứng, vẽ đối xứng, lật dọc, dịch hình, sửa vài lỗi nhỏ. Phần mới lưu ở khoá riêng `kotoba_batake_ext`.
+- **1.9.0**: **Cấu hình trường theo loại note** (bảng pixel chọn loại Từ vựng / Chữ Hán / Ngữ pháp / Khác và trường cho từng vai trò, bắt buộc Từ + Nghĩa / Kanji + Hán Việt / Cấu trúc + Nghĩa, gợi ý tự động, note mẫu, chip ⚠ + thông báo khi có loại note chưa cấu hình); **trò chơi theo loại note** với chế độ riêng (Lật cặp Kanji ↔ Hán Việt / Nghĩa / On/Kun, Chợ sáng Hán Việt → Kanji…, nghe câu ví dụ → chọn mẫu ngữ pháp, điền mẫu ngữ pháp vào câu), thiếu trường thì báo lý do; cây ngữ pháp có cách dùng + nghe ví dụ. Khoá riêng `kotoba_batake_fields`.
 - **1.8.0**: **Mùa & Lễ hội** — 14 giao diện theo mùa / lễ hội (4 mùa, Tết, Giáng sinh, お正月, Trung thu, Halloween, Mùa lá đỏ, Thất Tịch, Lễ hội mùa hè, Mùa mưa, Hoa anh đào), mở bằng 1000 xu hoặc chuỗi 7 / 10 ngày ôn, tự đổi theo lịch (Tết, Trung thu theo âm lịch VN) hoặc chọn tay / tắt, xem thử; giao diện đổi cả trang, ruộng, sân, vùng, phòng (dây trang trí, tuyết phủ, hạt rơi, trăng rằm, Ngân Hà, pháo hoa, diều, xe tuần lộc…), thời tiết nghiêng theo mùa, 3 bản nhạc vườn mới, chip chủ đề, linh vật chào; 40 món theo mùa có hoạt hình. Khoá riêng `kotoba_batake_season`.
 
 **Bộ `kotoba_daily`**
