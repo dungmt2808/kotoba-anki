@@ -38,6 +38,7 @@ Chạy **Anki 26.9.3 thật** không cửa sổ (`QT_QPA_PLATFORM=offscreen`), �
 |---|---|
 | `e2e.js` | 28 kiểm tra: đọc số báo (3 bài, ▶ từng đoạn, ▶ Chậm phát `ct_1_cham.wav`, ≥ 10 chỗ tra từ), số 1.12 được sửa file lồng + tạo bù bản chậm ở luồng nền, Chép chính tả deck A / C / D (giọng máy giả lập: `TTSTag ja_JP`, tốc độ 0.7, gõ kana → đúng +2 xu) / E (hướng dẫn riêng cho deck chữ Hán) / D không giọng (hướng dẫn cài giọng + bật Gemini), deck B với **Gemini TTS thật** (chỉ khi `KB_REAL_GEMINI=1`), thẻ "Giọng đọc cho câu không có audio" ở tab Nguồn báo + lưu `dict_voice`, cửa sổ 1024×640 không tràn ngang, không lỗi JS, nhật ký lỗi add-on trống |
 | `e2e_114.js` | 33 kiểm tra (1.14): sửa nhà (22 ngày → 3 nấc, Sửa hết −315 xu), thú nuôi (nhận nuôi, chip “đói”, cho ăn, đặt tên, chuyển ra Bãi biển), giống cây (mua, gieo cho deck → mọi cây là anh đào), vùng tự tạo (Xưởng 64×76, chuyển ảnh, tạo −5.000 xu, đặt đồ, nút cảnh, màn chính), bảng Giao diện (21 ô chọn, Esc chỉ đóng bảng, kiểu “Tập trung khi ôn” → sân + ruộng ẩn khi ôn, nút Lật thẻ vẫn trong cửa sổ, nút Hiện vườn, “Ôn buổi tối” → thẻ có lớp `nightMode`), hiệu ứng thành tích thật (ôn hết deck A bằng Dễ → `joy.done`, dải chúc mừng chỉ hiện sau khi đóng bảng ôn, huy hiệu), 1024×640 không tràn ngang, không lỗi JS |
+| `e2e_115.js` | 21 kiểm tra (1.15): góc sân chỉ còn thẻ Hôm nay (đủ dòng nhiệm vụ / báo / thú + nhà / cấu hình trường, thời tiết chỉ còn biểu tượng), số cây khát trên nút Tưới ngay, gợi ý Nhà chỉ hiện khi rê chuột, bảng nhiệm vụ mở dưới thẻ, mô phỏng 12.000 bước thú không vào chỗ nhà, Xưởng (chữ nhật tô kín 100 ô / viền 36 ô, kẻ thẳng + Shift 21 ô, bút cỡ 3 = 9 ô, hoàn tác + làm lại), 1024×700 thẻ trò chơi không cắt chữ + danh sách Nhà ≥ 180px, đứng yên không tính lại style và < 80 ms việc / giây |
 | `e2e_tour.js` | phím N / Q / T / B mở đúng bảng, **Esc chỉ đóng bảng, cửa sổ vườn vẫn mở** (lỗi của Anki 26.x đã sửa ở 1.13), R → ôn 1 thẻ thật (Space → 3, revlog +1), Esc khi đang ôn |
 
 Chuẩn bị một lần (Ubuntu):
@@ -50,8 +51,8 @@ ANKI_PY=~/.venv-anki/bin/python tests/anki/run_ui.sh /tmp/kb_src/kotoba_batake /
 ```
 Cần Node ≥ 22 (có sẵn `fetch` và `WebSocket`). Cổng: `KB_CDP_PORT` (9333), `KB_CTRL_PORT` (9444). `kill_anki.sh` tắt Anki đang chạy từ các script này.
 
-## Kết quả lần chạy gần nhất (bản 1.14.0, 03/11/2026)
-- `test_offline.py`: OK · `test_more.py`: TẤT CẢ OK · `test_dict.py`: OK · `e2e.js`: 24/24 (không chạy bước Gemini TTS thật) · `e2e_tour.js`: 12/12 · `e2e_114.js`: 33/33 (chạy trên gói đã đóng).
+## Kết quả lần chạy gần nhất (bản 1.15.0, 03/11/2026)
+- `test_offline.py`: OK · `test_more.py`: TẤT CẢ OK · `test_dict.py`: OK · `e2e.js`: 24/24 (không chạy bước Gemini TTS thật) · `e2e_tour.js`: 12/12 · `e2e_114.js`: 33/33 · `e2e_115.js`: 21/21 (chạy trên gói đã đóng).
 - `kill_anki.sh` giờ chờ Anki thoát hẳn (trước đó lần mở kế tiếp đôi khi chỉ “reusing existing instance” → kịch bản sau báo `fetch failed`).
 
 ## Lần chạy trước (bản 1.13.1, 03/11/2026)
