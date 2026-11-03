@@ -2,14 +2,14 @@
 
 README tổng hợp của cả dự án, viết để một phiên chat Claude hoặc Claude Code mới đọc là nắm được: dự án là gì, gồm những phần nào, chạy ra sao, đã chốt những gì và còn gì chưa làm.
 
-Cập nhật: 2026-11-03. Add-on **1.12.0** (báo do Gemini viết), bộ `kotoba_daily` bản 2.2 (`kiemtra.py` bắt romaji / chữ Trung / ngày đọc đặc biệt).
+Cập nhật: 2026-11-03. Add-on **1.13.0** (sửa báo Gemini sau khi thử khoá thật + Chép chính tả cho mọi deck), bộ `kotoba_daily` bản 2.2 (`kiemtra.py` bắt romaji / chữ Trung / ngày đọc đặc biệt).
 
 ---
 
 ## 0. Đọc nhanh (cho phiên chat mới)
 
 **Hai phần của dự án**
-1. **Add-on Anki ことば畑** (gói `kotoba_batake`, bản 1.12.0): biến deck tiếng Nhật (từ vựng, chữ Hán, ngữ pháp) thành khu vườn pixel. Mỗi note là một cây lớn theo độ bền trí nhớ FSRS. Có xu, nhà, cửa hàng, mini-game, nhiệm vụ, từ 1.6 có **báo 畑新聞** và **chép chính tả hằng ngày**, từ 1.8 có **giao diện Mùa & Lễ hội** (Tết, Giáng sinh, hoa anh đào, lá đỏ…), từ 1.9 có **Cấu hình trường theo loại note** và trò chơi theo loại note (từ vựng / chữ Hán / ngữ pháp), từ 1.10 có **nút mở nhanh** (thanh trên cùng của Anki, Ctrl+Shift+K, biểu tượng ngoài Anki) và Mùa & Lễ hội phủ cả các vùng lẫn màn trò chơi, từ 1.11 **bù xu cho lượt ôn trên điện thoại** và nút **Báo lỗi**, từ 1.12 **báo do Gemini viết** (người dùng chỉ dán khoá Gemini, song song với cách Claude Code).
+1. **Add-on Anki ことば畑** (gói `kotoba_batake`, bản 1.13.0): biến deck tiếng Nhật (từ vựng, chữ Hán, ngữ pháp) thành khu vườn pixel. Mỗi note là một cây lớn theo độ bền trí nhớ FSRS. Có xu, nhà, cửa hàng, mini-game, nhiệm vụ, từ 1.6 có **báo 畑新聞** và **chép chính tả hằng ngày**, từ 1.8 có **giao diện Mùa & Lễ hội** (Tết, Giáng sinh, hoa anh đào, lá đỏ…), từ 1.9 có **Cấu hình trường theo loại note** và trò chơi theo loại note (từ vựng / chữ Hán / ngữ pháp), từ 1.10 có **nút mở nhanh** (thanh trên cùng của Anki, Ctrl+Shift+K, biểu tượng ngoài Anki) và Mùa & Lễ hội phủ cả các vùng lẫn màn trò chơi, từ 1.11 **bù xu cho lượt ôn trên điện thoại** và nút **Báo lỗi**, từ 1.12 **báo do Gemini viết** (người dùng chỉ dán khoá Gemini, song song với cách Claude Code), từ 1.13 **Chép chính tả chạy với mọi deck** (câu ví dụ không có audio → giọng Gemini / giọng tiếng Nhật của máy; deck không có câu ví dụ → nghe từ, gõ lại) và báo Gemini đã sửa theo lần thử khoá thật.
 2. **Bộ `kotoba_daily`**: script Python và prompt để **Claude Code** (tác vụ lịch của Claude Desktop) mỗi sáng tự viết một số báo tiếng Nhật chỉ dùng ngữ pháp và từ vựng người học đã học, kèm audio VOICEVOX. Add-on đọc báo từ thư mục này.
 3. **Nguồn báo thứ hai (1.12)**: add-on tự gọi **Gemini API** bằng khoá của người dùng, viết cùng định dạng `bao.json` vào `user_files/bao_gemini/`, kiểm tra + sửa + soát lần 2 rồi mới đưa vào hòm thư. Dành cho người không rành kỹ thuật (không cần Claude Code, VOICEVOX, PDF giáo trình).
 
@@ -113,7 +113,7 @@ Giờ thật / giờ game / cố định, 6 buổi trong ngày, thời tiết đ
 - Mở bằng: bấm **hòm thư** ngoài sân (cờ đỏ dựng khi có số chưa đọc; chưa nối báo thì cờ thỉnh thoảng dựng cho vui như bản cũ), chip trên sân, hoặc phím **B**.
 - Bảng **新聞** có 3 tab:
   - **Báo**: số mới nhất chưa đọc. Furigana ẩn/hiện; bấm từ gạch chân → nghĩa, bài đã học, giai đoạn của cây cùng tên; ▶ nghe từng đoạn; truyện có "Kỳ trước" và nhắc nếu kỳ trước chưa đọc (nút "Đọc kỳ trước"); câu hỏi đọc hiểu; chép chính tả của số đó (Nghe / Nghe chậm); mẫu câu ở cuối; dòng ghi công VOICEVOX.
-  - **Chép chính tả**: lượt 5 câu mỗi ngày (xem mục 6). Gõ kana, kanji hoặc romaji.
+  - **Chép chính tả**: lượt 5 câu mỗi ngày (xem mục 6). Gõ kana, kanji hoặc romaji. Từ 1.13 chạy với mọi kiểu deck (mục 2.7c).
   - **Kệ báo**: mọi số theo ngày (Mới / Đã đọc / Xong +N xu), đọc bù lúc nào cũng được.
 - Hai loại nhiệm vụ mới: `paper` (đọc xong 1 số báo), `dict` (chép đúng 3 câu). Chỉ xuất hiện khi làm được hôm đó.
 - Add-on ghi `<bao_dir>/tien_do.json` để báo hôm sau nhắc lại từ yếu và biết có bao nhiêu số chưa đọc.
@@ -124,6 +124,20 @@ Giờ thật / giờ game / cố định, 6 buổi trong ngày, thời tiết đ
 - Sau đó thẻ Gemini hiện: khoá (che), model, số hôm nay (*Đọc ngay* / *Viết số hôm nay* / *Tạo giọng đọc còn thiếu*), lỗi, phạm vi; chọn **trình độ** N5–N1 (khi theo deck), **lấy từ** giáo trình (kotoba_daily) / deck đang xem, **giọng đọc** (Câu chép chính tả / Cả bài / Tắt) + tên giọng, **tự viết mỗi ngày**; *Gemini đã viết và tự sửa những gì* (nhật ký); *Xoá khoá khỏi máy* (bấm 2 lần).
 - Mỗi số: Gemini viết (JSON đúng khuôn) → máy tự sửa chỗ chắc chắn → máy kiểm tra (romaji, furigana, chữ Trung, ký tự lạ, cách đọc theo deck, `[3日|みっか]`, câu chép có trong bài, câu hỏi…) → gửi đúng danh sách lỗi cho Gemini sửa (≤ 2 lần) → **Gemini soát lần 2** như biên tập viên → kiểm tra lại. Còn lỗi thì **không lưu**. Khoảng 3–6 lượt gọi chữ + 4–6 lượt gọi giọng đọc mỗi ngày.
 - Báo Gemini đọc / chấm / chép y như báo kotoba_daily (cùng `paper_core`). Dòng cuối ghi "Giọng đọc: Gemini TTS:Kore. Báo do Gemini (<model>) viết tự động…".
+- **Sửa ở 1.13 (sau khi thử khoá thật, gói miễn phí)**:
+  - *Giọng đọc*: model TTS 3.8 trả **file WAV** (có khối chữ ký C2PA ở cuối) chứ không phải PCM thô → 1.12 ghi cả header vào âm thanh (tiếng "bụp" đầu, ~0,13 s rè cuối, to gấp ~3 lần giọng). Giờ `decode_audio` nhận cả WAV lẫn `audio/l16`; mở vườn lần đầu thì tự sửa file cũ (`repair_audio`, chạy nền).
+  - *Bản đọc chậm*: model TTS 3.8 đọc to luôn câu dặn tiếng Anh "Say slowly…" nên 1.12 luôn bỏ bản chậm. Giờ bản chậm **tạo ngay trên máy** (`stretch`, WSOLA thuần Python, 0,75×, không đổi cao độ, ~0,8 s cho một câu) — không tốn lượt gọi; số cũ được tạo bù.
+  - *Chọn model*: thử **mọi** model chữ (cả Flash-Lite, trước chỉ 4 model Flash đầu), model đã chạy được (lúc Thử khoá / số trước) đi trước, nhớ model **hết hạn mức** tới giờ Google đặt lại (`retryDelay`, 0 giờ giờ Thái Bình Dương = 15 giờ ở Việt Nam) — kể cả tên gọi tắt trỏ sang model khác (`gemini-3.5-flash` dùng chung hạn mức `gemini-3.6-flash`, lấy từ `quotaDimensions`). Cả số dùng một model TTS.
+  - *"Suy nghĩ" quá trần*: lượt sửa của `gemini-3-flash-preview` nghĩ 31.453 token / 32.768 → bài bị cắt, cả số hỏng, báo nhầm "quá dài". Giờ lượt sửa `thinkingLevel: low`, soát `medium` (2.5: `thinkingBudget`), trần 65.536 token; lượt sửa gọi hỏng thì giữ bản hiện có cho bước soát; thông báo ghi đúng lý do.
+  - *Tra từ*: bước soát (3.6-flash) gỡ hết `{..|..|..}` của từ đã học (bản cuối chỉ còn 3 từ bấm được). Giờ máy **tự nối tra từ** cho `[漢字|よみ]` khớp từ trong phạm vi (cả 勉強します → 勉強する, 働きます → 働く, so cách đọc), tối đa 20 chỗ; bản soát làm rơi > ½ chỗ tra từ thì dùng bản trước soát; lời nhắc soát dặn giữ nguyên.
+  - *Nội dung*: số thường bắt buộc đủ 3 bài; gợi ý cho bước soát: chữ Hán khó hơn N5/N4 (`hard_kanji`), chưa dùng mẫu câu trọng tâm, câu chép vắt qua 「」, ít chỗ tra từ; thiết lập nhân vật rõ (はなさん là 女将さん, không phải 店長; người mới đến nói よろしくお願いします).
+
+### 2.7c Chép chính tả cho mọi deck (1.13)
+- Lượt 5 câu mỗi ngày lấy theo thứ tự: câu chép sai đến hạn ôn → câu trong báo → câu ví dụ của deck (cây héo / khát trước, câu có audio thật trước) → **từ của deck** (`w:<nid>`: nghe từ, gõ lại — chỉ note từ vựng, từ 2–16 ký tự một cách viết, từ có chữ Hán phải có cách đọc kana; gõ kana hay chữ Hán đều đúng).
+- Câu / từ **không có audio** đọc bằng *giọng dự phòng* (`paper_core.Voice`): giọng Gemini đã tạo (kho `user_files/bao_gemini/giong/`, bản thường + bản chậm) → **giọng tiếng Nhật của máy** (Windows / macOS, Anki phát bằng `TTSTag(lang="ja_JP")`, đọc chậm = `speed 0.7`) → nhờ Gemini tạo (luồng nền, vài giây; dòng hiện "⏳ đang tạo giọng đọc…", xong tự vẽ lại). Có giọng máy thì phát ngay, đồng thời vẫn nhờ Gemini tạo bản hay hơn. Gemini hết hạn mức giọng đọc trong ngày → câu chưa làm mà không nghe được thì bỏ ra, lấp câu khác.
+- Câu trong báo thiếu audio (kotoba_daily không có VOICEVOX, Gemini hết hạn mức) cũng dùng giọng dự phòng; đoạn văn không có audio đọc bằng giọng máy. File audio của deck (mp3…) phát chậm bằng tốc độ của mpv khi Anki dùng mpv.
+- Tuỳ chọn `dict_voice` (tab Nguồn báo → thẻ *Giọng đọc cho câu không có audio*): **Tự động** (mặc định) / **Chỉ giọng máy** (không gửi câu lên Google) / **Tắt**. Thẻ ghi máy có giọng tiếng Nhật chưa và cách cài (Windows: Cài đặt → Thời gian & ngôn ngữ → Giọng nói → Thêm giọng nói → Tiếng Nhật; macOS: Trợ năng → Nội dung đọc → Giọng hệ thống → Quản lý giọng nói).
+- Không có gì để nghe thì tab Chép chính tả giải thích đúng trường hợp (deck chữ Hán / ngữ pháp không câu ví dụ; chưa có khoá Gemini; giọng Gemini hết hạn mức; máy chưa có giọng tiếng Nhật) kèm nút sang tab Nguồn báo.
 
 ---
 
@@ -291,7 +305,7 @@ Audio báo phát bằng `aqt.sound.av_player.play_file(đường_dẫn_tuyệt_�
 ## 5. Dữ liệu & lưu trữ
 
 ### 5.1 Cấu hình add-on (`config.json`)
-`word_field`… `example_audio_field` (ép tên trường, trống = tự nhận diện; từ 1.9 chỉ dùng cho loại note chưa cấu hình trong bảng Cấu hình trường), `stage_days` [3, 21, 90], `wilt_retrievability` 0.7, `max_plants` 400, `daily_goal` 30, `daily_bonus` 15, `game_daily_coins` 40, `effects`, `sound`, `music`, `music_volume`, `show_tooltips`, `open_maximized`, `toolbar_button` (1.10, nút ことば畑 trên thanh Anki), `mobile_coins` (1.11, bù xu cho lượt ôn trên điện thoại), **`bao_dir`** ("" = chưa nối báo); 1.12: `bao_source` (auto / claude / gemini), `gemini_key` (chỉ trên máy), `gemini_level`, `gemini_scope`, `gemini_audio`, `gemini_voice`, `gemini_auto`, `gemini_model`, `gemini_tts_model`.
+`word_field`… `example_audio_field` (ép tên trường, trống = tự nhận diện; từ 1.9 chỉ dùng cho loại note chưa cấu hình trong bảng Cấu hình trường), `stage_days` [3, 21, 90], `wilt_retrievability` 0.7, `max_plants` 400, `daily_goal` 30, `daily_bonus` 15, `game_daily_coins` 40, `effects`, `sound`, `music`, `music_volume`, `show_tooltips`, `open_maximized`, `toolbar_button` (1.10, nút ことば畑 trên thanh Anki), `mobile_coins` (1.11, bù xu cho lượt ôn trên điện thoại), **`bao_dir`** ("" = chưa nối báo); 1.12: `bao_source` (auto / claude / gemini), `gemini_key` (chỉ trên máy), `gemini_level`, `gemini_scope`, `gemini_audio`, `gemini_voice`, `gemini_auto`, `gemini_model`, `gemini_tts_model`; 1.13: `dict_voice` (auto / may / tat — giọng cho câu chép không có audio).
 
 ### 5.2 Khoá trong cấu hình collection (đồng bộ AnkiWeb)
 
@@ -319,7 +333,7 @@ Khoá báo **tách riêng** để bản cũ của add-on trên máy khác (vốn
 | `tien_do.json` | add-on (chỉ ghi khi nội dung đổi) | `pham_vi.py` |
 | `lich_su.md`, `truyen.md` | tác vụ sáng | tác vụ sáng, `pham_vi.py` (đếm số báo) |
 
-Add-on chỉ **ghi đúng một file** trong `bao_dir`: `tien_do.json`. Báo Gemini (1.12) nằm ở thư mục riêng `user_files/bao_gemini/` (cùng cấu trúc `bao/<ngày>/…`, thêm `truyen.json`, `lich_su.json`, `nhat_ky/`, `trang_thai.json`), không đụng tới `bao_dir`.
+Add-on chỉ **ghi đúng một file** trong `bao_dir`: `tien_do.json`. Báo Gemini (1.12) nằm ở thư mục riêng `user_files/bao_gemini/` (cùng cấu trúc `bao/<ngày>/…`, thêm `truyen.json`, `lich_su.json`, `nhat_ky/`, `trang_thai.json` — từ 1.13 có `exhausted` {model: giờ hết chặn}, `voice_fail_day` — và `giong/` kho giọng Gemini cho câu không có audio, tự dọn sau 90 ngày / 2000 file), không đụng tới `bao_dir`.
 
 ### 5.4 Định dạng chính
 `nguon/<id>/<chương>.json`:
@@ -414,6 +428,8 @@ Biến môi trường: `KB_ADDON` (thư mục add-on), `KB_KIT` (thư mục `kot
 
 **Bộ test 1.12** (harness mới vì bộ cũ không có trong repo; đều qua trên bản đóng gói): `stubs/aqt/` + `server.py ADDON PORT WORKDIR [--kit KIT] [--gemini]` (`__init__.py` thật, collection Anki thật, trang như `stdHtml`, việc nền chạy luồng thật) + `mock_gemini.py` (máy chủ Gemini giả). `test_ai.py ADDON KIT` (77), `e2e_ai.js PORT SHOTS` (38: tab Nguồn báo từ đầu tới cuối), `e2e_tour.js PORT SHOTS` (28: vòng tính năng cũ ở 3 cỡ cửa sổ). Chạy `run_e2e.sh SCRIPT PORT RUNDIR SHOTDIR [--kit KIT] [--gemini]`. Chi tiết ở README trong gói add-on. Test không nằm trong repo (`.gitignore` chỉ giữ add-on, giáo trình, kotoba_daily).
 
+**Bộ test 1.13** (lần đầu chạy trong **Anki 26.9.3 thật**: `pip install aqt==26.9.3` + PyQt6 6.12, `QT_QPA_PLATFORM=offscreen`, `QTWEBENGINE_REMOTE_DEBUGGING` → điều khiển webview bằng Chrome DevTools Protocol tự viết (`cdp.js`, Playwright không nối được QtWebEngine), add-on phụ `zz_kbtest` nhận lệnh Python qua HTTP 127.0.0.1 và ghi lại mọi lệnh phát âm thanh): `make_col.py` (5 kiểu deck: câu ví dụ + audio / câu ví dụ không audio / chỉ từ + audio từ / chỉ từ / kanji đơn), `test_dict.py ADDON` (lõi Chép chính tả × 4 cấu hình giọng × 5 deck, đều qua), `e2e.js SHOTS` (28/28: báo Gemini thật, ▶ Chậm, sửa file 1.12 + tạo bù bản chậm, deck D giọng máy + chấm đúng, deck B **Gemini TTS thật** tạo giọng trong lúc chờ, hướng dẫn khi trống, tab Nguồn báo, 1024×640, không lỗi JS), `e2e_tour.js` (phím N / Q / T / B / R + Esc, ôn thẻ thật ghi revlog). Gemini thật (khoá gói miễn phí) qua `run_job.py` (luồng `Job` + `make_audio` thật). Test vẫn không nằm trong repo.
+
 **Bộ test 1.11** (thêm vào `run_all.sh`, cả 19 bộ đều qua trên bản đóng gói): `test_v111.py ADDON` (82: bù xu bằng scheduler v3 thật — mốc lần đầu, lượt "điện thoại" +1 / lượt nhớ, lượt máy tính không trả lại, nhiệm vụ `due` / `new`, ngày cũ trong / ngoài 14 ngày, revlog type 4 không tính, undo, 2 máy ghi đè nhau, mục tiêu ngày, `mobile_coins=false`, móc đồng bộ / mở hồ sơ; Báo lỗi — nhật ký, ẩn thông tin cá nhân, báo cáo, nút, menu); `qt_report111.py ADDON PYQT_DIR OUT.png` (cửa sổ Báo lỗi bằng **PyQt6 6.9 thật**, offscreen; cần `pip install --target ../../pyqt PyQt6` và gói `libegl1`); `f_v111.js PORT [SHOTDIR]` (thông báo 📱 + chip xu khi đồng bộ lúc vườn mở, ⚙ ghi đã bù / Đang tắt, lỗi JS → nhắc một lần, ⚙ → Báo lỗi gửi thông tin trang). `test_launch110.py` đổi một kiểm tra: menu Tools có 3 mục.
 
 **Bộ test 1.9** (thêm vào, đều qua): `extra_models.py` (5 loại note mẫu: kanji On/Kun riêng, ngữ pháp có audio ví dụ, kanji "Sức mạnh (Lực)", tiếng Anh Front/Back/Sentence, tên trường lạ); `test_fields19.py ADDON OLD18` (86: chưa cấu hình thì đọc note **giống hệt `garden_core.py` của 1.8**, đoán loại / trường, lưu qua cầu nối thật kèm mọi lỗi, đã cấu hình thì không đoán thêm, On/Kun, tách ngoặc Hán Việt, cloze ngữ pháp, chép chính tả theo trường đã chọn, đổi tên trường, chế độ trò chơi hợp lệ / bị chặn, giữ khoá lạ, `MODES` JS khớp `GAME_MODES` Python, bản 1.8 không đụng khoá mới); `f_games.js` (chơi thử **mọi trò × mọi chế độ × 3 loại note** qua giao diện thật, chế độ còn sau khi tải lại, deck trộn 2 loại); `f_panel.js` (bảng Cấu hình trường: chip, thông báo, gợi ý, đổi loại, bắt buộc, lưu, hoàn tác, Esc, nút ở ⚙ / menu game, đổi tên trường, 2 cỡ cửa sổ); `f_extra.js` (bấm thông báo, đổi deck khi bảng mở, cây ngữ pháp). Bộ 1.7 / 1.8 chạy lại đều qua.
@@ -441,14 +457,16 @@ rm -f kotoba_batake/user_files/state.json* kotoba_batake/user_files/craft_px.jso
 - **Chưa chạy trên Anki thật**, chỉ kiểm bằng giả lập. Các phần chưa thử thật: cửa sổ trên GNOME/Wayland, phát WAV bằng `av_player`, VOICEVOX thật (`doc_voicevox.py` mới thử với máy chủ giả), `getFile`, dán ảnh Ctrl+V, kéo thả ảnh, và (1.7) nhạc tự phát nhờ `AnkiWebView.setPlaybackRequiresGesture(False)` — cùng cách màn ôn thẻ của Anki dùng; nếu QtWebEngine vẫn chặn thì nhạc bật ở thao tác đầu tiên như trước.
 - **Điện thoại**: AnkiDroid / AnkiMobile không chạy add-on. Lượt ôn trên điện thoại vẫn làm cây lớn; từ 1.11 được bù xu, nhiệm vụ hôm nay và mục tiêu ngày sau khi đồng bộ, nhưng không có thưởng lên giai đoạn, nhiệm vụ "tưới liền" / "giúp cây lớn", và nhiệm vụ của ngày đã qua. Báo chỉ đọc được trên máy có thư mục `kotoba_daily` (hoặc mở `bao.html`).
 - **Nhiều máy tính**: phải cập nhật add-on ở mọi máy. Muốn đọc báo ở máy khác thì đồng bộ thư mục `kotoba_daily` (ví dụ Syncthing).
-- **Câu ví dụ trong deck không có bản đọc chậm.**
+- **Câu ví dụ trong deck**: file audio của deck chỉ đọc chậm được khi Anki dùng mpv (Windows / macOS / Linux có mpv); giọng Gemini / giọng máy thì luôn có bản chậm (1.13).
+- **Esc trong Anki 26.x**: Anki gắn vào mọi webview "Esc → đóng cửa sổ" (không xét `preventDefault`), nên ở ≤ 1.12 bấm Esc để đóng Nhà / Trò chơi / Báo đóng luôn cả vườn. 1.13 thay `onEsc` của webview vườn: chỉ đóng cửa sổ khi trang không dùng phím Esc đó (`window.__kbEscUsed`).
 - **Chép chính tả có thể lấy câu của số báo chưa đọc** (nghe trước khi đọc), người dùng đã đồng ý.
 - **`tien_do.sap_quen` chỉ lấy theo deck đang xem.**
 - **Đuổi quạ** không phóng to phần vẽ trên màn hình lớn (tránh pixel nhoè).
 - **Cấu hình trường** gắn với id loại note + tên trường: đổi tên trường thì phải chọn lại (vườn báo). Một ván trò chơi chỉ dùng một loại note.
 - **Biểu tượng ngoài Anki (1.10)**: Ubuntu / Linux đã thử bằng `gio launch` (GLib thật); Windows / macOS chỉ kiểm bằng giả lập (lệnh PowerShell / AppleScript sinh ra). Cần Anki được đăng ký mở file .apkg (bộ cài làm sẵn); Linux ưu tiên lệnh `anki` trong PATH, không có thì `xdg-open`. Anki ở chế độ an toàn (tắt add-on) mà bấm biểu tượng thì Anki báo file vé không phải deck. Nếu Anki hỏi chọn hồ sơ khi mở bằng biểu tượng, chọn xong là vào vườn.
 - **Báo lỗi (1.11)**: chỉ ghi lỗi add-on bắt được (không có lỗi của mẫu thẻ hay add-on khác). Cửa sổ đã chạy bằng PyQt6 thật (offscreen) nhưng chưa thử trong Anki thật.
-- **Báo Gemini (1.12) chưa thử với khoá thật**: mới kiểm bằng máy chủ Gemini giả cùng định dạng REST (`generateContent`, `responseSchema`, TTS `responseModalities: AUDIO`, lỗi 400 / 429 / 503). Cần chạy với khoá thật để xem: chất lượng bài, số lần sửa trung bình, giọng đọc tiếng Nhật, hạn mức miễn phí hiện tại (Google đổi thường xuyên; TTS có thể không có trong bản miễn phí của một số tài khoản).
+- **Báo Gemini đã thử với khoá thật (1.13, gói miễn phí, 11/2026)**: mỗi model chữ ~20 lượt / ngày, `gemini-3.8-flash-tts` ~10 lượt / ngày (các model TTS khác hạn mức riêng). Một số báo: 5–15 lượt gọi chữ (tuỳ model hết hạn mức), 30–110 giây; Flash viết tốt hơn Flash-Lite rõ (Flash-Lite hay quên mẫu câu trọng tâm, dùng từ sai nghĩa). Phát âm Gemini TTS rất chuẩn (nghe lại bằng model khác khớp từng chữ, cả 今日 / 明日 / 3日 / 1枚). Model trong danh sách có thể trả 404 (`gemini-2.5-flash`) hoặc 503 lúc đông — add-on tự đổi model. Bước soát vẫn bỏ sót lỗi tự nhiên (từ sai nghĩa, vai nhân vật).
+- **Giọng máy (TTS của hệ điều hành)**: đã kiểm đường phát (`TTSTag` ja_JP, tốc độ 0.7) và nhận diện giọng trong Anki thật, nhưng máy test là Linux (không có TTS) nên giọng được giả lập; chưa nghe thử trên Windows / macOS.
 - **Giọng đọc khi không có VOICEVOX**: không cần cài add-on nào. Dùng Gemini thì giọng đọc lấy từ chính khoá Gemini. Không có giọng nào thì báo vẫn đọc được, câu chép trong báo không có ô gõ, lượt chép hằng ngày dùng câu ví dụ có audio của deck. Anki trên Linux không có giọng đọc hệ thống (bộ phát TTS của Anki chỉ có cho Windows / macOS — đã xem mã `aqt/tts.py` 26.9.3).
 - **Chất lượng tiếng Nhật do AI viết** có thể còn gượng; `kiemtra.py` chỉ bắt lỗi hình thức (furigana, phạm vi từ, cấu trúc), không bắt lỗi ngữ pháp.
 
@@ -501,7 +519,7 @@ Các ý dưới đây đã được bàn với người dùng nhưng **chưa là
 - **Máy gacha**: nếu làm thì phải có bảo hiểm, và trùng món thì đổi lại một phần xu.
 - **Vé nghỉ giữ chuỗi ngày**: chỉ giữ con số chuỗi, không đụng lịch ôn.
 
-- **Giọng đọc hệ thống cho Windows / macOS** (ý tưởng 1.12, chưa làm): dùng bộ phát TTS sẵn có của Anki (`TTSTag`, giọng tiếng Nhật của hệ điều hành) để đọc báo khi không có VOICEVOX / Gemini TTS. Linux không có.
+- ~~**Giọng đọc hệ thống cho Windows / macOS**~~: **làm ở 1.13** (giọng dự phòng cho Chép chính tả và đoạn báo không có audio, mục 2.7c). Linux không có.
 - **Gemini viết lại số hôm nay** (chưa làm): hiện chỉ viết khi chưa có số; muốn viết lại thì xoá thư mục `user_files/bao_gemini/bao/<ngày>/`.
 
 ### 10.3 Kỹ thuật
@@ -512,6 +530,7 @@ Các ý dưới đây đã được bàn với người dùng nhưng **chưa là
 ---
 
 ## 11. Lịch sử phiên bản
+- **1.13.0**: thử báo Gemini với khoá thật rồi sửa hết lỗi tìm được: giọng đọc TTS 3.8 bị lồng header WAV (tiếng bụp / rè) + tự sửa file cũ; bản đọc chậm tạo tại máy (trước luôn bị bỏ); thử mọi model kể cả Flash-Lite, nhớ model hết hạn mức tới giờ Google đặt lại, model đã chạy đi trước; lượt sửa / soát giới hạn "suy nghĩ" (trước bị cắt, hỏng cả số); tự nối tra từ cho từ đã học, chặn bước soát làm rơi tra từ; bắt buộc 3 bài, gợi ý chữ Hán khó / mẫu trọng tâm / câu chép vắt qua 「」. **Chép chính tả cho mọi deck**: câu ví dụ không có audio đọc bằng giọng Gemini (kho `giong/`) hoặc giọng tiếng Nhật của máy, deck không có câu ví dụ thì nghe từ – gõ từ, câu báo thiếu audio dùng giọng dự phòng, hướng dẫn rõ khi không có gì để nghe, tuỳ chọn `dict_voice`. Sửa: Esc để đóng bảng (Nhà / Trò chơi / Báo / ôn thẻ) đóng luôn cả cửa sổ vườn trên Anki 26.x.
 - **1.12.0**: **Báo do Gemini viết** (tab Nguồn báo: dán khoá Gemini → add-on tự viết mỗi ngày, kiểm tra + sửa + soát lần 2, giọng đọc Gemini; song song với Claude Code, chọn thư mục kotoba_daily ngay trong giao diện). Sửa: phím **B** lần nữa không đóng bảng báo; thông báo "chưa cấu hình trường" che nút Lật thẻ / ô gõ trò chơi. `kotoba_daily` 2.2: `kiemtra.py` bắt romaji / chữ Trung / ngày đọc đặc biệt / cách đọc không khớp kana.
 - **1.11.0**: **Bù xu cho lượt ôn trên điện thoại** (+1 / lượt nhớ, nhiệm vụ hôm nay, mục tiêu ngày; sổ ở khoá `kotoba_batake_mobile`; thông báo 📱; ⚙ ghi tổng đã bù; tắt bằng `mobile_coins`). **Báo lỗi** (nhật ký lỗi Python + JS, cửa sổ Báo lỗi từ ⚙ và menu Tools: thông tin máy + lỗi gần đây, ẩn thông tin cá nhân, Chép / Lưu ra file; nhắc một lần khi trang gặp lỗi).
 
