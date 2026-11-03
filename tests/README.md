@@ -15,6 +15,7 @@ Nhớ tăng `human_version` trong `manifest.json` và ghi lịch sử phiên b�
 | File | Nội dung |
 |---|---|
 | `core/test_offline.py ADDON` | phần sửa ở 1.13 / 1.13.1 trong `ai_core` / `paper_core`: giải mã giọng đọc Gemini (WAV có khối C2PA, `audio/l16`, định dạng lạ), sửa file WAV lồng của 1.12 + tạo bù bản chậm (chạy 2 lần không làm gì thêm), bản đọc chậm WSOLA (độ dài, có tiếng, tốc độ), chọn model (model đã chạy đi trước, bỏ model hết hạn mức và tên gọi tắt trỏ sang nó, hết chặn thì dùng lại, Flash-Lite), lỗi 429 theo ngày (`retryDelay`, `quotaDimensions`), giờ đặt lại hạn mức, thông báo MAX_TOKENS, tự nối tra từ trên số N4 thật của 1.12 (5 → 20 chỗ, okurigana), các gợi ý cho bước soát (chữ Hán khó, mẫu trọng tâm, câu chép vắt qua 「」), số thường phải 3 bài, chữ gửi giọng đọc; 1.13.1: máy tự sửa `3[日|にち]` / `2[人|にん]`, furigana chắc chắn, chọn lại câu chép từ bài, `1日` chỉ cảnh báo, bản đầu JSON hỏng → viết lại, lượt sửa JSON hỏng → giữ bản trước (Gemini giả lập trong test). Chạy được bằng python hệ thống (thiếu gói `anki` thì dùng `stubs/`) |
+| `core/test_more.py ADDON` | 1.14: sửa nhà (1 nấc / 7 ngày, trần, sửa 1 nấc giữ phần ngày lẻ, vắng lâu không tính dồn, giảm 50% khi quay lại), thú nuôi (đói / đi chơi / về, thân thiết, tên, chỗ ở, dữ liệu rác), giống cây (luật tag → loại note → deck cha, Trộn cố định theo note), vùng tự tạo (giá, sửa miễn phí / 50 xu, hình 64×76, tối đa 6, xoá → thú về sân, id không dùng lại), `GardenState` với collection giả: khoá riêng `kotoba_batake_more`, ví / ext không có gì của 1.14, bản cũ đặt trùng món → món ở vùng tự tạo về kho, giữ khoá lạ của bản sau, tự cho ăn khi mở vườn, collection chưa có khoá thì không đọc file sao lưu; giao diện tự chỉnh (`clean_ui`, kiểu có sẵn); hiệu ứng thành tích (`joy_view`) |
 | `core/test_dict.py ADDON` | Chép chính tả cho mọi deck trên **collection Anki thật** (`core/make_col.py`: deck A câu ví dụ + audio / B câu ví dụ không audio / C chỉ từ + audio từ / D chỉ từ / E kanji đơn) × 4 cấu hình giọng (không giọng / giọng máy / Gemini chưa tạo / giọng máy + Gemini): chọn câu, phát được (`audio_for`), bản chậm, câu cần Gemini tạo, chấm kana / chữ Hán, Gemini tạo xong / hết hạn mức trong ngày (bỏ câu không nghe được), id `w:<nid>` qua `clean_state`. Cần `ANKI_PY` = python có `anki==26.9.3` |
 
 ## 2. Gemini thật — `gemini/` (cần mạng + khoá)
@@ -36,6 +37,7 @@ Chạy **Anki 26.9.3 thật** không cửa sổ (`QT_QPA_PLATFORM=offscreen`), �
 | Kịch bản | Nội dung |
 |---|---|
 | `e2e.js` | 28 kiểm tra: đọc số báo (3 bài, ▶ từng đoạn, ▶ Chậm phát `ct_1_cham.wav`, ≥ 10 chỗ tra từ), số 1.12 được sửa file lồng + tạo bù bản chậm ở luồng nền, Chép chính tả deck A / C / D (giọng máy giả lập: `TTSTag ja_JP`, tốc độ 0.7, gõ kana → đúng +2 xu) / E (hướng dẫn riêng cho deck chữ Hán) / D không giọng (hướng dẫn cài giọng + bật Gemini), deck B với **Gemini TTS thật** (chỉ khi `KB_REAL_GEMINI=1`), thẻ "Giọng đọc cho câu không có audio" ở tab Nguồn báo + lưu `dict_voice`, cửa sổ 1024×640 không tràn ngang, không lỗi JS, nhật ký lỗi add-on trống |
+| `e2e_114.js` | 33 kiểm tra (1.14): sửa nhà (22 ngày → 3 nấc, Sửa hết −315 xu), thú nuôi (nhận nuôi, chip “đói”, cho ăn, đặt tên, chuyển ra Bãi biển), giống cây (mua, gieo cho deck → mọi cây là anh đào), vùng tự tạo (Xưởng 64×76, chuyển ảnh, tạo −5.000 xu, đặt đồ, nút cảnh, màn chính), bảng Giao diện (21 ô chọn, Esc chỉ đóng bảng, kiểu “Tập trung khi ôn” → sân + ruộng ẩn khi ôn, nút Lật thẻ vẫn trong cửa sổ, nút Hiện vườn, “Ôn buổi tối” → thẻ có lớp `nightMode`), hiệu ứng thành tích thật (ôn hết deck A bằng Dễ → `joy.done`, dải chúc mừng chỉ hiện sau khi đóng bảng ôn, huy hiệu), 1024×640 không tràn ngang, không lỗi JS |
 | `e2e_tour.js` | phím N / Q / T / B mở đúng bảng, **Esc chỉ đóng bảng, cửa sổ vườn vẫn mở** (lỗi của Anki 26.x đã sửa ở 1.13), R → ôn 1 thẻ thật (Space → 3, revlog +1), Esc khi đang ôn |
 
 Chuẩn bị một lần (Ubuntu):
@@ -48,7 +50,11 @@ ANKI_PY=~/.venv-anki/bin/python tests/anki/run_ui.sh /tmp/kb_src/kotoba_batake /
 ```
 Cần Node ≥ 22 (có sẵn `fetch` và `WebSocket`). Cổng: `KB_CDP_PORT` (9333), `KB_CTRL_PORT` (9444). `kill_anki.sh` tắt Anki đang chạy từ các script này.
 
-## Kết quả lần chạy gần nhất (bản 1.13.1, 03/11/2026)
+## Kết quả lần chạy gần nhất (bản 1.14.0, 03/11/2026)
+- `test_offline.py`: OK · `test_more.py`: TẤT CẢ OK · `test_dict.py`: OK · `e2e.js`: 24/24 (không chạy bước Gemini TTS thật) · `e2e_tour.js`: 12/12 · `e2e_114.js`: 33/33 (chạy trên gói đã đóng).
+- `kill_anki.sh` giờ chờ Anki thoát hẳn (trước đó lần mở kế tiếp đôi khi chỉ “reusing existing instance” → kịch bản sau báo `fetch failed`).
+
+## Lần chạy trước (bản 1.13.1, 03/11/2026)
 - `test_offline.py`: 32/32 · `test_dict.py`: OK (5 deck × 4 cấu hình) · `e2e.js`: 28/28 (có Gemini TTS thật) · `e2e_tour.js`: 12/12.
 - Gemini thật (gói miễn phí): số N4 viết bằng `gemini-flash-lite-latest` khi các model Flash đã hết hạn mức (15 lượt gọi, 36 giây, 10 file giọng đọc sạch); số N5 theo deck bằng `gemini-3.6-flash` (14 lượt gọi, 126 giây) — lần này đi qua cả nhánh "bản sửa bị hỏng → giữ bản trước". Hai lần trước đó (bản 1.13.0) hỏng vì JSON bị cắt và vì câu chép không còn nguyên văn sau bước soát → đã sửa ở 1.13.1.
 - Chưa kiểm: giọng tiếng Nhật thật của Windows / macOS (máy test Linux, giọng được giả lập).

@@ -5,6 +5,9 @@ HERE=$(cd "$(dirname "$0")" && pwd)
 ADDON=${1:-$("$HERE/tools/unpack.sh")}
 FAIL=0
 echo "== core/test_offline.py"; python3 "$HERE/core/test_offline.py" "$ADDON" || FAIL=1
+echo "== core/test_more.py"
+OUT=$(python3 "$HERE/core/test_more.py" "$ADDON" 2>&1); RC=$?
+echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
 if "${ANKI_PY:-python3}" -c "import anki.collection" 2>/dev/null; then
   echo "== core/test_dict.py"
   OUT=$("${ANKI_PY:-python3}" "$HERE/core/test_dict.py" "$ADDON" 2>&1); RC=$?
