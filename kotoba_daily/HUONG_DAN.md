@@ -4,6 +4,8 @@ Mỗi sáng, Claude Code đọc phạm vi bạn đã học trong giáo trình r�
 
 Báo đọc được ở hai nơi: trong add-on ことば畑 (từ bản 1.6: hòm thư ngoài sân, phím **B**) và bằng trình duyệt (file `bao.html`).
 
+> **Không muốn cài Claude Code?** Từ add-on ことば畑 1.12 có cách dễ hơn: mở báo (phím **B**) → tab **Nguồn báo** → dán khoá Gemini (lấy miễn phí ở aistudio.google.com/apikey) → **Thử khoá**. Add-on tự viết báo mỗi ngày theo từ trong deck của bạn, kèm giọng đọc Gemini, không cần cài gì thêm. Nếu đã có thư mục này, Gemini dùng luôn phạm vi theo giáo trình trong `pham_vi.json`. Bộ `kotoba_daily` (Claude Code) vẫn là cách cho báo sát giáo trình nhất và có giọng VOICEVOX.
+
 ## Trong thư mục có gì
 
 ```
@@ -160,9 +162,9 @@ Bạn cũng có thể sửa `truyen.md` để đổi nhân vật hoặc hướng
 
 ## Đọc trong add-on ことば畑 (bản 1.6 trở lên)
 
-1. Mở Anki → Tools → Add-ons → chọn ことば畑 → Config, sửa dòng `"bao_dir"` thành đường dẫn tới thư mục này, ví dụ `"bao_dir": "~/tieng-nhat/kotoba_daily"`. Bấm Save rồi mở lại vườn.
+1. Trong vườn: phím **B** → tab **Nguồn báo** → thẻ **Claude Code** → **Chọn thư mục…** → chọn thư mục này (từ bản 1.12). Bản cũ hơn: Tools → Add-ons → chọn ことば畑 → Config, sửa dòng `"bao_dir"` thành đường dẫn tới thư mục này, ví dụ `"bao_dir": "~/tieng-nhat/kotoba_daily"`, bấm Save rồi mở lại vườn.
 2. Có số báo chưa đọc thì cờ đỏ trên hòm thư ngoài sân dựng lên, chip "Báo mới" hiện ở góc sân. Bấm hòm thư, bấm chip, hoặc nhấn phím **B** để mở.
-3. Bảng 新聞 có 3 tab: **Báo** (số mới nhất chưa đọc), **Chép chính tả** (lượt 5 câu mỗi ngày, lấy từ báo và từ câu ví dụ trong deck), **Kệ báo** (mọi số cũ, đọc bù lúc nào cũng được).
+3. Bảng 新聞 có 4 tab: **Báo** (số mới nhất chưa đọc), **Chép chính tả** (lượt 5 câu mỗi ngày, lấy từ báo và từ câu ví dụ trong deck), **Kệ báo** (mọi số cũ, đọc bù lúc nào cũng được), **Nguồn báo** (Claude Code hay Gemini).
 
 Add-on ghi lại file `tien_do.json` trong thư mục này để số báo hôm sau biết từ nào bạn sắp quên, từ nào bạn chép sai, và còn bao nhiêu số chưa đọc:
 
@@ -176,7 +178,7 @@ Add-on chỉ đọc các file trong thư mục này và chỉ ghi đúng một f
 
 - Không có báo sáng nay: app Desktop có mở và máy có thức lúc 6:00 không? Xem lịch sử chạy ở trang chi tiết của tác vụ; dòng bị bỏ qua sẽ ghi lý do.
 - Tác vụ đứng mãi: có thể đang chờ duyệt quyền. Mở phiên chạy đó từ trang chi tiết tác vụ, duyệt và chọn always allow.
-- `kiemtra.py` báo lỗi mà Claude không sửa được: mở `bao/<ngày>/bao.json`, đọc dòng LỖI (có ghi vị trí như `bai[1].doan[0]`).
+- `kiemtra.py` báo lỗi mà Claude không sửa được: mở `bao/<ngày>/bao.json`, đọc dòng LỖI (có ghi vị trí như `bai[1].doan[0]`). Từ bản 2.2, `kiemtra.py` còn bắt chữ Latin / romaji trong câu tiếng Nhật (chữ viết tắt in hoa như NHK chỉ cảnh báo), chữ Hán giản thể của tiếng Trung, ngày / số người đọc đặc biệt (`[3日|みっか]`, `[2人|ふたり]`) và cách đọc không khớp phần kana trong chữ (`[食べ物|たもの]`).
 - Furigana sai hay câu nghe lạ: báo do AI viết nên đôi khi có chỗ chưa tự nhiên, nhất là kính ngữ. Gặp chỗ nghi ngờ thì hỏi thầy cô, và có thể thêm một dòng nhắc vào `prompts/bao_hang_ngay.md`.
 - Thử các script bằng tay (đứng trong thư mục tiếng Nhật):
 
