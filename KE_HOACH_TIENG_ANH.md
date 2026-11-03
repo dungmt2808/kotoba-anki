@@ -1,6 +1,6 @@
 # Kế hoạch: hỗ trợ deck tiếng Anh (dự kiến bản 1.17)
 
-> **Trạng thái: CHƯA LÀM.** Viết lúc add-on ở bản 1.16.0 (03/11/2026), sau khi đọc code và chạy thử.
+> **Trạng thái: LÀM DỞ — bản 1.17.0 đã xong bước 1–5, 7 (và một phần 8); còn bước 6 (báo tiếng Anh).** Viết lúc add-on ở bản 1.16.0 (03/11/2026), sau khi đọc code và chạy thử. Xem mục 7 "Tiến độ" ở cuối file.
 > **Làm xong toàn bộ thì xoá file này**, dòng trỏ tới nó ở `README.md` mục 0 và dòng `!/KE_HOACH_TIENG_ANH.md` trong `.gitignore`. Ghi tóm tắt vào mục 11 (lịch sử) của
 > `README.md` và của README trong gói. Làm dở thì cập nhật mục "Tiến độ" ở cuối file rồi mới commit.
 
@@ -218,11 +218,13 @@ Việc cần làm cho phần này:
 
 ## 7. Tiến độ
 
-- [ ] Bước 1 — Chuẩn hoá furigana
-- [ ] Bước 2 — Ngôn ngữ của loại note (+ gợi ý mức hỗ trợ trong Cấu hình trường)
-- [ ] Bước 3 — Trường và chữ tiếng Anh
-- [ ] Bước 4 — Trò chơi
-- [ ] Bước 5 — Chép chính tả
-- [ ] Bước 6 — Báo
-- [ ] Bước 7 — Dữ liệu test + e2e
-- [ ] Bước 8 — Đóng gói 1.17.0, README (có mục "Deck thế nào thì dùng được"), **xoá file này**
+- [x] Bước 1 — Chuẩn hoá furigana (1.17: `text_core.py`; mọi dòng ở bảng 4.1 trừ "Cách đọc bằng romaji" — để sau)
+- [x] Bước 2 — Ngôn ngữ của loại note (khoá `lang`, `guess_lang`, drop-down Ngôn ngữ + Loại, dòng gợi ý + cảnh báo trường nhồi chung). Lưu ý: ngôn ngữ khác lưu là `other` (không có mã con `other:ko`) cho gọn.
+- [x] Bước 3 — Trường và chữ tiếng Anh (nhãn IPA, `guess_roles_lang`, tách IPA, không bỏ `[...]`)
+- [x] Bước 4 — Trò chơi (nhóm `en` / `xx`, chế độ ở `games_lang`; Đuổi quạ `spell`; Điền vào câu nhận dạng biến đổi; giọng `en_US` của máy cho Nghe tìm cây + nút ♪). Chưa làm: "Nghe → gõ từ" cho Đuổi quạ, tự co chữ trong thùng hàng / thẻ lật, cụm từ tách rời ("look it up").
+- [x] Bước 5 — Chép chính tả (tiếng Anh chấm theo từ, `tts_en`; ngôn ngữ khác chỉ khi có audio). Chưa làm: báo lại từ sai / thiếu / thừa.
+- [ ] **Bước 6 — Báo tiếng Anh.** 1.17 chỉ làm phần chặn: deck đang xem không phải tiếng Nhật thì không tự viết báo (`_deck_is_japanese` trong `__init__.py`), tab Báo ghi "báo hiện chỉ tiếng Nhật". Khi làm tiếp, chú ý: trạng thái đọc / câu chép của báo khoá theo ngày (`p:<ngày>:<i>`, `PaperState.read`) — báo Nhật và báo Anh cùng ngày sẽ đụng nhau, cần khoá riêng (bản ≤ 1.17 `clean_state` bỏ id lạ, nên phải để ở khoá collection riêng, không chung `kotoba_batake_paper`).
+- [x] Bước 7 — Dữ liệu test + e2e (`make_col.py` thêm 7 deck; `tests/core/test_117.py`; `tests/anki/e2e_117.js`)
+- [ ] Bước 8 — Đóng gói: 1.17.0 đã đóng gói + README (mục "Deck thế nào thì dùng được" ở README trong gói, mục 10). Còn: **xoá file này** + dòng trỏ ở README mục 0 + dòng ngoại lệ trong `.gitignore` khi bước 6 xong.
+
+Ngoài kế hoạch, 1.17 còn làm theo yêu cầu người dùng: bảng Trò chơi trở lại kiểu 1.15 với drop-down; bỏ Âm Hán Việt + Loại từ khỏi Từ vựng.

@@ -2,16 +2,16 @@
 
 README tổng hợp của cả dự án, viết để một phiên chat Claude hoặc Claude Code mới đọc là nắm được: dự án là gì, gồm những phần nào, chạy ra sao, đã chốt những gì và còn gì chưa làm.
 
-Cập nhật: 2026-11-03. Add-on **1.16.0** (bản chốt: 12 món hiếm mới, ôn tối "Đêm vườn", bảng Trò chơi sắp lại, vẽ cả cảnh nền vùng tự tạo; 1.15: màn chính gọn với một thẻ "Hôm nay", Xưởng có kẻ thẳng / chữ nhật / làm lại / cỡ bút, đỡ tốn CPU; 1.14 có giao diện tự chỉnh theo chế độ, sửa nhà, thú nuôi, giống cây, vùng tự tạo, hiệu ứng thành tích; bộ test trong `tests/`), bộ `kotoba_daily` bản 2.2 (`kiemtra.py` bắt romaji / chữ Trung / ngày đọc đặc biệt).
+Cập nhật: 2026-11-03. Add-on **1.17.0** (deck **tiếng Anh** cho vườn / trò chơi / chép chính tả, furigana mọi kiểu, bảng Trò chơi trở lại kiểu 1.15 với drop-down, bỏ Hán Việt khỏi từ vựng; 1.16: 12 món hiếm mới, ôn tối "Đêm vườn", bảng Trò chơi sắp lại, vẽ cả cảnh nền vùng tự tạo; 1.15: màn chính gọn với một thẻ "Hôm nay", Xưởng có kẻ thẳng / chữ nhật / làm lại / cỡ bút, đỡ tốn CPU; 1.14 có giao diện tự chỉnh theo chế độ, sửa nhà, thú nuôi, giống cây, vùng tự tạo, hiệu ứng thành tích; bộ test trong `tests/`), bộ `kotoba_daily` bản 2.2 (`kiemtra.py` bắt romaji / chữ Trung / ngày đọc đặc biệt).
 
 ---
 
 ## 0. Đọc nhanh (cho phiên chat mới)
 
-> **Việc đang chờ làm: hỗ trợ deck tiếng Anh (bản 1.17)** — kế hoạch chi tiết ở [`KE_HOACH_TIENG_ANH.md`](KE_HOACH_TIENG_ANH.md) (hiện trạng code, cách lưu để bản cũ không xoá dữ liệu, phân tích furigana, các bước, test). Làm xong thì **xoá file đó và dòng này**.
+> **Việc đang chờ làm: báo 畑新聞 tiếng Anh (bước 6 của kế hoạch tiếng Anh)** — 1.17 đã làm xong furigana, ngôn ngữ theo loại note, trường / trò chơi / chép chính tả tiếng Anh; còn lại báo tiếng Anh do Gemini viết. Kế hoạch + tiến độ ở [`KE_HOACH_TIENG_ANH.md`](KE_HOACH_TIENG_ANH.md). Làm xong thì **xoá file đó và dòng này**.
 
 **Hai phần của dự án**
-1. **Add-on Anki ことば畑** (gói `kotoba_batake`, bản 1.16.0): biến deck tiếng Nhật (từ vựng, chữ Hán, ngữ pháp) thành khu vườn pixel. Mỗi note là một cây lớn theo độ bền trí nhớ FSRS. Có xu, nhà, cửa hàng, mini-game, nhiệm vụ, từ 1.6 có **báo 畑新聞** và **chép chính tả hằng ngày**, từ 1.8 có **giao diện Mùa & Lễ hội** (Tết, Giáng sinh, hoa anh đào, lá đỏ…), từ 1.9 có **Cấu hình trường theo loại note** và trò chơi theo loại note (từ vựng / chữ Hán / ngữ pháp), từ 1.10 có **nút mở nhanh** (thanh trên cùng của Anki, Ctrl+Shift+K, biểu tượng ngoài Anki) và Mùa & Lễ hội phủ cả các vùng lẫn màn trò chơi, từ 1.11 **bù xu cho lượt ôn trên điện thoại** và nút **Báo lỗi**, từ 1.12 **báo do Gemini viết** (người dùng chỉ dán khoá Gemini, song song với cách Claude Code), từ 1.13 **Chép chính tả chạy với mọi deck** (câu ví dụ không có audio → giọng Gemini / giọng tiếng Nhật của máy; deck không có câu ví dụ → nghe từ, gõ lại) và báo Gemini đã sửa theo lần thử khoá thật, từ 1.14 **tự chỉnh giao diện** theo chế độ (vd. ẩn sân khi ôn thẻ), 4 chỗ tiêu xu mới (**sửa nhà, thú nuôi, giống cây, vùng tự tạo**) và **hiệu ứng thành tích** của vườn.
+1. **Add-on Anki ことば畑** (gói `kotoba_batake`, bản 1.17.0): biến deck tiếng Nhật (từ vựng, chữ Hán, ngữ pháp) — từ 1.17 cả deck **tiếng Anh** — thành khu vườn pixel. Mỗi note là một cây lớn theo độ bền trí nhớ FSRS. Có xu, nhà, cửa hàng, mini-game, nhiệm vụ, từ 1.6 có **báo 畑新聞** và **chép chính tả hằng ngày**, từ 1.8 có **giao diện Mùa & Lễ hội** (Tết, Giáng sinh, hoa anh đào, lá đỏ…), từ 1.9 có **Cấu hình trường theo loại note** và trò chơi theo loại note (từ vựng / chữ Hán / ngữ pháp), từ 1.10 có **nút mở nhanh** (thanh trên cùng của Anki, Ctrl+Shift+K, biểu tượng ngoài Anki) và Mùa & Lễ hội phủ cả các vùng lẫn màn trò chơi, từ 1.11 **bù xu cho lượt ôn trên điện thoại** và nút **Báo lỗi**, từ 1.12 **báo do Gemini viết** (người dùng chỉ dán khoá Gemini, song song với cách Claude Code), từ 1.13 **Chép chính tả chạy với mọi deck** (câu ví dụ không có audio → giọng Gemini / giọng tiếng Nhật của máy; deck không có câu ví dụ → nghe từ, gõ lại) và báo Gemini đã sửa theo lần thử khoá thật, từ 1.14 **tự chỉnh giao diện** theo chế độ (vd. ẩn sân khi ôn thẻ), 4 chỗ tiêu xu mới (**sửa nhà, thú nuôi, giống cây, vùng tự tạo**) và **hiệu ứng thành tích** của vườn.
 2. **Bộ `kotoba_daily`**: script Python và prompt để **Claude Code** (tác vụ lịch của Claude Desktop) mỗi sáng tự viết một số báo tiếng Nhật chỉ dùng ngữ pháp và từ vựng người học đã học, kèm audio VOICEVOX. Add-on đọc báo từ thư mục này.
 3. **Nguồn báo thứ hai (1.12)**: add-on tự gọi **Gemini API** bằng khoá của người dùng, viết cùng định dạng `bao.json` vào `user_files/bao_gemini/`, kiểm tra + sửa + soát lần 2 rồi mới đưa vào hòm thư. Dành cho người không rành kỹ thuật (không cần Claude Code, VOICEVOX, PDF giáo trình).
 
@@ -55,7 +55,7 @@ Claude Code (6:00, tự chạy)                 Add-on ことば畑 (khi mở An
 - Cách làm: biểu tượng mở file vé `user_files/kotoba_batake_open.apkg` bằng Anki (như bấm đúp một file .apkg); add-on bọc `mw.handleImport`: gặp đúng file vé thì mở vườn, file khác vẫn nhập như cũ (`launcher.py`).
 
 ### 2.1 Khu vườn (màn chính)
-- Tối đa `max_plants` cây (mặc định 400, ưu tiên cây đã học). Bấm cây để ghim thẻ thông tin: chữ, cách đọc, nghĩa, Hán Việt, nút nghe, số ngày tới hạn.
+- Tối đa `max_plants` cây (mặc định 400, ưu tiên cây đã học). Bấm cây để ghim thẻ thông tin: chữ, cách đọc (tiếng Anh: IPA), nghĩa, Hán Việt (chỉ chữ Hán, từ 1.17), nút nghe, số ngày tới hạn.
 - Thanh trên: linh vật, chọn deck, xu, ⚙ cài đặt, Nhà, Trò chơi, Tưới ngay (1.15: số cây khát là con số nhỏ trên nút này).
 - Góc phải trên của sân (1.15): **một thẻ "Hôm nay"** — "Hôm nay X/30 lượt · N ngày liền" + biểu tượng thời tiết (tooltip ghi buổi / thời tiết, bấm để đổi), thanh tiến độ, và các dòng việc chỉ hiện khi có: "Nhiệm vụ 0/3 ▸", "Báo mới N · Chép x/5 ▸", "🐾 thú đói · 🔧 Sửa nhà ▸", "⚠ Cấu hình trường ▸". Trước 1.15 đây là 6 chip rời (người dùng thấy rối). Gợi ý "Nhà & Cửa hàng ▸" chỉ hiện khi rê chuột lên sân.
 - Phím tắt: **R** ôn, **T** trò chơi, **N** nhà, **Q** nhiệm vụ, **B** báo & chép chính tả, **← →** đổi cảnh ngoài trời (1.7), **Esc** đóng, **F11** toàn màn hình. Khi đang ôn thẻ thì R/T/N/B không có tác dụng (có chủ ý).
@@ -79,7 +79,7 @@ Claude Code (6:00, tự chạy)                 Add-on ことば畑 (khi mở An
 ### 2.4 Năm mini-game (không ghi vào FSRS, tối đa 40 xu/ngày)
 Nghe tìm cây (`listen`), Chợ sáng (`market`), Đuổi quạ (`crow`, gõ romaji/kana/kanji, 4 tốc độ), Lật cặp (`memory`), Điền vào câu (`cloze`, dùng câu ví dụ của note).
 
-Từ 1.9: đầu menu chọn **loại note để ôn** (chỉ hiện loại có trong deck); mỗi trò có **chế độ** (nút nhỏ dưới thẻ trò, mục đầu là mặc định, lưu trong collection):
+Từ 1.9: đầu menu chọn **loại note để ôn** (chỉ hiện loại có trong deck); mỗi trò có **chế độ** (mục đầu là mặc định, lưu trong collection). 1.17: bảng chọn trò trở lại kiểu 1.15 (thẻ to 3 cột); loại note, kiểu chơi, tốc độ quạ là **drop-down** dưới thẻ; thêm nhóm **Tiếng Anh** và **Ngôn ngữ khác**:
 
 | Trò | Từ vựng | Chữ Hán | Ngữ pháp |
 |---|---|---|---|
@@ -89,11 +89,14 @@ Từ 1.9: đầu menu chọn **loại note để ôn** (chỉ hiện loại có 
 | Lật cặp | Trộn / Từ ↔ Nghĩa / Từ ↔ Cách đọc | Kanji ↔ Hán Việt / Nghĩa / On/Kun / Trộn | Mẫu ↔ Nghĩa |
 | Điền vào câu | điền từ | điền chữ Hán vào từ / câu ví dụ | điền mẫu (kể cả mẫu đã chia) |
 
+**Tiếng Anh (1.17)**: Nghe tìm cây (audio của deck, không có thì giọng tiếng Anh của máy), Chợ sáng (Trộn / Nghĩa → Từ / Từ → Nghĩa / Phiên âm → Từ), Đuổi quạ **Nghĩa → gõ từ tiếng Anh** (chính tả, hoa thường không tính), Lật cặp (Trộn / Từ ↔ Nghĩa / Từ ↔ Phiên âm), Điền vào câu (nhận went / studying / stopped / cities / looked up / children / happier…). **Ngôn ngữ khác**: trò chung, không có Đuổi quạ.
+
 Thiếu trường cần cho trò / chế độ thì nút đó bị khoá và ghi lý do ("Cần ít nhất 4 chữ có audio (hiện có 0). Chọn trường ở ⚙ Cấu hình trường.").
 
 ### 2.4b Cấu hình trường theo loại note (từ 1.9)
 - Bảng **Cấu hình trường** (mở từ chip **⚠ Cấu hình trường ▸** ở góc sân, thông báo bật lên khi deck có loại note chưa cấu hình (bấm vào là mở), ⚙ → *Cấu hình trường…*, hoặc nút trong menu Trò chơi). Mỗi loại note (note type) chọn: **Từ vựng / Chữ Hán / Ngữ pháp / Khác** rồi chọn trường cho từng vai trò, có cột giá trị của 5 note mẫu và dòng "Trên cây: …", dòng "Trò chơi" báo trò nào chơi được.
-- Vai trò: **Từ vựng** — Từ *, Cách đọc (furigana), Nghĩa *, Âm Hán Việt, Câu ví dụ, Dịch câu ví dụ, Audio của từ, Audio câu ví dụ, Loại từ. **Chữ Hán** — Kanji *, Hán Việt *, Nghĩa, Âm On (hoặc On/Kun chung), Âm Kun (nếu tách riêng), Ví dụ, Dịch ví dụ, Audio. **Ngữ pháp** — Cấu trúc *, Nghĩa *, Cách dùng / ghi chú, Ví dụ, Dịch ví dụ, Audio ví dụ. **Khác** — vẫn là cây nhưng không vào trò chơi. (* = bắt buộc.)
+- 1.17: thêm drop-down **Ngôn ngữ** (Tiếng Nhật / Tiếng Anh / Ngôn ngữ khác — tự đoán từ chữ của trường Từ, lưu ở khoá `lang` khi bấm Lưu); Loại cũng là drop-down; cảnh báo khi trường Từ có vẻ nhồi chung cả nghĩa.
+- Vai trò: **Từ vựng** — Từ *, Cách đọc (furigana), Nghĩa *, Câu ví dụ, Dịch câu ví dụ, Audio của từ, Audio câu ví dụ (1.17 bỏ Âm Hán Việt, Loại từ). **Từ vựng tiếng Anh** — như trên, Cách đọc thành **Phiên âm (IPA)**. **Chữ Hán** — Kanji *, Hán Việt *, Nghĩa, Âm On (hoặc On/Kun chung), Âm Kun (nếu tách riêng), Ví dụ, Dịch ví dụ, Audio. **Ngữ pháp** — Cấu trúc *, Nghĩa *, Cách dùng / ghi chú, Ví dụ, Dịch ví dụ, Audio ví dụ. **Khác** — vẫn là cây nhưng không vào trò chơi. (* = bắt buộc.)
 - Điền sẵn theo gợi ý tự động; lưu thì kiểm tra trường bắt buộc; có Hoàn tác / Dùng gợi ý tự động. Loại note chưa cấu hình vẫn chạy bằng cách đoán tên trường như ≤ 1.8; đã cấu hình thì chỉ dùng đúng trường đã chọn. Đổi tên / xoá trường đã chọn → báo lại.
 - Cây ngữ pháp: bấm vào hiện cách dùng và nút ♪ Nghe ví dụ.
 
@@ -127,7 +130,13 @@ Giờ thật / giờ game / cố định, 6 buổi trong ngày, thời tiết đ
 - Người dùng: "không thích giao diện học thẻ màu đen", "sắp xếp các phần trong trò chơi bị lộn xộn", "đồ hiếm khi hoàn thành nhiệm vụ có bao nhiêu đồ, nếu ít thì nên vẽ thêm", "vẽ công trình chỉ vẽ được nhà chứ không vẽ được môi trường xung quanh hả".
 - **Đồ hiếm**: trước chỉ 6 món (6 ngày đủ nhiệm vụ là hết) → thêm 12 món (Hươu Nara, Cầu cong đỏ, Tháp chùa năm tầng, Quầy mì yatai, Kappa, Miếu nhỏ hokora, Vườn đá cát cào; Mũ giáp kabuto, Đàn koto, Bình phong hạc, Mặt nạ cáo, Đàn shamisen), đều có chuyển động. Rương tặng 6 món cũ trước rồi tới món mới. Lưu cùng tầng `kotoba_batake_season` (bản 1.8–1.15 giữ hộ món lạ ở tầng này).
 - **Ôn tối "Đêm vườn"**: chỉ hiện khi chọn Màu bảng *Đêm vườn* hoặc kiểu *Ôn buổi tối* (mặc định vẫn vàng). Thay xám đen bằng xanh đêm có sao + trăng, chữ kem, nút Lật thẻ vàng đèn lồng.
-- **Bảng Trò chơi**: 5 thẻ cùng cỡ (một hàng / 3 + 2 căn giữa / 2 cột theo cỡ cửa sổ), kiểu chơi + tốc độ quạ nằm trong thẻ, một nút Cấu hình trường (không còn băng cảnh báo to + nút trùng), xu game hôm nay thành ô nhỏ ở thanh trên.
+- **Bảng Trò chơi** (1.17 người dùng muốn trở lại kiểu 1.15 → đã đổi lại, kèm drop-down): 5 thẻ cùng cỡ (một hàng / 3 + 2 căn giữa / 2 cột theo cỡ cửa sổ), kiểu chơi + tốc độ quạ nằm trong thẻ, một nút Cấu hình trường (không còn băng cảnh báo to + nút trùng), xu game hôm nay thành ô nhỏ ở thanh trên.
+
+### 2.6f Bản 1.17 — tiếng Anh, furigana mọi kiểu, Trò chơi kiểu cũ + drop-down
+- Người dùng: "thêm hỗ trợ tiếng Anh, thêm cách xử lý nhiều kiểu định dạng furigana, phần trò chơi muốn giao diện cũ (1.15), các lựa chọn chỉnh dạng drop-down cho gọn, bỏ hẳn cái không cần thiết (vd. Hán Việt ở từ vựng), giao diện gọn gàng".
+- **Furigana** (`text_core.py`): ngoặc vuông Anki + okurigana, ruby HTML (`<rb>`, `<rp>`, nhiều `<rt>`), Migaku `[かんじ;h,1]`, `漢字（かんじ）` / `【】` / hai dòng ở trường Từ (không tách `賛成(する)`), trường Cách đọc dạng `漢字[かんじ]`. Câu ví dụ ruby dùng được cho Điền vào câu, chép chính tả.
+- **Tiếng Anh**: ngôn ngữ theo loại note (khoá `lang`, `games_lang` cấp trên cùng của `kotoba_batake_fields` để bản 1.16 không xoá), IPA, 5 trò chơi, chép chính tả chấm theo từ, giọng `en_US` của máy. Báo vẫn chỉ tiếng Nhật; deck không phải tiếng Nhật thì không tự viết báo.
+- **Gọn**: bảng Trò chơi về kiểu 1.15 + drop-down; Cấu hình trường dùng drop-down; Từ vựng bỏ Hán Việt + Loại từ; `hanviet_field` bỏ khỏi config.
 
 ### 2.6d Hiệu ứng thành tích (1.14)
 - **Xong hết thẻ hôm nay** (deck đang xem không còn thẻ mới / đang học / ôn, và hôm nay đã ôn): cầu vồng + giọt sương lấp lánh trên ruộng, cầu vồng trên trời sân. **Đạt mục tiêu ngày**. **Cả vườn xanh tốt / ra hoa / trĩu quả** (≥ 5 cây, không cây héo): lá lấp lánh / cánh hoa anh đào bay / đốm sáng vàng. **Mốc chuỗi ngày** (7, 14, 21, 30, 50, 100… ngày): pháo hoa trên sân. **Xong 3 nhiệm vụ**: đèn trời bay lên.
@@ -257,6 +266,7 @@ Nhân vật (trong `truyen.md`): **スタックちゃん** (robot của khu vư�
 │ garden_core.py  logic thuần (không import aqt → test được)           │
 │ season_core.py  Mùa & Lễ hội: lịch (âm lịch VN), chủ đề, 40 món      │
 │ fields_core.py  cấu hình trường theo loại note, chế độ trò chơi (1.9)│
+│ text_core.py    furigana mọi kiểu, chữ tiếng Anh (1.17)              │
 │ paper_core.py   báo & chép chính tả (không import aqt)               │
 └──────────────┬───────────────────────────────▲───────────────────────┘
    web.eval("Garden.fn(<json>)")               │ pycmd("nhóm:việc:tham_số")
@@ -286,7 +296,8 @@ Nguyên tắc:
 | `diag.py` | ~185 | Báo lỗi (1.11, thuần Python): `ErrorLog` (nhật ký `user_files/errors.json`, gộp trùng, giữ 40), `redact`, `build_report`, `config_diff`, `clean_client`. Cửa sổ Qt nằm trong `__init__.py` (`report_info`, `report_text`, `show_report`) |
 | `launcher.py` | ~260 | Mở nhanh từ ngoài Anki (1.10, thuần Python): file vé `kotoba_batake_open.apkg`, `is_ticket`, `create()` tạo biểu tượng Windows (PowerShell → `.lnk` chạy `explorer.exe "vé"`, dự phòng `.url`) / macOS (`osacompile` → `.app`, thay `applet.icns`) / Linux (`.desktop` đúng đặc tả + `gio set metadata::trusted`) |
 | `icons/` | | Biểu tượng mầm pixel: `kotoba.png` (Linux), `kotoba.ico` (Windows), `kotoba.icns` (macOS), `toolbar.png` (nút trên thanh Anki); vẽ bằng `tools/make_icons.py` lúc phát triển |
-| `fields_core.py` | ~280 | Cấu hình trường (1.9, thuần Python): `KINDS`, `ROLES` (vai trò + bắt buộc theo loại note), `GAME_MODES` (khớp `MODES` của games.js), `guess_kind`, `clean_store`, `conf_problem`, `validate_save`, `FieldStore` |
+| `fields_core.py` | ~400 | Cấu hình trường (1.9, thuần Python): `KINDS`, `ROLES` (vai trò + bắt buộc theo loại note), 1.17 `LANGS` / `ROLE_LABELS` / `guess_lang`, `GAME_MODES` (khớp `MODES` của games.js, cả nhóm `en` / `xx`), `guess_kind`, `clean_store`, `conf_problem`, `validate_save`, `FieldStore` |
+| `text_core.py` | ~330 | 1.17, thuần Python: furigana mọi kiểu về một dạng; tiếng Anh: tách IPA, các cách viết, dạng biến đổi + động từ bất quy tắc, chấm chép chính tả theo từ |
 | `garden_core.py` | ~2300 | Cân bằng game, `CATALOG` (+ `ITEM_DESC`, gộp `SEASON_ITEMS`), cửa hàng / vùng / kiểu nhà / tủ đồ / xưởng, nhận diện trường note (1.9: `note_roles` theo cấu hình hoặc đoán, `fields_panel`, `guess_config`, `grammar_candidates`), `build_garden` (+ `note_types`, `kind` của cây), giai đoạn, nhiệm vụ (`_make_quests` nhận thêm `extra`), `GardenState` (+ `add_coins`), tách / gộp khoá mở rộng (`split_ext`, `merge_ext`, `LEGACY_*`), Mùa & Lễ hội (`split_season`, `merge_season`, `_tier`, `unlock_theme`, `set_theme`) |
 | `season_core.py` | ~410 | Mùa & Lễ hội, thuần Python: âm lịch Việt Nam (`lunar_to_solar`, `tet_date`, `mid_autumn_date`), `THEMES` (thứ tự = ưu tiên), `SEASON_ITEMS`, `themes_view`, `clean_season`, `active_theme`, `streak_available` |
 | `paper_core.py` | ~890 | Cú pháp furigana, `clean_issue`, `Library` (đọc thư mục báo, cache theo mtime, chặn đường dẫn audio và symlink ra ngoài), `issue_view`, chấm câu hỏi / chép, lượt chép hằng ngày (`build_daily`, `DICT_REVIEW_MAX=2`, `DICT_PAPER_MAX=4`), hàng ôn 1/3/7 ngày, `PaperState`, `progress_payload` / `write_progress` |
@@ -345,7 +356,7 @@ Audio báo phát bằng `aqt.sound.av_player.play_file(đường_dẫn_tuyệt_�
 | `kotoba_batake_px` | điểm ảnh nén của món tự làm (RLE, bảng 32 màu) | `user_files/craft_px.json` |
 | `kotoba_batake_paper` (1.6) | `read` {ngày: {q, ct, coins, bonus}}, `dict` {day, items, res, coins, bonus}, `queue` {id câu: {due, box}}, `seen`, `miss` {từ: ngày} | `user_files/paper.json` |
 | `kotoba_batake_ext` (1.7) | phần mới mà bản ≤ 1.6.1 không hiểu: `owned` đồ mới, `zones` vùng mới, `places` {cảnh: [đồ mới hoặc đồ ở vùng mới]}, `craft_fx` {cid: {fx, was}} | `user_files/ext.json` |
-| `kotoba_batake_fields` (1.9) | `models`: {id loại note: {kind vocab/kanji/grammar/other, `f` {vai trò: tên trường}, name}}, `games`: {trò: {loại: chế độ}} | không (id loại note gắn với collection; chỉ ghi `user_files/fields.json` khi chạy không có collection) |
+| `kotoba_batake_fields` (1.9) | `models`: {id loại note: {kind vocab/kanji/grammar/other, `f` {vai trò: tên trường}, name}}, `games`: {trò: {loại: chế độ}}; 1.17: `lang`: {id loại note: ja/en/other}, `games_lang`: {en/other: {trò: chế độ}} (cấp trên cùng để bản ≤ 1.16 giữ nguyên) | không (id loại note gắn với collection; chỉ ghi `user_files/fields.json` khi chạy không có collection) |
 | `kotoba_batake_mobile` (1.11) | sổ bù xu: `start` (mốc, ms = id revlog), `days` {ngày Anki: {all, ok, rev, new}} = số lượt add-on **đã trả** (C), `goals` ngày đã nhận thưởng mục tiêu, `total`, `last`. Bù = R (đếm từ revlog, id > start, 14 ngày) − C, rồi C = max(C, R). Máy tính cộng C ngay khi trả xu (`record_desktop`) | `user_files/mobile.json` (chỉ sao lưu, có collection thì không đọc) |
 | `kotoba_batake_more` (1.14) | `repair` {day, seen, back}, `pets` {id: {name, scene, fed, love, got}}, `pet_auto`, `seeds` {owned, deck, kind, tag}, `zones` [{id u<n>, name, bg, ground, hills, lm}], `znext`, `places` {u<n>: [đồ đặt ở vùng tự tạo]}. Tách trước tiên khi lưu (`split_more`), gắn lại sau cùng khi đọc (`attach_uzones`: vượt số đã có thì về kho); giữ khoá lạ của bản sau | `user_files/more.json` |
 | `kotoba_batake_season` (1.8) | `unlocked` chủ đề đã mở, `mode` auto/pick/off, `pick`, `free_day` (ngày Anki của lần đổi chuỗi gần nhất), `owned` / `places` của **đồ theo mùa** | `user_files/season.json` |
@@ -487,6 +498,7 @@ rm -f kotoba_batake/user_files/state.json* kotoba_batake/user_files/craft_px.jso
 
 ## 9. Hạn chế đã biết / chưa kiểm tra trên máy thật
 
+- **Tiếng Anh (1.17)**: chưa có báo tiếng Anh (kế hoạch bước 6). Ngôn ngữ khác chỉ có vườn + trò chung. Điền vào câu chưa nhận cụm từ tách rời ("look it up"). Giọng tiếng Anh của máy chỉ kiểm bằng giả lập (Linux không có giọng TTS). Deck nhồi nhiều thứ vào một trường (vd. `食べる (たべる) - ăn`), furigana tự chế (CSS riêng, cách đọc trong thuộc tính HTML) không tách được — có cảnh báo trong Cấu hình trường, vườn + ôn thẻ vẫn chạy.
 - **Chưa chạy trên Anki thật**, chỉ kiểm bằng giả lập. Các phần chưa thử thật: cửa sổ trên GNOME/Wayland, phát WAV bằng `av_player`, VOICEVOX thật (`doc_voicevox.py` mới thử với máy chủ giả), `getFile`, dán ảnh Ctrl+V, kéo thả ảnh, và (1.7) nhạc tự phát nhờ `AnkiWebView.setPlaybackRequiresGesture(False)` — cùng cách màn ôn thẻ của Anki dùng; nếu QtWebEngine vẫn chặn thì nhạc bật ở thao tác đầu tiên như trước.
 - **Điện thoại**: AnkiDroid / AnkiMobile không chạy add-on. Lượt ôn trên điện thoại vẫn làm cây lớn; từ 1.11 được bù xu, nhiệm vụ hôm nay và mục tiêu ngày sau khi đồng bộ, nhưng không có thưởng lên giai đoạn, nhiệm vụ "tưới liền" / "giúp cây lớn", và nhiệm vụ của ngày đã qua. Báo chỉ đọc được trên máy có thư mục `kotoba_daily` (hoặc mở `bao.html`).
 - **Nhiều máy tính**: phải cập nhật add-on ở mọi máy. Muốn đọc báo ở máy khác thì đồng bộ thư mục `kotoba_daily` (ví dụ Syncthing).
@@ -565,6 +577,7 @@ Các ý dưới đây đã được bàn với người dùng nhưng **chưa là
 ---
 
 ## 11. Lịch sử phiên bản
+- **1.17.0**: deck **tiếng Anh** (ngôn ngữ theo loại note, IPA, 5 trò chơi — Đuổi quạ gõ chính tả, Điền vào câu nhận dạng biến đổi, giọng `en_US` của máy —, chép chính tả chấm theo từ; ngôn ngữ khác chỉ trò chung; không tự viết báo cho deck không phải tiếng Nhật); **furigana mọi kiểu** (`text_core.py`); bảng Trò chơi **trở lại kiểu 1.15 + drop-down**; Cấu hình trường có drop-down Ngôn ngữ / Loại và cảnh báo trường nhồi chung; **bỏ Âm Hán Việt + Loại từ khỏi từ vựng**. Test mới: `tests/core/test_117.py` (có vòng chạy mã 1.16 thật), `tests/anki/e2e_117.js` (45 kiểm tra), 7 deck mẫu mới trong `make_col.py`. Báo tiếng Anh để bước sau.
 - **1.16.0** (bản chốt): 12 món hiếm mới cho rương nhiệm vụ (lưu ở `SEASON_KEY`, test chạy mã 1.15 thật để chắc bản cũ không xoá); ôn tối "Đêm vườn"; bảng chọn Trò chơi sắp lại; vùng tự tạo vẽ được cảnh nền 256×76 (lớp riêng, phóng to + cuộn, lưu ở `zenv`). Test mới: `tests/core/test_116.py`, `tests/anki/e2e_116.js` (25 kiểm tra).
 - **1.15.0** (bản chốt sau khi soát lại toàn bộ): người dùng thấy màn chính nhiều nút, rối → 6 chip trên sân gộp thành một thẻ "Hôm nay", số cây khát lên nút Tưới ngay, chú thích ruộng một dải, gợi ý Nhà chỉ hiện khi rê chuột; tab Nhà xếp nhóm, danh sách đồ cao hơn; Xưởng thêm kẻ thẳng (L), chữ nhật (H, Shift = tô kín), làm lại (Ctrl+Y), cỡ bút 1–3; bảng Trò chơi cuộn được ở cửa sổ thấp (hết cắt chữ); tự cho ăn thiếu xu vẫn báo "thiếu xu"; nhắc cấu hình trường một lần mỗi loại note; cầu vồng ruộng đủ vòm; đỡ tốn CPU (linh vật chỉ vẽ khi đổi, 3 vòng vẽ chung nhịp, nhấp nháy CSS có giới hạn: đứng yên 150 → ~30 ms/giây). Ảnh "thú đứng trên mái nhà" người dùng gửi là ảnh thử trước khi sửa vùng đi của thú ở 1.14; test mới mô phỏng 12.000 bước để chắc thú không vào chỗ nhà.
 - **1.14.0**: **Giao diện tự chỉnh** theo chế độ (màn chính / khi ôn thẻ / trò chơi & báo; sân và ruộng chuyển động / đứng yên / mờ / ẩn, hạt bay, mưa tuyết, thú nuôi, linh vật nói, hiệu ứng; bảng ôn vàng / trắng / tối, khung thẻ to; 4 kiểu có sẵn; nút Ẩn vườn trên bảng ôn). **Chỗ tiêu xu mới**: sửa nhà, 6 thú nuôi, 8 giống cây cho ruộng, vùng tự tạo (công trình 64×76 vẽ bằng Xưởng). **Hiệu ứng thành tích**: xong thẻ hôm nay, đạt mục tiêu, cả vườn xanh / ra hoa / ra quả, mốc chuỗi ngày, xong 3 nhiệm vụ. Khoá collection riêng `kotoba_batake_more`. Test: `tests/core/test_more.py`, `tests/anki/e2e_114.js`.

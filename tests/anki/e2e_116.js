@@ -1,5 +1,5 @@
 // 1.16 trong Anki thật: 12 món hiếm mới (hình, cửa hàng, rương nhiệm vụ), giao diện ôn "Đêm vườn",
-// bảng chọn Trò chơi mới, vẽ cảnh nền cho vùng tự tạo (lớp 256×76, phóng to, lưu, hiện ngoài sân).
+// vẽ cảnh nền cho vùng tự tạo (lớp 256×76, phóng to, lưu, hiện ngoài sân).
 // Chạy: node e2e_116.js SHOTS
 const { pages, Page, sleep } = require('./cdp');
 const SHOTS = process.argv[2];
@@ -70,31 +70,7 @@ result = [nxt and nxt["name"], res["chest"]["id"]]`);
   await page.shot(SHOTS + '/42_on_dem_vuon.png');
   await page.eval(W('document.getElementById("kb-stop").click(); pycmd("ui:preset:full"); return 1;')); await sleep(900);
 
-  console.log('== bảng chọn Trò chơi');
-  await page.eval(W('document.getElementById("kb-games").click(); return 1;')); await sleep(900);
-  const menu = await page.eval(W(`const cards = Array.from(document.querySelectorAll(".kb-gmenu .kb-gcard")), ws = cards.map(c => Math.round(c.getBoundingClientRect().width));
-    const crow = cards.find(c => c.getAttribute("data-game") === "crow");
-    return { n: cards.length, ws: ws, inside: cards.every(c => !c.parentNode.querySelector(":scope > .kb-gmodes")), speed: crow ? crow.querySelectorAll("[data-speed]").length : 0,
-      cfg: document.querySelectorAll(".kb-gmenu-cfg").length, warn: document.querySelectorAll(".kb-gmenu-warn").length, coins: !!document.querySelector(".kb-gmenu-coins"),
-      tops: cards.map(c => Math.round(c.getBoundingClientRect().top)), hs: cards.map(c => c.offsetHeight) };`));
-  ok(menu.n === 5 && Math.max(...menu.ws) - Math.min(...menu.ws) <= 1, '5 thẻ game cùng độ rộng (' + menu.ws.join(', ') + ')');
-  ok(new Set(menu.tops).size === 1 && new Set(menu.hs).size === 1, '1366: 5 thẻ một hàng, cao bằng nhau');
-  ok(menu.inside && menu.speed === 4, 'kiểu chơi nằm trong thẻ; tốc độ quạ (4 mức) nằm trong thẻ Đuổi quạ');
-  ok(menu.cfg === 1 && menu.warn === 0 && menu.coins, 'chỉ còn một nút Cấu hình trường, xu game hôm nay là một ô nhỏ');
-  await page.shot(SHOTS + '/43_tro_choi.png');
-  await page.eval(W('document.querySelector(\'.kb-gcard[data-game="market"] [data-mode]:not(.is-on)\').click(); return 1;')); await sleep(700);
-  ok(await page.eval(W('return /ミニゲーム/.test(document.getElementById("kb-g-title").textContent);')), 'bấm nút kiểu chơi trong thẻ: chỉ đổi kiểu, không vào game');
-  await page.eval(W('document.querySelector(\'.kb-gcard[data-game="market"]\').click(); return 1;')); await sleep(900);
-  ok(await page.eval(W('return /朝市/.test(document.getElementById("kb-g-title").textContent);')), 'bấm vào thẻ Chợ sáng: vào game');
-  await page.eval(W('GardenGames.close(); return 1;')); await sleep(400);
-  await py(KB + 'kb._dialog.resize(1024, 700); result = 1'); await sleep(1300);
-  await page.eval(W('document.getElementById("kb-games").click(); return 1;')); await sleep(900);
-  const small = await page.eval(W(`const g = document.querySelector(".kb-gmenu-grid").getBoundingClientRect(), cards = Array.from(document.querySelectorAll(".kb-gmenu .kb-gcard")).map(c => c.getBoundingClientRect());
-    return { ws: cards.map(r => Math.round(r.width)), rows: new Set(cards.map(r => Math.round(r.top))).size, l: Math.round(cards[3].left - g.left), r: Math.round(g.right - cards[4].right) };`));
-  ok(small.rows === 2 && Math.max(...small.ws) - Math.min(...small.ws) <= 1 && Math.abs(small.l - small.r) <= 2, '1024×700: 3 + 2 thẻ cùng độ rộng, hàng dưới căn giữa');
-  await page.shot(SHOTS + '/44_tro_choi_1024.png');
-  await page.eval(W('GardenGames.close(); return 1;')); await sleep(300);
-  await py(KB + 'kb._dialog.resize(1366, 800); result = 1'); await sleep(1200);
+  // bảng chọn Trò chơi: 1.17 trở lại kiểu 1.15 + drop-down → kiểm ở e2e_117.js
 
   console.log('== vẽ cảnh nền cho vùng tự tạo');
   const c0 = await py(KB + 'result = kb.STATE.load()["coins"]');

@@ -7,7 +7,7 @@ ADDON=$(cd "$1" && pwd); SHOTS=${2:-/tmp/kb_shots}; mkdir -p "$SHOTS"
 export KB_CDP_PORT=${KB_CDP_PORT:-9333} KB_CTRL_PORT=${KB_CTRL_PORT:-9444}
 BASE=${KB_BASE:-/tmp/kb_anki_base}
 FAIL=0
-for script in e2e.js e2e_tour.js e2e_114.js e2e_115.js e2e_116.js; do
+for script in ${KB_SCRIPTS:-e2e.js e2e_tour.js e2e_114.js e2e_115.js e2e_116.js e2e_117.js}; do
   "$HERE/kill_anki.sh"
   "$HERE/setup_base.sh" "$BASE" "$ADDON" >/dev/null || exit 2
   "$HERE/run_anki.sh" "$BASE" "$KB_CDP_PORT" "$SHOTS/anki_${script%.js}.log" &
