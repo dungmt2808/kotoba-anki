@@ -237,6 +237,21 @@ result = [s["lang"].get(mid), s["models"].get(mid, {}).get("kind")]`);
   ok(ui.closed && ui.sel === 21, 'bảng Giao diện: phần tự chỉnh gập lại (vẫn đủ 21 ô chọn)');
   await page.eval(W('GardenUI.close(); return 1;'));
 
+  // 1.17.3 (sửa): dải chúc mừng ghi nhầm tên icon ("target", "rainbow") thay vì vẽ icon
+  const ban = [];
+  for (const j of [{ day: 990, goal: true }, { day: 991, done: true }, { day: 992, streak: 7, streak_mark: true }, { day: 993, quests: true }]) {
+    const r = await page.eval(W(`GardenJoy.render(Object.assign({ done: false, goal: false, grown: null, streak: 0, streak_mark: false, quests: false }, ${JSON.stringify(j)}));
+      const b = document.getElementById("kb-joy-banner"); const i = b && b.querySelector(".kb-pi");
+      return { t: b ? b.textContent : "", icon: i ? i.className : "" };`));
+    ban.push(r);
+  }
+  const NAMES = /\b(target|rainbow|firework|gift|fire|leaf|blossom|apple)\b/;
+  ok(ban.every((b) => b.t && !NAMES.test(b.t) && /kb-pi-(target|rainbow|firework|gift)/.test(b.icon)),
+    'dải chúc mừng có icon pixel, không lộ tên icon: ' + ban.map((b) => b.icon.replace('kb-pi kb-pi-', '') + ' «' + b.t.slice(0, 22) + '»').join(' · '));
+  const bdg = await page.eval(W('GardenJoy.render({ day: 994, done: true, goal: true, grown: "fruit", streak: 9, streak_mark: false, quests: true }); const box = document.getElementById("kb-joy"); return { t: box.textContent, n: box.querySelectorAll(".kb-pi").length, b: box.children.length };'));
+  ok(bdg.n === bdg.b && bdg.b >= 4 && !NAMES.test(bdg.t), 'huy hiệu cạnh ruộng: mỗi cái một icon pixel (' + bdg.t + ')');
+  await page.shot(SHOTS + '/58_chuc_mung.png');
+
   ok(page.errors.length === 0, 'không có lỗi JS' + (page.errors.length ? ': ' + page.errors.join(' | ').slice(0, 300) : ''));
   const errs = await py(KB + 'result = kb.ERRORS.load() if hasattr(kb.ERRORS, "load") else []');
   ok(!errs || !errs.length, 'nhật ký lỗi add-on trống' + (errs && errs.length ? ': ' + JSON.stringify(errs).slice(0, 300) : ''));
