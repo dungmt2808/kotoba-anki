@@ -207,10 +207,19 @@ result = [s["lang"].get(mid), s["models"].get(mid, {}).get("kind")]`);
   const furi = await page.eval(W('const a = document.getElementById("kb-p-furi").hidden; GardenPaper.open("issue"); return a;')); await sleep(800);
   ok(furi && !(await page.eval(W('return document.getElementById("kb-p-furi").hidden;'))), 'nút Ẩn furigana chỉ hiện ở tab Báo (ẩn ở Kệ báo)');
   await page.eval(W('GardenPaper.close(); document.getElementById("kb-house").click(); GardenHome.setTab("yard"); return 1;')); await sleep(600);
-  const h1 = await page.eval(W('return document.getElementById("kb-h-list").clientHeight;'));
-  await page.eval(W('GardenHome.setTab("seed"); return 1;')); await sleep(600);
-  const h2 = await page.eval(W('return { list: document.getElementById("kb-h-list").clientHeight, view: getComputedStyle(document.querySelector(".kb-h-view")).display };'));
-  ok(h2.view === 'none' && h2.list > h1 + 150, 'tab Giống cây: ẩn khung xem trước, danh sách cao hơn (' + h1 + ' → ' + h2.list + 'px)');
+  const tabTop = await page.eval(W('return Math.round(document.querySelector(".kb-h-tabs").getBoundingClientRect().top);'));
+  const moved = [];
+  for (const t of ["seed", "wear", "craft", "season", "pet"]) {
+    await page.eval(W('GardenHome.setTab("' + t + '"); return 1;')); await sleep(300);
+    const r = await page.eval(W('return [Math.round(document.querySelector(".kb-h-tabs").getBoundingClientRect().top), getComputedStyle(document.querySelector(".kb-h-view")).display];'));
+    if (r[0] !== tabTop || r[1] === 'none') { moved.push(t + ':' + r.join('/')); }
+  }
+  ok(!moved.length, '1.17.3: đổi tab Nhà (Giống cây, Tủ đồ, Xưởng…) khung xem trước vẫn hiện, hàng tab không nhảy' + (moved.length ? ' — ' + moved.join(', ') : ''));
+  await page.eval(W('GardenHome.setTab("seed"); return 1;')); await sleep(400);
+  const pix = await page.eval(W(`const emo = /[\u{1F300}-\u{1FAFF}\u26a0\u26a1\u23f3\u2600-\u2602\u2744\u263e]/u;
+    const txt = document.body.innerText; const icons = Array.from(document.querySelectorAll(".kb-pi")).filter(i => i.offsetWidth === 16 && getComputedStyle(i).backgroundImage.indexOf("svg") > 0);
+    return { emoji: (txt.match(emo) || [""])[0], icons: icons.length, seed: !!document.querySelector("#kb-h-list .kb-h-name .kb-pi-seed") };`));
+  ok(!pix.emoji && pix.icons >= 2 && pix.seed, 'không còn emoji, icon pixel 16px (vd. mầm cây ở “Giống cây cho ruộng”, ' + pix.icons + ' icon đang hiện)' + (pix.emoji ? ' — còn: ' + pix.emoji : ''));
   await page.shot(SHOTS + '/57_nha_giong_cay.png');
   const tabs = await page.eval(W(`const t = Array.from(document.querySelectorAll(".kb-h-tabs .kb-h-tab")).map(b => b.getBoundingClientRect());
     return { n: t.length, ws: t.map(r => Math.round(r.width)), gaps: t.slice(1).map((r, i) => Math.round(r.left - t[i].right)), seps: Array.from(document.querySelectorAll(".kb-h-tabsep")).filter(x => x.offsetWidth > 0).length };`));
