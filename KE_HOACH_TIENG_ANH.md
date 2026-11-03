@@ -163,12 +163,30 @@ normalize(raw_html, lang) -> list[(chữ, cách_đọc | None)]
   - Giọng đọc: Gemini TTS tiếng Anh + bản đọc chậm (`stretch()` có sẵn). Không có nút "Ẩn furigana" khi báo là tiếng Anh.
 - Tài khoản có cả deck Nhật và Anh: mỗi ngôn ngữ một số báo mỗi ngày (thư mục riêng), tự viết theo deck đang chọn khi mở vườn / mở Báo. Kệ báo chỉ hiện số báo của ngôn ngữ đang xem (có thể thêm nút chuyển ngôn ngữ).
 
+### 4.7 Mức hỗ trợ deck — ranh giới (người dùng đã đồng ý, ghi cho người dùng thấy)
+
+Nguyên tắc: **tự hiểu kiểu phổ biến, còn lại để người dùng chọn trường; không đoán bừa** (tách sai còn tệ hơn không tách, vì trò chơi sẽ hỏi sai đáp án). **Vườn + ôn thẻ luôn chạy với mọi deck** (ôn dùng chính mẫu thẻ của Anki); mức hỗ trợ chỉ ảnh hưởng trò chơi, biển cây, chép chính tả, báo.
+
+Một câu cho người dùng: *mỗi note là một mục cần nhớ, mỗi loại thông tin ở một trường riêng, chữ thuần hoặc HTML đơn giản, furigana theo kiểu phổ biến — đạt điều này là dùng được hết; thiếu chỗ nào thì mất tính năng ở chỗ đó.*
+
+| Mức | Gồm | Ghi chú |
+|---|---|---|
+| **1. Tự nhận** | Mỗi note một từ / chữ Hán / mẫu ngữ pháp; từ, nghĩa, cách đọc (IPA với tiếng Anh), ví dụ, audio ở các trường riêng; tên trường thông dụng (không khớp thì trường đầu = Từ, trường kế = Nghĩa); furigana: ngoặc vuông Anki, HTML ruby, Migaku, ngoặc tròn khi chắc chắn (sau Bước 1), hoặc trường Cách đọc riêng; audio `[sound:…]` | |
+| **2. Chọn một lần trong Cấu hình trường** | Tên trường lạ; hai trường trông giống nhau; On / Kun tách hai trường; deck nhiều loại note; ngôn ngữ đoán sai | mỗi loại note chọn một lần, dùng cho mọi deck |
+| **3. Chạy nhưng thiếu tính năng** | Thiếu cách đọc → không Đuổi quạ (tiếng Nhật) / kiểu chơi theo cách đọc; thiếu audio → giọng máy hoặc khoá Nghe tìm cây; thiếu câu ví dụ → không Điền vào câu, Chép chính tả chuyển sang nghe từ; chữ quá dài → cắt "…" (từ 60, nghĩa 80) | trò bị khoá luôn ghi lý do (đã có ở menu Trò chơi) |
+| **4. Không hỗ trợ** | Nhồi nhiều thứ vào một trường (vd. Front = `食べる (たべる) - ăn`; trừ 2 luật đơn giản ở 4.1: hai dòng chữ ⏎ kana, ngoặc tròn chứa kana); furigana tự chế (CSS riêng, cách đọc trong thuộc tính HTML, chữ trong ảnh); một note chứa danh sách nhiều từ; thẻ chỉ có ảnh / Cloze / Image Occlusion (ôn được, không vào trò chơi); đáp án dài kiểu môn học; ngôn ngữ ngoài Nhật / Anh (chỉ vườn + trò chung, không báo) | deck phải sửa lại, hoặc chỉ dùng vườn + ôn |
+
+Việc cần làm cho phần này:
+- **Bảng Cấu hình trường** (Bước 2): một dòng gợi ý ngắn ở đầu bảng, vd. *"Add-on tự hiểu khi mỗi loại thông tin nằm ở một trường riêng (furigana kiểu 漢字[かんじ] hoặc ruby cũng được). Trường nhồi chung kiểu “食べる (たべる) - ăn” thì không tách được — chọn trường gần đúng nhất hoặc sửa deck."* Thêm cảnh báo riêng cho từng loại note khi thấy dấu hiệu nhồi chung ở trường Từ (vd. đa số note có ` - ` / ` – ` / `:` rồi tới chữ Latin có dấu tiếng Việt, hoặc vừa có kana vừa có chữ Việt): *"Trường Từ có vẻ chứa cả nghĩa — trò chơi có thể hiện sai"*. Chỉ cảnh báo, không tự tách.
+- **README trong gói + README repo** (Bước 8): thêm mục "Deck thế nào thì dùng được" với bảng 4 mức ở trên (viết cho người dùng, có ví dụ trường). Mục "Hạn chế" trỏ tới mục này.
+- **Test**: deck mẫu "nhồi chung" (Bước 7) phải hiện cảnh báo ở Cấu hình trường và vẫn mọc cây + ôn được bình thường.
+
 ---
 
 ## 5. Các bước (mỗi bước một commit, chạy hết test trước khi sang bước sau)
 
 1. **Chuẩn hoá furigana** (4.1) + `test_117.py` phần furigana. Chạy lại toàn bộ test tiếng Nhật.
-2. **Ngôn ngữ của loại note** (4.2, 3): đoán, lưu `lang`, ô chọn trong Cấu hình trường, gửi sang JS. Test tương thích với mã 1.16 thật.
+2. **Ngôn ngữ của loại note** (4.2, 3): đoán, lưu `lang`, ô chọn trong Cấu hình trường, gửi sang JS. Test tương thích với mã 1.16 thật. Thêm dòng gợi ý "mức hỗ trợ" + cảnh báo trường nhồi chung trong Cấu hình trường (4.7).
 3. **Trường và chữ tiếng Anh** (4.3): nhãn, tên trường gợi ý, tách IPA, không bỏ `[...]`.
 4. **Trò chơi** (4.4): nhóm loại note theo ngôn ngữ, Đuổi quạ tiếng Anh, Điền vào câu tiếng Anh, giọng đọc cho Nghe tìm cây, tự co chữ, chữ mô tả theo ngôn ngữ, ẩn trò không hỗ trợ cho `other`.
 5. **Chép chính tả** (4.5).
@@ -177,11 +195,12 @@ normalize(raw_html, lang) -> list[(chữ, cách_đọc | None)]
    - tiếng Anh Basic (Front / Back);
    - tiếng Anh đầy đủ (Word / IPA / Meaning / Example / Example meaning / Audio);
    - tiếng Anh nhồi chung (Front: từ + IPA, Back: nghĩa + ví dụ cùng một trường);
+   - tiếng Nhật nhồi chung (Front = `食べる (たべる) - ăn`) để thử cảnh báo ở 4.7;
    - tiếng Hàn (để thử nhánh `other`);
    - tiếng Nhật dạng ruby HTML và dạng ngoặc tròn (cho Bước 1).
 
    Viết `tests/anki/e2e_117.js`, thêm vào `run_ui.sh`, cập nhật `tests/README.md`.
-8. **Đóng gói 1.17.0**: cập nhật README (gói, repo, tests) — nhất là mục "Hạn chế": ngôn ngữ khác chưa có báo, kiểu furigana lạ thì chọn trường Cách đọc. **Xoá file kế hoạch này + dòng trỏ trong README mục 0 + dòng ngoại lệ trong `.gitignore`**, commit, push.
+8. **Đóng gói 1.17.0**: cập nhật README (gói, repo, tests) — thêm mục **"Deck thế nào thì dùng được"** (bảng 4 mức ở 4.7) và mục "Hạn chế": ngôn ngữ khác chưa có báo, kiểu furigana lạ thì chọn trường Cách đọc. **Xoá file kế hoạch này + dòng trỏ trong README mục 0 + dòng ngoại lệ trong `.gitignore`**, commit, push.
 
 Ước lượng: bước 1–4 cỡ một bản như 1.15 / 1.16; bước 5 nhỏ hơn; bước 6 cỡ bản 1.12 (báo Gemini đầu tiên) nhưng dùng lại được nhiều khung.
 
@@ -200,10 +219,10 @@ normalize(raw_html, lang) -> list[(chữ, cách_đọc | None)]
 ## 7. Tiến độ
 
 - [ ] Bước 1 — Chuẩn hoá furigana
-- [ ] Bước 2 — Ngôn ngữ của loại note
+- [ ] Bước 2 — Ngôn ngữ của loại note (+ gợi ý mức hỗ trợ trong Cấu hình trường)
 - [ ] Bước 3 — Trường và chữ tiếng Anh
 - [ ] Bước 4 — Trò chơi
 - [ ] Bước 5 — Chép chính tả
 - [ ] Bước 6 — Báo
 - [ ] Bước 7 — Dữ liệu test + e2e
-- [ ] Bước 8 — Đóng gói 1.17.0, README, **xoá file này**
+- [ ] Bước 8 — Đóng gói 1.17.0, README (có mục "Deck thế nào thì dùng được"), **xoá file này**
