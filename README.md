@@ -2,14 +2,14 @@
 
 README tổng hợp của cả dự án, viết để một phiên chat Claude hoặc Claude Code mới đọc là nắm được: dự án là gì, gồm những phần nào, chạy ra sao, đã chốt những gì và còn gì chưa làm.
 
-Cập nhật: 2026-11-01. Add-on **1.10.0**, bộ `kotoba_daily` bản có `tien_do.json` / số rút gọn / số kỳ truyện.
+Cập nhật: 2026-11-03. Add-on **1.11.0**, bộ `kotoba_daily` bản có `tien_do.json` / số rút gọn / số kỳ truyện.
 
 ---
 
 ## 0. Đọc nhanh (cho phiên chat mới)
 
 **Hai phần của dự án**
-1. **Add-on Anki ことば畑** (gói `kotoba_batake`, bản 1.10.0): biến deck tiếng Nhật (từ vựng, chữ Hán, ngữ pháp) thành khu vườn pixel. Mỗi note là một cây lớn theo độ bền trí nhớ FSRS. Có xu, nhà, cửa hàng, mini-game, nhiệm vụ, từ 1.6 có **báo 畑新聞** và **chép chính tả hằng ngày**, từ 1.8 có **giao diện Mùa & Lễ hội** (Tết, Giáng sinh, hoa anh đào, lá đỏ…), từ 1.9 có **Cấu hình trường theo loại note** và trò chơi theo loại note (từ vựng / chữ Hán / ngữ pháp), từ 1.10 có **nút mở nhanh** (thanh trên cùng của Anki, Ctrl+Shift+K, biểu tượng ngoài Anki) và Mùa & Lễ hội phủ cả các vùng lẫn màn trò chơi.
+1. **Add-on Anki ことば畑** (gói `kotoba_batake`, bản 1.11.0): biến deck tiếng Nhật (từ vựng, chữ Hán, ngữ pháp) thành khu vườn pixel. Mỗi note là một cây lớn theo độ bền trí nhớ FSRS. Có xu, nhà, cửa hàng, mini-game, nhiệm vụ, từ 1.6 có **báo 畑新聞** và **chép chính tả hằng ngày**, từ 1.8 có **giao diện Mùa & Lễ hội** (Tết, Giáng sinh, hoa anh đào, lá đỏ…), từ 1.9 có **Cấu hình trường theo loại note** và trò chơi theo loại note (từ vựng / chữ Hán / ngữ pháp), từ 1.10 có **nút mở nhanh** (thanh trên cùng của Anki, Ctrl+Shift+K, biểu tượng ngoài Anki) và Mùa & Lễ hội phủ cả các vùng lẫn màn trò chơi, từ 1.11 **bù xu cho lượt ôn trên điện thoại** và nút **Báo lỗi**.
 2. **Bộ `kotoba_daily`**: script Python và prompt để **Claude Code** (tác vụ lịch của Claude Desktop) mỗi sáng tự viết một số báo tiếng Nhật chỉ dùng ngữ pháp và từ vựng người học đã học, kèm audio VOICEVOX. Add-on đọc báo từ thư mục này.
 
 **Người dùng**
@@ -66,6 +66,12 @@ Claude Code (6:00, tự chạy)                 Add-on ことば畑 (khi mở An
 - +1 xu mỗi lần nhớ (Khó/Được/Dễ); cây lên giai đoạn được thêm `2 × giai_đoạn_mới`.
 - Mục tiêu ngày 30 lượt → +15 xu.
 - 3 nhiệm vụ mỗi ngày (+20 xu mỗi cái), xong cả 3 mở rương: +30 xu và 1 món hiếm.
+- **Bù xu cho lượt ôn trên điện thoại (1.11, `mobile_coins`)**: lượt ôn không qua add-on (AnkiDroid, AnkiMobile, máy chưa cài add-on) được bù khi mở hồ sơ, sau đồng bộ và khi vườn làm mới: +1 xu / lượt nhớ được, cộng vào nhiệm vụ hôm nay (ôn thẻ đến hạn, học thẻ mới), thưởng mục tiêu ngày còn thiếu. 14 ngày gần nhất, không trả hai lần, chỉ tính từ lúc cài 1.11. Không bù thưởng lên giai đoạn, nhiệm vụ "tưới liền" / "giúp cây lớn". Thông báo 📱 trong vườn, tooltip ngoài vườn; ⚙ ghi tổng đã bù.
+
+### 2.3b Báo lỗi (từ 1.11)
+- ⚙ → **Báo lỗi…** hoặc menu **Tools → ことば畑 · Báo lỗi** (mở được cả khi vườn hỏng). Cửa sổ Qt có báo cáo sửa được: phiên bản add-on / Anki / Python / Qt, hệ điều hành, cửa sổ / màn hình, trình duyệt nhúng, cấu hình khác mặc định, tóm tắt vườn, add-on khác đang bật, chỗ mô tả lỗi, 15 lỗi mới nhất. Nút Chép / Lưu ra file… / Xoá nhật ký lỗi / Đóng.
+- Nhật ký `user_files/errors.json` (không đồng bộ): lỗi Python đã bắt (`_warn`), lỗi lệnh cầu nối (vẫn ném ra cho Anki báo), lỗi JS của trang (`web/diag.js`, gộp trùng). Trang gặp lỗi JS lần đầu thì nhắc "⚠ Vườn vừa gặp lỗi…" một lần.
+- Không có tên deck, nội dung thẻ, tên hồ sơ; thư mục nhà → `~`; `bao_dir` chỉ ghi "(đã đặt)". **Không gửi gì lên mạng.**
 
 ### 2.4 Năm mini-game (không ghi vào FSRS, tối đa 40 xu/ngày)
 Nghe tìm cây (`listen`), Chợ sáng (`market`), Đuổi quạ (`crow`, gõ romaji/kana/kanji, 4 tốc độ), Lật cặp (`memory`), Điền vào câu (`cloze`, dùng câu ví dụ của note).
@@ -226,6 +232,7 @@ Nguyên tắc:
 | File | Dòng | Vai trò |
 |---|---|---|
 | `__init__.py` | ~900 | Cửa sổ, `refresh()`, ôn thẻ trong vườn, cầu nối (`_on_bridge`, `_on_game`, `_on_home`, `_on_craft`, `_on_paper`, `_on_fields`), phát audio báo, ghi `tien_do.json`, hook, menu; `config()` gộp `_fields`; 1.10: phím tắt `SHORTCUT`, nút trên thanh trên cùng (`_toolbar_links`, `_toolbar_content`), bọc `mw.handleImport` (`_install_ticket_handler`), `create_desktop_icon` |
+| `diag.py` | ~185 | Báo lỗi (1.11, thuần Python): `ErrorLog` (nhật ký `user_files/errors.json`, gộp trùng, giữ 40), `redact`, `build_report`, `config_diff`, `clean_client`. Cửa sổ Qt nằm trong `__init__.py` (`report_info`, `report_text`, `show_report`) |
 | `launcher.py` | ~260 | Mở nhanh từ ngoài Anki (1.10, thuần Python): file vé `kotoba_batake_open.apkg`, `is_ticket`, `create()` tạo biểu tượng Windows (PowerShell → `.lnk` chạy `explorer.exe "vé"`, dự phòng `.url`) / macOS (`osacompile` → `.app`, thay `applet.icns`) / Linux (`.desktop` đúng đặc tả + `gio set metadata::trusted`) |
 | `icons/` | | Biểu tượng mầm pixel: `kotoba.png` (Linux), `kotoba.ico` (Windows), `kotoba.icns` (macOS), `toolbar.png` (nút trên thanh Anki); vẽ bằng `tools/make_icons.py` lúc phát triển |
 | `fields_core.py` | ~280 | Cấu hình trường (1.9, thuần Python): `KINDS`, `ROLES` (vai trò + bắt buộc theo loại note), `GAME_MODES` (khớp `MODES` của games.js), `guess_kind`, `clean_store`, `conf_problem`, `validate_save`, `FieldStore` |
@@ -235,6 +242,7 @@ Nguyên tắc:
 | `config.json` / `config.md` | | Cấu hình mặc định và hướng dẫn (Tools → Add-ons → Config) |
 | `web/body.html` | ~210 | Khung HTML: thanh trên, bảng ôn, game, Nhà + Xưởng, bảng 新聞 (`#kb-paper`), sân, ruộng |
 | `web/garden.css` | ~1180 | Toàn bộ CSS kiểu pixel (phần báo có tiền tố `kb-p-`) |
+| `web/diag.js` | ~65 | `GardenDiag` (1.11, nạp đầu tiên): bắt lỗi JS (`error`, `unhandledrejection`), gộp trùng, gửi `app:jserr`; `client()` cho báo cáo |
 | `web/garden.js` | ~970 | `Garden`: ruộng, thẻ ghim, bảng ôn, phím tắt, nhạc, chip báo (`drawPaperChip`), `openPaper` |
 | `web/paper.js` | ~600 | `GardenPaper`: 3 tab Báo / Chép chính tả / Kệ báo, tra từ, câu hỏi, chép (romaji qua `GardenGames._typedKana`) |
 | `web/home.js` | ~3620 | `GardenHome`: sprite (`SPR`, `FRAMES`, `BASE`), nhà, 7 cảnh ngoài trời + phòng, thời tiết theo lớp (vũng nước ở lớp mặt đất), đặt đồ, 8 tab cửa hàng (tab Mùa & Lễ hội: `renderSeason`, `themeCard`); cờ hòm thư theo báo, bấm hòm thư mở báo (`mainItemAt`); nút đổi cảnh ◂ ▸ (`cycleMain`) |
@@ -256,6 +264,7 @@ Nguyên tắc:
 | `home:theme:buy:<id>` / `theme:streak:<id>` / `theme:use:<id>` / `theme:auto` / `theme:off` | Mùa & Lễ hội: mở bằng xu / bằng chuỗi (Python tự tính chuỗi từ revlog), chọn tay, tự động, tắt |
 | `craft:save:<json>`, `craft:pick`, `win:full` | xưởng, chọn ảnh, F11 |
 | `app:icon` | 1.10: tạo biểu tượng ngoài Anki (`launcher.create`) → `Garden.appIcon({ok, kind, paths, msg})` |
+| `app:jserr:<json>` / `app:report:<json>` | 1.11: ghi lỗi JS vào nhật ký / mở cửa sổ Báo lỗi kèm thông tin trang (cửa sổ, màn hình, bảng đang mở) |
 | `fields:open`, `fields:save:{mid,kind,f}`, `fields:game:<game>:<loại>:<chế độ>` | 1.9: dữ liệu bảng Cấu hình trường; lưu cấu hình một loại note (Python kiểm tra loại, trường bắt buộc, trường có thật); lưu chế độ trò chơi |
 | `paper:index`, `paper:issue:<ngày>` | kệ báo; mở một số (đánh dấu đã đọc, ghi lại `tien_do.json`) |
 | `paper:q:{d,i,c}` | trả lời câu hỏi |
@@ -263,7 +272,7 @@ Nguyên tắc:
 | `paper:play:{d,k:bai\|ct,i,j,s}`, `dict:play:{id,s}` | phát audio: file báo là đường dẫn tuyệt đối đã kiểm tra; câu ví dụ deck là tên file media |
 | `dict:open`, `paper:stop` | lượt chép hôm nay; dừng audio |
 
-Python → JS: `render`, `showCard`, `showAnswer`, `reviewDone`, `celebrate`, `gameSaved`, `home`, `homeError`, `craftImage`, `fieldsData`, `fieldsSaved`, `fieldsError`, `gameModes`, `appIcon`, `paperIndex`, `paperIssue`, `paperSummary`, `dictShow`, `paperResult`, `paperError`, `toast`, `flip`, `key`, `fit`.
+Python → JS: `render`, `showCard`, `showAnswer`, `reviewDone`, `celebrate`, `mobilePaid` (1.11), `gameSaved`, `home`, `homeError`, `craftImage`, `fieldsData`, `fieldsSaved`, `fieldsError`, `gameModes`, `appIcon`, `paperIndex`, `paperIssue`, `paperSummary`, `dictShow`, `paperResult`, `paperError`, `toast`, `flip`, `key`, `fit`.
 
 Audio báo phát bằng `aqt.sound.av_player.play_file(đường_dẫn_tuyệt_đối)`. Đây là cách chính thức: `SoundOrVideoTag.path()` của Anki 26.9.3 nhận đường dẫn tuyệt đối.
 
@@ -272,7 +281,7 @@ Audio báo phát bằng `aqt.sound.av_player.play_file(đường_dẫn_tuyệt_�
 ## 5. Dữ liệu & lưu trữ
 
 ### 5.1 Cấu hình add-on (`config.json`)
-`word_field`… `example_audio_field` (ép tên trường, trống = tự nhận diện; từ 1.9 chỉ dùng cho loại note chưa cấu hình trong bảng Cấu hình trường), `stage_days` [3, 21, 90], `wilt_retrievability` 0.7, `max_plants` 400, `daily_goal` 30, `daily_bonus` 15, `game_daily_coins` 40, `effects`, `sound`, `music`, `music_volume`, `show_tooltips`, `open_maximized`, `toolbar_button` (1.10, nút ことば畑 trên thanh Anki), **`bao_dir`** ("" = chưa nối báo).
+`word_field`… `example_audio_field` (ép tên trường, trống = tự nhận diện; từ 1.9 chỉ dùng cho loại note chưa cấu hình trong bảng Cấu hình trường), `stage_days` [3, 21, 90], `wilt_retrievability` 0.7, `max_plants` 400, `daily_goal` 30, `daily_bonus` 15, `game_daily_coins` 40, `effects`, `sound`, `music`, `music_volume`, `show_tooltips`, `open_maximized`, `toolbar_button` (1.10, nút ことば畑 trên thanh Anki), `mobile_coins` (1.11, bù xu cho lượt ôn trên điện thoại), **`bao_dir`** ("" = chưa nối báo).
 
 ### 5.2 Khoá trong cấu hình collection (đồng bộ AnkiWeb)
 
@@ -283,6 +292,7 @@ Audio báo phát bằng `aqt.sound.av_player.play_file(đường_dẫn_tuyệt_�
 | `kotoba_batake_paper` (1.6) | `read` {ngày: {q, ct, coins, bonus}}, `dict` {day, items, res, coins, bonus}, `queue` {id câu: {due, box}}, `seen`, `miss` {từ: ngày} | `user_files/paper.json` |
 | `kotoba_batake_ext` (1.7) | phần mới mà bản ≤ 1.6.1 không hiểu: `owned` đồ mới, `zones` vùng mới, `places` {cảnh: [đồ mới hoặc đồ ở vùng mới]}, `craft_fx` {cid: {fx, was}} | `user_files/ext.json` |
 | `kotoba_batake_fields` (1.9) | `models`: {id loại note: {kind vocab/kanji/grammar/other, `f` {vai trò: tên trường}, name}}, `games`: {trò: {loại: chế độ}} | không (id loại note gắn với collection; chỉ ghi `user_files/fields.json` khi chạy không có collection) |
+| `kotoba_batake_mobile` (1.11) | sổ bù xu: `start` (mốc, ms = id revlog), `days` {ngày Anki: {all, ok, rev, new}} = số lượt add-on **đã trả** (C), `goals` ngày đã nhận thưởng mục tiêu, `total`, `last`. Bù = R (đếm từ revlog, id > start, 14 ngày) − C, rồi C = max(C, R). Máy tính cộng C ngay khi trả xu (`record_desktop`) | `user_files/mobile.json` (chỉ sao lưu, có collection thì không đọc) |
 | `kotoba_batake_season` (1.8) | `unlocked` chủ đề đã mở, `mode` auto/pick/off, `pick`, `free_day` (ngày Anki của lần đổi chuỗi gần nhất), `owned` / `places` của **đồ theo mùa** | `user_files/season.json` |
 
 Khoá báo **tách riêng** để bản cũ của add-on trên máy khác (vốn làm sạch và xoá khoá lạ trong ví) không xoá mất. Từ 1.7 đồ / vùng / hiệu ứng mới cũng vậy: ví chỉ giữ thứ bản 1.6.1 hiểu (`LEGACY_ITEMS`, `LEGACY_ZONES`, `LEGACY_FX`), phần mới ở `kotoba_batake_ext`; `load()` gộp lại (phần mới xếp sau), `save()` tách ra. Bản cũ đặt đồ vào ô của đồ mới thì đồ mới tự về kho. Collection có ví nhưng thiếu khoá mở rộng (vd. tải về từ máy chưa cài 1.7) thì không lấy `ext.json` của máy này. Từ 1.8 có thêm tầng thứ ba: đồ theo mùa và cài đặt Mùa & Lễ hội chỉ nằm ở `kotoba_batake_season` (không ở ví, không ở `ext`), nên bản 1.6.1 và 1.7.0 ở máy khác không xoá; thứ tự chuẩn món đặt: ví → ext → season (`_tier`). Khi lưu, phần của `kotoba_batake_season` mà bản này không hiểu (của bản mới hơn) được giữ nguyên (`keep_foreign_season`). Id câu chép: `p:<ngày>:<i>` (câu trong báo) hoặc `n:<nid>` (câu ví dụ của note). Ghi `col.set_config` không xoá undo.
@@ -363,6 +373,8 @@ Add-on chỉ **ghi đúng một file** trong `bao_dir`: `tien_do.json`.
 - **Nội dung báo hoàn toàn mới**, không chép đoạn văn, ví dụ hay tên nhân vật của giáo trình (cả trong `vi_du` của file chương).
 - **Báo có thể còn chỗ chưa tự nhiên**, nhất là kính ngữ. Trang báo luôn ghi dòng này; gặp chỗ nghi ngờ thì hỏi thầy cô.
 - **Cấu hình trường (1.9)** — người dùng yêu cầu bắt buộc: Từ vựng = Từ + Nghĩa, Chữ Hán = Kanji + Hán Việt, Ngữ pháp = Cấu trúc + Nghĩa. Phần còn lại người dùng giao cho Claude tự chọn, đã chọn: cấu hình **theo loại note (note type)**, lưu trong collection (đồng bộ); thêm loại **Khác** (không vào trò chơi); loại note chưa cấu hình **vẫn chạy bằng cách đoán** như cũ (không chặn) nhưng có chip ⚠ + thông báo bấm được; đã cấu hình thì **không đoán thêm** trường nào; kanji có 2 ô Âm On (hoặc On/Kun chung) + Âm Kun riêng; Hán Việt cùng trường với Nghĩa kiểu "Sức mạnh (Lực)" thì tách ngoặc; trò chơi chơi **một loại note mỗi ván** (chọn ở đầu menu); Đuổi quạ không dùng cho ngữ pháp; Nghe tìm cây với ngữ pháp = nghe câu ví dụ → chọn mẫu; chế độ mặc định: Lật cặp kanji = Kanji ↔ Hán Việt, Chợ sáng kanji = Hán Việt → Kanji, từ vựng giữ như bản cũ (Trộn).
+- **Bù xu điện thoại (1.11)** — đếm theo ngày (R − C) thay vì nhớ id từng lượt, để sổ luôn nhỏ và tự bù lại lượt bị mất khi hai máy ghi đè nhau. Chỉ tính từ lúc cài 1.11 (không trả hồi tố), 14 ngày gần nhất. Bật mặc định.
+- **Báo lỗi (1.11)** — add-on **không gửi gì lên mạng**; người dùng tự chép / lưu báo cáo rồi gửi. Cửa sổ là Qt thường (không phải trang pixel) để vẫn mở được khi trang vườn hỏng.
 - **Mở nhanh (1.10)** — người dùng hỏi có cách nào có icon bấm là vào add-on, không phải vào Tools. Đã chọn: nút ことば畑 trên thanh trên cùng của Anki (bật mặc định, tắt bằng `toolbar_button`) + phím Ctrl+Shift+K + biểu tượng ngoài Anki **chỉ tạo khi người dùng bấm** (không tự ghi file lên màn hình nền). Biểu tượng dùng **đường mở file .apkg có sẵn của Anki** (file vé + bọc `mw.handleImport`) thay vì tìm đường dẫn chương trình Anki (khác nhau theo bản cài / launcher) hay sửa tham số dòng lệnh của Anki. Windows chạy qua `explorer.exe` để ghim được vào thanh tác vụ.
 - **Mùa & Lễ hội ở vùng và trò chơi (1.10)** — không có chủ đề thì mọi cảnh giữ y như cũ (Suối nước nóng vẫn giữa tuyết, lúa theo tháng thật). Trò chơi theo giờ của vườn nhưng **ban đêm sáng dịu hơn vườn** để quạ và chữ vẫn rõ; menu / Nghe tìm cây / Lật cặp / Điền vào câu chỉ đổi nền nhạt + hạt bay phía sau, không đổi màu thẻ để không khó đọc.
 - **Mùa & Lễ hội (1.8)** — người dùng giao cho Claude tự chọn, đã chọn như sau: mỗi chủ đề 1000 xu hoặc chuỗi 7 ngày (mùa) / 10 ngày (lễ hội); **mở là tặng luôn các món** của chủ đề (mua thêm khi đã mở); một chuỗi chỉ đổi được một chủ đề (`free_day`), ôn tiếp đủ ngày lại đổi được; mặc định **tự động theo lịch**, chỉ áp dụng chủ đề **đã mở** (chưa mở thì chỉ có chip mời + "Xem thử"); lễ hội ưu tiên hơn mùa, Giáng sinh ưu tiên hơn Mùa lá đỏ; Giáng sinh 15/11–31/12 đúng ý người dùng; Tết theo âm lịch Việt Nam, từ 21 ngày trước mùng 1 tới rằm tháng Giêng; mở chủ đề trái mùa thì dùng luôn (chuyển sang chọn tay); nhãn "Mới" chỉ cho đồ của bản mới nhất.
@@ -389,6 +401,8 @@ Biến môi trường: `KB_ADDON` (thư mục add-on), `KB_KIT` (thư mục `kot
 
 **Bộ test 1.10** (thêm vào, đều qua; chạy cả bộ bằng `run_all.sh ADDON PORT OUT`): `test_launch110.py ADDON AQT_DIR` (81: menu + phím tắt, link trên thanh trên cùng y như `Toolbar.create_link`, CSS chỉ ở `TopToolbar`, tắt được; file vé, bọc `mw.handleImport`; đọc mã nguồn **aqt 26.9.3 thật** để chắc mọi đường mở file — Anki đang chạy, chưa chạy, đang chọn hồ sơ — đều qua `self.handleImport`; Linux tạo `.desktop` thật và chạy bằng `gio launch` (GLib) với đường dẫn có dấu cách / `$` / `"`; Windows giải mã lệnh PowerShell đã sinh; macOS giả lập `osacompile` và chạy phần shell của AppleScript); `f_season110.js` (nút ⚙ Tạo biểu tượng, bảng ⚙ cuộn được, trò chơi ngày / đêm / tuyết / dây đèn lồng, lớp nền chủ đề, ô đáp án Điền vào câu, cây / đất của vùng theo chủ đề, hiệu năng). Bộ 1.7 / 1.8 / 1.9 chạy lại đều qua.
 
+**Bộ test 1.11** (thêm vào `run_all.sh`, cả 19 bộ đều qua trên bản đóng gói): `test_v111.py ADDON` (82: bù xu bằng scheduler v3 thật — mốc lần đầu, lượt "điện thoại" +1 / lượt nhớ, lượt máy tính không trả lại, nhiệm vụ `due` / `new`, ngày cũ trong / ngoài 14 ngày, revlog type 4 không tính, undo, 2 máy ghi đè nhau, mục tiêu ngày, `mobile_coins=false`, móc đồng bộ / mở hồ sơ; Báo lỗi — nhật ký, ẩn thông tin cá nhân, báo cáo, nút, menu); `qt_report111.py ADDON PYQT_DIR OUT.png` (cửa sổ Báo lỗi bằng **PyQt6 6.9 thật**, offscreen; cần `pip install --target ../../pyqt PyQt6` và gói `libegl1`); `f_v111.js PORT [SHOTDIR]` (thông báo 📱 + chip xu khi đồng bộ lúc vườn mở, ⚙ ghi đã bù / Đang tắt, lỗi JS → nhắc một lần, ⚙ → Báo lỗi gửi thông tin trang). `test_launch110.py` đổi một kiểm tra: menu Tools có 3 mục.
+
 **Bộ test 1.9** (thêm vào, đều qua): `extra_models.py` (5 loại note mẫu: kanji On/Kun riêng, ngữ pháp có audio ví dụ, kanji "Sức mạnh (Lực)", tiếng Anh Front/Back/Sentence, tên trường lạ); `test_fields19.py ADDON OLD18` (86: chưa cấu hình thì đọc note **giống hệt `garden_core.py` của 1.8**, đoán loại / trường, lưu qua cầu nối thật kèm mọi lỗi, đã cấu hình thì không đoán thêm, On/Kun, tách ngoặc Hán Việt, cloze ngữ pháp, chép chính tả theo trường đã chọn, đổi tên trường, chế độ trò chơi hợp lệ / bị chặn, giữ khoá lạ, `MODES` JS khớp `GAME_MODES` Python, bản 1.8 không đụng khoá mới); `f_games.js` (chơi thử **mọi trò × mọi chế độ × 3 loại note** qua giao diện thật, chế độ còn sau khi tải lại, deck trộn 2 loại); `f_panel.js` (bảng Cấu hình trường: chip, thông báo, gợi ý, đổi loại, bắt buộc, lưu, hoàn tác, Esc, nút ở ⚙ / menu game, đổi tên trường, 2 cỡ cửa sổ); `f_extra.js` (bấm thông báo, đổi deck khi bảng mở, cây ngữ pháp). Bộ 1.7 / 1.8 chạy lại đều qua.
 
 **Bộ test 1.8** (thêm vào bộ 1.7, đều qua): `test_season.py ADDON V170 ORIG` (250: lịch 14 chủ đề theo ngày mốc, Tết / Trung thu âm lịch 25 năm, mở khoá xu / chuỗi, lưu 3 tầng, chạy `garden_core.py` của **1.7.0 và 1.6.1 thật** trên cùng collection để chứng minh không mất chủ đề / đồ theo mùa; bản 1.8 cũng giữ nguyên phần lạ của bản mới hơn); `season_bridge.js` (đổi chuỗi qua cầu nối thật với revlog giả, mini-game khi có chủ đề); `season_shop.js` (23: tab Mùa & Lễ hội qua giao diện thật); `season_more.js` (nhạc theo chủ đề, hiệu năng 3–6,4 ms/khung, ảnh phòng / vùng); `season_narrow.js` (5 cỡ cửa sổ); `season_ui.js` (ảnh 14 chủ đề ngày / đêm). Bộ 1.7 chạy lại vẫn qua (`regress.js` đổi một kiểm tra vì vùng của 1.7 không còn nhãn "Mới").
@@ -399,7 +413,7 @@ Biến môi trường: `KB_ADDON` (thư mục add-on), `KB_KIT` (thư mục `kot
 ```bash
 # tăng "mod" (unix time) và "human_version" trong manifest.json
 find kotoba_batake -name __pycache__ -prune -exec rm -rf {} +
-rm -f kotoba_batake/user_files/state.json* kotoba_batake/user_files/craft_px.json* kotoba_batake/user_files/paper.json* kotoba_batake/user_files/ext.json* kotoba_batake/user_files/season.json* kotoba_batake/user_files/fields.json* kotoba_batake/user_files/kotoba_batake_open.apkg
+rm -f kotoba_batake/user_files/state.json* kotoba_batake/user_files/craft_px.json* kotoba_batake/user_files/paper.json* kotoba_batake/user_files/ext.json* kotoba_batake/user_files/season.json* kotoba_batake/user_files/fields.json* kotoba_batake/user_files/mobile.json* kotoba_batake/user_files/errors.json* kotoba_batake/user_files/kotoba_batake_open.apkg
 (cd kotoba_batake && zip -r -X -q ../out/kotoba_batake.ankiaddon . -x "*.pyc")
 # giải nén ra thư mục tạm, chạy lại test trên bản giải nén (KB_ADDON=<thư mục giải nén>)
 ```
@@ -412,7 +426,7 @@ rm -f kotoba_batake/user_files/state.json* kotoba_batake/user_files/craft_px.jso
 ## 9. Hạn chế đã biết / chưa kiểm tra trên máy thật
 
 - **Chưa chạy trên Anki thật**, chỉ kiểm bằng giả lập. Các phần chưa thử thật: cửa sổ trên GNOME/Wayland, phát WAV bằng `av_player`, VOICEVOX thật (`doc_voicevox.py` mới thử với máy chủ giả), `getFile`, dán ảnh Ctrl+V, kéo thả ảnh, và (1.7) nhạc tự phát nhờ `AnkiWebView.setPlaybackRequiresGesture(False)` — cùng cách màn ôn thẻ của Anki dùng; nếu QtWebEngine vẫn chặn thì nhạc bật ở thao tác đầu tiên như trước.
-- **Điện thoại**: AnkiDroid / AnkiMobile không chạy add-on. Lượt ôn trên điện thoại vẫn làm cây lớn, nhưng không được xu hay nhiệm vụ. Báo chỉ đọc được trên máy có thư mục `kotoba_daily` (hoặc mở `bao.html`).
+- **Điện thoại**: AnkiDroid / AnkiMobile không chạy add-on. Lượt ôn trên điện thoại vẫn làm cây lớn; từ 1.11 được bù xu, nhiệm vụ hôm nay và mục tiêu ngày sau khi đồng bộ, nhưng không có thưởng lên giai đoạn, nhiệm vụ "tưới liền" / "giúp cây lớn", và nhiệm vụ của ngày đã qua. Báo chỉ đọc được trên máy có thư mục `kotoba_daily` (hoặc mở `bao.html`).
 - **Nhiều máy tính**: phải cập nhật add-on ở mọi máy. Muốn đọc báo ở máy khác thì đồng bộ thư mục `kotoba_daily` (ví dụ Syncthing).
 - **Câu ví dụ trong deck không có bản đọc chậm.**
 - **Chép chính tả có thể lấy câu của số báo chưa đọc** (nghe trước khi đọc), người dùng đã đồng ý.
@@ -420,6 +434,7 @@ rm -f kotoba_batake/user_files/state.json* kotoba_batake/user_files/craft_px.jso
 - **Đuổi quạ** không phóng to phần vẽ trên màn hình lớn (tránh pixel nhoè).
 - **Cấu hình trường** gắn với id loại note + tên trường: đổi tên trường thì phải chọn lại (vườn báo). Một ván trò chơi chỉ dùng một loại note.
 - **Biểu tượng ngoài Anki (1.10)**: Ubuntu / Linux đã thử bằng `gio launch` (GLib thật); Windows / macOS chỉ kiểm bằng giả lập (lệnh PowerShell / AppleScript sinh ra). Cần Anki được đăng ký mở file .apkg (bộ cài làm sẵn); Linux ưu tiên lệnh `anki` trong PATH, không có thì `xdg-open`. Anki ở chế độ an toàn (tắt add-on) mà bấm biểu tượng thì Anki báo file vé không phải deck. Nếu Anki hỏi chọn hồ sơ khi mở bằng biểu tượng, chọn xong là vào vườn.
+- **Báo lỗi (1.11)**: chỉ ghi lỗi add-on bắt được (không có lỗi của mẫu thẻ hay add-on khác). Cửa sổ đã chạy bằng PyQt6 thật (offscreen) nhưng chưa thử trong Anki thật.
 - **Chất lượng tiếng Nhật do AI viết** có thể còn gượng; `kiemtra.py` chỉ bắt lỗi hình thức (furigana, phạm vi từ, cấu trúc), không bắt lỗi ngữ pháp.
 
 ---
@@ -429,6 +444,11 @@ rm -f kotoba_batake/user_files/state.json* kotoba_batake/user_files/craft_px.jso
 Các ý dưới đây đã được bàn với người dùng nhưng **chưa làm**. Ghi kèm hướng thiết kế đã thống nhất để phiên sau làm cho khớp.
 
 ### 10.1 Liên quan đến báo
+- **Báo cho người không rành kỹ thuật** (bàn ngày 3/11/2026, chờ người dùng chọn): bộ `kotoba_daily` cần Claude Code + tài khoản Claude + VOICEVOX + giáo trình PDF, quá khó với người dùng thường. Các hướng đã cân nhắc:
+  - **A. Khoá API của người dùng (Google Gemini, hạn mức miễn phí)**: add-on tự gọi API mỗi ngày một lần (chạy nền, `mw.taskman`), chỉ văn bản (không có VOICEVOX nên không có giọng đọc; chép chính tả dùng audio của deck). Khoá chỉ lưu trong config của add-on trên máy (không để trong collection vì collection đồng bộ lên AnkiWeb), có nút thử khoá, tên model sửa được. Lưu ý: hạn mức / model / điều khoản miễn phí hay đổi; bản miễn phí có thể dùng dữ liệu gửi lên để cải thiện sản phẩm (chỉ gửi danh sách từ đang học, không gửi gì khác); phải kiểm tra định dạng furigana như `kiemtra.py`. **Đảo quyết định đã chốt** "add-on không gọi AI, không cần mạng" ở mục 7 → chỉ làm khi người dùng đồng ý, và luôn là tuỳ chọn tắt sẵn. Không bao giờ nhúng khoá của người làm add-on vào gói chia sẻ.
+  - **B. "Bảng tin từ deck" không cần AI**: ghép câu ví dụ (có audio) của từ sắp héo / đến hạn thành một trang đọc mỗi ngày + câu hỏi đơn giản. Không cần cài gì, chạy offline, nhưng không có truyện / bài viết mới.
+  - **C. Gói báo làm sẵn**: người làm add-on dùng bộ `kotoba_daily` viết báo theo danh sách từ JLPT N5 / N4 chung (không dựa vào giáo trình có bản quyền), kèm audio VOICEVOX (ghi tên giọng theo điều khoản từng nhân vật), phát hành thành gói zip; người dùng chỉ tải về và chọn thư mục. Không cá nhân hoá theo từ yếu.
+  - Đề xuất: B làm mặc định khi chia sẻ (Báo ẩn nếu chưa nối), A là tuỳ chọn cho ai có khoá, giữ `kotoba_daily` (Claude Code) cho người dùng này.
 - **Số ôn tập cuối tuần** (đã đề xuất, chờ người dùng trả lời): số Chủ nhật dành cho các chương cũ. Hướng làm: thêm `cai_dat.on_tap_cuoi_tuan` vào `lo_trinh.json`; `pham_vi.py` xuất danh sách chương cũ chọn ngẫu nhiên theo ngày; prompt dùng danh sách đó thay cho chương trọng tâm vào Chủ nhật.
 - **Radio / podcast do AI tạo**: Claude viết kịch bản hai người dẫn nói chuyện 3–5 phút quanh bài đọc; VOICEVOX đọc mỗi người một giọng; ghép bằng ffmpeg; có bản chậm; phụ đề chạy theo mốc thời gian. Radio là một món đồ trong phòng (có nốt nhạc bay ra khi phát).
 - **Nhạc**: dễ nhất là Claude soạn chiptune theo đúng dạng dữ liệu nốt của `music.js`. Bài hát có lời dùng từ đã học thì cần phần mềm hát tổng hợp (VOICEVOX có chế độ hát nhưng chưa thử qua API); để sau cùng.
@@ -467,13 +487,14 @@ Các ý dưới đây đã được bàn với người dùng nhưng **chưa là
 - **Vé nghỉ giữ chuỗi ngày**: chỉ giữ con số chuỗi, không đụng lịch ôn.
 
 ### 10.3 Kỹ thuật
-- **Bù xu cho lượt ôn trên điện thoại**: sau khi đồng bộ, quét revlog và bù xu, nhiệm vụ. Cần ghi nhớ id các lượt đã tính trên máy tính.
+- ~~**Bù xu cho lượt ôn trên điện thoại**~~: đã làm ở 1.11 (đếm theo ngày, không cần nhớ id từng lượt — xem 5.2 `kotoba_batake_mobile`).
 - **Chạy lại 19 bộ test cũ** trên bản 1.6.1, rồi gộp bộ test 1.6 vào thư mục `tests/` chung, theo quy ước `py X.py ADDON`.
 - **Kiểm tra trên Anki thật** (xem mục 9) và sửa theo phản hồi của người dùng.
 
 ---
 
 ## 11. Lịch sử phiên bản
+- **1.11.0**: **Bù xu cho lượt ôn trên điện thoại** (+1 / lượt nhớ, nhiệm vụ hôm nay, mục tiêu ngày; sổ ở khoá `kotoba_batake_mobile`; thông báo 📱; ⚙ ghi tổng đã bù; tắt bằng `mobile_coins`). **Báo lỗi** (nhật ký lỗi Python + JS, cửa sổ Báo lỗi từ ⚙ và menu Tools: thông tin máy + lỗi gần đây, ẩn thông tin cá nhân, Chép / Lưu ra file; nhắc một lần khi trang gặp lỗi).
 
 **Add-on**
 - **≤ 1.0**: vườn theo FSRS, ôn trong vườn (iframe chống giật, type-answer), note nhiều trường, 5 mini-game, xu, Nhà & Cửa hàng, nhạc nền, đồng bộ AnkiWeb, nhiệm vụ hằng ngày, đồ hiếm.
