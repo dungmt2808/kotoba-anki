@@ -143,7 +143,7 @@ result = 1`);
   ok(await page.eval(W('return !document.getElementById("kb-joy-banner") || document.getElementById("kb-joy-banner").hidden;')), 'đang ôn: chưa hiện dải chúc mừng');
   await page.eval(W('document.getElementById("kb-close-done").click(); return 1;')); await sleep(900);
   ok(await page.eval(W('const b = document.getElementById("kb-joy-banner"); return !!b && !b.hidden && /Tưới xong/.test(b.textContent);')), 'đóng bảng ôn → dải “Tưới xong cả vườn hôm nay”');
-  ok(await page.eval(W('return /Xong thẻ hôm nay/.test(document.getElementById("kb-joy").textContent);')), 'huy hiệu “🌈 Xong thẻ hôm nay”');
+  ok(await page.eval(W('return /Xong thẻ hôm nay/.test(document.getElementById("kb-joy").textContent);')), 'huy hiệu “Xong thẻ hôm nay”');
   await page.shot(SHOTS + '/28_thanh_tich.png');
 
   console.log('== cửa sổ nhỏ + lỗi');
