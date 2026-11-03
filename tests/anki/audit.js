@@ -39,6 +39,41 @@ const MEASURE = W(`
     if (leaf && parseFloat(s.fontSize) < 11 && r.top < H) out.small.push(name(e) + ' ' + s.fontSize);
     if (r.right > W + 2 || r.left < -2) { if (!e.closest('.kb-field, #kb-yard-box, canvas') && s.position !== 'fixed') out.outside.push(name(e) + ' [' + Math.round(r.left) + '..' + Math.round(r.right) + ']'); }
   });
+  // hàng nút / tab / chip nằm cùng một dòng: chiều cao, khoảng cách, mép trên có đều nhau không
+  out.rows = [];
+  document.querySelectorAll('body *').forEach((box) => {
+    if (!vis(box) || box.closest('[hidden]')) return;
+    const d = getComputedStyle(box).display;
+    if (!/flex|grid/.test(d)) return;
+    const CLS = ['kb-chip', 'kb-g-chip', 'kb-h-tab', 'kb-p-tab', 'kb-quest-btn'];
+    const kids = Array.from(box.children).filter((k) => vis(k) && (k.tagName === 'BUTTON' || k.tagName === 'SELECT' || CLS.some((c) => k.classList.contains(c)) || k.className === 'kb-h-tabsep'));
+    if (kids.length < 3) return;
+    const rs = kids.map((k) => k.getBoundingClientRect());
+    // gom theo tâm dọc (tab đang chọn có thể nhô cao hơn), rồi tách cụm khi hai nút cách nhau > 40px (cố ý)
+    const items = rs.map((r, i) => [r, kids[i]]).sort((a, b) => (a[0].top + a[0].bottom) - (b[0].top + b[0].bottom));
+    const lines = [];
+    items.forEach((it) => {
+      const cy = (it[0].top + it[0].bottom) / 2;
+      const ln = lines.find((l) => Math.abs(l.cy - cy) < 10);
+      if (ln) { ln.items.push(it); } else { lines.push({ cy: cy, items: [it] }); }
+    });
+    lines.forEach((l) => {
+      l.items.sort((a, b) => a[0].left - b[0].left);
+      const clusters = [[l.items[0]]];
+      l.items.slice(1).forEach((it, i) => { if (it[0].left - l.items[i][0].right > 40) { clusters.push([it]); } else { clusters[clusters.length - 1].push(it); } });
+      clusters.forEach((ln) => {
+        if (ln.length < 3) return;
+        const hs = ln.map((x) => Math.round(x[0].height)), tops = ln.map((x) => Math.round(x[0].top)), bots = ln.map((x) => Math.round(x[0].bottom));
+        const gaps = ln.slice(1).map((x, i) => Math.round(x[0].left - ln[i][0].right));
+        const bad = [];
+        if (Math.max(...hs) - Math.min(...hs) > 2) bad.push('cao ' + hs.join('/'));
+        if (Math.max(...tops) - Math.min(...tops) > 2 && Math.max(...bots) - Math.min(...bots) > 2) bad.push('lệch dọc ' + tops.join('/'));
+        if (gaps.length > 1 && Math.max(...gaps) - Math.min(...gaps) > 3) bad.push('khoảng cách ' + gaps.join('/'));
+        if (bad.length) out.rows.push(name(box) + ': ' + bad.join(' · ') + ' [' + ln.map((x) => (x[1].textContent || '').trim().slice(0, 10)).join(' | ') + ']');
+      });
+    });
+  });
+  out.rows = out.rows.slice(0, 10);
   out.cut = out.cut.slice(0, 12); out.outside = out.outside.slice(0, 8); out.tiny = out.tiny.slice(0, 8); out.small = Array.from(new Set(out.small)).slice(0, 8);
   return out;`);
 let page;
@@ -50,7 +85,7 @@ async function shot(name, note) {
   const errs = page.errors.splice(0);
   report.push({ name, note: note || '', ...m, errs });
   const flags = [m.hscroll ? 'TRÀN NGANG' : '', m.cut.length ? 'cắt ' + m.cut.length : '', m.outside.length ? 'ngoài khung ' + m.outside.length : '',
-    m.tiny.length ? 'nút nhỏ ' + m.tiny.length : '', errs.length ? 'LỖI JS ' + errs.length : ''].filter(Boolean).join(', ');
+    m.tiny.length ? 'nút nhỏ ' + m.tiny.length : '', m.rows.length ? 'hàng lệch ' + m.rows.length : '', errs.length ? 'LỖI JS ' + errs.length : ''].filter(Boolean).join(', ');
   console.log((flags ? '  ! ' : '  · ') + name + ' — ' + m.buttons + ' nút' + (flags ? ' — ' + flags : ''));
 }
 const js = (expr) => page.eval(W(expr + '; return 1;'));

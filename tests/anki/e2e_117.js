@@ -212,6 +212,13 @@ result = [s["lang"].get(mid), s["models"].get(mid, {}).get("kind")]`);
   const h2 = await page.eval(W('return { list: document.getElementById("kb-h-list").clientHeight, view: getComputedStyle(document.querySelector(".kb-h-view")).display };'));
   ok(h2.view === 'none' && h2.list > h1 + 150, 'tab Giống cây: ẩn khung xem trước, danh sách cao hơn (' + h1 + ' → ' + h2.list + 'px)');
   await page.shot(SHOTS + '/57_nha_giong_cay.png');
+  const tabs = await page.eval(W(`const t = Array.from(document.querySelectorAll(".kb-h-tabs .kb-h-tab")).map(b => b.getBoundingClientRect());
+    return { n: t.length, ws: t.map(r => Math.round(r.width)), gaps: t.slice(1).map((r, i) => Math.round(r.left - t[i].right)), seps: Array.from(document.querySelectorAll(".kb-h-tabsep")).filter(x => x.offsetWidth > 0).length };`));
+  ok(tabs.n === 10 && tabs.seps === 0 && new Set(tabs.gaps).size === 1 && Math.max(...tabs.ws) - Math.min(...tabs.ws) <= 1,
+    'Nhà: 10 tab bằng nhau, khoảng cách đều (' + tabs.ws.join('/') + ' · cách ' + Array.from(new Set(tabs.gaps)).join('/') + ')');
+  const hd = await page.eval(W(`const h = (sel) => Array.from(document.querySelectorAll(sel)).filter(e => e.offsetHeight).map(e => Math.round(e.getBoundingClientRect().height));
+    return { bar: h(".kb-bar > .kb-chip, .kb-bar > .kb-btn, .kb-bar .kb-sound-btn, .kb-bar > .kb-deck"), top: h("#kb-home .kb-game-top .kb-g-chip, #kb-home .kb-game-top > .kb-btn") };`));
+  ok(new Set(hd.bar).size === 1 && new Set(hd.top).size === 1, 'thanh trên cùng các ô cao bằng nhau (' + hd.bar.join('/') + '), đầu bảng Nhà: ô Ví = nút Thoát (' + hd.top.join('/') + ')');
   await page.eval(W('GardenHome.setTab("yard"); return 1;')); await sleep(500);
   const buys = await page.eval(W(`const cards = Array.from(document.querySelectorAll("#kb-h-list .kb-h-card")).slice(0, 6);
     return cards.map(c => { const b = c.querySelector(".kb-h-buy"); return b ? Math.round(c.getBoundingClientRect().bottom - b.getBoundingClientRect().bottom) : -1; });`));
