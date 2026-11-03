@@ -8,6 +8,8 @@ Cập nhật: 2026-11-03. Add-on **1.16.0** (bản chốt: 12 món hiếm mới,
 
 ## 0. Đọc nhanh (cho phiên chat mới)
 
+> **Việc đang chờ làm: hỗ trợ deck tiếng Anh (bản 1.17)** — kế hoạch chi tiết ở [`KE_HOACH_TIENG_ANH.md`](KE_HOACH_TIENG_ANH.md) (hiện trạng code, cách lưu để bản cũ không xoá dữ liệu, phân tích furigana, các bước, test). Làm xong thì **xoá file đó và dòng này**.
+
 **Hai phần của dự án**
 1. **Add-on Anki ことば畑** (gói `kotoba_batake`, bản 1.16.0): biến deck tiếng Nhật (từ vựng, chữ Hán, ngữ pháp) thành khu vườn pixel. Mỗi note là một cây lớn theo độ bền trí nhớ FSRS. Có xu, nhà, cửa hàng, mini-game, nhiệm vụ, từ 1.6 có **báo 畑新聞** và **chép chính tả hằng ngày**, từ 1.8 có **giao diện Mùa & Lễ hội** (Tết, Giáng sinh, hoa anh đào, lá đỏ…), từ 1.9 có **Cấu hình trường theo loại note** và trò chơi theo loại note (từ vựng / chữ Hán / ngữ pháp), từ 1.10 có **nút mở nhanh** (thanh trên cùng của Anki, Ctrl+Shift+K, biểu tượng ngoài Anki) và Mùa & Lễ hội phủ cả các vùng lẫn màn trò chơi, từ 1.11 **bù xu cho lượt ôn trên điện thoại** và nút **Báo lỗi**, từ 1.12 **báo do Gemini viết** (người dùng chỉ dán khoá Gemini, song song với cách Claude Code), từ 1.13 **Chép chính tả chạy với mọi deck** (câu ví dụ không có audio → giọng Gemini / giọng tiếng Nhật của máy; deck không có câu ví dụ → nghe từ, gõ lại) và báo Gemini đã sửa theo lần thử khoá thật, từ 1.14 **tự chỉnh giao diện** theo chế độ (vd. ẩn sân khi ôn thẻ), 4 chỗ tiêu xu mới (**sửa nhà, thú nuôi, giống cây, vùng tự tạo**) và **hiệu ứng thành tích** của vườn.
 2. **Bộ `kotoba_daily`**: script Python và prompt để **Claude Code** (tác vụ lịch của Claude Desktop) mỗi sáng tự viết một số báo tiếng Nhật chỉ dùng ngữ pháp và từ vựng người học đã học, kèm audio VOICEVOX. Add-on đọc báo từ thư mục này.
