@@ -20,10 +20,10 @@
   .kb-cal-next { font-family: "Noto Sans", "Noto Sans CJK JP", sans-serif; font-size: 12px; color: #4a4a66; margin-bottom: 6px; }
   .kb-cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
   .kb-cal-wd { text-align: center; font-size: 13px; color: #4a4a66; }
-  .kb-cal-day { position: relative; height: 70px; background: #ffffff; border: 2px solid #1b1b2f; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 6px; box-sizing: border-box; }
+  .kb-cal-day { position: relative; height: 74px; background: #ffffff; border: 2px solid #1b1b2f; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 4px; box-sizing: border-box; }
   .kb-cal-day.is-empty { background: transparent; border-color: transparent; }
   .kb-cal-day.is-future { background: #f4f1e4; border-style: dashed; border-color: #b9b39a; }
-  .kb-cal-day.is-today { outline: 3px solid #ffd23f; outline-offset: 1px; }
+  .kb-cal-day.is-today .kb-cal-num { background: #1b1b2f; color: #ffffff; padding: 0 3px; }
   .kb-cal-day.is-sel { background: #fff2b3; box-shadow: 3px 3px 0 #1b1b2f; }
   .kb-cal-num { position: absolute; left: 4px; top: 2px; font-size: 12px; }
   .kb-cal-stk { position: absolute; right: 3px; top: 3px; }
@@ -84,13 +84,14 @@
   .kb-page-cover { border: 3px solid #1b1b2f; image-rendering: pixelated; width: 100%; }
   .kb-page-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 12px; }
   .kb-page-stats b { font-family: "DotGothic16", "Noto Sans Mono CJK JP", monospace; font-size: 18px; }
-  .kb-entry { display: grid; grid-template-columns: 54px 26px 26px 1fr; gap: 6px; align-items: start; border-bottom: 2px dashed #d8cfa8; padding-bottom: 6px; }
+  .kb-entry { display: grid; grid-template-columns: 54px 38px 22px 1fr; gap: 6px; align-items: start; border-bottom: 2px dashed #d8cfa8; padding-bottom: 6px; }
   .kb-entry .d { font-family: "DotGothic16", "Noto Sans Mono CJK JP", monospace; font-size: 13px; }
   .kb-entry .txt { line-height: 1.45; }
   .kb-entry .wr { display: block; margin-top: 3px; font-family: "Noto Sans CJK JP", sans-serif; font-size: 14px; color: #2e6b3a; }
   .kb-page-foot { margin-top: auto; display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #4a4a66; }
   .kb-book-acts { display: flex; gap: 8px; margin-top: 10px; justify-content: flex-end; }
   .kb-book-acts .kb-btn { margin-left: 0; }
+  @media (max-width: 1100px) { .kb-cal-body { flex-direction: column; } .kb-cal-left { width: auto; align-self: stretch; } .kb-cal-right { align-self: stretch; } .kb-cal-year { grid-template-columns: repeat(4, 1fr); } .kb-book { flex-direction: column; } }
   .mock-note { position: fixed; right: 18px; bottom: 10px; font-family: "Noto Sans", sans-serif; font-size: 12px; color: #1b1b2f; background: #ffffffcc; border: 2px solid #1b1b2f; padding: 2px 8px; }
 </style>
 </head>
@@ -111,6 +112,7 @@
   <section class="kb-panel kb-game kb-cal" id="panel"></section>
 </div>
 <div class="mock-note">Bản mẫu 1.20 · số liệu giả</div>
+<script src="garden_sprites.js"></script><script src="seeds.js"></script><script src="flowers.js"></script><script src="flower_art.js"></script>
 <script>
 "use strict";
 const V = new URLSearchParams(location.search).get("v") || "month";
@@ -140,10 +142,8 @@ const THEME = {
   tanabata: { name: "Thất Tịch 七夕", c: "#3d348b" }, summer: { name: "Mùa hè", c: "#ffd166" }, natsu: { name: "Lễ hội mùa hè", c: "#ef476f" },
   autumn: { name: "Mùa thu", c: "#e76f51" }, tsukimi: { name: "Trung thu", c: "#f4a261" },
 };
-function flower(level, theme, scale) {
-  const t = THEME[theme] || THEME.momiji;
-  return sprite(FLOWER[level], { b: "#9a6a48", B: "#6b4226", g: "#3aa655", p: t.p || "#ff8fab", P: t.P || "#e05780", y: "#ffd23f" }, scale || 4);
-}
+// 1.20: hoa cùng kiểu cây của ruộng (seeds.js + loài mới ở flowers.js), mỗi giao diện mùa một loài
+function flower(level, theme, scale) { return KB_FLOWER_ART.make(theme, level, scale >= 4 ? 3 : 2, level * 7 + theme.length); }
 // sticker tâm trạng 9×9
 const FACE = {
   vui: { c: "#ffd23f", r: ["..kkkkk..", ".kyyyyyk.", "kyykyykyk", "kyyyyyyyk", "kyyyyyyyk", "kykyyykyk", "kyykkkyyk", ".kyyyyyk.", "..kkkkk.."] },
@@ -172,9 +172,9 @@ function panelTop(panel, tab, hud) {
   const ex = el("button", "kb-btn kb-btn-small", "Thoát "); ex.appendChild(el("span", "kb-key", "Esc")); t.appendChild(ex);
   panel.appendChild(t);
   const info = el("div", "kb-p-info");
-  info.textContent = tab === "month" ? "Mỗi ngày ôn nở một bông hoa — ôn càng nhiều hoa càng to. Bấm một ngày để xem và viết nhật ký."
-    : tab === "year" ? "Cả năm trong một trang. Dải màu dưới tên tháng là giao diện mùa của tháng đó."
-    : "Hết tháng, các ngày tự đóng thành một cuốn. Cuốn cũ nằm trên Kệ sách trong nhà.";
+  info.textContent = tab === "month" ? "Bấm một ngày để xem và viết nhật ký."
+    : tab === "year" ? "Dải màu dưới tên tháng là giao diện mùa của tháng đó."
+    : "Hết tháng, nhật ký tự đóng thành một cuốn.";
   panel.appendChild(info);
 }
 const panel = document.getElementById("panel");
@@ -218,9 +218,8 @@ function month() {
   }
   L.appendChild(g);
   const lg = el("div", "kb-cal-legend");
-  lg.appendChild(el("span", null, "Ít"));
   [0, 1, 2, 3, 4].forEach((l) => lg.appendChild(flower(l, "xmas", 2)));
-  lg.appendChild(el("span", null, "Nhiều"));
+  lg.appendChild(el("span", null, "nở rộ = đạt mục tiêu ngày (30 lượt)"));
   lg.appendChild(el("span", "sp"));
   const dot = el("i", "kb-cal-dot"); dot.style.position = "static"; lg.appendChild(dot);
   lg.appendChild(el("span", null, "có nhật ký"));
@@ -239,33 +238,42 @@ function month() {
   Rt.appendChild(c1);
 
   const c2 = el("div", "kb-cal-card");
-  const h2 = el("div", "kb-cal-h"); h2.appendChild(el("span", null, "Nhật ký")); h2.appendChild(el("small", null, "chỉ mình bạn đọc · không gửi cho Gemini"));
+  const h2 = el("div", "kb-cal-h"); h2.appendChild(el("span", null, "Nhật ký")); h2.appendChild(el("small", null, "không gửi cho Gemini"));
   c2.appendChild(h2);
   const sr = el("div", "kb-cal-stk-row");
   Object.keys(FACE).forEach((k) => { const b = el("button", "kb-cal-stk-b" + (k === "vui" ? " is-on" : "")); b.title = FACE_NAME[k]; b.appendChild(face(k, 3)); sr.appendChild(b); });
   c2.appendChild(sr);
-  const inp = el("input", "kb-cal-in"); inp.value = "Trời lạnh, ôn ở quán cà phê. Cuối cùng cũng nhớ được 予約 rồi!"; c2.appendChild(inp);
-  const m2 = el("div", "kb-cal-meta"); m2.appendChild(el("span", null, "Hôm nay: Vui")); m2.appendChild(el("span", null, "58 / 300")); c2.appendChild(m2);
+  const inp = el("div", "kb-cal-in", "Trời lạnh, ôn ở quán cà phê. Cuối cùng cũng nhớ được 予約 rồi!"); inp.style.minHeight = "52px"; c2.appendChild(inp);
+  const m2 = el("div", "kb-cal-meta"); m2.appendChild(el("span", null, "Đồng bộ qua AnkiWeb")); m2.appendChild(el("span", null, "58 / 200 ký tự")); c2.appendChild(m2);
   Rt.appendChild(c2);
 
   const c3 = el("div", "kb-cal-card");
-  const h3 = el("div", "kb-cal-h"); h3.appendChild(el("span", null, "Luyện viết")); h3.appendChild(el("small", null, "tiếng Nhật · 1–3 câu"));
+  const h3 = el("div", "kb-cal-h"); h3.appendChild(el("span", null, "Luyện viết")); h3.appendChild(el("small", null, "tối đa 60 ký tự (khoảng 20–30 từ)"));
+  const lc = el("div", "kb-ai-chips"); lc.style.marginLeft = "auto";
+  [["Tiếng Nhật", 1], ["Tiếng Anh", 0]].forEach((x) => { const b = el("button", "kb-btn kb-btn-small kb-ai-chip" + (x[1] ? " is-on" : ""), x[0]); if (x[1]) { b.style.background = "#ffd23f"; } lc.appendChild(b); });
+  h3.appendChild(lc);
   c3.appendChild(h3);
   const hint = el("div", "kb-cal-hint"); hint.appendChild(el("span", null, "Thử dùng:"));
   ["予約する", "寒い"].forEach((w) => hint.appendChild(el("span", "kb-cal-word", w)));
   hint.appendChild(el("button", "kb-btn kb-btn-small", "Đổi gợi ý"));
   c3.appendChild(hint);
-  const ta = el("div", "kb-cal-in kb-cal-ta", "きのう、レストランを予約しました。とても寒いでした。"); c3.appendChild(ta);
+  const ta = el("div", "kb-cal-in kb-cal-ta", "きのう友だちとレストランを予約しました。外はとても寒いでしたが、料理はおいしいでした。"); c3.appendChild(ta);
+  const m3 = el("div", "kb-cal-meta"); m3.appendChild(el("span", null, "Đã dùng 2 / 2 từ gợi ý ✓")); m3.appendChild(el("span", null, "43 / 60 ký tự")); c3.appendChild(m3);
   const fx = el("div", "kb-cal-fix");
-  fx.appendChild(el("b", null, "Gemini sửa:"));
-  const jp = el("div", "jp"); jp.innerHTML = "きのう、レストランを<u>予約</u>しました。とても<mark>寒かったです</mark>。"; fx.appendChild(jp);
-  fx.appendChild(el("div", "old", "とても寒いでした。"));
-  fx.appendChild(el("div", "why", "Tính từ đuôi い: quá khứ là 寒かった(です), không dùng 寒いでした."));
+  fx.appendChild(el("b", null, "1. Câu đã sửa"));
+  const jp = el("div", "jp"); jp.innerHTML = "きのう友だちとレストランを<u>予約</u>しました。外はとても<mark>寒かったです</mark>が、料理は<mark>おいしかったです</mark>。"; fx.appendChild(jp);
+  fx.appendChild(el("b", null, "2. Lỗi (2)"));
+  [["寒いでした → 寒かったです", "Ngữ pháp · tính từ đuôi い: quá khứ là bỏ い + かった(です)."],
+   ["おいしいでした → おいしかったです", "Cùng quy tắc như lỗi trên."]].forEach((e) => {
+    const r = el("div", "why"); const a = el("span", "jp-s", e[0]); a.style.fontFamily = '"Noto Sans CJK JP", sans-serif'; a.style.fontWeight = "700";
+    r.appendChild(a); r.appendChild(document.createTextNode(" — " + e[1])); fx.appendChild(r);
+  });
+  fx.appendChild(el("b", null, "3. Nhận xét"));
+  fx.appendChild(el("div", "why", "Dùng đúng cả 予約する và 寒い, câu có が nối hai ý rất tự nhiên. Hai lỗi cùng một quy tắc — nắm quy tắc này là hết lỗi."));
   c3.appendChild(fx);
   const acts = el("div", "kb-cal-acts");
-  acts.appendChild(el("button", "kb-btn kb-btn-small kb-ai-main", "Nhờ Gemini sửa"));
-  acts.appendChild(el("button", "kb-btn kb-btn-small", "Lưu"));
-  acts.appendChild(el("span", "kb-cal-lock", "Câu gửi cho Gemini để sửa"));
+  const done = el("button", "kb-btn kb-btn-small", "Đã sửa hôm nay"); done.disabled = true; done.style.opacity = "0.6"; acts.appendChild(done);
+  acts.appendChild(el("span", "kb-cal-lock", "Gemini sửa 1 lần mỗi ngày · mai viết bài mới"));
   c3.appendChild(acts);
   Rt.appendChild(c3);
   body.appendChild(Rt);
@@ -326,7 +334,7 @@ function year() {
 
 // ======================= CUỐN NHẬT KÝ =======================
 function cover() {
-  const W = 120, H = 56, S = 3;
+  const W = 120, H = 50, S = 3;
   const cv = document.createElement("canvas"); cv.width = W * S; cv.height = H * S; cv.className = "kb-page-cover";
   const x = cv.getContext("2d");
   const r = (a, b, w, h, c) => { x.fillStyle = c; x.fillRect(a * S, b * S, w * S, h * S); };
@@ -365,6 +373,9 @@ function book() {
   const mood = el("div", "kb-cal-hint"); mood.appendChild(el("span", null, "Tâm trạng tháng này:"));
   [["vui", 9], ["thu_thai", 6], ["ban", 4], ["met", 3]].forEach((m) => { const s = el("span", "kb-cal-hint"); s.appendChild(face(m[0], 2)); s.appendChild(document.createTextNode("×" + m[1])); mood.appendChild(s); });
   p1.appendChild(mood);
+  const err = el("div", "kb-cal-hint"); err.appendChild(el("span", null, "Lỗi hay gặp:"));
+  err.appendChild(el("span", null, "tính từ đuôi い (〜かった) ×4 · trợ từ に / で ×2")); err.lastChild.style.fontFamily = '"Noto Sans", "Noto Sans CJK JP", sans-serif';
+  p1.appendChild(err);
   const f1 = el("div", "kb-page-foot"); f1.appendChild(el("span", null, "ことば畑")); f1.appendChild(el("span", null, "1")); p1.appendChild(f1);
   bk.appendChild(p1);
   const p2 = el("div", "kb-page");
@@ -372,10 +383,10 @@ function book() {
     ["01 T5", 3, "vui", "Ngày đầu tháng, vườn treo đèn bí ngô rồi."],
     ["02 T6", 2, "ban", "Bận làm, chỉ kịp ôn trên điện thoại.", "電車で単語を覚えました。"],
     ["03 T7", 4, "hao_hung", "Lên N4 bài 29! Kính ngữ khó mà vui.", "先生がお話しになりました。"],
-    ["04 CN", 0, "", ""],
     ["05 T2", 3, "met", "Mệt nhưng vẫn tưới hết cây khát."],
     ["06 T3", 3, "thu_thai", "Trời mát, đọc báo số 15 ở ban công.", "公園でゆっくり新聞を読みました。"],
     ["07 T4", 2, "vui", "Chép đúng cả 5 câu."],
+    ["08 T5", 3, "vui", "Viết được 3 câu tiếng Nhật không sai.", "友だちと映画を見に行きました。"],
   ];
   E.forEach((e) => {
     const r = el("div", "kb-entry");
@@ -388,7 +399,7 @@ function book() {
     r.appendChild(t);
     p2.appendChild(r);
   });
-  const f2 = el("div", "kb-page-foot"); f2.appendChild(el("span", null, "1–7 / 10")); f2.appendChild(el("span", null, "2")); p2.appendChild(f2);
+  const f2 = el("div", "kb-page-foot"); f2.appendChild(el("span", null, "Chỉ ghi ngày có ôn hoặc có viết")); f2.appendChild(el("span", null, "2")); p2.appendChild(f2);
   bk.appendChild(p2);
   right.appendChild(bk);
   const acts = el("div", "kb-book-acts");

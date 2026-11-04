@@ -1,0 +1,39 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><title>Hoa theo mùa</title>
+<link rel="stylesheet" href="garden.css">
+<style>
+  .sheet { margin: 18px; background: #fff2b3; border: 4px solid #1b1b2f; box-shadow: 5px 5px 0 #1b1b2f; padding: 14px 18px; display: inline-block; }
+  .sheet h1 { font-size: 22px; margin: 0 0 4px; }
+  .sheet p { margin: 0 0 12px; font-family: "Noto Sans", sans-serif; font-size: 14px; color: #4a4a66; }
+  table { border-collapse: separate; border-spacing: 8px 6px; }
+  th { font-size: 14px; color: #4a4a66; font-weight: 400; }
+  td.n { font-family: "Noto Sans", "Noto Sans CJK JP", sans-serif; font-size: 14px; padding-right: 8px; white-space: nowrap; }
+  td.n b { font-family: "DotGothic16", "Noto Sans Mono CJK JP", monospace; font-size: 15px; display: block; }
+  td.c { background: #ffffff; border: 2px solid #1b1b2f; padding: 2px 4px 0; }
+  .new { background: #ff7fa0; color: #ffffff; font-size: 11px; padding: 0 4px; margin-left: 4px; border: 2px solid #1b1b2f; }
+</style></head><body>
+<div class="sheet"><h1>花暦 · Hoa theo mùa</h1>
+<p>Cùng kiểu cây pixel với ruộng. Mỗi giao diện mùa một loài; ôn càng nhiều cây càng lớn. Loài có nhãn “mới” là vẽ thêm cho lịch.</p>
+<table id="t"></table></div>
+<script src="garden_sprites.js"></script><script src="seeds.js"></script><script src="flowers.js"></script><script src="flower_art.js"></script>
+<script>
+const LIST = [
+  ["none", "Không có giao diện mùa", "cây của vườn", 0], ["tet", "Tết", "mai vàng", 1], ["hanami", "Xuân · Hoa anh đào", "anh đào", 0],
+  ["tsuyu", "Mùa mưa 梅雨", "cẩm tú cầu", 1], ["tanabata", "Thất Tịch 七夕", "tre", 0], ["natsu", "Hạ · Lễ hội mùa hè", "hướng dương", 0],
+  ["autumn", "Mùa thu", "cúc", 1], ["tsukimi", "Trung thu", "lúa", 0], ["halloween", "Halloween", "bí ngô", 0],
+  ["momiji", "Mùa lá đỏ 紅葉", "lá phong", 0], ["xmas", "Giáng sinh", "trạng nguyên", 1], ["winter", "Đông · お正月", "thông", 0],
+];
+const t = document.getElementById("t");
+const hr = document.createElement("tr");
+["", "0 lượt", "1–9", "10–29", "30–59", "60+ lượt"].forEach((h) => { const th = document.createElement("th"); th.textContent = h; hr.appendChild(th); });
+t.appendChild(hr);
+// hai cột: 6 hàng mỗi bên
+LIST.forEach((it, i) => {
+  const tr = document.createElement("tr");
+  const n = document.createElement("td"); n.className = "n";
+  const b = document.createElement("b"); b.textContent = it[1]; n.appendChild(b); n.appendChild(document.createTextNode(it[2]));
+  if (it[3]) { const s = document.createElement("span"); s.className = "new"; s.textContent = "mới"; n.appendChild(s); }
+  tr.appendChild(n);
+  for (let lv = 0; lv <= 4; lv++) { const c = document.createElement("td"); c.className = "c"; c.appendChild(KB_FLOWER_ART.make(it[0], lv, 3, i + lv)); tr.appendChild(c); }
+  t.appendChild(tr);
+});
+</script></body></html>
