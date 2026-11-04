@@ -56,7 +56,7 @@ ok(SCOPE["trong_tam"]["ngu_phap"] and all(g.startswith("cefr:A2-") for g in SCOP
    "mẫu trọng tâm = mẫu đúng trình độ A2")
 ok(ai_en.scope_from_plants(PLANTS, "B1")["ngu_phap"][-1]["bai"] == "CEFR B1", "B1 có thêm mẫu B1")
 ok(ai_en.scope_from_plants(PLANTS, "Z9")["trinh_do"] == "A2", "trình độ lạ → A2")
-ok("báo tiếng Anh" in ai.describe_scope(SCOPE), "mô tả phạm vi: " + ai.describe_scope(SCOPE))
+ok("trình độ A2" in ai.describe_scope(SCOPE), "mô tả phạm vi: " + ai.describe_scope(SCOPE))
 
 print("== máy nối tra từ (dạng gốc)")
 idx = ai_en.LinkIndex(SCOPE)

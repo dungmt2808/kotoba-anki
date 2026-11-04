@@ -1,7 +1,8 @@
-// 1.19 trong Anki thật: báo 畑新聞 bản tiếng Anh (The Garden Gazette) — báo theo ngôn ngữ của deck đang xem,
-// đọc / tra từ (went → go) / câu hỏi / chép chính tả tiếng Anh, trạng thái đọc riêng (cùng ngày với báo tiếng Nhật
-// không đụng nhau), nút chuyển báo Nhật / Anh ở Kệ báo, tab Nguồn báo theo ngôn ngữ (trình độ A1–C1),
-// deck ngôn ngữ khác: "Báo chưa hỗ trợ", không nhờ Gemini viết; deck tiếng Nhật vẫn như cũ.
+// 1.19 / 1.19.1 trong Anki thật: báo 畑新聞 bản tiếng Anh (The Garden Gazette) — đọc / tra từ (went → go) / câu hỏi /
+// chép chính tả tiếng Anh, trạng thái đọc riêng (cùng ngày với báo tiếng Nhật không đụng nhau).
+// 1.19.1: báo KHÔNG theo deck đang xem — ô tick "Báo muốn nhận" (tiếng Nhật / tiếng Anh), hòm thư cộng số chưa đọc
+// của mọi báo đã tick, mở bảng Báo thì vào báo có số chưa đọc (tiếng Nhật trước), deck tiếng Hàn không làm mất báo,
+// tab Nguồn báo: một khối cho mỗi báo (trình độ, Lấy từ: Mọi deck / Chọn deck tối đa 5), deck quá ít từ → không gọi Gemini.
 // Chạy: node e2e_119.js SHOTS
 const { pages, Page, sleep } = require('./cdp');
 const SHOTS = process.argv[2];
@@ -37,13 +38,14 @@ async function deck(name, extra = '') {
   await py(KB + `${extra}
 d = kb._dialog
 d.deck_id = mw.col.decks.id_for_name(${JSON.stringify(name)})
-d._paper_pick = ""
 d.refresh()
 result = d.deck_id`);
   await sleep(1800);
   await page.eval(W('const t = document.getElementById("kb-toast"); if (t) t.hidden = true; if (typeof GardenPaper !== "undefined") GardenPaper.close(); return 1;'));
 }
 const info = () => page.eval(W('return document.getElementById("kb-p-info").textContent;'));
+const chip = () => page.eval(W('return document.getElementById("kb-paper-btn").textContent;'));
+const langs = (x) => py(KB + `kb.save_config(gemini_langs=${JSON.stringify(x)})\nkb._dialog.refresh()\nresult = 1`).then(() => sleep(1200));
 
 (async () => {
   await py(KB + 'kb.open_garden(); result = 1'); await sleep(3000);
@@ -51,13 +53,29 @@ const info = () => page.eval(W('return document.getElementById("kb-p-info").text
   if (!page) { console.log('không thấy trang vườn'); process.exit(2); }
   await py(KB + 'kb._dialog.resize(1366, 800); result = 1');
 
-  console.log('== deck tiếng Anh → báo tiếng Anh');
+  console.log('== báo muốn nhận: máy đã có báo tiếng Anh (1.19.0) → tick sẵn cả hai');
+  ok(JSON.stringify(await py(KB + 'result = mw.addonManager.getConfig("kotoba_batake").get("gemini_langs")')) === '["ja","en"]',
+    'mở hồ sơ lần đầu: ghi gemini_langs = ["ja", "en"] một lần');
+
+  console.log('== đang xem deck tiếng Anh: hòm thư cộng cả hai báo, mở bảng → báo tiếng Nhật (có số chưa đọc)');
   await deck('M::Tiếng Anh A2', 'kb._en_tts = True');
   const sum = await page.eval(W('return Garden._data().paper;'));
-  ok(sum && sum.lang === 'en' && sum.enabled && sum.unread === 1, 'chip Báo theo báo tiếng Anh: ' + JSON.stringify(sum));
-  ok(/^Báo mới 1/.test(await page.eval(W('return document.getElementById("kb-paper-btn").textContent;'))), 'chip “Báo mới 1” (số tiếng Anh chưa đọc)');
-  ok(await py(KB + 'result = [kb.paper_lang(kb._dialog), kb.deck_lang(kb._dialog)]').then(x => x.join() === 'en,en'), 'paper_lang = deck_lang = en');
-  await page.eval(W('GardenPaper.open("issue"); return 1;'));
+  ok(sum && sum.enabled && sum.unread === 3 && sum.lang === 'ja', 'hòm thư: 2 số tiếng Nhật + 1 số tiếng Anh = ' + JSON.stringify(sum));
+  ok(/^Báo mới 3/.test(await chip()), 'chip “Báo mới 3”');
+
+  console.log('== Kệ báo: chuyển sang báo tiếng Anh');
+  await page.eval(W('GardenPaper.open("shelf"); return 1;'));
+  ok(await waitFor(page, 'document.querySelectorAll(".kb-p-row").length >= 1 && document.querySelector(".kb-p-langs")'), 'mở kệ báo (báo tiếng Nhật, không theo deck đang xem) + nút chuyển báo');
+  const shelf = await page.eval(W('return { rows: Array.from(document.querySelectorAll(".kb-p-row-title")).map(t => t.lang), chips: Array.from(document.querySelectorAll(".kb-p-langs .kb-ai-chip")).map(b => b.textContent + (b.classList.contains("is-on") ? "*" : "")), label: document.querySelector(".kb-p-langs .kb-ai-k") };'));
+  ok(shelf.rows.join() === 'ja,ja', 'kệ báo tiếng Nhật: 2 số');
+  ok(shelf.chips.length === 2 && /^Báo tiếng Nhật · 2 mới\*$/.test(shelf.chips[0]) && /^Báo tiếng Anh · 1 mới$/.test(shelf.chips[1]) && !shelf.label,
+    'nút: ' + shelf.chips.join(' | ') + ' (không còn nhãn “Đọc báo:”)');
+  ok(!(await page.eval(W('return Array.from(document.querySelectorAll("#kb-p-stage button")).some(b => b.textContent === "Theo deck đang xem");'))), 'không còn nút “Theo deck đang xem”');
+  await page.shot(SHOTS + '/61_ke_bao_chuyen_ngon_ngu.png');
+  await page.eval(W('document.querySelectorAll(".kb-p-langs .kb-ai-chip")[1].click(); return 1;'));
+  ok(await waitFor(page, 'document.querySelectorAll(".kb-p-row-title").length === 1 && document.querySelector(".kb-p-row-title").lang === "en"'), 'bấm “Báo tiếng Anh” → kệ báo tiếng Anh (1 số)');
+  ok((await page.eval(W('return Garden._data().paper.lang;'))) === 'en' && (await py(KB + 'result = kb._dialog._paper_lang')) === 'en', 'đang đọc báo tiếng Anh');
+  await page.eval(W('document.querySelector(".kb-p-row").click(); return 1;'));
   ok(await waitFor(page, 'document.querySelector(".kb-p-name") && document.querySelector(".kb-p-name").textContent === "The Garden Gazette"'), 'đầu báo: The Garden Gazette');
   const head = await page.eval(W(`return { meta: document.querySelector(".kb-p-meta").textContent, langs: Array.from(document.querySelectorAll(".kb-p-art")).map(a => a.lang),
     furi: document.getElementById("kb-p-furi").hidden, rt: document.querySelectorAll(".kb-p-art rt").length, words: document.querySelectorAll(".kb-p-w").length,
@@ -103,73 +121,89 @@ result = {"en": en["read"].get("2026-11-03"), "ja": "2026-11-03" in ja["read"], 
   ok(stv.en && stv.en.q['1'] === 1 && stv.en.ct['0'] === 1 && !stv.ja, 'đọc / làm số tiếng Anh 03/11 ghi vào khoá riêng, số tiếng Nhật cùng ngày vẫn chưa đọc: ' + JSON.stringify(stv));
   ok(stv.miss.indexOf('shop') >= 0 && stv.q.indexOf('p:2026-11-03:2') >= 0 && stv.col.indexOf('kotoba_batake_paper_en') >= 0, 'chép sai → ghi từ chép sai (shop) + hàng ôn trong khoá kotoba_batake_paper_en');
   const sum2 = await page.eval(W('return Garden._data().paper;'));
-  ok(sum2.lang === 'en' && sum2.unread === 0, 'đọc xong → chip hết “Báo mới”');
-
-  console.log('== Kệ báo: chuyển báo Nhật / Anh');
-  await page.eval(W('document.querySelector(".kb-p-tab[data-ptab=shelf]").click(); return 1;'));
-  ok(await waitFor(page, 'document.querySelectorAll(".kb-p-row").length >= 1 && document.querySelector(".kb-p-langs")'), 'kệ báo tiếng Anh + nút chuyển ngôn ngữ');
-  const shelf = await page.eval(W('return { rows: Array.from(document.querySelectorAll(".kb-p-row-title")).map(t => t.lang + ":" + t.textContent), chips: Array.from(document.querySelectorAll(".kb-p-langs .kb-ai-chip")).map(b => b.textContent + (b.classList.contains("is-on") ? "*" : "")) };'));
-  ok(shelf.rows.length === 1 && shelf.rows[0] === 'en:Autumn Walk Near the River', 'kệ chỉ có số tiếng Anh: ' + shelf.rows.join(' | '));
-  ok(shelf.chips.length === 2 && /tiếng Nhật · 2 mới/.test(shelf.chips[0]) && /tiếng Anh\*$/.test(shelf.chips[1]), 'nút: ' + shelf.chips.join(' | '));
-  await page.shot(SHOTS + '/61_ke_bao_chuyen_ngon_ngu.png');
-  await page.eval(W('document.querySelectorAll(".kb-p-langs .kb-ai-chip")[0].click(); return 1;'));
-  ok(await waitFor(page, 'document.querySelectorAll(".kb-p-row-title").length === 2 && document.querySelector(".kb-p-row-title").lang === "ja"'), 'bấm “Báo tiếng Nhật” → kệ báo tiếng Nhật (2 số)');
-  ok((await page.eval(W('return Garden._data().paper.lang;'))) === 'ja' && (await py(KB + 'result = kb._dialog._paper_pick')) === 'ja', 'chip Báo + hòm thư theo báo tiếng Nhật đã chọn');
-  await page.eval(W('document.querySelector(".kb-p-row").click(); return 1;'));
-  ok(await waitFor(page, 'document.querySelector(".kb-p-name") && document.querySelector(".kb-p-name").textContent === "畑新聞"'), 'mở số tiếng Nhật: đầu báo 畑新聞');
-  ok(!(await page.eval(W('return document.getElementById("kb-p-furi").hidden;'))) && await page.eval(W('return document.querySelectorAll(".kb-p-art rt").length > 10;')), 'báo tiếng Nhật: có furigana + nút Ẩn furigana');
-  const stja = await py(KB + 'result = ["2026-11-03" in kb.PAPER.load()["read"], kb.PAPER_EN.load()["read"]["2026-11-03"]["coins"]]');
-  ok(stja[0] === true && stja[1] === 4, 'đọc số tiếng Nhật 03/11: ghi vào khoá cũ, số tiếng Anh vẫn giữ +4 xu');
-  await page.eval(W('document.querySelector(".kb-p-tab[data-ptab=shelf]").click(); return 1;'));
-  ok(await waitFor(page, 'Array.from(document.querySelectorAll(".kb-p-langs button")).some(b => b.textContent === "Theo deck đang xem")'), 'có nút “Theo deck đang xem” khi đã chọn tay');
-  await page.eval(W('Array.from(document.querySelectorAll(".kb-p-langs button")).find(b => b.textContent === "Theo deck đang xem").click(); return 1;'));
-  ok(await waitFor(page, 'document.querySelectorAll(".kb-p-row-title").length === 1 && document.querySelector(".kb-p-row-title").lang === "en"'), '“Theo deck đang xem” → lại báo tiếng Anh');
-
-  console.log('== tab Nguồn báo (tiếng Anh)');
-  await page.eval(W('document.querySelector(".kb-p-tab[data-ptab=src]").click(); return 1;'));
-  ok(await waitFor(page, 'document.querySelector(".kb-ai-card") && /The Garden Gazette/.test(document.querySelector(".kb-ai-card").textContent)'), 'thẻ Gemini ghi báo tiếng Anh');
-  const src = await page.eval(W(`const rows = Array.from(document.querySelectorAll(".kb-ai-opts .kb-ai-row"));
-    const lv = rows.find(r => r.querySelector(".kb-ai-k").textContent === "Trình độ");
-    return { lv: Array.from(lv.querySelectorAll(".kb-ai-chip")).map(b => b.textContent + (b.classList.contains("is-on") ? "*" : "")).join(","),
-      scope: rows.some(r => r.querySelector(".kb-ai-k").textContent === "Lấy từ"), claude: document.querySelector(".kb-ai-claude").textContent };`));
-  ok(src.lv === 'A1,A2*,B1,B2,C1' && !src.scope, 'trình độ CEFR A1–C1 (đang A2), không có “Lấy từ giáo trình”: ' + src.lv);
-  ok(/chỉ viết báo tiếng Nhật/.test(src.claude) && !/Dùng Claude Code/.test(src.claude), 'thẻ Claude Code ghi chỉ có báo tiếng Nhật');
-  await page.shot(SHOTS + '/62_nguon_bao_tieng_anh.png');
-  await page.eval(W('Array.from(document.querySelectorAll(".kb-ai-opts .kb-ai-chip")).find(b => b.textContent === "B1").click(); return 1;')); await sleep(800);
-  const cfg = await py(KB + 'c = kb.config(); result = [c.get("gemini_level_en"), c.get("gemini_level")]');
-  ok(cfg[0] === 'B1' && cfg[1] === 'N4', 'chọn B1 → lưu gemini_level_en, trình độ báo tiếng Nhật giữ N4: ' + cfg.join());
-  ok(await waitFor(page, 'Array.from(document.querySelectorAll(".kb-ai-opts .kb-ai-chip.is-on")).some(b => b.textContent === "B1")'), 'chip B1 sáng');
-  const why = await py(KB + `kb._dialog._plants = [p for p in kb._dialog._plants][:8]
-ok = kb.ai_start("manual", kb._dialog)
-result = [ok, kb._ai["why"]]`);
-  ok(why[0] === false && /chưa có đủ từ tiếng Anh/.test(why[1]), 'deck < 10 từ tiếng Anh: không gọi Gemini, báo lý do: ' + why[1]);
-  await py(KB + 'kb._dialog.refresh(); result = 1'); await sleep(1200);
+  ok(sum2.lang === 'en' && sum2.unread === 2, 'đọc xong số tiếng Anh: vẫn ở báo tiếng Anh (không tự nhảy), hòm thư còn 2 số tiếng Nhật: ' + JSON.stringify(sum2));
   await page.eval(W('GardenPaper.close(); return 1;'));
 
-  console.log('== deck ngôn ngữ khác (tiếng Hàn)');
+  console.log('== chỉ tick tiếng Nhật');
+  await langs(['ja']);
+  const s3 = await page.eval(W('return Garden._data().paper;'));
+  ok(s3.unread === 2 && s3.lang === 'ja', 'hòm thư chỉ tính báo tiếng Nhật, kể cả khi đang xem deck tiếng Anh');
+  await page.eval(W('GardenPaper.open("shelf"); return 1;'));
+  ok(await waitFor(page, 'document.querySelectorAll(".kb-p-row-title").length === 2'), 'kệ báo tiếng Nhật');
+  ok(!(await page.eval(W('return !!document.querySelector(".kb-p-langs");'))), 'không có nút chuyển báo (chỉ một báo)');
+  await page.eval(W('GardenPaper.close(); return 1;'));
+
+  console.log('== deck ngôn ngữ khác (tiếng Hàn): báo vẫn bình thường');
   await deck('J::Tiếng Hàn');
   const sko = await page.eval(W('return Garden._data().paper;'));
-  ok(sko.lang === 'other' && !sko.enabled, 'chip Báo: ngôn ngữ khác, không có báo');
-  ok(/^Chép /.test(await page.eval(W('return document.getElementById("kb-paper-btn").textContent;'))), 'chip chỉ còn “Chép x/5”');
+  ok(sko.enabled && sko.lang === 'ja' && sko.unread === 2, 'chip Báo không đổi khi xem deck tiếng Hàn: ' + JSON.stringify(sko));
   await page.eval(W('GardenPaper.open("issue"); return 1;'));
-  ok(await waitFor(page, '/Báo chưa hỗ trợ ngôn ngữ này/.test(document.getElementById("kb-p-stage").textContent)'), 'tab Báo: “Báo chưa hỗ trợ ngôn ngữ này”');
-  ok(/hiện có báo tiếng Nhật và tiếng Anh/.test(await info()), 'dòng hướng dẫn: ' + (await info()).slice(0, 90));
-  const other = await page.eval(W('return Array.from(document.querySelectorAll("#kb-p-stage .kb-ai-chip")).map(b => b.textContent);'));
-  ok(other.length === 2, 'vẫn có nút đọc báo tiếng Nhật / tiếng Anh: ' + other.join(' | '));
+  ok(await waitFor(page, 'document.querySelector(".kb-p-name") && document.querySelector(".kb-p-name").textContent === "畑新聞"'), 'tab Báo: 畑新聞 (không còn màn “Báo chưa hỗ trợ”)');
+  ok(!/chưa hỗ trợ/.test(await page.eval(W('return document.getElementById("kb-paper").textContent;'))), 'không có chữ “chưa hỗ trợ”');
   await page.shot(SHOTS + '/63_ngon_ngu_khac.png');
-  const ko = await py(KB + 'ok = kb.ai_start("manual", kb._dialog)\nresult = [ok, kb._ai["why"], kb._ai["running"]]');
-  ok(ko[0] === false && /chưa hỗ trợ/.test(ko[1]) && !ko[2], 'không nhờ Gemini viết báo cho tiếng Hàn: ' + ko[1]);
   await page.eval(W('GardenPaper.close(); return 1;'));
 
-  console.log('== deck tiếng Nhật: như cũ');
+  console.log('== chỉ tick tiếng Anh, xem deck tiếng Nhật');
+  await langs(['en']);
   await deck('A::Có câu ví dụ + audio');
-  const sja = await page.eval(W('return Garden._data().paper;'));
-  ok(sja.lang === 'ja' && sja.enabled && sja.unread === 1, 'deck tiếng Nhật → báo tiếng Nhật (1 số chưa đọc): ' + JSON.stringify(sja));
+  const s4 = await page.eval(W('return Garden._data().paper;'));
+  ok(s4.enabled && s4.lang === 'en' && s4.unread === 0, 'chỉ báo tiếng Anh (đã đọc hết): ' + JSON.stringify(s4));
   await page.eval(W('GardenPaper.open("issue"); return 1;'));
-  ok(await waitFor(page, 'document.querySelector(".kb-p-name") && document.querySelector(".kb-p-name").textContent === "畑新聞"'), 'tab Báo: 畑新聞');
-  ok(/Gạch liền: từ đã học/.test(await info()), 'hướng dẫn như cũ');
-  await page.eval(W('document.querySelector(".kb-p-tab[data-ptab=src]").click(); return 1;'));
-  ok(await waitFor(page, 'document.querySelector(".kb-ai-opts") && Array.from(document.querySelectorAll(".kb-ai-opts .kb-ai-chip")).map(b => b.textContent).join(",").indexOf("N5,N4,N3,N2,N1") >= 0'), 'tab Nguồn báo: trình độ N5–N1 như cũ');
+  ok(await waitFor(page, 'document.querySelector(".kb-p-name") && document.querySelector(".kb-p-name").textContent === "The Garden Gazette"'), 'tab Báo: The Garden Gazette dù đang xem deck tiếng Nhật');
+  await page.eval(W('GardenPaper.close(); return 1;'));
+  await langs(['ja', 'en']);
+
+  console.log('== tab Nguồn báo');
+  await page.eval(W('GardenPaper.open("src"); return 1;'));
+  ok(await waitFor(page, 'document.querySelectorAll(".kb-ai-lang").length === 2'), 'thẻ Gemini: một khối cho mỗi báo đã tick');
+  const want = await page.eval(W('return Array.from(document.querySelectorAll(".kb-ai-want .kb-ai-tick")).map(l => l.textContent.trim() + (l.querySelector("input").checked ? "*" : ""));'));
+  ok(want.join('|') === 'Tiếng Nhật*|Tiếng Anh*', 'Báo muốn nhận: ' + want.join(' | '));
+  const blocks = await page.eval(W(`return Array.from(document.querySelectorAll(".kb-ai-lang")).map(b => {
+    const rows = Array.from(b.querySelectorAll(".kb-ai-row"));
+    const get = (k) => rows.find(r => r.querySelector(".kb-ai-k").textContent === k);
+    return { h: b.querySelector(".kb-ai-lang-h").textContent, lv: Array.from(get("Trình độ").querySelectorAll(".kb-ai-chip")).map(x => x.textContent + (x.classList.contains("is-on") ? "*" : "")).join(","),
+      src: Array.from(get("Lấy từ").querySelectorAll(".kb-ai-chip")).map(x => x.textContent + (x.classList.contains("is-on") ? "*" : "")).join(",") }; });`));
+  ok(/Báo tiếng Nhật/.test(blocks[0].h) && blocks[0].lv === 'N5,N4*,N3,N2,N1', 'khối báo tiếng Nhật: ' + JSON.stringify(blocks[0]));
+  ok(/Báo tiếng Anh/.test(blocks[1].h) && blocks[1].lv === 'A1,A2*,B1,B2,C1' && /^Mọi deck\*,Chọn deck$/.test(blocks[1].src), 'khối báo tiếng Anh: ' + JSON.stringify(blocks[1]));
+  ok(!/deck đang xem/i.test(await page.eval(W('return document.querySelector(".kb-ai").textContent;'))), 'không còn chữ “deck đang xem”');
+  await page.shot(SHOTS + '/62_nguon_bao.png');
+  await page.eval(W('Array.from(document.querySelectorAll(".kb-ai-lang")[1].querySelectorAll(".kb-ai-chip")).find(b => b.textContent === "B1").click(); return 1;')); await sleep(800);
+  const cfg = await py(KB + 'c = kb.config(); result = [c.get("gemini_level_en"), c.get("gemini_level")]');
+  ok(cfg[0] === 'B1' && cfg[1] === 'N4', 'chọn B1 → lưu gemini_level_en, báo tiếng Nhật giữ N4: ' + cfg.join());
+
+  console.log('== chọn deck cho báo tiếng Anh');
+  await page.eval(W('Array.from(document.querySelectorAll(".kb-ai-lang")[1].querySelectorAll(".kb-ai-chip")).find(b => b.textContent === "Chọn deck").click(); return 1;'));
+  ok(await waitFor(page, 'document.querySelector(".kb-ai-decks")'), 'bấm “Chọn deck” → danh sách deck');
+  const dl = await page.eval(W('return Array.from(document.querySelectorAll(".kb-ai-deck")).map(l => l.textContent);'));
+  ok(dl.some(x => /^ M::Tiếng Anh A2/.test(x) && /40 note/.test(x)) && !dl.some(x => /Tiếng Hàn|Có câu ví dụ/.test(x)),
+    'chỉ deck có note tiếng Anh, kèm số note: ' + dl.slice(0, 4).join(' | '));
+  await page.eval(W('Array.from(document.querySelectorAll(".kb-ai-deck")).find(l => /F::Tiếng Anh Basic/.test(l.textContent)).querySelector("input").click(); return 1;'));
+  ok(await waitFor(page, 'Array.from(document.querySelectorAll(".kb-ai-deck input")).filter(i => i.checked).length === 1'), 'tick một deck');
+  const src1 = await py(KB + 'result = mw.col.get_config("kotoba_batake_paper_src", None)');
+  const fid = await py(KB + 'result = mw.col.decks.id_for_name("F::Tiếng Anh Basic")');
+  ok(src1 && src1.en && src1.en.decks.length === 1 && src1.en.decks[0] === fid, 'lưu vào khoá collection kotoba_batake_paper_src: ' + JSON.stringify(src1));
+  const why = await py(KB + 'ok = kb.ai_start("manual", kb._dialog, "en")\nresult = [ok, kb._ai["why"], kb._ai["running"]]');
+  ok(why[0] === false && /Deck đã chọn mới có 8 từ/.test(why[1]) && !why[2], 'deck đã chọn < 10 từ: không gọi Gemini, báo lý do: ' + why[1]);
+  await page.eval(W('GardenPaper.close(); GardenPaper.open("src"); return 1;'));
+  ok(await waitFor(page, '/Deck đã chọn mới có 8 từ/.test((document.querySelectorAll(".kb-ai-lang")[1] || {}).textContent || "")'), 'khối báo tiếng Anh ghi lý do');
+  for (let i = 0; i < 6; i++) {
+    await page.eval(W('const b = Array.from(document.querySelectorAll(".kb-ai-deck input")).find(i => !i.checked && !i.disabled); if (b) b.click(); return 1;'));
+    await sleep(700);
+    if (!(await page.eval(W('return !!document.querySelector(".kb-ai-decks");')))) {
+      await page.eval(W('const b = Array.from(document.querySelectorAll(".kb-ai-lang")[1].querySelectorAll("button")).find(x => x.textContent === "Đổi"); if (b) b.click(); return 1;'));
+      await sleep(300);
+    }
+  }
+  const lim = await page.eval(W('const i = Array.from(document.querySelectorAll(".kb-ai-deck input")); return [i.filter(x => x.checked).length, i.filter(x => !x.checked && !x.disabled).length];'));
+  ok(lim[0] === 5 && lim[1] === 0, 'tối đa 5 deck: các ô còn lại bị khoá ' + JSON.stringify(lim));
+  await page.shot(SHOTS + '/64_chon_deck.png');
+  await page.eval(W('Array.from(document.querySelectorAll(".kb-ai-lang")[1].querySelectorAll(".kb-ai-chip")).find(b => b.textContent === "Mọi deck").click(); return 1;')); await sleep(800);
+  ok((await py(KB + 'result = mw.col.get_config("kotoba_batake_paper_src")["en"]["decks"]')).length === 0, 'bấm “Mọi deck” → bỏ chọn deck');
+
+  console.log('== bỏ tick tiếng Anh ở tab Nguồn báo');
+  await page.eval(W('Array.from(document.querySelectorAll(".kb-ai-want .kb-ai-tick")).find(l => /Tiếng Anh/.test(l.textContent)).querySelector("input").click(); return 1;'));
+  ok(await waitFor(page, 'document.querySelectorAll(".kb-ai-lang").length === 1'), 'chỉ còn khối báo tiếng Nhật');
+  ok(JSON.stringify(await py(KB + 'result = kb.config().get("gemini_langs")')) === '["ja"]', 'lưu gemini_langs = ["ja"]');
   await page.eval(W('GardenPaper.close(); return 1;'));
   const w = await page.eval(W('return [document.documentElement.scrollWidth, window.innerWidth];'));
   ok(w[0] <= w[1], 'không tràn ngang');

@@ -171,10 +171,10 @@ const plantsOf = () => page.eval(W('return Garden._data().plants.map(p => ({ w: 
   ok((await lastPlay()).includes("lang='en_US'") || (await lastPlay()).includes('kbtest_en_'), 'câu không có audio → giọng máy en_US');
   await page.shot(SHOTS + '/55_chep_tieng_anh.png');
   await page.eval(W('GardenPaper.open("issue"); return 1;')); await sleep(800);
-  // 1.19: deck tiếng Anh → báo tiếng Anh (The Garden Gazette, xem e2e_119.js), không còn dòng "chỉ tiếng Nhật"
-  ok(await waitFor(page, 'document.querySelector(".kb-p-name") && document.querySelector(".kb-p-name").textContent === "The Garden Gazette"'), 'tab Báo (deck tiếng Anh): báo tiếng Anh');
+  // 1.19.1: báo không theo deck đang xem (xem e2e_119.js): mở bảng → báo có số chưa đọc, tiếng Nhật trước
+  ok(await waitFor(page, 'document.querySelector(".kb-p-name") && document.querySelector(".kb-p-name").textContent === "畑新聞"'), 'tab Báo (đang xem deck tiếng Anh): báo tiếng Nhật còn số chưa đọc');
   const auto = await py(KB + 'result = kb.paper_lang(kb._dialog)');
-  ok(auto === 'en', 'deck tiếng Anh: báo theo tiếng Anh, không tự viết báo tiếng Nhật');
+  ok(auto === 'ja', 'báo đang đọc không theo deck đang xem');
   await page.eval(W('GardenPaper.close(); return 1;'));
 
   console.log('== Cấu hình trường: Ngôn ngữ');

@@ -17,6 +17,7 @@ ap.add_argument("--audio", default="chinh_ta"); ap.add_argument("--model", defau
 ap.add_argument("--lang", default="ja", choices=["ja", "en"]); ap.add_argument("--level", default="A2")
 ap.add_argument("--en-deck", default=os.path.join(_setup.HERE, "..", "fixtures", "en_deck_a2.json"))
 ap.add_argument("--voice", default="Kore")
+ap.add_argument("--pick", action="store_true", help="1.19.1: kho 100 từ (70 phải ôn / 30 đã thuộc) như words_core.pick")
 a = ap.parse_args()
 ai = _setup.load(a.addon)
 calls = []
@@ -52,6 +53,20 @@ elif a.deck_n5:
     scope = ai.scope_from_plants(plants, "N5")
 else:
     scope = ai.scope_from_pham_vi(raw)
+if a.pick:                                  # 1.19.1: lời nhắc chỉ gửi 100 từ, kiểm tra dùng mọi từ đã học
+    import random
+    rows = [r for r in scope["tu_vung"] if r[0]]
+    items = [{"nid": i, "word": r[0], "reading": r[1], "meaning": r[2], "kind": "vocab", "learned": True, "due": False}
+             for i, r in enumerate(rows)]
+    rng = random.Random(a.date)
+    kho = rng.sample(items, min(100, len(items)))
+    for it in kho[:70]:
+        it["due"] = True
+    pk = {"kho": kho, "all": items, "grammar": [], "decks": ["Mẫu"], "n_learned": len(items)}
+    if a.lang == "en":
+        scope = ai_en.scope_from_pick(pk, a.level)
+    else:
+        scope = ai.scope_from_pick(pk, "N4" if not a.deck_n5 else "N5")
 print("PHẠM VI:", ai.describe_scope(scope))
 t0 = time.time()
 prefer = ""

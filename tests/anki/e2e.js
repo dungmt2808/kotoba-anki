@@ -154,9 +154,9 @@ result = [len(res), all(res)]`);
   ok(await waitFor(page, 'document.querySelector(".kb-ai-dv") !== null'), 'tab Nguồn báo có thẻ "Giọng đọc cho câu không có audio"');
   await page.eval('document.querySelector(".kb-ai-dv").scrollIntoView()');
   await page.shot(SHOTS + '/09_nguon_bao.png');
-  await page.eval('Array.from(document.querySelectorAll(".kb-ai-dv .kb-ai-chip")).find(b => b.textContent === "Chỉ giọng máy").click()');
+  await page.eval('Array.from(document.querySelectorAll(".kb-ai-dv .kb-ai-chip")).find(b => b.textContent === "Giọng máy").click()');
   await sleep(800);
-  ok((await py(KB + 'result = kb.config().get("dict_voice")')) === 'may', 'bấm "Chỉ giọng máy" → lưu dict_voice = may');
+  ok((await py(KB + 'result = kb.config().get("dict_voice")')) === 'may', 'bấm "Giọng máy" → lưu dict_voice = may');
   await py(KB + 'kb.save_config(dict_voice="auto")\nresult = 1');
   // ---- cửa sổ nhỏ ----
   await py(KB + 'kb._dialog.resize(1024, 640); result = 1'); await sleep(800);

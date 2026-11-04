@@ -1,6 +1,6 @@
 # Kế hoạch 1.19.1: báo không phụ thuộc deck đang xem + soát giao diện và chữ
 
-> **Trạng thái: CHƯA LÀM.** Viết ngày 04/11/2026, ngay sau bản 1.19.0 (báo tiếng Anh). Người dùng dặn: phiên này chỉ kiểm tra và ghi lại, **phiên sau mới làm**.
+> **Trạng thái: ĐANG LÀM (phần A xong).** Viết ngày 04/11/2026, ngay sau bản 1.19.0 (báo tiếng Anh). Người dùng dặn: phiên này chỉ kiểm tra và ghi lại, **phiên sau mới làm**.
 > Làm xong thì **xoá file này**, dòng trỏ tới nó ở `README.md` mục 0, và dòng `!/KE_HOACH_1_19_1.md` trong `.gitignore`. Ghi tóm tắt vào mục 11 (lịch sử) của `README.md` và của README trong gói. Nếu làm dở thì cập nhật mục 6 "Tiến độ" rồi mới commit.
 
 Có ba phần, làm theo thứ tự A → B → C. Mỗi phần một commit, chạy hết test trước khi sang phần sau.
@@ -222,7 +222,7 @@ Có ba phần, làm theo thứ tự A → B → C. Mỗi phần một commit, ch
 ## 6. Tiến độ
 
 - [x] Chốt các câu ở 2.5 (70 / 30 theo lịch ôn, tổng 100 từ, không lấy deck khác) + tên "Giao diện mùa" (04/11)
-- [ ] Phần A — báo theo ô tick "Báo muốn nhận", chọn tối đa 5 deck / 100 note, bỏ phụ thuộc deck đang xem
+- [x] Phần A — báo theo ô tick "Báo muốn nhận", chọn tối đa 5 deck / 100 note, bỏ phụ thuộc deck đang xem
 - [ ] Phần B — nút chọn đều nhau, `audit.js` đo kiểu lệch, soát mọi màn
 - [ ] Phần C — chữ đơn giản, thống nhất thuật ngữ, bỏ diễn giải thừa
 - [ ] Đóng gói 1.19.1 + README + xoá file kế hoạch
