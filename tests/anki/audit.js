@@ -191,12 +191,33 @@ async function tour(size) {
   await js('GardenHome.openGuests("neko")'); await sleep(900); await shot(S + '_14_album_khach');
   await closeAll();
   await js('GardenGuests._clear()');
+  // 1.22: Xưởng giống cây (đang vẽ giai đoạn Cây non, Mầm hiện mờ), mã chia sẻ + dán mã xem trước, bảng chụp ảnh vườn
+  await js('GardenHome.open("yard"); GardenCraft.openSeed((Garden._data().catalog.myseeds || [])[0] || null); GardenCraft._setLayer("s2")'); await sleep(600);
+  await shot(S + '_15_xuong_giong_cay');
+  await closeAll();
+  await js('GardenHome.open("yard"); document.querySelector(\'.kb-h-tab[data-tab="craft"]\').click()'); await sleep(400);
+  await js('const b = Array.from(document.querySelectorAll("#kb-h-list .kb-h-card button")).find((x) => x.textContent === "Mã chia sẻ"); if (b) b.click()'); await sleep(1200);
+  await shot(S + '_15_ma_chia_se', 'mã vừa xuất ở đầu tab Xưởng');
+  await js(`const code = document.querySelector("#kb-h-list .kb-h-share textarea[readonly]").value; const t = document.querySelector("#kb-h-list .kb-h-paste textarea");
+    t.value = code; t.dispatchEvent(new Event("input")); Array.from(document.querySelectorAll("#kb-h-list .kb-h-paste button")).find((x) => x.textContent === "Xem trước").click()`);
+  await sleep(1200); await js('document.querySelector("#kb-h-list .kb-h-peek").scrollIntoView({ block: "center" })');
+  await shot(S + '_15_dan_ma', 'xem trước món từ mã');
+  await closeAll();
+  await js('document.getElementById("kb-yard-snap").click()'); await sleep(400);
+  await shot(S + '_15_chup_anh', 'bảng chọn cỡ ảnh');
+  await js('document.getElementById("kb-snap-pop").hidden = true');
+  await closeAll();
 }
 
 (async () => {
   await py(KB + `st = kb.STATE
 d = st.load(); d["coins"] = 20000; d["home"]["owned"]["bench"] = 1; st.save(d)
 st.place("yard", "bench", 6, 2)
+# 1.22: một món tự làm + một giống cây tự vẽ (Mầm / Cây non / Ra quả) cho các màn Xưởng / Giống cây / mã chia sẻ
+spr = kb.core.px_encode("." * 200 + "g" * 8 + "." * 8 + "k" * 40)
+st.craft_save({"name": "Táo đỏ", "size": 16, "kind": "ground", "fx": "sway", "px": spr})
+st.myseed_save({"name": "Cà chua bi", "st": ["", spr, kb.core.px_encode("." * 150 + "G" * 50 + "." * 16 + "k" * 40), "", kb.core.px_encode("." * 150 + "r" * 50 + "." * 16 + "k" * 40)]})
+d = st.load(); d["coins"] = 20000; st.save(d)
 result = 1`);
   // 1.20: lịch sử ôn + nhật ký + bài luyện viết đã sửa cho các màn Lịch hoa
   await py(KB + `import random, datetime, time
