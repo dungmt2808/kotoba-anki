@@ -7,6 +7,7 @@ Kiểm tra:
   - luật gieo: giống tự vẽ lưu ở myseeds, giống mua / "Trộn" ở seeds như cũ, đặt một bên thì xoá bên kia, hai bên cùng
     có luật một chỗ thì seeds thắng, giới hạn 12 luật tag tính chung; cây nhận đúng giống (tag → loại note → deck);
   - lưu: tên ở MORE_KEY["myseeds"], điểm ảnh ở PX_KEY["g1"] = "mã0|…|mã4"; render (home_catalog) có myseeds + giá;
+  - 1.22.1: sửa món tự làm chỉ đổi tên / hiệu ứng thì miễn phí, vẽ lại hình 50 xu;
   - mã chia sẻ cho món tự làm / vùng tự tạo / giống tự vẽ: xuất → đọc lại đúng, dán có xuống dòng / dấu cách vẫn đọc,
     sửa một ký tự → mã kiểm tra không khớp, bản mới hơn (KB2), không phải mã, mã cụt, "bom nén", tên có thẻ HTML,
     màu / loại / nền lạ (mã tự dựng có mã kiểm tra đúng), làm từ mã trừ xu như tự chế tác;
@@ -157,6 +158,14 @@ print("== mã chia sẻ")
 w = st.load(); w["coins"] = 50000; st.save(w)
 d = st.craft_save({"name": "Táo <đỏ>", "size": 24, "kind": "wall", "fx": "glow", "px": core.px_encode("." * 500 + "r" * 76)})
 cid = d["craft_id"]
+# 1.22.1: sửa món chỉ đổi tên / hiệu ứng thì miễn phí (như vùng / giống tự vẽ), vẽ lại hình mất 50 xu
+c0 = st.load()["coins"]
+st.craft_save({"id": cid, "name": "Táo đỏ to", "size": 24, "kind": "wall", "fx": "sparkle", "px": core.px_encode("." * 500 + "r" * 76)})
+m = st.load()["craft"]["items"][cid]
+ok(st.load()["coins"] == c0 and m["name"] == "Táo đỏ to" and m["fx"] == "sparkle", "sửa món: chỉ đổi tên + hiệu ứng → miễn phí")
+st.craft_save({"id": cid, "name": "Táo <đỏ>", "size": 24, "kind": "wall", "fx": "glow", "px": core.px_encode("." * 499 + "R" + "r" * 76)})
+ok(st.load()["coins"] == c0 - core.CRAFT_EDIT_PRICE, "sửa món: vẽ lại hình → trừ %d xu" % core.CRAFT_EDIT_PRICE)
+st.craft_save({"id": cid, "name": "Táo <đỏ>", "size": 24, "kind": "wall", "fx": "glow", "px": core.px_encode("." * 500 + "r" * 76)})
 code, name = st.share_code(cid)
 ok(code.startswith("KB1:m:24:") and name == "Táo đỏ" and code.count(":") == 5, "món tự làm → KB1:m:24:…")
 p = st.share_peek(code)
