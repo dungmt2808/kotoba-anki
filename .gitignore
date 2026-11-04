@@ -7,8 +7,6 @@
 !/giao_trinh/
 !/kotoba_daily/
 !README.md
-# kế hoạch đang làm dở — xoá dòng dưới cùng file khi làm xong
-!/KE_HOACH_TIENG_ANH.md
 !/tests/
 
 # không đưa file sinh ra khi chạy test
