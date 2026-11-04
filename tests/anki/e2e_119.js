@@ -210,7 +210,7 @@ result = {"en": en["read"].get("2026-11-03"), "ja": "2026-11-03" in ja["read"], 
 
   console.log('== lỗi');
   ok(page.errors.length === 0, 'không có lỗi JS' + (page.errors.length ? ': ' + page.errors.join(' | ').slice(0, 300) : ''));
-  const errs = await py(KB + 'result = kb.ERRORS.load() if hasattr(kb.ERRORS, "load") else []');
+  const errs = await py(KB + 'result = kb.ERRORS.entries()');
   ok(!errs || !errs.length, 'nhật ký lỗi add-on trống' + (errs && errs.length ? ': ' + JSON.stringify(errs).slice(0, 300) : ''));
   console.log('\nKẾT QUẢ: ' + results.filter(Boolean).length + '/' + results.length + ' đạt');
   page.close(); process.exit(results.every(Boolean) ? 0 : 1);

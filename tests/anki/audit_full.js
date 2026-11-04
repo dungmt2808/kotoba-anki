@@ -862,7 +862,7 @@ st.save(d); kb._dialog.refresh(); result = 1`); await sleep(1800); await hideToa
     await py(KB + 'kb._dialog.resize(1366, 768); result = 1');
   });
 
-  const errs = await py(KB + 'result = kb.ERRORS.load() if hasattr(kb.ERRORS, "load") else []');
+  const errs = await py(KB + 'result = kb.ERRORS.entries()');
   ok(!errs || !errs.length, 'nhật ký lỗi add-on trống ' + (errs && errs.length ? JSON.stringify(errs).slice(0, 800) : ''));
   const flagged = report.filter((r) => r.hscroll || r.cut.length || r.outside.length || r.rows.length || r.style.length || r.errs.length);
   fs.writeFileSync(SHOTS + '/audit_full.json', JSON.stringify(report, null, 1));

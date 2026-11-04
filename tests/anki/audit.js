@@ -173,7 +173,7 @@ result = len(rows)`);
   page = await gardenPage();
   if (!page) { console.log('không thấy trang vườn'); process.exit(2); }
   for (const size of [[1366, 768], [1024, 700]]) { await tour(size); }
-  const errs = await py(KB + 'result = kb.ERRORS.load() if hasattr(kb.ERRORS, "load") else []');
+  const errs = await py(KB + 'result = kb.ERRORS.entries()');
   report.push({ name: 'errors.json', addon_errors: errs });
   fs.writeFileSync(SHOTS + '/audit.json', JSON.stringify(report, null, 1));
   console.log('\nnhật ký lỗi add-on: ' + (errs && errs.length ? JSON.stringify(errs).slice(0, 600) : 'trống'));
