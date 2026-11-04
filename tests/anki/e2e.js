@@ -167,7 +167,7 @@ result = [len(res), all(res)]`);
   await page.shot(SHOTS + '/10_chep_1024.png');
   // ---- lỗi JS / Python ----
   ok(page.errors.length === 0, 'không có lỗi JS trên trang' + (page.errors.length ? ': ' + page.errors.join(' | ').slice(0, 300) : ''));
-  const errs = await py(KB + 'result = [e for e in kb.ERRORS.load()] if hasattr(kb.ERRORS, "load") else []');
+  const errs = await py(KB + 'result = [e for e in kb.ERRORS.entries()]');
   ok(!errs || !errs.length, 'nhật ký lỗi của add-on trống' + (errs && errs.length ? ': ' + JSON.stringify(errs).slice(0, 400) : ''));
   const fails = results.filter(r => !r[0]).length;
   console.log('\nKẾT QUẢ: ' + (results.length - fails) + '/' + results.length + ' đạt');

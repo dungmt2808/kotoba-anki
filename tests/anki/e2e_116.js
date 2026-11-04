@@ -110,7 +110,7 @@ result = [kb.STATE.load()["coins"], list((c.get("zenv") or {}).keys()), [z["id"]
   await page.shot(SHOTS + '/46_canh_nen_ngoai_san.png');
 
   ok(page.errors.length === 0, 'không có lỗi JS' + (page.errors.length ? ': ' + page.errors.join(' | ').slice(0, 300) : ''));
-  const errs = await py(KB + 'result = kb.ERRORS.load() if hasattr(kb.ERRORS, "load") else []');
+  const errs = await py(KB + 'result = kb.ERRORS.entries()');
   ok(!errs || !errs.length, 'nhật ký lỗi add-on trống' + (errs && errs.length ? ': ' + JSON.stringify(errs).slice(0, 300) : ''));
   console.log('\nKẾT QUẢ: ' + results.filter(Boolean).length + '/' + results.length + ' đạt');
   page.close(); process.exit(results.every(Boolean) ? 0 : 1);
