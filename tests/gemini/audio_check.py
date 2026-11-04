@@ -11,6 +11,7 @@ ai = _setup.load(ADDON)
 import paper_core as paper
 raw = json.load(open(os.path.join(FOLDER, "bao.json")))
 meta = json.load(open(os.path.join(FOLDER, "audio", "am_thanh.json")))
+EN = raw.get("ngon_ngu") == "en"       # 1.19: báo tiếng Anh — nghe lại bằng tiếng Anh, so theo từ
 def stats(path):
     with wave.open(path) as w:
         n, rate, ch, sw = w.getnframes(), w.getframerate(), w.getnchannels(), w.getsampwidth()
@@ -41,7 +42,8 @@ for i, row in enumerate(meta.get("bai", [])):
 def asr(path):
     b64 = base64.b64encode(open(path, "rb").read()).decode()
     body = {"contents": [{"role": "user", "parts": [{"inlineData": {"mimeType": "audio/wav", "data": b64}},
-            {"text": "Chép lại CHÍNH XÁC những gì giọng đọc nói, bằng HIRAGANA (katakana cho từ ngoại lai), không thêm gì, không sửa lỗi người đọc. Chỉ trả về phần chép."}]}],
+            {"text": "Transcribe EXACTLY what the speaker says, in English, without fixing mistakes. Return only the transcript." if EN else
+             "Chép lại CHÍNH XÁC những gì giọng đọc nói, bằng HIRAGANA (katakana cho từ ngoại lai), không thêm gì, không sửa lỗi người đọc. Chỉ trả về phần chép."}]}],
             "generationConfig": {"temperature": 0}}
     req = urllib.request.Request(ai.API_BASE + "/models/gemini-3.1-flash-lite:generateContent", data=json.dumps(body).encode(),
           headers={"x-goog-api-key": _setup.key(), "Content-Type": "application/json"}, method="POST")
@@ -55,12 +57,14 @@ def asr(path):
             time.sleep(25)
     return "".join(p.get("text","") for p in res["candidates"][0]["content"]["parts"] if not p.get("thought")).strip()
 def norm(s):
+    if EN:
+        return " ".join(paper.text.en_words(s))
     s = paper.to_hira(s)
     return re.sub(r"[\s、。「」！？!?・ー〜…,.]", "", s)
 import difflib
 out = []
 for name, rel, txt in items:
-    expect = paper.kana(txt)
+    expect = paper.surface(txt) if EN else paper.kana(txt)
     row = {"name": name, "text": paper.surface(txt), "expect_kana": expect}
     if rel is None:
         row["missing"] = "bo_cham (bản chậm bị bỏ)"; out.append(row); continue

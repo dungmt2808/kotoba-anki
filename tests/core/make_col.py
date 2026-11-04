@@ -16,6 +16,8 @@ DECKS = {
     "J::Tiếng Hàn": "ko",
     "K::Nhật ruby HTML": "ja_ruby",
     "L::Nhật ngoặc tròn": "ja_paren",
+    # 1.19: deck tiếng Anh đủ từ để viết báo tiếng Anh (40 từ A1–A2 của tests/fixtures/en_deck_a2.json)
+    "M::Tiếng Anh A2": "en_a2",
 }
 EN_WORDS = [("apple", "/ˈæp.əl/", "quả táo", "I eat an apple every morning.", "Tôi ăn một quả táo mỗi sáng."),
             ("go", "/ɡoʊ/", "đi", "She went to school by bus.", "Cô ấy đi học bằng xe buýt."),
@@ -41,6 +43,13 @@ WORDS = [("学生", "がくせい", "học sinh", "[学生|がくせい]です�
          ("図書館", "としょかん", "thư viện", "", "図書館[としょかん]で 本[ほん]を 読[よ]みます。"),
          ("コーヒー", "コーヒー", "cà phê", "", "コーヒーを 飲[の]みませんか。"),
          ("勉強する", "べんきょうする", "học", "", "毎日[まいにち] 日本語[にほんご]を 勉強[べんきょう]します。")]
+
+
+def en_a2_words(n=40):
+    import json
+    raw = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "fixtures", "en_deck_a2.json"),
+                         encoding="utf-8"))
+    return raw["tu_vung"][:n]
 
 
 def tone(path, secs=0.6, freq=440):
@@ -82,6 +91,12 @@ def build(path):
     media = col.media.dir()
     for dname, kind in DECKS.items():
         did = col.decks.id(dname)
+        if kind == "en_a2":
+            for w, ipa, mean in en_a2_words():
+                n = col.new_note(en_full)
+                n["Word"], n["IPA"], n["Meaning"] = w, ipa, mean
+                col.add_note(n, did)
+            continue
         if kind.startswith(("en_", "ja_", "ko")):
             for i in range(8):
                 if kind == "en_full":

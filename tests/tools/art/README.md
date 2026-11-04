@@ -15,3 +15,10 @@ Hình được dựng thẳng trong JS bằng các hàm `grid / rect / disc / el
 node tests/tools/art/rare_dump.js ADDON/web/rare_art.js ADDON/web/home.js /tmp/rare.json && python3 tests/tools/art/rare_render.py /tmp/rare.json /tmp/rare.png
 ```
 Ảnh có cả khung hoạt hình (hươu cúi chào, kappa chớp mắt, kabuto loé) và vài món cũ để so cỡ.
+
+## Khách ghé vườn 1.21 (`web/guests.js`)
+```bash
+cd tests/tools/art
+python3 guests.py [ẢNH.png]   # → guests.json (15 khách × 2–5 khung, mặt quay sang phải) + ảnh xem thử ×6 trên nền cỏ
+```
+Bảng màu = `spr.PAL` + vài màu riêng (nâu chim sẻ / tanuki, tím dơi, trắng xám cò / sếu). Chân chim / hươu vẽ bằng màu `k` (không tự viền thêm) cho mảnh. Sửa xong thì chép `guests.json` vào `SPR` của `web/guests.js` (`core/test_121.py` kiểm tra hai bên khớp nhau). Đom đóm không có hình (chấm sáng vẽ trong JS).

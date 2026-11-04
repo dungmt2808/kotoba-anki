@@ -11,7 +11,8 @@ mkdir -p "$BASE/Test"
 mkdir -p "$BASE/addons21/kotoba_batake"
 (cd "$SRC" && tar --exclude=.git --exclude=__pycache__ --exclude=meta.json -cf - .) | (cd "$BASE/addons21/kotoba_batake" && tar -xf -)
 cp -r "$HERE/zz_kbtest" "$BASE/addons21/"
-"$PY" "$HERE/make_fixture.py" "$BASE/addons21/kotoba_batake" "$BASE/addons21/kotoba_batake/user_files/bao_gemini" >/dev/null
+"$PY" "$HERE/make_fixture.py" "$BASE/addons21/kotoba_batake" "$BASE/addons21/kotoba_batake/user_files/bao_gemini" \
+  "$BASE/addons21/kotoba_batake/user_files/bao_gemini_en" >/dev/null
 "$PY" - "$BASE" "${GEMINI_API_KEY:-AIzaDUMMY-proxy-injects-the-real-key-00}" <<'PY'
 import json, sys
 base, key = sys.argv[1], sys.argv[2]

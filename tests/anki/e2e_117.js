@@ -171,9 +171,10 @@ const plantsOf = () => page.eval(W('return Garden._data().plants.map(p => ({ w: 
   ok((await lastPlay()).includes("lang='en_US'") || (await lastPlay()).includes('kbtest_en_'), 'câu không có audio → giọng máy en_US');
   await page.shot(SHOTS + '/55_chep_tieng_anh.png');
   await page.eval(W('GardenPaper.open("issue"); return 1;')); await sleep(800);
-  ok(/chỉ viết bằng tiếng Nhật/.test(await page.eval(W('return document.getElementById("kb-p-info").textContent;'))), 'tab Báo: ghi rõ báo hiện chỉ tiếng Nhật');
-  const auto = await py(KB + 'result = kb._deck_is_japanese(kb._dialog)');
-  ok(auto === false, 'deck tiếng Anh: không tự viết báo tiếng Nhật');
+  // 1.19.1: báo không theo deck đang xem (xem e2e_119.js): mở bảng → báo có số chưa đọc, tiếng Nhật trước
+  ok(await waitFor(page, 'document.querySelector(".kb-p-name") && document.querySelector(".kb-p-name").textContent === "畑新聞"'), 'tab Báo (đang xem deck tiếng Anh): báo tiếng Nhật còn số chưa đọc');
+  const auto = await py(KB + 'result = kb.paper_lang(kb._dialog)');
+  ok(auto === 'ja', 'báo đang đọc không theo deck đang xem');
   await page.eval(W('GardenPaper.close(); return 1;'));
 
   console.log('== Cấu hình trường: Ngôn ngữ');
@@ -202,7 +203,7 @@ result = [s["lang"].get(mid), s["models"].get(mid, {}).get("kind")]`);
   await deck('A::Có câu ví dụ + audio');
   await page.eval(W('document.getElementById("kb-sound").click(); return 1;')); await sleep(300);
   const pop = await page.eval(W('const p = document.getElementById("kb-sound-pop"); return { notes: p.querySelectorAll(".kb-sound-note").length, hv: /Hán Việt/.test(p.textContent), btns: p.querySelectorAll("button").length };'));
-  ok(pop.notes <= 3 && !pop.hv && pop.btns === 5, '⚙ cài đặt: 5 nút, ≤ 3 dòng chú thích, không còn nhắc Hán Việt (' + JSON.stringify(pop) + ')');
+  ok(pop.notes <= 3 && !pop.hv && pop.btns === 6, '⚙ cài đặt: 6 nút (1.20 thêm Lịch hoa & nhật ký), ≤ 3 dòng chú thích, không còn nhắc Hán Việt (' + JSON.stringify(pop) + ')');
   await page.eval(W('document.getElementById("kb-sound-pop").hidden = true; GardenPaper.open("shelf"); return 1;')); await sleep(600);
   const furi = await page.eval(W('const a = document.getElementById("kb-p-furi").hidden; GardenPaper.open("issue"); return a;')); await sleep(800);
   ok(furi && !(await page.eval(W('return document.getElementById("kb-p-furi").hidden;'))), 'nút Ẩn furigana chỉ hiện ở tab Báo (ẩn ở Kệ báo)');
@@ -223,8 +224,8 @@ result = [s["lang"].get(mid), s["models"].get(mid, {}).get("kind")]`);
   await page.shot(SHOTS + '/57_nha_giong_cay.png');
   const tabs = await page.eval(W(`const t = Array.from(document.querySelectorAll(".kb-h-tabs .kb-h-tab")).map(b => b.getBoundingClientRect());
     return { n: t.length, ws: t.map(r => Math.round(r.width)), gaps: t.slice(1).map((r, i) => Math.round(r.left - t[i].right)), seps: Array.from(document.querySelectorAll(".kb-h-tabsep")).filter(x => x.offsetWidth > 0).length };`));
-  ok(tabs.n === 10 && tabs.seps === 0 && new Set(tabs.gaps).size === 1 && Math.max(...tabs.ws) - Math.min(...tabs.ws) <= 1,
-    'Nhà: 10 tab bằng nhau, khoảng cách đều (' + tabs.ws.join('/') + ' · cách ' + Array.from(new Set(tabs.gaps)).join('/') + ')');
+  ok(tabs.n === 11 && tabs.seps === 0 && new Set(tabs.gaps).size === 1 && Math.max(...tabs.ws) - Math.min(...tabs.ws) <= 1,
+    'Nhà: 11 tab (1.21: + Album khách) bằng nhau, khoảng cách đều (' + tabs.ws.join('/') + ' · cách ' + Array.from(new Set(tabs.gaps)).join('/') + ')');
   const hd = await page.eval(W(`const h = (sel) => Array.from(document.querySelectorAll(sel)).filter(e => e.offsetHeight).map(e => Math.round(e.getBoundingClientRect().height));
     return { bar: h(".kb-bar > .kb-chip, .kb-bar > .kb-btn, .kb-bar .kb-sound-btn, .kb-bar > .kb-deck"), top: h("#kb-home .kb-game-top .kb-g-chip, #kb-home .kb-game-top > .kb-btn") };`));
   ok(new Set(hd.bar).size === 1 && new Set(hd.top).size === 1, 'thanh trên cùng các ô cao bằng nhau (' + hd.bar.join('/') + '), đầu bảng Nhà: ô Ví = nút Thoát (' + hd.top.join('/') + ')');

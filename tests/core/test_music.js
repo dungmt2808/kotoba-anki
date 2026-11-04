@@ -49,7 +49,7 @@ sea.pv = 'natsumatsuri';
 ok(M.trackFor('home') === 'natsumatsuri', 'bấm Xem thử “Lễ hội mùa hè” trong Nhà → phát nhạc lễ hội');
 ok(M.trackFor('game') === 'game' && M.trackFor('review') === null, 'Xem thử không đổi nhạc trò chơi / không phát khi ôn');
 sea.pv = null;
-ok(M.trackFor('home') === 'home', 'Thôi xem thử → lại hộp nhạc của Nhà');
+ok(M.trackFor('home') === 'home', 'Dừng xem thử → lại hộp nhạc của Nhà');
 sea.cur = 'halloween'; sea.pv = 'tet';
 ok(M.trackFor('home') === 'tet' && M.trackFor('garden') === 'tet', 'xem thử Tết khi đang dùng Halloween → nhạc Tết');
 

@@ -1,0 +1,840 @@
+{
+"_ghi_chu": "Deck tiếng Anh mẫu A1–A2 (từ | IPA | nghĩa) cho test báo tiếng Anh (1.19). Tự soạn.",
+"tu_vung": [
+[
+"apple",
+"/ˈæp.əl/",
+"quả táo"
+],
+[
+"bread",
+"/bred/",
+"bánh mì"
+],
+[
+"breakfast",
+"/ˈbrek.fəst/",
+"bữa sáng"
+],
+[
+"lunch",
+"/lʌntʃ/",
+"bữa trưa"
+],
+[
+"dinner",
+"/ˈdɪn.ər/",
+"bữa tối"
+],
+[
+"cake",
+"/keɪk/",
+"bánh ngọt"
+],
+[
+"tea",
+"/tiː/",
+"trà"
+],
+[
+"coffee",
+"/ˈkɒf.i/",
+"cà phê"
+],
+[
+"milk",
+"/mɪlk/",
+"sữa"
+],
+[
+"water",
+"/ˈwɔː.tər/",
+"nước"
+],
+[
+"cup",
+"/kʌp/",
+"cái cốc, tách"
+],
+[
+"kitchen",
+"/ˈkɪtʃ.ən/",
+"nhà bếp"
+],
+[
+"café",
+"/ˈkæf.eɪ/",
+"quán cà phê"
+],
+[
+"menu",
+"/ˈmen.juː/",
+"thực đơn"
+],
+[
+"customer",
+"/ˈkʌs.tə.mər/",
+"khách hàng"
+],
+[
+"waiter",
+"/ˈweɪ.tər/",
+"người phục vụ"
+],
+[
+"friend",
+"/frend/",
+"bạn bè"
+],
+[
+"neighbour",
+"/ˈneɪ.bər/",
+"hàng xóm"
+],
+[
+"village",
+"/ˈvɪl.ɪdʒ/",
+"làng"
+],
+[
+"city",
+"/ˈsɪt.i/",
+"thành phố"
+],
+[
+"garden",
+"/ˈɡɑː.dən/",
+"khu vườn"
+],
+[
+"flower",
+"/ˈflaʊ.ər/",
+"bông hoa"
+],
+[
+"tree",
+"/triː/",
+"cây"
+],
+[
+"leaf",
+"/liːf/",
+"chiếc lá"
+],
+[
+"bridge",
+"/brɪdʒ/",
+"cây cầu"
+],
+[
+"river",
+"/ˈrɪv.ər/",
+"dòng sông"
+],
+[
+"beach",
+"/biːtʃ/",
+"bãi biển"
+],
+[
+"sea",
+"/siː/",
+"biển"
+],
+[
+"hill",
+"/hɪl/",
+"ngọn đồi"
+],
+[
+"road",
+"/rəʊd/",
+"con đường"
+],
+[
+"shop",
+"/ʃɒp/",
+"cửa hàng"
+],
+[
+"market",
+"/ˈmɑː.kɪt/",
+"chợ"
+],
+[
+"post office",
+"/ˈpəʊst ˌɒf.ɪs/",
+"bưu điện"
+],
+[
+"letter",
+"/ˈlet.ər/",
+"lá thư"
+],
+[
+"parcel",
+"/ˈpɑː.səl/",
+"bưu kiện"
+],
+[
+"bike",
+"/baɪk/",
+"xe đạp"
+],
+[
+"bus",
+"/bʌs/",
+"xe buýt"
+],
+[
+"train",
+"/treɪn/",
+"tàu hoả"
+],
+[
+"ticket",
+"/ˈtɪk.ɪt/",
+"vé"
+],
+[
+"weather",
+"/ˈweð.ər/",
+"thời tiết"
+],
+[
+"rain",
+"/reɪn/",
+"mưa"
+],
+[
+"wind",
+"/wɪnd/",
+"gió"
+],
+[
+"cloud",
+"/klaʊd/",
+"đám mây"
+],
+[
+"sun",
+"/sʌn/",
+"mặt trời"
+],
+[
+"snow",
+"/snəʊ/",
+"tuyết"
+],
+[
+"autumn",
+"/ˈɔː.təm/",
+"mùa thu"
+],
+[
+"winter",
+"/ˈwɪn.tər/",
+"mùa đông"
+],
+[
+"morning",
+"/ˈmɔː.nɪŋ/",
+"buổi sáng"
+],
+[
+"afternoon",
+"/ˌɑːf.təˈnuːn/",
+"buổi chiều"
+],
+[
+"evening",
+"/ˈiːv.nɪŋ/",
+"buổi tối"
+],
+[
+"week",
+"/wiːk/",
+"tuần"
+],
+[
+"weekend",
+"/ˌwiːkˈend/",
+"cuối tuần"
+],
+[
+"today",
+"/təˈdeɪ/",
+"hôm nay"
+],
+[
+"tomorrow",
+"/təˈmɒr.əʊ/",
+"ngày mai"
+],
+[
+"yesterday",
+"/ˈjes.tə.deɪ/",
+"hôm qua"
+],
+[
+"picture",
+"/ˈpɪk.tʃər/",
+"bức tranh, bức ảnh"
+],
+[
+"paint",
+"/peɪnt/",
+"sơn, vẽ (bằng màu)"
+],
+[
+"draw",
+"/drɔː/",
+"vẽ"
+],
+[
+"song",
+"/sɒŋ/",
+"bài hát"
+],
+[
+"sing",
+"/sɪŋ/",
+"hát"
+],
+[
+"dance",
+"/dɑːns/",
+"nhảy múa"
+],
+[
+"play",
+"/pleɪ/",
+"chơi"
+],
+[
+"music",
+"/ˈmjuː.zɪk/",
+"âm nhạc"
+],
+[
+"book",
+"/bʊk/",
+"quyển sách"
+],
+[
+"read",
+"/riːd/",
+"đọc"
+],
+[
+"write",
+"/raɪt/",
+"viết"
+],
+[
+"learn",
+"/lɜːn/",
+"học"
+],
+[
+"study",
+"/ˈstʌd.i/",
+"học, nghiên cứu"
+],
+[
+"teach",
+"/tiːtʃ/",
+"dạy"
+],
+[
+"word",
+"/wɜːd/",
+"từ"
+],
+[
+"language",
+"/ˈlæŋ.ɡwɪdʒ/",
+"ngôn ngữ"
+],
+[
+"mistake",
+"/mɪˈsteɪk/",
+"lỗi sai"
+],
+[
+"practise",
+"/ˈpræk.tɪs/",
+"luyện tập"
+],
+[
+"go",
+"/ɡəʊ/",
+"đi"
+],
+[
+"come",
+"/kʌm/",
+"đến"
+],
+[
+"walk",
+"/wɔːk/",
+"đi bộ"
+],
+[
+"run",
+"/rʌn/",
+"chạy"
+],
+[
+"carry",
+"/ˈkær.i/",
+"mang, xách"
+],
+[
+"bring",
+"/brɪŋ/",
+"mang đến"
+],
+[
+"take",
+"/teɪk/",
+"cầm, lấy, mang đi"
+],
+[
+"give",
+"/ɡɪv/",
+"đưa, tặng"
+],
+[
+"buy",
+"/baɪ/",
+"mua"
+],
+[
+"sell",
+"/sel/",
+"bán"
+],
+[
+"pay",
+"/peɪ/",
+"trả tiền"
+],
+[
+"make",
+"/meɪk/",
+"làm, chế tạo"
+],
+[
+"cook",
+"/kʊk/",
+"nấu ăn"
+],
+[
+"bake",
+"/beɪk/",
+"nướng (bánh)"
+],
+[
+"wash",
+"/wɒʃ/",
+"rửa, giặt"
+],
+[
+"clean",
+"/kliːn/",
+"sạch; lau dọn"
+],
+[
+"open",
+"/ˈəʊ.pən/",
+"mở"
+],
+[
+"close",
+"/kləʊz/",
+"đóng"
+],
+[
+"find",
+"/faɪnd/",
+"tìm thấy"
+],
+[
+"lose",
+"/luːz/",
+"làm mất"
+],
+[
+"forget",
+"/fəˈɡet/",
+"quên"
+],
+[
+"remember",
+"/rɪˈmem.bər/",
+"nhớ"
+],
+[
+"help",
+"/help/",
+"giúp đỡ"
+],
+[
+"ask",
+"/ɑːsk/",
+"hỏi"
+],
+[
+"answer",
+"/ˈɑːn.sər/",
+"trả lời"
+],
+[
+"say",
+"/seɪ/",
+"nói"
+],
+[
+"tell",
+"/tel/",
+"kể, bảo"
+],
+[
+"talk",
+"/tɔːk/",
+"nói chuyện"
+],
+[
+"laugh",
+"/lɑːf/",
+"cười"
+],
+[
+"smile",
+"/smaɪl/",
+"mỉm cười"
+],
+[
+"cry",
+"/kraɪ/",
+"khóc"
+],
+[
+"look after",
+"/lʊk ˈɑːf.tər/",
+"chăm sóc"
+],
+[
+"get up",
+"/ɡet ʌp/",
+"thức dậy"
+],
+[
+"wait for",
+"/weɪt fɔːr/",
+"chờ đợi"
+],
+[
+"arrive",
+"/əˈraɪv/",
+"đến nơi"
+],
+[
+"leave",
+"/liːv/",
+"rời đi"
+],
+[
+"visit",
+"/ˈvɪz.ɪt/",
+"thăm"
+],
+[
+"invite",
+"/ɪnˈvaɪt/",
+"mời"
+],
+[
+"plan",
+"/plæn/",
+"kế hoạch; lên kế hoạch"
+],
+[
+"happy",
+"/ˈhæp.i/",
+"vui vẻ"
+],
+[
+"sad",
+"/sæd/",
+"buồn"
+],
+[
+"tired",
+"/taɪəd/",
+"mệt"
+],
+[
+"hungry",
+"/ˈhʌŋ.ɡri/",
+"đói"
+],
+[
+"busy",
+"/ˈbɪz.i/",
+"bận"
+],
+[
+"quiet",
+"/ˈkwaɪ.ət/",
+"yên tĩnh"
+],
+[
+"noisy",
+"/ˈnɔɪ.zi/",
+"ồn ào"
+],
+[
+"warm",
+"/wɔːm/",
+"ấm áp"
+],
+[
+"cold",
+"/kəʊld/",
+"lạnh"
+],
+[
+"hot",
+"/hɒt/",
+"nóng"
+],
+[
+"new",
+"/njuː/",
+"mới"
+],
+[
+"old",
+"/əʊld/",
+"cũ, già"
+],
+[
+"big",
+"/bɪɡ/",
+"to, lớn"
+],
+[
+"small",
+"/smɔːl/",
+"nhỏ"
+],
+[
+"beautiful",
+"/ˈbjuː.tɪ.fəl/",
+"đẹp"
+],
+[
+"delicious",
+"/dɪˈlɪʃ.əs/",
+"ngon"
+],
+[
+"kind",
+"/kaɪnd/",
+"tốt bụng"
+],
+[
+"friendly",
+"/ˈfrend.li/",
+"thân thiện"
+],
+[
+"nervous",
+"/ˈnɜː.vəs/",
+"lo lắng, hồi hộp"
+],
+[
+"excited",
+"/ɪkˈsaɪ.tɪd/",
+"háo hức"
+],
+[
+"surprised",
+"/səˈpraɪzd/",
+"ngạc nhiên"
+],
+[
+"early",
+"/ˈɜː.li/",
+"sớm"
+],
+[
+"late",
+"/leɪt/",
+"muộn"
+],
+[
+"always",
+"/ˈɔːl.weɪz/",
+"luôn luôn"
+],
+[
+"usually",
+"/ˈjuː.ʒu.ə.li/",
+"thường thường"
+],
+[
+"sometimes",
+"/ˈsʌm.taɪmz/",
+"thỉnh thoảng"
+],
+[
+"never",
+"/ˈnev.ər/",
+"không bao giờ"
+],
+[
+"together",
+"/təˈɡeð.ər/",
+"cùng nhau"
+],
+[
+"again",
+"/əˈɡen/",
+"lại, lần nữa"
+],
+[
+"because",
+"/bɪˈkɒz/",
+"bởi vì"
+],
+[
+"but",
+"/bʌt/",
+"nhưng"
+],
+[
+"key",
+"/kiː/",
+"chìa khoá"
+],
+[
+"door",
+"/dɔːr/",
+"cánh cửa"
+],
+[
+"window",
+"/ˈwɪn.dəʊ/",
+"cửa sổ"
+],
+[
+"table",
+"/ˈteɪ.bəl/",
+"cái bàn"
+],
+[
+"chair",
+"/tʃeər/",
+"cái ghế"
+],
+[
+"lamp",
+"/læmp/",
+"cái đèn"
+],
+[
+"box",
+"/bɒks/",
+"cái hộp"
+],
+[
+"bag",
+"/bæɡ/",
+"cái túi"
+],
+[
+"hat",
+"/hæt/",
+"cái mũ"
+],
+[
+"umbrella",
+"/ʌmˈbrel.ə/",
+"cái ô"
+],
+[
+"robot",
+"/ˈrəʊ.bɒt/",
+"người máy"
+],
+[
+"cat",
+"/kæt/",
+"con mèo"
+],
+[
+"dog",
+"/dɒɡ/",
+"con chó"
+],
+[
+"bird",
+"/bɜːd/",
+"con chim"
+],
+[
+"fish",
+"/fɪʃ/",
+"con cá"
+],
+[
+"festival",
+"/ˈfes.tɪ.vəl/",
+"lễ hội"
+],
+[
+"party",
+"/ˈpɑː.ti/",
+"bữa tiệc"
+],
+[
+"present",
+"/ˈprez.ənt/",
+"món quà"
+],
+[
+"surprise",
+"/səˈpraɪz/",
+"điều bất ngờ"
+],
+[
+"idea",
+"/aɪˈdɪə/",
+"ý tưởng"
+],
+[
+"problem",
+"/ˈprɒb.ləm/",
+"vấn đề"
+],
+[
+"job",
+"/dʒɒb/",
+"công việc"
+],
+[
+"money",
+"/ˈmʌn.i/",
+"tiền"
+],
+[
+"price",
+"/praɪs/",
+"giá cả"
+]
+]
+}
