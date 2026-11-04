@@ -132,7 +132,7 @@ result = 1`);
   ok(await clickTry('Lễ hội mùa hè') === 'Xem thử', 'chủ đề chưa mở có nút Xem thử');
   ok(await waitFor(page, 'GardenMusic._state().playing === "natsumatsuri"', 6000), 'Xem thử “Lễ hội mùa hè” → phát nhạc lễ hội: ' + await playing());
   const tipT = await page.eval(W('return document.getElementById("kb-h-tip").textContent;'));
-  ok(/đang phát nhạc của chủ đề/.test(tipT), 'dòng gợi ý: ' + tipT);
+  ok(/♪ đang phát nhạc/.test(tipT), 'dòng gợi ý: ' + tipT);
   await page.shot(SHOTS + '/82_xem_thu_nhac.png');
   ok(await clickTry('Mùa đông') === 'Xem thử', 'chủ đề đã mở mà chưa dùng cũng có nút Xem thử');
   ok(await waitFor(page, 'GardenMusic._state().playing === "winter"', 6000), 'Xem thử Mùa đông → nhạc Mùa đông');
