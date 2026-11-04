@@ -1,7 +1,7 @@
 # Kế hoạch 1.20 – 1.22: Lịch hoa, nhật ký, luyện viết, cuốn nhật ký · khách ghé vườn · tự vẽ giống cây, mã chia sẻ, chụp ảnh vườn
 
 > **Trạng thái: CHƯA LÀM — thiết kế và mọi câu hỏi đã chốt với người dùng (04/11/2026), phiên sau làm luôn từ 1.20.** Viết sau khi xong 1.19.1, từ buổi người dùng và Claude cùng nghĩ ý rồi xem bản mẫu.
-> **Bản thiết kế**: thư mục [`thiet_ke_1_20/`](thiet_ke_1_20/) — xem nhanh ảnh trong `thiet_ke_1_20/anh/` (1–5: thiết kế; 6–9: nội dung dài tối đa); mở `lich_hoa.html?v=month|year|book` (thêm `&long=ja` hoặc `&long=en` để thử nội dung dài) và `hoa.html` bằng trình duyệt (đã kèm `garden.css`, `seeds.js` của gói và phần hình của cây gốc nên mở được ngay). Mã trong đó là mã **mẫu** (số liệu giả) để lấy hình, bố cục, màu, chữ — khi làm thì viết lại đúng kiến trúc add-on (Python giữ dữ liệu, JS chỉ vẽ).
+> **Bản thiết kế**: thư mục [`thiet_ke_1_20/`](thiet_ke_1_20/) — xem nhanh ảnh trong `thiet_ke_1_20/anh/` (1–5: thiết kế; 6–9: nội dung dài tối đa; 10–11: đang sửa / thông báo đã sửa); mở `lich_hoa.html?v=month|year|book|wait|notify` (thêm `&long=ja` hoặc `&long=en` để thử nội dung dài) và `hoa.html` bằng trình duyệt (đã kèm `garden.css`, `seeds.js` của gói và phần hình của cây gốc nên mở được ngay). Mã trong đó là mã **mẫu** (số liệu giả) để lấy hình, bố cục, màu, chữ — khi làm thì viết lại đúng kiến trúc add-on (Python giữ dữ liệu, JS chỉ vẽ).
 > Làm xong thì **xoá file này, thư mục `thiet_ke_1_20/`**, dòng trỏ tới chúng ở `README.md` mục 0 và hai dòng `!/KE_HOACH_1_20.md`, `!/thiet_ke_1_20/` trong `.gitignore`. Làm dở thì cập nhật mục 10 "Tiến độ" rồi mới commit.
 > Cách làm việc, môi trường, test: `README.md` mục 8, `tests/README.md` (giải nén gói → sửa → test offline + Anki thật → đóng gói). Quy tắc chữ / nút: `README.md` mục 0 (bảng thuật ngữ 1.19.1, nút đang chọn chỉ đổi nền).
 
@@ -71,6 +71,13 @@
 - **Gợi ý** (dòng "Thử dùng"): 2 từ phải ôn hôm nay của ngôn ngữ đó (`words_core.pick` 1.19.1, ngẫu nhiên theo ngày), nút "Đổi gợi ý". Dưới ô: "Đã dùng 2 / 2 từ gợi ý ✓" — máy đếm (tiếng Nhật: chữ hoặc gốc của từ có trong bài; tiếng Anh: dạng biến đổi qua `ai_en.LinkIndex`).
 - **Gemini sửa 1 lần mỗi ngày** (một lượt gọi cho cả hai ngôn ngữ): nút "Nhờ Gemini sửa" → chạy nền như báo → xong thì nút thành "Đã sửa hôm nay" + "Gemini sửa 1 lần mỗi ngày · mai viết bài mới". Gọi lỗi (mạng, hết hạn mức, khoá sai) **không tính** lượt. Không có khoá: vẫn viết / lưu được, chỗ nút ghi "Dán khoá Gemini ở tab Nguồn báo để được sửa".
 - Sau khi sửa: **khoá bài** của hôm đó (giữ bài gốc + bản sửa cho cuốn nhật ký). Luyện viết chỉ cho **hôm nay** (ngày cũ chỉ xem).
+- **Gửi rồi đóng bảng được, xong thì báo** (người dùng: "luyện viết xong thì có thể tắt đi, khi nào Gemini sửa xong thì có thông báo") — ảnh `10_luyen_viet_dang_sua.png`, `11_thong_bao_da_sua.png`:
+  - Bấm "Nhờ Gemini sửa" → bài được lưu ngay (khoá collection, mục 6) với cờ "đang sửa" + thời điểm gửi; ô viết **tạm khoá** (nền xám) để khỏi lệch với bản sửa; khung hiện "[i:hourglass] Gemini đang sửa bài… Thường mất 10–60 giây. Có thể đóng bảng hoặc làm việc khác — xong sẽ có thông báo." + nút "Đóng bảng".
+  - Gọi Gemini trong luồng nền (`mw.taskman.run_in_background(uses_collection=False)` như báo); kết quả ghi vào collection ở luồng chính khi xong. Dùng chung khoá một-việc-một-lúc với báo (`_ai["running"]`): báo đang viết thì bài sửa **xếp hàng** chạy ngay sau (khung ghi "Đang chờ Gemini viết báo xong…").
+  - **Xong mà vườn đang mở**: toast bấm được (kiểu `kb-toast-link`, hiện ~8 giây) "✎ Gemini đã sửa bài luyện viết hôm nay · 2 lỗi · bấm để xem ▸" → mở Lịch hoa ở hôm nay; thẻ Hôm nay thêm một dòng nền hồng "✎ Luyện viết: Gemini đã sửa (2 lỗi) · xem ▸" **tới khi đã xem** (cờ "đã xem" trong bài, đồng bộ). Lịch hoa đang mở đúng ngày đó thì cập nhật tại chỗ, không cần toast.
+  - **Xong mà vườn đang đóng**: tooltip của Anki "ことば畑: Gemini đã sửa bài luyện viết · mở vườn để xem" (như báo, theo `show_tooltips`); dòng ở thẻ Hôm nay vẫn chờ lần mở vườn sau.
+  - **Lỗi** (mạng, hết lượt miễn phí, khoá sai, JSON hỏng): toast "Chưa sửa được: <lý do ngắn> · không tính lượt, thử lại sau"; mở khoá ô viết, nút trở lại "Nhờ Gemini sửa".
+  - **Tắt Anki khi đang sửa**: lần mở sau thấy cờ "đang sửa" quá 10 phút → coi như chưa sửa (không tính lượt), mở khoá ô, gửi lại được.
 - **Kết quả 3 phần** (như ảnh `1_lich_thang.png`):
   1. **Câu đã sửa** — Gemini sửa **ít nhất có thể**, giữ ý và cách nói của người học (không viết lại thành bài khác). **Máy** tô xanh chỗ khác với bài gốc (so chuỗi: tiếng Nhật theo ký tự, tiếng Anh theo từ) và gạch chân từ đã học (dùng lại máy nối tra từ của báo) — không để Gemini tự đánh dấu.
   2. **Lỗi (tối đa 3)** — mỗi lỗi: "chỗ sai → sửa", loại (ngữ pháp / từ / trợ từ / chính tả / dạng chia), một câu giải thích tiếng Việt. Lỗi cùng quy tắc thì nói gộp ("Cùng quy tắc như lỗi trên").
@@ -151,6 +158,7 @@ Phải nhớ khi làm:
 - Kiểm tra phím tắt `L` chưa trùng; `audit.js` thêm 3 màn Lịch hoa + màn 1024px; chữ theo bảng thuật ngữ (không "add-on", Bật / Tắt…).
 - Gemini: luyện viết dùng chung hạn mức với báo (1 lượt / ngày, ít); chọn model như báo (`ai_core.Gemini`).
 - Câu mẫu tiếng Anh đầu tiên của bản mẫu dài 32 từ (quá 30) — bộ đếm phải chặn thật khi gõ / dán, kể cả dán cả đoạn dài (cắt ở từ thứ 30 và báo "đã cắt bớt").
+- Test luồng nền: gửi → đóng bảng → xong thì có toast + dòng ở thẻ Hôm nay (vườn mở) / tooltip (vườn đóng); lỗi → mở khoá, không tính lượt; báo đang viết → bài sửa xếp hàng; cờ "đang sửa" cũ > 10 phút → mở khoá.
 - Test độ dài: Gemini giả lập trả về quá mọi giới hạn → máy cắt đúng; nội dung dài tối đa → không tràn (đo như `audit.js`); cuốn nhật ký toàn ngày dài → ngắt trang đúng.
 
 ## 10. Thứ tự làm và tiến độ
@@ -164,6 +172,7 @@ Mỗi phần: test offline (dữ liệu, làm sạch, đếm revlog theo ngày, 
 - [x] Chốt ý (04/11), đồng bộ nhật ký, thiết kế Lịch hoa / Nhật ký / Luyện viết / Cuốn nhật ký / hoa theo mùa (`thiet_ke_1_20/`)
 - [x] Luyện viết không có xu; giao diện mùa giữ mua một lần (người dùng chốt 04/11)
 - [x] Thử nội dung dài tối đa trên bản mẫu; chốt giới hạn đầu ra của Gemini (mục 4)
+- [x] Luồng "gửi rồi đóng bảng, xong thì báo" (mục 4)
 - [ ] Lịch hoa (tháng, năm, hoa theo mùa, vẽ kỹ 4 loài mới)
 - [ ] Nhật ký + sticker
 - [ ] Luyện viết

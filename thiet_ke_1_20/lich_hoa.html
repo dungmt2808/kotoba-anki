@@ -92,6 +92,16 @@
   .kb-book-acts { display: flex; gap: 8px; margin-top: 10px; justify-content: flex-end; }
   .kb-book-acts .kb-btn { margin-left: 0; }
   @media (max-width: 1100px) { .kb-cal-body { flex-direction: column; } .kb-cal-left { width: auto; align-self: stretch; } .kb-cal-right { align-self: stretch; } .kb-cal-year { grid-template-columns: repeat(4, 1fr); } .kb-book { flex-direction: column; } }
+  .kb-cal-wait { background: #eef6ff; border: 2px dashed #3d8bff; padding: 8px 10px; display: flex; flex-direction: column; gap: 4px; }
+  .kb-cal-wait-h { display: flex; align-items: center; gap: 8px; }
+  /* màn vườn rút gọn cho bản mẫu thông báo */
+  .mock-yard { position: relative; height: 520px; border: 4px solid #1b1b2f; box-shadow: 5px 5px 0 #1b1b2f; background: linear-gradient(#8fd3ff 0 38%, #5cbf5c 38%); overflow: hidden; }
+  .mock-rows { position: absolute; left: 40px; right: 330px; top: 230px; display: grid; grid-template-columns: repeat(9, 1fr); gap: 4px 6px; }
+  .mock-today { position: absolute; right: 16px; bottom: 16px; width: 290px; background: #ffffff; border: 3px solid #1b1b2f; box-shadow: 3px 3px 0 #1b1b2f; font-size: 14px; }
+  .mock-today > div { padding: 5px 9px; border-top: 2px solid #1b1b2f; }
+  .mock-today > div:first-child { border-top: 0; }
+  .mock-today .is-new { background: #ffe0ec; cursor: pointer; }
+  .mock-toast { position: absolute; left: 50%; bottom: 22px; transform: translateX(-60%); }
   .mock-note { position: fixed; right: 18px; bottom: 10px; font-family: "Noto Sans", sans-serif; font-size: 12px; color: #1b1b2f; background: #ffffffcc; border: 2px solid #1b1b2f; padding: 2px 8px; }
 </style>
 </head>
@@ -288,6 +298,23 @@ function month() {
   c3.appendChild(hint);
   const ta = el("div", "kb-cal-in kb-cal-ta", P.text); if (P.lang === "en") { ta.style.fontFamily = '"Noto Sans", sans-serif'; ta.style.fontSize = "16px"; } c3.appendChild(ta);
   const m3 = el("div", "kb-cal-meta"); m3.appendChild(el("span", null, "Đã dùng 2 / 2 từ gợi ý ✓")); m3.appendChild(el("span", null, plen(P.text) + " / " + P.max + " " + P.unit)); c3.appendChild(m3);
+  if (V === "wait") {
+    ta.style.background = "#f1f1f5"; ta.style.color = "#4a4a66";
+    const w = el("div", "kb-cal-wait");
+    const hg = el("div", "kb-cal-wait-h"); hg.appendChild(face("binh_thuong", 2)); hg.appendChild(el("b", null, "Gemini đang sửa bài…"));
+    w.appendChild(hg);
+    w.appendChild(el("div", "why", "Thường mất 10–60 giây. Có thể đóng bảng hoặc làm việc khác — xong sẽ có thông báo."));
+    c3.appendChild(w);
+    const acts = el("div", "kb-cal-acts");
+    const b1 = el("button", "kb-btn kb-btn-small", "Đang sửa…"); b1.disabled = true; b1.style.opacity = "0.6"; acts.appendChild(b1);
+    acts.appendChild(el("button", "kb-btn kb-btn-small", "Đóng bảng"));
+    acts.appendChild(el("span", "kb-cal-lock", "Bài đã gửi, tạm khoá để khỏi lệch với bản sửa"));
+    c3.appendChild(acts);
+    Rt.appendChild(c3);
+    body.appendChild(Rt);
+    panel.appendChild(body);
+    return;
+  }
   const fx = el("div", "kb-cal-fix");
   fx.appendChild(el("b", null, "1. Câu đã sửa"));
   const jp = el("div", "jp"); jp.innerHTML = P.fixed; if (P.lang === "en") { jp.style.fontFamily = '"Noto Sans", sans-serif'; jp.style.fontSize = "16px"; } fx.appendChild(jp);
@@ -442,7 +469,24 @@ function book() {
   wrap.appendChild(right);
   panel.appendChild(wrap);
 }
-({ month, year, book })[V]();
+function notify() {
+  panel.remove();
+  const app = document.getElementById("kb-app");
+  const y = el("div", "mock-yard");
+  const rows = el("div", "mock-rows");
+  const R = rnd(5);
+  for (let i = 0; i < 18; i++) { rows.appendChild(KB_FLOWER_ART.make("none", 1 + Math.floor(R() * 4), 3, i)); }
+  y.appendChild(rows);
+  const td = el("div", "mock-today");
+  const head = el("div"); head.appendChild(el("b", null, "Hôm nay 32/30 lượt ✓")); head.appendChild(document.createTextNode(" · 12 ngày liền")); td.appendChild(head);
+  td.appendChild(el("div", null, "Báo mới 1 · Chép 5/5 ✓"));
+  const nw = el("div", "is-new", "✎ Luyện viết: Gemini đã sửa (2 lỗi) · xem ▸"); td.appendChild(nw);
+  y.appendChild(td);
+  const t = el("div", "kb-toast kb-toast-link mock-toast", "✎ Gemini đã sửa bài luyện viết hôm nay · 2 lỗi · bấm để xem ▸");
+  y.appendChild(t);
+  app.appendChild(y);
+}
+({ month, year, book, wait: month, notify })[V]();
 </script>
 </body>
 </html>
