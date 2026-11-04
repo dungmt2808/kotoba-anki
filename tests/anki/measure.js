@@ -5,6 +5,10 @@ const W = (expr) => '(() => { ' + expr + ' })()';
 const MEASURE = W(`
   const vis = (e) => { const r = e.getBoundingClientRect(); if (r.width < 2 || r.height < 2) return false; const s = getComputedStyle(e); return s.visibility !== 'hidden' && s.display !== 'none' && +s.opacity > 0.05; };
   const name = (e) => (e.id ? '#' + e.id : e.tagName.toLowerCase() + (e.className && typeof e.className === 'string' ? '.' + e.className.trim().split(/\\s+/).slice(0, 2).join('.') : '')) + ' «' + (e.textContent || '').trim().slice(0, 28) + '»';
+  // 1.22.5: phần tử nằm trong một khung cuộn / cắt ngang (vd. hàng nút cảnh cuộn ngang của bảng Nhà ở cửa sổ thấp) mà khung đó
+  // nằm trong cửa sổ thì không "ra ngoài khung" — chỉ đang ở phần chưa cuộn tới
+  const clipped = (e) => { for (let a = e.parentElement; a && a !== document.body; a = a.parentElement) { const cs = getComputedStyle(a);
+    if (/auto|scroll|hidden/.test(cs.overflowX)) { const ar = a.getBoundingClientRect(); return ar.right <= innerWidth + 2 && ar.left >= -2; } } return false; };
   const W = innerWidth, H = innerHeight, out = { vscroll: document.documentElement.scrollHeight > H + 1, hscroll: document.documentElement.scrollWidth > W + 1, cut: [], outside: [], tiny: [], small: [], buttons: 0 };
   document.querySelectorAll('body *').forEach((e) => {
     if (!vis(e) || e.closest('[hidden]')) return;
@@ -14,7 +18,7 @@ const MEASURE = W(`
     if (leaf && (s.overflow === 'hidden' || s.overflowX === 'hidden' || s.textOverflow === 'ellipsis' || s.webkitLineClamp !== 'none')
         && (e.scrollWidth > e.clientWidth + 1 || e.scrollHeight > e.clientHeight + 2) && e.tagName !== 'OPTION') out.cut.push(name(e));
     if (leaf && parseFloat(s.fontSize) < 11 && r.top < H) out.small.push(name(e) + ' ' + s.fontSize);
-    if (r.right > W + 2 || r.left < -2) { if (!e.closest('.kb-field, #kb-yard-box, canvas') && s.position !== 'fixed') out.outside.push(name(e) + ' [' + Math.round(r.left) + '..' + Math.round(r.right) + ']'); }
+    if (r.right > W + 2 || r.left < -2) { if (!e.closest('.kb-field, #kb-yard-box, canvas') && s.position !== 'fixed' && !clipped(e)) out.outside.push(name(e) + ' [' + Math.round(r.left) + '..' + Math.round(r.right) + ']'); }
   });
   // hàng nút / tab / chip nằm cùng một dòng: chiều cao, khoảng cách, mép trên có đều nhau không
   out.rows = []; out.style = []; out.label = [];
