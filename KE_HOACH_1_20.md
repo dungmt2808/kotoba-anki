@@ -1,6 +1,6 @@
 # Kế hoạch 1.20 – 1.22: Lịch hoa, nhật ký, luyện viết, cuốn nhật ký · khách ghé vườn · tự vẽ giống cây, mã chia sẻ, chụp ảnh vườn
 
-> **Trạng thái: CHƯA LÀM — thiết kế đã chốt với người dùng (04/11/2026).** Viết sau khi xong 1.19.1, từ buổi người dùng và Claude cùng nghĩ ý rồi xem bản mẫu.
+> **Trạng thái: CHƯA LÀM — thiết kế và mọi câu hỏi đã chốt với người dùng (04/11/2026), phiên sau làm luôn từ 1.20.** Viết sau khi xong 1.19.1, từ buổi người dùng và Claude cùng nghĩ ý rồi xem bản mẫu.
 > **Bản thiết kế**: thư mục [`thiet_ke_1_20/`](thiet_ke_1_20/) — xem nhanh ảnh trong `thiet_ke_1_20/anh/`; mở `lich_hoa.html?v=month|year|book` và `hoa.html` bằng trình duyệt (đã kèm `garden.css`, `seeds.js` của gói và phần hình của cây gốc nên mở được ngay). Mã trong đó là mã **mẫu** (số liệu giả) để lấy hình, bố cục, màu, chữ — khi làm thì viết lại đúng kiến trúc add-on (Python giữ dữ liệu, JS chỉ vẽ).
 > Làm xong thì **xoá file này, thư mục `thiet_ke_1_20/`**, dòng trỏ tới chúng ở `README.md` mục 0 và hai dòng `!/KE_HOACH_1_20.md`, `!/thiet_ke_1_20/` trong `.gitignore`. Làm dở thì cập nhật mục 10 "Tiến độ" rồi mới commit.
 > Cách làm việc, môi trường, test: `README.md` mục 8, `tests/README.md` (giải nén gói → sửa → test offline + Anki thật → đóng gói). Quy tắc chữ / nút: `README.md` mục 0 (bảng thuật ngữ 1.19.1, nút đang chọn chỉ đổi nền).
@@ -15,7 +15,8 @@
 - Nhật ký: **đồng bộ** qua AnkiWeb (người dùng chốt).
 - Xem bản mẫu: "ổn, nhưng **hoa chưa đẹp**" → hoa vẽ lại theo đúng kiểu cây của ruộng (mục 2). Luyện viết: "nên **giới hạn khoảng 20–30 từ** một ngày, **gọi Gemini một lần**" → mục 4. Cách Gemini sửa: Claude đề xuất 3 phần (câu đã sửa · lỗi · nhận xét), người dùng bảo đánh giá lại lần cuối rồi viết kế hoạch → coi như chốt.
 - Người dùng định **chia sẻ add-on** và mỗi mùa vẽ thêm đồ → dùng mã chia sẻ thiết kế để phát đồ mùa (mục 8.2). Trước khi đăng: không kèm dữ liệu giáo trình GUNGUN; kiểm tra giấy phép / tên **StackChan** (dự án robot có thật của người khác) hoặc đổi linh vật; ghi bản Anki hỗ trợ trong manifest.
-- Giao diện mùa: Claude đề nghị **giữ mua một lần** (thuê = mất thứ đã có, như đánh thuế việc học); chỗ tiêu xu theo mùa thì dùng đồ dùng một mùa / một món mới mỗi năm. **Người dùng chưa trả lời — hỏi trước khi đổi gì ở phần mùa.**
+- Giao diện mùa: **giữ mua một lần** (người dùng chốt 04/11: "giữ 1 lần"; thuê = mất thứ đã có, như đánh thuế việc học). Muốn có chỗ tiêu xu theo mùa thì dùng đồ dùng một mùa / một món mới mỗi năm hoặc gói đồ qua mã chia sẻ — không đổi cách mở khoá.
+- Luyện viết: **không có xu** (người dùng chốt 04/11).
 
 ---
 
@@ -77,7 +78,7 @@
   - Bài không có lỗi: ghi "Không có lỗi" + một **cách nói tự nhiên hơn** (tuỳ chọn, ghi rõ là "tự nhiên hơn", không phải "sai").
 - **Gemini** (`ai_core`, `responseSchema` JSON như báo): `{"sua": str, "loi": [{"goc": str, "sua": str, "loai": str, "giai_thich": str}] (≤ 3), "tu_nhien": str, "nhan_xet": str}`. Máy kiểm tra: `sua` đúng ngôn ngữ (dùng `check_jp` / `ai_en.check_en` mức nhẹ), không dài quá 2 lần bài gốc, `goc` có trong bài gốc, phần tiếng Việt có dấu; sai thì bỏ phần đó (không gọi lại — giữ 1 lượt / ngày). Lời nhắc dặn trình độ (N4 / A2… như báo) và "chỉ sửa lỗi thật, giữ cách nói của người học".
 - **Lỗi lưu lại** (loại + quy tắc ngắn) → trang "Lỗi hay gặp tháng này" trong cuốn nhật ký.
-- Có xu không? **Chưa chốt** — Claude đề nghị **không** (để không thành "cày"); hỏi người dùng khi làm.
+- **Không có xu** (người dùng chốt 04/11), cả nhật ký lẫn luyện viết.
 
 ## 5. Cuốn nhật ký (1.20) — `thiet_ke_1_20/anh/3_cuon_nhat_ky.png`
 
@@ -143,7 +144,7 @@ Phải nhớ khi làm:
 Mỗi phần: test offline (dữ liệu, làm sạch, đếm revlog theo ngày, bản cũ lưu đè không mất khoá mới — như `test_1191.py`), Gemini giả lập cho luyện viết + một lần Gemini thật, kịch bản Anki thật (`e2e_120.js`), `audit.js`, ảnh trước / sau gửi người dùng.
 
 - [x] Chốt ý (04/11), đồng bộ nhật ký, thiết kế Lịch hoa / Nhật ký / Luyện viết / Cuốn nhật ký / hoa theo mùa (`thiet_ke_1_20/`)
-- [ ] Hỏi: luyện viết có xu không (đề nghị không); giao diện mùa giữ mua một lần?
+- [x] Luyện viết không có xu; giao diện mùa giữ mua một lần (người dùng chốt 04/11)
 - [ ] Lịch hoa (tháng, năm, hoa theo mùa, vẽ kỹ 4 loài mới)
 - [ ] Nhật ký + sticker
 - [ ] Luyện viết
