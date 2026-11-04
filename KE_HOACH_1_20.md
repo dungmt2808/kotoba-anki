@@ -73,7 +73,13 @@
 - Sau khi sửa: **khoá bài** của hôm đó (giữ bài gốc + bản sửa cho cuốn nhật ký). Luyện viết chỉ cho **hôm nay** (ngày cũ chỉ xem).
 - **Gửi rồi đóng bảng được, xong thì báo** (người dùng: "luyện viết xong thì có thể tắt đi, khi nào Gemini sửa xong thì có thông báo") — ảnh `10_luyen_viet_dang_sua.png`, `11_thong_bao_da_sua.png`:
   - Bấm "Nhờ Gemini sửa" → bài được lưu ngay (khoá collection, mục 6) với cờ "đang sửa" + thời điểm gửi; ô viết **tạm khoá** (nền xám) để khỏi lệch với bản sửa; khung hiện "[i:hourglass] Gemini đang sửa bài… Thường mất 10–60 giây. Có thể đóng bảng hoặc làm việc khác — xong sẽ có thông báo." + nút "Đóng bảng".
-  - Gọi Gemini trong luồng nền (`mw.taskman.run_in_background(uses_collection=False)` như báo); kết quả ghi vào collection ở luồng chính khi xong. Dùng chung khoá một-việc-một-lúc với báo (`_ai["running"]`): báo đang viết thì bài sửa **xếp hàng** chạy ngay sau (khung ghi "Đang chờ Gemini viết báo xong…").
+  - Gọi Gemini trong luồng nền (`mw.taskman.run_in_background(uses_collection=False)` như báo); kết quả ghi vào collection ở luồng chính khi xong.
+  - **Vừa sửa bài vừa viết báo → chạy song song** (người dùng hỏi 04/11). Không xếp hàng sau báo: một số báo có thể mất nhiều phút (thử thật 04/11: 547 giây vì máy chủ báo bận 502 / 503), bài sửa chỉ một lượt gọi nên không bắt chờ.
+    - Trạng thái riêng `_fix` (đang sửa, lý do lỗi), **không dùng** `_ai["running"]` của báo → bấm "Viết số hôm nay" khi đang sửa bài vẫn chạy bình thường, và ngược lại. Pool luồng nền của Anki (`_no_collection_executor`, `ThreadPoolExecutor` không giới hạn 1) cho chạy cùng lúc.
+    - **Không tranh lượt với báo**: bài sửa ưu tiên model **Flash-Lite** (hạn mức theo từng model, tách khỏi Flash mà báo dùng), hết thì mới sang model khác. Danh sách model đã hết hạn mức dùng chung trong bộ nhớ (`_shared_exhausted` + cập nhật khi mỗi việc xong) để hai việc không thử lại model đã hết.
+    - Không ghi chung file: báo ghi `user_files/bao_gemini*/`, bài sửa ghi khoá collection của nhật ký (luồng chính) — không đụng `trang_thai.json` của báo.
+    - **Thông báo không đè nhau**: `toast()` của vườn hiện đang thay câu cũ bằng câu mới → thêm **hàng chờ** (hiện lần lượt, mỗi câu ~8 giây); hai việc xong cùng lúc thì vẫn thấy cả "Báo mới…" lẫn "Gemini đã sửa bài…". Dòng ở thẻ Hôm nay của cả hai vẫn giữ tới khi xem.
+    - **Hết lượt miễn phí ở mọi model**: bài chuyển sang "chờ lượt" (không tính lượt), tự gửi lại **một lần** khi mở Anki / vườn sau giờ đặt lại hạn mức (15 giờ, giờ Việt Nam); khung ghi "Hôm nay Gemini hết lượt miễn phí · sẽ tự sửa sau 15 giờ".
   - **Xong mà vườn đang mở**: toast bấm được (kiểu `kb-toast-link`, hiện ~8 giây) "✎ Gemini đã sửa bài luyện viết hôm nay · 2 lỗi · bấm để xem ▸" → mở Lịch hoa ở hôm nay; thẻ Hôm nay thêm một dòng nền hồng "✎ Luyện viết: Gemini đã sửa (2 lỗi) · xem ▸" **tới khi đã xem** (cờ "đã xem" trong bài, đồng bộ). Lịch hoa đang mở đúng ngày đó thì cập nhật tại chỗ, không cần toast.
   - **Xong mà vườn đang đóng**: tooltip của Anki "ことば畑: Gemini đã sửa bài luyện viết · mở vườn để xem" (như báo, theo `show_tooltips`); dòng ở thẻ Hôm nay vẫn chờ lần mở vườn sau.
   - **Lỗi** (mạng, hết lượt miễn phí, khoá sai, JSON hỏng): toast "Chưa sửa được: <lý do ngắn> · không tính lượt, thử lại sau"; mở khoá ô viết, nút trở lại "Nhờ Gemini sửa".
@@ -158,7 +164,7 @@ Phải nhớ khi làm:
 - Kiểm tra phím tắt `L` chưa trùng; `audit.js` thêm 3 màn Lịch hoa + màn 1024px; chữ theo bảng thuật ngữ (không "add-on", Bật / Tắt…).
 - Gemini: luyện viết dùng chung hạn mức với báo (1 lượt / ngày, ít); chọn model như báo (`ai_core.Gemini`).
 - Câu mẫu tiếng Anh đầu tiên của bản mẫu dài 32 từ (quá 30) — bộ đếm phải chặn thật khi gõ / dán, kể cả dán cả đoạn dài (cắt ở từ thứ 30 và báo "đã cắt bớt").
-- Test luồng nền: gửi → đóng bảng → xong thì có toast + dòng ở thẻ Hôm nay (vườn mở) / tooltip (vườn đóng); lỗi → mở khoá, không tính lượt; báo đang viết → bài sửa xếp hàng; cờ "đang sửa" cũ > 10 phút → mở khoá.
+- Test luồng nền: gửi → đóng bảng → xong thì có toast + dòng ở thẻ Hôm nay (vườn mở) / tooltip (vườn đóng); lỗi → mở khoá, không tính lượt; **báo đang viết + gửi bài sửa → chạy song song, hai thông báo đều hiện (hàng chờ toast), bài sửa dùng model Flash-Lite**; hết lượt mọi model → "chờ lượt", tự gửi lại một lần sau 15 giờ; cờ "đang sửa" cũ > 10 phút → mở khoá.
 - Test độ dài: Gemini giả lập trả về quá mọi giới hạn → máy cắt đúng; nội dung dài tối đa → không tràn (đo như `audit.js`); cuốn nhật ký toàn ngày dài → ngắt trang đúng.
 
 ## 10. Thứ tự làm và tiến độ
@@ -173,6 +179,7 @@ Mỗi phần: test offline (dữ liệu, làm sạch, đếm revlog theo ngày, 
 - [x] Luyện viết không có xu; giao diện mùa giữ mua một lần (người dùng chốt 04/11)
 - [x] Thử nội dung dài tối đa trên bản mẫu; chốt giới hạn đầu ra của Gemini (mục 4)
 - [x] Luồng "gửi rồi đóng bảng, xong thì báo" (mục 4)
+- [x] Vừa sửa bài vừa viết báo: chạy song song, model riêng, hàng chờ thông báo (mục 4)
 - [ ] Lịch hoa (tháng, năm, hoa theo mùa, vẽ kỹ 4 loài mới)
 - [ ] Nhật ký + sticker
 - [ ] Luyện viết
