@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Lịch hoa — bản mẫu</title>
+<link rel="stylesheet" href="garden.css">
+<style>
+  /* chỉ cho bản mẫu: các lớp mới của Lịch hoa / Nhật ký (cùng kiểu pixel: viền đen, bóng cứng, không bo góc) */
+  .mock-bar .kb-chip, .mock-bar .kb-btn { margin-left: 0; }
+  .mock-mascot { width: 52px; height: 40px; background: #ffffff; border: 3px solid #1b1b2f; box-shadow: 3px 3px 0 #1b1b2f; }
+  .kb-cal { flex: 1; min-height: 0; }
+  .kb-cal-body { display: flex; gap: 14px; align-items: flex-start; }
+  .kb-cal-left { background: #fffdf3; border: 3px solid #1b1b2f; box-shadow: 3px 3px 0 #1b1b2f; padding: 10px 12px 12px; width: 560px; flex: 0 0 auto; }
+  .kb-cal-nav { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .kb-cal-nav .kb-btn { margin-left: 0; }
+  .kb-cal-month { font-size: 20px; font-weight: 700; flex: 1; text-align: center; }
+  .kb-cal-bands { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; font-family: "Noto Sans", "Noto Sans CJK JP", sans-serif; font-size: 13px; }
+  .kb-cal-band { display: flex; align-items: center; gap: 8px; }
+  .kb-cal-band i { display: inline-block; height: 12px; border: 2px solid #1b1b2f; }
+  .kb-cal-next { font-family: "Noto Sans", "Noto Sans CJK JP", sans-serif; font-size: 12px; color: #4a4a66; margin-bottom: 6px; }
+  .kb-cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+  .kb-cal-wd { text-align: center; font-size: 13px; color: #4a4a66; }
+  .kb-cal-day { position: relative; height: 70px; background: #ffffff; border: 2px solid #1b1b2f; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 6px; box-sizing: border-box; }
+  .kb-cal-day.is-empty { background: transparent; border-color: transparent; }
+  .kb-cal-day.is-future { background: #f4f1e4; border-style: dashed; border-color: #b9b39a; }
+  .kb-cal-day.is-today { outline: 3px solid #ffd23f; outline-offset: 1px; }
+  .kb-cal-day.is-sel { background: #fff2b3; box-shadow: 3px 3px 0 #1b1b2f; }
+  .kb-cal-num { position: absolute; left: 4px; top: 2px; font-size: 12px; }
+  .kb-cal-stk { position: absolute; right: 3px; top: 3px; }
+  .kb-cal-dot { position: absolute; right: 5px; bottom: 9px; width: 6px; height: 6px; background: #1f5fbf; }
+  .kb-cal-strip { position: absolute; left: 0; right: 0; bottom: 0; height: 4px; }
+  .kb-cal-legend { display: flex; align-items: center; gap: 6px; margin-top: 10px; font-size: 12px; color: #4a4a66; }
+  .kb-cal-legend .sp { flex: 1; }
+  .kb-cal-right { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+  .kb-cal-card { background: #ffffff; border: 3px solid #1b1b2f; box-shadow: 3px 3px 0 #1b1b2f; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px;
+    font-family: "Noto Sans", "Noto Sans CJK JP", sans-serif; font-size: 14px; }
+  .kb-cal-card .kb-btn { font-family: "DotGothic16", "Noto Sans Mono CJK JP", "Noto Sans CJK JP", monospace; margin-left: 0; }
+  .kb-cal-h { display: flex; align-items: baseline; gap: 10px; font-family: "DotGothic16", "Noto Sans Mono CJK JP", monospace; font-size: 18px; font-weight: 700; }
+  .kb-cal-h small { font-size: 12px; font-weight: 400; color: #4a4a66; font-family: "Noto Sans", sans-serif; }
+  .kb-cal-h .kb-p-tag { margin-left: auto; font-size: 12px; }
+  .kb-cal-stats { display: grid; grid-template-columns: 96px 1fr; gap: 4px 10px; }
+  .kb-cal-stats span:nth-child(odd) { color: #4a4a66; }
+  .kb-cal-stk-row { display: flex; gap: 6px; flex-wrap: wrap; }
+  .kb-cal-stk-b { width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; background: #ffffff; border: 2px solid #1b1b2f; box-shadow: 2px 2px 0 #1b1b2f; }
+  .kb-cal-stk-b.is-on { background: #ffd23f; }
+  .kb-cal-in { font: inherit; font-size: 15px; border: 3px solid #1b1b2f; padding: 6px 8px; background: #fffdf3; width: 100%; box-sizing: border-box; }
+  .kb-cal-meta { display: flex; justify-content: space-between; font-size: 12px; color: #4a4a66; }
+  .kb-cal-lock { font-size: 12px; color: #4a4a66; }
+  .kb-cal-ta { font-family: "Noto Sans CJK JP", sans-serif; font-size: 17px; min-height: 52px; line-height: 1.6; }
+  .kb-cal-hint { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 13px; }
+  .kb-cal-word { font-family: "Noto Sans CJK JP", sans-serif; background: #e6f7ea; border: 2px solid #1b1b2f; padding: 0 6px; font-size: 14px; }
+  .kb-cal-fix { background: #f3fbf5; border: 2px dashed #3aa655; padding: 6px 10px; display: flex; flex-direction: column; gap: 4px; }
+  .kb-cal-fix .jp { font-family: "Noto Sans CJK JP", sans-serif; font-size: 17px; line-height: 1.6; }
+  .kb-cal-fix .jp u { text-decoration: none; border-bottom: 2px solid #1f5fbf; }
+  .kb-cal-fix .jp mark { background: #c8f7d2; padding: 0 2px; }
+  .kb-cal-fix .old { font-family: "Noto Sans CJK JP", sans-serif; color: #8a8aa0; text-decoration: line-through; }
+  .kb-cal-fix .why { font-size: 13px; color: #2b2b44; }
+  .kb-cal-acts { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  /* năm */
+  .kb-cal-year { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
+  .kb-cal-mini { background: #ffffff; border: 3px solid #1b1b2f; box-shadow: 3px 3px 0 #1b1b2f; padding: 6px 8px 8px; }
+  .kb-cal-mini.is-now { background: #fff2b3; }
+  .kb-cal-mini-h { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 4px; }
+  .kb-cal-mini-h small { color: #4a4a66; font-size: 12px; }
+  .kb-cal-mini-strip { display: flex; height: 6px; border: 2px solid #1b1b2f; margin-bottom: 6px; }
+  .kb-cal-mini-grid { display: grid; grid-template-columns: repeat(7, 13px); gap: 3px; justify-content: center; }
+  .kb-cal-mini-grid b { width: 13px; height: 13px; display: block; }
+  .kb-cal-sum { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .kb-cal-sum .kb-g-chip b { font-size: 16px; }
+  .kb-cal-ylegend { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 12px; font-family: "Noto Sans", "Noto Sans CJK JP", sans-serif; font-size: 12px; color: #2b2b44; }
+  .kb-cal-ylegend span { display: inline-flex; align-items: center; gap: 4px; }
+  .kb-cal-ylegend i { width: 14px; height: 10px; border: 2px solid #1b1b2f; display: inline-block; }
+  /* cuốn nhật ký */
+  .kb-book-wrap { display: flex; gap: 14px; align-items: flex-start; }
+  .kb-shelf { width: 150px; flex: 0 0 auto; background: #8a5a3b; border: 3px solid #1b1b2f; box-shadow: 3px 3px 0 #1b1b2f; padding: 10px 8px; display: flex; flex-direction: column; gap: 8px; }
+  .kb-shelf-h { color: #fff2b3; font-size: 14px; text-align: center; }
+  .kb-shelf-row { display: flex; gap: 4px; align-items: flex-end; border-bottom: 6px solid #5b3a24; padding: 0 4px; min-height: 92px; }
+  .kb-spine { width: 22px; border: 2px solid #1b1b2f; color: #1b1b2f; font-size: 11px; writing-mode: vertical-rl; text-align: center; padding: 4px 0; }
+  .kb-spine.is-on { outline: 3px solid #ffd23f; }
+  .kb-book { flex: 1; display: flex; background: #6b4a36; border: 4px solid #1b1b2f; box-shadow: 5px 5px 0 #1b1b2f; padding: 10px; gap: 4px; }
+  .kb-page { flex: 1; background: #fffdf3; border: 3px solid #1b1b2f; padding: 14px 16px; min-height: 470px; box-sizing: border-box; font-family: "Noto Sans", "Noto Sans CJK JP", sans-serif; font-size: 14px; display: flex; flex-direction: column; gap: 8px; }
+  .kb-page-t { font-family: "DotGothic16", "Noto Sans Mono CJK JP", monospace; font-size: 22px; font-weight: 700; }
+  .kb-page-sub { color: #4a4a66; font-size: 13px; }
+  .kb-page-cover { border: 3px solid #1b1b2f; image-rendering: pixelated; width: 100%; }
+  .kb-page-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 12px; }
+  .kb-page-stats b { font-family: "DotGothic16", "Noto Sans Mono CJK JP", monospace; font-size: 18px; }
+  .kb-entry { display: grid; grid-template-columns: 54px 26px 26px 1fr; gap: 6px; align-items: start; border-bottom: 2px dashed #d8cfa8; padding-bottom: 6px; }
+  .kb-entry .d { font-family: "DotGothic16", "Noto Sans Mono CJK JP", monospace; font-size: 13px; }
+  .kb-entry .txt { line-height: 1.45; }
+  .kb-entry .wr { display: block; margin-top: 3px; font-family: "Noto Sans CJK JP", sans-serif; font-size: 14px; color: #2e6b3a; }
+  .kb-page-foot { margin-top: auto; display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #4a4a66; }
+  .kb-book-acts { display: flex; gap: 8px; margin-top: 10px; justify-content: flex-end; }
+  .kb-book-acts .kb-btn { margin-left: 0; }
+  .mock-note { position: fixed; right: 18px; bottom: 10px; font-family: "Noto Sans", sans-serif; font-size: 12px; color: #1b1b2f; background: #ffffffcc; border: 2px solid #1b1b2f; padding: 2px 8px; }
+</style>
+</head>
+<body>
+<div id="kb-app">
+  <header class="kb-bar mock-bar">
+    <div class="mock-mascot"></div>
+    <div class="kb-title">ことば畑</div>
+    <div class="kb-chip" style="background:#ffe0ec">Giáng sinh ▸</div>
+    <label class="kb-deck">Deck <select><option>JLPT N4::Từ vựng</option></select></label>
+    <div class="kb-chip" id="kb-coins">2.140 xu</div>
+    <div style="flex:1"></div>
+    <button class="kb-btn kb-btn-small" style="background:#ffffff">⚙</button>
+    <button class="kb-btn kb-btn-house" style="background:#ffc27a">Nhà</button>
+    <button class="kb-btn kb-btn-games" style="background:#c9a7ff">Trò chơi</button>
+    <button class="kb-btn">Tưới ngay</button>
+  </header>
+  <section class="kb-panel kb-game kb-cal" id="panel"></section>
+</div>
+<div class="mock-note">Bản mẫu 1.20 · số liệu giả</div>
+<script>
+"use strict";
+const V = new URLSearchParams(location.search).get("v") || "month";
+const el = (t, c, s) => { const e = document.createElement(t); if (c) e.className = c; if (s !== undefined) e.textContent = s; return e; };
+// ---- sprite pixel ----
+function sprite(rows, pal, scale) {
+  const cv = document.createElement("canvas");
+  cv.width = rows[0].length * scale; cv.height = rows.length * scale;
+  cv.style.imageRendering = "pixelated";
+  const ctx = cv.getContext("2d");
+  rows.forEach((r, y) => { for (let x = 0; x < r.length; x++) { const c = pal[r[x]]; if (c) { ctx.fillStyle = c; ctx.fillRect(x * scale, y * scale, scale, scale); } } });
+  return cv;
+}
+const FLOWER = [
+  ["............", "............", "............", "............", "............", "............", "............", "............", "............", "............", "..bbbbbbbb..", ".bBbbBbbBbb."],
+  ["............", "............", "............", "............", "............", "....g..g....", "....gg.gg...", ".....ggg....", "......g.....", "......g.....", "..bbbbbbbb..", ".bBbbBbbBbb."],
+  ["............", "............", "............", ".....pp.....", "....pPPp....", ".....pp.....", "......g.....", "...gg.g.....", "....ggg.gg..", "......ggg...", "..bbbbbbbb..", ".bBbbBbbBbb."],
+  ["............", ".....pp.....", "....pPPp....", "...pPyyPp...", "....pPPp....", ".....pp.....", "......g.....", "...gg.g.....", "....ggg.gg..", "......ggg...", "..bbbbbbbb..", ".bBbbBbbBbb."],
+  ["...pp..pp...", "..pPPppPPp..", "..pPPyyPPp..", "...ppyyyp...", "..pPPyyPPp..", "..pPPppPPp..", "...pp.gpp...", "...gg.g.....", "....ggg.gg..", ".g....ggg...", "..bbbbbbbb..", ".bBbbBbbBbb."],
+];
+const THEME = {
+  momiji: { name: "Mùa lá đỏ 紅葉", c: "#e85d04", p: "#ff8c42", P: "#d9452b" },
+  xmas: { name: "Giáng sinh", c: "#2a9d8f", p: "#ffffff", P: "#e23b3b" },
+  halloween: { name: "Halloween", c: "#7b2cbf", p: "#ffb347", P: "#7b2cbf" },
+  oshogatsu: { name: "お正月", c: "#d62828" }, winter: { name: "Mùa đông", c: "#9ecbff" }, tet: { name: "Tết", c: "#ffcc00" },
+  spring: { name: "Mùa xuân", c: "#ffb7c5" }, hanami: { name: "Hoa anh đào 花見", c: "#ff8fab" }, tsuyu: { name: "Mùa mưa 梅雨", c: "#6c8ebf" },
+  tanabata: { name: "Thất Tịch 七夕", c: "#3d348b" }, summer: { name: "Mùa hè", c: "#ffd166" }, natsu: { name: "Lễ hội mùa hè", c: "#ef476f" },
+  autumn: { name: "Mùa thu", c: "#e76f51" }, tsukimi: { name: "Trung thu", c: "#f4a261" },
+};
+function flower(level, theme, scale) {
+  const t = THEME[theme] || THEME.momiji;
+  return sprite(FLOWER[level], { b: "#9a6a48", B: "#6b4226", g: "#3aa655", p: t.p || "#ff8fab", P: t.P || "#e05780", y: "#ffd23f" }, scale || 4);
+}
+// sticker tâm trạng 9×9
+const FACE = {
+  vui: { c: "#ffd23f", r: ["..kkkkk..", ".kyyyyyk.", "kyykyykyk", "kyyyyyyyk", "kyyyyyyyk", "kykyyykyk", "kyykkkyyk", ".kyyyyyk.", "..kkkkk.."] },
+  hao_hung: { c: "#ff9bb4", r: ["..kkkkk..", ".kyyyyyk.", "kykkykkyk", "kyykyykyk", "kyyyyyyyk", "kyykkkyyk", "kyykrkyyk", ".kyykyyk.", "..kkkkk.."] },
+  thu_thai: { c: "#8fe3a6", r: ["..kkkkk..", ".kyyyyyk.", "kykykykyk", "kyyyyyyyk", "kyyyyyyyk", "kyyyyyyyk", "kyykkkyyk", ".kyyyyyk.", "..kkkkk.."] },
+  binh_thuong: { c: "#f1e6c8", r: ["..kkkkk..", ".kyyyyyk.", "kyykyykyk", "kyyyyyyyk", "kyyyyyyyk", "kyyyyyyyk", "kyykkkyyk", ".kyyyyyk.", "..kkkkk.."] },
+  met: { c: "#ffe9a8", r: ["..kkkkk.c", ".kyyyyykc", "kykkykkyk", "kyyyyyyyk", "kyyyyyyyk", "kyyyyyyyk", "kyyykyyyk", ".kyyyyyk.", "..kkkkk.."] },
+  buon: { c: "#9ecbff", r: ["..kkkkk..", ".kyyyyyk.", "kyykyykyk", "kyyyyyyyk", "kyyyyyyyk", "kyykkkyyk", "kykyyykyk", ".kyyyyyk.", "..kkkkk.."] },
+  ban: { c: "#ffc27a", r: ["..kkkkk..", ".kyyyyyk.", "kykyykyyk", "kyyyyyyyk", "kyyyyyyyk", "kykykykyk", "kyykykyyk", ".kyyyyyk.", "..kkkkk.."] },
+  om: { c: "#c9e4b4", r: ["..kkkkk..", ".kyyyyyk.", "kykkykkyk", "kyyyyyyyk", "kyyyyyywk", "kyykkkywk", "kyyyyyyrk", ".kyyyyyk.", "..kkkkk.."] },
+};
+const FACE_NAME = { vui: "Vui", hao_hung: "Hào hứng", thu_thai: "Thư thái", binh_thuong: "Bình thường", met: "Mệt", buon: "Buồn", ban: "Bận", om: "Ốm" };
+function face(id, scale) { const f = FACE[id]; return sprite(f.r, { k: "#1b1b2f", y: f.c, c: "#3a86ff", r: "#e23b3b", w: "#ffffff" }, scale || 2); }
+// số liệu giả, cố định
+function rnd(seed) { let s = seed; return () => { s = (s * 1103515245 + 12345) & 0x7fffffff; return s / 0x7fffffff; }; }
+const lvlOf = (n) => n === 0 ? 0 : n < 10 ? 1 : n < 30 ? 2 : n < 60 ? 3 : 4;
+function panelTop(panel, tab, hud) {
+  const t = el("div", "kb-game-top");
+  t.appendChild(el("div", "kb-g-title", "花暦 · Lịch hoa"));
+  const tabs = el("div", "kb-p-tabs");
+  [["month", "Tháng"], ["year", "Năm"], ["book", "Cuốn nhật ký"]].forEach((x) => { const b = el("button", "kb-h-tab kb-p-tab" + (x[0] === tab ? " is-on" : ""), x[1]); tabs.appendChild(b); });
+  t.appendChild(tabs);
+  const h = el("div", "kb-g-hud");
+  hud.forEach((x) => { const c = el("div", "kb-g-chip"); c.appendChild(el("span", "kb-g-chip-l", x[0])); c.appendChild(el("b", null, x[1])); h.appendChild(c); });
+  t.appendChild(h);
+  const ex = el("button", "kb-btn kb-btn-small", "Thoát "); ex.appendChild(el("span", "kb-key", "Esc")); t.appendChild(ex);
+  panel.appendChild(t);
+  const info = el("div", "kb-p-info");
+  info.textContent = tab === "month" ? "Mỗi ngày ôn nở một bông hoa — ôn càng nhiều hoa càng to. Bấm một ngày để xem và viết nhật ký."
+    : tab === "year" ? "Cả năm trong một trang. Dải màu dưới tên tháng là giao diện mùa của tháng đó."
+    : "Hết tháng, các ngày tự đóng thành một cuốn. Cuốn cũ nằm trên Kệ sách trong nhà.";
+  panel.appendChild(info);
+}
+const panel = document.getElementById("panel");
+
+// ======================= THÁNG =======================
+function month() {
+  panelTop(panel, "month", [["Chuỗi", "12 ngày"], ["Tháng này", "21 ngày ôn"]]);
+  const body = el("div", "kb-cal-body");
+  const L = el("div", "kb-cal-left");
+  const nav = el("div", "kb-cal-nav");
+  nav.appendChild(el("button", "kb-btn kb-btn-small", "◂"));
+  nav.appendChild(el("div", "kb-cal-month", "Tháng 11 · 2026"));
+  nav.appendChild(el("button", "kb-btn kb-btn-small", "▸"));
+  L.appendChild(nav);
+  const bands = el("div", "kb-cal-bands");
+  [["momiji", "1/11 – 10/12", 1], ["xmas", "15/11 – 31/12 (ưu tiên hơn lá đỏ)", 1]].forEach((b) => {
+    const r = el("div", "kb-cal-band"); const i = el("i"); i.style.background = THEME[b[0]].c; i.style.width = "28px";
+    r.appendChild(i); r.appendChild(el("b", null, THEME[b[0]].name)); r.appendChild(el("span", null, b[1])); bands.appendChild(r);
+  });
+  L.appendChild(bands);
+  L.appendChild(el("div", "kb-cal-next", "Sắp tới: お正月 1/1 · Tết 16/1 – 20/2/2027 (theo âm lịch)"));
+  const g = el("div", "kb-cal-grid");
+  ["T2", "T3", "T4", "T5", "T6", "T7", "CN"].forEach((d) => g.appendChild(el("div", "kb-cal-wd", d)));
+  const R = rnd(11), today = 24, sel = 23;
+  const stk = { 2: "vui", 3: "met", 5: "ban", 8: "thu_thai", 10: "vui", 13: "hao_hung", 15: "buon", 17: "vui", 19: "ban", 20: "om", 22: "thu_thai", 23: "vui", 24: "binh_thuong" };
+  const notes = [2, 3, 8, 10, 13, 15, 17, 20, 22, 23];
+  for (let i = 0; i < 6; i++) { g.appendChild(el("div", "kb-cal-day is-empty")); }   // 1/11/2026 là Chủ nhật
+  for (let d = 1; d <= 30; d++) {
+    const c = el("div", "kb-cal-day" + (d > today ? " is-future" : "") + (d === today ? " is-today" : "") + (d === sel ? " is-sel" : ""));
+    c.appendChild(el("span", "kb-cal-num", String(d)));
+    const theme = d >= 15 ? "xmas" : "momiji";
+    if (d <= today) {
+      const n = [6, 12, 20].indexOf(d) >= 0 ? 0 : Math.floor(R() * 90);
+      c.appendChild(flower(lvlOf(n), theme, 4));
+      c.title = n + " lượt ôn";
+      if (stk[d]) { const s = face(stk[d], 2); s.className = "kb-cal-stk"; c.appendChild(s); }
+      if (notes.indexOf(d) >= 0) { c.appendChild(el("i", "kb-cal-dot")); }
+    }
+    const st = el("i", "kb-cal-strip"); st.style.background = THEME[theme].c; c.appendChild(st);
+    g.appendChild(c);
+  }
+  L.appendChild(g);
+  const lg = el("div", "kb-cal-legend");
+  lg.appendChild(el("span", null, "Ít"));
+  [0, 1, 2, 3, 4].forEach((l) => lg.appendChild(flower(l, "xmas", 2)));
+  lg.appendChild(el("span", null, "Nhiều"));
+  lg.appendChild(el("span", "sp"));
+  const dot = el("i", "kb-cal-dot"); dot.style.position = "static"; lg.appendChild(dot);
+  lg.appendChild(el("span", null, "có nhật ký"));
+  L.appendChild(lg);
+  body.appendChild(L);
+
+  // ---- khung ngày ----
+  const Rt = el("div", "kb-cal-right");
+  const c1 = el("div", "kb-cal-card");
+  const h1 = el("div", "kb-cal-h"); h1.appendChild(el("span", null, "Thứ Hai, 23/11/2026"));
+  const tg = el("span", "kb-p-tag", "Giáng sinh"); tg.style.background = "#c8f0e8"; h1.appendChild(tg);
+  c1.appendChild(h1);
+  const stats = el("div", "kb-cal-stats");
+  [["Ôn", "47 lượt · 12 thẻ mới"], ["Lên Ra quả", "3 từ: 予約する · 天気 · 図書館"], ["Báo", "đọc số 23 · chép đúng 4 / 5 câu"]].forEach((x) => { stats.appendChild(el("span", null, x[0])); stats.appendChild(el("span", null, x[1])); });
+  c1.appendChild(stats);
+  Rt.appendChild(c1);
+
+  const c2 = el("div", "kb-cal-card");
+  const h2 = el("div", "kb-cal-h"); h2.appendChild(el("span", null, "Nhật ký")); h2.appendChild(el("small", null, "chỉ mình bạn đọc · không gửi cho Gemini"));
+  c2.appendChild(h2);
+  const sr = el("div", "kb-cal-stk-row");
+  Object.keys(FACE).forEach((k) => { const b = el("button", "kb-cal-stk-b" + (k === "vui" ? " is-on" : "")); b.title = FACE_NAME[k]; b.appendChild(face(k, 3)); sr.appendChild(b); });
+  c2.appendChild(sr);
+  const inp = el("input", "kb-cal-in"); inp.value = "Trời lạnh, ôn ở quán cà phê. Cuối cùng cũng nhớ được 予約 rồi!"; c2.appendChild(inp);
+  const m2 = el("div", "kb-cal-meta"); m2.appendChild(el("span", null, "Hôm nay: Vui")); m2.appendChild(el("span", null, "58 / 300")); c2.appendChild(m2);
+  Rt.appendChild(c2);
+
+  const c3 = el("div", "kb-cal-card");
+  const h3 = el("div", "kb-cal-h"); h3.appendChild(el("span", null, "Luyện viết")); h3.appendChild(el("small", null, "tiếng Nhật · 1–3 câu"));
+  c3.appendChild(h3);
+  const hint = el("div", "kb-cal-hint"); hint.appendChild(el("span", null, "Thử dùng:"));
+  ["予約する", "寒い"].forEach((w) => hint.appendChild(el("span", "kb-cal-word", w)));
+  hint.appendChild(el("button", "kb-btn kb-btn-small", "Đổi gợi ý"));
+  c3.appendChild(hint);
+  const ta = el("div", "kb-cal-in kb-cal-ta", "きのう、レストランを予約しました。とても寒いでした。"); c3.appendChild(ta);
+  const fx = el("div", "kb-cal-fix");
+  fx.appendChild(el("b", null, "Gemini sửa:"));
+  const jp = el("div", "jp"); jp.innerHTML = "きのう、レストランを<u>予約</u>しました。とても<mark>寒かったです</mark>。"; fx.appendChild(jp);
+  fx.appendChild(el("div", "old", "とても寒いでした。"));
+  fx.appendChild(el("div", "why", "Tính từ đuôi い: quá khứ là 寒かった(です), không dùng 寒いでした."));
+  c3.appendChild(fx);
+  const acts = el("div", "kb-cal-acts");
+  acts.appendChild(el("button", "kb-btn kb-btn-small kb-ai-main", "Nhờ Gemini sửa"));
+  acts.appendChild(el("button", "kb-btn kb-btn-small", "Lưu"));
+  acts.appendChild(el("span", "kb-cal-lock", "Câu gửi cho Gemini để sửa"));
+  c3.appendChild(acts);
+  Rt.appendChild(c3);
+  body.appendChild(Rt);
+  panel.appendChild(body);
+}
+
+// ======================= NĂM =======================
+const SEG = [
+  [["oshogatsu", 15], ["winter", 11], ["tet", 5]], [["tet", 28]], [["tet", 3], ["spring", 16], ["hanami", 12]], [["hanami", 15], ["spring", 15]],
+  [["spring", 31]], [["tsuyu", 24], ["tanabata", 6]], [["tanabata", 7], ["tsuyu", 3], ["summer", 4], ["natsu", 17]], [["natsu", 31]],
+  [["autumn", 10], ["tsukimi", 18], ["autumn", 2]], [["halloween", 31]], [["momiji", 14], ["xmas", 16]], [["xmas", 31]],
+];
+const LV_COL = ["#e8dfc4", "#b8e0a8", "#6fcf87", "#2fa85a", "#17713a"];
+function year() {
+  panelTop(panel, "year", [["Chuỗi", "12 ngày"], ["Dài nhất", "41 ngày"]]);
+  const nav = el("div", "kb-cal-nav");
+  nav.appendChild(el("button", "kb-btn kb-btn-small", "◂"));
+  nav.appendChild(el("div", "kb-cal-month", "Năm 2026"));
+  nav.appendChild(el("button", "kb-btn kb-btn-small", "▸"));
+  panel.appendChild(nav);
+  const sum = el("div", "kb-cal-sum");
+  [["Ngày ôn", "271"], ["Lượt ôn", "12.430"], ["Từ ra quả mới", "1.120"], ["Nhật ký", "198 ngày"], ["Hay gặp nhất", "Vui · 82 ngày"]].forEach((x) => {
+    const c = el("div", "kb-g-chip"); c.appendChild(el("span", "kb-g-chip-l", x[0])); c.appendChild(el("b", null, x[1])); sum.appendChild(c);
+  });
+  panel.appendChild(sum);
+  const grid = el("div", "kb-cal-year");
+  const R = rnd(7);
+  const dim = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  const start = [3, 6, 6, 2, 4, 0, 2, 5, 1, 3, 6, 1];   // thứ của ngày 1 (T2 = 0) năm 2026
+  for (let m = 0; m < 12; m++) {
+    const box = el("div", "kb-cal-mini" + (m === 10 ? " is-now" : ""));
+    const h = el("div", "kb-cal-mini-h"); h.appendChild(el("b", null, "Th " + (m + 1)));
+    let cnt = 0;
+    const days = [];
+    for (let d = 1; d <= dim[m]; d++) {
+      const future = m > 10 || (m === 10 && d > 24);
+      const n = future ? -1 : (R() < 0.18 ? 0 : Math.floor(R() * 95));
+      if (n > 0) { cnt++; }
+      days.push(n);
+    }
+    h.appendChild(el("small", null, m > 10 ? "" : cnt + " ngày"));
+    box.appendChild(h);
+    const strip = el("div", "kb-cal-mini-strip");
+    SEG[m].forEach((s) => { const i = el("i"); i.style.flex = String(s[1]); i.style.background = THEME[s[0]].c; i.title = THEME[s[0]].name; strip.appendChild(i); });
+    box.appendChild(strip);
+    const mg = el("div", "kb-cal-mini-grid");
+    for (let i = 0; i < start[m]; i++) { mg.appendChild(el("b")); }
+    days.forEach((n) => { const b = el("b"); b.style.background = n < 0 ? "#f4f1e4" : LV_COL[lvlOf(n)]; if (n >= 0) { b.style.outline = "1px solid #1b1b2f22"; } mg.appendChild(b); });
+    box.appendChild(mg);
+    grid.appendChild(box);
+  }
+  panel.appendChild(grid);
+  const lg = el("div", "kb-cal-ylegend");
+  const sp0 = el("span"); sp0.appendChild(document.createTextNode("Ít ")); LV_COL.forEach((c) => { const i = el("i"); i.style.background = c; sp0.appendChild(i); }); sp0.appendChild(document.createTextNode(" Nhiều")); lg.appendChild(sp0);
+  ["oshogatsu", "tet", "hanami", "tsuyu", "natsu", "tsukimi", "halloween", "momiji", "xmas"].forEach((k) => { const s = el("span"); const i = el("i"); i.style.background = THEME[k].c; s.appendChild(i); s.appendChild(document.createTextNode(THEME[k].name)); lg.appendChild(s); });
+  panel.appendChild(lg);
+}
+
+// ======================= CUỐN NHẬT KÝ =======================
+function cover() {
+  const W = 120, H = 56, S = 3;
+  const cv = document.createElement("canvas"); cv.width = W * S; cv.height = H * S; cv.className = "kb-page-cover";
+  const x = cv.getContext("2d");
+  const r = (a, b, w, h, c) => { x.fillStyle = c; x.fillRect(a * S, b * S, w * S, h * S); };
+  for (let y = 0; y < 30; y++) { r(0, y, W, 1, y < 10 ? "#2c2550" : y < 20 ? "#4b3a7a" : "#7a4f8f"); }
+  r(92, 6, 8, 8, "#fff3c4"); r(94, 6, 6, 6, "#ffe9a8");
+  [[8, 4], [30, 9], [55, 3], [70, 12], [110, 8]].forEach((p) => r(p[0], p[1], 1, 1, "#ffffff"));
+  for (let i = 0; i < W; i += 1) { const hh = 22 + Math.round(3 * Math.sin(i / 9)); r(i, hh, 1, 30 - hh, "#3c2f5c"); }
+  r(0, 30, W, 26, "#5a8a3c");
+  for (let row = 0; row < 3; row++) { r(6, 34 + row * 7, W - 12, 3, "#7a5a3a"); for (let k = 0; k < 13; k++) { r(10 + k * 8, 32 + row * 7, 2, 3, "#3aa655"); if ((k + row) % 3 === 0) { r(9 + k * 8, 30 + row * 7, 4, 3, "#ff9f1c"); r(10 + k * 8, 29 + row * 7, 2, 1, "#2a6d2a"); } } }
+  r(14, 22, 10, 8, "#c97c3a"); r(13, 21, 12, 2, "#7b2cbf"); r(17, 25, 3, 5, "#3a2a1a");   // nhà
+  r(100, 40, 8, 7, "#ff9f1c"); r(103, 39, 2, 1, "#2a6d2a"); r(101, 42, 2, 2, "#3a2a1a"); r(105, 42, 2, 2, "#3a2a1a");   // bí ngô
+  return cv;
+}
+function book() {
+  panelTop(panel, "book", [["Đã có", "11 cuốn"]]);
+  const wrap = el("div", "kb-book-wrap");
+  const shelf = el("div", "kb-shelf");
+  shelf.appendChild(el("div", "kb-shelf-h", "Kệ sách"));
+  [[["Th 7", "#ef476f"], ["Th 8", "#ef476f"], ["Th 9", "#f4a261"], ["Th 10", "#7b2cbf"]], [["Năm 2025", "#ffd23f"], ["Th 5", "#ffb7c5"], ["Th 6", "#6c8ebf"]]].forEach((row) => {
+    const r = el("div", "kb-shelf-row");
+    row.forEach((b, i) => { const s = el("div", "kb-spine" + (b[0] === "Th 10" ? " is-on" : ""), b[0]); s.style.background = b[1]; s.style.height = (70 + (i % 2) * 12 + (b[0].length > 5 ? 10 : 0)) + "px"; if (b[0].length > 5) { s.style.width = "30px"; } r.appendChild(s); });
+    shelf.appendChild(r);
+  });
+  wrap.appendChild(shelf);
+  const right = el("div"); right.style.flex = "1";
+  const bk = el("div", "kb-book");
+  const p1 = el("div", "kb-page");
+  p1.appendChild(el("div", "kb-page-t", "Tháng 10 · 2026"));
+  p1.appendChild(el("div", "kb-page-sub", "Giao diện mùa: Halloween · ảnh vườn chụp ngày 25/10"));
+  p1.appendChild(cover());
+  const st = el("div", "kb-page-stats");
+  [["Ngày ôn", "27 / 31"], ["Lượt ôn", "1.284"], ["Từ ra quả mới", "96"], ["Ngày ôn nhiều nhất", "18/10 · 132"], ["Nhật ký", "22 ngày"], ["Luyện viết", "14 bài · 31 câu"]].forEach((x) => {
+    const d = el("div"); d.appendChild(el("div", "kb-page-sub", x[0])); d.appendChild(el("b", null, x[1])); st.appendChild(d);
+  });
+  p1.appendChild(st);
+  const mood = el("div", "kb-cal-hint"); mood.appendChild(el("span", null, "Tâm trạng tháng này:"));
+  [["vui", 9], ["thu_thai", 6], ["ban", 4], ["met", 3]].forEach((m) => { const s = el("span", "kb-cal-hint"); s.appendChild(face(m[0], 2)); s.appendChild(document.createTextNode("×" + m[1])); mood.appendChild(s); });
+  p1.appendChild(mood);
+  const f1 = el("div", "kb-page-foot"); f1.appendChild(el("span", null, "ことば畑")); f1.appendChild(el("span", null, "1")); p1.appendChild(f1);
+  bk.appendChild(p1);
+  const p2 = el("div", "kb-page");
+  const E = [
+    ["01 T5", 3, "vui", "Ngày đầu tháng, vườn treo đèn bí ngô rồi."],
+    ["02 T6", 2, "ban", "Bận làm, chỉ kịp ôn trên điện thoại.", "電車で単語を覚えました。"],
+    ["03 T7", 4, "hao_hung", "Lên N4 bài 29! Kính ngữ khó mà vui.", "先生がお話しになりました。"],
+    ["04 CN", 0, "", ""],
+    ["05 T2", 3, "met", "Mệt nhưng vẫn tưới hết cây khát."],
+    ["06 T3", 3, "thu_thai", "Trời mát, đọc báo số 15 ở ban công.", "公園でゆっくり新聞を読みました。"],
+    ["07 T4", 2, "vui", "Chép đúng cả 5 câu."],
+  ];
+  E.forEach((e) => {
+    const r = el("div", "kb-entry");
+    r.appendChild(el("span", "d", e[0]));
+    r.appendChild(flower(e[1], "halloween", 2));
+    if (e[2]) { r.appendChild(face(e[2], 2)); } else { r.appendChild(el("span")); }
+    const t = el("div", "txt", e[3] || "—");
+    if (!e[3]) { t.style.color = "#8a8aa0"; }
+    if (e[4]) { t.appendChild(el("span", "wr", "✎ " + e[4])); }
+    r.appendChild(t);
+    p2.appendChild(r);
+  });
+  const f2 = el("div", "kb-page-foot"); f2.appendChild(el("span", null, "1–7 / 10")); f2.appendChild(el("span", null, "2")); p2.appendChild(f2);
+  bk.appendChild(p2);
+  right.appendChild(bk);
+  const acts = el("div", "kb-book-acts");
+  ["◂ Trang trước", "Trang sau ▸", "Xuất PDF"].forEach((t) => acts.appendChild(el("button", "kb-btn kb-btn-small", t)));
+  right.appendChild(acts);
+  wrap.appendChild(right);
+  panel.appendChild(wrap);
+}
+({ month, year, book })[V]();
+</script>
+</body>
+</html>

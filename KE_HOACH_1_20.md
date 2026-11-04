@@ -1,6 +1,7 @@
 # Kế hoạch 1.20: Lịch hoa, nhật ký, khách ghé vườn, tự vẽ giống cây, chia sẻ thiết kế, chụp ảnh vườn
 
 > **Trạng thái: CHƯA LÀM.** Viết 04/11/2026 sau khi xong 1.19.1, từ buổi người dùng và Claude cùng nghĩ ý (brainstorm). Làm xong thì **xoá file này**, dòng trỏ tới nó ở `README.md` mục 0 và dòng `!/KE_HOACH_1_20.md` trong `.gitignore`. Làm dở thì cập nhật mục 8 "Tiến độ" rồi mới commit.
+> **Bản mẫu giao diện** (người dùng đã xem 04/11): `KE_HOACH_1_20_mau.html` — mở bằng trình duyệt sau khi chép `garden.css` của gói (`tests/tools/unpack.sh` → `/tmp/kb_src/kotoba_batake/web/garden.css`) vào cạnh file; `?v=month` (Lịch hoa tháng + khung ngày: Nhật ký / Luyện viết), `?v=year` (cả năm), `?v=book` (Cuốn nhật ký + Kệ sách). Xoá cùng file kế hoạch khi làm xong.
 > Cách làm việc, môi trường, test: như `README.md` mục 8 và `tests/README.md` (giải nén gói → sửa → test offline + Anki thật → đóng gói).
 
 ---
@@ -85,7 +86,7 @@
 
 ## 7. Câu cần hỏi người dùng khi làm (mỗi lần một câu)
 
-1. Nhật ký / luyện viết có **đồng bộ AnkiWeb** không? (Lưu trong collection thì có trên mọi máy nhưng nội dung riêng tư nằm trên máy chủ AnkiWeb; lưu ở `user_files/` thì chỉ máy này.) Claude đề nghị: đồng bộ, có ghi rõ ở giao diện; khoá theo năm `kotoba_batake_journal_<năm>` cho nhỏ.
+1. ~~Nhật ký / luyện viết có đồng bộ AnkiWeb không?~~ **Đã chốt 04/11: đồng bộ** — lưu trong collection, khoá theo năm `kotoba_batake_journal_<năm>` (cho nhỏ; bản cũ không đụng khoá lạ), ghi rõ ở giao diện "đồng bộ qua AnkiWeb". Sao lưu `user_files/journal_<năm>.json` như các khoá khác.
 2. Luyện viết có xu không?
 3. Cuốn nhật ký: chỉ đọc trong add-on, hay thêm xuất PDF / HTML?
 4. Giao diện mùa: giữ mua một lần + đồ dùng một mùa (mục 0)?
@@ -99,7 +100,8 @@
 
 Mỗi phần: test offline (dữ liệu, làm sạch, bản cũ lưu đè không mất khoá mới — như `test_1191.py`) + kịch bản Anki thật + `audit.js` (thêm màn mới) + ảnh trước / sau.
 
-- [ ] Hỏi câu 7.1 (đồng bộ nhật ký)
+- [x] Hỏi câu 7.1 (đồng bộ nhật ký) — đồng bộ
+- [x] Bản mẫu giao diện Lịch hoa / Nhật ký / Cuốn nhật ký (`KE_HOACH_1_20_mau.html`)
 - [ ] Lịch hoa
 - [ ] Nhật ký + sticker
 - [ ] Luyện viết
