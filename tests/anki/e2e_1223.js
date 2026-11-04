@@ -2,6 +2,7 @@
 // "lúc chọn 5 deck thì thanh kéo lại nhảy về cái deck đầu tiên"; "tất cả nên có nút tìm kiếm deck"):
 // - dán khoá lần đầu → Thử khoá đúng → KHÔNG tự viết (cả khi vườn làm mới / mở lại), có khối "Bước 3 · Bắt đầu viết";
 //   bấm "Bắt đầu viết" mới viết; đổi khoá khi đã có khoá thì như cũ; Xoá khoá rồi dán lại thì lại chờ;
+// - 1.22.4: đang có báo tiếng Nhật, tick thêm Tiếng Anh → báo tiếng Anh chờ (khối "Vừa bật Báo tiếng Anh"), bấm mới viết;
 // - Nguồn báo → Chọn deck (24 deck): cuộn xuống tick một deck → danh sách giữ nguyên vị trí; ô tìm deck (bỏ dấu, "::")
 //   lọc đúng, tick khi đang lọc vẫn giữ chữ tìm + bộ lọc, Esc xoá chữ tìm;
 // - thanh trên: nút kính lúp / phím / → bảng tìm deck, gõ → lọc, ↑ ↓ Enter → đổi deck, Esc chỉ đóng bảng (vườn vẫn mở);
@@ -58,7 +59,10 @@ for i in range(15, 39):
     col.add_note(n, did)
 kb.save_config(gemini_key="", gemini_auto=True)
 kb._kb_starts = []
+kb._kb_done = set()          # báo coi như hôm nay đã có số (ai_start trả False như thật)
 def _fake_start(reason, dialog=None, lang="ja"):
+    if lang in kb._kb_done:
+        return False
     kb._kb_starts.append([reason, lang])
     return True
 kb.ai_start = _fake_start
@@ -135,6 +139,40 @@ result = 1`);
   ok(await py(KB + 'result = not kb.config().get("gemini_wait_start")'), 'bỏ cờ chờ: từ giờ tự viết như cũ');
   await py(KB + 'kb._kb_starts.clear(); kb.ai_start_all("auto"); result = 1');
   ok((await starts()).length >= 1, 'sau đó vườn mở lại thì tự viết bình thường');
+
+  console.log('== 1.22.4: đang có báo tiếng Nhật, tick thêm Tiếng Anh → chờ bấm "Bắt đầu viết"');
+  // người dùng: "lúc đang chọn tiếng Nhật, chuyển qua Tiếng Anh, thì nó cũng tự động viết báo luôn, không chờ cấu hình gì cả"
+  const tick = (name) => js(`const l = Array.from(document.querySelectorAll(".kb-ai-want .kb-ai-tick")).find((x) => x.textContent.trim() === ${JSON.stringify(name)});
+    l.querySelector("input").click(); return 1;`);
+  const langsNow = () => py(KB + 'result = kb.config().get("gemini_langs")');
+  await js('GardenPaper.open("src"); return 1;'); await sleep(800);
+  await tick('Tiếng Anh');
+  const off = await (async () => { for (let k = 0; k < 30; k++) { const l = await langsNow(); if (JSON.stringify(l) === '["ja"]') return true; await sleep(200); } return false; })();
+  ok(off, 'bỏ tick Tiếng Anh → chỉ còn báo tiếng Nhật');
+  await py(KB + 'kb._kb_done = {"ja"}; kb._kb_starts.clear(); result = 1');      // báo tiếng Nhật hôm nay đã có
+  await sleep(600);
+  await tick('Tiếng Anh');
+  const on = await (async () => { for (let k = 0; k < 30; k++) { const l = await langsNow(); if (JSON.stringify(l) === '["ja","en"]') return true; await sleep(200); } return false; })();
+  await sleep(1500);
+  ok(on && (await starts()).length === 0, 'tick thêm Tiếng Anh → KHÔNG tự viết báo tiếng Anh (' + JSON.stringify(await starts()) + ')');
+  ok(JSON.stringify(await py(KB + 'result = kb.config().get("gemini_wait_langs")')) === '["en"]' && !(await py(KB + 'result = kb.config().get("gemini_wait_start")')),
+    'chỉ báo tiếng Anh chờ (gemini_wait_langs = ["en"])');
+  const blk = await waitFor('(() => { const b = document.querySelector(".kb-ai-start"); return b ? b.textContent : ""; })()', 5000);
+  ok(/Vừa bật Báo tiếng Anh/.test(blk || '') && /Bắt đầu viết/.test(blk || ''), 'khối "Vừa bật Báo tiếng Anh · … Bắt đầu viết"');
+  const rows2 = await js('return Array.from(document.querySelectorAll(".kb-ai-lang")).map((b) => { const r = Array.from(b.querySelectorAll(".kb-ai-row")).find((x) => /Hôm nay/.test(x.textContent)); return [b.querySelector(".kb-ai-lang-h b").textContent, r ? r.textContent : ""]; });');
+  const en = rows2.find((r) => /Anh/.test(r[0])), ja = rows2.find((r) => /Nhật/.test(r[0]));
+  ok(en && /chờ bấm/.test(en[1]) && ja && !/chờ bấm/.test(ja[1]), 'báo tiếng Anh "chờ bấm", báo tiếng Nhật vẫn như cũ');
+  await measure('them_tieng_anh');
+  await py(KB + 'kb._dialog.refresh(); kb.ai_start_all("auto"); result = 1'); await sleep(1200);
+  ok((await starts()).length === 0, 'vườn làm mới / tự viết: vẫn không viết báo tiếng Anh');
+  await js('Array.from(document.querySelectorAll(".kb-ai-lang")).find((b) => /Anh/.test(b.querySelector(".kb-ai-lang-h b").textContent)).querySelectorAll(".kb-ai-chip")[0].click(); return 1;');
+  await sleep(500);
+  ok((await starts()).length === 0, 'đổi trình độ báo tiếng Anh: vẫn chờ');
+  await js('document.querySelector(".kb-ai-start button").click(); return 1;');
+  ok(await waitFor('!document.querySelector(".kb-ai-start")', 5000), 'bấm "Bắt đầu viết" → khối biến mất');
+  ok(JSON.stringify(await starts()) === '[["manual","en"]]', 'bấm "Bắt đầu viết" → viết báo tiếng Anh (' + JSON.stringify(await starts()) + ')');
+  ok(JSON.stringify(await py(KB + 'result = kb.config().get("gemini_wait_langs")')) === '[]', 'hết chờ');
+  await py(KB + 'kb._kb_done = set(); kb._kb_starts.clear(); result = 1');
   // đổi khoá khi đã có khoá: không chờ
   await js('Array.from(document.querySelectorAll("button")).find((x) => x.textContent === "Đổi khoá").click(); return 1;'); await sleep(400);
   await js(`const i = document.querySelector(".kb-ai-key"); i.value = "AIzaSy" + "D3m0K3yF0rT3st1ngOnly-abcdefghi";
