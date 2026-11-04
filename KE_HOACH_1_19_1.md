@@ -59,6 +59,7 @@ Có ba phần, làm theo thứ tự A → B → C. Mỗi phần một commit, ch
 
 - **Báo không còn phụ thuộc deck đang xem.** Người dùng tick ngôn ngữ muốn nhận: ☑ Tiếng Nhật (mặc định) ☐ Tiếng Anh. Mỗi sáng viết **một số cho mỗi ngôn ngữ đã tick**.
 - **Chọn deck lấy từ vựng**: tối đa **5 deck** cho mỗi ngôn ngữ, mỗi số dùng **100 note**. Không chọn deck thì lấy **ngẫu nhiên** trong mọi deck cùng ngôn ngữ.
+- **Tỉ lệ (người dùng chốt 04/11): khoảng 70% từ chưa thuộc, 30% từ đã thuộc** (100 từ → 70 + 30), trong mỗi nhóm chọn ngẫu nhiên.
 - Trình độ vẫn là ô chọn riêng cho từng ngôn ngữ (N4 / A2…).
 
 ### 2.3 Trả lời "có cần quy định deck nào thuộc ngôn ngữ nào không"
@@ -76,7 +77,13 @@ Có ba phần, làm theo thứ tự A → B → C. Mỗi phần một commit, ch
 - **Phạm vi (từ vựng gửi Gemini)**: hàm mới, ví dụ `scope_notes(col, lang, deck_ids, limit=100, seed=ngày)` trong `garden_core.py` hoặc module riêng. Đọc thẳng từ collection (không qua `build_garden`, không bị giới hạn 400 cây, không phụ thuộc deck đang xem).
   - Lấy note thuộc loại note đúng `lang`, trong các deck đã chọn (kể cả deck con); không chọn deck thì lấy mọi deck.
   - Chỉ lấy note "đã học" (có thẻ đã ôn ≥ 1 lần / có trạng thái FSRS). Chưa đủ 30 thì thêm note mới, giống `scope_from_plants` hiện nay.
-  - Chọn 100 note bằng ngẫu nhiên có hạt giống theo ngày (cùng ngày thử lại thì ra cùng danh sách). Chọn 5 deck thì chia đều (mỗi deck 20, deck thiếu thì bù từ deck khác). Phần ưu tiên: xem câu hỏi mở ở 2.5.
+  - Chọn 100 note theo tỉ lệ **70% chưa thuộc / 30% đã thuộc**, ngẫu nhiên có hạt giống theo ngày (cùng ngày thử lại thì ra cùng danh sách). Chọn 5 deck thì chia đều (mỗi deck 20, deck thiếu thì bù từ deck khác).
+  - **Thuộc / chưa thuộc** tính theo giai đoạn cây (độ bền FSRS, `stage_days` = [3, 21, 90]):
+    - **Chưa thuộc**: cây Mầm / Cây non (độ bền < 21 ngày), cộng mọi cây đang héo hoặc khát dù đã lớn (sắp quên), cộng từ chép sai 14 ngày gần đây.
+    - **Đã thuộc**: cây Ra hoa / Ra quả (≥ 21 ngày) và không héo, không khát.
+    - Hạt giống (thẻ chưa ôn lần nào) không tính là từ đã học; chỉ dùng khi tổng từ đã học < 30, như hiện nay.
+  - Trong nhóm chưa thuộc, lấy trước cây héo / khát và từ chép sai (tối đa khoảng một nửa của 70), phần còn lại ngẫu nhiên. Đánh dấu nhóm này là "từ trọng tâm" trong lời nhắc (như `trong_tam.tu` hiện nay).
+  - Một nhóm không đủ thì lấy bù từ nhóm kia (vd. mới học, gần như chưa có từ đã thuộc → 100 từ chưa thuộc).
   - Giữ thêm danh sách **mọi từ đã học** của ngôn ngữ đó (chỉ chữ + cách đọc + nghĩa, tối đa khoảng 3000) để:
     - kiểm tra (`check` tiếng Nhật: từ trong `{..|..|..}` phải đã học, `_deck_readings`, `hard_kanji`);
     - máy nối tra từ (tiếng Anh `LinkIndex`; tiếng Nhật `link_index`);
@@ -100,7 +107,7 @@ Có ba phần, làm theo thứ tự A → B → C. Mỗi phần một commit, ch
 
 ### 2.5 Câu hỏi còn mở (hỏi người dùng đầu phiên, trước khi code)
 
-1. **"Ngẫu nhiên" là ngẫu nhiên hoàn toàn, hay có ưu tiên?** Đề xuất: khoảng 30 từ đầu ưu tiên từ sắp quên / mới học / chép sai, còn khoảng 70 từ ngẫu nhiên. Có ưu tiên thì báo giúp ôn đúng chỗ yếu, còn ngẫu nhiên hoàn toàn thì dễ toàn từ đã thuộc.
+1. ~~"Ngẫu nhiên" là ngẫu nhiên hoàn toàn, hay có ưu tiên?~~ **Đã chốt 04/11: 70% từ chưa thuộc, 30% từ đã thuộc** (xem 2.4). Còn nên xác nhận lại với người dùng: cách hiểu "thuộc" = cây Ra hoa / Ra quả (≥ 21 ngày) và không héo có đúng ý không.
 2. **"100 note" là tổng mỗi số báo**, hay mỗi deck? Ghi ở trên đang hiểu là tổng.
 3. Khi chọn deck mà deck đó chỉ có vài từ đã học (< 30) thì có bù thêm từ deck khác cùng ngôn ngữ không. Đề xuất: không bù, chỉ cảnh báo "deck này mới có N từ đã học".
 
@@ -206,7 +213,7 @@ Có ba phần, làm theo thứ tự A → B → C. Mỗi phần một commit, ch
 
 ## 6. Tiến độ
 
-- [ ] Hỏi người dùng các câu ở 2.5 + bảng thuật ngữ 4.1
+- [ ] Hỏi người dùng các câu còn lại ở 2.5 (câu 1 đã chốt: 70% chưa thuộc / 30% đã thuộc) + bảng thuật ngữ 4.1
 - [ ] Phần A — báo theo ô tick "Báo muốn nhận", chọn tối đa 5 deck / 100 note, bỏ phụ thuộc deck đang xem
 - [ ] Phần B — nút chọn đều nhau, `audit.js` đo kiểu lệch, soát mọi màn
 - [ ] Phần C — chữ đơn giản, thống nhất thuật ngữ, bỏ diễn giải thừa
