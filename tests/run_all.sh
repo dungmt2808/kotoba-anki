@@ -20,9 +20,15 @@ if "${ANKI_PY:-python3}" -c "import anki.collection" 2>/dev/null; then
   echo "== core/test_117.py"
   OUT=$("${ANKI_PY:-python3}" "$HERE/core/test_117.py" "$ADDON" ${OLD116:+"$OLD116"} 2>&1); RC=$?
   echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
+  echo "== core/test_118.py"
+  OUT=$("${ANKI_PY:-python3}" "$HERE/core/test_118.py" "$ADDON" 2>&1); RC=$?
+  echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
 else
-  echo "– bỏ qua core/test_dict.py, core/test_117.py (cần gói anki: ANKI_PY=<python có anki==26.9.3>)"
+  echo "– bỏ qua core/test_dict.py, core/test_117.py, core/test_118.py (cần gói anki: ANKI_PY=<python có anki==26.9.3>)"
 fi
+echo "== core/test_music.js"
+OUT=$(node "$HERE/core/test_music.js" "$ADDON" 2>&1); RC=$?
+echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
 for f in "$ADDON"/web/*.js; do node --check "$f" || FAIL=1; done
 [ $FAIL = 0 ] && echo "TỔNG: TẤT CẢ OK" || echo "TỔNG: CÓ LỖI"
 exit $FAIL
