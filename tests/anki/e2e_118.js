@@ -136,7 +136,7 @@ result = 1`);
   await page.shot(SHOTS + '/82_xem_thu_nhac.png');
   ok(await clickTry('Mùa đông') === 'Xem thử', 'chủ đề đã mở mà chưa dùng cũng có nút Xem thử');
   ok(await waitFor(page, 'GardenMusic._state().playing === "winter"', 6000), 'Xem thử Mùa đông → nhạc Mùa đông');
-  ok(await clickTry('Mùa đông') === 'Thôi xem thử', 'bấm lần nữa = Thôi xem thử');
+  ok(await clickTry('Mùa đông') === 'Dừng xem thử', 'bấm lần nữa = Dừng xem thử');
   ok(await waitFor(page, 'GardenMusic._state().playing === "home"', 6000), 'thôi xem thử → lại hộp nhạc của nhà');
   const useRow = await page.eval(W(`const card = Array.from(document.querySelectorAll(".kb-h-theme")).find(c => c.querySelector(".kb-h-name").textContent.indexOf("Mùa thu") >= 0);
     return Array.from(card.querySelectorAll("button")).map(b => b.textContent);`));
