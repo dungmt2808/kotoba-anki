@@ -104,6 +104,14 @@ Có ba phần, làm theo thứ tự A → B → C. Mỗi phần một commit, ch
   - Chọn deck: danh sách có ô tick (chỉ các deck có note của ngôn ngữ đó, kèm số note); tick tới 5 thì khoá các ô còn lại.
   - Nhật ký "Gemini đã viết và tự sửa những gì" cho từng ngôn ngữ (đã tách thư mục). Giọng đọc: một ô giọng chung là đủ (bỏ `gemini_voice_en` khỏi giao diện nhưng vẫn đọc config cũ).
 - **Lượt Chép chính tả hằng ngày**: giữ nguyên.
+- **Từ không liên quan nhau vẫn thành bài tự nhiên** (người dùng hỏi "từ không liên quan thì có thành câu chuyện được không, ví dụ đếm…", đồng ý cách dưới đây ngày 04/11):
+  - Gemini **không phải dùng hết 100 từ**: 100 từ chỉ là kho để chọn. Một số báo N4 / A2 chứa tự nhiên được khoảng 15–25 từ đã học (số thật ngày 04/11: tiếng Nhật dùng 25 / 1665 từ, tiếng Anh khoảng 24 / 167 từ).
+  - Trong 70 từ chưa thuộc, chỉ đánh dấu **khoảng 20 từ trọng tâm** (ngẫu nhiên theo ngày). Lời nhắc dặn: "dùng được bao nhiêu thì dùng, tối thiểu khoảng 8 từ, từ nào không hợp thì bỏ — đừng ép câu".
+  - Dặn Gemini **chọn chủ đề của số báo theo nhóm từ trọng tâm** (nhìn danh sách, chọn tình huống mà nhiều từ hợp nhau). Gợi ý xếp loại từ vào bài hợp: số đếm / giờ / ngày / giá / số lượng → Thông báo; động từ / tính từ / cảm xúc → Truyện; nơi chốn / sự kiện / thời tiết → Tin làng. Trợ số từ (〜枚, 〜本, 〜匹…) chỉ dùng một hai cái mỗi số.
+  - **Bỏ khỏi kho 100 từ**: chữ Hán đơn (note loại "kanji", hoặc từ chỉ một chữ Hán) và note ngữ pháp. Báo tiếng Nhật đã có danh sách ngữ pháp riêng.
+  - Dùng ít từ trọng tâm **không phải lỗi**: không chặn số báo, chỉ là gợi ý cho bước soát lần 2 (như `rep.warn` "chưa dùng từ TRỌNG TÂM" của `ai_en.check`; thêm cho tiếng Nhật).
+  - Tab Nguồn báo ghi thêm một dòng ngắn: **"Hôm nay dùng 14 / 70 từ phải ôn"** (đếm từ chưa thuộc có trong bài, kể cả dạng biến đổi; tiếng Nhật đếm theo `{..|..|từ gốc}` + máy nối).
+  - Từ chưa được dùng hôm nay thì không phải làm gì thêm: hôm sau chọn ngẫu nhiên lại, và nếu từ đó vẫn còn lịch ôn thì vẫn nằm trong nhóm 70.
 
 ### 2.5 Các câu đã hỏi người dùng (đã chốt 04/11)
 
