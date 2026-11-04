@@ -116,6 +116,27 @@
 <script>
 "use strict";
 const V = new URLSearchParams(location.search).get("v") || "month";
+// ?long=ja|en: thử nội dung dài tối đa (nhật ký 200 ký tự, luyện viết 60 ký tự / 30 từ, Gemini trả về đúng giới hạn)
+const LONG = new URLSearchParams(location.search).get("long") || "";
+const DIARY_MAX = "Hôm nay đi làm về muộn, mưa to nên ghé quán cà phê gần nhà ôn bài. Ôn được 47 thẻ, cuối cùng cũng nhớ được 予約 và 天気. Tối gọi cho mẹ, kể chuyện tháng sau thi N4. Hơi lo nhưng thấy mình đang tiến bộ dần.".slice(0, 200);
+const PR = LONG === "en" ? {
+  lang: "en", unit: "từ", max: 30, words: ["book", "rain"],
+  text: "Yesterday it rain a lot, so my friend and I book a small restaurant near the station and we eats dinner together. The food was delicious and we was happy.",
+  fixed: "Yesterday it <mark>rained</mark> a lot, so my friend and I <mark>booked</mark> a small restaurant near the station and we <mark>ate</mark> dinner together. The food was delicious and we <mark>were</mark> happy.",
+  loi: [["rain → rained", "Dạng chia · chuyện hôm qua thì dùng thì quá khứ."], ["book → booked", "Cùng quy tắc như lỗi trên."],
+        ["eats → ate", "Dạng chia · eat là động từ bất quy tắc: eat → ate."]],
+  more: "Còn 1 lỗi cùng loại: was → were.",
+  nx: "Dùng đúng book và rain. Lỗi chính là thì quá khứ: kể chuyện hôm qua thì chia hết động từ.",
+} : {
+  lang: "ja", unit: "ký tự", max: 60, words: ["予約する", "寒い"],
+  text: "きのうは雨だったので、友だちと駅の近くのレストランを予約しました。寒いでしたが、料理はおいしいでした。また行きたいです。",
+  fixed: "きのうは雨だったので、友だちと駅の近くのレストランを<u>予約</u>しました。<mark>寒かったです</mark>が、料理は<mark>おいしかったです</mark>。また<mark>行きたいと思います</mark>。",
+  loi: [["寒いでした → 寒かったです", "Ngữ pháp · tính từ đuôi い: quá khứ là bỏ い + かった(です)."], ["おいしいでした → おいしかったです", "Cùng quy tắc như lỗi trên."],
+        ["行きたいです → 行きたいと思います", "Tự nhiên hơn · nói ý định với người khác nên thêm と思います."]],
+  more: "",
+  nx: "Dùng đúng 予約する và 寒い, nối câu bằng ので, が tự nhiên. Hai lỗi đầu cùng một quy tắc.",
+};
+const plen = (t) => PR.lang === "en" ? t.split(/\s+/).filter(Boolean).length : t.replace(/<[^>]+>/g, "").length;
 const el = (t, c, s) => { const e = document.createElement(t); if (c) e.className = c; if (s !== undefined) e.textContent = s; return e; };
 // ---- sprite pixel ----
 function sprite(rows, pal, scale) {
@@ -243,33 +264,41 @@ function month() {
   const sr = el("div", "kb-cal-stk-row");
   Object.keys(FACE).forEach((k) => { const b = el("button", "kb-cal-stk-b" + (k === "vui" ? " is-on" : "")); b.title = FACE_NAME[k]; b.appendChild(face(k, 3)); sr.appendChild(b); });
   c2.appendChild(sr);
-  const inp = el("div", "kb-cal-in", "Trời lạnh, ôn ở quán cà phê. Cuối cùng cũng nhớ được 予約 rồi!"); inp.style.minHeight = "52px"; c2.appendChild(inp);
-  const m2 = el("div", "kb-cal-meta"); m2.appendChild(el("span", null, "Đồng bộ qua AnkiWeb")); m2.appendChild(el("span", null, "58 / 200 ký tự")); c2.appendChild(m2);
+  const inp = el("div", "kb-cal-in", LONG ? DIARY_MAX : "Trời lạnh, ôn ở quán cà phê. Cuối cùng cũng nhớ được 予約 rồi!"); inp.style.minHeight = "52px"; c2.appendChild(inp);
+  const m2 = el("div", "kb-cal-meta"); m2.appendChild(el("span", null, "Đồng bộ qua AnkiWeb")); m2.appendChild(el("span", null, (LONG ? DIARY_MAX.length : 58) + " / 200 ký tự")); c2.appendChild(m2);
   Rt.appendChild(c2);
 
+  const P = LONG ? PR : {
+    lang: "ja", unit: "ký tự", max: 60, words: ["予約する", "寒い"],
+    text: "きのう友だちとレストランを予約しました。外はとても寒いでしたが、料理はおいしいでした。",
+    fixed: "きのう友だちとレストランを<u>予約</u>しました。外はとても<mark>寒かったです</mark>が、料理は<mark>おいしかったです</mark>。",
+    loi: [["寒いでした → 寒かったです", "Ngữ pháp · tính từ đuôi い: quá khứ là bỏ い + かった(です)."], ["おいしいでした → おいしかったです", "Cùng quy tắc như lỗi trên."]],
+    more: "", nx: "Dùng đúng 予約する và 寒い, câu có が nối hai ý tự nhiên. Hai lỗi cùng một quy tắc.",
+  };
   const c3 = el("div", "kb-cal-card");
-  const h3 = el("div", "kb-cal-h"); h3.appendChild(el("span", null, "Luyện viết")); h3.appendChild(el("small", null, "tối đa 60 ký tự (khoảng 20–30 từ)"));
+  const h3 = el("div", "kb-cal-h"); h3.appendChild(el("span", null, "Luyện viết"));
+  h3.appendChild(el("small", null, P.lang === "en" ? "tối đa 30 từ" : "tối đa 60 ký tự (khoảng 20–30 từ)"));
   const lc = el("div", "kb-ai-chips"); lc.style.marginLeft = "auto";
-  [["Tiếng Nhật", 1], ["Tiếng Anh", 0]].forEach((x) => { const b = el("button", "kb-btn kb-btn-small kb-ai-chip" + (x[1] ? " is-on" : ""), x[0]); if (x[1]) { b.style.background = "#ffd23f"; } lc.appendChild(b); });
+  [["Tiếng Nhật", "ja"], ["Tiếng Anh", "en"]].forEach((x) => { const b = el("button", "kb-btn kb-btn-small kb-ai-chip" + (x[1] === P.lang ? " is-on" : ""), x[0]); if (x[1] === P.lang) { b.style.background = "#ffd23f"; } lc.appendChild(b); });
   h3.appendChild(lc);
   c3.appendChild(h3);
   const hint = el("div", "kb-cal-hint"); hint.appendChild(el("span", null, "Thử dùng:"));
-  ["予約する", "寒い"].forEach((w) => hint.appendChild(el("span", "kb-cal-word", w)));
+  P.words.forEach((w) => hint.appendChild(el("span", "kb-cal-word", w)));
   hint.appendChild(el("button", "kb-btn kb-btn-small", "Đổi gợi ý"));
   c3.appendChild(hint);
-  const ta = el("div", "kb-cal-in kb-cal-ta", "きのう友だちとレストランを予約しました。外はとても寒いでしたが、料理はおいしいでした。"); c3.appendChild(ta);
-  const m3 = el("div", "kb-cal-meta"); m3.appendChild(el("span", null, "Đã dùng 2 / 2 từ gợi ý ✓")); m3.appendChild(el("span", null, "43 / 60 ký tự")); c3.appendChild(m3);
+  const ta = el("div", "kb-cal-in kb-cal-ta", P.text); if (P.lang === "en") { ta.style.fontFamily = '"Noto Sans", sans-serif'; ta.style.fontSize = "16px"; } c3.appendChild(ta);
+  const m3 = el("div", "kb-cal-meta"); m3.appendChild(el("span", null, "Đã dùng 2 / 2 từ gợi ý ✓")); m3.appendChild(el("span", null, plen(P.text) + " / " + P.max + " " + P.unit)); c3.appendChild(m3);
   const fx = el("div", "kb-cal-fix");
   fx.appendChild(el("b", null, "1. Câu đã sửa"));
-  const jp = el("div", "jp"); jp.innerHTML = "きのう友だちとレストランを<u>予約</u>しました。外はとても<mark>寒かったです</mark>が、料理は<mark>おいしかったです</mark>。"; fx.appendChild(jp);
-  fx.appendChild(el("b", null, "2. Lỗi (2)"));
-  [["寒いでした → 寒かったです", "Ngữ pháp · tính từ đuôi い: quá khứ là bỏ い + かった(です)."],
-   ["おいしいでした → おいしかったです", "Cùng quy tắc như lỗi trên."]].forEach((e) => {
+  const jp = el("div", "jp"); jp.innerHTML = P.fixed; if (P.lang === "en") { jp.style.fontFamily = '"Noto Sans", sans-serif'; jp.style.fontSize = "16px"; } fx.appendChild(jp);
+  fx.appendChild(el("b", null, "2. Lỗi (" + P.loi.length + (P.more ? "+" : "") + ")"));
+  P.loi.forEach((e) => {
     const r = el("div", "why"); const a = el("span", "jp-s", e[0]); a.style.fontFamily = '"Noto Sans CJK JP", sans-serif'; a.style.fontWeight = "700";
     r.appendChild(a); r.appendChild(document.createTextNode(" — " + e[1])); fx.appendChild(r);
   });
+  if (P.more) { const r = el("div", "why", P.more); r.style.color = "#4a4a66"; fx.appendChild(r); }
   fx.appendChild(el("b", null, "3. Nhận xét"));
-  fx.appendChild(el("div", "why", "Dùng đúng cả 予約する và 寒い, câu có が nối hai ý rất tự nhiên. Hai lỗi cùng một quy tắc — nắm quy tắc này là hết lỗi."));
+  fx.appendChild(el("div", "why", P.nx));
   c3.appendChild(fx);
   const acts = el("div", "kb-cal-acts");
   const done = el("button", "kb-btn kb-btn-small", "Đã sửa hôm nay"); done.disabled = true; done.style.opacity = "0.6"; acts.appendChild(done);
@@ -379,7 +408,12 @@ function book() {
   const f1 = el("div", "kb-page-foot"); f1.appendChild(el("span", null, "ことば畑")); f1.appendChild(el("span", null, "1")); p1.appendChild(f1);
   bk.appendChild(p1);
   const p2 = el("div", "kb-page");
-  const E = [
+  const E = LONG ? [
+    ["01 T5", 3, "vui", DIARY_MAX, "きのうは雨だったので、友だちと駅の近くのレストランを予約しました。寒かったですが、料理はおいしかったです。"],
+    ["02 T6", 4, "ban", DIARY_MAX, "Yesterday it rained a lot, so my friend and I booked a small restaurant near the station and ate dinner together."],
+    ["03 T7", 2, "met", DIARY_MAX],
+    ["05 T2", 3, "thu_thai", DIARY_MAX, "公園でゆっくり新聞を読みました。"],
+  ] : [
     ["01 T5", 3, "vui", "Ngày đầu tháng, vườn treo đèn bí ngô rồi."],
     ["02 T6", 2, "ban", "Bận làm, chỉ kịp ôn trên điện thoại.", "電車で単語を覚えました。"],
     ["03 T7", 4, "hao_hung", "Lên N4 bài 29! Kính ngữ khó mà vui.", "先生がお話しになりました。"],

@@ -1,7 +1,7 @@
 # Kế hoạch 1.20 – 1.22: Lịch hoa, nhật ký, luyện viết, cuốn nhật ký · khách ghé vườn · tự vẽ giống cây, mã chia sẻ, chụp ảnh vườn
 
 > **Trạng thái: CHƯA LÀM — thiết kế và mọi câu hỏi đã chốt với người dùng (04/11/2026), phiên sau làm luôn từ 1.20.** Viết sau khi xong 1.19.1, từ buổi người dùng và Claude cùng nghĩ ý rồi xem bản mẫu.
-> **Bản thiết kế**: thư mục [`thiet_ke_1_20/`](thiet_ke_1_20/) — xem nhanh ảnh trong `thiet_ke_1_20/anh/`; mở `lich_hoa.html?v=month|year|book` và `hoa.html` bằng trình duyệt (đã kèm `garden.css`, `seeds.js` của gói và phần hình của cây gốc nên mở được ngay). Mã trong đó là mã **mẫu** (số liệu giả) để lấy hình, bố cục, màu, chữ — khi làm thì viết lại đúng kiến trúc add-on (Python giữ dữ liệu, JS chỉ vẽ).
+> **Bản thiết kế**: thư mục [`thiet_ke_1_20/`](thiet_ke_1_20/) — xem nhanh ảnh trong `thiet_ke_1_20/anh/` (1–5: thiết kế; 6–9: nội dung dài tối đa); mở `lich_hoa.html?v=month|year|book` (thêm `&long=ja` hoặc `&long=en` để thử nội dung dài) và `hoa.html` bằng trình duyệt (đã kèm `garden.css`, `seeds.js` của gói và phần hình của cây gốc nên mở được ngay). Mã trong đó là mã **mẫu** (số liệu giả) để lấy hình, bố cục, màu, chữ — khi làm thì viết lại đúng kiến trúc add-on (Python giữ dữ liệu, JS chỉ vẽ).
 > Làm xong thì **xoá file này, thư mục `thiet_ke_1_20/`**, dòng trỏ tới chúng ở `README.md` mục 0 và hai dòng `!/KE_HOACH_1_20.md`, `!/thiet_ke_1_20/` trong `.gitignore`. Làm dở thì cập nhật mục 10 "Tiến độ" rồi mới commit.
 > Cách làm việc, môi trường, test: `README.md` mục 8, `tests/README.md` (giải nén gói → sửa → test offline + Anki thật → đóng gói). Quy tắc chữ / nút: `README.md` mục 0 (bảng thuật ngữ 1.19.1, nút đang chọn chỉ đổi nền).
 
@@ -76,7 +76,22 @@
   2. **Lỗi (tối đa 3)** — mỗi lỗi: "chỗ sai → sửa", loại (ngữ pháp / từ / trợ từ / chính tả / dạng chia), một câu giải thích tiếng Việt. Lỗi cùng quy tắc thì nói gộp ("Cùng quy tắc như lỗi trên").
   3. **Nhận xét** — 1–2 câu tiếng Việt: khen chỗ làm đúng (vd. dùng đúng từ gợi ý), nhắc một điều nên nhớ.
   - Bài không có lỗi: ghi "Không có lỗi" + một **cách nói tự nhiên hơn** (tuỳ chọn, ghi rõ là "tự nhiên hơn", không phải "sai").
-- **Gemini** (`ai_core`, `responseSchema` JSON như báo): `{"sua": str, "loi": [{"goc": str, "sua": str, "loai": str, "giai_thich": str}] (≤ 3), "tu_nhien": str, "nhan_xet": str}`. Máy kiểm tra: `sua` đúng ngôn ngữ (dùng `check_jp` / `ai_en.check_en` mức nhẹ), không dài quá 2 lần bài gốc, `goc` có trong bài gốc, phần tiếng Việt có dấu; sai thì bỏ phần đó (không gọi lại — giữ 1 lượt / ngày). Lời nhắc dặn trình độ (N4 / A2… như báo) và "chỉ sửa lỗi thật, giữ cách nói của người học".
+- **Gemini** (`ai_core`, `responseSchema` JSON như báo): `{"sua": str, "loi": [{"goc": str, "sua": str, "loai": str, "giai_thich": str}] (maxItems 3), "con_lai": str, "tu_nhien": str, "nhan_xet": str}`. Lời nhắc dặn trình độ (N4 / A2… như báo), "chỉ sửa lỗi thật, giữ cách nói của người học", tiếng Việt có dấu, không markdown, không emoji, không đánh dấu furigana.
+- **Giới hạn độ dài đầu ra — ghi rõ từng con số trong lời nhắc, kèm một ví dụ JSON đúng giới hạn** (người dùng: "nhận xét của Gemini phải ngắn gọn, quy định trước cho Gemini"):
+
+  | Trường | Giới hạn | Ghi chú |
+  |---|---|---|
+  | `sua` (câu đã sửa) | ≤ bài gốc + 20% (tiếng Nhật ≤ 72 ký tự, tiếng Anh ≤ 36 từ) | sửa ít nhất có thể |
+  | `loi` | **tối đa 3** | lỗi quan trọng nhất trước |
+  | `goc` / `sua` của một lỗi | chỉ trích đúng chỗ sai: ≤ 15 ký tự (tiếng Nhật) / ≤ 5 từ (tiếng Anh) | không chép cả câu |
+  | `loai` | một trong: ngữ pháp, dạng chia, từ, trợ từ, chính tả, tự nhiên hơn | máy hiện trước giải thích, vd. "Dạng chia · …" |
+  | `giai_thich` | **1 câu, ≤ 60 ký tự** | lỗi cùng quy tắc: "Cùng quy tắc như lỗi trên." |
+  | `con_lai` | ≤ 60 ký tự, để trống nếu ≤ 3 lỗi | vd. "Còn 1 lỗi cùng loại: was → were." |
+  | `nhan_xet` | **tối đa 2 câu, ≤ 100 ký tự** | một câu khen chỗ đúng + một điều nên nhớ |
+  | `tu_nhien` | chỉ khi **không có lỗi**, ≤ độ dài bài gốc | "cách nói tự nhiên hơn" |
+
+  **Máy kiểm tra sau khi nhận** (không gọi lại — giữ 1 lượt / ngày): quá giới hạn thì cắt ở dấu hết câu gần nhất trong giới hạn, không có thì cắt + "…"; bỏ lỗi thứ 4 trở đi; bỏ lỗi có `goc` không nằm trong bài gốc; `sua` sai ngôn ngữ (dùng `check_jp` / `ai_en.check_en` mức nhẹ) hoặc dài quá 2 lần bài gốc thì chỉ hiện lỗi + nhận xét; phần tiếng Việt không dấu thì bỏ phần đó. Ghi nhật ký những gì đã cắt (như nhật ký báo).
+- **Nội dung dài tối đa vẫn hiện hết** (đã thử bản mẫu `?long=ja` / `?long=en`, ảnh `6_` – `9_`): khung ngày cao lên theo nội dung, không cắt chữ, không tràn ngang ở 1366 và 1024px. Ô nhật ký / luyện viết **tự giãn** theo nội dung (2–4 dòng), không có thanh cuộn trong ô. Bảng Lịch hoa cuộn dọc như bảng Báo khi khung ngày dài hơn cửa sổ.
 - **Lỗi lưu lại** (loại + quy tắc ngắn) → trang "Lỗi hay gặp tháng này" trong cuốn nhật ký.
 - **Không có xu** (người dùng chốt 04/11), cả nhật ký lẫn luyện viết.
 
@@ -85,7 +100,8 @@
 - Hết tháng → tự đóng thành **một cuốn**; hết năm → thêm một cuốn dày gộp 12 tháng. Tháng đang chạy cũng xem được ("bản nháp").
 - Tab **Cuốn nhật ký**: bên trái **Kệ sách** (gáy sách màu theo giao diện mùa của tháng, cuốn năm to hơn, cuốn đang mở viền vàng); bên phải sách mở hai trang, nút ◂ Trang trước · Trang sau ▸ · **Xuất PDF**.
 - **Trang đầu**: "Tháng 10 · 2026", giao diện mùa + ngày chụp ảnh, **ảnh vườn** (mục 8.3), tổng kết (ngày ôn a / b, lượt ôn, từ ra quả mới, ngày ôn nhiều nhất, số ngày có nhật ký, số bài luyện viết), tâm trạng của tháng (sticker × số lần), **Lỗi hay gặp** (vd. "tính từ đuôi い (〜かった) ×4 · trợ từ に / で ×2").
-- **Các trang sau**: mỗi ngày một dòng — ngày + thứ, cây, sticker, nhật ký, câu luyện viết đã sửa (màu xanh, ✎). **Chỉ ghi ngày có ôn hoặc có viết** (bỏ ngày trống cho cuốn gọn).
+- **Các trang sau**: mỗi ngày một dòng — ngày + thứ, cây, sticker, nhật ký, câu luyện viết đã sửa (màu xanh, ✎; không in lỗi / nhận xét — gom vào "Lỗi hay gặp" ở trang đầu). **Chỉ ghi ngày có ôn hoặc có viết** (bỏ ngày trống cho cuốn gọn).
+- **Ngắt trang theo chiều cao thật** (đo sau khi vẽ), không theo số ngày cố định: ngày viết dài tối đa thì một trang chỉ khoảng 4 ngày (ảnh `8_cuon_nhat_ky_noi_dung_dai.png`), ngày ngắn thì 8–10 ngày. Không cắt một ngày ra hai trang. Trang có chiều cao cố định (như khổ A5 khi xuất PDF).
 - **Kệ sách trong nhà**: món `shelf` đã có trong `garden_core.CATALOG` — đặt kệ trong phòng thì bấm vào là mở tab này; chưa có kệ thì mở từ Lịch hoa.
 - **Xuất PDF**: dựng HTML của cuốn rồi `printToPdf` (QtWebEngine trong Anki), lưu bằng `getSaveFile` như Báo lỗi; khổ A5 dọc, mỗi tháng một file.
 
@@ -134,6 +150,8 @@ Phải nhớ khi làm:
 - 4 loài hoa mới cần vẽ kỹ lại (mục 2).
 - Kiểm tra phím tắt `L` chưa trùng; `audit.js` thêm 3 màn Lịch hoa + màn 1024px; chữ theo bảng thuật ngữ (không "add-on", Bật / Tắt…).
 - Gemini: luyện viết dùng chung hạn mức với báo (1 lượt / ngày, ít); chọn model như báo (`ai_core.Gemini`).
+- Câu mẫu tiếng Anh đầu tiên của bản mẫu dài 32 từ (quá 30) — bộ đếm phải chặn thật khi gõ / dán, kể cả dán cả đoạn dài (cắt ở từ thứ 30 và báo "đã cắt bớt").
+- Test độ dài: Gemini giả lập trả về quá mọi giới hạn → máy cắt đúng; nội dung dài tối đa → không tràn (đo như `audit.js`); cuốn nhật ký toàn ngày dài → ngắt trang đúng.
 
 ## 10. Thứ tự làm và tiến độ
 
@@ -145,6 +163,7 @@ Mỗi phần: test offline (dữ liệu, làm sạch, đếm revlog theo ngày, 
 
 - [x] Chốt ý (04/11), đồng bộ nhật ký, thiết kế Lịch hoa / Nhật ký / Luyện viết / Cuốn nhật ký / hoa theo mùa (`thiet_ke_1_20/`)
 - [x] Luyện viết không có xu; giao diện mùa giữ mua một lần (người dùng chốt 04/11)
+- [x] Thử nội dung dài tối đa trên bản mẫu; chốt giới hạn đầu ra của Gemini (mục 4)
 - [ ] Lịch hoa (tháng, năm, hoa theo mùa, vẽ kỹ 4 loài mới)
 - [ ] Nhật ký + sticker
 - [ ] Luyện viết
