@@ -378,6 +378,28 @@ result = done`);
   await page.click('#kb-h-read');
   ok(await waitFor(page, W('return !document.getElementById("kb-cal").hidden && GardenCal._state().tab === "book";')), '"Đọc nhật ký" → tab Cuốn nhật ký');
 
+  console.log('== kệ sách nhiều năm (mỗi lần một năm, ◂ năm ▸)');
+  await py(KB + `
+col = mw.col
+cid = col.db.scalar("select id from cards limit 1")
+day0 = int(col.sched.day_cutoff) - 86400
+rows = [((day0 - back * 86400 + 36000) * 1000 + back, cid, -1, 3, 5, 3, 2500, 3000, 1) for back in range(150, 900, 9)]
+col.db.executemany("insert or ignore into revlog (id,cid,usn,ease,ivl,lastIvl,factor,time,type) values (?,?,?,?,?,?,?,?,?)", rows)
+result = len(rows)`);
+  await page.eval(W('GardenCal.close(); GardenCal.open({ tab: "book" }); return 1;'));
+  await waitFor(page, W('return document.querySelectorAll("#kb-book .kb-page").length >= 1 && !!document.querySelector(".kb-shelf-nav");'));
+  const sh = await page.eval(W(`const s = document.querySelector(".kb-shelf"); return { h: s.getBoundingClientRect().height, y: document.querySelector(".kb-shelf-y").textContent,
+    total: GardenCal._state().book, spines: document.querySelectorAll(".kb-spine").length, prevOff: document.querySelector(".kb-shelf-nav .kb-btn").disabled };`));
+  ok(sh.h < 420 && sh.y === T.slice(0, 4) && !sh.prevOff && sh.spines <= 12, 'kệ chỉ bày năm của cuốn đang mở, không dài ra theo số năm (cao ' + Math.round(sh.h) + ' px, ' + sh.spines + ' cuốn)');
+  await page.eval(W('document.querySelector(".kb-shelf-nav .kb-btn").click(); return 1;')); await sleep(300);
+  const sh2 = await page.eval(W(`return { y: document.querySelector(".kb-shelf-y").textContent, flat: (document.querySelector(".kb-spine-flat") || {}).textContent || "",
+    rows: Array.from(document.querySelectorAll(".kb-shelf-row")).map(r => r.children.length) };`));
+  ok(Number(sh2.y) === Number(T.slice(0, 4)) - 1 && sh2.flat === 'Năm ' + sh2.y && sh2.rows.every(n => n === 6), '◂ → năm trước: cuốn năm nằm ngang trên cùng, 12 tháng đúng chỗ (2 tầng × 6): ' + sh2.y);
+  await page.eval(W('document.querySelector(".kb-spine-flat").click(); return 1;'));
+  ok(await waitFor(page, W('return GardenCal._state().book === ' + JSON.stringify(String(Number(T.slice(0, 4)) - 1)) + ' && !!document.querySelector("#kb-book .kb-page-mh");'), 10000), 'mở cuốn năm: gộp 12 tháng, có tiêu đề từng tháng');
+  ok(await page.eval(W('return document.querySelector(".kb-shelf-y").textContent === ' + JSON.stringify(String(Number(T.slice(0, 4)) - 1)) + ';')), 'mở cuốn năm cũ → kệ vẫn ở năm đó');
+  await page.shot(SHOTS + '/127b_ke_sach_nhieu_nam.png');
+
   console.log('== ảnh vườn tự chụp (bìa cuốn nhật ký)');
   const photo = await py(KB + 'import os\nresult = sorted(os.listdir(kb.PHOTO_DIR)) if os.path.isdir(kb.PHOTO_DIR) else []');
   ok(photo.some(p => p === T + '.png'), 'tuần này đã tự chụp một tấm: ' + photo.join(','));
