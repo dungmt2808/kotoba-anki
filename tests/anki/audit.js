@@ -117,7 +117,7 @@ async function shot(name, note) {
 }
 const js = (expr) => page.eval(W(expr + '; return 1;'));
 async function closeAll() {
-  await js('try { GardenGames.close(); } catch (e) {} try { GardenHome.close(); } catch (e) {} try { GardenPaper.close(); } catch (e) {} try { GardenFields.close(); } catch (e) {} try { GardenUI.close(); } catch (e) {}' +
+  await js('try { GardenGames.close(); } catch (e) {} try { GardenHome.close(); } catch (e) {} try { GardenPaper.close(); } catch (e) {} try { GardenFields.close(); } catch (e) {} try { GardenUI.close(); } catch (e) {} try { GardenCal.close(); } catch (e) {}' +
     'document.getElementById("kb-sound-pop").hidden = true; const q = document.getElementById("kb-quest-pop"); if (q) q.hidden = true; const t = document.getElementById("kb-toast"); if (t) t.hidden = true;' +
     'const s = document.getElementById("kb-stop"); if (s && !document.getElementById("kb-panel").hidden) s.click();');
   await sleep(400);
@@ -180,12 +180,41 @@ async function tour(size) {
   await closeAll();
   await js('document.getElementById("kb-ui-open").click()'); await sleep(800); await shot(S + '_11_giaodien');
   await closeAll();
+  // 1.20: Lịch hoa (tháng + khung ngày có nhật ký / luyện viết đã sửa, năm, cuốn nhật ký)
+  await js('GardenCal.open({ tab: "month" })'); await sleep(2200); await shot(S + '_13_lich_thang');
+  await js('document.getElementById("kb-c-stage").scrollTop = 9999'); await sleep(300); await shot(S + '_13_lich_thang_cuoi', 'khung ngày (nhật ký, luyện viết đã sửa)');
+  await js('document.querySelector(".kb-c-tab[data-ctab=year]").click()'); await sleep(1800); await shot(S + '_13_lich_nam');
+  await js('document.querySelector(".kb-c-tab[data-ctab=book]").click()'); await sleep(2200); await shot(S + '_13_cuon_nhat_ky');
+  await closeAll();
 }
 
 (async () => {
   await py(KB + `st = kb.STATE
 d = st.load(); d["coins"] = 20000; st.save(d)
 result = 1`);
+  // 1.20: lịch sử ôn + nhật ký + bài luyện viết đã sửa cho các màn Lịch hoa
+  await py(KB + `import random, datetime, time
+col = mw.col
+rng = random.Random(3)
+cids = list(col.db.list("select id from cards limit 300"))
+day0 = int(col.sched.day_cutoff) - 86400
+rows = []
+for back in range(1, 120):
+    n = rng.choice([0, 6, 12, 25, 40])
+    for i in range(n):
+        rows.append(((day0 - back * 86400 + 36000) * 1000 + i * 1000 + back, rng.choice(cids), -1, 3, 95 if i % 9 == 0 else 10, 60 if i % 9 == 0 else 5, 2500, 4000, 0 if i < 3 else 1))
+col.db.executemany("insert or ignore into revlog (id,cid,usn,ease,ivl,lastIvl,factor,time,type) values (?,?,?,?,?,?,?,?,?)", rows)
+t = kb.cal_today()
+for back in range(0, 40, 2):
+    kb.JOURNAL.update(t - datetime.timedelta(days=back), {"m": kb.journal.STICKERS[back % 8], "t": "Hôm nay đi làm về muộn, mưa to nên ghé quán cà phê gần nhà ôn bài. Ôn được 47 thẻ, cuối cùng cũng nhớ được 予約 và 天気. Tối gọi cho mẹ, kể chuyện tháng sau thi N4. Hơi lo nhưng thấy mình đang tiến bộ."[:200]})
+goc = "きのうは雨だったので、友だちと駅の近くのレストランを予約しました。寒いでしたが、料理はおいしいでした。また行きたいです。"[:60]
+kb.JOURNAL.update(t, {"w": {"lang": "ja", "goc": goc, "st": "done", "seen": True, "goi_y": ["予約する", "寒い"],
+    "sua": goc.replace("寒いでした", "寒かったです").replace("おいしいでした", "おいしかったです"),
+    "loi": [{"goc": "寒いでした", "sua": "寒かったです", "loai": "ngữ pháp", "quy_tac": "tính từ đuôi い", "giai_thich": "Tính từ đuôi い: quá khứ là bỏ い + かった(です)."},
+            {"goc": "おいしいでした", "sua": "おいしかったです", "loai": "ngữ pháp", "quy_tac": "tính từ đuôi い", "giai_thich": "Cùng quy tắc như lỗi trên."},
+            {"goc": "行きたいです", "sua": "行きたいと思います", "loai": "tự nhiên hơn", "quy_tac": "と思います", "giai_thich": "Nói ý định với người khác nên thêm と思います."}],
+    "con_lai": "", "tu_nhien": "", "nhan_xet": "Dùng đúng 予約する và 寒い, nối câu bằng ので tự nhiên. Hai lỗi đầu cùng một quy tắc."}, "u": time.time()})
+result = len(rows)`);
   await py(KB + 'kb.open_garden(); result = 1'); await sleep(3000);
   page = await gardenPage();
   if (!page) { console.log('không thấy trang vườn'); process.exit(2); }
