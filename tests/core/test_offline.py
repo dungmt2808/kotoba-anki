@@ -1,4 +1,5 @@
-"""Test offline cho các phần sửa ở 1.13 trong ai_core / paper_core (không gọi mạng, không cần Qt).
+"""Test offline cho các phần sửa ở 1.13 trong ai_core / paper_core (không gọi mạng, không cần Qt);
+1.22.2: khoá Gemini kiểu mới "AQ." (nhận, che trong Báo lỗi, gửi bằng header, lỗi 401 ACCESS_TOKEN_TYPE_UNSUPPORTED).
 
 Chạy: python test_offline.py THƯ_MỤC_ADD_ON
 Không có gói `anki` thì dùng tests/stubs (ai_core chỉ cần garden_core import được).
@@ -192,6 +193,46 @@ jd2 = tempfile.mkdtemp()
 res2 = ai.Job(fr, jd2, "2026-11-03", scope, {"max_new": 3, "ky": 1}).run()
 steps2 = [x["buoc"] for x in ai.last_log(jd2, "2026-11-03")["buoc"]]
 ok(res2.get("ok") and "sua_hong" in steps2, "bản sửa hỏng bị bỏ qua, sửa lần 2 xong → lưu được số (%s)" % steps2)
+
+print("== khoá Gemini kiểu mới \"AQ.\" (1.22.2)")
+# AI Studio nay chỉ cấp khoá "AQ.…" (có dấu chấm); bản ≤ 1.22.1 từ chối vì "ký tự lạ". Khoá giả, không gọi mạng thật.
+import http.server, threading
+import diag
+AQ = "AQ.Ab8RN6Ka" + "x7Yq-Pz_Lm2Nv8Rt4Wb1Kc9Df3Gh6Jk0Sa5Ue"
+AIZA = "AIzaSy" + "D3m0K3yF0rT3st1ngOnly-abcdefghi"
+ok(ai.clean_key('  "' + AQ[:20] + "\n" + AQ[20:] + '"  ') == AQ, "dán khoá AQ. có nháy / xuống dòng → làm sạch, giữ dấu chấm")
+ok(ai.key_problem(AQ) is None and ai.key_problem(AIZA) is None, "khoá AQ. và khoá AIza cũ đều nhận")
+ok(ai.key_problem("AQ.abc <script>xyz12345678") is not None and "AQ." in (ai.key_problem("AQ.abc <script>xyz12345678") or ""),
+   "khoá có ký tự lạ vẫn bị từ chối, câu báo nhắc cả AQ. và AIza")
+m = ai.mask_key(AQ)
+ok(m.startswith("AQ.A") and m.endswith(AQ[-4:]) and AQ[8:30] not in m, "khoá AQ. hiện dạng che: " + m)
+rep = diag.redact("HTTP 401 khi gọi với khoá " + AQ + " và " + AIZA)
+ok(AQ not in rep and AQ[3:20] not in rep and "AQ.…(đã ẩn)" in rep and AIZA not in rep, "Báo lỗi che cả khoá AQ. lẫn AIza")
+e = ai.explain_http(401, json.dumps({"error": {"code": 401, "status": "UNAUTHENTICATED", "message": "Request had invalid authentication credentials.",
+    "details": [{"@type": "type.googleapis.com/google.rpc.ErrorInfo", "reason": "ACCESS_TOKEN_TYPE_UNSUPPORTED"}]}}).encode())
+ok(e.kind == "key" and "tạo khoá mới" in str(e), "401 ACCESS_TOKEN_TYPE_UNSUPPORTED → hướng dẫn tạo khoá mới")
+seen = {}
+
+
+class _H(http.server.BaseHTTPRequestHandler):
+    def log_message(self, *a):
+        pass
+
+    def do_GET(self):
+        seen["key"] = self.headers.get("x-goog-api-key"); seen["path"] = self.path
+        out = json.dumps({"models": [{"name": "models/gemini-flash-latest", "supportedGenerationMethods": ["generateContent"]}]}).encode()
+        self.send_response(200); self.send_header("Content-Type", "application/json"); self.end_headers(); self.wfile.write(out)
+
+
+srv = http.server.HTTPServer(("127.0.0.1", 0), _H)
+threading.Thread(target=srv.serve_forever, daemon=True).start()
+try:
+    ai.Gemini(AQ, base="http://127.0.0.1:%d/v1beta" % srv.server_port).models()
+except ai.AIError:
+    pass
+srv.shutdown()
+ok(seen.get("key") == AQ and "AQ." not in (seen.get("path") or "") and "key=" not in (seen.get("path") or ""),
+   "khoá AQ. gửi nguyên vẹn bằng header x-goog-api-key, không nằm trong URL")
 
 print("\nKẾT QUẢ:", "OK" if not FAIL else "%d lỗi" % len(FAIL))
 sys.exit(1 if FAIL else 0)
