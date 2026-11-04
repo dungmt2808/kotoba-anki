@@ -1,6 +1,6 @@
 # Kế hoạch 1.20 – 1.22: Lịch hoa, nhật ký, luyện viết, cuốn nhật ký · khách ghé vườn · tự vẽ giống cây, mã chia sẻ, chụp ảnh vườn
 
-> **Trạng thái: 1.20 ĐÃ XONG (add-on 1.20.0, 04/11/2026 — xem `README.md` mục 2.6i). Còn 1.21 (khách ghé vườn) và 1.22 (tự vẽ giống cây, mã chia sẻ, nút chụp ảnh vườn) — phiên sau làm tiếp từ mục 7.** Thiết kế và mọi câu hỏi đã chốt với người dùng (04/11/2026). Viết sau khi xong 1.19.1, từ buổi người dùng và Claude cùng nghĩ ý rồi xem bản mẫu.
+> **Trạng thái: 1.20 ĐÃ XONG (add-on 1.20.0, 04/11/2026 — `README.md` mục 2.6i), 1.21 ĐÃ XONG (add-on 1.21.0, 04/11/2026 — `README.md` mục 2.6j). Còn 1.22 (tự vẽ giống cây, mã chia sẻ, nút chụp ảnh vườn) — phiên sau làm tiếp từ mục 8.** Thiết kế và mọi câu hỏi đã chốt với người dùng (04/11/2026). Viết sau khi xong 1.19.1, từ buổi người dùng và Claude cùng nghĩ ý rồi xem bản mẫu.
 > **Bản thiết kế**: thư mục [`thiet_ke_1_20/`](thiet_ke_1_20/) — xem nhanh ảnh trong `thiet_ke_1_20/anh/` (1–5: thiết kế; 6–9: nội dung dài tối đa; 10–11: đang sửa / thông báo đã sửa); mở `lich_hoa.html?v=month|year|book|wait|notify` (thêm `&long=ja` hoặc `&long=en` để thử nội dung dài) và `hoa.html` bằng trình duyệt (đã kèm `garden.css`, `seeds.js` của gói và phần hình của cây gốc nên mở được ngay). Mã trong đó là mã **mẫu** (số liệu giả) để lấy hình, bố cục, màu, chữ — khi làm thì viết lại đúng kiến trúc add-on (Python giữ dữ liệu, JS chỉ vẽ).
 > Làm xong thì **xoá file này, thư mục `thiet_ke_1_20/`**, dòng trỏ tới chúng ở `README.md` mục 0 và hai dòng `!/KE_HOACH_1_20.md`, `!/thiet_ke_1_20/` trong `.gitignore`. Làm dở thì cập nhật mục 10 "Tiến độ" rồi mới commit.
 > Cách làm việc, môi trường, test: `README.md` mục 8, `tests/README.md` (giải nén gói → sửa → test offline + Anki thật → đóng gói). Quy tắc chữ / nút: `README.md` mục 0 (bảng thuật ngữ 1.19.1, nút đang chọn chỉ đổi nền).
@@ -185,7 +185,8 @@ Mỗi phần: test offline (dữ liệu, làm sạch, đếm revlog theo ngày, 
 - [x] Luyện viết — luồng nền `_fix`, Flash-Lite trước, chờ lượt, cờ "đang sửa" cũ, hàng chờ thông báo; thử Gemini thật (`tests/gemini/run_fix.py`)
 - [x] Cuốn nhật ký (+ ảnh vườn tự chụp, Xuất PDF) — kệ sách trong phòng mở tab này (nút "Đọc nhật ký")
 - Ghi chú khi làm 1.20: câu đã sửa hiện cả chữ Gemini bỏ (gạch ngang) vì Flash-Lite có lần bỏ "料理は"; lỗi "cùng quy tắc như lỗi trên" lấy quy tắc của lỗi trước; mở Lịch hoa luôn về hôm nay; trang sách trên màn hình cao theo cửa sổ (PDF đúng A5); gáy sách cùng hàng cao bằng nhau. Test: `test_120.py`, `e2e_120.js`, `audit.js` (4 màn × 2 cỡ).
-- [ ] Khách ghé vườn
+- [x] Khách ghé vườn — `guest_core.py` + `web/guests.js`, 16 khách (3 hiếm theo mùa), Album khách là tab mới của Nhà (khoá `kotoba_batake_guests`), tần suất 0,3 → 0,85 theo số cây Ra quả, "Khách mới" ở Lịch hoa / cuốn nhật ký
+- Ghi chú khi làm 1.21: không tặng đồ khi gặp lần đầu (mục 7 ghi "có thể"; tránh thành chỗ cày đồ); "chuông gió → chim" làm thành chim vành khuyên ở bậu cửa sổ trong nhà (fūrin là đồ treo tường trong nhà); "ghế đá" là Ghế gỗ (`bench`) — mèo hoang nằm trên ghế; "lồng đèn → đom đóm" gồm đèn đá tōrō, đèn lồng giấy, ao, lọ đom đóm; chỉ ghi album khi khách hiện ≥ 1,5 giây trên cảnh người dùng đang xem. Test: `test_121.py`, `test_guests.js`, `e2e_121.js`, `audit.js` (màn Album + khách trên sân).
 - [ ] Tự vẽ giống cây
 - [ ] Mã chia sẻ thiết kế
 - [ ] Chụp ảnh vườn

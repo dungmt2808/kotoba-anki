@@ -149,7 +149,7 @@ async function tour(size) {
   await js('document.querySelector(\'.kb-gcard[data-game="listen"]\').click()'); await sleep(1500); await shot(S + '_07_listen');
   await closeAll();
   await py(KB + 'd = kb._dialog; d.deck_id = mw.col.decks.id_for_name("A::Có câu ví dụ + audio"); d.refresh(); result = 1'); await sleep(2000); await closeAll();
-  for (const t of ['build', 'yard', 'room', 'zone', 'pet', 'seed', 'season', 'wear', 'craft', 'inv']) {
+  for (const t of ['build', 'yard', 'room', 'zone', 'pet', 'guest', 'seed', 'season', 'wear', 'craft', 'inv']) {
     await js('document.getElementById("kb-house").click()'); await sleep(300);
     await js('const b = document.querySelector(\'.kb-h-tab[data-tab="' + t + '"]\'); if (b) b.click()'); await sleep(500);
     await shot(S + '_08_nha_' + t);
@@ -186,11 +186,17 @@ async function tour(size) {
   await js('document.querySelector(".kb-c-tab[data-ctab=year]").click()'); await sleep(1800); await shot(S + '_13_lich_nam');
   await js('document.querySelector(".kb-c-tab[data-ctab=book]").click()'); await sleep(2200); await shot(S + '_13_cuon_nhat_ky');
   await closeAll();
+  // 1.21: khách trên sân (mèo nằm trên ghế), Album khách cuộn tới thẻ của khách
+  await js('GardenGuests._force("yard", "neko")'); await sleep(9000); await shot(S + '_14_khach_tren_san', 'mèo hoang nằm trên ghế gỗ');
+  await js('GardenHome.openGuests("neko")'); await sleep(900); await shot(S + '_14_album_khach');
+  await closeAll();
+  await js('GardenGuests._clear()');
 }
 
 (async () => {
   await py(KB + `st = kb.STATE
-d = st.load(); d["coins"] = 20000; st.save(d)
+d = st.load(); d["coins"] = 20000; d["home"]["owned"]["bench"] = 1; st.save(d)
+st.place("yard", "bench", 6, 2)
 result = 1`);
   // 1.20: lịch sử ôn + nhật ký + bài luyện viết đã sửa cho các màn Lịch hoa
   await py(KB + `import random, datetime, time
