@@ -59,7 +59,7 @@ Có ba phần, làm theo thứ tự A → B → C. Mỗi phần một commit, ch
 
 - **Báo không còn phụ thuộc deck đang xem.** Người dùng tick ngôn ngữ muốn nhận: ☑ Tiếng Nhật (mặc định) ☐ Tiếng Anh. Mỗi sáng viết **một số cho mỗi ngôn ngữ đã tick**.
 - **Chọn deck lấy từ vựng**: tối đa **5 deck** cho mỗi ngôn ngữ, mỗi số dùng **100 note**. Không chọn deck thì lấy **ngẫu nhiên** trong mọi deck cùng ngôn ngữ.
-- **Tỉ lệ (người dùng chốt 04/11): khoảng 70% từ chưa thuộc, 30% từ đã thuộc** (100 từ → 70 + 30), trong mỗi nhóm chọn ngẫu nhiên.
+- **Tỉ lệ (người dùng chốt 04/11): khoảng 70% từ chưa thuộc, 30% từ đã thuộc** (100 từ → 70 + 30), trong mỗi nhóm chọn ngẫu nhiên. Theo định nghĩa của người dùng: **chưa thuộc = hôm đó có lịch ôn, đã thuộc = hôm đó không có lịch ôn** (xem 2.4).
 - Trình độ vẫn là ô chọn riêng cho từng ngôn ngữ (N4 / A2…).
 
 ### 2.3 Trả lời "có cần quy định deck nào thuộc ngôn ngữ nào không"
@@ -78,12 +78,12 @@ Có ba phần, làm theo thứ tự A → B → C. Mỗi phần một commit, ch
   - Lấy note thuộc loại note đúng `lang`, trong các deck đã chọn (kể cả deck con); không chọn deck thì lấy mọi deck.
   - Chỉ lấy note "đã học" (có thẻ đã ôn ≥ 1 lần / có trạng thái FSRS). Chưa đủ 30 thì thêm note mới, giống `scope_from_plants` hiện nay.
   - Chọn 100 note theo tỉ lệ **70% chưa thuộc / 30% đã thuộc**, ngẫu nhiên có hạt giống theo ngày (cùng ngày thử lại thì ra cùng danh sách). Chọn 5 deck thì chia đều (mỗi deck 20, deck thiếu thì bù từ deck khác).
-  - **Thuộc / chưa thuộc** tính theo giai đoạn cây (độ bền FSRS, `stage_days` = [3, 21, 90]):
-    - **Chưa thuộc**: cây Mầm / Cây non (độ bền < 21 ngày), cộng mọi cây đang héo hoặc khát dù đã lớn (sắp quên), cộng từ chép sai 14 ngày gần đây.
-    - **Đã thuộc**: cây Ra hoa / Ra quả (≥ 21 ngày) và không héo, không khát.
-    - Hạt giống (thẻ chưa ôn lần nào) không tính là từ đã học; chỉ dùng khi tổng từ đã học < 30, như hiện nay.
-  - Trong nhóm chưa thuộc, lấy trước cây héo / khát và từ chép sai (tối đa khoảng một nửa của 70), phần còn lại ngẫu nhiên. Đánh dấu nhóm này là "từ trọng tâm" trong lời nhắc (như `trong_tam.tu` hiện nay).
-  - Một nhóm không đủ thì lấy bù từ nhóm kia (vd. mới học, gần như chưa có từ đã thuộc → 100 từ chưa thuộc).
+  - **Thuộc / chưa thuộc — định nghĩa của người dùng (04/11)**: tính theo **lịch ôn của Anki vào ngày viết báo**, không theo giai đoạn cây:
+    - **Chưa thuộc** = note có ít nhất một thẻ **đến hạn ôn hôm đó** (`is:due`: thẻ ôn và thẻ đang học tới hạn hôm nay, kể cả quá hạn; không tính thẻ bị tạm ngưng — giống cách 1.18 đếm cây khát).
+    - **Đã thuộc** = note đã học (có thẻ đã ôn ít nhất một lần) mà **hôm đó không có thẻ nào đến hạn**.
+    - Thẻ mới (chưa ôn lần nào) không thuộc nhóm nào; chỉ dùng khi tổng từ đã học < 30, như hiện nay.
+  - Mỗi nhóm chọn **ngẫu nhiên** (hạt giống theo ngày). Từ chép sai gần đây vẫn gửi riêng như hiện nay (dòng "TỪ NGƯỜI HỌC HAY NGHE SAI" trong lời nhắc). Nhóm chưa thuộc là "từ trọng tâm" trong lời nhắc (như `trong_tam.tu` hiện nay). Danh sách tính lúc viết báo (thường là sáng, khi mở Anki).
+  - Một nhóm không đủ thì lấy bù từ nhóm kia. Ví dụ hôm đó chỉ có 20 thẻ đến hạn → 20 chưa thuộc + 80 đã thuộc; ôn hết rồi mới viết báo (hiếm, vì báo viết lúc mở Anki) → 100 từ đã thuộc.
   - Giữ thêm danh sách **mọi từ đã học** của ngôn ngữ đó (chỉ chữ + cách đọc + nghĩa, tối đa khoảng 3000) để:
     - kiểm tra (`check` tiếng Nhật: từ trong `{..|..|..}` phải đã học, `_deck_readings`, `hard_kanji`);
     - máy nối tra từ (tiếng Anh `LinkIndex`; tiếng Nhật `link_index`);
@@ -105,11 +105,11 @@ Có ba phần, làm theo thứ tự A → B → C. Mỗi phần một commit, ch
   - Nhật ký "Gemini đã viết và tự sửa những gì" cho từng ngôn ngữ (đã tách thư mục). Giọng đọc: một ô giọng chung là đủ (bỏ `gemini_voice_en` khỏi giao diện nhưng vẫn đọc config cũ).
 - **Lượt Chép chính tả hằng ngày**: giữ nguyên.
 
-### 2.5 Câu hỏi còn mở (hỏi người dùng đầu phiên, trước khi code)
+### 2.5 Các câu đã hỏi người dùng (đã chốt 04/11)
 
-1. ~~"Ngẫu nhiên" là ngẫu nhiên hoàn toàn, hay có ưu tiên?~~ **Đã chốt 04/11: 70% từ chưa thuộc, 30% từ đã thuộc** (xem 2.4). Còn nên xác nhận lại với người dùng: cách hiểu "thuộc" = cây Ra hoa / Ra quả (≥ 21 ngày) và không héo có đúng ý không.
-2. **"100 note" là tổng mỗi số báo**, hay mỗi deck? Ghi ở trên đang hiểu là tổng.
-3. Khi chọn deck mà deck đó chỉ có vài từ đã học (< 30) thì có bù thêm từ deck khác cùng ngôn ngữ không. Đề xuất: không bù, chỉ cảnh báo "deck này mới có N từ đã học".
+1. ~~"Ngẫu nhiên" là ngẫu nhiên hoàn toàn, hay có ưu tiên?~~ **Đã chốt 04/11: 70% chưa thuộc (hôm đó có lịch ôn) / 30% đã thuộc (hôm đó không có lịch ôn)**, xem 2.4.
+2. ~~"100 note" là tổng mỗi số báo hay mỗi deck?~~ Người dùng chưa hiểu câu hỏi, Claude chốt: **100 từ là tổng cho mỗi số báo** (chọn 5 deck thì mỗi deck khoảng 20 từ, không phải 5 × 100 = 500 từ), để lời nhắc gửi Gemini luôn nhỏ.
+3. ~~Deck đã chọn mới có vài từ đã học thì có bù từ deck khác không?~~ Người dùng để Claude chọn: **không lấy từ deck khác** (đã chọn deck là muốn tập trung vào đó). Thiếu thì dùng thêm thẻ mới (chưa ôn) của chính các deck đã chọn, như cách hiện nay khi đã học < 30 từ. Vẫn dưới 10 từ thì không viết báo ngôn ngữ đó, ghi ở tab Nguồn báo: "Deck đã chọn mới có N từ — chọn thêm deck" (không tốn lượt Gemini).
 
 ### 2.6 Test
 
@@ -162,7 +162,7 @@ Có ba phần, làm theo thứ tự A → B → C. Mỗi phần một commit, ch
 
   | Khái niệm | Dùng | Không dùng lẫn |
   |---|---|---|
-  | giao diện theo mùa / lễ hội | **Giao diện mùa** (tab: "Giao diện mùa"?) | "chủ đề", "giao diện theo mùa", "Mùa & Lễ hội" (chọn **một**, hỏi người dùng) |
+  | giao diện theo mùa / lễ hội | **Giao diện mùa** — người dùng chốt 04/11 (tên tab, chip, nút, câu chữ đều dùng tên này) | "chủ đề", "giao diện theo mùa", "Mùa & Lễ hội" |
   | bật / tắt | **Bật / Tắt** | "Thôi", "Đã tắt" lẫn "Tắt …" |
   | xem thử | **Xem thử / Dừng xem thử** | "Thôi xem thử" |
   | báo | **Báo** (tiếng Nhật / tiếng Anh) | "畑新聞" chỉ là chữ trang trí |
@@ -203,7 +203,7 @@ Có ba phần, làm theo thứ tự A → B → C. Mỗi phần một commit, ch
 
 ## 5. Thứ tự làm
 
-1. Hỏi người dùng 3 câu ở 2.5 và chốt bảng thuật ngữ 4.1 (tên "Giao diện mùa" hay "Mùa & Lễ hội"…).
+1. Câu hỏi ở 2.5 và tên "Giao diện mùa" đã chốt (04/11). Nếu còn chỗ chưa rõ khi làm thì hỏi lại người dùng.
 2. Phần A (báo theo ô tick + chọn deck) → test → commit.
 3. Phần B (kiểu nút chọn dùng chung, `audit.js` đo thêm, soát mọi màn) → test → commit.
 4. Phần C (chữ) → test → commit.
@@ -213,7 +213,7 @@ Có ba phần, làm theo thứ tự A → B → C. Mỗi phần một commit, ch
 
 ## 6. Tiến độ
 
-- [ ] Hỏi người dùng các câu còn lại ở 2.5 (câu 1 đã chốt: 70% chưa thuộc / 30% đã thuộc) + bảng thuật ngữ 4.1
+- [x] Chốt các câu ở 2.5 (70 / 30 theo lịch ôn, tổng 100 từ, không lấy deck khác) + tên "Giao diện mùa" (04/11)
 - [ ] Phần A — báo theo ô tick "Báo muốn nhận", chọn tối đa 5 deck / 100 note, bỏ phụ thuộc deck đang xem
 - [ ] Phần B — nút chọn đều nhau, `audit.js` đo kiểu lệch, soát mọi màn
 - [ ] Phần C — chữ đơn giản, thống nhất thuật ngữ, bỏ diễn giải thừa
