@@ -42,8 +42,14 @@ class H(BaseHTTPRequestHandler):
         self.wfile.write(out)
 
 
+_srv = []
+
+
 def _start():
+    if _srv:          # mở lại hồ sơ (test đổi hồ sơ, 1.22.6): cổng đã mở từ lần đầu
+        return
     srv = HTTPServer(("127.0.0.1", int(os.environ.get("KB_CTRL_PORT", "9444"))), H)
+    _srv.append(srv)
     threading.Thread(target=srv.serve_forever, daemon=True).start()
 
 
