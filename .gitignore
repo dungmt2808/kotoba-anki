@@ -7,6 +7,9 @@
 !/giao_trinh/
 !/kotoba_daily/
 !README.md
+!/PHAT_TRIEN.md
+!/CLAUDE.md
+!/docs/
 !/tests/
 
 # không đưa file sinh ra khi chạy test
