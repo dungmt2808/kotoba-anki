@@ -1,17 +1,22 @@
-"""compare_shots.py TRƯỚC SAU RA — ghép ảnh của shots_1225.js chạy trên bản cũ (TRƯỚC) và bản mới (SAU) thành ảnh
-"Trước | Sau" có tiêu đề + ghi chú (số liệu từ info.json của mỗi lần chạy). Cần Pillow."""
+"""compare_shots.py TRƯỚC SAU RA [BỘ] — ghép ảnh của shots_<BỘ>.js chạy trên bản cũ (TRƯỚC) và bản mới (SAU) thành ảnh
+"Trước | Sau" có tiêu đề + ghi chú (số liệu từ info.json của mỗi lần chạy). BỘ: 1225 (mặc định) hoặc 1226. Cần Pillow."""
 import json, os, sys
 
 from PIL import Image, ImageDraw, ImageFont
 
 BEFORE, AFTER, OUT = sys.argv[1], sys.argv[2], sys.argv[3]
+SET = sys.argv[4] if len(sys.argv) > 4 else "1225"
 os.makedirs(OUT, exist_ok=True)
 FONT = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
 BOLD = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
 if not os.path.exists(BOLD):
     BOLD = FONT
+# 1.22.6: chú thích có chữ Nhật (ことば畑) → dùng Noto CJK nếu có (DejaVu chỉ ra ô vuông)
+for _r, _b in (("/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc", "/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc"),):
+    if os.path.exists(_r):
+        FONT, BOLD = _r, (_b if os.path.exists(_b) else _r)
 
-SHOTS = [
+SHOTS_1225 = [
     ("a_thieu_xu_xuong", "a", "0 xu · tab Xưởng: thẻ \"Tạo món đồ mới\"",
      "Trước: nút \"Mở xưởng\" bấm được dù không đủ xu cho món nhỏ nhất (vẽ xong mới biết không lưu được). "
      "Sau: khoá, ghi \"Còn thiếu 200 xu\" như hai thẻ tạo vùng / giống."),
@@ -28,6 +33,28 @@ SHOTS = [
     ("f_trong_nha_1093x560", "f", "Cảnh Trong nhà · cửa sổ thấp (1093×560)",
      "Trước: cảnh cao hơn khung xem, tràn lên viền trên, dòng gợi ý đè viền dưới. Sau: khung xem đủ cao cho cảnh ×2."),
 ]
+
+SHOTS_1226 = [
+    ("a_cham_roi_dung", "a", "Ôn trong vườn: bấm \"Được\" rồi bấm Dừng ngay",
+     "Trước: lượt chấm lưu xong thì bảng ôn tự bật lại với thẻ kế tiếp dù đã bấm Dừng (Esc cũng vậy). "
+     "Sau: bảng ôn đóng hẳn, lượt chấm vẫn được lưu và trả xu."),
+    ("b_cham_roi_doi_deck", "b", "Ôn trong vườn: bấm \"Được\" rồi đổi deck ngay",
+     "Trước: bảng ôn bật lại với thẻ của deck CŨ dưới tên deck mới, và lượt vừa ôn bị \"bù xu điện thoại\" thêm một lần "
+     "(trả xu 2 lần). Sau: bảng ôn đóng, vườn ở deck mới, lượt ôn chỉ trả xu một lần."),
+    ("c_anki_che_do_toi", "c", "Anki ở chế độ tối · mẫu thẻ có \".nightMode { color: #fafafa }\" (rất hay gặp)",
+     "Trước: khung thẻ trong vườn vẫn nền trắng → chữ trắng trên nền trắng, gần như không đọc được. "
+     "Sau: nền tối / chữ sáng đúng như màn ôn của Anki."),
+    ("d_the_hom_nay", "d", "Thẻ \"Hôm nay\" ở 1366×768 khi có 4 dòng việc (đúng lúc mới cài)",
+     "Trước: dòng cuối \"Cấu hình trường\" bị cắt nửa, phải cuộn trong thẻ. Sau: các dòng xếp sát lại, thấy đủ 4 dòng."),
+    ("e_tab_giong_cay", "e", "Nhà → tab Giống cây: các luật gieo",
+     "Trước: ô chọn giống của dòng Deck / Note / tag lệch nhau. Sau: thẳng một cột."),
+    ("f_config_sai_kieu", "f", "Mở vườn khi config sửa tay sai kiểu (\"daily_goal\": \"\", \"max_plants\": \"nhiều\", \"effects\": \"false\")",
+     "Trước: hộp lỗi \"không dựng được khu vườn\", vườn trống. Sau: mục sai kiểu tự về đúng kiểu / mặc định, vườn mở bình thường."),
+    ("g_doi_ho_so", "g", "File → Đổi hồ sơ khi vườn đang mở",
+     "Trước: Anki đã đóng collection mà cửa sổ vườn vẫn mở (bấm gì cũng lỗi). Sau: vườn đóng theo hồ sơ, mở lại hồ sơ thì mở vườn bình thường."),
+]
+SETS = {"1225": (SHOTS_1225, "1.22.4", "1.22.5"), "1226": (SHOTS_1226, "1.22.5", "1.22.6")}
+SHOTS, V_OLD, V_NEW = SETS[SET]
 
 
 def load_info(d):
@@ -53,8 +80,8 @@ def wrap(draw, text, font, width):
 
 def fmt(v):
     if isinstance(v, list):
-        return " · ".join(str(x) for x in v)
-    return str(v or "")
+        v = " · ".join(str(x) for x in v)
+    return str(v or "").replace(" ▸", "")      # font chú thích không có ▸
 
 
 ib, ia = load_info(BEFORE), load_info(AFTER)
@@ -82,9 +109,9 @@ for name, key, title, note in SHOTS:
         y += 24
     y += 16
     d.rectangle([20, y - 4, 20 + a.width, y + 28], fill="#ffb3b3")
-    d.text((28, y), "TRƯỚC (1.22.4)", font=f_head, fill="#7a0010")
+    d.text((28, y), "TRƯỚC (" + V_OLD + ")", font=f_head, fill="#7a0010")
     d.rectangle([40 + a.width, y - 4, 40 + a.width + b.width, y + 28], fill="#b8f0c0")
-    d.text((48 + a.width, y), "SAU (1.22.5)", font=f_head, fill="#0b5a1c")
+    d.text((48 + a.width, y), "SAU (" + V_NEW + ")", font=f_head, fill="#0b5a1c")
     img.paste(a, (20, top))
     img.paste(b, (40 + a.width, top))
     d.rectangle([20, top, 20 + a.width - 1, top + a.height - 1], outline="#d0002a", width=3)

@@ -7,6 +7,8 @@ const { pages, Page, sleep } = require('./cdp');
 const SHOTS = process.argv[2] || '/tmp/kb_shots';
 const results = []; const ok = (c, m) => { results.push(!!c); console.log((c ? '  ✓ ' : '  ✗ ') + m); };
 const CDP = Number(process.env.KB_CDP_PORT || 9333), CTRL = Number(process.env.KB_CTRL_PORT || 9444);
+// ảnh vườn tự lưu: mỗi Anki (cổng điều khiển) một file — chạy song song nhiều bản Anki không ghi đè nhau (1.22.7)
+const PHOTO = '/tmp/kb_photo_122_' + CTRL + '.png';
 async function py(code) {
   const r = await fetch('http://127.0.0.1:' + CTRL, { method: 'POST', body: code });
   const j = await r.json(); if (j.err) throw new Error(j.err); return j.r;
@@ -62,7 +64,7 @@ st.craft_save({"name": "Táo đỏ", "size": 16, "kind": "ground", "fx": "sway",
 st.zone_save({"name": "Đồi hồng", "bg": "flower", "ground": "#5ed35e", "hills": "#ff7fa0",
               "px": kb.core.px_encode("." * (64 * 70) + "p" * (64 * 6)), "env": ""})
 d = st.load(); d["coins"] = 40000; st.save(d)
-os.environ["KB_TEST_PHOTO"] = "/tmp/kb_photo_122.png"
+os.environ["KB_TEST_PHOTO"] = "${PHOTO}"
 result = 1`);
   await py(KB + 'kb.open_garden(); result = 1'); await sleep(3000);
   page = await gardenPage();
@@ -263,23 +265,23 @@ result = 1`);
   const pop = await rectOf('#kb-snap-pop');
   ok(pop && pop.l >= 0 && pop.t >= 0 && pop.r <= 1366 && !(await page.eval('GardenHome.isOpen()')), 'bấm nút → bảng chọn cỡ ảnh (không mở Nhà, không tràn khỏi cửa sổ)');
   await page.shot(SHOTS + '/_15_chup_anh_bang.png');
-  await py(KB + 'import os\nfor p in ["/tmp/kb_photo_122.png"]:\n    os.path.exists(p) and os.remove(p)\nresult = 1');
+  await py(KB + 'import os\nfor p in ["' + PHOTO + '"]:\n    os.path.exists(p) and os.remove(p)\nresult = 1');
   await clickText('#kb-snap-pop [data-snap]', '/Cỡ thường/');
   ok(await waitFor(page, W('const t = document.getElementById("kb-toast"); return t && !t.hidden && /Đã lưu ảnh vườn/.test(t.textContent);'), 8000), 'lưu xong có thông báo "Đã lưu ảnh vườn"');
-  let sz = await pngSize('/tmp/kb_photo_122.png');
+  let sz = await pngSize(PHOTO);
   ok(sz && sz[0] === 534 && sz[1] === 200, 'cỡ thường: cảnh 512×152 + khung + dải chữ = 534×200 (' + sz + ')');
-  fs.copyFileSync('/tmp/kb_photo_122.png', SHOTS + '/_15_anh_vuon_thuong.png');
+  fs.copyFileSync(PHOTO, SHOTS + '/_15_anh_vuon_thuong.png');
   ok(await page.eval('document.getElementById("kb-snap-pop").hidden'), 'chụp xong bảng chọn tự đóng');
   await page.click('#kb-yard-snap'); await sleep(200);
   await clickText('#kb-snap-pop [data-snap]', '/Hình nền/'); await sleep(2500);
-  sz = await pngSize('/tmp/kb_photo_122.png');
+  sz = await pngSize(PHOTO);
   ok(sz && sz[0] === 1920 && sz[1] === 1080, 'hình nền 1920×1080');
-  fs.copyFileSync('/tmp/kb_photo_122.png', SHOTS + '/_15_anh_vuon_hinh_nen.png');
+  fs.copyFileSync(PHOTO, SHOTS + '/_15_anh_vuon_hinh_nen.png');
   await page.click('#kb-yard-snap'); await sleep(200);
   await clickText('#kb-snap-pop [data-snap]', '/Cỡ lớn/'); await sleep(2500);
-  sz = await pngSize('/tmp/kb_photo_122.png');
+  sz = await pngSize(PHOTO);
   ok(sz && sz[0] === 1068 && sz[1] === 400, 'cỡ lớn ×2: 1068×400');
-  fs.copyFileSync('/tmp/kb_photo_122.png', SHOTS + '/_15_anh_vuon_lon.png');
+  fs.copyFileSync(PHOTO, SHOTS + '/_15_anh_vuon_lon.png');
   await page.click('#kb-yard-snap'); await sleep(200);
   await page.key('Escape', 'Escape', 27); await sleep(200);
   ok(await page.eval('document.getElementById("kb-snap-pop").hidden && !GardenHome.isOpen()'), 'Esc đóng bảng chọn (không đóng / mở bảng khác)');
@@ -288,9 +290,9 @@ result = 1`);
   await page.click('#kb-h-snap'); await sleep(300);
   ok(/Trong nhà/.test(await page.eval('document.getElementById("kb-snap-scene").textContent')), 'nút "Chụp ảnh" trong Nhà chụp cảnh đang xem (Trong nhà)');
   await clickText('#kb-snap-pop [data-snap]', '/Cỡ thường/'); await sleep(2500);
-  sz = await pngSize('/tmp/kb_photo_122.png');
+  sz = await pngSize(PHOTO);
   ok(sz && sz[0] === 320 + 22 && sz[1] === 176 + 22 + 26, 'ảnh trong nhà 342×224 (' + sz + ')');
-  fs.copyFileSync('/tmp/kb_photo_122.png', SHOTS + '/_15_anh_trong_nha.png');
+  fs.copyFileSync(PHOTO, SHOTS + '/_15_anh_trong_nha.png');
   const top1366 = await page.eval(W('const t = document.querySelector("#kb-home .kb-game-top"); return t ? [t.scrollWidth, t.clientWidth, t.getBoundingClientRect().height] : null;'));
   ok(top1366 && top1366[0] <= top1366[1] + 1, 'thanh trên của Nhà có thêm nút "Chụp ảnh" vẫn không tràn ở 1366 px');
   await page.eval(W('GardenHome.close(); return 1;'));
