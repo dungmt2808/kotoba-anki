@@ -43,6 +43,37 @@ const sky = (hour, weather) => js(`GardenSky.set("mode", "fixed"); GardenSky.set
 const deck = (name) => py(KB + `d = kb._dialog; d.deck_id = mw.col.decks.id_for_name(${JSON.stringify(name)}); d.refresh()\nresult = 1`).then(() => sleep(1500));
 const closeAll = () => js('try { GardenPaper.close(); } catch (e) {} try { GardenCal.close(); } catch (e) {} try { GardenGames.close(); } catch (e) {} try { GardenHome.close(); } catch (e) {} const s = document.getElementById("kb-stop"); if (s && !document.getElementById("kb-panel").hidden) s.click(); return 1;').then(() => sleep(500));
 
+// ---- Xưởng: hộp "Chọn ảnh…" trả lời bằng hình daruma vẽ sẵn (canvas), mở xưởng cỡ 32 rồi chuyển ảnh ----
+async function useDaruma() {
+  const dataUrl = await js(`const c = document.createElement("canvas"); c.width = 240; c.height = 240; const x = c.getContext("2d");
+    x.fillStyle = "#f4f2ee"; x.fillRect(0, 0, 240, 240);
+    x.fillStyle = "#c8282e"; x.beginPath(); x.ellipse(120, 132, 92, 100, 0, 0, 7); x.fill();
+    x.fillStyle = "#e8484c"; x.beginPath(); x.ellipse(96, 100, 30, 26, 0, 0, 7); x.fill();
+    x.fillStyle = "#fbefd9"; x.beginPath(); x.ellipse(120, 112, 52, 46, 0, 0, 7); x.fill();
+    x.fillStyle = "#1b1b2f"; x.beginPath(); x.arc(100, 106, 11, 0, 7); x.fill(); x.beginPath(); x.arc(140, 106, 11, 0, 7); x.fill();
+    x.lineWidth = 7; x.strokeStyle = "#1b1b2f"; x.beginPath(); x.arc(100, 90, 16, 3.6, 5.8); x.stroke(); x.beginPath(); x.arc(140, 90, 16, 3.6, 5.8); x.stroke();
+    x.beginPath(); x.arc(120, 140, 14, 0.3, 2.8); x.stroke();
+    x.fillStyle = "#ffd23f"; x.fillRect(80, 186, 80, 16); x.fillRect(112, 176, 16, 36);
+    return c.toDataURL("image/png");`);
+  await py(KB + `import base64
+open("/tmp/kb_media_daruma.png", "wb").write(base64.b64decode(${JSON.stringify(dataUrl.split(',')[1])}))
+kb.getFile = lambda parent, title, cb, filter=None, key=None, **kw: cb("/tmp/kb_media_daruma.png")
+result = 1`);
+}
+async function openCraft(tapIt) {
+  const go = tapIt || ((sel) => page.eval(`(() => { document.querySelector(${JSON.stringify(sel)}).click(); return 1; })()`).then(() => sleep(700)));
+  await js('if (!GardenHome.isOpen()) GardenHome.open("yard"); return 1;'); await sleep(600);
+  await go('#kb-home button[data-tab=craft]');
+  await js('const b = Array.prototype.find.call(document.querySelectorAll("#kb-h-list .kb-h-craft-new button"), (x) => x.textContent === "Mở xưởng"); if (b) b.setAttribute("data-demo-craft", "1"); return 1;');
+  await go('[data-demo-craft="1"]');
+  await waitFor('return GardenCraft.isOpen();');
+  await js('const n = document.getElementById("kb-cf-name"); n.value = "Daruma"; n.dispatchEvent(new Event("input")); const s = document.getElementById("kb-cf-size"); s.value = "32"; s.dispatchEvent(new Event("change")); return 1;');
+  await sleep(500);
+  await go('#kb-cf-pick');
+  await waitFor('return GardenCraft._state().px.replace(/\\./g, "").length > 200;', 10000);
+  await sleep(900);
+}
+
 // ---- con trỏ chuột vẽ thêm (screencast không có con trỏ thật) ----
 const CURSOR = `(() => {
   if (document.getElementById("kb-demo-cursor")) return 1;
@@ -55,7 +86,7 @@ const CURSOR = `(() => {
   r.style.cssText = "position:fixed;width:28px;height:28px;margin:-14px 0 0 -14px;border:3px solid #ffd23f;z-index:2147483646;pointer-events:none;opacity:0;transition:transform .35s ease-out,opacity .35s ease-out";
   document.body.appendChild(r); document.body.appendChild(c); return 1; })()`;
 async function cursorTo(sel, dx = 0, dy = 0) {
-  const box = await page.eval(`(() => { const e = document.querySelector(${JSON.stringify(sel)}); if (!e) return null; const r = e.getBoundingClientRect(); return [r.x + r.width / 2, r.y + r.height / 2]; })()`);
+  const box = await page.eval(`(() => { const e = document.querySelector(${JSON.stringify(sel)}); if (!e) return null; e.scrollIntoView({ block: "nearest" }); const r = e.getBoundingClientRect(); return [r.x + r.width / 2, r.y + r.height / 2]; })()`);
   if (!box) throw new Error('không thấy ' + sel);
   await page.eval(`(() => { const c = document.getElementById("kb-demo-cursor"); c.style.left = "${box[0] + dx - 2}px"; c.style.top = "${box[1] + dy - 2}px"; return 1; })()`);
   await sleep(650);
@@ -69,7 +100,7 @@ async function tap(sel, opts = {}) {
 }
 
 // ---- ghi hình ----
-const rec = { on: false, n: 0, dir: path.join(OUT, 'frames'), list: [] };
+const rec = { on: false, n: 0, dir: path.join(OUT, 'frames'), list: [], marks: [] };
 function hookFrames() {
   const orig = page.ws.onmessage;
   page.ws.onmessage = (ev) => {
@@ -88,11 +119,13 @@ function hookFrames() {
 }
 async function recStart() {
   fs.rmSync(rec.dir, { recursive: true, force: true }); fs.mkdirSync(rec.dir, { recursive: true });
-  rec.list = []; rec.on = true;
+  rec.list = []; rec.marks = []; rec.on = true;
   await page.send('Page.startScreencast', { format: 'jpeg', quality: 92, maxWidth: W, maxHeight: H, everyNthFrame: 1 });
 }
+function mark(track) { rec.marks.push([Date.now() / 1000, track]); }
 async function recStop() {
   await page.send('Page.stopScreencast'); rec.on = false;
+  await makeMusic();
   // danh sách cho ffmpeg concat: mỗi khung hiện tới khi khung sau tới (screencast chỉ gửi khi trang đổi)
   const lines = [];
   for (let i = 0; i < rec.list.length; i++) {
@@ -103,6 +136,57 @@ async function recStop() {
   lines.push("file '" + rec.list[rec.list.length - 1][0] + "'");
   fs.writeFileSync(path.join(rec.dir, 'frames.txt'), lines.join('\n') + '\n');
   console.log('  video:', rec.list.length, 'khung,', (rec.list[rec.list.length - 1][1] - rec.list[0][1]).toFixed(1), 'giây');
+}
+
+// ---- nhạc cho video: dựng đúng các bản nhạc 8-bit của add-on (GardenMusic._offline trên OfflineAudioContext),
+// mỗi đoạn video (theo mốc mark()) phát bản nhạc của cảnh đó từ đầu, nối nhau bằng fade ngắn → frames/music.wav ----
+const SR = 32000;
+async function renderTrack(name) {
+  const r = await page.eval(`(async () => {
+    const t = GardenMusic._tracks[${JSON.stringify(name)}]; if (!t) return null;
+    const loop = t.len * 60 / t.bpm / 4;
+    const ctx = new OfflineAudioContext(1, Math.ceil((loop + 3) * ${SR}), ${SR});
+    GardenMusic._offline(ctx, ${JSON.stringify(name)});
+    const d = (await ctx.startRendering()).getChannelData(0);
+    const a = new Int16Array(d.length);
+    for (let i = 0; i < d.length; i++) a[i] = Math.max(-32767, Math.min(32767, Math.round(d[i] * 32767)));
+    const u = new Uint8Array(a.buffer); let s = "";
+    for (let i = 0; i < u.length; i += 0x8000) s += String.fromCharCode.apply(null, u.subarray(i, i + 0x8000));
+    return { loop: loop, b64: btoa(s) }; })()`);
+  if (!r) return null;
+  const b = Buffer.from(r.b64, 'base64'), ab = new ArrayBuffer(b.length);
+  new Uint8Array(ab).set(b);
+  const pcm = new Int16Array(ab), off = Math.round(0.05 * SR), L = Math.round(r.loop * SR);
+  // phát lặp: đoạn một vòng + đuôi tiếng vọng của vòng trước cộng vào đầu vòng sau
+  return (i) => { const k = i % L; let v = pcm[off + k] || 0; if (i >= L && off + L + k < pcm.length) v += pcm[off + L + k]; return v; };
+}
+async function makeMusic() {
+  if (!rec.list.length || !rec.marks.length) return;
+  const t0 = rec.list[0][1], t1 = rec.list[rec.list.length - 1][1] + 0.5;
+  console.log('  khung đầu', t0.toFixed(2), '· mốc đầu', rec.marks[0][0].toFixed(2));
+  const n = Math.ceil((t1 - t0) * SR), mix = new Float32Array(n);
+  const tracks = {};
+  for (const [, name] of rec.marks) { if (!(name in tracks)) tracks[name] = await renderTrack(name); }
+  const fadeIn = Math.round(0.12 * SR), fadeOut = Math.round(0.35 * SR);
+  rec.marks.forEach(([t, name], k) => {
+    const play = tracks[name]; if (!play) return;
+    const a = Math.max(0, Math.round((t - t0) * SR));
+    const b = k + 1 < rec.marks.length ? Math.round((rec.marks[k + 1][0] - t0) * SR) : n;
+    for (let i = a; i < Math.min(n, b + fadeOut); i++) {
+      const j = i - a;
+      const g = Math.min(1, j / fadeIn) * (i < b ? 1 : 1 - (i - b) / fadeOut) * (i > n - SR ? (n - i) / SR : 1);
+      mix[i] += play(j) * g;
+    }
+  });
+  let peak = 1; for (let i = 0; i < n; i++) peak = Math.max(peak, Math.abs(mix[i]));
+  const gain = 0.7 * 32767 / peak, out = Buffer.alloc(44 + n * 2);
+  out.write('RIFF', 0); out.writeUInt32LE(36 + n * 2, 4); out.write('WAVEfmt ', 8); out.writeUInt32LE(16, 16);
+  out.writeUInt16LE(1, 20); out.writeUInt16LE(1, 22); out.writeUInt32LE(SR, 24); out.writeUInt32LE(SR * 2, 28);
+  out.writeUInt16LE(2, 32); out.writeUInt16LE(16, 34); out.write('data', 36); out.writeUInt32LE(n * 2, 40);
+  for (let i = 0; i < n; i++) out.writeInt16LE(Math.round(mix[i] * gain), 44 + i * 2);
+  fs.writeFileSync(path.join(rec.dir, 'music.wav'), out);
+  fs.writeFileSync(path.join(rec.dir, 'marks.json'), JSON.stringify(rec.marks.map(([t, m]) => [+(t - t0).toFixed(2), m])));
+  console.log('  nhạc:', rec.marks.map(([t, m]) => (t - t0).toFixed(1) + 's ' + m).join(' · '));
 }
 
 // ---- cảnh: nhà xây xong, đồ trang trí, nội thất, thú nuôi, cấu hình trường, nhật ký ----
@@ -124,6 +208,31 @@ for scene, items in (("yard", yard), ("room", room)):
         st.buy(iid); st.place(scene, iid, x, y)
 for pid in ("neko", "shiba"):
     st.pet_buy(pid)
+# 6 vùng + đồ của từng vùng, vùng tự tạo "Tiệm bánh nhỏ" (demo_zone.py) có vài món đồ
+SPOTS = [(5, 1), (8, 0), (11, 1), (14, 0), (6, 2), (12, 2), (9, 2), (4, 0), (13, 1), (7, 1), (10, 0), (15, 2)]
+def _put(scene, iid):
+    st.buy(iid)
+    for x, y in SPOTS + [(x, y) for y in (1, 0, 2) for x in range(4, 16)]:
+        try:
+            st.place(scene, iid, x, y)
+            return True
+        except Exception:
+            pass
+    return False
+cat = kb.core.CATALOG
+for z in kb.core.ZONE_IDS:
+    st.unlock_zone(z)
+    for iid in [k for k, v in cat.items() if v.get("zone") == z and not v.get("season") and not v.get("rare")]:
+        _put(z, iid)
+sys.path.insert(0, ${JSON.stringify(__dirname)})
+import demo_zone
+zid = st.zone_save(demo_zone.payload(sys.modules["kotoba_batake.more_core"].px_encode))["zone_id"]
+for iid in ("bench", "chochin", "flowers", "sunflower", "bonsai"):
+    try:
+        _put(zid, iid)
+    except Exception:
+        pass
+kb._demo_zone = zid
 for tid in ("momiji", "hanami", "noel", "tet", "tsuyu", "natsumatsuri", "tsukimi", "halloween"):   # tháng 11 tự dùng Mùa lá đỏ; còn lại để chụp
     st.unlock_theme(tid, "coins")
 st.set_theme("auto")
@@ -263,6 +372,45 @@ result = len(notes)`);
     await shot('14b_cuon_nhat_ky');
     await closeAll();
 
+    // trong nhà: ảnh cỡ lớn bằng nút Chụp ảnh của bảng Nhà
+    await js('GardenHome.open("room"); return 1;'); await sleep(1200);
+    if (fs.existsSync(PHOTO)) fs.rmSync(PHOTO);
+    await js('document.getElementById("kb-h-snap").click(); return 1;'); await sleep(300);
+    await js('document.querySelector(\'#kb-snap-pop [data-snap="l"]\').click(); return 1;');
+    for (let k = 0; k < 40 && !fs.existsSync(PHOTO); k++) await sleep(250);
+    await sleep(300);
+    if (fs.existsSync(PHOTO)) { fs.copyFileSync(PHOTO, path.join(OUT, '16_trong_nha.png')); console.log('  ảnh 16_trong_nha'); }
+    await closeAll();
+    // sân + 6 vùng + vùng tự tạo: ảnh cỡ lớn của cảnh chính → ghép 2 × 4 bằng make_media.sh
+    const zid = await py(KB + 'result = kb._demo_zone');
+    fs.mkdirSync(path.join(OUT, 'vung'), { recursive: true });
+    const scenes = ['yard', 'beach', 'shrine', 'festival', 'bamboo', 'onsen', 'station', zid];
+    for (let i = 0; i < scenes.length; i++) {
+      const sc = scenes[i];
+      await js(`try { localStorage.setItem("kb-main-scene", ${JSON.stringify(sc)}); } catch (e) {} GardenHome.open(${JSON.stringify(sc)}); GardenHome.close(); return 1;`);
+      await sleep(1200); await sky(10, 'sunny'); await sleep(600); await hideToast();
+      if (fs.existsSync(PHOTO)) fs.rmSync(PHOTO);
+      await js('document.getElementById("kb-yard-snap").click(); return 1;'); await sleep(300);
+      await js('document.querySelector(\'#kb-snap-pop [data-snap="l"]\').click(); return 1;');
+      for (let k = 0; k < 40 && !fs.existsSync(PHOTO); k++) await sleep(250);
+      await sleep(300);
+      if (fs.existsSync(PHOTO)) { fs.copyFileSync(PHOTO, path.join(OUT, 'vung', `${i + 1}_${sc}.png`)); console.log('  vùng', sc); }
+    }
+    await js('try { localStorage.setItem("kb-main-scene", "yard"); } catch (e) {} GardenHome.open("yard"); GardenHome.close(); return 1;'); await sleep(800);
+    // Xưởng: "Chọn ảnh…" → hình daruma vẽ sẵn chuyển thành pixel 32 × 32
+    await useDaruma();
+    await openCraft();
+    await shot('17_xuong');
+    await js('GardenCraft.close(); return 1;'); await sleep(400);
+    // xưởng vùng: sửa vùng "Tiệm bánh nhỏ"
+    await js('GardenHome.open("yard"); document.querySelector("#kb-home button[data-tab=zone]").click(); return 1;'); await sleep(900);
+    await js(`const c = Array.prototype.find.call(document.querySelectorAll("#kb-h-list .kb-h-card"), (k) => /Tiệm bánh nhỏ/.test(k.textContent));
+      if (c) { c.scrollIntoView({ block: "center" }); const b = Array.prototype.find.call(c.querySelectorAll("button"), (x) => /^Sửa vùng$/.test(x.textContent.trim())); if (b) b.click(); } return 1;`);
+    await waitFor('return GardenCraft.isOpen();'); await sleep(1200);
+    await shot('17b_xuong_vung');
+    await js('GardenCraft.close(); return 1;'); await sleep(300);
+    await closeAll();
+
     // tủ đồ: StackChan (linh vật ở góc trái) đội mũ rơm, đeo kính, khăn quàng, vỏ sakura
     await py(KB + `d = st.load(); c0 = d["coins"]; d["coins"] = 100000; st.save(d)
 for w in ("straw", "glasses", "scarf", "sakura"):
@@ -282,23 +430,36 @@ result = 1`); await sleep(1800);
     console.log('== Video');
     await closeAll(); await deck('Tiếng Nhật::N5 · Từ vựng'); await sky(10, 'sunny'); await hideToast();
     await page.eval(CURSOR);
+    await useDaruma();
     await recStart();
+    mark('momiji');                                                 // nhạc vườn = nhạc giao diện mùa đang dùng (tháng 11: lá đỏ)
     await sleep(3500);                                              // vườn: cây đung đưa, thú nuôi đi lại
     await tap('#kb-review', { wait: 1800 });                        // Tưới ngay
-    await tap('#kb-show', { wait: 1500 });
-    await tap('#kb-ratings button:nth-child(3)', { wait: 2200 });   // Được → +xu, cây được tưới
     await tap('#kb-show', { wait: 1400 });
-    await tap('#kb-ratings button:nth-child(3)', { wait: 2000 });
-    await tap('#kb-stop', { wait: 1800 });
-    await tap('#kb-house', { wait: 2000 });                         // Nhà & Cửa hàng
-    await tap('#kb-home button[data-tab=yard]', { wait: 1800 });
+    await tap('#kb-ratings button:nth-child(3)', { wait: 2000 });   // Được → +xu, cây được tưới
+    await tap('#kb-show', { wait: 1300 });
+    await tap('#kb-ratings button:nth-child(3)', { wait: 1800 });
+    await tap('#kb-stop', { wait: 1500 });
+    mark('home');                                                   // Nhà: hộp nhạc
+    await tap('#kb-house', { wait: 1800 });
+    await tap('#kb-home button[data-tab=yard]', { wait: 1400 });
     await page.eval('(() => { const l = document.getElementById("kb-h-list"); if (l) l.scrollBy({ top: 260, behavior: "smooth" }); return 1; })()');
-    await sleep(1500);
-    await js('GardenHome.setScene("room"); return 1;'); await sleep(2200);  // Trong nhà
-    await js('GardenHome.setScene("yard"); return 1;');
-    await tap('#kb-h-exit', { wait: 1200 });
-    await tap('#kb-games', { wait: 1800 });                         // Trò chơi → Chợ sáng
-    await tap('.kb-gcard[data-game=market]', { wait: 2500 });
+    await sleep(1200);
+    // các cảnh: Trong nhà, 6 vùng, vùng tự tạo (nút ở đầu bảng Nhà)
+    const sceneBtns = await js(`const bs = Array.prototype.filter.call(document.querySelectorAll(".kb-h-scenes button[data-scene]"), (b) => b.offsetParent);
+      return bs.map((b) => b.getAttribute("data-scene"));`);
+    console.log('  cảnh:', JSON.stringify(sceneBtns));
+    for (let k = 1; k < sceneBtns.length; k++) {          // nút được vẽ lại sau mỗi lần bấm → tìm theo data-scene
+      await tap(`.kb-h-scenes button[data-scene="${sceneBtns[k]}"]`, { wait: k === 1 ? 2000 : 1200 });
+    }
+    await tap(`.kb-h-scenes button[data-scene="${sceneBtns[0]}"]`, { wait: 900 });
+    await openCraft((sel) => tap(sel, { wait: 900 }));              // Xưởng: Chọn ảnh… → daruma thành pixel
+    await sleep(1600);
+    await js('GardenCraft.close(); return 1;'); await sleep(500);
+    await tap('#kb-h-exit', { wait: 1000 });
+    mark('game');                                                   // Trò chơi
+    await tap('#kb-games', { wait: 1600 });
+    await tap('.kb-gcard[data-game=market]', { wait: 2400 });
     // trả lời đúng hai khách: tìm nghĩa của từ khách hỏi trong deck
     for (let k = 0; k < 2; k++) {
       const ask = await js('const b = Array.prototype.find.call(document.querySelectorAll("#kb-game *"), (e) => e.children.length === 0 && /「.+」/.test(e.textContent)); return b ? b.textContent : "";');
@@ -307,21 +468,30 @@ result = 1`); await sleep(1800);
       const mean = await py(KB + `nids = mw.col.find_notes(${JSON.stringify('"Từ:' + word + '"')}) or mw.col.find_notes(${JSON.stringify('"Kanji:' + word + '"')})\nresult = mw.col.get_note(nids[0])["Nghĩa"] if nids else ""`);
       const idx = await js(`const bs = Array.prototype.slice.call(document.querySelectorAll("#kb-game button")).filter((b) => b.offsetParent && b.textContent.indexOf(${JSON.stringify(mean)}) >= 0); if (!bs.length) return -1; bs[0].setAttribute("data-demo-pick", "1"); return 1;`);
       if (idx < 0) break;
-      await tap('[data-demo-pick="1"]', { wait: 2400 });
+      await tap('[data-demo-pick="1"]', { wait: 2200 });
       await js('const b = document.querySelector("[data-demo-pick]"); if (b) b.removeAttribute("data-demo-pick"); return 1;');
     }
-    await js('GardenGames.close(); return 1;'); await sleep(800);
-    await tap('#kb-paper-btn', { wait: 2500 });                      // Báo (dòng "Báo mới" của thẻ Hôm nay)
+    await js('GardenGames.close(); return 1;'); await sleep(500);
+    mark('momiji');
+    await sleep(300);
+    await tap('#kb-paper-btn', { wait: 2300 });                      // Báo (dòng "Báo mới" của thẻ Hôm nay)
     const word = await js('const ws = document.querySelectorAll("#kb-p-stage .kb-p-w"); const w = ws[Math.min(3, ws.length - 1)]; if (!w) return 0; w.setAttribute("data-demo-word", "1"); return 1;');
-    if (word) { await tap('[data-demo-word="1"]', { wait: 2500 }); }
+    if (word) { await tap('[data-demo-word="1"]', { wait: 2200 }); }
     await page.eval('(() => { const s = document.getElementById("kb-p-stage"); if (s) s.scrollBy({ top: 280, behavior: "smooth" }); return 1; })()');
-    await sleep(1800);
-    await js('GardenPaper.close(); return 1;'); await sleep(600);
-    await js('GardenCal.open(); return 1;'); await sleep(1600);       // Lịch hoa
-    await page.eval('(() => { const b = Array.prototype.find.call(document.querySelectorAll("#kb-cal button"), (x) => /^◂$|^‹$/.test(x.textContent.trim())); if (b) b.setAttribute("data-demo-prev", "1"); return 1; })()');
-    if (await js('return !!document.querySelector("[data-demo-prev]");')) { await tap('[data-demo-prev="1"]', { wait: 2400 }); }
-    await js('GardenCal.close(); return 1;'); await sleep(600);
-    await sky(20, 'sunny'); await sleep(3200);                     // vườn đêm
+    await sleep(1500);
+    await js('GardenPaper.close(); return 1;'); await sleep(400);
+    await js('GardenCal.open({ date: "2026-10-18", tab: "month" }); return 1;'); await sleep(2600);   // Lịch hoa + nhật ký
+    await js('GardenCal.open({ tab: "book" }); return 1;'); await sleep(2600);                         // Cuốn nhật ký
+    await js('GardenCal.close(); return 1;'); await sleep(400);
+    // giao diện mùa, mỗi giao diện một bản nhạc
+    for (const [tid, hour, weather] of [['tet', 9, 'sunny'], ['hanami', 10, 'sunny'], ['natsumatsuri', 20, 'sunny'], ['noel', 18, 'snow']]) {
+      await py(KB + `st.set_theme("pick", "${tid}"); kb._dialog.refresh()\nresult = 1`);
+      mark(tid);
+      await sleep(700); await sky(hour, weather); await hideToast(); await sleep(2600);
+    }
+    await py(KB + 'st.set_theme("auto"); kb._dialog.refresh()\nresult = 1');
+    mark('momiji');
+    await sleep(700); await sky(20, 'sunny'); await hideToast(); await sleep(3000);   // vườn đêm
     await sky(10, 'sunny'); await sleep(1500);
     await recStop();
   }
