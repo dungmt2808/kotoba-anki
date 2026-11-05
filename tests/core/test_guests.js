@@ -84,10 +84,15 @@ const items = [];
 for (let cx = 72; cx <= 168; cx += 16) { for (let r = 0; r < 3; r++) { items.push({ id: 'fence', cx: cx + 8, top: 28 + r * 16, bottom: 44 + r * 16, w: 16, left: cx, right: cx + 16, cell: (cx / 16) + ',' + r }); } }
 data.guests.defs.tanuki = { kind: 'walk', tod: ['day'], wx: 'any', spot: [] };
 let clash = 0;
+const realNow = Date.now;
 for (let k = 0; k < 30; k++) {
   G._clear('u2');
   G.place('u2', T0 + k * SLOT, DAY, { spots: (ids) => (ids === '*' ? items : []), seen: false });
+  // _force lấy khung giờ theo đồng hồ thật → giả đồng hồ cho mỗi lần một khung khác (trước 1.22.5: cả 30 lần cùng một chỗ,
+  // test đúng / sai tuỳ khung 4 phút lúc chạy)
+  Date.now = () => T0 + k * SLOT + 1000;
   G._force('u2', 'tanuki');
+  Date.now = realNow;
   const h = G._vis('u2').home;
   if (items.some((b) => h.x > b.left - 7 && h.x < b.right + 7 && h.y > b.top - 2 && h.y < b.bottom + 3)) { clash++; }
 }
