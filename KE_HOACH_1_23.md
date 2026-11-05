@@ -10,6 +10,8 @@ Ngày 05/11/2026. File này chỉ là kế hoạch: chưa sửa mã. Làm xong b
 | 4 | Kệ báo chỉ hiện số của nguồn đang dùng (số Claude Code biến khỏi kệ) | lỗi |
 | 5 | Bản test nhiều xu (add-on phụ riêng, không nằm trong bản phát hành) | công cụ |
 | 6 | Danh sách cần test | kiểm thử |
+| 7 | Báo Gemini: bấm từ gạch chân ở số cũ không ra nghĩa (đã tái hiện) | lỗi |
+| 8 | Truyện dài kỳ của Gemini nhạt, gượng | chất lượng |
 
 ### Ảnh phác thảo (dựng trong Anki thật bằng hình, nút, chữ của chính add-on, cửa sổ 1850 × 1130)
 
@@ -17,9 +19,17 @@ Chỉ là ảnh minh hoạ: chèn tạm vào trang đang chạy, chưa sửa mã
 
 | Bây giờ | Sau khi làm (phác thảo) |
 |---|---|
-| ![Màn chính bây giờ: dải cảnh chỉ có sân và vùng](docs/ke_hoach_1_23/0a_bay_gio_man_chinh.png) | ![1. Màn chính chọn Trong nhà](docs/ke_hoach_1_23/1_man_chinh_trong_nha.png) |
+| ![Màn chính bây giờ: dải cảnh chỉ có sân và vùng](docs/ke_hoach_1_23/0a_bay_gio_man_chinh.png) | ![B. Màn chính chọn Trong nhà: nhà 3 gian](docs/ke_hoach_1_23/7b_huong_B_nha_3_gian.png) |
 | ![Bảng Nhà bây giờ: trong nhà khung nhỏ, dính danh sách cửa hàng](docs/ke_hoach_1_23/0b_bay_gio_nha.png) | ![3. Ngắm cảnh: trong nhà phóng 10 lần](docs/ke_hoach_1_23/3_ngam_trong_nha.png) |
 | ![Thẻ Gemini bây giờ: Giáo trình, Trình độ bị khoá](docs/ke_hoach_1_23/6a_bay_gio_gemini.png) | ![6. Thẻ Gemini sau khi bấm Dùng Gemini: chờ Bắt đầu viết, chỉ chọn deck](docs/ke_hoach_1_23/6b_phac_thao_gemini.png) |
+
+Ba cách hiện "Trong nhà" ở màn chính (mục 1.2). Bản đầu (ảnh 1) người dùng chưa ưng vì hai bên tường / sàn kéo dài trông thừa:
+
+| Bản đầu: tường / sàn kéo dài (chưa ưng) | A. Nhà búp bê giữa sân |
+|---|---|
+| ![1. Hai bên là tường và sàn kéo dài](docs/ke_hoach_1_23/1_man_chinh_trong_nha.png) | ![A. Phòng là mặt cắt ngôi nhà, hai bên là sân thật](docs/ke_hoach_1_23/7a_huong_A_nha_bup_be.png) |
+| **B. Nhà 3 gian (Bếp · phòng chính · Phòng ngủ)** | **C. Không đưa vào màn chính, bấm nhà → Ngắm cảnh** |
+| ![B. Hai bên là hai phòng thật, gian chưa mở thì tối lại](docs/ke_hoach_1_23/7b_huong_B_nha_3_gian.png) | ![C. Ngắm cảnh: phòng gần kín khung, không có chỗ thừa](docs/ke_hoach_1_23/3_ngam_trong_nha.png) |
 
 Các màn mới khác:
 
@@ -46,10 +56,13 @@ Các màn mới khác:
 Trả lời câu hỏi "không thay đổi giao diện ngoài được hả": **được**. Màn chính sẽ đổi được sang mọi cảnh, kể cả Trong nhà. Ngắm cảnh (mục 1.3) chỉ là thêm một chỗ xem to hơn, không thay cho màn chính.
 
 - **Nút ◂ ▸ ở màn chính** có thêm **Trong nhà**, theo thứ tự: Sân vườn → Trong nhà → 6 vùng → vùng tự tạo. Nút luôn hiện khi đã vào được nhà (bước "Lắp cửa & cửa sổ"), kể cả khi chưa mở vùng nào.
-- **Trong nhà ở màn chính:**
-  - Phòng vẽ cùng cỡ phóng với sân (2 / 3 / 4 lần theo cửa sổ).
-  - Tường và sàn kéo dài ra hai bên cho kín bề ngang, mép tối như nhìn vào một ngôi nhà búp bê.
-  - Phòng cao 88 ô, sân 76 ô, nên khi đang xem trong nhà dải cảnh cao thêm khoảng 12 ô (48 px ở cỡ 4 lần).
+- **Trong nhà ở màn chính:** phòng vẽ cùng cỡ phóng với sân (2 / 3 / 4 lần theo cửa sổ). Phòng cao 88 ô, sân 76 ô, nên khi đang xem trong nhà dải cảnh cao thêm khoảng 12 ô (48 px ở cỡ 4 lần).
+- **Vì sao có "hai khoảng thừa":** căn phòng rộng 160 điểm ảnh, dải cảnh trên màn 1850 px rộng khoảng 453 điểm ảnh ở cỡ 4 lần. Ngoài trời không lộ vì sân / đồi / trời tự kéo dài; căn phòng thì không. Phóng phòng cho kín bề ngang thì phòng cao gần 1000 px, không vừa. Nên phải chọn một trong ba cách (ảnh ở đầu file):
+  - **A. Nhà búp bê giữa sân.** Căn phòng là mặt cắt của ngôi nhà (tường ngoài, cột gỗ, móng đá), hai bên là sân thật: trời, đồi, cỏ, đổi theo giờ, mùa, thời tiết. Không cần dữ liệu mới, làm nhanh. Vẫn còn hai khoảng hai bên, nhưng là cảnh ngoài trời chứ không phải tường lặp.
+  - **B. Nhà 3 gian.** Hai bên là hai phòng thật: **Bếp** (gạch men, sàn ô vuông) và **Phòng ngủ** (giấy shoji, chiếu tatami). Mua "Mở rộng nhà" (ví dụ 2.000 xu mỗi gian, mở sau khi xây xong nhà), rồi bày đồ như phòng chính (mỗi gian 9 ô ngang). Gian chưa mở thì tối lại, có biển giá. **Không còn chỗ thừa**, thêm chỗ tiêu xu cho người nhiều xu, Ngắm cảnh cũng thành nhà 3 gian. Cần khoá dữ liệu riêng (bản cũ không đọc khoá này nên không xoá mất đồ), thêm vài món đồ bếp / phòng ngủ. Làm lâu hơn A.
+  - **C. Không đưa Trong nhà vào màn chính.** Dải cảnh giữ ngoài trời như bây giờ; bấm vào ngôi nhà (hoặc nút Ngắm) là mở **Ngắm cảnh · Trong nhà** (ảnh 3): phòng gần kín khung, không có chỗ thừa. Ít việc nhất.
+  - **Đề xuất:** làm **C trước** (có ngay, không có chỗ thừa), rồi **B** ở bản sau. B cho thêm thứ để chơi chứ không chỉ để lấp chỗ trống. A chỉ nên chọn nếu muốn có Trong nhà ở màn chính ngay mà không chờ B.
+  - Thẻ **Hôm nay** nằm đè góc phải dải cảnh ở cả ba cách (như bây giờ ở sân).
 - **Cảnh đang xem được nhớ** như bây giờ (trên máy, không đồng bộ). Thú nuôi ở trong nhà, đồ treo tường, cửa sổ sáng / tối theo giờ đều hiện ở màn chính.
 - **Tuỳ chọn mới trong ⚙ → Giao diện & chế độ học: "Cỡ cảnh trên màn chính"**
   - **Vừa** (mặc định, như cũ).
@@ -83,8 +96,8 @@ Phác thảo: ảnh 3, 4, 5 ở đầu file.
 
 ### 1.5 Cần chốt với người dùng
 
-- Có làm cả 1.2 (màn chính) lẫn 1.3 (Ngắm cảnh), hay chỉ 1.2 trước?
-- Tường / sàn kéo dài hai bên phòng ở màn chính, hay để phòng ở giữa với hai bên là cảnh sân mờ đi?
+- Trong nhà ở màn chính: chọn **A**, **B** hay **C** (mục 1.2, ảnh ở đầu file)? Đề xuất: C trước, B ở bản sau.
+- Nếu chọn B: giá mỗi gian (đề xuất 2.000 xu), có cần thêm món đồ riêng cho bếp / phòng ngủ ngay không?
 - Cỡ "Lớn" có cần thêm mức "Rất lớn" không?
 
 ---
@@ -192,6 +205,58 @@ Phác thảo: ảnh 3, 4, 5 ở đầu file.
 
 ---
 
+## 5b. Lỗi: bấm từ gạch chân ở số báo Gemini cũ không ra nghĩa
+
+### Đã tái hiện
+
+- Ảnh người dùng (số 04/11 『秋の落とし物と交番』): bấm 交番 chỉ hiện "交番", không cách đọc, không nghĩa.
+- **Nguyên nhân:**
+  - Từ đã học trong báo được đánh dấu `{交番|こうばん|交番}`. Lúc mở số báo, `paper_core.issue_view()` tra nghĩa trong **một file `pham_vi.json` chung** của thư mục báo Gemini.
+  - File này bị **ghi đè mỗi lần Gemini viết số mới** (`ai_core.Job._save` → `write_scope`), bằng phạm vi của **số mới** (deck đang chọn, hoặc giáo trình).
+  - Số cũ viết theo phạm vi khác (ví dụ theo giáo trình GUNGUN, rồi đổi sang deck Dũng Mori; hay đổi deck ở "Chọn deck") thì từ của nó không còn trong file → không tìm được nghĩa → chỉ hiện chữ.
+  - Từ **mới** (`tu_moi`) không bị vì nghĩa nằm ngay trong số báo.
+- **Tái hiện offline:** số báo có 日本, 中国, 韓国 (từ đã học) → vừa viết: đủ nghĩa. Ghi phạm vi của số sau (deck khác) → cả ba thành "(không có nghĩa)".
+- Báo Claude Code (kotoba_daily) không bị: `pham_vi.json` của kotoba_daily chỉ thêm chương, không thay.
+
+### Hướng sửa
+
+- **Mỗi số báo tự mang bảng tra nghĩa:** khi lưu số, ghi `tra_tu` (từ gốc → cách đọc, nghĩa, nguồn) cho **mọi** từ được đánh dấu trong số đó. `issue_view()` tra bảng của số trước, không có mới tới `pham_vi.json` chung.
+- **Sửa số cũ đã hỏng:** mở số cũ mà còn từ thiếu nghĩa thì tìm trong collection (mọi deck, theo Cấu hình trường) và `pham_vi.json` của kotoba_daily (nếu có). Tìm được thì ghi bổ sung vào chính số đó, một lần.
+- **Không tìm được ở đâu:** vẫn hiện cách đọc (lấy ngay trong dấu `{表記|よみ|…}`) + "chưa có nghĩa trong deck", không để trống.
+- **Test:** hai số viết theo hai phạm vi khác nhau → số cũ vẫn đủ nghĩa; số cũ đã hỏng → mở ra tự có lại nghĩa từ deck; báo tiếng Anh cũng vậy.
+
+## 5c. Truyện dài kỳ của Gemini nhạt, gượng
+
+### Vì sao nhạt (đọc lời nhắc trong `ai_core.py`)
+
+- Lời nhắc chỉ ghi "mỗi kỳ là một tình huống nhỏ trong ngày, kết hơi bỏ ngỏ". Không có mục tiêu, trở ngại, bất ngờ, nên Gemini viết cảnh "chào hỏi, có 2 cái đĩa, rửa đĩa, cảm ơn".
+- Lời nhắc còn bảo đưa động từ / tính từ / cảm xúc trong **từ trọng tâm** (khoảng 8 từ phải ôn) vào truyện. Kết quả là truyện thành chỗ nhồi từ: "フロントに小さいお皿が2個あります".
+- Bước soát lần 2 chỉ kiểm lỗi (furigana, ngữ pháp, phạm vi từ), không ai chấm "có hay không".
+- Chỉ dùng từ đã học (N4) nên câu buộc phải đơn giản. Không làm truyện văn hay được, nhưng làm được truyện **có chuyện xảy ra** và muốn đọc kỳ sau.
+
+### Hướng sửa
+
+- **Tách việc:** từ trọng tâm dồn vào Tin làng, お知らせ, câu hỏi, chép chính tả. Truyện chỉ cần 2–3 từ, ưu tiên mạch truyện.
+- **Mạch truyện dài hơi:**
+  - Mỗi đợt 6–8 kỳ có một câu chuyện lớn (ví dụ: リンさん chuẩn bị lễ hội làng, khách trọ bí ẩn để quên chiếc hộp, StackChan bị hỏng). Mỗi kỳ một bước: muốn gì, gặp gì cản, xoay xở ra sao, kết bằng một câu hỏi cho kỳ sau.
+  - Gemini lập dàn ý một lần khi bắt đầu đợt (thêm 1 lượt gọi), lưu trong `truyen.json`.
+- **Quy tắc viết:**
+  - Một cảnh, một vấn đề cụ thể.
+  - Lời thoại thể hiện tính cách (mỗi nhân vật một câu cửa miệng).
+  - Có chi tiết bất ngờ hoặc buồn cười.
+  - Không kết bằng lời khuyên ("みなさんも…気をつけてください"), không liệt kê đồ vật, không lặp mô-típ của 3 kỳ trước.
+- **Nhân vật sâu hơn:** mỗi người một nỗi niềm / bí mật nhỏ, quan hệ thay đổi theo thời gian. Thêm nhân vật phụ xoay vòng (khách trọ của tuần, người đưa thư, con mèo hoang).
+- **Bước "biên tập truyện":** Gemini chấm phần truyện theo 4 tiêu chí (có chuyện xảy ra, nhân vật, bất ngờ / hài, muốn đọc kỳ sau). Dưới 4/5 thì viết lại riêng phần truyện. Thêm 1–2 lượt gọi, chỉ chạy khi còn hạn mức.
+- **Người đọc có tiếng nói:**
+  - Nút **"Kỳ này hay / Nhạt"** dưới truyện, kèm ô ghi một dòng. Gemini đọc phản hồi ở kỳ sau.
+  - Chọn **thể loại**: Ấm áp đời thường / Hài / Bí ẩn nhẹ / Phiêu lưu.
+  - **Tắt truyện** (chỉ còn tin, お知らせ, cột) để đỡ tốn lượt.
+- **Cho truyện thêm 2 từ mới** có giải nghĩa (ngoài 3 từ mới của cả số), để câu tự nhiên hơn.
+- **Model mạnh hơn cho phần truyện** nếu khoá còn lượt (Gemini Pro), không thì Flash như bây giờ.
+- **Kiểm chứng:** viết 5 kỳ liên tiếp bằng khoá thật trước và sau khi sửa, cho người dùng đọc so sánh rồi mới chốt.
+
+---
+
 ## 6. Danh sách cần test
 
 Cách ghi: mỗi dòng là một việc làm → điều phải thấy. Sai ở đâu thì chụp màn hình + **Tools → ことば畑 · Báo lỗi → Chép**, ghi số mục (ví dụ "D3").
@@ -274,6 +339,8 @@ Cách ghi: mỗi dòng là một việc làm → điều phải thấy. Sai ở 
 - [ ] J9. Chép chính tả hằng ngày: 5 câu, gõ đúng / sai / romaji / katakana → chấm đúng; deck không có câu ví dụ → nghe từ.
 - [ ] J10. Hết lượt Gemini miễn phí (dùng nhiều trong ngày) → báo rõ, hôm sau viết tiếp.
 - [ ] J11. Xoá khoá → không còn gọi Gemini, số cũ vẫn trong kệ.
+- [ ] J12. Đổi "Chọn deck" hoặc đổi nguồn vài ngày liền → mở lại số cũ, bấm **mọi** từ gạch chân → đều có cách đọc + nghĩa (mục 5b).
+- [ ] J13. Đọc 5 kỳ truyện liên tiếp → có chuyện xảy ra, nhân vật nhất quán, muốn đọc kỳ sau; bấm "Kỳ này hay / Nhạt" (mục 5c).
 
 ### K. Lịch hoa, nhật ký
 - [ ] K1. Lịch tháng: ngày ôn có hoa, ngày nhiều lượt hoa to hơn; lịch năm.
@@ -314,14 +381,16 @@ Cách ghi: mỗi dòng là một việc làm → điều phải thấy. Sai ở 
 ## 7. Thứ tự làm (khi người dùng duyệt)
 
 1. Mục 3 + 2 (lỗi tự viết báo, Gemini chỉ chọn deck): nhỏ, gây khó chịu nhất.
-2. Mục 4 (Kệ báo gộp hai nguồn).
-3. Mục 5: công cụ test, để người dùng test được ngay trong tuần.
-4. Mục 1.2 (màn chính đổi được cảnh + cỡ Lớn), rồi 1.3 + 1.4 (Ngắm cảnh, Sắp xếp đồ).
-5. Giới hạn config hợp lý (mục 5.3).
-6. Test tự động trong Anki thật (`e2e_123.js` + chạy lại bộ cũ trên 26.9.4 và 23.10), ảnh trước / sau, cập nhật README / ảnh / video nếu giao diện đổi, đóng gói 1.23.0.
+2. Mục 5b (bấm từ không ra nghĩa) + mục 4 (Kệ báo gộp hai nguồn).
+3. Mục 5c (truyện): sửa lời nhắc + bước biên tập, viết thử 5 kỳ bằng khoá thật cho người dùng đọc; nút "Kỳ này hay / Nhạt", thể loại, tắt truyện.
+4. Mục 5: công cụ test, để người dùng test được ngay trong tuần.
+5. Mục 1: Ngắm cảnh + Sắp xếp đồ (1.3, 1.4), Trong nhà ở màn chính theo cách đã chọn (1.2: A / B / C), cỡ cảnh Lớn.
+6. Giới hạn config hợp lý (mục 5.3).
+7. Test tự động trong Anki thật (`e2e_123.js` + chạy lại bộ cũ trên 26.9.4 và 23.10), ảnh trước / sau, cập nhật README / ảnh / video nếu giao diện đổi, đóng gói 1.23.0.
 
 ## 8. Câu hỏi cần chốt
 
-- Mục 1.5 (ba câu về cách xem cảnh).
+- Mục 1.5: Trong nhà ở màn chính theo cách A, B hay C.
+- Mục 5c: thể loại truyện mặc định; có muốn thêm nhân vật / bối cảnh nào không.
 - Có làm giới hạn config hợp lý (mục 5.3) không, và mức giới hạn.
 - Công cụ test có cần thêm việc gì (ví dụ chỉnh ngày để thử chuỗi ngày ôn / bảo dưỡng nhà)?
