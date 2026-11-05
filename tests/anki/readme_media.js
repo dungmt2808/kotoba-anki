@@ -124,7 +124,7 @@ for scene, items in (("yard", yard), ("room", room)):
         st.buy(iid); st.place(scene, iid, x, y)
 for pid in ("neko", "shiba"):
     st.pet_buy(pid)
-for tid in ("momiji", "hanami", "noel"):      # giao diện mùa: tháng 11 tự dùng Mùa lá đỏ; hai cái kia để chụp
+for tid in ("momiji", "hanami", "noel", "tet", "tsuyu", "natsumatsuri", "tsukimi", "halloween"):   # tháng 11 tự dùng Mùa lá đỏ; còn lại để chụp
     st.unlock_theme(tid, "coins")
 st.set_theme("auto")
 fc = kb.fields_core
@@ -225,6 +225,57 @@ result = 1`); await sleep(2000);
       console.log('  ảnh', path.basename(PHOTO), fs.existsSync(PHOTO));
     } catch (e) { console.log('  không chụp được ảnh vườn:', e.message); }
     await hideToast();
+  }
+
+  if (ONLY !== 'video') {
+    console.log('== Giao diện mùa, nhật ký, tủ đồ');
+    // 8 giao diện mùa: ảnh sân cỡ lớn (1024 px, có khung + tên giao diện) → ghép 2 × 4 bằng make_media.sh
+    const themes = [['tet', 9, 'sunny'], ['hanami', 10, 'sunny'], ['tsuyu', 15, 'rain'], ['natsumatsuri', 20, 'sunny'],
+      ['tsukimi', 21, 'sunny'], ['momiji', 16, 'sunny'], ['halloween', 19, 'sunny'], ['noel', 18, 'snow']];
+    fs.mkdirSync(path.join(OUT, 'mua'), { recursive: true });
+    for (let i = 0; i < themes.length; i++) {
+      const [tid, hour, weather] = themes[i];
+      await py(KB + `st.set_theme("pick", "${tid}"); kb._dialog.refresh()\nresult = 1`); await sleep(1800);
+      await sky(hour, weather); await sleep(1800); await hideToast();
+      if (fs.existsSync(PHOTO)) fs.rmSync(PHOTO);
+      await js('document.getElementById("kb-yard-snap").click(); return 1;'); await sleep(300);
+      await js('document.querySelector(\'#kb-snap-pop [data-snap="l"]\').click(); return 1;');
+      for (let k = 0; k < 40 && !fs.existsSync(PHOTO); k++) await sleep(250);
+      await sleep(300);
+      if (fs.existsSync(PHOTO)) { fs.copyFileSync(PHOTO, path.join(OUT, 'mua', `${i + 1}_${tid}.png`)); console.log('  mùa', tid); }
+    }
+    await py(KB + 'st.set_theme("auto"); kb._dialog.refresh()\nresult = 1'); await sleep(1800);
+    await sky(10, 'sunny'); await hideToast();
+
+    // nhật ký: sticker + một dòng cho nhiều ngày tháng 10 / 11 (tự viết, không gửi Gemini), mở ngày có nhật ký
+    await py(KB + `import datetime as _d
+notes = {"2026-10-03": ("vui", "初めて新聞を全部読めた！"), "2026-10-07": ("met", "残業。でも十分だけ復習した。"),
+         "2026-10-12": ("hao_hung", "Lên Ra quả 5 cây một lúc."), "2026-10-18": ("thu_thai", "公園で散歩。秋の花がきれい。"),
+         "2026-10-21": ("buon", "Quên mất 三つ từ hôm qua…"), "2026-10-25": ("binh_thuong", "Ôn 30 thẻ, chép chính tả 5 câu."),
+         "2026-10-31": ("vui", "Halloween! カボチャの花が咲いた。"), "2026-11-02": ("ban", "Bận cả ngày, ôn trên tàu."),
+         "2026-11-04": ("thu_thai", "雨の日。家でお茶を飲みながら勉強。")}
+for ds, (m, t) in notes.items():
+    kb.JOURNAL.update(_d.date.fromisoformat(ds), {"m": m, "t": t})
+result = len(notes)`);
+    await js('GardenCal.open({ date: "2026-10-18", tab: "month" }); return 1;'); await sleep(2000);
+    await shot('14_nhat_ky');
+    await js('GardenCal.open({ tab: "book" }); return 1;'); await sleep(2500);
+    await shot('14b_cuon_nhat_ky');
+    await closeAll();
+
+    // tủ đồ: StackChan (linh vật ở góc trái) đội mũ rơm, đeo kính, khăn quàng, vỏ sakura
+    await py(KB + `d = st.load(); c0 = d["coins"]; d["coins"] = 100000; st.save(d)
+for w in ("straw", "glasses", "scarf", "sakura"):
+    st.buy_wear(w)
+d = st.load(); d["coins"] = c0; st.save(d)
+kb._dialog.refresh()
+result = 1`); await sleep(1800);
+    await js('GardenHome.open("yard"); return 1;'); await sleep(1200);
+    await js('document.querySelector("#kb-home button[data-tab=wear]").click(); return 1;'); await sleep(1200);
+    await shot('15_tu_do');
+    await js('document.querySelector("#kb-home button[data-tab=inv]").click(); return 1;'); await sleep(1200);
+    await shot('15b_kho_do');
+    await closeAll();
   }
 
   if (ONLY !== 'shots') {

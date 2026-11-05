@@ -24,17 +24,47 @@ Bấm **Tưới ngay** để ôn ngay trong vườn. Đây là lượt ôn Anki 
 
 ![Ôn thẻ trong vườn: thẻ của bạn hiện như trong Anki, bốn nút Lại / Khó / Được / Dễ](docs/anh/02_on_the.png)
 
+### 14 giao diện mùa
+
+Vườn thay áo theo mùa: Tết, hoa anh đào, mùa mưa cẩm tú cầu, lễ hội mùa hè, Thất Tịch, Trung thu, lá đỏ, Halloween, Giáng sinh, năm mới Nhật Bản và bốn mùa xuân, hạ, thu, đông. Mỗi giao diện đổi màu trời, núi, dây cờ, hạt bay, **nhạc nền riêng**, và phủ cả các vùng lẫn màn trò chơi. Mở một giao diện bằng 1000 xu hoặc bằng chuỗi 7–10 ngày ôn liên tục, kèm quà là các món đồ của mùa đó. Ở chế độ **Tự động**, giao diện đã mở tự bật đúng dịp trong năm.
+
+![8 trong 14 giao diện mùa: Tết, hoa anh đào, mùa mưa, lễ hội mùa hè, Trung thu, lá đỏ, Halloween, Giáng sinh](docs/anh/13_giao_dien_mua.png)
+
+Trời còn đổi theo giờ thật (sáng, hoàng hôn, đêm có đèn lồng và đom đóm), có mưa và tuyết.
+
 ### Nhà & Cửa hàng
 
-Xây nhà từng bước, từ bãi đất trống tới gác mái có đèn lồng. Sau đó trang trí sân (cổng torii, ao cá koi, cây anh đào…), bày nội thất, nuôi mèo, chó Shiba, thỏ hoặc vịt. Mở thêm 6 vùng mới như bãi biển hay đền thần. Thỉnh thoảng có **khách ghé vườn**, như chim sẻ, cáo hay hươu Nara, tuỳ đồ bạn đặt và tuỳ mùa. Khách đã gặp được ghi vào Album khách.
+Xây nhà từng bước, từ bãi đất trống tới gác mái có đèn lồng, rồi đổi kiểu nhà (nhà mái tranh minka, nhà trà chashitsu, lâu đài mini). Trang trí sân, bày nội thất, nuôi thú, mở thêm 6 vùng mới như bãi biển hay đền thần. Thỉnh thoảng có **khách ghé vườn**, như chim sẻ, cáo hay hươu Nara, tuỳ đồ bạn đặt và tuỳ mùa. Khách đã gặp được ghi vào Album khách.
 
 | Sân vườn | Trong nhà |
 |---|---|
 | ![Nhà & Cửa hàng, tab Trang trí sân](docs/anh/03_nha_trang_tri.png) | ![Trong nhà: kotatsu, bể cá, kệ sách, mèo ngủ](docs/anh/04_trong_nha.png) |
 
-Có **Xưởng** để tự vẽ đồ pixel và giống cây riêng, hoặc chuyển một tấm ảnh thành pixel. Thiết kế chia sẻ được cho bạn bè bằng một đoạn mã. Nút **Chụp ảnh** lưu khu vườn thành ảnh, có cỡ hình nền 1920 × 1080:
+### Đồ đạc, tủ đồ, kho đồ
+
+- **133 món đồ**: 91 món ngoài sân (cổng torii, ao cá koi, cây anh đào, đài phun nước…), 24 món nội thất (kotatsu, bể cá, radio cổ…) và 18 món hiếm chỉ có trong rương quà nhiệm vụ.
+- **6 thú nuôi**: gà, vịt, thỏ, rùa, mèo mướp, chó Shiba. Thú có tên, có độ thân, đi lại khắp sân.
+- **Tủ đồ**: 17 món cho StackChan (linh vật ở góc trái): mũ rơm, nón lá, kính tròn, khăn quàng, vỏ màu sakura… cùng 7 biểu cảm.
+- **Kho đồ**: mọi món đã có, kể cả quà của giao diện mùa. Đặt ra sân, di chuyển hay cất lại lúc nào cũng được, không mất gì.
+- **Xưởng**: tự vẽ đồ pixel và giống cây riêng, hoặc chuyển một tấm ảnh thành pixel. Thiết kế chia sẻ được cho bạn bè bằng một đoạn mã.
+
+| Tủ đồ | Kho đồ |
+|---|---|
+| ![Tủ đồ: StackChan đội mũ rơm, đeo kính, khăn quàng đỏ](docs/anh/15_tu_do.png) | ![Kho đồ: các món chưa đặt, có nút Đặt](docs/anh/15b_kho_do.png) |
+
+Nút **Chụp ảnh** lưu khu vườn thành ảnh, có cỡ hình nền 1920 × 1080:
 
 ![Ảnh vườn tự chụp, cỡ hình nền 1920 × 1080](docs/anh/anh_vuon_1920.png)
+
+### 花暦 · Lịch hoa và nhật ký
+
+Mỗi ngày bạn ôn là một chậu hoa trên lịch, loài hoa đổi theo giao diện mùa. Ngày ôn càng nhiều, hoa càng lớn. Bấm vào một ngày để viết **nhật ký một dòng** (tối đa 200 ký tự) và chọn **sticker tâm trạng**. Nhật ký đồng bộ qua AnkiWeb và không gửi cho Gemini.
+
+Hết tháng, nhật ký tự đóng thành **một cuốn** trên kệ sách: ảnh vườn của tháng, số ngày ôn, ngày ôn nhiều nhất, tâm trạng cả tháng, từng dòng nhật ký. Cuốn nhật ký **xuất được ra PDF** khổ A5 để in hay giữ làm kỷ niệm. Có thêm ô **luyện viết** một hai câu tiếng Nhật hoặc tiếng Anh, Gemini sửa một lần mỗi ngày.
+
+| Lịch tháng + nhật ký | Cuốn nhật ký |
+|---|---|
+| ![Lịch hoa tháng 10, có sticker ở những ngày viết nhật ký](docs/anh/14_nhat_ky.png) | ![Cuốn nhật ký tháng 10 trên kệ sách](docs/anh/14b_cuon_nhat_ky.png) |
 
 ### 5 trò chơi ôn từ
 
@@ -53,22 +83,6 @@ Mỗi sáng có một số báo tiếng Nhật 畑新聞 (hoặc báo tiếng An
 | Báo | Chép chính tả |
 |---|---|
 | ![Báo 畑新聞 có furigana và giọng đọc](docs/anh/06_bao.png) | ![Chép chính tả](docs/anh/07_chep_chinh_ta.png) |
-
-### 花暦 · Lịch hoa và nhật ký
-
-Mỗi ngày bạn ôn là một bông hoa trên lịch, đổi loài theo mùa. Có lịch năm dạng ô màu, **nhật ký một dòng** kèm sticker tâm trạng, ô **luyện viết** (Gemini sửa một lần mỗi ngày) và **cuốn nhật ký** cuối tháng xuất ra PDF. Nhật ký đồng bộ qua AnkiWeb và không gửi cho Gemini.
-
-| Tháng | Năm |
-|---|---|
-| ![Lịch hoa tháng 10](docs/anh/08b_lich_hoa_thang_truoc.png) | ![Lịch hoa cả năm](docs/anh/08c_lich_hoa_nam.png) |
-
-### Ngày đêm, thời tiết, giao diện mùa
-
-Trời đổi theo giờ thật: sáng, hoàng hôn, đêm có đèn lồng và đom đóm. Có mưa và tuyết. Có **14 giao diện mùa** (hoa anh đào, lễ hội mùa hè, Trung thu, lá đỏ, Giáng sinh, Tết…), mỗi giao diện có nhạc riêng. Mở giao diện bằng xu hoặc bằng chuỗi ngày ôn liên tục.
-
-| Vườn ban đêm | Giáng sinh |
-|---|---|
-| ![Vườn ban đêm](docs/anh/09_vuon_dem.png) | ![Giao diện Giáng sinh, tuyết rơi](docs/anh/10b_giang_sinh.png) |
 
 ### Mục tiêu nhỏ mỗi ngày
 

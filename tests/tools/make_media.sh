@@ -3,7 +3,8 @@
 #   DEST/anh/*.png         ảnh chụp (nén lại bằng pngquant nếu có, giữ nguyên cỡ)
 #   DEST/video/tour.mp4    video đầy đủ (H.264, 30 khung/giây, phát được trên GitHub / AnkiWeb / điện thoại)
 #   DEST/video/tour.gif    GIF ngắn (đoạn đầu: vườn → ôn thẻ → Nhà), hiện thẳng trong README không cần bấm
-# Cần ffmpeg (+ pngquant nếu muốn ảnh nhỏ hơn).
+#   DEST/anh/13_giao_dien_mua.png  ảnh ghép 8 giao diện mùa (nếu có OUT/mua/)
+# Cần ffmpeg, ImageMagick (montage) (+ pngquant nếu muốn ảnh nhỏ hơn).
 set -e
 OUT=$(cd "$1" && pwd); mkdir -p "$2"; DEST=$(cd "$2" && pwd)
 mkdir -p "$DEST/anh" "$DEST/video"
@@ -11,6 +12,12 @@ for f in "$OUT"/*.png; do
   b=$(basename "$f")
   if command -v pngquant >/dev/null; then pngquant --force --quality 80-98 --output "$DEST/anh/$b" "$f"; else cp "$f" "$DEST/anh/$b"; fi
 done
+# 1.22.8: 8 ảnh sân theo giao diện mùa (OUT/mua/) → một ảnh ghép 2 × 4
+if [ -d "$OUT/mua" ]; then
+  montage $(ls "$OUT"/mua/*.png | sort -V) -tile 2x -geometry 640x+6+6 -background '#f4efe6' -depth 8 "$DEST/anh/13_giao_dien_mua.png"
+  command -v pngquant >/dev/null && pngquant --force --quality 80-98 --ext .png "$DEST/anh/13_giao_dien_mua.png"
+fi
+[ -f "$OUT/frames/frames.txt" ] || { echo "không có video (KB_ONLY=shots): giữ video cũ"; exit 0; }
 (cd "$OUT/frames" && ffmpeg -loglevel error -y -f concat -safe 0 -i frames.txt \
   -vf "fps=30,format=yuv420p" -c:v libx264 -crf 26 -preset slow -movflags +faststart "$DEST/video/tour.mp4")
 GIF_LEN=${GIF_LEN:-22}; GIF_W=${GIF_W:-800}; GIF_FPS=${GIF_FPS:-12}
