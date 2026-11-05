@@ -6,9 +6,9 @@
 
 ![Khu vườn của ことば畑: nhà, sân trang trí, thú nuôi và hơn 100 cây ở đủ 5 giai đoạn](docs/anh/01_vuon.png)
 
-![Xem nhanh: tưới cây bằng cách ôn thẻ, nhận xu, vào Nhà & Cửa hàng](docs/video/tour.gif)
+![Xem nhanh: tưới cây bằng cách ôn thẻ, nhận xu, vào Nhà, trong nhà và các vùng](docs/video/tour.gif)
 
-▶ **[Video đầy đủ (55 giây, MP4)](docs/video/tour.mp4)**: ôn thẻ trong vườn, Nhà và nội thất, trò chơi Chợ sáng, đọc báo, Lịch hoa, vườn ban đêm.
+▶ **[Video đầy đủ (1 phút 34 giây, MP4, có nhạc)](docs/video/tour.mp4)**: ôn thẻ trong vườn, Nhà, trong nhà, 6 vùng và vùng tự tạo, Xưởng chuyển ảnh thành pixel, trò chơi Chợ sáng, đọc báo, Lịch hoa và cuốn nhật ký, 4 giao diện mùa, vườn ban đêm. Nhạc trong video là chính các bản nhạc 8-bit của add-on (vườn, nhà, trò chơi, từng giao diện mùa).
 
 > Mọi ảnh và video trên trang này được chụp trong Anki 26.9.4 thật, với một bộ thẻ mẫu.
 
@@ -38,7 +38,13 @@ Xây nhà từng bước, từ bãi đất trống tới gác mái có đèn l�
 
 | Sân vườn | Trong nhà |
 |---|---|
-| ![Nhà & Cửa hàng, tab Trang trí sân](docs/anh/03_nha_trang_tri.png) | ![Trong nhà: kotatsu, bể cá, kệ sách, mèo ngủ](docs/anh/04_trong_nha.png) |
+| ![Nhà & Cửa hàng, tab Trang trí sân](docs/anh/03_nha_trang_tri.png) | ![Trong nhà: kotatsu, bể cá, kệ sách, đèn andon, mèo ngủ](docs/anh/16_trong_nha.png) |
+
+### 6 vùng mới và vùng tự tạo
+
+Ngoài sân nhà còn 6 vùng mở bằng xu: **Bãi biển, Đền trên núi, Phố lễ hội, Rừng tre, Suối nước nóng, Ga làng quê**. Mỗi vùng có cảnh riêng, công trình riêng và 6 món đồ riêng (hải đăng, cáo thần, quầy vớt cá vàng, gấu trúc, khỉ tắm suối, máy bán hàng…). Muốn thêm nữa thì **tự tạo vùng**: tự vẽ công trình và cảnh nền, chọn nền đất, màu đồi, đặt tên, rồi bày đồ như ở sân.
+
+![Sân vườn, 6 vùng và một vùng tự tạo (Tiệm bánh nhỏ)](docs/anh/16b_cac_vung.png)
 
 ### Đồ đạc, tủ đồ, kho đồ
 
@@ -46,11 +52,15 @@ Xây nhà từng bước, từ bãi đất trống tới gác mái có đèn l�
 - **6 thú nuôi**: gà, vịt, thỏ, rùa, mèo mướp, chó Shiba. Thú có tên, có độ thân, đi lại khắp sân.
 - **Tủ đồ**: 17 món cho StackChan (linh vật ở góc trái): mũ rơm, nón lá, kính tròn, khăn quàng, vỏ màu sakura… cùng 7 biểu cảm.
 - **Kho đồ**: mọi món đã có, kể cả quà của giao diện mùa. Đặt ra sân, di chuyển hay cất lại lúc nào cũng được, không mất gì.
-- **Xưởng**: tự vẽ đồ pixel và giống cây riêng, hoặc chuyển một tấm ảnh thành pixel. Thiết kế chia sẻ được cho bạn bè bằng một đoạn mã.
+- **Xưởng**: tự vẽ đồ pixel (bút, đổ màu, kẻ thẳng, đối xứng, 3 cỡ 16 / 24 / 32), giống cây riêng và vùng riêng, hoặc chọn một tấm ảnh để chuyển thành pixel. Thiết kế chia sẻ được cho bạn bè bằng một đoạn mã.
 
 | Tủ đồ | Kho đồ |
 |---|---|
 | ![Tủ đồ: StackChan đội mũ rơm, đeo kính, khăn quàng đỏ](docs/anh/15_tu_do.png) | ![Kho đồ: các món chưa đặt, có nút Đặt](docs/anh/15b_kho_do.png) |
+
+| Xưởng: chuyển ảnh thành pixel | Xưởng vùng: vẽ công trình |
+|---|---|
+| ![Xưởng: hình daruma chuyển thành pixel 32 × 32](docs/anh/17_xuong.png) | ![Xưởng vùng: sửa công trình Tiệm bánh nhỏ](docs/anh/17b_xuong_vung.png) |
 
 Nút **Chụp ảnh** lưu khu vườn thành ảnh, có cỡ hình nền 1920 × 1080:
 
