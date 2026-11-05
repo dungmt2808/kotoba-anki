@@ -1,6 +1,22 @@
 # Kế hoạch ことば畑 1.23.0 (bản nháp, chưa làm)
 
-Ngày 05/11/2026. File này chỉ là kế hoạch: chưa sửa mã. Làm xong bản 1.23.0 thì chuyển phần đã làm vào `PHAT_TRIEN.md` (mục 2.6, 7, 11) rồi xoá file này, như các kế hoạch trước.
+Ngày 05/11/2026. File này chỉ là kế hoạch: chưa sửa mã.
+
+> **Bàn giao cho phiên sau (đọc trước):**
+> - Bản đang có: **1.22.8** (`kotoba_batake.ankiaddon` ở gốc repo, nhánh `claude/adoring-heisenberg-91bihb`).
+> - **Đã chốt:**
+>   - nhà B + C (mục 1.2, 1.2b);
+>   - Gemini chỉ chọn deck (2);
+>   - sửa tận gốc lỗi tự viết báo (3);
+>   - Kệ báo gộp (4);
+>   - bản test nhiều xu là add-on riêng (5);
+>   - bảng tra nghĩa theo từng số (5b);
+>   - truyện Gemini theo quy trình mới, **ưu tiên** (5c);
+>   - bản dịch **ẩn sẵn** (5d).
+> - **Những gì bị ảnh hưởng** khi làm từng việc: mục **7** (đọc trước khi sửa mã).
+> - **Thứ tự làm:** mục 8. **Câu hỏi còn mở:** mục 9. **Danh sách test** cho người dùng: mục 6.
+> - **Lấy mã nguồn:** `tests/tools/unpack.sh` (giải nén gói); đóng gói: `tests/tools/pack.py`. Test: `tests/README.md`. Anki mẫu có nhà / vùng / đồ đầy đủ: `tests/anki/setup_demo.sh` + `KB_ONLY=setup node tests/anki/readme_media.js`.
+> - **Bản thử truyện:** `tests/gemini/thu_truyen_1_23.py` (lời nhắc + biên tập đã thử). Script vẽ phác thảo: `tests/tools/phac_thao_1_23/`. Làm xong bản 1.23.0 thì chuyển phần đã làm vào `PHAT_TRIEN.md` (mục 2.6, 7, 11) rồi xoá file này, như các kế hoạch trước.
 
 | # | Việc | Loại |
 |---|---|---|
@@ -349,7 +365,7 @@ Rút ra:
 - **Giao diện:**
   - Mỗi đoạn có nút nhỏ **"Dịch"**, bấm thì bản dịch hiện ngay dưới đoạn đó (chữ nhỏ, màu nhạt). Bấm lại để ẩn.
   - Đầu trang có nút **"Hiện bản dịch"** cạnh "Ẩn furigana" để bật / tắt cả số.
-  - Mặc định ẩn. Nhớ lựa chọn trên máy.
+  - **Mặc định ẩn (người dùng đã chốt).** Nhớ lựa chọn trên máy (localStorage, không đồng bộ).
 - **Phạm vi:** cả truyện, tin làng, お知らせ / cột, của báo tiếng Nhật lẫn báo tiếng Anh (dịch sang tiếng Việt). Câu hỏi và câu chép chính tả không có dịch (để còn tự làm).
 - **Làm ra bản dịch:**
   - Truyện: viết kèm ở bước 1 (mục 5c).
@@ -396,7 +412,7 @@ Cách ghi: mỗi dòng là một việc làm → điều phải thấy. Sai ở 
 ### D. Nhà
 - [ ] D1. Xây đủ 7 bước → mỗi bước trừ đúng giá, nhà đổi hình.
 - [ ] D2. Mua và đổi 3 kiểu nhà (minka, nhà trà, lâu đài mini), đổi qua lại miễn phí.
-- [ ] D3. Bảo dưỡng nhà: để lâu không sửa (cần công cụ chỉnh ngày, xem mục 8) → rêu, sơn bong… → sửa đúng giá.
+- [ ] D3. Bảo dưỡng nhà: để lâu không sửa (cần công cụ chỉnh ngày, xem mục 9) → rêu, sơn bong… → sửa đúng giá.
 - [ ] D4. Trong nhà: đặt đồ treo tường (chỉ hàng trên, không đè cửa sổ), đồ dưới sàn, thảm dưới bàn.
 - [ ] D5. Di chuyển / cất vào kho / đặt lại từ Kho đồ.
 
@@ -484,7 +500,147 @@ Cách ghi: mỗi dòng là một việc làm → điều phải thấy. Sai ở 
 
 ---
 
-## 7. Thứ tự làm (khi người dùng duyệt)
+## 7. Những gì có thể bị ảnh hưởng (kiểm trước khi sửa, test lại sau khi sửa)
+
+Đọc mã ngày 05/11 (bản 1.22.8). Mỗi việc: chỗ phải sửa → chỗ dễ vỡ theo → test phải cập nhật.
+
+### 7.1 Lỗi tự viết báo (mục 3)
+- **Sửa ở:** `__init__.py`: `ai_start_all`, `ai_waiting`, `ai_test_key` (Đổi khoá không đổi nguồn), `_on_ai` (set source), `paper_source`. Khoá config mới `paper_confirmed` → `config.json`, `DEFAULT_CONFIG` + `merged_config` (kiểu dict) trong `garden_core.py`, `config.md`.
+- **Dễ vỡ theo:**
+  - Tự viết 8 giây sau khi mở hồ sơ.
+  - Chuỗi "viết xong báo này thì viết báo kế" trong `_ai_done` (cả khi không mở vườn).
+  - Báo tiếng Anh không có nguồn Claude Code: quy tắc mới không được làm báo tiếng Anh chờ sai.
+  - Nút "Viết" của báo đang chờ phải tính là xác nhận.
+  - Dòng "Hôm nay: chờ bấm Bắt đầu viết", khối Bắt đầu viết (`startBlock` trong `web/paper.js`).
+  - Người đang dùng Gemini lên 1.23 không được bị bắt chờ.
+- **Không bị ảnh hưởng (kiểm lại cho chắc):** giọng đọc Gemini cho câu chép chính tả (`_voice_job`), luyện viết (`fix_auto`). Hai việc này dùng khoá chứ không theo nguồn báo.
+- **Test phải sửa:**
+  - `e2e_1228.js`: bấm "Dùng Gemini" giờ phải chờ, không viết.
+  - `e2e_119.js`, `e2e_1223.js` (chờ Bắt đầu viết của 1.22.3 / 1.22.4).
+  - `core/test_1191.py`, `test_ai` / `test_offline.py` (FakeGemini đếm lượt).
+  - Báo lỗi (`diag`) ghi thêm `paper_confirmed`.
+
+### 7.2 Gemini chỉ chọn deck (mục 2)
+- **Sửa ở:** `_ai_scope`, `_ai_opts`; `web/paper.js`: chip "Giáo trình", khoá Trình độ `byBook`, dòng "theo giáo trình"; `config.md` (`gemini_scope`, `gemini_level`).
+- **Dễ vỡ theo:**
+  - `ai.describe_scope` (dòng Nhật ký).
+  - Câu "chưa đủ từ" khi deck ít từ (`words.MIN_WORDS`).
+  - Người dùng có kotoba_daily mà dùng Gemini: từ hôm sau báo theo deck.
+  - `sap_quen` từ `tien_do` vẫn phải vào báo.
+- **Test phải sửa:** test nào đang mong Gemini theo `pham_vi.json` (`core/test_1191.py`, `core/test_120.py`, `e2e.js` có bộ kit).
+
+### 7.3 Bảng tra nghĩa theo từng số (mục 5b)
+- **Sửa ở:** `ai_core.Job._save` (ghi `tra_tu`), `paper_core.clean_issue` (làm sạch `tra_tu`: kiểu, độ dài, tối đa ~200 mục), `issue_view` (ưu tiên `tra_tu`, lấy cách đọc từ dấu `{表記|よみ|…}` khi thiếu).
+- **Dễ vỡ theo:**
+  - **Sửa số cũ cần collection** (tra deck theo Cấu hình trường) nên phải làm ở `__init__.py` trên luồng chính. `paper_core` không được import aqt.
+  - **Chỉ được ghi vào số của thư mục Gemini.** Thư mục kotoba_daily chỉ đọc (quyết định đã chốt, trừ `tien_do.json`). Số Claude Code thiếu nghĩa thì bổ sung trong bộ nhớ, không ghi file.
+  - Giới hạn cỡ file `MAX_JSON` (1 MB) của `bao.json`.
+  - Câu hỏi đọc hiểu cũng dùng `md(text, v.tu)`, nên cũng hưởng bảng mới.
+  - Báo tiếng Anh (`bao_gemini_en`) cùng lỗi, sửa cùng.
+  - Bản cũ (1.22) đọc `bao.json` có thêm `tra_tu`: `clean_issue` bỏ qua khoá lạ, không lỗi (kiểm lại).
+
+### 7.4 Kệ báo gộp hai nguồn (mục 4), chỗ rủi ro nhất về dữ liệu
+- **Tiến độ đọc** (`PaperState`, khoá collection `PAPER_KEY`, **đồng bộ AnkiWeb**) đánh theo **ngày**, không theo nguồn: `st["read"][date]`.
+  - Gộp kệ thì số Claude Code và số Gemini **cùng ngày** dùng chung một ô tiến độ / xu.
+  - Hai máy dùng hai nguồn khác nhau (đã đồng bộ) **hiện cũng đã bị** lẫn như vậy.
+  - Cần khoá theo **(nguồn, ngày)**, chuyển dữ liệu cũ sang (mặc định: nguồn đang dùng), và bản 1.22 vẫn đọc được phần của nó.
+- **Dễ vỡ theo:**
+  - `paper_summary` (chip "Báo mới N", cờ hòm thư), `unread_dates`.
+  - Chép chính tả hằng ngày `build_daily(lib)` lấy câu "trong 7 số mới nhất" của **một** thư mục: cần chọn lấy cả hai nguồn hay chỉ nguồn đang dùng.
+  - Nhiệm vụ "đọc báo", xu mỗi số (`Q_COINS`, `ISSUE_BONUS`).
+  - `wantDate` trong `paper.js` phải kèm nguồn.
+  - Tra nghĩa: mỗi số theo phạm vi của thư mục của nó.
+  - `tien_do.json` chỉ ghi cho kotoba_daily.
+- **Test phải sửa:** `e2e.js`, `e2e_119.js` (kệ, chuyển báo), `core/test_paper*`; thêm test đồng bộ hai máy khác nguồn.
+
+### 7.5 Truyện Gemini theo quy trình mới (mục 5c)
+- **Sửa ở:**
+  - `ai_core.py`: lời nhắc mạch truyện / nhà văn / biên tập, khuôn JSON, `Job.run` thêm bước, chọn model, giới hạn lượt; `ai_en.py` cho báo tiếng Anh.
+  - `truyen.json` đổi định dạng (thêm `mach`, nguyên văn từng kỳ, chỗ bỏ ngỏ): **đọc được định dạng cũ** (danh sách `{ky, ngay, tom_tat}`).
+  - `numbering()` (số kỳ), số rút gọn không viết truyện.
+- **Dễ vỡ theo:**
+  - Bước tự sửa máy (`autofix`: nối tra từ, bỏ liên kết ngoài phạm vi) và soát lần 2 (`review_prompt` "GIỮ NGUYÊN…") phải chạy cả trên truyện mới.
+  - Câu hỏi / chép chính tả lấy từ truyện.
+  - Hạn mức dùng chung (`_shared_exhausted`) với báo tiếng Anh, giọng đọc, luyện viết.
+  - Chỉ một việc nền Gemini một lúc.
+  - Thông báo tiến độ ("Đang lập mạch truyện…", "Biên tập đang đọc…"), Nhật ký trong thẻ Gemini (`log_summary`).
+  - Thời gian ra báo lâu hơn (hiện 30–110 giây).
+- **Tuỳ chọn mới:**
+  - `gemini_story` (hay hơn / tiết kiệm / tắt), `gemini_story_tone`.
+  - Phản hồi "Kỳ này hay / Nhạt": lệnh cầu nối mới `paper:fb:<ngày>:<hay|nhat>` + một dòng ghi chú, lưu trong thư mục Gemini (`truyen.json`), không đồng bộ.
+- **Riêng tư:** Gemini nhận thêm dòng phản hồi người dùng gõ. Sửa câu trong khối "Khoá lưu trên máy này…" của thẻ Gemini và mục Riêng tư của README.
+- **Test phải sửa:**
+  - `core/test_offline.py` / `test_ai`: FakeGemini trả lời theo thứ tự lượt gọi, thêm bước là lệch hết.
+  - `tests/gemini/run_job.py` (Gemini thật).
+  - Con số "5–15 lượt / số" trong README, `PHAT_TRIEN.md` mục 9.
+
+### 7.6 Bản dịch (mục 5d)
+- **Dữ liệu:**
+  - `bai[].dich` (danh sách song song với `doan`). `clean_issue` làm sạch: đúng số đoạn, chuỗi, giới hạn độ dài, **không chữ Hán / kana / ghi chú**. Đoạn hỏng thì bỏ nút Dịch đoạn đó.
+  - "Dịch số này" cho số cũ: số Gemini ghi vào `bao.json`; số Claude Code **không ghi vào kotoba_daily**, lưu bản dịch ở `user_files/` của add-on theo ngày.
+- **Giao diện:**
+  - `paper.js`: nút Dịch mỗi đoạn, nút "Hiện bản dịch" cạnh "Ẩn furigana" (localStorage).
+  - `garden.css` cho 3 màu bảng (Vàng vườn / Trắng giấy / Đêm vườn) và Anki chế độ tối.
+  - Cửa sổ hẹp (1024 / 720 px) không tràn.
+  - Bật cùng furigana / ẩn furigana.
+- **Báo tiếng Anh:** dịch Anh → Việt, `ai_en` thêm trường + máy kiểm tra.
+- **kotoba_daily:** một dòng trong `prompts/bao_hang_ngay.md` (tuỳ chọn) + `tools/kiemtra.py` chấp nhận `dich`.
+
+### 7.7 Ngắm cảnh, bấm nhà, cỡ Lớn, tuỳ chọn ⚙ (mục 1.2, 1.3, 1.4)
+- **Vẽ:**
+  - Khung lớn tới 10–11 lần (canvas ~1760 × 968) mỗi khung hình, nên phải đo lại hiệu năng (`perf.js`, mục tiêu ≤ 5 ms / khung như 1.7).
+  - Trời / đất kéo dài cho cảnh ngoài trời phải có cả lớp của giao diện mùa (dây cờ, hạt bay, đèn lồng: `season_art.js`, `sky.js`), mưa / tuyết, đom đóm, khách bay (chim, bướm).
+- **Thú nuôi / khách:** bấm trúng (`GardenPets.at`, `GardenGuests.at`) theo toạ độ khung mới.
+- **Phím:** V / Esc / mũi tên đi qua chỗ Anki tự đóng cửa sổ khi Esc (1.13 thay `onEsc`); không trùng phím của Xưởng (B, E, G, I, L, H, M) khi đang vẽ.
+- **Nhạc:** Ngắm trong nhà / sân dùng nhạc nào (`GardenMusic.setScene`).
+- **Chụp ảnh** từ Ngắm cảnh.
+- **Bấm nhà ở màn chính:** hiện bấm cả dải sân là mở Nhà & Cửa hàng (chú thích "Bấm để vào Nhà & Cửa hàng"). Phải tách: bấm trúng ngôi nhà → Ngắm cảnh; bấm chỗ khác vẫn như cũ. Sửa chú thích "Nhà & Cửa hàng ▸".
+- **⚙ Giao diện (`ui.js`):**
+  - Nhóm mới "Màn chính" lưu trong `ui` của config (không đồng bộ).
+  - Bốn kiểu có sẵn (Đầy đủ / Tập trung khi ôn / Dịu mắt / Ôn buổi tối) có cần đặt cỡ cảnh không.
+  - Cỡ Lớn chỉ áp cho chế độ "Màn chính", không cho "Khi ôn thẻ".
+- **Bố cục:**
+  - Cỡ Lớn làm dải cảnh cao hơn: thẻ Hôm nay (`fitTodayList`, 1.22.6), cửa sổ thấp (tự lùi về Vừa khi cửa sổ thấp hơn ~900 px).
+  - `measure.js` (tràn / cắt chữ / nút nhỏ).
+- **Test phải sửa / thêm:** `audit_full.js`, `audit_edge.js`, `e2e_114.js` (chế độ giao diện), `e2e_121.js` / `e2e_122.js` (khách, chụp ảnh), test mới cho Ngắm cảnh + Sắp xếp đồ.
+
+### 7.8 Nhà 3 gian (mục 1.2b)
+- **Dữ liệu:**
+  - Khoá collection mới cho hai gian bên. Đồ đặt ở gian bên vẫn tính vào `owned` / `placed_count`.
+  - **Rủi ro đồng bộ với bản cũ:** máy còn 1.22 không thấy đồ ở gian bên nên tưởng còn trong kho, cho đặt thêm ra sân. Đồng bộ về thì số đồ đặt có thể vượt số đang có.
+  - Cần quy tắc khi tải: vượt thì cất bớt **đồ ở gian bên** trước (không xoá đồ đã mua).
+- **Mua / đặt:**
+  - `check_spot`, `place` / `move` / `take`; Kho đồ "Đặt" phải chọn được gian.
+  - Bảo dưỡng nhà (1.14) có tính cả gian bên không.
+  - Kiểu nhà (minka, nhà trà, lâu đài) có đổi giấy dán / sàn của gian bên không.
+- **Ngôi nhà ngoài sân:** có vẽ thêm chái nhà khi đã mở gian không. Nhà đang chiếm cột 0–3 của sân, **nới rộng sẽ đè đồ ngoài sân**. Đề xuất: không nới, chỉ thêm chi tiết nhỏ (ví dụ ống khói bếp).
+- **Danh mục:** khoảng 12 món mới (bếp, phòng ngủ) + hình pixel trong `home.js` / `rare_art.js`.
+  - Mã chia sẻ, Xưởng (món tự làm loại "Trong nhà" đặt được ở gian bên).
+  - Ảnh vườn.
+  - Album khách (khách trong nhà, nếu sau này có).
+- **Cân bằng xu** (`PHAT_TRIEN.md` mục 6): thêm khoảng 4.000 xu gian + đồ mới.
+
+### 7.9 Bản test nhiều xu + giới hạn config (mục 5)
+- **Công cụ test:**
+  - Gói riêng, gọi `STATE` của add-on. Không được nằm trong `pack.py`.
+  - Mỗi lần dùng ghi vào nhật ký Báo lỗi (`kb.ERRORS`).
+  - Khôi phục ví phải trả lại cả khoá mở rộng (vùng tự tạo, giống cây, thú nuôi, nhật ký, gian nhà mới).
+- **Giới hạn config** (`CONFIG_RANGES`): người đang đặt `daily_bonus` / `game_daily_coins` cao sẽ bị hạ không báo. Ghi vào `config.md` và lịch sử phiên bản. `core/test_1226.py` đang kiểm trần 100.000, phải sửa.
+
+### 7.10 Chung cho cả bản 1.23
+- **Tương thích:** Anki 23.10 → 26.9.4.
+  - JS chỉ dùng tính năng có từ Chromium ~87 (không `:has`, `Array.at`, `structuredClone`…), Python đúng cú pháp 3.9.
+  - Chạy `tests/anki/run_versions.sh` ít nhất trên 23.10.1 (Qt 6.6) và 26.9.4.
+- **Dữ liệu đồng bộ:**
+  - Khoá collection mới nào cũng có `_clean_*` và không nhét vào ví (bản cũ xoá khoá lạ trong ví, quyết định ở `PHAT_TRIEN.md` mục 12).
+  - Xem lại cỡ cấu hình collection (AnkiWeb đồng bộ cả khối).
+- **Tài liệu:**
+  - `PHAT_TRIEN.md` (2.6, 5, 6, 7, 9, 11), README trong gói, `config.md`, `tests/README.md`.
+  - **README.md** (thêm Ngắm cảnh, nhà 3 gian, bản dịch, truyện mới), `docs/ankiweb_mo_ta.html`.
+  - Ảnh + video làm lại bằng `readme_media.js` (thêm cảnh Ngắm, nhà 3 gian, bản dịch).
+- **Xoá khi xong:** `KE_HOACH_1_23.md`, `docs/ke_hoach_1_23/`, `tests/tools/phac_thao_1_23/` (chép phần cần giữ sang `PHAT_TRIEN.md`).
+
+## 8. Thứ tự làm (khi người dùng duyệt)
 
 1. Mục 3 + 2 (lỗi tự viết báo, Gemini chỉ chọn deck): nhỏ, gây khó chịu nhất.
 2. Mục 5b (bấm từ không ra nghĩa) + mục 4 (Kệ báo gộp hai nguồn).
@@ -494,10 +650,10 @@ Cách ghi: mỗi dòng là một việc làm → điều phải thấy. Sai ở 
 6. Giới hạn config hợp lý (mục 5.3).
 7. Test tự động trong Anki thật (`e2e_123.js` + chạy lại bộ cũ trên 26.9.4 và 23.10), ảnh trước / sau, cập nhật README / ảnh / video nếu giao diện đổi, đóng gói 1.23.0.
 
-## 8. Câu hỏi cần chốt
+## 9. Câu hỏi cần chốt
 
 - Mục 1.5: Trong nhà ở màn chính theo cách A, B hay C.
 - Mục 5c: giọng truyện mặc định; có muốn thêm nhân vật / bối cảnh / mạch truyện đầu tiên nào không.
-- Mục 5d: bản dịch mặc định ẩn (đề xuất) hay hiện?
+- ~~Mục 5d: bản dịch mặc định ẩn hay hiện?~~ Đã chốt: **ẩn**, bấm "Dịch" / "Hiện bản dịch" mới hiện.
 - Có làm giới hạn config hợp lý (mục 5.3) không, và mức giới hạn.
 - Công cụ test có cần thêm việc gì (ví dụ chỉnh ngày để thử chuỗi ngày ôn / bảo dưỡng nhà)?
