@@ -11,6 +11,24 @@ Ngày 05/11/2026. File này chỉ là kế hoạch: chưa sửa mã. Làm xong b
 | 5 | Bản test nhiều xu (add-on phụ riêng, không nằm trong bản phát hành) | công cụ |
 | 6 | Danh sách cần test | kiểm thử |
 
+### Ảnh phác thảo (dựng trong Anki thật bằng hình, nút, chữ của chính add-on, cửa sổ 1850 × 1130)
+
+Chỉ là ảnh minh hoạ: chèn tạm vào trang đang chạy, chưa sửa mã. Ảnh "Bây giờ" là giao diện 1.22.8 để so.
+
+| Bây giờ | Sau khi làm (phác thảo) |
+|---|---|
+| ![Màn chính bây giờ: dải cảnh chỉ có sân và vùng](docs/ke_hoach_1_23/0a_bay_gio_man_chinh.png) | ![1. Màn chính chọn Trong nhà](docs/ke_hoach_1_23/1_man_chinh_trong_nha.png) |
+| ![Bảng Nhà bây giờ: trong nhà khung nhỏ, dính danh sách cửa hàng](docs/ke_hoach_1_23/0b_bay_gio_nha.png) | ![3. Ngắm cảnh: trong nhà phóng 10 lần](docs/ke_hoach_1_23/3_ngam_trong_nha.png) |
+| ![Thẻ Gemini bây giờ: Giáo trình, Trình độ bị khoá](docs/ke_hoach_1_23/6a_bay_gio_gemini.png) | ![6. Thẻ Gemini sau khi bấm Dùng Gemini: chờ Bắt đầu viết, chỉ chọn deck](docs/ke_hoach_1_23/6b_phac_thao_gemini.png) |
+
+Các màn mới khác:
+
+| Màn chính, cỡ Lớn | Tuỳ chọn mới ở ⚙ → Giao diện |
+|---|---|
+| ![2. Màn chính cỡ Lớn: sân phóng 6 lần](docs/ke_hoach_1_23/2_man_chinh_co_lon.png) | ![2b. Tuỳ chọn Màn chính: Cỡ cảnh Vừa / Lớn, Cảnh hiện](docs/ke_hoach_1_23/2b_tuy_chon_co_canh.png) |
+| **Ngắm cảnh · Bãi biển** | **Ngắm cảnh · Sắp xếp đồ** |
+| ![4. Ngắm cảnh Bãi biển: trời và đất kéo dài kín khung](docs/ke_hoach_1_23/4_ngam_bai_bien.png) | ![5. Sắp xếp đồ: lưới ô, popup món đồ, ngăn Kho đồ](docs/ke_hoach_1_23/5_ngam_sap_xep_do.png) |
+
 ---
 
 ## 1. Xem nhà và các vùng
@@ -37,11 +55,13 @@ Trả lời câu hỏi "không thay đổi giao diện ngoài được hả": **
   - **Vừa** (mặc định, như cũ).
   - **Lớn**: phóng thêm, ví dụ màn 1920 × 1200 thì sân 6 lần (1536 × 456), trong nhà 5 lần (800 × 440). Ruộng cây lùi xuống, cuộn được.
   - Kết hợp tuỳ chọn có sẵn **"Ruộng cây: Ẩn"** thì màn chính gần như chỉ còn cảnh.
+  - Thêm **"Cảnh hiện"**: *Cảnh đang chọn* (nhớ cảnh chọn bằng ◂ ▸, mặc định) hoặc *Luôn về Sân vườn khi mở vườn*.
+  - Hai mục này nằm ở một nhóm mới **"Màn chính"**, ngay trên nhóm "Bảng ôn thẻ" (ảnh 2b).
 - **Bấm vào ngôi nhà ở màn chính** để vào Trong nhà ngay trên màn chính (bây giờ bấm nhà chỉ có tác dụng trong bảng Nhà).
 
 ### 1.3 Màn "Ngắm cảnh" (cả cửa sổ)
 
-Phác thảo: `y_tuong_1_ngam_trong_nha.png`, `y_tuong_2_ngam_vung.png` (đã gửi trong chat).
+Phác thảo: ảnh 3, 4, 5 ở đầu file.
 
 - **Cả cửa sổ chỉ có một cảnh**, không có danh sách cửa hàng.
   - Phóng nguyên lần to nhất vừa cửa sổ, pixel không nhoè. Màn 1920 × 1200: trong nhà khoảng 11 lần, ngoài trời khoảng 7 lần.

@@ -7,7 +7,7 @@ const fs = require('fs');
 const path = require('path');
 const { pages, Page, sleep } = require('./cdp');
 const OUT = path.resolve(process.argv[2] || '/tmp/kb_media');
-const ONLY = process.env.KB_ONLY || '';          // "shots" / "video": chỉ làm một phần
+const ONLY = process.env.KB_ONLY || '';          // "shots" / "video": chỉ làm một phần; "setup": chỉ dựng cảnh rồi thoát
 fs.mkdirSync(OUT, { recursive: true });
 const CDP = Number(process.env.KB_CDP_PORT || 9333), CTRL = Number(process.env.KB_CTRL_PORT || 9444);
 const W = 1280, H = 800;
@@ -258,6 +258,7 @@ result = 1`;
   await deck('Tiếng Nhật');
   await sky(10, 'sunny'); await hideToast(); await sleep(1500);
 
+  if (ONLY === 'setup') { console.log('Đã dựng cảnh (KB_ONLY=setup), Anki vẫn mở.'); process.exit(0); }
   if (ONLY !== 'video') {
     console.log('== Ảnh');
     await page.eval('(() => { const s = document.createElement("style"); s.id = "kb-demo-nosay"; s.textContent = "#kb-say{display:none!important}"; document.head.appendChild(s); return 1; })()');
