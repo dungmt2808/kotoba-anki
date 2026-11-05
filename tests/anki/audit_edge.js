@@ -19,6 +19,8 @@ fs.mkdirSync(SHOTS, { recursive: true });
 const results = []; const fails = [];
 const ok = (c, m) => { results.push(!!c); if (!c) fails.push(m); console.log((c ? '  ✓ ' : '  ✗ ') + m); };
 const CDP = Number(process.env.KB_CDP_PORT || 9333), CTRL = Number(process.env.KB_CTRL_PORT || 9444);
+// ảnh vườn tự lưu: mỗi Anki (cổng điều khiển) một file — chạy song song nhiều bản Anki không ghi đè nhau (1.22.7)
+const PHOTO = '/tmp/kb_edge_photo_' + CTRL + '.png';
 async function py(code) {
   const r = await fetch('http://127.0.0.1:' + CTRL, { method: 'POST', body: code });
   const j = await r.json(); if (j.err) throw new Error(j.err); return j.r;
@@ -176,7 +178,7 @@ def prep(coins=0, house=0, zones=0, wear_days=None, pets=(), seeds=(), themes=()
 const ITEM_CODE = `spr = core.px_encode("." * 100 + "r" * 40 + "." * 76 + "k" * 40)`;
 
 (async () => {
-  await py(KB + `os.environ["KB_TEST_PHOTO"] = "/tmp/kb_edge_photo.png"
+  await py(KB + `os.environ["KB_TEST_PHOTO"] = "${PHOTO}"
 d = st.load(); d["coins"] = 0; st.save(d)
 result = 1`);
   await py(KB + 'kb.open_garden(); result = 1'); await sleep(3000);

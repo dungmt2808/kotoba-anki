@@ -83,5 +83,42 @@ ok(m({"gemini_langs": ["en"], "journal_lang": "ja"})["gemini_langs"] == ["en"], 
 d = m({"daily_goal": "abc"})
 ok(D["daily_goal"] == 30 and d is not D, "không sửa DEFAULT_CONFIG")
 
+print("== cây héo trên Anki 23.10 – 24.06 (prop:r của Anki không tìm ra thẻ) → tự tính R")
+
+
+class FakeCol:
+    def __init__(self, rows, fsrs=True, today=1000):
+        self.rows, self.fsrs = rows, fsrs
+        self.sched = type("S", (), {"today": today})()
+        self.db = self
+
+    def get_config(self, key, default=None):
+        return self.fsrs if key == "fsrs" else default
+
+    def all(self, sql):
+        return self.rows
+
+
+# (id, due, odue, odid, ivl, data): S = 3 ngày, ôn cuối cách đây 40 ngày (hạn ôn 35 ngày trước, khoảng cách 5)
+rows = [(1, 965, 0, 0, 5, '{"s":3.0,"d":5.0}'), (2, 1020, 0, 0, 40, '{"s":3.0,"d":5.0}'),
+        (3, 999, 0, 0, 30, '{"s":60.0,"d":5.0}'), (4, 0, 965, 7, 5, '{"s":3.0}'), (5, 965, 0, 0, 5, '{}'), (6, 965, 0, 0, 5, 'hỏng')]
+w = core.wilted_by_hand
+r4 = (1 + 40 / 27) ** -1          # FSRS-4: 0.403 (bảng thông tin thẻ của 23.10 ghi 0.403)
+r45 = (1 + 19 / 81 * 40 / 3) ** -0.5   # FSRS-4.5: 0.492 (24.06 ghi 0.492)
+ok(abs(r4 - 0.403) < 0.001 and abs(r45 - 0.492) < 0.001, "công thức khớp số của bảng thông tin thẻ (0.403 / 0.492)")
+ok(w(FakeCol(rows), [1, 2, 3, 4, 5, 6], 0.7, (23, 10, 1)) == {1, 2, 4}, "23.10: thẻ quá hạn / hẹn sau nhưng R thấp / ở deck lọc héo; nhớ tốt, không có S, dữ liệu hỏng thì không")
+ok(w(FakeCol(rows), [1, 2, 3, 4], 0.7, (24, 6, 3)) == {1, 2, 4}, "24.06 (FSRS-4.5) cũng vậy")
+ok(w(FakeCol(rows[:1]), [1], 0.45, (23, 10, 1)) == {1} and w(FakeCol(rows[:1]), [1], 0.45, (24, 6, 3)) == set(),
+   "ngưỡng 0.45: R 0.403 (23.10) héo, R 0.492 (24.06) không — đúng công thức từng bản")
+ok(w(FakeCol(rows), [1, 2], 0.7, (24, 11, 0)) == set() and w(FakeCol(rows), [1, 2], 0.7, (26, 9, 4)) == set()
+   and w(FakeCol(rows), [1, 2], 0.7, (2, 1, 66)) == set(), "24.11 trở lên (prop:r đúng) và 2.1.x (không có FSRS): không dùng")
+ok(w(FakeCol(rows, fsrs=False), [1, 2], 0.7, (24, 6, 3)) == set() and w(FakeCol(rows), [], 0.7, (24, 6, 3)) == set(),
+   "FSRS tắt / deck trống: không có cây héo")
+try:
+    import anki.buildinfo  # noqa: F401  (stubs không có)
+    ok(core.anki_version()[:1] != (99,), "đọc được bản Anki đang chạy: %s" % (core.anki_version(),))
+except ImportError:
+    ok(core.anki_version() == (99, 0, 0), "không có gói anki → coi như bản mới (99, 0, 0), không tự tính R")
+
 print("\nKẾT QUẢ: " + ("TẤT CẢ OK" if not FAIL else "%d LỖI" % len(FAIL)))
 sys.exit(1 if FAIL else 0)

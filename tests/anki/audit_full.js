@@ -15,6 +15,8 @@ fs.mkdirSync(SHOTS, { recursive: true });
 const results = []; const fails = [];
 const ok = (c, m) => { results.push(!!c); if (!c) fails.push(m); console.log((c ? '  ✓ ' : '  ✗ ') + m); };
 const CDP = Number(process.env.KB_CDP_PORT || 9333), CTRL = Number(process.env.KB_CTRL_PORT || 9444);
+// ảnh vườn tự lưu: mỗi Anki (cổng điều khiển) một file — chạy song song nhiều bản Anki không ghi đè nhau (1.22.7)
+const PHOTO = '/tmp/kb_full_photo_' + CTRL + '.png';
 async function py(code) {
   const r = await fetch('http://127.0.0.1:' + CTRL, { method: 'POST', body: code });
   const j = await r.json(); if (j.err) throw new Error(j.err); return j.r;
@@ -166,7 +168,7 @@ for back in range(1, 15):
     for i in range(12):
         rows.append(((day0 - back * 86400 + 36000) * 1000 + i * 1000 + back, cids[(back * 12 + i) % len(cids)], -1, 3, 10, 5, 2500, 4000, 1))
 col.db.executemany("insert or ignore into revlog (id,cid,usn,ease,ivl,lastIvl,factor,time,type) values (?,?,?,?,?,?,?,?,?)", rows)
-os.environ["KB_TEST_PHOTO"] = "/tmp/kb_full_photo.png"
+os.environ["KB_TEST_PHOTO"] = "${PHOTO}"
 result = 1`);
   await py(KB + 'kb.open_garden(); result = 1'); await sleep(3000);
   page = await gardenPage();
@@ -804,14 +806,14 @@ st.save(d); kb._dialog.refresh(); result = 1`); await sleep(1800); await hideToa
   await phase('Chụp ảnh vườn (3 cỡ)', async () => {
     await closeHome(); await sleep(300);
     for (const [k, w, h] of [['s', 534, 200], ['l', 1068, 400], ['wall', 1920, 1080]]) {
-      await py(KB + 'p = "/tmp/kb_full_photo.png"\nif os.path.exists(p): os.remove(p)\nresult = 1');
+      await py(KB + 'p = "' + PHOTO + '"\nif os.path.exists(p): os.remove(p)\nresult = 1');
       await js('document.getElementById("kb-yard-snap").click(); return 1;'); await sleep(250);
       if (k === 's') await shot('16_bang_chup_anh');
       await js(`document.querySelector('#kb-snap-pop [data-snap="${k}"]').click(); return 1;`);
-      const ok1 = await waitPy('result = os.path.exists("/tmp/kb_full_photo.png")', 10000);
-      const dim = ok1 && await py(KB + 'import struct\nb = open("/tmp/kb_full_photo.png", "rb").read(24)\nresult = list(struct.unpack(">II", b[16:24]))');
+      const ok1 = await waitPy('result = os.path.exists("' + PHOTO + '")', 10000);
+      const dim = ok1 && await py(KB + 'import struct\nb = open("' + PHOTO + '", "rb").read(24)\nresult = list(struct.unpack(">II", b[16:24]))');
       ok(dim && dim[0] === w && dim[1] === h, 'Ảnh vườn cỡ ' + k + ': ' + JSON.stringify(dim));
-      if (dim) fs.copyFileSync('/tmp/kb_full_photo.png', SHOTS + '/anh_vuon_' + k + '.png');
+      if (dim) fs.copyFileSync(PHOTO, SHOTS + '/anh_vuon_' + k + '.png');
     }
   });
 
