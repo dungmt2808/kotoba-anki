@@ -1,0 +1,22 @@
+
+DevTools listening on ws://127.0.0.1:9535/devtools/browser/98157ca3-9655-408c-aa1f-a2e7b1b7b62e
+[4930:4930:1106/091039.328550:ERROR:zygote_communication_linux.cc(296)] Failed to send GetTerminationStatus message to zygote
+[4930:4930:1106/091039.333200:ERROR:zygote_communication_linux.cc(296)] Failed to send GetTerminationStatus message to zygote
+[4930:4930:1106/091039.335255:ERROR:zygote_communication_linux.cc(296)] Failed to send GetTerminationStatus message to zygote
+[4930:4930:1106/091039.339121:ERROR:zygote_communication_linux.cc(296)] Failed to send GetTerminationStatus message to zygote
+Preparing to run...
+Qt info: Sandboxing disabled by user. 
+Qt debug: doh set to ""  --  SystemOnly 
+Starting main loop...
+Qt warning: Remote debugging server started successfully. Try pointing a Chromium-based browser to http://127.0.0.1:9535 
+mpv not found, reverting to mplayer
+Qt warning: This plugin does not support propagateSizeHints() 
+Qt warning: This plugin does not support raise() 
+update check failed: A network error occurred.
+
+Error details: ⁨error sending request for url (): error trying to connect: unsuccessful tunnel⁩
+Qt warning: This plugin does not support propagateSizeHints() 
+Qt warning: This plugin does not support propagateSizeHints() 
+Qt warning: This plugin does not support propagateSizeHints() 
+Qt warning: This plugin does not support raise() 
+JS info /_anki/legacyPageData?id=140583406622896:0 [DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o

@@ -1,0 +1,10 @@
+{
+  "script": "/workspace/kotoba-audit-tools/audit_extra.js",
+  "exit": 0,
+  "summary": null,
+  "failed_assertions": [],
+  "seconds": 54,
+  "profile": "/workspace/kotoba-audit-results/kb-audit-5-gm3hst1r",
+  "cdp": 9535,
+  "ctrl": 9635
+}

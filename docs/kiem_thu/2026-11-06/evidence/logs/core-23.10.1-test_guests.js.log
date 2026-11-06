@@ -1,0 +1,28 @@
+== lịch ghé theo khung giờ
+  ✓ rate 0,5 → khoảng một nửa số khung có khách (0.495)
+  ✓ ban ngày khô: chỉ chim sẻ / mèo / bướm (suzume,neko,cho)
+  ✓ nhiều trọng số thì ghé nhiều hơn (mèo 18 > sẻ 10 > bướm 7)
+  ✓ ban đêm: cú, đom đóm (fukuro,hotaru)
+  ✓ trời mưa: ếch (kaeru)
+  ✓ có tuyết: chồn tuyết + khách "không mưa" (cho,neko,okojo,suzume)
+  ✓ trong một khung: cùng một khách
+  ✓ cảnh Python không cho khách nào → không có khách
+  ✓ rate 0 → không bao giờ có khách
+  ✓ trong nhà: vành khuyên ban ngày, đêm thì không
+== đi vào / ở lại / đi về, báo Python
+  ✓ có khung mèo hoang ghé
+  ✓ khách mới đi vào từ mép cảnh
+  ✓ mèo hoang nằm trên ghế gỗ (giữa ghế, cao hơn chân ghế)
+  ✓ tới chỗ rồi ở lại (≤ 20 giây)
+  ✓ cảnh không hiện cho người dùng (seen = false) → không báo Python
+  ✓ hiện chưa đủ 1,5 giây → chưa báo
+  ✓ hiện ≥ 1,5 giây → báo một lần: guest:met:neko:yard
+  ✓ cùng ngày không báo lại
+  ✓ bấm trúng khách / chỗ trống
+  ✓ trời tối (mèo không ghé đêm) → mèo đi về rồi biến mất
+== không đứng chồng lên đồ
+  ✓ nửa trái sân kín đồ → khách đứng ngẫu nhiên vẫn tránh ô có đồ (0/30 lần chạm)
+== khung hình
+  ✓ mọi khách vẽ được ở mọi dáng (đi, đứng, nghỉ, bay) 
+  ✓ đom đóm không cần hình; cò có hình cho Album
+KẾT QUẢ: 23/23

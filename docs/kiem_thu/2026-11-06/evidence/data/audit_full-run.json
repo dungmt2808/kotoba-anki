@@ -1,0 +1,10 @@
+{
+  "script": "audit_full.js",
+  "exit": 0,
+  "summary": "KẾT QUẢ: 180/180",
+  "failed_assertions": [],
+  "seconds": 324,
+  "profile": "/workspace/kotoba-audit-results/kb-audit-1-qep2zu5v",
+  "cdp": 9531,
+  "ctrl": 9631
+}

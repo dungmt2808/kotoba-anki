@@ -1,0 +1,42 @@
+== thẻ đến hạn bình thường: đếm như cũ
+  ✓ 3 thẻ đến hạn → nút 3, hàng đợi 3 (3, 3)
+  ✓ 3 cây khát, không cây nào bị giữ
+  ✓ không có lý do 'chưa tưới được'
+== thẻ anh em bị hoãn tới mai (tình huống trong ảnh người dùng)
+  ✓ note 2 thẻ héo cùng đến hạn → nút 1, hàng đợi 1
+  ✓ ôn 1 thẻ → thẻ kia bị Anki hoãn, hàng đợi rỗng
+  ✓ nút Tưới ngay không còn số (trước 1.18: còn 1) → 0
+  ✓ cây vẫn héo (nhớ thật) nhưng không khát, lý do 'buried': buried
+  ✓ thống kê: 1 cây hoãn tới mai
+== bấm Hoãn (bury) một thẻ héo
+  ✓ thẻ bị hoãn: nút 0, cây 'buried'
+== chôn thẻ mới anh em: cây mầm không bị gắn 'hoãn tới mai'
+  ✓ Anki hoãn thẻ mới anh em
+  ✓ hàng đợi rỗng, cây không khát, không lý do 'buried' (thẻ mới chưa cần tưới): None
+== thẻ tạm ngưng (suspend): không tính vào vườn như trước
+  ✓ thẻ tạm ngưng không thành cây, nút 0
+== deck chạm giới hạn ôn mỗi ngày
+  ✓ 4 thẻ đến hạn, giới hạn 2 → nút 2, hàng đợi 2 (2, 2)
+  ✓ vẫn 4 cây khát (có giọt nước), 2 cây 'vượt giới hạn'
+  ✓ ôn đủ 2 thẻ → hàng đợi rỗng, nút không còn số (trước 1.18: 2)
+  ✓ màn hết thẻ biết còn 2 cây chờ mai vì giới hạn
+== thẻ héo nhưng Anki hẹn ôn ở ngày sau
+  ✓ hàng đợi rỗng, nút không có số (trước 1.18: 1)
+  ✓ cây héo, không khát, lý do 'notdue'
+  ✓ chú thích cây vẫn ghi ôn sau 20 ngày (20)
+== thẻ đang học, bước 1 giờ (dài hơn 20 phút học trước)
+  ✓ vừa bấm Lại, chờ 1 giờ → hàng đợi rỗng, nút 0
+  ✓ cây 'later', có giờ tới lượt (1793959470)
+  ✓ thống kê: 1 cây chờ tới lượt
+== thẻ đang học, bước 10 phút (trong 20 phút học trước): vẫn tưới được
+  ✓ bấm Lại → học lại sau 10 phút: nút 1, hàng đợi 1
+== thẻ đang nằm trong deck lọc (Filtered deck)
+  ✓ deck gốc: 2 thẻ đến hạn, 1 thẻ mượn sang deck lọc → nút 1, hàng đợi 1 (1, 1)
+  ✓ lý do 'filtered', không báo nhầm 'chạm giới hạn': {'filtered': 1}
+  ✓ xem chính deck lọc: cây khát, nút 1, hàng đợi 1
+  ✓ stats.queue = [mới, đang học, ôn] Anki còn cho: [0, 0, 1]
+== FSRS tắt: prop:r lỗi thì bỏ qua như cũ
+  ✓ FSRS tắt: nút 1, hàng đợi 1
+== hàm phụ chịu lỗi
+  ✓ queue_counts lỗi → None (nút dùng số cây khát)
+KẾT QUẢ: TẤT CẢ OK

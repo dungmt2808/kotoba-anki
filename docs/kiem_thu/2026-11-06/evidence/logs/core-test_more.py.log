@@ -1,0 +1,76 @@
+== sửa nhà
+  ✓ trần nấc hư: chưa tường 0, có tường 2, có mái 4
+  ✓ mở vườn lần đầu có nhà: bắt đầu tính tuổi nhà từ hôm nay
+  ✓ 1 nấc / 7 ngày
+  ✓ không vượt trần (nhà không bao giờ sập)
+  ✓ giá 1 nấc ≈ 3% giá nhà, tối thiểu 15 xu
+  ✓ sửa 1 nấc: 105 xu
+  ✓ sửa 1 nấc: còn 2 nấc
+  ✓   … phần ngày lẻ vẫn giữ (7 ngày sau lại thêm 1 nấc)
+  ✓ vắng rất lâu (nấc 4) rồi sửa 1 nấc → đúng 3 nấc (không bị tính dồn)
+  ✓ vắng ≥ 14 ngày: giảm 50% trong 7 ngày
+  ✓   sửa hết 4 nấc khi được giảm: 210 xu thay vì 420
+== thú nuôi
+  ✓ nhận nuôi: về là đã no
+  ✓ không nuôi trùng / không có con lạ
+  ✓ quên 1 ngày: đói · 2 ngày: đi chơi (không chết)
+  ✓ cho ăn 3 xu → về nhà, thân thêm 1
+  ✓ đã ăn hôm nay thì không tính tiền nữa
+  ✓ mức thân thiết
+  ✓ tên được làm sạch (bỏ < > &)
+  ✓ chưa mở vùng thì không chuyển tới được
+  ✓ chó chỉ ở ngoài trời
+  ✓ mèo vào nhà được
+  ✓ dữ liệu thú rác → làm sạch
+== giống cây
+  ✓ chưa mua giống thì không gieo được
+  ✓ deck cha có luật → cây của deck con theo luật đó
+  ✓ loại note thắng deck
+  ✓ tag (kể cả tag con, không phân biệt hoa thường) thắng tất cả
+  ✓ không có luật → cây gốc
+  ✓ Trộn: mỗi cây một giống (cả cây gốc), cố định theo note
+  ✓ bỏ luật tag
+  ✓ apply_seeds gắn / bỏ plant.v
+  ✓ luật gieo rác → làm sạch
+== vùng tự tạo
+  ✓ tạo vùng 5.000 xu; tên / màu lạ được làm sạch
+  ✓ công trình 64×76 lưu đúng
+  ✓ đổi tên / nền không đổi hình: miễn phí
+  ✓ vẽ lại công trình: 50 xu
+  ✓ màu lạ trong hình → lỗi
+  ✓ sai kích thước hình → lỗi
+  ✓ tối đa 6 vùng
+  ✓ xoá vùng: thú ở đó về sân
+  ✓ id vùng không dùng lại (u2 đã xoá → vùng mới là u7)
+  ✓ nhận diện id vùng tự tạo
+== GardenState: lưu ở khoá riêng, bản cũ không xoá
+  ✓ touch(): ghi tuổi nhà vào MORE_KEY
+  ✓ ví (bản 1.6.1 đọc) không có gì của 1.14
+  ✓ EXT_KEY cũng không
+  ✓ đồ đặt ở vùng tự tạo nằm ở MORE_KEY
+  ✓ đọc lại: vùng + đồ + xu đúng
+  ✓ more_view tính sẵn cho giao diện
+  ✓ kho hết hàng rào → không đặt thêm được
+  ✓ vùng chưa tạo → không đặt được
+  ✓ bản cũ đặt trùng món ở chỗ khác → món ở vùng tự tạo về kho (không vượt số đã có)
+  ✓ lưu lại không mất thú nuôi
+  ✓ giữ khoá lạ của bản mới hơn
+  ✓ sửa hết 3 nấc sau 21 ngày
+  ✓ nhà mới thì không sửa
+  ✓ tự cho ăn: thiếu xu thì không trừ
+  ✓ tự cho ăn khi mở vườn: trừ 3 xu
+  ✓ xoá vùng
+  ✓ collection chưa có MORE_KEY → không dùng more.json của máy khác
+== giao diện tự chỉnh
+  ✓ làm sạch: giữ giá trị hợp lệ, bỏ giá trị lạ
+  ✓ mặc định = như cũ (mọi thứ chuyển động)
+  ✓ kiểu “Tập trung khi ôn”
+  ✓ kiểu “Ôn buổi tối”, kiểu lạ → lỗi
+== hiệu ứng thành tích
+  ✓ xong thẻ, cả vườn ra hoa, mốc 7 ngày, xong nhiệm vụ
+  ✓ chưa ôn lượt nào thì chưa tính “xong thẻ”
+  ✓ cả vườn ra quả, đạt mục tiêu
+  ✓ có cây héo thì không tính “cả vườn”
+  ✓ ít hơn 5 cây thì không tính
+
+KẾT QUẢ: TẤT CẢ OK

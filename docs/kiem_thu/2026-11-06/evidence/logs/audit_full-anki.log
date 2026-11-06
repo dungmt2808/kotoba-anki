@@ -1,0 +1,441 @@
+Starting Anki 26.09.4...
+2026-11-06 09:01:48,077:INFO:aqt.mediasrv: Serving on http://127.0.0.1:38493
+[1165:1209:1106/090148.202535:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+
+DevTools listening on ws://127.0.0.1:9531/devtools/browser/860947cd-4369-4856-bbb2-d7bfbd912e00
+[1165:1209:1106/090155.438358:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090155.438395:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090155.438400:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090200.097553:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090200.097597:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090200.097604:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090203.035231:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090203.035263:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090203.035267:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090207.377636:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090207.377744:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090207.377751:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090209.219507:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090209.219540:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090209.219544:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090210.130565:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090210.130600:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090210.130606:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090212.557140:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090212.557251:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090212.557265:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090213.929000:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090213.929031:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090213.929036:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090215.258708:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090215.258741:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090215.258745:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090216.607607:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090216.607637:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090216.607642:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090220.055937:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090220.055967:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090220.055972:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090220.978052:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090220.978182:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090220.978188:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090233.463413:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090233.463446:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090233.463451:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090246.038523:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090246.038552:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090246.038556:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090310.479847:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090310.479930:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090310.479935:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090311.413278:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090311.413391:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090311.413396:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090317.185694:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090317.185727:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090317.185731:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090318.941850:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090318.941901:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090318.941906:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090322.918446:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090322.918502:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090322.918507:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090325.874963:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090325.874993:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090325.874999:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090328.885564:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090328.885593:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090328.885598:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090331.870225:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090331.870271:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090331.870277:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090334.852592:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090334.852692:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090334.852697:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090337.881687:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090337.881727:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090337.881733:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090340.882552:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090340.882583:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090340.882587:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090343.843087:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090343.843117:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090343.843122:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090346.817794:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090346.817827:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090346.817832:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090349.777618:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090349.777650:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090349.777654:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090351.538300:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090351.538342:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090351.538346:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090352.517635:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090352.517665:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090352.517670:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090410.264555:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090410.264585:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090410.264591:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090412.615270:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090412.615304:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090412.615309:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090414.865602:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090414.865634:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090414.865639:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090417.114226:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090417.114258:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090417.114263:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090419.399607:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090419.399665:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090419.399673:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090421.670063:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090421.670092:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090421.670111:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090424.059108:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090424.059131:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090424.059138:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090426.348513:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090426.348545:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090426.348549:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090428.631218:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090428.631266:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090428.631270:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090430.939740:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090430.939771:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090430.939775:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090433.252928:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090433.252961:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090433.252965:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090435.579050:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090435.579084:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090435.579089:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090437.918850:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090437.918906:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090437.918911:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090440.230340:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090440.230378:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090440.230769:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090442.521255:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090442.521286:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090442.521290:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090444.742009:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090444.742048:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090444.742052:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090455.530496:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090455.530535:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090455.530542:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090456.595514:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090456.595547:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090456.595551:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090457.535699:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090457.535737:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090457.535741:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090458.933905:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090458.933941:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090458.933945:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090501.181531:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090501.181571:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090501.181576:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090504.363840:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090504.363860:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090504.363865:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090507.130095:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090507.130134:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090507.130141:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090508.061450:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090508.061482:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090508.061487:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090529.707368:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090529.707402:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090529.707406:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090531.432028:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090531.432062:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090531.432066:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090533.286446:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090533.286507:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090533.286512:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090534.396168:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090534.396202:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090534.396215:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090536.346744:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090536.346785:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090536.346790:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090538.523201:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090538.523240:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090538.523246:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090542.425007:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090542.425037:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090542.425042:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090543.390311:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090543.390342:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090543.390347:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090544.794278:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090544.794306:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090544.794311:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090546.835159:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090546.835212:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090546.835217:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090548.773665:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090548.773707:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090548.773725:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090550.638211:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090550.638245:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090550.638249:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090552.448547:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090552.448594:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090552.448599:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090554.212847:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090554.212907:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090554.212914:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090555.914010:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090555.914031:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090555.914035:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090557.661506:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090557.661543:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090557.661547:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090559.409907:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090559.409946:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090559.409952:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090601.182643:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090601.182675:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090601.182680:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090602.890513:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090602.890553:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090602.890558:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090604.881936:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090604.881969:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090604.881973:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090606.369442:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090606.369479:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090606.369486:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090607.864703:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090607.864740:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090607.864745:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090609.230950:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090609.230983:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090609.230987:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090610.382754:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090610.382786:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090610.382802:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090613.359029:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090613.359062:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090613.359066:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090615.736529:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090615.736571:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090615.736576:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090616.571144:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090616.571178:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090616.571182:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090617.731786:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090617.731817:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090617.731821:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090618.542912:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090618.542943:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090618.542948:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090619.723427:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090619.723459:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090619.723463:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090620.567617:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090620.567649:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090620.567653:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090621.762025:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090621.762056:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090621.762060:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090622.615644:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090622.615679:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090622.615696:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090623.778062:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090623.778093:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090623.778099:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090624.569328:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090624.569362:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090624.569367:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090625.770963:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090625.770995:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090625.770999:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090626.617404:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090626.617436:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090626.617440:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090627.779743:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090627.779773:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090627.779778:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090628.585780:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090628.585818:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090628.585910:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090629.800338:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090629.800369:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090629.800374:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090630.643533:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090630.643565:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090630.643570:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090631.794444:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090631.794529:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090631.794538:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090632.634038:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090632.634075:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090632.634082:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090633.813923:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090633.814136:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090633.814143:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090634.646035:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090634.646066:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090634.646070:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090635.847055:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090635.847096:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090635.847101:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090636.675541:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090636.675572:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090636.675577:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090638.330044:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090638.330078:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090638.330084:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090639.724129:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090639.724161:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090639.724166:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090641.175377:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090641.175408:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090641.175413:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090643.554829:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090643.554972:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090643.554978:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090645.946213:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090645.946248:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090645.946255:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090646.757919:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090646.757949:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090646.757953:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090647.963437:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090647.963518:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090647.963523:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090648.783968:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090648.784009:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090648.784013:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090649.967653:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090649.967686:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090649.967691:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090650.762745:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090650.762778:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090650.762783:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090651.943572:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090651.943604:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090651.943608:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090652.743244:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090652.743277:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090652.743282:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090653.891165:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090653.891197:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090653.891201:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090654.697682:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090654.697711:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090654.697716:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090655.854872:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090655.854934:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090655.854950:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090656.641494:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090656.641519:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090656.641524:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090657.789473:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090657.789513:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090657.789520:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090658.574067:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090658.574092:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090658.574096:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090659.810158:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090659.810190:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090659.810194:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090700.622064:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090700.622101:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090700.622108:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090701.802727:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090701.802761:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090701.802765:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090702.605683:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090702.605728:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090702.605736:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090703.767745:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090703.767799:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090703.767804:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090704.614254:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090704.614290:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090704.614296:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090705.803480:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090705.803508:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090705.803512:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090706.653363:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090706.653400:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090706.653406:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090708.261549:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090708.261580:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090708.261585:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090709.632810:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090709.632842:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090709.632846:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090710.971410:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090710.971442:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1209:1106/090710.971446:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[1165:1165:1106/090711.143643:ERROR:../../../qtwebengine/src/3rdparty/chromium/content/common/zygote/zygote_communication_linux.cc:299] Failed to send GetTerminationStatus message to zygote
+[1165:1165:1106/090711.149757:ERROR:../../../qtwebengine/src/3rdparty/chromium/content/common/zygote/zygote_communication_linux.cc:299] Failed to send GetTerminationStatus message to zygote
+[1165:1165:1106/090711.151984:ERROR:../../../qtwebengine/src/3rdparty/chromium/content/common/zygote/zygote_communication_linux.cc:299] Failed to send GetTerminationStatus message to zygote
+[1165:1165:1106/090711.178408:ERROR:../../../qtwebengine/src/3rdparty/chromium/content/common/zygote/zygote_communication_linux.cc:299] Failed to send GetTerminationStatus message to zygote
+[1165:1234:1106/090711.180236:ERROR:../../../qtwebengine/src/3rdparty/chromium/gpu/command_buffer/service/shared_image/shared_image_manager.cc:521] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.
+[1165:1234:1106/090711.181031:ERROR:../../../qtwebengine/src/3rdparty/chromium/gpu/command_buffer/service/shared_image/shared_image_manager.cc:521] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.
+[1165:1234:1106/090711.181040:ERROR:../../../qtwebengine/src/3rdparty/chromium/gpu/command_buffer/service/shared_image/shared_image_manager.cc:521] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.
+[1165:1234:1106/090711.181205:ERROR:../../../qtwebengine/src/3rdparty/chromium/gpu/command_buffer/service/shared_image/shared_image_manager.cc:521] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.
+[1165:1234:1106/090711.181210:ERROR:../../../qtwebengine/src/3rdparty/chromium/gpu/command_buffer/service/shared_image/shared_image_manager.cc:521] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.
+[1165:1234:1106/090711.181214:ERROR:../../../qtwebengine/src/3rdparty/chromium/gpu/command_buffer/service/shared_image/shared_image_manager.cc:521] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.
+[1165:1234:1106/090711.181376:ERROR:../../../qtwebengine/src/3rdparty/chromium/gpu/command_buffer/service/shared_image/shared_image_manager.cc:521] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.
+[1165:1234:1106/090711.181401:ERROR:../../../qtwebengine/src/3rdparty/chromium/gpu/command_buffer/service/shared_image/shared_image_manager.cc:521] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.
+[1165:1234:1106/090711.181406:ERROR:../../../qtwebengine/src/3rdparty/chromium/gpu/command_buffer/service/shared_image/shared_image_manager.cc:521] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.
+[1165:1234:1106/090711.181411:ERROR:../../../qtwebengine/src/3rdparty/chromium/gpu/command_buffer/service/shared_image/shared_image_manager.cc:521] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.
+[1165:1234:1106/090711.181416:ERROR:../../../qtwebengine/src/3rdparty/chromium/gpu/command_buffer/service/shared_image/shared_image_manager.cc:521] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.
+[1165:1234:1106/090711.181445:ERROR:../../../qtwebengine/src/3rdparty/chromium/gpu/command_buffer/service/shared_image/shared_image_manager.cc:521] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.
+[1165:1234:1106/090711.181449:ERROR:../../../qtwebengine/src/3rdparty/chromium/gpu/command_buffer/service/shared_image/shared_image_manager.cc:521] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.
+[1165:1234:1106/090711.181453:ERROR:../../../qtwebengine/src/3rdparty/chromium/gpu/command_buffer/service/shared_image/shared_image_manager.cc:521] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.
+[1165:1234:1106/090711.181464:ERROR:../../../qtwebengine/src/3rdparty/chromium/gpu/command_buffer/service/shared_image/shared_image_manager.cc:521] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.
+[1165:1234:1106/090711.181482:ERROR:../../../qtwebengine/src/3rdparty/chromium/gpu/command_buffer/service/shared_image/shared_image_manager.cc:521] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.
+[1165:1234:1106/090711.181486:ERROR:../../../qtwebengine/src/3rdparty/chromium/gpu/command_buffer/service/shared_image/shared_image_manager.cc:521] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.
+[1165:1234:1106/090711.181491:ERROR:../../../qtwebengine/src/3rdparty/chromium/gpu/command_buffer/service/shared_image/shared_image_manager.cc:521] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.
+[1165:1234:1106/090711.181570:ERROR:../../../qtwebengine/src/3rdparty/chromium/gpu/command_buffer/service/shared_image/shared_image_manager.cc:521] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.
+[1165:1234:1106/090711.181703:ERROR:../../../qtwebengine/src/3rdparty/chromium/gpu/command_buffer/service/shared_image/shared_image_manager.cc:521] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.
+[1165:1234:1106/090711.182206:ERROR:../../../qtwebengine/src/3rdparty/chromium/gpu/command_buffer/service/shared_image/shared_image_manager.cc:521] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.
+[1165:1234:1106/090711.182212:ERROR:../../../qtwebengine/src/3rdparty/chromium/gpu/command_buffer/service/shared_image/shared_image_manager.cc:521] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.
+[1165:1234:1106/090711.182386:ERROR:../../../qtwebengine/src/3rdparty/chromium/gpu/command_buffer/service/shared_image/shared_image_manager.cc:521] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.
+Qt info: Sandboxing disabled by user. 
+Qt warning: QRhiGles2: Failed to create temporary context 
+Qt warning: QRhiGles2: Failed to create context 
+Qt warning: Failed to create RHI for backend: OpenGL 
+Starting main loop...
+Qt debug: Remote debugging server started successfully. Try pointing a Chromium-based browser to http://127.0.0.1:9531 
+mpv not found, reverting to mplayer
+Qt warning: This plugin does not support propagateSizeHints() 
+Qt warning: This plugin does not support raise() 
+Qt warning: GPUInfo not initialized on GpuInfoUpdate 
+update check failed: A network error occurred.
+
+Error details: ⁨error sending request for url ()⁩
+Qt warning: This plugin does not support propagateSizeHints() 
+Qt warning: This plugin does not support propagateSizeHints() 
+Qt warning: This plugin does not support propagateSizeHints() 
+Qt warning: This plugin does not support raise() 
+JS warning /_addons/kotoba_batake/web/home.js:3185 Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true. See: https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently
+2026-11-06 09:07:11,248:WARNING:waitress: unhandled close event

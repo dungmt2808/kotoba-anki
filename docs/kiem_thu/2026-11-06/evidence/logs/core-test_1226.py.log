@@ -1,0 +1,51 @@
+== mặc định
+  ✓ không có config → đúng mặc định
+  ✓ giá trị null → mặc định
+  ✓ config mặc định đọc lại không đổi
+== số
+  ✓ "daily_goal": "" → 30 (trước: ValueError, vườn không mở)
+  ✓ "45" → 45 (int)
+  ✓ mục tiêu 0 / âm → 30 (như Lịch hoa)
+  ✓ 12.7 → 12
+  ✓ "max_plants": "nhiều" → 400
+  ✓ max_plants kẹp 1…5000
+  ✓ "music_volume": "to" → 0.5
+  ✓ âm lượng kẹp 0…1
+  ✓ "0,3" (dấu phẩy kiểu Việt) → 0.3
+  ✓ "0.7" → 0.7
+  ✓ true cho ô số → mặc định
+  ✓ thưởng / trần xu âm → 0
+  ✓ "40" → 40
+  ✓ NaN / vô cực → mặc định
+  ✓ danh sách / object cho ô số → mặc định
+== bật / tắt
+  ✓ "effects": "false" → false (trước: bool("false") = True, vẫn bật)
+  ✓ "False" / "tắt" → false
+  ✓ "true" / "bật" → true
+  ✓ 0 / 1 → false / true
+  ✓ chữ lạ / danh sách → mặc định
+== stage_days
+  ✓ "3,21,90" → [3, 21, 90] (trước: so chuỗi với số → lỗi)
+  ✓ số lẻ giữ nguyên
+  ✓ ít hơn 3 số giữ nguyên (stage_of tự bù mặc định)
+  ✓ số ≤ 0 → mặc định
+  ✓ chữ → mặc định
+  ✓ một số / rỗng → mặc định
+  ✓ stage_of chạy được với stage_days '3,21,90'
+  ✓ stage_of chạy được với stage_days [3]
+  ✓ stage_of chạy được với stage_days [2.5, 21, 90]
+== chữ / object / mục lạ
+  ✓ ô chữ nhận số → mặc định
+  ✓ ui không phải object → {}
+  ✓ mục không có trong mặc định giữ nguyên
+  ✓ không sửa DEFAULT_CONFIG
+== cây héo trên Anki 23.10 – 24.06 (prop:r của Anki không tìm ra thẻ) → tự tính R
+  ✓ công thức khớp số của bảng thông tin thẻ (0.403 / 0.492)
+  ✓ 23.10: thẻ quá hạn / hẹn sau nhưng R thấp / ở deck lọc héo; nhớ tốt, không có S, dữ liệu hỏng thì không
+  ✓ 24.06 (FSRS-4.5) cũng vậy
+  ✓ ngưỡng 0.45: R 0.403 (23.10) héo, R 0.492 (24.06) không — đúng công thức từng bản
+  ✓ 24.11 trở lên (prop:r đúng) và 2.1.x (không có FSRS): không dùng
+  ✓ FSRS tắt / deck trống: không có cây héo
+  ✓ đọc được bản Anki đang chạy: (26, 9, 4)
+
+KẾT QUẢ: TẤT CẢ OK

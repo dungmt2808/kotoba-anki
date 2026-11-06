@@ -1,0 +1,24 @@
+[
+  {
+    "name": "stress-400",
+    "deck_id": 1793956370402,
+    "notes": 5000,
+    "elapsed_ms": 55.5,
+    "plants": 400,
+    "total": null,
+    "overflow": false,
+    "canvas": 300,
+    "bodyText": "y non\n0\nRa hoa\n0\nRa quả\n0\nĐang hiện 400/5000 từ (ưu tiên từ đã học).\nCó loại note “Audit Typed Answer” chưa cấu hình trường. Bấm vào đây để cấu hình ▸"
+  },
+  {
+    "name": "stress-5000",
+    "deck_id": 1793956370402,
+    "notes": 5000,
+    "elapsed_ms": 249.8,
+    "plants": 5000,
+    "total": null,
+    "overflow": false,
+    "canvas": 300,
+    "bodyText": "▸\nCấu hình trường ▸\nHạt giống\n5000\nMầm\n0\nCây non\n0\nRa hoa\n0\nRa quả\n0\nCó loại note “Audit Typed Answer” chưa cấu hình trường. Bấm vào đây để cấu hình ▸"
+  }
+]

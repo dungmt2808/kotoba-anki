@@ -1,0 +1,72 @@
+== làm sạch myseeds
+  ✓ không có / sai kiểu → rỗng
+  ✓ giữ g1 / g7, bỏ id lạ, tên bỏ ký tự < > (tên trống → “Giống của tớ”)
+  ✓ next ≥ id lớn nhất + 1
+  ✓ luật deck / loại note: bỏ id deck hỏng, giống không có, loại lạ
+  ✓ luật tag: bỏ trùng (không phân biệt hoa thường), bỏ dấu cách, bỏ giống không có
+  ✓ tối đa 12 giống
+== hình 5 giai đoạn
+  ✓ 3 giai đoạn đã vẽ → hợp lệ
+  ✓ 2 giai đoạn → “Vẽ ít nhất 3 giai đoạn”
+  ✓ giai đoạn toàn ô trống = chưa vẽ
+  ✓ màu lạ → báo đúng giai đoạn
+  ✓ sai cỡ → lỗi
+  ✓ thiếu giai đoạn → lỗi
+== tạo / sửa / xoá giống tự vẽ
+  ✓ tạo giống g1, trừ 500 xu
+  ✓ tên lưu ở MORE_KEY["myseeds"]
+  ✓ điểm ảnh ở PX_KEY["g1"] = mã0|…|mã4
+  ✓ có file sao lưu
+  ✓ đổi tên, giữ hình → miễn phí
+  ✓ đổi hình → 50 xu
+  ✓ sửa giống không có → lỗi
+  ✓ thiếu xu → không tạo
+  ✓ thiếu xu thì không lưu gì
+  ✓ render: catalog.myseeds có hình + số giai đoạn đã vẽ
+  ✓ render: giá 500 / sửa 50 / tối thiểu 3 / tên 5 giai đoạn
+== luật gieo
+  ✓ giống tự vẽ → luật ở myseeds, không đụng seeds
+  ✓ đổi sang giống mua → xoá luật bên myseeds
+  ✓ đổi lại giống tự vẽ → xoá luật bên seeds
+  ✓ gộp luật hai bên (tag của seeds trước)
+  ✓ hai bên cùng có luật một deck → seeds thắng (luật bản cũ đặt sau)
+  ✓ cây nhận giống: deck → g1, loại Chữ Hán → g1, tag N5::… → g1, tag bai29 → Lúa, còn lại cây gốc
+  ✓ “Trộn” chọn cả giống tự vẽ
+  ✓ 12 luật tag tính chung hai bên
+  ✓ giống tự vẽ không có → lỗi
+== xoá giống
+  ✓ xoá g1 → bỏ mọi luật trỏ tới g1, giữ luật của g2
+  ✓ điểm ảnh của g1 bị xoá
+  ✓ id không dùng lại (next = 3)
+  ✓ đủ 12 giống → không tạo thêm
+== mã chia sẻ
+  ✓ sửa món: chỉ đổi tên + hiệu ứng → miễn phí
+  ✓ sửa món: vẽ lại hình → trừ 50 xu
+  ✓ món tự làm → KB1:m:24:…
+  ✓ đọc lại đúng tên / cỡ / loại / hiệu ứng / hình, giá 350
+  ✓ mã bị xuống dòng / dấu cách vẫn đọc được
+  ✓ sửa một ký tự → “mã kiểm tra không khớp”
+  ✓ sửa ở giữa mã → cũng không khớp
+  ✓ KB2 → “bản ことば畑 mới hơn”
+  ✓ chữ thường → “không phải mã thiết kế”
+  ✓ mã cụt → “thiếu một đoạn”
+  ✓ ô trống → nhắc dán mã
+  ✓ mã quá dài → từ chối trước khi đọc
+  ✓ “bom nén” (5 MB khi giải nén) → từ chối
+  ✓ màu lạ trong hình → hỏng
+  ✓ cỡ lạ → không hợp lệ
+  ✓ loại đặt lạ → không hợp lệ
+  ✓ hiệu ứng lạ → “Không”
+  ✓ tên có thẻ HTML → bỏ ký tự < > và cắt 24 ký tự
+  ✓ vùng có màu đất ngoài bảng → không hợp lệ
+  ✓ vùng chưa vẽ gì → từ chối
+  ✓ giống mới vẽ 2 giai đoạn → từ chối
+  ✓ loại thiết kế lạ → “bản mới hơn”
+  ✓ làm món từ mã: trừ 350 xu, món mới vào kho
+  ✓ vùng tự tạo → mã → đọc lại nền / màu / công trình / cảnh nền, giá 5000
+  ✓ tạo vùng từ mã: có cả công trình + cảnh nền, đặt đồ được
+  ✓ vùng không có → lỗi
+  ✓ giống tự vẽ → mã → đọc lại 5 giai đoạn
+  ✓ đủ 12 giống → làm từ mã cũng bị chặn (không trừ xu)
+  ✓ id lạ → lỗi
+KẾT QUẢ: OK

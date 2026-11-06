@@ -1,0 +1,9 @@
+diary-close-fast {"typed":"NHẬT KÝ ĐÃ LƯU DÒNG VỪA VIẾT","visible":"NHẬT KÝ ĐÃ LƯU","saved":{"t":"NHẬT KÝ ĐÃ LƯU"},"retained":false,"delay_ms":100}
+diary-close-after-autosave {"typed":"NHẬT KÝ ĐÃ LƯU DÒNG VỪA VIẾT","visible":"NHẬT KÝ ĐÃ LƯU DÒNG VỪA VIẾT","saved":{"t":"NHẬT KÝ ĐÃ LƯU DÒNG VỪA VIẾT"},"retained":true,"delay_ms":2000}
+draft-close-fast {"typed":"いい天気です。","visible":"","saved":{"t":"今日は"},"retained":false,"delay_ms":100}
+draft-panel-close {"typed":"テスト","visible":"テスト"}
+review-undo {"before":{"coins":0,"waters":0,"revlog":0,"undo":""},"answered":{"coins":3,"waters":1,"revlog":1,"undo":"undo: \"Answer Card\"\nlast_step: 32\n"},"undone":{"coins":3,"waters":1,"revlog":0,"undo":"undo: \"Select Deck\"\nredo: \"Answer Card\"\nlast_step: 33\n"}}
+review-undo-three-cycles {"initial":{"coins":0,"waters":0,"revlog":0,"undo":""},"loops":[{"start":{"coins":3,"waters":1,"revlog":0,"undo":"undo: \"Select Deck\"\nredo: \"Answer Card\"\nlast_step: 33\n"},"paid":{"coins":6,"waters":2,"revlog":1,"undo":"undo: \"Answer Card\"\nlast_step: 45\n"},"undone":{"coins":6,"waters":2,"revlog":0,"undo":"undo: \"Select Deck\"\nredo: \"Answer Card\"\nlast_step: 46\n"}},{"start":{"coins":6,"waters":2,"revlog":0,"undo":"undo: \"Select Deck\"\nredo: \"Answer Card\"\nlast_step: 46\n"},"paid":{"coins":9,"waters":3,"revlog":1,"undo":"undo: \"Answer Card\"\nlast_step: 58\n"},"undone":{"coins":9,"waters":3,"revlog":0,"undo":"undo: \"Select Deck\"\nredo: \"Answer Card\"\nlast_step: 59\n"}}],"final":{"coins":9,"waters":3,"revlog":0,"undo":"undo: \"Select Deck\"\nredo: \"Answer Card\"\nlast_step: 59\n"}}
+new-profile-progress {"profileA":{"profile":"Test","coins":12345,"house":7,"notes":123},"profileB":{"profile":"Audit_New_Profile","coins":12345,"house":7,"notes":0}}
+end-errors {"errors":[],"js_errors":[]}
+EXPLORATION COMPLETED

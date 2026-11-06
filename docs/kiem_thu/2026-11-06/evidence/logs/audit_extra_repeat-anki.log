@@ -1,0 +1,84 @@
+Starting Anki 26.09.4...
+2026-11-06 09:06:48,286:INFO:aqt.mediasrv: Serving on http://127.0.0.1:43529
+[3383:3412:1106/090648.344564:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+
+DevTools listening on ws://127.0.0.1:9533/devtools/browser/284c53ce-1ecc-47a6-a33b-6a48353c121c
+[3383:3412:1106/090650.789413:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[3383:3412:1106/090650.789443:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[3383:3412:1106/090650.789447:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[3383:3424:1106/090650.947664:ERROR:../../../qtwebengine/src/3rdparty/chromium/gpu/command_buffer/service/shared_image/shared_image_manager.cc:521] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.
+[3383:3424:1106/090650.947697:ERROR:../../../qtwebengine/src/3rdparty/chromium/gpu/command_buffer/service/shared_image/shared_image_manager.cc:521] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.
+[3383:3424:1106/090650.949847:ERROR:../../../qtwebengine/src/3rdparty/chromium/gpu/command_buffer/service/shared_image/shared_image_manager.cc:521] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.
+[3383:3424:1106/090650.949949:ERROR:../../../qtwebengine/src/3rdparty/chromium/gpu/command_buffer/service/shared_image/shared_image_manager.cc:521] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.
+[3383:3424:1106/090650.949954:ERROR:../../../qtwebengine/src/3rdparty/chromium/gpu/command_buffer/service/shared_image/shared_image_manager.cc:521] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.
+[3383:3424:1106/090650.949957:ERROR:../../../qtwebengine/src/3rdparty/chromium/gpu/command_buffer/service/shared_image/shared_image_manager.cc:521] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.
+[3383:3424:1106/090650.949961:ERROR:../../../qtwebengine/src/3rdparty/chromium/gpu/command_buffer/service/shared_image/shared_image_manager.cc:521] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.
+[3383:3424:1106/090650.949964:ERROR:../../../qtwebengine/src/3rdparty/chromium/gpu/command_buffer/service/shared_image/shared_image_manager.cc:521] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.
+[3383:3424:1106/090650.949968:ERROR:../../../qtwebengine/src/3rdparty/chromium/gpu/command_buffer/service/shared_image/shared_image_manager.cc:521] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.
+[3383:3424:1106/090650.949986:ERROR:../../../qtwebengine/src/3rdparty/chromium/gpu/command_buffer/service/shared_image/shared_image_manager.cc:521] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.
+[3383:3412:1106/090652.972828:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[3383:3412:1106/090652.972854:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[3383:3412:1106/090652.972859:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[3383:3412:1106/090655.130093:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[3383:3412:1106/090655.130131:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[3383:3412:1106/090655.130135:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[3383:3412:1106/090657.207121:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[3383:3412:1106/090657.207157:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[3383:3412:1106/090657.207163:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[3383:3412:1106/090657.493227:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[3383:3412:1106/090657.493259:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[3383:3412:1106/090657.493263:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[3383:3412:1106/090659.630589:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[3383:3412:1106/090659.630622:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[3383:3412:1106/090659.630629:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[3383:3412:1106/090702.055321:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[3383:3412:1106/090702.055438:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[3383:3412:1106/090702.055444:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[3383:3412:1106/090703.452645:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[3383:3412:1106/090703.452679:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[3383:3412:1106/090703.452693:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[3383:3412:1106/090706.789331:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[3383:3412:1106/090706.789363:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[3383:3412:1106/090706.789367:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[3383:3412:1106/090707.480495:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[3383:3412:1106/090707.480536:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[3383:3412:1106/090707.480540:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[3383:3412:1106/090714.681587:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[3383:3412:1106/090714.681618:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[3383:3412:1106/090714.681623:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[3383:3383:1106/090744.727936:ERROR:../../../qtwebengine/src/3rdparty/chromium/content/common/zygote/zygote_communication_linux.cc:299] Failed to send GetTerminationStatus message to zygote
+[3383:3383:1106/090744.729586:ERROR:../../../qtwebengine/src/3rdparty/chromium/content/common/zygote/zygote_communication_linux.cc:299] Failed to send GetTerminationStatus message to zygote
+[3383:3383:1106/090744.730694:ERROR:../../../qtwebengine/src/3rdparty/chromium/content/common/zygote/zygote_communication_linux.cc:299] Failed to send GetTerminationStatus message to zygote
+[3383:3383:1106/090744.737783:ERROR:../../../qtwebengine/src/3rdparty/chromium/content/common/zygote/zygote_communication_linux.cc:299] Failed to send GetTerminationStatus message to zygote
+Qt info: Sandboxing disabled by user. 
+Qt warning: QRhiGles2: Failed to create temporary context 
+Qt warning: QRhiGles2: Failed to create context 
+Qt warning: Failed to create RHI for backend: OpenGL 
+Starting main loop...
+Qt debug: Remote debugging server started successfully. Try pointing a Chromium-based browser to http://127.0.0.1:9533 
+mpv not found, reverting to mplayer
+Qt warning: This plugin does not support propagateSizeHints() 
+Qt warning: This plugin does not support raise() 
+update check failed: A network error occurred.
+
+Error details: ⁨error sending request for url ()⁩
+Qt warning: This plugin does not support propagateSizeHints() 
+Qt warning: This plugin does not support propagateSizeHints() 
+Qt warning: This plugin does not support propagateSizeHints() 
+Qt warning: This plugin does not support raise() 
+Qt warning: This plugin does not support raise() 
+Qt warning: This plugin does not support raise() 
+Qt warning: This plugin does not support raise() 
+Qt warning: This plugin does not support raise() 
+Qt warning: This plugin does not support raise() 
+Qt warning: This plugin does not support raise() 
+Qt warning: This plugin does not support propagateSizeHints() 
+Qt warning: This plugin does not support raise() 
+mpv not found, reverting to mplayer
+Qt warning: This plugin does not support raise() 
+[kotoba_batake] đã chuyển dữ liệu sang collection (đồng bộ AnkiWeb)
+update check failed: A network error occurred.
+
+Error details: ⁨error sending request for url ()⁩
+Qt warning: This plugin does not support raise() 
+2026-11-06 09:07:44,831:WARNING:waitress: unhandled close event

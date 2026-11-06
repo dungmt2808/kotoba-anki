@@ -1,0 +1,12 @@
+{
+  "script": "e2e.js",
+  "exit": 1,
+  "summary": "KẾT QUẢ: 23/24 đạt",
+  "failed_assertions": [
+    "  ✗ nhật ký lỗi của add-on trống: [{\"kind\":\"Python\",\"where\":\"giọng đọc Gemini cho câu chép\",\"msg\":\"AIError: Không kết nối được tới Gemini (kiểm tra mạng): Tunnel connection failed: 403 Forbidden\",\"detail\":\"Traceback (most recent call last):\\n  File \\\"/workspace/kotoba-audit-results/kb-audit-2-2n849vue/addons21/kotoba_batake/__init__.py\\\", line 460, in done\\n    res = fut.result()\\n  File \\\"/usr/lib/python3.13/concurrent/futures/_b"
+  ],
+  "seconds": 22,
+  "profile": "/workspace/kotoba-audit-results/kb-audit-2-2n849vue",
+  "cdp": 9532,
+  "ctrl": 9632
+}

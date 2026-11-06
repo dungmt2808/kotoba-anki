@@ -1,0 +1,74 @@
+== phạm vi từ deck tiếng Anh
+  ✓ lang en, trình độ A2
+  ✓ chỉ lấy cây tiếng Anh (175 từ)
+  ✓ IPA trong [..] chuẩn về /…/: /ɡrəʊ/
+  ✓ ngữ pháp A1 + A2 (36 mẫu)
+  ✓ mẫu trọng tâm = mẫu đúng trình độ A2
+  ✓ B1 có thêm mẫu B1
+  ✓ trình độ lạ → A2
+  ✓ mô tả phạm vi: 175 từ · trình độ A2 · mọi deck
+== máy nối tra từ (dạng gốc)
+  ✓ biến đổi → từ gốc (went → go, cities → city, bigger → big…): đúng hết
+  ✓ không nối nhầm news→new, evening→even, bed/best→be, corner→corn, teacher→teach, is/was→be: đúng
+  ✓ flowing → flow nhưng flower vẫn là flower
+  ✓ cụm từ: looked after → look after
+  ✓ Mrs. Rose (tên riêng sau Mrs.) không nối
+  ✓ từ có gạch nối, so sánh hơn, từ sau sở hữu cách: {'ice-cream': 'ice-cream', 'bigger': 'big', 'new': 'new'}
+  ✓ đánh dấu {chữ||từ gốc}, mỗi từ một chỗ: Mrs. Rose {looked after||look after} the {old||old} {bridge||bridge} on {Monday||Monday}. 
+  ✓ surface() trả lại đúng chữ, keys() ra từ gốc
+  ✓ tiêu đề viết hoa từng chữ vẫn nối: StackChan {Paints||paint} the {Old||old} {Bridge||bridge}
+  ✓ tách câu (không tách sau Mr.)
+== máy sửa + kiểm tra số báo tốt
+  ✓ bỏ markdown ** trong tiêu đề
+  ✓ từ mới: bỏ từ đã có trong deck (city) và từ không dùng (spaceship), IPA chuẩn /…/: [{'w': 'nervous', 'r': '/nɜːvəs/', 'm': 'lo lắng'}]
+  ✓ id mẫu câu: sửa "can / can't" → cefr:A1-05, bỏ id lạ: ['cefr:A2-01', 'cefr:A1-05']
+  ✓ nối tra từ: 24 chỗ, mỗi từ một chỗ, có từ mới nervous
+  ✓ evening (từ của deck) nối evening, Even đầu câu nối even
+  ✓ số báo tốt: không lỗi ([])
+  ✓ sửa máy lần 2 không đổi gì (ổn định qua các lượt sửa / soát): []
+  ✓ câu chép cũng nối từ của deck (để ghi từ chép sai): Hana will {look after||look after} me in the {kitchen||kitchen}.
+  ✓ bản gửi Gemini sửa / soát không có đánh dấu tra từ
+  ✓ lời nhắc sửa / soát dùng chữ trơn
+  ✓ danh sách từ: "từ /IPA/ = nghĩa"
+== kiểm tra bắt lỗi
+  ✓ lẫn tiếng Việt trong bài → lỗi
+  ✓ lẫn chữ Nhật → lỗi
+  ✓ giải thích viết tiếng Anh → lỗi
+  ✓ đáp án đúng ngoài phạm vi → lỗi
+  ✓ hai lựa chọn giống nhau → lỗi
+  ✓ thiếu bài truyện / chỉ 2 bài → lỗi: ['bai: cần 3–5 bài', 'bai: thiếu bài truyện dài kỳ (loai "truyen", kỳ 1)']
+  ✓ báo ngắn quá → lỗi
+  ✓ gần như không dùng từ của deck → lỗi (gửi Gemini viết lại)
+  ✓ lời nhắc sửa kèm danh sách từ khi thiếu từ của deck
+  ✓ câu chép không có trong bài → lỗi
+  ✓ máy chọn lại câu chép trọn vẹn trong bài: ['Hana will look after me in the kitchen.', 'I usually make mistakes, but I always learn something new.']
+  ✓ câu máy chọn dài 4–14 từ
+== Job với Gemini giả lập
+  ✓ viết → sửa lỗi tiếng Việt → soát → lưu (['may_sua', 'viet', 'sua', 'may_sua', 'soat', 'may_sua', 'ket_qua'])
+  ✓ lời nhắc hệ thống tiếng Anh, trình độ A2
+  ✓ lượt sửa gửi đúng lỗi
+  ✓ bao.json ghi ngon_ngu: en, số 1
+  ✓ pham_vi.json để tra nghĩa từ
+  ✓ truyện kỳ 1 được ghi để kỳ sau viết tiếp
+  ✓ bản soát bỏ gần hết từ của deck → dùng bản trước khi soát (['may_sua', 'viet', 'sua', 'may_sua', 'soat', 'may_sua', 'soat_mat_tra_tu', 'dung_ban_truoc_soat', 'ket_qua'])
+  ✓ nhật ký cho tab Nguồn báo
+  ✓ đánh số riêng cho thư mục báo tiếng Anh
+== đọc báo tiếng Anh (paper_core)
+  ✓ clean_issue: ngon_ngu en → lang en; không ghi → ja
+  ✓ issue_view: lang en, câu chép đếm theo từ (6 từ)
+  ✓ bấm từ: went → go (đi, /ɡəʊ/); nervous là từ mới
+  ✓ không có file audio: giọng tiếng Anh của máy đọc được câu chép + từng đoạn
+  ✓ ghi chú giọng dự phòng: Câu chưa có giọng đọc dùng giọng dự phòng (Gemini hoặc giọng tiếng Anh của máy).
+  ✓ máy chỉ có giọng tiếng Nhật → không đọc báo tiếng Anh bằng giọng Nhật
+  ✓ phát chậm câu chép: ('tts_en', 'She made tea for three customers.', 0.7)
+  ✓ chép "she made tea for three customers" (chữ thường, không dấu câu) → đúng +2 xu
+  ✓ chép sai → vào hàng ôn + ghi từ chép sai (từ gốc): ['look after', 'kitchen']
+  ✓ trả lời câu hỏi tiếng Anh đúng +2 xu
+  ✓ kệ báo: lang en
+  ✓ chấm câu có đánh dấu tra từ: bỏ đánh dấu trước khi so (didn't = did not)
+== trạng thái đọc báo tiếng Anh: khoá riêng trong collection
+  ✓ hai khoá: kotoba_batake_paper + kotoba_batake_paper_en
+  ✓ báo Nhật và báo Anh cùng ngày không đụng nhau
+  – bỏ qua vòng chạy mã 1.18 thật (không có thư mục bản cũ)
+
+KẾT QUẢ: TẤT CẢ OK

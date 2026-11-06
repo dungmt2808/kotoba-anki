@@ -1,0 +1,31 @@
+Starting Anki 26.09.4...
+2026-11-06 09:05:51,968:INFO:aqt.mediasrv: Serving on http://127.0.0.1:33501
+[3138:3159:1106/090552.035644:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+
+DevTools listening on ws://127.0.0.1:9532/devtools/browser/fef45c29-e090-4753-8352-4aa022d6503b
+[3138:3159:1106/090558.581503:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[3138:3159:1106/090558.581528:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[3138:3159:1106/090558.581533:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[3138:3159:1106/090604.729653:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[3138:3159:1106/090604.729680:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[3138:3159:1106/090604.729686:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[3138:3138:1106/090609.361209:ERROR:../../../qtwebengine/src/3rdparty/chromium/content/common/zygote/zygote_communication_linux.cc:299] Failed to send GetTerminationStatus message to zygote
+[3138:3138:1106/090609.363788:ERROR:../../../qtwebengine/src/3rdparty/chromium/content/common/zygote/zygote_communication_linux.cc:299] Failed to send GetTerminationStatus message to zygote
+[3138:3138:1106/090609.367288:ERROR:../../../qtwebengine/src/3rdparty/chromium/content/common/zygote/zygote_communication_linux.cc:299] Failed to send GetTerminationStatus message to zygote
+[3138:3138:1106/090609.370122:ERROR:../../../qtwebengine/src/3rdparty/chromium/content/common/zygote/zygote_communication_linux.cc:299] Failed to send GetTerminationStatus message to zygote
+Qt info: Sandboxing disabled by user. 
+Qt warning: QRhiGles2: Failed to create temporary context 
+Qt warning: QRhiGles2: Failed to create context 
+Qt warning: Failed to create RHI for backend: OpenGL 
+Starting main loop...
+Qt debug: Remote debugging server started successfully. Try pointing a Chromium-based browser to http://127.0.0.1:9532 
+mpv not found, reverting to mplayer
+Qt warning: This plugin does not support propagateSizeHints() 
+Qt warning: This plugin does not support raise() 
+update check failed: A network error occurred.
+
+Error details: ⁨error sending request for url ()⁩
+Qt warning: This plugin does not support propagateSizeHints() 
+Qt warning: This plugin does not support propagateSizeHints() 
+Qt warning: This plugin does not support raise() 
+2026-11-06 09:06:09,472:WARNING:waitress: unhandled close event

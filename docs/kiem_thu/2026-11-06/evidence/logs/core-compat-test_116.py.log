@@ -1,0 +1,36 @@
+== món hiếm mới
+  ✓ 18 món hiếm (6 cũ + 12 mới), có 18
+  ✓ 6 món cũ vẫn nhận trước, đúng thứ tự cũ
+  ✓ RARE_ORDER gồm đúng 18 món, không trùng
+  ✓ món mới không bán, có dòng mô tả
+  ✓ 7 món ngoài sân, 5 món trong nhà (7 / 5)
+  ✓ rare_art.js có hình cho cả 12 món
+  ✓ rare_art.js nạp trước home.js
+== rương nhiệm vụ trao lần lượt cả 18 món, hết thì +100 xu
+  ✓ 18 ngày xong nhiệm vụ: nhận đủ 18 món theo RARE_ORDER
+  ✓ ngày 19, 20: không còn món → rương cho thêm 100 xu
+  ✓ mỗi món hiếm có 1 cái
+== lưu ở SEASON_KEY (bản 1.8–1.15 giữ hộ món lạ ở tầng này)
+  ✓ sở hữu món mới nằm ở SEASON_KEY
+  ✓ chỗ đặt món mới nằm ở SEASON_KEY
+  ✓ ví và EXT_KEY không có món mới
+  ✓ đọc lại: món mới còn đủ, đúng chỗ
+== cảnh nền tự vẽ của vùng tự tạo
+  ✓ tạo vùng có cảnh nền: vẫn 5.000 xu
+  ✓ cảnh nền lưu ở khoá riêng zenv (không nằm trong zones)
+  ✓ danh mục báo cỡ cảnh nền 256×76
+  ✓ đọc lại: cảnh nền gắn vào vùng
+  ✓ đổi nền có sẵn, giữ cảnh nền: miễn phí
+  ✓ vẽ lại cảnh nền: 50 xu
+  ✓ cảnh nền hỏng / màu lạ → báo lỗi, không lưu (Hình cảnh nền bị lỗi, thử vẽ lại nhé.)
+  ✓ xoá trắng cảnh nền → bỏ khỏi zenv
+  ✓ xoá vùng → xoá luôn cảnh nền
+== máy khác còn bản 1.15: đọc, mua, lưu → bản mới đọc lại không mất gì
+  ✓ bản 1.15 chạy được trên dữ liệu của bản mới
+  ✓ bản 1.15 không thấy 2 món mới (không hiện, không lỗi)
+  ✓ bản mới đọc lại: vẫn có Hươu Nara + Đàn koto
+  ✓ món mới vẫn ở đúng chỗ đã đặt
+  ✓ món bản cũ vừa mua cũng có
+  ✓ bản cũ đổi tên vùng → bản mới vẫn còn cảnh nền tự vẽ
+
+KẾT QUẢ: TẤT CẢ OK

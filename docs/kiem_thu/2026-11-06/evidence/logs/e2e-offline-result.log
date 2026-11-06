@@ -1,0 +1,28 @@
+  ✓ tìm thấy trang khu vườn trong Anki
+  ✓ mở số báo hôm nay: đủ 3 bài
+  ✓ nút ▶ cho từng đoạn: 6
+  ✓ câu chép trong báo có ▶ Nghe + ▶ Chậm: [["▶ Nghe","▶ Chậm"],["▶ Nghe","▶ Chậm"]]
+  ✓ bấm ▶ Chậm phát ct_1_cham.wav: e/user_files/bao_gemini/bao/2026-11-03/audio/ct_1_cham.wav')
+  ✓ số chỗ bấm tra từ trong bài: 20
+  ✓ số 02/11 của 1.12: file lồng đã sửa + tạo bù 2 bản chậm (luồng nền): [10,true]
+  ✓ số 02/11 giờ có ▶ Chậm: [2,2]
+  ✓ deck A: lượt chép có 5 câu
+      ["1. Báo 03/11","2. Báo 03/11","3. Báo 02/11","4. Báo 02/11","5. Ví dụ của コーヒー"]
+  ✓ deck D + giọng máy: 5 từ nghe được
+  ✓ nhãn "giọng máy": ["giọng máy","giọng máy","giọng máy","giọng máy","giọng máy"]
+  ✓ ô gõ ghi "Gõ từ vừa nghe"
+  ✓ bấm ▶ Nghe → giọng máy ja_JP: TTSTag(field_text='コーヒー', lang='ja_JP', voices=[], speed=1.0, other_args=[])
+  ✓ bấm ▶ Chậm → giọng máy tốc độ 0.7
+  ✓ gõ "コーヒー" (kana) → đúng: Đúng rồi +2 xu.
+  – bỏ qua bước Gemini TTS thật (đặt KB_REAL_GEMINI=1 để chạy)
+  ✓ deck kanji: hướng dẫn riêng: Deck chữ Hán / ngữ pháp này không có câu ví dụ để chép. Thêm câu ví dụ vào thẻ, hoặc dán k
+  ✓ deck D không giọng: chỉ cách bật Gemini + cài giọng máy (4 dòng)
+  ✓ deck C: 5 từ có audio của deck (không cần giọng dự phòng)
+  ✓ phát audio của từ trong media: undOrVideoTag(filename='kbtest_w_6.wav')
+  ✓ tab Nguồn báo có thẻ "Giọng đọc cho câu không có audio"
+  ✓ bấm "Giọng máy" → lưu dict_voice = may
+  ✓ cửa sổ 1024×640: không tràn ngang
+  ✓ không có lỗi JS trên trang
+  ✓ nhật ký lỗi của add-on trống
+
+KẾT QUẢ: 24/24 đạt

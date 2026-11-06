@@ -1,0 +1,15 @@
+== xây nhà: lệnh lặp do bấm đúp
+  ✓ build:1 hai lần → chỉ xây bước 1, trừ 80 xu (còn 9920)
+  ✓ lần lặp báo: Bước “Đổ móng” đã xây rồi.
+  ✓ build:2 sau đó vẫn xây bước 2
+  ✓ build:5 khi bước kế tiếp là 3 → không xây
+  ✓ build:0 / build:-1 → không xây
+  ✓ home:build (không có bước, giao diện cũ) vẫn xây bước kế tiếp
+  ✓ xây xong hết rồi thì báo như cũ
+== thiếu xu: mọi lệnh mua bị từ chối, ví không đổi, xu không âm
+  ✓ 8 lệnh mua khi 0 xu đều báo "Chưa đủ xu"
+  ✓ ví không đổi, xu vẫn 0
+  ✓ 79 xu (thiếu 1 xu) → không xây, còn 79 xu
+  ✓ đúng 80 xu → xây được, còn 0 xu
+
+KẾT QUẢ: TẤT CẢ OK

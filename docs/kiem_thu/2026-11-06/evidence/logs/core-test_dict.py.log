@@ -1,0 +1,310 @@
+
+== A::Có câu ví dụ + audio | cây: 8 | has_ex: 8 | ex_audio: 8 | audio từ: 0 | kind: ['vocab']
+   không giọng          5 câu: [('deck', 'nghe', ''), ('deck', 'nghe', ''), ('deck', 'nghe', ''), ('deck', 'nghe', ''), ('deck', 'nghe', '')]
+  ✓ không giọng n:1793955708346 phát được: ('media', 'kbtest_ex_5.wav', 1.0)
+  ✓ không giọng n:1793955708340 phát được: ('media', 'kbtest_ex_3.wav', 1.0)
+  ✓ không giọng n:1793955708343 phát được: ('media', 'kbtest_ex_4.wav', 1.0)
+  ✓ không giọng n:1793955708328 phát được: ('media', 'kbtest_ex_0.wav', 1.0)
+  ✓ không giọng n:1793955708333 phát được: ('media', 'kbtest_ex_1.wav', 1.0)
+  ✓ n:1793955708346 trả lời kana 'としょかんでほんをよみます。' → đúng
+  ✓ n:1793955708340 trả lời kana 'りんごをみっつかいました。' → đúng
+   giọng máy            5 câu: [('deck', 'nghe', ''), ('deck', 'nghe', ''), ('deck', 'nghe', ''), ('deck', 'nghe', ''), ('deck', 'nghe', '')]
+  ✓ giọng máy n:1793955708346 phát được: ('media', 'kbtest_ex_5.wav', 1.0)
+  ✓ giọng máy n:1793955708340 phát được: ('media', 'kbtest_ex_3.wav', 1.0)
+  ✓ giọng máy n:1793955708343 phát được: ('media', 'kbtest_ex_4.wav', 1.0)
+  ✓ giọng máy n:1793955708328 phát được: ('media', 'kbtest_ex_0.wav', 1.0)
+  ✓ giọng máy n:1793955708333 phát được: ('media', 'kbtest_ex_1.wav', 1.0)
+  ✓ n:1793955708346 trả lời kana 'としょかんでほんをよみます。' → đúng
+  ✓ n:1793955708340 trả lời kana 'りんごをみっつかいました。' → đúng
+   Gemini (chưa tạo)    5 câu: [('deck', 'nghe', ''), ('deck', 'nghe', ''), ('deck', 'nghe', ''), ('deck', 'nghe', ''), ('deck', 'nghe', '')]
+  ✓ Gemini (chưa tạo) n:1793955708346 phát được: ('media', 'kbtest_ex_5.wav', 1.0)
+  ✓ Gemini (chưa tạo) n:1793955708340 phát được: ('media', 'kbtest_ex_3.wav', 1.0)
+  ✓ Gemini (chưa tạo) n:1793955708343 phát được: ('media', 'kbtest_ex_4.wav', 1.0)
+  ✓ Gemini (chưa tạo) n:1793955708328 phát được: ('media', 'kbtest_ex_0.wav', 1.0)
+  ✓ Gemini (chưa tạo) n:1793955708333 phát được: ('media', 'kbtest_ex_1.wav', 1.0)
+  ✓ Gemini (chưa tạo): 0 câu cần Gemini tạo
+  ✓ n:1793955708346 trả lời kana 'としょかんでほんをよみます。' → đúng
+  ✓ n:1793955708340 trả lời kana 'りんごをみっつかいました。' → đúng
+   giọng máy + Gemini   5 câu: [('deck', 'nghe', ''), ('deck', 'nghe', ''), ('deck', 'nghe', ''), ('deck', 'nghe', ''), ('deck', 'nghe', '')]
+  ✓ giọng máy + Gemini n:1793955708346 phát được: ('media', 'kbtest_ex_5.wav', 1.0)
+  ✓ giọng máy + Gemini n:1793955708346 bản chậm: ('media', 0.75)
+  ✓ giọng máy + Gemini n:1793955708340 phát được: ('media', 'kbtest_ex_3.wav', 1.0)
+  ✓ giọng máy + Gemini n:1793955708340 bản chậm: ('media', 0.75)
+  ✓ giọng máy + Gemini n:1793955708343 phát được: ('media', 'kbtest_ex_4.wav', 1.0)
+  ✓ giọng máy + Gemini n:1793955708343 bản chậm: ('media', 0.75)
+  ✓ giọng máy + Gemini n:1793955708328 phát được: ('media', 'kbtest_ex_0.wav', 1.0)
+  ✓ giọng máy + Gemini n:1793955708328 bản chậm: ('media', 0.75)
+  ✓ giọng máy + Gemini n:1793955708333 phát được: ('media', 'kbtest_ex_1.wav', 1.0)
+  ✓ giọng máy + Gemini n:1793955708333 bản chậm: ('media', 0.75)
+  ✓ giọng máy + Gemini: 0 câu cần Gemini tạo
+  ✓ n:1793955708346 trả lời kana 'としょかんでほんをよみます。' → đúng
+  ✓ n:1793955708340 trả lời kana 'りんごをみっつかいました。' → đúng
+
+== B::Có câu ví dụ, không audio | cây: 8 | has_ex: 8 | ex_audio: 0 | audio từ: 0 | kind: ['vocab']
+   không giọng          0 câu: []
+   giọng máy            5 câu: [('deck', 'nghe', 'giọng máy'), ('deck', 'nghe', 'giọng máy'), ('deck', 'nghe', 'giọng máy'), ('deck', 'nghe', 'giọng máy'), ('deck', 'nghe', 'giọng máy')]
+  ✓ giọng máy n:1793955708359 phát được: ('tts', '図書館で本を読みます。', 1.0)
+  ✓ giọng máy n:1793955708359 bản chậm: ('tts', 0.7)
+  ✓ giọng máy n:1793955708357 phát được: ('tts', 'りんごを三つ買いました。', 1.0)
+  ✓ giọng máy n:1793955708357 bản chậm: ('tts', 0.7)
+  ✓ giọng máy n:1793955708358 phát được: ('tts', 'きょうはいい天気ですね。', 1.0)
+  ✓ giọng máy n:1793955708358 bản chậm: ('tts', 0.7)
+  ✓ giọng máy n:1793955708354 phát được: ('tts', '私は学生です。', 1.0)
+  ✓ giọng máy n:1793955708354 bản chậm: ('tts', 0.7)
+  ✓ giọng máy n:1793955708355 phát được: ('tts', '田中さんは先生です。', 1.0)
+  ✓ giọng máy n:1793955708355 bản chậm: ('tts', 0.7)
+  ✓ n:1793955708359 trả lời kana 'としょかんでほんをよみます。' → đúng
+  ✓ n:1793955708357 trả lời kana 'りんごをみっつかいました。' → đúng
+   Gemini (chưa tạo)    5 câu: [('deck', 'chờ', ''), ('deck', 'chờ', ''), ('deck', 'chờ', ''), ('deck', 'chờ', ''), ('deck', 'chờ', '')]
+  ✓ Gemini (chưa tạo): 5 câu cần Gemini tạo
+  ✓ n:1793955708359 trả lời kana 'としょかんでほんをよみます。' → đúng
+  ✓ n:1793955708357 trả lời kana 'りんごをみっつかいました。' → đúng
+   giọng máy + Gemini   5 câu: [('deck', 'nghe', 'giọng máy'), ('deck', 'nghe', 'giọng máy'), ('deck', 'nghe', 'giọng máy'), ('deck', 'nghe', 'giọng máy'), ('deck', 'nghe', 'giọng máy')]
+  ✓ giọng máy + Gemini n:1793955708359 phát được: ('tts', '図書館で本を読みます。', 1.0)
+  ✓ giọng máy + Gemini n:1793955708359 bản chậm: ('tts', 0.7)
+  ✓ giọng máy + Gemini n:1793955708357 phát được: ('tts', 'りんごを三つ買いました。', 1.0)
+  ✓ giọng máy + Gemini n:1793955708357 bản chậm: ('tts', 0.7)
+  ✓ giọng máy + Gemini n:1793955708358 phát được: ('tts', 'きょうはいい天気ですね。', 1.0)
+  ✓ giọng máy + Gemini n:1793955708358 bản chậm: ('tts', 0.7)
+  ✓ giọng máy + Gemini n:1793955708354 phát được: ('tts', '私は学生です。', 1.0)
+  ✓ giọng máy + Gemini n:1793955708354 bản chậm: ('tts', 0.7)
+  ✓ giọng máy + Gemini n:1793955708355 phát được: ('tts', '田中さんは先生です。', 1.0)
+  ✓ giọng máy + Gemini n:1793955708355 bản chậm: ('tts', 0.7)
+  ✓ giọng máy + Gemini: 5 câu cần Gemini tạo
+  ✓ n:1793955708359 trả lời kana 'としょかんでほんをよみます。' → đúng
+  ✓ n:1793955708357 trả lời kana 'りんごをみっつかいました。' → đúng
+
+== C::Chỉ từ + audio từ | cây: 8 | has_ex: 0 | ex_audio: 0 | audio từ: 8 | kind: ['vocab']
+   không giọng          5 câu: [('word', 'nghe', ''), ('word', 'nghe', ''), ('word', 'nghe', ''), ('word', 'nghe', ''), ('word', 'nghe', '')]
+  ✓ không giọng w:1793955708371 phát được: ('media', 'kbtest_w_5.wav', 1.0)
+  ✓ không giọng w:1793955708367 phát được: ('media', 'kbtest_w_3.wav', 1.0)
+  ✓ không giọng w:1793955708369 phát được: ('media', 'kbtest_w_4.wav', 1.0)
+  ✓ không giọng w:1793955708362 phát được: ('media', 'kbtest_w_0.wav', 1.0)
+  ✓ không giọng w:1793955708363 phát được: ('media', 'kbtest_w_1.wav', 1.0)
+  ✓ w:1793955708371 trả lời kana 'としょかん' → đúng
+  ✓ w:1793955708367 trả lời kana 'りんご' → đúng
+   giọng máy            5 câu: [('word', 'nghe', ''), ('word', 'nghe', ''), ('word', 'nghe', ''), ('word', 'nghe', ''), ('word', 'nghe', '')]
+  ✓ giọng máy w:1793955708371 phát được: ('media', 'kbtest_w_5.wav', 1.0)
+  ✓ giọng máy w:1793955708367 phát được: ('media', 'kbtest_w_3.wav', 1.0)
+  ✓ giọng máy w:1793955708369 phát được: ('media', 'kbtest_w_4.wav', 1.0)
+  ✓ giọng máy w:1793955708362 phát được: ('media', 'kbtest_w_0.wav', 1.0)
+  ✓ giọng máy w:1793955708363 phát được: ('media', 'kbtest_w_1.wav', 1.0)
+  ✓ w:1793955708371 trả lời kana 'としょかん' → đúng
+  ✓ w:1793955708367 trả lời kana 'りんご' → đúng
+   Gemini (chưa tạo)    5 câu: [('word', 'nghe', ''), ('word', 'nghe', ''), ('word', 'nghe', ''), ('word', 'nghe', ''), ('word', 'nghe', '')]
+  ✓ Gemini (chưa tạo) w:1793955708371 phát được: ('media', 'kbtest_w_5.wav', 1.0)
+  ✓ Gemini (chưa tạo) w:1793955708367 phát được: ('media', 'kbtest_w_3.wav', 1.0)
+  ✓ Gemini (chưa tạo) w:1793955708369 phát được: ('media', 'kbtest_w_4.wav', 1.0)
+  ✓ Gemini (chưa tạo) w:1793955708362 phát được: ('media', 'kbtest_w_0.wav', 1.0)
+  ✓ Gemini (chưa tạo) w:1793955708363 phát được: ('media', 'kbtest_w_1.wav', 1.0)
+  ✓ Gemini (chưa tạo): 0 câu cần Gemini tạo
+  ✓ w:1793955708371 trả lời kana 'としょかん' → đúng
+  ✓ w:1793955708367 trả lời kana 'りんご' → đúng
+   giọng máy + Gemini   5 câu: [('word', 'nghe', ''), ('word', 'nghe', ''), ('word', 'nghe', ''), ('word', 'nghe', ''), ('word', 'nghe', '')]
+  ✓ giọng máy + Gemini w:1793955708371 phát được: ('media', 'kbtest_w_5.wav', 1.0)
+  ✓ giọng máy + Gemini w:1793955708371 bản chậm: ('media', 0.75)
+  ✓ giọng máy + Gemini w:1793955708367 phát được: ('media', 'kbtest_w_3.wav', 1.0)
+  ✓ giọng máy + Gemini w:1793955708367 bản chậm: ('media', 0.75)
+  ✓ giọng máy + Gemini w:1793955708369 phát được: ('media', 'kbtest_w_4.wav', 1.0)
+  ✓ giọng máy + Gemini w:1793955708369 bản chậm: ('media', 0.75)
+  ✓ giọng máy + Gemini w:1793955708362 phát được: ('media', 'kbtest_w_0.wav', 1.0)
+  ✓ giọng máy + Gemini w:1793955708362 bản chậm: ('media', 0.75)
+  ✓ giọng máy + Gemini w:1793955708363 phát được: ('media', 'kbtest_w_1.wav', 1.0)
+  ✓ giọng máy + Gemini w:1793955708363 bản chậm: ('media', 0.75)
+  ✓ giọng máy + Gemini: 0 câu cần Gemini tạo
+  ✓ w:1793955708371 trả lời kana 'としょかん' → đúng
+  ✓ w:1793955708367 trả lời kana 'りんご' → đúng
+
+== D::Chỉ từ, không gì cả | cây: 8 | has_ex: 0 | ex_audio: 0 | audio từ: 0 | kind: ['vocab']
+   không giọng          0 câu: []
+   giọng máy            5 câu: [('word', 'nghe', 'giọng máy'), ('word', 'nghe', 'giọng máy'), ('word', 'nghe', 'giọng máy'), ('word', 'nghe', 'giọng máy'), ('word', 'nghe', 'giọng máy')]
+  ✓ giọng máy w:1793955708382 phát được: ('tts', '図書館', 1.0)
+  ✓ giọng máy w:1793955708382 bản chậm: ('tts', 0.7)
+  ✓ giọng máy w:1793955708380 phát được: ('tts', 'りんご', 1.0)
+  ✓ giọng máy w:1793955708380 bản chậm: ('tts', 0.7)
+  ✓ giọng máy w:1793955708381 phát được: ('tts', '天気', 1.0)
+  ✓ giọng máy w:1793955708381 bản chậm: ('tts', 0.7)
+  ✓ giọng máy w:1793955708377 phát được: ('tts', '学生', 1.0)
+  ✓ giọng máy w:1793955708377 bản chậm: ('tts', 0.7)
+  ✓ giọng máy w:1793955708378 phát được: ('tts', '先生', 1.0)
+  ✓ giọng máy w:1793955708378 bản chậm: ('tts', 0.7)
+  ✓ w:1793955708382 trả lời kana 'としょかん' → đúng
+  ✓ w:1793955708380 trả lời kana 'りんご' → đúng
+   Gemini (chưa tạo)    5 câu: [('word', 'chờ', ''), ('word', 'chờ', ''), ('word', 'chờ', ''), ('word', 'chờ', ''), ('word', 'chờ', '')]
+  ✓ Gemini (chưa tạo): 5 câu cần Gemini tạo
+  ✓ w:1793955708382 trả lời kana 'としょかん' → đúng
+  ✓ w:1793955708380 trả lời kana 'りんご' → đúng
+   giọng máy + Gemini   5 câu: [('word', 'nghe', 'giọng máy'), ('word', 'nghe', 'giọng máy'), ('word', 'nghe', 'giọng máy'), ('word', 'nghe', 'giọng máy'), ('word', 'nghe', 'giọng máy')]
+  ✓ giọng máy + Gemini w:1793955708382 phát được: ('tts', '図書館', 1.0)
+  ✓ giọng máy + Gemini w:1793955708382 bản chậm: ('tts', 0.7)
+  ✓ giọng máy + Gemini w:1793955708380 phát được: ('tts', 'りんご', 1.0)
+  ✓ giọng máy + Gemini w:1793955708380 bản chậm: ('tts', 0.7)
+  ✓ giọng máy + Gemini w:1793955708381 phát được: ('tts', '天気', 1.0)
+  ✓ giọng máy + Gemini w:1793955708381 bản chậm: ('tts', 0.7)
+  ✓ giọng máy + Gemini w:1793955708377 phát được: ('tts', '学生', 1.0)
+  ✓ giọng máy + Gemini w:1793955708377 bản chậm: ('tts', 0.7)
+  ✓ giọng máy + Gemini w:1793955708378 phát được: ('tts', '先生', 1.0)
+  ✓ giọng máy + Gemini w:1793955708378 bản chậm: ('tts', 0.7)
+  ✓ giọng máy + Gemini: 5 câu cần Gemini tạo
+  ✓ w:1793955708382 trả lời kana 'としょかん' → đúng
+  ✓ w:1793955708380 trả lời kana 'りんご' → đúng
+
+== E::Kanji đơn | cây: 4 | has_ex: 0 | ex_audio: 0 | audio từ: 0 | kind: ['kanji']
+   không giọng          0 câu: []
+   giọng máy            0 câu: []
+   Gemini (chưa tạo)    0 câu: []
+  ✓ Gemini (chưa tạo): 0 câu cần Gemini tạo
+   giọng máy + Gemini   0 câu: []
+  ✓ giọng máy + Gemini: 0 câu cần Gemini tạo
+
+== F::Tiếng Anh Basic | cây: 8 | has_ex: 0 | ex_audio: 0 | audio từ: 0 | kind: ['vocab']
+   không giọng          0 câu: []
+   giọng máy            0 câu: []
+   Gemini (chưa tạo)    5 câu: [('word', 'chờ', ''), ('word', 'chờ', ''), ('word', 'chờ', ''), ('word', 'chờ', ''), ('word', 'chờ', '')]
+  ✓ Gemini (chưa tạo): 5 câu cần Gemini tạo
+  ✓ w:1793955708394 trả lời kana 'look up' → đúng
+  ✓ w:1793955708392 trả lời kana 'stop' → đúng
+   giọng máy + Gemini   5 câu: [('word', 'chờ', ''), ('word', 'chờ', ''), ('word', 'chờ', ''), ('word', 'chờ', ''), ('word', 'chờ', '')]
+  ✓ giọng máy + Gemini: 5 câu cần Gemini tạo
+  ✓ w:1793955708394 trả lời kana 'look up' → đúng
+  ✓ w:1793955708392 trả lời kana 'stop' → đúng
+
+== G::Tiếng Anh đầy đủ | cây: 8 | has_ex: 8 | ex_audio: 0 | audio từ: 5 | kind: ['vocab']
+   không giọng          5 câu: [('word', 'nghe', ''), ('word', 'nghe', ''), ('word', 'nghe', ''), ('word', 'nghe', ''), ('word', 'nghe', '')]
+  ✓ không giọng w:1793955708397 phát được: ('media', 'kbtest_en_0.wav', 1.0)
+  ✓ không giọng w:1793955708399 phát được: ('media', 'kbtest_en_2.wav', 1.0)
+  ✓ không giọng w:1793955708398 phát được: ('media', 'kbtest_en_1.wav', 1.0)
+  ✓ không giọng w:1793955708400 phát được: ('media', 'kbtest_en_3.wav', 1.0)
+  ✓ không giọng w:1793955708401 phát được: ('media', 'kbtest_en_4.wav', 1.0)
+  ✓ w:1793955708397 trả lời kana 'apple' → đúng
+  ✓ w:1793955708399 trả lời kana 'study' → đúng
+   giọng máy            5 câu: [('word', 'nghe', ''), ('word', 'nghe', ''), ('word', 'nghe', ''), ('word', 'nghe', ''), ('word', 'nghe', '')]
+  ✓ giọng máy w:1793955708398 phát được: ('media', 'kbtest_en_1.wav', 1.0)
+  ✓ giọng máy w:1793955708400 phát được: ('media', 'kbtest_en_3.wav', 1.0)
+  ✓ giọng máy w:1793955708399 phát được: ('media', 'kbtest_en_2.wav', 1.0)
+  ✓ giọng máy w:1793955708401 phát được: ('media', 'kbtest_en_4.wav', 1.0)
+  ✓ giọng máy w:1793955708397 phát được: ('media', 'kbtest_en_0.wav', 1.0)
+  ✓ w:1793955708398 trả lời kana 'go' → đúng
+  ✓ w:1793955708400 trả lời kana 'stop' → đúng
+   Gemini (chưa tạo)    5 câu: [('deck', 'chờ', ''), ('deck', 'chờ', ''), ('deck', 'chờ', ''), ('deck', 'chờ', ''), ('deck', 'chờ', '')]
+  ✓ Gemini (chưa tạo): 5 câu cần Gemini tạo
+  ✓ n:1793955708402 trả lời kana 'I looked up the word in a dictionary.' → đúng
+  ✓ n:1793955708400 trả lời kana 'The car stopped at the light.' → đúng
+   giọng máy + Gemini   5 câu: [('deck', 'chờ', ''), ('deck', 'chờ', ''), ('deck', 'chờ', ''), ('deck', 'chờ', ''), ('deck', 'chờ', '')]
+  ✓ giọng máy + Gemini: 5 câu cần Gemini tạo
+  ✓ n:1793955708402 trả lời kana 'I looked up the word in a dictionary.' → đúng
+  ✓ n:1793955708400 trả lời kana 'The car stopped at the light.' → đúng
+
+== H::Tiếng Anh nhồi chung | cây: 8 | has_ex: 0 | ex_audio: 0 | audio từ: 0 | kind: ['vocab']
+   không giọng          0 câu: []
+   giọng máy            0 câu: []
+   Gemini (chưa tạo)    5 câu: [('word', 'chờ', ''), ('word', 'chờ', ''), ('word', 'chờ', ''), ('word', 'chờ', ''), ('word', 'chờ', '')]
+  ✓ Gemini (chưa tạo): 5 câu cần Gemini tạo
+  ✓ w:1793955708408 trả lời kana 'stop - dừng lại' → đúng
+  ✓ w:1793955708409 trả lời kana 'city - thành phố' → đúng
+   giọng máy + Gemini   5 câu: [('word', 'chờ', ''), ('word', 'chờ', ''), ('word', 'chờ', ''), ('word', 'chờ', ''), ('word', 'chờ', '')]
+  ✓ giọng máy + Gemini: 5 câu cần Gemini tạo
+  ✓ w:1793955708408 trả lời kana 'stop - dừng lại' → đúng
+  ✓ w:1793955708409 trả lời kana 'city - thành phố' → đúng
+
+== I::Nhật nhồi chung | cây: 8 | has_ex: 0 | ex_audio: 0 | audio từ: 0 | kind: ['vocab']
+   không giọng          0 câu: []
+   giọng máy            0 câu: []
+   Gemini (chưa tạo)    0 câu: []
+  ✓ Gemini (chưa tạo): 0 câu cần Gemini tạo
+   giọng máy + Gemini   0 câu: []
+  ✓ giọng máy + Gemini: 0 câu cần Gemini tạo
+
+== J::Tiếng Hàn | cây: 5 | has_ex: 0 | ex_audio: 0 | audio từ: 0 | kind: ['vocab']
+   không giọng          0 câu: []
+   giọng máy            0 câu: []
+   Gemini (chưa tạo)    0 câu: []
+  ✓ Gemini (chưa tạo): 0 câu cần Gemini tạo
+   giọng máy + Gemini   0 câu: []
+  ✓ giọng máy + Gemini: 0 câu cần Gemini tạo
+
+== K::Nhật ruby HTML | cây: 5 | has_ex: 5 | ex_audio: 0 | audio từ: 0 | kind: ['vocab']
+   không giọng          0 câu: []
+   giọng máy            5 câu: [('deck', 'nghe', 'giọng máy'), ('deck', 'nghe', 'giọng máy'), ('deck', 'nghe', 'giọng máy'), ('deck', 'nghe', 'giọng máy'), ('deck', 'nghe', 'giọng máy')]
+  ✓ giọng máy n:1793955708426 phát được: ('tts', '私は学生です。', 1.0)
+  ✓ giọng máy n:1793955708426 bản chậm: ('tts', 0.7)
+  ✓ giọng máy n:1793955708428 phát được: ('tts', 'パンを食べます。', 1.0)
+  ✓ giọng máy n:1793955708428 bản chậm: ('tts', 0.7)
+  ✓ giọng máy n:1793955708427 phát được: ('tts', '田中さんは先生です。', 1.0)
+  ✓ giọng máy n:1793955708427 bản chậm: ('tts', 0.7)
+  ✓ giọng máy n:1793955708429 phát được: ('tts', 'きょうはいい天気ですね。', 1.0)
+  ✓ giọng máy n:1793955708429 bản chậm: ('tts', 0.7)
+  ✓ giọng máy n:1793955708430 phát được: ('tts', '図書館で本を読みます。', 1.0)
+  ✓ giọng máy n:1793955708430 bản chậm: ('tts', 0.7)
+  ✓ n:1793955708426 trả lời kana 'わたしはがくせいです。' → đúng
+  ✓ n:1793955708428 trả lời kana 'パンをたべます。' → đúng
+   Gemini (chưa tạo)    5 câu: [('deck', 'chờ', ''), ('deck', 'chờ', ''), ('deck', 'chờ', ''), ('deck', 'chờ', ''), ('deck', 'chờ', '')]
+  ✓ Gemini (chưa tạo): 5 câu cần Gemini tạo
+  ✓ n:1793955708426 trả lời kana 'わたしはがくせいです。' → đúng
+  ✓ n:1793955708428 trả lời kana 'パンをたべます。' → đúng
+   giọng máy + Gemini   5 câu: [('deck', 'nghe', 'giọng máy'), ('deck', 'nghe', 'giọng máy'), ('deck', 'nghe', 'giọng máy'), ('deck', 'nghe', 'giọng máy'), ('deck', 'nghe', 'giọng máy')]
+  ✓ giọng máy + Gemini n:1793955708426 phát được: ('tts', '私は学生です。', 1.0)
+  ✓ giọng máy + Gemini n:1793955708426 bản chậm: ('tts', 0.7)
+  ✓ giọng máy + Gemini n:1793955708428 phát được: ('tts', 'パンを食べます。', 1.0)
+  ✓ giọng máy + Gemini n:1793955708428 bản chậm: ('tts', 0.7)
+  ✓ giọng máy + Gemini n:1793955708427 phát được: ('tts', '田中さんは先生です。', 1.0)
+  ✓ giọng máy + Gemini n:1793955708427 bản chậm: ('tts', 0.7)
+  ✓ giọng máy + Gemini n:1793955708429 phát được: ('tts', 'きょうはいい天気ですね。', 1.0)
+  ✓ giọng máy + Gemini n:1793955708429 bản chậm: ('tts', 0.7)
+  ✓ giọng máy + Gemini n:1793955708430 phát được: ('tts', '図書館で本を読みます。', 1.0)
+  ✓ giọng máy + Gemini n:1793955708430 bản chậm: ('tts', 0.7)
+  ✓ giọng máy + Gemini: 5 câu cần Gemini tạo
+  ✓ n:1793955708426 trả lời kana 'わたしはがくせいです。' → đúng
+  ✓ n:1793955708428 trả lời kana 'パンをたべます。' → đúng
+
+== L::Nhật ngoặc tròn | cây: 5 | has_ex: 0 | ex_audio: 0 | audio từ: 0 | kind: ['vocab']
+   không giọng          0 câu: []
+   giọng máy            4 câu: [('word', 'nghe', 'giọng máy'), ('word', 'nghe', 'giọng máy'), ('word', 'nghe', 'giọng máy'), ('word', 'nghe', 'giọng máy')]
+  ✓ giọng máy w:1793955708431 phát được: ('tts', '学生', 1.0)
+  ✓ giọng máy w:1793955708431 bản chậm: ('tts', 0.7)
+  ✓ giọng máy w:1793955708433 phát được: ('tts', '天気', 1.0)
+  ✓ giọng máy w:1793955708433 bản chậm: ('tts', 0.7)
+  ✓ giọng máy w:1793955708432 phát được: ('tts', '先生', 1.0)
+  ✓ giọng máy w:1793955708432 bản chậm: ('tts', 0.7)
+  ✓ giọng máy w:1793955708435 phát được: ('tts', '図書館', 1.0)
+  ✓ giọng máy w:1793955708435 bản chậm: ('tts', 0.7)
+  ✓ w:1793955708431 trả lời kana 'がくせい' → đúng
+  ✓ w:1793955708433 trả lời kana 'てんき' → đúng
+   Gemini (chưa tạo)    4 câu: [('word', 'chờ', ''), ('word', 'chờ', ''), ('word', 'chờ', ''), ('word', 'chờ', '')]
+  ✓ Gemini (chưa tạo): 4 câu cần Gemini tạo
+  ✓ w:1793955708431 trả lời kana 'がくせい' → đúng
+  ✓ w:1793955708433 trả lời kana 'てんき' → đúng
+   giọng máy + Gemini   4 câu: [('word', 'nghe', 'giọng máy'), ('word', 'nghe', 'giọng máy'), ('word', 'nghe', 'giọng máy'), ('word', 'nghe', 'giọng máy')]
+  ✓ giọng máy + Gemini w:1793955708431 phát được: ('tts', '学生', 1.0)
+  ✓ giọng máy + Gemini w:1793955708431 bản chậm: ('tts', 0.7)
+  ✓ giọng máy + Gemini w:1793955708433 phát được: ('tts', '天気', 1.0)
+  ✓ giọng máy + Gemini w:1793955708433 bản chậm: ('tts', 0.7)
+  ✓ giọng máy + Gemini w:1793955708432 phát được: ('tts', '先生', 1.0)
+  ✓ giọng máy + Gemini w:1793955708432 bản chậm: ('tts', 0.7)
+  ✓ giọng máy + Gemini w:1793955708435 phát được: ('tts', '図書館', 1.0)
+  ✓ giọng máy + Gemini w:1793955708435 bản chậm: ('tts', 0.7)
+  ✓ giọng máy + Gemini: 4 câu cần Gemini tạo
+  ✓ w:1793955708431 trả lời kana 'がくせい' → đúng
+  ✓ w:1793955708433 trả lời kana 'てんき' → đúng
+
+== M::Tiếng Anh A2 | cây: 40 | has_ex: 0 | ex_audio: 0 | audio từ: 0 | kind: ['vocab']
+   không giọng          0 câu: []
+   giọng máy            0 câu: []
+   Gemini (chưa tạo)    5 câu: [('word', 'chờ', ''), ('word', 'chờ', ''), ('word', 'chờ', ''), ('word', 'chờ', ''), ('word', 'chờ', '')]
+  ✓ Gemini (chưa tạo): 5 câu cần Gemini tạo
+  ✓ w:1793955708441 trả lời kana 'cake' → đúng
+  ✓ w:1793955708456 trả lời kana 'garden' → đúng
+   giọng máy + Gemini   5 câu: [('word', 'chờ', ''), ('word', 'chờ', ''), ('word', 'chờ', ''), ('word', 'chờ', ''), ('word', 'chờ', '')]
+  ✓ giọng máy + Gemini: 5 câu cần Gemini tạo
+  ✓ w:1793955708441 trả lời kana 'cake' → đúng
+  ✓ w:1793955708456 trả lời kana 'garden' → đúng
+
+== Gemini tạo xong / hỏng trong ngày (deck D: chỉ từ, không gì cả)
+  ✓ 5 từ đang chờ Gemini: ['図書館', 'コーヒー', '勉強する', '学生', '先生']
+  ✓ 3 câu đã có giọng Gemini, 2 còn chờ
+  ✓ hết hạn mức → bỏ 2 câu không nghe được, còn 3
+  ✓ id 'w:<nid>' giữ được qua clean_state
+  ✓ kanji đơn không thành bài nghe từ
+  ✓ từ 食べる: gõ たべる hoặc 食べる đều đúng ([食べる|たべる])
+
+KẾT QUẢ: OK

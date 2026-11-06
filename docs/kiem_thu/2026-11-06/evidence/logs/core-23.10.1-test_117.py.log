@@ -1,0 +1,84 @@
+== furigana: mọi kiểu đưa về một dạng
+  ✓ 日本[にほん] 語[ご]                                            → ('日本語', 'にほんご')
+  ✓  食[た]べる                                                 → ('食べる', 'たべる')
+  ✓ 漢字[かんじ;h,1]                                             → ('漢字', 'かんじ')
+  ✓ です[;k]                                                  → ('です', '')
+  ✓ <ruby>漢字<rt>かんじ</rt></ruby>                             → ('漢字', 'かんじ')
+  ✓ <ruby><rb>漢字</rb><rp>(</rp><rt>かんじ</rt><rp>)</rp></ruby> → ('漢字', 'かんじ')
+  ✓ <ruby>漢<rt>かん</rt>字<rt>じ</rt></ruby>                    → ('漢字', 'かんじ')
+  ✓ <ruby><rb>漢</rb><rb>字</rb><rt>かん</rt><rt>じ</rt></ruby>  → ('漢字', 'かんじ')
+  ✓ 漢字（かんじ）                                                 → ('漢字', 'かんじ')
+  ✓ 漢字(かんじ)                                                 → ('漢字', 'かんじ')
+  ✓ 漢字【かんじ】                                                 → ('漢字', 'かんじ')
+  ✓ 漢字<br>かんじ                                               → ('漢字', 'かんじ')
+  ✓ 賛成(する)                                                  → ('賛成(する)', '')
+  ✓ 静か（な）                                                   → ('静か（な）', '')
+  ✓ <b>今日</b>[きょう]                                          → ('今日', 'きょう')
+  ✓ 食べる                                                     → ('食べる', '')
+  ✓ たべる[sound:a.mp3]                                        → ('たべる', '')
+  ✓ trường Cách đọc dạng 漢字[かんじ] → かんじ (1.16 mất cách đọc)
+  ✓ trường Cách đọc dạng ruby → かんじ
+  ✓ trường Cách đọc nhiều dòng giữ như cũ
+  ✓ câu ví dụ ruby → ngoặc vuông: 漢字[かんじ]を 勉強[べんきょう]します。
+  ✓ câu ruby → cú pháp báo (chép chính tả): [私|わたし]は[学生|がくせい]です。
+  ✓ câu Migaku → cú pháp báo: [私|わたし]は[学生|がくせい]です
+== tiếng Anh
+  ✓ tách IPA giữa / /
+  ✓ tách IPA trong [ ]
+  ✓ [sth] không phải IPA → giữ
+  ✓ to go (v) → to go, go
+  ✓ (be) able to
+  ✓ tìm 'go' trong 'She went home.' → 'went'
+  ✓ tìm 'study' trong 'He is studying.' → 'studying'
+  ✓ tìm 'stop' trong 'The car stopped.' → 'stopped'
+  ✓ tìm 'city' trong 'Big cities are noisy.' → 'cities'
+  ✓ tìm 'look up' trong 'I looked up the word.' → 'looked up'
+  ✓ tìm 'child' trong 'The children run.' → 'children'
+  ✓ tìm 'happy' trong 'She is happier now.' → 'happier'
+  ✓ tìm 'cat' trong 'I have a cat.' → 'cat'
+  ✓ không bắt nhầm giữa từ (concatenate ≠ cat)
+  ✓ don't = do not, it's = it is, bỏ dấu câu
+  ✓ chấm câu tiếng Anh theo từ
+  ✓ sai một từ → sai
+== đoán ngôn ngữ
+  ✓ Basic ['apple', 'run'] → en
+  ✓ Basic ['食べる', '日本'] → ja
+  ✓ Kanji ['水', '火'] → ja
+  ✓ Basic ['안녕', '사랑'] → other
+  ✓ Basic ['cái bàn', 'con mèo'] → other
+  ✓ Chinese ['水', '火'] → other
+  ✓ EN ['apple /ˈæp.əl/ - quả táo', 'go /ɡoʊ/ - đi'] → en
+  ✓ x [] → ja
+== collection thật: deck mẫu 1.17
+  ✓ từ vựng: không còn Hán Việt / loại từ
+  ✓ deck tiếng Nhật cũ: lang = ja
+  ✓ chữ Hán vẫn có Hán Việt
+  ✓ deck tiếng Anh: lang en, IPA giữ dấu / /
+  ✓ audio: chỉ từ có file (máy không có giọng tiếng Anh)
+  ✓ máy có giọng tiếng Anh → mọi từ / câu nghe được
+  ✓ Điền vào câu: mọi câu tiếng Anh che được từ
+  ✓ Basic Front/Back tiếng Anh tự nhận
+  ✓ tiếng Hàn → ngôn ngữ khác
+  ✓ ruby HTML: chữ sạch
+  ✓ ruby HTML: cách đọc
+  ✓ cảnh báo trường Từ nhồi chung (Anh + Nhật)
+  ✓ deck chuẩn không bị cảnh báo
+  ✓ gợi ý trường tiếng Anh đúng
+  ✓ nhãn vai trò tiếng Anh: Phiên âm (IPA)
+== lưu ngôn ngữ, chế độ trò chơi theo ngôn ngữ
+  ✓ tiếng Anh không chọn được loại Chữ Hán: Tiếng Anh chỉ có loại Từ vựng hoặc Khác.
+  ✓ khoá lang: {'1793956599409': 'en', '1793956599413': 'other'}
+  ✓ games_lang tách khỏi games
+  ✓ Đuổi quạ không có chế độ cho ngôn ngữ khác
+  ✓ vườn gửi game_modes_lang sang trang
+== chép chính tả tiếng Anh
+  ✓ câu ví dụ tiếng Anh: The children don't like rain.
+  ✓ nghe từ, gõ lại: child
+  ✓ câu không có audio → giọng máy
+  ✓ phát bằng giọng tiếng Anh, chậm 0.7: ('tts_en', "The children don't like rain.", 0.7)
+  ✓ gõ chữ thường, mở rút gọn → đúng, +2 xu (+5 làm hết lượt)
+  ✓ ngôn ngữ khác: không đọc bằng giọng máy tiếng Nhật
+  ✓ máy chỉ có giọng Nhật thì không đọc câu tiếng Anh
+  ✓ câu ví dụ ruby của deck Nhật vẫn chép được: [私|わたし]は[学生|がくせい]です。
+
+KẾT QUẢ: TẤT CẢ OK

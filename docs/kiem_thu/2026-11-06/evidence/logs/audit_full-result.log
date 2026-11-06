@@ -1,0 +1,335 @@
+  · 1366_00_vuon_moi (vườn mới, 1.000.000 xu)
+== Kiếm xu: lượt ôn trên điện thoại, ôn trong vườn, mục tiêu ngày, nhiệm vụ, rương đồ hiếm
+  ✓ Bù 27 lượt ôn ngoài add-on: +27 xu (gồm thưởng nhiệm vụ nếu xong) · thông báo "Bù 27 lượt ôn trên điện thoại: +27 xu"
+  · 1366_00b_bu_xu_dien_thoai
+  · 1366_00c_on_the_dap_an
+  ✓ Ôn 3 thẻ trong vườn → đủ 30 lượt, nhận thưởng mục tiêu ngày
+  ✓ Xong 3 nhiệm vụ → mở rương, nhận 1 món hiếm (0 → 1)
+  ✓ Xu ôn thẻ + nhiệm vụ + rương + mục tiêu: +114 xu
+  · 1366_00d_ruong_nhiem_vu
+  · 1366_00e_bang_nhiem_vu_ruong
+== Xây nhà 7 bước + 3 kiểu nhà
+  · 1366_01_xay_nha_dau
+  ✓ Xây "Đổ móng" · trừ 80 / 80 xu
+  ✓ Xây "Dựng khung gỗ" · trừ 150 / 150 xu
+  ✓ Xây "Xây tường" · trừ 250 / 250 xu
+  ✓ Xây "Lợp mái" · trừ 400 / 400 xu
+  ✓ Xây "Lắp cửa & cửa sổ" · trừ 550 / 550 xu
+  ✓ Xây "Ống khói & bồn hoa" · trừ 800 / 800 xu
+  ✓ Xây "Gác mái & đèn lồng" · trừ 1200 / 1200 xu
+  · 1366_01_xay_nha_xong (nhà xây xong + 3 kiểu nhà)
+  ✓ Mua kiểu "Nhà mái tranh minka" 1500 xu
+  ✓ Dùng kiểu "Nhà mái tranh minka"
+  · 1366_01_kieu_minka
+  ✓ Mua kiểu "Nhà trà chashitsu" 2000 xu
+  ✓ Dùng kiểu "Nhà trà chashitsu"
+  · 1366_01_kieu_teahouse
+  ✓ Mua kiểu "Lâu đài mini" 3000 xu
+  ✓ Dùng kiểu "Lâu đài mini"
+  · 1366_01_kieu_castle
+  ✓ Quay lại nhà gỗ mái đỏ (miễn phí)
+== Sửa nhà (nhà cũ 4 nấc)
+  · 1366_02_nha_cu_mua (nhà cũ 4 nấc khi mưa (mái dột))
+  · 1366_02_tab_sua_nha
+  ✓ Sửa 1 nấc "Chống dột · 105 xu" trừ đúng giá
+  ✓ Sửa hết "Sửa hết · 315 xu" trừ đúng giá
+  ✓ Sửa xong: "Nhà như mới"
+== Trang trí sân (mọi món, đặt ra sân)
+  · 1366_03_tab_trang_tri_san (mua hết, “Đã có”)
+== Nội thất (mọi món, đặt trong phòng)
+  · 1366_04_tab_noi_that_phong_day
+== 6 vùng + đồ của từng vùng
+  ✓ Mở vùng "Bãi biển" 2000 xu
+  ✓ Mở vùng "Đền trên núi" 3000 xu
+  ✓ Mở vùng "Phố lễ hội" 4000 xu
+  ✓ Mở vùng "Rừng tre" 5000 xu
+  ✓ Mở vùng "Suối nước nóng" 6000 xu
+  ✓ Mở vùng "Ga làng quê" 7000 xu
+  · 1366_05_tab_vung_moi_mo_het
+  mua đồ thường: 75 món, đặt 75, vào kho 0
+  ✓ mọi lần bấm Mua trừ đúng giá, có đồ, đặt được 
+== Thú nuôi
+  · 1366_06_tab_thu_nuoi_chua_co
+  ✓ Nhận nuôi "Gà mái" 500 xu
+  ✓ Nhận nuôi "Vịt con" 600 xu
+  ✓ Nhận nuôi "Thỏ trắng" 700 xu
+  ✓ Nhận nuôi "Rùa" 800 xu
+  ✓ Nhận nuôi "Mèo mướp" 900 xu
+  ✓ Nhận nuôi "Chó Shiba" 1200 xu
+  ✓ Đặt tên thú "Thỏ trắng" → Mochi
+  ✓ Mochi chuyển vào trong nhà
+  · 1366_06_tab_thu_nuoi_doi (cả nhà đói / đi chơi)
+  ✓ Cho cả nhà ăn: "Cho cả nhà ăn · 14 xu"
+  ✓ Sau khi cho ăn: "Hôm nay đã cho ăn hết ✓"
+  ✓ Bật "Tự cho ăn mỗi ngày"
+  · 1366_06_tab_thu_nuoi_du (6 thú, đã cho ăn)
+== Giống cây (mua 8 giống + luật gieo)
+  ✓ Mua giống "Lúa" 600 xu
+  ✓ Mua giống "Củ cải daikon" 600 xu
+  ✓ Mua giống "Hướng dương" 800 xu
+  ✓ Mua giống "Bí ngô" 800 xu
+  ✓ Mua giống "Tre" 900 xu
+  ✓ Mua giống "Anh đào" 1200 xu
+  ✓ Mua giống "Phong lá đỏ" 1200 xu
+  ✓ Mua giống "Bonsai thông" 1500 xu
+  · 1366_07_tab_giong_cay_du
+  ✓ Gieo "Lúa" cho deck đang xem
+  · 1366_07_ruong_ine
+  ✓ Gieo "Củ cải daikon" cho deck đang xem
+  · 1366_07_ruong_daikon
+  ✓ Gieo "Hướng dương" cho deck đang xem
+  · 1366_07_ruong_himawari
+  ✓ Gieo "Bí ngô" cho deck đang xem
+  · 1366_07_ruong_kabocha
+  ✓ Gieo "Tre" cho deck đang xem
+  · 1366_07_ruong_take
+  ✓ Gieo "Anh đào" cho deck đang xem
+  · 1366_07_ruong_sakura
+  ✓ Gieo "Phong lá đỏ" cho deck đang xem
+  · 1366_07_ruong_momiji
+  ✓ Gieo "Bonsai thông" cho deck đang xem
+  · 1366_07_ruong_bonsai
+  ✓ Gieo "Trộn" cho deck đang xem
+  · 1366_07_ruong_mix
+  ✓ Luật loại note Từ vựng → Hướng dương
+  ✓ Thêm luật tag N5 → Anh đào
+  · 1366_07_tab_giong_cay_luat (luật deck / loại note / tag)
+  ✓ Bỏ luật tag
+== Giao diện mùa (đổi chuỗi, mua hết, xem thử, dùng từng giao diện)
+  · 1366_08_tab_giao_dien_mua_dau
+  ✓ Mở "Tết Nguyên Đán" bằng chuỗi ngày ôn (Đổi chuỗi 10 ngày)
+  ✓ Mở giao diện "Giáng sinh" 1000 xu
+  ✓ Mở giao diện "Năm mới Nhật Bản" 1000 xu
+  ✓ Mở giao diện "Trung thu · Ngắm trăng" 1000 xu
+  ✓ Mở giao diện "Halloween" 1000 xu
+  ✓ Mở giao diện "Mùa lá đỏ" 1000 xu
+  ✓ Mở giao diện "Lễ Thất Tịch" 1000 xu
+  ✓ Mở giao diện "Lễ hội mùa hè" 1000 xu
+  ✓ Mở giao diện "Mùa mưa cẩm tú cầu" 1000 xu
+  ✓ Mở giao diện "Mùa hoa anh đào" 1000 xu
+  ✓ Mở giao diện "Mùa xuân" 1000 xu
+  ✓ Mở giao diện "Mùa hè" 1000 xu
+  ✓ Mở giao diện "Mùa thu" 1000 xu
+  ✓ Mở giao diện "Mùa đông" 1000 xu
+  đồ giao diện mùa: đặt 39, để kho 1
+  ✓ Xem thử "Tết Nguyên Đán"
+  · 1366_08_xem_thu (đang xem thử)
+  · 1366_08_gd_tet_san
+  · 1366_08_gd_noel_san
+  · 1366_08_gd_shogatsu_san
+  · 1366_08_gd_tsukimi_san
+  · 1366_08_gd_halloween_san
+  · 1366_08_gd_momiji_san
+  · 1366_08_gd_tanabata_san
+  · 1366_08_gd_natsumatsuri_san
+  · 1366_08_gd_tsuyu_san
+  · 1366_08_gd_hanami_san
+  · 1366_08_gd_spring_san
+  · 1366_08_gd_summer_san
+  · 1366_08_gd_autumn_san
+  · 1366_08_gd_winter_san
+  ✓ Dùng ngay đủ 14 giao diện
+  ✓ Giao diện mùa: Tắt
+  ✓ Giao diện mùa: Tự động
+  ✓ Mở hết giao diện mùa: không còn nhắc cách mở khoá
+  · 1366_08_tab_giao_dien_mua_mo_het
+== Tủ đồ StackChan + biểu cảm
+  ✓ Mua đồ mặc "Mầm lá trên đầu" 80 xu
+  ✓ Mua đồ mặc "Khăn hachimaki" 80 xu
+  ✓ Mua đồ mặc "Tai mèo" 100 xu
+  ✓ Mua đồ mặc "Mũ rơm" 120 xu
+  ✓ Mua đồ mặc "Mũ Noel" 120 xu
+  ✓ Mua đồ mặc "Nón lá" 150 xu
+  ✓ Mua đồ mặc "Mũ tốt nghiệp" 200 xu
+  ✓ Mua đồ mặc "Vương miện" 300 xu
+  ✓ Mua đồ mặc "Băng cá nhân" 60 xu
+  ✓ Mua đồ mặc "Kính tròn" 100 xu
+  ✓ Mua đồ mặc "Nơ bướm" 90 xu
+  ✓ Mua đồ mặc "Khăn quàng đỏ" 100 xu
+  ✓ Mua đồ mặc "Vòng chuông" 120 xu
+  ✓ Mua đồ mặc "Vỏ xanh trời" 200 xu
+  ✓ Mua đồ mặc "Vỏ xanh matcha" 200 xu
+  ✓ Mua đồ mặc "Vỏ hồng sakura" 200 xu
+  ✓ Mua đồ mặc "Vỏ vàng kim" 300 xu
+  ✓ Mua biểu cảm "Phụng phịu" 60 xu
+  ✓ Mua biểu cảm "Nháy mắt" 80 xu
+  ✓ Mua biểu cảm "Khóc nhè" 80 xu
+  ✓ Mua biểu cảm "Ngạc nhiên" 100 xu
+  ✓ Mua biểu cảm "Mắt lấp lánh" 100 xu
+  ✓ Mua biểu cảm "Mắt tim" 120 xu
+  ✓ Mua biểu cảm "Kính ngầu" 150 xu
+  ✓ Mặc lại "Mầm lá trên đầu"
+  · 1366_09_tu_do_mac_du
+  ✓ Cởi: Cởi Mầm lá trên đầu ✕
+  ✓ Tắt một biểu cảm
+  · 1366_09_san_stackchan_mac_do
+== Xưởng: vẽ bằng chuột, mọi công cụ, 3 cỡ / 3 loại
+  · 1366_10_tab_xuong_trong
+  ✓ Mở Xưởng từ thẻ "Tạo món đồ mới"
+  ✓ Đổi cỡ 24×24
+  ✓ Bút: kéo chuột vẽ 7 ô
+  ✓ Chữ nhật: 39 ô
+  ✓ Đổ màu trong khung: 87 ô
+  ✓ Kẻ thẳng
+  ✓ Đối xứng: vẽ bên trái, bên phải tự vẽ theo
+  ✓ Cỡ bút 2 + tẩy
+  ✓ Chuột phải tẩy + Hoàn tác / Làm lại
+  ✓ Lật ngang / lật dọc / viền đen / mũi tên dịch hình
+  ✓ Hút màu
+  · 1366_10_xuong_dang_ve (đã dùng mọi công cụ)
+  ✓ Chế tác 24×24 (Chế tác · 350 xu) trừ 350 xu
+  ✓ Món vừa làm tự vào chế độ đặt và đặt được ra sân
+  ✓ Chọn ảnh… → ảnh chuyển thành pixel 32×32
+  ✓ Ảnh hoa hồng: 409 ô hồng / đỏ, 0 ô nâu
+  · 1366_10_xuong_chuyen_anh (đã tắt Xoá nền / Viền đen / Gọn màu)
+  ✓ Chế tác 32×32 treo tường 500 xu
+  ✓ Tranh treo tường: đặt lên tường, tường kín thì vào kho (hết chỗ ở room)
+  ✓ Shift + chữ nhật: tô kín 100 ô
+  ✓ Chế tác 16×16 sàn 200 xu
+  ✓ Gối tím đặt dưới sàn phòng
+  · 1366_10_tab_xuong_3_mon (3 món tự làm)
+  ✓ Sửa món (vẽ lại hình) 50 xu
+  ✓ Sửa món chỉ đổi tên + hiệu ứng: miễn phí (nút "Lưu sửa · miễn phí")
+  ✓ +1 cái (+1 cái · 100 xu)
+  ✓ Món đang đặt: nút "Xoá mẫu" khoá (Cất hết món này vào kho trước)
+== Kho đồ: Đặt / Di chuyển / Cất vào kho
+  · 1366_11_kho_do
+  · 1366_11_bang_mon_da_dat (bấm một món trên sân)
+  ✓ Cất vào kho
+  ✓ Kho đồ → Đặt lại
+  ✓ Di chuyển món ({"id":"mailbox","x":6,"y":0} → {"id":"mailbox","x":13,"y":2})
+== Đồ hiếm (18 món) đặt từ Kho đồ
+  ✓ Đặt đồ hiếm: 15 món ra cảnh, 3 món còn trong kho (hết chỗ)
+  ✓ Kho đồ: món còn trong kho lên đầu ("Trong kho · chưa đặt (6)")
+  · 1366_11_kho_do_co_do_hiem
+== Vùng tự tạo (công trình + cảnh nền) + mã chia sẻ
+  ✓ Mở xưởng vùng
+  ✓ Vẽ công trình 64×76
+  ✓ Vẽ cảnh nền 256×76
+  ! 1366_12_xuong_vung (lớp Cảnh nền) — nút nhỏ 8
+  ✓ Tạo vùng 5000 xu
+  · 1366_12_tab_vung_tu_tao
+  ✓ Mã chia sẻ vùng: 167 ký tự
+  ✓ Mã vùng đã chép vào bộ nhớ tạm
+  ✓ Xem trước vùng từ mã
+  · 1366_12_dan_ma_vung
+  ✓ Tạo vùng từ mã (Tạo vùng này · 5000 xu)
+  · 1366_12_vung_tu_ma_san
+  ✓ Đổi tên vùng miễn phí (nút: "Lưu vùng · miễn phí")
+== Giống cây tự vẽ + mã chia sẻ
+  ✓ Mở Xưởng giống cây từ tab Giống cây
+  ✓ Vẽ 3 giai đoạn (phím 2, 3, 5)
+  · 1366_13_xuong_giong_dau
+  ✓ Tạo giống 500 xu
+  ✓ Gieo "Dâu tây (tự vẽ)" cho deck đang xem
+  · 1366_13_ruong_dau_tay
+  ✓ Mã giống cây 117 ký tự
+  · 1366_13_ma_giong
+  ✓ Dán mã bị xuống dòng / thừa dấu cách vẫn xem trước được
+  ✓ Tạo giống từ mã (Tạo giống này · 500 xu)
+  ✓ Mã sai một chỗ → "Mã bị thiếu hoặc sai một chỗ (mã kiểm tra không khớp) — chép lại cả đoạn nhé."
+  · 1366_13_ma_sai
+  ✓ Sửa giống chưa đổi hình: nút "Lưu giống · miễn phí"
+  ✓ Bấm "Xoá giống" lần 1: hỏi lại
+  ✓ Bấm lần 2: xoá giống
+== Mã chia sẻ món + dán làm món
+  ✓ Mã món 24×24: 193 ký tự
+  · 1366_14_dan_ma_mon
+  ✓ Làm món từ mã (Làm món này · 350 xu)
+  ✓ Món từ mã vào chế độ đặt
+== Cảnh ngoài trời đầy đồ: từng vùng, ngày / đêm / mưa / tuyết + tốc độ vẽ
+  · 1366_15_canh_yard_ngay
+  ✓ Vẽ một khung "yard" đầy đồ: 9.0 ms
+  · 1366_15_canh_beach_ngay
+  ✓ Vẽ một khung "beach" đầy đồ: 7.1 ms
+  · 1366_15_canh_shrine_ngay
+  ✓ Vẽ một khung "shrine" đầy đồ: 5.3 ms
+  · 1366_15_canh_festival_ngay
+  ✓ Vẽ một khung "festival" đầy đồ: 3.9 ms
+  · 1366_15_canh_bamboo_ngay
+  ✓ Vẽ một khung "bamboo" đầy đồ: 4.9 ms
+  · 1366_15_canh_onsen_ngay
+  ✓ Vẽ một khung "onsen" đầy đồ: 5.0 ms
+  · 1366_15_canh_station_ngay
+  ✓ Vẽ một khung "station" đầy đồ: 5.0 ms
+  · 1366_15_canh_u1_ngay
+  ✓ Vẽ một khung "u1" đầy đồ: 2.8 ms
+  · 1366_15_canh_u2_ngay
+  ✓ Vẽ một khung "u2" đầy đồ: 2.5 ms
+  · 1366_15_san_dem (đèn, đom đóm)
+  · 1366_15_san_mua
+  · 1366_15_san_tuyet
+  · 1366_15_trong_nha_day (phòng đầy nội thất + đồ hiếm + mèo)
+== Chụp ảnh vườn (3 cỡ)
+  · 1366_16_bang_chup_anh
+  ✓ Ảnh vườn cỡ s: [534,200]
+  ✓ Ảnh vườn cỡ l: [1068,400]
+  ✓ Ảnh vườn cỡ wall: [1920,1080]
+== Các tab Nhà khi đã có hết (1366 và 1024 px)
+  · 1366_20_vuon_day_do
+  ✓ 1366 px: thẻ Hôm nay không cắt chuỗi ngày ("Hôm nay 30/30 lượt ✓15 ngày liền", chuỗi xuống dòng 137/137)
+  ✓ 1366 px: phần thừa bên phải ruộng cùng màu cỏ giao diện mùa (#86c450 / #86c450)
+  · 1366_21_nha_build
+  · 1366_21_nha_build_cuoi
+  · 1366_21_nha_yard
+  · 1366_21_nha_yard_cuoi
+  · 1366_21_nha_room
+  · 1366_21_nha_room_cuoi
+  · 1366_21_nha_zone
+  · 1366_21_nha_zone_cuoi
+  · 1366_21_nha_pet
+  · 1366_21_nha_pet_cuoi
+  · 1366_21_nha_guest
+  · 1366_21_nha_guest_cuoi
+  · 1366_21_nha_seed
+  · 1366_21_nha_seed_cuoi
+  · 1366_21_nha_season
+  · 1366_21_nha_season_cuoi
+  · 1366_21_nha_wear
+  · 1366_21_nha_wear_cuoi
+  · 1366_21_nha_craft
+  · 1366_21_nha_craft_cuoi
+  · 1366_21_nha_inv
+  · 1366_21_nha_inv_cuoi
+  ✓ 1366 px: bảng Nhà nằm gọn trong cửa sổ (đáy 721 / 768 px, danh sách cao 225 px)
+  ✓ 1366 px: dòng gợi ý dưới cảnh không đè lên cảnh / không lọt khỏi khung (cảnh tới 380, gợi ý 384–403, khung tới 435)
+  ✓ 1366 px: Xưởng vừa cửa sổ, lưới vẽ không lọt xuống dưới (lưới tới 672 / 768 px)
+  · 1366_22_xuong_moi
+  · 1366_22_xuong_giong
+  ! 1366_22_xuong_vung — nút nhỏ 8
+  · 1024_20_vuon_day_do
+  ✓ 1024 px: thẻ Hôm nay không cắt chuỗi ngày ("Hôm nay 30/30 lượt ✓15 ngày liền", chuỗi xuống dòng 137/137)
+  ✓ 1024 px: phần thừa bên phải ruộng cùng màu cỏ giao diện mùa (#86c450 / #86c450)
+  · 1024_21_nha_build
+  · 1024_21_nha_build_cuoi
+  · 1024_21_nha_yard
+  · 1024_21_nha_yard_cuoi
+  · 1024_21_nha_room
+  · 1024_21_nha_room_cuoi
+  · 1024_21_nha_zone
+  · 1024_21_nha_zone_cuoi
+  · 1024_21_nha_pet
+  · 1024_21_nha_pet_cuoi
+  · 1024_21_nha_guest
+  · 1024_21_nha_guest_cuoi
+  · 1024_21_nha_seed
+  · 1024_21_nha_seed_cuoi
+  · 1024_21_nha_season
+  · 1024_21_nha_season_cuoi
+  · 1024_21_nha_wear
+  · 1024_21_nha_wear_cuoi
+  · 1024_21_nha_craft
+  · 1024_21_nha_craft_cuoi
+  · 1024_21_nha_inv
+  · 1024_21_nha_inv_cuoi
+  ✓ 1024 px: bảng Nhà nằm gọn trong cửa sổ (đáy 694 / 700 px, danh sách cao 176 px)
+  ✓ 1024 px: dòng gợi ý dưới cảnh không đè lên cảnh / không lọt khỏi khung (cảnh tới 428, gợi ý 432–451, khung tới 457)
+  ✓ 1024 px: Xưởng vừa cửa sổ, lưới vẽ không lọt xuống dưới (lưới tới 647 / 700 px)
+  · 1024_22_xuong_moi
+  · 1024_22_xuong_giong
+  ! 1024_22_xuong_vung — nút nhỏ 8
+  ✓ nhật ký lỗi add-on trống 
+
+ảnh có cờ đo: 0/130
+xu còn lại: 906717 (đã tiêu 93283)
+KẾT QUẢ: 180/180

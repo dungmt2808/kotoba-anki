@@ -1,0 +1,34 @@
+
+DevTools listening on ws://127.0.0.1:9535/devtools/browser/53c0b4b3-62ad-4632-b760-4d77a9693666
+[5274:5274:1106/091136.004529:ERROR:zygote_communication_linux.cc(296)] Failed to send GetTerminationStatus message to zygote
+[5274:5274:1106/091136.008296:ERROR:zygote_communication_linux.cc(296)] Failed to send GetTerminationStatus message to zygote
+[5274:5274:1106/091136.009873:ERROR:zygote_communication_linux.cc(296)] Failed to send GetTerminationStatus message to zygote
+[5274:5274:1106/091136.011289:ERROR:zygote_communication_linux.cc(296)] Failed to send GetTerminationStatus message to zygote
+Preparing to run...
+Qt info: Sandboxing disabled by user. 
+Qt debug: doh set to ""  --  SystemOnly 
+Starting main loop...
+Qt warning: Remote debugging server started successfully. Try pointing a Chromium-based browser to http://127.0.0.1:9535 
+mpv not found, reverting to mplayer
+Qt warning: This plugin does not support propagateSizeHints() 
+Qt warning: This plugin does not support raise() 
+update check failed: A network error occurred.
+
+Error details: ⁨error sending request for url (): error trying to connect: unsuccessful tunnel⁩
+Qt warning: This plugin does not support propagateSizeHints() 
+Qt warning: This plugin does not support propagateSizeHints() 
+Qt warning: This plugin does not support propagateSizeHints() 
+Qt warning: This plugin does not support raise() 
+Qt warning: This plugin does not support raise() 
+Qt warning: This plugin does not support raise() 
+Qt warning: This plugin does not support raise() 
+Qt warning: This plugin does not support raise() 
+Qt warning: This plugin does not support propagateSizeHints() 
+Qt warning: This plugin does not support raise() 
+mpv not found, reverting to mplayer
+Qt warning: This plugin does not support raise() 
+[kotoba_batake] đã chuyển dữ liệu sang collection (đồng bộ AnkiWeb)
+update check failed: A network error occurred.
+
+Error details: ⁨error sending request for url (): error trying to connect: unsuccessful tunnel⁩
+Qt warning: This plugin does not support raise() 

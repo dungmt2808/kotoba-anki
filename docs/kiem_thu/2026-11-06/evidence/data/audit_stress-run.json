@@ -1,0 +1,10 @@
+{
+  "script": "/workspace/kotoba-audit-tools/audit_stress.js",
+  "exit": 2,
+  "summary": null,
+  "failed_assertions": [],
+  "seconds": 18,
+  "profile": "/workspace/kotoba-audit-results/kb-audit-6-ghavip8g",
+  "cdp": 9536,
+  "ctrl": 9636
+}

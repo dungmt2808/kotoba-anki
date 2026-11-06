@@ -1,0 +1,21 @@
+
+DevTools listening on ws://127.0.0.1:9535/devtools/browser/e72fd9a8-07cc-4869-a832-de5ca979dd89
+[4476:4476:1106/090951.169669:ERROR:zygote_communication_linux.cc(296)] Failed to send GetTerminationStatus message to zygote
+[4476:4476:1106/090951.174921:ERROR:zygote_communication_linux.cc(296)] Failed to send GetTerminationStatus message to zygote
+[4476:4476:1106/090951.184982:ERROR:zygote_communication_linux.cc(296)] Failed to send GetTerminationStatus message to zygote
+[4476:4476:1106/090951.190085:ERROR:zygote_communication_linux.cc(296)] Failed to send GetTerminationStatus message to zygote
+Preparing to run...
+Qt info: Sandboxing disabled by user. 
+Qt debug: doh set to ""  --  SystemOnly 
+Starting main loop...
+Qt warning: Remote debugging server started successfully. Try pointing a Chromium-based browser to http://127.0.0.1:9535 
+mpv not found, reverting to mplayer
+Qt warning: This plugin does not support propagateSizeHints() 
+Qt warning: This plugin does not support raise() 
+update check failed: A network error occurred.
+
+Error details: ⁨error sending request for url (): error trying to connect: unsuccessful tunnel⁩
+Qt warning: This plugin does not support propagateSizeHints() 
+Qt warning: This plugin does not support propagateSizeHints() 
+Qt warning: This plugin does not support propagateSizeHints() 
+Qt warning: This plugin does not support raise() 

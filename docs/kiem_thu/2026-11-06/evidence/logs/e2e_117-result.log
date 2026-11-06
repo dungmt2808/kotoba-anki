@@ -1,0 +1,64 @@
+== bảng Trò chơi kiểu 1.15 + drop-down
+  ✓ lưới 3 cột như 1.15: 5 thẻ to, 3 + 2 (411, 411, 411, 411, 411)
+  ✓ loại note là drop-down: ["Từ vựng · 8 từ"]
+  ✓ kiểu chơi (4 trò) + tốc độ quạ (4 mức) là drop-down, không còn nút nhỏ
+  ✓ drop-down nằm dưới thẻ (bấm thẻ là vào game, không lẫn với lựa chọn)
+  ✓ một nút Cấu hình trường, xu game hôm nay ở dòng chú thích
+  ✓ mô tả trò chơi hiện đủ chữ (không cắt "…")
+  ✓ đổi kiểu chơi ở drop-down: không vào game
+  ✓ kiểu chơi đã lưu vào collection (meaning-word)
+  ✓ tốc độ quạ đổi bằng drop-down
+  ✓ bấm thẻ Chợ sáng: vào game
+  ✓ 1024×700: 3 + 2 thẻ, không tràn ngang, chữ không bị cắt
+== bỏ Hán Việt khỏi từ vựng
+  ✓ vai trò của Từ vựng: word, reading, meaning, example, ex_meaning, audio, ex_audio
+  ✓ loại Chữ Hán vẫn giữ Hán Việt (学 HỌC, 生 SINH, 食 THỰC, 天 THIÊN)
+== furigana: ruby HTML, ngoặc tròn
+  ✓ ruby HTML → chữ + cách đọc: 学生/がくせい 先生/せんせい 食べる/たべる 天気/てんき 図書館/としょかん
+  ✓ câu ví dụ dạng ruby dùng được cho Điền vào câu
+  ✓ ngoặc tròn / 【】 / hai dòng: 学生/がくせい 先生/せんせい 天気/てんき 賛成(する)/ 図書館/としょかん
+== deck tiếng Anh
+  ✓ loại note tự nhận là tiếng Anh
+  ✓ cây: apple /ˈæp.əl/ — quả táo
+  ✓ không có audio thì vẫn nghe được bằng giọng tiếng Anh của máy
+  ✓ Điền vào câu tìm được dạng biến đổi: apple,went,studying,stopped,cities,looked up,children,happier
+  ✓ menu: Tiếng Anh · 8 từ
+  ✓ cả 5 trò chơi được với deck tiếng Anh: listen, market, crow, memory, cloze
+  ✓ Đuổi quạ: Quạ mang nghĩa tiếng Việt bay tới trộm hạt. Gõ đúng chính tả từ tiếng Anh để đuổi.
+  ✓ quạ bay ra
+  ✓ ô gõ: Gõ từ tiếng Anh… (vd. apple, look up)
+  ✓ gõ "CITY" (hoa thường không tính) cho biển "thành phố" → đuổi được quạ
+  ✓ Điền vào câu (tiếng Anh) chạy
+  ✓ có 4 lựa chọn, đáp án apple
+  ✓ từ không có audio → giọng máy en_US: TTSTag(field_text='child', lang='en_US', voices=[], speed=1.0, other_args=[])
+  ✓ từ có audio → phát file của deck
+== chép chính tả tiếng Anh
+  ✓ lượt chép có 5 câu tiếng Anh
+  ✓ deck tiếng Anh: ẩn nút Ẩn furigana, hướng dẫn gõ tiếng Anh: Nghe rồi gõ lại câu. Không tính hoa thường, dấu câu; don't = do not. Enter để kiểm tra.
+  ✓ ô gõ tiếng Anh, không nhắc furigana: Gõ câu vừa nghe (hoa thường, dấu câu không tính)
+  ✓ gõ "the children do not like rain" (chữ thường, không dấu câu) → đúng
+  ✓ câu không có audio → giọng máy en_US
+  ✓ tab Báo (đang xem deck tiếng Anh): báo tiếng Nhật còn số chưa đọc
+  ✓ báo đang đọc không theo deck đang xem
+== Cấu hình trường: Ngôn ngữ
+  ✓ bảng Cấu hình trường có ô Ngôn ngữ
+  ✓ loại note “EN nhồi chung”: tiếng Anh, chỉ chọn Từ vựng / Khác
+  ✓ cảnh báo trường Từ nhồi chung (thay cho dòng gợi ý chung)
+  ✓ vai trò tiếng Anh: Từ (Word) *, Phiên âm (IPA), Nghĩa *, Câu ví dụ (Example), Dịch câu ví dụ, Audio của từ, Audio câu ví dụ
+  ✓ lưu ngôn ngữ đã chọn vào khoá lang (["other","vocab"])
+  ✓ vườn dùng ngôn ngữ vừa lưu: other:true
+== soát lại: gọn hơn
+  ✓ ⚙ cài đặt: 6 nút (1.20 thêm Lịch hoa & nhật ký), ≤ 3 dòng chú thích, không còn nhắc Hán Việt ({"notes":3,"hv":false,"btns":6})
+  ✓ nút Ẩn furigana chỉ hiện ở tab Báo (ẩn ở Kệ báo)
+  ✓ 1.17.3: đổi tab Nhà (Giống cây, Tủ đồ, Xưởng…) khung xem trước vẫn hiện, hàng tab không nhảy
+  ✓ không còn emoji, icon pixel 16px (vd. mầm cây ở “Giống cây cho ruộng”, 4 icon đang hiện)
+  ✓ Nhà: 11 tab (1.21: + Album khách) bằng nhau, khoảng cách đều (113/113/113/113/113/113/113/113/113/113/113 · cách 4)
+  ✓ thanh trên cùng các ô cao bằng nhau (40/40/40/40/40/40/40), đầu bảng Nhà: ô Ví = nút Thoát (31/31/31)
+  ✓ nút Mua thẳng hàng ở đáy thẻ (8,8,8,8,8,8)
+  ✓ bảng Giao diện: phần tự chỉnh gập lại (vẫn đủ 21 ô chọn)
+  ✓ dải chúc mừng có icon pixel, không lộ tên icon: target «Đạt mục tiêu hôm nay! » · rainbow «Tưới xong cả vườn hôm » · firework «Mốc 7 ngày ôn liên tiế» · gift «Xong cả 3 nhiệm vụ hôm»
+  ✓ huy hiệu cạnh ruộng: mỗi cái một icon pixel (Xong thẻ hôm nayĐạt mục tiêuCả vườn trĩu quả9 ngày liềnXong 3 nhiệm vụ)
+  ✓ không có lỗi JS
+  ✓ nhật ký lỗi add-on trống
+
+KẾT QUẢ: 55/55 đạt

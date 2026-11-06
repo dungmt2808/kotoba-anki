@@ -1,0 +1,7 @@
+  ✓ 14 màu hồng / đỏ ra đúng hồng / đỏ 
+  ✓ không màu hồng / đỏ nào ra nâu / be / da
+  ✓ 40 màu khác (nâu, da, lá, trời, xám…) vẫn đúng nhóm 
+  (cách so RGB cũ làm sai 10 màu: hồng có bóng tối→b, hồng đất→E, đỏ tối ảnh chụp→B, hồng phấn gần trắng→s, vàng đất→E, tím ảnh→S, rêu→b, xám xanh→A, lá tối→k, tím đậm→U)
+  ✓ cách cũ sai ≥ 8 màu (để chắc bộ màu thử bắt được lỗi cũ)
+  ✓ 32 màu của bảng Xưởng ra lại đúng chính nó 
+KẾT QUẢ: 5/5

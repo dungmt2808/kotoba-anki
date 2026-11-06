@@ -1,0 +1,32 @@
+== mỗi chủ đề một bản
+  ✓ 14 chủ đề trong season.js: spring, summer, autumn, winter, hanami, tsuyu, tanabata, natsumatsuri, tsukimi, halloween, momiji, noel, shogatsu, tet
+  ✓ chủ đề nào cũng có bản nhạc riêng
+  ✓ không chủ đề nào dùng chung bản / dùng bản vườn thường
+== bản nào cũng đúng nhịp
+  ✓ garden        8 ô nhịp, 8 hợp âm, nốt 69–84, 92 bpm
+  ✓ game          8 ô nhịp, 8 hợp âm, nốt 71–86, 138 bpm
+  ✓ home          8 ô nhịp, 8 hợp âm, nốt 71–84, 80 bpm
+  ✓ noel          8 ô nhịp, 8 hợp âm, nốt 72–88, 120 bpm
+  ✓ tet           8 ô nhịp, 8 hợp âm, nốt 72–86, 112 bpm
+  ✓ halloween     8 ô nhịp, 8 hợp âm, nốt 67–81, 96 bpm
+  ✓ spring        8 ô nhịp, 8 hợp âm, nốt 74–88, 104 bpm
+  ✓ summer        8 ô nhịp, 8 hợp âm, nốt 67–84, 100 bpm
+  ✓ autumn        8 ô nhịp, 8 hợp âm, nốt 68–84, 84 bpm
+  ✓ winter        8 ô nhịp, 8 hợp âm, nốt 76–89, 76 bpm
+  ✓ hanami        8 ô nhịp, 8 hợp âm, nốt 76–88, 88 bpm
+  ✓ tsuyu         8 ô nhịp, 8 hợp âm, nốt 73–86, 72 bpm
+  ✓ tanabata      8 ô nhịp, 8 hợp âm, nốt 78–90, 96 bpm
+  ✓ natsumatsuri  8 ô nhịp, 8 hợp âm, nốt 74–88, 126 bpm
+  ✓ tsukimi       8 ô nhịp, 8 hợp âm, nốt 74–88, 84 bpm
+  ✓ momiji        8 ô nhịp, 8 hợp âm, nốt 74–86, 92 bpm
+  ✓ shogatsu      8 ô nhịp, 8 hợp âm, nốt 76–88, 100 bpm
+== chọn bản theo màn / chủ đề / Xem thử
+  ✓ không dùng giao diện mùa → bản vườn thường
+  ✓ đang dùng Mùa thu → bản Mùa thu (trước 1.18: bản vườn thường)
+  ✓ Nhà / trò chơi giữ bản riêng
+  ✓ ôn thẻ / nghe → im
+  ✓ bấm Xem thử “Lễ hội mùa hè” trong Nhà → phát nhạc lễ hội
+  ✓ Xem thử không đổi nhạc trò chơi / không phát khi ôn
+  ✓ Dừng xem thử → lại hộp nhạc của Nhà
+  ✓ xem thử Tết khi đang dùng Halloween → nhạc Tết
+KẾT QUẢ: TẤT CẢ OK

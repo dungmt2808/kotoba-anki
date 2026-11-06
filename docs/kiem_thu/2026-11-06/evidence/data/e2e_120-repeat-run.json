@@ -1,0 +1,12 @@
+{
+  "script": "e2e_120.js",
+  "exit": 1,
+  "summary": null,
+  "failed_assertions": [
+    "LỖI KỊCH BẢN: Error: TypeError: Cannot read properties of null (reading 'textContent')"
+  ],
+  "seconds": 18,
+  "profile": "/workspace/kotoba-audit-results/kb-audit-4-jjo6_lg7",
+  "cdp": 9534,
+  "ctrl": 9634
+}

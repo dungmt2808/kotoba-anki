@@ -1,0 +1,23 @@
+
+DevTools listening on ws://127.0.0.1:9535/devtools/browser/9008e371-b38b-4eb4-8377-5a48e3fabd25
+[4742:4788:1106/091006.082737:ERROR:bus.cc(399)] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[4742:4788:1106/091006.082787:ERROR:bus.cc(399)] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[4742:4742:1106/091010.892452:ERROR:zygote_communication_linux.cc(296)] Failed to send GetTerminationStatus message to zygote
+[4742:4742:1106/091010.902985:ERROR:zygote_communication_linux.cc(296)] Failed to send GetTerminationStatus message to zygote
+[4742:4742:1106/091010.906845:ERROR:zygote_communication_linux.cc(296)] Failed to send GetTerminationStatus message to zygote
+[4742:4742:1106/091010.909958:ERROR:zygote_communication_linux.cc(296)] Failed to send GetTerminationStatus message to zygote
+Preparing to run...
+Qt info: Sandboxing disabled by user. 
+Qt debug: doh set to ""  --  SystemOnly 
+Starting main loop...
+Qt warning: Remote debugging server started successfully. Try pointing a Chromium-based browser to http://127.0.0.1:9535 
+mpv not found, reverting to mplayer
+Qt warning: This plugin does not support propagateSizeHints() 
+Qt warning: This plugin does not support raise() 
+update check failed: A network error occurred.
+
+Error details: ⁨error sending request for url (): error trying to connect: unsuccessful tunnel⁩
+Qt warning: This plugin does not support propagateSizeHints() 
+Qt warning: This plugin does not support propagateSizeHints() 
+Qt warning: This plugin does not support propagateSizeHints() 
+Qt warning: This plugin does not support raise() 

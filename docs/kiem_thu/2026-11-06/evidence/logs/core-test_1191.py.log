@@ -1,0 +1,46 @@
+== deck theo ngôn ngữ
+  ✓ deck tiếng Nhật kèm số note (deck cha tính cả deck con): {'JA': 150, 'JA::N4': 60, 'JA::N4::Bài 1': 30, 'JA::N5': 90}
+  ✓ deck trộn: 6 note Nhật, 6 note Anh
+  ✓ deck tiếng Hàn không có ở hai danh sách
+  ✓ deck tiếng Anh: 32 note, không có deck Nhật
+== 100 từ ngẫu nhiên (không chọn deck)
+  ✓ 100 từ: 70 phải ôn + 30 đã thuộc
+  ✓ chỉ note tiếng Nhật (kể cả ở deck trộn)
+  ✓ không có chữ Hán đơn, không có note ngữ pháp trong kho
+  ✓ note ngữ pháp đã học → danh sách ngữ pháp
+  ✓ đã học ≥ 30 từ → không dùng thẻ mới
+  ✓ cùng ngày → cùng danh sách
+  ✓ ngày khác → danh sách khác
+  ✓ 20 từ trọng tâm, đều là từ phải ôn
+  ✓ danh sách mọi từ đã học: 146 từ
+== chọn deck
+  ✓ chỉ deck N4 (kể cả deck con): 50 từ đã học
+  ✓ N4 chỉ có 20 từ phải ôn → 20 + 30 đã thuộc
+  ✓ hai deck: xoay vòng cho đều (['n5', 'n4', 'n5', 'n4', 'n5', 'n4'])
+  ✓ deck trộn, báo tiếng Anh: chỉ 6 từ tiếng Anh
+  ✓ deck đã chọn chỉ có 6 từ (< 10 → không viết báo)
+  ✓ tiếng Anh không chọn deck: 38 từ (18 phải ôn), cả deck trộn
+  ✓ deck tiếng Hàn chọn cho báo tiếng Anh: không có từ
+== mới học (< 30 từ đã học) → thêm thẻ mới
+  ✓ 5 từ đã học + 35 thẻ mới của chính deck đó (40)
+== khoá collection
+  ✓ chưa chọn → rỗng
+  ✓ bỏ id deck không còn, trùng, sai kiểu
+  ✓ tối đa 5 deck
+  ✓ giữ phần lạ của khoá (bản sau)
+  ✓ xoá deck → id tự bỏ khi đọc
+  ✓ ngôn ngữ lạ bị từ chối
+== phạm vi gửi Gemini
+  ✓ kho 100 từ, tu_vung (kiểm tra) 146 từ
+  ✓ 20 từ trọng tâm / 70 từ phải ôn
+  ✓ ngữ pháp lấy từ note ngữ pháp đã học
+  ✓ lời nhắc chỉ có 100 từ của kho
+  ✓ dặn dùng được bao nhiêu thì dùng, đừng ép câu
+  ✓ mô tả: 100 từ (70 từ phải ôn) · trình độ N4 · mọi deck
+  ✓ mô tả có tên deck: 100 từ (70 từ phải ôn) · trình độ N4 · deck JA::N5, JA::N4
+  ✓ đếm từ phải ôn có trong bài: [2, 70]
+  ✓ dùng ít từ trọng tâm chỉ là cảnh báo
+  ✓ báo tiếng Anh: kho 38, 18 từ phải ôn
+  ✓ lời nhắc tiếng Anh có từ trọng tâm hôm nay
+  ✓ đếm từ phải ôn (tiếng Anh): [2, 18]
+KẾT QUẢ: OK

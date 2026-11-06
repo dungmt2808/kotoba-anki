@@ -1,0 +1,74 @@
+== chuyển ảnh thành pixel: hồng / đỏ giữ màu (không ra nâu)
+  ✓ hoa hồng có bóng + hồng phai + đỏ sẫm → toàn ô hồng / đỏ (515), không ô nâu / be (0)
+  ✓ ảnh pixel art dùng đủ 32 màu của bảng Xưởng → chuyển lại giữ nguyên từng màu 
+== giống cây tự vẽ: Xưởng 5 giai đoạn
+  ✓ tab Giống cây có mục "Giống tự vẽ · 0/12"
+  ✓ bấm "Mở xưởng" ở thẻ "Tự vẽ giống cây"
+  ✓ Xưởng mở chế độ giống cây, bắt đầu ở giai đoạn Mầm (16×16)
+  ✓ thanh trên: 5 nút giai đoạn, ẩn Cỡ / Loại / Hiệu ứng, tiêu đề "Giống cây tự vẽ"
+  ✓ nút lưu "Tạo giống · 500 xu"
+  ✓ vẽ được giai đoạn Mầm
+  ✓ phím 3 → giai đoạn Cây non
+  ✓ có giai đoạn trước → nút "Chép giai đoạn trước" bấm được
+  ✓ chép hình Mầm sang Cây non
+  ✓ mới vẽ 2 giai đoạn → nhắc "Vẽ ít nhất 3 giai đoạn"
+  ✓ đã vẽ Mầm, Cây non, Ra quả (Hạt, Ra hoa để tự suy ra)
+  ✓ xem trước ghi "Đã vẽ 3/5"
+  ✓ nút giai đoạn đã vẽ có chấm xanh
+  ✓ thanh trên Xưởng (giống cây) không tràn ngang ở 1366 px
+  ✓ lưu giống → Xưởng đóng
+  ✓ trừ 500 xu (40000 → 39500)
+  ✓ Python lưu tên ở khoá "myseeds", điểm ảnh 5 giai đoạn ở PX_KEY ("g1")
+  ✓ về tab Giống cây, có thẻ "Cà chua bi"
+  ✓ seeds.js: Hạt chưa vẽ → hạt cây gốc, Ra hoa lấy hình Cây non, cây héo có bảng màu khô
+== gieo giống tự vẽ cho deck → cây trên ruộng đổi hình
+  ✓ chọn được "Cà chua bi (tự vẽ)" ở luật gieo theo deck
+  ✓ luật trỏ tới giống tự vẽ lưu ở myseeds (khoá "seeds" của bản cũ không bị đụng)
+  ✓ mọi cây của deck đang xem mang giống "g1" (8/8 cây)
+== sửa giống: đổi tên miễn phí
+  ✓ bấm "Sửa · 50 xu"
+  ✓ mở lại giống g1 ở giai đoạn đã vẽ đầu tiên
+  ✓ chưa đổi hình → "Lưu giống · miễn phí"
+  ✓ đổi tên không mất xu
+== mã chia sẻ: xuất
+  ✓ tab Xưởng có ô "Dán mã thiết kế"
+  ✓ bấm "Mã chia sẻ" ở món "Táo đỏ"
+  ✓ hiện mã "KB1:m:16:…" ở đầu danh sách
+  ✓ danh sách tự cuộn tới hộp mã (bấm ở món cuối danh sách vẫn thấy mã)
+  ✓ mã đã chép vào bộ nhớ tạm
+  ✓ ghi "Đã chép vào bộ nhớ tạm"
+== mã chia sẻ: dán → xem trước → làm
+  ✓ dán chữ thường → "Đây không phải mã thiết kế…"
+  ✓ sửa một chỗ → "mã kiểm tra không khớp"
+  ✓ mã bị xuống dòng / dấu cách vẫn đọc được → xem trước "Táo đỏ", nút "Làm món này · 200 xu"
+  ✓ xem trước có hình + tên
+  ✓ làm món từ mã: trừ 200 xu, thêm mẫu thứ hai
+== mã chia sẻ: vùng + giống cây
+  ✓ vùng tự tạo có nút "Mã chia sẻ"
+  ✓ mã vùng "KB1:z:64x76:…" hiện ở tab Vùng mới
+  ✓ giống tự vẽ có nút "Mã chia sẻ"
+  ✓ mã giống "KB1:g:16:…"
+  ✓ xem trước vùng: nền Đồi hoa, "Tạo vùng này · 5000 xu"
+  ✓ xem trước giống: "vẽ 3/5 giai đoạn", "Tạo giống này · 500 xu"
+  ✓ tạo giống từ mã: trừ 500 xu, có giống g2
+  ✓ xong thì chuyển sang tab Giống cây
+== chụp ảnh vườn
+  ✓ góc dưới trái sân có nút chụp ảnh
+  ✓ nút chụp không đè thẻ Hôm nay / chữ "Nhà & Cửa hàng"
+  ✓ bấm nút → bảng chọn cỡ ảnh (không mở Nhà, không tràn khỏi cửa sổ)
+  ✓ lưu xong có thông báo "Đã lưu ảnh vườn"
+  ✓ cỡ thường: cảnh 512×152 + khung + dải chữ = 534×200 (534,200)
+  ✓ chụp xong bảng chọn tự đóng
+  ✓ hình nền 1920×1080
+  ✓ cỡ lớn ×2: 1068×400
+  ✓ Esc đóng bảng chọn (không đóng / mở bảng khác)
+  ✓ nút "Chụp ảnh" trong Nhà chụp cảnh đang xem (Trong nhà)
+  ✓ ảnh trong nhà 342×224 (342,224)
+  ✓ thanh trên của Nhà có thêm nút "Chụp ảnh" vẫn không tràn ở 1366 px
+== cửa sổ 1024 px
+  ✓ nút chụp không đè thẻ Hôm nay ở 1024 px
+  ✓ thanh trên của Nhà không tràn, nút "Chụp ảnh" không đè "Thoát" ở 1024 px
+  ✓ thanh trên Xưởng (giống cây) không tràn ngang ở 1024 px
+  ✓ nút giai đoạn không đè ô Tên / Huỷ / Tạo giống ở 1024 px
+  ✓ không có lỗi JavaScript
+KẾT QUẢ: 64/64

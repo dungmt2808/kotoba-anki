@@ -1,0 +1,23 @@
+== 12 món hiếm mới
+  ✓ có hình cho cả 12 món (rare_art.js)
+  ✓ danh mục: 18 món hiếm
+  ✓ tab Trang trí sân: 10 món hiếm ngoài sân (3 cũ + 7 mới) có Hươu Nara, Tháp chùa
+  ✓ chưa có thì khoá (8 món), đã có (tháp chùa, quầy mì) thì không (8)
+  ✓ đủ 6 món cũ → rương kế tiếp tặng “Hươu Nara” (Hươu Nara, shika)
+== giao diện ôn “Đêm vườn”
+  ✓ bảng ôn nền xanh đêm + sao (không còn xám đen) — rgb(35, 42, 92)
+  ✓ nút Lật thẻ vàng đèn lồng (rgb(255, 200, 87))
+  ✓ thẻ trong khung: nền xanh đêm, chữ kem (rgb(38, 45, 94) / rgb(244, 236, 216))
+== vẽ cảnh nền cho vùng tự tạo
+  ✓ hàng trên của Xưởng vùng nằm gọn một dòng
+  ✓ lớp “Cảnh nền”: lưới 256×76
+  ✓ tự phóng to ×2, khung vẽ cuộn ngang được
+  ✓ vẽ được trên lớp cảnh nền
+  ✓ nút + phóng to ×3
+  ✓ về lớp Công trình 64×76, cảnh nền vừa vẽ vẫn còn
+  ✓ tạo vùng −5.000 xu, cảnh nền lưu ở khoá zenv ([35000,["u1"],["u1"]])
+  ✓ màn chính: vùng mới hiện đúng mảng đỏ vừa vẽ ở cảnh nền (rgb 255,79,109)
+  ✓ không có lỗi JS
+  ✓ nhật ký lỗi add-on trống
+
+KẾT QUẢ: 18/18 đạt

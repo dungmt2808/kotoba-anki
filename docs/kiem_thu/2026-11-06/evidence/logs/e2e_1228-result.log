@@ -1,0 +1,34 @@
+== bao_dir trống (mặc định của người dùng mới)
+  ✓ không có thẻ Claude Code, vẫn có thẻ Gemini + Giọng đọc (2 thẻ)
+  ✓ tab Nguồn báo không còn chữ "Claude" / "kotoba_daily"
+  ✓ không có nút "Dùng Gemini cho báo tiếng Nhật" (đang dùng Gemini rồi)
+  ✓ nút "Nguồn báo…" không nhắc Claude Code ("Gemini viết báo mỗi sáng bằng từ bạn đang học")
+  ✓ nguồn báo: gemini
+== bao_source "claude" sửa tay, bao_dir trống
+  ✓ thẻ Claude Code vẫn ẩn
+  ✓ như "auto": có khoá thì Gemini viết (trước 1.22.8: "" — chưa có nguồn) ["gemini","claude",false]
+  ✓ kệ báo tiếng Nhật đọc báo Gemini (2 số)
+  ✓ bao_dir chỉ có dấu cách → coi như trống
+== bao_dir là thư mục kotoba_daily có thật
+  ✓ thẻ Claude Code hiện, đang dùng (auto + có bao_dir)
+  ✓ thẻ ghi "✓ 1 số" + "Đang dùng"
+  ✓ hàng Báo tiếng Nhật ghi "Nguồn: Claude Code (thẻ bên dưới)"
+  ✓ thẻ Gemini có nút "Dùng Gemini cho báo tiếng Nhật"
+  ✓ → nguồn gemini ["gemini","gemini",true]
+  ✓ thẻ Claude Code vẫn còn, có nút "Dùng Claude Code" để đổi lại
+  ✓ bấm "Dùng Claude Code" → nguồn claude ["claude","claude",true]
+== bao_dir trỏ tới thư mục không còn
+  ✓ thẻ hiện "✗ không thấy thư mục" (chữ đỏ)
+  ✓ nguồn báo tiếng Nhật: chưa có (đúng ý người dùng chọn Claude Code)
+  ✓ thẻ Gemini có nút "Dùng Gemini cho báo tiếng Nhật" (trước 1.22.8: không có)
+  ✓ bấm → báo tiếng Nhật về Gemini ["gemini","gemini",true]
+== xoá bao_dir
+  ✓ thẻ Claude Code ẩn lại, báo về Gemini
+  ✓ số báo cũ trong thư mục kotoba_daily không bị xoá
+  ✓ không tạo thư mục bao_dir không có thật
+== Không có Gemini, không có bao_dir
+  ✓ chưa có báo: chỉ mời dán khoá Gemini
+  ✓ không có lỗi JS
+  ✓ nhật ký lỗi add-on trống
+
+KẾT QUẢ: 26/26 đạt

@@ -1,0 +1,10 @@
+{
+  "script": "e2e_tour.js",
+  "exit": 0,
+  "summary": "KẾT QUẢ: 12/12 đạt",
+  "failed_assertions": [],
+  "seconds": 22,
+  "profile": "/workspace/kotoba-audit-results/kb-audit-2-wyb5nr7_",
+  "cdp": 9532,
+  "ctrl": 9632
+}

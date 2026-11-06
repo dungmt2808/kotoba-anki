@@ -1,0 +1,67 @@
+== ai được ghé cảnh nào
+  ✓ 16 khách, album theo thứ tự định sẵn
+  ✓ khách nào cũng đủ trường
+  ✓ thời tiết / buổi hợp lệ
+  ✓ gợi ý không lặp chữ "Hiếm" (đã có nhãn)
+  ✓ chim sẻ ở sân có bụi hoa: 10 × 3 = 30
+  ✓ chim sẻ ở Bãi biển không có món thích: 10
+  ✓ chim sẻ không vào trong nhà
+  ✓ mèo hoang thích ghế gỗ (×3)
+  ✓ cò cần ao / ruộng: sân có ao → ghé, Đền không có → không
+  ✓ cò ở Bãi biển không cần ao (cảnh free)
+  ✓ ruộng lúa nhỏ ở Ga cũng gọi được cò
+  ✓ đom đóm chỉ tháng 5–8
+  ✓ đom đóm ở Rừng tre không cần đèn / ao, Bãi biển trống thì không
+  ✓ bướm tháng 3–9, thích hoa
+  ✓ ếch tháng 4–10, thích ao
+  ✓ cáo ở Đền; sân không có torii / tượng cáo thì không
+  ✓ sân có cổng torii → cáo ghé
+  ✓ hươu ở Đền trên núi
+  ✓ hải âu chỉ ở Bãi biển
+  ✓ tanuki ở vùng tự tạo có tượng tanuki (×3), không ra Bãi biển
+  ✓ vành khuyên cần chuông gió fūrin trong nhà
+  ✓ dơi hiếm: chỉ tháng 10
+  ✓ sếu hiếm: tháng 12–2, thích ao
+  ✓ chồn tuyết hiếm: tháng 11–3
+  ✓ khách / cảnh lạ → 0
+  ✓ cảnh có khách: sân, vùng đã mở (đúng thứ tự), vùng tự tạo, trong nhà (đã mở phòng)
+  ✓ chưa mở vùng / phòng → chỉ sân
+== tần suất theo số cây Ra quả
+  ✓ 0 cây 0,3 → 150 cây 0,85 (chặn hai đầu)
+  ✓ 75 cây: 0,575
+  ✓ nhãn tần suất
+== làm sạch album
+  ✓ bỏ ngày hỏng / khách lạ / kiểu sai: ['shika', 'suzume', 'tanuki']
+  ✓ mục hợp lệ giữ nguyên (bỏ khoá lạ khi đọc)
+  ✓ cảnh lạ → sân, số ngày hỏng → 1
+  ✓ ngày ghé cuối trước ngày gặp đầu → bằng ngày gặp đầu; n ≥ 1
+  ✓ dữ liệu sai kiểu → album trống
+== ghi lần gặp (collection Anki thật)
+  ✓ gặp lần đầu: ngày + cảnh
+  ✓ cùng ngày gặp lại: không ghi thêm
+  ✓ hôm khác: +1 ngày ghé, giữ cảnh gặp lần đầu
+  ✓ giữ khoá lạ của bản sau (mức khoá + mức từng khách)
+  ✓ sao lưu user_files/guests.json
+  ✓ không có collection: đọc bản sao lưu
+== dữ liệu gửi JS, khách mới theo ngày
+  ✓ tổng / đã gặp / cây Ra quả / nhãn tần suất / hôm nay
+  ✓ khách theo từng cảnh (có cả phòng)
+  ✓ không gửi khách trọng số 0
+  ✓ khách ngoài mùa không có trong danh sách hôm nay
+  ✓ danh sách album: đã gặp, ngày, số ngày, ngoài mùa, hiếm
+  ✓ defs: chỗ đứng (món thích + món cần), kiểu
+  ✓ khách mới trong tháng theo ngày gặp
+  ✓ khách mới của một ngày (khung ngày Lịch hoa)
+== ví thật của GardenState → cảnh có khách
+  ✓ ví: sân, Bãi biển, Đền, trong nhà
+  ✓ ao ở sân gọi cò, chuông gió trong nhà gọi vành khuyên
+  ✓ Đền: cáo; cổng torii làm cú ghé thường hơn (×3)
+== hình trong web/guests.js
+  ✓ SPR khớp tests/tools/art/guests.json
+  ✓ khách nào cũng có hình (đom đóm vẽ bằng chấm sáng)
+  ✓ mỗi khung: các hàng dài bằng nhau
+  ✓ mọi điểm ảnh dùng màu có trong bảng màu
+  ✓ hình không to quá một ô rưỡi
+== mã 1.20.0 thật lưu ví / báo / cấu hình trường / nhật ký → khoá album còn nguyên
+  ✓ khoá kotoba_batake_guests không đổi sau khi bản 1.20.0 lưu
+KẾT QUẢ: OK

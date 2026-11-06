@@ -1,0 +1,52 @@
+== mở Lịch hoa (lịch sử ôn giả: 3404 lượt)
+  ✓ thẻ Hôm nay: "· N ngày liền" bấm được, chú thích "Mở Lịch hoa"
+  ✓ bấm chuỗi ngày → mở Lịch hoa tháng này
+  ✓ bấm chuỗi không mở bảng nhiệm vụ
+  ✓ khung ngày mở ở hôm nay
+  ✓ hôm nay = số trong ô đen, đang chọn = nền vàng: 2026-11-06
+  ✓ lưới 7 cột T2 → CN
+  ✓ mọi ô có vạch màu giao diện mùa (cả ngày tương lai)
+  ✓ ngày đã qua / hôm nay có cây, ngày tương lai không
+  ✓ dải tên mùa / lễ + dòng "Sắp tới": Mùa lá đỏ, Giáng sinh | Sắp tới: お正月 1/1 – 15/1/2027 · Tết 16/1 – 21/2/2027 (theo âm lịch)
+  ✓ chú giải 5 mức cây, chip Chuỗi / Tháng này, một dòng hướng dẫn
+  ✓ Esc đóng bảng
+  ✓ Esc chỉ đóng bảng, cửa sổ vườn vẫn mở
+  ✓ phím L mở Lịch hoa
+  ✓ phím L lần nữa đóng
+  ✓ ⚙ có nút "Lịch hoa & nhật ký…"
+  ✓ nút ở ⚙ mở Lịch hoa
+== nhật ký + sticker (lưu ngay, đồng bộ)
+  ✓ 8 sticker hình mặt pixel (không emoji)
+  ✓ ghi rõ "không gửi cho Gemini" · "Đồng bộ qua AnkiWeb"
+  ✓ thẻ Hôm nay có dòng "Hôm nay thế nào?" khi chưa viết
+  ✓ chọn sticker Vui → lưu vào collection
+  ✓ sticker hiện ngay ở góc ô ngày
+  ✓ đã có sticker → dòng "Hôm nay thế nào?" ẩn
+  ✓ bấm lại → bỏ sticker
+  ✓ đếm "N / 200 ký tự"
+  ✓ Enter / rời ô → lưu (không cần bấm Lưu)
+  ✓ khoá collection theo tháng kotoba_batake_journal_<yyyy>_<mm>
+  ✓ nhật ký tối đa 200 ký tự
+  ✓ ngày cũ: viết được nhật ký, luyện viết chỉ cho hôm nay
+  ✓ sửa được ngày cũ (2026-11-01)
+  ✓ ngày tương lai: chỉ xem giao diện mùa, không viết
+  ✓ khung ngày: Ôn N lượt · N thẻ mới, Lên Ra quả (gần đúng): Ôn70 lượt · 14 thẻ mớiLên Ra quả6 từ: study · look up · apple /ˈæp.əl/ - quả táo
+  ✓ ghi rõ "gần đúng" ở chú thích
+== luyện viết: gợi ý, giới hạn, đổi ngôn ngữ
+  ✓ tick cả hai báo → nút Tiếng Nhật / Tiếng Anh: Tiếng Nhật* Tiếng Anh
+  ✓ tiếng Nhật: tối đa 60 ký tự, bộ đếm 0 / 60
+  ✓ "Thử dùng": 2 từ phải ôn hôm nay: 天気, コーヒー
+  ✓ Đổi gợi ý → bộ khác (gr = 1): コーヒー, 図書館
+  ✓ gõ / dán quá 60 ký tự → không nhận thêm, báo "đã cắt bớt"
+  ✓ chọn Tiếng Anh
+  ✓ tiếng Anh: tối đa 30 từ, gợi ý là từ tiếng Anh: leaf, letter
+  ✓ nhớ lựa chọn ngôn ngữ lần trước
+  ✓ đoạn 32 từ → lưu 30 từ (cắt ở từ thứ 30)
+  ✓ bản nháp lưu tự động khi gõ (luồng chính, khoá collection)
+== Gemini sửa bài: gửi rồi đóng bảng, xong thì báo (Gemini giả lập)
+  ✓ đang sửa: khung "Gemini đang sửa bài…", ô viết tạm khoá
+LỖI KỊCH BẢN: Error: TypeError: Cannot read properties of null (reading 'textContent')
+    at <anonymous>:1:145
+    at <anonymous>:1:268
+    at Page.eval (/workspace/kotoba-anki/tests/anki/cdp.js:16:162)
+    at async /workspace/kotoba-anki/tests/anki/e2e_120.js:228:6

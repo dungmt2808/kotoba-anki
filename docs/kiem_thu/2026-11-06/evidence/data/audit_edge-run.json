@@ -1,0 +1,10 @@
+{
+  "script": "audit_edge.js",
+  "exit": 0,
+  "summary": "KẾT QUẢ: 58/58 đạt",
+  "failed_assertions": [],
+  "seconds": 179,
+  "profile": "/workspace/kotoba-audit-results/kb-audit-1-4j89u40t",
+  "cdp": 9531,
+  "ctrl": 9631
+}

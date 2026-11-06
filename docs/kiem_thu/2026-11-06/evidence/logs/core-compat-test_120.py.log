@@ -1,0 +1,131 @@
+== đếm chữ / cắt bài luyện viết
+  ✓ tiếng Nhật đếm ký tự, không tính khoảng trắng
+  ✓ tiếng Anh đếm từ (I'm, well-known là một từ)
+  ✓ dán đoạn 32 từ → cắt ở từ thứ 30 ('ous and we was happy')
+  ✓ tiếng Nhật cắt ở ký tự thứ 60 (không tính khoảng trắng)
+  ✓ bài ngắn giữ nguyên
+  ✓ giữ dấu câu dính sau từ cuối
+== làm sạch dữ liệu nhật ký
+  ✓ xuống dòng / tab / ký tự điều khiển → một dòng
+  ✓ nhật ký tối đa 200 ký tự
+  ✓ chỉ nhận ngày đúng tháng của khoá, bỏ mục hỏng / rỗng (['2026-11-04', '2026-11-06'])
+  ✓ khoá lạ không vào dữ liệu hiện, chữ được làm sạch
+  ✓ ngôn ngữ lạ → ja, bài cắt còn 60 ký tự
+  ✓ tối đa 3 lỗi, loại lạ → ngữ pháp
+  ✓ nhận xét đã lưu bị chặn độ dài
+  ✓ gợi ý: tối đa 2 từ, bỏ giá trị không phải chữ
+== mức cây, chuỗi ngày
+  ✓ mức theo mục tiêu 30
+  ✓ mức theo mục tiêu 60 (nở rộ = đạt mục tiêu)
+  ✓ mục tiêu không hợp lệ → 30
+  ✓ chuỗi hiện tại (hôm nay chưa ôn → tính tới hôm qua) và chuỗi dài nhất
+  ✓ hôm nay đã ôn → chuỗi +1
+== giao diện mùa theo ngày
+  ✓ Giáng sinh ưu tiên hơn lá đỏ
+  ✓ Tết theo âm lịch: từ 21 ngày trước mùng 1
+  ✓ ngày nào cũng có giao diện mùa theo lịch
+  ✓ dải tháng 11: Mùa lá đỏ, Giáng sinh (ưu tiên hơn Mùa lá đỏ); Mùa thu không thắng ngày nào nên không hiện
+  ✓ Sắp tới sau tháng 11: お正月, Tết (âm lịch)
+  ✓ mỗi giao diện mùa một loài hoa
+  ✓ seeds.js có loài bonsai
+  ✓ seeds.js có loài momiji
+  ✓ seeds.js có loài himawari
+  ✓ seeds.js có loài ajisai
+  ✓ seeds.js có loài sakura
+  ✓ seeds.js có loài kiku
+  ✓ seeds.js có loài take
+  ✓ seeds.js có loài ine
+  ✓ seeds.js có loài poinsettia
+  ✓ seeds.js có loài kabocha
+  ✓ seeds.js có loài mai
+== từ gợi ý, từ đã dùng, đánh dấu chỗ sửa
+  ✓ gốc của する-động từ / tính từ い
+  ✓ gốc một chữ Hán: không khớp 銀行, khớp 行きます
+  ✓ tiếng Nhật: dùng dạng chia vẫn tính là đã dùng
+  ✓ tiếng Anh: dạng biến đổi (booked, raining) tính là đã dùng
+  ✓ gợi ý: từ phải ôn, bỏ từ có ngoặc / quá dài / không phải từ vựng (['寒い', '予約する'])
+  ✓ cùng ngày cùng gợi ý
+  ✓ không có từ phải ôn thì lấy từ đã thuộc
+  ✓ câu đã sửa: tô chỗ sửa (かったです), hiện chữ bị bỏ (料理は), gạch chân từ đã học
+  ✓ ghép lại (trừ chữ bị bỏ) đúng câu đã sửa
+  ✓ tiếng Anh: so theo từ (lot ↔ lot, không tính dấu phẩy), chữ bị bỏ, từ đã học
+== Gemini sửa bài: lời nhắc + máy cắt đầu ra
+  ✓ lời nhắc có: tối đa 3 lỗi
+  ✓ lời nhắc có: tối đa 60 ký tự
+  ✓ lời nhắc có: tối đa 100 ký tự
+  ✓ lời nhắc có: tối đa 15 ký tự
+  ✓ lời nhắc có: tối đa 30 ký tự
+  ✓ lời nhắc có: Cùng quy tắc như lỗi trên
+  ✓ lời nhắc có: 予約する, 寒い
+  ✓ lời nhắc có: N4
+  ✓ lời nhắc có: "loi": [{"goc"
+  ✓ lời nhắc có: không bỏ bớt
+  ✓ tiếng Anh: chỗ sai tối đa 5 từ
+  ✓ lời dặn hệ thống
+  ✓ câu đã sửa ≤ bài gốc + 20% (50)
+  ✓ cắt câu đã sửa ở dấu hết câu
+  ✓ tối đa 3 lỗi (bỏ lỗi không có trong bài, lỗi thứ 4 trở đi)
+  ✓ giải thích: 1 câu ≤ 60 ký tự
+  ✓ quy tắc ≤ 30 ký tự
+  ✓ giải thích không dấu bị bỏ, loại grammar → ngữ pháp
+  ✓ còn lại ≤ 60, nhận xét ≤ 2 câu ≤ 100
+  ✓ có lỗi thì bỏ cách nói tự nhiên hơn
+  ✓ ghi nhật ký những gì đã cắt / bỏ
+  ✓ câu đã sửa dài quá 2 lần bài gốc → chỉ hiện lỗi + nhận xét
+  ✓ câu đã sửa sai ngôn ngữ → bỏ
+  ✓ không lỗi → giữ cách nói tự nhiên; nhận xét không dấu → bỏ
+  ✓ dữ liệu lạ → JournalError
+  ✓ lỗi "cùng quy tắc như lỗi trên" dùng quy tắc của lỗi trước (gom Lỗi hay gặp)
+  ✓ chuẩn hoá loại lỗi
+  ✓ bài sửa dùng Flash-Lite trước (không tranh lượt với báo)
+  ✓ gọi đúng 1 lần, model Flash-Lite
+  ✓ Flash-Lite hết hạn mức → sang Flash
+  ✓ mọi model hết hạn mức → quota (bài chuyển sang "chờ lượt")
+  ✓ khoá sai → dừng ngay, không thử model khác
+  ✓ JSON hỏng → thử model kế tiếp
+  ✓ bỏ model đã biết hết hạn mức (dùng chung với báo)
+  ✓ lý do ngắn cho thông báo
+== trạng thái bài luyện viết
+  ✓ cờ "đang sửa" quá 10 phút → coi như chưa sửa
+  ✓ đang có việc nền thì không mở khoá
+  ✓ hôm nay chưa viết: ô mở, chưa có khoá
+  ✓ ngày cũ chưa viết → không có khung luyện viết
+  ✓ đã sửa: khoá bài, giữ ngôn ngữ của bài, có câu đã sửa
+  ✓ chờ lượt: khoá bài, ghi giờ tự sửa
+== collection thật: revlog theo ngày, nhật ký theo tháng
+  ✓ hôm nay 12 lượt
+  ✓ hôm qua: 3 lượt (bỏ type 4), 1 thẻ mới (đếm thẻ, không đếm lượt), 1 lên Ra quả ({'n': 3, 'new': 1, 'fruit': 1})
+  ✓ lượt ivl 120 / lastIvl 80 → lên Ra quả
+  ✓ ngày ôn đầu tiên
+  ✓ thẻ lên Ra quả của một ngày
+  ✓ ghi nhật ký giữ khoá lạ của bản sau (mức tháng + mức ngày)
+  ✓ đọc lại đúng mục đã ghi
+  ✓ sao lưu user_files/journal/<yyyy_mm>.json
+  ✓ xoá hết mục đã biết mà còn khoá lạ → giữ ngày đó
+  ✓ lịch tháng: đủ ngày, đúng thứ của ngày 1
+  ✓ ô hôm nay: 12 lượt = cây non, sticker, loài theo giao diện mùa
+  ✓ lùi được tới tháng có lượt ôn đầu tiên, tiến được
+  ✓ không có lượt ôn cũ hơn thì không lùi
+  ✓ tiến tối đa 12 tháng
+  ✓ Giao diện mùa Tắt → cây gốc của vườn
+  ✓ lịch năm: 12 tháng, tổng lượt, tâm trạng hay gặp
+  ✓ dải màu mỗi tháng phủ đủ số ngày
+== cuốn nhật ký
+  ✓ tổng kết tháng
+  ✓ tâm trạng hay gặp, lỗi hay gặp (gom theo quy tắc, bỏ "tự nhiên hơn")
+  ✓ số bài luyện viết · số câu
+  ✓ chỉ ghi ngày có ôn hoặc có viết
+  ✓ dòng có câu luyện viết đã sửa, nhãn ngày + thứ
+  ✓ kệ sách: mỗi tháng một cuốn (tháng này là bản nháp) + cuốn năm cho năm đã hết
+== ảnh vườn tự chụp
+  ✓ chưa có ảnh → cần chụp
+  ✓ mỗi tuần một tấm
+  ✓ giữ 1 tấm / tuần (tấm cũ cùng tuần bị thay)
+  ✓ ảnh bìa theo tháng
+  ✓ chặn ảnh lạ / quá lớn: data:image/jpeg;base64,A…
+  ✓ chặn ảnh lạ / quá lớn: data:image/png;base64,QU…
+  ✓ chặn ảnh lạ / quá lớn: javascript:alert(1)…
+  ✓ chặn ảnh lạ / quá lớn: data:image/png;base64,iV…
+== mã 1.19.1 thật lưu ví / báo / cấu hình trường → khoá nhật ký còn nguyên
+  ✓ khoá kotoba_batake_journal_2026_11 không đổi sau khi bản 1.19.1 lưu
+KẾT QUẢ: OK

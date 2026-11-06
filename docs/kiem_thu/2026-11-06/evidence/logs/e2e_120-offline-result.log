@@ -1,0 +1,116 @@
+== mở Lịch hoa (lịch sử ôn giả: 3404 lượt)
+  ✓ thẻ Hôm nay: "· N ngày liền" bấm được, chú thích "Mở Lịch hoa"
+  ✓ bấm chuỗi ngày → mở Lịch hoa tháng này
+  ✓ bấm chuỗi không mở bảng nhiệm vụ
+  ✓ khung ngày mở ở hôm nay
+  ✓ hôm nay = số trong ô đen, đang chọn = nền vàng: 2026-11-06
+  ✓ lưới 7 cột T2 → CN
+  ✓ mọi ô có vạch màu giao diện mùa (cả ngày tương lai)
+  ✓ ngày đã qua / hôm nay có cây, ngày tương lai không
+  ✓ dải tên mùa / lễ + dòng "Sắp tới": Mùa lá đỏ, Giáng sinh | Sắp tới: お正月 1/1 – 15/1/2027 · Tết 16/1 – 21/2/2027 (theo âm lịch)
+  ✓ chú giải 5 mức cây, chip Chuỗi / Tháng này, một dòng hướng dẫn
+  ✓ Esc đóng bảng
+  ✓ Esc chỉ đóng bảng, cửa sổ vườn vẫn mở
+  ✓ phím L mở Lịch hoa
+  ✓ phím L lần nữa đóng
+  ✓ ⚙ có nút "Lịch hoa & nhật ký…"
+  ✓ nút ở ⚙ mở Lịch hoa
+== nhật ký + sticker (lưu ngay, đồng bộ)
+  ✓ 8 sticker hình mặt pixel (không emoji)
+  ✓ ghi rõ "không gửi cho Gemini" · "Đồng bộ qua AnkiWeb"
+  ✓ thẻ Hôm nay có dòng "Hôm nay thế nào?" khi chưa viết
+  ✓ chọn sticker Vui → lưu vào collection
+  ✓ sticker hiện ngay ở góc ô ngày
+  ✓ đã có sticker → dòng "Hôm nay thế nào?" ẩn
+  ✓ bấm lại → bỏ sticker
+  ✓ đếm "N / 200 ký tự"
+  ✓ Enter / rời ô → lưu (không cần bấm Lưu)
+  ✓ khoá collection theo tháng kotoba_batake_journal_<yyyy>_<mm>
+  ✓ nhật ký tối đa 200 ký tự
+  ✓ ngày cũ: viết được nhật ký, luyện viết chỉ cho hôm nay
+  ✓ sửa được ngày cũ (2026-11-01)
+  ✓ ngày tương lai: chỉ xem giao diện mùa, không viết
+  ✓ khung ngày: Ôn N lượt · N thẻ mới, Lên Ra quả (gần đúng): Ôn70 lượt · 14 thẻ mớiLên Ra quả6 từ: study · look up · apple /ˈæp.əl/ - quả táo
+  ✓ ghi rõ "gần đúng" ở chú thích
+== luyện viết: gợi ý, giới hạn, đổi ngôn ngữ
+  ✓ tick cả hai báo → nút Tiếng Nhật / Tiếng Anh: Tiếng Nhật* Tiếng Anh
+  ✓ tiếng Nhật: tối đa 60 ký tự, bộ đếm 0 / 60
+  ✓ "Thử dùng": 2 từ phải ôn hôm nay: 天気, コーヒー
+  ✓ Đổi gợi ý → bộ khác (gr = 1): コーヒー, 図書館
+  ✓ gõ / dán quá 60 ký tự → không nhận thêm, báo "đã cắt bớt"
+  ✓ chọn Tiếng Anh
+  ✓ tiếng Anh: tối đa 30 từ, gợi ý là từ tiếng Anh: leaf, letter
+  ✓ nhớ lựa chọn ngôn ngữ lần trước
+  ✓ đoạn 32 từ → lưu 30 từ (cắt ở từ thứ 30)
+  ✓ bản nháp lưu tự động khi gõ (luồng chính, khoá collection)
+== Gemini sửa bài: gửi rồi đóng bảng, xong thì báo (Gemini giả lập)
+  ✓ đang sửa: khung "Gemini đang sửa bài…", ô viết tạm khoá
+  ✓ chữ hướng dẫn + nút "Đóng bảng"
+  ✓ bài lưu ngay với cờ "đang sửa"
+  ✓ đóng bảng → thẻ Hôm nay: "Luyện viết: Gemini đang sửa…"
+  ✓ xong → thông báo bấm được: Gemini đã sửa bài luyện viết hôm nay · 2 lỗi · bấm để xem ▸|kb-toast kb-toast-link
+  ✓ thẻ Hôm nay: dòng hồng "Luyện viết: Gemini đã sửa (2 lỗi) · xem ▸"
+  ✓ bấm thông báo → mở Lịch hoa ở hôm nay, có kết quả 3 phần
+  ✓ kết quả: Câu đã sửa · Lỗi (2) · Nhận xét
+  ✓ máy tô xanh chỗ sửa: かったです, かったです
+  ✓ khoá bài: "Đã sửa hôm nay" · "Gemini sửa 1 lần mỗi ngày · mai viết bài mới"
+  ✓ đã xem → dòng hồng ở thẻ Hôm nay biến mất
+  ✓ collection: bài gốc + bản sửa, cờ "đã xem", thời điểm sửa
+  ✓ gọi Gemini một lần cho bài này
+== lỗi, chờ lượt, cờ "đang sửa" cũ, không có khoá
+  ✓ gọi lỗi (mạng) → "Chưa sửa được: mất mạng · không tính lượt", mở khoá ô viết
+  ✓ không tính lượt (bài trở lại bản nháp)
+  ✓ mọi model hết lượt → "Hôm nay Gemini hết lượt miễn phí · sẽ tự sửa sau …"
+  ✓ bài "chờ lượt", hẹn giờ đặt lại hạn mức
+  ✓ sau giờ đặt lại → tự gửi lại một lần, sửa xong cập nhật tại chỗ (không cần thông báo)
+  ✓ đánh dấu đã tự gửi lại (không lặp mãi)
+  ✓ cờ "đang sửa" cũ hơn 10 phút (tắt Anki giữa chừng) → mở khoá, gửi lại được
+  ✓ không tính lượt
+  ✓ không có khoá: vẫn viết / lưu được, chỗ nút ghi "Dán khoá Gemini ở tab Nguồn báo để được sửa"
+  ✓ nút "Nguồn báo" mở tab Nguồn báo
+== chạy song song với báo, hàng chờ thông báo, vườn đóng → tooltip
+  ✓ báo đang viết vẫn gửi được bài sửa (trạng thái riêng, chạy song song)
+  ✓ hai việc xong gần nhau → hai thông báo lần lượt (không đè nhau): Báo mới: số 3 đã về hòm thư. → Gemini đã sửa bài luyện viết hôm nay · 2 lỗi · bấm để xem ▸
+  ✓ vườn đóng → tooltip "ことば畑: Gemini đã sửa bài luyện viết · mở vườn để xem"
+  ✓ mở vườn lần sau: dòng "Luyện viết: Gemini đã sửa … xem ▸" vẫn chờ
+== nội dung dài tối đa (máy cắt đầu ra, khung giãn theo nội dung)
+  ✓ Gemini trả về quá mọi giới hạn → máy cắt rồi vẫn hiện
+  ✓ câu đã sửa dài quá 2 lần bài gốc → chỉ hiện lỗi + nhận xét; tối đa 3 lỗi + "còn lại": 1. Lỗi (3+)|2. Nhận xét
+  ✓ ô nhật ký / luyện viết tự giãn, không có thanh cuộn trong ô
+  ✓ không tràn ngang ở 1366 (1274/1274) 
+  ✓ nhật ký sửa bài ghi những gì máy đã cắt
+== năm
+  ✓ Năm: 12 tháng nhỏ
+  ✓ chip tổng kết, tháng hiện tại nền vàng, dải màu giao diện mùa: Ngày ôn,Lượt ôn,Từ ra quả mới,Nhật ký,Hay gặp nhất
+  ✓ chip Chuỗi / Dài nhất, chú giải mức + màu các lễ
+  ✓ bấm một tháng → mở tháng đó
+== cuốn nhật ký + Xuất PDF + kệ sách trong nhà
+  ✓ Kệ sách + sách mở
+  ✓ gáy sách theo tháng, tháng này là bản nháp, cuốn đang mở viền vàng: Th 10
+  ✓ sách mở hai trang: trang đầu có ảnh bìa + 6 ô tổng kết: Tháng 10 · 2026
+  ✓ các trang sau: mỗi ngày một dòng, chân trang + số trang
+  ✓ ngắt trang theo chiều cao thật: không trang nào bị tràn
+  ✓ trang đầu (ảnh bìa + tổng kết) vừa khung, chân trang không bị che
+  ✓ Trang sau ▸ / ◂ Trang trước
+  ✓ Xuất PDF → "Đã lưu …pdf"
+  ✓ file PDF thật, 4 trang (khổ A5)
+  ✓ khổ A5 dọc (420 × 595 pt)
+  ✓ bấm Kệ sách trong phòng → nút "Đọc nhật ký"
+  ✓ "Đọc nhật ký" → tab Cuốn nhật ký
+== kệ sách nhiều năm (mỗi lần một năm, ◂ năm ▸)
+  ✓ kệ chỉ bày năm của cuốn đang mở, không dài ra theo số năm (cao 284 px, 11 cuốn)
+  ✓ ◂ → năm trước: cuốn năm nằm ngang trên cùng, 12 tháng đúng chỗ (2 tầng × 6): 2025
+  ✓ mở cuốn năm: gộp 12 tháng, có tiêu đề từng tháng
+  ✓ mở cuốn năm cũ → kệ vẫn ở năm đó
+== ảnh vườn tự chụp (bìa cuốn nhật ký)
+  ✓ tuần này đã tự chụp một tấm: 2026-11-06.png
+== cửa sổ 1024 px
+  ✓ dưới 1100 px: khung ngày xếp xuống dưới lịch, giãn hết chiều ngang
+  ✓ tháng: không tràn ngang ở 1024 (932/932) 
+  ✓ năm: 4 cột ở 1024 px
+  ✓ năm: không tràn ngang ở 1024
+  ✓ trang đầu vừa khung ở 1024 × 700
+  ✓ cuốn nhật ký: không tràn ở 1024
+  ✓ không lỗi JS
+  ✓ nhật ký lỗi add-on trống
+KẾT QUẢ: 103/103

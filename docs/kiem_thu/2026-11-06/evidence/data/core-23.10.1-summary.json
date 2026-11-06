@@ -1,0 +1,116 @@
+[
+  {
+    "script": "test_offline.py",
+    "exit": 0,
+    "checks_passed": 39,
+    "checks_failed": 0,
+    "skipped": []
+  },
+  {
+    "script": "test_more.py",
+    "exit": 0,
+    "checks_passed": 67,
+    "checks_failed": 0,
+    "skipped": []
+  },
+  {
+    "script": "test_119.py",
+    "exit": 0,
+    "checks_passed": 64,
+    "checks_failed": 0,
+    "skipped": [
+      "– bỏ qua vòng chạy mã 1.18 thật (không có thư mục bản cũ)"
+    ]
+  },
+  {
+    "script": "test_116.py",
+    "exit": 0,
+    "checks_passed": 23,
+    "checks_failed": 0,
+    "skipped": []
+  },
+  {
+    "script": "test_1225.py",
+    "exit": 0,
+    "checks_passed": 11,
+    "checks_failed": 0,
+    "skipped": []
+  },
+  {
+    "script": "test_1226.py",
+    "exit": 0,
+    "checks_passed": 43,
+    "checks_failed": 0,
+    "skipped": []
+  },
+  {
+    "script": "test_dict.py",
+    "exit": 0,
+    "checks_passed": 228,
+    "checks_failed": 0,
+    "skipped": []
+  },
+  {
+    "script": "test_117.py",
+    "exit": 0,
+    "checks_passed": 76,
+    "checks_failed": 0,
+    "skipped": []
+  },
+  {
+    "script": "test_1191.py",
+    "exit": 0,
+    "checks_passed": 39,
+    "checks_failed": 0,
+    "skipped": []
+  },
+  {
+    "script": "test_120.py",
+    "exit": 0,
+    "checks_passed": 118,
+    "checks_failed": 0,
+    "skipped": []
+  },
+  {
+    "script": "test_121.py",
+    "exit": 0,
+    "checks_passed": 57,
+    "checks_failed": 0,
+    "skipped": []
+  },
+  {
+    "script": "test_122.py",
+    "exit": 0,
+    "checks_passed": 65,
+    "checks_failed": 0,
+    "skipped": []
+  },
+  {
+    "script": "test_118.py",
+    "exit": 0,
+    "checks_passed": 29,
+    "checks_failed": 0,
+    "skipped": []
+  },
+  {
+    "script": "test_guests.js",
+    "exit": 0,
+    "checks_passed": 23,
+    "checks_failed": 0,
+    "skipped": []
+  },
+  {
+    "script": "test_colors.js",
+    "exit": 0,
+    "checks_passed": 5,
+    "checks_failed": 0,
+    "skipped": []
+  },
+  {
+    "script": "test_music.js",
+    "exit": 0,
+    "checks_passed": 28,
+    "checks_failed": 0,
+    "skipped": []
+  }
+]

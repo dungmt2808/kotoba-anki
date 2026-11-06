@@ -1,0 +1,134 @@
+== 0 xu: mọi nút trả xu đều khoá, lệnh mua gửi thẳng bị Python từ chối
+  · 1366_01_0xu_build (0 xu)
+  · 1366_01_0xu_pet (0 xu)
+  · 1366_01_0xu_season (0 xu)
+  · 1366_01_0xu_craft (0 xu)
+  ✓ 0 xu: không còn nút trả xu nào bấm được
+  ✓ Thẻ "Tạo món đồ mới" khi 0 xu: nút khoá, ghi còn thiếu 200 xu ({"text":"Còn thiếu 200 xu","disabled":true,"title":"Món nhỏ nhất (16×16) 200 xu"})
+  ✓ Lệnh mua gửi thẳng khi 0 xu: Python từ chối hết, xu vẫn 0 ([0,0,1,7])
+  ✓ Báo "Chưa đủ xu…" ở dòng gợi ý: Chưa đủ xu: cần 3000, đang có 0.
+== Vừa đủ xu (xu = giá): mua được, xu về 0
+  ✓ Vừa đủ xu → Xây "Đổ móng" · còn 0 xu
+  ✓ Vừa đủ xu → Mua "Hàng rào gỗ" 15 xu · còn 0 xu
+  ✓ Vừa đủ xu → Mở vùng "Bãi biển" 2000 xu · còn 0 xu
+  ✓ Vừa đủ xu → Nhận nuôi "Gà mái" 500 xu · còn 0 xu
+  ✓ Vừa đủ xu → Mua giống "Lúa" 600 xu · còn 0 xu
+  ✓ Vừa đủ xu → Mở giao diện "Tết Nguyên Đán" 1000 xu · còn 0 xu
+  ✓ Vừa đủ xu → Mua đồ mặc "Mầm lá trên đầu" 80 xu · còn 0 xu
+  ✓ Vừa đủ xu → Mua biểu cảm "Phụng phịu" 60 xu · còn 0 xu
+  ✓ Vừa đủ xu → Chế tác món 16×16 · 200 xu · còn 0 xu
+  ✓ Vừa đủ xu → +1 cái · 100 xu · còn 0 xu
+  ✓ Vừa đủ xu → Sửa nhà 1 nấc · 105 xu · còn 0 xu
+  ✓ Vừa đủ xu → Mua kiểu nhà "Nhà mái tranh minka" 1500 xu · còn 0 xu
+  · 1366_02_vua_du_xu (mua bằng đúng số xu đang có)
+== Bấm đúp / bấm lại liền tay vào nút trả xu: chỉ trả một lần
+  ✓ Bấm "Xây" hai lần riêng (cách 0,35 giây): xây 2 bước, trả 400 xu (= 150 + 250)
+  ✓ Bấm đúp "Xây": được 1 lần, trả 80 xu (giá 80)
+  ✓ Bấm đúp "Mua" Hàng rào gỗ: được 1 lần, trả 15 xu (giá 15)
+  ✓ Bấm đúp "+1 cái": được 1 lần, trả 100 xu (giá 100)
+  ✓ Bấm đúp "Làm món này" (mã chia sẻ): được 1 lần, trả 200 xu (giá 200)
+  ✓ Bấm đúp "Mở khoá" vùng: được 1 lần, trả 2000 xu (giá 2000)
+  ✓ Bấm đúp "Sửa 1 nấc": được 1 lần, trả 105 xu (giá 105)
+  ✓ Bấm đúp "Chế tác": được 1 lần, trả 200 xu (giá 200)
+  ✓ Bấm đúp "Nhận nuôi": được 1 lần, trả 600 xu (giá 600)
+  · 1366_03_bam_dup (sau khi bấm đúp các nút trả xu)
+== Chạm giới hạn: 60 món, 6 vùng tự tạo, 12 giống tự vẽ, 12 luật tag, món chỉ một cái
+  ✓ 60 món: nút tạo món mới bị khoá (Đã đủ 60 mẫu)
+  ✓ 12 giống: nút "Tự vẽ giống cây" ở tab Xưởng bị khoá (Đã đủ 12 giống)
+  · 1366_04_gioi_han_dan_ma_vung (6 vùng tự tạo rồi, dán mã vùng)
+  ✓ Dán mã khi đã đủ (món / vùng / giống): nút làm bị khoá, ghi lý do — Xưởng đã đủ 60 mẫu | Đã có 6 vùng tự tạo | Đã có 12 giống tự vẽ
+  ✓ Gửi thẳng lệnh làm từ mã khi đã đủ: không làm thêm, không trừ xu ([60,6,12])
+  ✓ 6 vùng tự tạo: không còn thẻ "Tạo vùng mới"
+  · 1366_04_gioi_han_vung (6 vùng tự tạo)
+  ✓ Luật tag thứ 13: báo "Tối đa 12 luật theo tag.", vẫn 12 luật (12)
+  · 1366_04_gioi_han_12_tag (12 luật tag)
+  ✓ Món chỉ một cái "Tượng StackChan vàng" đã mua: nút "Đã có" bị khoá
+  ✓ Sân kín chỗ (36 ô) mà mua thêm: "“Sân vườn” hết chỗ cho “Hàng rào gỗ” · món đã vào Kho đồ: cất bớt đồ h…"
+  · 1366_04_san_kin_cho (mua thêm khi sân kín chỗ)
+== Xoá khi đang dùng: món đang đặt, vùng đang hiện ở màn chính, giống đang gieo
+  ✓ Món đang đặt ngoài sân: nút "Xoá mẫu" khoá, chú thích "Cất hết món này vào kho trước"
+  ✓ Gửi thẳng lệnh xoá món đang đặt: Python từ chối, món còn nguyên
+  · 1366_05_vung_tu_tao_man_chinh (màn chính đang ở vùng tự tạo, có ghế + mèo)
+  ✓ Xoá vùng đang hiện: màn chính về sân nhà ("Sân vườn · 1/1"), mèo về sân, ghế về kho ([0,"yard",1,0])
+  · 1366_05_sau_xoa_vung (màn chính sau khi xoá vùng)
+  ✓ Xoá giống đang gieo: 8 cây → 0 cây mang giống, luật deck bị bỏ
+== Mã chia sẻ: dán sai, quá dài, đổi chữ sau khi xem trước
+  ✓ Dán "" → "Dán mã chia sẻ vào ô trước đã."
+  ✓ Dán "xin chào" → "Đây không phải mã thiết kế (mã đúng bắt đầu bằng “KB1:”)."
+  ✓ Dán "KB2:m:16:abc:def:00000000" → "Mã này của bản ことば畑 mới hơn — cập nhật rồi dán lại nhé."
+  ✓ Dán KB1:m:16:VMOhbw:eN… (67 ký tự) → "Mã bị thiếu hoặc sai một chỗ (mã kiểm tra không khớp) — chép"
+  ✓ Dán KB1:AAAAAAAAAAAAAA… (450004 ký tự) → "Mã dài quá, không phải mã thiết kế của vườn."
+  ✓ Dán mã bị xuống dòng + dấu cách → xem trước được
+  · 1366_06_ma_chia_se_loi (mã sai một ký tự)
+  · 1366_06_doi_ma_sau_xem_truoc (xem trước mã món rồi dán đè mã vùng)
+  ✓ Xem trước "Làm món này · 200 xu", đổi chữ sang mã vùng rồi bấm "không còn nút": trả 0 xu, vùng 0→0, món 1→1 (không được trả 5.000 xu cho vùng chưa xem)
+== Deck lạ: deck trống, deck bị xoá khi vườn mở, tên rất dài, deck lọc
+  · 1366_07_deck_trong (deck Default trống)
+  ✓ Deck trống: 0 cây, vườn vẫn mở
+  ✓ Deck trống → Tưới ngay: màn "hết thẻ" hiện ("Hết thẻ cần tưới trong deck này. Vườn đã no nước, hẹn gặp lại!")
+  · 1366_07_deck_trong_tuoi_ngay
+  · 1366_07_ten_deck_dai (tên deck 120 ký tự)
+  ✓ Tên deck rất dài: thanh trên không tràn ngang
+  ✓ Deck đang xem bị xoá khi vườn mở → làm mới không lỗi, vườn đổi sang "Default" (0 cây)
+  · 1366_07_deck_bi_xoa (deck đang xem vừa bị xoá)
+  ✓ Deck lọc: vườn có 8 cây
+  ✓ Deck lọc → Tưới ngay: có thẻ để ôn
+== Xu rất nhiều, thú nuôi: tự cho ăn khi thiếu xu, tên có thẻ HTML / quá dài
+  · 1366_08_xu_rat_nhieu (123.456.789 xu)
+  ✓ Xu rất nhiều: thanh trên "123456789 xu", Nhà "123456789 xu"
+  · 1366_08_xu_rat_nhieu_nha
+  ✓ Đặt tên thú có thẻ HTML + dài: lưu "img src=x o" (≤ 12 ký tự, không chạy thẻ)
+  ✓ Tự cho ăn khi chỉ có 3 xu (cần 7): không cho ăn, không trừ xu, xu không âm ([3,[false,false]])
+  ✓ Thẻ Hôm nay nhắc thú đói: "2 bé đói · thiếu xu ▸"
+  · 1366_08_thu_doi_thieu_xu (tự cho ăn bật nhưng thiếu xu)
+== Cửa sổ 720 × 520: màn chính, Nhà, Xưởng, Trò chơi, Báo, Lịch hoa
+  · 720x520_09_vuon (cửa sổ thật 720×520)
+  · 720x520_09_nha_build
+  · 720x520_09_nha_yard
+  · 720x520_09_nha_zone
+  · 720x520_09_nha_pet
+  · 720x520_09_nha_seed
+  · 720x520_09_nha_season
+  · 720x520_09_nha_craft
+  · 720x520_09_nha_inv
+  · 720x520_09_xuong
+  · 720x520_09_tro_choi
+  · 720x520_09_bao
+  · 720x520_09_lich_hoa
+  · 720x520_09_on_the
+  ✓ 720 × 520 (trang 720×520): không tràn ngang / ra ngoài khung / lỗi JS
+== Cửa sổ 1093 × 560: màn chính, Nhà, Xưởng, Trò chơi, Báo, Lịch hoa
+  · 1093x560_09_vuon (cửa sổ thật 1093×560)
+  · 1093x560_09_nha_build
+  · 1093x560_09_nha_yard
+  · 1093x560_09_nha_zone
+  · 1093x560_09_nha_pet
+  · 1093x560_09_nha_seed
+  · 1093x560_09_nha_season
+  · 1093x560_09_nha_craft
+  · 1093x560_09_nha_inv
+  · 1093x560_09_xuong
+  · 1093x560_09_tro_choi
+  · 1093x560_09_bao
+  · 1093x560_09_lich_hoa
+  · 1093x560_09_on_the
+  ✓ 1093 × 560 (trang 1093×560): không tràn ngang / ra ngoài khung / lỗi JS
+== Cửa sổ 1920 × 1080: màn chính, Nhà, Xưởng, Trò chơi, Báo, Lịch hoa
+  · 1920x1080_09_vuon (cửa sổ thật 1920×1080)
+  · 1920x1080_09_nha_build
+  · 1920x1080_09_nha_yard
+  · 1920x1080_09_nha_zone
+  · 1920x1080_09_nha_pet
+  · 1920x1080_09_nha_seed
+  · 1920x1080_09_nha_season
+  · 1920x1080_09_nha_craft
+  · 1920x1080_09_nha_inv
+  · 1920x1080_09_xuong
+  · 1920x1080_09_tro_choi
+  · 1920x1080_09_bao
+  · 1920x1080_09_lich_hoa
+  · 1920x1080_09_on_the
+  ✓ 1920 × 1080 (trang 1920×1080): không tràn ngang / ra ngoài khung / lỗi JS
+  ✓ Nhật ký lỗi add-on trống
+
+KẾT QUẢ: 58/58 đạt

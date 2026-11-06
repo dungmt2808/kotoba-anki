@@ -1,0 +1,364 @@
+{
+  "base_commit": "57b89e147efae860b9ee36849dc5f83ca915baa1",
+  "branch": "audit/addon-1.22.8-2026-11-06",
+  "package_sha256": "d1baeedadf9c158a22eb053a0be325474d184f0b392962f07215d6be770f2b38",
+  "timezone": "Asia/Ho_Chi_Minh",
+  "app_source_changed": false,
+  "python": "3.13.5",
+  "anki": "26.9.4",
+  "qt": "6.12.0",
+  "qtwebengine": "6.140.0",
+  "legacy": {
+    "anki": "23.10.1",
+    "python": "3.9.25",
+    "qt": "6.6.0"
+  },
+  "core_checks_passed": 915,
+  "ui_final_runs": [
+    "e2e-offline",
+    "e2e_tour",
+    "e2e_114",
+    "e2e_115",
+    "e2e_116",
+    "e2e_117",
+    "e2e_118",
+    "e2e_119",
+    "e2e_120-offline",
+    "e2e_121",
+    "e2e_122",
+    "e2e_1223",
+    "e2e_1226",
+    "e2e_1228",
+    "audit_full",
+    "audit_edge"
+  ],
+  "ui_assertions_passed": 813,
+  "live_gemini_tested": false,
+  "raw_runs": [
+    {
+      "script": "audit.js",
+      "exit": 0,
+      "summary": null,
+      "failed_assertions": [],
+      "seconds": 225,
+      "profile": "/workspace/kotoba-audit-results/kb-audit-1-pp48wtv0",
+      "cdp": 9531,
+      "ctrl": 9631,
+      "run_name": "audit"
+    },
+    {
+      "script": "audit_edge.js",
+      "exit": 0,
+      "summary": "KẾT QUẢ: 58/58 đạt",
+      "failed_assertions": [],
+      "seconds": 179,
+      "profile": "/workspace/kotoba-audit-results/kb-audit-1-4j89u40t",
+      "cdp": 9531,
+      "ctrl": 9631,
+      "run_name": "audit_edge"
+    },
+    {
+      "script": "/workspace/kotoba-audit-tools/audit_extra.js",
+      "exit": 0,
+      "summary": null,
+      "failed_assertions": [],
+      "seconds": 54,
+      "profile": "/workspace/kotoba-audit-results/kb-audit-3-o0bozqe7",
+      "cdp": 9533,
+      "ctrl": 9633,
+      "run_name": "audit_extra"
+    },
+    {
+      "script": "/workspace/kotoba-audit-tools/audit_extra.js",
+      "exit": 0,
+      "summary": null,
+      "failed_assertions": [],
+      "seconds": 54,
+      "profile": "/workspace/kotoba-audit-results/kb-audit-5-gm3hst1r",
+      "cdp": 9535,
+      "ctrl": 9635,
+      "run_name": "audit_extra-23.10.1"
+    },
+    {
+      "script": "/workspace/kotoba-audit-tools/audit_extra_evidence.js",
+      "exit": 0,
+      "summary": null,
+      "failed_assertions": [],
+      "seconds": 65,
+      "profile": "/workspace/kotoba-audit-results/kb-audit-3-t76gh7ph",
+      "cdp": 9533,
+      "ctrl": 9633,
+      "run_name": "audit_extra_evidence"
+    },
+    {
+      "script": "/workspace/kotoba-audit-tools/audit_extra_repeat.js",
+      "exit": 0,
+      "summary": null,
+      "failed_assertions": [],
+      "seconds": 57,
+      "profile": "/workspace/kotoba-audit-results/kb-audit-3-q9bgf7qy",
+      "cdp": 9533,
+      "ctrl": 9633,
+      "run_name": "audit_extra_repeat"
+    },
+    {
+      "script": "audit_full.js",
+      "exit": 0,
+      "summary": "KẾT QUẢ: 180/180",
+      "failed_assertions": [],
+      "seconds": 324,
+      "profile": "/workspace/kotoba-audit-results/kb-audit-1-qep2zu5v",
+      "cdp": 9531,
+      "ctrl": 9631,
+      "run_name": "audit_full"
+    },
+    {
+      "script": "/workspace/kotoba-audit-tools/audit_stress.js",
+      "exit": 2,
+      "summary": null,
+      "failed_assertions": [],
+      "seconds": 18,
+      "profile": "/workspace/kotoba-audit-results/kb-audit-6-ghavip8g",
+      "cdp": 9536,
+      "ctrl": 9636,
+      "run_name": "audit_stress"
+    },
+    {
+      "script": "/workspace/kotoba-audit-tools/audit_stress_confirm.js",
+      "exit": 0,
+      "summary": null,
+      "failed_assertions": [],
+      "seconds": 42,
+      "profile": "/workspace/kotoba-audit-results/kb-audit-6-c4_svi95",
+      "cdp": 9536,
+      "ctrl": 9636,
+      "run_name": "audit_stress_confirm"
+    },
+    {
+      "script": "e2e.js",
+      "exit": 1,
+      "summary": "KẾT QUẢ: 23/24 đạt",
+      "failed_assertions": [
+        "  ✗ nhật ký lỗi của add-on trống: [{\"kind\":\"Python\",\"where\":\"giọng đọc Gemini cho câu chép\",\"msg\":\"AIError: Không kết nối được tới Gemini (kiểm tra mạng): Tunnel connection failed: 403 Forbidden\",\"detail\":\"Traceback (most recent call last):\\n  File \\\"/workspace/kotoba-audit-results/kb-audit-2-2n849vue/addons21/kotoba_batake/__init__.py\\\", line 460, in done\\n    res = fut.result()\\n  File \\\"/usr/lib/python3.13/concurrent/futures/_b"
+      ],
+      "seconds": 22,
+      "profile": "/workspace/kotoba-audit-results/kb-audit-2-2n849vue",
+      "cdp": 9532,
+      "ctrl": 9632,
+      "run_name": "e2e"
+    },
+    {
+      "script": "e2e.js",
+      "exit": 0,
+      "summary": "KẾT QUẢ: 24/24 đạt",
+      "failed_assertions": [],
+      "seconds": 21,
+      "profile": "/workspace/kotoba-audit-results/kb-audit-4-r6tjpugh",
+      "cdp": 9534,
+      "ctrl": 9634,
+      "run_name": "e2e-offline"
+    },
+    {
+      "script": "e2e_114.js",
+      "exit": 0,
+      "summary": "KẾT QUẢ: 33/33 đạt",
+      "failed_assertions": [],
+      "seconds": 49,
+      "profile": "/workspace/kotoba-audit-results/kb-audit-2-b7t_tgsh",
+      "cdp": 9532,
+      "ctrl": 9632,
+      "run_name": "e2e_114"
+    },
+    {
+      "script": "e2e_115.js",
+      "exit": 0,
+      "summary": "KẾT QUẢ: 21/21 đạt",
+      "failed_assertions": [],
+      "seconds": 32,
+      "profile": "/workspace/kotoba-audit-results/kb-audit-2-7ziqidvz",
+      "cdp": 9532,
+      "ctrl": 9632,
+      "run_name": "e2e_115"
+    },
+    {
+      "script": "e2e_116.js",
+      "exit": 0,
+      "summary": "KẾT QUẢ: 18/18 đạt",
+      "failed_assertions": [],
+      "seconds": 19,
+      "profile": "/workspace/kotoba-audit-results/kb-audit-2-78v3_5s9",
+      "cdp": 9532,
+      "ctrl": 9632,
+      "run_name": "e2e_116"
+    },
+    {
+      "script": "e2e_117.js",
+      "exit": 0,
+      "summary": "KẾT QUẢ: 55/55 đạt",
+      "failed_assertions": [],
+      "seconds": 40,
+      "profile": "/workspace/kotoba-audit-results/kb-audit-2-v_atj7rh",
+      "cdp": 9532,
+      "ctrl": 9632,
+      "run_name": "e2e_117"
+    },
+    {
+      "script": "e2e_118.js",
+      "exit": 0,
+      "summary": "KẾT QUẢ: 29/29 đạt",
+      "failed_assertions": [],
+      "seconds": 17,
+      "profile": "/workspace/kotoba-audit-results/kb-audit-2-8yi2doy4",
+      "cdp": 9532,
+      "ctrl": 9632,
+      "run_name": "e2e_118"
+    },
+    {
+      "script": "e2e_118.js",
+      "exit": 0,
+      "summary": "KẾT QUẢ: 29/29 đạt",
+      "failed_assertions": [],
+      "seconds": 17,
+      "profile": "/workspace/kotoba-audit-results/kb-audit-5-bas3phmg",
+      "cdp": 9535,
+      "ctrl": 9635,
+      "run_name": "e2e_118-23.10.1"
+    },
+    {
+      "script": "e2e_119.js",
+      "exit": 0,
+      "summary": "KẾT QUẢ: 55/55 đạt",
+      "failed_assertions": [],
+      "seconds": 23,
+      "profile": "/workspace/kotoba-audit-results/kb-audit-2-4dzt0ckh",
+      "cdp": 9532,
+      "ctrl": 9632,
+      "run_name": "e2e_119"
+    },
+    {
+      "script": "e2e_120.js",
+      "exit": 1,
+      "summary": null,
+      "failed_assertions": [
+        "LỖI KỊCH BẢN: Error: TypeError: Cannot read properties of null (reading 'textContent')"
+      ],
+      "seconds": 18,
+      "profile": "/workspace/kotoba-audit-results/kb-audit-2-y0lrk69g",
+      "cdp": 9532,
+      "ctrl": 9632,
+      "run_name": "e2e_120"
+    },
+    {
+      "script": "e2e_120.js",
+      "exit": 0,
+      "summary": "KẾT QUẢ: 103/103",
+      "failed_assertions": [],
+      "seconds": 46,
+      "profile": "/workspace/kotoba-audit-results/kb-audit-4-jputlay3",
+      "cdp": 9534,
+      "ctrl": 9634,
+      "run_name": "e2e_120-offline"
+    },
+    {
+      "script": "e2e_120.js",
+      "exit": 1,
+      "summary": null,
+      "failed_assertions": [
+        "LỖI KỊCH BẢN: Error: TypeError: Cannot read properties of null (reading 'textContent')"
+      ],
+      "seconds": 18,
+      "profile": "/workspace/kotoba-audit-results/kb-audit-4-jjo6_lg7",
+      "cdp": 9534,
+      "ctrl": 9634,
+      "run_name": "e2e_120-repeat"
+    },
+    {
+      "script": "e2e_121.js",
+      "exit": 0,
+      "summary": "KẾT QUẢ: 46/46",
+      "failed_assertions": [],
+      "seconds": 43,
+      "profile": "/workspace/kotoba-audit-results/kb-audit-2-9l6omcyu",
+      "cdp": 9532,
+      "ctrl": 9632,
+      "run_name": "e2e_121"
+    },
+    {
+      "script": "e2e_122.js",
+      "exit": 0,
+      "summary": "KẾT QUẢ: 64/64",
+      "failed_assertions": [],
+      "seconds": 40,
+      "profile": "/workspace/kotoba-audit-results/kb-audit-2-xktlcmvi",
+      "cdp": 9532,
+      "ctrl": 9632,
+      "run_name": "e2e_122"
+    },
+    {
+      "script": "e2e_1223.js",
+      "exit": 0,
+      "summary": "KẾT QUẢ: 49/49",
+      "failed_assertions": [],
+      "seconds": 33,
+      "profile": "/workspace/kotoba-audit-results/kb-audit-2-kcn0wxz9",
+      "cdp": 9532,
+      "ctrl": 9632,
+      "run_name": "e2e_1223"
+    },
+    {
+      "script": "e2e_1226.js",
+      "exit": 0,
+      "summary": "KẾT QUẢ: 40/40 đạt",
+      "failed_assertions": [],
+      "seconds": 48,
+      "profile": "/workspace/kotoba-audit-results/kb-audit-2-3kk1yt6k",
+      "cdp": 9532,
+      "ctrl": 9632,
+      "run_name": "e2e_1226"
+    },
+    {
+      "script": "e2e_1228.js",
+      "exit": 0,
+      "summary": "KẾT QUẢ: 26/26 đạt",
+      "failed_assertions": [],
+      "seconds": 26,
+      "profile": "/workspace/kotoba-audit-results/kb-audit-2-w_fu6j7b",
+      "cdp": 9532,
+      "ctrl": 9632,
+      "run_name": "e2e_1228"
+    },
+    {
+      "script": "e2e_1228.js",
+      "exit": 0,
+      "summary": "KẾT QUẢ: 26/26 đạt",
+      "failed_assertions": [],
+      "seconds": 26,
+      "profile": "/workspace/kotoba-audit-results/kb-audit-5-egl4a90k",
+      "cdp": 9535,
+      "ctrl": 9635,
+      "run_name": "e2e_1228-23.10.1"
+    },
+    {
+      "script": "e2e_tour.js",
+      "exit": 0,
+      "summary": "KẾT QUẢ: 12/12 đạt",
+      "failed_assertions": [],
+      "seconds": 22,
+      "profile": "/workspace/kotoba-audit-results/kb-audit-2-wyb5nr7_",
+      "cdp": 9532,
+      "ctrl": 9632,
+      "run_name": "e2e_tour"
+    },
+    {
+      "script": "e2e_tour.js",
+      "exit": 0,
+      "summary": "KẾT QUẢ: 12/12 đạt",
+      "failed_assertions": [],
+      "seconds": 21,
+      "profile": "/workspace/kotoba-audit-results/kb-audit-5-0yf4xbna",
+      "cdp": 9535,
+      "ctrl": 9635,
+      "run_name": "e2e_tour-23.10.1"
+    }
+  ]
+}

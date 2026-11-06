@@ -1,0 +1,10 @@
+{
+  "script": "e2e_115.js",
+  "exit": 0,
+  "summary": "KẾT QUẢ: 21/21 đạt",
+  "failed_assertions": [],
+  "seconds": 32,
+  "profile": "/workspace/kotoba-audit-results/kb-audit-2-7ziqidvz",
+  "cdp": 9532,
+  "ctrl": 9632
+}
