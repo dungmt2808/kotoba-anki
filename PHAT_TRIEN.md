@@ -708,6 +708,9 @@ Các ý dưới đây đã được bàn với người dùng nhưng **chưa là
 - ~~**Giọng đọc hệ thống cho Windows / macOS**~~: **làm ở 1.13** (giọng dự phòng cho Chép chính tả và đoạn báo không có audio, mục 2.7c). Linux không có.
 - **Gemini viết lại số hôm nay** (chưa làm): hiện chỉ viết khi chưa có số; muốn viết lại thì xoá thư mục `user_files/bao_gemini/bao/<ngày>/`.
 
+### 10.2b "Mỗi ngày vào vườn có gì mới" (06/11/2026, chưa chốt)
+- Người dùng hỏi ý tưởng từ game pixel xưa cho "FOMO lành mạnh". 14 ý + luật FOMO lành mạnh + mức khó / đáng làm + ảnh hưởng: **`KE_HOACH_Y_TUONG_HANG_NGAY.md`**. Đề xuất đợt 1 (sau 1.23): Bảng tin làng, cây lấp lánh, rút quẻ, lịch trời Nhật (trăng thật, 二十四節気, sao băng, sổ 歳時記), kỷ niệm / mốc học; đợt 2: nhặt đồ theo vùng + Hộp sưu tầm, gánh hàng rong. Chờ người dùng chọn.
+
 ### 10.3 Kỹ thuật
 - ~~**Bù xu cho lượt ôn trên điện thoại**~~: đã làm ở 1.11 (đếm theo ngày, không cần nhớ id từng lượt — xem 5.2 `kotoba_batake_mobile`).
 - **Chạy lại 19 bộ test cũ** trên bản 1.6.1, rồi gộp bộ test 1.6 vào thư mục `tests/` chung, theo quy ước `py X.py ADDON`.

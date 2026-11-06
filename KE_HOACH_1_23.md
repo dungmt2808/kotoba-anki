@@ -16,6 +16,7 @@ Ngày 05/11/2026. File này chỉ là kế hoạch: chưa sửa mã.
 > - **Những gì bị ảnh hưởng** khi làm từng việc: mục **7** (đọc trước khi sửa mã).
 > - **Thứ tự làm:** mục 8. **Câu hỏi còn mở:** mục 9. **Danh sách test** cho người dùng: mục 6.
 > - **Lấy mã nguồn:** `tests/tools/unpack.sh` (giải nén gói); đóng gói: `tests/tools/pack.py`. Test: `tests/README.md`. Anki mẫu có nhà / vùng / đồ đầy đủ: `tests/anki/setup_demo.sh` + `KB_ONLY=setup node tests/anki/readme_media.js`.
+> - **Không làm trong 1.23:** ý tưởng sự kiện hằng ngày ở `KE_HOACH_Y_TUONG_HANG_NGAY.md` (chưa chốt, để bản sau).
 > - **Bản thử truyện:** `tests/gemini/thu_truyen_1_23.py` (lời nhắc + biên tập đã thử). Script vẽ phác thảo: `tests/tools/phac_thao_1_23/`. Làm xong bản 1.23.0 thì chuyển phần đã làm vào `PHAT_TRIEN.md` (mục 2.6, 7, 11) rồi xoá file này, như các kế hoạch trước.
 
 | # | Việc | Loại |
