@@ -12,6 +12,7 @@ Kiểm tra lần cuối sau khi làm bản 1.23.0 (người dùng: "sau khi làm
 | `e2e_120` · `e2e_121` · `e2e_122` · `e2e_1223` · `e2e_1226` · `e2e_1228` | 103/103 · 46/46 · 64/64 · 49/49 · 40/40 · 26/26 | `e2e_1226` 40/40 · `e2e_1228` 26/26 |
 | `audit_edge.js` (ít xu, bấm đúp, cửa sổ nhỏ) · `audit_full.js` (1.000.000 xu, mua / dùng mọi thứ) | 58/58 · 180/180 | — |
 
+- Sau các sửa từ lần thử Gemini thật (mục 4, chỉ đổi `ai_core.py` / `story_core.py`), chạy lại trên **gói 1.23.0 cuối** đã giải nén: `run_all.sh` TẤT CẢ OK; Anki 26.9.4 `e2e_123` 74/74 · `e2e` 24/24 · `e2e_119` 55/55 · `e2e_120` 103/103 · `e2e_1223` 49/49 · `e2e_1228` 26/26 (các kịch bản có viết báo Gemini giả).
 - `e2e_116` còn 15 kiểm tra (trước 18): bỏ 3 kiểm tra giao diện "Đêm vườn" đã xoá theo yêu cầu.
 - Lần chạy đầu `e2e_122` trượt 1/64: nút **Ngắm** mới làm thanh trên của bảng Nhà tràn ở cửa sổ 1024 px → chuyển nút xuống góc khung xem, chạy lại (bảng trên).
 
@@ -43,7 +44,19 @@ Thêm (chỉ bản mới): [chờ "Bắt đầu viết" khi chuyển sang Gemini
 
 ## 4. Truyện Gemini thật (`tests/gemini/run_story.py`)
 
-KQ_TRUYEN
+Khoá Gemini thật (gói miễn phí) qua proxy của môi trường test; mỗi lượt 3 số liền (ngày 08 → 10/11, N4, Truyện: Hay hơn, giọng Ấm áp đời thường), thư mục mới mỗi lượt. Từ lượt 3, mọi model Flash đã hết hạn mức miễn phí trong ngày → **chỉ còn Flash-Lite** cho cả nhà văn, biên tập, viết số và soát — trường hợp xấu nhất của người dùng gói miễn phí. Mỗi lượt trượt / lọt lỗi được sửa trước lượt sau:
+
+| Lượt | Lưu được | Thấy gì | Sửa trong 1.23.0 |
+|---|---|---|---|
+| 1 | 3 / 3 | chữ hiện sai: "開くくと", "優しいしく", "緊張するしていました", "葉ぱ", "召上がって"; kỳ 1–2 mất bản dịch | máy tự sửa dạng từ điển trong ngoặc, `[葉|はっ]ぱ`; kiểm từ gốc khớp chữ viết |
+| 2 | 3 / 3 | lượt viết số chép hỏng truyện đã duyệt: "落とした古い手紙を急いで拾い上げました" → "落てしまいました", "驚った", "少困った" (độ giống cả bài vẫn 0,90); bản dịch giữ tên はなさん → bị bỏ | so từng đoạn (`story_diffs`); tên riêng → chữ Latin |
+| 3 · 4 | 2 / 3 · 1 / 2 | Flash-Lite để okurigana chỉ trong từ gốc (`{少|すこ|少し}[困|こま]った`); 2 chỗ nhỏ ("し" rơi, thêm "さん") sửa mãi không xong → số không lưu | `_okuri_fill`; máy tự vá chỗ sai chắc chắn (`restore_story`) |
+| 5 · 6 | 2 / 3 · 2 / 3 | đổi chữ vô hại (銀の葉 → 銀色の葉, 微笑み → 笑い) chặn cả số; `[今週末|こんしうまつ]` 3 lần sửa không xong | chỗ nhỏ chỉ cảnh báo; lấy cách đọc theo deck |
+| 7 · 8 · 9 | 3 / 3 mỗi lượt | lọt "言い直すました", "ぴくせる画", "聞ましたか"; một kỳ 1 rơi về "viết chung" vì từ mới đọc bằng romaji; một bước soát đổi 32 / 43 chữ Hán sang kana | vá đuôi kana trong ngoặc, giữ katakana, 見 → 聞 thành cảnh báo; bỏ từ mới hỏng thay vì cả truyện; chặn mất > 40% chữ Hán |
+| 10 | 2 / 3 | đáp án trắc nghiệm: `見` thiếu furigana → Flash-Lite sửa thành `花|hāna` | điền cách đọc chính số đó đã dùng (cùng kana theo sau), bỏ cách đọc romaji |
+| **11 — gói 1.23.0** | **3 / 3** | 30 lượt gọi, 99 giây; cả 3 số đủ bản dịch mọi bài; truyện giữ 90–97% chữ Hán của bản đã duyệt; điểm biên tập 2–5 (kỳ 1 "bất ngờ" 2 → viết lại 1 lần) | — |
+
+Truyện của lượt 11 (chữ trơn kèm bản dịch): [truyen_gemini_that.md](truyen_gemini_that.md). Bản viết khi còn model Flash (lượt 2) đều tay hơn: điểm biên tập 3–5, kỳ 1 không phải viết lại. Còn lại thấy được bằng mắt: vài chỗ dùng từ chưa tự nhiên mà biên tập vẫn cho 4 ("朝はとても冷たい" thay vì 寒い), một chỗ đổi từ (玄関 → 入口) máy chỉ cảnh báo.
 
 ## 5. Chưa kiểm / giới hạn
 

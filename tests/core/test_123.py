@@ -342,6 +342,11 @@ RD = {"今週末": {"こんしゅうまつ"}, "今日": {"きょう", "こんに
 ok(ai._fix_jp("[今週末|こんしうまつ]に", set(), set(), [], readings=RD) == "[今週末|こんしゅうまつ]に"
    and ai._fix_jp("[今日|こんにち]は", set(), set(), [], readings=RD) == "[今日|こんにち]は",
    "cách đọc khác deck (Flash-Lite: こんしうまつ, sửa 3 lần không xong) → lấy cách đọc của deck; deck có nhiều cách đọc thì để nguyên")
+SEEN = ai.seen_readings(["リンさんは[窓|まど]から[外|そと]を[見|み]ています。[花|はな]がきれい。[郵便屋|ゆうびんや]さん", "[見|けん][学|がく]"])
+sn = lambda t: ai._fix_jp(t, set(), set(), [], None, None, None, SEEN)
+ok(sn("スタックちゃんは外を見ています") == "スタックちゃんは[外|そと]を[見|み]ています" and sn("郵便屋さんが来た") == "[郵便屋|ゆうびんや]さんが来た"
+   and sn("[花|hāna]を[見|み]る") == "[花|はな]を[見|み]る" and sn("見学") == "見学",
+   "chữ Hán quên furigana / cách đọc romaji → lấy cách đọc chính số đó đã dùng (cùng kana theo sau); không chắc thì để nguyên")
 def base_err(t, k):
     raw = {"bai": [{"loai": "tin_lang", "tieu_de": "[村|むら]", "doan": [t]}], "cau_hoi": [], "chinh_ta": [], "mau_cau": [], "tu_moi": []}
     return any("từ gốc là" in e for e in ai.check(raw, {"trinh_do": "N4", "tu_vung": [[k, "", "x", "deck"]], "ngu_phap": []}, {"short": True}).errors)

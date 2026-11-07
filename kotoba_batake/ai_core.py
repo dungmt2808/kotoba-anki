@@ -1326,9 +1326,29 @@ SAFE_READ = [("私", "わたし", ""), ("願", "ねが", "いうえっ"), ("下"
              ("何", "なん", "でとだの人時回曜歳度月日年分個枚本")]
 
 
-def _annotate(plain: str, index: Any, notes: list[str]) -> str:
-    """Thêm furigana cho chữ Hán trơn khi chắc chắn: từ chỉ có chữ Hán trong phạm vi (một cách đọc), SAFE_READ."""
+def seen_readings(texts: list[Any]) -> dict[Any, set[str]]:
+    """1.23: cách đọc chính số báo đã dùng — (chữ Hán, kana ngay sau) và (chữ Hán ≥ 2 chữ) → các cách đọc."""
+    out: dict[Any, set[str]] = {}
+    for text in texts:
+        if not isinstance(text, str):
+            continue
+        toks = paper.tokenize(text)
+        for i, t in enumerate(toks):
+            if t[0] == "plain" or not t[2] or not KANA_ONLY_RE.match(t[2]) or not re.fullmatch(r"[㐀-鿿々]+", t[1]):
+                continue
+            r = paper.to_hira(t[2])
+            nxt = toks[i + 1][1][:1] if i + 1 < len(toks) else ""
+            out.setdefault((t[1], nxt), set()).add(r)
+            out.setdefault(t[1], set()).add(r)
+    return out
+
+
+def _annotate(plain: str, index: Any, notes: list[str], seen: dict[Any, set[str]] | None = None, loose: bool = False) -> str:
+    """Thêm furigana cho chữ Hán trơn khi chắc chắn: từ chỉ có chữ Hán trong phạm vi (một cách đọc), SAFE_READ;
+    1.23: cách đọc chính số báo đã dùng cho cùng chữ + cùng kana theo sau ([見|み]て ở chỗ khác → 見て), hoặc từ ≥ 2 chữ
+    chỉ có một cách đọc trong số (thử thật 07/11: Flash-Lite để 見 trơn trong đáp án, sửa thành 花|hāna, số không lưu)."""
     exact = index[0] if index else {}
+    seen = seen or {}
     out, i = [], 0
     while i < len(plain):
         if not paper.KANJI_RE.match(plain[i]):
@@ -1349,6 +1369,13 @@ def _annotate(plain: str, index: Any, notes: list[str]) -> str:
                     out.append("[%s|%s]" % (run, read))
                     done = True
                     break
+        if not done:
+            rs = seen.get((run, nxt)) if nxt and re.match(r"[\u3041-\u3096]", nxt) else None
+            if not rs and (len(run) >= 2 or loose):     # loose: thay cách đọc romaji — không điền thì chắc chắn là lỗi
+                rs = seen.get(run)
+            if rs and len(rs) == 1:
+                out.append("[%s|%s]" % (run, next(iter(rs))))
+                done = True
         if done:
             notes.append("thêm furigana chắc chắn cho chữ Hán bị quên")
         else:
@@ -1447,7 +1474,7 @@ def _deck_read(surf: str, read: str, readings: dict[str, set[str]] | None, notes
 
 def _fix_jp(text: Any, scope_keys: set[str], new_keys: set[str], notes: list[str],
             linker: Callable[[str, str, str], str | None] | None = None, index: Any = None,
-            readings: dict[str, set[str]] | None = None) -> Any:
+            readings: dict[str, set[str]] | None = None, seen: dict[Any, set[str]] | None = None) -> Any:
     if not isinstance(text, str):
         return text
     text = _fix_special(text, notes)
@@ -1470,7 +1497,7 @@ def _fix_jp(text: Any, scope_keys: set[str], new_keys: set[str], notes: list[str
     toks = paper.tokenize(s)
     for i, t in enumerate(toks):
         if t[0] == "plain":
-            out.append(_annotate(t[1], index, notes) if paper.KANJI_RE.search(t[1]) else t[1])
+            out.append(_annotate(t[1], index, notes, seen) if paper.KANJI_RE.search(t[1]) else t[1])
         elif t[0] == "ruby":
             surf, read = t[1].strip(), t[2].strip()
             if read and not paper.KANJI_RE.search(surf):
@@ -1478,6 +1505,12 @@ def _fix_jp(text: Any, scope_keys: set[str], new_keys: set[str], notes: list[str
                 out.append(surf)
                 continue
             read = paper.to_hira(read) if KANA_ONLY_RE.match(read or "x") else read
+            if read and LATIN_RE.search(read) and re.fullmatch(r"[㐀-鿿々]+", surf):
+                q = _annotate(surf, index, notes, seen, True)    # 1.23: cách đọc romaji ([花|hāna]) → điền theo cách đọc đã thấy
+                if q != surf:
+                    notes.append("bỏ cách đọc romaji của %s" % surf)
+                    out.append(q)
+                    continue
             after = toks[i + 1][1] if i + 1 < len(toks) and toks[i + 1][0] == "plain" else ""
             pre, surf2, read2, post = _split_kana(surf, read, after) if KANA_ONLY_RE.match(read or "x") else ("", surf, read, "")
             if (surf2, read2) != (surf, read):
@@ -1558,9 +1591,10 @@ def autofix(raw: Any, scope: dict[str, Any], opts: dict[str, Any]) -> tuple[Any,
         return w
 
     readings = _deck_readings(scope)
+    seen = seen_readings(_all_jp(raw))
 
     def fx(v: Any) -> Any:
-        return _fix_jp(v, scope_keys, new_keys, notes, linker, index, readings)
+        return _fix_jp(v, scope_keys, new_keys, notes, linker, index, readings, seen)
 
     for b in raw.get("bai", []) if isinstance(raw.get("bai"), list) else []:
         if isinstance(b, dict):
