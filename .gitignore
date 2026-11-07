@@ -4,6 +4,7 @@
 # Trừ các mục sau
 !/.gitignore
 !/*.ankiaddon
+!/kotoba_batake/
 !/giao_trinh/
 !/kotoba_daily/
 !README.md
@@ -16,3 +17,8 @@
 # không đưa file sinh ra khi chạy test
 __pycache__/
 *.pyc
+
+# mã nguồn add-on: không đưa dữ liệu người dùng / cấu hình máy
+/kotoba_batake/meta.json
+/kotoba_batake/user_files/*
+!/kotoba_batake/user_files/README.txt

@@ -1,10 +1,13 @@
-"""pack.py THƯ_MỤC_ADD_ON [GÓI_RA] — đóng gói .ankiaddon (tăng "mod" trong manifest.json).
+"""pack.py [THƯ_MỤC_ADD_ON] [GÓI_RA] — đóng gói .ankiaddon (tăng "mod" trong manifest.json).
+
+Từ 1.23 mã nguồn nằm ở kotoba_batake/ (gốc repo): không đưa THƯ_MỤC thì đóng gói thư mục đó.
 
 Bỏ .git, __pycache__, *.pyc và mọi thứ trong user_files/ trừ README.txt (để Anki giữ dữ liệu người dùng khi cập nhật)."""
 import json, os, sys, time, zipfile
 
-src = os.path.abspath(sys.argv[1])
-out = os.path.abspath(sys.argv[2] if len(sys.argv) > 2 else os.path.join(os.path.dirname(__file__), "..", "..", "kotoba_batake.ankiaddon"))
+ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..")
+src = os.path.abspath(sys.argv[1] if len(sys.argv) > 1 else os.path.join(ROOT, "kotoba_batake"))
+out = os.path.abspath(sys.argv[2] if len(sys.argv) > 2 else os.path.join(ROOT, "kotoba_batake.ankiaddon"))
 mpath = os.path.join(src, "manifest.json")
 m = json.load(open(mpath, encoding="utf-8"))
 m["mod"] = int(time.time())
