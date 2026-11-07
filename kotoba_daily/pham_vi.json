@@ -22,7 +22,7 @@
   "tu_moi_toi_da": 5,
   "tin_that": true
  },
- "so_bao_tiep_theo": 2,
+ "so_bao_tiep_theo": 5,
  "trong_tam": [
   {
    "bai": "gungun_n4:25",
@@ -11764,18 +11764,33 @@
   ]
  ],
  "kanji": "力動働知短医皿血工空試計説心思性地池公広去転遠園台始治正政王玉国主住所近辺切勉晩色発黄虫風強油決漢止歩歴史使品号味研丸究谷船里理野若菜番料奥鳥鳴島化便係宿私利科顔題速通週夫鉄妹姉妻天送弟引弱考者都暑開閉問質貸員店度黒点然声仕才事予服報指押洋遅様着有育教数楽薬記起港赤走場室屋堂院降部原反文済対糸緑経紙細練羽習馬駅験作低夜家宅客館",
- "tien_do": {},
+ "tien_do": {
+  "sap_quen": [
+   "蓋",
+   "(～を)剥がす",
+   "ドイツ",
+   "つい",
+   "筆箱",
+   "少しずつ"
+  ],
+  "loi_sai": [],
+  "chua_doc": [],
+  "cap_nhat": "2026-11-04T22:45"
+ },
  "bao_ton": {
   "so_chua_doc": 0,
   "khi_ton": "rut_gon",
   "cach_viet": "day_du"
  },
  "truyen": {
-  "ky_tiep_theo": 2,
-  "ky_cuoi_ngay": "2026-11-01"
+  "ky_tiep_theo": 5,
+  "ky_cuoi_ngay": "2026-11-04"
  },
  "lich_su_gan_day": [
-  "- 2026-11-01 | số 1 | mẫu: gungun_n4:25-2, gungun_n4:27-5, gungun_n4:29-3, gungun_n4:16-3 | từ ôn: お客様, 支度する, 渡す, 相談する, 会場, だんだん | Từ hôm nay đến 15/11 có thể ngắm hoa cúc ở Shinjuku Gyoen, còn làng ことば村 sẽ nướng khoai ngày 3/11. Truyện kỳ 1: Lin nhầm kính ngữ với vị khách đầu tiên, và ông cụ mang theo một tấm bản đồ cũ."
+  "- 2026-11-01 | số 1 | mẫu: gungun_n4:25-2, gungun_n4:27-5, gungun_n4:29-3, gungun_n4:16-3 | từ ôn: お客様, 支度する, 渡す, 相談する, 会場, だんだん | Từ hôm nay đến 15/11 có thể ngắm hoa cúc ở Shinjuku Gyoen, còn làng ことば村 sẽ nướng khoai ngày 3/11. Truyện kỳ 1: Lin nhầm kính ngữ với vị khách đầu tiên, và ông cụ mang theo một tấm bản đồ cũ.",
+  "- 2026-11-02 | số 2 | mẫu: gungun_n4:26-1, gungun_n4:26-6, gungun_n4:29-4, gungun_n4:18-3 | từ ôn: 元の場所, 支度する, 山登り, 〜以上, 濡れる, 滑る | Hôm nay mưa tuyết trên núi nên không nên leo núi, và lá StackChan gom để nướng khoai bị ướt hết. Truyện kỳ 2: chỗ vòng tròn đỏ là nơi cũ của ことば屋, còn ông cụ đang tìm một người phụ nữ giống hệt はなさん trong ảnh.",
+  "- 2026-11-03 | số 3 | mẫu: gungun_n4:28-6, gungun_n4:25-6, gungun_n4:29-7, gungun_n4:20-5 | từ ôn: 過ごす, 最初は, 少しずつ, 乾かす, 用意する, 驚く | Ngày Văn hoá 3/11 trời đẹp ở nhiều nơi tại Nhật (Hokkaido có mưa rào), còn ことば畑 nướng khoai và StackChan khoe tranh “mùi khoai nướng”. Truyện kỳ 3: cậu bé trong album ảnh chính là ông cụ, và chiếc chìa khoá ông mang tới có ghi chữ 「はな」.",
+  "- 2026-11-04 | số 4 | mẫu: gungun_n4:26-3, gungun_n4:27-1, gungun_n4:25-4, gungun_n4:15-1 | từ ôn: 蓋, はっきり, 元の場所, 確かめる, 郊外, なるべく | Tối nay mưa to dần ở Kanto và Tokai (Tokyo mưa to nhất sáng mai), còn ở ことば畑 gió thổi bay tấm bạt của StackChan. Truyện kỳ 4: bà của はなさん cũng tên là はな, và chiếc chìa khoá mở được hộp gỗ cũ, bên trong có lá thư gửi 「けんちゃん」."
  ],
  "thieu": []
 }

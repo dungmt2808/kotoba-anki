@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>畑新聞</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
+<style>
+:root {
+  --grass: #6aa83a;
+  --paper: #ffffff;
+  --ink: #000000;
+  --muted: #4b5244;
+  --sky: #1e78c8;
+  --kaki: #d97000;
+  --leaf: #e6f2d9;
+  --ok: #2e7d32;
+  --bad: #c62828;
+  --edge: #000000;
+  --pixel: "DotGothic16", "Noto Sans CJK JP", "Noto Sans JP", monospace;
+  --ja: "Noto Sans CJK JP", "Noto Sans JP", "Hiragino Sans", "Yu Gothic", sans-serif;
+  --ui: "Noto Sans", "Ubuntu", "Segoe UI", "Noto Sans CJK JP", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --grass: #1b2a16; --paper: #252a20; --ink: #f0f0e6; --muted: #b8bdae;
+    --sky: #7cc4ff; --kaki: #ffb04d; --leaf: #2d3826; --ok: #81c784; --bad: #ef9a9a;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--grass); color: var(--ink); font-family: var(--ui); font-size: 16px; line-height: 1.6; }
+main { max-width: 720px; margin: 0 auto; padding: 24px 16px 48px; }
+.card { background: var(--paper); border: 3px solid var(--edge); box-shadow: 4px 4px 0 var(--edge); padding: 20px 22px; margin: 0 0 20px; }
+.mast { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 8px 20px; }
+.mast h1 { font-family: var(--pixel); font-weight: 400; font-size: 56px; line-height: 1; margin: 0; letter-spacing: 2px; }
+.mast .meta { font-family: var(--pixel); font-size: 18px; text-align: right; }
+.mast .where { font-size: 14px; color: var(--muted); width: 100%; }
+.bar { position: sticky; top: 0; z-index: 5; background: var(--paper); border: 3px solid var(--edge); box-shadow: 4px 4px 0 var(--edge); padding: 10px 14px; margin: 0 0 20px; }
+.bar .row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.bar .score { margin-left: auto; font-family: var(--pixel); font-size: 18px; }
+.info { margin-top: 8px; font-size: 14px; color: var(--muted); min-height: 1.6em; }
+.info .big { font-family: var(--ja); font-size: 22px; color: var(--ink); margin-right: 8px; }
+h2 { font-family: var(--pixel); font-weight: 400; font-size: 24px; line-height: 2.1; margin: 0 0 8px; }
+.ja { font-family: var(--ja); }
+.art p { font-family: var(--ja); font-size: 18px; line-height: 2.4; margin: 0 0 12px; }
+rt { font-size: 11px; color: var(--muted); font-family: var(--ja); }
+body.nofuri rt { visibility: hidden; }
+.tu { cursor: pointer; border-bottom: 3px solid var(--sky); }
+.tu.moi { border-bottom-style: dotted; border-bottom-color: var(--kaki); }
+.tu.quen { background: color-mix(in srgb, var(--kaki) 22%, transparent); }
+.tu.chon { background: color-mix(in srgb, var(--sky) 28%, transparent); }
+.tu:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid var(--sky); outline-offset: 2px; }
+.src { font-size: 13px; color: var(--muted); }
+.kind { font-size: 13px; color: var(--muted); }
+.art p.prev { font-family: var(--ui); font-size: 14px; line-height: 1.6; color: var(--muted); font-style: italic; }
+.src a { color: var(--sky); }
+button { font: inherit; font-size: 14px; background: var(--paper); color: var(--ink); border: 3px solid var(--edge); box-shadow: 3px 3px 0 var(--edge); padding: 4px 12px; cursor: pointer; }
+button:active { transform: translate(3px, 3px); box-shadow: none; }
+button.play { padding: 0 8px; font-size: 12px; margin-left: 6px; vertical-align: middle; }
+.practice { background: var(--leaf); }
+.q { margin: 0 0 20px; }
+.q .hoi { font-family: var(--ja); font-size: 17px; line-height: 2.3; margin: 0 0 6px; }
+.opt { display: block; width: 100%; text-align: left; margin: 0 0 8px; font-family: var(--ja); font-size: 16px; line-height: 2.2; padding: 2px 12px; }
+.opt.dung { border-color: var(--ok); box-shadow: 3px 3px 0 var(--ok); }
+.opt.sai { border-color: var(--bad); box-shadow: 3px 3px 0 var(--bad); }
+.fb { font-size: 14px; min-height: 1.4em; }
+.fb.ok { color: var(--ok); } .fb.bad { color: var(--bad); }
+.ct { margin: 0 0 18px; }
+.ct .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 0 0 8px; }
+.ct input { flex: 1; min-width: 200px; font-family: var(--ja); font-size: 17px; padding: 6px 10px; border: 3px solid var(--edge); background: var(--paper); color: var(--ink); }
+.answer { font-family: var(--ja); font-size: 17px; line-height: 2.3; }
+.chips { display: flex; flex-wrap: wrap; gap: 10px; }
+.chip { font-family: var(--ja); font-size: 14px; }
+.foot { font-size: 13px; color: var(--muted); }
+@media (max-width: 520px) {
+  .mast h1 { font-size: 44px; }
+  .mast .meta { text-align: left; }
+  .card { padding: 16px; }
+}
+@media (prefers-reduced-motion: reduce) { button:active { transform: none; } }
+</style>
+</head>
+<body>
+<main>
+  <header class="card mast">
+    <h1 lang="ja">畑新聞</h1>
+    <div class="meta" lang="ja"><div id="ngay"></div><div id="so"></div></div>
+    <div class="where" id="where"></div>
+  </header>
+  <div class="bar">
+    <div class="row">
+      <button id="furi" type="button">Ẩn furigana</button>
+      <span class="score" id="score"></span>
+    </div>
+    <div class="info" id="info" aria-live="polite">Bấm vào từ gạch chân để tra nghĩa. Gạch liền là từ đã học, gạch chấm là từ mới.</div>
+  </div>
+  <div id="bai"></div>
+  <section class="card practice" id="luyen">
+    <h2>Câu hỏi</h2>
+    <div id="cauhoi"></div>
+    <h2>Chép chính tả</h2>
+    <p class="foot">Nghe rồi gõ lại câu bằng kana hoặc kanji.</p>
+    <div id="chinhta"></div>
+  </section>
+  <section class="card">
+    <h2>Mẫu câu trong số này</h2>
+    <div class="chips" id="mau"></div>
+    <p class="foot" id="credit"></p>
+  </section>
+</main>
+<script>
+const DATA = {"bao": {"ngay": "2026-11-05", "so": 5, "rut_gon": false, "bai": [{"loai": "tin_that", "tieu_de": "[今日|きょう]は[頭|あたま]が[痛|いた]くなりやすい[日|ひ]", "nguon": "https://tenki.jp/forecaster/y_nakagawa/2026/11/05/41205.html", "doan": ["[今日|きょう]は[多|おお]くの[所|ところ]で{気圧|きあつ|気圧}が[下|さ]がっています。[雨|あめ]を[降|ふ]らせる{低気圧|ていきあつ|低気圧}や{台風|たいふう|台風}31[号|ごう]が[近|ちか]づいているからです。{気圧|きあつ|気圧}が[大|おお]きく[変|か]わると、[頭|あたま]が[痛|いた]くなったり、[疲|つか]れやすくなったりする[人|ひと]がいます。", "[9日|ここのか]ごろまで{気圧|きあつ|気圧}は[上|あ]がったり[下|さ]がったりして、[7日|なのか]ごろから{急|きゅう|急}に[寒|さむ]くなるそうです。お[風呂|ふろ]にゆっくり[入|はい]って[体|からだ]を{温|あたた|温める}めたり、よく[寝|ね]たりしたほうがいいでしょう。"]}, {"loai": "tin_lang", "tieu_de": "スタックちゃんと{ストーブ||ストーブ}", "doan": ["[昨日|きのう]の[夜|よる]、スタックちゃんは{村長|そんちょう|村長}に{頼|たの|頼む}みました。「[寒|さむ]いと、ぼくの{電池|でんち|電池}はすぐなくなっちゃうんです。{ストーブ||ストーブ}の[前|まえ]で{充電|じゅうでん|充電する}させてください。」", "「いいよ。[明日|あした]の[朝|あさ]はストーブをつけておいてほしいな。」でも[今朝|けさ]、[先|さき]に[起|お]きたのは{村長|そんちょう|村長}でした。ストーブの[前|まえ]が{暖|あたた|暖かい}かくて、スタックちゃんは{つい||つい}[朝|あさ]まで[寝|ね]てしまいました。"]}, {"loai": "truyen", "ky": 5, "ky_truoc": "Chìa khoá của ông cụ mở được chiếc hộp cũ của bà, và bên trong có lá thư đề 「けんちゃんへ」 — tên gọi hồi nhỏ của ông cụ.", "tieu_de": "けんちゃんへの[手紙|てがみ]", "doan": ["「この[手紙|てがみ]、ここで[読|よ]ませてください。」おじいさんは[手紙|てがみ]を[読|よ]み[始|はじ]めました。", "「けんちゃんへ。[夏休|なつやす]み、[毎朝|まいあさ][早|はや]く[起|お]こしてごめんね。[台所|だいどころ]を[手伝|てつだ]ってくれて、うれしかったよ。ことば[屋|や]は[来年|らいねん]、[村|むら]へ[引|ひ]っ[越|こ]すことになりました。この[箱|はこ]の[鍵|かぎ]はけんちゃんに{預|あず|預ける}けます。[大人|おとな]になったら、また[会|あ]いに[来|き]てほしいな。はなより」", "おじいさんは[泣|な]いていました。「おばあさまには[料理|りょうり]をさせてもらいました。でも、60[年|ねん]も[待|ま]たせてしまいました。」リンさんが{気|き|気がつく}がつきました。「{蓋|ふた|蓋}にも[何|なに]か[書|か]いてあります！」[木|き]の[絵|え]と[赤|あか]い{丸|まる|丸}。「あの[地図|ちず]と[同|おな]じ{丸|まる|丸}だわ……。」はなさんが[言|い]いました。"]}, {"loai": "cot", "tieu_de": "リンの{敬語|けいご|敬語}ノート", "doan": ["[来週|らいしゅう]から、[夜|よる]の{フロント||フロント}の[電話|でんわ]は[私|わたし]が[出|で]ることになりました。「まだ{無理|むり|無理}かな」と[言|い]われましたが、「[練習|れんしゅう]させてください」とお[願|ねが]いしたんです。", "はなさんに[電話|でんわ]の[練習|れんしゅう]をさせてもらっています。「{少々|しょうしょう|少々}お[待|ま]ちください」も{少|すこ|少しずつ}しずつ[言|い]えるようになってきました。お[電話|でんわ]のときは、ゆっくり[話|はな]してほしいです！"]}], "cau_hoi": [{"hoi": "[今日|きょう]、{気圧|きあつ|気圧}が[下|さ]がっているのは、どうしてですか。", "chon": ["[雪|ゆき]がたくさん[降|ふ]っているから", "{低気圧|ていきあつ|低気圧}や{台風|たいふう|台風}が[近|ちか]づいているから", "[気温|きおん]が{急|きゅう|急}に[上|あ]がったから"], "dung": 1, "giai_thich": "Tin thật, đoạn 1: 雨を降らせる低気圧や台風31号が近づいているからです (vì áp thấp gây mưa và bão số 31 đang đến gần)."}, {"hoi": "{蓋|ふた|蓋}には、[何|なに]が[書|か]いてありましたか。", "chon": ["けんちゃんの[名前|なまえ]", "ことば[屋|や]の[電話番号|でんわばんごう]", "[木|き]の[絵|え]と[赤|あか]い{丸|まる|丸}"], "dung": 2, "giai_thich": "Truyện, đoạn 3: 木の絵と、赤い丸です (trên nắp hộp có hình cái cây và một vòng tròn đỏ). Tên けんちゃん nằm ở đầu lá thư, không phải trên nắp."}, {"hoi": "リンさんは[来週|らいしゅう]から、[何|なに]をすることになりましたか。", "chon": ["[夜|よる]の{フロント||フロント}の[電話|でんわ]に[出|で]る", "[毎朝|まいあさ]{ストーブ||ストーブ}をつける", "おじいさんを[地図|ちず]の[場所|ばしょ]へ{案内|あんない|案内する}する"], "dung": 0, "giai_thich": "Cột của Lin, đoạn 1: 来週から、夜のフロントの電話は私が出ることになりました (từ tuần sau, Lin sẽ nghe điện thoại ở quầy lễ tân buổi tối). Bật lò sưởi là việc trưởng làng nhờ StackChan."}], "chinh_ta": [{"cau": "この[手紙|てがみ]、ここで[読|よ]ませてください。"}, {"cau": "[夜|よる]の{フロント||フロント}の[電話|でんわ]は[私|わたし]が[出|で]ることになりました。", "them_dap_an": ["夜のフロントの電話はわたしが出ることになりました"]}, {"cau": "はなさんに[電話|でんわ]の[練習|れんしゅう]をさせてもらっています。"}], "mau_cau": ["gungun_n4:29-1", "gungun_n4:25-3", "gungun_n4:28-7", "gungun_n4:23-6"], "tu_moi": [{"w": "気圧", "r": "きあつ", "m": "áp suất khí quyển"}, {"w": "低気圧", "r": "ていきあつ", "m": "vùng áp thấp"}, {"w": "村長", "r": "そんちょう", "m": "trưởng làng"}], "tom_tat": "Hôm nay áp suất khí quyển giảm ở nhiều nơi tại Nhật nên dễ đau đầu, mệt mỏi; còn ở ことば村, StackChan xin sạc pin trước lò sưởi nhà trưởng làng rồi ngủ quên đến sáng. Truyện kỳ 5: lá thư bà はな hẹn けんちゃん lớn lên quay lại gặp bà, và trên nắp hộp có hình cái cây với vòng tròn đỏ giống tấm bản đồ cũ."}, "tu": {"気圧": {"w": "気圧", "r": "きあつ", "m": "áp suất khí quyển", "moi": true}, "低気圧": {"w": "低気圧", "r": "ていきあつ", "m": "vùng áp thấp", "moi": true}, "台風": {"w": "台風", "r": "たいふう", "m": "cơn bão", "bai": "GUNGUN N4, bài 15"}, "急": {"w": "急", "r": "きゅう", "m": "đột ngột, đột nhiên", "bai": "GUNGUN N4, bài 25"}, "温める": {"w": "温める", "r": "あたためる", "m": "làm ấm", "bai": "GUNGUN N4, bài 18"}, "ストーブ": {"w": "ストーブ", "r": "", "m": "lò sưởi", "bai": "GUNGUN N4, bài 27"}, "村長": {"w": "村長", "r": "そんちょう", "m": "trưởng làng", "moi": true}, "頼む": {"w": "頼む", "r": "たのむ", "m": "nhờ ai đó làm gì", "bai": "GUNGUN N4, bài 28"}, "電池": {"w": "電池", "r": "でんち", "m": "cục pin, pin", "bai": "GUNGUN N4, bài 16"}, "充電する": {"w": "充電する", "r": "じゅうでんする", "m": "sạc điện", "bai": "GUNGUN N4, bài 27"}, "暖かい": {"w": "暖かい", "r": "あたたかい", "m": "ấm", "bai": "GUNGUN N4, bài 18"}, "つい": {"w": "つい", "r": "", "m": "lỡ, trót", "bai": "GUNGUN N4, bài 27", "quen": true}, "預ける": {"w": "預ける", "r": "あずける", "m": "gửi, giao phó", "bai": "GUNGUN N5, bài 14"}, "気がつく": {"w": "気がつく", "r": "きがつく", "m": "để ý đến, nhận ra", "bai": "GUNGUN N4, bài 27"}, "蓋": {"w": "蓋", "r": "ふた", "m": "nắp", "bai": "GUNGUN N4, bài 27", "quen": true}, "丸": {"w": "丸", "r": "まる", "m": "hình tròn, khoanh tròn", "bai": "GUNGUN N4, bài 29"}, "敬語": {"w": "敬語", "r": "けいご", "m": "kính ngữ", "bai": "GUNGUN N4, bài 18"}, "フロント": {"w": "フロント", "r": "", "m": "quầy lễ tân", "bai": "GUNGUN N4, bài 29"}, "無理": {"w": "無理", "r": "むり", "m": "không thể, quá sức", "bai": "GUNGUN N4, bài 21"}, "少々": {"w": "少々", "r": "しょうしょう", "m": "một chút (lịch sự)", "bai": "GUNGUN N4, bài 29"}, "少しずつ": {"w": "少しずつ", "r": "すこしずつ", "m": "từng chút một", "bai": "GUNGUN N4, bài 27", "quen": true}, "案内する": {"w": "案内する", "r": "あんないする", "m": "hướng dẫn", "bai": "GUNGUN N5, bài 13"}}, "mau": [{"mau": "Vさせてください", "nghia": "Hãy để tôi V, xin cho tôi V (xin phép làm điều mình muốn)", "bai": "GUNGUN N4, bài 29"}, {"mau": "Vる/Vない＋ことになる", "nghia": "Được quyết định là ~: kết quả không do ý mình", "bai": "GUNGUN N4, bài 25"}, {"mau": "Aは/がBにVさせて＋もらう", "nghia": "A được B cho phép V: thể hiện lòng biết ơn", "bai": "GUNGUN N4, bài 28"}, {"mau": "Vて＋ほしい", "nghia": "Muốn (ai đó) V: mong người khác làm việc gì", "bai": "GUNGUN N4, bài 23"}], "trinh_do": "N4", "vi_tri": [{"id": "gungun_n5", "ten": "GUNGUN N5", "den": 14}, {"id": "gungun_n4", "ten": "GUNGUN N4", "den": 29}], "audio": {"giong": 2, "credit": "VOICEVOX:四国めたん", "bai": [["audio/bai_1_1.wav", "audio/bai_1_2.wav"], ["audio/bai_2_1.wav", "audio/bai_2_2.wav"], ["audio/bai_3_1.wav", "audio/bai_3_2.wav", "audio/bai_3_3.wav"], ["audio/bai_4_1.wav", "audio/bai_4_2.wav"]], "chinh_ta": [{"thuong": "audio/ct_1.wav", "cham": "audio/ct_1_cham.wav"}, {"thuong": "audio/ct_2.wav", "cham": "audio/ct_2_cham.wav"}, {"thuong": "audio/ct_3.wav", "cham": "audio/ct_3_cham.wav"}], "canh_bao": []}};
+(function () {
+  if (!DATA) { document.querySelector("main").textContent = "Thiếu dữ liệu báo. Hãy tạo trang bằng tools/render.py."; return; }
+  const B = DATA.bao;
+  const RE = /\{([^{}\[\]|]*)\|([^{}\[\]|]*)\|([^{}\[\]|]*)\}|\[([^{}\[\]|]*)\|([^{}\[\]|]*)\]/g;
+  const $ = (id) => document.getElementById(id);
+  function el(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+  function ruby(s, r) {
+    if (!r) return document.createTextNode(s);
+    const rb = el("ruby"); rb.appendChild(document.createTextNode(s)); rb.appendChild(el("rt", null, r)); return rb;
+  }
+  function md(text, link) {
+    const f = document.createDocumentFragment(); let last = 0, m; RE.lastIndex = 0;
+    while ((m = RE.exec(text))) {
+      if (m.index > last) f.appendChild(document.createTextNode(text.slice(last, m.index)));
+      if (m[4] !== undefined) f.appendChild(ruby(m[4], m[5]));
+      else {
+        const node = ruby(m[1], m[2]); const info = DATA.tu[m[3]];
+        if (link && info) {
+          const s = el("span", "tu" + (info.moi ? " moi" : "") + (info.quen ? " quen" : ""));
+          s.dataset.k = m[3]; s.tabIndex = 0; s.setAttribute("role", "button"); s.appendChild(node); f.appendChild(s);
+        } else f.appendChild(node);
+      }
+      last = RE.lastIndex;
+    }
+    if (last < text.length) f.appendChild(document.createTextNode(text.slice(last)));
+    return f;
+  }
+  const surface = (t) => t.replace(RE, (m, a, b, c, d) => (d !== undefined ? d : a));
+  const kana = (t) => t.replace(RE, (m, a, b, c, d, e) => (d !== undefined ? (e || d) : (b || a)));
+  const norm = (s) => s.replace(/[\s\u3000。、．，！？!?.,「」『』（）()…・〜～]/g, "").replace(/[\u30a1-\u30f6]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0x60));
+
+  const d = new Date(B.ngay + "T00:00:00");
+  $("ngay").textContent = (d.getMonth() + 1) + "月" + d.getDate() + "日（" + "日月火水木金土"[d.getDay()] + "）";
+  $("so").textContent = "第" + B.so + "号" + (B.rut_gon ? "・短縮版" : "");
+  $("where").textContent = "Trình độ " + DATA.trinh_do + ", viết trong phạm vi " +
+    DATA.vi_tri.map((v) => v.ten + " đến bài " + v.den).join(" và ") + ".";
+
+  let score = 0; const maxScore = (B.cau_hoi || []).length + (B.chinh_ta || []).length;
+  const showScore = () => { $("score").textContent = "Điểm " + score + "/" + maxScore; };
+  showScore();
+
+  const player = new Audio();
+  function play(src, fallbackText, rate, outEl) {
+    if (src) { player.src = src; player.play().catch(() => {}); return; }
+    if (!("speechSynthesis" in window)) { if (outEl) outEl.textContent = "Chưa có audio cho câu này."; return; }
+    const vs = speechSynthesis.getVoices(); const ja = vs.find((v) => (v.lang || "").toLowerCase().startsWith("ja"));
+    if (vs.length && !ja) { if (outEl) outEl.textContent = "Chưa có audio. Cài VOICEVOX để có giọng đọc (xem HUONG_DAN.md)."; return; }
+    const u = new SpeechSynthesisUtterance(fallbackText); u.lang = "ja-JP"; if (ja) u.voice = ja; u.rate = rate;
+    speechSynthesis.cancel(); speechSynthesis.speak(u);
+  }
+  if ("speechSynthesis" in window) speechSynthesis.getVoices();
+  const A = DATA.audio || {};
+
+  const bai = $("bai");
+  B.bai.forEach((b, i) => {
+    const sec = el("article", "card art"); sec.lang = "ja";
+    if (b.loai === "truyen" && b.ky) { const k = el("div", "kind", "Truyện dài kỳ, kỳ " + b.ky); k.lang = "vi"; sec.appendChild(k); }
+    const h = el("h2"); h.appendChild(md(b.tieu_de, true)); sec.appendChild(h);
+    if (b.ky_truoc) { const k = el("p", "prev", "Kỳ trước: " + b.ky_truoc); k.lang = "vi"; sec.appendChild(k); }
+    b.doan.forEach((p, j) => {
+      const para = el("p"); para.appendChild(md(p, true));
+      const src = A.bai && A.bai[i] && A.bai[i][j];
+      if (src) {
+        const btn = el("button", "play", "▶"); btn.type = "button"; btn.setAttribute("aria-label", "Nghe đoạn này");
+        btn.addEventListener("click", () => play(src)); para.appendChild(btn);
+      }
+      sec.appendChild(para);
+    });
+    if (b.nguon) {
+      const s = el("p", "src"); s.lang = "vi"; s.appendChild(document.createTextNode("Viết lại từ tin: "));
+      const a = el("a", null, b.nguon); a.href = b.nguon; a.target = "_blank"; a.rel = "noopener"; s.appendChild(a); sec.appendChild(s);
+    }
+    bai.appendChild(sec);
+  });
+
+  const info = $("info");
+  function showWord(k) {
+    const w = DATA.tu[k]; if (!w) return;
+    info.textContent = "";
+    info.appendChild(el("span", "big", w.w)); 
+    if (w.r) info.appendChild(el("span", "ja", w.r + "  "));
+    info.appendChild(document.createTextNode(w.m || ""));
+    const note = w.moi ? "Từ mới trong số này." : (w.bai ? "Đã học ở " + w.bai + "." : "");
+    if (note || w.quen) {
+      info.appendChild(el("br"));
+      info.appendChild(document.createTextNode(note + (w.quen ? " Bạn sắp quên từ này, báo cố ý nhắc lại." : "")));
+    }
+    document.querySelectorAll(".tu.chon").forEach((x) => x.classList.remove("chon"));
+    document.querySelectorAll('.tu[data-k="' + CSS.escape(k) + '"]').forEach((x) => x.classList.add("chon"));
+  }
+  bai.addEventListener("click", (e) => { const t = e.target.closest(".tu"); if (t) showWord(t.dataset.k); });
+  bai.addEventListener("keydown", (e) => { const t = e.target.closest(".tu"); if (t && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); showWord(t.dataset.k); } });
+
+  $("furi").addEventListener("click", (e) => {
+    document.body.classList.toggle("nofuri");
+    e.currentTarget.textContent = document.body.classList.contains("nofuri") ? "Hiện furigana" : "Ẩn furigana";
+  });
+
+  const qBox = $("cauhoi"); const qDone = {};
+  (B.cau_hoi || []).forEach((q, i) => {
+    const wrap = el("div", "q");
+    const hoi = el("p", "hoi"); hoi.lang = "ja"; hoi.appendChild(document.createTextNode((i + 1) + ". ")); hoi.appendChild(md(q.hoi, false)); wrap.appendChild(hoi);
+    const fb = el("div", "fb"); fb.setAttribute("aria-live", "polite");
+    q.chon.forEach((o, j) => {
+      const btn = el("button", "opt"); btn.type = "button"; btn.lang = "ja"; btn.appendChild(md(o, false));
+      btn.addEventListener("click", () => {
+        wrap.querySelectorAll(".opt").forEach((x) => x.classList.remove("dung", "sai"));
+        if (j === q.dung) {
+          btn.classList.add("dung");
+          if (!qDone[i]) { score++; showScore(); }
+          qDone[i] = "ok"; fb.className = "fb ok"; fb.textContent = "Đúng. " + q.giai_thich;
+        } else {
+          btn.classList.add("sai"); if (!qDone[i]) qDone[i] = "sai";
+          fb.className = "fb bad"; fb.textContent = "Chưa đúng, đọc lại bài rồi thử lần nữa.";
+        }
+      });
+      wrap.appendChild(btn);
+    });
+    wrap.appendChild(fb); qBox.appendChild(wrap);
+  });
+
+  const cBox = $("chinhta"); const cDone = {};
+  (B.chinh_ta || []).forEach((c, i) => {
+    const wrap = el("div", "ct");
+    const row1 = el("div", "row"); row1.appendChild(el("span", null, "Câu " + (i + 1)));
+    const fb = el("div", "fb"); fb.setAttribute("aria-live", "polite");
+    const audio = (A.chinh_ta && A.chinh_ta[i]) || {};
+    const b1 = el("button", null, "Nghe"); b1.type = "button"; b1.addEventListener("click", () => play(audio.thuong, surface(c.cau), 0.95, fb));
+    const b2 = el("button", null, "Nghe chậm"); b2.type = "button"; b2.addEventListener("click", () => play(audio.cham, surface(c.cau), 0.7, fb));
+    row1.appendChild(b1); row1.appendChild(b2); wrap.appendChild(row1);
+    const row2 = el("div", "row");
+    const inp = el("input"); inp.type = "text"; inp.lang = "ja"; inp.placeholder = "Gõ câu vừa nghe"; inp.setAttribute("aria-label", "Câu " + (i + 1));
+    const chk = el("button", null, "Kiểm tra"); chk.type = "button";
+    row2.appendChild(inp); row2.appendChild(chk); wrap.appendChild(row2);
+    const ans = el("div", "answer"); ans.lang = "ja";
+    const accepted = [surface(c.cau), kana(c.cau)].concat(c.them_dap_an || []).map(norm);
+    function check() {
+      ans.textContent = "";
+      if (!inp.value.trim()) { fb.className = "fb bad"; fb.textContent = "Gõ câu bạn nghe được trước đã."; return; }
+      if (accepted.includes(norm(inp.value))) {
+        fb.className = "fb ok"; fb.textContent = "Đúng rồi.";
+        if (!cDone[i]) { cDone[i] = 1; score++; showScore(); }
+      } else {
+        fb.className = "fb bad"; fb.textContent = "Chưa đúng. Đáp án:"; ans.appendChild(md(c.cau, false));
+      }
+    }
+    chk.addEventListener("click", check);
+    inp.addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.isComposing) check(); });
+    inp.addEventListener("input", () => { if (fb.classList.contains("bad")) { fb.textContent = ""; ans.textContent = ""; } });
+    wrap.appendChild(fb); wrap.appendChild(ans); cBox.appendChild(wrap);
+  });
+
+  const mBox = $("mau");
+  (DATA.mau || []).forEach((g) => {
+    const btn = el("button", "chip", g.mau); btn.type = "button";
+    btn.addEventListener("click", () => { info.textContent = g.mau + ": " + g.nghia + (g.bai ? " (" + g.bai + ")" : ""); });
+    mBox.appendChild(btn);
+  });
+  const credits = [];
+  if (A.credit) credits.push("Giọng đọc: " + A.credit + ".");
+  credits.push("Báo do Claude viết tự động, có thể còn chỗ chưa tự nhiên.");
+  $("credit").textContent = credits.join(" ");
+})();
+</script>
+</body>
+</html>

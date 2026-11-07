@@ -4,8 +4,6 @@
 # Trừ các mục sau
 !/.gitignore
 !/*.ankiaddon
-!/kotoba_batake/
-!/giao_trinh/
 !/kotoba_daily/
 !README.md
 !/PHAT_TRIEN.md

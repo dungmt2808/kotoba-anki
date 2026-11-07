@@ -18,3 +18,11 @@ File này giúp các số báo kể tiếp một câu chuyện liền mạch. Cl
 (chưa có kỳ nào)
 - Kỳ 1 (2026-11-01): Lin đến làm ở ことば屋. Với vị khách đầu tiên, Lin nói nhầm お書きします thay vì お書きください và được はなさん nhắc. Nhân vật mới: ông cụ đội mũ (khách trọ).
 - Ông cụ đưa ra tấm bản đồ cũ có vòng tròn đỏ giữa núi và muốn đến đó. Lin hỏi はなさん; はなさん nhìn bản đồ rồi nói nhỏ 「あら、ここは……」 (bỏ ngỏ: chỗ đó là đâu).
+- Kỳ 2 (2026-11-02): Vòng tròn đỏ là chỗ cũ của ことば屋 trong núi, nơi bà của はなさん từng mở quán trọ; nay không còn ai ở. Sáng hôm sau trời mưa, ông cụ định đi nhưng はなさん khuyên ở lại, và lần này Lin nói đúng kính ngữ (お休みください).
+- Ông cụ đưa ra tấm ảnh cũ và nói đang tìm người phụ nữ trong ảnh; người đó có khuôn mặt giống hệt はなさん (bỏ ngỏ: người đó là ai, có phải bà của はなさん không).
+- Kỳ 3 (2026-11-03): Người trong ảnh là bà của はなさん. Trong album cũ có ảnh bà lúc trẻ đứng trước ことば屋 trên núi cùng một cậu bé — chính là ông cụ. Hồi nhỏ ông từng ở đó một mùa hè, bị bà bắt dậy 5 giờ sáng và phụ việc bếp, nhờ vậy mà biết nấu ăn.
+- Ông cụ lấy ra một chiếc chìa khoá nhỏ, nói đã hứa sẽ có ngày trả lại cho bà. Lin thấy trên chìa khoá ghi 「はな」; はなさん sững người: 「えっ、私の名前……？」 (bỏ ngỏ: chìa khoá mở cái gì; tên bà cũng là はな, hay bà để lại cho はなさん; bà còn sống không).
+- Kỳ 4 (2026-11-04): Bà của はなさん cũng tên là はな (はなさん được đặt theo tên bà); bà nay 90 tuổi, sống ở ngoại ô thị trấn, vẫn đi dạo mỗi sáng. はなさん nhớ ra trong phòng trong cùng của quán có một chiếc hộp cũ của bà bị khoá, hồi nhỏ bà dặn không được mở; Lin chạy đi lấy.
+- Ông cụ dùng chìa khoá mở hộp: bên trong có một lá thư cũ đề 「けんちゃんへ」 — tên gọi hồi nhỏ của ông cụ (nay biết ông cụ tên là けん). (Bỏ ngỏ: trong thư viết gì; vì sao bà khoá thư lại và đưa chìa khoá cho cậu bé.)
+- Kỳ 5 (2026-11-05): Ông cụ xin đọc thư ngay tại quán. Thư bà はな viết hồi đó: xin lỗi vì mùa hè bắt dậy sớm, cảm ơn けんちゃん phụ bếp; năm sau ことば屋 sẽ dời từ núi xuống làng; bà gửi けんちゃん giữ chìa khoá hộp và mong lớn lên cậu quay lại gặp bà. Ông cụ khóc, nói đã để bà chờ 60 năm. Lin cũng được giao nghe điện thoại quầy lễ tân buổi tối từ tuần sau (cột của Lin).
+- Lin phát hiện trên nắp hộp có vẽ một cái cây và một vòng tròn đỏ; はなさん nói 「あの地図と同じ丸だわ……」 (bỏ ngỏ: dưới gốc cây ở chỗ ことば屋 cũ trên núi có gì; ông cụ có đi gặp bà はな ở ngoại ô không).
