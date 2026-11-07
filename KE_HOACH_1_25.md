@@ -14,8 +14,8 @@ Trả lời bốn câu hỏi chốt (cùng ngày):
 
 ## 1. Mở rộng nhà một lần: 2.000 xu → cả Bếp lẫn Phòng ngủ
 
-- Tab **Xây nhà** (nhà đã xây xong, bước 7): **một** thẻ "Mở rộng nhà: Bếp + Phòng ngủ · 2.000 xu" (thay hai thẻ của 1.24). Lệnh `home:nha:open` không kèm id; `GardenState.open_rooms()` mở cả hai; bấm đúp → "đã mở rồi", không trừ lần hai.
-- Chưa mở: hai gian bên **cùng tối như nhau**, một biển giá chung "Mở rộng nhà · Bếp + Phòng ngủ · 2.000 xu" (không còn cảnh một bên sáng một bên tối).
+- Tab **Xây nhà** (nhà đã xây xong, bước 7): **một** thẻ "Mở rộng nhà: Bếp + Phòng ngủ · 2.000 xu" (thay hai thẻ của 1.24), tiêu đề nhóm "Mở rộng nhà · một lần mở cả Bếp lẫn Phòng ngủ", ảnh nhỏ là cả nhà 3 gian theo kiểu nhà đang dùng (ảnh phác `125_f_the_mo_rong_nha.png`). Lệnh `home:nha:open` không kèm id; `GardenState.open_rooms()` mở cả hai; bấm đúp → "đã mở rồi", không trừ lần hai.
+- Chưa mở: hai gian bên **cùng tối như nhau**, hai biển giống hệt nhau (đối xứng): dòng 1 tên gian ("Bếp" / "Phòng ngủ"), dòng 2 giá chung "Mở rộng nhà: cả 2 gian · 2.000 xu"; bấm biển bên nào cũng mở cả hai (không còn cảnh một bên sáng một bên tối). Ảnh phác: `docs/ke_hoach_1_25/125_d_*`, `125_e_1366_chua_mo_rong.png`.
 - Dữ liệu giữ nguyên `kotoba_batake_nha` (`rooms`). Đọc dữ liệu 1.24 chỉ có một gian → coi như mở cả hai. 1.24 chưa phát hành (chỉ có trên nhánh thử) nên **không hoàn xu** cho ai đã mở hai gian với giá 4.000.
 - Công cụ test: giữ "Mở Bếp + Phòng ngủ".
 
@@ -28,7 +28,7 @@ Trả lời bốn câu hỏi chốt (cùng ngày):
 |---|---|---|---|
 | Nhà gỗ mái đỏ (classic) | tường kem hồng sọc dọc, xà nâu, sàn gỗ ván, cửa sổ kính rèm hồng | dải gạch men trắng ở nửa dưới tường | viền giấy dán tường hoa nhỏ, rèm dày hơn |
 | Minka mái tranh | tường đất ngà, cột + xà gỗ sẫm, chiếu tatami, cửa sổ shoji | sàn đất nện (doma) thay tatami | tatami + rèm noren ở cửa sổ |
-| Nhà trà chashitsu | tường giấy vàng nhạt, cửa sổ tròn, tatami | sàn gỗ thông, kệ tre vẽ trên tường (nền, không phải đồ) | hốc tường tokonoma vẽ ở nền |
+| Nhà trà chashitsu | tường giấy vàng nhạt, cửa sổ tròn, tatami | sàn gỗ thông, kệ tre 2 tầng vẽ trên tường (hộp trà, chén, bát — nền, không phải đồ) | hốc tường tokonoma vẽ ở nền (tranh cuộn, bậc gỗ, bình hoa) |
 | Lâu đài mini | tường trắng viền vàng, cột đen, sàn gỗ sẫm, cửa sổ shoji khung đen | sàn đá lát xám | thảm đỏ viền vàng vẽ ở sàn (nằm dưới đồ) |
 
 - **Cửa sổ ở cả ba gian**: mỗi gian bên một cửa sổ 2 ô cùng kiểu với phòng chính (Bếp cột 3–4, Phòng ngủ cột 4–5 — đối xứng quanh phòng chính). Ô có cửa sổ không treo được đồ (như phòng chính). Đồ treo tường đang đặt ở các ô đó (từ 1.24) **tự về kho** khi đọc dữ liệu — không mất món.
@@ -44,13 +44,13 @@ Trả lời bốn câu hỏi chốt (cùng ngày):
 
 ## 4. Một nút ẩn dây trang trí mùa ("ruy băng")
 
-- ⚙ → Giao diện → nhóm **Màn chính**: "Dây trang trí mùa: **Hiện** / **Ẩn**" (mặc định Hiện).
+- ⚙ → Giao diện → nhóm **Màn chính**: "Dây trang trí: **Hiện** / **Ẩn** (dải trên cùng, sân, trong nhà)" (mặc định Hiện; nhãn ngắn cho vừa cột như "Cỡ cảnh", "Cảnh hiện").
 - Ẩn: dải trang trí trên cùng cửa sổ (`band`), dây trong cảnh ngoài trời (`garland`), dây trong các gian (`room`). Vẫn giữ: màu trang / trời của giao diện mùa, hạt rơi, đồ theo mùa, nhạc.
 - Lưu ở config `ui` (khoá chung mới, như `scene` / `start`; `more_core.clean_ui` hiểu khoá này) — mỗi máy một lựa chọn, không đồng bộ.
 
 ## 5. Cách làm và kiểm tra
 
-1. Dựng **ảnh phác** 4 kiểu nhà × cả nhà 3 gian (ngày, đêm) bằng hình thật trong Anki để người dùng duyệt màu / điểm nhấn trước khi hoàn thiện; chỉnh theo góp ý.
+1. Dựng **ảnh phác** 4 kiểu nhà × cả nhà 3 gian (ngày, đêm) bằng hình thật trong Anki để người dùng duyệt màu / điểm nhấn trước khi hoàn thiện; chỉnh theo góp ý. **Đã vẽ 07/11, chờ chốt** — xem mục 5a.
 2. Mã:
    - Python: `open_rooms` (một lần, hai gian), cửa sổ gian bên trong `check_spot`, đồ treo ở ô cửa sổ về kho khi đọc, đọc dữ liệu 1.24 một gian → hai gian; `home_catalog` giá + cửa sổ gian bên.
    - JS: nền chung theo kiểu nhà cho cả ba gian (gộp `drawRoom` / `drawSideRoom`, nền theo kiểu ở `nha_art.js`), cửa sổ gian bên, biển giá chung, `drawHouse3` kéo dài + đặt tránh thẻ Hôm nay, `houseRoomAt` theo bố cục mới; `season.js` + `ui.js` nút ẩn dây trang trí.
@@ -59,6 +59,27 @@ Trả lời bốn câu hỏi chốt (cùng ngày):
    - `tests/anki/e2e_125.js` (Anki thật): một thẻ Mở rộng; trước khi mở hai gian cùng tối; sau khi mở cùng sáng; 4 kiểu nhà × 3 gian đổi theo kiểu; dải cảnh không còn vùng gỗ tối ở 1024 / 1366 / 1920 px; thẻ Hôm nay không che đồ Phòng ngủ ở 1366 / 1920 px; nút ẩn dây trang trí (dải trên cùng, sân, trong nhà); cửa sổ 720 × 520.
    - Chạy lại bộ cũ (26.9.4 đầy đủ + 23.10.1), `audit_full` / `audit_edge`; ảnh trước / sau 1.24 ↔ 1.25 (`tools/compare_shots.py … 125`), báo cáo `docs/kiem_thu/1.25/`.
 4. Tài liệu: `PHAT_TRIEN.md` (mục 2.6s, 5.2 nếu đổi dữ liệu, 6 cân bằng xu: mở rộng nhà 2.000 thay 4.000), README, `config.md` (nút ẩn dây trang trí), `tests/README.md`; xoá file kế hoạch này khi xong.
+
+## 5a. Ảnh phác (07/11, chờ người dùng chốt)
+
+Vẽ trong Anki thật 26.9.4 bằng chính hàm vẽ của add-on (`GardenHome._lib()` — cổng chỉ cho test / ảnh phác) + `tests/anki/mock_125_lib.js` (nền 3 gian theo kiểu nhà, phần kéo dài, biển giá), phủ lên dải cảnh ở màn chính thật (thẻ Hôm nay, nút ◂ ▸ vẫn nằm trên). Chạy lại: `KB_SCRIPTS=mock_125.js anki/run_ui.sh ../kotoba_batake OUT` (trong `tests/`, cần `ANKI_PY`). Đồ bày mẫu giống nhau ở cả 4 kiểu; giao diện mùa xem thử "Mùa lá đỏ" để thấy dây trang trí.
+
+Ảnh ở `docs/ke_hoach_1_25/`:
+
+| Ảnh | Nội dung |
+|---|---|
+| `125_00_so_sanh_4_kieu_nha.png` | 4 kiểu nhà xếp chồng (ban ngày, 1920 px) — để so nhanh |
+| `125_a_{classic,minka,teahouse,castle}_ngay.png` | từng kiểu, cả màn chính 1920 × 1080: ba gian ×3 nằm bên trái thẻ Hôm nay, phần dưới thẻ là Phòng ngủ kéo dài, không còn khoảng gỗ tối |
+| `125_b_{classic,minka}_dem.png` | 21 giờ: cửa sổ ba gian cùng tối, đèn sáng quầng |
+| `125_c_an_day_trang_tri.png` | nút "Dây trang trí: Ẩn" — mất dải trên cùng cửa sổ và dây trong nhà; hạt rơi, màu mùa vẫn còn |
+| `125_d_chua_mo_rong{,_minka}.png` | chưa mở rộng: hai gian bên tối như nhau, hai biển đối xứng |
+| `125_e_1366_*.png` | cửa sổ 1366 × 768: cỡ ×2, ba gian vẫn tránh được thẻ Hôm nay; trần cắt bớt 12 điểm ảnh như 1.24 |
+| `125_f_the_mo_rong_nha.png` | tab Xây nhà: một thẻ "Mở rộng nhà: Bếp + Phòng ngủ" 2.000 xu |
+| `125_g_nut_an_day_trang_tri.png` | ⚙ → Giao diện → Màn chính: dòng mới "Dây trang trí: Hiện / Ẩn" (khung đỏ đứt nét = dòng thêm) |
+
+Số đo (1920 px): dải cảnh 1866 × 304 px CSS, phần không bị thẻ che 1575 px → ×3, ba gian rộng 1368 px, kéo dài trái 34 điểm ảnh nghệ thuật, trần thêm 13. 1366 px: 1312 × 152, phần trống 1021 px → ×2.
+
+Còn để ý khi làm thật: nút ◂ Trong nhà ▸ + 📷 ở góc trái dưới vẫn che một phần Bếp (như 1.24) — ở 1366 px che mép bàn ăn; ban đêm phòng chỉ tối nhẹ (cùng công thức `drawNight` của 1.24).
 
 ## 6. Còn mở / để sau
 

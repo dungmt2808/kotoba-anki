@@ -4949,6 +4949,8 @@ var GardenHome = (function () {
     icon: function (id, size) { return SPR[id] ? iconCanvas(SPR[id], size || 40) : null; },
     _state: () => ({ scene: scene, tab: tab, placing: placing, selected: selected, payWait: payWait, peekCode: peekCode }),
     _spotError: spotError,
+    // test / ảnh phác: hàm vẽ nội bộ (không dùng trong giao diện)
+    _lib: () => ({ SPR, P, T, ROOM, SIDE, HOUSE3, box, sprite, drawItem, drawNight, skyColors, skyNow, timeOfDay, lights, SEA, drawWeather }),
     _clickCell: function (x, y) {
       const cv = $("kb-home-canvas"), r = cv.getBoundingClientRect();
       const rc = cellRect(scene, x, y, 1);
