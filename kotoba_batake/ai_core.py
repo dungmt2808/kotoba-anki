@@ -1335,6 +1335,25 @@ def _annotate(plain: str, index: Any, notes: list[str]) -> str:
     return "".join(out)
 
 
+_KANA_CH = re.compile(r"[\u3041-\u3096\u30a1-\u30fa\u30fc]")
+
+
+def _split_kana(surf: str, read: str) -> tuple[str, str, str, str]:
+    """1.23: kana dính trong ngoặc furigana ([お願|ねが]い, [食べ|たべ]る) → đưa ra ngoài ngoặc (thử Gemini thật 08/11: lỗi
+    "cách đọc ねが không khớp phần kana trong お願" lặp lại sau 2 lần sửa, cả số không lưu). Trả (trước, chữ, đọc, sau)."""
+    pre = post = ""
+    # chỉ khi cách đọc KHÔNG có kana đó ([お願|ねが]); [お願|おねが], {お茶|おちゃ|…} hợp lệ thì để nguyên
+    while len(surf) > 1 and _KANA_CH.match(surf[0]) and paper.KANJI_RE.search(surf[1:]) \
+            and not read.startswith(paper.to_hira(surf[0])):
+        pre += surf[0]
+        surf = surf[1:]
+    while len(surf) > 1 and _KANA_CH.match(surf[-1]) and paper.KANJI_RE.search(surf[:-1]) \
+            and not read.endswith(paper.to_hira(surf[-1])):
+        post = surf[-1] + post
+        surf = surf[:-1]
+    return pre, surf, read, post
+
+
 def _fix_jp(text: Any, scope_keys: set[str], new_keys: set[str], notes: list[str],
             linker: Callable[[str, str, str], str | None] | None = None, index: Any = None) -> Any:
     if not isinstance(text, str):
@@ -1361,13 +1380,19 @@ def _fix_jp(text: Any, scope_keys: set[str], new_keys: set[str], notes: list[str
                 out.append(surf)
                 continue
             read = paper.to_hira(read) if KANA_ONLY_RE.match(read or "x") else read
-            nxt = toks[i + 1][1] if i + 1 < len(toks) and toks[i + 1][0] == "plain" else ""
+            pre, surf2, read2, post = _split_kana(surf, read) if KANA_ONLY_RE.match(read or "x") else ("", surf, read, "")
+            if pre or post:
+                notes.append("đưa kana ra ngoài ngoặc furigana")
+                surf, read = surf2, read2
+            nxt = post + (toks[i + 1][1] if i + 1 < len(toks) and toks[i + 1][0] == "plain" else "")
             key = linker(surf, read, nxt) if linker and read and KANA_ONLY_RE.match(read) else None
+            out.append(pre)
             if key:
                 notes.append("nối tra từ cho từ đã học")
                 out.append("{%s|%s|%s}" % (surf, read, key))
             else:
                 out.append("[%s|%s]" % (surf, read))
+            out.append(post)
         else:
             surf, read, key = t[1].strip(), t[2].strip(), t[3].strip()
             nk = paper.norm_key(key)
@@ -1375,7 +1400,10 @@ def _fix_jp(text: Any, scope_keys: set[str], new_keys: set[str], notes: list[str
                 notes.append("bỏ liên kết tra từ của từ ngoài phạm vi %s" % key)
                 out.append("[%s|%s]" % (surf, read) if paper.KANJI_RE.search(surf) and read else surf)
             else:
-                out.append("{%s|%s|%s}" % (surf, read, key))
+                pre, surf2, read2, post = _split_kana(surf, read) if KANA_ONLY_RE.match(read or "x") else ("", surf, read, "")
+                if pre or post:
+                    notes.append("đưa kana ra ngoài ngoặc furigana")
+                out.append(pre + "{%s|%s|%s}" % (surf2, read2, key) + post)
     return "".join(out)
 
 

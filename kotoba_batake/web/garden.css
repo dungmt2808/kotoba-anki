@@ -1956,3 +1956,4 @@ button { cursor: pointer; }
 .kb-view-kho-c { color: #5b5470; }
 body.kb-viewing { overflow: hidden; }
 .kb-yard-view { font-size: 12px; }
+.kb-h-viewbtn { position: absolute; right: 8px; top: 8px; z-index: 2; font-size: 12px; }

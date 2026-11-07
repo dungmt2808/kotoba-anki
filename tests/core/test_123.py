@@ -259,6 +259,16 @@ old_fmt = [{"ky": 1, "ngay": "2026-11-01", "tom_tat": "cũ"}]
 ai._write_json(os.path.join(sd4, "truyen.json"), old_fmt)
 ok(story.load_story(sd4)[0]["tom_tat"] == "cũ", "đọc được truyen.json định dạng cũ (1.22)")
 
+print("== máy tự đưa kana ra ngoài ngoặc furigana (thử thật 08/11: [お願|ねが] làm cả số không lưu)")
+fx = lambda t: ai._fix_jp(t, {"お茶"}, set(), [])
+ok(fx("[お願|ねが]いします") == "お[願|ねが]いします" and fx("[ご飯|はん]") == "ご[飯|はん]" and fx("[食べ|た]ます") == "[食|た]べます",
+   "[お願|ねが] → お[願|ねが], [ご飯|はん] → ご[飯|はん], [食べ|た] → [食|た]べ")
+ok(fx("[お願|おねが]いします") == "[お願|おねが]いします" and fx("{お茶|おちゃ|お茶}を") == "{お茶|おちゃ|お茶}を"
+   and fx("[取り消し|とりけし]") == "[取り消し|とりけし]", "cách đọc đã có kana đó thì để nguyên")
+ok(not any("không khớp phần kana" in e for e in ai.check({"bai": [{"loai": "tin_lang", "tieu_de": "[村|むら]",
+                                                                  "doan": [ai._fix_jp("よろしく[お願|ねが]いします。", set(), set(), [])]}]},
+                                                        {"tu_vung": []}, {"short": True}).errors), "sau khi tự sửa: hết lỗi")
+
 shutil.rmtree(TMP, ignore_errors=True)
 print("\nKẾT QUẢ: " + ("TẤT CẢ OK" if not FAIL else "%d LỖI" % len(FAIL)))
 sys.exit(1 if FAIL else 0)
