@@ -1089,6 +1089,12 @@ def check(raw: Any, scope: dict[str, Any], opts: dict[str, Any]) -> Report:
     plain = opts.get("story_plain")
     if plain and story_seen and not short:      # 1.23: truyện đã viết + biên tập sẵn → bài truyện phải chép đúng
         sb = next(b for b in bai if isinstance(b, dict) and b.get("loai") == "truyen")
+        # 1.23 (thử thật 07/11): bước soát của Flash-Lite đổi gần hết chữ Hán của truyện sang kana (げんきな声, おちゃ…)
+        k_plain = len(paper.KANJI_RE.findall("".join(plain["doan"])))
+        k_now = len(paper.KANJI_RE.findall("".join(paper.surface(p) for p in sb.get("doan") or [] if isinstance(p, str))))
+        if k_plain >= 10 and k_now < 0.6 * k_plain:
+            rep.err("bai[truyen]", "bài truyện còn %d / %d chữ Hán của bản đã duyệt — giữ chữ Hán (thêm furigana), "
+                    "không đổi sang kana" % (k_now, k_plain))
         # 0,75: bước soát được phép sửa lỗi nhỏ (vd. chữ Hán khó → kana), chép sai / viết lại cả bài thì thấp hơn nhiều
         if story_core.story_matches(sb.get("doan") or [], plain["doan"]) < 0.75:
             rep.err("bai[truyen]", "bài truyện phải chép NGUYÊN VĂN truyện đã viết sẵn (chỉ thêm đánh dấu furigana, không sửa "

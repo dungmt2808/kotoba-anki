@@ -517,17 +517,22 @@ def check_story(st: Any, lang: str, level: str, bad_kanji: Any = None) -> tuple[
             warns.append(where + ": độ dài %d (nên %d–%d)" % (n, lo, hi))
     if len(doan) != 3:
         warns.append("doan: nên đúng 3 đoạn")
+    # từ mới chỉ là phần phụ: mục hỏng thì bỏ mục đó, không bỏ cả bản truyện (thử thật 07/11, Flash-Lite hai lần ghi
+    # cách đọc 郵便屋さん bằng romaji → cả truyện rơi về "viết chung")
     tm = st.get("tu_moi") if isinstance(st.get("tu_moi"), list) else []
-    if len(tm) > 2:
-        errs.append("tu_moi: tối đa 2 từ mới")
+    good = []
     for w in tm:
         if not isinstance(w, dict) or not _str(w.get("w"), 40) or not _str(w.get("m"), 120):
-            errs.append("tu_moi: cần w và m")
-            continue
-        if lang != "en" and paper.KANJI_RE.search(w["w"]) and not KANA_RE.match(_str(w.get("r"), 60)):
-            errs.append('tu_moi "%s": cách đọc r phải là kana (không romaji)' % w["w"])
-        if not VI_RE.search(w["m"]) or CJK_RE.search(w["m"]):
-            errs.append('tu_moi "%s": nghĩa m viết tiếng Việt' % w["w"])
+            warns.append("tu_moi: bỏ mục thiếu w / m")
+        elif lang != "en" and paper.KANJI_RE.search(w["w"]) and not KANA_RE.match(_str(w.get("r"), 60)):
+            warns.append('tu_moi "%s": bỏ (cách đọc r không phải kana)' % w["w"])
+        elif not VI_RE.search(w["m"]) or CJK_RE.search(w["m"]):
+            warns.append('tu_moi "%s": bỏ (nghĩa m không phải tiếng Việt)' % w["w"])
+        else:
+            good.append(w)
+    if len(good) > 2:
+        warns.append("tu_moi: tối đa 2 từ mới (bỏ bớt)")
+    st["tu_moi"] = good[:2]
     if clean_translation(st.get("dich"), len(doan)) is None:
         warns.append("dich: bản dịch thiếu / sai (không có nút Dịch cho truyện)")
     nho = st.get("nho") if isinstance(st.get("nho"), dict) else {}
@@ -671,7 +676,7 @@ _HAN = re.compile(r"[\u3400-\u9fff\uf900-\ufaff々]")
 
 def _norm_story(s: str) -> str:
     import unicodedata
-    return paper.to_hira(_KEEP_CH.sub("", unicodedata.normalize("NFKC", s or "")))
+    return _KEEP_CH.sub("", unicodedata.normalize("NFKC", s or ""))       # giữ katakana: ピクセル ≠ ぴくせる
 
 
 _HONOR = ("さん", "さま", "様", "ちゃん", "くん", "君")
@@ -685,9 +690,6 @@ def _ok_op(x: str, y: str, b: str, j1: int, j2: int, toks: list[Any]) -> bool:
         return True                                 # chữ Hán → kana (封筒 → ふうとう)
     if x and y and _HAN.search(x) and not _HAN.search(y) and len(x) <= len(y):
         return True                                 # kana → chữ Hán (なに → 何)
-    if x and y and _HAN.search(x) and _HAN.search(y) and len(x) <= 2 and len(y) <= 2 \
-            and not _HAN.sub("", x) and not _HAN.sub("", y):
-        return True                                 # đổi 1–2 chữ Hán (去年 → 昨年)
     if (not y and x in _HONOR) or (not x and y in _HONOR):
         return True                                 # thêm / bớt kính xưng (村長 → 村長さん)
     if not x and len(y) <= 2 and 0 < j1 and j2 < len(b) and _HAN.match(b[j1 - 1]) and _HAN.match(b[j2]) \
@@ -699,7 +701,7 @@ def _ok_op(x: str, y: str, b: str, j1: int, j2: int, toks: list[Any]) -> bool:
 def story_diffs(raw_doan: list[str], plain: list[str]) -> list[tuple[int, list[tuple[str, str]]]]:
     """1.23 (thử Gemini thật 07/11: lượt viết số chép "落とした古い手紙を急いで拾い上げました" thành "落てしまいました",
     "驚いた" thành "驚った"): các chỗ bài truyện trong số báo chép SAI bản đã duyệt, theo từng đoạn. Bỏ qua chỗ đổi chữ Hán
-    ↔ kana (bước soát được phép), dấu câu, katakana ↔ hiragana, số toàn khổ, kính xưng. Trả [(đoạn, [(gốc, chép), …]), …]."""
+    ↔ kana (bước soát được phép), dấu câu, số toàn khổ, kính xưng. Trả [(đoạn, [(gốc, chép), …]), …]."""
     import difflib
     out: list[tuple[int, list[tuple[str, str]]]] = []
     if len(raw_doan) != len(plain):
@@ -719,25 +721,26 @@ def story_diffs(raw_doan: list[str], plain: list[str]) -> list[tuple[int, list[t
 def _nc(c: str) -> str:
     import unicodedata
     n = unicodedata.normalize("NFKC", c)
-    return paper.to_hira(n if len(n) == 1 else c)
+    return n if len(n) == 1 else c
 
 
 def restore_story(p: str, o: str) -> str:
-    """1.23: máy tự chép lại cho đúng bản đã duyệt những chỗ sai nằm NGOÀI ngoặc furigana và không cần thêm chữ Hán
-    ([驚|おどろ]った → [驚|おどろ]いた, [話|はな][始|はじ]め → [話|はな]し[始|はじ]め). Đoạn có chỗ cần chữ Hán mới thì để
-    nguyên cả đoạn (story_diffs vẫn báo cho Gemini chép lại). Trả đoạn đã vá (hoặc nguyên như cũ)."""
+    """1.23: máy tự chép lại cho đúng bản đã duyệt những chỗ sai máy vá chắc được (thử Gemini thật 07/11, Flash-Lite):
+    ngoài ngoặc, không cần chữ Hán mới ([驚|おどろ]った → いた, [話|はな][始|はじ]め → [話|はな]し[始|はじ]め, ぴくせる → ピクセル);
+    đuôi kana trong ngoặc mà cách đọc cũng có ([言い直す|いいなおす]ました → [言い直し|いいなおし]ました). Chỗ không vá được
+    mà mất cả cụm, hoặc nằm sát chỗ cần vá, thì để nguyên cả đoạn (story_diffs vẫn báo). Trả đoạn đã vá (hoặc như cũ)."""
     import difflib
     if not isinstance(p, str) or not isinstance(o, str):
         return p
-    units: list[tuple[str, str]] = []            # (chữ gốc trong bài, mặt chữ) — ngoặc furigana là một khối
+    units: list[tuple[str, str, Any]] = []       # (chữ gốc trong bài, mặt chữ, khớp ngoặc) — ngoặc là một khối
     pos = 0
     for m in paper.TOKEN_RE.finditer(p):
-        units += [(c, c) for c in p[pos:m.start()]]
-        units.append((m.group(0), m.group(4) if m.group(4) is not None else m.group(1)))
+        units += [(c, c, None) for c in p[pos:m.start()]]
+        units.append((m.group(0), m.group(4) if m.group(4) is not None else m.group(1), m))
         pos = m.end()
-    units += [(c, c) for c in p[pos:]]
+    units += [(c, c, None) for c in p[pos:]]
     a, amap, ustart = [], [], []
-    for u, (_, surf) in enumerate(units):
+    for u, (_, surf, _) in enumerate(units):
         ustart.append(len(a))
         for c in surf:
             a.append(_nc(c))
@@ -745,23 +748,50 @@ def restore_story(p: str, o: str) -> str:
     A, B = "".join(a), "".join(_nc(c) for c in o)
     toks = [t for t in paper.tokenize(p) if t[0] != "plain"]
     edge = lambda i: i == len(A) or ustart[amap[i]] == i      # noqa: E731 — vị trí nằm giữa hai khối
-    edits = []
+    uend = lambda u: ustart[u] + len(units[u][1])            # noqa: E731
+    edits: list[tuple[int, int, str]] = []
+    skipped: list[tuple[int, int]] = []
     for tag, i1, i2, j1, j2 in difflib.SequenceMatcher(None, A, B, autojunk=False).get_opcodes():
         if tag == "equal":
             continue
-        x, y = _KEEP_CH.sub("", A[i1:i2]), _KEEP_CH.sub("", B[j1:j2])
+        x, y, text = _KEEP_CH.sub("", A[i1:i2]), _KEEP_CH.sub("", B[j1:j2]), o[j1:j2]
         if _ok_op(x, y, B, j1, j2, toks):
             continue
-        if _HAN.search(o[j1:j2]) or not (edge(i1) and edge(i2)):
-            return p            # có chỗ máy không vá được (thiếu cả câu có chữ Hán…) → để nguyên, báo Gemini chép lại cả đoạn
-        edits.append((amap[i1] if i1 < len(A) else len(units), amap[i2] if i2 < len(A) else len(units), o[j1:j2]))
+        if not _HAN.search(text) and edge(i1) and edge(i2):
+            edits.append((amap[i1] if i1 < len(A) else len(units), amap[i2] if i2 < len(A) else len(units), text))
+            continue
+        u = amap[i1] if i1 < len(A) else -1
+        m = units[u][2] if u >= 0 else None
+        tail = A[i1:i2]
+        if m is not None and i2 > i1 and i2 == uend(u) and not _HAN.search(text) \
+                and re.fullmatch(r"[\u3041-\u3096]+", tail) and re.fullmatch(r"[\u3041-\u3096]*", text):
+            ruby = m.group(4) is not None
+            read = m.group(5) if ruby else m.group(2)
+            if read.endswith(tail):                 # đuôi kana trong ngoặc, cách đọc cũng có → sửa cả hai
+                surf2, read2 = units[u][1][:i1 - ustart[u]] + text, read[:len(read) - len(tail)] + text
+                if not paper.KANJI_RE.search(surf2):
+                    edits.append((u, u + 1, surf2))    # ngoặc chỉ có kana ({みんなで|みんなで|…}) → chữ trơn
+                    continue
+                raw = "[%s|%s]" % (surf2, read2) if ruby else "{%s|%s|%s}" % (surf2, read2, m.group(3))
+                edits.append((u, u + 1, raw))
+                continue
+        if len(y) - len(x) >= 3 or len(x) + len(y) >= 6:
+            return p            # mất / viết lại cả cụm mà máy không vá được → để nguyên, báo Gemini chép lại cả đoạn
+        skipped.append((i1, i2))
     if not edits:
         return p
+    spans = []
+    for u1, u2, _ in edits:
+        st = ustart[u1] if u1 < len(units) else len(A)
+        spans.append((st, uend(u2 - 1) if u2 > u1 else st))
+    for e1, e2 in skipped:      # chỗ không vá nằm sát chỗ vá (微笑み → 笑い) → vá dở dễ sai cách đọc: để nguyên cả đoạn
+        if any(st - 2 <= e2 and e1 <= en + 2 for st, en in spans):
+            return p
     out, u = [], 0
-    for u1, u2, text in edits:
-        out += [r for r, _ in units[u:u1]] + [text]
+    for u1, u2, text in sorted(edits):
+        out += [r for r, _, _ in units[u:u1]] + [text]
         u = u2
-    out += [r for r, _ in units[u:]]
+    out += [r for r, _, _ in units[u:]]
     return "".join(out)
 
 

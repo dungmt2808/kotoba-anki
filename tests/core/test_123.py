@@ -245,8 +245,10 @@ ok(res4.get("ok") and "KHÔNG có truyện" in fo.asked[0][1] and len(fo.asked) 
 print("== máy kiểm tra truyện / bản dịch")
 e, _w = story.check_story(dict(PLAIN, doan=["リンさんは watashi です" * 5] * 3), "ja", "N4", ai._bad_kanji)
 ok(any("romaji" in x for x in e), "romaji trong truyện → lỗi")
-e, _w = story.check_story(dict(PLAIN, tu_moi=[{"w": "落とし物", "r": "otoshimono", "m": "đồ đánh rơi"}]), "ja", "N4", ai._bad_kanji)
-ok(any("kana" in x for x in e), "từ mới đọc bằng romaji (thử thật: \"orugōru\") → lỗi")
+tm_st = dict(PLAIN, tu_moi=[{"w": "落とし物", "r": "otoshimono", "m": "đồ đánh rơi"}, {"w": "鍵", "r": "かぎ", "m": "chìa khoá"}])
+e, _w = story.check_story(tm_st, "ja", "N4", ai._bad_kanji)
+ok(not e and any("kana" in x for x in _w) and tm_st["tu_moi"] == [{"w": "鍵", "r": "かぎ", "m": "chìa khoá"}],
+   "từ mới đọc bằng romaji (thử thật: \"orugōru\", 郵便屋さん) → bỏ mục đó, không bỏ cả bản truyện")
 ok(story.clean_translation(["U哇, cái hộp!"], 1) is None, "bản dịch lọt chữ Trung (thử thật: \"U哇\") → bỏ")
 ok(story.clean_translation(["Lin chào はなさん ở ことば屋 rồi cùng スタックちゃん đi."], 1) == ["Lin chào Hana ở quán Kotoba rồi cùng Stack-chan đi."],
    "tên riêng để chữ Nhật trong bản dịch (thử thật: cả bài mất nút Dịch) → đổi sang chữ Latin")
@@ -268,6 +270,15 @@ ok(story.restore_story("[話|はな][始|はじ]めました。[村長|そんち
    and story.restore_story("はなさんは[驚|おどろ]ったような[顔|かお]。", "はなさんは驚いたような顔。") == "はなさんは[驚|おどろ]いたような[顔|かお]。"
    and story.restore_story("それと{見|み|見る}て", "それを見て") == "それを{見|み|見る}て",
    "máy tự chép lại chỗ sai ngoài ngoặc (話し始め, 驚いた, それを); thêm さん thì để nguyên")
+ok(story.restore_story("「あ、いらっしゃいませ！」と[言い直す|いいなおす]ました。", "「あ、いらっしゃいませ！」と言い直しました。")
+   == "「あ、いらっしゃいませ！」と[言い直し|いいなおし]ました。"
+   and story.restore_story("そのぴくせる[画|が]を[見|み]て", "そのピクセル画を見て") == "そのピクセル[画|が]を[見|み]て"
+   and story.restore_story("[言|い]って{みんなで|みんなで|みんなで}[困|こま]らせてしまいました。", "言ってみんなを困らせました。")
+   == "[言|い]ってみんなを[困|こま]らせました。",
+   "vá đuôi kana trong ngoặc (言い直すました → 言い直しました), katakana bị đổi sang hiragana (ぴくせる → ピクセル)")
+ok(story.restore_story("「どこで[聞|き]ましたか」", "「どこで見ましたか」") == "「どこで[聞|き]ましたか」"
+   and story.story_diffs(["「どこで[聞|き]ましたか」"], ["「どこで見ましたか」"]) == [(0, [("見", "聞")])],
+   "đổi chữ Hán (見 → 聞) máy không vá được nhưng vẫn báo (trước đây \"đổi 1–2 chữ Hán\" được bỏ qua)")
 ok(story.restore_story("[郵便屋|ゆうびんや]さんは[落|お]てしまいました。", PL[0]) == "[郵便屋|ゆうびんや]さんは[落|お]てしまいました。",
    "đoạn thiếu cả câu có chữ Hán → không vá dở, để Gemini chép lại")
 def story_errs(doan0):
@@ -278,6 +289,17 @@ def story_errs(doan0):
            "cau_hoi": [], "chinh_ta": [], "mau_cau": [], "tu_moi": []}
     r = ai.check(raw, {"trinh_do": "N4", "tu_vung": [], "ngu_phap": []}, {"story_plain": plain, "ky": 1})
     return [e for e in r.errors if "chép sai truyện" in e], [w for w in r.warnings if "chép sai truyện" in w]
+KJ = {"tieu_de": "朝", "doan": ["今日は元気な声で朝の挨拶をしました。", "お茶を急いで運んで、大きな音を立てました。", "外の窓から風鈴の音が聞こえました。"]}
+def kanji_err(doan):
+    raw = {"bai": [{"loai": "tin_lang", "tieu_de": "[村|むら]", "doan": ["[村|むら]です。"]}, {"loai": "truyen", "ky": 1, "tieu_de": "[朝|あさ]",
+                                                                                             "doan": doan}],
+           "cau_hoi": [], "chinh_ta": [], "mau_cau": [], "tu_moi": []}
+    return any("chữ Hán của bản đã duyệt" in e for e in ai.check(raw, {"trinh_do": "N4", "tu_vung": [], "ngu_phap": []},
+                                                                 {"story_plain": KJ, "ky": 1}).errors)
+ok(kanji_err(["きょうはげんきなこえであさのあいさつをしました。", "おちゃをいそいではこんで、おおきなおとをたてました。", "そとのまどからふうりんのおとがきこえました。"])
+   and not kanji_err(["[今日|きょう]は[元気|げんき]な[声|こえ]で[朝|あさ]のあいさつをしました。", "お[茶|ちゃ]を[急|いそ]いで[運|はこ]んで、[大|おお]きな[音|おと]を[立|た]てました。",
+                      "[外|そと]の[窓|まど]から[風鈴|ふうりん]の[音|おと]が[聞|き]こえました。"]),
+   "bước soát đổi gần hết chữ Hán của truyện sang kana (thử thật: 11 / 43) → lỗi; đổi vài chữ (挨拶 → あいさつ) thì được")
 e1, w1 = story_errs("[郵便屋|ゆうびんや]さんは[落|お]てしまいました。")
 ok(len(e1) == 1 and len(w1) == 1, "mất cả cụm (落てしまいました) → lỗi; đổi chữ nhỏ (笑い → 微笑み) → chỉ cảnh báo, không chặn số báo")
 ok(paper.clean_issue(saved, "2026-11-07")["bai"][1]["dich"] == st_art["dich"], "clean_issue giữ bản dịch hợp lệ")
