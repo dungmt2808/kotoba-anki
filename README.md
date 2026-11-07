@@ -34,11 +34,13 @@ Trời còn đổi theo giờ thật (sáng, hoàng hôn, đêm có đèn lồng
 
 ### Nhà & Cửa hàng
 
-Xây nhà từng bước, từ bãi đất trống tới gác mái có đèn lồng, rồi đổi kiểu nhà (nhà mái tranh minka, nhà trà chashitsu, lâu đài mini). Trang trí sân, bày nội thất, nuôi thú, mở thêm 6 vùng mới như bãi biển hay đền thần. Thỉnh thoảng có **khách ghé vườn**, như chim sẻ, cáo hay hươu Nara, tuỳ đồ bạn đặt và tuỳ mùa. Khách đã gặp được ghi vào Album khách.
+Xây nhà từng bước, từ bãi đất trống tới gác mái có đèn lồng, rồi đổi kiểu nhà (nhà mái tranh minka, nhà trà chashitsu, lâu đài mini). Xây xong thì **mở rộng nhà** thêm **Bếp** và **Phòng ngủ** hai bên phòng chính (2.000 xu mỗi gian), với 12 món đồ riêng như tủ lạnh, nồi cơm, giường, đèn ngủ, dây đèn sao; ở màn chính bấm ◂ ▸ sang cảnh **Trong nhà** để thấy cả ba gian, mèo đi lại khắp nhà. Trang trí sân, bày nội thất, nuôi thú, mở thêm 6 vùng mới như bãi biển hay đền thần. Thỉnh thoảng có **khách ghé vườn**, như chim sẻ, cáo hay hươu Nara, tuỳ đồ bạn đặt và tuỳ mùa. Khách đã gặp được ghi vào Album khách.
 
 | Sân vườn | Trong nhà |
 |---|---|
 | ![Nhà & Cửa hàng, tab Trang trí sân](docs/anh/03_nha_trang_tri.png) | ![Trong nhà: kotatsu, bể cá, kệ sách, đèn andon, mèo ngủ](docs/anh/16_trong_nha.png) |
+
+![Nhà 3 gian ở màn chính: Bếp, phòng chính, Phòng ngủ](docs/anh/18_nha_3_gian.png)
 
 Muốn dải cảnh ở màn chính to hơn: ⚙ → Giao diện → Màn chính → Cỡ cảnh **Lớn**.
 

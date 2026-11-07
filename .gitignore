@@ -11,6 +11,7 @@
 !/KE_HOACH_*.md
 !/docs/
 !/tests/
+!/kotoba_batake/
 
 # không đưa file sinh ra khi chạy test
 __pycache__/

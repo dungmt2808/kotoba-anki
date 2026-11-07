@@ -143,6 +143,22 @@ def build_house() -> None:
     _refresh()
 
 
+def open_rooms() -> None:
+    """1.24: xây xong nhà + mở cả Bếp và Phòng ngủ (không trừ xu)."""
+    m = kb()
+    if not hasattr(m.core, "SIDE_IDS"):
+        tooltip("Bản ことば畑 này chưa có nhà 3 gian (từ 1.24).")
+        return
+    d = m.STATE.load()
+    d["home"]["house"] = len(m.core.HOUSE_LEVELS) - 1
+    d["home"]["rooms"] = list(m.core.SIDE_IDS)
+    for sid in m.core.SIDE_IDS:
+        d["home"].setdefault(sid, [])
+    m.STATE.save(d)
+    _log("mở cả Bếp và Phòng ngủ")
+    _refresh()
+
+
 def open_zones() -> None:
     m = kb()
     d = m.STATE.load()
@@ -256,7 +272,7 @@ def _menu() -> None:
         ("+1.000 xu", lambda: add_coins(1000)), ("+100.000 xu", lambda: add_coins(100000)),
         ("+1.000.000 xu", lambda: add_coins(1000000)),
         ("Đưa ví về 0 xu", lambda: askUser("Đưa ví về 0 xu?") and add_coins(0)), None,
-        ("Xây xong nhà", build_house), ("Mở hết vùng", open_zones), ("Mở hết giao diện mùa", open_seasons), None,
+        ("Xây xong nhà", build_house), ("Mở Bếp + Phòng ngủ (nhà 3 gian)", open_rooms), ("Mở hết vùng", open_zones), ("Mở hết giao diện mùa", open_seasons), None,
         ("Xoá số báo Gemini hôm nay", delete_today),
         ("Giả lập thư mục kotoba_daily mất", lambda: hide_claude(True)),
         ("Giả lập thư mục kotoba_daily có lại", lambda: hide_claude(False)),

@@ -1751,7 +1751,7 @@ class GardenDialog(QDialog):
             css=[f"{WEB_BASE}/garden.css"],
             js=[
                 f"{WEB_BASE}/diag.js", f"{WEB_BASE}/icons.js", f"{WEB_BASE}/sky.js", f"{WEB_BASE}/season.js", f"{WEB_BASE}/fx.js", f"{WEB_BASE}/music.js",
-                f"{WEB_BASE}/games.js", f"{WEB_BASE}/fields.js", f"{WEB_BASE}/season_art.js", f"{WEB_BASE}/rare_art.js", f"{WEB_BASE}/pets.js", f"{WEB_BASE}/guests.js",
+                f"{WEB_BASE}/games.js", f"{WEB_BASE}/fields.js", f"{WEB_BASE}/season_art.js", f"{WEB_BASE}/rare_art.js", f"{WEB_BASE}/nha_art.js", f"{WEB_BASE}/pets.js", f"{WEB_BASE}/guests.js",
                 f"{WEB_BASE}/home.js", f"{WEB_BASE}/craft.js", f"{WEB_BASE}/paper.js", f"{WEB_BASE}/seeds.js",
                 f"{WEB_BASE}/joy.js", f"{WEB_BASE}/ui.js", f"{WEB_BASE}/calendar.js", f"{WEB_BASE}/garden.js",
             ],
@@ -2634,6 +2634,7 @@ class GardenDialog(QDialog):
             ("face", "buy"): STATE.buy_face, ("face", "toggle"): STATE.toggle_face,
             ("craft", "copy"): STATE.craft_copy, ("craft", "del"): STATE.craft_delete,
             ("myseed", "del"): STATE.myseed_delete,
+            ("nha", "open"): STATE.open_room,       # 1.24: mở rộng nhà (Bếp / Phòng ngủ)
         }
         regrow = False   # đổi giống cây → dựng lại ruộng
         try:

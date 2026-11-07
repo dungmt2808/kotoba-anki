@@ -959,7 +959,7 @@ button { cursor: pointer; }
 
 /* ---- v1.4: vùng mới, kiểu nhà, tủ đồ, xưởng chế tác ---- */
 .kb-home { position: relative; }
-.kb-h-scenes { flex-wrap: wrap; }
+.kb-h-scenes { flex-wrap: wrap; flex: 1 1 0; min-width: 0; }    /* 1.24: nhiều gian / vùng thì nút cảnh xuống dòng trong hàng của mình, Ví · Chụp ảnh · Thoát giữ bên phải */
 .kb-h-scenes .kb-btn { margin-left: 0; }
 .kb-h-scene-lock { background: #e9e9f2; }
 .kb-h-list { height: clamp(170px, calc(100vh - 720px), 420px); }

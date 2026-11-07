@@ -295,6 +295,16 @@ st.save(d); kb._dialog.refresh(); result = q["list"]`);
     for (const it of C.items.filter((i) => i.scene === 'yard' && !i.season && !i.rare && !i.custom)) { await openHome('yard'); await buyItem(it); }
     await openHome('yard', 'yard'); await shot('03_tab_trang_tri_san', 'mua hết, “Đã có”');
   });
+  await phase('Mở rộng nhà (1.24: Bếp, Phòng ngủ)', async () => {
+    for (const rm of (C.rooms || [])) {
+      await openHome('build');
+      const c0 = await coins();
+      const r = await js(`const c = document.querySelector('.kb-h-room[data-room="${rm.id}"]'); if (!c) return null; const b = c.querySelector(".kb-h-buy"); if (!b || b.disabled) return b ? "khoá" : null; b.click(); return b.textContent;`);
+      const got = await waitPy(`result = ${JSON.stringify(rm.id)} in (st.load()["home"].get("rooms") or [])`);
+      ok(got && c0 - (await coins()) === rm.price, 'Mở rộng nhà: ' + rm.name + ' ' + rm.price + ' xu' + (r === 'Mở rộng' ? '' : ' — ' + r));
+    }
+    await openHome('build'); await shot('03b_mo_rong_nha', 'hai gian đã mở');
+  });
   await phase('Nội thất (mọi món, đặt trong phòng)', async () => {
     await openHome('room', 'room');
     for (const it of C.items.filter((i) => i.scene === 'room' && !i.season && !i.rare && !i.custom)) { await openHome('room'); await buyItem(it); }
