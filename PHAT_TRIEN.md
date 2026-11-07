@@ -8,7 +8,9 @@ Cập nhật: 2026-11-07. Add-on **1.25.0** (1.25.0: **nhà 3 gian làm lại** 
 
 ## 0. Đọc nhanh (cho phiên chat mới)
 
-> **Không có việc đang chờ (07/11/2026).** 1.25.0 đã làm nhà 3 gian làm lại (mục 2.6s; `KE_HOACH_1_25.md` đã xoá, ảnh phác 3 lượt duyệt ở `docs/ke_hoach_1_25/`). Ý tưởng sự kiện hằng ngày (chưa chốt): `KE_HOACH_Y_TUONG_HANG_NGAY.md`.
+> **Việc đang chờ (07/11/2026): bản 1.26 theo `KE_HOACH_1_26.md`** — màn chào khi mở vườn (thú nuôi ra chào, lần mở đầu mỗi ngày Anki, chưa nuôi thú thì StackChan), hiệu ứng chuyển cảnh kiểu game pixel cũ, Bảng tin làng. Làm ảnh phác cho người dùng duyệt trước. **Lộ trình đã chốt**: 1.26 chào + chuyển cảnh + Bảng tin · 1.27 cây lấp lánh, quẻ, lịch trời Nhật + 歳時記, mốc học · 1.28 nhặt đồ + Hộp sưu tầm, gánh hàng rong · 1.29 Nhạc làng + thêm hiệu ứng (người dùng: "nhằm FOMO lành mạnh, dễ thương, chill").
+>
+> ~~Không có việc đang chờ (07/11/2026).~~ 1.25.0 đã làm nhà 3 gian làm lại (mục 2.6s; `KE_HOACH_1_25.md` đã xoá, ảnh phác 3 lượt duyệt ở `docs/ke_hoach_1_25/`). Ý tưởng sự kiện hằng ngày (chưa chốt): `KE_HOACH_Y_TUONG_HANG_NGAY.md`.
 >
 > ~~Việc đang chờ (07/11/2026): bản 1.25 theo `KE_HOACH_1_25.md`~~ (đã làm ở 1.25.0, mục 2.6s).
 >
@@ -620,6 +622,7 @@ Add-on chỉ **ghi đúng một file** trong `bao_dir`: `tien_do.json`. Báo Gem
 
 ## 7. Quyết định đã chốt (đừng đảo ngược khi chưa hỏi người dùng)
 
+- **Lộ trình sau 1.25 (người dùng chốt 07/11)**: 1.26 màn chào (thú nuôi ra chào lần mở đầu mỗi ngày, StackChan khi chưa nuôi thú) + hiệu ứng chuyển cảnh + Bảng tin làng; 1.27 cây lấp lánh, rút quẻ, lịch trời Nhật + 歳時記, kỷ niệm & mốc học; 1.28 nhặt đồ theo vùng + Hộp sưu tầm, gánh hàng rong; 1.29 Nhạc làng (chuông làng tự soạn, nhạc theo buổi) + thêm hiệu ứng. Không làm: radio (trùng báo), thư trong hòm thư, ngày này năm trước, chấm điểm vườn (người dùng chưa chọn). Mọi ý theo luật "FOMO lành mạnh" (`KE_HOACH_Y_TUONG_HANG_NGAY.md` mục 1): lỡ không mất gì, không chuỗi mới, không đếm ngược, tắt được.
 - **Nhà 3 gian (1.25, người dùng chốt qua 3 lượt ảnh phác 07/11)**: mở rộng nhà **một lần** cho cả hai gian (không bán lẻ từng gian — "một bên sáng một bên mờ nhìn rất kỳ"); ba gian **cùng nền theo kiểu nhà + mỗi gian bên một điểm nhấn**, đổi kiểu nhà đổi cả ba gian; **chỉ phòng chính có cửa sổ**; màn chính theo **bố cục A** (nhà giữa dải như 1.24, hai bên là vườn, mái phía trên — không kéo dài gian bên, không đẩy nhà lệch tránh thẻ Hôm nay, không thu gọn thẻ Hôm nay); **một nút ẩn mọi dây trang trí mùa** (dải trên cùng, sân, trong nhà). Ý "giảm cỡ cảnh còn 3/4" để sau nếu người dùng vẫn thấy dải cảnh to.
 - **Mã nguồn add-on là thư mục `kotoba_batake/` (1.23)** — người dùng: "giải nén addon ra, thành 1 folder trên git, để sau này so sánh diff cho dễ". Sửa ở thư mục, đóng gói lại `kotoba_batake.ankiaddon` bằng `tests/tools/pack.py` mỗi lần sửa (gói và thư mục luôn khớp).
 - **Kế hoạch 1.23 (người dùng chốt 05/11)**: Gemini chỉ chọn deck; mọi đường đổi nguồn sang Gemini đều chờ "Bắt đầu viết" (một quy tắc chung ở `ai_waiting`); Kệ báo gộp hai nguồn; mỗi số mang bảng tra nghĩa; truyện quy trình mới là ưu tiên; **bản dịch mặc định ẩn**; công cụ test nhiều xu là add-on riêng, không đăng kèm; Trong nhà ở màn chính theo **B + C** (C = Ngắm cảnh ở 1.23, B = nhà 3 gian để 1.24). Claude chọn: giọng truyện mặc định Ấm áp đời thường; giới hạn config theo đề xuất của kế hoạch (`daily_bonus` ≤ 100, `game_daily_coins` ≤ 200, `daily_goal` ≥ 10); không thêm "chống gian lận" khác.
@@ -778,7 +781,7 @@ Các ý dưới đây đã được bàn với người dùng nhưng **chưa là
 - ~~**Giọng đọc hệ thống cho Windows / macOS**~~: **làm ở 1.13** (giọng dự phòng cho Chép chính tả và đoạn báo không có audio, mục 2.7c). Linux không có.
 - **Gemini viết lại số hôm nay** (chưa làm): hiện chỉ viết khi chưa có số; muốn viết lại thì xoá thư mục `user_files/bao_gemini/bao/<ngày>/`.
 
-### 10.2b "Mỗi ngày vào vườn có gì mới" (06/11/2026, chưa chốt)
+### 10.2b "Mỗi ngày vào vườn có gì mới" (06/11/2026; lộ trình chốt 07/11 → `KE_HOACH_1_26.md` mục 0)
 - Người dùng hỏi ý tưởng từ game pixel xưa cho "FOMO lành mạnh". 14 ý + luật FOMO lành mạnh + mức khó / đáng làm + ảnh hưởng: **`KE_HOACH_Y_TUONG_HANG_NGAY.md`**. Đề xuất đợt 1 (sau 1.23): Bảng tin làng, cây lấp lánh, rút quẻ, lịch trời Nhật (trăng thật, 二十四節気, sao băng, sổ 歳時記), kỷ niệm / mốc học; đợt 2: nhặt đồ theo vùng + Hộp sưu tầm, gánh hàng rong. Chờ người dùng chọn.
 
 ### 10.3 Kỹ thuật
