@@ -1,4 +1,4 @@
-# Kế hoạch ことば畑 1.26 — màn chào + hiệu ứng chuyển cảnh + Bảng tin làng (đã chốt, chưa làm)
+# Kế hoạch ことば畑 1.26 — màn chào + hiệu ứng chuyển cảnh + Bảng tin làng (đã chốt, có ảnh phác, chưa làm)
 
 Ngày 07/11/2026. Người dùng: "tớ nghĩ bây giờ cũng xong khoảng 70-80% rồi, chốt những cái mình sẽ phát triển tiếp đi, nhằm FOMO lành mạnh, dễ thương, chill. 1 tính năng tớ nghĩ là nhỏ nhưng có thể sẽ hiệu quả (như là mới khởi động game thì chưa hiển thị vùng liền), sẽ có 1 NPC hoặc con vật ra chào mình, hiệu ứng chuyển cảnh,..."
 
@@ -55,6 +55,29 @@ Người dùng chọn: ai chào = **thú nuôi của mình**; chào **lần mở
 
 - Câu chào có đổi theo giao diện mùa / ngày lễ không (vd. Tết: あけましておめでとう)? Đề xuất: có, vài câu theo mùa.
 - Thú có món quà nhỏ thỉnh thoảng (sticker nhật ký) khi chào không? Đề xuất: chưa, để 1.28 (gắn với Hộp sưu tầm).
+
+## 5b. Ảnh phác giao diện 1.26 → 1.29 (07/11, chờ người dùng duyệt)
+
+Người dùng: "soạn trước giao diện cho các phần trên đi". Vẽ trên vườn mẫu trong Anki thật (`tests/anki/setup_demo.sh` + `mock_126.js` / `mock_126_lib.js`; chuyển cảnh ghép bằng `mock_126_ghep.py` từ ảnh gốc). Ảnh ở `docs/ke_hoach_1_26/`:
+
+| Ảnh | Bản | Nội dung |
+|---|---|---|
+| `126_01_chao_sang.png` | 1.26 | màn chào sáng: mèo "Mít" nhảy vẫy, おはよう！, 3 tin hôm nay, "bấm để vào vườn" + chấm đếm |
+| `126_02_chao_toi_stackchan.png` | 1.26 | chưa nuôi thú → StackChan chào, buổi tối có sao |
+| `126_03_chao_thu_di_choi.png` | 1.26 | thú đang đi chơi → StackChan báo nhẹ |
+| `126_04_tin_lang.png` | 1.26 | dòng "Tin làng ▸" trong thẻ Hôm nay + bảng Hôm nay / Sắp tới |
+| `126_05_cai_dat.png` | 1.26 | ⚙ → Màn chính: Chào khi mở vườn, Chuyển cảnh (khung đỏ = dòng mới) |
+| `126_06_chuyen_iris.png` · `126_07_chuyen_la.png` · `126_08_chuyen_rem.png` | 1.26 | khung hình chuyển cảnh: vòng tròn (màn chào → vườn), dải lá (◂ ▸), rèm (Trong nhà) |
+| `127_01_cay_lap_lanh.png` | 1.27 | 3 cây đến hạn phát sáng + thẻ cây "Cây lấp lánh" |
+| `127_02_que.png` | 1.27 | hộp quẻ ở Đền + tờ quẻ 中吉 (学問 / 待ち人 / 失せ物 / từ may mắn) |
+| `127_03_dem_sao_bang.png` | 1.27 | trăng lưỡi liềm thật + mưa sao băng, dòng Tin làng |
+| `127_04_saijiki.png` | 1.27 | sổ 歳時記 (đã thấy / chưa thấy) |
+| `127_05_moc_hoc.png` | 1.27 | mốc 100 ngày có ôn: dải chúc, mũ tiệc StackChan, bánh trong nhà |
+| `128_01_nhat_do.png` | 1.28 | chỗ lấp lánh ở Bãi biển + nhặt được 貝殻 |
+| `128_02_hop_suu_tam.png` | 1.28 | Album · Hộp sưu tầm (tên Nhật + cách đọc, ô chưa nhặt) |
+| `128_03_ganh_hang.png` | 1.28 | gánh hàng rong ở Ga + bảng hàng (món hiếm, −25 %, giống cây) |
+| `129_01_chuong_lang.png` | 1.29 | bảng soạn chuông làng 16 nốt + nhạc theo buổi |
+| `129_02_hieu_ung.png` | 1.29 | nắng xiên + sương sớm, bụi lấp lánh khi đặt đồ |
 
 ## 6. Ghi chú cho 1.29 (Nhạc làng + thêm hiệu ứng)
 
