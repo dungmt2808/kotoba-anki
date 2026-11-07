@@ -766,7 +766,7 @@ def check(raw: Any, scope: dict[str, Any], opts: dict[str, Any]) -> Any:
     ctx = {"keys": deck_keys | new_keys, "used": set()}
 
     bai = raw.get("bai")
-    lo_n, hi_n = (1, 2) if short else (3, 5)
+    lo_n, hi_n = (1, 2) if short else (2, 4) if opts.get("no_story") else (3, 5)    # 1.23: Truyện: Tắt → 2 bài
     if not isinstance(bai, list) or not lo_n <= len(bai) <= hi_n:
         rep.err("bai", "cần %d–%d bài" % (lo_n, hi_n))
         bai = bai if isinstance(bai, list) else []
@@ -1013,6 +1013,28 @@ def write_prompt(scope: dict[str, Any], opts: dict[str, Any], story: list[dict[s
             "ĐÂY LÀ SỐ RÚT GỌN (người học còn nhiều số chưa đọc): chỉ 1 bài loai \"tin_lang\" ngắn (2 đoạn), "
             "chinh_ta 2 câu chép nguyên văn từ bài, cau_hoi để rỗng hoặc 1 câu. KHÔNG viết truyện. "
             "Tin làng có thể nhắc nhẹ là các nhân vật đang chờ người đọc.")
+    elif opts.get("no_story") or opts.get("story_plain"):
+        # 1.23: Truyện: Tắt → 2 bài; truyện đã viết + biên tập sẵn → máy tự chèn làm bài thứ 2, ở đây viết 2 bài còn lại
+        sp = opts.get("story_plain")
+        parts.append(
+            "CẤU TRÚC: bai gồm đúng 2 bài theo thứ tự (KHÔNG viết truyện dài kỳ%s):\n"
+            "1. loai \"tin_lang\": tin trong làng Kotoba Village và khu vườn Kotoba Farm, 2–3 đoạn%s.\n"
+            "2. loai \"%s\": %s\n"
+            "Tiêu đề viết kiểu tiêu đề báo tiếng Anh, ngắn (3–8 từ).\n"
+            "cau_hoi: 2–3 câu trắc nghiệm TIẾNG ANH về nội dung %s, mỗi câu đúng 3 lựa chọn tiếng Anh ngắn, CHỈ MỘT đáp "
+            "án đúng, \"dung\" là vị trí đáp án đúng tính từ 0 (đổi vị trí giữa các câu), \"giai_thich\" tiếng Việt chỉ "
+            "ra câu nào trong bài cho biết đáp án.\n"
+            "chinh_ta: 2–3 câu CHÉP NGUYÊN VĂN từ %s (một câu trọn vẹn, %d–%d từ, chép đúng cả dấu câu), nên chứa từ "
+            "trong danh sách từ vựng, KHÔNG có tên riêng và không phải lời thoại trong ngoặc kép; \"them_dap_an\": thường "
+            "để rỗng.%s" % (
+                ": máy tự chèn truyện đã viết sẵn làm bài giữa" if sp else "",
+                " (đừng kể lại truyện)" if sp else "",
+                third, "Notices — 2–3 mục thông báo của làng, mỗi mục là một đoạn bắt đầu bằng \"◆ \", tiêu đề "
+                "\"Village Notices\"." if third == "thong_bao" else
+                "cột ngắn của một nhân vật (1–2 đoạn), tiêu đề kiểu \"StackChan's Corner\".",
+                "CẢ SỐ (nên có 1 câu về truyện)" if sp else "bài", "bài hoặc truyện" if sp else "bài", dlo, dhi,
+                ("\nTRUYỆN ĐÃ VIẾT SẴN (kỳ %d, để đặt câu hỏi / câu chép):\n%s" % (
+                    ky, json.dumps({"tieu_de": sp["tieu_de"], "doan": sp["doan"]}, ensure_ascii=False))) if sp else ""))
     else:
         parts.append(
             "CẤU TRÚC: bai gồm đúng 3 bài theo thứ tự:\n"
@@ -1031,6 +1053,9 @@ def write_prompt(scope: dict[str, Any], opts: dict[str, Any], story: list[dict[s
                 third, "Notices — 2–3 mục thông báo của làng, mỗi mục là một đoạn bắt đầu bằng \"◆ \", tiêu đề "
                 "\"Village Notices\"." if third == "thong_bao" else
                 "cột ngắn của một nhân vật (1–2 đoạn), tiêu đề kiểu \"StackChan's Corner\".", dlo, dhi, ky))
+    if not short:
+        parts.append("dich: mỗi bài thêm \"dich\" = bản dịch tiếng Việt TỰ NHIÊN (có dấu) của từng đoạn (cùng số phần tử "
+                     "với doan; không ghi chú trong ngoặc). Người học bấm \"Dịch\" mới thấy.")
     parts.append(
         "mau_cau: 2–4 id lấy đúng từ DANH SÁCH NGỮ PHÁP (cột đầu), là các mẫu được nhấn mạnh; mỗi mẫu xuất hiện ít nhất "
         "2 lần. Phần lớn là mẫu TRỌNG TÂM (đúng trình độ %s), thêm 1 mẫu thấp hơn để ôn.\n"
@@ -1054,11 +1079,15 @@ def write_prompt(scope: dict[str, Any], opts: dict[str, Any], story: list[dict[s
         parts.append("3 SỐ GẦN NHẤT (tránh lặp lại chủ đề và mẫu câu): " +
                      "; ".join("%s: %s — %s" % (h.get("ngay"), ", ".join(h.get("mau", [])), h.get("tom_tat", "")[:80])
                                for h in recent))
-    if not short:
+    if not short and not opts.get("no_story") and not opts.get("story_plain"):
         parts.append("TRUYỆN:\n" + STORY_SETUP)
+        if opts.get("tone") in ai.story_core.TONES:
+            parts.append("GIỌNG TRUYỆN: " + ai.story_core.TONE_TEXT[opts["tone"]])
         if story:
             parts.append("ĐÃ XẢY RA:\n" + "\n".join("- Kỳ %s (%s): %s" % (s.get("ky"), s.get("ngay"), s.get("tom_tat"))
                                                      for s in story[-10:]))
+            if story[-1].get("nguyen_van"):     # 1.23: nguyên văn kỳ trước
+                parts.append("NGUYÊN VĂN KỲ TRƯỚC (viết tiếp, không mâu thuẫn):\n" + "\n".join(story[-1]["nguyen_van"]))
         else:
             parts.append("ĐÃ XẢY RA: (chưa có kỳ nào, đây là kỳ 1: Linh đến Kotoba Village và bắt đầu làm ở The Kettle Café)")
     parts.append("DANH SÁCH NGỮ PHÁP (id|mẫu|nghĩa) — chỉ dùng ngữ pháp này và đơn giản hơn:\n" + ai._grammar_lines(scope))
@@ -1100,7 +1129,8 @@ def review_prompt(raw: Any, scope: dict[str, Any], warnings: list[str]) -> str:
         "10. Số báo thường phải đủ 3 bài: tin_lang, truyen, rồi thong_bao hoặc cot.\n"
         "Ghi mỗi chỗ đã sửa vào van_de (cho = vị trí như bai[1].doan[0], loi = lỗi gì bằng tiếng Việt, sua = câu mới). "
         "Không có lỗi thì van_de rỗng. \"bao\" là toàn bộ số báo sau khi sửa (không có lỗi thì trả nguyên). "
-        "Giữ nguyên các id mau_cau, số kỳ truyện.\n\n%s\n\n%s"
+        "Giữ nguyên các id mau_cau, số kỳ truyện. Bài truyện (loai truyen) đã qua biên tập: chỉ sửa lỗi thật sự, không viết "
+        "lại. \"dich\" (bản dịch tiếng Việt) giữ nguyên, chỉ sửa câu dịch của đoạn bạn vừa sửa.\n\n%s\n\n%s"
         "DANH SÁCH NGỮ PHÁP:\n%s\n\nDANH SÁCH TỪ VỰNG ĐÃ HỌC (từ /phiên âm/ = nghĩa):\n%s\n\nSỐ BÁO:\n%s" % (
             level, level, level, RULES,
             ("GỢI Ý CỦA MÁY KIỂM TRA (xem và sửa nếu đúng là lỗi):\n- " + "\n- ".join(warnings[:20]) + "\n\n") if warnings else "",

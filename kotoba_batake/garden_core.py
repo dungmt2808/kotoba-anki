@@ -83,6 +83,8 @@ DEFAULT_CONFIG: dict[str, Any] = {
     "gemini_scope": "auto",
     "gemini_model": "",
     "gemini_tts_model": "",
+    "gemini_story": "hay",         # 1.23: Truyện: hay (quy trình mới) / tiet_kiem (như cũ, ít lượt) / tat
+    "gemini_story_tone": "am",     # 1.23: Giọng truyện: am / hai / bi_an / phieu_luu
 }
 
 GAMES = ("listen", "market", "crow", "memory", "cloze")
@@ -2375,11 +2377,11 @@ def redo_reward(data: dict[str, Any], entry: dict[str, Any]) -> int:
 
 
 # 1.23 (KB-02): file sao lưu trong user_files/ dùng chung cho mọi hồ sơ Anki trên máy. Hồ sơ mới (collection chưa có
-# ví) trước đây đọc luôn file đó → nhận xu và nhà của hồ sơ khác. Nay mỗi lần lưu ghi kèm "chủ" của bản sao lưu
-# (mã của thư mục hồ sơ); collection chưa có ví chỉ dùng file sao lưu khi đúng hồ sơ đó. Bản sao lưu cũ (≤ 1.22,
-# không ghi chủ) coi như của hồ sơ khác — ví luôn nằm trong collection từ ≤ 1.0 nên không ai cần chuyển từ file nữa.
-OWNER_FILE = "ho_so.json"
-_owner_written: dict[str, str] = {}
+# ví) trước đây đọc luôn các file đó → nhận xu, nhà, tiến độ báo của hồ sơ khác. Nay mỗi file sao lưu ghi kèm "chủ"
+# (OWNER_KEY = mã của thư mục hồ sơ); collection chưa có khoá thì chỉ dùng file sao lưu có đúng chủ là hồ sơ đang mở.
+# File của bản ≤ 1.22 (không ghi chủ) coi như của hồ sơ khác — dữ liệu luôn nằm trong collection từ ≤ 1.0 nên không ai
+# cần chuyển từ file nữa.
+OWNER_KEY = "_ho_so"
 
 
 def profile_key(col: Any) -> str:
@@ -2391,35 +2393,25 @@ def profile_key(col: Any) -> str:
     return hashlib.sha1(folder.encode("utf-8", "replace")).hexdigest()[:16]
 
 
-def backup_mine(folder: str, col: Any) -> bool:
-    """File sao lưu trong `folder` có phải của hồ sơ đang mở không (không có collection: luôn dùng được)."""
+def backup_payload(payload: Any, col: Any) -> Any:
+    """Bản ghi ra file sao lưu: thêm chủ (hồ sơ đang mở) nếu biết."""
+    key = profile_key(col)
+    if key and isinstance(payload, dict):
+        return dict(payload, **{OWNER_KEY: key})
+    return payload
+
+
+def backup_data(raw: Any, col: Any) -> Any:
+    """Dữ liệu đọc từ file sao lưu dùng được cho hồ sơ đang mở không: không có collection (test) → dùng nguyên; có
+    collection → chỉ khi file ghi đúng chủ (bỏ khoá chủ trước khi trả về); không thì None."""
     if col is None:
-        return True
+        return raw
     key = profile_key(col)
-    if not key:
-        return False
-    try:
-        with open(os.path.join(folder, OWNER_FILE), encoding="utf-8") as f:
-            raw = json.load(f)
-    except (OSError, ValueError):
-        return False
-    return isinstance(raw, dict) and raw.get("ho_so") == key
-
-
-def mark_backup(folder: str, col: Any) -> None:
-    """Ghi chủ của các file sao lưu trong `folder` = hồ sơ đang mở (chỉ ghi khi đổi)."""
-    key = profile_key(col)
-    if not key or _owner_written.get(folder) == key:
-        return
-    try:
-        os.makedirs(folder, exist_ok=True)
-        tmp = os.path.join(folder, OWNER_FILE + ".tmp")
-        with open(tmp, "w", encoding="utf-8") as f:
-            json.dump({"ho_so": key, "_ghi_chu": "Các file sao lưu trong thư mục này là của hồ sơ Anki có mã trên."}, f)
-        os.replace(tmp, os.path.join(folder, OWNER_FILE))
-        _owner_written[folder] = key
-    except OSError as err:
-        print(f"[kotoba_batake] owner file: {err}")
+    if not key or not isinstance(raw, dict) or raw.get(OWNER_KEY) != key:
+        return None
+    out = dict(raw)
+    out.pop(OWNER_KEY, None)
+    return out
 
 
 class GardenState:
@@ -2447,10 +2439,6 @@ class GardenState:
         except (OSError, ValueError):
             return None
 
-    def _mine(self, col: Any) -> bool:
-        """1.23 (KB-02): file sao lưu là của hồ sơ đang mở (collection chưa có ví thì mới hỏi)."""
-        return backup_mine(os.path.dirname(self.path), col)
-
     def _read(self) -> Any:
         col = self._col()
         if col is not None:
@@ -2460,9 +2448,8 @@ class GardenState:
                 stored = None
             if isinstance(stored, dict):
                 return stored
-            if not self._mine(col):
-                return None          # hồ sơ mới: không nhận ví của hồ sơ khác trên cùng máy
-        return self._read_file()
+        # 1.23 (KB-02): hồ sơ mới không nhận ví của hồ sơ khác trên cùng máy (file phải đúng chủ)
+        return backup_data(self._read_file(), col)
 
     def load(self) -> dict[str, Any]:
         data: dict[str, Any] = {
@@ -2552,11 +2539,9 @@ class GardenState:
                 has_wallet = False
             if has_wallet:
                 return None
-        if col is not None and not self._mine(col):
-            return None
         try:
             with open(self._more_path(), encoding="utf-8") as f:
-                return json.load(f)
+                return backup_data(json.load(f), col)
         except (OSError, ValueError):
             return None
 
@@ -2598,11 +2583,9 @@ class GardenState:
                 # collection có ví nhưng chưa có phần mới (vd. vừa tải về từ máy chưa cài 1.7):
                 # không lấy file sao lưu của máy này, tránh nhân đôi đồ mà không trừ xu
                 return None
-        if col is not None and not self._mine(col):
-            return None
         try:
             with open(self._ext_path(), encoding="utf-8") as f:
-                return json.load(f)
+                return backup_data(json.load(f), col)
         except (OSError, ValueError):
             return None
 
@@ -2625,11 +2608,9 @@ class GardenState:
                 has_wallet = False
             if has_wallet:
                 return None
-        if col is not None and not self._mine(col):
-            return None
         try:
             with open(self._season_path(), encoding="utf-8") as f:
-                return json.load(f)
+                return backup_data(json.load(f), col)
         except (OSError, ValueError):
             return None
 
@@ -2643,7 +2624,7 @@ class GardenState:
             os.makedirs(os.path.dirname(path), exist_ok=True)
             tmp = path + ".tmp"
             with open(tmp, "w", encoding="utf-8") as f:
-                json.dump(payload, f, ensure_ascii=False)
+                json.dump(backup_payload(payload, col), f, ensure_ascii=False)
             os.replace(tmp, path)
         except OSError as err:
             if col is None:
@@ -2674,8 +2655,6 @@ class GardenState:
         self._write(MORE_KEY, self._more_path(), more_store, col)
         if isinstance(mobile, dict):
             self._write(MOBILE_KEY, self._mobile_path(), mobile, col)
-        if col is not None:
-            mark_backup(os.path.dirname(self.path), col)
         full["more_view"] = self._more_view(full)
 
     def _px_path(self) -> str:
@@ -2728,8 +2707,8 @@ class GardenState:
                 return False
         except Exception:
             return False
-        old = self._read_file()
-        if not isinstance(old, dict) or not self._mine(col):
+        old = backup_data(self._read_file(), col)
+        if not isinstance(old, dict):
             return False
         self.save(self.load())
         return True

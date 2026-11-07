@@ -39,6 +39,7 @@ from . import garden_core as core
 from . import more_core
 from . import paper_core as paper
 from . import share_core
+from . import story_core
 from . import words_core as words
 
 ADDON_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -65,6 +66,7 @@ _ai: dict[str, Any] = {"running": False, "testing": False, "msg": "", "lang": "j
 _libraries: dict[str, paper.Library] = {}
 _dict_possible = False   # deck đang xem có câu / từ để chép chính tả không (cập nhật ở refresh)
 # 1.13: giọng dự phòng cho câu chép không có audio
+_dich_job: dict[str, Any] = {"running": False, "ref": ""}       # 1.23: "Dịch số này" đang chạy
 _voice_job: dict[str, Any] = {"running": False, "tried": set()}   # đang nhờ Gemini tạo giọng đọc / chữ đã thử
 _ja_tts: bool | None = None      # máy có giọng tiếng Nhật của hệ điều hành (Anki TTS) — kiểm một lần
 _en_tts: bool | None = None      # 1.17: máy có giọng tiếng Anh của hệ điều hành
@@ -191,6 +193,36 @@ def _library(lang: str = "ja") -> paper.Library | None:
     if base not in _libraries:
         _libraries[base] = paper.Library(base)
     return _libraries[base]
+
+
+DICH_DIR = os.path.join(ADDON_DIR, "user_files", "dich_claude")   # 1.23: bản dịch cho số Claude Code (kotoba_daily chỉ đọc)
+
+
+def _claude_dich(date: str) -> list[list[str] | None]:
+    if not paper.DATE_RE.match(date or ""):
+        return []
+    try:
+        with open(os.path.join(DICH_DIR, date + ".json"), encoding="utf-8") as f:
+            raw = json.load(f)
+    except (OSError, ValueError):
+        return []
+    rows = raw.get("bai") if isinstance(raw, dict) else None
+    out: list[list[str] | None] = []
+    for r in rows if isinstance(rows, list) else []:
+        out.append([x[:1500] for x in r if isinstance(x, str)] if isinstance(r, list) and all(isinstance(x, str) for x in r)
+                   else None)
+    return out[:6]
+
+
+def _save_claude_dich(date: str, dich: list[list[str] | None]) -> bool:
+    if not paper.DATE_RE.match(date or "") or not any(dich):
+        return False
+    os.makedirs(DICH_DIR, exist_ok=True)
+    tmp = os.path.join(DICH_DIR, date + ".json.tmp")
+    with open(tmp, "w", encoding="utf-8") as f:
+        json.dump({"bai": dich}, f, ensure_ascii=False)
+    os.replace(tmp, os.path.join(DICH_DIR, date + ".json"))
+    return True
 
 
 def _source_lib(src: str) -> paper.Library | None:
@@ -794,6 +826,8 @@ def _ai_opts(cfg: dict[str, Any]) -> dict[str, Any]:
             "level_en": level_en, "voice_en": voice_en,
             "tts_model": tts.strip()[:80], "auto": bool(cfg.get("gemini_auto", True)),
             "scope": "deck",      # 1.23: báo Gemini chỉ lấy từ deck (gemini_scope "auto" cũ = "deck")
+            "story": cfg.get("gemini_story") if cfg.get("gemini_story") in story_core.MODES else "hay",
+            "tone": cfg.get("gemini_story_tone") if cfg.get("gemini_story_tone") in story_core.TONES else "am",
             "dict_voice": cfg.get("dict_voice") if cfg.get("dict_voice") in DICT_VOICE_MODES else "auto"}
 
 
@@ -857,7 +891,8 @@ def ai_view(extra: dict[str, Any] | None = None, lang: str | None = None) -> dic
         "source": paper_source(cfg), "want": cfg.get("bao_source") or "auto", "langs_on": wanted_langs(cfg),
         "gemini": {
             "key": ai.mask_key(key), "audio": o["audio"], "voice": o["voice"], "auto": o["auto"],
-            "scope": o["scope"], "model": o["model"],
+            "scope": o["scope"], "model": o["model"], "story": o["story"], "tone": o["tone"],
+            "tones": [[k, story_core.TONE_NAME[k]] for k in story_core.TONES],
             "has_tts": any(v["tts"] for v in langs.values()),
             "running": bool(_ai["running"]), "run_lang": _ai.get("lang", "ja"), "testing": bool(_ai["testing"]),
             "msg": _ai["msg"], "langs": langs, "first": bool(key) and bool(cfg.get("gemini_wait_start")),
@@ -1054,7 +1089,7 @@ def ai_start(reason: str, dialog: Any = None, lang: str = "ja") -> bool:
         except Exception:
             unread = []
         opts = {"max_new": 3, "short": len(unread) >= 3, "model": o["model"],
-                "prefer": st.get("model", "") or other.get("model", "")}
+                "prefer": st.get("model", "") or other.get("model", ""), "story": o["story"], "tone": o["tone"]}
         st["tries"] = int(st.get("tries") or 0) + 1
         st["scope"] = ai.describe_scope(scope)
     else:
@@ -2142,6 +2177,9 @@ class GardenDialog(QDialog):
         if group == "paper" and action == "open":       # 1.19.1: mở bảng Báo → báo có số chưa đọc
             self._paper_lang = ""
             return
+        if group == "paper" and action in ("dich", "fb"):   # 1.23: "Dịch số này", "Kỳ này hay / Nhạt"
+            self._paper_extra(action, arg)
+            return
         lang = paper_lang(self)
         if group == "paper":
             self._paper_lang = lang            # giữ báo đang đọc (đọc hết số mới cũng không tự nhảy sang báo kia)
@@ -2285,6 +2323,10 @@ class GardenDialog(QDialog):
                 changes["gemini_auto"] = p["auto"]
             if p.get("dict_voice") in DICT_VOICE_MODES:
                 changes["dict_voice"] = p["dict_voice"]
+            if p.get("story") in story_core.MODES:          # 1.23: Truyện: Hay hơn / Tiết kiệm / Tắt
+                changes["gemini_story"] = p["story"]
+            if p.get("tone") in story_core.TONES:           # 1.23: Giọng truyện
+                changes["gemini_story_tone"] = p["tone"]
             if p.get("source") in ("auto", "claude", "gemini"):
                 changes["bao_source"] = p["source"]
                 refresh = True
@@ -2474,9 +2516,83 @@ class GardenDialog(QDialog):
         except Exception as err:
             _warn("tra nghĩa số báo cũ", err)
         view = paper.issue_view(lib, st, date, voice, extra)
-        view.update(src=src, ref=date + "@" + src if lang == "ja" else date,
-                    src_name={"claude": "Claude Code", "gemini": "Gemini"}.get(src, ""))
+        ref = date + "@" + src if lang == "ja" else date
+        view.update(src=src, ref=ref, src_name={"claude": "Claude Code", "gemini": "Gemini"}.get(src, ""))
+        # 1.23: bản dịch (ẩn sẵn). Số Claude Code dịch bằng "Dịch số này" lưu ở user_files (kotoba_daily chỉ đọc)
+        if src == "claude":
+            saved = _claude_dich(date)
+            for b, d in zip(view["bai"], saved):
+                if d and not b.get("dich") and len(d) == len(b.get("doan") or []):
+                    b["dich"] = d
+        view["has_dich"] = any(b.get("dich") for b in view["bai"])
+        view["can_dich"] = not view["has_dich"] and bool(ai.clean_key(config().get("gemini_key")))
+        view["dich_busy"] = bool(_dich_job["running"]) and _dich_job.get("ref") == ref
+        # 1.23: người đọc chấm truyện (chỉ truyện do Gemini viết — kỳ sau đọc phản hồi này)
+        gem = os.path.realpath(lib.base) in (os.path.realpath(AI_DIR), os.path.realpath(AI_DIR_EN))
+        view["fb_ok"] = gem
+        if gem:
+            view["fb"] = {str(b["ky"]): story_core.feedback_of(lib.base, b["ky"]) for b in view["bai"]
+                          if b.get("loai") == "truyen" and b.get("ky")}
         return view
+
+    def _paper_extra(self, action: str, arg: str) -> None:
+        """1.23: "Dịch số này" (Gemini dịch số cũ, một lượt) và "Kỳ này hay / Nhạt" (phản hồi cho truyện)."""
+        lang = paper_lang(self)
+        try:
+            p = json.loads(arg) if arg.startswith("{") else {"d": arg}
+        except ValueError:
+            return
+        lib, src, date = paper_ref(lang, str(p.get("d") or ""))
+        if lib is None or not paper.DATE_RE.match(date or ""):
+            return
+        ref = date + "@" + src if lang == "ja" else date
+        if action == "fb":
+            ky = p.get("k")
+            gem = os.path.realpath(lib.base) in (os.path.realpath(AI_DIR), os.path.realpath(AI_DIR_EN))
+            if gem and isinstance(ky, int) and story_core.set_feedback(lib.base, ky, str(p.get("y") or ""),
+                                                                       str(p.get("g") or "")):
+                self._js("notice", {"msg": "Đã ghi nhận xét. Kỳ sau Gemini sẽ đọc.", "ms": 3000})
+            self._reissue_ref(lang, lib, src, date)
+            return
+        if _dich_job["running"] or _ai["running"]:
+            self._js("paperError", "Gemini đang bận, thử lại sau.")
+            return
+        key = ai.clean_key(config().get("gemini_key"))
+        iss = lib.try_issue(date)
+        if not key or not iss:
+            return
+        client = ai.Gemini(key, exhausted=_shared_exhausted())
+        prefer = (ai.load_status(AI_DIR) if os.path.isdir(AI_DIR) else {}).get("model", "")
+        _dich_job.update(running=True, ref=ref)
+        base = lib.base
+
+        def done(fut: Any) -> None:
+            _dich_job.update(running=False, ref="")
+            msg = ""
+            try:
+                dich = fut.result()
+                gem = os.path.realpath(base) in (os.path.realpath(AI_DIR), os.path.realpath(AI_DIR_EN))
+                ok = ai.add_translation(base, date, dich) if gem else _save_claude_dich(date, dich)
+                msg = "" if ok else "Bản dịch chưa dùng được, thử lại sau."
+            except ai.AIError as err:
+                msg = "Chưa dịch được: " + str(err)
+            except Exception as err:
+                _warn("dịch số báo", err)
+                msg = "Chưa dịch được (%s)." % type(err).__name__
+            if _dialog is self:
+                if msg:
+                    self._js("notice", {"msg": msg, "ms": 5000})
+                if getattr(self, "_open_issue", None) == date:
+                    self._reissue_ref(lang, lib, src, date)
+
+        _bg(lambda: ai.translate_issue(client, iss, iss.get("lang", "ja"), prefer), done)
+        self._reissue_ref(lang, lib, src, date)
+
+    def _reissue_ref(self, lang: str, lib: paper.Library, src: str, date: str) -> None:
+        try:
+            self._js("paperIssue", self._issue_view(lib, paper_states(lang, src)[1], date, _voice(), src, lang))
+        except paper.PaperError:
+            pass
 
     def _paper_play(self, group: str, payload: dict[str, Any], lib: paper.Library | None) -> None:
         slow = bool(payload.get("s"))

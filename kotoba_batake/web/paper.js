@@ -181,6 +181,7 @@ var GardenPaper = (function () {
     defaultInfo();
     // 1.17: chép chính tả của deck tiếng Anh / khác không có furigana → ẩn nút Ẩn furigana (1.19: cả báo tiếng Anh)
     furiButton();
+    dichButton();
     stage().textContent = "";
     stage().scrollTop = 0;
     if (t === "issue") {
@@ -587,6 +588,14 @@ var GardenPaper = (function () {
       aiRow(opts, "Giọng đọc", chips([["chinh_ta", "Câu chép", "Chỉ câu chép chính tả: ít lượt gọi nhất"], ["ca_bai", "Cả bài", "Thêm giọng đọc từng đoạn"], ["tat", "Tắt"]],
         g.audio, (x) => aiSet({ audio: x })), [g.audio !== "tat" ? voice : null]);
       if (!g.has_tts && g.audio !== "tat") { opts.lastChild.appendChild(el("span", "kb-ai-hint", "khoá chưa có giọng đọc")); }
+      // 1.23: truyện dài kỳ — Hay hơn (lập mạch, biên tập, viết lại) / Tiết kiệm (như cũ, ít lượt gọi) / Tắt
+      aiRow(opts, "Truyện", chips([["hay", "Hay hơn", "Lập mạch truyện, biên tập chấm điểm, viết lại khi nhạt (thêm 2–3 lượt gọi mỗi số)"],
+        ["tiet_kiem", "Tiết kiệm", "Viết chung một lượt với cả số báo, ít lượt gọi"], ["tat", "Tắt", "Số báo không có truyện"]],
+        g.story || "hay", (x) => aiSet({ story: x })));
+      if ((g.story || "hay") !== "tat") {
+        aiRow(opts, "Giọng truyện", chips(g.tones || [["am", "Ấm áp đời thường"], ["hai", "Hài"], ["bi_an", "Bí ẩn nhẹ"], ["phieu_luu", "Phiêu lưu"]],
+          g.tone || "am", (x) => aiSet({ tone: x })));
+      }
       const lab = el("label", "kb-ai-auto");
       const cb = el("input");
       cb.type = "checkbox";
@@ -599,8 +608,8 @@ var GardenPaper = (function () {
     }
     const note = el("details", "kb-ai-note kb-ai-more");
     note.appendChild(el("summary", null, "Khoá lưu trên máy này, không đồng bộ."));
-    note.appendChild(el("div", null, "Gemini nhận danh sách từ bạn đang học, nội dung báo và câu cần giọng đọc. Bản miễn phí: Google có thể dùng dữ liệu này để cải thiện sản phẩm."));
-    note.appendChild(el("div", null, "Mỗi số: Gemini viết → máy kiểm tra → Gemini sửa → soát lần 2. Còn lỗi thì không đưa vào hòm thư. Hết lượt miễn phí thì hôm sau viết tiếp."));
+    note.appendChild(el("div", null, "Gemini nhận danh sách từ bạn đang học, nội dung báo, câu cần giọng đọc và dòng nhận xét truyện bạn gõ. Bản miễn phí: Google có thể dùng dữ liệu này để cải thiện sản phẩm."));
+    note.appendChild(el("div", null, "Mỗi số: Gemini viết truyện → biên tập chấm → viết cả số → máy kiểm tra → Gemini sửa → soát lần 2. Còn lỗi thì không đưa vào hòm thư. Hết lượt miễn phí thì hôm sau viết tiếp."));
     card.appendChild(note);
     if (g.key) {
       const f = btn("kb-ai-forget", forgetArmed ? "Bấm lần nữa để xoá khoá" : "Xoá khoá", () => {
@@ -802,12 +811,24 @@ var GardenPaper = (function () {
         warn.appendChild(btn("", "Đọc kỳ trước", () => { wantDate = b.ky_truoc_ngay + (v.src ? "@" + v.src : ""); issue = null; setTab("issue"); }));
         art.appendChild(warn);
       }
+      const hasD = b.dich && b.dich.length === b.doan.length;
       b.doan.forEach((p, j) => {
         const para = el("p", "kb-p-text");
         para.appendChild(md(p, v.tu));
         if (b.audio && b.audio[j]) { para.appendChild(playBtn("▶", { d: refOf(v), k: "bai", i: i, j: j }, "Nghe đoạn này")); }
         art.appendChild(para);
+        if (hasD && b.dich[j]) {        // 1.23: bản dịch ẩn sẵn, bấm "Dịch" để xem đoạn này
+          const tr = el("div", "kb-p-dich", b.dich[j]);
+          tr.lang = "vi";
+          const db = el("button", "kb-p-play kb-p-dbtn", "Dịch");
+          db.type = "button";
+          db.title = "Xem / ẩn bản dịch đoạn này";
+          db.addEventListener("click", (e) => { e.stopPropagation(); tr.classList.toggle("is-open"); db.classList.toggle("is-on", tr.classList.contains("is-open")); });
+          para.appendChild(db);
+          art.appendChild(tr);
+        }
       });
+      if (b.loai === "truyen" && b.ky && v.fb_ok) { art.appendChild(storyFeedback(v, b)); }
       if (b.nguon) {
         const src = el("div", "kb-p-src", "Viết lại từ tin: " + b.nguon);
         src.lang = "vi";
@@ -842,6 +863,60 @@ var GardenPaper = (function () {
       (v.credit ? "Giọng đọc: " + v.credit + ". " : "") + (v.voice_note ? v.voice_note + " " : "") +
       "Báo do " + (v.may_viet || "Claude") + " viết tự động, có thể còn chỗ chưa tự nhiên."));
     updateCoins(v.coins);
+    dichButton();
+  }
+
+  // 1.23: người đọc chấm kỳ truyện — kỳ sau Gemini (nhà văn + biên tập) đọc phản hồi này
+  function storyFeedback(v, b) {
+    const cur = (v.fb && v.fb[String(b.ky)]) || {};
+    const box = el("div", "kb-p-fbs");
+    box.lang = "vi";
+    box.appendChild(el("span", "kb-p-fbs-l", "Kỳ này thế nào?"));
+    const note = el("input", "kb-p-in kb-p-fbs-in");
+    note.type = "text"; note.maxLength = 120; note.spellcheck = false; note.autocomplete = "off";
+    note.placeholder = "Một dòng cho Gemini (không bắt buộc)";
+    note.value = cur.ghi || "";
+    note.setAttribute("aria-label", "Nhận xét kỳ truyện");
+    const send = (y) => { H.send("paper:fb:" + JSON.stringify({ d: refOf(v), k: b.ky, y: y, g: note.value.trim() })); sfx("boop"); };
+    [["hay", "Kỳ này hay"], ["nhat", "Nhạt"]].forEach(([y, t]) => {
+      const x = btn("kb-p-fbs-b" + (cur.y === y ? " is-on" : ""), t, () => send(y));
+      x.setAttribute("aria-pressed", cur.y === y ? "true" : "false");
+      box.appendChild(x);
+    });
+    note.addEventListener("keydown", (e) => {
+      e.stopPropagation();
+      if (e.key === "Enter" && !e.isComposing) { e.preventDefault(); send(cur.y || "hay"); }
+    });
+    box.appendChild(note);
+    return box;
+  }
+  // 1.23: nút ở đầu bảng: "Hiện bản dịch" (số có bản dịch) / "Dịch số này" (số cũ, Gemini dịch một lần)
+  let showDich = false;
+  try { showDich = localStorage.getItem("kb-p-dich") === "1"; } catch (e) { showDich = false; }
+  function dichButton() {
+    const b = $("kb-p-dich");
+    if (!b) { return; }
+    const v = tab === "issue" ? issue : null;
+    $("kb-paper").classList.toggle("kb-p-showdich", showDich);
+    if (!v || (!v.has_dich && !v.can_dich)) { b.hidden = true; return; }
+    b.hidden = false;
+    b.disabled = !v.has_dich && !!v.dich_busy;
+    b.textContent = v.has_dich ? (showDich ? "Ẩn bản dịch" : "Hiện bản dịch") : (v.dich_busy ? "Đang dịch…" : "Dịch số này");
+    b.classList.toggle("is-on", !!v.has_dich && showDich);
+  }
+  function onDichClick() {
+    const v = issue;
+    if (!v) { return; }
+    if (v.has_dich) {
+      showDich = !showDich;
+      try { localStorage.setItem("kb-p-dich", showDich ? "1" : "0"); } catch (e) { /* bỏ qua */ }
+      Array.prototype.forEach.call(document.querySelectorAll(".kb-p-dich.is-open"), (x) => x.classList.remove("is-open"));
+      Array.prototype.forEach.call(document.querySelectorAll(".kb-p-dbtn.is-on"), (x) => x.classList.remove("is-on"));
+      dichButton();
+    } else if (v.can_dich && !v.dich_busy) {
+      v.dich_busy = true; dichButton();
+      H.send("paper:dich:" + refOf(v));
+    }
   }
 
   function drawQuestion(q, i, lg) {
@@ -1103,6 +1178,7 @@ var GardenPaper = (function () {
       Array.prototype.forEach.call(document.querySelectorAll(".kb-p-tab"), (b) => {
         b.addEventListener("click", () => { if (b.getAttribute("data-ptab") === "issue") { wantDate = null; issue = null; } setTab(b.getAttribute("data-ptab")); });
       });
+      $("kb-p-dich").addEventListener("click", onDichClick);
       $("kb-p-furi").addEventListener("click", (e) => {
         const p = $("kb-paper");
         p.classList.toggle("kb-p-nofuri");

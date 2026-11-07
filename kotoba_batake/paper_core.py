@@ -258,10 +258,13 @@ def clean_issue(raw: Any, date: str) -> dict[str, Any]:
         if not doan and not title:
             continue
         nguon = _s(b.get("nguon"), 400)
+        dich = [_s(x, 1500) for x in _list(b.get("dich"), 12)]
         arts.append({
             "loai": b.get("loai") if b.get("loai") in LOAI else "tin_lang",
             "tieu_de": title,
             "doan": doan,
+            # 1.23: bản dịch tiếng Việt từng đoạn (ẩn sẵn) — đúng số đoạn, không có chữ Nhật / dấu đánh dấu thì mới dùng
+            "dich": dich if len(dich) == len(doan) and all(dich) and not any(TRANS_BAD.search(x) for x in dich) else [],
             "ky": _int(b.get("ky"), 1, 100000),
             "ky_truoc": _s(b.get("ky_truoc"), 300),
             "nguon": nguon if re.match(r"^https?://", nguon) else "",
@@ -307,6 +310,7 @@ def clean_issue(raw: Any, date: str) -> dict[str, Any]:
 
 
 TRA_MAX = 400          # 1.23: số mục tối đa của bảng tra nghĩa trong một số báo
+TRANS_BAD = re.compile(r"[\u3040-\u30ff\u3400-\u9fff\uf900-\ufaff\uac00-\ud7af\[\]{}|]")   # 1.23: bản dịch hỏng
 
 
 def _row4(v: Any) -> list[str] | None:
@@ -655,11 +659,11 @@ class PaperState:
                 stored = col.get_config(self.key, None)
             except Exception:
                 stored = None
-        if not isinstance(stored, dict) and core.backup_mine(os.path.dirname(self.path), col):
+        if not isinstance(stored, dict):
             # 1.23 (KB-02): collection chưa có khoá này → chỉ dùng file sao lưu của đúng hồ sơ đang mở
             try:
                 with open(self.path, encoding="utf-8") as f:
-                    stored = json.load(f)
+                    stored = core.backup_data(json.load(f), col)
             except (OSError, ValueError):
                 stored = None
         return self.clean(stored)
@@ -675,10 +679,8 @@ class PaperState:
             os.makedirs(os.path.dirname(self.path), exist_ok=True)
             tmp = self.path + ".tmp"
             with open(tmp, "w", encoding="utf-8") as f:
-                json.dump(st, f, ensure_ascii=False)
+                json.dump(core.backup_payload(st, col), f, ensure_ascii=False)
             os.replace(tmp, self.path)
-            if col is not None:
-                core.mark_backup(os.path.dirname(self.path), col)
         except OSError as err:
             if col is None:
                 raise

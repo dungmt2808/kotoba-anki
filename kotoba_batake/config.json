@@ -34,6 +34,8 @@
     "gemini_scope": "auto",
     "gemini_model": "",
     "gemini_tts_model": "",
+    "gemini_story": "hay",
+    "gemini_story_tone": "am",
     "dict_voice": "auto",
     "ui": {}
 }

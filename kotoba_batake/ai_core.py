@@ -51,8 +51,10 @@ from typing import Any, Callable
 
 try:
     from . import paper_core as paper
+    from . import story_core      # 1.23: truyện dài kỳ theo quy trình mới
 except ImportError:  # chạy test: thư mục add-on nằm trong sys.path
     import paper_core as paper  # type: ignore[no-redef]
+    import story_core  # type: ignore[no-redef]
 
 API_BASE = "https://generativelanguage.googleapis.com/v1beta"
 KEY_PAGE = "https://aistudio.google.com/apikey"
@@ -1036,7 +1038,7 @@ def check(raw: Any, scope: dict[str, Any], opts: dict[str, Any]) -> Report:
     ctx = {"scope": scope_keys, "new": new_words, "used": set(), "readings": _deck_readings(scope)}
 
     bai = raw.get("bai")
-    lo_n, hi_n = (1, 2) if short else (3, 5)     # 1.13: số thường phải đủ 3 bài (tin làng, truyện, お知らせ / cột)
+    lo_n, hi_n = (1, 2) if short else (2, 4) if opts.get("no_story") else (3, 5)   # 1.13: số thường đủ 3 bài; 1.23: tắt truyện → 2
     if not isinstance(bai, list) or not lo_n <= len(bai) <= hi_n:
         rep.err("bai", "cần %d–%d bài" % (lo_n, hi_n))
         bai = bai if isinstance(bai, list) else []
@@ -1075,6 +1077,13 @@ def check(raw: Any, scope: dict[str, Any], opts: dict[str, Any]) -> Report:
                     rep.err("%s.doan[%d]" % (where, j), "đoạn dài quá")
     if not short and opts.get("ky") and not story_seen:
         rep.err("bai", "thiếu bài truyện dài kỳ (loai \"truyen\", kỳ %d)" % opts["ky"])
+    plain = opts.get("story_plain")
+    if plain and story_seen and not short:      # 1.23: truyện đã viết + biên tập sẵn → bài truyện phải chép đúng
+        sb = next(b for b in bai if isinstance(b, dict) and b.get("loai") == "truyen")
+        if story_core.story_matches(sb.get("doan") or [], plain["doan"]) < 0.9:
+            rep.err("bai[truyen]", "bài truyện phải chép NGUYÊN VĂN truyện đã viết sẵn (chỉ thêm đánh dấu furigana, không sửa "
+                    "chữ, không thêm bớt câu):\n" + json.dumps({"tieu_de": plain["tieu_de"], "doan": plain["doan"]},
+                                                             ensure_ascii=False))
     lo, hi = LENGTH.get(scope.get("trinh_do", "N4"), (280, 700))
     if short:
         lo, hi = lo // 3, hi // 2
@@ -1550,9 +1559,10 @@ ISSUE_SCHEMA: dict[str, Any] = {
         "bai": {"type": "ARRAY", "items": {"type": "OBJECT", "properties": {
             "loai": {"type": "STRING", "enum": list(LOAI_AI)},
             "tieu_de": _S, "doan": {"type": "ARRAY", "items": _S},
+            "dich": {"type": "ARRAY", "items": _S},          # 1.23: bản dịch tiếng Việt từng đoạn (ẩn sẵn)
             "ky": {"type": "INTEGER"}, "ky_truoc": _S},
             "required": ["loai", "tieu_de", "doan"],
-            "propertyOrdering": ["loai", "ky", "ky_truoc", "tieu_de", "doan"]}},
+            "propertyOrdering": ["loai", "ky", "ky_truoc", "tieu_de", "doan", "dich"]}},
         "cau_hoi": {"type": "ARRAY", "items": {"type": "OBJECT", "properties": {
             "hoi": _S, "chon": {"type": "ARRAY", "items": _S}, "dung": {"type": "INTEGER"}, "giai_thich": _S},
             "required": ["hoi", "chon", "dung", "giai_thich"],
@@ -1642,7 +1652,7 @@ def system_prompt(level: str) -> str:
         "Trả về đúng MỘT object JSON theo khuôn, không viết gì thêm." % (level, lo, hi, RULES))
 
 
-def write_prompt(scope: dict[str, Any], opts: dict[str, Any], story: list[dict[str, Any]],
+def write_prompt(scope: dict[str, Any], opts: dict[str, Any], story_list: list[dict[str, Any]],
                  history: list[dict[str, Any]], date: datetime.date) -> str:
     level = scope.get("trinh_do", "N5")
     short = bool(opts.get("short"))
@@ -1654,6 +1664,38 @@ def write_prompt(scope: dict[str, Any], opts: dict[str, Any], story: list[dict[s
             "ĐÂY LÀ SỐ RÚT GỌN (người học còn nhiều số chưa đọc): chỉ 1 bài loai \"tin_lang\" ngắn (2 đoạn), "
             "chinh_ta 2 câu lấy nguyên văn từ bài, cau_hoi để rỗng hoặc 1 câu. KHÔNG viết truyện. "
             "Tin làng có thể nhắc nhẹ là các nhân vật đang chờ người đọc.")
+    elif opts.get("no_story"):           # 1.23: Truyện: Tắt
+        parts.append(
+            "CẤU TRÚC: bai gồm đúng 2 bài theo thứ tự (KHÔNG có truyện dài kỳ):\n"
+            "1. loai \"tin_lang\": tin trong làng ことば村 và khu vườn ことば畑, 2–3 đoạn.\n"
+            "2. loai \"%s\": %s\n"
+            "cau_hoi: 2–3 câu trắc nghiệm tiếng Nhật về nội dung bài, mỗi câu đúng 3 lựa chọn, CHỈ MỘT đáp án đúng, "
+            "\"dung\" là vị trí đáp án đúng tính từ 0 (đổi vị trí giữa các câu), \"giai_thich\" tiếng Việt chỉ ra câu trong bài.\n"
+            "chinh_ta: 2–3 câu CHÉP NGUYÊN VĂN từ bài (8–30 ký tự, một câu trọn vẹn, không vắt qua dấu 「」); \"them_dap_an\": "
+            "cách viết khác vẫn đúng (僕/ぼく, 下さい/ください), không đánh dấu." % (
+                third, "お知らせ, 2–3 mục, mỗi mục là một đoạn bắt đầu bằng ◆, tiêu đề お[知|し]らせ."
+                if third == "thong_bao" else "cột ngắn của một nhân vật (1–2 đoạn), tiêu đề kiểu スタックちゃんの[一言|ひとこと]."))
+    elif opts.get("story_plain"):        # 1.23: truyện đã viết + biên tập ở các lượt trước
+        sp = opts["story_plain"]
+        parts.append(
+            "CẤU TRÚC: bai gồm đúng 3 bài theo thứ tự:\n"
+            "1. loai \"tin_lang\": tin trong làng ことば村 và khu vườn ことば畑, dùng nhân vật của truyện, 2–3 đoạn (đừng kể lại truyện).\n"
+            "2. loai \"truyen\", \"ky\": %d: CHÉP NGUYÊN VĂN truyện đã viết sẵn dưới đây (tiêu đề + %d đoạn), CHỈ THÊM đánh dấu "
+            "furigana theo quy tắc ([漢字|かんじ], {表記|よみ|từ gốc} cho từ trong danh sách), không sửa chữ, không thêm bớt câu; "
+            "\"dich\" để rỗng (máy tự điền).\n"
+            "3. loai \"%s\": %s\n"
+            "cau_hoi: 2–3 câu trắc nghiệm tiếng Nhật về nội dung CẢ SỐ (nên có 1 câu về truyện), mỗi câu đúng 3 lựa chọn, CHỈ "
+            "MỘT đáp án đúng, \"dung\" là vị trí đáp án đúng tính từ 0 (đổi vị trí giữa các câu), \"giai_thich\" tiếng Việt "
+            "chỉ ra câu trong bài.\n"
+            "chinh_ta: 2–3 câu CHÉP NGUYÊN VĂN từ bài (8–30 ký tự, một câu trọn vẹn, không vắt qua dấu 「」), lấy cả từ truyện; "
+            "\"them_dap_an\": cách viết khác vẫn đúng (僕/ぼく, 下さい/ください), không đánh dấu.\n"
+            "TRUYỆN ĐÃ VIẾT SẴN (kỳ %d):\n%s" % (
+                ky, len(sp["doan"]), third, "お知らせ, 2–3 mục, mỗi mục là một đoạn bắt đầu bằng ◆, tiêu đề お[知|し]らせ."
+                if third == "thong_bao" else "cột ngắn của một nhân vật (1–2 đoạn), tiêu đề kiểu スタックちゃんの[一言|ひとこと].",
+                ky, json.dumps({"tieu_de": sp["tieu_de"], "doan": sp["doan"]}, ensure_ascii=False)))
+        if sp.get("tu_moi"):
+            parts.append("Từ mới của truyện (đánh dấu {..|..|từ} và khai báo trong tu_moi): " +
+                         "、".join("%s（%s）= %s" % (w.get("w"), w.get("r"), w.get("m")) for w in sp["tu_moi"] if isinstance(w, dict)))
     else:
         parts.append(
             "CẤU TRÚC: bai gồm đúng 3 bài theo thứ tự:\n"
@@ -1668,6 +1710,9 @@ def write_prompt(scope: dict[str, Any], opts: dict[str, Any], story: list[dict[s
                 ky, ky, "\"\" (kỳ 1)" if ky == 1 else "1 câu tiếng Việt tóm tắt kỳ %d" % (ky - 1),
                 third, "お知らせ, 2–3 mục, mỗi mục là một đoạn bắt đầu bằng ◆, tiêu đề お[知|し]らせ."
                 if third == "thong_bao" else "cột ngắn của một nhân vật (1–2 đoạn), tiêu đề kiểu スタックちゃんの[一言|ひとこと].", ky))
+    if not short:
+        parts.append("dich: mỗi bài thêm \"dich\" = bản dịch tiếng Việt TỰ NHIÊN của từng đoạn (cùng số phần tử với doan; không "
+                     "có chữ Nhật, không furigana, không ghi chú trong ngoặc). Người học bấm \"Dịch\" mới thấy.")
     parts.append(
         "mau_cau: 2–4 id lấy đúng từ DANH SÁCH NGỮ PHÁP (cột đầu), là các mẫu được nhấn mạnh; mỗi mẫu xuất hiện ít nhất 2 lần. "
         "Phần lớn là mẫu TRỌNG TÂM (nếu có), thêm 1 mẫu cũ để ôn.\n"
@@ -1689,11 +1734,19 @@ def write_prompt(scope: dict[str, Any], opts: dict[str, Any], story: list[dict[s
     if recent:
         parts.append("3 SỐ GẦN NHẤT ĐÃ NHẤN MẠNH (tránh lặp lại hết): " +
                      "; ".join("%s: %s" % (h.get("ngay"), ", ".join(h.get("mau", []))) for h in recent))
-    if not short:
+    if not short and not opts.get("no_story") and not opts.get("story_plain"):
         parts.append("TRUYỆN:\n" + STORY_SETUP)
-        if story:
+        if opts.get("tone") in story_core.TONES:
+            parts.append("GIỌNG TRUYỆN: " + story_core.TONE_TEXT[opts["tone"]])
+        if story_list:
             parts.append("ĐÃ XẢY RA:\n" + "\n".join("- Kỳ %s (%s): %s" % (s.get("ky"), s.get("ngay"), s.get("tom_tat"))
-                                                     for s in story[-10:]))
+                                                     for s in story_list[-10:]))
+            last = story_list[-1]
+            if last.get("nguyen_van"):     # 1.23: nguyên văn kỳ trước (trước chỉ một câu tóm tắt → hay mâu thuẫn)
+                parts.append("NGUYÊN VĂN KỲ TRƯỚC (viết tiếp, không mâu thuẫn):\n" + "\n".join(last["nguyen_van"]))
+            th = story_core.open_threads(story_list, None)
+            if th:
+                parts.append("CHỖ BỎ NGỎ CÒN MỞ: " + "; ".join(th[-4:]))
         else:
             parts.append("ĐÃ XẢY RA: (chưa có kỳ nào, đây là kỳ 1: リンさん bắt đầu làm ở ことば屋)")
     parts.append("DANH SÁCH NGỮ PHÁP (id|mẫu|nghĩa) — chỉ dùng ngữ pháp này và đơn giản hơn:\n" + _grammar_lines(scope))
@@ -1734,6 +1787,8 @@ def review_prompt(raw: Any, scope: dict[str, Any], warnings: list[str]) -> str:
         "11. Số báo thường phải đủ 3 bài: tin_lang, truyen, rồi thong_bao hoặc cot.\n"
         "Ghi mỗi chỗ đã sửa vào van_de (cho = vị trí như bai[1].doan[0], loi = lỗi gì bằng tiếng Việt, sua = câu mới). "
         "Không có lỗi thì van_de rỗng. \"bao\" là toàn bộ số báo sau khi sửa (không có lỗi thì trả nguyên). "
+        "Bài truyện (loai truyen) đã qua biên tập: chỉ sửa lỗi thật sự (ngữ pháp, furigana), không viết lại. \"dich\" (bản "
+        "dịch tiếng Việt) giữ nguyên, chỉ sửa câu dịch của đoạn bạn vừa sửa.\n"
         "Giữ nguyên quy tắc đánh dấu, các id mau_cau, số kỳ truyện. GIỮ NGUYÊN mọi chỗ {表記|よみ|từ gốc}: đó là từ người học "
         "ĐÃ HỌC (bấm vào để tra nghĩa) — không đổi chúng thành [..|..], không đưa chúng vào tu_moi; tu_moi chỉ dành cho "
         "từ NGOÀI danh sách từ vựng.\n\n%s\n\n%s"
@@ -1741,6 +1796,69 @@ def review_prompt(raw: Any, scope: dict[str, Any], warnings: list[str]) -> str:
             level, level, level, RULES,
             ("GỢI Ý CỦA MÁY KIỂM TRA (xem và sửa nếu đúng là lỗi):\n- " + "\n- ".join(warnings[:20]) + "\n\n") if warnings else "",
             _grammar_lines(scope), json.dumps(raw, ensure_ascii=False)))
+
+
+TRANSLATE_SCHEMA: dict[str, Any] = {
+    "type": "OBJECT",
+    "properties": {"bai": {"type": "ARRAY", "items": {"type": "OBJECT", "properties": {"dich": {"type": "ARRAY", "items": _S}},
+                                                      "required": ["dich"]}}},
+    "required": ["bai"],
+}
+
+
+def translate_issue(client: Gemini, issue: dict[str, Any], lang: str = "ja", prefer: Any = None) -> list[list[str] | None]:
+    """1.23: "Dịch số này" cho số cũ (chưa có bản dịch): một lượt gọi, model nhẹ (Flash-Lite) trước. Trả về bản dịch
+    tiếng Việt của từng bài (None = bài đó dịch hỏng, không có nút Dịch)."""
+    arts = [{"tieu_de": paper.surface(b.get("tieu_de") or ""), "doan": [paper.surface(p) for p in b.get("doan") or []]}
+            for b in issue.get("bai") or []]
+    if not arts:
+        return []
+    names = text_models(client.models())
+    lite = [n for n in names if "lite" in n] + [n for n in names if "lite" not in n]
+    names = order_models(lite, client, [prefer]) if lite else []
+    prompt = ("Dịch số báo %s dưới đây sang tiếng Việt cho người Việt đang học: dịch tự nhiên, đúng ý, giữ tên riêng, "
+              "không thêm ghi chú hay giải thích trong ngoặc, không để chữ %s trong bản dịch. Mỗi bài trả về \"dich\" là "
+              "danh sách bản dịch của TỪNG đoạn, đúng thứ tự và đúng số đoạn (không dịch tiêu đề).\n\nSỐ BÁO:\n%s" % (
+                  "tiếng Anh" if lang == "en" else "tiếng Nhật", "Anh" if lang == "en" else "Nhật / Hán",
+                  json.dumps({"bai": arts}, ensure_ascii=False)))
+    last: AIError | None = None
+    for name in names[:MAX_MODELS]:
+        try:
+            raw = parse_json(client.generate(name, "Bạn là người dịch báo cẩn thận.", prompt, TRANSLATE_SCHEMA, 0.2,
+                                             thinking="low"))
+        except AIError as e:
+            last = e
+            if e.kind in ("quota", "model", "busy", "format", "bad", "blocked"):
+                continue
+            raise
+        rows = raw.get("bai") if isinstance(raw, dict) else None
+        if not isinstance(rows, list):
+            last = AIError("Gemini trả bản dịch sai định dạng.", "format")
+            continue
+        out: list[list[str] | None] = []
+        for i, a in enumerate(arts):
+            r = rows[i] if i < len(rows) and isinstance(rows[i], dict) else {}
+            out.append(story_core.clean_translation(r.get("dich"), len(a["doan"])))
+        if any(out):
+            return out
+        last = AIError("Bản dịch của Gemini không dùng được.", "format")
+    raise last or AIError("Không gọi được Gemini.", "busy")
+
+
+def add_translation(base: str, date: str, dich: list[list[str] | None]) -> bool:
+    """Ghi bản dịch vào bao.json của số báo Gemini (thư mục của add-on)."""
+    path = issue_path(base, date)
+    raw = _read(path, None)
+    if not isinstance(raw, dict) or not isinstance(raw.get("bai"), list):
+        return False
+    n = 0
+    for b, d in zip(raw["bai"], dich):
+        if isinstance(b, dict) and d and len(d) == len(b.get("doan") or []):
+            b["dich"] = d
+            n += 1
+    if n:
+        _write_json(path, raw)
+    return bool(n)
 
 
 # ---------------------------------------------------------------------------
@@ -1849,6 +1967,50 @@ class Job:
         self.models: list[str] = []
         self.model = ""
         self.en = _en_module() if scope.get("lang") == "en" else None
+        self.story: dict[str, Any] | None = None     # 1.23: kỳ truyện đã viết + biên tập (quy trình mới)
+
+    def check_kanji(self, text: str) -> list[str]:
+        return _bad_kanji(text)
+
+    def story_hints(self, st: dict[str, Any]) -> list[str]:
+        """Gợi ý cho biên tập (không chặn): chữ Hán khó hơn trình độ trong truyện tiếng Nhật."""
+        if self.en:
+            return []
+        hard = hard_kanji([st.get("tieu_de") or ""] + list(st.get("doan") or []), self.scope,
+                          [w.get("w", "") for w in st.get("tu_moi") or [] if isinstance(w, dict)])
+        return ["chữ Hán khó hơn trình độ (không có trong từ đã học): " + "、".join(hard[:8])] if hard else []
+
+    def _story_fill(self, raw: Any) -> None:
+        """1.23: điền phần máy biết chắc vào bài truyện của số báo: số kỳ, tóm tắt kỳ trước, bản dịch, tóm tắt truyện.
+        Báo tiếng Anh: chèn thẳng truyện đã duyệt (chữ trơn, máy tự nối tra từ sau)."""
+        st = self.story
+        if not st or not isinstance(raw, dict) or not isinstance(raw.get("bai"), list):
+            return
+        bai = raw["bai"]
+        idx = next((i for i, b in enumerate(bai) if isinstance(b, dict) and b.get("loai") == "truyen"), None)
+        if idx is None and self.en:
+            bai.insert(min(1, len(bai)), {"loai": "truyen"})
+            idx = min(1, len(bai) - 1)
+        if idx is None:
+            return
+        b = bai[idx]
+        if self.en:
+            b["tieu_de"], b["doan"] = st["tieu_de"], list(st["doan"])
+        b["ky"] = st["ky"]
+        if st["ky"] > 1 and not (isinstance(b.get("ky_truoc"), str) and VI_LETTER_RE.search(b["ky_truoc"])):
+            b["ky_truoc"] = st.get("ky_truoc") or b.get("ky_truoc") or ""
+        if st.get("dich") and isinstance(b.get("doan"), list) and len(b["doan"]) == len(st["dich"]):
+            b["dich"] = list(st["dich"])
+        nho = st.get("nho") if isinstance(st.get("nho"), dict) else {}
+        if not (isinstance(raw.get("tom_tat_truyen"), str) and raw["tom_tat_truyen"].strip()) and nho.get("tom_tat"):
+            raw["tom_tat_truyen"] = nho["tom_tat"]
+        if self.en and st.get("tu_moi"):     # từ mới của truyện tiếng Anh (máy tự gạch chân)
+            tm = raw.get("tu_moi") if isinstance(raw.get("tu_moi"), list) else []
+            have = {w.get("w") for w in tm if isinstance(w, dict)}
+            for w in st["tu_moi"]:
+                if isinstance(w, dict) and w.get("w") not in have and len(tm) < int(self.opts.get("max_new", 3)):
+                    tm.append({"w": w.get("w", ""), "r": w.get("r", ""), "m": w.get("m", "")})
+            raw["tu_moi"] = tm
 
     def _note(self, step: str, **kw: Any) -> None:
         item = {"buoc": step, **kw}
@@ -1893,6 +2055,7 @@ class Job:
             rep.err("bao", "JSON hỏng, không đọc được")
             return raw, rep
         fix, chk = (self.en.autofix, self.en.check) if self.en else (autofix, check)
+        self._story_fill(raw)
         raw, notes = fix(raw, self.scope, self.opts)
         if notes:
             self._note("may_sua", viec=notes)
@@ -1927,21 +2090,40 @@ class Job:
         t0 = time.time()
         level = self.scope.get("trinh_do", "N5")
         ensure_dir(self.base)
-        story = _read(os.path.join(self.base, "truyen.json"), [])
-        story = story if isinstance(story, list) else []
+        story = story_core.load_story(self.base)        # 1.23: đọc cả định dạng cũ, thêm nguyên văn / chỗ bỏ ngỏ
         history = _read(os.path.join(self.base, "lich_su.json"), [])
         history = history if isinstance(history, list) else []
         so, ky = numbering(self.base, self.date)
         self.opts.setdefault("so", so)
-        if not self.opts.get("short"):
-            self.opts.setdefault("ky", ky)
-        else:
+        mode = self.opts.get("story") if self.opts.get("story") in story_core.MODES else "hay"
+        if self.opts.get("short"):
             self.opts["ky"] = None
+        elif mode == "tat":                 # 1.23: Truyện: Tắt → số báo không có truyện, số kỳ giữ cho lần bật lại
+            self.opts["ky"] = None
+            self.opts["no_story"] = True
+        else:
+            self.opts.setdefault("ky", ky)
         day = datetime.date.fromisoformat(self.date)
         en = self.en
         system = en.system_prompt(level) if en else system_prompt(level)
         result: dict[str, Any] = {"ok": False, "date": self.date, "so": self.opts["so"], "lang": "en" if en else "ja"}
         try:
+            if mode == "hay" and self.opts.get("ky"):
+                # 1.23: mạch truyện → nhà văn → biên tập → viết lại (story_core); lỗi / hết lượt → truyện viết chung như cũ
+                try:
+                    self.story = story_core.run(self, int(self.opts["ky"]), str(self.opts.get("tone") or "am"),
+                                                (en.season_text if en else season_text)(day))
+                except AIError as e:
+                    if e.kind == "key":
+                        raise
+                    self._note("truyen_bo_qua", ly_do=str(e)[:200])
+                    self.story = None
+                if self.story:
+                    self.opts["story_plain"] = {k: self.story[k] for k in ("tieu_de", "doan")}
+                    self.opts["story_plain"]["tu_moi"] = self.story.get("tu_moi") or []
+                    result["story"] = {"diem": self.story.get("diem") or {}, "viet_lai": bool(self.story.get("_viet_lai"))}
+                else:
+                    self._note("truyen_viet_chung")
             self.progress("Gemini đang viết số %d%s…" % (self.opts["so"], " (tiếng Anh)" if en else ""))
             prompt = (en.write_prompt if en else write_prompt)(self.scope, self.opts, story, history, day)
             first = self._gen(system, prompt, ISSUE_SCHEMA, 0.8)
@@ -2023,15 +2205,28 @@ class Job:
             if b.get("loai") != "truyen":
                 b.pop("ky", None)
                 b.pop("ky_truoc", None)
+            # 1.23: bản dịch hỏng (sai số đoạn, lọt chữ Nhật…) → bỏ, bài đó không có nút Dịch, cả số vẫn dùng được
+            d = story_core.clean_translation(b.get("dich"), len(b.get("doan") or []))
+            if d:
+                b["dich"] = d
+            else:
+                b.pop("dich", None)
         # 1.23: mỗi số tự mang bảng tra nghĩa (pham_vi.json chung bị ghi đè khi số sau viết theo phạm vi khác)
         out.update(paper.build_lookup(paper.issue_texts(out), out.get("mau_cau") or [], self.scope))
         write_scope(self.base, self.scope)
         _write_json(issue_path(self.base, self.date), out)
-        ky = next((b.get("ky") for b in out["bai"] if b.get("loai") == "truyen"), None)
-        if ky and isinstance(raw.get("tom_tat_truyen"), str) and raw["tom_tat_truyen"].strip():
-            story = [s for s in story if isinstance(s, dict) and s.get("ky") != ky]
-            story.append({"ky": ky, "ngay": self.date, "tom_tat": raw["tom_tat_truyen"].strip()[:300]})
-            _write_json(os.path.join(self.base, "truyen.json"), story[-60:])
+        sb = next((b for b in out["bai"] if b.get("loai") == "truyen"), None)
+        ky = sb.get("ky") if sb else None
+        if ky and isinstance(ky, int):
+            # 1.23: bộ nhớ truyện ghi nguyên văn (chữ trơn), chỗ bỏ ngỏ, điểm biên tập — kỳ sau viết tiếp không mâu thuẫn
+            ep: dict[str, Any] = dict(self.story) if self.story else {}
+            ep["doan"] = [paper.surface(p) for p in sb.get("doan") or [] if isinstance(p, str)]
+            nho = dict(ep.get("nho") or {}) if isinstance(ep.get("nho"), dict) else {}
+            if isinstance(raw.get("tom_tat_truyen"), str) and raw["tom_tat_truyen"].strip() and not nho.get("tom_tat"):
+                nho["tom_tat"] = raw["tom_tat_truyen"].strip()[:300]
+            ep["nho"] = nho
+            if nho.get("tom_tat"):
+                story_core.save_episode(self.base, self.date, ky, ep, paper.surface(sb.get("tieu_de") or ""))
         words = [paper.norm_key(k) for t in _all_jp(out) for k in paper.keys(t)]
         history = [h for h in history if isinstance(h, dict) and h.get("ngay") != self.date]
         history.append({"ngay": self.date, "so": out["so"], "mau": out["mau_cau"],

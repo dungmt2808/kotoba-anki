@@ -129,6 +129,136 @@ full = issue("2026-11-05", [("日本", "にほん")])
 full["tra_tu"] = {"日本": ["日本", "にほん", "Nhật Bản", "deck"]}
 ok(paper.clean_issue(full, "2026-11-05")["bai"], "bao.json có thêm tra_tu vẫn đọc bình thường")
 
+print("== 5c: truyện theo quy trình mới (Gemini giả trả lời theo khuôn được hỏi)")
+import story_core as story
+REPO = os.path.join(HERE, "..", "..")
+scope = ai.scope_from_pham_vi(json.load(open(os.path.join(REPO, "kotoba_daily", "pham_vi.json"), encoding="utf-8")))
+raw0 = json.load(open(os.path.join(HERE, "..", "fixtures", "bao_112_n4.json"), encoding="utf-8"))
+fixed, _n = ai.autofix(json.loads(json.dumps(raw0)), scope, {"max_new": 3, "ky": 1})
+fixed["tom_tat_truyen"] = "Lin bắt đầu làm ở ことば屋."
+sb = next(b for b in fixed["bai"] if b["loai"] == "truyen")
+PLAIN = {"dan_y": {"muon": "Lin muốn làm tốt", "tro_ngai": "nói nhầm", "bat_ngo": "khách có bản đồ", "moc_cau": "hộp đỏ"},
+         "tieu_de": paper.surface(sb["tieu_de"]), "doan": [paper.surface(p) for p in sb["doan"]],
+         "dich": ["Lin bắt đầu làm việc ở quán trọ.", "Có một vị khách đến (dùng dạng lịch sự).", "Hộp đỏ khẽ rung lên."],
+         "tu_moi": [], "nho": {"tom_tat": "Kỳ 1: Lin bắt đầu làm, có vị khách lạ.", "nhan_vat_moi": ["ông khách đội mũ"],
+                                "bo_ngo": ["chiếc hộp đỏ là của ai"], "da_giai": []}}
+ARC = {"ten": "Chiếc hộp đỏ", "muc_tieu": "Lin muốn tự đón khách", "bi_an": "hộp đỏ của ai", "nhan_vat_phu": "ông khách",
+       "buoc": ["Lin đón khách đầu tiên", "hộp đỏ rung", "tìm chủ hộp", "bản đồ cũ", "lên núi", "gặp ông cụ", "mở hộp"],
+       "ket": "hộp là của mẹ はなさん"}
+
+
+class FakeStory(ai.Gemini):
+    def __init__(self, low_first=True, bad_story=False):
+        super().__init__("x" * 39, sleep=lambda s: None)
+        self.asked = []
+        self.low_first = low_first
+        self.bad_story = bad_story
+
+    def models(self):
+        return [{"name": "models/gemini-3.6-flash", "supportedGenerationMethods": ["generateContent"]}]
+
+    def generate(self, model, system, prompt, schema=None, temperature=0.7, max_tokens=0, thinking=None):
+        self.calls += 1
+        kind = ("mach" if schema is story.ARC_SCHEMA else "truyen" if schema is story.STORY_SCHEMA else
+                "bien_tap" if schema is story.EDIT_SCHEMA else "soat" if "van_de" in json.dumps(schema or {}) else "so")
+        self.asked.append((kind, prompt))
+        if kind == "mach":
+            return json.dumps(ARC, ensure_ascii=False)
+        if kind == "truyen":
+            if self.bad_story:
+                return json.dumps(dict(PLAIN, doan=["Lin wa genki desu."]), ensure_ascii=False)
+            return json.dumps(PLAIN, ensure_ascii=False)
+        if kind == "bien_tap":
+            low = self.low_first and sum(1 for k, _p in self.asked if k == "bien_tap") == 1
+            return json.dumps({"diem": {k: (3 if low and k == "bat_ngo" else 4) for k in story.CRIT},
+                               "loi": [], "goi_y": ["thêm chi tiết bất ngờ"]}, ensure_ascii=False)
+        if kind == "soat":
+            return json.dumps({"van_de": [], "bao": fixed}, ensure_ascii=False)
+        return json.dumps(fixed, ensure_ascii=False)
+
+
+sd = tempfile.mkdtemp(prefix="kb123s_")
+fs = FakeStory()
+res = ai.Job(fs, sd, "2026-11-07", scope, {"max_new": 3, "story": "hay", "tone": "bi_an"}).run()
+kinds = [k for k, _p in fs.asked]
+ok(res.get("ok"), "viết được số báo có truyện mới (%s)" % res.get("error", "ok"))
+ok(kinds[:4] == ["mach", "truyen", "bien_tap", "truyen"] and kinds[4] == "so",
+   "thứ tự: lập mạch → nhà văn → biên tập → viết lại (điểm bất ngờ 3 < 4) → viết số: %s" % kinds)
+ok(len(kinds) <= 7, "tổng lượt gọi %d (cũ: 2, thêm 3–4 cho truyện)" % len(kinds))
+wp = dict(fs.asked)["truyen"]
+ok("Bí ẩn nhẹ" in wp and "MẠCH CỦA ĐỢT" in wp and "VÍ DỤ MỘT KỲ HAY" in wp and "ĐÂY LÀ KỲ 1" in wp,
+   "lời nhắc nhà văn: giọng truyện, mạch, kỳ mẫu, kỳ 1")
+issue_prompt = next(p for k, p in fs.asked if k == "so")
+ok("TRUYỆN ĐÃ VIẾT SẴN" in issue_prompt and "CHÉP NGUYÊN VĂN" in issue_prompt, "lượt viết số nhận truyện đã duyệt, chép nguyên văn + furigana")
+saved = json.load(open(ai.issue_path(sd, "2026-11-07"), encoding="utf-8"))
+st_art = next(b for b in saved["bai"] if b["loai"] == "truyen")
+ok(st_art.get("dich") == ["Lin bắt đầu làm việc ở quán trọ.", "Có một vị khách đến.", "Hộp đỏ khẽ rung lên."],
+   "bản dịch truyện vào số báo, đã bỏ ghi chú trong ngoặc \"(dùng dạng lịch sự)\"")
+arc = story.load_arc(sd)
+ok(arc and arc["tu_ky"] == 1 and len(arc["buoc"]) == 7 and arc["giong"] == "bi_an", "truyen_mach.json: mạch 7 kỳ từ kỳ 1")
+eps = story.load_story(sd)
+ok(eps and eps[-1]["ky"] == 1 and eps[-1]["nguyen_van"] == PLAIN["doan"] and eps[-1]["bo_ngo"] == ["chiếc hộp đỏ là của ai"],
+   "truyen.json: nguyên văn + chỗ bỏ ngỏ của kỳ 1")
+ok(res.get("story", {}).get("viet_lai") is True, "kết quả ghi đã viết lại theo góp ý")
+
+print("== kỳ 2: nhà văn nhận nguyên văn kỳ trước, chỗ bỏ ngỏ, nhận xét người đọc")
+ok(story.set_feedback(sd, 1, "nhat", "muốn có thêm スタックちゃん"), "ghi nhận xét kỳ 1: Nhạt")
+fs2 = FakeStory(low_first=False)
+res2 = ai.Job(fs2, sd, "2026-11-08", scope, {"max_new": 3, "story": "hay", "tone": "bi_an"}).run()
+k2 = [k for k, _p in fs2.asked]
+ok(k2[:3] == ["truyen", "bien_tap", "so"], "mạch còn hạn: không lập lại; điểm ≥ 4: không viết lại — %s" % k2)
+wp2 = dict(fs2.asked)["truyen"]
+ok("NGUYÊN VĂN KỲ TRƯỚC" in wp2 and PLAIN["doan"][0][:15] in wp2 and "chiếc hộp đỏ là của ai" in wp2,
+   "kỳ 2 nhận nguyên văn kỳ 1 + chỗ bỏ ngỏ")
+ok("muốn có thêm スタックちゃん" in wp2 and "Nhạt" in wp2, "kỳ 2 đọc nhận xét người đọc")
+ok("→ kỳ 2" in wp2, "lời nhắc đánh dấu bước của mạch cho kỳ 2")
+
+print("== nhà văn trả bài hỏng (romaji) → dùng truyện viết chung như cũ, số báo vẫn về")
+sd3 = tempfile.mkdtemp(prefix="kb123s_")
+fs3 = FakeStory(bad_story=True)
+res3 = ai.Job(fs3, sd3, "2026-11-07", scope, {"max_new": 3, "story": "hay"}).run()
+k3 = [k for k, _p in fs3.asked]
+ok(res3.get("ok") and k3.count("truyen") == 2 and "bien_tap" not in k3, "2 lần viết đều hỏng → bỏ qua, viết chung: %s" % k3)
+ok("TRUYỆN ĐÃ VIẾT SẴN" not in next(p for k, p in fs3.asked if k == "so"), "lượt viết số tự viết truyện (Tiết kiệm)")
+
+print("== Truyện: Tắt")
+sd4 = tempfile.mkdtemp(prefix="kb123s_")
+two = json.loads(json.dumps(fixed))
+two["bai"] = [b for b in two["bai"] if b["loai"] != "truyen"]
+two.pop("tom_tat_truyen", None)
+
+
+class FakeOff(FakeStory):
+    def generate(self, model, system, prompt, schema=None, temperature=0.7, max_tokens=0, thinking=None):
+        self.calls += 1
+        self.asked.append(("x", prompt))
+        if "van_de" in json.dumps(schema or {}):
+            return json.dumps({"van_de": [], "bao": two}, ensure_ascii=False)
+        return json.dumps(two, ensure_ascii=False)
+
+
+fo = FakeOff()
+res4 = ai.Job(fo, sd4, "2026-11-07", scope, {"max_new": 3, "story": "tat"}).run()
+ok(res4.get("ok") and "KHÔNG có truyện" in fo.asked[0][1] and len(fo.asked) == 2,
+   "tắt truyện: số 2 bài, 2 lượt gọi (%s)" % res4.get("error", "ok"))
+
+print("== máy kiểm tra truyện / bản dịch")
+e, _w = story.check_story(dict(PLAIN, doan=["リンさんは watashi です" * 5] * 3), "ja", "N4", ai._bad_kanji)
+ok(any("romaji" in x for x in e), "romaji trong truyện → lỗi")
+e, _w = story.check_story(dict(PLAIN, tu_moi=[{"w": "落とし物", "r": "otoshimono", "m": "đồ đánh rơi"}]), "ja", "N4", ai._bad_kanji)
+ok(any("kana" in x for x in e), "từ mới đọc bằng romaji (thử thật: \"orugōru\") → lỗi")
+ok(story.clean_translation(["U哇, cái hộp!"], 1) is None, "bản dịch lọt chữ Trung (thử thật: \"U哇\") → bỏ")
+ok(story.clean_translation(["Hello there"], 1) is None, "bản dịch không phải tiếng Việt → bỏ")
+ok(story.clean_translation(["Một", "hai"], 1) is None, "sai số đoạn → bỏ")
+ok(story.story_matches(sb["doan"], PLAIN["doan"]) > 0.99 and story.story_matches(sb["doan"], ["全然違う話です。"] * 3) < 0.5,
+   "so bài truyện có furigana với bản chữ trơn")
+ok(paper.clean_issue(saved, "2026-11-07")["bai"][1]["dich"] == st_art["dich"], "clean_issue giữ bản dịch hợp lệ")
+bad_d = json.loads(json.dumps(saved)); bad_d["bai"][1]["dich"] = ["một", "hai"]
+ok(paper.clean_issue(bad_d, "2026-11-07")["bai"][1]["dich"] == [], "bản dịch sai số đoạn trong bao.json → không hiện")
+old_fmt = [{"ky": 1, "ngay": "2026-11-01", "tom_tat": "cũ"}]
+ai._write_json(os.path.join(sd4, "truyen.json"), old_fmt)
+ok(story.load_story(sd4)[0]["tom_tat"] == "cũ", "đọc được truyen.json định dạng cũ (1.22)")
+
 shutil.rmtree(TMP, ignore_errors=True)
 print("\nKẾT QUẢ: " + ("TẤT CẢ OK" if not FAIL else "%d LỖI" % len(FAIL)))
 sys.exit(1 if FAIL else 0)
