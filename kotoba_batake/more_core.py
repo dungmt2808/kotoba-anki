@@ -620,6 +620,7 @@ UI_GLOBAL: dict[str, tuple[str, ...]] = {
     "theme": ("garden", "paper"),                # màu bảng ôn: vàng / trắng giấy (1.23: bỏ "night" — Đêm vườn)
     "scene": ("normal", "large"),                # 1.23: cỡ cảnh trên màn chính: Vừa / Lớn
     "start": ("last", "yard"),                   # 1.23: mở vườn: cảnh đang chọn / luôn về Sân vườn
+    "deco": ("on", "off"),                       # 1.25: dây trang trí mùa (dải trên cùng, sân, trong nhà): Hiện / Ẩn
 }
 UI_PRESETS: dict[str, dict[str, Any]] = {
     "full": {},                                  # như cũ: mọi thứ chuyển động

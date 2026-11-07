@@ -282,9 +282,10 @@ TIER2_ITEMS = frozenset(SEASON_ITEMS) | frozenset(RARE_116)   # đồ lưu ở S
 # kho — xem attach_nha: vượt số đã có thì món ở gian bên về kho trước).
 NHA_KEY = "kotoba_batake_nha"
 SIDE_ROOMS = [
-    {"id": "kitchen", "name": "Bếp", "price": 2000, "side": "left"},
-    {"id": "bedroom", "name": "Phòng ngủ", "price": 2000, "side": "right"},
+    {"id": "kitchen", "name": "Bếp", "side": "left"},
+    {"id": "bedroom", "name": "Phòng ngủ", "side": "right"},
 ]
+NHA_PRICE = 2000                      # 1.25: mở rộng nhà một lần được cả hai gian (1.24: mỗi gian 2.000 xu)
 SIDE_IDS = tuple(r["id"] for r in SIDE_ROOMS)
 SIDE_COLS, SIDE_ROWS = 9, 4           # như phòng chính: hàng 0 là tường (gian bên không có cửa sổ)
 NHA_ITEMS: dict[str, dict[str, Any]] = {
@@ -524,6 +525,7 @@ def home_catalog(data: dict[str, Any] | None = None, px: dict[str, str] | None =
         # 1.24: nhà 3 gian
         "side": {"cols": SIDE_COLS, "rows": SIDE_ROWS},
         "rooms": [dict(r) for r in SIDE_ROOMS],
+        "nha_price": NHA_PRICE,
         "nha_unlock": NHA_UNLOCK_LEVEL,
         "zones": [dict(z, new=False) for z in ZONES],
         "styles": [dict(v, id=k) for k, v in HOUSE_STYLES.items()],
@@ -840,7 +842,8 @@ def attach_nha(data: dict[str, Any], store: Any) -> None:
     thì món ở gian bên về kho trước (không mất món đã mua)."""
     home = data["home"]
     got = store.get("rooms") if isinstance(store, dict) and isinstance(store.get("rooms"), list) else []
-    home["rooms"] = [r for r in SIDE_IDS if r in got]
+    # 1.25: mở rộng nhà là một lần cho cả hai gian — dữ liệu 1.24 mới mở một gian cũng coi như mở cả hai
+    home["rooms"] = list(SIDE_IDS) if any(r in got for r in SIDE_IDS) else []
     for sid in SIDE_IDS:
         home[sid] = []
     places = store.get("places") if isinstance(store, dict) and isinstance(store.get("places"), dict) else {}
@@ -3175,22 +3178,26 @@ class GardenState:
         self.save(data)
         return data
 
-    def open_room(self, room_id: str) -> dict[str, Any]:
-        """1.24: mở rộng nhà thêm một gian (Bếp / Phòng ngủ), thứ tự nào cũng được. Gọi lặp (bấm đúp) thì báo đã mở."""
-        info = next((r for r in SIDE_ROOMS if r["id"] == room_id), None)
-        if info is None:
-            raise HomeError("Không có gian này.")
+    def open_rooms(self) -> dict[str, Any]:
+        """1.25: mở rộng nhà một lần — 2.000 xu được cả Bếp lẫn Phòng ngủ. Gọi lặp (bấm đúp) thì báo đã mở, không trừ lần hai."""
         data = self.load()
         home = data["home"]
         if home["house"] < NHA_UNLOCK_LEVEL:
             raise HomeError(f"Xây xong nhà (bước “{HOUSE_LEVELS[NHA_UNLOCK_LEVEL][0]}”) rồi mới mở rộng được.")
-        if room_id in home["rooms"]:
-            raise HomeError(f"Gian “{info['name']}” đã mở rồi.")
-        self._pay(data, info["price"])
-        home["rooms"] = [r for r in SIDE_IDS if r in home["rooms"] or r == room_id]
-        home.setdefault(room_id, [])
+        if all(r in home["rooms"] for r in SIDE_IDS):
+            raise HomeError("Nhà đã mở rộng rồi (có cả Bếp và Phòng ngủ).")
+        self._pay(data, NHA_PRICE)
+        home["rooms"] = list(SIDE_IDS)
+        for sid in SIDE_IDS:
+            home.setdefault(sid, [])
         self.save(data)
         return data
+
+    def open_room(self, room_id: str) -> dict[str, Any]:
+        """Lệnh cũ của 1.24 (kèm id gian): từ 1.25 mở cả hai gian một lần."""
+        if room_id not in SIDE_IDS:
+            raise HomeError("Không có gian này.")
+        return self.open_rooms()
 
     def buy_style(self, style_id: str) -> dict[str, Any]:
         if style_id not in HOUSE_STYLES or style_id == "classic":

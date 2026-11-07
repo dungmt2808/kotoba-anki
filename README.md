@@ -34,15 +34,17 @@ Trời còn đổi theo giờ thật (sáng, hoàng hôn, đêm có đèn lồng
 
 ### Nhà & Cửa hàng
 
-Xây nhà từng bước, từ bãi đất trống tới gác mái có đèn lồng, rồi đổi kiểu nhà (nhà mái tranh minka, nhà trà chashitsu, lâu đài mini). Xây xong thì **mở rộng nhà** thêm **Bếp** và **Phòng ngủ** hai bên phòng chính (2.000 xu mỗi gian), với 12 món đồ riêng như tủ lạnh, nồi cơm, giường, đèn ngủ, dây đèn sao; ở màn chính bấm ◂ ▸ sang cảnh **Trong nhà** để thấy cả ba gian, mèo đi lại khắp nhà. Trang trí sân, bày nội thất, nuôi thú, mở thêm 6 vùng mới như bãi biển hay đền thần. Thỉnh thoảng có **khách ghé vườn**, như chim sẻ, cáo hay hươu Nara, tuỳ đồ bạn đặt và tuỳ mùa. Khách đã gặp được ghi vào Album khách.
+Xây nhà từng bước, từ bãi đất trống tới gác mái có đèn lồng, rồi đổi kiểu nhà (nhà mái tranh minka, nhà trà chashitsu, lâu đài mini). Xây xong thì **mở rộng nhà** một lần (2.000 xu) được cả **Bếp** và **Phòng ngủ** hai bên phòng chính, với 12 món đồ riêng như tủ lạnh, nồi cơm, giường, đèn ngủ, dây đèn sao. Ba gian theo kiểu nhà đang dùng (nhà gỗ: giấy dán tường hoa, sàn gỗ; minka: tường đất, chiếu tatami, cửa lùa vẽ sóng; nhà trà: cửa sổ tròn, hốc tokonoma; lâu đài: vách lá vàng vẽ tùng, cửa sổ hình chuông), đổi kiểu nhà là đổi cả ba gian. Ở màn chính bấm ◂ ▸ sang cảnh **Trong nhà** để thấy cả ngôi nhà đứng giữa vườn, mèo đi lại khắp nhà. Trang trí sân, bày nội thất, nuôi thú, mở thêm 6 vùng mới như bãi biển hay đền thần. Thỉnh thoảng có **khách ghé vườn**, như chim sẻ, cáo hay hươu Nara, tuỳ đồ bạn đặt và tuỳ mùa. Khách đã gặp được ghi vào Album khách.
 
 | Sân vườn | Trong nhà |
 |---|---|
 | ![Nhà & Cửa hàng, tab Trang trí sân](docs/anh/03_nha_trang_tri.png) | ![Trong nhà: kotatsu, bể cá, kệ sách, đèn andon, mèo ngủ](docs/anh/16_trong_nha.png) |
 
-![Nhà 3 gian ở màn chính: Bếp, phòng chính, Phòng ngủ](docs/anh/18_nha_3_gian.png)
+![Nhà 3 gian ở màn chính: Bếp, phòng chính, Phòng ngủ, hai bên là vườn](docs/anh/18_nha_3_gian.png)
 
-Muốn dải cảnh ở màn chính to hơn: ⚙ → Giao diện → Màn chính → Cỡ cảnh **Lớn**.
+![Ba gian theo 4 kiểu nhà: nhà gỗ mái đỏ, minka mái tranh, nhà trà, lâu đài mini](docs/anh/18b_nha_4_kieu.png)
+
+Muốn dải cảnh ở màn chính to hơn: ⚙ → Giao diện → Màn chính → Cỡ cảnh **Lớn**. Không thích dây trang trí theo mùa (dải trên cùng cửa sổ, dây ngoài sân, trong nhà): ⚙ → Giao diện → Màn chính → Dây trang trí **Ẩn**.
 
 ### 6 vùng mới và vùng tự tạo
 

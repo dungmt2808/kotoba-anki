@@ -1,6 +1,7 @@
 // 1.24 — nhà 3 gian trong Anki thật: Trong nhà ở ◂ ▸ màn chính (cả nhà, gian chưa mở tối + biển giá), bấm gian chưa mở →
 // tab Xây nhà, Mở rộng (bấm đúp chỉ trừ một lần), bảng Nhà chuyển gian, Nội thất nhóm Bếp / Phòng ngủ, mua + đặt tủ lạnh
 // trong Bếp, đặt đồ từ Kho vào Bếp, ảnh chụp nguyên nhà, ban đêm, cửa sổ nhỏ.
+// 1.25: mở rộng nhà một lần được cả hai gian → phần "Mở rộng" đổi theo (một thẻ, mở cả Bếp lẫn Phòng ngủ); chi tiết ở e2e_125.js.
 // Chạy: KB_SCRIPTS=e2e_124.js run_ui.sh ADDON SHOTS
 const fs = require('fs');
 const { pages, Page, sleep } = require('./cdp');
@@ -69,14 +70,14 @@ kb.open_garden(); result = 1`);
   const kx = await js('const r = document.getElementById("kb-yard").getBoundingClientRect(); return [r.left + r.width * 0.2, r.top + r.height * 0.6];');
   await click(kx[0], kx[1]); await sleep(900);
   ok(await js('return !document.getElementById("kb-home").hidden && document.querySelector("#kb-home .kb-h-tab.is-on").getAttribute("data-tab") === "build";'), 'mở Nhà & Cửa hàng ở tab Xây nhà');
-  ok(await js('return document.querySelectorAll(".kb-h-room").length === 2 && /Mở rộng nhà: Bếp/.test(document.getElementById("kb-h-list").textContent);'), 'hai thẻ "Mở rộng nhà: Bếp / Phòng ngủ"');
-  await js('const l = document.getElementById("kb-h-list"), c = document.querySelector(".kb-h-room[data-room=kitchen]"); l.scrollTop = c.offsetTop - l.offsetTop - 8; window.scrollTo(0, 0); return 1;'); await sleep(300);
+  ok(await js('return document.querySelectorAll(".kb-h-room").length === 1 && /Mở rộng nhà: Bếp \\+ Phòng ngủ/.test(document.getElementById("kb-h-list").textContent);'), '1.25: một thẻ "Mở rộng nhà: Bếp + Phòng ngủ"');
+  await js('const l = document.getElementById("kb-h-list"), c = document.querySelector(".kb-h-nha"); l.scrollTop = c.offsetTop - l.offsetTop - 8; window.scrollTo(0, 0); return 1;'); await sleep(300);
   await page.shot(SHOTS + '/124_02_xay_nha_mo_rong.png');
-  await js('const b = document.querySelector(".kb-h-room[data-room=kitchen] .kb-h-buy"); b.click(); b.click(); return 1;'); await sleep(1500);
+  await js('const b = document.querySelector(".kb-h-nha .kb-h-buy"); b.click(); b.click(); return 1;'); await sleep(1500);
   let h = await home();
-  ok(h.coins === 8000 && JSON.stringify(h.rooms) === '["kitchen"]', 'bấm đúp "Mở rộng": mở Bếp, chỉ trừ 2.000 xu (còn ' + h.coins + ')');
-  ok(await js('return [...document.querySelectorAll(".kb-h-scene")].some(b => b.textContent === "Bếp") && ![...document.querySelectorAll(".kb-h-scene")].some(b => /Phòng ngủ|Mở rộng/.test(b.textContent));'),
-     'nút cảnh: có "Bếp"; Phòng ngủ chưa mở thì không có nút (mở ở tab Xây nhà)');
+  ok(h.coins === 8000 && JSON.stringify(h.rooms) === '["kitchen","bedroom"]', 'bấm đúp "Mở rộng": mở cả Bếp lẫn Phòng ngủ, chỉ trừ 2.000 xu (còn ' + h.coins + ')');
+  ok(await js('return [...document.querySelectorAll(".kb-h-scene")].some(b => b.textContent === "Bếp") && [...document.querySelectorAll(".kb-h-scene")].some(b => b.textContent === "Phòng ngủ") && ![...document.querySelectorAll(".kb-h-scene")].some(b => /Mở rộng/.test(b.textContent));'),
+     'nút cảnh: có "Bếp" và "Phòng ngủ"');
 
   console.log('== Bếp: mua + đặt tủ lạnh, đặt chậu cây từ Kho');
   await js('[...document.querySelectorAll(".kb-h-scene")].find(b => b.textContent === "Bếp").click(); return 1;'); await sleep(600);
@@ -107,8 +108,7 @@ kb.open_garden(); result = 1`);
   await page.shot(SHOTS + '/124_03_bep.png');
 
   console.log('== Phòng ngủ + đồ mới, thú nuôi đi khắp nhà');
-  await py(KB + `st.open_room("bedroom")
-for k in ("beddo", "nightlamp", "hoshizora", "tansu", "nagashi", "shokutaku", "suihanki", "shokkidana"):
+  await py(KB + `for k in ("beddo", "nightlamp", "hoshizora", "tansu", "nagashi", "shokutaku", "suihanki", "shokkidana"):
     st.buy(k)
 st.place("bedroom", "beddo", 0, 3); st.place("bedroom", "nightlamp", 2, 2); st.place("bedroom", "hoshizora", 3, 0); st.place("bedroom", "tansu", 7, 1)
 st.place("kitchen", "nagashi", 2, 1); st.place("kitchen", "shokutaku", 5, 3); st.place("kitchen", "suihanki", 6, 1); st.place("kitchen", "shokkidana", 5, 0)

@@ -2634,7 +2634,7 @@ class GardenDialog(QDialog):
             ("face", "buy"): STATE.buy_face, ("face", "toggle"): STATE.toggle_face,
             ("craft", "copy"): STATE.craft_copy, ("craft", "del"): STATE.craft_delete,
             ("myseed", "del"): STATE.myseed_delete,
-            ("nha", "open"): STATE.open_room,       # 1.24: mở rộng nhà (Bếp / Phòng ngủ)
+            ("nha", "open"): STATE.open_room,       # 1.24: mở rộng nhà kèm id gian (1.25: vẫn mở cả hai gian)
         }
         regrow = False   # đổi giống cây → dựng lại ruộng
         try:
@@ -2659,6 +2659,8 @@ class GardenDialog(QDialog):
                 data = STATE.pet_move(parts[2], parts[3])
             elif parts[0] == "uzone" and len(parts) == 3 and parts[1] == "del":
                 data = STATE.zone_delete(parts[2])
+            elif parts == ["nha", "open"]:          # 1.25: mở rộng nhà một lần (cả Bếp lẫn Phòng ngủ)
+                data = STATE.open_rooms()
             elif len(parts) == 3 and (parts[0], parts[1]) in two:
                 data = two[(parts[0], parts[1])](parts[2])
                 regrow = parts[0] == "myseed"      # 1.22: xoá giống tự vẽ → cây mang giống đó về cây gốc

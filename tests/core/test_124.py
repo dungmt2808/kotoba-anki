@@ -1,6 +1,7 @@
 """Test offline 1.24: nhà 3 gian (Bếp · phòng chính · Phòng ngủ).
 
-- Danh mục 12 món mới (Bếp / Phòng ngủ), mở gian 2.000 xu sau khi xây xong nhà, bấm đúp không trừ hai lần.
+- Danh mục 12 món mới (Bếp / Phòng ngủ), mở gian 2.000 xu sau khi xây xong nhà, bấm đúp không trừ hai lần
+  (1.25: một lần 2.000 xu mở cả hai gian — các kiểm tra ở đây đã đổi theo, phần mới ở test_125.py).
 - Đặt / di chuyển / cất đồ ở từng gian (9 ô, không cửa sổ), đồ ngoài trời không vào nhà, gian chưa mở không đặt được.
 - Lưu: hai gian bên + đồ mới chỉ ở khoá riêng NHA_KEY (ví / EXT / SEASON không lẫn), giữ khoá lạ của bản sau.
 - Bản 1.23 mở cùng dữ liệu (mã 1.23 thật): không mất gian / đồ mới; đặt thêm món tưởng còn trong kho → khi về 1.24 món ở
@@ -66,23 +67,19 @@ ok(sum(1 for v in core.NHA_ITEMS.values() if v["group"] == "kitchen") == 6 and a
    "6 món Bếp + 6 món Phòng ngủ, giá 100–400 xu (tổng %d xu)" % sum(v["price"] for v in core.NHA_ITEMS.values()))
 cat = core.home_catalog()
 ok(cat["side"] == {"cols": 9, "rows": 4} and [r["id"] for r in cat["rooms"]] == ["kitchen", "bedroom"]
-   and all(r["price"] == 2000 for r in cat["rooms"]) and cat["nha_unlock"] == 7, "home_catalog: gian bên 9 × 4, Bếp / Phòng ngủ 2.000 xu, mở sau bước 7")
+   and cat["nha_price"] == 2000 and cat["nha_unlock"] == 7, "home_catalog: gian bên 9 × 4, mở rộng nhà 2.000 xu (1.25: một lần cả hai gian), mở sau bước 7")
 ok(all(any(i["id"] == k and i.get("group") for i in cat["items"]) for k in core.NHA_ITEMS), "món mới có trong danh mục gửi giao diện (kèm nhóm)")
 
-print("== mở gian")
+print("== mở gian (1.25: một lần 2.000 xu được cả Bếp lẫn Phòng ngủ — chi tiết ở test_125.py)")
 d, st = fresh("open", coins=5000, house=6)
 ok("Xây xong nhà" in err(st.open_room, "kitchen") and st.load()["coins"] == 5000, "nhà chưa xây xong → chưa mở rộng được, không trừ xu")
 data = st.load(); data["home"]["house"] = 7; st.save(data)
 st.open_room("bedroom")
 data = st.load()
-ok(data["coins"] == 3000 and data["home"]["rooms"] == ["bedroom"], "mở Phòng ngủ trước (thứ tự nào cũng được): trừ 2.000 xu")
-ok("đã mở rồi" in err(st.open_room, "bedroom") and st.load()["coins"] == 3000, "bấm đúp: báo đã mở, không trừ lần hai")
+ok(data["coins"] == 3000 and data["home"]["rooms"] == ["kitchen", "bedroom"], "lệnh cũ kèm id gian (Phòng ngủ): trừ 2.000 xu, mở cả hai gian")
+ok("đã mở rộng rồi" in err(st.open_room, "bedroom") and "đã mở rộng rồi" in err(st.open_room, "kitchen") and st.load()["coins"] == 3000,
+   "bấm đúp / bấm gian kia: báo đã mở, không trừ lần hai")
 ok("Không có gian" in err(st.open_room, "attic"), "gian lạ → lỗi")
-data = st.load(); data["coins"] = 1500; st.save(data)
-ok("Chưa đủ xu" in err(st.open_room, "kitchen") and st.load()["home"]["rooms"] == ["bedroom"], "thiếu xu → không mở")
-data = st.load(); data["coins"] = 2000; st.save(data)
-st.open_room("kitchen")
-ok(st.load()["home"]["rooms"] == ["kitchen", "bedroom"] and st.load()["coins"] == 0, "mở nốt Bếp: danh sách gian theo thứ tự Bếp, Phòng ngủ")
 
 print("== đặt / di chuyển / cất đồ ở từng gian")
 d, st = fresh("place", owned={"plant": 3, "clock": 1, "futon": 1, "fence": 2, "reizouko": 1, "hoshizora": 1})
@@ -112,7 +109,7 @@ w, ext, sea, nha = read(d, "wallet.json"), read(d, "ext.json"), read(d, "season.
 blob = json.dumps([w, ext, sea])
 ok("kitchen" not in blob and "reizouko" not in blob and "hoshizora" not in blob and "rooms" not in json.dumps(w["home"]),
    "ví / EXT / SEASON không có gian bên hay món mới (bản cũ không thấy, không xoá được)")
-ok(nha["rooms"] == ["kitchen"] and nha["owned"] == {"reizouko": 1, "hoshizora": 1}
+ok(nha["rooms"] == ["kitchen", "bedroom"] and nha["owned"] == {"reizouko": 1, "hoshizora": 1}
    and [e["id"] for e in nha["places"]["kitchen"]] == ["plant", "clock"] and [e["id"] for e in nha["places"]["room"]] == ["hoshizora"],
    "NHA_KEY: gian đã mở, sở hữu món mới, đồ ở Bếp, món mới ở phòng chính")
 ok([e["id"] for e in w["home"]["room"]] == ["plant"], "phòng chính trong ví giữ nguyên đồ cũ (bản cũ vẫn đọc đúng)")
@@ -124,7 +121,7 @@ json.dump(nha, open(os.path.join(d, "nha.json"), "w", encoding="utf-8"))
 data = st.load(); data["coins"] += 1; st.save(data)
 nha2 = read(d, "nha.json")
 ok(nha2.get("future") == {"x": 1} and "attic" in nha2["rooms"] and nha2["places"].get("attic") and nha2["owned"].get("piano") == 1
-   and st.load()["home"]["rooms"] == ["kitchen"], "giữ khoá / gian / món lạ của bản sau, bản này chỉ hiện gian mình biết")
+   and st.load()["home"]["rooms"] == ["kitchen", "bedroom"], "giữ khoá / gian / món lạ của bản sau, bản này chỉ hiện gian mình biết")
 
 print("== đồng bộ với bản cũ: vượt số đồ đã có → món ở gian bên về kho trước")
 d2, st2 = fresh("over", owned={"plant": 2})
@@ -173,7 +170,7 @@ print(json.dumps(out))
     ok(r.returncode == 0 and not old.get("has_kitchen") and "reizouko" not in old.get("owned", {}) and old.get("free_plant") == 2,
        "bản 1.23 không thấy Bếp / tủ lạnh; tưởng 2 chậu cây còn trong kho" + ("" if r.returncode == 0 else ": " + r.stderr[-300:]))
     data = st3.load()
-    ok(data["home"]["rooms"] == ["kitchen"] and data["home"]["owned"].get("reizouko") == 1
+    ok(data["home"]["rooms"] == ["kitchen", "bedroom"] and data["home"]["owned"].get("reizouko") == 1
        and [e["id"] for e in data["home"]["kitchen"]] == ["reizouko"],
        "về 1.24: Bếp và tủ lạnh còn nguyên sau khi bản 1.23 lưu")
     ok(data["home"]["owned"]["plant"] == 2 and [e["id"] for e in data["home"]["room"]] == ["plant", "plant"] and core.placed_count(data["home"], "plant") == 2,

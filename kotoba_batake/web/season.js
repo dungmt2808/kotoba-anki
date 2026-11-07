@@ -439,9 +439,11 @@ var GardenSeason = (function () {
       if (hash(n * 41) < 0.3) { bx(ctx, ox + x + 1, oy + y, 1, 1, c, S); }
     }
   }
+  // 1.25: ⚙ → Màn chính → "Dây trang trí: Ẩn" — ẩn dải trên cùng, dây ngoài sân và dây trong nhà (màu mùa, hạt rơi giữ nguyên)
+  function decoOff() { return typeof GardenUI !== "undefined" && GardenUI.glob && GardenUI.glob("deco") === "off"; }
   function sceneGarland(ctx, S, ox, oy, now, x0, x1, pass, st) {
     const v = V();
-    if (!v || !v.garland) { return; }
+    if (!v || !v.garland || decoOff()) { return; }
     if (pass && st.light >= 0.6) { return; }
     garland(ctx, S, ox, oy, x0, x1, 1, effects() ? now : 0, v.garland, pass);
   }
@@ -469,7 +471,7 @@ var GardenSeason = (function () {
   // Trong phòng: dây trang trí dưới xà nhà
   function room(ctx, S, ox, oy, now, W, pass, st) {
     const v = V();
-    if (!v || !v.room) { return; }
+    if (!v || !v.room || decoOff()) { return; }
     if (pass && (!st || st.light >= 0.6)) { return; }
     garland(ctx, S, ox, oy, 0, W, 6, effects() ? now : 0, v.room, pass, { L: 40, sag: 3 });
   }
@@ -507,7 +509,7 @@ var GardenSeason = (function () {
     const cv = $("kb-theme-band"), v = V();
     if (!cv) { return; }
     if (uiSkyOff()) { now = 0; }    // 1.14: tắt hạt bay → dải trang trí đứng yên
-    if (!v) { if (!cv.hidden) { cv.hidden = true; } return; }
+    if (!v || decoOff()) { if (!cv.hidden) { cv.hidden = true; } return; }
     cv.hidden = false;
     const w = cv.clientWidth || window.innerWidth, dpr = 1;
     if (cv.width !== w * dpr || cv.height !== BAND_H * BAND_S) { cv.width = w * dpr; cv.height = BAND_H * BAND_S; }
