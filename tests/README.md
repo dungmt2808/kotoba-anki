@@ -96,7 +96,13 @@ ANKI_PY=~/.venv-anki/bin/python tests/anki/run_ui.sh /tmp/kb_src/kotoba_batake /
 ```
 Cần Node ≥ 22 (có sẵn `fetch` và `WebSocket`). Cổng: `KB_CDP_PORT` (9333), `KB_CTRL_PORT` (9444). `kill_anki.sh` tắt Anki đang chạy từ các script này.
 
-## Kết quả lần chạy gần nhất (bản 1.24.0, 07/11/2026) — nhà 3 gian, bỏ Ngắm cảnh
+## Kết quả lần chạy gần nhất (bản 1.25.0, 07/11/2026) — nhà 3 gian làm lại
+- `run_all.sh` (`ANKI_PY` = venv aqt 26.9.4, có `core/test_125.py` mới chạy cả mã 1.24 thật lấy từ git) **TẤT CẢ OK**.
+- Anki thật **26.9.4**: `e2e_125.js` **29/29** (mới) · `e2e_124.js` 23/23 (đổi phần Mở rộng theo luật mới) · `e2e.js` 24/24 · `e2e_tour.js` 12/12 · `e2e_114` 34/34 · `e2e_115` 21/21 · `e2e_116` 15/15 · `e2e_117` 55/55 · `e2e_118` 29/29 · `e2e_119` 55/55 · `e2e_120` 103/103 · `e2e_121` 46/46 · `e2e_122` 64/64 · `e2e_1223` 49/49 · `e2e_1226` 40/40 · `e2e_1228` 26/26 · `e2e_123` 65/65 · `e2e_kit23` 10/10 · `audit_edge.js` 58/58 · `audit_full.js` **181/181** (Mở rộng nhà một lần; ảnh có cờ đo 0/131). **23.10.1 (Qt 6.6.1)**: `e2e_125` 29/29 · `e2e_124` 23/23 · `e2e_tour` 12/12 · `e2e_1226` 40/40 · `e2e_1228` 26/26 · `e2e_123` 65/65.
+- Lần chạy đầu `e2e_125` trượt 4/29 do điểm đo của kịch bản (trúng biển giá / cột tường ngoài) — dời điểm đo.
+- Báo cáo + ảnh: `docs/kiem_thu/1.25/BAO_CAO.md` (`shots_125.js`).
+
+## Kết quả lần chạy trước (bản 1.24.0, 07/11/2026) — nhà 3 gian, bỏ Ngắm cảnh
 - `run_all.sh` (`ANKI_PY` = venv aqt 26.9.4, có `core/test_124.py` mới chạy cả mã 1.23 thật lấy từ git) **TẤT CẢ OK**.
 - Anki thật **26.9.4**: `e2e_124.js` **23/23** (mới) · `e2e.js` 24/24 · `e2e_tour.js` 12/12 · `e2e_114` 34/34 · `e2e_115` 21/21 · `e2e_116` 15/15 · `e2e_117` 55/55 · `e2e_118` 29/29 · `e2e_119` 55/55 · `e2e_120` 103/103 · `e2e_121` 46/46 · `e2e_122` 64/64 · `e2e_1223` 49/49 · `e2e_1226` 40/40 · `e2e_1228` 26/26 · `e2e_123` 65/65 (phần Ngắm cảnh thay bằng kiểm tra đã gỡ) · `e2e_kit23` 10/10 · `audit_edge.js` 58/58 · `audit_full.js` **182/182** (thêm phần "Mở rộng nhà"; ảnh có cờ đo 0). **23.10.1 (Qt 6.6.1)**: `e2e_124` 22/22 · `e2e_tour` 12/12 · `e2e_1226` 40/40 · `e2e_1228` 26/26 · `e2e_123` 65/65.
 - Lần chạy đầu: `e2e_122` trượt 1/64 (nút khoá "Mở rộng nhà" đẩy "Thoát" xuống dòng ở 1024 px → bỏ nút, hàng nút cảnh xuống dòng trong khung của mình); `audit_full` 178/180 (mua hết đồ thì phòng chính kín vì thêm 12 món mới, món tự làm "Gối tím" vào kho → món trong nhà mới mua / tự làm tự sang gian còn chỗ, `audit_full` mở rộng nhà qua giao diện trước khi mua nội thất).
