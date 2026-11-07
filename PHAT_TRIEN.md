@@ -8,7 +8,9 @@ Cập nhật: 2026-11-07. Add-on **1.24.0** (1.24.0: **nhà 3 gian** — Bếp �
 
 ## 0. Đọc nhanh (cho phiên chat mới)
 
-> **Không có việc đang chờ (07/11/2026).** 1.24.0 đã làm nhà 3 gian (`KE_HOACH_1_24.md` đã xoá, mục 2.6r) và bỏ Ngắm cảnh theo yêu cầu. Ý tưởng sự kiện hằng ngày (chưa chốt): `KE_HOACH_Y_TUONG_HANG_NGAY.md`.
+> **Việc đang chờ (07/11/2026): bản 1.25 theo `KE_HOACH_1_25.md`** — người dùng xem 1.24.0 trên máy thật rồi chốt: mở rộng nhà **một lần 2.000 xu cho cả hai gian**; ba gian **cùng phong cách theo kiểu nhà** (đổi kiểu nhà đổi cả ba gian, không mua lại), mỗi gian một cửa sổ + một điểm nhấn; dải cảnh "Trong nhà" **kín bề ngang** (kéo dài hai gian bên, ba gian đặt tránh thẻ Hôm nay); **một nút ẩn dây trang trí mùa**. Làm ảnh phác cho người dùng duyệt trước khi hoàn thiện (kế hoạch mục 5.1).
+>
+> ~~Không có việc đang chờ (07/11/2026).~~ 1.24.0 đã làm nhà 3 gian (`KE_HOACH_1_24.md` đã xoá, mục 2.6r) và bỏ Ngắm cảnh theo yêu cầu. Ý tưởng sự kiện hằng ngày (chưa chốt): `KE_HOACH_Y_TUONG_HANG_NGAY.md`.
 >
 > ~~Việc đang chờ (07/11/2026): nhà 3 gian (Bếp · phòng chính · Phòng ngủ) theo `KE_HOACH_1_24.md`~~ (đã làm ở 1.24.0, mục 2.6r).
 >
