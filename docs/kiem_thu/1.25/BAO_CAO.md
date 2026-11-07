@@ -38,7 +38,7 @@ Bản 1.25.0: **nhà 3 gian làm lại** sau khi người dùng xem 1.24 trên m
 
 ![Hình nền 1920 × 1080 nguyên nhà](125_hinh_nen_nha.png)
 
-Thêm: [cửa sổ 1366 × 768](125_nha_classic_1366.png) · [tab Xây nhà: thẻ Mở rộng nhà](125_the_mo_rong.png) · [thẻ kiểu nhà có ảnh ba gian](125_kieu_nha.png) · [bảng Nhà · Bếp](125_bang_bep.png) · [⚙ → Màn chính → Dây trang trí](125_nut_day_trang_tri.png) · [đã ẩn dây trang trí](125_an_day_trang_tri.png).
+Thêm: [Cỡ cảnh Lớn: mái đầy đủ](125_co_canh_lon.png) · [nhà chưa xây xong 7 bước](125_nha_chua_xay_xong.png) · [mưa](125_mua.png) · [tuyết](125_tuyet.png) · [cửa sổ 1366 × 768](125_nha_classic_1366.png) · [tab Xây nhà: thẻ Mở rộng nhà](125_the_mo_rong.png) · [thẻ kiểu nhà có ảnh ba gian](125_kieu_nha.png) · [bảng Nhà · Bếp](125_bang_bep.png) · [⚙ → Màn chính → Dây trang trí](125_nut_day_trang_tri.png) · [đã ẩn dây trang trí](125_an_day_trang_tri.png).
 
 ## 4. Đồng bộ với bản cũ (mã 1.24 thật, `test_125.py`)
 

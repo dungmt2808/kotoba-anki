@@ -205,7 +205,7 @@ var GardenUI = (function () {
     g = el("div", "kb-ui-globals");
     radios("scene", "Cỡ cảnh", [["normal", "Vừa"], ["large", "Lớn (ruộng cây lùi xuống)"]]);
     radios("start", "Cảnh hiện", [["last", "Cảnh đang chọn"], ["yard", "Luôn về Sân vườn khi mở vườn"]]);
-    radios("deco", "Dây trang trí", [["on", "Hiện"], ["off", "Ẩn (dải trên cùng, sân, trong nhà)"]]);     // 1.25
+    radios("deco", "Dây trang trí", [["on", "Hiện"], ["off", "Ẩn"]]);     // 1.25
     st.appendChild(g);
     st.appendChild(el("div", "kb-ui-h", "Bảng ôn thẻ"));
     g = el("div", "kb-ui-globals");

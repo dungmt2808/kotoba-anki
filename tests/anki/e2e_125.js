@@ -76,8 +76,8 @@ kb.open_garden(); result = 1`);
   await click(kx[0], kx[1]); await sleep(900);
   ok(await js('return !document.getElementById("kb-home").hidden && document.querySelector("#kb-home .kb-h-tab.is-on").getAttribute("data-tab") === "build";'), 'bấm Bếp chưa mở → Nhà & Cửa hàng ở tab Xây nhà');
   const card = await js('const c = document.querySelectorAll(".kb-h-nha"); return [c.length, document.querySelectorAll(".kb-h-room").length, c[0] ? c[0].textContent : "", c[0] ? c[0].querySelectorAll("canvas.kb-h-house3").length : 0];');
-  ok(card[0] === 1 && card[1] === 1 && /Bếp \+ Phòng ngủ/.test(card[2]) && /2000 xu/.test(card[2]) && card[3] === 1, 'một thẻ "Mở rộng nhà: Bếp + Phòng ngủ · 2000 xu" có ảnh nhỏ cả nhà');
-  ok(await js('return /một lần mở cả Bếp lẫn Phòng ngủ/.test(document.getElementById("kb-h-list").textContent);'), 'tiêu đề nhóm: "một lần mở cả Bếp lẫn Phòng ngủ"');
+  ok(card[0] === 1 && card[1] === 1 && /Bếp \+ Phòng ngủ/.test(card[2]) && /2000 xu/.test(card[2]) && card[3] === 1, 'một thẻ "Bếp + Phòng ngủ · 2000 xu" có ảnh nhỏ cả nhà');
+  ok(await js('const c = document.querySelector(".kb-h-nha"); return !c.querySelector(".kb-h-desc") && [...document.querySelectorAll("#kb-h-list .kb-h-sec")].some((x) => x.textContent === "Mở rộng nhà");'), 'tiêu đề nhóm "Mở rộng nhà", thẻ không có đoạn giải thích');
   await js('const l = document.getElementById("kb-h-list"), c = document.querySelector(".kb-h-nha"); l.scrollTop = c.offsetTop - l.offsetTop - 8; window.scrollTo(0, 0); return 1;'); await sleep(300);
   await page.shot(SHOTS + '/125_02_the_mo_rong.png');
   await js('const b = document.querySelector(".kb-h-nha .kb-h-buy"); b.click(); b.click(); return 1;'); await sleep(1500);
@@ -140,7 +140,7 @@ else:
   const garl0 = await strip('let s = 0; for (let x = 4; x < 452; x += 3) { s += lum(at(x, 7)); } return s;');
   await js('GardenUI.open(); return 1;'); await sleep(800);
   const row = await js('const r = [...document.querySelectorAll("#kb-ui-stage .kb-ui-radio")].find((x) => /Dây trang trí/.test(x.textContent)); if (!r) return null; const ins = r.querySelectorAll("input"); return [ins.length, ins[0].checked, r.textContent];');
-  ok(row && row[0] === 2 && row[1] && /Hiện/.test(row[2]) && /Ẩn \(dải trên cùng, sân, trong nhà\)/.test(row[2]), 'có dòng "Dây trang trí: Hiện / Ẩn", mặc định Hiện');
+  ok(row && row[0] === 2 && row[1] && /Hiện/.test(row[2]) && /Ẩn/.test(row[2]), 'có dòng "Dây trang trí: Hiện / Ẩn", mặc định Hiện');
   await js('const r = [...document.querySelectorAll("#kb-ui-stage .kb-ui-radio")].find((x) => /Dây trang trí/.test(x.textContent)); r.scrollIntoView({ block: "center" }); return 1;'); await sleep(200);
   await page.shot(SHOTS + '/125_05_nut_day_trang_tri.png');
   await js('const r = [...document.querySelectorAll("#kb-ui-stage .kb-ui-radio")].find((x) => /Dây trang trí/.test(x.textContent)); r.querySelectorAll("input")[1].click(); return 1;'); await sleep(800);
@@ -156,6 +156,13 @@ else:
   dc = await js('return [document.getElementById("kb-theme-band").hidden, document.getElementById("kb-app").classList.contains("kb-ui-deco-off")];');
   ok(dc[0] && dc[1], 'mở lại vườn: vẫn ẩn');
   await js('GardenUI.open(); return 1;'); await sleep(600);
+  const presetKeep = [];
+  for (const name of ['Dịu mắt', 'Đầy đủ']) {
+    await js(`[...document.querySelectorAll("#kb-ui-stage .kb-ui-preset")].find((b) => b.querySelector("b").textContent === ${JSON.stringify(name)}).click(); return 1;`); await sleep(900);
+    presetKeep.push(await py(KB + 'u = kb.config().get("ui", {}); result = [u.get("deco"), u.get("main", {}).get("yard")]'));
+  }
+  ok(presetKeep[0][0] === 'off' && presetKeep[0][1] === 'still' && presetKeep[1][0] === 'off' && presetKeep[1][1] === 'full',
+     'bấm kiểu có sẵn (Dịu mắt → Đầy đủ): kiểu được áp dụng, Dây trang trí vẫn Ẩn ' + JSON.stringify(presetKeep));
   await js('const r = [...document.querySelectorAll("#kb-ui-stage .kb-ui-radio")].find((x) => /Dây trang trí/.test(x.textContent)); r.querySelectorAll("input")[0].click(); return 1;'); await sleep(600);
   await js('document.getElementById("kb-ui-exit").click(); return 1;'); await sleep(1200);
   dc = await js('return [document.getElementById("kb-theme-band").hidden, document.getElementById("kb-app").classList.contains("kb-ui-deco-off")];');

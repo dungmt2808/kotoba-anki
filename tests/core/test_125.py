@@ -133,7 +133,11 @@ print("== cài đặt giao diện: Dây trang trí")
 ok(more_core.UI_GLOBAL.get("deco") == ("on", "off") and more_core.ui_default()["deco"] == "on", "khoá chung mới deco: on / off, mặc định on (Hiện)")
 ok(more_core.clean_ui({"deco": "off"})["deco"] == "off" and more_core.clean_ui({"deco": "maybe"})["deco"] == "on"
    and more_core.clean_ui({"scene": "large"})["deco"] == "on", "clean_ui giữ off, giá trị lạ / thiếu → on")
-ok(all(more_core.ui_preset(p)["deco"] == "on" for p in more_core.UI_PRESETS), "các kiểu có sẵn không đụng tới dây trang trí")
+ok(all(more_core.ui_preset(p)["deco"] == "on" for p in more_core.UI_PRESETS), "các kiểu có sẵn: mặc định dây trang trí Hiện")
+cur = {"deco": "off", "scene": "large", "start": "yard", "card": "tall", "review": {"yard": "hide"}}
+ok(all((lambda u: u["deco"] == "off" and u["scene"] == "large" and u["start"] == "yard")(more_core.ui_preset(p, cur)) for p in more_core.UI_PRESETS)
+   and more_core.ui_preset("full", cur)["review"]["yard"] == "full" and more_core.ui_preset("calm", cur)["main"]["yard"] == "still",
+   "bấm kiểu có sẵn giữ nhóm Màn chính (Cỡ cảnh, Cảnh hiện, Dây trang trí), các mục của kiểu vẫn áp dụng")
 raw = more_core.clean_ui({"deco": "off", "card": "tall", "main": {"yard": "hide"}})
 ok(raw["card"] == "tall" and raw["main"]["yard"] == "hide" and raw["deco"] == "off", "khoá mới không làm mất các khoá cũ")
 

@@ -3909,19 +3909,18 @@ var GardenHome = (function () {
         inf.appendChild(btn(money >= nx.price ? "Xây" : "Còn thiếu " + (nx.price - money) + " xu", "kb-h-buy", () => pay("home:build:" + (lv + 1)), money < nx.price));
         card.appendChild(inf);
         list.appendChild(card);
-        if (cat.styles) { list.appendChild(el("div", "kb-h-empty", "Xây xong cả 7 bước sẽ mở thêm các kiểu nhà khác (minka mái tranh, nhà trà, lâu đài mini) và mở rộng nhà thêm Bếp, Phòng ngủ.")); }
+        if (cat.styles) { list.appendChild(el("div", "kb-h-empty", "Xây xong 7 bước: mở thêm kiểu nhà, Bếp và Phòng ngủ.")); }
       } else {
         list.appendChild(el("div", "kb-h-empty", "Nhà đã xây xong! Giờ trang trí thôi ♪"));
         // 1.24: nhà 3 gian
         // 1.25: mở rộng nhà một lần được cả Bếp lẫn Phòng ngủ
-        sec("Mở rộng nhà · một lần mở cả Bếp lẫn Phòng ngủ");
+        sec("Mở rộng nhà");
         {
           const price = cat.nha_price || 2000, opened = (cat.rooms || []).every((rm) => canEnter(rm.id));
           const card = el("div", "kb-h-card kb-h-build kb-h-room kb-h-nha" + (opened ? " kb-h-using" : ""));
           card.appendChild(house3Preview(null, 228));
           const inf = el("div", "kb-h-info");
-          inf.appendChild(el("div", "kb-h-name", "Mở rộng nhà: Bếp + Phòng ngủ"));
-          inf.appendChild(el("div", "kb-h-desc", "Mở cả hai gian hai bên phòng chính. Ba gian cùng kiểu với nhà đang dùng; đổi kiểu nhà thì đổi cả ba gian, không phải mở lại."));
+          inf.appendChild(el("div", "kb-h-name", "Bếp + Phòng ngủ"));
           inf.appendChild(el("div", "kb-h-price", opened ? "Đã mở" : price + " xu"));
           if (opened) {
             const row = el("div", "kb-h-btnrow");
@@ -4125,7 +4124,7 @@ var GardenHome = (function () {
       [["", "Phòng chính"], ["kitchen", "Bếp"], ["bedroom", "Phòng ngủ"]].forEach(([g, name]) => {
         const grp = items.filter((it) => (it.group || "") === g);
         if (!grp.length) { return; }
-        sec(name + (g ? " · đặt được ở cả ba gian" : ""));
+        sec(name);
         grp.forEach((it) => itemCard(list, it, {}));
       });
       return;

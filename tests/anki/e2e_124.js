@@ -70,7 +70,7 @@ kb.open_garden(); result = 1`);
   const kx = await js('const r = document.getElementById("kb-yard").getBoundingClientRect(); return [r.left + r.width * 0.2, r.top + r.height * 0.6];');
   await click(kx[0], kx[1]); await sleep(900);
   ok(await js('return !document.getElementById("kb-home").hidden && document.querySelector("#kb-home .kb-h-tab.is-on").getAttribute("data-tab") === "build";'), 'mở Nhà & Cửa hàng ở tab Xây nhà');
-  ok(await js('return document.querySelectorAll(".kb-h-room").length === 1 && /Mở rộng nhà: Bếp \\+ Phòng ngủ/.test(document.getElementById("kb-h-list").textContent);'), '1.25: một thẻ "Mở rộng nhà: Bếp + Phòng ngủ"');
+  ok(await js('return document.querySelectorAll(".kb-h-room").length === 1 && /Bếp \\+ Phòng ngủ/.test(document.querySelector(".kb-h-nha").textContent);'), '1.25: một thẻ "Mở rộng nhà · Bếp + Phòng ngủ"');
   await js('const l = document.getElementById("kb-h-list"), c = document.querySelector(".kb-h-nha"); l.scrollTop = c.offsetTop - l.offsetTop - 8; window.scrollTo(0, 0); return 1;'); await sleep(300);
   await page.shot(SHOTS + '/124_02_xay_nha_mo_rong.png');
   await js('const b = document.querySelector(".kb-h-nha .kb-h-buy"); b.click(); b.click(); return 1;'); await sleep(1500);

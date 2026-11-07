@@ -2936,7 +2936,7 @@ class GardenDialog(QDialog):
             if action == "set":
                 ui = more_core.clean_ui(json.loads(arg))
             elif action == "preset":
-                ui = more_core.ui_preset(arg)
+                ui = more_core.ui_preset(arg, config().get("ui"))     # 1.25: giữ nhóm Màn chính
             else:
                 return
         except (ValueError, more_core.MoreError) as err:

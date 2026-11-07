@@ -107,6 +107,23 @@ kb._dialog.refresh(); result = 1`);
   // 1366 × 768
   await py(KB + 'kb._dialog.resize(1366, 768); result = 1'); await sleep(2000);
   await clip('125_nha_classic_1366', '#kb-yard');
+  // mưa · tuyết (1366)
+  await js('GardenSky.set("weather", "rain"); return 1;'); await sleep(1500);
+  await clip('125_mua', '#kb-yard');
+  await js('GardenSky.set("weather", "snow"); return 1;'); await sleep(1500);
+  await clip('125_tuyet', '#kb-yard');
+  await js('GardenSky.set("weather", "sunny"); return 1;'); await sleep(600);
+  // Cỡ cảnh Lớn ở 1920 × 1080: đủ chỗ cho mái đầy đủ
+  await py(KB + 'kb.save_config(ui={"scene": "large"}); kb._dialog.resize(1920, 1080); kb._dialog.refresh(); result = 1'); await sleep(2500);
+  await js('const t = document.getElementById("kb-toast"); if (t) t.hidden = true; GardenSky.set("mode", "fixed"); GardenSky.set("fixedHour", 10); GardenSky.set("weather", "sunny"); GardenSeason.preview("momiji"); return 1;'); await sleep(1500);
+  await clip('125_co_canh_lon', '#kb-yard');
+  await py(KB + 'kb.save_config(ui={}); result = 1');
+  // nhà chưa xây xong (bước 5): phòng chính kiểu gốc, hai gian bên "Xây xong nhà để mở rộng"
+  await py(KB + `d = st.load(); d["home"]["house"] = 5; st.save(d)
+col = st._col(); n = col.get_config(kb.core.NHA_KEY, {}); n["rooms"] = []; col.set_config(kb.core.NHA_KEY, n)
+kb._dialog.refresh(); result = st.load()["home"]["rooms"]`); await sleep(2500);
+  await js('const t = document.getElementById("kb-toast"); if (t) t.hidden = true; localStorage.setItem("kb-main-scene", "house"); return 1;'); await sleep(1500);
+  await clip('125_nha_chua_xay_xong', '#kb-yard');
   console.log(JSON.stringify({ photo: fs.existsSync(PHOTO), deco }));
   process.exit(0);
 })().catch((e) => { console.log('LỖI', e); process.exit(1); });

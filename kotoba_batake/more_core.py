@@ -657,7 +657,10 @@ def clean_ui(raw: Any) -> dict[str, Any]:
     return out
 
 
-def ui_preset(name: str) -> dict[str, Any]:
+UI_KEEP_ON_PRESET = ("scene", "start", "deco")    # 1.25: nhóm "Màn chính" không thuộc kiểu có sẵn → bấm kiểu không đổi
+
+
+def ui_preset(name: str, current: Any = None) -> dict[str, Any]:
     if name not in UI_PRESETS:
         raise MoreError("Không có kiểu giao diện này.")
     out = ui_default()
@@ -666,4 +669,8 @@ def ui_preset(name: str) -> dict[str, Any]:
             out[k].update(v)
         else:
             out[k] = v
+    if current is not None:
+        cur = clean_ui(current)
+        for k in UI_KEEP_ON_PRESET:
+            out[k] = cur[k]
     return out
