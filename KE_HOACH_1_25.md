@@ -1,4 +1,4 @@
-# Kế hoạch ことば畑 1.25 — nhà 3 gian làm lại cho đẹp (đang chọn bố cục, chưa làm)
+# Kế hoạch ことば畑 1.25 — nhà 3 gian làm lại cho đẹp (đã chọn bố cục A, đang duyệt nội thất, chưa làm)
 
 Ngày 07/11/2026. Người dùng xem 1.24.0 trên máy thật (Ubuntu, cửa sổ ~1920 px, ảnh chụp màn hình trong cuộc trò chuyện):
 
@@ -81,7 +81,7 @@ Số đo (1920 px): dải cảnh 1866 × 304 px CSS, phần không bị thẻ ch
 
 Còn để ý khi làm thật: nút ◂ Trong nhà ▸ + 📷 ở góc trái dưới vẫn che một phần Bếp (như 1.24) — ở 1366 px che mép bàn ăn; ban đêm phòng chỉ tối nhẹ (cùng công thức `drawNight` của 1.24).
 
-## 5b. Lượt 2 — bố cục khác (07/11, chờ người dùng chọn)
+## 5b. Lượt 2 — bố cục khác (07/11) → **người dùng chọn A**
 
 Góp ý sau ảnh phác 5a:
 
@@ -101,6 +101,26 @@ Góp ý sau ảnh phác 5a:
 | `A_{classic,minka,teahouse,castle}_ngay.png`, `A_classic_dem.png`, `A_classic_chua_mo_rong.png` | A ở 4 kiểu nhà, ban đêm, chưa mở rộng (hai biển đối xứng) |
 | `A+_classic_the_gon.png`, `A+_1366_the_gon.png` | thẻ Hôm nay thu gọn |
 | `B_{classic,minka,castle}_ngay.png`, `B_classic_dem.png`, `B_1366_classic.png` | nhà búp bê |
+
+**Chốt (07/11):** "A là ổn" → bố cục A (nhà giữa dải như 1.24, hai bên là vườn, mái hiên phía trên, chỉ phòng chính có cửa sổ). Mục 3 (kéo dài gian bên, đẩy nhà tránh thẻ Hôm nay) và cửa sổ gian bên ở mục 2 **bỏ**. Thẻ Hôm nay giữ như cũ (A+ không chọn).
+
+## 5c. Lượt 3 — nội thất v2 của 4 kiểu nhà (07/11, chờ duyệt)
+
+Góp ý: "thiết kế lại giao diện bên trong từng ngôi nhà đẹp hơn nhé, tớ vẫn chưa ưng các thiết kế đó." → vẽ lại nền cả ba gian (thay bảng ở mục 2). Chung cho mọi kiểu: tường có lớp (phần trên / nẹp / ốp chân tường), bóng đổ dưới xà và ở mép sàn, sàn có vân (ván so le 3 tông màu, chiếu có sợi + viền), cột ngăn có mép sáng và đai ở hai đầu, vệt nắng từ cửa sổ xuống sàn ban ngày. Điểm nhấn từng gian đặt giữa / bên trái để thẻ Hôm nay không che.
+
+| Kiểu nhà | Nền chung | Phòng chính (cửa sổ) | Bếp | Phòng ngủ |
+|---|---|---|---|---|
+| Nhà gỗ mái đỏ | xà nâu, giấy dán tường hoa nhỏ, nẹp gỗ, ốp ván dọc, chân tường kem, sàn gỗ mật ong | ốp xanh lá mạ; cửa sổ kính khung trắng, rèm hồng có nếp + dây buộc, diềm rèm, chậu hoa ở bậu | gạch men trắng viền xanh tới giữa tường, sàn ô cờ kem / đỏ gạch | giấy dán tím nhạt hoa tím, ốp hồng |
+| Minka mái tranh | xà gỗ sẫm, tường đất trát lốm đốm, thanh ngang nageshi, ốp ván chân tường, chiếu tatami viền đen | cửa sổ nửa mở: nửa kính nhìn trời, nửa shoji | sàn đất nện + bậc gỗ agari, tường ám khói, hai dây hồng treo khô | ô thoáng ranma + bốn cánh fusuma vẽ sóng chàm (seigaiha) kín tường |
+| Nhà trà | trần đan tre ajiro, tường đất vàng có sợi rơm, giấy dán chân tường koshibari, cột gỗ mộc, tatami viền nâu | cửa sổ tròn song tre không đều | sàn gỗ thông nhạt + kệ tre 2 tầng (hộp trà, chén, bát) | hốc tokonoma giữa gian: cột gỗ mộc, tranh cuộn chữ, bình hoa, bậc gỗ |
+| Lâu đài mini | xà sơn đen đinh vàng, vữa trắng, nageshi đen đinh vàng, fusuma lá vàng, tatami viền gấm đỏ chấm vàng, cột đen đai vàng | cửa sổ hình chuông katōmado viền vàng; fusuma vẽ tùng xanh + mây vàng | ốp gỗ sơn đen viền vàng, sàn gỗ sẫm bóng có vệt phản chiếu | fusuma vàng vẽ cành anh đào |
+
+Ảnh ở `docs/ke_hoach_1_25/noi_that/` (driver `tests/anki/mock_125_noi_that.js`, hàm `WALLS` / `windowV2` / `post2` trong `mock_125_lib.js`):
+- `00_noi_that_4_kieu_co_do.png`, `00_noi_that_4_kieu_trong.png` — 4 kiểu xếp chồng, phóng ×4 (có đồ / chưa bày đồ), có chú thích
+- `Z_{kiểu}_x4[_trong].png` — từng kiểu phóng ×4
+- `N_{kiểu}_{ngay,dem,trong}.png` — trên màn chính 1920 px (bố cục A), ban ngày / 21 giờ / chưa bày đồ
+
+Khi làm thật: chuyển `WALLS` / `windowV2` / `post2` / `garden` / `eave` từ ảnh phác sang `web/nha_art.js` (nền 3 gian theo kiểu) + `home.js` (`drawRoom`, `drawHouse3`); phòng chính 1.24 lấy luôn nền mới (ảnh chụp, bảng Nhà, xem trước ở tab Xây nhà cùng một hàm).
 
 ## 6. Còn mở / để sau
 
