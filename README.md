@@ -40,9 +40,7 @@ Xây nhà từng bước, từ bãi đất trống tới gác mái có đèn l�
 |---|---|
 | ![Nhà & Cửa hàng, tab Trang trí sân](docs/anh/03_nha_trang_tri.png) | ![Trong nhà: kotatsu, bể cá, kệ sách, đèn andon, mèo ngủ](docs/anh/16_trong_nha.png) |
 
-### Ngắm cảnh cả cửa sổ
-
-Bấm vào ngôi nhà, nút **Ngắm** hoặc phím **V**: cả cửa sổ chỉ còn một cảnh, phóng to nét căng (pixel không nhoè). Đổi cảnh bằng ◂ ▸, thú nuôi vẫn đi lại, khách vẫn ghé, trời theo giờ thật. Bấm **Sắp xếp đồ** để di chuyển, cất hay bày đồ từ kho ngay trên khung lớn. Bật thêm F11 là Anki thành một khung ảnh động. Muốn dải cảnh ở màn chính to hơn: ⚙ → Giao diện → Màn chính → Cỡ cảnh **Lớn**.
+Muốn dải cảnh ở màn chính to hơn: ⚙ → Giao diện → Màn chính → Cỡ cảnh **Lớn**.
 
 ### 6 vùng mới và vùng tự tạo
 

@@ -200,7 +200,7 @@ var GardenUI = (function () {
       });
       g.appendChild(box);
     };
-    // 1.23: nhóm "Màn chính" — cỡ dải cảnh, cảnh hiện khi mở vườn (Ngắm cảnh cả cửa sổ: nút Ngắm / phím V)
+    // 1.23: nhóm "Màn chính" — cỡ dải cảnh, cảnh hiện khi mở vườn
     st.appendChild(el("div", "kb-ui-h", "Màn chính"));
     g = el("div", "kb-ui-globals");
     radios("scene", "Cỡ cảnh", [["normal", "Vừa"], ["large", "Lớn (ruộng cây lùi xuống)"]]);

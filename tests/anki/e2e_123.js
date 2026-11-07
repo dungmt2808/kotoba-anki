@@ -263,55 +263,22 @@ result = 1`);
   ok(errs.length === 0, 'nhật ký lỗi add-on trống' + (errs.length ? ': ' + errs.join(' | ') : ''));
   ok(page.errors.length === 0, 'không có lỗi JS' + (page.errors.length ? ': ' + page.errors.slice(0, 3).join(' | ') : ''));
 
-  console.log('== Ngắm cảnh (mục 1.3, 1.4)');
+  console.log('== Màn chính (1.24: bỏ Ngắm cảnh — vùng dưới chớp xanh, người dùng thấy không cần)');
   await py(KB + `d = st.load(); d["coins"] = max(d["coins"], 5000); d["home"]["house"] = 7
-d["home"]["owned"].update({"plant": 2, "tea": 1, "fence": 1, "flowers": 2})
-d["home"]["room"] = [e for e in d["home"].get("room", []) if e.get("id") != "plant"]
 st.save(d); kb._dialog.refresh(); result = 1`); await sleep(1500);
   await py(KB + 'kb._dialog.resize(1920, 1080); result = 1'); await sleep(1200);
   await js('GardenSky.set("fixedHour", 10); return 1;');
-  const keyJS = (k) => js(`const t = document.activeElement && document.activeElement !== document.body ? document.activeElement : document; t.dispatchEvent(new KeyboardEvent("keydown", {key: ${JSON.stringify(k)}, code: ${JSON.stringify(k.length === 1 ? 'Key' + k.toUpperCase() : k)}, bubbles: true, cancelable: true})); return 1;`);
-  await keyJS('v'); await sleep(900);
-  let v = await js('return GardenHome._view();');
-  ok(v.open, 'phím V mở Ngắm cảnh');
-  ok(await js('return !document.getElementById("kb-view").hidden && document.getElementById("kb-view-canvas").width >= 1900;'), 'cả cửa sổ chỉ một cảnh (canvas kín cửa sổ)');
-  ok(v.list[0] === 'yard' && v.list[1] === 'room', 'danh sách cảnh: Sân vườn → Trong nhà → các vùng (' + v.list.join(', ') + ')');
-  ok(v.scene !== 'room' ? v.S === 7 : true, 'ngoài trời ở 1920 × 1080: phóng ×' + v.S + ' (kế hoạch: khoảng 7)');
-  await page.shot(SHOTS + '/123_10_ngam_san.png');
-  await keyJS('ArrowRight'); await sleep(600);
-  v = await js('return GardenHome._view();');
-  ok(v.scene === 'room' && v.S >= 11, 'phím → sang Trong nhà, phóng ×' + v.S + ' (kế hoạch: khoảng 11)');
-  await sleep(500); await page.shot(SHOTS + '/123_11_ngam_trong_nha.png');
-  await js('document.getElementById("kb-view-arrange").click(); document.getElementById("kb-view-khobtn").click(); return 1;'); await sleep(500);
-  v = await js('return GardenHome._view();');
-  ok(v.arrange && v.kho.includes('plant') && !v.kho.includes('fence'), 'Sắp xếp đồ → Đặt từ kho: chỉ đồ trong nhà còn trong kho (' + v.kho.join(', ') + ')');
-  await page.shot(SHOTS + '/123_12_sap_xep_do.png');
-  const nRoom0 = await py(KB + 'result = len(st.load()["home"]["room"])');
-  await js('[...document.querySelectorAll(".kb-view-kho-item")].find(b => b.title === "Chậu cây" || /cây/i.test(b.title)).click(); return 1;'); await sleep(300);
-  // ô trống ở hàng sàn: thử lần lượt các ô cho tới khi Python nhận
-  const spot = await js(`const v = GardenHome._view(); for (let y = 3; y >= 1; y--) { for (let x = 0; x < 10; x++) { const c = document.getElementById("kb-view-canvas").getBoundingClientRect();
-      const px = c.left + (v.ox + x * 16 + 8) * v.S, py = c.top + (v.oy + 40 + (y - 1) * 16 + 8) * v.S;
-      const el = document.elementFromPoint(px, py); if (el && el.id === "kb-view-canvas") { return [px, py]; } } } return null;`);
-  if (spot) { await page.send('Input.dispatchMouseEvent', { type: 'mousePressed', x: spot[0], y: spot[1], button: 'left', clickCount: 1 }); await page.send('Input.dispatchMouseEvent', { type: 'mouseReleased', x: spot[0], y: spot[1], button: 'left', clickCount: 1 }); }
-  await sleep(1200);
-  const nRoom1 = await py(KB + 'result = len(st.load()["home"]["room"])');
-  ok(nRoom1 === nRoom0 + 1, 'đặt chậu cây từ kho ngay trên khung lớn → Python ghi chỗ đặt (' + nRoom0 + ' → ' + nRoom1 + ')');
-  const idxPlant = await py(KB + 'r = st.load()["home"]["room"]; result = max(i for i, e in enumerate(r) if e["id"] == "plant")');
-  await py(KB + `kb._dialog._on_home("take:room:${idxPlant}"); result = 1`); await sleep(900);
-  ok(await py(KB + 'result = len(st.load()["home"]["room"])') === nRoom0, 'Cất vào kho trên khung lớn');
-  await page.key('Escape', 'Escape', 27); await sleep(400);
-  ok(await js('return !GardenHome._view().arrange && GardenHome._view().open;'), 'Esc: thoát Sắp xếp đồ trước, vẫn đang ngắm');
-  await page.key('Escape', 'Escape', 27); await sleep(700);
-  ok(!(await js('return GardenHome._view().open;')) && await py(KB + 'result = kb._dialog is not None and kb._dialog.isVisible()'), 'Esc lần nữa: thoát Ngắm cảnh, cửa sổ vườn vẫn mở');
+  const keyJS = (k) => js(`const t = document.activeElement && document.activeElement !== document.body ? document.activeElement : document; t.dispatchEvent(new KeyboardEvent("keydown", {key: ${JSON.stringify(k)}, code: "Key" + ${JSON.stringify(k)}.toUpperCase(), bubbles: true, cancelable: true})); return 1;`);
+  await keyJS('v'); await sleep(700);
+  ok(await js('return !document.getElementById("kb-view") && !document.getElementById("kb-yard-view") && typeof GardenHome.view === "undefined" && document.getElementById("kb-home").hidden;'),
+     'không còn Ngắm cảnh: phím V không mở gì, không còn nút Ngắm');
   await js('localStorage.setItem("kb-main-scene", "yard"); return 1;'); await sleep(800);
-  const hp = await js(`const cv = document.getElementById("kb-yard"), r = cv.getBoundingClientRect(); return [r.left + 30 * (r.width / Math.max(256, r.width / 4)), r.top + r.height * 0.55];`);
-  const yv = await js(`const cv = document.getElementById("kb-yard"); const r = cv.getBoundingClientRect(); const S = Math.max(2, Math.min(4, Math.floor(r.width / 256))); const ox = Math.floor((r.width / S - 256) / 2); return [r.left + (ox + 30) * S, r.top + 45 * S];`);
+  const yv = await js(`const cv = document.getElementById("kb-yard"); const r = cv.getBoundingClientRect(); const S = Math.max(2, Math.min(4, Math.floor(r.width / 256))); const ox = Math.floor((r.width / S - 256) / 2); return [r.left + (ox + 30) * S, r.top + r.height * 0.6];`);
   await page.send('Input.dispatchMouseEvent', { type: 'mousePressed', x: yv[0], y: yv[1], button: 'left', clickCount: 1 });
   await page.send('Input.dispatchMouseEvent', { type: 'mouseReleased', x: yv[0], y: yv[1], button: 'left', clickCount: 1 });
-  await sleep(800);
-  v = await js('return GardenHome._view();');
-  ok(v.open && v.scene === 'room', 'bấm vào ngôi nhà ở màn chính → Ngắm cảnh · Trong nhà');
-  await js('GardenHome.viewClose(); return 1;'); await sleep(400);
+  await sleep(900);
+  ok(await js('return !document.getElementById("kb-home").hidden;'), 'bấm vào ngôi nhà ở màn chính → mở Nhà & Cửa hàng như 1.22');
+  await js('GardenHome.close(); return 1;'); await sleep(400);
   await js('GardenUI.open(); return 1;'); await sleep(400);
   ok(await js('return /Màn chính/.test(document.getElementById("kb-ui-stage").textContent) && /Cỡ cảnh/.test(document.getElementById("kb-ui-stage").textContent) && /Luôn về Sân vườn/.test(document.getElementById("kb-ui-stage").textContent);'), '⚙ Giao diện có nhóm Màn chính: Cỡ cảnh, Cảnh hiện');
   const h0 = await js('return document.getElementById("kb-yard").getBoundingClientRect().height;');
@@ -323,7 +290,7 @@ st.save(d); kb._dialog.refresh(); result = 1`); await sleep(1500);
   ok(await py(KB + 'result = kb.config()["ui"].get("scene")') === 'large', 'lưu vào config (ui.scene = large)');
   await py(KB + 'kb.save_config(ui={}); kb._dialog.resize(1366, 768); kb._dialog.refresh(); result = 1'); await sleep(800);
   const errs2 = await py(KB + 'result = [e.get("where") + ": " + str(e.get("msg"))[:100] for e in kb.ERRORS.entries()]');
-  ok(errs2.length === 0, 'nhật ký lỗi add-on vẫn trống sau Ngắm cảnh' + (errs2.length ? ': ' + errs2.join(' | ') : ''));
+  ok(errs2.length === 0, 'nhật ký lỗi add-on vẫn trống sau phần Màn chính' + (errs2.length ? ': ' + errs2.join(' | ') : ''));
   ok(page.errors.length === 0, 'không có lỗi JS' + (page.errors.length ? ': ' + page.errors.slice(0, 3).join(' | ') : ''));
 
   console.log('== KB-02: hồ sơ Anki mới');
