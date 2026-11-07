@@ -1096,8 +1096,12 @@ def check(raw: Any, scope: dict[str, Any], opts: dict[str, Any]) -> Report:
                                                              ensure_ascii=False))
         else:
             for j, bad in story_core.story_diffs(sb.get("doan") or [], plain["doan"])[:3]:
-                rep.err("bai[truyen].doan[%d]" % j, "chép sai truyện đã duyệt (%s) — đoạn này phải là (thêm furigana, không "
-                        "sửa chữ): %s" % ("; ".join('"%s" thành "%s"' % (y or "∅", x or "∅") for y, x in bad[:3]), plain["doan"][j]))
+                # lỗi khi mất / viết lại cả cụm (thử thật: 落とした古い手紙を急いで拾い上げました → 落てしまいました);
+                # chỗ nhỏ máy không tự vá được (銀の葉 → 銀色の葉, 微笑み → 笑い) chỉ cảnh báo, không chặn cả số
+                big = any(len(y) - len(x) >= 3 or len(x) + len(y) >= 6 for y, x in bad)
+                (rep.err if big else rep.warn)(
+                    "bai[truyen].doan[%d]" % j, "chép sai truyện đã duyệt (%s) — đoạn này phải là (thêm furigana, không "
+                    "sửa chữ): %s" % ("; ".join('"%s" thành "%s"' % (y or "∅", x or "∅") for y, x in bad[:3]), plain["doan"][j]))
     lo, hi = LENGTH.get(scope.get("trinh_do", "N4"), (280, 700))
     if short:
         lo, hi = lo // 3, hi // 2
@@ -1403,8 +1407,41 @@ def _split_kana(surf: str, read: str, nxt: str = "") -> tuple[str, str, str, str
     return pre, surf, read, post
 
 
+def _okuri_fill(surf: str, key: str, follow: str) -> tuple[str, bool]:
+    """1.23 (thử Gemini thật 07/11, Flash-Lite): okurigana chỉ nằm trong từ gốc — {少|すこ|少し}[困|こま]った hiện "少困った",
+    {困|こま|困った}た hiện "困た", {古|ふる|古い}[店|みせ]. Trả (kana cần chèn ngay sau ngoặc, từ gốc lệch hẳn chữ viết)."""
+    if not key or key == surf or not key.startswith(surf) or not paper.KANJI_RE.search(surf):
+        return "", False
+    tail = key[len(surf):]
+    if tail.endswith(("する", "くる", "来る")) or (follow and follow.startswith(tail[0])):
+        return "", False
+    if re.fullmatch(r"[\u3041-\u3096]+", tail):
+        if not follow or not re.match(r"[\u3041-\u3096ー]", follow[0]):
+            return tail, False                       # {少|すこ|少し}[困|こま]った → 少し困った; {高|たか|高い}。 → 高い。
+        if len(tail) >= 2 and follow.startswith(tail[1:]):
+            return tail[0], False                    # {困|こま|困った}た → 困った, {優|やさ|優しい}い → 優しい
+        if len(tail) == 1 and tail not in "うくぐすつぬぶむるい":
+            return tail, False                       # đuôi không chia: {少|すこ|少し}ずつ → 少しずつ, {静|しず|静か}に
+        return "", len(tail) >= 2                    # {過|す|過ごす}ぎて: chữ viết là 過ぎる → bỏ liên kết, giữ chữ
+    kp = re.match(r"[\u3041-\u3096]+", tail)
+    if kp and follow.startswith(tail[len(kp.group(0))]):
+        return kp.group(0), False                    # {召|めし|召し上がる}上がって → 召し上がって
+    return "", False
+
+
+def _deck_read(surf: str, read: str, readings: dict[str, set[str]] | None, notes: list[str]) -> str:
+    """1.23 (thử Gemini thật 07/11: Flash-Lite viết [今週末|こんしうまつ] 3 lần sửa không xong → cả số không lưu): từ ≥ 2 chữ
+    có đúng MỘT cách đọc trong deck mà Gemini ghi khác → lấy cách đọc của deck (bước kiểm vẫn coi cách khác là lỗi)."""
+    want = readings.get(surf) if readings and len(surf) >= 2 else None
+    if want and len(want) == 1 and read and KANA_ONLY_RE.match(read) and paper.to_hira(read) not in want:
+        notes.append("sửa cách đọc theo deck: %s" % surf)
+        return next(iter(want))
+    return read
+
+
 def _fix_jp(text: Any, scope_keys: set[str], new_keys: set[str], notes: list[str],
-            linker: Callable[[str, str, str], str | None] | None = None, index: Any = None) -> Any:
+            linker: Callable[[str, str, str], str | None] | None = None, index: Any = None,
+            readings: dict[str, set[str]] | None = None) -> Any:
     if not isinstance(text, str):
         return text
     text = _fix_special(text, notes)
@@ -1440,6 +1477,7 @@ def _fix_jp(text: Any, scope_keys: set[str], new_keys: set[str], notes: list[str
             if (surf2, read2) != (surf, read):
                 notes.append("đưa kana ra ngoài ngoặc furigana")
                 surf, read = surf2, read2
+            read = _deck_read(surf, read, readings, notes)
             nxt = post + after
             key = linker(surf, read, nxt) if linker and read and KANA_ONLY_RE.match(read) else None
             out.append(pre)
@@ -1452,20 +1490,32 @@ def _fix_jp(text: Any, scope_keys: set[str], new_keys: set[str], notes: list[str
         else:
             surf, read, key = t[1].strip(), t[2].strip(), t[3].strip()
             nk = paper.norm_key(key)
+            after = toks[i + 1][1] if i + 1 < len(toks) and toks[i + 1][0] == "plain" else ""
+            follow = after or (toks[i + 1][1] if i + 1 < len(toks) else "")
             if key and nk not in scope_keys and nk not in new_keys:
                 notes.append("bỏ liên kết tra từ của từ ngoài phạm vi %s" % key)
                 if paper.KANJI_RE.search(surf) and read:
-                    after = toks[i + 1][1] if i + 1 < len(toks) and toks[i + 1][0] == "plain" else ""
                     pre, surf2, read2, post = _split_kana(surf, read, after) if KANA_ONLY_RE.match(read) else ("", surf, read, "")
-                    out.append(pre + "[%s|%s]" % (surf2, read2) + post)
+                    read2 = _deck_read(surf2, read2, readings, notes)
+                    add, _ = _okuri_fill(surf2, key, post + follow)
+                    if add:
+                        notes.append("thêm okurigana còn thiếu (%s%s)" % (surf2, add))
+                    out.append(pre + "[%s|%s]" % (surf2, read2) + add + post)
                 else:
                     out.append(surf)
             else:
-                after = toks[i + 1][1] if i + 1 < len(toks) and toks[i + 1][0] == "plain" else ""
                 pre, surf2, read2, post = _split_kana(surf, read, after) if KANA_ONLY_RE.match(read or "x") else ("", surf, read, "")
                 if (surf2, read2) != (surf, read):
                     notes.append("đưa kana ra ngoài ngoặc furigana")
-                out.append(pre + "{%s|%s|%s}" % (surf2, read2, key) + post)
+                read2 = _deck_read(surf2, read2, readings, notes)
+                add, off = _okuri_fill(surf2, key, post + follow)
+                if add:
+                    notes.append("thêm okurigana còn thiếu (%s%s)" % (surf2, add))
+                if off:
+                    notes.append("bỏ liên kết tra từ: từ gốc %s không khớp chữ viết %s%s" % (key, surf2, (post + follow)[:2]))
+                    out.append(pre + "[%s|%s]" % (surf2, read2) + post)
+                else:
+                    out.append(pre + "{%s|%s|%s}" % (surf2, read2, key) + add + post)
     return "".join(out)
 
 
@@ -1501,8 +1551,10 @@ def autofix(raw: Any, scope: dict[str, Any], opts: dict[str, Any]) -> tuple[Any,
         total[0] += 1
         return w
 
+    readings = _deck_readings(scope)
+
     def fx(v: Any) -> Any:
-        return _fix_jp(v, scope_keys, new_keys, notes, linker, index)
+        return _fix_jp(v, scope_keys, new_keys, notes, linker, index, readings)
 
     for b in raw.get("bai", []) if isinstance(raw.get("bai"), list) else []:
         if isinstance(b, dict):
@@ -2155,9 +2207,28 @@ class Job:
         fix, chk = (self.en.autofix, self.en.check) if self.en else (autofix, check)
         self._story_fill(raw)
         raw, notes = fix(raw, self.scope, self.opts)
+        if not self.en:
+            notes += self._story_restore(raw)
         if notes:
             self._note("may_sua", viec=notes)
         return raw, chk(raw, self.scope, self.opts)
+
+    def _story_restore(self, raw: Any) -> list[str]:
+        """1.23: bài truyện chép sai bản đã duyệt ở chỗ máy vá được (ngoài ngoặc, không cần chữ Hán mới) → máy tự vá."""
+        plain = self.opts.get("story_plain")
+        if not plain or not isinstance(raw, dict) or not isinstance(raw.get("bai"), list):
+            return []
+        sb = next((b for b in raw["bai"] if isinstance(b, dict) and b.get("loai") == "truyen"), None)
+        doan = sb.get("doan") if sb else None
+        if not isinstance(doan, list) or len(doan) != len(plain["doan"]):
+            return []
+        notes = []
+        for j, p in enumerate(doan):
+            q = story_core.restore_story(p, plain["doan"][j])
+            if q != p:
+                doan[j] = q
+                notes.append("chép lại đúng truyện đã duyệt (đoạn %d)" % (j + 1))
+        return notes
 
     def _repair(self, raw: Any, rep: Report, system: str, rounds: int) -> tuple[Any, Report]:
         for i in range(rounds):

@@ -674,10 +674,32 @@ def _norm_story(s: str) -> str:
     return paper.to_hira(_KEEP_CH.sub("", unicodedata.normalize("NFKC", s or "")))
 
 
+_HONOR = ("さん", "さま", "様", "ちゃん", "くん", "君")
+
+
+def _ok_op(x: str, y: str, b: str, j1: int, j2: int, toks: list[Any]) -> bool:
+    """Một chỗ khác giữa bài trong số báo (x) và bản đã duyệt (y, nằm ở b[j1:j2]) có chấp nhận được không."""
+    if not x and not y:
+        return True                                 # chỉ khác dấu câu
+    if x and y and _HAN.search(y) and not _HAN.search(x) and len(x) <= 4 * len(y) + 2:
+        return True                                 # chữ Hán → kana (封筒 → ふうとう)
+    if x and y and _HAN.search(x) and not _HAN.search(y) and len(x) <= len(y):
+        return True                                 # kana → chữ Hán (なに → 何)
+    if x and y and _HAN.search(x) and _HAN.search(y) and len(x) <= 2 and len(y) <= 2 \
+            and not _HAN.sub("", x) and not _HAN.sub("", y):
+        return True                                 # đổi 1–2 chữ Hán (去年 → 昨年)
+    if (not y and x in _HONOR) or (not x and y in _HONOR):
+        return True                                 # thêm / bớt kính xưng (村長 → 村長さん)
+    if not x and len(y) <= 2 and 0 < j1 and j2 < len(b) and _HAN.match(b[j1 - 1]) and _HAN.match(b[j2]) \
+            and any(b[j1 - 1] + b[j2] in t[1] and y in paper.to_hira(t[2] or "") for t in toks):
+        return True                                 # bỏ okurigana trong cùng một từ: [入口|いりぐち] (入り口)
+    return False
+
+
 def story_diffs(raw_doan: list[str], plain: list[str]) -> list[tuple[int, list[tuple[str, str]]]]:
     """1.23 (thử Gemini thật 07/11: lượt viết số chép "落とした古い手紙を急いで拾い上げました" thành "落てしまいました",
     "驚いた" thành "驚った"): các chỗ bài truyện trong số báo chép SAI bản đã duyệt, theo từng đoạn. Bỏ qua chỗ đổi chữ Hán
-    ↔ kana (bước soát được phép), dấu câu, katakana ↔ hiragana, số toàn khổ. Trả [(đoạn, [(gốc, chép), …]), …]."""
+    ↔ kana (bước soát được phép), dấu câu, katakana ↔ hiragana, số toàn khổ, kính xưng. Trả [(đoạn, [(gốc, chép), …]), …]."""
     import difflib
     out: list[tuple[int, list[tuple[str, str]]]] = []
     if len(raw_doan) != len(plain):
@@ -687,23 +709,60 @@ def story_diffs(raw_doan: list[str], plain: list[str]) -> list[tuple[int, list[t
         toks = [t for t in paper.tokenize(p) if t[0] != "plain"] if isinstance(p, str) else []
         bad: list[tuple[str, str]] = []
         for tag, i1, i2, j1, j2 in difflib.SequenceMatcher(None, a, b, autojunk=False).get_opcodes():
-            if tag == "equal":
-                continue
-            x, y = a[i1:i2], b[j1:j2]
-            if x and y and _HAN.search(y) and not _HAN.search(x) and len(x) <= 4 * len(y) + 2:
-                continue                                    # chữ Hán → kana (封筒 → ふうとう)
-            if x and y and _HAN.search(x) and not _HAN.search(y) and len(x) <= len(y):
-                continue                                    # kana → chữ Hán (なに → 何)
-            if x and y and _HAN.search(x) and _HAN.search(y) and len(x) <= 2 and len(y) <= 2 \
-                    and not _HAN.sub("", x) and not _HAN.sub("", y):
-                continue                                    # đổi 1–2 chữ Hán (去年 → 昨年)
-            if not x and len(y) <= 2 and 0 < j1 and j2 < len(b) and _HAN.match(b[j1 - 1]) and _HAN.match(b[j2]) \
-                    and any(b[j1 - 1] + b[j2] in t[1] and y in paper.to_hira(t[2] or "") for t in toks):
-                continue                                    # bỏ okurigana trong cùng một từ: [入口|いりぐち] (入り口)
-            bad.append((y, x))
+            if tag != "equal" and not _ok_op(a[i1:i2], b[j1:j2], b, j1, j2, toks):
+                bad.append((b[j1:j2], a[i1:i2]))
         if bad:
             out.append((j, bad))
     return out
+
+
+def _nc(c: str) -> str:
+    import unicodedata
+    n = unicodedata.normalize("NFKC", c)
+    return paper.to_hira(n if len(n) == 1 else c)
+
+
+def restore_story(p: str, o: str) -> str:
+    """1.23: máy tự chép lại cho đúng bản đã duyệt những chỗ sai nằm NGOÀI ngoặc furigana và không cần thêm chữ Hán
+    ([驚|おどろ]った → [驚|おどろ]いた, [話|はな][始|はじ]め → [話|はな]し[始|はじ]め). Đoạn có chỗ cần chữ Hán mới thì để
+    nguyên cả đoạn (story_diffs vẫn báo cho Gemini chép lại). Trả đoạn đã vá (hoặc nguyên như cũ)."""
+    import difflib
+    if not isinstance(p, str) or not isinstance(o, str):
+        return p
+    units: list[tuple[str, str]] = []            # (chữ gốc trong bài, mặt chữ) — ngoặc furigana là một khối
+    pos = 0
+    for m in paper.TOKEN_RE.finditer(p):
+        units += [(c, c) for c in p[pos:m.start()]]
+        units.append((m.group(0), m.group(4) if m.group(4) is not None else m.group(1)))
+        pos = m.end()
+    units += [(c, c) for c in p[pos:]]
+    a, amap, ustart = [], [], []
+    for u, (_, surf) in enumerate(units):
+        ustart.append(len(a))
+        for c in surf:
+            a.append(_nc(c))
+            amap.append(u)
+    A, B = "".join(a), "".join(_nc(c) for c in o)
+    toks = [t for t in paper.tokenize(p) if t[0] != "plain"]
+    edge = lambda i: i == len(A) or ustart[amap[i]] == i      # noqa: E731 — vị trí nằm giữa hai khối
+    edits = []
+    for tag, i1, i2, j1, j2 in difflib.SequenceMatcher(None, A, B, autojunk=False).get_opcodes():
+        if tag == "equal":
+            continue
+        x, y = _KEEP_CH.sub("", A[i1:i2]), _KEEP_CH.sub("", B[j1:j2])
+        if _ok_op(x, y, B, j1, j2, toks):
+            continue
+        if _HAN.search(o[j1:j2]) or not (edge(i1) and edge(i2)):
+            return p            # có chỗ máy không vá được (thiếu cả câu có chữ Hán…) → để nguyên, báo Gemini chép lại cả đoạn
+        edits.append((amap[i1] if i1 < len(A) else len(units), amap[i2] if i2 < len(A) else len(units), o[j1:j2]))
+    if not edits:
+        return p
+    out, u = [], 0
+    for u1, u2, text in edits:
+        out += [r for r, _ in units[u:u1]] + [text]
+        u = u2
+    out += [r for r, _ in units[u:]]
+    return "".join(out)
 
 
 def story_matches(raw_doan: list[str], plain: list[str]) -> float:

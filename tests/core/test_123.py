@@ -263,6 +263,23 @@ ok(story.story_diffs(["[郵便屋|ゆうびんや]さんは[落|お]てしまい
 ok(story.story_diffs(["[郵便屋|ゆうびんや]さんは[落|お]とした[古|ふる]い[手紙|てがみ]をいそいで[拾|ひろ]い[上|あ]げました！",
                       "はなさんは[少|すこ]し[驚|おどろ]いたような[顔|かお]をしました。", "ことばやの[入|い]り[口|ぐち]でしんこきゅうをしました"], PL) == [],
    "chữ Hán → kana, katakana / dấu câu khác → không tính là chép sai")
+ok(story.restore_story("[話|はな][始|はじ]めました。[村長|そんちょう]さんは[笑|わら]った。", "話し始めました。村長は笑った。")
+   == "[話|はな]し[始|はじ]めました。[村長|そんちょう]さんは[笑|わら]った。"
+   and story.restore_story("はなさんは[驚|おどろ]ったような[顔|かお]。", "はなさんは驚いたような顔。") == "はなさんは[驚|おどろ]いたような[顔|かお]。"
+   and story.restore_story("それと{見|み|見る}て", "それを見て") == "それを{見|み|見る}て",
+   "máy tự chép lại chỗ sai ngoài ngoặc (話し始め, 驚いた, それを); thêm さん thì để nguyên")
+ok(story.restore_story("[郵便屋|ゆうびんや]さんは[落|お]てしまいました。", PL[0]) == "[郵便屋|ゆうびんや]さんは[落|お]てしまいました。",
+   "đoạn thiếu cả câu có chữ Hán → không vá dở, để Gemini chép lại")
+def story_errs(doan0):
+    plain = {"tieu_de": "古い手紙", "doan": [PL[0], "はなさんは少し驚いた。", "リンさんは笑いました。"]}
+    raw = {"bai": [{"loai": "tin_lang", "tieu_de": "[村|むら]", "doan": ["[村|むら]です。"]},
+                   {"loai": "truyen", "ky": 1, "tieu_de": "[古|ふる]い[手紙|てがみ]", "doan": [doan0, "はなさんは[少|すこ]し[驚|おどろ]いた。",
+                                                                                       "リンさんは[微笑|ほほえ]みました。"]}],
+           "cau_hoi": [], "chinh_ta": [], "mau_cau": [], "tu_moi": []}
+    r = ai.check(raw, {"trinh_do": "N4", "tu_vung": [], "ngu_phap": []}, {"story_plain": plain, "ky": 1})
+    return [e for e in r.errors if "chép sai truyện" in e], [w for w in r.warnings if "chép sai truyện" in w]
+e1, w1 = story_errs("[郵便屋|ゆうびんや]さんは[落|お]てしまいました。")
+ok(len(e1) == 1 and len(w1) == 1, "mất cả cụm (落てしまいました) → lỗi; đổi chữ nhỏ (笑い → 微笑み) → chỉ cảnh báo, không chặn số báo")
 ok(paper.clean_issue(saved, "2026-11-07")["bai"][1]["dich"] == st_art["dich"], "clean_issue giữ bản dịch hợp lệ")
 bad_d = json.loads(json.dumps(saved)); bad_d["bai"][1]["dich"] = ["một", "hai"]
 ok(paper.clean_issue(bad_d, "2026-11-07")["bai"][1]["dich"] == [], "bản dịch sai số đoạn trong bao.json → không hiện")
@@ -290,6 +307,19 @@ ok(ai._fix_jp("{落|お}として", set(), set(), []) == "[落|お]として" an
 ok(paper.surface(ai._fix_jp("この[葉|はっ]ぱの[色|いろ]", set(), set(), [])) == "この葉っぱの色"
    and ai._fix_jp("この[葉|はっ]ぱ", set(), set(), []) == "この[葉|は]っぱ" and ai._fix_jp("[学|がっ][校|こう]", set(), set(), []) == "[学|がっ][校|こう]",
    "[葉|はっ]ぱ → [葉|は]っぱ (chữ hiện \"葉ぱ\"); [学|がっ][校|こう] để nguyên")
+KO = {paper.norm_key(x) for x in ["少し", "困った", "古い", "過ごす", "召し上がる", "優しい", "静か", "落とす", "書く", "見つめる", "案内する"]}
+so = lambda t: paper.surface(ai._fix_jp(t, KO, set(), []))
+ok(so("{少|すこ|少し}[困|こま]った") == "少し困った" and so("{困|こま|困った}た[顔|かお]") == "困った顔" and so("{古|ふる|古い}[店|みせ]") == "古い店"
+   and so("{優|やさ|優しい}い[人|ひと]") == "優しい人" and so("{少|すこ|少し}ずつ") == "少しずつ" and so("{静|しず|静か}に") == "静かに"
+   and so("「{召|めし|召し上がる}[上|うえ]がって」") == "「召し上がって」",
+   "okurigana chỉ nằm trong từ gốc (Flash-Lite: 少困った, 困た, 古店) → máy chèn lại")
+ok(ai._fix_jp("{過|す|過ごす}ぎていました", KO, set(), []) == "[過|す]ぎていました" and ai._fix_jp("{落|お|落とす}ちました", KO, set(), []) == "[落|お]ちました"
+   and so("{書|か|書く}かない") == "書かない" and so("{見|み|見つめる}つめて") == "見つめて" and so("{案内|あんない|案内する}を") == "案内を",
+   "từ gốc lệch hẳn chữ viết (過ぎて ↔ 過ごす) → bỏ liên kết, giữ chữ; chia đúng thì để nguyên")
+RD = {"今週末": {"こんしゅうまつ"}, "今日": {"きょう", "こんにち"}}
+ok(ai._fix_jp("[今週末|こんしうまつ]に", set(), set(), [], readings=RD) == "[今週末|こんしゅうまつ]に"
+   and ai._fix_jp("[今日|こんにち]は", set(), set(), [], readings=RD) == "[今日|こんにち]は",
+   "cách đọc khác deck (Flash-Lite: こんしうまつ, sửa 3 lần không xong) → lấy cách đọc của deck; deck có nhiều cách đọc thì để nguyên")
 def base_err(t, k):
     raw = {"bai": [{"loai": "tin_lang", "tieu_de": "[村|むら]", "doan": [t]}], "cau_hoi": [], "chinh_ta": [], "mau_cau": [], "tu_moi": []}
     return any("từ gốc là" in e for e in ai.check(raw, {"trinh_do": "N4", "tu_vung": [[k, "", "x", "deck"]], "ngu_phap": []}, {"short": True}).errors)
