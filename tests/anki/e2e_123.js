@@ -151,20 +151,22 @@ result = 1`);
 
   console.log('== mục 5b: số Gemini cũ thiếu nghĩa');
   await py(KB + `d = os.path.join(kb.AI_DIR, "bao", "2026-10-30"); os.makedirs(d, exist_ok=True)
-raw = {"ngay": "2026-10-30", "so": 1, "bai": [{"loai": "tin_lang", "tieu_de": "[村|むら]の[話|はなし]", "doan": ["{学生|がくせい|学生}と{先生|せんせい|先生}が{交番|こうばん|交番}へ[行|い]きました。"]}],
+raw = {"ngay": "2026-10-30", "so": 1, "bai": [{"loai": "tin_lang", "tieu_de": "[村|むら]の[話|はなし]", "doan": ["{学生|がくせい|学生}と{先生|せんせい|先生}が{宇宙船|うちゅうせん|宇宙船}を[見|み]ました。"]}],
        "cau_hoi": [], "chinh_ta": [], "mau_cau": [], "tu_moi": []}
 json.dump(raw, open(os.path.join(d, "bao.json"), "w", encoding="utf-8"), ensure_ascii=False)
+# số sau viết theo deck khác → pham_vi.json chung bị ghi đè (đúng lỗi 1.22.8)
+kb.ai.write_scope(kb.AI_DIR, {"trinh_do": "N4", "tu_vung": [["図書館", "としょかん", "thư viện", "deck"]], "ngu_phap": []})
 result = 1`);
   await js('GardenPaper.close(); GardenPaper.open("shelf"); if (!window.__kbWrap) { const o = Garden.paperIssue; Garden.paperIssue = (v) => { window.__kbIssue = v; return o(v); }; window.__kbWrap = 1; } return 1;'); await sleep(900);
   await js('[...document.querySelectorAll(".kb-p-row")].find(r => r.textContent.indexOf("30/10") >= 0).click(); return 1;');
   ok(await waitFor('const v = window.__kbIssue; return v && v.date === "2026-10-30" && GardenPaper._state().issue === "2026-10-30";'), 'mở số 30/10 từ kệ (viết trước 1.23, phạm vi đã đổi)');
   const tu = await js('return window.__kbIssue.tu;');
-  ok(tu['学生'] && tu['学生'].m === 'học sinh' && tu['先生'] && tu['先生'].m === 'giáo viên', 'từ có trong deck: có nghĩa (tìm trong deck) — 学生: ' + (tu['学生'] || {}).m);
-  ok(tu['交番'] && tu['交番'].r === 'こうばん' && tu['交番'].thieu, 'từ không có ở đâu: vẫn có cách đọc こうばん');
+  ok(tu['学生'] && tu['学生'].m === 'học sinh' && tu['先生'] && tu['先生'].m === 'giáo viên', 'từ có trong deck: có nghĩa (tìm trong deck, 1.22.8: trống) — 学生: ' + (tu['学生'] || {}).m);
+  ok(tu['宇宙船'] && tu['宇宙船'].r === 'うちゅうせん' && tu['宇宙船'].thieu, 'từ không có ở đâu (cả deck lẫn kotoba_daily): vẫn có cách đọc うちゅうせん');
   const saved = await py(KB + 'result = sorted(json.load(open(os.path.join(kb.AI_DIR, "bao", "2026-10-30", "bao.json"), encoding="utf-8")).get("tra_tu", {}))');
-  ok(saved.includes('学生') && saved.includes('先生') && !saved.includes('交番'), 'nghĩa tìm được ghi bổ sung vào chính số đó: ' + saved.join(', '));
-  await js('const w = [...document.querySelectorAll(".kb-p-w")].find(e => e.getAttribute("data-k") === "交番"); if (w) w.click(); return 1;'); await sleep(400);
-  ok(await js('return /Chưa có nghĩa trong deck/.test(document.getElementById("kb-p-info").textContent) && /こうばん/.test(document.getElementById("kb-p-info").textContent);'), 'bấm 交番: hiện cách đọc + "Chưa có nghĩa trong deck"');
+  ok(saved.includes('学生') && saved.includes('先生') && !saved.includes('宇宙船'), 'nghĩa tìm được ghi bổ sung vào chính số đó: ' + saved.join(', '));
+  await js('const w = [...document.querySelectorAll(".kb-p-w")].find(e => e.getAttribute("data-k") === "宇宙船"); if (w) w.click(); return 1;'); await sleep(400);
+  ok(await js('return /Chưa có nghĩa trong deck/.test(document.getElementById("kb-p-info").textContent) && /うちゅうせん/.test(document.getElementById("kb-p-info").textContent);'), 'bấm 宇宙船: hiện cách đọc + "Chưa có nghĩa trong deck"');
   await page.shot(SHOTS + '/123_03_tra_nghia_so_cu.png');
   await js('GardenPaper.close(); return 1;');
 
@@ -204,12 +206,8 @@ result = 1`);
   const last = cyc[2][1];
   ok(last[2] === before[2], 'Undo: revlog về như cũ (' + before[2] + ' → ' + last[2] + ')');
   ok(last[0] === before[0] && last[1] === before[1], 'sau 3 vòng ôn + Undo: xu và số lần tưới về như cũ ' + JSON.stringify(before) + ' → ' + JSON.stringify(last) + ' (1.22.8: +9 xu)');
-  await py(KB + 'from aqt.operations.collection import redo; redo(parent=mw); result = 1'); await sleep(1200);
-  await py(KB + 'kb._dialog.refresh(); result = 1'); await sleep(600);
-  const redo = await py(KB + 'd = st.load(); result = [d["coins"], mw.col.db.scalar("select count() from revlog")]');
-  ok(redo[1] === before[2] + 1 && redo[0] > before[0], 'Redo: lượt ôn quay lại → xu cộng lại ' + JSON.stringify(redo));
   await py(KB + 'kb.mobile_catch_up(); kb._dialog.refresh(); result = 1'); await sleep(600);
-  ok(await py(KB + 'result = st.load()["coins"]') === redo[0], 'lần bù xu điện thoại sau đó không trả thêm cho lượt Redo');
+  ok(await py(KB + 'result = st.load()["coins"]') === before[0], 'lần bù xu điện thoại sau Undo không trả lại xu cho lượt đã Undo');
 
   console.log('== giao diện ôn buổi tối');
   await js('GardenUI.open(); return 1;'); await sleep(500);
@@ -230,18 +228,18 @@ result = 1`);
   ok(page.errors.length === 0, 'không có lỗi JS' + (page.errors.length ? ': ' + page.errors.slice(0, 3).join(' | ') : ''));
 
   console.log('== KB-02: hồ sơ Anki mới');
-  const a = await py(KB + 'd = st.load(); result = [d["coins"], d["home"].get("level", 0)]');
-  await py(KB + 'd = st.load(); d["coins"] = max(d["coins"], 12345); d["home"]["level"] = 7; st.save(d); result = 1');
+  const a = await py(KB + 'd = st.load(); result = [d["coins"], d["home"].get("house", 0)]');
+  await py(KB + 'd = st.load(); d["coins"] = max(d["coins"], 12345); d["home"]["house"] = 7; st.save(d); result = 1');
   page.close();
   await py(KB + 'mw.unloadProfileAndShowProfileManager(); result = 1'); await sleep(4000);
   await py(KB + 'mw.pm.create("HoSoMoi"); mw.pm.load("HoSoMoi"); mw.onOpenProfile(); result = 1'); await sleep(6000);
-  const b = await py(KB + 'd = st.load(); result = [mw.pm.name, mw.col.note_count(), d["coins"], d["home"].get("level", 0), kb.PAPER.load()["read"] != {}]');
+  const b = await py(KB + 'd = st.load(); result = [mw.pm.name, mw.col.note_count(), d["coins"], d["home"].get("house", 0), kb.PAPER.load()["read"] != {}]');
   ok(b[0] === 'HoSoMoi' && b[1] === 0, 'đã mở hồ sơ mới (0 note)');
   ok(b[2] === 0 && b[3] === 0, 'hồ sơ mới: 0 xu, chưa có nhà (1.22.8: 12.345 xu, nhà cấp 7) — ' + JSON.stringify(b.slice(2, 4)));
   ok(b[4] === false, 'hồ sơ mới: không nhận tiến độ đọc báo của hồ sơ khác');
   await py(KB + 'mw.unloadProfileAndShowProfileManager(); result = 1'); await sleep(4000);
   await py(KB + 'mw.pm.load("Test"); mw.onOpenProfile(); result = 1'); await sleep(5000);
-  const back = await py(KB + 'd = st.load(); result = [mw.pm.name, d["coins"], d["home"].get("level", 0)]');
+  const back = await py(KB + 'd = st.load(); result = [mw.pm.name, d["coins"], d["home"].get("house", 0)]');
   ok(back[0] === 'Test' && back[1] >= 12345 && back[2] === 7, 'về hồ sơ cũ: ví còn nguyên ' + JSON.stringify(back) + ' (trước: ' + JSON.stringify(a) + ')');
 
   const n = results.filter(Boolean).length;

@@ -859,9 +859,10 @@ def placed_count(home: dict[str, Any], item_id: str) -> int:
 CONFIG_RANGES: dict[str, tuple[float, float]] = {
     "wilt_retrievability": (0.0, 1.0),
     "max_plants": (1, 5000),
-    "daily_goal": (1, 100000),
-    "daily_bonus": (0, 100000),
-    "game_daily_coins": (0, 100000),
+    # 1.23 (kế hoạch mục 5.3): giới hạn hợp lý — trước cho đặt daily_bonus 100.000 (mỗi ngày đạt mục tiêu được 100.000 xu)
+    "daily_goal": (10, 100000),
+    "daily_bonus": (0, 100),
+    "game_daily_coins": (0, 200),
     "music_volume": (0.0, 1.0),
 }
 _TRUE = {"true", "1", "yes", "on", "có", "bật"}
@@ -889,7 +890,9 @@ def _clean_value(key: str, val: Any, default: Any) -> Any:
             return default
         lo, hi = CONFIG_RANGES.get(key, (float("-inf"), float("inf")))
         if num < lo:
-            return default if key == "daily_goal" else type(default)(lo)   # mục tiêu 0 / âm = như mặc định (giống Lịch hoa)
+            if key == "daily_goal" and num <= 0:
+                return default        # mục tiêu 0 / âm = như mặc định (giống Lịch hoa)
+            return type(default)(lo)      # 1.23: mục tiêu 1–9 → 10
         num = min(num, hi)
         return int(num) if isinstance(default, int) else num
     if isinstance(default, str):

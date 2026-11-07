@@ -1,0 +1,8 @@
+{
+  "package": "kotoba_batake_test",
+  "name": "ことば畑 · Công cụ test (chỉ để thử, không dùng hằng ngày)",
+  "conflicts": [],
+  "mod": 0,
+  "human_version": "1.23.0",
+  "min_point_version": 231000
+}
