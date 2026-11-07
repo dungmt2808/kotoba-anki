@@ -801,7 +801,7 @@ def check(raw: Any, scope: dict[str, Any], opts: dict[str, Any]) -> Any:
         for j, p in enumerate(doan):
             check_en(rep, "%s.doan[%d]" % (where, j), p, ctx)
             if isinstance(p, str):
-                total += len(words(p))
+                total += 0 if (opts.get("story_plain") and b.get("loai") == "truyen") else len(words(p))
                 sents += [len(words(x)) for x in sentences(paper.surface(p))]
                 if len(p) > 1500:
                     rep.err("%s.doan[%d]" % (where, j), "đoạn dài quá")
@@ -810,6 +810,8 @@ def check(raw: Any, scope: dict[str, Any], opts: dict[str, Any]) -> Any:
     lo, hi = LENGTH[level]
     if short:
         lo, hi = lo // 3, hi // 2
+    if opts.get("story_plain") and story_seen and not short:     # 1.23: truyện viết sẵn không tính vào độ dài
+        lo, hi = int(lo * 0.4), int(hi * 0.75)
     if total and total < lo * 0.6:
         rep.err("bai", "báo ngắn quá (%d từ), cần khoảng %d–%d từ" % (total, lo, hi))
     elif total > hi * 1.4:
@@ -1033,8 +1035,9 @@ def write_prompt(scope: dict[str, Any], opts: dict[str, Any], story: list[dict[s
                 "\"Village Notices\"." if third == "thong_bao" else
                 "cột ngắn của một nhân vật (1–2 đoạn), tiêu đề kiểu \"StackChan's Corner\".",
                 "CẢ SỐ (nên có 1 câu về truyện)" if sp else "bài", "bài hoặc truyện" if sp else "bài", dlo, dhi,
-                ("\nTRUYỆN ĐÃ VIẾT SẴN (kỳ %d, để đặt câu hỏi / câu chép):\n%s" % (
-                    ky, json.dumps({"tieu_de": sp["tieu_de"], "doan": sp["doan"]}, ensure_ascii=False))) if sp else ""))
+                ("\nĐỘ DÀI: hai bài này tổng khoảng %d–%d từ (truyện không tính).\nTRUYỆN ĐÃ VIẾT SẴN (kỳ %d, để đặt câu hỏi / câu "
+                 "chép):\n%s" % (int(LENGTH[level][0] * 0.4), int(LENGTH[level][1] * 0.75), ky,
+                                 json.dumps({"tieu_de": sp["tieu_de"], "doan": sp["doan"]}, ensure_ascii=False))) if sp else ""))
     else:
         parts.append(
             "CẤU TRÚC: bai gồm đúng 3 bài theo thứ tự:\n"

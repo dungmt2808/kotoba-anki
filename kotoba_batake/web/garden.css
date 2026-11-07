@@ -1928,3 +1928,31 @@ button { cursor: pointer; }
 .kb-p-fbs .kb-btn { font-size: 13px; padding: 2px 10px; }
 .kb-p-fbs .kb-btn.is-on { background: #ffd23f; }
 .kb-p-fbs-in { flex: 1 1 200px; min-width: 160px; font-size: 13px; padding: 3px 6px; }
+
+/* 1.23: Ngắm cảnh — cả cửa sổ chỉ một cảnh (canvas vẽ kín cửa sổ, thanh trên trong suốt) */
+.kb-view { position: fixed; inset: 0; z-index: 55; background: #1b1b2f; overflow: hidden; }
+.kb-view-canvas { position: absolute; left: 0; top: 0; display: block; image-rendering: pixelated; }
+.kb-view-bar { position: absolute; left: 0; right: 0; top: 0; display: flex; align-items: center; gap: 6px; padding: 6px 10px;
+  background: rgba(27, 27, 47, 0.72); color: #fff8dc; border-bottom: 3px solid #1b1b2f; font-size: 14px; flex-wrap: wrap; }
+.kb-view-title { font-weight: bold; margin-right: 6px; }
+.kb-view-nav { display: inline-flex; align-items: center; gap: 4px; }
+.kb-view-name { min-width: 120px; text-align: center; }
+.kb-view-sp { flex: 1 1 auto; }
+.kb-view-bar .kb-btn.is-on { background: #ffd23f; }
+.kb-view-tip { position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); max-width: calc(100% - 40px);
+  padding: 4px 10px; background: rgba(255, 248, 220, 0.92); color: #1b1b2f; border: 2px solid #1b1b2f; font-size: 13px;
+  box-shadow: 3px 3px 0 #1b1b2f; text-align: center; }
+.kb-view-tip:empty { display: none; }
+.kb-view-pop { position: absolute; z-index: 4; }
+.kb-view-kho { position: absolute; right: 8px; top: 52px; bottom: 50px; width: 230px; overflow-y: auto; padding: 8px;
+  background: #fff8dc; border: 3px solid #1b1b2f; box-shadow: 4px 4px 0 #1b1b2f; color: #1b1b2f; font-size: 13px; }
+.kb-view-kho-h { font-weight: bold; margin-bottom: 6px; }
+.kb-view-kho-empty { color: #5b5470; }
+.kb-view-kho-list { display: flex; flex-direction: column; gap: 6px; }
+.kb-view-kho-item { display: flex; align-items: center; gap: 6px; width: 100%; margin: 0; padding: 3px 6px; text-align: left;
+  font-size: 13px; justify-content: flex-start; }
+.kb-view-kho-item canvas { width: 40px; height: 40px; flex: 0 0 40px; image-rendering: pixelated; }
+.kb-view-kho-n { flex: 1 1 auto; }
+.kb-view-kho-c { color: #5b5470; }
+body.kb-viewing { overflow: hidden; }
+.kb-yard-view { font-size: 12px; }

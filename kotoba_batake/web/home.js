@@ -3059,7 +3059,11 @@ var GardenHome = (function () {
     const wrap = cv.parentNode;
     const cw = wrap.clientWidth;
     // cửa sổ thấp thì thu nhỏ sân; phóng to màn hình thì sân to theo (tối đa ×4)
-    const maxS = window.innerHeight < 860 ? 2 : window.innerHeight < 1000 ? 3 : 4;
+    let maxS = window.innerHeight < 860 ? 2 : window.innerHeight < 1000 ? 3 : 4;
+    // 1.23: ⚙ → Màn chính → Cỡ cảnh: Lớn — phóng thêm (dải cảnh tới ~55 % chiều cao cửa sổ); cửa sổ thấp hơn 900 px giữ Vừa
+    if (typeof GardenUI !== "undefined" && GardenUI.glob && GardenUI.glob("scene") === "large" && window.innerHeight >= 900) {
+      maxS = Math.max(maxS, Math.floor(window.innerHeight * 0.55 / YARD.H));
+    }
     const S = Math.max(2, Math.min(maxS, Math.floor(cw / YARD.W)));
     const dpr = window.devicePixelRatio || 1;
     const hgt = YARD.H * S;
@@ -3245,7 +3249,12 @@ var GardenHome = (function () {
   // 1.14: Giao diện → cảnh sân "đứng yên" / "mờ" thì chỉ vẽ lại khi có thay đổi (hoặc mỗi 30 giây), "ẩn" thì không vẽ
   let stillDirty = true, stillAt = 0;
   let lastTick = -1;
+  let startDone = false;      // 1.23: "Cảnh hiện: Luôn về Sân vườn khi mở vườn"
   function loop(ts) {
+    if (!startDone && H && H.data() && H.data().ui) {
+      startDone = true;
+      if (H.data().ui.start === "yard") { try { localStorage.setItem("kb-main-scene", "yard"); } catch (e) { /* bỏ qua */ } }
+    }
     // 1.15: 15 khung/giây (5 khi ở nền), bám cùng nhịp 30 khung/giây với ruộng (fx.js) để vẽ chung khung hình
     const every = document.hasFocus() ? 2 : 6, tk = Math.floor(Math.floor(ts / 33.34) / every);
     if (tk === lastTick) { requestAnimationFrame(loop); return; }
@@ -3255,7 +3264,8 @@ var GardenHome = (function () {
     frame++;
     if (!document.hidden) {
       const now = Date.now();
-      if (isOpen) { stepParts(scene, dt); drawPanel(now); }
+      if (vw.open) { stepParts(vw.scene, dt); drawView(now); if (vw.arrange && vw.kho && frame % 10 === 0) { viewKho(); } }
+      else if (isOpen) { stepParts(scene, dt); drawPanel(now); }
       else {
         const ym = UIget("yard");
         if (ym === "full") { stepParts(mainScene(), dt); drawMainYard(now); }
@@ -4459,7 +4469,11 @@ var GardenHome = (function () {
   }
 
   function onKey(e) {
+    if (vw.open) { viewKey(e); return; }     // (không chặn lan truyền: garden.js cần thấy Esc đã dùng → Anki không đóng cửa sổ)
     if (!isOpen) { return; }
+    if ((e.key === "v" || e.key === "V") && !placing && !e.ctrlKey && !e.metaKey && !e.altKey &&
+        !(e.target && /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) &&
+        !(typeof GardenCraft !== "undefined" && GardenCraft.isOpen())) { e.preventDefault(); viewOpen(scene); return; }
     if (typeof GardenCraft !== "undefined" && GardenCraft.isOpen()) { return; }
     if (e.key === "Escape") {
       e.preventDefault();
@@ -4585,6 +4599,289 @@ var GardenHome = (function () {
     selected = null; hidePop();
     renderList();
     if (!placing) { if (tipMsg) { setTip(tipMsg); } else { defaultTip(); } }
+    if (vw.open) { vw.selected = null; viewPopHide(); viewSync(); }
+  }
+
+  // ---------------------------------------------------------------------
+  // 1.23: Ngắm cảnh — cả cửa sổ chỉ một cảnh (phóng nguyên lần to nhất, pixel không nhoè), đổi cảnh ◂ ▸ / phím mũi
+  // tên, chụp ảnh, Sắp xếp đồ ngay trên khung lớn (luật đặt đồ như bảng Nhà; Python vẫn là nơi quyết định).
+  // Mở bằng nút Ngắm trên dải cảnh, nút Ngắm trong bảng Nhà, bấm vào ngôi nhà ở màn chính, phím V.
+  // ---------------------------------------------------------------------
+  const vw = { open: false, scene: "yard", arrange: false, placing: null, selected: null, hover: null, S: 2, ox: 0, oy: 0,
+    switchAt: 0, kho: false };
+  function viewList() { return ["yard"].concat(canEnter("room") ? ["room"] : [], ZONE_IDS.filter((z) => zoneOpen(z)), uzIds()); }
+  function viewOpen(sc) {
+    if (!H) { return; }
+    if (isOpen) { close(); }
+    if (typeof GardenGames !== "undefined") { GardenGames.close(); }
+    if (typeof GardenPaper !== "undefined") { GardenPaper.close(); }
+    if (typeof GardenCal !== "undefined") { GardenCal.close(); }
+    if (typeof GardenUI !== "undefined") { GardenUI.close(); }
+    if (H.closeReview) { H.closeReview(); }
+    vw.scene = sc && canEnter(sc) ? sc : mainScene();
+    vw.open = true; vw.arrange = false; vw.placing = null; vw.selected = null; vw.hover = null; vw.kho = false;
+    vw.switchAt = Date.now();
+    $("kb-view").hidden = false;
+    document.body.classList.add("kb-viewing");
+    viewSync();
+    sfx("flip");
+  }
+  function viewClose() {
+    if (!vw.open) { return; }
+    vw.open = false; vw.placing = null; vw.selected = null;
+    $("kb-view").hidden = true;
+    document.body.classList.remove("kb-viewing");
+    viewPopHide();
+    stillDirty = true;
+    window.dispatchEvent(new Event("kb-today-fit"));
+  }
+  function viewStep(step) {
+    const list = viewList();
+    if (list.length < 2) { return; }
+    const i = Math.max(0, list.indexOf(vw.scene));
+    viewGo(list[(i + step + list.length) % list.length]);
+  }
+  function viewGo(sc) {
+    if (!canEnter(sc)) { return; }
+    vw.scene = sc; vw.placing = null; vw.selected = null; vw.hover = null;
+    if (isOut(sc)) { try { localStorage.setItem("kb-main-scene", sc); } catch (e) { /* bỏ qua */ } }
+    vw.switchAt = Date.now();
+    viewPopHide();
+    viewSync();
+    sfx("flip");
+  }
+  function viewTip(text) { const t = $("kb-view-tip"); if (t && t.textContent !== text) { t.textContent = text || ""; } }
+  function viewDefaultTip() {
+    if (!vw.arrange) { viewTip("Bấm thú để vuốt ve · bấm đồ để xem tên · ◂ ▸ đổi cảnh · Esc để thoát"); return; }
+    if (vw.placing) {
+      const it = item(vw.placing.id);
+      viewTip("Đang đặt “" + (it ? it.name : vw.placing.id) + "”: bấm vào ô trống (xanh) · Esc để huỷ");
+    } else {
+      viewTip("Sắp xếp đồ: bấm một món để di chuyển hoặc cất vào kho · “Đặt từ kho” để bày thêm · mua đồ ở Nhà & Cửa hàng");
+    }
+  }
+  function viewSync() {
+    const list = viewList();
+    const nm = $("kb-view-name");
+    if (nm) { nm.textContent = sceneName(vw.scene) + " · " + (list.indexOf(vw.scene) + 1) + "/" + list.length; }
+    const nav = $("kb-view-nav");
+    if (nav) { nav.hidden = list.length < 2; }
+    const ar = $("kb-view-arrange");
+    if (ar) { ar.classList.toggle("is-on", vw.arrange); ar.setAttribute("aria-pressed", vw.arrange ? "true" : "false"); }
+    const kb = $("kb-view-khobtn");
+    if (kb) { kb.hidden = !vw.arrange; kb.classList.toggle("is-on", vw.kho); }
+    const k = $("kb-view-kho");
+    if (k) { k.hidden = !(vw.arrange && vw.kho); if (!k.hidden) { viewKho(); } }
+    viewDefaultTip();
+  }
+  // món còn trong kho đặt được ở cảnh đang xem (đồ trong nhà ↔ trong nhà; đồ ngoài trời ↔ mọi cảnh ngoài trời)
+  function viewKhoItems() {
+    const cat = catalog() || {}, home = homeState();
+    return (cat.items || []).filter((it) => (home.owned[it.id] || 0) > placedOf(it.id) &&
+      (vw.scene === "room" ? it.scene === "room" : it.scene !== "room"));
+  }
+  function viewKho() {
+    const k = $("kb-view-kho");
+    if (!k) { return; }
+    const items = viewKhoItems();
+    const sig = vw.scene + "|" + items.map((it) => it.id + ":" + ((homeState().owned[it.id] || 0) - placedOf(it.id))).join(",");
+    if (k.getAttribute("data-sig") === sig) { return; }
+    k.setAttribute("data-sig", sig);
+    k.textContent = "";
+    k.appendChild(el("div", "kb-view-kho-h", "Kho đồ · " + (vw.scene === "room" ? "đồ trong nhà" : "đồ ngoài trời")));
+    if (!items.length) { k.appendChild(el("div", "kb-view-kho-empty", "Kho không còn món nào đặt được ở đây. Mua thêm ở Nhà & Cửa hàng.")); return; }
+    const grid = el("div", "kb-view-kho-list");
+    items.forEach((it) => {
+      const b = el("button", "kb-btn kb-view-kho-item");
+      b.type = "button";
+      b.title = it.name;
+      b.appendChild(iconCanvas(SPR[it.id] || ["k"], 40));
+      b.appendChild(el("span", "kb-view-kho-n", it.name));
+      b.appendChild(el("span", "kb-view-kho-c", "×" + ((homeState().owned[it.id] || 0) - placedOf(it.id))));
+      b.addEventListener("click", () => { vw.placing = { id: it.id }; vw.selected = null; viewPopHide(); viewDefaultTip(); sfx("flip"); });
+      grid.appendChild(b);
+    });
+    k.appendChild(grid);
+  }
+  function viewPopHide() { const p = $("kb-view-pop"); if (p) { p.hidden = true; } }
+  function viewPop(e) {
+    const p = $("kb-view-pop");
+    if (!p) { return; }
+    const it = item(e.id) || { w: 1, name: e.id };
+    const r = cellRect(vw.scene, e.x, e.y, it.w);
+    p.querySelector(".kb-view-pop-name").textContent = it.name;
+    p.hidden = false;
+    const left = (vw.ox + r.x + r.w / 2) * vw.S - p.offsetWidth / 2, top = (vw.oy + r.y + r.h) * vw.S + 6;
+    p.style.left = Math.max(4, Math.min(window.innerWidth - p.offsetWidth - 4, left)) + "px";
+    p.style.top = Math.max(50, Math.min(window.innerHeight - p.offsetHeight - 4, top)) + "px";
+  }
+  function viewCell(ev) {
+    const cv = $("kb-view-canvas");
+    const r = cv.getBoundingClientRect();
+    return { ax: (ev.clientX - r.left) / vw.S - vw.ox, ay: (ev.clientY - r.top) / vw.S - vw.oy };
+  }
+  function viewMove(ev) {
+    if (!vw.open) { return; }
+    const p = viewCell(ev);
+    vw.hover = vw.arrange ? cellAt(vw.scene, p.ax, p.ay) : null;
+    const cv = $("kb-view-canvas");
+    const pet = typeof GardenPets !== "undefined" ? GardenPets.at(vw.scene, p.ax, p.ay) : null;
+    const idx = itemAt(vw.scene, cellAt(vw.scene, p.ax, p.ay));
+    cv.style.cursor = vw.placing ? "copy" : (pet || idx >= 0 || (isOut(vw.scene) && vw.scene === "yard" && p.ax >= 0 && p.ax < 64)) ? "pointer" : "";
+  }
+  function viewClick(ev) {
+    if (!vw.open) { return; }
+    const p = viewCell(ev), sc = vw.scene;
+    if (!vw.placing && typeof GardenPets !== "undefined") {
+      const pid = GardenPets.at(sc, p.ax, p.ay);
+      if (pid) {
+        GardenPets.cheer(pid); sfx("boop");
+        const pv = (moreView().pets || []).find((x) => x.id === pid);
+        viewTip((pv ? pv.name + " · " + petStateText(pv) : "") + " ♪");
+        return;
+      }
+    }
+    if (!vw.placing && typeof GardenGuests !== "undefined") {
+      const gid = GardenGuests.at(sc, p.ax, p.ay);
+      if (gid) { GardenGuests.react(sc); sfx("boop"); viewTip((guestName(gid) || "Khách") + " ghé vườn"); return; }
+    }
+    const cell = cellAt(sc, p.ax, p.ay);
+    if (vw.placing) {
+      if (!cell) { return; }
+      const err = spotError(sc, vw.placing.id, cell.x, cell.y, vw.placing.index);
+      if (err) { sfx("again"); viewTip("Không đặt được: " + err + " · Esc để huỷ"); return; }
+      pendingSpot = { scene: sc, id: vw.placing.id, x: cell.x, y: cell.y };
+      if (vw.placing.index !== undefined) { H.send("home:move:" + sc + ":" + vw.placing.index + ":" + cell.x + ":" + cell.y); }
+      else { H.send("home:place:" + sc + ":" + vw.placing.id + ":" + cell.x + ":" + cell.y); }
+      vw.placing = null;
+      return;
+    }
+    const idx = itemAt(sc, cell);
+    if (idx >= 0) {
+      const e = (homeState()[sc] || [])[idx], it = item(e.id);
+      if (vw.arrange) { vw.selected = { scene: sc, index: idx }; viewPop(e); sfx("flip"); return; }
+      if (e.id === "mailbox" && H.openPaper) { viewClose(); H.openPaper(); return; }
+      viewTip((it ? it.name : e.id) + (it && it.desc ? " · " + it.desc : ""));
+      sfx("flip");
+      return;
+    }
+    vw.selected = null; viewPopHide();
+    if (sc === "yard" && p.ax >= 0 && p.ax < 64 && canEnter("room") && !vw.arrange) { viewGo("room"); }
+  }
+  function drawView(now) {
+    const cv = $("kb-view-canvas");
+    if (!cv) { return; }
+    const cw = window.innerWidth, ch = window.innerHeight;
+    const bar = 44;
+    const side = vw.arrange && vw.kho ? 250 : 0;          // ngăn Kho đồ bên phải: cảnh thu vào phần còn lại, không bị che
+    const out = isOut(vw.scene);
+    const SW = out ? YARD.W : ROOM.W, SH = out ? YARD.H : ROOM.H;
+    const S = Math.max(1, Math.min(Math.floor((cw - side) / SW), Math.floor((ch - bar) / SH)));
+    const dpr = window.devicePixelRatio || 1;
+    if (cv._w !== cw || cv._h !== ch || cv._dpr !== dpr) {
+      cv.width = Math.round(cw * dpr); cv.height = Math.round(ch * dpr);
+      cv.style.width = cw + "px"; cv.style.height = ch + "px";
+      cv._w = cw; cv._h = ch; cv._dpr = dpr;
+    }
+    const ctx = cv.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.imageSmoothingEnabled = false;
+    const ox = Math.floor(((cw - side) / S - SW) / 2), oy = Math.max(Math.ceil(bar / S), Math.floor((ch / S - SH) / 2));
+    vw.S = S; vw.ox = ox; vw.oy = oy;
+    if (out) {
+      ctx.fillStyle = "#1b1b2f"; ctx.fillRect(0, 0, cw, ch);
+    } else {
+      ctx.fillStyle = "#2b211c"; ctx.fillRect(0, 0, cw, ch);
+      ctx.fillStyle = "#3a2c24";
+      for (let x = 0; x * S < cw; x += 12) { ctx.fillRect(x * S, 0, S, ch); }
+    }
+    const overlay = (c, s, x0, y0) => {
+      if (!vw.arrange) { return; }
+      if (vw.placing && vw.hover) {
+        const it = item(vw.placing.id);
+        const err = spotError(vw.scene, vw.placing.id, vw.hover.x, vw.hover.y, vw.placing.index);
+        const r = cellRect(vw.scene, vw.hover.x, vw.hover.y, it ? it.w : 1);
+        if (!err) { drawItem(c, s, x0, y0, { id: vw.placing.id, x: vw.hover.x, y: vw.hover.y }, vw.scene, now, timeOfDay(), 0.75); }
+        c.globalAlpha = 0.35; box(c, x0 + r.x, y0 + r.y, r.w, r.h, err ? "#ff4f6d" : "#6be08a", s); c.globalAlpha = 1;
+        c.strokeStyle = err ? "#c21f3a" : "#1f7a3a"; c.lineWidth = 2;
+        c.strokeRect((x0 + r.x) * s + 1, (y0 + r.y) * s + 1, r.w * s - 2, r.h * s - 2);
+      } else if (vw.selected && vw.selected.scene === vw.scene) {
+        const e = (homeState()[vw.scene] || [])[vw.selected.index];
+        if (e) {
+          const it = item(e.id), r = cellRect(vw.scene, e.x, e.y, it ? it.w : 1);
+          c.strokeStyle = "#ffd23f"; c.lineWidth = 3; c.strokeRect((x0 + r.x) * s, (y0 + r.y) * s, r.w * s, r.h * s);
+        }
+      }
+    };
+    const opts = { grid: vw.arrange && !!vw.placing, overlay: overlay, seen: !document.hidden };
+    if (out) {
+      drawOutdoor(ctx, S, ox, oy, now, vw.scene, Object.assign(opts, { bgFrom: -ox - 1, bgTo: cw / S - ox + 1 }));
+      // trời kéo dài lên trên, đất kéo dài xuống dưới cho kín khung — lấy đúng màu ở mép trên / dưới của cảnh cho liền
+      const pick = (y) => { const d = ctx.getImageData(Math.round(4 * dpr), Math.round(y * dpr), 1, 1).data; return "rgb(" + d[0] + "," + d[1] + "," + d[2] + ")"; };
+      const top = oy * S, bot = (oy + SH) * S;
+      if (top > 0) { ctx.fillStyle = pick(top + 1); ctx.fillRect(0, 0, cw, top); }
+      if (bot < ch) {
+        ctx.fillStyle = pick(bot - 2); ctx.fillRect(0, bot, cw, ch - bot);
+        ctx.fillStyle = "rgba(0,0,0,0.06)";
+        for (let y = oy + SH + 3; y * S < ch; y += 7) { ctx.fillRect(0, y * S, cw, S); }
+      }
+    } else {
+      drawRoom(ctx, S, ox, oy, now, opts);
+      ctx.strokeStyle = "#1b1b2f"; ctx.lineWidth = Math.max(3, S);
+      ctx.strokeRect(ox * S - ctx.lineWidth / 2, oy * S - ctx.lineWidth / 2, SW * S + ctx.lineWidth, SH * S + ctx.lineWidth);
+    }
+    const sw = now - vw.switchAt;
+    if (sw < 380) { ctx.globalAlpha = 0.65 * (1 - sw / 380); ctx.fillStyle = "#1b1b2f"; ctx.fillRect(0, 0, cw, ch); ctx.globalAlpha = 1; }
+  }
+  function viewKey(e) {
+    if (!vw.open || e.defaultPrevented) { return false; }     // phím V vừa mở Ngắm cảnh (garden.js) → đừng đóng lại ngay
+    if (e.key === "Escape") {
+      e.preventDefault();
+      if (vw.placing) { vw.placing = null; viewDefaultTip(); }
+      else if (vw.selected) { vw.selected = null; viewPopHide(); }
+      else if (vw.arrange) { vw.arrange = false; vw.kho = false; viewSync(); }
+      else { viewClose(); }
+      return true;
+    }
+    if (e.target && /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) { return false; }
+    if (e.key === "ArrowLeft" || e.key === "ArrowRight") { e.preventDefault(); viewStep(e.key === "ArrowLeft" ? -1 : 1); return true; }
+    if (e.key === "v" || e.key === "V") { e.preventDefault(); viewClose(); return true; }
+    return true;      // phím khác của màn chính (R, N, T…) không chạy khi đang ngắm
+  }
+  function viewInit() {
+    const cv = $("kb-view-canvas");
+    if (!cv) { return; }
+    cv.addEventListener("mousemove", viewMove);
+    cv.addEventListener("mouseleave", () => { vw.hover = null; });
+    cv.addEventListener("click", viewClick);
+    $("kb-view-exit").addEventListener("click", viewClose);
+    $("kb-view-prev").addEventListener("click", () => viewStep(-1));
+    $("kb-view-next").addEventListener("click", () => viewStep(1));
+    $("kb-view-arrange").addEventListener("click", () => {
+      vw.arrange = !vw.arrange; vw.placing = null; vw.selected = null; vw.kho = vw.arrange && vw.kho; viewPopHide(); viewSync(); sfx("flip");
+    });
+    $("kb-view-khobtn").addEventListener("click", () => { vw.kho = !vw.kho; viewSync(); });
+    $("kb-view-snap").addEventListener("click", (ev) => { ev.stopPropagation(); openSnap($("kb-view-snap"), vw.scene); });
+    $("kb-view-move").addEventListener("click", () => {
+      if (!vw.selected) { return; }
+      const e = (homeState()[vw.selected.scene] || [])[vw.selected.index];
+      if (e) { vw.placing = { id: e.id, index: vw.selected.index }; vw.selected = null; viewPopHide(); viewDefaultTip(); }
+    });
+    $("kb-view-take").addEventListener("click", () => {
+      if (!vw.selected) { return; }
+      H.send("home:take:" + vw.selected.scene + ":" + vw.selected.index);
+      vw.selected = null; viewPopHide();
+    });
+    $("kb-view-cancel").addEventListener("click", () => { vw.selected = null; viewPopHide(); });
+    Array.prototype.forEach.call(document.querySelectorAll("#kb-view button"), (b) => b.addEventListener("mousedown", (ev) => ev.preventDefault()));
+  }
+  // bấm trúng ngôi nhà trên dải cảnh ở màn chính (cột 0–3 của sân, khi đã xây tới bước có cửa)
+  function mainHouseAt(ev) {
+    const cv = $("kb-yard");
+    if (!cv || !mainView || mainScene() !== "yard" || homeState().house < 1) { return false; }
+    const r = cv.getBoundingClientRect();
+    const ax = (ev.clientX - r.left) / mainView.S - mainView.ox, ay = (ev.clientY - r.top) / mainView.S;
+    return ax >= 0 && ax < 64 && ay > 6 && ay < YARD.H - 4;
   }
 
   function error(msg) {
@@ -4593,6 +4890,7 @@ var GardenHome = (function () {
     sfx("again");
     mood("sad", 1200, "あれ？");
     setTip(msg);
+    if (vw.open) { viewTip(msg); }
   }
 
   return {
@@ -4649,6 +4947,14 @@ var GardenHome = (function () {
         document.addEventListener("click", () => closeSnap());
         document.addEventListener("keydown", (ev) => { if (ev.key === "Escape" && !spop.hidden) { ev.stopImmediatePropagation(); ev.preventDefault(); closeSnap(); } }, true);
       }
+      viewInit();
+      const yv = $("kb-yard-view");
+      if (yv) {
+        yv.addEventListener("mousedown", (ev) => ev.preventDefault());
+        yv.addEventListener("click", (ev) => { ev.stopPropagation(); viewOpen(mainScene()); });
+      }
+      const hv = $("kb-h-view");
+      if (hv) { hv.addEventListener("click", (ev) => { ev.stopPropagation(); viewOpen(scene); }); }
       $("kb-yard").addEventListener("click", (ev) => {
         const pid = mainPetAt(ev);
         if (pid) {
@@ -4672,6 +4978,8 @@ var GardenHome = (function () {
         }
         const hit = mainItemAt(ev);
         if (hit && hit.id === "mailbox" && H.openPaper) { H.openPaper(); return; }
+        // 1.23: bấm trúng ngôi nhà → Ngắm cảnh · Trong nhà (chưa có cửa thì ngắm sân); chỗ khác vẫn mở Nhà & Cửa hàng
+        if (!hit && mainHouseAt(ev)) { viewOpen(canEnter("room") ? "room" : "yard"); return; }
         if (typeof GardenGames !== "undefined") { GardenGames.close(); }
         if (typeof GardenPaper !== "undefined") { GardenPaper.close(); }
         if (typeof GardenCal !== "undefined") { GardenCal.close(); }
@@ -4685,6 +4993,7 @@ var GardenHome = (function () {
         if (pv) { cv.title = pv.name + " · " + petStateText(pv) + " (bấm để chăm)"; cv.style.cursor = "pointer"; }
         else if (gid) { cv.title = (guestName(gid) || "Khách") + " ghé vườn (bấm để xem Album khách)"; cv.style.cursor = "pointer"; }
         else if (hit && hit.id === "mailbox") { cv.title = "Hòm thư: mở Báo (phím B)"; cv.style.cursor = "pointer"; }
+        else if (!hit && mainHouseAt(ev)) { cv.title = canEnter("room") ? "Ngắm trong nhà (phím V)" : "Ngắm cảnh (phím V)"; cv.style.cursor = "zoom-in"; }
         else { cv.removeAttribute("title"); cv.style.cursor = ""; }
       });
       const care = $("kb-care-btn");
@@ -4704,6 +5013,12 @@ var GardenHome = (function () {
     close: close,
     isOpen: () => isOpen,
     cycleMain: cycleMain,
+    // 1.23: Ngắm cảnh
+    view: function (sc) { if (vw.open) { viewClose(); } else { viewOpen(sc || (isOpen ? scene : mainScene())); } },
+    viewClose: viewClose,
+    viewing: () => vw.open,
+    _view: () => ({ open: vw.open, scene: vw.scene, arrange: vw.arrange, S: vw.S, ox: vw.ox, oy: vw.oy, placing: vw.placing,
+      kho: viewKhoItems().map((it) => it.id), list: viewList() }),
     // 1.20: bìa cuốn nhật ký — ảnh xem trước của giao diện mùa, và ảnh vườn tự chụp mỗi tuần (cảnh đang xem, ×2)
     themePreview: themePreview,
     snapshot: function () {

@@ -358,6 +358,7 @@ var Garden = (function () {
 
   // Phím tắt ở màn chính: R ôn, T trò chơi, N nhà, B báo, ← → đổi cảnh ngoài trời, Esc đóng thẻ thông tin.
   function mainKey(e) {
+    if (typeof GardenHome !== "undefined" && GardenHome.viewing && GardenHome.viewing()) { return; }   // 1.23: Ngắm cảnh tự xử lý phím
     if (!$("kb-panel").hidden) { return; }
     if (typeof GardenGames !== "undefined" && GardenGames.isOpen()) { return; }
     if (typeof GardenHome !== "undefined" && GardenHome.isOpen()) { return; }
@@ -382,6 +383,7 @@ var Garden = (function () {
     else if (k === "n") { e.preventDefault(); $("kb-house").click(); }
     else if (k === "b") { e.preventDefault(); openPaper(true); }
     else if (k === "l") { e.preventDefault(); openCal({}); }
+    else if (k === "v" && typeof GardenHome !== "undefined" && GardenHome.view) { e.preventDefault(); GardenHome.view(); }   // 1.23: Ngắm cảnh
     else if (k === "/") { e.preventDefault(); openDeckFind(); }
     else if ((k === "arrowleft" || k === "arrowright") && typeof GardenHome !== "undefined" && GardenHome.cycleMain) {
       if (GardenHome.cycleMain(k === "arrowleft" ? -1 : 1)) { e.preventDefault(); }

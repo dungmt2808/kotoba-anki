@@ -13,9 +13,9 @@
 - `max_plants`: số cây tối đa hiển thị trong một deck. Mặc định `400`; deck lớn hơn thì ưu tiên hiện cây đã học.
 
 **Xu, mục tiêu, nhiệm vụ**
-- `daily_goal`: số lượt ôn mỗi ngày để hoàn thành mục tiêu (tính cả ôn ở màn ôn của Anki). Mặc định `30`, đặt `0` để tắt.
-- `daily_bonus`: xu thưởng khi đạt mục tiêu ngày. Mặc định `15`.
-- `game_daily_coins`: số xu tối đa kiếm từ mini-game mỗi ngày. Mặc định `40`.
+- `daily_goal`: số lượt ôn mỗi ngày để hoàn thành mục tiêu (tính cả ôn ở màn ôn của Anki). Mặc định `30`; tối thiểu `10` (1.23: đặt 1–9 thì tính là 10; `0` / số âm thì về `30`).
+- `daily_bonus`: xu thưởng khi đạt mục tiêu ngày. Mặc định `15`, tối đa `100` (1.23: trước đây cho tới 100.000; đặt cao hơn thì tính là 100).
+- `game_daily_coins`: số xu tối đa kiếm từ mini-game mỗi ngày. Mặc định `40`, tối đa `200` (1.23).
 - Nhiệm vụ hằng ngày (3 cái, đổi mỗi ngày) được chọn theo số thẻ đến hạn / thẻ mới bạn đang có. Xong cả 3 mở rương quà có đồ hiếm.
 - Xu, nhà, đồ đạc, kỷ lục, nhiệm vụ được lưu trong collection nên **đồng bộ qua AnkiWeb**; bản sao lưu nằm ở `user_files/state.json`.
 - `mobile_coins` (từ 1.11): **bù xu cho lượt ôn trên điện thoại** (AnkiDroid / AnkiMobile) hoặc máy chưa cài add-on. Sau khi đồng bộ, add-on đếm lượt ôn mới trong lịch sử ôn của Anki: +1 xu mỗi lượt nhớ được (Khó / Được / Dễ), tính vào nhiệm vụ hôm nay (ôn thẻ đến hạn, học thẻ mới) và thưởng mục tiêu ngày còn thiếu. Bù trong 14 ngày gần nhất, không bao giờ trả hai lần; chỉ tính lượt ôn từ lúc cài bản 1.11. Thưởng cây lên giai đoạn và nhiệm vụ “tưới liền” chỉ tính khi ôn trên máy tính. Mặc định `true`; `false` để tắt.
@@ -39,9 +39,12 @@
 - `gemini_scope`: không dùng nữa (1.23: báo Gemini luôn lấy từ deck — mọi deck hoặc deck đã chọn ở tab Nguồn báo; mỗi số 100 từ, khoảng 70% từ hôm nay phải ôn và 30% từ đã thuộc). Báo Claude Code (kotoba_daily) vẫn theo giáo trình.
 - `paper_confirmed` (1.23, tự ghi): nguồn đã xác nhận của từng báo, vd. `{"ja": "claude", "en": "gemini"}`. Nguồn vừa thành Gemini mà chưa xác nhận (bấm "Dùng Gemini", thư mục kotoba_daily tạm không thấy) thì chờ bấm "Bắt đầu viết", không tự viết. Không cần sửa tay.
 - `gemini_model`, `gemini_tts_model`: để trống cho add-on tự chọn model mới nhất (Google hay đổi tên model).
-- Mỗi số: Gemini viết → máy kiểm tra (romaji, furigana, chữ Trung, cách đọc theo deck, số đếm…) → máy tự nối tra từ cho từ đã học → gửi lại lỗi cho Gemini sửa (tối đa 2 lần) → Gemini soát lần 2 như biên tập viên → kiểm tra lại. Còn lỗi thì **không lưu** số đó. Khoảng 3–5 lượt gọi chữ + 2–3 lượt gọi giọng đọc mỗi ngày (bản đọc chậm tạo ngay trên máy, không tốn lượt).
+- `gemini_story` (1.23): truyện dài kỳ — `"hay"` (mặc định: lập mạch truyện, Gemini viết, biên tập chấm điểm, viết lại khi nhạt; thêm 2–3 lượt gọi mỗi số), `"tiet_kiem"` (viết chung một lượt với cả số báo như bản cũ), `"tat"` (số báo không có truyện). Đổi ở tab Nguồn báo.
+- `gemini_story_tone` (1.23): giọng truyện — `"am"` (Ấm áp đời thường, mặc định), `"hai"` (Hài), `"bi_an"` (Bí ẩn nhẹ), `"phieu_luu"` (Phiêu lưu).
+- Bản dịch tiếng Việt (1.23): mỗi bài báo có bản dịch ẩn sẵn — bấm **Dịch** cuối đoạn hoặc **Hiện bản dịch** ở đầu bảng Báo. Số cũ chưa có bản dịch: **Dịch số này** (Gemini dịch một lần). Dưới truyện có **Kỳ này hay / Nhạt** + một dòng nhận xét: Gemini đọc khi viết kỳ sau (dòng bạn gõ được gửi lên Google).
+- Mỗi số (1.23, Truyện: Hay hơn): Gemini lập mạch truyện (mỗi đợt 6–8 kỳ) → viết kỳ truyện → biên tập chấm điểm, nhạt thì viết lại → Gemini viết cả số (chép truyện, thêm furigana) → máy kiểm tra (romaji, furigana, chữ Trung, cách đọc theo deck, số đếm…) → máy tự nối tra từ cho từ đã học → gửi lại lỗi cho Gemini sửa (tối đa 2 lần) → Gemini soát lần 2 như biên tập viên → kiểm tra lại. Còn lỗi thì **không lưu** số đó. Khoảng 5–8 lượt gọi chữ (Tiết kiệm: 3–5) + 2–3 lượt gọi giọng đọc mỗi ngày (bản đọc chậm tạo ngay trên máy, không tốn lượt).
 - Bản miễn phí: mỗi model khoảng 20 lượt viết / ngày, model giọng đọc khoảng 10 lượt / ngày. Model nào hết hạn mức thì add-on nhớ và dùng model khác (cả Flash-Lite) tới khi Google đặt lại hạn mức (0 giờ giờ Thái Bình Dương = 15 giờ ở Việt Nam).
-- Gửi lên Google: danh sách từ / mẫu câu đang học, tóm tắt truyện, nội dung báo và câu / từ cần giọng đọc. Bản miễn phí của Gemini có thể dùng dữ liệu gửi lên để cải thiện sản phẩm.
+- Gửi lên Google: danh sách từ / mẫu câu đang học, truyện các kỳ trước, dòng nhận xét truyện bạn gõ (1.23), nội dung báo và câu / từ cần giọng đọc. Bản miễn phí của Gemini có thể dùng dữ liệu gửi lên để cải thiện sản phẩm.
 
 **Báo do Claude Code viết** (tuỳ chọn, cho người đã dùng Claude Code) — mặc định ẩn
 - Thay cho Gemini, báo tiếng Nhật có thể do **Claude Code** (tác vụ lịch của Claude Desktop) viết mỗi sáng theo đúng giáo trình bạn đang học, kèm giọng đọc VOICEVOX nếu có. Cần: Claude Code chạy trên máy, Python 3, PDF giáo trình của bạn.
@@ -54,7 +57,8 @@
 - Giọng tiếng Nhật của máy: Windows → Cài đặt → Thời gian & ngôn ngữ → Giọng nói → Thêm giọng nói → Tiếng Nhật; macOS → Trợ năng → Nội dung đọc → Giọng hệ thống → Quản lý giọng nói → Tiếng Nhật. Mở lại Anki sau khi cài.
 
 **Giao diện tự chỉnh** (từ bản 1.14) — sửa trong vườn: ⚙ → *Giao diện & chế độ học…*
-- `ui`: `{}` = như cũ (mọi thứ chuyển động). Mỗi chế độ `main` (màn chính), `review` (khi ôn thẻ), `panel` (Trò chơi / Báo / Cấu hình trường) có: `yard` và `field` = `"full"` (chuyển động) / `"still"` (đứng yên) / `"dim"` (mờ, đứng yên) / `"hide"` (ẩn); `sky`, `weather`, `pets`, `mascot`, `joy` = `"on"` / `"off"`. Chung: `card` = `"normal"` / `"tall"` (khung thẻ to hết chỗ), `theme` = `"garden"` / `"paper"` / `"night"` (màu bảng ôn).
+- `ui`: `{}` = như cũ (mọi thứ chuyển động). Mỗi chế độ `main` (màn chính), `review` (khi ôn thẻ), `panel` (Trò chơi / Báo / Cấu hình trường) có: `yard` và `field` = `"full"` (chuyển động) / `"still"` (đứng yên) / `"dim"` (mờ, đứng yên) / `"hide"` (ẩn); `sky`, `weather`, `pets`, `mascot`, `joy` = `"on"` / `"off"`. Chung: `card` = `"normal"` / `"tall"` (khung thẻ to hết chỗ), `theme` = `"garden"` / `"paper"` (màu bảng ôn; 1.23 bỏ `"night"` — Đêm vườn, config cũ về `"garden"`), `scene` = `"normal"` / `"large"` (1.23: cỡ dải cảnh ở màn chính Vừa / Lớn), `start` = `"last"` / `"yard"` (1.23: mở vườn ở cảnh đang chọn / luôn về Sân vườn).
+- **Ngắm cảnh** (1.23): phím **V**, nút **Ngắm** trên dải cảnh / trong Nhà, hoặc bấm vào ngôi nhà — cả cửa sổ chỉ một cảnh, ◂ ▸ đổi cảnh, Chụp ảnh, **Sắp xếp đồ** (di chuyển, cất, đặt từ kho ngay trên khung lớn). Esc để thoát. Kết hợp F11 (toàn màn hình) thành khung ảnh động.
 - Ví dụ ẩn sân + ruộng khi ôn thẻ: `"ui": {"review": {"yard": "hide", "field": "hide"}, "card": "tall"}`. Nhanh hơn: bấm nút **Ẩn vườn** trên bảng ôn.
 
 **Hiệu ứng & âm thanh**

@@ -1069,9 +1069,10 @@ def check(raw: Any, scope: dict[str, Any], opts: dict[str, Any]) -> Report:
             continue
         if len(doan) > 6:
             rep.err(where + ".doan", "nhiều đoạn quá (tối đa 6)")
+        pre = bool(opts.get("story_plain")) and b.get("loai") == "truyen"     # 1.23: truyện viết sẵn, độ dài kiểm riêng
         for j, p in enumerate(doan):
             check_jp(rep, "%s.doan[%d]" % (where, j), p, ctx)
-            if isinstance(p, str):
+            if isinstance(p, str) and not pre:
                 total += len(paper.surface(p))
                 if len(p) > 1400:
                     rep.err("%s.doan[%d]" % (where, j), "đoạn dài quá")
@@ -1080,13 +1081,16 @@ def check(raw: Any, scope: dict[str, Any], opts: dict[str, Any]) -> Report:
     plain = opts.get("story_plain")
     if plain and story_seen and not short:      # 1.23: truyện đã viết + biên tập sẵn → bài truyện phải chép đúng
         sb = next(b for b in bai if isinstance(b, dict) and b.get("loai") == "truyen")
-        if story_core.story_matches(sb.get("doan") or [], plain["doan"]) < 0.9:
+        # 0,75: bước soát được phép sửa lỗi nhỏ (vd. chữ Hán khó → kana), chép sai / viết lại cả bài thì thấp hơn nhiều
+        if story_core.story_matches(sb.get("doan") or [], plain["doan"]) < 0.75:
             rep.err("bai[truyen]", "bài truyện phải chép NGUYÊN VĂN truyện đã viết sẵn (chỉ thêm đánh dấu furigana, không sửa "
                     "chữ, không thêm bớt câu):\n" + json.dumps({"tieu_de": plain["tieu_de"], "doan": plain["doan"]},
                                                              ensure_ascii=False))
     lo, hi = LENGTH.get(scope.get("trinh_do", "N4"), (280, 700))
     if short:
         lo, hi = lo // 3, hi // 2
+    elif plain and story_seen:      # 1.23: hai bài còn lại (truyện viết sẵn không tính)
+        lo, hi = int(lo * 0.4), int(hi * 0.75)
     if total and total < lo * 0.6:
         rep.err("bai", "báo ngắn quá (%d ký tự), cần khoảng %d–%d" % (total, lo, hi))
     elif total > hi * 1.4:
@@ -1693,6 +1697,9 @@ def write_prompt(scope: dict[str, Any], opts: dict[str, Any], story_list: list[d
                 ky, len(sp["doan"]), third, "お知らせ, 2–3 mục, mỗi mục là một đoạn bắt đầu bằng ◆, tiêu đề お[知|し]らせ."
                 if third == "thong_bao" else "cột ngắn của một nhân vật (1–2 đoạn), tiêu đề kiểu スタックちゃんの[一言|ひとこと].",
                 ky, json.dumps({"tieu_de": sp["tieu_de"], "doan": sp["doan"]}, ensure_ascii=False)))
+        lo0, hi0 = LENGTH.get(level, (280, 700))
+        parts.append("ĐỘ DÀI: hai bài còn lại (tin_lang + bài 3, KHÔNG tính truyện) tổng khoảng %d–%d ký tự." % (
+            int(lo0 * 0.4), int(hi0 * 0.75)))
         if sp.get("tu_moi"):
             parts.append("Từ mới của truyện (đánh dấu {..|..|từ} và khai báo trong tu_moi): " +
                          "、".join("%s（%s）= %s" % (w.get("w"), w.get("r"), w.get("m")) for w in sp["tu_moi"] if isinstance(w, dict)))

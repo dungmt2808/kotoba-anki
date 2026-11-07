@@ -44,7 +44,8 @@ var GardenUI = (function () {
     const sub = c && c[m || mode];
     return (sub && sub[k]) || DEF[k];
   }
-  function glob(k) { const c = conf(); return (c && c[k]) || (k === "card" ? "normal" : "garden"); }
+  const GLOB_DEF = { card: "normal", theme: "garden", scene: "normal", start: "last" };
+  function glob(k) { const c = conf(); return (c && c[k]) || GLOB_DEF[k] || "garden"; }
 
   // thẻ đang ôn nằm trong iframe: bảng tối thì thêm lớp nightMode (như Anki) + màu nền dịu.
   // 1.23: bỏ bảng "Đêm vườn" → luôn gọi với false (gỡ lớp nếu trang còn giữ từ trước); Anki chế độ tối do garden.js lo
@@ -91,7 +92,7 @@ var GardenUI = (function () {
   function full() {
     const c = conf() ? clone(conf()) : {};
     MODES.forEach(([m]) => { c[m] = Object.assign({}, DEF, c[m] || {}); });
-    c.card = c.card || "normal"; c.theme = c.theme || "garden";
+    Object.keys(GLOB_DEF).forEach((k) => { c[k] = c[k] || GLOB_DEF[k]; });
     return c;
   }
   function save(c) {
@@ -184,8 +185,7 @@ var GardenUI = (function () {
   let moreOpen = false;
   function globals() {
     const st = $("kb-ui-stage"), c = full();
-    st.appendChild(el("div", "kb-ui-h", "Bảng ôn thẻ"));
-    const g = el("div", "kb-ui-globals");
+    let g = null;
     const radios = (key, label, list) => {
       const box = el("div", "kb-ui-radio");
       box.appendChild(el("span", "kb-ui-l", label));
@@ -200,6 +200,14 @@ var GardenUI = (function () {
       });
       g.appendChild(box);
     };
+    // 1.23: nhóm "Màn chính" — cỡ dải cảnh, cảnh hiện khi mở vườn (Ngắm cảnh cả cửa sổ: nút Ngắm / phím V)
+    st.appendChild(el("div", "kb-ui-h", "Màn chính"));
+    g = el("div", "kb-ui-globals");
+    radios("scene", "Cỡ cảnh", [["normal", "Vừa"], ["large", "Lớn (ruộng cây lùi xuống)"]]);
+    radios("start", "Cảnh hiện", [["last", "Cảnh đang chọn"], ["yard", "Luôn về Sân vườn khi mở vườn"]]);
+    st.appendChild(g);
+    st.appendChild(el("div", "kb-ui-h", "Bảng ôn thẻ"));
+    g = el("div", "kb-ui-globals");
     radios("theme", "Màu bảng", [["garden", "Vàng vườn"], ["paper", "Trắng giấy"]]);
     radios("card", "Khung thẻ", [["normal", "Vừa"], ["tall", "To hết chỗ còn lại"]]);
     st.appendChild(g);

@@ -338,8 +338,8 @@ def writer_prompt(lang: str, scope: dict[str, Any], ky: int, tone: str, arc: dic
     parts.append("HÔM NAY: %s. Viết KỲ %d." % (season, ky))
     parts.append("MẪU NGỮ PHÁP ĐANG HỌC (dùng 1–2 mẫu làm CHẤT LIỆU của chuyện):\n" + _grammar(scope))
     lo, hi = story_length(lang, level)
-    parts.append(RULES + "\n9. Độ dài: đúng 3 đoạn, mỗi đoạn %d–%d %s." % (lo, hi, "từ tiếng Anh" if lang == "en" else
-                                                                         "ký tự tiếng Nhật"))
+    parts.append(RULES + "\n9. Độ dài: đúng 3 đoạn, mỗi đoạn %d–%d %s (truyện là một bài trong số báo, đừng viết dài hơn)." % (
+        lo, hi, "từ tiếng Anh" if lang == "en" else "ký tự tiếng Nhật"))
     parts.append(("DANH SÁCH TỪ ĐÃ HỌC (trình độ %s):\n" % level) + _vocab(scope, lang, 400))
     parts.append("VÍ DỤ MỘT KỲ HAY (chỉ xem cách kể: nhầm mẫu câu thành chuyện, có vật lạ, móc câu; KHÔNG chép nội dung, "
                  "nhân vật phụ, đồ vật):\n" + (SAMPLE_EN if lang == "en" else SAMPLE_JA))
@@ -408,12 +408,37 @@ KANA_RE = re.compile(r"^[\u3041-\u3096\u309d\u309e\u30a1-\u30fa\u30fc〜～・]+
 # ghi chú lọt vào bản dịch (thử thật 05/11: "(dùng dạng thân mật …)")
 NOTE_RE = re.compile(r"\s*[(（][^()（）]{0,80}?(?:dùng|dạng|nghĩa là|ghi chú|lưu ý|tức là|kính ngữ|thân mật|lịch sự|"
                      r"chữ Hán|furigana|tiếng Nhật|nguyên văn|dịch)[^()（）]{0,80}[)）]", re.I)
-LEN_JA = {"N5": (50, 200), "N4": (70, 240), "N3": (90, 300), "N2": (100, 360), "N1": (100, 380)}
-LEN_EN = {"A1": (22, 80), "A2": (30, 100), "B1": (40, 130), "B2": (50, 160), "C1": (55, 180)}
+# độ dài MỖI đoạn (thử thật 08/11: đoạn 70–240 ký tự làm cả số N4 dài 1.380 ký tự, quá khung 280–700 → số hỏng)
+LEN_JA = {"N5": (40, 110), "N4": (60, 150), "N3": (80, 190), "N2": (90, 220), "N1": (90, 240)}
+LEN_EN = {"A1": (18, 55), "A2": (25, 70), "B1": (35, 90), "B2": (45, 110), "C1": (50, 130)}
 
 
 def story_length(lang: str, level: str) -> tuple[int, int]:
-    return (LEN_EN.get(level, (30, 100)) if lang == "en" else LEN_JA.get(level, (70, 240)))
+    return (LEN_EN.get(level, (25, 70)) if lang == "en" else LEN_JA.get(level, (60, 150)))
+
+
+DRAFT_DIR = "truyen_nhap"     # kỳ truyện đã duyệt của hôm nay: lượt viết số hỏng thì lần thử sau dùng lại, khỏi tốn lượt
+
+
+def _draft_path(base: str, date: str, ky: int) -> str:
+    return os.path.join(base, DRAFT_DIR, "%s_%d.json" % (re.sub(r"[^0-9-]", "", date)[:10], int(ky)))
+
+
+def load_draft(base: str, date: str, ky: int) -> dict[str, Any] | None:
+    raw = _read(_draft_path(base, date, ky), None)
+    if not isinstance(raw, dict) or check_story(raw, raw.get("_lang", "ja"), raw.get("_level", ""))[0]:
+        return None
+    return raw
+
+
+def save_draft(base: str, date: str, ky: int, st: dict[str, Any]) -> None:
+    try:
+        _write(_draft_path(base, date, ky), st)
+        folder = os.path.join(base, DRAFT_DIR)
+        for name in sorted(os.listdir(folder))[:-6]:       # giữ vài ngày gần nhất
+            os.remove(os.path.join(folder, name))
+    except OSError:
+        pass
 
 
 def clean_translation(dich: Any, n: int) -> list[str] | None:
@@ -515,6 +540,10 @@ def run(job: Any, ky: int, tone: str, season: str) -> dict[str, Any] | None:
     tone = tone if tone in TONES else "am"
     story = load_story(job.base)
     arc = load_arc(job.base)
+    cached = load_draft(job.base, job.date, ky)
+    if cached:            # lần thử trước hôm nay đã có kỳ truyện duyệt xong (lượt viết số hỏng) → dùng lại
+        job._note("truyen_dung_lai", ky=ky)
+        return cached
     start = job.c.calls
     left = lambda: MAX_CALLS - (job.c.calls - start)       # noqa: E731
     system = ("Bạn là nhà văn viết truyện dài kỳ %s dễ đọc cho người Việt học %s trình độ %s. Viết hay như một truyện thật, "
@@ -602,6 +631,8 @@ def run(job: Any, ky: int, tone: str, season: str) -> dict[str, Any] | None:
     best["ky"] = ky
     prev = [e for e in story if e["ky"] < ky]
     best["ky_truoc"] = prev[-1]["tom_tat"] if prev and ky > 1 else ""
+    best["_lang"], best["_level"] = lang, level
+    save_draft(job.base, job.date, ky, best)
     return best
 
 

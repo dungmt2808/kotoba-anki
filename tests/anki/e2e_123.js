@@ -170,6 +170,40 @@ result = 1`);
   await page.shot(SHOTS + '/123_03_tra_nghia_so_cu.png');
   await js('GardenPaper.close(); return 1;');
 
+  console.log('== 5d: bản dịch ẩn sẵn, Dịch số này; 5c: Kỳ này hay / Nhạt');
+  await py(KB + `p = kb.ai.issue_path(kb.AI_DIR, kb.ai_today()); raw = json.load(open(p, encoding="utf-8"))
+for b in raw["bai"]:
+    b["dich"] = ["Bản dịch tiếng Việt của đoạn %d." % (j + 1) for j in range(len(b["doan"]))]
+json.dump(raw, open(p, "w", encoding="utf-8"), ensure_ascii=False)
+kb.ai.translate_issue = lambda client, iss, lang="ja", prefer=None: [["Dịch máy giả đoạn %d." % (j + 1) for j in range(len(b["doan"]))] for b in iss["bai"]]
+result = 1`);
+  await js('GardenPaper.close(); window.__kbIssue = null; GardenPaper.open("shelf"); return 1;'); await sleep(900);
+  await py(KB + 'kb._dialog._on_paper("paper:issue:" + kb.ai_today() + "@gemini"); result = 1');
+  ok(await waitFor('return window.__kbIssue && window.__kbIssue.has_dich && GardenPaper._state().tab === "issue";'), 'mở số hôm nay (có bản dịch)');
+  ok(await js('return document.querySelectorAll(".kb-p-dbtn").length >= 4 && [...document.querySelectorAll(".kb-p-dich")].every(d => getComputedStyle(d).display === "none");'), 'mỗi đoạn có nút Dịch, bản dịch ẩn sẵn');
+  await js('document.querySelector(".kb-p-dbtn").click(); return 1;'); await sleep(200);
+  ok(await js('const d = document.querySelector(".kb-p-dich"); return getComputedStyle(d).display !== "none" && /Bản dịch tiếng Việt/.test(d.textContent) && d.lang === "vi";'), 'bấm Dịch: hiện bản dịch đoạn đó');
+  const db = await js('const b = document.getElementById("kb-p-dich"); return [b.hidden, b.textContent];');
+  ok(!db[0] && db[1] === 'Hiện bản dịch', 'nút "Hiện bản dịch" cạnh "Ẩn furigana"');
+  await js('document.getElementById("kb-p-dich").click(); return 1;'); await sleep(200);
+  ok(await js('return [...document.querySelectorAll(".kb-p-dich")].every(d => getComputedStyle(d).display !== "none") && document.getElementById("kb-p-dich").textContent === "Ẩn bản dịch";'), 'Hiện bản dịch: cả số hiện bản dịch');
+  await page.shot(SHOTS + '/123_05_ban_dich.png');
+  await js('document.getElementById("kb-p-dich").click(); return 1;'); await sleep(200);
+  const fbn = await js('return [...document.querySelectorAll(".kb-p-fbs .kb-btn")].map(b => b.textContent);');
+  ok(fbn.join(",") === 'Kỳ này hay,Nhạt', 'dưới truyện có "Kỳ này hay / Nhạt" + ô ghi một dòng');
+  await js('const i = document.querySelector(".kb-p-fbs-in"); i.value = "muốn thêm スタックちゃん"; [...document.querySelectorAll(".kb-p-fbs .kb-btn")][1].click(); return 1;'); await sleep(900);
+  const fbs = await py(KB + 'import json as J\nraw = J.load(open(os.path.join(kb.AI_DIR, "truyen.json"), encoding="utf-8")) if os.path.exists(os.path.join(kb.AI_DIR, "truyen.json")) else []\nresult = [x.get("phan_hoi") for x in raw if isinstance(x, dict) and x.get("phan_hoi")]');
+  ok(fbs.some(f => f.y === 'nhat' && /スタックちゃん/.test(f.ghi)), 'bấm Nhạt → ghi nhận xét vào truyen.json (kỳ sau Gemini đọc) ' + JSON.stringify(fbs));
+  ok(await waitFor('return document.querySelector(".kb-p-fbs .kb-btn.is-on") && document.querySelector(".kb-p-fbs .kb-btn.is-on").textContent === "Nhạt";'), 'nút Nhạt sáng lên sau khi ghi');
+  await js('GardenPaper.close(); window.__kbIssue = null; GardenPaper.open("shelf"); return 1;'); await sleep(900);
+  await py(KB + 'kb._dialog._on_paper("paper:issue:2026-11-02@gemini"); result = 1');
+  ok(await waitFor('return window.__kbIssue && window.__kbIssue.date === "2026-11-02" && !window.__kbIssue.has_dich && window.__kbIssue.can_dich;'), 'số cũ chưa có bản dịch');
+  ok(await waitFor('return document.getElementById("kb-p-dich").textContent === "Dịch số này";'), 'nút "Dịch số này"');
+  await js('document.getElementById("kb-p-dich").click(); return 1;');
+  ok(await waitFor('return window.__kbIssue && window.__kbIssue.date === "2026-11-02" && window.__kbIssue.has_dich;', 10000), 'Dịch số này → Gemini (giả) dịch, số hiện nút Dịch');
+  ok(await py(KB + 'import json as J\nraw = J.load(open(kb.ai.issue_path(kb.AI_DIR, "2026-11-02"), encoding="utf-8"))\nresult = all(b.get("dich") for b in raw["bai"])'), 'bản dịch ghi vào bao.json của số đó');
+  await js('GardenPaper.close(); return 1;');
+
   console.log('== KB-01: gõ nhật ký rồi đóng cửa sổ vườn ngay');
   await js('GardenCal.open({}); return 1;');
   ok(await waitFor('return !!document.querySelector(".kb-cal-note");'), 'mở Lịch hoa · hôm nay');
@@ -225,6 +259,69 @@ result = 1`);
 
   const errs = await py(KB + 'result = [e.get("where") + ": " + str(e.get("msg"))[:100] for e in kb.ERRORS.entries()]');
   ok(errs.length === 0, 'nhật ký lỗi add-on trống' + (errs.length ? ': ' + errs.join(' | ') : ''));
+  ok(page.errors.length === 0, 'không có lỗi JS' + (page.errors.length ? ': ' + page.errors.slice(0, 3).join(' | ') : ''));
+
+  console.log('== Ngắm cảnh (mục 1.3, 1.4)');
+  await py(KB + `d = st.load(); d["coins"] = max(d["coins"], 5000); d["home"]["house"] = 7
+d["home"]["owned"].update({"plant": 2, "tea": 1, "fence": 1, "flowers": 2})
+d["home"]["room"] = [e for e in d["home"].get("room", []) if e.get("id") != "plant"]
+st.save(d); kb._dialog.refresh(); result = 1`); await sleep(1500);
+  await py(KB + 'kb._dialog.resize(1920, 1080); result = 1'); await sleep(1200);
+  await js('GardenSky.set("fixedHour", 10); return 1;');
+  const keyJS = (k) => js(`const t = document.activeElement && document.activeElement !== document.body ? document.activeElement : document; t.dispatchEvent(new KeyboardEvent("keydown", {key: ${JSON.stringify(k)}, code: ${JSON.stringify(k.length === 1 ? 'Key' + k.toUpperCase() : k)}, bubbles: true, cancelable: true})); return 1;`);
+  await keyJS('v'); await sleep(900);
+  let v = await js('return GardenHome._view();');
+  ok(v.open, 'phím V mở Ngắm cảnh');
+  ok(await js('return !document.getElementById("kb-view").hidden && document.getElementById("kb-view-canvas").width >= 1900;'), 'cả cửa sổ chỉ một cảnh (canvas kín cửa sổ)');
+  ok(v.list[0] === 'yard' && v.list[1] === 'room', 'danh sách cảnh: Sân vườn → Trong nhà → các vùng (' + v.list.join(', ') + ')');
+  ok(v.scene !== 'room' ? v.S === 7 : true, 'ngoài trời ở 1920 × 1080: phóng ×' + v.S + ' (kế hoạch: khoảng 7)');
+  await page.shot(SHOTS + '/123_10_ngam_san.png');
+  await keyJS('ArrowRight'); await sleep(600);
+  v = await js('return GardenHome._view();');
+  ok(v.scene === 'room' && v.S >= 11, 'phím → sang Trong nhà, phóng ×' + v.S + ' (kế hoạch: khoảng 11)');
+  await sleep(500); await page.shot(SHOTS + '/123_11_ngam_trong_nha.png');
+  await js('document.getElementById("kb-view-arrange").click(); document.getElementById("kb-view-khobtn").click(); return 1;'); await sleep(500);
+  v = await js('return GardenHome._view();');
+  ok(v.arrange && v.kho.includes('plant') && !v.kho.includes('fence'), 'Sắp xếp đồ → Đặt từ kho: chỉ đồ trong nhà còn trong kho (' + v.kho.join(', ') + ')');
+  await page.shot(SHOTS + '/123_12_sap_xep_do.png');
+  const nRoom0 = await py(KB + 'result = len(st.load()["home"]["room"])');
+  await js('[...document.querySelectorAll(".kb-view-kho-item")].find(b => b.title === "Chậu cây" || /cây/i.test(b.title)).click(); return 1;'); await sleep(300);
+  // ô trống ở hàng sàn: thử lần lượt các ô cho tới khi Python nhận
+  const spot = await js(`const v = GardenHome._view(); for (let y = 3; y >= 1; y--) { for (let x = 0; x < 10; x++) { const c = document.getElementById("kb-view-canvas").getBoundingClientRect();
+      const px = c.left + (v.ox + x * 16 + 8) * v.S, py = c.top + (v.oy + 40 + (y - 1) * 16 + 8) * v.S;
+      const el = document.elementFromPoint(px, py); if (el && el.id === "kb-view-canvas") { return [px, py]; } } } return null;`);
+  if (spot) { await page.send('Input.dispatchMouseEvent', { type: 'mousePressed', x: spot[0], y: spot[1], button: 'left', clickCount: 1 }); await page.send('Input.dispatchMouseEvent', { type: 'mouseReleased', x: spot[0], y: spot[1], button: 'left', clickCount: 1 }); }
+  await sleep(1200);
+  const nRoom1 = await py(KB + 'result = len(st.load()["home"]["room"])');
+  ok(nRoom1 === nRoom0 + 1, 'đặt chậu cây từ kho ngay trên khung lớn → Python ghi chỗ đặt (' + nRoom0 + ' → ' + nRoom1 + ')');
+  const idxPlant = await py(KB + 'r = st.load()["home"]["room"]; result = max(i for i, e in enumerate(r) if e["id"] == "plant")');
+  await py(KB + `kb._dialog._on_home("take:room:${idxPlant}"); result = 1`); await sleep(900);
+  ok(await py(KB + 'result = len(st.load()["home"]["room"])') === nRoom0, 'Cất vào kho trên khung lớn');
+  await page.key('Escape', 'Escape', 27); await sleep(400);
+  ok(await js('return !GardenHome._view().arrange && GardenHome._view().open;'), 'Esc: thoát Sắp xếp đồ trước, vẫn đang ngắm');
+  await page.key('Escape', 'Escape', 27); await sleep(700);
+  ok(!(await js('return GardenHome._view().open;')) && await py(KB + 'result = kb._dialog is not None and kb._dialog.isVisible()'), 'Esc lần nữa: thoát Ngắm cảnh, cửa sổ vườn vẫn mở');
+  await js('localStorage.setItem("kb-main-scene", "yard"); return 1;'); await sleep(800);
+  const hp = await js(`const cv = document.getElementById("kb-yard"), r = cv.getBoundingClientRect(); return [r.left + 30 * (r.width / Math.max(256, r.width / 4)), r.top + r.height * 0.55];`);
+  const yv = await js(`const cv = document.getElementById("kb-yard"); const r = cv.getBoundingClientRect(); const S = Math.max(2, Math.min(4, Math.floor(r.width / 256))); const ox = Math.floor((r.width / S - 256) / 2); return [r.left + (ox + 30) * S, r.top + 45 * S];`);
+  await page.send('Input.dispatchMouseEvent', { type: 'mousePressed', x: yv[0], y: yv[1], button: 'left', clickCount: 1 });
+  await page.send('Input.dispatchMouseEvent', { type: 'mouseReleased', x: yv[0], y: yv[1], button: 'left', clickCount: 1 });
+  await sleep(800);
+  v = await js('return GardenHome._view();');
+  ok(v.open && v.scene === 'room', 'bấm vào ngôi nhà ở màn chính → Ngắm cảnh · Trong nhà');
+  await js('GardenHome.viewClose(); return 1;'); await sleep(400);
+  await js('GardenUI.open(); return 1;'); await sleep(400);
+  ok(await js('return /Màn chính/.test(document.getElementById("kb-ui-stage").textContent) && /Cỡ cảnh/.test(document.getElementById("kb-ui-stage").textContent) && /Luôn về Sân vườn/.test(document.getElementById("kb-ui-stage").textContent);'), '⚙ Giao diện có nhóm Màn chính: Cỡ cảnh, Cảnh hiện');
+  const h0 = await js('return document.getElementById("kb-yard").getBoundingClientRect().height;');
+  await js('const r = [...document.querySelectorAll("#kb-ui-stage .kb-ui-opt input")].find(i => i.name === "kb-ui-scene" && i.value === "large"); r.click(); return 1;'); await sleep(900);
+  await js('GardenUI.close(); return 1;'); await sleep(600);
+  const h1 = await js('return document.getElementById("kb-yard").getBoundingClientRect().height;');
+  ok(h1 > h0 * 1.3, 'Cỡ cảnh Lớn: dải cảnh cao hơn (' + Math.round(h0) + ' → ' + Math.round(h1) + ' px)');
+  await page.shot(SHOTS + '/123_13_man_chinh_co_lon.png');
+  ok(await py(KB + 'result = kb.config()["ui"].get("scene")') === 'large', 'lưu vào config (ui.scene = large)');
+  await py(KB + 'kb.save_config(ui={}); kb._dialog.resize(1366, 768); kb._dialog.refresh(); result = 1'); await sleep(800);
+  const errs2 = await py(KB + 'result = [e.get("where") + ": " + str(e.get("msg"))[:100] for e in kb.ERRORS.entries()]');
+  ok(errs2.length === 0, 'nhật ký lỗi add-on vẫn trống sau Ngắm cảnh' + (errs2.length ? ': ' + errs2.join(' | ') : ''));
   ok(page.errors.length === 0, 'không có lỗi JS' + (page.errors.length ? ': ' + page.errors.slice(0, 3).join(' | ') : ''));
 
   console.log('== KB-02: hồ sơ Anki mới');

@@ -618,6 +618,8 @@ UI_CHOICES: dict[str, tuple[str, ...]] = {
 UI_GLOBAL: dict[str, tuple[str, ...]] = {
     "card": ("normal", "tall"),                  # khung thẻ khi ôn: vừa / to hết chỗ (khi ẩn vườn)
     "theme": ("garden", "paper"),                # màu bảng ôn: vàng / trắng giấy (1.23: bỏ "night" — Đêm vườn)
+    "scene": ("normal", "large"),                # 1.23: cỡ cảnh trên màn chính: Vừa / Lớn
+    "start": ("last", "yard"),                   # 1.23: mở vườn: cảnh đang chọn / luôn về Sân vườn
 }
 UI_PRESETS: dict[str, dict[str, Any]] = {
     "full": {},                                  # như cũ: mọi thứ chuyển động
