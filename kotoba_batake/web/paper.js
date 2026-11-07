@@ -96,7 +96,9 @@ var GardenPaper = (function () {
     return out.slice(0, 20);
   }
 
+  let infoDefault = false;  // 1.23: ô thông tin đang là gợi ý mặc định (chưa bấm từ nào) → vẽ lại số báo thì cập nhật gợi ý
   function setInfo(nodeOrText, kind) {
+    infoDefault = false;
     const box = $("kb-p-info");
     box.className = "kb-p-info" + (kind ? " is-" + kind : "");
     box.textContent = "";
@@ -117,17 +119,29 @@ var GardenPaper = (function () {
     const s = H && H.data() && H.data().paper;
     return (s && s.lang) || "ja";
   }
+  // 1.23: gợi ý theo đúng số đang xem — nút ▶ chỉ có ở đoạn có giọng đọc (file VOICEVOX / Gemini "Cả bài", hoặc giọng
+  // tiếng Nhật của máy); trước đây luôn ghi "▶ để nghe" nên số không có giọng đọc trông như mất nút
+  function issueTip() {
+    const v = issue;
+    if (!v || !v.bai) { return " ▶ để nghe."; }
+    let t = v.bai.some((b) => (b.audio || []).some(Boolean)) ? " ▶ để nghe."
+      : v.src === "claude" ? " Số này chưa có giọng đọc từng đoạn (cần VOICEVOX)."
+        : " Số này chưa có giọng đọc từng đoạn (Nguồn báo → Giọng đọc: Cả bài).";
+    if (v.has_dich) { t += " Dịch: xem bản dịch."; }
+    return t;
+  }
   function defaultInfo() {
     const pl = paperLang();
     if (tab === "issue" && pl === "en") {
-      setInfo("Bấm từ gạch chân để tra nghĩa (nhận cả dạng biến đổi: went → go). Gạch chấm: từ mới. ▶ để nghe.");
-    } else if (tab === "issue") { setInfo("Bấm từ gạch chân để tra nghĩa. Gạch liền: từ đã học. Gạch chấm: từ mới. ▶ để nghe."); }
+      setInfo("Bấm từ gạch chân để tra nghĩa (nhận cả dạng biến đổi: went → go). Gạch chấm: từ mới." + issueTip());
+    } else if (tab === "issue") { setInfo("Bấm từ gạch chân để tra nghĩa. Gạch liền: từ đã học. Gạch chấm: từ mới." + issueTip()); }
     else if (tab === "dict") {
       setInfo(dictLang() === "ja" ? "Nghe rồi gõ lại câu (kana, kanji hoặc romaji). Enter để kiểm tra."
         : "Nghe rồi gõ lại câu. Không tính hoa thường, dấu câu; don't = do not. Enter để kiểm tra.");
     }
     else if (tab === "src") { setInfo("Chọn báo muốn nhận và nguồn báo."); }
     else { setInfo("Chọn một số báo để đọc."); }
+    infoDefault = true;
   }
 
   // 1.19.1: ngôn ngữ của lượt chép hôm nay = ngôn ngữ của đa số câu (deck tiếng Hàn vẫn có câu báo tiếng Nhật)
@@ -864,6 +878,7 @@ var GardenPaper = (function () {
       "Báo do " + (v.may_viet || "Claude") + " viết tự động, có thể còn chỗ chưa tự nhiên."));
     updateCoins(v.coins);
     dichButton();
+    if (infoDefault) { defaultInfo(); }
   }
 
   // 1.23: người đọc chấm kỳ truyện — kỳ sau Gemini (nhà văn + biên tập) đọc phản hồi này
