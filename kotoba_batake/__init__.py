@@ -56,10 +56,10 @@ AI_DIR = os.path.join(ADDON_DIR, "user_files", ai.FOLDER)
 # 1.19: báo tiếng Anh (The Garden Gazette, chỉ Gemini viết): thư mục riêng + trạng thái đọc / chép riêng trong collection
 AI_DIR_EN = os.path.join(ADDON_DIR, "user_files", ai_en.FOLDER)
 PAPER_EN = paper.PaperState(os.path.join(ADDON_DIR, "user_files", "paper_en.json"), col_getter=lambda: mw.col,
+                            key=paper.PAPER_KEY_EN)
 # 1.23: tiến độ đọc của nguồn báo tiếng Nhật thứ hai (Kệ báo gộp số Claude Code + Gemini), khoá collection riêng
 BOOK = paper.PaperState(os.path.join(ADDON_DIR, "user_files", "paper_nguon.json"), col_getter=lambda: mw.col,
                         key=paper.PAPER_KEY_SRC, clean=paper.clean_book)
-                            key=paper.PAPER_KEY_EN)
 LANG_NAME = {"ja": "tiếng Nhật", "en": "tiếng Anh", "other": "ngôn ngữ khác"}
 _ai: dict[str, Any] = {"running": False, "testing": False, "msg": "", "lang": "ja", "why": ""}
 _libraries: dict[str, paper.Library] = {}
@@ -613,11 +613,69 @@ def _quest_after(kind: str, **kw: Any) -> dict[str, Any] | None:
     return res
 
 
+# 1.23 (KB-03): sổ phần thưởng của các lượt ôn trong phiên này (Undo của Anki chỉ có trong phiên) — Undo lượt ôn thì
+# trả lại xu; trước đây ôn rồi Undo lặp lại cùng thẻ thì mỗi vòng lại được cộng xu.
+_ledger: list[dict[str, Any]] = []
+LEDGER_MAX = 60
+
+
+def _quest_snapshot() -> tuple[list[str], bool, int | None]:
+    try:
+        q = STATE.load().get("quest") or {}
+    except Exception:
+        return [], False, None
+    return list(q.get("done") or []), bool(q.get("chest")), q.get("day")
+
+
+def _last_rev(cid: int) -> int:
+    try:
+        return int(mw.col.db.scalar("select max(id) from revlog where cid = ?", int(cid)) or 0)
+    except Exception:
+        return 0
+
+
+def check_undo() -> int:
+    """So sổ phần thưởng với revlog: lượt ôn đã bị Undo (dòng revlog mất) → trả lại xu; Redo (dòng revlog có lại) → cộng
+    lại. Gọi sau Undo của Anki (state_did_undo) và mỗi lần vườn làm mới. Trả về số xu chênh (âm = đã trừ)."""
+    if not _ledger or not mw.col:
+        return 0
+    delta = 0
+    for e in reversed(_ledger):
+        try:
+            alive = bool(mw.col.db.scalar("select count() from revlog where id = ? and cid = ?", e["rev"], e["cid"]))
+        except Exception:
+            continue
+        if not alive and not e.get("undone"):
+            delta -= STATE.undo_answer(e)
+            e["undone"] = True
+        elif alive and e.get("undone"):
+            delta += STATE.redo_answer(e)
+            e["undone"] = False
+            e.update(goal=0, quest_coins=0, quest_done=[], chest=False)   # nhiệm vụ / mục tiêu không cộng lại
+    return delta
+
+
+def _on_undo(*_args: Any) -> None:
+    try:
+        delta = check_undo()
+    except Exception as err:
+        _warn("hoàn tác lượt ôn", err)
+        return
+    if delta and _dialog is not None:
+        try:
+            _dialog.refresh()
+        except Exception as err:
+            _warn("refresh sau Undo", err)
+    if delta < 0 and config().get("show_tooltips", True):
+        tooltip("ことば畑: đã hoàn tác lượt ôn, trả lại %d xu." % -delta, period=2500)
+
+
 def _record_answer(nid: int, old: int | None, ease: int, deck: str | None,
-                   before: str | None = None) -> dict[str, Any]:
+                   before: str | None = None, cid: int | None = None) -> dict[str, Any]:
     """Cộng xu, ghi số lần tưới. Trả về kết quả để làm hiệu ứng / thông báo."""
     cfg = config()
     new = core.note_stage(mw.col, nid, cfg["stage_days"], deck)
+    done0, chest0, _qd = _quest_snapshot()
     _wallet, gained = STATE.record_answer(ease, old, new, day=_today(), before=before)
     info: dict[str, Any] = {"nid": nid, "ease": ease, "old": old, "new": new, "gained": gained, "message": None,
                             "goal_bonus": 0}
@@ -635,6 +693,18 @@ def _record_answer(nid: int, old: int | None, ease: int, deck: str | None,
         "answer", before=before, ease=ease,
         stage_up=old is not None and new is not None and new > old,
     )
+    if cid:
+        done1, chest1, qday = _quest_snapshot()
+        q = info["quests"] or {}
+        _ledger.append({
+            "cid": int(cid), "rev": _last_rev(int(cid)), "gained": gained, "goal": int(info.get("goal_bonus") or 0),
+            "goal_day": _today() if info.get("goal_bonus") else None, "quest_coins": int(q.get("coins") or 0),
+            "quest_done": [x for x in done1 if x not in done0], "chest": chest1 and not chest0, "qday": qday,
+            "day": _today(), "ease": ease, "before": before,
+            "stage_up": old is not None and new is not None and new > old,
+            "harvest": old is not None and new == core.STAGE_FRUIT and old < core.STAGE_FRUIT,
+        })
+        del _ledger[:-LEDGER_MAX]
     return info
 
 
@@ -1605,6 +1675,7 @@ class GardenDialog(QDialog):
         except Exception:  # hồ sơ chưa sẵn sàng
             self.resize(1100, 820)
         self._was_maximized = True
+        self._cal_keep: dict[str, tuple[str, dict[str, Any]]] = {}   # 1.23 (KB-01): chữ đang gõ dở trong Lịch hoa
         self.deck_id: int = mw.col.decks.current()["id"]
         self._card: Any = None          # thẻ đang chờ trả lời
         self._states: Any = None
@@ -1660,6 +1731,10 @@ class GardenDialog(QDialog):
         global _dict_possible
         if not mw.col:
             return
+        try:      # 1.23 (KB-03): Undo / Redo lượt ôn ở cửa sổ chính → trả lại / cộng lại xu (trước lần bù điện thoại)
+            check_undo()
+        except Exception as err:
+            _warn("hoàn tác lượt ôn", err)
         paid = mobile_catch_up()
         fed = None
         try:   # 1.14: tuổi nhà, "mừng quay lại", tự cho thú ăn
@@ -1859,7 +1934,7 @@ class GardenDialog(QDialog):
             self._busy = False
             info: dict[str, Any] | None = None
             try:
-                info = _record_answer(nid, old, ease, deck, before)
+                info = _record_answer(nid, old, ease, deck, before, card.id)
             except Exception as err:
                 _warn("record", err)
             finally:
@@ -2621,7 +2696,15 @@ class GardenDialog(QDialog):
             except ValueError:
                 return
             if isinstance(p, dict):
+                self._cal_keep.pop(self._keep_key(name, p), None)
                 self._js("calSaved", self._cal_save(name, p))
+        elif name == "keep":            # 1.23 (KB-01): chữ đang gõ, chưa tới lần tự lưu
+            try:
+                p = json.loads(arg or "{}")
+            except ValueError:
+                return
+            if isinstance(p, dict) and p.get("k") in ("note", "draft") and isinstance(p.get("t"), str):
+                self._cal_keep[self._keep_key(p["k"], p)] = (p["k"], {k: p.get(k) for k in ("d", "lang", "t")})
         elif name == "lang":
             if arg in journal.WRITE_LANGS:
                 save_config(journal_lang=arg)
@@ -2670,6 +2753,26 @@ class GardenDialog(QDialog):
                 except (journal.JournalError, ValueError, OSError) as err:
                     _warn("ảnh vườn", err)
                 _push_journal()
+
+    @staticmethod
+    def _keep_key(name: str, p: dict[str, Any]) -> str:
+        return "%s:%s:%s" % (name, p.get("d"), p.get("lang") if name == "draft" else "")
+
+    def flush_unsaved(self) -> int:
+        """1.23 (KB-01): lưu nốt chữ nhật ký / bản nháp luyện viết đang gõ dở (cửa sổ đóng trước lần tự lưu).
+        Gọi khi đóng cửa sổ và khi đóng hồ sơ (collection còn mở). Trả về số mục đã lưu."""
+        n = 0
+        items = list(getattr(self, "_cal_keep", {}).values())
+        self._cal_keep = {}
+        if not mw.col:
+            return 0
+        for name, p in items[:20]:
+            try:
+                r = self._cal_save(name, p)
+                n += 1 if r.get("ok") else 0
+            except Exception as err:
+                _warn("lưu nhật ký khi đóng vườn", err)
+        return n
 
     def _cal_save(self, name: str, p: dict[str, Any]) -> dict[str, Any]:
         """Lưu sticker / nhật ký / bản nháp luyện viết (lưu ngay khi rời ô). Trả về phần cần vẽ lại."""
@@ -2824,6 +2927,7 @@ class GardenDialog(QDialog):
 
     def closeEvent(self, event: Any) -> None:
         global _dialog
+        self.flush_unsaved()            # 1.23 (KB-01): chữ vừa gõ trong Lịch hoa không mất khi bấm X ngay
         _dialog = None
         try:
             if not self.isFullScreen():
@@ -2888,7 +2992,7 @@ def _did_answer(reviewer: Any, card: Any, ease: int) -> None:
     try:
         try:
             info = _record_answer(card.nid, _pre_stage.pop(card.id, None), ease, _deck_name(),
-                                  _pre_kind.pop(card.id, None))
+                                  _pre_kind.pop(card.id, None), card.id)
         finally:
             answer_finished(card.id)
         if info["message"] and config()["show_tooltips"]:
@@ -3239,8 +3343,10 @@ def _on_profile_close() -> None:
     đóng: bấm gì cũng lỗi, mở hồ sơ khác thì vườn vẫn trỏ vào deck của hồ sơ cũ; Anki ghi "Window should have been
     closed")."""
     global _report_dialog
+    _ledger.clear()                       # 1.23: sổ phần thưởng (Undo) chỉ cho collection đang mở
     if _dialog is not None:
         try:
+            _dialog.flush_unsaved()       # collection còn mở ở hook này → lưu được chữ đang gõ dở
             _dialog.close()
         except Exception as err:
             _warn("đóng vườn khi đóng hồ sơ", err)
@@ -3278,3 +3384,5 @@ gui_hooks.av_player_did_end_playing.append(_reset_speed)
 gui_hooks.sync_did_finish.append(_on_sync_finished)
 gui_hooks.reviewer_will_answer_card.append(_will_answer)
 gui_hooks.reviewer_did_answer_card.append(_did_answer)
+if hasattr(gui_hooks, "state_did_undo"):          # 1.23 (KB-03): Undo lượt ôn → trả lại xu
+    gui_hooks.state_did_undo.append(_on_undo)

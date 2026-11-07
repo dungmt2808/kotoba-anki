@@ -369,6 +369,7 @@ var GardenCal = (function () {
     ta.addEventListener("input", () => {
       cnt.textContent = ta.value.length + " / " + ta.maxLength + " ký tự";
       grow(ta);
+      keep("note", { d: v.d, t: ta.value });
       if (!composing) { clearTimeout(timers.note); timers.note = setTimeout(save, 1500); }
     });
     ta.addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey && !e.isComposing) { e.preventDefault(); ta.blur(); } });
@@ -480,6 +481,7 @@ var GardenCal = (function () {
         if (!composing) { limit(); }
         paint(units(ta.value, w.lang), w.used);
         grow(ta);
+        keep("draft", { d: v.d, lang: w.lang, t: ta.value });
         if (!composing) { clearTimeout(timers.write); timers.write = setTimeout(save, 800); }
         actsFor(c, v);
       });
@@ -601,6 +603,9 @@ var GardenCal = (function () {
     ta.style.height = (ta.scrollHeight + 6) + "px";
   }
   function autoGrowAll(root) { Array.prototype.forEach.call(root.querySelectorAll("textarea"), grow); }
+  // 1.23 (KB-01): đóng cửa sổ vườn ngay sau khi gõ (trước lần tự lưu 1,5 / 0,8 giây) làm mất chữ vừa nhập — gửi
+  // chữ đang gõ cho Python giữ trong bộ nhớ (không ghi), đóng cửa sổ / đóng hồ sơ thì Python lưu nốt
+  function keep(kind, p) { H.send("cal:keep:" + JSON.stringify(Object.assign({ k: kind }, p))); }
   function flushAll() {
     const st = stage();
     if (!st) { return; }

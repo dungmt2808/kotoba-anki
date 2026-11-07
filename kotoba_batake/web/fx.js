@@ -406,14 +406,16 @@ var GardenFX = (function () {
     if (!cv || !G) { return; }
     var ctx = cv.getContext("2d");
     ctx.imageSmoothingEnabled = false;
-    // trời + cỏ (theo giờ & thời tiết)
+    // trời + cỏ (theo giờ & thời tiết). 1.23 (người dùng: "buổi tối … hơi tối nên nhìn không đẹp lắm"): chậu cây
+    // nhỏ ở góc bảng ôn sáng hơn cảnh sân lúc tối — trời ngả tím nhạt, cỏ xanh dịu, lớp tối phủ chỉ còn nhẹ
     var sk = typeof GardenSky !== "undefined" ? GardenSky.state() : null;
-    ctx.fillStyle = sk ? sk.bottom : "#bfe9ff";
+    var dusk = sk ? Math.max(0, Math.min(1, (0.8 - sk.light) / 0.55)) : 0;      // 0 = ngày, 1 = đêm
+    ctx.fillStyle = sk ? mixHex(sk.bottom, "#7d86c9", 0.5 * dusk) : "#bfe9ff";
     ctx.fillRect(0, 0, cv.width, cv.height);
-    ctx.fillStyle = sk ? sk.ground : "#5ed35e";
+    ctx.fillStyle = sk ? mixHex(sk.ground, "#5ed35e", 0.45 * dusk) : "#5ed35e";
     ctx.fillRect(0, 16 * PS, cv.width, cv.height);
-    ctx.fillStyle = "#45bf4a";
-    for (var gx = 1; gx < PW; gx += 5) { dot(ctx, gx, 17 + (gx % 3), PS, "#45bf4a"); }
+    var grass = sk ? mixHex(sk.grass, "#45bf4a", 0.45 * dusk) : "#45bf4a";
+    for (var gx = 1; gx < PW; gx += 5) { dot(ctx, gx, 17 + (gx % 3), PS, grass); }
 
     if (pot.nextNid !== null && now > pot.busyUntil) {
       pot.nid = pot.nextNid; pot.nextNid = null; pot.hopAt = now; potInfo();
@@ -460,9 +462,19 @@ var GardenFX = (function () {
         ctx.fillRect(Math.round(rx * PS), Math.round(ry * PS), sk.snow ? PS : 1, sk.snow ? PS : PS * 2);
       }
     }
-    if (sk && sk.light < 0.55) {
-      ctx.globalAlpha = (0.55 - sk.light) * 0.7; ctx.fillStyle = "#0b0b2a"; ctx.fillRect(0, 0, cv.width, cv.height); ctx.globalAlpha = 1;
+    if (sk && sk.light < 0.55) {      // 1.23: phủ tối nhẹ hơn (trước 0,7 → đêm phủ ~23 %, nay ~8 %)
+      ctx.globalAlpha = (0.55 - sk.light) * 0.25; ctx.fillStyle = "#1b1b4a"; ctx.fillRect(0, 0, cv.width, cv.height); ctx.globalAlpha = 1;
     }
+  }
+  function mixHex(a, b, k) {          // trộn hai màu #rrggbb (k = 0 → a, 1 → b)
+    if (!/^#[0-9a-f]{6}$/i.test(a) || !/^#[0-9a-f]{6}$/i.test(b) || !(k > 0)) { return a; }
+    k = Math.min(1, k);
+    var o = "#";
+    for (var i = 1; i < 7; i += 2) {
+      var v = Math.round(parseInt(a.substr(i, 2), 16) * (1 - k) + parseInt(b.substr(i, 2), 16) * k);
+      o += (v < 16 ? "0" : "") + v.toString(16);
+    }
+    return o;
   }
 
   // ---------------------------------------------------------------------

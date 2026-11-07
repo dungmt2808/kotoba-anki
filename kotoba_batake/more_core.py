@@ -617,16 +617,17 @@ UI_CHOICES: dict[str, tuple[str, ...]] = {
 }
 UI_GLOBAL: dict[str, tuple[str, ...]] = {
     "card": ("normal", "tall"),                  # khung thẻ khi ôn: vừa / to hết chỗ (khi ẩn vườn)
-    "theme": ("garden", "paper", "night"),       # màu bảng ôn: vàng / trắng giấy / tối
+    "theme": ("garden", "paper"),                # màu bảng ôn: vàng / trắng giấy (1.23: bỏ "night" — Đêm vườn)
 }
 UI_PRESETS: dict[str, dict[str, Any]] = {
     "full": {},                                  # như cũ: mọi thứ chuyển động
     "focus": {"review": {"yard": "hide", "field": "hide", "sky": "off", "weather": "off", "mascot": "off", "joy": "off"},
               "card": "tall"},
     "calm": {m: {"yard": "still", "field": "still", "sky": "off", "weather": "off"} for m in UI_MODES},
-    "night": {"review": {"yard": "dim", "field": "dim", "sky": "off", "weather": "off", "mascot": "off"},
-              "theme": "night"},
 }
+# 1.23 (người dùng: "tắt giao diện học buổi tối luôn vì có vẻ nhìn không đẹp lắm"): bỏ kiểu "Ôn buổi tối" và màu bảng
+# "Đêm vườn". Ai đang dùng thì về như "Đầy đủ" (các mục của kiểu đó về mặc định, mục tự chỉnh khác giữ nguyên).
+OLD_NIGHT = {"review": {"yard": "dim", "field": "dim", "sky": "off", "weather": "off", "mascot": "off"}}
 
 
 def ui_default() -> dict[str, Any]:
@@ -639,9 +640,12 @@ def clean_ui(raw: Any) -> dict[str, Any]:
     out = ui_default()
     if not isinstance(raw, dict):
         return out
+    night = raw.get("theme") == "night"         # 1.23: kiểu "Ôn buổi tối" cũ → bỏ
     for m in UI_MODES:
         sub = raw.get(m) if isinstance(raw.get(m), dict) else {}
         for k, choices in UI_CHOICES.items():
+            if night and OLD_NIGHT.get(m, {}).get(k) == sub.get(k):
+                continue
             if sub.get(k) in choices:
                 out[m][k] = sub[k]
     for k, choices in UI_GLOBAL.items():

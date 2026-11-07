@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import datetime
 import html
+import hashlib
 import json
 import os
 import re
@@ -2313,6 +2314,114 @@ def record_desktop(data: dict[str, Any], day: int | None, ease: int, before: str
     c["new"] += 1 if before == "new" else 0
 
 
+def undo_reward(data: dict[str, Any], entry: dict[str, Any]) -> int:
+    """1.23 (KB-03): Undo lượt ôn (Edit → Undo của Anki) thì trả lại phần thưởng add-on đã cộng cho lượt đó — trước
+    đây ôn rồi Undo lặp lại cùng một thẻ thì mỗi vòng lại được +1 xu, +xu lên giai đoạn, cộng tiến độ nhiệm vụ.
+
+    `entry` do __init__ ghi lúc trả xu (xem `_ledger`). Trừ xu (không xuống dưới 0 nếu đã tiêu), bớt số lần tưới /
+    thu hoạch, sổ "máy tính đã trả xu" của ngày đó (để lần bù xu điện thoại sau không lệch), thưởng mục tiêu ngày, tiến
+    độ + phần thưởng nhiệm vụ do chính lượt này hoàn thành, rương (món hiếm chưa đặt ra sân thì lấy lại). Trả về số xu
+    đã trừ."""
+    want = sum(max(0, int(entry.get(k) or 0)) for k in ("gained", "goal", "quest_coins"))
+    take = min(max(0, int(data.get("coins") or 0)), want)
+    data["coins"] = int(data.get("coins") or 0) - take
+    data["waters"] = max(0, int(data.get("waters") or 0) - 1)
+    if entry.get("harvest"):
+        data["harvests"] = max(0, int(data.get("harvests") or 0) - 1)
+    ease, before, day = int(entry.get("ease") or 0), entry.get("before"), entry.get("day")
+    m = data.get("mobile")
+    if isinstance(m, dict) and isinstance(day, int):
+        c = m.get("days", {}).get(str(day))
+        if isinstance(c, dict):
+            for f, on in (("all", True), ("ok", ease > 1), ("rev", before == "review"), ("new", before == "new")):
+                if on:
+                    c[f] = max(0, int(c.get(f) or 0) - 1)
+    if entry.get("goal") and isinstance(entry.get("goal_day"), int):
+        if data.get("goal_day") == entry["goal_day"]:
+            data.pop("goal_day", None)
+        if isinstance(m, dict) and entry["goal_day"] in m.get("goals", []):
+            m["goals"].remove(entry["goal_day"])
+    q = data.get("quest")
+    if isinstance(q, dict) and q.get("day") == entry.get("qday"):
+        pr = q.get("progress") or {}
+        for k, on in (("due", before == "review"), ("new", before == "new"), ("stage", bool(entry.get("stage_up")))):
+            if on and pr.get(k):
+                pr[k] = max(0, int(pr[k]) - 1)
+        for qid in entry.get("quest_done") or []:
+            if qid in q.get("done", []):
+                q["done"].remove(qid)
+        if entry.get("chest") and q.get("chest"):
+            q["chest"] = False
+            rid = q.get("chest_item")
+            owned = data.get("home", {}).get("owned", {})
+            if rid and owned.get(rid, 0) > placed_count(data.get("home", {}), rid):
+                owned[rid] -= 1
+                if owned[rid] <= 0:
+                    owned.pop(rid, None)
+            q["chest_item"] = None
+    return take
+
+
+def redo_reward(data: dict[str, Any], entry: dict[str, Any]) -> int:
+    """1.23: Redo (làm lại lượt vừa Undo) → cộng lại xu của lượt ôn và số lần tưới (không cộng lại nhiệm vụ / mục tiêu)."""
+    g = max(0, int(entry.get("gained") or 0))
+    data["coins"] = int(data.get("coins") or 0) + g
+    data["waters"] = int(data.get("waters") or 0) + 1
+    if entry.get("harvest"):
+        data["harvests"] = int(data.get("harvests") or 0) + 1
+    record_desktop(data, entry.get("day") if isinstance(entry.get("day"), int) else None,
+                   int(entry.get("ease") or 0), entry.get("before"))
+    return g
+
+
+# 1.23 (KB-02): file sao lưu trong user_files/ dùng chung cho mọi hồ sơ Anki trên máy. Hồ sơ mới (collection chưa có
+# ví) trước đây đọc luôn file đó → nhận xu và nhà của hồ sơ khác. Nay mỗi lần lưu ghi kèm "chủ" của bản sao lưu
+# (mã của thư mục hồ sơ); collection chưa có ví chỉ dùng file sao lưu khi đúng hồ sơ đó. Bản sao lưu cũ (≤ 1.22,
+# không ghi chủ) coi như của hồ sơ khác — ví luôn nằm trong collection từ ≤ 1.0 nên không ai cần chuyển từ file nữa.
+OWNER_FILE = "ho_so.json"
+_owner_written: dict[str, str] = {}
+
+
+def profile_key(col: Any) -> str:
+    """Mã ngắn của hồ sơ Anki (theo thư mục chứa collection). "" nếu không biết (collection giả trong test)."""
+    path = getattr(col, "path", "") if col is not None else ""
+    if not isinstance(path, str) or not path:
+        return ""
+    folder = os.path.dirname(os.path.abspath(path))
+    return hashlib.sha1(folder.encode("utf-8", "replace")).hexdigest()[:16]
+
+
+def backup_mine(folder: str, col: Any) -> bool:
+    """File sao lưu trong `folder` có phải của hồ sơ đang mở không (không có collection: luôn dùng được)."""
+    if col is None:
+        return True
+    key = profile_key(col)
+    if not key:
+        return False
+    try:
+        with open(os.path.join(folder, OWNER_FILE), encoding="utf-8") as f:
+            raw = json.load(f)
+    except (OSError, ValueError):
+        return False
+    return isinstance(raw, dict) and raw.get("ho_so") == key
+
+
+def mark_backup(folder: str, col: Any) -> None:
+    """Ghi chủ của các file sao lưu trong `folder` = hồ sơ đang mở (chỉ ghi khi đổi)."""
+    key = profile_key(col)
+    if not key or _owner_written.get(folder) == key:
+        return
+    try:
+        os.makedirs(folder, exist_ok=True)
+        tmp = os.path.join(folder, OWNER_FILE + ".tmp")
+        with open(tmp, "w", encoding="utf-8") as f:
+            json.dump({"ho_so": key, "_ghi_chu": "Các file sao lưu trong thư mục này là của hồ sơ Anki có mã trên."}, f)
+        os.replace(tmp, os.path.join(folder, OWNER_FILE))
+        _owner_written[folder] = key
+    except OSError as err:
+        print(f"[kotoba_batake] owner file: {err}")
+
+
 class GardenState:
     """Xu, thu hoạch, kỷ lục mini-game, nhà, nhiệm vụ.
 
@@ -2338,6 +2447,10 @@ class GardenState:
         except (OSError, ValueError):
             return None
 
+    def _mine(self, col: Any) -> bool:
+        """1.23 (KB-02): file sao lưu là của hồ sơ đang mở (collection chưa có ví thì mới hỏi)."""
+        return backup_mine(os.path.dirname(self.path), col)
+
     def _read(self) -> Any:
         col = self._col()
         if col is not None:
@@ -2347,6 +2460,8 @@ class GardenState:
                 stored = None
             if isinstance(stored, dict):
                 return stored
+            if not self._mine(col):
+                return None          # hồ sơ mới: không nhận ví của hồ sơ khác trên cùng máy
         return self._read_file()
 
     def load(self) -> dict[str, Any]:
@@ -2437,6 +2552,8 @@ class GardenState:
                 has_wallet = False
             if has_wallet:
                 return None
+        if col is not None and not self._mine(col):
+            return None
         try:
             with open(self._more_path(), encoding="utf-8") as f:
                 return json.load(f)
@@ -2481,6 +2598,8 @@ class GardenState:
                 # collection có ví nhưng chưa có phần mới (vd. vừa tải về từ máy chưa cài 1.7):
                 # không lấy file sao lưu của máy này, tránh nhân đôi đồ mà không trừ xu
                 return None
+        if col is not None and not self._mine(col):
+            return None
         try:
             with open(self._ext_path(), encoding="utf-8") as f:
                 return json.load(f)
@@ -2506,6 +2625,8 @@ class GardenState:
                 has_wallet = False
             if has_wallet:
                 return None
+        if col is not None and not self._mine(col):
+            return None
         try:
             with open(self._season_path(), encoding="utf-8") as f:
                 return json.load(f)
@@ -2553,6 +2674,8 @@ class GardenState:
         self._write(MORE_KEY, self._more_path(), more_store, col)
         if isinstance(mobile, dict):
             self._write(MOBILE_KEY, self._mobile_path(), mobile, col)
+        if col is not None:
+            mark_backup(os.path.dirname(self.path), col)
         full["more_view"] = self._more_view(full)
 
     def _px_path(self) -> str:
@@ -2606,7 +2729,7 @@ class GardenState:
         except Exception:
             return False
         old = self._read_file()
-        if not isinstance(old, dict):
+        if not isinstance(old, dict) or not self._mine(col):
             return False
         self.save(self.load())
         return True
@@ -2662,6 +2785,19 @@ class GardenState:
             data["harvests"] += 1
         self.save(data)
         return data, gained
+
+    def undo_answer(self, entry: dict[str, Any]) -> int:
+        """1.23 (KB-03): trả lại phần thưởng của lượt ôn vừa bị Undo. Trả về số xu đã trừ."""
+        data = self.load()
+        take = undo_reward(data, entry)
+        self.save(data)
+        return take
+
+    def redo_answer(self, entry: dict[str, Any]) -> int:
+        data = self.load()
+        g = redo_reward(data, entry)
+        self.save(data)
+        return g
 
     def record_game(
         self, game: str, score: int, coins: int, today: str, daily_cap: int, win: bool = False

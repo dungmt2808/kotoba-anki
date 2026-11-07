@@ -655,7 +655,8 @@ class PaperState:
                 stored = col.get_config(self.key, None)
             except Exception:
                 stored = None
-        if not isinstance(stored, dict):
+        if not isinstance(stored, dict) and core.backup_mine(os.path.dirname(self.path), col):
+            # 1.23 (KB-02): collection chưa có khoá này → chỉ dùng file sao lưu của đúng hồ sơ đang mở
             try:
                 with open(self.path, encoding="utf-8") as f:
                     stored = json.load(f)
@@ -676,6 +677,8 @@ class PaperState:
             with open(tmp, "w", encoding="utf-8") as f:
                 json.dump(st, f, ensure_ascii=False)
             os.replace(tmp, self.path)
+            if col is not None:
+                core.mark_backup(os.path.dirname(self.path), col)
         except OSError as err:
             if col is None:
                 raise

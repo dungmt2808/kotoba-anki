@@ -1453,32 +1453,7 @@ button { cursor: pointer; }
 .kb-ui-m-review.kb-ui-card-tall.kb-themed .kb-done { min-height: max(240px, calc(100vh - 320px)); }
 /* màu bảng ôn */
 .kb-ui-th-paper #kb-panel { background: #fbfaf4; }
-/* 1.16: "Đêm vườn" — nền chàm có sao lấm tấm, thẻ xanh đêm chữ kem, nút vàng đèn lồng (thay bản xám đen của 1.14) */
-.kb-ui-th-night #kb-panel {
-  color: #f4ecd8; background-color: #232a5c;
-  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2222%22%20height%3D%2222%22%20shape-rendering%3D%22crispEdges%22%3E%3Cpath%20fill%3D%22%23ffe9a8%22%20d%3D%22M8%202h6v2h2v2h-4v2h-2v6h2v2h4v2h-2v2h-6v-2h-2v-2h-2v-10h2v-2h2z%22/%3E%3C/svg%3E"), url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22360%22%20height%3D%22220%22%20shape-rendering%3D%22crispEdges%22%3E%3Cg%20fill%3D%22%23cfd6ff%22%20opacity%3D%220.35%22%3E%3Crect%20x%3D%22167%22%20y%3D%2238%22%20width%3D%222%22%20height%3D%226%22/%3E%3Crect%20x%3D%22165%22%20y%3D%2240%22%20width%3D%226%22%20height%3D%222%22/%3E%3C/g%3E%3Crect%20x%3D%2239%22%20y%3D%22212%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23fff3c4%22%20opacity%3D%220.7%22/%3E%3Crect%20x%3D%22300%22%20y%3D%2216%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.35%22/%3E%3Crect%20x%3D%2246%22%20y%3D%22113%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23cfd6ff%22%20opacity%3D%220.35%22/%3E%3Crect%20x%3D%22125%22%20y%3D%2225%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23cfd6ff%22%20opacity%3D%220.35%22/%3E%3Crect%20x%3D%22291%22%20y%3D%2233%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.35%22/%3E%3Crect%20x%3D%22297%22%20y%3D%22151%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23cfd6ff%22%20opacity%3D%220.35%22/%3E%3Crect%20x%3D%22115%22%20y%3D%2213%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.7%22/%3E%3Crect%20x%3D%22216%22%20y%3D%2238%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23fff3c4%22%20opacity%3D%220.7%22/%3E%3Cg%20fill%3D%22%23ffffff%22%20opacity%3D%220.35%22%3E%3Crect%20x%3D%22288%22%20y%3D%22208%22%20width%3D%222%22%20height%3D%226%22/%3E%3Crect%20x%3D%22286%22%20y%3D%22210%22%20width%3D%226%22%20height%3D%222%22/%3E%3C/g%3E%3Crect%20x%3D%22299%22%20y%3D%22148%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.7%22/%3E%3Crect%20x%3D%2251%22%20y%3D%22142%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23fff3c4%22%20opacity%3D%220.35%22/%3E%3Crect%20x%3D%22318%22%20y%3D%2254%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23cfd6ff%22%20opacity%3D%220.9%22/%3E%3Crect%20x%3D%22162%22%20y%3D%22121%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23cfd6ff%22%20opacity%3D%220.7%22/%3E%3Crect%20x%3D%22155%22%20y%3D%2265%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.5%22/%3E%3Crect%20x%3D%2243%22%20y%3D%22149%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23ffe27a%22%20opacity%3D%220.9%22/%3E%3Crect%20x%3D%22177%22%20y%3D%22188%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23cfd6ff%22%20opacity%3D%220.7%22/%3E%3Crect%20x%3D%22313%22%20y%3D%2220%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23fff3c4%22%20opacity%3D%220.9%22/%3E%3Cg%20fill%3D%22%23ffe27a%22%20opacity%3D%220.5%22%3E%3Crect%20x%3D%2286%22%20y%3D%22193%22%20width%3D%222%22%20height%3D%226%22/%3E%3Crect%20x%3D%2284%22%20y%3D%22195%22%20width%3D%226%22%20height%3D%222%22/%3E%3C/g%3E%3Crect%20x%3D%22252%22%20y%3D%22109%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23fff3c4%22%20opacity%3D%220.35%22/%3E%3Crect%20x%3D%22287%22%20y%3D%22148%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23ffe27a%22%20opacity%3D%220.7%22/%3E%3Crect%20x%3D%22181%22%20y%3D%22154%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23cfd6ff%22%20opacity%3D%220.9%22/%3E%3Crect%20x%3D%2237%22%20y%3D%2225%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23ffe27a%22%20opacity%3D%220.9%22/%3E%3Crect%20x%3D%22342%22%20y%3D%2218%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23fff3c4%22%20opacity%3D%220.7%22/%3E%3Crect%20x%3D%22333%22%20y%3D%22149%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23cfd6ff%22%20opacity%3D%220.7%22/%3E%3Crect%20x%3D%22199%22%20y%3D%22173%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23ffe27a%22%20opacity%3D%220.35%22/%3E%3C/svg%3E"), linear-gradient(180deg, #2c3672 0%, #242b60 50%, #1e2453 100%);
-  background-repeat: no-repeat, repeat, no-repeat;
-  background-size: 22px 22px, 360px 220px, 100% 100%;
-  background-position: right 300px top 24px, 0 0, 0 0;
-}
-.kb-ui-th-night #kb-panel .kb-card-wrap { background: #1d234d; border-color: #0f1230; box-shadow: inset 0 0 0 2px #39418a; }
-.kb-ui-th-night #kb-panel .kb-card { background: #262d5e; }
-.kb-ui-th-night #kb-panel .kb-done { background: #262d5e; color: #f4ecd8; border-color: #0f1230; }
-.kb-ui-th-night #kb-panel .kb-done-why { background: #1b2148; border-color: #f4ecd8; }
-.kb-ui-th-night #kb-panel .kb-pot { border-color: #0f1230; }
-.kb-ui-th-night #kb-panel .kb-pot-info { color: #f4ecd8; }
-.kb-ui-th-night #kb-panel .kb-count-new { color: #9fdcff; }
-.kb-ui-th-night #kb-panel .kb-count-lrn { color: #ffa3b5; }
-.kb-ui-th-night #kb-panel .kb-count-rev { color: #a8f5bd; }
-.kb-ui-th-night #kb-panel .kb-btn { border-color: #0f1230; box-shadow: 3px 3px 0 #0f1230; }
-.kb-ui-th-night #kb-panel .kb-btn-small { background: #3a4388; color: #f4ecd8; }
-.kb-ui-th-night #kb-panel .kb-btn-small:hover { background: #4a55a8; }
-.kb-ui-th-night #kb-panel .kb-btn-wide { background: #ffc857; color: #1b1b2f; }
-.kb-ui-th-night #kb-panel .kb-btn-wide:hover { background: #ffd77a; }
-.kb-ui-th-night #kb-panel .kb-key { color: #5a4a1a; }
-.kb-ui-th-night #kb-panel .kb-btn-small .kb-key { color: #c9c3e8; }
-.kb-ui-th-night #kb-panel .kb-rate-ivl { color: #2b2b44; }
-.kb-ui-th-night #kb-panel .kb-rv-garden[aria-pressed="true"] { background: #2e8b5a; }
+/* 1.23: bỏ màu bảng "Đêm vườn" (1.16) — người dùng thấy không đẹp; cấu hình cũ "theme": "night" về "Vàng vườn" */
 .kb-rv-garden { background: #ffffff; }
 .kb-rv-garden[aria-pressed="true"] { background: #c8f7d2; }
 
@@ -1503,7 +1478,6 @@ button { cursor: pointer; }
 .kb-ui-sw { display: inline-block; width: 14px; height: 14px; border: 2px solid #1b1b2f; }
 .kb-ui-sw-garden { background: #fff2b3; }
 .kb-ui-sw-paper { background: #fbfaf4; }
-.kb-ui-sw-night { background: #262d5e; box-shadow: inset 3px 3px 0 #ffc857; }
 
 /* ---- 1.14: cửa hàng — thú nuôi, giống cây, sửa nhà, vùng tự tạo ---- */
 .kb-h-select, .kb-h-input { font: inherit; font-size: 13px; border: 2px solid #1b1b2f; border-radius: 0; background: #ffffff; color: #1b1b2f; padding: 1px 4px; max-width: 100%; }

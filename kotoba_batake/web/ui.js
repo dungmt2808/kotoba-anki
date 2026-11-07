@@ -25,9 +25,8 @@ var GardenUI = (function () {
   const PRESETS = [
     ["full", "Đầy đủ", "Như cũ: mọi thứ chuyển động ở mọi màn."],
     ["focus", "Tập trung khi ôn", "Ôn thẻ thì ẩn sân + ruộng, tắt hạt bay, mưa, linh vật nói; khung thẻ to hết chỗ."],
-    ["calm", "Dịu mắt", "Sân và ruộng đứng yên ở mọi màn, tắt hạt bay và mưa tuyết."],
-    ["night", "Ôn buổi tối", "Bảng ôn “Đêm vườn” (xanh đêm, chữ kem); ôn thẻ thì sân + ruộng mờ đi, tắt hạt bay."]
-  ];
+    ["calm", "Dịu mắt", "Sân và ruộng đứng yên ở mọi màn, tắt hạt bay và mưa tuyết."]
+  ];      // 1.23: bỏ "Ôn buổi tối" (bảng ôn Đêm vườn) — người dùng thấy không đẹp
 
   function conf() {
     if (ui) { return ui; }
@@ -47,7 +46,8 @@ var GardenUI = (function () {
   }
   function glob(k) { const c = conf(); return (c && c[k]) || (k === "card" ? "normal" : "garden"); }
 
-  // thẻ đang ôn nằm trong iframe: bảng tối thì thêm lớp nightMode (như Anki) + màu nền dịu
+  // thẻ đang ôn nằm trong iframe: bảng tối thì thêm lớp nightMode (như Anki) + màu nền dịu.
+  // 1.23: bỏ bảng "Đêm vườn" → luôn gọi với false (gỡ lớp nếu trang còn giữ từ trước); Anki chế độ tối do garden.js lo
   function syncFrame(night) {
     const f = $("kb-card");
     let doc = null;
@@ -200,7 +200,7 @@ var GardenUI = (function () {
       });
       g.appendChild(box);
     };
-    radios("theme", "Màu bảng", [["garden", "Vàng vườn"], ["paper", "Trắng giấy"], ["night", "Đêm vườn (xanh đêm, thẻ tối theo)"]]);
+    radios("theme", "Màu bảng", [["garden", "Vàng vườn"], ["paper", "Trắng giấy"]]);
     radios("card", "Khung thẻ", [["normal", "Vừa"], ["tall", "To hết chỗ còn lại"]]);
     st.appendChild(g);
     st.appendChild(el("div", "kb-sound-note", "Nút “Ẩn vườn” trên bảng ôn bật / tắt nhanh sân + ruộng khi ôn."));
