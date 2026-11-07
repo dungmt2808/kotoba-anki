@@ -135,7 +135,12 @@ var Mock125 = (function () {
     if (kind === "bedroom" && st.name === "castle") {        // thảm đỏ viền vàng ở sàn
       R(ctx, S, ox, oy, 8, 46, W0 - 16, 38, P.i); R(ctx, S, ox, oy, 10, 48, W0 - 20, 34, "#a3243b");
     }
-    windowAt(ctx, S, ox, oy, kind, st, now);
+    if (kind === "bedroom" && st.name === "minka" && !st.sideWin) {      // không cửa sổ: cửa lùa fusuma vẽ sóng chàm
+      R(ctx, S, ox, oy, 52, 8, 42, 29, "#4a2c18"); R(ctx, S, ox, oy, 54, 10, 18, 25, "#f4ecd8"); R(ctx, S, ox, oy, 74, 10, 18, 25, "#f4ecd8");
+      [[56, 26], [62, 23], [68, 27], [76, 24], [82, 27], [88, 25]].forEach(([x, y]) => { R(ctx, S, ox, oy, x - 2, y, 5, 2, "#2f4f7f"); R(ctx, S, ox, oy, x - 1, y - 1, 3, 1, "#5f7faf"); });
+      R(ctx, S, ox, oy, 69, 21, 2, 3, "#4a2c18"); R(ctx, S, ox, oy, 75, 21, 2, 3, "#4a2c18");
+    }
+    if (kind === "room" || st.sideWin) { windowAt(ctx, S, ox, oy, kind, st, now); }
   }
   // biển hai dòng: tên gian + giá chung (hai gian bên giống hệt nhau, bấm bên nào cũng là một lần mở)
   function lockedLabel(ctx, S, x, y, lines) {
@@ -161,7 +166,7 @@ var Mock125 = (function () {
   // vẽ cả nhà ở (ox, oy) theo toạ độ nghệ thuật; extL / extR / extT / extB: phần kéo dài (điểm ảnh nghệ thuật)
   function house(ctx, S, ox, oy, o) {
     const now = Date.now(), tod = timeOfDay(), stR = skyNow();
-    const st = Object.assign({ name: o.style }, STY[o.style]);
+    const st = Object.assign({ name: o.style, sideWin: o.sideWin !== false }, STY[o.style]);
     const extL = o.extL || 0, extR = o.extR || 0, extT = o.extT || 0, extB = o.extB || 0;
     lights.length = 0;
     ["kitchen", "room", "bedroom"].forEach((k) => {
@@ -208,5 +213,124 @@ var Mock125 = (function () {
       extL: hx + 1, extR: Math.ceil(cw / S) - 456 - hx + 1, extT: Math.max(0, hy) + 1, extB: 1 }));
     return { S: S, hx: hx, hy: hy };
   }
-  return { strip: strip, house: house, STY: STY };
+
+  // ================= Bố cục khác (07/11, sau góp ý "vừa đối xứng vừa bất đối xứng") =================
+  const ROOF = {
+    classic: { a: P.r, b: P.R, edge: P.k, board: P.B },
+    minka: { a: P.h, b: P.t, edge: "#7a5a2a", board: P.B },
+    teahouse: { a: P.m, b: P.S, edge: P.n, board: P.b },
+    castle: { a: P.m, b: P.n, edge: P.k, board: P.n },
+  };
+  const mix = (a, b, t) => (typeof GardenSky !== "undefined" && GardenSky.mix ? GardenSky.mix(a, b, t) : a);
+  function outdoorSt() {
+    return skyNow() || { top: "#8fd3ff", bottom: "#c4ecff", light: 1, clouds: 2, tod: "day", ground: "#5ed35e", grass: "#45bf4a", hills: "#7ed98a" };
+  }
+  // vườn ngoài nhà trong [x0, x1) × [y0, y1), chân trời ở hz (toạ độ nghệ thuật, gốc ox / oy)
+  function garden(ctx, S, ox, oy, x0, x1, y0, y1, hz, side) {
+    const st = outdoorSt(), w = x1 - x0, now = Date.now();
+    if (w <= 0) { return; }
+    const bands = 7;
+    for (let b = 0; b < bands; b++) {
+      const a = y0 + Math.floor((hz - y0) * b / bands), c = y0 + Math.floor((hz - y0) * (b + 1) / bands);
+      R(ctx, S, ox, oy, x0, a, w, c - a, mix(st.top, st.bottom, b / (bands - 1)));
+    }
+    if (st.light >= 0.6) {                                     // mây
+      const cx = side < 0 ? x0 + Math.floor(w * 0.35) : x0 + Math.floor(w * 0.55), cy = y0 + Math.max(3, Math.floor((hz - y0) * 0.3));
+      [[0, 2, 14, 3], [3, 0, 7, 2], [-3, 3, 4, 2]].forEach(([dx, dy, ww, hh]) => R(ctx, S, ox, oy, cx + dx, cy + dy, ww, hh, "#ffffff"));
+    } else {                                                   // sao
+      for (let i = 0; i < w / 6; i++) { R(ctx, S, ox, oy, x0 + ((i * 37 + 5) % w), y0 + ((i * 23 + 3) % Math.max(4, hz - y0 - 8)), 1, 1, i % 3 ? "#ffffff" : "#ffe9a8"); }
+    }
+    ctx.fillStyle = st.hills;
+    for (let i = x0; i < x1; i++) { const hh = 5 + Math.round(3 * Math.sin(i / 17) + 2 * Math.sin(i / 7)); ctx.fillRect((ox + i) * S, (oy + hz - hh) * S, S, hh * S); }
+    if (SEA()) { try { SEA().decorHills(ctx, S, ox, oy, x0, x1, hz, st); } catch (e) { /* bỏ qua */ } }
+    R(ctx, S, ox, oy, x0, hz, w, y1 - hz, st.ground);
+    for (let i = Math.floor(x0 / 11) * 11 + 3; i < x1; i += 11) { if (i >= x0) { R(ctx, S, ox, oy, i, hz + 3 + (Math.abs(i) * 7) % Math.max(1, y1 - hz - 4), 1, 1, st.grass); } }
+    if (SEA()) { try { SEA().decorGround(ctx, S, ox, oy, x0, x1, hz, y1, st); } catch (e) { /* bỏ qua */ } }
+    // bụi cây + hoa sát tường nhà
+    const bx = side < 0 ? x1 - 16 : x0 + 3, by = hz + 6;
+    if (bx >= x0 && bx + 13 <= x1) {
+      R(ctx, S, ox, oy, bx + 1, by + 3, 12, 6, P.k); R(ctx, S, ox, oy, bx + 2, by + 1, 10, 7, P.G); R(ctx, S, ox, oy, bx + 3, by, 8, 6, P.g);
+      R(ctx, S, ox, oy, bx + 4, by + 2, 1, 1, P.p); R(ctx, S, ox, oy, bx + 8, by + 1, 1, 1, P.y); R(ctx, S, ox, oy, bx + 6, by + 4, 1, 1, P.w);
+    }
+    const fx = side < 0 ? x1 - 30 : x0 + 22;
+    if (fx >= x0 && fx + 10 <= x1) { [0, 4, 8].forEach((d, i) => { R(ctx, S, ox, oy, fx + d, by + 6, 1, 4, P.G); R(ctx, S, ox, oy, fx + d - 1, by + 5, 3, 2, [P.p, P.y, P.r][i]); }); }
+    // đêm: tối theo trời ngoài (không có đèn trong nhà)
+    const keep = lights.splice(0);
+    const stN = Object.assign({}, st);
+    if (stN.light < 0.6) { drawNight(ctx, S, ox, oy, x0, x1, y1 - 0, stN); }
+    lights.push(...keep);
+  }
+  // mái hiên phía trên trần (cắt ngang), kín bề ngang nhà + chìa ra hai bên
+  function eave(ctx, S, ox, oy, x0, x1, top, style) {
+    const r = ROOF[style] || ROOF.classic, h = -top;
+    if (h <= 0) { return; }
+    for (let y = top; y < -2; y++) {
+      const k = y - top;
+      R(ctx, S, ox, oy, x0, y, x1 - x0, 1, (Math.floor(k / 3) % 2) ? r.b : r.a);
+      if (k % 3 === 2) { for (let x = x0 + ((Math.floor(k / 3) % 2) * 4); x < x1; x += 8) { R(ctx, S, ox, oy, x, y, 1, 1, r.edge); } }
+    }
+    R(ctx, S, ox, oy, x0, -3, x1 - x0, 2, r.board); R(ctx, S, ox, oy, x0, -1, x1 - x0, 1, P.k);
+  }
+  // mái đầy đủ (nhà búp bê): hình thang từ yE (mái hiên) lên yR (nóc)
+  function fullRoof(ctx, S, ox, oy, x0, x1, yR, yE, style, night) {
+    const r = ROOF[style] || ROOF.classic, W0 = x1 - x0, inset = Math.floor(W0 * 0.16);
+    for (let y = yR; y <= yE; y++) {
+      const t = (y - yR) / Math.max(1, yE - yR), a = x0 + Math.round(inset * (1 - t)), b = x1 - Math.round(inset * (1 - t));
+      R(ctx, S, ox, oy, a - 1, y, b - a + 2, 1, P.k);
+      R(ctx, S, ox, oy, a, y, b - a, 1, (Math.floor((y - yR) / 3) % 2) ? r.b : r.a);
+      if ((y - yR) % 3 === 2) { for (let x = a + ((Math.floor((y - yR) / 3) % 2) * 4); x < b; x += 8) { R(ctx, S, ox, oy, x, y, 1, 1, r.edge); } }
+    }
+    R(ctx, S, ox, oy, x0 + inset - 2, yR - 3, W0 - 2 * inset + 4, 3, P.k); R(ctx, S, ox, oy, x0 + inset - 1, yR - 2, W0 - 2 * inset + 2, 1, r.board);
+    R(ctx, S, ox, oy, x0, yE - 1, W0, 2, r.board); R(ctx, S, ox, oy, x0, yE + 1, W0, 1, P.k);
+    const cx = Math.floor((x0 + x1) / 2), cy = Math.floor((yR + yE) / 2);            // cửa sổ áp mái
+    R(ctx, S, ox, oy, cx - 6, cy - 5, 12, 11, P.k); R(ctx, S, ox, oy, cx - 5, cy - 4, 10, 9, night ? P.y : P.l);
+    R(ctx, S, ox, oy, cx, cy - 4, 1, 9, P.k); R(ctx, S, ox, oy, cx - 5, cy, 10, 1, P.k);
+    if (style === "classic") {                                                       // ống khói phía Bếp
+      const hx = x0 + inset + 26; R(ctx, S, ox, oy, hx, yR - 12, 10, 14, P.k); R(ctx, S, ox, oy, hx + 1, yR - 11, 8, 13, P.R);
+      for (let y = yR - 9; y < yR + 1; y += 3) { R(ctx, S, ox, oy, hx + 1, y, 8, 1, P.r); }
+      R(ctx, S, ox, oy, hx - 1, yR - 14, 12, 3, P.k); R(ctx, S, ox, oy, hx, yR - 13, 10, 1, P.S);
+    }
+  }
+  function outerWalls(ctx, S, ox, oy, y0, y1, style) {
+    const c = STY[style].post;
+    [-4, 456].forEach((x) => { R(ctx, S, ox, oy, x, y0, 4, y1 - y0, c); R(ctx, S, ox, oy, x, y0, 1, y1 - y0, P.k); R(ctx, S, ox, oy, x + 3, y0, 1, y1 - y0, P.k); });
+  }
+  function canvasSetup(canvas, o) {
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.round(o.cw * dpr); canvas.height = Math.round(o.ch * dpr);
+    canvas.style.width = o.cw + "px"; canvas.style.height = o.ch + "px";
+    const ctx = canvas.getContext("2d"); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.imageSmoothingEnabled = false;
+    return ctx;
+  }
+  // Phương án A: như 1.24 (nhà giữa dải, cỡ theo chiều cao), hai bên là vườn, mái hiên phía trên
+  function stripA(canvas, o) {
+    const ctx = canvasSetup(canvas, o);
+    const S = Math.max(2, Math.min(o.maxS || 4, Math.floor(o.ch / H), Math.floor(o.cw / 466)));
+    const VW = Math.ceil(o.cw / S), VH = Math.ceil(o.ch / S);
+    const hx = Math.floor((VW - 456) / 2), hy = VH - H;            // hy < 0: cắt bớt trần như 1.24
+    const top = -Math.max(0, hy);
+    garden(ctx, S, hx, Math.max(hy, 0) + Math.min(hy, 0), -hx - 1, -4, top - 1, H + 1, FLOOR, -1);
+    garden(ctx, S, hx, Math.max(hy, 0) + Math.min(hy, 0), 460, VW - hx + 1, top - 1, H + 1, FLOOR, 1);
+    const oy = hy;
+    house(ctx, S, hx, oy, Object.assign({}, o, { sideWin: o.sideWin === true, extL: 0, extR: 0, extT: 0, extB: 1 }));
+    outerWalls(ctx, S, hx, oy, Math.min(0, top), H + 1, o.style);
+    if (hy > 0) { eave(ctx, S, hx, oy, -12, 468, top, o.style); }
+    return { S: S, hx: hx, hy: hy };
+  }
+  // Phương án B: nhà búp bê — cả nhà có mái, nhỏ hơn (×2 ở 1920), vườn quanh nhà
+  function stripB(canvas, o) {
+    const ctx = canvasSetup(canvas, o);
+    const S = Math.max(1, Math.min(o.maxS || 4, Math.floor(o.ch / 140), Math.floor(o.cw / 520)));
+    const VW = Math.ceil(o.cw / S), VH = Math.ceil(o.ch / S);
+    const hx = Math.floor((VW - 456) / 2), oy = VH - 6 - H, hz = VH - 26;
+    garden(ctx, S, 0, 0, -1, VW + 1, -1, VH + 1, hz, -1);
+    // bụi cây hai bên nhà
+    const night = (outdoorSt().light < 0.6);
+    fullRoof(ctx, S, hx, oy, -14, 470, -Math.min(44, oy - 8), -1, o.style, night);
+    house(ctx, S, hx, oy, Object.assign({}, o, { sideWin: o.sideWin === true, extL: 0, extR: 0, extT: 0, extB: 0 }));
+    outerWalls(ctx, S, hx, oy, 0, H, o.style);
+    R(ctx, S, hx, oy, -6, H, 468, 6, P.k); R(ctx, S, hx, oy, -5, H + 1, 466, 4, P.S); R(ctx, S, hx, oy, -5, H + 1, 466, 1, P.s);   // móng đá
+    return { S: S, hx: hx, oy: oy };
+  }
+  return { strip: strip, stripA: stripA, stripB: stripB, house: house, STY: STY };
 })();

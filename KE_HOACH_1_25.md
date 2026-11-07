@@ -1,4 +1,4 @@
-# Kế hoạch ことば畑 1.25 — nhà 3 gian làm lại cho đẹp (đã chốt, chưa làm)
+# Kế hoạch ことば畑 1.25 — nhà 3 gian làm lại cho đẹp (đang chọn bố cục, chưa làm)
 
 Ngày 07/11/2026. Người dùng xem 1.24.0 trên máy thật (Ubuntu, cửa sổ ~1920 px, ảnh chụp màn hình trong cuộc trò chuyện):
 
@@ -80,6 +80,27 @@ Vẽ trong Anki thật 26.9.4 bằng chính hàm vẽ của add-on (`GardenHome.
 Số đo (1920 px): dải cảnh 1866 × 304 px CSS, phần không bị thẻ che 1575 px → ×3, ba gian rộng 1368 px, kéo dài trái 34 điểm ảnh nghệ thuật, trần thêm 13. 1366 px: 1312 × 152, phần trống 1021 px → ×2.
 
 Còn để ý khi làm thật: nút ◂ Trong nhà ▸ + 📷 ở góc trái dưới vẫn che một phần Bếp (như 1.24) — ở 1366 px che mép bàn ăn; ban đêm phòng chỉ tối nhẹ (cùng công thức `drawNight` của 1.24).
+
+## 5b. Lượt 2 — bố cục khác (07/11, chờ người dùng chọn)
+
+Góp ý sau ảnh phác 5a:
+
+> "tớ thấy bố cục này vẫn không ổn lắm, nó vừa đối xứng, vừa bất đối xứng (chỉ cần cửa sổ ở giữa là được). thà để như cũ, rồi 2 bên là màu sắc của cỏ bên ngoài vườn thì tớ nghĩ cũng ổn (tớ không biết cái nào ưng nữa), còn thiết kế bố cục nào khác không"
+
+→ Bỏ hướng "kéo dài gian bên + đẩy nhà sang trái" (mục 3, ảnh 5a) và cửa sổ ở gian bên (mục 2). Vẽ ba phương án, đều **đối xứng**, nhà ở giữa dải, **chỉ phòng chính có cửa sổ** (như 1.24), giữ "cùng nền theo kiểu nhà + mỗi gian một điểm nhấn" (Minka: Phòng ngủ đổi rèm noren thành cửa lùa fusuma vẽ sóng chàm vì không còn cửa sổ). Ảnh ở `docs/ke_hoach_1_25/bo_cuc/` (driver `tests/anki/mock_125_bo_cuc.js`, hàm `stripA` / `stripB` trong `mock_125_lib.js`):
+
+| Phương án | Mô tả | Ưu | Nhược |
+|---|---|---|---|
+| **A** — như 1.24, hai bên là vườn | Cỡ như 1.24 (×3 ở 1920, ×2 cắt trần ở 1366). Hai bên nhà là vườn: trời theo giờ + đồi + cỏ theo mùa, chân trời ngang mép sàn; tường ngoài hai đầu; mái hiên phía trên trần (màu mái theo kiểu nhà). | Gần 1.24 nhất, đồ to như cũ; nút ◂ Trong nhà ▸ + 📷 nằm trên phần vườn, không che Bếp | Thẻ Hôm nay che mép Phòng ngủ (~10 px ở 1920, ~1/4 gian ở 1366) |
+| **A+** — A + thẻ Hôm nay thu gọn | Ở cảnh Trong nhà, thẻ Hôm nay còn một dòng "Hôm nay 0/30 · 3 việc ▾" + thanh tiến độ (rộng 176 px), nằm gọn trong phần vườn bên phải; bấm ▾ mở đủ như cũ | Không che gì ở cả 1920 và 1366 | Phải bấm một lần mới thấy Nhiệm vụ / Báo / Nhật ký |
+| **B** — nhà búp bê | Cả nhà có mái (ống khói, cửa sổ áp mái), móng đá, đứng giữa vườn; thẻ Hôm nay nằm trên trời | Cân đối, dễ thương nhất; thấy rõ "cái nhà" đổi theo kiểu | Nhỏ hơn: ×2 ở 1920; màn ≤ 1366 px chỉ vừa ×1 → phải tự về A / A+ |
+
+| Ảnh | Nội dung |
+|---|---|
+| `00_so_sanh_bo_cuc_1920.png`, `00_so_sanh_bo_cuc_1366.png` | A / A+ / B xếp chồng, có chú thích |
+| `A_{classic,minka,teahouse,castle}_ngay.png`, `A_classic_dem.png`, `A_classic_chua_mo_rong.png` | A ở 4 kiểu nhà, ban đêm, chưa mở rộng (hai biển đối xứng) |
+| `A+_classic_the_gon.png`, `A+_1366_the_gon.png` | thẻ Hôm nay thu gọn |
+| `B_{classic,minka,castle}_ngay.png`, `B_classic_dem.png`, `B_1366_classic.png` | nhà búp bê |
 
 ## 6. Còn mở / để sau
 
