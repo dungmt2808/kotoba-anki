@@ -8,6 +8,7 @@ Thư mục làm việc là thư mục tiếng Nhật; mọi file của nhiệm v
 
 - Lấy ngày bằng `date +%F`, gọi là NGAY. Số báo hôm nay là `kotoba_daily/bao/NGAY/bao.json`.
 - Nếu file đó đã có và `python3 kotoba_daily/tools/kiemtra.py bao/NGAY/bao.json` in `OK`: dừng, trả lời "Hôm nay đã có báo".
+- Nếu file đó đã có và mọi dòng `LỖI` đều là về `dich` (số viết bằng bộ cũ, chưa có bản dịch): không viết lại số báo. Chỉ thêm `dich` cho từng bài theo mục "Bản dịch tiếng Việt" ở Bước 4, chạy lại `kiemtra.py` đến khi `OK`, chạy `render.py` (Bước 7) rồi dừng, trả lời "Đã thêm bản dịch cho số hôm nay".
 
 ## Bước 1. Phạm vi đã học
 
@@ -45,8 +46,8 @@ Cấu trúc giống `vi_du/bao_mau.json`:
  "so": <so_bao_tiep_theo>,
  "rut_gon": false,
  "bai": [
-  {"loai": "tin_lang", "tieu_de": "<đánh dấu>", "doan": ["<đánh dấu>", "..."]},
-  {"loai": "truyen", "ky": <truyen.ky_tiep_theo>, "ky_truoc": "<1 câu tiếng Việt tóm tắt kỳ trước, để trống nếu là kỳ 1>", "tieu_de": "...", "doan": ["..."]}
+  {"loai": "tin_lang", "tieu_de": "<đánh dấu>", "doan": ["<đánh dấu>", "..."], "dich": ["<bản dịch tiếng Việt của đoạn 1>", "..."]},
+  {"loai": "truyen", "ky": <truyen.ky_tiep_theo>, "ky_truoc": "<1 câu tiếng Việt tóm tắt kỳ trước, để trống nếu là kỳ 1>", "tieu_de": "...", "doan": ["..."], "dich": ["..."]}
  ],
  "cau_hoi": [ {"hoi": "<đánh dấu>", "chon": ["<đánh dấu>", "...", "..."], "dung": 0, "giai_thich": "<tiếng Việt>"} ],
  "chinh_ta": [ {"cau": "<đánh dấu>", "them_dap_an": ["<cách viết khác vẫn đúng>"]} ],
@@ -85,6 +86,14 @@ Tổng độ dài các đoạn (ký tự tiếng Nhật, không tính đánh d�
 - Tiểu từ, kana, dấu câu và số Ả Rập để ngoài ngoặc. Không dùng `[ ] { } |` cho việc khác; trích lời dùng 「」.
 - Đánh dấu cả trong tiêu đề, câu hỏi, lựa chọn và câu chép chính tả.
 
+### Bản dịch tiếng Việt (`dich`)
+
+Mỗi bài (cả số rút gọn và tin thật) có `dich`: danh sách bản dịch tiếng Việt, **mỗi đoạn trong `doan` một bản, cùng số phần tử, cùng thứ tự**. Không dịch tiêu đề. Bản dịch ẩn sẵn: người học đọc tiếng Nhật trước, bí mới bấm "Dịch" (trong add-on ことば畑 1.23 trở lên và trong `bao.html`).
+
+- Dịch tự nhiên như người Việt viết, đúng và đủ ý từng câu (không tóm tắt, không bỏ câu, không thêm ý). Giữ giọng nhân vật: はなさん nói lịch sự, スタックちゃん xưng "tớ", lời chào / kính ngữ dịch sang cách nói lịch sự tương ứng ("quý khách", "ạ").
+- Không có chữ Nhật (kana, chữ Hán) và không có `[ ] { } |` trong bản dịch — add-on bỏ cả bản dịch của bài nếu có. Tên riêng viết Latin: Lin, Hana, Stack-chan, trưởng làng, quán trọ Kotoba, làng Kotoba, vườn Kotoba. Câu tiếng Nhật cần giữ để hiểu truyện (chỗ nhân vật nói nhầm, chơi chữ) thì viết romaji trong ngoặc kép rồi dịch nghĩa, ví dụ: Lin lỡ nói "omachi shite shimaimashita" (lỡ chờ mất rồi).
+- Không thêm ghi chú giải thích ngữ pháp trong ngoặc; ký hiệu ◆ của お知らせ giữ nguyên ở đầu bản dịch.
+
 ### Câu hỏi và chép chính tả
 
 - `cau_hoi`: 2–3 câu trắc nghiệm bằng tiếng Nhật về nội dung bài, mỗi câu 3 lựa chọn, chỉ một đáp án đúng. `dung` là vị trí đáp án đúng tính từ 0; đổi vị trí giữa các câu. `giai_thich` bằng tiếng Việt, chỉ ra câu trong bài.
@@ -101,7 +110,8 @@ Tìm 1 tin trong ngày về đời sống, văn hoá hoặc thời tiết ở Nh
 - ngữ pháp ngoài phạm vi, câu gượng, kính ngữ sai chủ ngữ;
 - furigana sai, nhất là từ có nhiều cách đọc (今日, 明日, 方, 上手, 一日, 何, số đếm);
 - câu hỏi có hai đáp án cùng đúng, hoặc đáp án không có trong bài;
-- câu chép chính tả không có nguyên văn trong bài.
+- câu chép chính tả không có nguyên văn trong bài;
+- bản dịch sai ý, thiếu câu, lệch đoạn (bản dịch thứ j phải là của đoạn thứ j), hoặc còn chữ Nhật.
 
 ## Bước 6. Kiểm tra bằng máy
 

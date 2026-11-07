@@ -159,6 +159,8 @@ Cách này dành cho số ít người đã dùng [Claude Code](https://claude.c
 2. Trong Anki: **Tools → Add-ons → ことば畑 → Config**, đặt `"bao_dir": "<đường dẫn tới kotoba_daily>"`.
 3. Mở lại vườn. Tab **Nguồn báo** có thêm thẻ **Claude Code** để chọn thư mục và đổi qua lại với Gemini.
 
+Từ bộ `kotoba_daily` 2.3, số báo Claude Code viết cũng có **bản dịch tiếng Việt ẩn sẵn** từng đoạn như báo Gemini. Đang dùng bộ cũ thì chép đè `tools/`, `prompts/`, `vi_du/`, `HUONG_DAN.md` (giữ nguyên dữ liệu của bạn); số cũ thêm bản dịch bằng `prompts/them_ban_dich.md`.
+
 Để `bao_dir` trống (mặc định) thì thẻ này không hiện. Chi tiết từng mục cấu hình nằm ở trang Config của add-on.
 
 ---

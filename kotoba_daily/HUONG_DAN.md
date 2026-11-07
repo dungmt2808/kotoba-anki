@@ -19,7 +19,7 @@ kotoba_daily/
   bao/<ngày>/bao.json   số báo của ngày đó (dữ liệu)
   bao/<ngày>/bao.html   trang để đọc
   bao/<ngày>/audio/     giọng đọc (nếu có VOICEVOX)
-  prompts/              hướng dẫn cho Claude Code
+  prompts/              hướng dẫn cho Claude Code (bao_hang_ngay.md mỗi sáng; them_ban_dich.md thêm bản dịch cho số cũ)
   tools/                các script kiểm tra và dựng trang (Python có sẵn trên Ubuntu)
   vi_du/                số báo mẫu
 ```
@@ -174,16 +174,30 @@ Add-on ghi lại file `tien_do.json` trong thư mục này để số báo hôm 
 
 Add-on chỉ đọc các file trong thư mục này và chỉ ghi đúng một file `tien_do.json`.
 
+## Bản dịch tiếng Việt (từ bản 2.3)
+
+Mỗi số báo có sẵn bản dịch tiếng Việt từng đoạn, ẩn đi để bạn tự đọc tiếng Nhật trước:
+
+- Trong add-on ことば畑 (bản 1.23 trở lên): nút **Dịch** cuối mỗi đoạn, nút **Hiện bản dịch** ở đầu bảng để mở cả số.
+- Trong `bao.html`: cũng có nút **Dịch** cuối đoạn và **Hiện bản dịch** cạnh "Ẩn furigana".
+
+Số báo viết trước bản 2.3 chưa có bản dịch. Muốn thêm: trong Claude Code (đứng ở thư mục tiếng Nhật) gõ "Đọc và làm đúng theo file kotoba_daily/prompts/them_ban_dich.md" — mỗi lần làm tối đa 10 số, chỉ thêm bản dịch, không sửa chữ của số cũ. Hoặc trong add-on bấm **Dịch số này** (cần khoá Gemini; bản dịch lưu trong add-on, không ghi vào thư mục này).
+
+## Cập nhật bộ này lên bản mới
+
+Chỉ chép đè `tools/`, `prompts/`, `vi_du/` và `HUONG_DAN.md` từ bản mới. **Không** chép đè `lo_trinh.json`, `truyen.md`, `lich_su.md`, `nguon/`, `bao/` (dữ liệu của bạn). Tác vụ lịch không cần sửa: nó luôn đọc `prompts/bao_hang_ngay.md` mới nhất.
+
 ## Gỡ rối
 
 - Không có báo sáng nay: app Desktop có mở và máy có thức lúc 6:00 không? Xem lịch sử chạy ở trang chi tiết của tác vụ; dòng bị bỏ qua sẽ ghi lý do.
 - Tác vụ đứng mãi: có thể đang chờ duyệt quyền. Mở phiên chạy đó từ trang chi tiết tác vụ, duyệt và chọn always allow.
-- `kiemtra.py` báo lỗi mà Claude không sửa được: mở `bao/<ngày>/bao.json`, đọc dòng LỖI (có ghi vị trí như `bai[1].doan[0]`). Từ bản 2.2, `kiemtra.py` còn bắt chữ Latin / romaji trong câu tiếng Nhật (chữ viết tắt in hoa như NHK chỉ cảnh báo), chữ Hán giản thể của tiếng Trung, ngày / số người đọc đặc biệt (`[3日|みっか]`, `[2人|ふたり]`) và cách đọc không khớp phần kana trong chữ (`[食べ物|たもの]`).
+- `kiemtra.py` báo lỗi mà Claude không sửa được: mở `bao/<ngày>/bao.json`, đọc dòng LỖI (có ghi vị trí như `bai[1].doan[0]`). Từ bản 2.2, `kiemtra.py` còn bắt chữ Latin / romaji trong câu tiếng Nhật (chữ viết tắt in hoa như NHK chỉ cảnh báo), chữ Hán giản thể của tiếng Trung, ngày / số người đọc đặc biệt (`[3日|みっか]`, `[2人|ふたり]`) và cách đọc không khớp phần kana trong chữ (`[食べ物|たもの]`). Từ bản 2.3, `kiemtra.py` kiểm cả bản dịch `dich` (mỗi đoạn một bản, không có chữ Nhật — tên riêng viết Latin như Lin, Hana, Stack-chan).
 - Furigana sai hay câu nghe lạ: báo do AI viết nên đôi khi có chỗ chưa tự nhiên, nhất là kính ngữ. Gặp chỗ nghi ngờ thì hỏi thầy cô, và có thể thêm một dòng nhắc vào `prompts/bao_hang_ngay.md`.
 - Thử các script bằng tay (đứng trong thư mục tiếng Nhật):
 
 ```
 python3 kotoba_daily/tools/pham_vi.py
 python3 kotoba_daily/tools/kiemtra.py vi_du/bao_mau.json
+python3 kotoba_daily/tools/kiemtra.py --chi-dich bao/<ngày>/bao.json      # chỉ kiểm bản dịch
 python3 kotoba_daily/tools/render.py vi_du/bao_mau.json
 ```
