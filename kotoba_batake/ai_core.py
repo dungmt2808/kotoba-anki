@@ -964,6 +964,14 @@ def check_jp(rep: Report, where: str, text: Any, ctx: dict[str, Any]) -> None:
             if want2 and KANA_ONLY_RE.match(tail) and t[3] not in ("来る", "来ます") \
                     and not any(w.startswith(hira) for w in want2):
                 rep.err(where, "%s (trong %s) đọc là %s…, không phải %s" % (surf, t[3], "/".join(sorted(want2)), read))
+        if t[0] == "word" and t[3] and t[3] != surf and t[3].startswith(surf):
+            # 1.23 (thử Gemini thật 07/11): từ gốc phải khớp phần viết tiếp — {召|めし|召し上がる}[上|うえ]がって hiện "召上がって",
+            # {落|お|落とす}ちました là 落ちる. Chữ đầu của phần đuôi từ gốc (≥ 2 kana) không đổi khi chia, trừ する / くる.
+            tail = t[3][len(surf):]
+            after = "".join(x[1] for x in toks[i + 1:i + 3])
+            if len(tail) >= 2 and after and not tail.endswith(("する", "くる", "来る")) and not after.startswith(tail[0]):
+                rep.err(where, "{%s|%s|%s}: chữ viết tiếp là \"%s…\" nhưng từ gốc là %s — viết đủ chữ (vd %s%s…) "
+                                "hoặc sửa từ gốc cho đúng chữ đang dùng" % (surf, read, t[3], surf + after[:3], t[3], surf, tail[0]))
     surface = paper.surface(text)
     lat = LATIN_RE.findall(surface)
     acr = [x for x in lat if re.match(r"^[A-Z]{2,5}$", x)]         # NHK, JR, SNS: người Nhật vẫn viết vậy
@@ -1338,11 +1346,42 @@ def _annotate(plain: str, index: Any, notes: list[str]) -> str:
 _KANA_CH = re.compile(r"[\u3041-\u3096\u30a1-\u30fa\u30fc]")
 
 
-def _split_kana(surf: str, read: str) -> tuple[str, str, str, str]:
-    """1.23: kana dính trong ngoặc furigana ([お願|ねが]い, [食べ|たべ]る) → đưa ra ngoài ngoặc (thử Gemini thật 08/11: lỗi
-    "cách đọc ねが không khớp phần kana trong お願" lặp lại sau 2 lần sửa, cả số không lưu). Trả (trước, chữ, đọc, sau)."""
+# kana theo sau dạng từ điển mà vẫn đúng (trợ từ, danh từ hoá…): giữ dạng từ điển
+_KEEP_NEXT = ("を", "に", "が", "は", "と", "で", "も", "の", "へ", "や", "ね", "よ", "な", "わ", "ぞ", "。", "、", "」", "？", "！",
+              "…", "こと", "ころ", "ところ", "とき", "ため", "つもり", "まで", "から", "より", "だけ", "ほど", "けど", "でしょ",
+              "です", "らしい", "そう", "べき", "かも", "かしら", "かな。", "かな？", "かなあ", "くらい", "ぐらい")
+# đuôi động từ nhóm 1 → kana đầu của phần chia hợp lệ (書く → 書か / 書き / 書い / 書こ…)
+_GODAN_ROW = {"う": "わいうえおっ", "く": "かきくけこい", "ぐ": "がぎぐげごい", "す": "さしすせそ", "つ": "たちつてとっ",
+              "ぬ": "なにぬねのん", "ぶ": "ばびぶべぼん", "む": "まみむめもん", "る": "らりるれろっ"}
+
+
+def _conj_drop(post: str, nxt: str) -> int:
+    """Số kana cuối của `post` (dạng từ điển trong ngoặc) cần BỎ vì phần chia đã viết tiếp ngay sau. 0 = không bỏ."""
+    if not post or not nxt or not re.match(r"[\u3041-\u3096]", nxt[0]) or nxt.startswith(_KEEP_NEXT):
+        return 0
+    if nxt.startswith(post):                                     # {開く|ひら|開く}くと
+        return len(post)
+    if len(post) >= 2 and nxt.startswith(post[:-1]) and post[-1] in "うくぐすつぬぶむるい":
+        return len(post)                                         # {優しい|やさ|優しい}しく, {間違える|まちが|…}えちゃった
+    if post.endswith("する") and nxt[0] in "しさせす":            # {緊張する|きんちょう|…}して
+        return 2
+    if len(post) >= 2 and post.endswith("る") and nxt[0] in "まなたてよられろさ":
+        return 1                                                 # [食べる|た]ます → [食|た]べます
+    if len(post) == 1 and post in _GODAN_ROW and nxt[0] in _GODAN_ROW[post]:
+        return 1                                                 # {驚く|おどろ|驚く}いた, {持つ|も|持つ}って
+    if post.endswith("い") and nxt.startswith(("く", "かっ", "けれ", "さ", "そう")):
+        return 1                                                 # [高い|たか]かった
+    return 0
+
+
+def _split_kana(surf: str, read: str, nxt: str = "") -> tuple[str, str, str, str]:
+    """1.23: kana dính trong ngoặc furigana mà cách đọc không có (thử Gemini thật 07/11):
+    - đầu: [お願|ねが]い → お[願|ねが]い (đưa ra ngoài);
+    - cuối: Gemini để DẠNG TỪ ĐIỂN trong ngoặc rồi viết tiếp đuôi chia → chữ hiện ra "開くく", "緊張するして", "驚くいた":
+      {開く|ひら|開く}く → {開|ひら|開く}く, {緊張する|きんちょう|緊張する}して → {緊張|きんちょう|緊張する}して (bỏ phần thừa);
+      theo sau là trợ từ / dấu câu ({開く|ひら|開く}と) thì đưa kana ra ngoài: {開|ひら|開く}くと.
+    Cách đọc đã có kana đó ([お願|おねが], {お茶|おちゃ|…}, [食べ|たべ]) thì để nguyên. Trả (trước, chữ, đọc, sau)."""
     pre = post = ""
-    # chỉ khi cách đọc KHÔNG có kana đó ([お願|ねが]); [お願|おねが], {お茶|おちゃ|…} hợp lệ thì để nguyên
     while len(surf) > 1 and _KANA_CH.match(surf[0]) and paper.KANJI_RE.search(surf[1:]) \
             and not read.startswith(paper.to_hira(surf[0])):
         pre += surf[0]
@@ -1351,6 +1390,12 @@ def _split_kana(surf: str, read: str) -> tuple[str, str, str, str]:
             and not read.endswith(paper.to_hira(surf[-1])):
         post = surf[-1] + post
         surf = surf[:-1]
+    if not post and len(read) > 1 and read.endswith("っ") and paper.KANJI_RE.match(surf[-1]) and nxt \
+            and re.match(r"[\u3041-\u3096\u30a1-\u30fa]", nxt[0]):
+        read, post = read[:-1], "っ"      # [葉|はっ]ぱ → [葉|は]っぱ (thử Gemini thật 07/11: chữ hiện "葉ぱ")
+    drop = _conj_drop(post, nxt)
+    if drop:
+        post = post[:len(post) - drop]    # dạng từ điển trong ngoặc + phần chia viết tiếp → bỏ phần lặp
     return pre, surf, read, post
 
 
@@ -1360,6 +1405,12 @@ def _fix_jp(text: Any, scope_keys: set[str], new_keys: set[str], notes: list[str
         return text
     text = _fix_special(text, notes)
     s = re.sub(r"\s*[\r\n]+\s*", "", text.strip())
+    # 1.23 (thử Gemini thật, Flash-Lite): nhầm loại ngoặc — {落|お} (2 phần) là [落|お]; [学生|がくせい|学生] (3 phần) là {…}
+    s2 = re.sub(r"\{([^{}\[\]|]+)\|([^{}\[\]|]+)\}", r"[\1|\2]", s)
+    s2 = re.sub(r"\[([^{}\[\]|]+)\|([^{}\[\]|]*)\|([^{}\[\]|]+)\]", r"{\1|\2|\3}", s2)
+    if s2 != s:
+        notes.append("sửa nhầm ngoặc furigana { } / [ ]")
+        s = s2
     s2 = _GAP_RE.sub("", s)
     if s2 != s:
         notes.append("bỏ khoảng trắng giữa chữ Nhật")
@@ -1380,11 +1431,12 @@ def _fix_jp(text: Any, scope_keys: set[str], new_keys: set[str], notes: list[str
                 out.append(surf)
                 continue
             read = paper.to_hira(read) if KANA_ONLY_RE.match(read or "x") else read
-            pre, surf2, read2, post = _split_kana(surf, read) if KANA_ONLY_RE.match(read or "x") else ("", surf, read, "")
-            if pre or post:
+            after = toks[i + 1][1] if i + 1 < len(toks) and toks[i + 1][0] == "plain" else ""
+            pre, surf2, read2, post = _split_kana(surf, read, after) if KANA_ONLY_RE.match(read or "x") else ("", surf, read, "")
+            if (surf2, read2) != (surf, read):
                 notes.append("đưa kana ra ngoài ngoặc furigana")
                 surf, read = surf2, read2
-            nxt = post + (toks[i + 1][1] if i + 1 < len(toks) and toks[i + 1][0] == "plain" else "")
+            nxt = post + after
             key = linker(surf, read, nxt) if linker and read and KANA_ONLY_RE.match(read) else None
             out.append(pre)
             if key:
@@ -1398,10 +1450,16 @@ def _fix_jp(text: Any, scope_keys: set[str], new_keys: set[str], notes: list[str
             nk = paper.norm_key(key)
             if key and nk not in scope_keys and nk not in new_keys:
                 notes.append("bỏ liên kết tra từ của từ ngoài phạm vi %s" % key)
-                out.append("[%s|%s]" % (surf, read) if paper.KANJI_RE.search(surf) and read else surf)
+                if paper.KANJI_RE.search(surf) and read:
+                    after = toks[i + 1][1] if i + 1 < len(toks) and toks[i + 1][0] == "plain" else ""
+                    pre, surf2, read2, post = _split_kana(surf, read, after) if KANA_ONLY_RE.match(read) else ("", surf, read, "")
+                    out.append(pre + "[%s|%s]" % (surf2, read2) + post)
+                else:
+                    out.append(surf)
             else:
-                pre, surf2, read2, post = _split_kana(surf, read) if KANA_ONLY_RE.match(read or "x") else ("", surf, read, "")
-                if pre or post:
+                after = toks[i + 1][1] if i + 1 < len(toks) and toks[i + 1][0] == "plain" else ""
+                pre, surf2, read2, post = _split_kana(surf, read, after) if KANA_ONLY_RE.match(read or "x") else ("", surf, read, "")
+                if (surf2, read2) != (surf, read):
                     notes.append("đưa kana ra ngoài ngoặc furigana")
                 out.append(pre + "{%s|%s|%s}" % (surf2, read2, key) + post)
     return "".join(out)

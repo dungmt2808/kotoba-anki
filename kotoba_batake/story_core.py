@@ -409,7 +409,7 @@ KANA_RE = re.compile(r"^[\u3041-\u3096\u309d\u309e\u30a1-\u30fa\u30fc〜～・]+
 # ghi chú lọt vào bản dịch (thử thật 05/11: "(dùng dạng thân mật …)")
 NOTE_RE = re.compile(r"\s*[(（][^()（）]{0,80}?(?:dùng|dạng|nghĩa là|ghi chú|lưu ý|tức là|kính ngữ|thân mật|lịch sự|"
                      r"chữ Hán|furigana|tiếng Nhật|nguyên văn|dịch)[^()（）]{0,80}[)）]", re.I)
-# độ dài MỖI đoạn (thử thật 08/11: đoạn 70–240 ký tự làm cả số N4 dài 1.380 ký tự, quá khung 280–700 → số hỏng)
+# độ dài MỖI đoạn (thử Gemini thật 07/11: đoạn 70–240 ký tự làm cả số N4 dài 1.380 ký tự, quá khung 280–700 → số hỏng)
 LEN_JA = {"N5": (40, 110), "N4": (60, 150), "N3": (80, 190), "N2": (90, 220), "N1": (90, 240)}
 LEN_EN = {"A1": (18, 55), "A2": (25, 70), "B1": (35, 90), "B2": (45, 110), "C1": (50, 130)}
 

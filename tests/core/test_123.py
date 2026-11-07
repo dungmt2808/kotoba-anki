@@ -259,12 +259,35 @@ old_fmt = [{"ky": 1, "ngay": "2026-11-01", "tom_tat": "cũ"}]
 ai._write_json(os.path.join(sd4, "truyen.json"), old_fmt)
 ok(story.load_story(sd4)[0]["tom_tat"] == "cũ", "đọc được truyen.json định dạng cũ (1.22)")
 
-print("== máy tự đưa kana ra ngoài ngoặc furigana (thử thật 08/11: [お願|ねが] làm cả số không lưu)")
+print("== máy tự đưa kana ra ngoài ngoặc furigana (thử Gemini thật 07/11: [お願|ねが] làm cả số không lưu)")
 fx = lambda t: ai._fix_jp(t, {"お茶"}, set(), [])
 ok(fx("[お願|ねが]いします") == "お[願|ねが]いします" and fx("[ご飯|はん]") == "ご[飯|はん]" and fx("[食べ|た]ます") == "[食|た]べます",
    "[お願|ねが] → お[願|ねが], [ご飯|はん] → ご[飯|はん], [食べ|た] → [食|た]べ")
 ok(fx("[お願|おねが]いします") == "[お願|おねが]いします" and fx("{お茶|おちゃ|お茶}を") == "{お茶|おちゃ|お茶}を"
    and fx("[取り消し|とりけし]") == "[取り消し|とりけし]", "cách đọc đã có kana đó thì để nguyên")
+print("== dạng từ điển trong ngoặc + phần chia viết tiếp (thử Gemini thật 07/11: \"開くくと\", \"緊張するしていました\")")
+KV = {paper.norm_key(x) for x in ["開く", "優しい", "緊張する", "驚く", "間違える", "持つ", "行く", "書く", "読む"]}
+sf = lambda t: paper.surface(ai._fix_jp(t, KV, set(), []))
+ok(sf("ドアが{開く|ひら|開く}くと") == "ドアが開くと" and sf("{優しい|やさ|優しい}しく") == "優しく"
+   and sf("{緊張する|きんちょう|緊張する}していました") == "緊張していました", "bỏ kana lặp: 開くく → 開く, 優しいしく → 優しく, するして → して")
+ok(sf("{驚く|おどろ|驚く}いた") == "驚いた" and sf("{持つ|も|持つ}っていた") == "持っていた" and sf("{間違える|まちが|間違える}えちゃった") == "間違えちゃった"
+   and sf("{書く|か|書く}かない") == "書かない" and sf("{読む|よ|読む}んで") == "読んで", "động từ nhóm 1 / 2: bỏ đuôi dạng từ điển khi phần chia viết tiếp")
+ok(sf("ドアを{開く|ひら|開く}と") == "ドアを開くと" and sf("{行く|い|行く}ことにしました") == "行くことにしました"
+   and sf("{行く|い|行く}つもり") == "行くつもり" and sf("[食べる|た]。") == "食べる。", "dạng từ điển đứng trước trợ từ / こと / つもり / 。 → giữ")
+ok(ai._fix_jp("{落|お}として", set(), set(), []) == "[落|お]として" and ai._fix_jp("[学生|がくせい|学生]", {"学生"}, set(), []) == "{学生|がくせい|学生}",
+   "nhầm ngoặc: {落|お} → [落|お], [学生|がくせい|学生] → {学生|…}")
+ok(paper.surface(ai._fix_jp("この[葉|はっ]ぱの[色|いろ]", set(), set(), [])) == "この葉っぱの色"
+   and ai._fix_jp("この[葉|はっ]ぱ", set(), set(), []) == "この[葉|は]っぱ" and ai._fix_jp("[学|がっ][校|こう]", set(), set(), []) == "[学|がっ][校|こう]",
+   "[葉|はっ]ぱ → [葉|は]っぱ (chữ hiện \"葉ぱ\"); [学|がっ][校|こう] để nguyên")
+def base_err(t, k):
+    raw = {"bai": [{"loai": "tin_lang", "tieu_de": "[村|むら]", "doan": [t]}], "cau_hoi": [], "chinh_ta": [], "mau_cau": [], "tu_moi": []}
+    return any("từ gốc là" in e for e in ai.check(raw, {"trinh_do": "N4", "tu_vung": [[k, "", "x", "deck"]], "ngu_phap": []}, {"short": True}).errors)
+ok(base_err("「{召|めし|召し上がる}[上|うえ]がってください」", "召し上がる") and base_err("[紙|かみ]が{落|お|落とす}ちました。", "落とす"),
+   "từ gốc không khớp chữ viết tiếp (召上がって, 落ちました ↔ 落とす) → báo lỗi cho Gemini sửa")
+ok(not any(base_err(t, k) for t, k in [("{見|み|見つめる}つめていました。", "見つめる"), ("{持|も|持ってくる}って[行|い]きました。", "持ってくる"),
+                                        ("{案内|あんない|案内する}をしました。", "案内する"), ("{優|やさ|優しい}しさ。", "優しい"),
+                                        ("{始|はじ|始まる}まりました。", "始まる"), ("{召し|めし|召し上がる}[上|あ]がって。", "召し上がる")]),
+   "chia đúng (見つめて, 持って, 案内を, 優しさ, 始まり, 召し上がって) → không báo")
 ok(not any("không khớp phần kana" in e for e in ai.check({"bai": [{"loai": "tin_lang", "tieu_de": "[村|むら]",
                                                                   "doan": [ai._fix_jp("よろしく[お願|ねが]いします。", set(), set(), [])]}]},
                                                         {"tu_vung": []}, {"short": True}).errors), "sau khi tự sửa: hết lỗi")
