@@ -46,7 +46,8 @@ TONE_TEXT = {
     "phieu_luu": "Phiêu lưu: nhân vật rời quán đi tìm / đi tới chỗ mới trong làng, gặp thử thách nhỏ, tự xoay xở.",
 }
 ARC_LEN = (6, 8)            # số kỳ của một đợt
-MAX_CALLS = 9               # trần số lượt gọi cho phần truyện của một số báo (kể cả đổi model khi hết hạn mức / bận)
+MAX_CALLS = 6               # trần số lượt gọi THÀNH CÔNG cho phần truyện của một số báo (mạch, nháp ×2, biên tập, viết lại)
+MAX_REQUESTS = 24           # trần tổng số yêu cầu (kể cả lượt lỗi bận / hết hạn mức khi đổi model) — chặn chạy quá lâu
 STORY_FILE = "truyen.json"
 ARC_FILE = "truyen_mach.json"
 FEEDBACK = ("hay", "nhat")
@@ -545,7 +546,19 @@ def run(job: Any, ky: int, tone: str, season: str) -> dict[str, Any] | None:
         job._note("truyen_dung_lai", ky=ky)
         return cached
     start = job.c.calls
-    left = lambda: MAX_CALLS - (job.c.calls - start)       # noqa: E731
+    done = [0]               # lượt gọi THÀNH CÔNG (lượt lỗi bận / hết hạn mức không tốn hạn mức của Gemini)
+
+    def left() -> int:
+        if job.c.calls - start >= MAX_REQUESTS:
+            return 0
+        return MAX_CALLS - done[0]
+
+    _gen0 = job._gen
+
+    def gen(*a: Any, **k: Any) -> Any:
+        r = _gen0(*a, **k)
+        done[0] += 1
+        return r
     system = ("Bạn là nhà văn viết truyện dài kỳ %s dễ đọc cho người Việt học %s trình độ %s. Viết hay như một truyện thật, "
               "không như bài tập." % ("tiếng Anh" if lang == "en" else "tiếng Nhật",
                                       "tiếng Anh" if lang == "en" else "tiếng Nhật", level))
@@ -553,7 +566,7 @@ def run(job: Any, ky: int, tone: str, season: str) -> dict[str, Any] | None:
     if arc_step(arc, ky) is None or (arc and arc.get("giong") != tone):
         job.progress("Gemini đang lập mạch truyện…")
         try:
-            raw = job._gen(system, arc_prompt(lang, tone, story, ky, season), ARC_SCHEMA, 0.9, thinking="low")
+            raw = gen(system, arc_prompt(lang, tone, story, ky, season), ARC_SCHEMA, 0.9, thinking="low")
             buoc = _strs(raw.get("buoc") if isinstance(raw, dict) else None, ARC_LEN[1], 300)
             if len(buoc) >= 3:
                 arc = {"ten": _str(raw.get("ten"), 120), "muc_tieu": _str(raw.get("muc_tieu"), 300),
@@ -579,7 +592,7 @@ def run(job: Any, ky: int, tone: str, season: str) -> dict[str, Any] | None:
         if left() <= 1:
             break
         try:
-            draft = job._gen(system, prompt if not problems else writer_prompt(lang, job.scope, ky, tone, arc, story,
+            draft = gen(system, prompt if not problems else writer_prompt(lang, job.scope, ky, tone, arc, story,
                                                                                season, problems),
                              STORY_SCHEMA, 0.9, thinking="low")
         except Exception as e:      # noqa: BLE001
@@ -601,7 +614,7 @@ def run(job: Any, ky: int, tone: str, season: str) -> dict[str, Any] | None:
     if left() > 1:
         job.progress("Biên tập đang đọc kỳ %d…" % ky)
         try:
-            edit = job._gen("Bạn là biên tập viên truyện khó tính nhưng công bằng.",
+            edit = gen("Bạn là biên tập viên truyện khó tính nhưng công bằng.",
                             editor_prompt(lang, job.scope, best, story, ky, warns), EDIT_SCHEMA, 0.3, thinking="low") or {}
             job._note("bien_tap", diem=edit.get("diem"), loi=(edit.get("loi") or [])[:8])
         except Exception as e:      # noqa: BLE001
@@ -614,7 +627,7 @@ def run(job: Any, ky: int, tone: str, season: str) -> dict[str, Any] | None:
     if (low or edit.get("loi")) and left() >= 1:
         job.progress("Gemini đang viết lại kỳ %d theo góp ý…" % ky)
         try:
-            again = job._gen(system, rewrite_prompt(prompt, best, edit), STORY_SCHEMA, 0.8, thinking="low")
+            again = gen(system, rewrite_prompt(prompt, best, edit), STORY_SCHEMA, 0.8, thinking="low")
             errs2, _w2 = check_story(again, lang, level, job.check_kanji if lang == "ja" else None)
             job._note("viet_lai_truyen", tieu_chi_thap=low, loi=errs2[:12])
             if not errs2:

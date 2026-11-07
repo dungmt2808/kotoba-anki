@@ -3177,6 +3177,11 @@ def report_info(client: Any = None) -> dict[str, Any]:
                                 f"{_ai_opts(cfg)['audio']} · lỗi hôm nay: {st.get('error') or 'không'}"))
         else:
             rows.append(("Báo", {"claude": "Claude Code (kotoba_daily)", "": "chưa nối"}.get(src, src)))
+        # 1.23: nguồn đã xác nhận, báo đang chờ "Bắt đầu viết", chế độ truyện
+        o = _ai_opts(cfg)
+        rows.append(("Báo · xác nhận", "nguồn đã xác nhận %s · chờ Bắt đầu viết: %s · truyện %s / giọng %s" % (
+            json.dumps(confirmed_sources(cfg), ensure_ascii=False), ", ".join(ai_waiting(cfg)) or "không",
+            o["story"], o["tone"])))
         if os.path.isdir(AI_DIR_EN):        # 1.19: báo tiếng Anh
             st = ai.load_status(AI_DIR_EN)
             rows.append(("Báo tiếng Anh", f"Gemini · model {st.get('model') or '?'} · {_ai_opts(cfg)['level_en']} · "
