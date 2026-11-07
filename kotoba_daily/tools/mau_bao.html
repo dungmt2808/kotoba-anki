@@ -59,6 +59,11 @@ body.nofuri rt { visibility: hidden; }
 button { font: inherit; font-size: 14px; background: var(--paper); color: var(--ink); border: 3px solid var(--edge); box-shadow: 3px 3px 0 var(--edge); padding: 4px 12px; cursor: pointer; }
 button:active { transform: translate(3px, 3px); box-shadow: none; }
 button.play { padding: 0 8px; font-size: 12px; margin-left: 6px; vertical-align: middle; }
+/* 2.3: bản dịch tiếng Việt ẩn sẵn — bấm "Dịch" cuối đoạn, hoặc "Hiện bản dịch" cho cả số */
+.art p.vi { display: none; font-family: var(--ui); font-size: 15px; line-height: 1.6; margin: -6px 0 14px; padding: 4px 10px;
+  border-left: 3px solid var(--kaki); background: color-mix(in srgb, var(--kaki) 12%, transparent); }
+.art p.vi.open, body.showdich .art p.vi { display: block; }
+button.dbtn.on, body.showdich button.dbtn, #dich.on { background: var(--kaki); color: #000; }
 .practice { background: var(--leaf); }
 .q { margin: 0 0 20px; }
 .q .hoi { font-family: var(--ja); font-size: 17px; line-height: 2.3; margin: 0 0 6px; }
@@ -92,6 +97,7 @@ button.play { padding: 0 8px; font-size: 12px; margin-left: 6px; vertical-align:
   <div class="bar">
     <div class="row">
       <button id="furi" type="button">Ẩn furigana</button>
+      <button id="dich" type="button" hidden>Hiện bản dịch</button>
       <span class="score" id="score"></span>
     </div>
     <div class="info" id="info" aria-live="polite">Bấm vào từ gạch chân để tra nghĩa. Gạch liền là từ đã học, gạch chấm là từ mới.</div>
@@ -166,11 +172,13 @@ const DATA = /*__DATA__*/null;
   const A = DATA.audio || {};
 
   const bai = $("bai");
+  let hasDich = false;
   B.bai.forEach((b, i) => {
     const sec = el("article", "card art"); sec.lang = "ja";
     if (b.loai === "truyen" && b.ky) { const k = el("div", "kind", "Truyện dài kỳ, kỳ " + b.ky); k.lang = "vi"; sec.appendChild(k); }
     const h = el("h2"); h.appendChild(md(b.tieu_de, true)); sec.appendChild(h);
     if (b.ky_truoc) { const k = el("p", "prev", "Kỳ trước: " + b.ky_truoc); k.lang = "vi"; sec.appendChild(k); }
+    const hasD = Array.isArray(b.dich) && b.dich.length === b.doan.length;
     b.doan.forEach((p, j) => {
       const para = el("p"); para.appendChild(md(p, true));
       const src = A.bai && A.bai[i] && A.bai[i][j];
@@ -179,6 +187,15 @@ const DATA = /*__DATA__*/null;
         btn.addEventListener("click", () => play(src)); para.appendChild(btn);
       }
       sec.appendChild(para);
+      if (hasD && b.dich[j]) {
+        const tr = el("p", "vi", b.dich[j]); tr.lang = "vi";
+        const db = el("button", "play dbtn", "Dịch"); db.type = "button"; db.title = "Xem / ẩn bản dịch đoạn này";
+        db.setAttribute("aria-expanded", "false");
+        db.addEventListener("click", () => {
+          const open = tr.classList.toggle("open"); db.classList.toggle("on", open); db.setAttribute("aria-expanded", String(open));
+        });
+        para.appendChild(db); sec.appendChild(tr); hasDich = true;
+      }
     });
     if (b.nguon) {
       const s = el("p", "src"); s.lang = "vi"; s.appendChild(document.createTextNode("Viết lại từ tin: "));
@@ -209,6 +226,26 @@ const DATA = /*__DATA__*/null;
     document.body.classList.toggle("nofuri");
     e.currentTarget.textContent = document.body.classList.contains("nofuri") ? "Hiện furigana" : "Ẩn furigana";
   });
+
+  // 2.3: "Hiện bản dịch" cho cả số (nhớ lựa chọn trên máy này)
+  const dBtn = $("dich");
+  function setDich(on) {
+    document.body.classList.toggle("showdich", on);
+    dBtn.classList.toggle("on", on); dBtn.textContent = on ? "Ẩn bản dịch" : "Hiện bản dịch";
+    try { localStorage.setItem("hatake-dich", on ? "1" : "0"); } catch (e) { /* trình duyệt chặn lưu: bỏ qua */ }
+  }
+  if (hasDich) {
+    dBtn.hidden = false;
+    let on = false;
+    try { on = localStorage.getItem("hatake-dich") === "1"; } catch (e) { on = false; }
+    setDich(on);
+    dBtn.addEventListener("click", () => {
+      document.querySelectorAll(".art p.vi.open").forEach((x) => x.classList.remove("open"));
+      document.querySelectorAll("button.dbtn.on").forEach((x) => { x.classList.remove("on"); x.setAttribute("aria-expanded", "false"); });
+      setDich(!document.body.classList.contains("showdich"));
+    });
+    info.textContent = "Bấm vào từ gạch chân để tra nghĩa. Gạch liền là từ đã học, gạch chấm là từ mới. Bấm \"Dịch\" cuối đoạn để xem bản dịch tiếng Việt.";
+  }
 
   const qBox = $("cauhoi"); const qDone = {};
   (B.cau_hoi || []).forEach((q, i) => {

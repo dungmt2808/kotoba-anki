@@ -8,9 +8,15 @@
 !README.md
 !/PHAT_TRIEN.md
 !/CLAUDE.md
+!/KE_HOACH_*.md
 !/docs/
 !/tests/
 
 # không đưa file sinh ra khi chạy test
 __pycache__/
 *.pyc
+
+# mã nguồn add-on: không đưa dữ liệu người dùng / cấu hình máy
+/kotoba_batake/meta.json
+/kotoba_batake/user_files/*
+!/kotoba_batake/user_files/README.txt

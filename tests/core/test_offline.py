@@ -167,7 +167,7 @@ class FakeGemini(ai.Gemini):
 
 fg = FakeGemini()
 jobdir = tempfile.mkdtemp()
-res = ai.Job(fg, jobdir, "2026-11-03", scope, {"max_new": 3, "ky": 1}).run()
+res = ai.Job(fg, jobdir, "2026-11-03", scope, {"max_new": 3, "ky": 1, "story": "tiet_kiem"}).run()
 steps = [x["buoc"] for x in ai.last_log(jobdir, "2026-11-03")["buoc"]]
 ok(res.get("ok"), "bản đầu hỏng → viết lại → lưu được số báo (%s)" % res.get("error", "ok"))
 ok("viet_lai" in steps and fg.prompts[1] == fg.prompts[0], "lượt 2 dùng lại đúng lời nhắc viết (không phải lời nhắc sửa): %s" % steps)
@@ -190,7 +190,7 @@ class FakeRepair(FakeGemini):
 
 fr = FakeRepair()
 jd2 = tempfile.mkdtemp()
-res2 = ai.Job(fr, jd2, "2026-11-03", scope, {"max_new": 3, "ky": 1}).run()
+res2 = ai.Job(fr, jd2, "2026-11-03", scope, {"max_new": 3, "ky": 1, "story": "tiet_kiem"}).run()
 steps2 = [x["buoc"] for x in ai.last_log(jd2, "2026-11-03")["buoc"]]
 ok(res2.get("ok") and "sua_hong" in steps2, "bản sửa hỏng bị bỏ qua, sửa lần 2 xong → lưu được số (%s)" % steps2)
 

@@ -46,6 +46,8 @@ def _request(self, method, path, body=None, timeout=ai.TEXT_TIMEOUT, model=""):
                 for p in (c.get("content") or {}).get("parts", []):
                     if isinstance(p.get("text"), str):
                         (think if p.get("thought") else text).append(p["text"])
+    if fr is None:      # 1.23: proxy cắt luồng giữa chừng (không có finishReason) → coi như máy chủ bận, add-on tự thử lại
+        raise ai.AIError("Luồng trả lời bị ngắt giữa chừng (%d ký tự)." % len("".join(text)), "busy")
     parts = ([{"text": "".join(think), "thought": True}] if think else []) + ([{"text": "".join(text)}] if text else [])
     res = {"candidates": [{"content": {"parts": parts, "role": "model"}, "finishReason": fr}], "usageMetadata": usage,
            "modelVersion": mv}

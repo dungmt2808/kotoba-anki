@@ -124,9 +124,12 @@ result = 1`);
   await page.shot(SHOTS + '/26_on_tap_trung.png');
   await page.eval(W('document.getElementById("kb-rv-garden").click(); return 1;')); await sleep(800);
   ok(await page.eval(W('return getComputedStyle(document.getElementById("kb-field")).display !== "none";')), 'nút “Hiện vườn” trên bảng ôn: hiện lại sân + ruộng');
-  await page.eval(W('pycmd("ui:preset:night"); return 1;')); await sleep(1000);
-  ok(await page.eval(W('const d = document.getElementById("kb-card").contentDocument; return d.body.classList.contains("nightMode") && document.getElementById("kb-app").classList.contains("kb-ui-th-night");')),
-    '“Ôn buổi tối”: bảng ôn tối, thẻ có lớp nightMode');
+  // 1.23: bỏ kiểu “Ôn buổi tối” / màu bảng “Đêm vườn” — config cũ "theme": "night" về Vàng vườn
+  await page.eval(W('pycmd("ui:set:" + JSON.stringify({ theme: "night", review: { yard: "dim", field: "dim" } })); return 1;')); await sleep(1000);
+  ok(await page.eval(W('const d = document.getElementById("kb-card").contentDocument; return !d.body.classList.contains("kb-night") && !document.getElementById("kb-app").classList.contains("kb-ui-th-night") && document.getElementById("kb-app").classList.contains("kb-ui-th-garden") && GardenUI.PRESETS_N === undefined;')),
+    '1.23: config cũ “Đêm vườn” → bảng ôn Vàng vườn, thẻ không bị phủ tối');
+  ok(await page.eval(W('return !Array.from(document.querySelectorAll(".kb-ui-preset")).some((b) => /buổi tối/.test(b.textContent));')),
+    '1.23: không còn kiểu “Ôn buổi tối”');
   await page.shot(SHOTS + '/27_on_toi.png');
 
   console.log('== hiệu ứng thành tích (ôn hết thẻ của deck A bằng Dễ)');

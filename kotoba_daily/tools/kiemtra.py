@@ -2,6 +2,7 @@
 """Kiểm tra một số báo trước khi dùng.
 
 Chạy:  python3 tools/kiemtra.py bao/2026-11-02/bao.json
+       python3 tools/kiemtra.py --chi-dich bao/2026-11-01/bao.json   (chỉ kiểm bản dịch, dùng khi thêm dịch cho số cũ)
 
 In "OK" và thoát mã 0 nếu không có lỗi. Có lỗi thì in từng dòng "LỖI ..." và thoát mã 1.
 Dòng "CẢNH BÁO ..." không chặn, nhưng nên xem.
@@ -17,6 +18,13 @@ import kb_markup as M  # noqa: E402
 BASE = Path(__file__).resolve().parent.parent
 LOAI = {"tin_lang", "truyen", "thong_bao", "cot", "tin_that"}
 LENGTH = {"N5": (150, 400), "N4": (280, 700), "N3": (450, 1000), "N2": (650, 1400), "N1": (650, 1600)}
+# bản 2.3: bản dịch tiếng Việt từng đoạn ("dich"). Add-on ことば畑 1.23 chỉ hiện nút "Dịch" khi bản dịch đúng số đoạn và
+# không có chữ Nhật / Hán / Hàn hay dấu đánh dấu — kiểm cùng luật đó.
+JA_RE = re.compile(r"[\u3040-\u30ff\u3400-\u9fff\uf900-\ufaff\uac00-\ud7af]+")
+VI_MARK = re.compile(r"[àáảãạăằắẳẵặâầấẩẫậèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵđ]", re.I)
+NOTE_RE = re.compile(r"[(（][^()（）]{0,80}?(?:dùng|dạng|nghĩa là|ghi chú|lưu ý|tức là|kính ngữ|thân mật|lịch sự)"
+                     r"[^()（）]{0,80}[)）]", re.I)
+NAMES = "Lin, Hana, Stack-chan, trưởng làng, quán Kotoba, làng Kotoba, vườn Kotoba"
 
 
 class Report:
@@ -50,7 +58,42 @@ def check_text(rep, where, text, scope, new_words, used):
             rep.err(where, '"%s" không có trong phạm vi đã học; thêm vào tu_moi hoặc đổi thành [..|..]' % k)
 
 
+def check_dich(rep, where, b):
+    """Bản dịch tiếng Việt của một bài: "dich" = danh sách, mỗi đoạn một bản, cùng thứ tự (không dịch tiêu đề)."""
+    doan = b.get("doan") if isinstance(b.get("doan"), list) else []
+    dich = b.get("dich")
+    if dich is None:
+        rep.err(where + ".dich", "cần bản dịch tiếng Việt từng đoạn (%d đoạn) — người học bấm \"Dịch\" mới thấy" % len(doan))
+        return
+    if not isinstance(dich, list) or len(dich) != len(doan):
+        rep.err(where + ".dich", "cần đúng %d bản dịch, mỗi đoạn một bản, cùng thứ tự (đang có %s)"
+                % (len(doan), len(dich) if isinstance(dich, list) else "không phải danh sách"))
+        return
+    for j, (d, p) in enumerate(zip(dich, doan)):
+        w = "%s.dich[%d]" % (where, j)
+        if not is_str(d):
+            rep.err(w, "cần bản dịch của đoạn này")
+            continue
+        if len(d) > 1500:
+            rep.err(w, "bản dịch dài quá (tối đa 1500 ký tự)")
+        ja = JA_RE.findall(d)
+        if ja:
+            rep.err(w, 'có chữ Nhật "%s" — tên riêng viết Latin (%s); câu tiếng Nhật cần giữ (chỗ nhân vật nói nhầm) '
+                       'thì viết romaji trong ngoặc kép' % ("".join(ja)[:12], NAMES))
+        if any(c in d for c in "[]{}|"):
+            rep.err(w, "bản dịch không dùng [ ] { } |")
+        if NOTE_RE.search(d):
+            rep.warn(w, "bỏ ghi chú giải thích trong ngoặc, chỉ dịch")
+        n = len(M.surface(p)) if is_str(p) else 0
+        if n >= 20 and len(d) < 0.6 * n:
+            rep.warn(w, "bản dịch ngắn hơn nhiều so với đoạn gốc (%d / %d ký tự) — dịch đủ ý, đừng tóm tắt" % (len(d), n))
+    if not any(VI_MARK.search(d) for d in dich if is_str(d)):
+        rep.err(where + ".dich", "bản dịch phải là tiếng Việt có dấu")
+
+
 def main(argv):
+    only_dich = "--chi-dich" in argv
+    argv = [a for a in argv if a != "--chi-dich"]
     if len(argv) != 2:
         print(__doc__)
         return 2
@@ -77,6 +120,12 @@ def main(argv):
     if not isinstance(bao, dict):
         print("LỖI bao.json phải là một object")
         return 1
+    if only_dich:
+        bai = bao.get("bai") if isinstance(bao.get("bai"), list) else []
+        for i, b in enumerate(bai):
+            if isinstance(b, dict) and isinstance(b.get("doan"), list) and b["doan"]:
+                check_dich(rep, "bai[%d]" % i, b)
+        return report(rep, "OK (bản dịch %d bài)" % len(bai))
 
     ngay = bao.get("ngay", "")
     if not (isinstance(ngay, str) and re.match(r"^\d{4}-\d{2}-\d{2}$", ngay)):
@@ -150,6 +199,7 @@ def main(argv):
             check_text(rep, "%s.doan[%d]" % (where, j), p, scope, new_words, used)
             if is_str(p):
                 total_len += len(M.surface(p))
+        check_dich(rep, where, b)
 
     lo, hi = LENGTH.get(pv.get("trinh_do", "N4"), (280, 700))
     if short:
@@ -214,6 +264,10 @@ def main(argv):
     if not is_str(bao.get("tom_tat")):
         rep.err("tom_tat", "cần 1–2 câu tóm tắt tiếng Việt")
 
+    return report(rep, "OK (%d ký tự, %d từ đánh dấu)" % (total_len, len(used)))
+
+
+def report(rep, ok_line):
     for w in rep.warnings:
         print("CẢNH BÁO %s" % w)
     for e in rep.errors:
@@ -221,7 +275,7 @@ def main(argv):
     if rep.errors:
         print("Có %d lỗi." % len(rep.errors))
         return 1
-    print("OK (%d ký tự, %d từ đánh dấu)" % (total_len, len(used)))
+    print(ok_line)
     return 0
 
 

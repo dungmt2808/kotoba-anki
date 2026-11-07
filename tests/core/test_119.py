@@ -216,7 +216,7 @@ class Fake(ai.Gemini):
 
 f = Fake()
 d = tempfile.mkdtemp()
-res = ai.Job(f, d, "2026-11-04", SCOPE2, {"max_new": 3}).run()
+res = ai.Job(f, d, "2026-11-04", SCOPE2, {"max_new": 3, "story": "tiet_kiem"}).run()
 steps = [x["buoc"] for x in ai.last_log(d, "2026-11-04")["buoc"]]
 ok(res.get("ok") and res.get("lang") == "en", "viết → sửa lỗi tiếng Việt → soát → lưu (%s)" % (res.get("error") or steps))
 ok("Bạn là người bản xứ" in f.prompts[0][0] and "The Garden Gazette" in f.prompts[0][0] and "A2" in f.prompts[0][0],
@@ -239,7 +239,7 @@ swap["chinh_ta"] = [{"cau": "Linh and Hana went to the market.", "them_dap_an": 
 swap["bai"] = [{k: v for k, v in b.items() if v is not None} for b in swap["bai"]]
 f2 = Fake(review=swap)
 d2 = tempfile.mkdtemp()
-res2 = ai.Job(f2, d2, "2026-11-04", SCOPE2, {"max_new": 3}).run()
+res2 = ai.Job(f2, d2, "2026-11-04", SCOPE2, {"max_new": 3, "story": "tiet_kiem"}).run()
 steps2 = [x["buoc"] for x in ai.last_log(d2, "2026-11-04")["buoc"]]
 saved2 = json.load(open(os.path.join(d2, "bao", "2026-11-04", "bao.json"), encoding="utf-8"))
 ok(res2.get("ok") and ("soat_mat_tra_tu" in steps2 or "dung_ban_truoc_soat" in steps2) and
@@ -249,7 +249,7 @@ log = "\n".join(ai.log_summary(ai.last_log(d, "2026-11-04")))
 ok("Soát lần 2" in log and "✓ Xong" in log, "nhật ký cho tab Nguồn báo")
 g2 = copy.deepcopy(good)
 g2["bai"][1]["ky"], g2["bai"][1]["ky_truoc"] = 2, "Linh bắt đầu làm ở quán; có một vị khách buồn bước vào."
-res3 = ai.Job(Fake(good_issue=g2, first_issue=g2), d, "2026-11-05", SCOPE2, {"max_new": 3}).run()
+res3 = ai.Job(Fake(good_issue=g2, first_issue=g2), d, "2026-11-05", SCOPE2, {"max_new": 3, "story": "tiet_kiem"}).run()
 ok(res3.get("so") == 2 and ai.numbering(d, "2026-11-06") == (3, 3), "đánh số riêng cho thư mục báo tiếng Anh")
 
 print("== đọc báo tiếng Anh (paper_core)")

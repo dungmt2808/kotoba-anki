@@ -1,5 +1,5 @@
 #!/bin/bash
-# run_all.sh [ADDON] — test offline (không mạng, không Qt). Không đưa ADDON thì giải nén gói ở gốc repo.
+# run_all.sh [ADDON] — test offline (không mạng, không Qt). Không đưa ADDON thì dùng mã nguồn kotoba_batake/ ở gốc repo (từ 1.23).
 #   ANKI_PY=<python có gói anki> để chạy cả test_dict.py (collection Anki thật).
 #   OLD_ADDON=<thư mục add-on bản 1.15> để test_116.py chạy cả vòng "máy khác còn bản cũ".
 #   OLD116=<thư mục add-on bản 1.16> để test_117.py chạy mã 1.16 thật lưu đè cấu hình trường.
@@ -9,7 +9,7 @@
 #   OLD120=<thư mục add-on bản 1.20.0> để test_121.py chạy mã 1.20.0 thật lưu ví / báo / cấu hình / nhật ký (khoá album còn nguyên).
 #   OLD121=<thư mục add-on bản 1.21.0> để test_122.py chạy mã 1.21.0 thật lưu ví / đặt luật / chế tác (giống tự vẽ còn nguyên).
 HERE=$(cd "$(dirname "$0")" && pwd)
-ADDON=${1:-$("$HERE/tools/unpack.sh")}
+ADDON=${1:-$HERE/../kotoba_batake}
 FAIL=0
 echo "== core/test_offline.py"; python3 "$HERE/core/test_offline.py" "$ADDON" || FAIL=1
 echo "== core/test_more.py"
@@ -26,6 +26,12 @@ OUT=$(python3 "$HERE/core/test_1225.py" "$ADDON" 2>&1); RC=$?
 echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
 echo "== core/test_1226.py"
 OUT=$(python3 "$HERE/core/test_1226.py" "$ADDON" 2>&1); RC=$?
+echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
+echo "== core/test_123.py"
+OUT=$(python3 "$HERE/core/test_123.py" "$ADDON" 2>&1); RC=$?
+echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
+echo "== core/test_kit.py (bộ kotoba_daily)"
+OUT=$(python3 "$HERE/core/test_kit.py" "$ADDON" 2>&1); RC=$?
 echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
 if "${ANKI_PY:-python3}" -c "import anki.collection" 2>/dev/null; then
   echo "== core/test_dict.py"

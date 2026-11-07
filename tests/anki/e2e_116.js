@@ -59,16 +59,7 @@ res = core._settle_quests(d)
 result = [nxt and nxt["name"], res["chest"]["id"]]`);
   ok(chest[0] === 'Hươu Nara' && chest[1] === 'shika', 'đủ 6 món cũ → rương kế tiếp tặng “Hươu Nara” (' + chest.join(', ') + ')');
 
-  console.log('== giao diện ôn “Đêm vườn”');
-  await page.eval(W('pycmd("ui:preset:night"); return 1;')); await sleep(900);
-  await page.eval(W('document.getElementById("kb-review").click(); return 1;')); await sleep(2200);
-  const night = await page.eval(W(`const p = getComputedStyle(document.getElementById("kb-panel")), b = getComputedStyle(document.getElementById("kb-show"));
-    const f = document.getElementById("kb-card").contentDocument; return { bg: p.backgroundColor, img: p.backgroundImage.length, btn: b.backgroundColor, card: f && getComputedStyle(f.body).backgroundColor, text: f && getComputedStyle(f.body).color };`));
-  ok(night.bg === 'rgb(35, 42, 92)' && night.img > 200, 'bảng ôn nền xanh đêm + sao (không còn xám đen) — ' + night.bg);
-  ok(night.btn === 'rgb(255, 200, 87)', 'nút Lật thẻ vàng đèn lồng (' + night.btn + ')');
-  ok(night.card === 'rgb(38, 45, 94)' && night.text === 'rgb(244, 236, 216)', 'thẻ trong khung: nền xanh đêm, chữ kem (' + night.card + ' / ' + night.text + ')');
-  await page.shot(SHOTS + '/42_on_dem_vuon.png');
-  await page.eval(W('document.getElementById("kb-stop").click(); pycmd("ui:preset:full"); return 1;')); await sleep(900);
+  // 1.23: bỏ giao diện ôn “Đêm vườn” (người dùng thấy không đẹp) — kiểm ở e2e_114.js / e2e_123.js
 
   // bảng chọn Trò chơi: 1.17 trở lại kiểu 1.15 + drop-down → kiểm ở e2e_117.js
 

@@ -40,6 +40,10 @@ Xây nhà từng bước, từ bãi đất trống tới gác mái có đèn l�
 |---|---|
 | ![Nhà & Cửa hàng, tab Trang trí sân](docs/anh/03_nha_trang_tri.png) | ![Trong nhà: kotatsu, bể cá, kệ sách, đèn andon, mèo ngủ](docs/anh/16_trong_nha.png) |
 
+### Ngắm cảnh cả cửa sổ
+
+Bấm vào ngôi nhà, nút **Ngắm** hoặc phím **V**: cả cửa sổ chỉ còn một cảnh, phóng to nét căng (pixel không nhoè). Đổi cảnh bằng ◂ ▸, thú nuôi vẫn đi lại, khách vẫn ghé, trời theo giờ thật. Bấm **Sắp xếp đồ** để di chuyển, cất hay bày đồ từ kho ngay trên khung lớn. Bật thêm F11 là Anki thành một khung ảnh động. Muốn dải cảnh ở màn chính to hơn: ⚙ → Giao diện → Màn chính → Cỡ cảnh **Lớn**.
+
 ### 6 vùng mới và vùng tự tạo
 
 Ngoài sân nhà còn 6 vùng mở bằng xu: **Bãi biển, Đền trên núi, Phố lễ hội, Rừng tre, Suối nước nóng, Ga làng quê**. Mỗi vùng có cảnh riêng, công trình riêng và 6 món đồ riêng (hải đăng, cáo thần, quầy vớt cá vàng, gấu trúc, khỉ tắm suối, máy bán hàng…). Muốn thêm nữa thì **tự tạo vùng**: tự vẽ công trình và cảnh nền, chọn nền đất, màu đồi, đặt tên, rồi bày đồ như ở sân.
@@ -86,7 +90,7 @@ Hết tháng, nhật ký tự đóng thành **một cuốn** trên kệ sách: �
 
 ### Báo mỗi sáng và chép chính tả
 
-Mỗi sáng có một số báo tiếng Nhật 畑新聞 (hoặc báo tiếng Anh *The Garden Gazette*) viết bằng từ bạn đang học. Báo có furigana, bấm vào từ để tra nghĩa, có giọng đọc, câu hỏi đọc hiểu và truyện dài kỳ. Báo do **Gemini** viết bằng khoá miễn phí của chính bạn (xem [cách lấy khoá](#báo-mỗi-sáng-bằng-gemini-miễn-phí)).
+Mỗi sáng có một số báo tiếng Nhật 畑新聞 (hoặc báo tiếng Anh *The Garden Gazette*) viết bằng từ trong các deck bạn chọn. Báo có furigana, bấm vào từ để tra nghĩa, có giọng đọc, câu hỏi đọc hiểu và **truyện dài kỳ** (Gemini lập mạch truyện, viết, rồi một "biên tập viên" chấm điểm và bắt viết lại nếu nhạt). Mỗi đoạn có **bản dịch tiếng Việt ẩn sẵn**: kẹt câu nào thì bấm **Dịch** để kiểm tra mình hiểu đúng chưa. Dưới truyện có nút **Kỳ này hay / Nhạt** để Gemini viết kỳ sau hợp ý bạn. Báo do **Gemini** viết bằng khoá miễn phí của chính bạn (xem [cách lấy khoá](#báo-mỗi-sáng-bằng-gemini-miễn-phí)).
 
 **Chép chính tả** chạy với mọi deck: nghe câu ví dụ (hoặc từ) rồi gõ lại. Câu nào không có audio thì dùng giọng Gemini hoặc giọng tiếng Nhật của máy.
 
@@ -142,7 +146,7 @@ Phím tắt trong vườn: **R** Tưới ngay · **N** Nhà · **T** Trò chơi 
 **Riêng tư:**
 
 - Khoá chỉ lưu trên máy này. Khoá không đồng bộ AnkiWeb và không nằm trong báo cáo lỗi.
-- Gemini nhận danh sách từ bạn đang học, nội dung báo, câu cần giọng đọc, và đoạn luyện viết nếu bạn nhờ sửa.
+- Gemini nhận danh sách từ bạn đang học, nội dung báo và truyện các kỳ trước, câu cần giọng đọc, dòng nhận xét truyện bạn gõ, và đoạn luyện viết nếu bạn nhờ sửa.
 - Với gói miễn phí, Google có thể dùng dữ liệu đó để cải thiện sản phẩm.
 
 Không dán khoá thì add-on **không gửi gì lên mạng**; vườn, trò chơi, lịch và chép chính tả vẫn chạy đầy đủ.
@@ -154,6 +158,8 @@ Cách này dành cho số ít người đã dùng [Claude Code](https://claude.c
 1. Chép thư mục [`kotoba_daily/`](kotoba_daily/) về máy và làm theo [`kotoba_daily/HUONG_DAN.md`](kotoba_daily/HUONG_DAN.md). Cần Claude Code, Python 3 và PDF giáo trình của bạn.
 2. Trong Anki: **Tools → Add-ons → ことば畑 → Config**, đặt `"bao_dir": "<đường dẫn tới kotoba_daily>"`.
 3. Mở lại vườn. Tab **Nguồn báo** có thêm thẻ **Claude Code** để chọn thư mục và đổi qua lại với Gemini.
+
+Từ bộ `kotoba_daily` 2.3, số báo Claude Code viết cũng có **bản dịch tiếng Việt ẩn sẵn** từng đoạn như báo Gemini. Đang dùng bộ cũ thì chép đè `tools/`, `prompts/`, `vi_du/`, `HUONG_DAN.md` (giữ nguyên dữ liệu của bạn); số cũ thêm bản dịch bằng `prompts/them_ban_dich.md`.
 
 Để `bao_dir` trống (mặc định) thì thẻ này không hiện. Chi tiết từng mục cấu hình nằm ở trang Config của add-on.
 
@@ -188,4 +194,4 @@ Vào **Tools → ことば畑 · Báo lỗi**, ghi vài dòng ở mục *Mô t�
 - Tài liệu phát triển (kiến trúc, dữ liệu, luật chơi, quyết định đã chốt, lịch sử phiên bản): [`PHAT_TRIEN.md`](PHAT_TRIEN.md).
 - Bộ test (offline, Gemini thật, giao diện trong Anki thật trên nhiều bản Anki): [`tests/README.md`](tests/README.md).
 - Ảnh và video trên trang này làm lại được bằng `tests/anki/readme_media.js` và `tests/tools/make_media.sh`.
-- Mã nguồn add-on nằm trong file `kotoba_batake.ankiaddon` (file zip).
+- Mã nguồn add-on nằm ở thư mục [`kotoba_batake/`](kotoba_batake/); file cài đặt `kotoba_batake.ankiaddon` đóng gói từ thư mục đó.

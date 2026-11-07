@@ -9,6 +9,11 @@
     "[昨日|きのう]の[夜|よる]、[村|むら]の{公民館|こうみんかん|公民館}で「ピクセル[絵|え]の{発表会|はっぴょうかい|発表会}」がありました。スタックちゃんは[前|まえ]から{村長|そんちょう|村長}に「ぼくにも{発表|はっぴょう|発表する}させていただけませんか」とお[願|ねが]いしていました。",
     "[会場|かいじょう]は30{名|めい|〜名}の{お客様|おきゃくさま|お客様}で{満席|まんせき|満席}になりました。スタックちゃんは[自分|じぶん]で[作|つく]った[絵|え]を[見|み]せて、「[少|すこ]し{自慢|じまん|自慢する}させてください」と[言|い]いました。",
     "{村長|そんちょう|村長}は「たくさんの{お客様|おきゃくさま|お客様}がお[越|こ]しになって、うれしかったです」と[話|はな]していました。"
+   ],
+   "dich": [
+    "Tối qua, ở nhà văn hoá của làng có \"buổi trình bày tranh pixel\". Từ trước đó, Stack-chan đã xin trưởng làng: \"Cho cháu cũng được trình bày, có được không ạ?\"",
+    "Hội trường kín chỗ với 30 vị khách. Stack-chan cho mọi người xem bức tranh tự vẽ và nói: \"Cho cháu khoe một chút nhé.\"",
+    "Trưởng làng kể: \"Có rất nhiều quý khách đến dự, tôi vui lắm.\""
    ]
   },
   {
@@ -20,6 +25,11 @@
     "リンさんはベトナムから[来|き]ました。[今日|きょう]から[旅館|りょかん]「ことば[屋|や]」で[働|はたら]きます。はなさんは「わからないことは、いつでも{相談|そうだん|相談する}してね」と[言|い]いました。",
     "[夕方|ゆうがた]、[最初|さいしょ]のお[客|きゃく]さんが[来|き]ました。リンさんは[少|すこ]しドキドキしましたが、「お[荷物|にもつ]、お[持|も]ちします」と[言|い]いました。お[客|きゃく]さんはにっこり[笑|わら]いました。",
     "お[客|きゃく]さんを[部屋|へや]までご[案内|あんない]したあと、{フロント||フロント}の[電話|でんわ]が[鳴|な]りました。[出|で]ると、[知|し]らない[男|おとこ]の[人|ひと]の[声|こえ]でした。「すみません、[今夜|こんや]、{泊|と|泊まる}まれますか……」"
+   ],
+   "dich": [
+    "Lin đến từ Việt Nam. Từ hôm nay, cô làm việc ở quán trọ Kotoba. Hana nói: \"Có gì không hiểu thì cứ hỏi chị bất cứ lúc nào nhé.\"",
+    "Chiều tối, vị khách đầu tiên đến. Lin hơi hồi hộp nhưng vẫn nói: \"Để tôi mang hành lý giúp quý khách ạ.\" Vị khách mỉm cười.",
+    "Dẫn khách lên phòng xong thì điện thoại ở quầy lễ tân reo. Lin nhấc máy, đầu dây là giọng một người đàn ông lạ: \"Xin lỗi, tối nay tôi có thể nghỉ lại được không……\""
    ]
   },
   {
@@ -29,6 +39,11 @@
     "◆ [明日|あした]は[雨|あめ]です。[夜|よる]は[寒|さむ]くなりますから、[畑|はたけ]にお[越|こ]しになる[方|かた]は、[傘|かさ]と{コート||コート}をお[持|も]ちください。",
     "◆ [旅館|りょかん]「ことば[屋|や]」から：[今週末|こんしゅうまつ]、2{名|めい|〜名}[様|さま]でお{泊|と|泊まる}まりになると、{夕食|ゆうしょく|夕食}のデザートを[無料|むりょう]でお[作|つく]りします。ご[予約|よやく]は、お[電話|でんわ]ください。",
     "◆ [土曜日|どようび]の[午後|ごご]は、[新|あたら]しいお[風呂|ふろ]の{見学|けんがく|見学する}もできます。{見学|けんがく|見学する}の[方|かた]は、{フロント||フロント}でお[名前|なまえ]を{確|たし|確かめる}かめさせていただきます。"
+   ],
+   "dich": [
+    "◆ Ngày mai trời mưa. Buổi tối sẽ lạnh, nên ai ghé vườn xin mang theo ô và áo khoác.",
+    "◆ Tin từ quán trọ Kotoba: cuối tuần này, quý khách đến nghỉ theo nhóm 2 người sẽ được quán làm miễn phí món tráng miệng cho bữa tối. Xin gọi điện để đặt phòng.",
+    "◆ Chiều thứ Bảy, quý khách cũng có thể tham quan phòng tắm mới. Ai muốn tham quan, xin cho phép chúng tôi xác nhận tên ở quầy lễ tân."
    ]
   },
   {
@@ -36,6 +51,9 @@
    "tieu_de": "スタックちゃんの[一言|ひとこと]",
    "doan": [
     "{発表会|はっぴょうかい|発表会}が[終|お]わって[家|いえ]に[帰|かえ]ったら、お[母|かあ]さんロボットに「[早|はや]く[寝|ね]なさい」と[言|い]われました。でも、まだドキドキして、なかなか[寝|ね]られませんでした。[今日|きょう]は[少|すこ]し[眠|ねむ]いです。"
+   ],
+   "dich": [
+    "Buổi trình bày xong, về đến nhà là tớ bị mẹ robot bảo: \"Đi ngủ sớm đi.\" Nhưng tớ vẫn còn hồi hộp, mãi mà không ngủ được. Hôm nay tớ hơi buồn ngủ."
    ]
   }
  ],
@@ -108,5 +126,5 @@
    "m": "bữa tối"
   }
  ],
- "tom_tat": "StackChan trình bày tranh pixel ở buổi trình diễn của làng. Truyện kỳ 1: Lin bắt đầu làm ở quán trọ ことば屋 và nhận cuộc gọi đầu tiên. Quán có ưu đãi cuối tuần."
+ "tom_tat": "Stack-chan trình bày tranh pixel ở buổi trình diễn của làng. Truyện kỳ 1: Lin bắt đầu làm ở quán trọ ことば屋 và nhận cuộc gọi đầu tiên. Quán có ưu đãi cuối tuần."
 }

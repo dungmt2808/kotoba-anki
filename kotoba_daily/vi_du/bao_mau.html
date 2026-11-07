@@ -59,6 +59,11 @@ body.nofuri rt { visibility: hidden; }
 button { font: inherit; font-size: 14px; background: var(--paper); color: var(--ink); border: 3px solid var(--edge); box-shadow: 3px 3px 0 var(--edge); padding: 4px 12px; cursor: pointer; }
 button:active { transform: translate(3px, 3px); box-shadow: none; }
 button.play { padding: 0 8px; font-size: 12px; margin-left: 6px; vertical-align: middle; }
+/* 2.3: bản dịch tiếng Việt ẩn sẵn — bấm "Dịch" cuối đoạn, hoặc "Hiện bản dịch" cho cả số */
+.art p.vi { display: none; font-family: var(--ui); font-size: 15px; line-height: 1.6; margin: -6px 0 14px; padding: 4px 10px;
+  border-left: 3px solid var(--kaki); background: color-mix(in srgb, var(--kaki) 12%, transparent); }
+.art p.vi.open, body.showdich .art p.vi { display: block; }
+button.dbtn.on, body.showdich button.dbtn, #dich.on { background: var(--kaki); color: #000; }
 .practice { background: var(--leaf); }
 .q { margin: 0 0 20px; }
 .q .hoi { font-family: var(--ja); font-size: 17px; line-height: 2.3; margin: 0 0 6px; }
@@ -92,6 +97,7 @@ button.play { padding: 0 8px; font-size: 12px; margin-left: 6px; vertical-align:
   <div class="bar">
     <div class="row">
       <button id="furi" type="button">Ẩn furigana</button>
+      <button id="dich" type="button" hidden>Hiện bản dịch</button>
       <span class="score" id="score"></span>
     </div>
     <div class="info" id="info" aria-live="polite">Bấm vào từ gạch chân để tra nghĩa. Gạch liền là từ đã học, gạch chấm là từ mới.</div>
@@ -111,7 +117,7 @@ button.play { padding: 0 8px; font-size: 12px; margin-left: 6px; vertical-align:
   </section>
 </main>
 <script>
-const DATA = {"bao": {"ngay": "2026-11-02", "so": 1, "bai": [{"loai": "tin_lang", "tieu_de": "スタックちゃん、{発表会|はっぴょうかい|発表会}で[絵|え]を{発表|はっぴょう|発表する}", "doan": ["[昨日|きのう]の[夜|よる]、[村|むら]の{公民館|こうみんかん|公民館}で「ピクセル[絵|え]の{発表会|はっぴょうかい|発表会}」がありました。スタックちゃんは[前|まえ]から{村長|そんちょう|村長}に「ぼくにも{発表|はっぴょう|発表する}させていただけませんか」とお[願|ねが]いしていました。", "[会場|かいじょう]は30{名|めい|〜名}の{お客様|おきゃくさま|お客様}で{満席|まんせき|満席}になりました。スタックちゃんは[自分|じぶん]で[作|つく]った[絵|え]を[見|み]せて、「[少|すこ]し{自慢|じまん|自慢する}させてください」と[言|い]いました。", "{村長|そんちょう|村長}は「たくさんの{お客様|おきゃくさま|お客様}がお[越|こ]しになって、うれしかったです」と[話|はな]していました。"]}, {"loai": "truyen", "ky": 1, "ky_truoc": "", "tieu_de": "リンさん、ことば[屋|や]で[働|はたら]き[始|はじ]める", "doan": ["リンさんはベトナムから[来|き]ました。[今日|きょう]から[旅館|りょかん]「ことば[屋|や]」で[働|はたら]きます。はなさんは「わからないことは、いつでも{相談|そうだん|相談する}してね」と[言|い]いました。", "[夕方|ゆうがた]、[最初|さいしょ]のお[客|きゃく]さんが[来|き]ました。リンさんは[少|すこ]しドキドキしましたが、「お[荷物|にもつ]、お[持|も]ちします」と[言|い]いました。お[客|きゃく]さんはにっこり[笑|わら]いました。", "お[客|きゃく]さんを[部屋|へや]までご[案内|あんない]したあと、{フロント||フロント}の[電話|でんわ]が[鳴|な]りました。[出|で]ると、[知|し]らない[男|おとこ]の[人|ひと]の[声|こえ]でした。「すみません、[今夜|こんや]、{泊|と|泊まる}まれますか……」"]}, {"loai": "thong_bao", "tieu_de": "お[知|し]らせ", "doan": ["◆ [明日|あした]は[雨|あめ]です。[夜|よる]は[寒|さむ]くなりますから、[畑|はたけ]にお[越|こ]しになる[方|かた]は、[傘|かさ]と{コート||コート}をお[持|も]ちください。", "◆ [旅館|りょかん]「ことば[屋|や]」から：[今週末|こんしゅうまつ]、2{名|めい|〜名}[様|さま]でお{泊|と|泊まる}まりになると、{夕食|ゆうしょく|夕食}のデザートを[無料|むりょう]でお[作|つく]りします。ご[予約|よやく]は、お[電話|でんわ]ください。", "◆ [土曜日|どようび]の[午後|ごご]は、[新|あたら]しいお[風呂|ふろ]の{見学|けんがく|見学する}もできます。{見学|けんがく|見学する}の[方|かた]は、{フロント||フロント}でお[名前|なまえ]を{確|たし|確かめる}かめさせていただきます。"]}, {"loai": "cot", "tieu_de": "スタックちゃんの[一言|ひとこと]", "doan": ["{発表会|はっぴょうかい|発表会}が[終|お]わって[家|いえ]に[帰|かえ]ったら、お[母|かあ]さんロボットに「[早|はや]く[寝|ね]なさい」と[言|い]われました。でも、まだドキドキして、なかなか[寝|ね]られませんでした。[今日|きょう]は[少|すこ]し[眠|ねむ]いです。"]}], "cau_hoi": [{"hoi": "スタックちゃんは{発表会|はっぴょうかい|発表会}で[何|なに]をしましたか。", "chon": ["{村長|そんちょう|村長}の[絵|え]を[見|み]せた", "[自分|じぶん]で[作|つく]った[絵|え]を[見|み]せた", "{お客様|おきゃくさま|お客様}にお[茶|ちゃ]を[出|だ]した"], "dung": 1, "giai_thich": "Đoạn 2: 自分で作った絵を見せて… (StackChan cho mọi người xem tranh tự vẽ)."}, {"hoi": "[明日|あした]、[畑|はたけ]に[行|い]く[人|ひと]は[何|なに]を[持|も]っていきますか。", "chon": ["[傘|かさ]と{コート||コート}", "{保険証|ほけんしょう|保険証}", "ピクセルの[絵|え]"], "dung": 0, "giai_thich": "Mục お知らせ: 傘とコートをお持ちください (mời mang theo ô và áo khoác)."}, {"hoi": "[電話|でんわ]をかけた[人|ひと]は、[何|なに]をしたいですか。", "chon": ["[今夜|こんや]、[旅館|りょかん]に{泊|と|泊まる}まりたい", "リンさんと{相談|そうだん|相談する}したい", "[荷物|にもつ]を[持|も]ってほしい"], "dung": 0, "giai_thich": "Truyện, đoạn 3: 今夜、泊まれますか (tối nay có phòng trọ không)."}], "chinh_ta": [{"cau": "[傘|かさ]と{コート||コート}をお[持|も]ちください。"}, {"cau": "ぼくにも{発表|はっぴょう|発表する}させていただけませんか。", "them_dap_an": ["僕にも発表させていただけませんか", "ぼくにも発表させて頂けませんか"]}], "mau_cau": ["gungun_n4:29-2", "gungun_n4:29-1", "gungun_n4:29-4", "gungun_n4:29-5", "gungun_n4:29-3", "gungun_n4:29-6"], "tu_moi": [{"w": "公民館", "r": "こうみんかん", "m": "nhà văn hoá, hội trường khu dân cư"}, {"w": "村長", "r": "そんちょう", "m": "trưởng làng"}, {"w": "夕食", "r": "ゆうしょく", "m": "bữa tối"}], "tom_tat": "StackChan trình bày tranh pixel ở buổi trình diễn của làng. Truyện kỳ 1: Lin bắt đầu làm ở quán trọ ことば屋 và nhận cuộc gọi đầu tiên. Quán có ưu đãi cuối tuần."}, "tu": {"発表会": {"w": "発表会", "r": "はっぴょうかい", "m": "buổi trình diễn (của học viên)", "bai": "GUNGUN N4, bài 29"}, "発表する": {"w": "発表する", "r": "はっぴょうする", "m": "phát biểu, trình bày", "bai": "GUNGUN N4, bài 29"}, "公民館": {"w": "公民館", "r": "こうみんかん", "m": "nhà văn hoá, hội trường khu dân cư", "moi": true}, "村長": {"w": "村長", "r": "そんちょう", "m": "trưởng làng", "moi": true}, "〜名": {"w": "〜名", "r": "〜めい", "m": "~ người (đếm người, lịch sự)", "bai": "GUNGUN N4, bài 29"}, "お客様": {"w": "お客様", "r": "おきゃくさま", "m": "quý khách", "bai": "GUNGUN N4, bài 29"}, "満席": {"w": "満席", "r": "まんせき", "m": "kín chỗ, hết chỗ", "bai": "GUNGUN N4, bài 29"}, "自慢する": {"w": "自慢する", "r": "じまんする", "m": "khoe, tự hào", "bai": "GUNGUN N4, bài 29"}, "相談する": {"w": "相談する", "r": "そうだんする", "m": "bàn bạc, hỏi ý kiến", "bai": "GUNGUN N4, bài 29"}, "フロント": {"w": "フロント", "r": "", "m": "quầy lễ tân", "bai": "GUNGUN N4, bài 29"}, "泊まる": {"w": "泊まる", "r": "とまる", "m": "trọ lại, nghỉ lại", "bai": "GUNGUN N4, bài 29"}, "コート": {"w": "コート", "r": "", "m": "áo khoác", "bai": "GUNGUN N4, bài 29"}, "夕食": {"w": "夕食", "r": "ゆうしょく", "m": "bữa tối", "moi": true}, "見学する": {"w": "見学する", "r": "けんがくする", "m": "tham quan để học hỏi", "bai": "GUNGUN N4, bài 29"}, "確かめる": {"w": "確かめる", "r": "たしかめる", "m": "xác nhận, kiểm tra lại", "bai": "GUNGUN N4, bài 29"}, "保険証": {"w": "保険証", "r": "ほけんしょう", "m": "thẻ bảo hiểm", "bai": "GUNGUN N4, bài 29"}}, "mau": [{"mau": "Vさせていただけませんか", "nghia": "Có thể cho phép tôi V được không? (rất lịch sự)", "bai": "GUNGUN N4, bài 29"}, {"mau": "Vさせてください", "nghia": "Hãy để tôi V, xin cho tôi V (xin phép làm điều mình muốn)", "bai": "GUNGUN N4, bài 29"}, {"mau": "お Vます / ご N になる", "nghia": "Tôn kính ngữ: hành động của người trên, khách", "bai": "GUNGUN N4, bài 29"}, {"mau": "お Vます / ご N ください", "nghia": "Yêu cầu, mời một cách lịch sự", "bai": "GUNGUN N4, bài 29"}, {"mau": "お Vます / ご N します", "nghia": "Khiêm nhường ngữ: mình làm V cho người trên, khách", "bai": "GUNGUN N4, bài 29"}, {"mau": "Vます + なさい", "nghia": "Hãy V (người trên ra lệnh, bố mẹ nói với con, đề thi)", "bai": "GUNGUN N4, bài 29"}], "trinh_do": "N4", "vi_tri": [{"id": "gungun_n4", "ten": "GUNGUN N4", "den": 29}], "audio": null};
+const DATA = {"bao": {"ngay": "2026-11-02", "so": 1, "bai": [{"loai": "tin_lang", "tieu_de": "スタックちゃん、{発表会|はっぴょうかい|発表会}で[絵|え]を{発表|はっぴょう|発表する}", "doan": ["[昨日|きのう]の[夜|よる]、[村|むら]の{公民館|こうみんかん|公民館}で「ピクセル[絵|え]の{発表会|はっぴょうかい|発表会}」がありました。スタックちゃんは[前|まえ]から{村長|そんちょう|村長}に「ぼくにも{発表|はっぴょう|発表する}させていただけませんか」とお[願|ねが]いしていました。", "[会場|かいじょう]は30{名|めい|〜名}の{お客様|おきゃくさま|お客様}で{満席|まんせき|満席}になりました。スタックちゃんは[自分|じぶん]で[作|つく]った[絵|え]を[見|み]せて、「[少|すこ]し{自慢|じまん|自慢する}させてください」と[言|い]いました。", "{村長|そんちょう|村長}は「たくさんの{お客様|おきゃくさま|お客様}がお[越|こ]しになって、うれしかったです」と[話|はな]していました。"], "dich": ["Tối qua, ở nhà văn hoá của làng có \"buổi trình bày tranh pixel\". Từ trước đó, Stack-chan đã xin trưởng làng: \"Cho cháu cũng được trình bày, có được không ạ?\"", "Hội trường kín chỗ với 30 vị khách. Stack-chan cho mọi người xem bức tranh tự vẽ và nói: \"Cho cháu khoe một chút nhé.\"", "Trưởng làng kể: \"Có rất nhiều quý khách đến dự, tôi vui lắm.\""]}, {"loai": "truyen", "ky": 1, "ky_truoc": "", "tieu_de": "リンさん、ことば[屋|や]で[働|はたら]き[始|はじ]める", "doan": ["リンさんはベトナムから[来|き]ました。[今日|きょう]から[旅館|りょかん]「ことば[屋|や]」で[働|はたら]きます。はなさんは「わからないことは、いつでも{相談|そうだん|相談する}してね」と[言|い]いました。", "[夕方|ゆうがた]、[最初|さいしょ]のお[客|きゃく]さんが[来|き]ました。リンさんは[少|すこ]しドキドキしましたが、「お[荷物|にもつ]、お[持|も]ちします」と[言|い]いました。お[客|きゃく]さんはにっこり[笑|わら]いました。", "お[客|きゃく]さんを[部屋|へや]までご[案内|あんない]したあと、{フロント||フロント}の[電話|でんわ]が[鳴|な]りました。[出|で]ると、[知|し]らない[男|おとこ]の[人|ひと]の[声|こえ]でした。「すみません、[今夜|こんや]、{泊|と|泊まる}まれますか……」"], "dich": ["Lin đến từ Việt Nam. Từ hôm nay, cô làm việc ở quán trọ Kotoba. Hana nói: \"Có gì không hiểu thì cứ hỏi chị bất cứ lúc nào nhé.\"", "Chiều tối, vị khách đầu tiên đến. Lin hơi hồi hộp nhưng vẫn nói: \"Để tôi mang hành lý giúp quý khách ạ.\" Vị khách mỉm cười.", "Dẫn khách lên phòng xong thì điện thoại ở quầy lễ tân reo. Lin nhấc máy, đầu dây là giọng một người đàn ông lạ: \"Xin lỗi, tối nay tôi có thể nghỉ lại được không……\""]}, {"loai": "thong_bao", "tieu_de": "お[知|し]らせ", "doan": ["◆ [明日|あした]は[雨|あめ]です。[夜|よる]は[寒|さむ]くなりますから、[畑|はたけ]にお[越|こ]しになる[方|かた]は、[傘|かさ]と{コート||コート}をお[持|も]ちください。", "◆ [旅館|りょかん]「ことば[屋|や]」から：[今週末|こんしゅうまつ]、2{名|めい|〜名}[様|さま]でお{泊|と|泊まる}まりになると、{夕食|ゆうしょく|夕食}のデザートを[無料|むりょう]でお[作|つく]りします。ご[予約|よやく]は、お[電話|でんわ]ください。", "◆ [土曜日|どようび]の[午後|ごご]は、[新|あたら]しいお[風呂|ふろ]の{見学|けんがく|見学する}もできます。{見学|けんがく|見学する}の[方|かた]は、{フロント||フロント}でお[名前|なまえ]を{確|たし|確かめる}かめさせていただきます。"], "dich": ["◆ Ngày mai trời mưa. Buổi tối sẽ lạnh, nên ai ghé vườn xin mang theo ô và áo khoác.", "◆ Tin từ quán trọ Kotoba: cuối tuần này, quý khách đến nghỉ theo nhóm 2 người sẽ được quán làm miễn phí món tráng miệng cho bữa tối. Xin gọi điện để đặt phòng.", "◆ Chiều thứ Bảy, quý khách cũng có thể tham quan phòng tắm mới. Ai muốn tham quan, xin cho phép chúng tôi xác nhận tên ở quầy lễ tân."]}, {"loai": "cot", "tieu_de": "スタックちゃんの[一言|ひとこと]", "doan": ["{発表会|はっぴょうかい|発表会}が[終|お]わって[家|いえ]に[帰|かえ]ったら、お[母|かあ]さんロボットに「[早|はや]く[寝|ね]なさい」と[言|い]われました。でも、まだドキドキして、なかなか[寝|ね]られませんでした。[今日|きょう]は[少|すこ]し[眠|ねむ]いです。"], "dich": ["Buổi trình bày xong, về đến nhà là tớ bị mẹ robot bảo: \"Đi ngủ sớm đi.\" Nhưng tớ vẫn còn hồi hộp, mãi mà không ngủ được. Hôm nay tớ hơi buồn ngủ."]}], "cau_hoi": [{"hoi": "スタックちゃんは{発表会|はっぴょうかい|発表会}で[何|なに]をしましたか。", "chon": ["{村長|そんちょう|村長}の[絵|え]を[見|み]せた", "[自分|じぶん]で[作|つく]った[絵|え]を[見|み]せた", "{お客様|おきゃくさま|お客様}にお[茶|ちゃ]を[出|だ]した"], "dung": 1, "giai_thich": "Đoạn 2: 自分で作った絵を見せて… (StackChan cho mọi người xem tranh tự vẽ)."}, {"hoi": "[明日|あした]、[畑|はたけ]に[行|い]く[人|ひと]は[何|なに]を[持|も]っていきますか。", "chon": ["[傘|かさ]と{コート||コート}", "{保険証|ほけんしょう|保険証}", "ピクセルの[絵|え]"], "dung": 0, "giai_thich": "Mục お知らせ: 傘とコートをお持ちください (mời mang theo ô và áo khoác)."}, {"hoi": "[電話|でんわ]をかけた[人|ひと]は、[何|なに]をしたいですか。", "chon": ["[今夜|こんや]、[旅館|りょかん]に{泊|と|泊まる}まりたい", "リンさんと{相談|そうだん|相談する}したい", "[荷物|にもつ]を[持|も]ってほしい"], "dung": 0, "giai_thich": "Truyện, đoạn 3: 今夜、泊まれますか (tối nay có phòng trọ không)."}], "chinh_ta": [{"cau": "[傘|かさ]と{コート||コート}をお[持|も]ちください。"}, {"cau": "ぼくにも{発表|はっぴょう|発表する}させていただけませんか。", "them_dap_an": ["僕にも発表させていただけませんか", "ぼくにも発表させて頂けませんか"]}], "mau_cau": ["gungun_n4:29-2", "gungun_n4:29-1", "gungun_n4:29-4", "gungun_n4:29-5", "gungun_n4:29-3", "gungun_n4:29-6"], "tu_moi": [{"w": "公民館", "r": "こうみんかん", "m": "nhà văn hoá, hội trường khu dân cư"}, {"w": "村長", "r": "そんちょう", "m": "trưởng làng"}, {"w": "夕食", "r": "ゆうしょく", "m": "bữa tối"}], "tom_tat": "Stack-chan trình bày tranh pixel ở buổi trình diễn của làng. Truyện kỳ 1: Lin bắt đầu làm ở quán trọ ことば屋 và nhận cuộc gọi đầu tiên. Quán có ưu đãi cuối tuần."}, "tu": {"発表会": {"w": "発表会", "r": "はっぴょうかい", "m": "buổi trình diễn (của học viên)", "bai": "GUNGUN N4, bài 29"}, "発表する": {"w": "発表する", "r": "はっぴょうする", "m": "phát biểu, trình bày", "bai": "GUNGUN N4, bài 29"}, "公民館": {"w": "公民館", "r": "こうみんかん", "m": "nhà văn hoá, hội trường khu dân cư", "moi": true}, "村長": {"w": "村長", "r": "そんちょう", "m": "trưởng làng", "moi": true}, "〜名": {"w": "〜名", "r": "〜めい", "m": "~ người (đếm người, lịch sự)", "bai": "GUNGUN N4, bài 29"}, "お客様": {"w": "お客様", "r": "おきゃくさま", "m": "quý khách", "bai": "GUNGUN N4, bài 29"}, "満席": {"w": "満席", "r": "まんせき", "m": "kín chỗ, hết chỗ", "bai": "GUNGUN N4, bài 29"}, "自慢する": {"w": "自慢する", "r": "じまんする", "m": "khoe, tự hào", "bai": "GUNGUN N4, bài 29"}, "相談する": {"w": "相談する", "r": "そうだんする", "m": "bàn bạc, hỏi ý kiến", "bai": "GUNGUN N4, bài 29"}, "フロント": {"w": "フロント", "r": "", "m": "quầy lễ tân", "bai": "GUNGUN N4, bài 29"}, "泊まる": {"w": "泊まる", "r": "とまる", "m": "trọ lại, nghỉ lại", "bai": "GUNGUN N4, bài 29"}, "コート": {"w": "コート", "r": "", "m": "áo khoác", "bai": "GUNGUN N4, bài 29"}, "夕食": {"w": "夕食", "r": "ゆうしょく", "m": "bữa tối", "moi": true}, "見学する": {"w": "見学する", "r": "けんがくする", "m": "tham quan để học hỏi", "bai": "GUNGUN N4, bài 29"}, "確かめる": {"w": "確かめる", "r": "たしかめる", "m": "xác nhận, kiểm tra lại", "bai": "GUNGUN N4, bài 29"}, "保険証": {"w": "保険証", "r": "ほけんしょう", "m": "thẻ bảo hiểm", "bai": "GUNGUN N4, bài 29"}}, "mau": [{"mau": "Vさせていただけませんか", "nghia": "Có thể cho phép tôi V được không? (rất lịch sự)", "bai": "GUNGUN N4, bài 29"}, {"mau": "Vさせてください", "nghia": "Hãy để tôi V, xin cho tôi V (xin phép làm điều mình muốn)", "bai": "GUNGUN N4, bài 29"}, {"mau": "お Vます / ご N になる", "nghia": "Tôn kính ngữ: hành động của người trên, khách", "bai": "GUNGUN N4, bài 29"}, {"mau": "お Vます / ご N ください", "nghia": "Yêu cầu, mời một cách lịch sự", "bai": "GUNGUN N4, bài 29"}, {"mau": "お Vます / ご N します", "nghia": "Khiêm nhường ngữ: mình làm V cho người trên, khách", "bai": "GUNGUN N4, bài 29"}, {"mau": "Vます + なさい", "nghia": "Hãy V (người trên ra lệnh, bố mẹ nói với con, đề thi)", "bai": "GUNGUN N4, bài 29"}], "trinh_do": "N4", "vi_tri": [{"id": "gungun_n5", "ten": "GUNGUN N5", "den": 14}, {"id": "gungun_n4", "ten": "GUNGUN N4", "den": 29}], "audio": null};
 (function () {
   if (!DATA) { document.querySelector("main").textContent = "Thiếu dữ liệu báo. Hãy tạo trang bằng tools/render.py."; return; }
   const B = DATA.bao;
@@ -166,11 +172,13 @@ const DATA = {"bao": {"ngay": "2026-11-02", "so": 1, "bai": [{"loai": "tin_lang"
   const A = DATA.audio || {};
 
   const bai = $("bai");
+  let hasDich = false;
   B.bai.forEach((b, i) => {
     const sec = el("article", "card art"); sec.lang = "ja";
     if (b.loai === "truyen" && b.ky) { const k = el("div", "kind", "Truyện dài kỳ, kỳ " + b.ky); k.lang = "vi"; sec.appendChild(k); }
     const h = el("h2"); h.appendChild(md(b.tieu_de, true)); sec.appendChild(h);
     if (b.ky_truoc) { const k = el("p", "prev", "Kỳ trước: " + b.ky_truoc); k.lang = "vi"; sec.appendChild(k); }
+    const hasD = Array.isArray(b.dich) && b.dich.length === b.doan.length;
     b.doan.forEach((p, j) => {
       const para = el("p"); para.appendChild(md(p, true));
       const src = A.bai && A.bai[i] && A.bai[i][j];
@@ -179,6 +187,15 @@ const DATA = {"bao": {"ngay": "2026-11-02", "so": 1, "bai": [{"loai": "tin_lang"
         btn.addEventListener("click", () => play(src)); para.appendChild(btn);
       }
       sec.appendChild(para);
+      if (hasD && b.dich[j]) {
+        const tr = el("p", "vi", b.dich[j]); tr.lang = "vi";
+        const db = el("button", "play dbtn", "Dịch"); db.type = "button"; db.title = "Xem / ẩn bản dịch đoạn này";
+        db.setAttribute("aria-expanded", "false");
+        db.addEventListener("click", () => {
+          const open = tr.classList.toggle("open"); db.classList.toggle("on", open); db.setAttribute("aria-expanded", String(open));
+        });
+        para.appendChild(db); sec.appendChild(tr); hasDich = true;
+      }
     });
     if (b.nguon) {
       const s = el("p", "src"); s.lang = "vi"; s.appendChild(document.createTextNode("Viết lại từ tin: "));
@@ -209,6 +226,26 @@ const DATA = {"bao": {"ngay": "2026-11-02", "so": 1, "bai": [{"loai": "tin_lang"
     document.body.classList.toggle("nofuri");
     e.currentTarget.textContent = document.body.classList.contains("nofuri") ? "Hiện furigana" : "Ẩn furigana";
   });
+
+  // 2.3: "Hiện bản dịch" cho cả số (nhớ lựa chọn trên máy này)
+  const dBtn = $("dich");
+  function setDich(on) {
+    document.body.classList.toggle("showdich", on);
+    dBtn.classList.toggle("on", on); dBtn.textContent = on ? "Ẩn bản dịch" : "Hiện bản dịch";
+    try { localStorage.setItem("hatake-dich", on ? "1" : "0"); } catch (e) { /* trình duyệt chặn lưu: bỏ qua */ }
+  }
+  if (hasDich) {
+    dBtn.hidden = false;
+    let on = false;
+    try { on = localStorage.getItem("hatake-dich") === "1"; } catch (e) { on = false; }
+    setDich(on);
+    dBtn.addEventListener("click", () => {
+      document.querySelectorAll(".art p.vi.open").forEach((x) => x.classList.remove("open"));
+      document.querySelectorAll("button.dbtn.on").forEach((x) => { x.classList.remove("on"); x.setAttribute("aria-expanded", "false"); });
+      setDich(!document.body.classList.contains("showdich"));
+    });
+    info.textContent = "Bấm vào từ gạch chân để tra nghĩa. Gạch liền là từ đã học, gạch chấm là từ mới. Bấm \"Dịch\" cuối đoạn để xem bản dịch tiếng Việt.";
+  }
 
   const qBox = $("cauhoi"); const qDone = {};
   (B.cau_hoi || []).forEach((q, i) => {

@@ -190,7 +190,13 @@ ok(ui["review"]["yard"] == "hide" and ui["review"]["field"] == "full" and ui["ca
 ok(more.clean_ui(None) == more.ui_default() and more.ui_default()["main"]["yard"] == "full", "mặc định = như cũ (mọi thứ chuyển động)")
 f = more.ui_preset("focus")
 ok(f["review"]["yard"] == "hide" and f["review"]["field"] == "hide" and f["main"]["yard"] == "full" and f["card"] == "tall", "kiểu “Tập trung khi ôn”")
-ok(more.ui_preset("night")["theme"] == "night" and raises(more.ui_preset, "xx") is not None, "kiểu “Ôn buổi tối”, kiểu lạ → lỗi")
+ok(raises(more.ui_preset, "night") is not None and raises(more.ui_preset, "xx") is not None,
+   "1.23: bỏ kiểu “Ôn buổi tối”; kiểu lạ → lỗi")
+old_night = more.clean_ui({"review": {"yard": "dim", "field": "dim", "sky": "off", "weather": "off", "mascot": "off",
+                                      "pets": "off"}, "theme": "night", "card": "tall"})
+ok(old_night["theme"] == "garden" and old_night["review"]["yard"] == "full" and old_night["review"]["sky"] == "on"
+   and old_night["review"]["pets"] == "off" and old_night["card"] == "tall",
+   "1.23: config cũ “Ôn buổi tối” → Vàng vườn, các mục của kiểu đó về mặc định, mục tự chỉnh khác giữ nguyên")
 
 print("== hiệu ứng thành tích")
 P = lambda st, w=False: {"stage": st, "wilted": w}
