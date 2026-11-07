@@ -158,6 +158,7 @@ var GardenPaper = (function () {
     const notes = [];
     if (w.moi) { notes.push("Từ mới trong số này"); }
     else if (w.bai) { notes.push("Đã học ở " + w.bai); }
+    else if (w.thieu) { notes.push("Chưa có nghĩa trong deck"); }      // 1.23: vẫn hiện cách đọc, không để trống
     const p = plantOf(w.w);
     const d = H && H.data();
     if (p && d && d.stage_names) {
@@ -183,7 +184,7 @@ var GardenPaper = (function () {
     stage().textContent = "";
     stage().scrollTop = 0;
     if (t === "issue") {
-      if (issue && (!wantDate || wantDate === issue.date)) { drawIssue(); }
+      if (issue && (!wantDate || isRef(wantDate, issue))) { drawIssue(); }
       else { stage().appendChild(el("div", "kb-p-empty", "Đang mở báo…")); H.send(lang ? "paper:lang:" + lang : "paper:index"); }
     } else if (t === "dict") {
       stage().appendChild(el("div", "kb-p-empty", "Đang chuẩn bị lượt chép chính tả…"));
@@ -238,7 +239,8 @@ var GardenPaper = (function () {
     defaultInfo();
     if (tab === "issue") {
       if (!v.enabled) { drawSetup(); return; }
-      const pick = wantDate || (v.issues.filter((x) => !x.read)[0] || v.issues[0] || {}).date;
+      const first = v.issues.filter((x) => !x.read)[0] || v.issues[0] || {};
+      const pick = wantDate || first.ref || first.date;
       if (!pick) { drawNoIssue(); return; }
       wantDate = pick;
       H.send("paper:issue:" + pick);
@@ -728,7 +730,10 @@ var GardenPaper = (function () {
       row.appendChild(mid);
       row.appendChild(el("span", "kb-p-tag" + (x.read ? (x.complete ? " is-done" : "") : " is-new"),
         x.read ? (x.complete ? "Xong +" + x.coins + " xu" : "Đã đọc") : "Mới"));
-      row.addEventListener("click", () => { wantDate = x.date; issue = null; setTab("issue"); });
+      if (index.multi && x.src) {      // 1.23: Kệ báo gộp hai nguồn → mỗi số ghi nguồn
+        row.appendChild(el("span", "kb-p-tag kb-p-src", x.src === "claude" ? "Claude Code" : "Gemini"));
+      }
+      row.addEventListener("click", () => { wantDate = x.ref || x.date; issue = null; setTab("issue"); });
       list.appendChild(row);
     });
     st.appendChild(list);
@@ -737,9 +742,12 @@ var GardenPaper = (function () {
   // ---------------------------------------------------------------------
   // Một số báo
   // ---------------------------------------------------------------------
+  // 1.23: mã số báo "ngày@nguồn" (Kệ báo gộp Claude Code + Gemini); ngày trơn = nguồn đang dùng
+  function refOf(v) { return (v && (v.ref || v.date)) || ""; }
+  function isRef(want, v) { return want === refOf(v) || (want.indexOf("@") < 0 && want === v.date && (!v.src || v.src === (index && index.source) || !index)); }
   function onIssue(v) {
     issue = v;
-    wantDate = v.date;
+    wantDate = refOf(v);
     if (isOpen && tab === "issue") { drawIssue(); }
   }
 
@@ -791,13 +799,13 @@ var GardenPaper = (function () {
         const warn = el("div", "kb-p-note");
         warn.lang = "vi";
         warn.appendChild(document.createTextNode("Bạn chưa đọc kỳ " + (b.ky - 1) + " (số ngày " + shortDate(b.ky_truoc_ngay) + "). "));
-        warn.appendChild(btn("", "Đọc kỳ trước", () => { wantDate = b.ky_truoc_ngay; issue = null; setTab("issue"); }));
+        warn.appendChild(btn("", "Đọc kỳ trước", () => { wantDate = b.ky_truoc_ngay + (v.src ? "@" + v.src : ""); issue = null; setTab("issue"); }));
         art.appendChild(warn);
       }
       b.doan.forEach((p, j) => {
         const para = el("p", "kb-p-text");
         para.appendChild(md(p, v.tu));
-        if (b.audio && b.audio[j]) { para.appendChild(playBtn("▶", { d: v.date, k: "bai", i: i, j: j }, "Nghe đoạn này")); }
+        if (b.audio && b.audio[j]) { para.appendChild(playBtn("▶", { d: refOf(v), k: "bai", i: i, j: j }, "Nghe đoạn này")); }
         art.appendChild(para);
       });
       if (b.nguon) {
@@ -815,7 +823,7 @@ var GardenPaper = (function () {
       ph.appendChild(el("span", "kb-p-reward", "Đúng ngay lần đầu +" + v.reward.q + " xu mỗi câu · làm hết +" + v.reward.bonus + " xu"));
       pr.appendChild(ph);
       v.cau_hoi.forEach((q, i) => pr.appendChild(drawQuestion(q, i, lg)));
-      v.chinh_ta.forEach((c, i) => pr.appendChild(drawDictRow(c, i, { d: v.date, k: "ct", i: i }, "Chép câu " + (i + 1))));
+      v.chinh_ta.forEach((c, i) => pr.appendChild(drawDictRow(c, i, { d: refOf(v), k: "ct", i: i }, "Chép câu " + (i + 1))));
       st.appendChild(pr);
     }
     if (v.mau.length) {
@@ -855,7 +863,7 @@ var GardenPaper = (function () {
         if (busy["q" + i]) { return; }
         busy["q" + i] = true;
         box.setAttribute("data-pick", j);
-        H.send("paper:q:" + JSON.stringify({ d: issue.date, i: i, c: j }));
+        H.send("paper:q:" + JSON.stringify({ d: refOf(issue), i: i, c: j }));
       });
       box.appendChild(b);
     });
@@ -1042,7 +1050,7 @@ var GardenPaper = (function () {
     }
     if (res.kind === "q") {
       busy["q" + res.i] = false;
-      if (!issue || issue.date !== res.date) { return; }
+      if (!issue || refOf(issue) !== (res.ref || res.date)) { return; }
       issue.coins = (issue.coins || 0) + (res.gained || 0);
       updateCoins(issue.coins);
       const box = document.querySelector('.kb-p-q[data-q="' + res.i + '"]');
@@ -1050,7 +1058,7 @@ var GardenPaper = (function () {
       if (res.first && issue.cau_hoi[res.i]) { issue.cau_hoi[res.i].done = true; issue.cau_hoi[res.i].first = res.ok ? 1 : 0; issue.cau_hoi[res.i].dung = res.dung; issue.cau_hoi[res.i].giai_thich = res.giai_thich; }
     } else if (res.kind === "ct") {
       busy["ct" + res.i] = false;
-      if (!issue || issue.date !== res.date) { return; }
+      if (!issue || refOf(issue) !== (res.ref || res.date)) { return; }
       issue.coins = (issue.coins || 0) + (res.gained || 0);
       updateCoins(issue.coins);
       const row = document.querySelector('.kb-p-practice .kb-p-ct[data-ct="' + res.i + '"]');

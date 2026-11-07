@@ -412,3 +412,49 @@ def note_words(col: Any, cfg: dict[str, Any], nids: list[int], limit: int = 6) -
         if len(out) >= limit:
             break
     return out
+
+
+def _key(s: str) -> str:
+    """Giống paper_core.norm_key (không import paper_core để file này đứng riêng được)."""
+    s = (s or "").strip().lstrip("〜～")
+    if s.endswith("する") and len(s) > 2:
+        s = s[:-2]
+    return s
+
+
+def lookup(col: Any, cfg: dict[str, Any], lang: str, wanted: list[str], limit: int = 400) -> dict[str, list[str]]:
+    """1.23: tìm nghĩa của các từ (từ gốc, đã chuẩn hoá) trong **mọi deck** theo Cấu hình trường — sửa số báo cũ bấm
+    từ không ra nghĩa. Trả về {từ gốc: [từ, cách đọc, nghĩa, "deck"]}. Chỉ đọc note có chứa chữ của từ cần tìm."""
+    cfg = core.merged_config(cfg)
+    want = {w for w in (wanted or [])[:limit] if isinstance(w, str) and w.strip()}
+    if not want:
+        return {}
+    lower = lang != "ja"
+    probe = {w.lower() if lower else w for w in want}
+    infos = model_infos(col, cfg)
+    mids = [m for m, i in infos.items() if i["lang"] == lang and i["kind"] == "vocab"]
+    if not mids:
+        return {}
+    out: dict[str, list[str]] = {}
+    for nid, mid, flds in col.db.all(f"select id, mid, flds from notes where mid in {ids2str([int(m) for m in mids])}"):
+        hay = flds.lower() if lower else flds
+        if not any(p in hay for p in probe):
+            continue
+        info = infos.get(str(mid))
+        if not info:
+            continue
+        try:
+            det = core.note_details(_Row(col, int(nid), str(mid), flds, info["keys"], info["name"]), cfg, info["roles"])
+        except Exception:
+            continue
+        word = str(det.get("word") or "").strip()
+        meaning = str(det.get("meaning") or "").strip()
+        if not word or word == "?" or not meaning:
+            continue
+        k = _key(word.lower() if lower else word)
+        hit = next((w for w in want if (w.lower() if lower else w) == k), None)
+        if hit and hit not in out:
+            out[hit] = [word[:40], str(det.get("reading") or "").strip()[:60], meaning[:160], "deck"]
+            if len(out) >= len(want):
+                break
+    return out

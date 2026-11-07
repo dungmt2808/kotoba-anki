@@ -1167,6 +1167,7 @@ button { cursor: pointer; }
 .kb-p-tag.is-new { background: #ff7fa0; color: #ffffff; }
 .kb-p-tag.is-done { background: #c8f7d2; }
 .kb-p-tag.is-review { background: #ffc27a; }
+.kb-p-tag.kb-p-src { background: #eef3ff; color: #2f3d6b; font-size: 11px; margin-right: 4px; }   /* 1.23: nguồn của số báo ở Kệ báo gộp */
 .kb-p-shelf { display: flex; flex-direction: column; gap: 8px; max-width: 920px; }
 .kb-p-row {
   display: flex;

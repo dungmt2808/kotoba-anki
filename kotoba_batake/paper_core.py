@@ -289,6 +289,7 @@ def clean_issue(raw: Any, date: str) -> dict[str, Any]:
             new_words.append({"w": _s(w.get("w"), 40), "r": _s(w.get("r"), 60), "m": _s(w.get("m"), 120)})
     mau = [_s(x, 80) for x in _list(raw.get("mau_cau"), 10) if _s(x, 80)]
     return {
+        **clean_lookup(raw),
         "ngay": date,
         "so": _int(raw.get("so"), 1, 1_000_000) or 0,
         "rut_gon": bool(raw.get("rut_gon")),
@@ -303,6 +304,119 @@ def clean_issue(raw: Any, date: str) -> dict[str, Any]:
         # 1.19: ngôn ngữ của số báo (bản tiếng Anh ghi "ngon_ngu": "en")
         "lang": "en" if raw.get("ngon_ngu") == "en" else "ja",
     }
+
+
+TRA_MAX = 400          # 1.23: số mục tối đa của bảng tra nghĩa trong một số báo
+
+
+def _row4(v: Any) -> list[str] | None:
+    if not isinstance(v, list) or len(v) < 3 or not all(isinstance(x, str) for x in v[:4]):
+        return None
+    w, r, m = v[0].strip()[:40], v[1].strip()[:60], v[2].strip()[:160]
+    return [w, r, m, v[3].strip()[:60] if len(v) > 3 else ""] if w and m else None
+
+
+def clean_lookup(raw: Any) -> dict[str, Any]:
+    """1.23: bảng tra nghĩa đi kèm từng số báo (`tra_tu`: từ gốc → [từ, cách đọc, nghĩa, nguồn]; `tra_mau`: mẫu câu,
+    `tra_sach`: tên sách / deck). Trước đây mọi số tra chung một pham_vi.json, bị ghi đè mỗi lần Gemini viết số mới →
+    số cũ viết theo phạm vi khác bấm từ không ra nghĩa (kế hoạch 1.23 mục 5b)."""
+    raw = raw if isinstance(raw, dict) else {}
+    tu: dict[str, list[str]] = {}
+    src = raw.get("tra_tu") if isinstance(raw.get("tra_tu"), dict) else {}
+    for k, v in list(src.items())[:TRA_MAX]:
+        row = _row4(v)
+        if isinstance(k, str) and k.strip() and row:
+            tu[k.strip()[:40]] = row
+    mau: dict[str, list[str]] = {}
+    src = raw.get("tra_mau") if isinstance(raw.get("tra_mau"), dict) else {}
+    for k, v in list(src.items())[:40]:
+        if isinstance(k, str) and k.strip() and isinstance(v, list) and len(v) >= 2 and all(isinstance(x, str) for x in v[:3]):
+            mau[k.strip()[:80]] = [v[0].strip()[:200], v[1].strip()[:300], v[2].strip()[:60] if len(v) > 2 else ""]
+    sach = raw.get("tra_sach") if isinstance(raw.get("tra_sach"), dict) else {}
+    books = {k[:40]: v.strip()[:60] for k, v in list(sach.items())[:20] if isinstance(k, str) and isinstance(v, str)}
+    return {"tra_tu": tu, "tra_mau": mau, "tra_sach": books}
+
+
+def build_lookup(texts: list[str], mau_ids: list[str], scope: dict[str, Any]) -> dict[str, Any]:
+    """1.23: bảng tra nghĩa cho một số báo, lấy từ phạm vi lúc viết (`tu_vung` dạng [từ, đọc, nghĩa, bài], `ngu_phap`,
+    `sach`). Chỉ giữ các từ / mẫu thật sự có trong số đó."""
+    vocab: dict[str, list[str]] = {}
+    for row in scope.get("tu_vung") or []:
+        r = _row4(row)
+        if r:
+            vocab.setdefault(norm_key(r[0]), r)
+    tu: dict[str, list[str]] = {}
+    for t in texts:
+        for k in keys(t or ""):
+            nk = norm_key(k)
+            if nk in vocab and nk not in tu and len(tu) < TRA_MAX:
+                tu[nk] = vocab[nk]
+    gram = {g.get("id"): g for g in scope.get("ngu_phap") or [] if isinstance(g, dict) and isinstance(g.get("id"), str)}
+    mau = {gid: [_s(gram[gid].get("mau"), 200), _s(gram[gid].get("nghia"), 300), _s(gram[gid].get("bai"), 60)]
+           for gid in mau_ids if isinstance(gid, str) and gid in gram}
+    sach = scope.get("sach") if isinstance(scope.get("sach"), dict) else {}
+    return {"tra_tu": tu, "tra_mau": mau, "tra_sach": {k: v for k, v in sach.items() if isinstance(k, str) and isinstance(v, str)}}
+
+
+def issue_texts(issue: dict[str, Any]) -> list[str]:
+    """Mọi đoạn chữ có đánh dấu của một số báo (bản thô `bao.json` hoặc bản đã làm sạch)."""
+    out: list[str] = []
+    for b in issue.get("bai") or []:
+        if isinstance(b, dict):
+            out.append(b.get("tieu_de") or "")
+            out.extend(x for x in b.get("doan") or [] if isinstance(x, str))
+    for q in issue.get("cau_hoi") or []:
+        if isinstance(q, dict):
+            out.append(q.get("hoi") or "")
+            out.extend(x for x in q.get("chon") or [] if isinstance(x, str))
+    out.extend(c.get("cau") or "" for c in issue.get("chinh_ta") or [] if isinstance(c, dict))
+    return [x for x in out if isinstance(x, str)]
+
+
+def missing_words(lib: "Library", date: str) -> list[str]:
+    """1.23: từ đánh dấu `{表記|よみ|từ gốc}` của số báo mà bảng tra của số đó lẫn pham_vi.json chung đều không có nghĩa
+    (số cũ viết trước 1.23 theo phạm vi đã bị ghi đè)."""
+    try:
+        iss = lib.issue(date)
+    except PaperError:
+        return []
+    vocab = lib.scope()["vocab"]
+    new = {norm_key(w["w"]) for w in iss["tu_moi"]}
+    out: list[str] = []
+    for t in _texts(iss):
+        for k in keys(t):
+            nk = norm_key(k)
+            if nk and nk not in new and nk not in iss["tra_tu"] and nk not in vocab and nk not in out:
+                out.append(nk)
+    return out[:TRA_MAX]
+
+
+def add_lookup(base: str, date: str, found: dict[str, list[str]]) -> bool:
+    """1.23: ghi bổ sung nghĩa tìm được (trong deck) vào `tra_tu` của chính số báo (chỉ thư mục báo Gemini của add-on;
+    thư mục kotoba_daily chỉ đọc). Trả về True nếu có ghi."""
+    path = os.path.join(base, "bao", date, "bao.json")
+    if not DATE_RE.match(date or "") or not found:
+        return False
+    try:
+        raw = _read_json(path)
+    except (OSError, ValueError, PaperError):
+        return False
+    if not isinstance(raw, dict):
+        return False
+    tu = clean_lookup(raw)["tra_tu"]
+    n = len(tu)
+    for k, v in found.items():
+        row = _row4(v)
+        if isinstance(k, str) and row and k not in tu and len(tu) < TRA_MAX:
+            tu[k] = row
+    if len(tu) == n:
+        return False
+    raw["tra_tu"] = tu
+    tmp = path + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
+        json.dump(raw, f, ensure_ascii=False, indent=1)
+    os.replace(tmp, path)
+    return True
 
 
 class Library:
@@ -485,13 +599,47 @@ def clean_state(raw: Any) -> dict[str, Any]:
     return st
 
 
+PAPER_KEY_SRC = "kotoba_batake_paper_nguon"   # 1.23: tiến độ đọc của nguồn báo tiếng Nhật thứ hai (Kệ báo gộp)
+SOURCES = ("claude", "gemini")
+
+
+def clean_book(raw: Any) -> dict[str, Any]:
+    """1.23: Kệ báo tiếng Nhật gộp số của Claude Code (kotoba_daily) và Gemini. Tiến độ đọc (`read[ngày]`) trước đây
+    chỉ theo ngày, nên hai nguồn cùng ngày dùng chung một ô. Nay:
+    - nguồn `mac_dinh` (nguồn đang dùng lúc chạy 1.23 lần đầu) vẫn ghi ở `kotoba_batake_paper` như cũ — bản 1.22 trên
+      máy khác đọc đúng phần của nó;
+    - nguồn còn lại ghi ở khoá riêng này (`read[nguồn][ngày]`), bản cũ không đọc nên không xoá."""
+    out: dict[str, Any] = {"mac_dinh": "", "read": {x: {} for x in SOURCES}}
+    if not isinstance(raw, dict):
+        return out
+    if raw.get("mac_dinh") in SOURCES:
+        out["mac_dinh"] = raw["mac_dinh"]
+    rd = raw.get("read") if isinstance(raw.get("read"), dict) else {}
+    for x in SOURCES:
+        out["read"][x] = clean_state({"read": rd.get(x)})["read"]
+    return out
+
+
+def source_view(st: dict[str, Any], book: dict[str, Any] | None, src: str) -> dict[str, Any]:
+    """Trạng thái báo nhìn theo một nguồn. Nguồn mặc định (hoặc không có sổ): chính `st`. Nguồn kia: bản sao nông của
+    `st` có `read` là `book["read"][src]` (sửa trên bản này là sửa thẳng vào sổ; hàng chờ chép sai, từ chép sai vẫn
+    chung với `st`)."""
+    if not book or src not in SOURCES or not book.get("mac_dinh") or src == book["mac_dinh"]:
+        return st
+    view = dict(st)
+    view["read"] = book["read"][src]
+    return view
+
+
 class PaperState:
     """Lưu trong cấu hình collection (khoá PAPER_KEY) + bản sao lưu user_files/paper.json."""
 
-    def __init__(self, path: str, col_getter: Any = None, key: str = PAPER_KEY) -> None:
+    def __init__(self, path: str, col_getter: Any = None, key: str = PAPER_KEY,
+                 clean: Callable[[Any], dict[str, Any]] | None = None) -> None:
         self.path = path
         self.col_getter = col_getter
         self.key = key            # 1.19: báo tiếng Anh dùng khoá riêng PAPER_KEY_EN
+        self.clean = clean or clean_state     # 1.23: sổ tiến độ theo nguồn (PAPER_KEY_SRC) dùng clean_book
 
     def _col(self) -> Any:
         try:
@@ -513,7 +661,7 @@ class PaperState:
                     stored = json.load(f)
             except (OSError, ValueError):
                 stored = None
-        return clean_state(stored)
+        return self.clean(stored)
 
     def save(self, st: dict[str, Any]) -> None:
         col = self._col()
@@ -573,7 +721,8 @@ def _texts(issue: dict[str, Any]) -> list[str]:
 
 def _lesson(tag: str, books: dict[str, str]) -> str:
     if ":" not in tag:
-        return tag
+        name = books.get(tag, "") if tag == "deck" else ""     # 1.23: "Đã học ở Dũng Mori N4" thay cho "ở deck"
+        return name if name and name != "mọi deck" and len(name) <= 40 else tag
     bid, ch = tag.split(":", 1)
     return "%s, bài %s" % (books.get(bid, bid), ch)
 
@@ -599,28 +748,40 @@ def dict_len(markup: str, lang: str = "ja") -> tuple[int, str]:
     return len((text.en_words if lang == "en" else text.latin_words)(surface(markup))), "từ"
 
 
-def issue_view(lib: Library, st: dict[str, Any], date: str, voice: Voice | None = None) -> dict[str, Any]:
-    """Dữ liệu gửi sang giao diện. Không gửi đáp án câu hỏi và câu chép chính tả chưa làm."""
+def issue_view(lib: Library, st: dict[str, Any], date: str, voice: Voice | None = None,
+               extra: dict[str, list[str]] | None = None) -> dict[str, Any]:
+    """Dữ liệu gửi sang giao diện. Không gửi đáp án câu hỏi và câu chép chính tả chưa làm.
+
+    1.23: nghĩa của từ tra theo thứ tự: từ mới của số → bảng tra của chính số đó (`tra_tu`) → `extra` (tìm trong deck
+    cho số cũ) → pham_vi.json chung của thư mục. Không có ở đâu thì vẫn hiện cách đọc (lấy ngay trong dấu
+    `{表記|よみ|…}`) + "chưa có nghĩa trong deck", không để trống."""
     voice = voice or NO_VOICE
     iss = lib.issue(date)
     scope = lib.scope()
-    books = scope["books"]
+    books = dict(scope["books"])
+    books.update(iss["tra_sach"])
     new = {norm_key(w["w"]): w for w in iss["tu_moi"]}
+    extra = extra or {}
     tu: dict[str, dict[str, Any]] = {}
     for text in _texts(iss):
-        for k in keys(text):
+        for t in tokenize(text):
+            if t[0] != "word":
+                continue
+            k = t[3]
             nk = norm_key(k)
+            w4 = iss["tra_tu"].get(nk) or extra.get(nk) or scope["vocab"].get(nk)
             if nk in new:
                 w = new[nk]
                 tu[k] = {"w": w["w"], "r": w["r"], "m": w["m"], "moi": True}
-            elif nk in scope["vocab"]:
-                w4 = scope["vocab"][nk]
+            elif w4:
                 tu[k] = {"w": w4[0], "r": w4[1], "m": w4[2], "bai": _lesson(w4[3], books)}
-            else:
-                tu[k] = {"w": k, "r": "", "m": ""}
+            elif k not in tu:
+                read = t[2] if iss["lang"] == "ja" and t[2] != t[1] else ""
+                tu[k] = {"w": k, "r": read, "m": "", "thieu": True}
     mau = []
     for gid in iss["mau_cau"]:
-        g = scope["grammar"].get(gid)
+        g3 = iss["tra_mau"].get(gid)
+        g = {"mau": g3[0], "nghia": g3[1], "bai": g3[2]} if g3 else scope["grammar"].get(gid)
         if g:
             mau.append({"mau": g["mau"], "nghia": g["nghia"], "bai": _lesson(g["bai"], books)})
     audio = lib.audio(date)

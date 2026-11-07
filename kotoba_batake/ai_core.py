@@ -2023,6 +2023,8 @@ class Job:
             if b.get("loai") != "truyen":
                 b.pop("ky", None)
                 b.pop("ky_truoc", None)
+        # 1.23: mỗi số tự mang bảng tra nghĩa (pham_vi.json chung bị ghi đè khi số sau viết theo phạm vi khác)
+        out.update(paper.build_lookup(paper.issue_texts(out), out.get("mau_cau") or [], self.scope))
         write_scope(self.base, self.scope)
         _write_json(issue_path(self.base, self.date), out)
         ky = next((b.get("ky") for b in out["bai"] if b.get("loai") == "truyen"), None)

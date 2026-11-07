@@ -56,6 +56,9 @@ AI_DIR = os.path.join(ADDON_DIR, "user_files", ai.FOLDER)
 # 1.19: báo tiếng Anh (The Garden Gazette, chỉ Gemini viết): thư mục riêng + trạng thái đọc / chép riêng trong collection
 AI_DIR_EN = os.path.join(ADDON_DIR, "user_files", ai_en.FOLDER)
 PAPER_EN = paper.PaperState(os.path.join(ADDON_DIR, "user_files", "paper_en.json"), col_getter=lambda: mw.col,
+# 1.23: tiến độ đọc của nguồn báo tiếng Nhật thứ hai (Kệ báo gộp số Claude Code + Gemini), khoá collection riêng
+BOOK = paper.PaperState(os.path.join(ADDON_DIR, "user_files", "paper_nguon.json"), col_getter=lambda: mw.col,
+                        key=paper.PAPER_KEY_SRC, clean=paper.clean_book)
                             key=paper.PAPER_KEY_EN)
 LANG_NAME = {"ja": "tiếng Nhật", "en": "tiếng Anh", "other": "ngôn ngữ khác"}
 _ai: dict[str, Any] = {"running": False, "testing": False, "msg": "", "lang": "ja", "why": ""}
@@ -190,6 +193,72 @@ def _library(lang: str = "ja") -> paper.Library | None:
     return _libraries[base]
 
 
+def _source_lib(src: str) -> paper.Library | None:
+    """1.23: thư mục báo tiếng Nhật của một nguồn cụ thể (để Kệ báo gộp hiện cả số của nguồn không dùng nữa)."""
+    cfg = config()
+    if src == paper_source(cfg):
+        return _library("ja")
+    if src == "claude":
+        base = paper.resolve_dir(cfg.get("bao_dir")) if _bao_dir_set(cfg) else None
+    elif src == "gemini":
+        base = AI_DIR if os.path.isdir(os.path.join(AI_DIR, "bao")) else None
+    else:
+        base = None
+    if not base:
+        return None
+    if base not in _libraries:
+        _libraries[base] = paper.Library(base)
+    return _libraries[base]
+
+
+def _ja_sources() -> list[tuple[str, paper.Library]]:
+    """Các nguồn báo tiếng Nhật có số trên máy này: nguồn đang dùng trước, rồi nguồn kia (nếu có số)."""
+    cur = paper_source()
+    out: list[tuple[str, paper.Library]] = []
+    for src in [cur] + [x for x in paper.SOURCES if x != cur]:
+        lib = _source_lib(src) if src else None
+        if lib is not None and (src == cur or lib.issues()):
+            out.append((src, lib))
+    return out
+
+
+def _book() -> dict[str, Any]:
+    """Sổ tiến độ theo nguồn; lần đầu: nguồn đang dùng là nguồn mặc định (giữ ở khoá cũ như bản 1.22)."""
+    book = BOOK.load()
+    if not book["mac_dinh"]:
+        book["mac_dinh"] = paper_source() or "gemini"
+        try:
+            BOOK.save(book)
+        except Exception as err:
+            _warn("sổ tiến độ báo", err)
+    return book
+
+
+def paper_states(lang: str, src: str | None = None) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any] | None]:
+    """(trạng thái lưu, trạng thái nhìn theo nguồn `src`, sổ theo nguồn). Báo tiếng Anh chỉ có một nguồn."""
+    st = _paper_state(lang).load()
+    if lang != "ja":
+        return st, st, None
+    book = _book()
+    return st, paper.source_view(st, book, src if src is not None else paper_source()), book
+
+
+def save_paper_states(lang: str, st: dict[str, Any], book: dict[str, Any] | None) -> None:
+    _paper_state(lang).save(st)
+    if book is not None and lang == "ja":
+        BOOK.save(book)
+
+
+def paper_ref(lang: str, ref: str) -> tuple[paper.Library | None, str, str]:
+    """1.23: mã số báo của Kệ báo gộp: "2026-11-04" (nguồn đang dùng) hoặc "2026-11-04@claude" → (thư mục, nguồn, ngày)."""
+    date, _, src = str(ref or "").partition("@")
+    if lang != "ja":
+        return _library(lang), "gemini", date
+    cur = paper_source()
+    src = src if src in paper.SOURCES else cur
+    return (_library("ja") if src == cur else _source_lib(src)), src, date
+
+
 PAPER_LANGS = ("ja", "en")
 
 
@@ -270,7 +339,7 @@ def ai_waiting(cfg: dict[str, Any] | None = None) -> list[str]:
 
 def _unread(lang: str) -> list[str]:
     try:
-        return paper.unread_dates(_library(lang), _paper_state(lang).load())
+        return paper.unread_dates(_library(lang), paper_states(lang)[1])
     except Exception as err:
         _warn("báo " + lang, err)
         return []
@@ -303,7 +372,7 @@ def paper_langs() -> list[dict[str, Any]]:
             if lib is None:
                 continue
             issues = lib.issues()
-            read = _paper_state(lang).load()["read"]
+            read = paper_states(lang)[1]["read"]
         except Exception as err:
             _warn("báo " + lang, err)
             continue
@@ -529,7 +598,7 @@ def _write_progress(plants: list[dict[str, Any]] | None) -> None:
     if lib is None or plants is None:
         return
     try:
-        paper.write_progress(lib.base, paper.progress_payload(PAPER.load(), lib, plants, _today()))
+        paper.write_progress(lib.base, paper.progress_payload(paper_states("ja")[1], lib, plants, _today()))
     except (OSError, ValueError) as err:
         _warn("tien_do.json", err)
 
@@ -911,7 +980,7 @@ def ai_start(reason: str, dialog: Any = None, lang: str = "ja") -> bool:
             return False
         st.pop("thieu", None)
         try:
-            unread = paper.unread_dates(paper.Library(base, lang), _paper_state(lang).load())
+            unread = paper.unread_dates(paper.Library(base, lang), paper_states(lang, "gemini")[1])
         except Exception:
             unread = []
         opts = {"max_new": 3, "short": len(unread) >= 3, "model": o["model"],
@@ -1211,7 +1280,7 @@ def _paper_day(ds: str) -> str:
     issues: dict[str, dict[str, Any]] = {}
     for lang in PAPER_LANGS:
         try:
-            r = _paper_state(lang).load()["read"]
+            r = paper_states(lang)[1]["read"]
         except Exception:
             continue
         if ds not in r:
@@ -1965,9 +2034,26 @@ class GardenDialog(QDialog):
     # -- báo 畑新聞 & chép chính tả --------------------------------------------
 
     def _paper_index(self, lang: str) -> dict[str, Any]:
-        """Kệ báo của ngôn ngữ đang đọc (kèm các báo đã tick để chuyển)."""
+        """Kệ báo của ngôn ngữ đang đọc (kèm các báo đã tick để chuyển).
+
+        1.23: Kệ báo tiếng Nhật gộp số của cả hai nguồn (Claude Code / Gemini), xếp theo ngày, mỗi số ghi nguồn;
+        trước đây chuyển nguồn thì các số của nguồn kia biến khỏi kệ."""
         lib = _library(lang)
-        view = paper.index_view(lib, _paper_state(lang).load())
+        if lang == "ja":
+            st, _view, book = paper_states(lang)
+            rows: list[dict[str, Any]] = []
+            srcs = _ja_sources()
+            for src, slib in srcs:
+                part = paper.index_view(slib, paper.source_view(st, book, src))
+                for x in part["issues"]:
+                    x.update(src=src, ref=x["date"] + "@" + src)
+                rows += part["issues"]
+            order = {src: i for i, (src, _l) in enumerate(srcs)}
+            rows.sort(key=lambda x: (x["date"], -order.get(x["src"], 9)), reverse=True)
+            view = {"enabled": bool(srcs), "issues": rows[:paper.MAX_ISSUES], "lang": "ja",
+                    "multi": len({x["src"] for x in rows}) > 1}
+        else:
+            view = paper.index_view(lib, _paper_state(lang).load())
         view.update(source=paper_source() if lang == "ja" else ("gemini" if lib is not None else ""), lang=lang,
                     lang_name=LANG_NAME.get(lang, ""), langs=paper_langs(),
                     ai_busy=bool(_ai["running"]) and _ai.get("lang") == lang)
@@ -1985,11 +2071,22 @@ class GardenDialog(QDialog):
         if group == "paper":
             self._paper_lang = lang            # giữ báo đang đọc (đọc hết số mới cũng không tự nhảy sang báo kia)
         lib = _library(lang) if group == "paper" else _library()
-        store = _paper_state(lang) if group == "paper" else PAPER
+        src = paper_source() if lang == "ja" else "gemini"
+        book: dict[str, Any] | None = None
         try:
             if action in ("stop",):
                 av_player.stop_and_clear_queue()
                 return
+            if group == "paper" and action in ("issue", "q", "ct", "play"):
+                # 1.23: Kệ báo gộp hai nguồn → mã số báo "ngày@nguồn" chọn đúng thư mục và đúng ô tiến độ
+                payload0 = json.loads(arg) if action != "issue" else {}
+                ref = arg if action == "issue" else str(payload0.get("d") or "")
+                lib, src, date0 = paper_ref(lang, ref)
+                if action == "issue":
+                    arg = date0
+                else:
+                    payload0["d"] = date0
+                    arg = json.dumps(payload0)
             if action == "play":
                 self._paper_play(group, json.loads(arg), lib)
                 return
@@ -1998,7 +2095,10 @@ class GardenDialog(QDialog):
                 self._js("paperIndex", self._paper_index(paper_lang(self)))
                 self._js("paperSummary", paper_summary(self))
                 return
-            st = store.load()
+            if group == "paper":
+                saved, st, book = paper_states(lang, src)
+            else:
+                saved = st = PAPER.load()
             if group == "paper" and action == "index":
                 self._js("paperIndex", self._paper_index(lang))
                 return
@@ -2008,13 +2108,14 @@ class GardenDialog(QDialog):
                         "Báo tiếng Anh do Gemini viết: dán khoá Gemini ở tab Nguồn báo." if lang == "en" else
                         "Chưa chọn nguồn báo: mở tab Nguồn báo để dán khoá Gemini hoặc chọn thư mục kotoba_daily.")
                 voice = _voice()
-                view = paper.issue_view(lib, st, arg, voice)
+                view = self._issue_view(lib, st, arg, voice, src, lang)
                 if arg not in st["read"]:
                     paper.mark_read(st, arg)
-                    store.save(st)
-                    if lang == "ja":
+                    save_paper_states(lang, saved, book)
+                    if lang == "ja" and src == paper_source():
                         _write_progress(self._plants)
                 self._open_issue = arg
+                self._open_src = src
                 self._js("paperIssue", view)
                 self._js("paperSummary", paper_summary(self))
                 pend = paper.issue_pending(lib, arg, voice)
@@ -2045,7 +2146,10 @@ class GardenDialog(QDialog):
             _warn("paper", err)
             self._js("paperError", "Không làm được việc này.")
             return
-        store.save(st)
+        if group == "paper":
+            save_paper_states(lang, saved, book)
+        else:
+            PAPER.save(saved)
         res["wallet"] = STATE.add_coins(res["gained"]) if res["gained"] else STATE.load()
         quests = None
         if res["ok"] and res["first"] and res["kind"] in ("ct", "dict"):
@@ -2057,6 +2161,8 @@ class GardenDialog(QDialog):
             res["wallet"] = STATE.load()
         if not res["ok"] and (group == "dict" or lang == "ja"):
             _write_progress(self._plants)
+        if group == "paper" and lang == "ja" and res.get("date"):
+            res["ref"] = res["date"] + "@" + src
         res["summary"] = paper_summary(self)
         self._js("paperResult", res)
 
@@ -2260,13 +2366,42 @@ class GardenDialog(QDialog):
         if getattr(self, "_open_issue", None) != date:
             return
         lang = paper_lang(self)
-        lib = _library(lang)
+        src = getattr(self, "_open_src", "") or (paper_source() if lang == "ja" else "gemini")
+        lib, src, _d = paper_ref(lang, date + "@" + src)
         if lib is None:
             return
         try:
-            self._js("paperIssue", paper.issue_view(lib, _paper_state(lang).load(), date, _voice()))
+            self._js("paperIssue", self._issue_view(lib, paper_states(lang, src)[1], date, _voice(), src, lang))
         except paper.PaperError:
             pass
+
+    def _issue_view(self, lib: paper.Library, st: dict[str, Any], date: str, voice: paper.Voice, src: str,
+                    lang: str) -> dict[str, Any]:
+        """issue_view + mã số báo theo nguồn (Kệ báo gộp) + 1.23: tra nghĩa cho số cũ thiếu nghĩa.
+
+        Số cũ (viết trước 1.23, theo phạm vi đã bị ghi đè) có từ gạch chân không ra nghĩa → tìm trong mọi deck (theo
+        Cấu hình trường) và pham_vi.json của kotoba_daily. Số Gemini: ghi bổ sung vào chính số đó (một lần). Số
+        Claude Code: chỉ bổ sung khi hiện, không ghi vào thư mục kotoba_daily."""
+        extra: dict[str, list[str]] = {}
+        try:
+            miss = paper.missing_words(lib, date)
+            if miss and mw.col:
+                cfg = config()
+                found = words.lookup(mw.col, cfg, lang, miss)
+                if lang == "ja" and len(found) < len(miss):
+                    cdir = paper.resolve_dir(cfg.get("bao_dir")) if _bao_dir_set(cfg) else None
+                    if cdir and os.path.realpath(cdir) != os.path.realpath(lib.base):
+                        voc = paper.Library(cdir).scope()["vocab"]
+                        found.update({k: voc[k] for k in miss if k not in found and k in voc})
+                gem = os.path.realpath(lib.base) in (os.path.realpath(AI_DIR), os.path.realpath(AI_DIR_EN))
+                if found and not (gem and paper.add_lookup(lib.base, date, found)):
+                    extra = found
+        except Exception as err:
+            _warn("tra nghĩa số báo cũ", err)
+        view = paper.issue_view(lib, st, date, voice, extra)
+        view.update(src=src, ref=date + "@" + src if lang == "ja" else date,
+                    src_name={"claude": "Claude Code", "gemini": "Gemini"}.get(src, ""))
+        return view
 
     def _paper_play(self, group: str, payload: dict[str, Any], lib: paper.Library | None) -> None:
         slow = bool(payload.get("s"))
