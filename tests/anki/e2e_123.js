@@ -178,8 +178,10 @@ json.dump(raw, open(p, "w", encoding="utf-8"), ensure_ascii=False)
 kb.ai.translate_issue = lambda client, iss, lang="ja", prefer=None: [["Dịch máy giả đoạn %d." % (j + 1) for j in range(len(b["doan"]))] for b in iss["bai"]]
 result = 1`);
   await js('GardenPaper.close(); window.__kbIssue = null; GardenPaper.open("shelf"); return 1;'); await sleep(900);
-  await py(KB + 'kb._dialog._on_paper("paper:issue:" + kb.ai_today() + "@gemini"); result = 1');
-  ok(await waitFor('return window.__kbIssue && window.__kbIssue.has_dich && GardenPaper._state().tab === "issue";'), 'mở số hôm nay (có bản dịch)');
+  const today = await py(KB + 'result = kb.ai_today()');
+  const dm = today.slice(8, 10) + '/' + today.slice(5, 7);
+  await js(`[...document.querySelectorAll(".kb-p-row")].find(r => r.textContent.indexOf(${JSON.stringify(dm)}) >= 0 && /Gemini/.test(r.textContent)).click(); return 1;`);
+  ok(await waitFor('return window.__kbIssue && window.__kbIssue.has_dich && GardenPaper._state().tab === "issue";'), 'mở số hôm nay từ kệ (có bản dịch)');
   ok(await js('return document.querySelectorAll(".kb-p-dbtn").length >= 4 && [...document.querySelectorAll(".kb-p-dich")].every(d => getComputedStyle(d).display === "none");'), 'mỗi đoạn có nút Dịch, bản dịch ẩn sẵn');
   await js('document.querySelector(".kb-p-dbtn").click(); return 1;'); await sleep(200);
   ok(await js('const d = document.querySelector(".kb-p-dich"); return getComputedStyle(d).display !== "none" && /Bản dịch tiếng Việt/.test(d.textContent) && d.lang === "vi";'), 'bấm Dịch: hiện bản dịch đoạn đó');
@@ -196,7 +198,7 @@ result = 1`);
   ok(fbs.some(f => f.y === 'nhat' && /スタックちゃん/.test(f.ghi)), 'bấm Nhạt → ghi nhận xét vào truyen.json (kỳ sau Gemini đọc) ' + JSON.stringify(fbs));
   ok(await waitFor('return document.querySelector(".kb-p-fbs .kb-btn.is-on") && document.querySelector(".kb-p-fbs .kb-btn.is-on").textContent === "Nhạt";'), 'nút Nhạt sáng lên sau khi ghi');
   await js('GardenPaper.close(); window.__kbIssue = null; GardenPaper.open("shelf"); return 1;'); await sleep(900);
-  await py(KB + 'kb._dialog._on_paper("paper:issue:2026-11-02@gemini"); result = 1');
+  await js('[...document.querySelectorAll(".kb-p-row")].find(r => r.textContent.indexOf("02/11") >= 0).click(); return 1;');
   ok(await waitFor('return window.__kbIssue && window.__kbIssue.date === "2026-11-02" && !window.__kbIssue.has_dich && window.__kbIssue.can_dich;'), 'số cũ chưa có bản dịch');
   ok(await waitFor('return document.getElementById("kb-p-dich").textContent === "Dịch số này";'), 'nút "Dịch số này"');
   await js('document.getElementById("kb-p-dich").click(); return 1;');

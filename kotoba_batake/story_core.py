@@ -46,7 +46,7 @@ TONE_TEXT = {
     "phieu_luu": "Phiêu lưu: nhân vật rời quán đi tìm / đi tới chỗ mới trong làng, gặp thử thách nhỏ, tự xoay xở.",
 }
 ARC_LEN = (6, 8)            # số kỳ của một đợt
-MAX_CALLS = 7               # trần số lượt gọi cho phần truyện của một số báo (kể cả đổi model khi hết hạn mức)
+MAX_CALLS = 9               # trần số lượt gọi cho phần truyện của một số báo (kể cả đổi model khi hết hạn mức / bận)
 STORY_FILE = "truyen.json"
 ARC_FILE = "truyen_mach.json"
 FEEDBACK = ("hay", "nhat")

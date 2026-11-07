@@ -53,7 +53,21 @@ SHOTS_1226 = [
     ("g_doi_ho_so", "g", "File → Đổi hồ sơ khi vườn đang mở",
      "Trước: Anki đã đóng collection mà cửa sổ vườn vẫn mở (bấm gì cũng lỗi). Sau: vườn đóng theo hồ sơ, mở lại hồ sơ thì mở vườn bình thường."),
 ]
-SETS = {"1225": (SHOTS_1225, "1.22.4", "1.22.5"), "1226": (SHOTS_1226, "1.22.5", "1.22.6")}
+SHOTS_123 = [
+    ("a_chau_cay_toi", "a", "Bảng ôn lúc 22 giờ: chậu cây nhỏ ở góc trên trái (phóng 2 lần)",
+     "Người dùng: \"buổi tối thì giao diện tối … hơi tối nên nhìn không đẹp lắm\". Sau: trời tím nhạt, cỏ xanh dịu, lớp phủ tối nhẹ."),
+    ("b_kieu_giao_dien", "b", "⚙ → Giao diện & chế độ học",
+     "Sau: bỏ kiểu \"Ôn buổi tối\" và màu bảng \"Đêm vườn\" (người dùng: \"tắt giao diện học buổi tối luôn\"); thêm nhóm Màn chính (Cỡ cảnh, Cảnh hiện)."),
+    ("c_the_gemini", "c", "Nguồn báo → thẻ Gemini (máy có pham_vi.json của kotoba_daily)",
+     "Trước: chip \"Giáo trình\" chọn sẵn, Trình độ bị khoá. Sau: chỉ Mọi deck / Chọn deck, Trình độ chọn được; thêm Truyện và Giọng truyện."),
+    ("d_tra_nghia", "d", "Số báo Gemini cũ sau khi số sau viết theo deck khác: bấm 学生",
+     "Trước: chỉ hiện chữ 学生, không cách đọc, không nghĩa. Sau: tìm trong deck → đủ cách đọc + nghĩa (ghi luôn vào số đó)."),
+    ("e_ke_bao", "e", "Kệ báo sau khi chuyển từ Claude Code sang Gemini",
+     "Trước: số Claude Code biến khỏi kệ. Sau: kệ gộp cả hai nguồn, mỗi số ghi nguồn."),
+    ("f_ngam_canh", "f", "Ngắm cảnh (phím V / nút Ngắm / bấm vào ngôi nhà)",
+     "Trước: không có (ảnh là màn chính). Sau: cả cửa sổ chỉ một cảnh, Sắp xếp đồ, Chụp ảnh."),
+]
+SETS = {"1225": (SHOTS_1225, "1.22.4", "1.22.5"), "1226": (SHOTS_1226, "1.22.5", "1.22.6"), "123": (SHOTS_123, "1.22.8", "1.23.0")}
 SHOTS, V_OLD, V_NEW = SETS[SET]
 
 
