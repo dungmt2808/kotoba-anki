@@ -30,13 +30,14 @@
 - `bao_source`: nguồn báo — `"auto"` (có `bao_dir` thì dùng kotoba_daily, không thì Gemini), `"claude"`, `"gemini"`. `"claude"` mà `bao_dir` trống thì như `"auto"`.
 - `gemini_key`: khoá Gemini API. **Chỉ lưu trên máy này** (không đồng bộ AnkiWeb, không ghi vào Báo lỗi). Đừng chia sẻ file cấu hình có khoá.
 - `gemini_langs` (1.19.1): báo muốn nhận, ví dụ `["ja"]` (mặc định), `["ja", "en"]`, `["en"]`. Mỗi sáng Gemini viết một số cho mỗi báo trong danh sách, **không phụ thuộc deck đang xem**. Chưa có khoá này thì add-on ghi một lần: `["ja"]`, thêm `"en"` nếu máy đã có báo tiếng Anh. Deck lấy từ (tối đa 5 cho mỗi báo) chọn ở tab Nguồn báo, lưu trong collection (đồng bộ AnkiWeb).
-- `gemini_level`: trình độ báo `"N5"`…`"N1"` khi lấy từ deck (dùng `kotoba_daily` thì theo giáo trình).
+- `gemini_level`: trình độ báo tiếng Nhật `"N5"`…`"N1"`.
 - `gemini_audio`: giọng đọc Gemini — `"chinh_ta"` (chỉ câu chép chính tả, ít lượt gọi), `"ca_bai"` (cả từng đoạn), `"tat"`. `gemini_voice`: tên giọng (`"Kore"`, `"Leda"`, `"Aoede"`…).
 - `gemini_level_en` (1.19): trình độ `"A1"`…`"C1"` của **báo tiếng Anh** (The Garden Gazette), lưu ở `user_files/bao_gemini_en/`. Giọng đọc dùng chung `gemini_voice` (`gemini_voice_en` của bản 1.19.0 vẫn được đọc nếu có).
 - `gemini_auto`: tự viết số hôm nay khi mở Anki / mở vườn (mỗi ngày tối đa 2 lần thử). `false` = chỉ viết khi bấm **Viết số hôm nay**.
 - `gemini_wait_start` (1.22.3, add-on tự đặt): `true` sau khi dán khoá lần đầu và **Thử khoá** đúng — chưa tự viết, chờ bạn chọn báo muốn nhận / trình độ / deck rồi bấm **Bắt đầu viết** ở tab Nguồn báo (bấm xong thành `false`). Đặt `false` bằng tay cũng được.
 - `gemini_wait_langs` (1.22.4, add-on tự đặt): báo vừa tick thêm ở "Báo muốn nhận" khi đã có khoá, ví dụ `["en"]` — báo đó chưa tự viết, chờ bạn chọn trình độ / deck rồi bấm **Bắt đầu viết**; các báo khác vẫn tự viết như cũ.
-- `gemini_scope`: báo tiếng Nhật lấy từ ở đâu — `"auto"` (có `pham_vi.json` của kotoba_daily thì theo giáo trình, không thì theo deck) hoặc `"deck"`. Theo deck: mỗi số 100 từ, khoảng 70% từ hôm nay phải ôn và 30% từ đã thuộc.
+- `gemini_scope`: không dùng nữa (1.23: báo Gemini luôn lấy từ deck — mọi deck hoặc deck đã chọn ở tab Nguồn báo; mỗi số 100 từ, khoảng 70% từ hôm nay phải ôn và 30% từ đã thuộc). Báo Claude Code (kotoba_daily) vẫn theo giáo trình.
+- `paper_confirmed` (1.23, tự ghi): nguồn đã xác nhận của từng báo, vd. `{"ja": "claude", "en": "gemini"}`. Nguồn vừa thành Gemini mà chưa xác nhận (bấm "Dùng Gemini", thư mục kotoba_daily tạm không thấy) thì chờ bấm "Bắt đầu viết", không tự viết. Không cần sửa tay.
 - `gemini_model`, `gemini_tts_model`: để trống cho add-on tự chọn model mới nhất (Google hay đổi tên model).
 - Mỗi số: Gemini viết → máy kiểm tra (romaji, furigana, chữ Trung, cách đọc theo deck, số đếm…) → máy tự nối tra từ cho từ đã học → gửi lại lỗi cho Gemini sửa (tối đa 2 lần) → Gemini soát lần 2 như biên tập viên → kiểm tra lại. Còn lỗi thì **không lưu** số đó. Khoảng 3–5 lượt gọi chữ + 2–3 lượt gọi giọng đọc mỗi ngày (bản đọc chậm tạo ngay trên máy, không tốn lượt).
 - Bản miễn phí: mỗi model khoảng 20 lượt viết / ngày, model giọng đọc khoảng 10 lượt / ngày. Model nào hết hạn mức thì add-on nhớ và dùng model khác (cả Flash-Lite) tới khi Google đặt lại hạn mức (0 giờ giờ Thái Bình Dương = 15 giờ ở Việt Nam).

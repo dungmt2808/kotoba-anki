@@ -210,16 +210,62 @@ def wanted_langs(cfg: dict[str, Any] | None = None) -> list[str]:
     return ["ja"] + (["en"] if _en_has_issues() else [])
 
 
-def ai_waiting(cfg: dict[str, Any] | None = None) -> list[str]:
-    """1.22.3 / 1.22.4: báo đang chờ người dùng bấm "Bắt đầu viết" (không tự viết): mọi báo đã tick khi vừa dán khoá
-    lần đầu (`gemini_wait_start`), hoặc báo vừa tick thêm ở "Báo muốn nhận" (`gemini_wait_langs`) — người dùng: "lúc đang
-    chọn tiếng Nhật, chuyển qua Tiếng Anh, thì nó cũng tự động viết báo luôn, không chờ cấu hình gì cả"."""
-    cfg = cfg if cfg is not None else config()
+def _old_waiting(cfg: dict[str, Any]) -> list[str]:
+    """Hàng chờ kiểu 1.22.3 / 1.22.4: mọi báo đã tick khi vừa dán khoá lần đầu (`gemini_wait_start`), hoặc báo vừa tick
+    thêm ở "Báo muốn nhận" (`gemini_wait_langs`)."""
     langs = wanted_langs(cfg)
     if cfg.get("gemini_wait_start"):
         return langs
     w = cfg.get("gemini_wait_langs")
     return [x for x in langs if isinstance(w, list) and x in w]
+
+
+def _lang_source(cfg: dict[str, Any], lang: str) -> str:
+    """Nguồn báo của `lang` lúc này: tiếng Nhật theo paper_source, tiếng Anh chỉ có Gemini (cần khoá)."""
+    if lang == "ja":
+        return paper_source(cfg)
+    return "gemini" if ai.clean_key(cfg.get("gemini_key")) else ""
+
+
+def confirmed_sources(cfg: dict[str, Any] | None = None) -> dict[str, str]:
+    """1.23: "nguồn đã xác nhận" của từng báo (`paper_confirmed`, config trên máy này, không đồng bộ).
+
+    Lần đầu chạy 1.23 (chưa có khoá này): ghi nguồn đang dùng làm nguồn đã xác nhận — người đang dùng Gemini không bị
+    bắt bấm lại "Bắt đầu viết"; báo đang chờ kiểu 1.22.3 / 1.22.4 thì vẫn chờ."""
+    cfg = cfg if cfg is not None else config()
+    raw = cfg.get("paper_confirmed")
+    if isinstance(raw, dict):
+        return {x: raw.get(x) if raw.get(x) in ("claude", "gemini") else "" for x in PAPER_LANGS}
+    wait = _old_waiting(cfg)
+    on = wanted_langs(cfg)
+    out = {x: _lang_source(cfg, x) if x not in wait and (x == "ja" or x in on) else "" for x in PAPER_LANGS}
+    try:
+        save_config(paper_confirmed=out)
+    except Exception as err:
+        _warn("paper_confirmed", err)
+    return out
+
+
+def confirm_source(lang: str, src: str) -> None:
+    """Ghi nguồn đã xác nhận của báo `lang` (chỉ khi đổi, để không ghi config mỗi lần làm mới vườn)."""
+    cur = confirmed_sources()
+    if lang in PAPER_LANGS and cur.get(lang) != src:
+        cur[lang] = src
+        save_config(paper_confirmed=cur)
+
+
+def ai_waiting(cfg: dict[str, Any] | None = None) -> list[str]:
+    """Báo đang chờ người dùng bấm "Bắt đầu viết" (không tự viết).
+
+    1.22.3 / 1.22.4: dán khoá lần đầu, tick thêm báo (`_old_waiting`). 1.23 (sửa tận gốc, kế hoạch mục 3 — trước đây
+    bấm "Dùng Gemini cho báo tiếng Nhật", "Đổi khoá" khi đang dùng Claude Code, hay thư mục kotoba_daily tạm thời không
+    thấy đều làm Gemini viết ngay): **nguồn lúc này là Gemini mà nguồn đã xác nhận không phải Gemini** thì cũng chờ.
+    Chỉ "Bắt đầu viết" / "Viết" mới xác nhận Gemini; quy tắc nằm ở đây nên đường đổi nguồn nào cũng không lọt."""
+    cfg = cfg if cfg is not None else config()
+    langs = wanted_langs(cfg)
+    wait = _old_waiting(cfg)
+    conf = confirmed_sources(cfg)
+    return [x for x in langs if x in wait or (_lang_source(cfg, x) == "gemini" and conf.get(x) != "gemini")]
 
 
 def _unread(lang: str) -> list[str]:
@@ -608,7 +654,7 @@ def _ai_opts(cfg: dict[str, Any]) -> dict[str, Any]:
     return {"level": level, "audio": audio, "voice": voice, "model": model.strip()[:80],
             "level_en": level_en, "voice_en": voice_en,
             "tts_model": tts.strip()[:80], "auto": bool(cfg.get("gemini_auto", True)),
-            "scope": "deck" if cfg.get("gemini_scope") == "deck" else "auto",
+            "scope": "deck",      # 1.23: báo Gemini chỉ lấy từ deck (gemini_scope "auto" cũ = "deck")
             "dict_voice": cfg.get("dict_voice") if cfg.get("dict_voice") in DICT_VOICE_MODES else "auto"}
 
 
@@ -677,6 +723,8 @@ def ai_view(extra: dict[str, Any] | None = None, lang: str | None = None) -> dic
             "running": bool(_ai["running"]), "run_lang": _ai.get("lang", "ja"), "testing": bool(_ai["testing"]),
             "msg": _ai["msg"], "langs": langs, "first": bool(key) and bool(cfg.get("gemini_wait_start")),
             "waiting": [x for x in ai_waiting(cfg) if not langs[x]["today"]] if key else [],
+            # 1.23: báo chờ vì nguồn vừa thành Gemini (bấm "Dùng Gemini", mất thư mục kotoba_daily), không phải vừa tick
+            "switched": [x for x in ai_waiting(cfg) if x not in _old_waiting(cfg)] if key else [],
         },
         "claude": {"set": _bao_dir_set(cfg), "ok": bool(claude_dir), "pham_vi": bool(pv),
                    "path": diag.redact(str(claude_dir or cfg.get("bao_dir") or ""))[:160], "issues": claude_issues},
@@ -719,7 +767,7 @@ def _shared_exhausted(*bases: str) -> dict[str, float]:
 
 
 def ai_test_key(key: str) -> None:
-    """Thử khoá trong luồng nền; đúng thì lưu khoá và chọn nguồn Gemini.
+    """Thử khoá trong luồng nền; đúng thì lưu khoá (dán lần đầu: chọn luôn nguồn Gemini, chờ "Bắt đầu viết").
 
     1.22.3 (người dùng: "test khóa vừa xong thì gemini chạy ngay lập tức, không kịp cấu hình gì cả"): dán khoá lần đầu
     thì chưa viết — chờ người dùng chọn báo muốn nhận / trình độ / deck rồi bấm "Bắt đầu viết" (`gemini_wait_start`).
@@ -740,7 +788,7 @@ def ai_test_key(key: str) -> None:
             if first:
                 save_config(gemini_key=key, bao_source="gemini", gemini_wait_start=True)
             else:
-                save_config(gemini_key=key, bao_source="gemini")
+                save_config(gemini_key=key)      # 1.23: "Đổi khoá" không đổi nguồn báo (trước: tự chọn Gemini)
             st = ai.load_status(ai.ensure_dir(AI_DIR))
             st.update(model=r["model"], models=r["models"], tts=r["tts"], exhausted=client.exhausted_state())
             st.pop("voice_fail_day", None)
@@ -778,23 +826,13 @@ def _loi_sai(lang: str) -> list[str]:
 
 def _ai_scope(cfg: dict[str, Any], o: dict[str, Any], lang: str) -> dict[str, Any]:
     """1.19.1: phạm vi của báo `lang` — 100 từ lấy từ các deck đã chọn (không chọn thì mọi deck), không theo deck
-    đang xem. Báo tiếng Nhật: có pham_vi.json của kotoba_daily và chọn "Giáo trình" thì theo giáo trình."""
+    đang xem. 1.23: báo Gemini **chỉ** lấy từ deck (bỏ "Giáo trình" / pham_vi.json của kotoba_daily — báo Claude Code
+    vẫn theo giáo trình); trình độ luôn theo ô Trình độ."""
     en = lang == "en"
     src = words.load_src(mw.col)
     pk = words.pick(mw.col, cfg, lang, src[lang]["decks"], ai_today(),
                     eligible=ai_en.kho_ok if en else ai.kho_ok)
-    scope = None
-    pv = _claude_pham_vi(cfg) if not en else None
-    if pv and o["scope"] != "deck":
-        try:
-            with open(pv, encoding="utf-8") as f:
-                scope = ai.scope_from_pham_vi(json.load(f))
-        except (OSError, ValueError) as err:
-            _warn("pham_vi.json", err)
-        if scope is not None:
-            scope["sap_quen"] = list(dict.fromkeys(pk["focus"][:12] + scope.get("sap_quen", [])))[:12]
-    if scope is None:
-        scope = ai_en.scope_from_pick(pk, o["level_en"]) if en else ai.scope_from_pick(pk, o["level"])
+    scope = ai_en.scope_from_pick(pk, o["level_en"]) if en else ai.scope_from_pick(pk, o["level"])
     try:
         scope["loi_sai"] = list(dict.fromkeys(_loi_sai(lang) + list(scope.get("loi_sai", []))))[:12]
     except Exception as err:
@@ -830,6 +868,8 @@ def ai_start(reason: str, dialog: Any = None, lang: str = "ja") -> bool:
     key = ai.clean_key(cfg.get("gemini_key"))
     if not key:
         return False
+    if reason == "auto" and lang in ai_waiting(cfg):
+        return False                     # 1.23: chờ "Bắt đầu viết" (một quy tắc chung, xem ai_waiting)
     o = _ai_opts(cfg)
     date = ai_today()
     try:
@@ -908,7 +948,11 @@ def ai_start(reason: str, dialog: Any = None, lang: str = "ja") -> bool:
 
 def ai_start_all(reason: str = "auto") -> bool:
     """1.19.1: tự viết lần lượt các báo đã tick (một việc nền một lúc; xong báo này thì _ai_done gọi lại).
-    1.22.3: vừa dán khoá lần đầu / 1.22.4: vừa tick thêm một báo — báo đó không tự viết cho tới khi bấm "Bắt đầu viết"."""
+    Báo trong `ai_waiting()` (vừa dán khoá, vừa tick thêm, 1.23: nguồn vừa thành Gemini mà chưa xác nhận) không tự viết
+    cho tới khi bấm "Bắt đầu viết"."""
+    cfg = config()
+    if paper_source(cfg) == "claude":
+        confirm_source("ja", "claude")   # 1.23: đang đọc báo Claude Code → mất thư mục / đổi nguồn thì Gemini chờ
     skip = ai_waiting() if reason == "auto" else []
     for lang in wanted_langs():
         if lang in skip:
@@ -2058,13 +2102,15 @@ class GardenDialog(QDialog):
                 changes["gemini_voice"] = changes["gemini_voice_en"] = p["voice"]
             if isinstance(p.get("auto"), bool):
                 changes["gemini_auto"] = p["auto"]
-            if p.get("scope") in ("auto", "deck"):
-                changes["gemini_scope"] = p["scope"]
             if p.get("dict_voice") in DICT_VOICE_MODES:
                 changes["dict_voice"] = p["dict_voice"]
             if p.get("source") in ("auto", "claude", "gemini"):
                 changes["bao_source"] = p["source"]
                 refresh = True
+                if p["source"] == "claude":
+                    conf = confirmed_sources()
+                    conf["ja"] = "claude"
+                    changes["paper_confirmed"] = conf
             if changes:
                 save_config(**changes)
             if changes.get("gemini_audio") in ("chinh_ta", "ca_bai"):
@@ -2082,7 +2128,12 @@ class GardenDialog(QDialog):
             except (ValueError, TypeError, AttributeError) as err:
                 _warn("chọn deck cho báo", err)
         elif action == "start":                           # 1.22.3: "Bắt đầu viết" sau khi dán khoá lần đầu
-            save_config(gemini_wait_start=False, gemini_wait_langs=[])
+            cfg0 = config()
+            conf = confirmed_sources(cfg0)
+            for x in wanted_langs(cfg0):
+                if _lang_source(cfg0, x) == "gemini":
+                    conf[x] = "gemini"
+            save_config(gemini_wait_start=False, gemini_wait_langs=[], paper_confirmed=conf)
             if not ai_start_all("manual"):
                 flash = {"flash": _ai.get("why") or ("Gemini đang bận, thử lại sau." if _ai["running"] else
                                                      "Hôm nay đã có đủ báo rồi. Từ mai Gemini tự viết khi mở Anki."), "ok": not _ai["running"]}
@@ -2093,8 +2144,11 @@ class GardenDialog(QDialog):
                 lang = "ja"
             lang = lang if lang in PAPER_LANGS else "ja"
             if action == "write" and lang in ai_waiting():
-                rest = [x for x in ai_waiting() if x != lang]
+                cfg0 = config()
+                rest = [x for x in _old_waiting(cfg0) if x != lang]
                 save_config(gemini_wait_start=False, gemini_wait_langs=rest)
+            if action == "write" and _lang_source(config(), lang) == "gemini":
+                confirm_source(lang, "gemini")   # 1.23: bấm "Viết" là xác nhận Gemini cho báo này
             if action == "write" and not ai_start("manual", self, lang):
                 base = AI_DIR_EN if lang == "en" else AI_DIR
                 flash = {"flash": _ai.get("why") or ("Hôm nay đã có báo rồi." if ai.has_issue(base, ai_today()) else
@@ -2104,7 +2158,8 @@ class GardenDialog(QDialog):
                 flash = {"flash": "Không còn giọng đọc nào cần tạo.", "ok": True}
         elif action == "forget":
             cfg = config()
-            save_config(gemini_key="", gemini_wait_start=False, gemini_wait_langs=[],
+            conf = {x: ("" if v == "gemini" else v) for x, v in confirmed_sources(cfg).items()}
+            save_config(gemini_key="", gemini_wait_start=False, gemini_wait_langs=[], paper_confirmed=conf,
                         bao_source="auto" if cfg.get("bao_source") == "gemini" else cfg.get("bao_source", "auto"))
             flash = {"flash": "Đã xoá khoá. Các số báo cũ vẫn còn trong kệ.", "ok": True}
             refresh = True
