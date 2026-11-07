@@ -348,8 +348,8 @@ def writer_prompt(lang: str, scope: dict[str, Any], ky: int, tone: str, arc: dic
         parts.append("BẢN TRƯỚC BỊ MÁY KIỂM TRA TRẢ LẠI (tránh các lỗi này):\n- " + "\n- ".join(problems[:12]))
     parts.append(
         "Trả về đúng một object JSON theo khuôn: dan_y (tiếng Việt: muon, tro_ngai, bat_ngo, moc_cau), tieu_de (%s), "
-        "doan = 3 đoạn %s, dich = bản dịch tiếng Việt TỰ NHIÊN của từng đoạn (cùng số phần tử, không có chữ %s, không ghi "
-        "chú trong ngoặc), tu_moi (≤ 2 từ ngoài danh sách: w, r = %s, m = nghĩa tiếng Việt), nho (tiếng Việt: tom_tat = 2 "
+        "doan = 3 đoạn %s, dich = bản dịch tiếng Việt TỰ NHIÊN của từng đoạn (cùng số phần tử, không có chữ %s — tên riêng viết "
+        "Latin: Lin, Hana, Stack-chan, quán Kotoba, làng Kotoba; không ghi chú trong ngoặc), tu_moi (≤ 2 từ ngoài danh sách: w, r = %s, m = nghĩa tiếng Việt), nho (tiếng Việt: tom_tat = 2 "
         "câu chuyện gì xảy ra; nhan_vat_moi; bo_ngo = chỗ bỏ ngỏ kỳ sau cần giải quyết; da_giai = chỗ bỏ ngỏ cũ kỳ này đã "
         "giải quyết)." % (
             "tiếng Anh, 3–8 từ" if lang == "en" else "tiếng Nhật, ngắn",
@@ -442,6 +442,22 @@ def save_draft(base: str, date: str, ky: int, st: dict[str, Any]) -> None:
         pass
 
 
+# tên riêng hay bị để nguyên chữ Nhật trong bản dịch (hồ sơ nhân vật viết lẫn chữ Nhật; thử Gemini thật 07/11: cả bài mất
+# nút Dịch) → đổi sang chữ Latin trước khi kiểm. Dài trước ngắn.
+NAME_VI = (("スタックちゃん", "Stack-chan"), ("はなさん", "Hana"), ("リンさん", "Lin"), ("女将さん", "bà chủ"),
+           ("村長さん", "trưởng làng"), ("郵便屋さん", "bác đưa thư"), ("「ことば屋」", "quán Kotoba"), ("ことば屋", "quán Kotoba"),
+           ("ことば村", "làng Kotoba"), ("ことば畑", "vườn Kotoba"), ("田中様", "ông Tanaka"), ("田中さん", "Tanaka"),
+           ("はな", "Hana"), ("リン", "Lin"), ("さん", ""), ("様", ""), ("ちゃん", ""))
+
+
+def _latin_names(d: str) -> str:
+    if not CJK_RE.search(d):
+        return d
+    for ja, vi in NAME_VI:
+        d = d.replace(ja, vi)
+    return re.sub(r"[ \t]{2,}", " ", d)
+
+
 def clean_translation(dich: Any, n: int) -> list[str] | None:
     """Bản dịch tiếng Việt của n đoạn: bỏ ghi chú trong ngoặc; sai số đoạn / có chữ Nhật, Hán, Hàn / không phải tiếng
     Việt → None (đoạn đó / bài đó không có nút Dịch, cả số vẫn dùng được)."""
@@ -451,7 +467,7 @@ def clean_translation(dich: Any, n: int) -> list[str] | None:
     for d in dich:
         if not isinstance(d, str):
             return None
-        d = NOTE_RE.sub("", d).strip()
+        d = _latin_names(NOTE_RE.sub("", d)).strip()
         if not d or len(d) > 1500 or CJK_RE.search(d) or MARK_RE.search(d) or not VI_RE.search(d):
             return None
         out.append(d)
@@ -647,6 +663,47 @@ def run(job: Any, ky: int, tone: str, season: str) -> dict[str, Any] | None:
     best["_lang"], best["_level"] = lang, level
     save_draft(job.base, job.date, ky, best)
     return best
+
+
+_KEEP_CH = re.compile(r"[^\u3041-\u309f\u30a1-\u30ff\u3400-\u9fff\uf900-\ufaff々〆ヶA-Za-z0-9]")
+_HAN = re.compile(r"[\u3400-\u9fff\uf900-\ufaff々]")
+
+
+def _norm_story(s: str) -> str:
+    import unicodedata
+    return paper.to_hira(_KEEP_CH.sub("", unicodedata.normalize("NFKC", s or "")))
+
+
+def story_diffs(raw_doan: list[str], plain: list[str]) -> list[tuple[int, list[tuple[str, str]]]]:
+    """1.23 (thử Gemini thật 07/11: lượt viết số chép "落とした古い手紙を急いで拾い上げました" thành "落てしまいました",
+    "驚いた" thành "驚った"): các chỗ bài truyện trong số báo chép SAI bản đã duyệt, theo từng đoạn. Bỏ qua chỗ đổi chữ Hán
+    ↔ kana (bước soát được phép), dấu câu, katakana ↔ hiragana, số toàn khổ. Trả [(đoạn, [(gốc, chép), …]), …]."""
+    import difflib
+    out: list[tuple[int, list[tuple[str, str]]]] = []
+    if len(raw_doan) != len(plain):
+        return out
+    for j, (p, o) in enumerate(zip(raw_doan, plain)):
+        a, b = _norm_story(paper.surface(p) if isinstance(p, str) else ""), _norm_story(o)
+        toks = [t for t in paper.tokenize(p) if t[0] != "plain"] if isinstance(p, str) else []
+        bad: list[tuple[str, str]] = []
+        for tag, i1, i2, j1, j2 in difflib.SequenceMatcher(None, a, b, autojunk=False).get_opcodes():
+            if tag == "equal":
+                continue
+            x, y = a[i1:i2], b[j1:j2]
+            if x and y and _HAN.search(y) and not _HAN.search(x) and len(x) <= 4 * len(y) + 2:
+                continue                                    # chữ Hán → kana (封筒 → ふうとう)
+            if x and y and _HAN.search(x) and not _HAN.search(y) and len(x) <= len(y):
+                continue                                    # kana → chữ Hán (なに → 何)
+            if x and y and _HAN.search(x) and _HAN.search(y) and len(x) <= 2 and len(y) <= 2 \
+                    and not _HAN.sub("", x) and not _HAN.sub("", y):
+                continue                                    # đổi 1–2 chữ Hán (去年 → 昨年)
+            if not x and len(y) <= 2 and 0 < j1 and j2 < len(b) and _HAN.match(b[j1 - 1]) and _HAN.match(b[j2]) \
+                    and any(b[j1 - 1] + b[j2] in t[1] and y in paper.to_hira(t[2] or "") for t in toks):
+                continue                                    # bỏ okurigana trong cùng một từ: [入口|いりぐち] (入り口)
+            bad.append((y, x))
+        if bad:
+            out.append((j, bad))
+    return out
 
 
 def story_matches(raw_doan: list[str], plain: list[str]) -> float:

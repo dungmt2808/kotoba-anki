@@ -248,10 +248,21 @@ ok(any("romaji" in x for x in e), "romaji trong truyện → lỗi")
 e, _w = story.check_story(dict(PLAIN, tu_moi=[{"w": "落とし物", "r": "otoshimono", "m": "đồ đánh rơi"}]), "ja", "N4", ai._bad_kanji)
 ok(any("kana" in x for x in e), "từ mới đọc bằng romaji (thử thật: \"orugōru\") → lỗi")
 ok(story.clean_translation(["U哇, cái hộp!"], 1) is None, "bản dịch lọt chữ Trung (thử thật: \"U哇\") → bỏ")
+ok(story.clean_translation(["Lin chào はなさん ở ことば屋 rồi cùng スタックちゃん đi."], 1) == ["Lin chào Hana ở quán Kotoba rồi cùng Stack-chan đi."],
+   "tên riêng để chữ Nhật trong bản dịch (thử thật: cả bài mất nút Dịch) → đổi sang chữ Latin")
+ok(story.clean_translation(["Lin thấy một chữ 葉 lạ."], 1) is None, "còn chữ Nhật khác ngoài tên riêng → vẫn bỏ")
 ok(story.clean_translation(["Hello there"], 1) is None, "bản dịch không phải tiếng Việt → bỏ")
 ok(story.clean_translation(["Một", "hai"], 1) is None, "sai số đoạn → bỏ")
 ok(story.story_matches(sb["doan"], PLAIN["doan"]) > 0.99 and story.story_matches(sb["doan"], ["全然違う話です。"] * 3) < 0.5,
    "so bài truyện có furigana với bản chữ trơn")
+PL = ["郵便屋さんは落とした古い手紙を急いで拾い上げました。", "はなさんは少し驚いたような顔をしました。", "ことば屋の入り口で深呼吸をしました。"]
+ok(story.story_diffs(["[郵便屋|ゆうびんや]さんは[落|お]てしまいました。", "はなさんは{少|すこ|少し}[驚|おどろ]ったような[顔|かお]をしました。",
+                      "ことば[屋|や]の[入口|いりぐち]で[深呼吸|しんこきゅう]をしました。"], PL) == [
+    (0, [("と", "て"), ("手紙を急いで拾い上げ", "")]), (1, [("し", ""), ("い", "っ")])],
+   "chép sai truyện đã duyệt theo từng đoạn (thử thật: 落てしまいました, 少困った, 驚った); [入口|いりぐち] cho 入り口 thì được")
+ok(story.story_diffs(["[郵便屋|ゆうびんや]さんは[落|お]とした[古|ふる]い[手紙|てがみ]をいそいで[拾|ひろ]い[上|あ]げました！",
+                      "はなさんは[少|すこ]し[驚|おどろ]いたような[顔|かお]をしました。", "ことばやの[入|い]り[口|ぐち]でしんこきゅうをしました"], PL) == [],
+   "chữ Hán → kana, katakana / dấu câu khác → không tính là chép sai")
 ok(paper.clean_issue(saved, "2026-11-07")["bai"][1]["dich"] == st_art["dich"], "clean_issue giữ bản dịch hợp lệ")
 bad_d = json.loads(json.dumps(saved)); bad_d["bai"][1]["dich"] = ["một", "hai"]
 ok(paper.clean_issue(bad_d, "2026-11-07")["bai"][1]["dich"] == [], "bản dịch sai số đoạn trong bao.json → không hiện")

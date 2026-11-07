@@ -89,7 +89,11 @@ ANKI_PY=~/.venv-anki/bin/python tests/anki/run_ui.sh /tmp/kb_src/kotoba_batake /
 Cần Node ≥ 22 (có sẵn `fetch` và `WebSocket`). Cổng: `KB_CDP_PORT` (9333), `KB_CTRL_PORT` (9444). `kill_anki.sh` tắt Anki đang chạy từ các script này.
 
 ## Kết quả lần chạy gần nhất (bản 1.23.0, 07/11/2026)
-- (xem cuối mục này — cập nhật sau lần chạy cuối)
+- Mã nguồn `kotoba_batake/` (và gói đóng lại từ đó): `run_all.sh` (`ANKI_PY` = venv aqt 26.9.4, có `core/test_123.py` mới) **TẤT CẢ OK**.
+- Anki thật **26.9.4**: `e2e_123.js` **74/74** (mới: 3 đường tự viết báo, Kệ báo gộp, tra nghĩa số cũ, bản dịch, KB-01/02/03, giao diện tối, Ngắm cảnh + Sắp xếp đồ) · `e2e.js` 24/24 · `e2e_tour.js` 12/12 · `e2e_114` 34/34 · `e2e_115` 21/21 · `e2e_116` 15/15 (bỏ 3 kiểm tra "Đêm vườn" đã xoá) · `e2e_117` 55/55 · `e2e_118` 29/29 · `e2e_119` 55/55 · `e2e_120` 103/103 · `e2e_121` 46/46 · `e2e_122` 64/64 · `e2e_1223` 49/49 · `e2e_1226` 40/40 · `e2e_1228` 26/26 · `audit_edge.js` 58/58 · `audit_full.js` 180/180. **23.10.1 (Qt 6.6.1)**: `e2e_123` 74/74 · `e2e_tour` 12/12 · `e2e_1226` 40/40 · `e2e_1228` 26/26.
+- Lần chạy đầu `e2e_122` trượt 1/64: nút **Ngắm** mới làm thanh trên bảng Nhà tràn ở cửa sổ 1024 px → chuyển nút xuống góc khung xem, chạy lại 64/64.
+- Ảnh trước / sau 1.22.8 ↔ 1.23.0: `KB_SCRIPTS=shots_123.js anki/run_ui.sh <gói> <thư mục>` trên hai bản, rồi `tools/compare_shots.py TRƯỚC SAU RA 123` → `docs/kiem_thu/1.23/` (báo cáo `BAO_CAO.md`).
+- Gemini thật: `KB_STREAM=1 python3 gemini/run_story.py ../kotoba_batake OUT --days 3` (truyện quy trình mới, 3 kỳ) — kết quả ở `docs/kiem_thu/1.23/BAO_CAO.md` mục 4.
 
 ## Lần chạy trước (bản 1.22.8, 05/11/2026) — ẩn thẻ Claude Code, ảnh / video giới thiệu
 - Gói 1.22.8 đã giải nén (`tools/pack.py`): `run_all.sh` (cả phần cần gói `anki`, `ANKI_PY` = venv aqt 26.9.4) **TẤT CẢ OK**.

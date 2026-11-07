@@ -1094,6 +1094,10 @@ def check(raw: Any, scope: dict[str, Any], opts: dict[str, Any]) -> Report:
             rep.err("bai[truyen]", "bài truyện phải chép NGUYÊN VĂN truyện đã viết sẵn (chỉ thêm đánh dấu furigana, không sửa "
                     "chữ, không thêm bớt câu):\n" + json.dumps({"tieu_de": plain["tieu_de"], "doan": plain["doan"]},
                                                              ensure_ascii=False))
+        else:
+            for j, bad in story_core.story_diffs(sb.get("doan") or [], plain["doan"])[:3]:
+                rep.err("bai[truyen].doan[%d]" % j, "chép sai truyện đã duyệt (%s) — đoạn này phải là (thêm furigana, không "
+                        "sửa chữ): %s" % ("; ".join('"%s" thành "%s"' % (y or "∅", x or "∅") for y, x in bad[:3]), plain["doan"][j]))
     lo, hi = LENGTH.get(scope.get("trinh_do", "N4"), (280, 700))
     if short:
         lo, hi = lo // 3, hi // 2
@@ -1805,7 +1809,8 @@ def write_prompt(scope: dict[str, Any], opts: dict[str, Any], story_list: list[d
                 if third == "thong_bao" else "cột ngắn của một nhân vật (1–2 đoạn), tiêu đề kiểu スタックちゃんの[一言|ひとこと].", ky))
     if not short:
         parts.append("dich: mỗi bài thêm \"dich\" = bản dịch tiếng Việt TỰ NHIÊN của từng đoạn (cùng số phần tử với doan; không "
-                     "có chữ Nhật, không furigana, không ghi chú trong ngoặc). Người học bấm \"Dịch\" mới thấy.")
+                     "có chữ Nhật — tên riêng viết Latin: Lin, Hana, Stack-chan, quán Kotoba; không furigana, không ghi chú "
+                     "trong ngoặc). Người học bấm \"Dịch\" mới thấy.")
     parts.append(
         "mau_cau: 2–4 id lấy đúng từ DANH SÁCH NGỮ PHÁP (cột đầu), là các mẫu được nhấn mạnh; mỗi mẫu xuất hiện ít nhất 2 lần. "
         "Phần lớn là mẫu TRỌNG TÂM (nếu có), thêm 1 mẫu cũ để ôn.\n"
@@ -1909,8 +1914,8 @@ def translate_issue(client: Gemini, issue: dict[str, Any], lang: str = "ja", pre
     names = text_models(client.models())
     lite = [n for n in names if "lite" in n] + [n for n in names if "lite" not in n]
     names = order_models(lite, client, [prefer]) if lite else []
-    prompt = ("Dịch số báo %s dưới đây sang tiếng Việt cho người Việt đang học: dịch tự nhiên, đúng ý, giữ tên riêng, "
-              "không thêm ghi chú hay giải thích trong ngoặc, không để chữ %s trong bản dịch. Mỗi bài trả về \"dich\" là "
+    prompt = ("Dịch số báo %s dưới đây sang tiếng Việt cho người Việt đang học: dịch tự nhiên, đúng ý, tên riêng viết "
+              "Latin (Lin, Hana, Stack-chan, quán Kotoba, làng Kotoba), không thêm ghi chú hay giải thích trong ngoặc, không để chữ %s trong bản dịch. Mỗi bài trả về \"dich\" là "
               "danh sách bản dịch của TỪNG đoạn, đúng thứ tự và đúng số đoạn (không dịch tiêu đề).\n\nSỐ BÁO:\n%s" % (
                   "tiếng Anh" if lang == "en" else "tiếng Nhật", "Anh" if lang == "en" else "Nhật / Hán",
                   json.dumps({"bai": arts}, ensure_ascii=False)))

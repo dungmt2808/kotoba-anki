@@ -7,9 +7,9 @@ Kiểm tra lần cuối sau khi làm bản 1.23.0 (người dùng: "sau khi làm
 | Bộ | Anki 26.9.4 | Anki 23.10.1 (Qt 6.6) |
 |---|---|---|
 | `tests/run_all.sh` (offline, cả phần cần gói `anki`, có `core/test_123.py` mới) | TẤT CẢ OK | — |
-| `e2e_123.js` (mới: báo, KB-01/02/03, giao diện tối, Ngắm cảnh, bản dịch) | **74/74** → KQ_123 | KQ_123_2310 |
+| `e2e_123.js` (mới: báo, KB-01/02/03, giao diện tối, Ngắm cảnh, bản dịch) | **74/74** | **74/74** |
 | `e2e.js` · `e2e_tour.js` · `e2e_114` · `e2e_115` · `e2e_116` · `e2e_117` · `e2e_118` · `e2e_119` | 24/24 · 12/12 · 34/34 · 21/21 · 15/15 · 55/55 · 29/29 · 55/55 | `e2e_tour` 12/12 |
-| `e2e_120` · `e2e_121` · `e2e_122` · `e2e_1223` · `e2e_1226` · `e2e_1228` | 103/103 · 46/46 · KQ_122 · 49/49 · 40/40 · 26/26 | `e2e_1226` KQ_1226_2310 · `e2e_1228` KQ_1228_2310 |
+| `e2e_120` · `e2e_121` · `e2e_122` · `e2e_1223` · `e2e_1226` · `e2e_1228` | 103/103 · 46/46 · 64/64 · 49/49 · 40/40 · 26/26 | `e2e_1226` 40/40 · `e2e_1228` 26/26 |
 | `audit_edge.js` (ít xu, bấm đúp, cửa sổ nhỏ) · `audit_full.js` (1.000.000 xu, mua / dùng mọi thứ) | 58/58 · 180/180 | — |
 
 - `e2e_116` còn 15 kiểm tra (trước 18): bỏ 3 kiểm tra giao diện "Đêm vườn" đã xoá theo yêu cầu.
