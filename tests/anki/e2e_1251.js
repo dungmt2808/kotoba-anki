@@ -49,47 +49,41 @@ const flash = () => js('const f = document.querySelector(".kb-ai-flash"); return
 const srcText = () => js('return document.getElementById("kb-p-stage").innerText;');
 async function shot(name) { await page.shot(SHOTS + '/1251_' + name + '.png'); }
 
-// Gemini giả: đọc DANH SÁCH THẺ trong lời nhắc, viết số báo đánh dấu đúng số của thẻ
+// Gemini giả (1.25.2 "Một làng, một truyện"): bản gốc chung (truyện + tin làng) → số báo tiếng Việt
 const FAKE = String.raw`
-import re as _re
 SC = kb.story_core
-def _items(prompt):
-    out = []
-    for m in _re.finditer(r"^#(\d+)(?: ★)? \| ([^|\n]+) \| ([^\n]+)$", prompt, _re.M):
-        out.append((int(m.group(1)), m.group(2).strip(), m.group(3).strip()))
-    return out
 P = ("Sáng nay cả làng Kotoba tụ tập bên giếng cũ để nghe bà Hana kể chuyện. Lin cầm cuốn sổ nhỏ ghi chép không ngừng, "
      "còn StackChan thì vẽ lại mọi thứ bằng những ô vuông màu. Ông trưởng làng bảo rằng ngày mai sẽ có hội chợ mùa thu, ai "
      "cũng nên mang theo một câu chuyện hay để kể cho nhau nghe. ")
-def _issue(items, story):
-    ms = items[:6]
-    marks = " ".join("Ai cũng nhớ {%s||#%d}: %s." % (f, n, b) for n, f, b in ms[:3]) if ms else ""
-    marks2 = " ".join("Bà Hana nhắc lại {%s||#%d}." % (f, n) for n, f, b in ms[3:6]) if ms else ""
-    bai = [{"loai": "tin_lang", "tieu_de": "Hội chợ mùa thu sắp tới", "doan": [P + marks, P, P + marks2]}]
+S = ("Đêm đó, Lin nghe tiếng gõ cộc cộc phát ra từ cái giếng cạn sau quán. Cô cầm đèn bão nhón chân ra sân, tim đập thình "
+     "thịch. StackChan lăn theo sau, thì thầm rằng tớ thấy một bóng trắng. Bà Hana đứng ở cửa, không nói gì, chỉ nhìn cái "
+     "giếng rất lâu như đang nhớ lại một điều gì đã cũ. ")
+def _issue(story):
+    bai = [{"loai": "tin_lang", "tieu_de": "Hội chợ mùa thu sắp tới", "doan": [P, P, P]}]
     if story:
-        bai.append({"loai": "truyen", "ky": 1, "tieu_de": "Tấm bản đồ cũ", "doan": [P, P, P]})
-    bai.append({"loai": "cot", "tieu_de": "Sổ tay StackChan", "doan": ["◆ " + P + marks2, "◆ " + P]})
-    first = ms[0] if ms else (0, "giếng cũ", "")
+        bai.append({"loai": "truyen", "ky": 1, "tieu_de": "Tiếng gõ trong đêm", "doan": [S, S, S]})
+    bai.append({"loai": "cot", "tieu_de": "Góc của StackChan", "doan": ["Tớ vẽ được ba quả bí ngô hôm nay. " + P]})
     q = [{"hoi": "Cả làng tụ tập ở đâu?", "chon": ["Bên giếng cũ", "Ở chợ", "Trên núi"], "dung": 0, "giai_thich": "Tin làng kể mọi người tụ tập bên giếng cũ."},
          {"hoi": "Ai ghi chép vào sổ nhỏ?", "chon": ["StackChan", "Lin", "Ông trưởng làng"], "dung": 1, "giai_thich": "Lin cầm cuốn sổ nhỏ ghi chép."},
          {"hoi": "Ngày mai làng có gì?", "chon": ["Lễ hội đèn", "Phiên chợ cá", "Hội chợ mùa thu"], "dung": 2, "giai_thich": "Ông trưởng làng nói ngày mai có hội chợ mùa thu."}]
     return {"bai": bai, "cau_hoi": q, "chinh_ta": [], "mau_cau": [], "tu_moi": [], "tom_tat": "Làng chuẩn bị hội chợ mùa thu.",
-            "tom_tat_truyen": "Lin thấy tấm bản đồ cũ."}
+            "tom_tat_truyen": "Lin nghe tiếng gõ ở giếng cạn."}
 def _gen(self, model, system, prompt, schema=None, temperature=0.7, max_tokens=0, thinking=None):
     self.calls += 1
-    kb._kb_prompts.append(prompt[:6000])
+    kb._kb_prompts.append(prompt[:8000])
     if schema is SC.ARC_SCHEMA:
-        return json.dumps({"ten": "Tấm bản đồ", "muc_tieu": "tìm giếng", "bi_an": "giếng ở đâu", "nhan_vat_phu": "ông khách",
-                           "buoc": ["b1", "b2", "b3", "b4", "b5", "b6"], "ket": "tìm thấy"}, ensure_ascii=False)
-    if schema is SC.STORY_SCHEMA:
-        return json.dumps({"dan_y": {"muon": "a", "tro_ngai": "b", "bat_ngo": "c", "moc_cau": "d"}, "tieu_de": "Tấm bản đồ cũ",
-                           "doan": [P, P, P], "dich": [], "tu_moi": [], "nho": {"tom_tat": "Lin thấy tấm bản đồ cũ.", "bo_ngo": ["giếng"]}},
-                          ensure_ascii=False)
+        return json.dumps({"ten": "Tiếng gõ trong đêm", "muc_tieu": "tìm ra ai gõ", "bi_an": "bóng trắng", "nhan_vat_phu": "mèo trắng",
+                           "buoc": ["b1", "b2", "b3", "b4", "b5", "b6"], "ket": "là con mèo"}, ensure_ascii=False)
+    if schema is SC.MASTER_SCHEMA:
+        return json.dumps({"dan_y": {"muon": "a", "tro_ngai": "b", "bat_ngo": "c", "moc_cau": "d"}, "tieu_de": "Tiếng gõ trong đêm",
+                           "doan": [S, S, S], "nho": {"tom_tat": "Lin nghe tiếng gõ ở giếng cạn.", "bo_ngo": ["bóng trắng là ai"]},
+                           "tin": [{"tieu_de": "Hội chợ mùa thu", "noi_dung": "Ngày mai làng mở hội chợ mùa thu bên giếng cũ."},
+                                   {"tieu_de": "Bí ngô to", "noi_dung": "Bác đưa thư thấy một quả bí ngô to bằng cái ghế."}],
+                           "muc3": {"tieu_de": "Góc của StackChan", "doan": ["Tớ vẽ được ba quả bí ngô hôm nay."]}}, ensure_ascii=False)
     if schema is SC.EDIT_SCHEMA:
         return json.dumps({"diem": {k: 5 for k in SC.CRIT}, "loi": [], "goi_y": []}, ensure_ascii=False)
-    items = _items(prompt)
-    two = "TRUYỆN ĐÃ VIẾT SẴN" in prompt or "máy tự chèn truyện" in prompt
-    iss = _issue(items, not two)
+    two = "TRUYỆN ĐÃ VIẾT SẴN" in prompt or "TRUYỆN HÔM NAY (kỳ" in prompt or "máy tự chèn truyện" in prompt
+    iss = _issue(not two)
     if "van_de" in json.dumps(schema or {}):
         return json.dumps({"van_de": [], "bao": iss}, ensure_ascii=False)
     return json.dumps(iss, ensure_ascii=False)
@@ -137,15 +131,13 @@ result = len(nids)`);
   await waitFor('document.querySelector(".kb-ai-plan")');
   await sleep(500);
   const want = await js('return [...document.querySelectorAll(".kb-ai-want label")].map((l) => [l.textContent.trim(), l.querySelector("input").checked, l.querySelector("input").disabled]);');
-  ok(want.length === 3 && want[2][0] === 'Tiếng Việt' && want[2][1] && !want[0][2] && !want[1][2],
+  ok(want.length === 3 && want[2][0] === 'Chỉ tiếng Việt' && want[2][1] && !want[0][2] && !want[1][2],
      'Báo muốn nhận: Tiếng Nhật / Tiếng Anh / Tiếng Việt, tick được cả khi chưa có deck (' + JSON.stringify(want) + ')');
   let txt = await srcText();
   ok(/Gói báo/.test(txt) && /Số báo đầu tiên được tặng 7 ngày/.test(txt) && /Mua 1 tuần · 100 xu/.test(txt) && /Mua 1 tháng · 300 xu/.test(txt),
      'thẻ Gói báo: chưa có gói, tặng 7 ngày, Mua 1 tuần · 100 xu / 1 tháng · 300 xu');
-  ok(/Báo tiếng Việt/.test(txt) && /Báo Làng Kotoba/.test(txt) && !/Trình độ/.test(txt) && /Lấy thẻ/.test(txt),
-     'khối Báo tiếng Việt: Báo Làng Kotoba, không có Trình độ, "Lấy thẻ"');
-  const chipsVi = await js('const r = [...document.querySelectorAll(".kb-ai-row")].find((x) => x.querySelector(".kb-ai-k") && x.querySelector(".kb-ai-k").textContent === "Lấy thẻ"); return [...r.querySelectorAll(".kb-ai-chip")].map((b) => [b.textContent, b.classList.contains("is-on"), b.disabled]);');
-  ok(chipsVi.map((c) => c[0]).join('|') === 'Mọi deck|Chọn deck|Không dùng deck' && chipsVi[0][1], 'Lấy thẻ: Mọi deck (đang chọn) / Chọn deck / Không dùng deck');
+  ok(/Báo tiếng Việt/.test(txt) && /Báo Làng Kotoba/.test(txt) && !/Trình độ/.test(txt) && !/Lấy thẻ|Lấy từ/.test(txt)
+     && /truyện dài kỳ \+ tin làng/.test(txt), 'khối Báo tiếng Việt: Báo Làng Kotoba, không Trình độ, không lấy thẻ / deck (1.25.2: chỉ truyện + tin làng)');
   ok(!/Giọng đọc/.test(txt) && !/câu không có audio/.test(txt), 'chỉ có báo tiếng Việt: không hàng Giọng đọc, không thẻ giọng cho câu chép');
   const tones = await js('const r = document.querySelector(".kb-ai-tones"); return r ? [...r.querySelectorAll(".kb-ai-chip")].map((b) => [b.textContent, b.classList.contains("is-on")]) : [];');
   ok(tones.length === 8 && tones.map((t) => t[0]).indexOf('Kinh dị nhẹ') >= 0 && tones.map((t) => t[0]).indexOf('Dễ thương') >= 0 && tones[0][1],
@@ -175,11 +167,17 @@ result = len(nids)`);
   if (!wrote) {
     console.log('    (chẩn đoán)', JSON.stringify(await py(KB + 'st = kb.ai.load_status(kb.AI_DIR_VI); result = [st.get("error"), kb._ai.get("why"), kb.ai.log_summary(kb.ai.last_log(kb.AI_DIR_VI, kb.ai_today()))[:12], len(kb._kb_prompts), [e.get("where") + ": " + str(e.get("msg"))[:300] for e in kb.ERRORS.entries()]]')));
   }
-  const pr = await py(KB + 'result = [p for p in kb._kb_prompts if "DANH SÁCH THẺ" in p][:1]');
-  ok(pr.length && /Kinh dị nhẹ/.test(pr.join('')) && /#\d+ ★ \|/.test(pr.join('')), 'lời nhắc gửi đi: thẻ đánh số (★ đến hạn), chủ đề Kinh dị nhẹ');
-  const saved = await py(KB + 'raw = json.load(open(kb.ai.issue_path(kb.AI_DIR_VI, kb.ai_today()), encoding="utf-8")); result = [raw.get("ngon_ngu"), [b["loai"] for b in raw["bai"]], len(raw.get("tra_tu", {})), raw["chinh_ta"]]');
-  ok(saved[0] === 'vi' && saved[1].join(',') === 'tin_lang,truyen,cot' && saved[2] >= 3 && saved[3].length === 0,
-     'bao.json: ngon_ngu vi, 3 bài, bảng tra ' + saved[2] + ' thẻ, không câu chép');
+  const pr = await py(KB + 'result = [p for p in kb._kb_prompts if "TIN LÀNG HÔM NAY" in p][:1]');
+  const wx = await py(KB + 'result = kb._village_weather(kb.ai_today())');
+  ok(pr.length && /Kinh dị nhẹ/.test(pr[0]) && pr[0].indexOf('THỜI TIẾT HÔM NAY Ở LÀNG (khớp với trời trong vườn): ' + wx) >= 0 && !/DANH SÁCH THẺ/.test(pr[0]),
+     'lời nhắc bản gốc: chủ đề Kinh dị nhẹ, thời tiết = trời trong vườn ("' + wx + '"), không thẻ');
+  const jsWx = await js('const d = new Date(); return [9, 15].map((h) => GardenSky._weatherAuto(new Date(d.getFullYear(), d.getMonth(), d.getDate(), h, 30).getTime()));');
+  const lbl = { sunny: 'nắng', cloudy: 'nhiều mây', rain: 'mưa', storm: 'giông', snow: 'tuyết' };
+  ok(wx === (jsWx[0] === jsWx[1] ? 'cả ngày ' + lbl[jsWx[0]] : 'sáng ' + lbl[jsWx[0]] + ', chiều ' + lbl[jsWx[1]]),
+     'thời tiết trong báo khớp trời của vườn lúc 9 giờ / 15 giờ (' + JSON.stringify(jsWx) + ')');
+  const saved = await py(KB + 'raw = json.load(open(kb.ai.issue_path(kb.AI_DIR_VI, kb.ai_today()), encoding="utf-8")); m = kb.story_core.load_master(kb.AI_DIR_SHARED, kb.ai_today()); result = [raw.get("ngon_ngu"), [b["loai"] for b in raw["bai"]], raw.get("tra_tu", {}), raw["chinh_ta"], [b["doan"] for b in raw["bai"] if b["loai"] == "truyen"][0] == m["truyen"]["doan"], len(m["tin"])]');
+  ok(saved[0] === 'vi' && saved[1].join(',') === 'tin_lang,truyen,cot' && Object.keys(saved[2]).length === 0 && saved[3].length === 0 && saved[4] && saved[5] === 2,
+     'bao.json: ngon_ngu vi, 3 bài, truyện = nguyên văn bản gốc (bao_chung/ban_goc), 2 tin làng chung, không bảng tra / câu chép');
   await sleep(1200);
 
   await py(KB + 'kb._dialog.refresh(); result = 1'); await sleep(1500);
@@ -199,14 +197,13 @@ result = len(nids)`);
   const today = await py(KB + 'd = datetime.date.today(); result = [d.day, d.month, d.year]');
   ok(iv[0] === 'Báo Làng Kotoba' && iv[1].indexOf(today[0] + '/' + today[1] + '/' + today[2]) >= 0 && /Số 1/.test(iv[1]) && iv[9] === 'vi',
      'đầu báo "Báo Làng Kotoba", ngày ' + iv[1] + ', lang="vi"');
-  ok(iv[2].join('|') === 'Tin làng|Truyện dài kỳ · Kỳ 1|Góc ôn bài', 'các mục: Tin làng / Truyện dài kỳ · Kỳ 1 / Góc ôn bài');
-  ok(iv[3] && iv[4] === 0 && iv[5] === 0 && iv[6] && iv[7] === 0, 'không nút furigana, không ▶ nghe, không Dịch, không câu chép');
-  ok(iv[8] >= 3, iv[8] + ' chữ gạch chân (thẻ đang ôn)');
-  ok(/từ thẻ của bạn/.test(iv[10]), 'dòng cuối: "viết tự động từ thẻ của bạn; chỗ nào lệch với thẻ thì tin thẻ"');
-  await js('document.querySelector("#kb-p-stage .kb-p-w").click(); return 1;'); await sleep(400);
-  const info = await js('const b = document.getElementById("kb-p-info"); return [b.querySelector(".kb-p-iw") && b.querySelector(".kb-p-iw").textContent, b.querySelector(".kb-p-im") && b.querySelector(".kb-p-im").textContent, b.textContent];');
-  const card = await py(KB + `raw = json.load(open(kb.ai.issue_path(kb.AI_DIR_VI, kb.ai_today()), encoding="utf-8")); result = list(raw["tra_tu"].values())`);
-  ok(card.some((r) => r[0] === info[0] && r[2] === info[1]) && /Thẻ trong/.test(info[2]), 'bấm chữ gạch chân → mặt trước "' + info[0] + '" + mặt sau của thẻ + "Thẻ trong …"');
+  ok(iv[2].join('|') === 'Tin làng|Truyện dài kỳ · Kỳ 1|Cột ngắn', 'các mục: Tin làng / Truyện dài kỳ · Kỳ 1 / Cột ngắn');
+  ok(iv[3] && iv[4] === 0 && iv[5] === 0 && iv[6] && iv[7] === 0 && iv[8] === 0, 'không nút furigana, không ▶ nghe, không Dịch, không câu chép, không chữ gạch chân');
+  ok(!/thẻ của bạn/.test(iv[10]) && /viết tự động\./.test(iv[10]), 'dòng cuối: "Báo do … viết tự động."');
+  const fbOk = await js('const b = [...document.querySelectorAll("#kb-p-stage .kb-p-fbs-b")].find((x) => x.textContent === "Kỳ này hay"); if (!b) return false; b.click(); return true;');
+  await sleep(800);
+  const fbSaved = await py(KB + 'result = kb.story_core.feedback_of(kb.AI_DIR_SHARED, 1)');
+  ok(fbOk && fbSaved && fbSaved.y === 'hay', 'bấm "Kỳ này hay" → ghi vào truyện chung (bao_chung), kỳ sau mọi báo đọc');
   await shot('03_bao_tieng_viet');
   const c0 = await py(KB + 'result = kb.STATE.load()["coins"]');
   for (const [qi, right] of [[0, 0], [1, 1], [2, 2]]) {
@@ -270,14 +267,30 @@ result = 1`);
   const capped = await py(KB + 'd = kb.STATE.load(); result = [d["coins"], d["more"]["paper_sub"]["until"]]');
   ok(capped[0] === 5000 && /gần hết/.test(await flash()), 'gửi lệnh mua tháng thẳng (bỏ khoá nút) → Python từ chối, không trừ xu');
 
-  console.log('== Kệ báo, Không dùng deck, Luyện viết');
+  console.log('== Báo muốn nhận: Nhật / Anh hoặc chỉ tiếng Việt (1.25.2)');
   await py(KB + 'kb.save_config(gemini_langs=["ja", "vi"]); result = 1');
+  ok(JSON.stringify(await py(KB + 'result = kb.wanted_langs()')) === '["ja"]', 'cấu hình cũ ["ja","vi"] → chỉ đọc báo tiếng Nhật (Việt không đi cùng Nhật / Anh)');
+  const tick = (label) => js(`const l = [...document.querySelectorAll(".kb-ai-want label")].find((x) => x.textContent.trim() === ${JSON.stringify(label)}); l.querySelector("input").click(); return 1;`);
+  await py(KB + 'kb.save_config(gemini_langs=["vi"]); result = 1');
+  await js('GardenPaper.close(); GardenPaper.open("src"); return 1;'); await sleep(1200);
+  await tick('Tiếng Nhật'); await sleep(900);
+  let wl = await py(KB + 'result = kb.config().get("gemini_langs")');
+  ok(JSON.stringify(wl) === '["ja"]', 'đang chỉ tiếng Việt, tick Tiếng Nhật → bỏ tiếng Việt: ' + JSON.stringify(wl));
+  await tick('Tiếng Anh'); await sleep(900);
+  ok(/hai báo cùng kể một chuyện/.test(await srcText()), 'tick Nhật + Anh: ghi chú "hai báo cùng kể một chuyện"');
+  await tick('Chỉ tiếng Việt'); await sleep(900);
+  wl = await py(KB + 'result = kb.config().get("gemini_langs")');
+  ok(JSON.stringify(wl) === '["vi"]', 'tick "Chỉ tiếng Việt" → bỏ Nhật + Anh: ' + JSON.stringify(wl));
+  await shot('07b_chi_tieng_viet');
+
+  console.log('== Kệ báo, Không dùng deck, Luyện viết');
+  await py(KB + 'kb.save_config(gemini_langs=["ja", "en"]); result = 1');
   await js('GardenPaper.close(); GardenPaper.open("shelf"); return 1;'); await sleep(1500);
   const bar = await js('return [...document.querySelectorAll(".kb-p-langs .kb-ai-chip")].map((b) => b.textContent);');
-  ok(bar.some((b) => /Báo tiếng Việt/.test(b)) && bar.some((b) => /Báo tiếng Nhật/.test(b)), 'Kệ báo: nút chuyển Báo tiếng Nhật / Báo tiếng Việt ' + JSON.stringify(bar));
+  ok(bar.some((b) => /Báo tiếng Anh/.test(b)) && bar.some((b) => /Báo tiếng Nhật/.test(b)), 'Kệ báo: nút chuyển Báo tiếng Nhật / Báo tiếng Anh ' + JSON.stringify(bar));
   await js('GardenPaper.close(); GardenPaper.open("src"); return 1;'); await sleep(1200);
   txt = await srcText();
-  ok(/Giọng đọc/.test(txt), 'có thêm báo tiếng Nhật → hàng Giọng đọc hiện lại');
+  ok(/Giọng đọc/.test(txt), 'báo tiếng Nhật / tiếng Anh → hàng Giọng đọc hiện lại');
   await js('const r = [...document.querySelectorAll(".kb-ai-lang")].find((x) => /Báo tiếng Nhật/.test(x.textContent)); [...r.querySelectorAll(".kb-ai-chip")].find((b) => b.textContent === "Không dùng deck").click(); return 1;');
   await sleep(1000);
   const lv = await py(KB + 'src = kb.words.load_src(mw.col); sc = kb._ai_scope(kb.config(), kb._ai_opts(kb.config()), "ja"); result = [src["ja"]["mode"], sc.get("khong_deck"), len(sc.get("kho") or [])]');
@@ -336,7 +349,7 @@ result = 1`);
   await js('GardenGames.close && GardenGames.close(); return 1;'); await sleep(800);
 
   console.log('== cửa sổ 1366 / 720 × 520: Nguồn báo có thẻ Gói báo');
-  await py(KB + 'kb.save_config(gemini_langs=["ja", "en", "vi"]); d = kb._dialog; d.deck_id = mw.col.decks.id_for_name("Lịch sử & Sinh học"); d.refresh(); result = 1'); await sleep(2000);
+  await py(KB + 'kb.save_config(gemini_langs=["ja", "en"]); d = kb._dialog; d.deck_id = mw.col.decks.id_for_name("Lịch sử & Sinh học"); d.refresh(); result = 1'); await sleep(2000);
   for (const [w, h] of [[1366, 768], [720, 520]]) {
     await py(KB + `kb._dialog.resize(${w}, ${h}); result = 1`); await sleep(1200);
     await js('GardenPaper.close(); GardenPaper.open("src"); return 1;'); await sleep(1500);
