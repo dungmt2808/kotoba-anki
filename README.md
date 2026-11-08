@@ -92,13 +92,13 @@ Hết tháng, nhật ký tự đóng thành **một cuốn** trên kệ sách: �
 
 ### Báo mỗi sáng và chép chính tả
 
-Mỗi sáng có một số báo tiếng Nhật 畑新聞 (hoặc báo tiếng Anh *The Garden Gazette*, hoặc **báo tiếng Việt *Báo Làng Kotoba*** cho deck kiến thức / ngôn ngữ khác) viết bằng từ trong các deck bạn chọn — chưa có deck thì viết theo trình độ. Báo có furigana, bấm vào từ để tra nghĩa, có giọng đọc, câu hỏi đọc hiểu và **truyện dài kỳ** (Gemini lập mạch truyện, viết, rồi một "biên tập viên" chấm điểm và bắt viết lại nếu nhạt). Mỗi đoạn có **bản dịch tiếng Việt ẩn sẵn**: kẹt câu nào thì bấm **Dịch** để kiểm tra mình hiểu đúng chưa. Dưới truyện có nút **Kỳ này hay / Nhạt** để Gemini viết kỳ sau hợp ý bạn; **chủ đề truyện** chọn được nhiều (ấm áp, hài, dễ thương, kinh dị nhẹ, bí ẩn, phiêu lưu, lãng mạn nhẹ, kỳ ảo). Báo do **Gemini** viết bằng khoá miễn phí của chính bạn (xem [cách lấy khoá](#báo-mỗi-sáng-bằng-gemini-miễn-phí)); mỗi số mới cần **gói báo mua bằng xu** (1 tuần 100 xu, 1 tháng 300 xu, 7 ngày đầu miễn phí).
+Mỗi sáng có một số báo tiếng Nhật 畑新聞 (hoặc báo tiếng Anh *The Garden Gazette*) viết bằng từ trong các deck bạn chọn — chưa có deck thì viết theo trình độ. **Một làng, một truyện**: mỗi ngày làng có một kỳ truyện và vài tin làng chung; báo tiếng Nhật và báo tiếng Anh kể lại cùng câu chuyện theo trình độ của bạn, thời tiết trong báo đúng như trời trong vườn hôm đó. Báo có furigana, bấm vào từ để tra nghĩa, có giọng đọc, câu hỏi đọc hiểu và **truyện dài kỳ** (Gemini lập mạch truyện, viết, rồi một "biên tập viên" chấm điểm và bắt viết lại nếu nhạt). Mỗi đoạn có **bản dịch tiếng Việt ẩn sẵn**: kẹt câu nào thì bấm **Dịch** để kiểm tra mình hiểu đúng chưa. Dưới truyện có nút **Kỳ này hay / Nhạt** để Gemini viết kỳ sau hợp ý bạn; **chủ đề truyện** chọn được nhiều (ấm áp, hài, dễ thương, kinh dị nhẹ, bí ẩn, phiêu lưu, lãng mạn nhẹ, kỳ ảo). Báo do **Gemini** viết bằng khoá miễn phí của chính bạn (xem [cách lấy khoá](#báo-mỗi-sáng-bằng-gemini-miễn-phí)); mỗi số mới cần **gói báo mua bằng xu** (1 tuần 100 xu, 1 tháng 300 xu, 7 ngày đầu miễn phí).
 
-**Báo tiếng Việt** (cho người không học tiếng Nhật / tiếng Anh): Gemini đan nội dung các thẻ bạn đang ôn — lịch sử, sinh học, y khoa, tiếng Hàn… — vào tin làng, truyện dài kỳ và "Góc ôn bài", câu hỏi hỏi lại đúng kiến thức trong thẻ. Bấm chữ gạch chân để xem lại mặt trước / mặt sau của thẻ. Báo tiếng Việt không có giọng đọc và chép chính tả.
+**Báo tiếng Việt** *Báo Làng Kotoba* (cho người không học tiếng Nhật / tiếng Anh, chọn "Chỉ tiếng Việt"): cùng truyện dài kỳ và tin làng ấy bằng tiếng Việt, có câu hỏi đọc hiểu để nhận xu; không có giọng đọc, chép chính tả.
 
 | Báo tiếng Việt | Gói báo, chủ đề truyện |
 |---|---|
-| ![Báo Làng Kotoba: bấm chữ gạch chân xem lại thẻ](docs/anh/19_bao_tieng_viet.png) | ![Tab Nguồn báo: Gói báo, báo tiếng Việt, Lấy thẻ](docs/anh/19b_goi_bao.png) |
+| ![Báo Làng Kotoba: truyện dài kỳ + tin làng](docs/anh/19_bao_tieng_viet.png) | ![Tab Nguồn báo: Gói báo, Chỉ tiếng Việt, chủ đề truyện](docs/anh/19b_goi_bao.png) |
 
 **Chép chính tả** chạy với mọi deck: nghe câu ví dụ (hoặc từ) rồi gõ lại. Câu nào không có audio thì dùng giọng Gemini hoặc giọng tiếng Nhật của máy.
 
@@ -149,7 +149,7 @@ Phím tắt trong vườn: **R** Tưới ngay · **N** Nhà · **T** Trò chơi 
 1. Mở báo (phím **B**) → tab **Nguồn báo** → **Mở trang lấy khoá** (aistudio.google.com/apikey).
 2. Đăng nhập Google → **Create API key** → **Copy**.
 3. Dán khoá vào ô → **Thử khoá**.
-4. Chọn báo muốn nhận (tiếng Nhật, tiếng Anh, tiếng Việt), trình độ và deck lấy từ (hoặc **Không dùng deck**) → **Bắt đầu viết**. Số đầu tiên về sau 1–2 phút. Từ hôm sau, Gemini tự viết khi bạn mở Anki.
+4. Chọn báo muốn nhận (tiếng Nhật và / hoặc tiếng Anh, hoặc chỉ tiếng Việt), trình độ và deck lấy từ (hoặc **Không dùng deck**) → **Bắt đầu viết**. Số đầu tiên về sau 1–2 phút. Từ hôm sau, Gemini tự viết khi bạn mở Anki.
 5. **Gói báo**: số đầu tiên được tặng 7 ngày. Sau đó mua ở thẻ **Gói báo** (1 tuần 100 xu, 1 tháng 300 xu); **Tự gia hạn** (bật sẵn) tự mua tiếp khi hết hạn nếu đủ xu. Hết gói thì không có số mới, số cũ vẫn đọc được.
 
 **Riêng tư:**
@@ -186,7 +186,7 @@ Không. Ôn trong vườn là lượt ôn Anki bình thường. Xu, nhà, trò c
 Mọi thứ lưu trong collection nên đồng bộ qua AnkiWeb sang máy khác (máy đó cũng cần cài add-on). Gỡ add-on không ảnh hưởng tới thẻ hay lịch ôn.
 
 **Deck của tôi không phải tiếng Nhật?**
-Deck **tiếng Anh** có đủ vườn, trò chơi, chép chính tả và báo tiếng Anh. Ngôn ngữ khác và deck kiến thức (lịch sử, y khoa…) có vườn, các trò chơi chung (cả Đuổi quạ: gõ đúng từ / câu trả lời ngắn) và **báo tiếng Việt** đan nội dung thẻ của bạn.
+Deck **tiếng Anh** có đủ vườn, trò chơi, chép chính tả và báo tiếng Anh. Ngôn ngữ khác và deck kiến thức (lịch sử, y khoa…) có vườn, các trò chơi chung (cả Đuổi quạ: gõ đúng từ / câu trả lời ngắn) và **báo tiếng Việt** (truyện dài kỳ + tin làng).
 
 **Lời nhắc (prompt) gửi Gemini là gì?**
 Xem nguyên văn ở [docs/LOI_NHAC_GEMINI.md](docs/LOI_NHAC_GEMINI.md).

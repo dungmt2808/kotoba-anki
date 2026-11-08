@@ -1,32 +1,37 @@
 # Lời nhắc (prompt) gửi Gemini khi viết báo — nguyên văn
 
-Xuất bằng `tests/tools/dump_prompts.py` từ mã 1.25.1 (ngày mẫu 08/11/2026, chủ đề truyện: Kinh dị nhẹ + Hài). Danh sách từ / thẻ ở đây rút gọn còn vài mục; mỗi số thật gửi khoảng 100 từ (báo tiếng Việt: 60 thẻ).
+Xuất bằng `tests/tools/dump_prompts.py` từ mã 1.25.2 (ngày mẫu 08/11/2026, chủ đề truyện: Kinh dị nhẹ + Hài, thời tiết của vườn hôm đó: cả ngày nhiều mây). Danh sách từ ở đây rút gọn còn vài từ; mỗi số thật gửi khoảng 100 từ.
 
-Mỗi số báo thường (Truyện: Hay hơn) gọi Gemini theo thứ tự: **0. lập mạch** (khoảng mỗi tuần một lần) → **1. nhà văn** viết kỳ truyện → **2. biên tập** chấm 7 tiêu chí → (điểm < 4: **viết lại** một lần) → **3. viết cả số** (chép truyện đã duyệt + tin làng + bài thứ ba + câu hỏi) → máy kiểm tra → **sửa** (≤ 2 lần) → **4. soát lần 2**. Gemini trả JSON theo khuôn (schema) cố định của từng bước.
+**Một làng, một truyện (1.25.2):** mỗi ngày Gemini viết **một bản gốc tiếng Việt** cho cả làng — kỳ truyện dài kỳ + 2–3 tin làng + mục thứ ba (thông báo / cột của một nhân vật). Thứ tự gọi: **0. lập mạch** (khoảng mỗi tuần) → **1. nhà văn** (bản gốc) → **2. biên tập** chấm 7 tiêu chí → (điểm < 4: **viết lại** một lần). Rồi mỗi báo: **3. kể lại** truyện bằng tiếng Nhật / tiếng Anh theo trình độ (báo tiếng Việt in thẳng bản gốc) → **4. viết cả số** (chép truyện + furigana, tin làng kể lại từ tin bản gốc, câu hỏi, câu chép) → máy kiểm tra → **sửa** (≤ 2 lần) → **5. soát lần 2**. Gemini trả JSON theo khuôn cố định của từng bước. Báo thứ hai trong ngày không viết lại bản gốc.
 
-## Báo tiếng Nhật (畑新聞, N4, theo deck)
+Bản gốc thấy được: nguyên văn kỳ trước, tóm tắt các kỳ trong đợt, mạch đợt, chỗ bỏ ngỏ, nhận xét Hay / Nhạt của người đọc, ngày + mùa, thời tiết của vườn, tin làng mấy số trước (để tin nối tin).
 
-### 0. Lập mạch truyện (system: như bước 1)
+## Bản gốc chung (tiếng Việt) — viết một lần mỗi ngày
+
+### 0. Lập mạch truyện
 
 ```text
-TRUYỆN DÀI KỲ 『ことば村の小さな旅館』 — làng nhỏ ことば村 cạnh khu vườn ことば畑; mùa và thời tiết theo ngày thật ở Nhật.
+TRUYỆN DÀI KỲ "Quán trọ nhỏ ở làng Kotoba" — làng nhỏ yên bình cạnh khu vườn Kotoba, bốn mùa rõ rệt theo lịch
+thật. Mỗi kỳ được in trong báo làng bằng tiếng Việt, tiếng Nhật và tiếng Anh (bản tiếng Nhật / tiếng Anh kể lại cho người
+mới học).
 Nhân vật (mỗi người một điều muốn, một điều sợ, một câu cửa miệng; giữ nhất quán qua mọi kỳ):
-- リンさん: cô gái Việt Nam 22 tuổi mới đến làm ở quán trọ「ことば屋」. Muốn được はなさん tin tưởng giao việc một mình. Sợ nói sai làm
-  khách buồn. Hay nhầm kính ngữ / mẫu câu (đúng mẫu người học đang học), nhầm xong tự nhận ra và sửa. Câu cửa miệng:「がんばります！」
-- はなさん: bà chủ (女将さん) của ことば屋, khoảng 30 tuổi, điềm tĩnh, nói kính ngữ với khách, thân mật với Lin. Có một bí mật về quá
-  khứ của quán, hé ra dần qua nhiều đợt (chưa kể hết). Gọi là はなさん hoặc 女将さん, KHÔNG gọi là 店長.
-- スタックちゃん: robot nhỏ của khu vườn, tò mò, xưng ぼく, nói thân mật, hay vẽ tranh pixel. Hiểu câu nói thường ngày theo nghĩa đen
-  (gây cười) — chỉ dùng câu nói đơn giản, KHÔNG dùng thành ngữ khó.
-- 村長（そんちょう）: trưởng làng, hiền, thích kể chuyện ngày xưa, hay kể quá dài.
-- Nhân vật phụ của đợt (mỗi đợt chọn một): một vị khách trọ có mục đích riêng, người đưa thư 郵便屋さん, con mèo hoang trắng.
-Lời thoại trong「…」, ghi rõ ai nói; lời chào / nhờ vả hợp vai (Lin là người mới, nói よろしくお願いします với はなさん).
+- Lin: cô gái Việt Nam 22 tuổi mới đến làm ở quán trọ "Quán Kotoba". Muốn bà Hana tin tưởng giao quán một mình. Đang
+  học tiếng của làng, hay ghi chép vào cuốn sổ nhỏ, đôi khi nói nhầm một câu (lời chào, cách nói lịch sự) rồi tự sửa.
+  Câu cửa miệng: "Để em ghi lại đã!"
+- Bà Hana: bà chủ quán, khoảng 30 tuổi, điềm tĩnh, nói năng lịch sự với khách, thân mật với Lin. Có một bí mật về quá
+  khứ của quán, hé ra dần qua nhiều đợt.
+- StackChan: robot nhỏ của khu vườn, tò mò, nói câu ngắn, xưng "tớ", hay vẽ tranh pixel. Hiểu câu nói thường ngày theo
+  nghĩa đen (gây cười).
+- Ông trưởng làng: hiền, thích kể chuyện ngày xưa, hay kể quá dài.
+- Nhân vật phụ của đợt (mỗi đợt chọn một): một vị khách trọ có mục đích riêng, bác đưa thư, con mèo hoang trắng.
+Lời thoại để trong ngoặc kép "…", ghi rõ ai nói.
 
 CHỦ ĐỀ CỦA ĐỢT NÀY: Kinh dị nhẹ: chuyện lạ / chuyện ma trong làng (tiếng động ban đêm, bóng người bên giếng, đồ vật tự dời chỗ) gây rùng mình và tò mò; KHÔNG máu me, không bạo lực, không ai chết; lời giải có thể bất ngờ hoặc để lại một chút rợn. Người đọc cũng thích: Hài — có thể pha nhẹ, nhưng giữ Kinh dị nhẹ là chính.
 
 CÁC KỲ ĐÃ ĐĂNG:
-(chưa có kỳ nào)
+- Kỳ 11: （tóm tắt kỳ 11）
 
-HÔM NAY: ngày 8/11/2026, mùa thu ở Nhật. Đợt mới bắt đầu từ kỳ 1.
+HÔM NAY: Chủ Nhật, ngày 8/11/2026, mùa thu. Đợt mới bắt đầu từ kỳ 12.
 
 Lập MẠCH TRUYỆN cho một đợt 6–8 kỳ (mỗi kỳ đăng một ngày): ten = tên đợt (tiếng Việt); muc_tieu = điều nhân vật chính muốn đạt trong đợt; bi_an = câu hỏi / bí ẩn kéo suốt đợt; nhan_vat_phu = nhân vật phụ của đợt (một người / con vật, kèm điều họ muốn); buoc = mỗi phần tử là MỘT kỳ (tiếng Việt, 1–2 câu: chuyện gì xảy ra, trở ngại, móc câu); ket = đợt kết thúc thế nào (giải được bí ẩn, có thay đổi nhỏ ở nhân vật, để lại một sợi chỉ cho đợt sau). Nối tiếp các kỳ đã đăng, không lặp lại chuyện cũ. Hợp mùa hiện tại.
 
@@ -36,99 +41,117 @@ Trả về đúng một object JSON theo khuôn.
 ### 1. Nhà văn — system
 
 ```text
-Bạn là nhà văn viết truyện dài kỳ tiếng Nhật dễ đọc cho người Việt học tiếng Nhật trình độ N4. Viết hay như một truyện thật, không như bài tập.
+Bạn là nhà văn viết truyện dài kỳ tiếng Việt cho người đọc đang ôn bài bằng thẻ Anki. Viết hay như một truyện thật, không như bài giảng.
 ```
 
-### 1. Nhà văn — lời nhắc
+### 1. Nhà văn — lời nhắc (bản gốc: truyện + tin làng + mục thứ ba)
 
 ```text
-TRUYỆN DÀI KỲ 『ことば村の小さな旅館』 — làng nhỏ ことば村 cạnh khu vườn ことば畑; mùa và thời tiết theo ngày thật ở Nhật.
+TRUYỆN DÀI KỲ "Quán trọ nhỏ ở làng Kotoba" — làng nhỏ yên bình cạnh khu vườn Kotoba, bốn mùa rõ rệt theo lịch
+thật. Mỗi kỳ được in trong báo làng bằng tiếng Việt, tiếng Nhật và tiếng Anh (bản tiếng Nhật / tiếng Anh kể lại cho người
+mới học).
 Nhân vật (mỗi người một điều muốn, một điều sợ, một câu cửa miệng; giữ nhất quán qua mọi kỳ):
-- リンさん: cô gái Việt Nam 22 tuổi mới đến làm ở quán trọ「ことば屋」. Muốn được はなさん tin tưởng giao việc một mình. Sợ nói sai làm
-  khách buồn. Hay nhầm kính ngữ / mẫu câu (đúng mẫu người học đang học), nhầm xong tự nhận ra và sửa. Câu cửa miệng:「がんばります！」
-- はなさん: bà chủ (女将さん) của ことば屋, khoảng 30 tuổi, điềm tĩnh, nói kính ngữ với khách, thân mật với Lin. Có một bí mật về quá
-  khứ của quán, hé ra dần qua nhiều đợt (chưa kể hết). Gọi là はなさん hoặc 女将さん, KHÔNG gọi là 店長.
-- スタックちゃん: robot nhỏ của khu vườn, tò mò, xưng ぼく, nói thân mật, hay vẽ tranh pixel. Hiểu câu nói thường ngày theo nghĩa đen
-  (gây cười) — chỉ dùng câu nói đơn giản, KHÔNG dùng thành ngữ khó.
-- 村長（そんちょう）: trưởng làng, hiền, thích kể chuyện ngày xưa, hay kể quá dài.
-- Nhân vật phụ của đợt (mỗi đợt chọn một): một vị khách trọ có mục đích riêng, người đưa thư 郵便屋さん, con mèo hoang trắng.
-Lời thoại trong「…」, ghi rõ ai nói; lời chào / nhờ vả hợp vai (Lin là người mới, nói よろしくお願いします với はなさん).
+- Lin: cô gái Việt Nam 22 tuổi mới đến làm ở quán trọ "Quán Kotoba". Muốn bà Hana tin tưởng giao quán một mình. Đang
+  học tiếng của làng, hay ghi chép vào cuốn sổ nhỏ, đôi khi nói nhầm một câu (lời chào, cách nói lịch sự) rồi tự sửa.
+  Câu cửa miệng: "Để em ghi lại đã!"
+- Bà Hana: bà chủ quán, khoảng 30 tuổi, điềm tĩnh, nói năng lịch sự với khách, thân mật với Lin. Có một bí mật về quá
+  khứ của quán, hé ra dần qua nhiều đợt.
+- StackChan: robot nhỏ của khu vườn, tò mò, nói câu ngắn, xưng "tớ", hay vẽ tranh pixel. Hiểu câu nói thường ngày theo
+  nghĩa đen (gây cười).
+- Ông trưởng làng: hiền, thích kể chuyện ngày xưa, hay kể quá dài.
+- Nhân vật phụ của đợt (mỗi đợt chọn một): một vị khách trọ có mục đích riêng, bác đưa thư, con mèo hoang trắng.
+Lời thoại để trong ngoặc kép "…", ghi rõ ai nói.
 
 CHỦ ĐỀ TRUYỆN: Kinh dị nhẹ: chuyện lạ / chuyện ma trong làng (tiếng động ban đêm, bóng người bên giếng, đồ vật tự dời chỗ) gây rùng mình và tò mò; KHÔNG máu me, không bạo lực, không ai chết; lời giải có thể bất ngờ hoặc để lại một chút rợn. Người đọc cũng thích: Hài — có thể pha nhẹ, nhưng giữ Kinh dị nhẹ là chính.
 
-MẠCH CỦA ĐỢT「Tấm bản đồ cũ」: muốn: tìm cái giếng · bí ẩn: giếng ở đâu · nhân vật phụ: ông khách già · kết: …
+MẠCH CỦA ĐỢT「Tiếng gõ trong đêm」: muốn: tìm ra ai gõ · bí ẩn: bóng trắng bên giếng · nhân vật phụ: mèo trắng · kết: …
 Các bước:
-→ kỳ 1: Kỳ 1: …
-  kỳ 2: Kỳ 2: …
-  kỳ 3: Kỳ 3: …
-  kỳ 4: Kỳ 4: …
-  kỳ 5: Kỳ 5: …
-  kỳ 6: Kỳ 6: …
+→ kỳ 12: Kỳ 12: …
+  kỳ 13: Kỳ 13: …
+  kỳ 14: Kỳ 14: …
+  kỳ 15: Kỳ 15: …
+  kỳ 16: Kỳ 16: …
+  kỳ 17: Kỳ 17: …
 
-KỲ NÀY (kỳ 1) theo bước: Kỳ 1: …
+KỲ NÀY (kỳ 12) theo bước: Kỳ 12: …
 
-ĐÂY LÀ KỲ 1: リンさん bắt đầu làm ở ことば屋.
+NGUYÊN VĂN KỲ TRƯỚC (kỳ 11, viết tiếp từ đây, không mâu thuẫn):
+（nguyên văn kỳ 11, đoạn 1）
+（đoạn 2）
 
-HÔM NAY: ngày 8/11/2026, mùa thu ở Nhật. Viết KỲ 1.
+NGƯỜI ĐỌC NHẬN XÉT (lắng nghe):
+- Kỳ 11: Hay — "（dòng nhận xét của người đọc）"
 
-MẪU NGỮ PHÁP ĐANG HỌC (dùng 1–2 mẫu làm CHẤT LIỆU của chuyện):
-- いらっしゃる・おっしゃる・召し上がる: động từ tôn kính đặc biệt
-- まいる・申す・いただく・拝見する: động từ khiêm nhường đặc biệt
-- 〜ところです: đúng lúc sắp / đang / vừa
-- 〜ばかりです: vừa mới
-- 〜までに: trước (hạn)
-- 〜場合は: trong trường hợp
+HÔM NAY: Chủ Nhật, ngày 8/11/2026, mùa thu. Viết KỲ 12.
+
+THỜI TIẾT HÔM NAY Ở LÀNG (khớp với trời trong vườn): cả ngày nhiều mây
 
 CÁCH VIẾT MỘT KỲ HAY (bắt buộc):
 1. Một cảnh, 2–3 nhân vật. Mở đầu bằng hành động hoặc lời thoại, KHÔNG mở bằng tả thời tiết.
-2. Có MỘT vấn đề cụ thể: nhân vật muốn gì, cái gì cản (hiểu lầm, đồ bị mất, khách khó tính, lời nói nhầm…); nhân vật tự xoay xở.
-3. Dùng mẫu ngữ pháp đang học làm CHẤT LIỆU của chuyện (vd. nói nhầm mẫu → hiểu lầm → buồn cười), không chèn cho có.
+2. Có MỘT vấn đề cụ thể: nhân vật muốn gì, cái gì cản (hiểu lầm, đồ bị mất, khách khó tính, nói nhầm…); nhân vật tự xoay xở.
+3. Hợp mùa và thời tiết hôm nay (chi tiết nhỏ trong cảnh, không tả dài).
 4. Có ít nhất một chi tiết bất ngờ hoặc buồn cười, và một khoảnh khắc cảm xúc nhỏ.
-5. Kết bằng một móc câu: câu hỏi chưa có lời đáp, vật lạ, câu nói bỏ dở. KHÔNG kết bằng bài học hay lời khuyên.
-6. Không liệt kê đồ vật, không câu chỉ để dùng từ (kiểu「〜が2個あります」). Không lặp lại tình huống của các kỳ trước.
-7. Nối tiếp kỳ trước: KHÔNG mâu thuẫn với chuyện đã xảy ra (đồ đã mở thì không "lần đầu mở" nữa…), giải quyết hoặc đẩy tiếp
-   một chỗ bỏ ngỏ.
-8. Thoại thể hiện tính cách, ghi rõ ai nói. Câu ngắn, tự nhiên, đúng trình độ: chỉ dùng từ trong DANH SÁCH TỪ và từ rất cơ
-   bản; tối đa 2 từ ngoài danh sách (ghi vào tu_moi kèm nghĩa). Không thành ngữ / chữ Hán khó hơn trình độ.
-9. Độ dài: đúng 3 đoạn, mỗi đoạn 60–150 ký tự tiếng Nhật (truyện là một bài trong số báo, đừng viết dài hơn).
+5. Kết bằng một móc câu: câu hỏi chưa có lời đáp, vật lạ, câu nói bỏ dở — để người đọc mong số sau. KHÔNG kết bằng bài
+   học hay lời khuyên.
+6. Không liệt kê, không lặp lại tình huống của các kỳ trước.
+7. Nối tiếp kỳ trước: KHÔNG mâu thuẫn với chuyện đã xảy ra, giải quyết hoặc đẩy tiếp một chỗ bỏ ngỏ.
+8. Thoại thể hiện tính cách, ghi rõ ai nói. Tiếng Việt tự nhiên, đúng chính tả, có dấu; chữ trơn (không [ ] { } |,
+   không markdown).
+9. Chuyện sẽ được kể lại bằng tiếng Nhật / tiếng Anh cho người mới học: tránh chơi chữ chỉ có trong tiếng Việt, thành
+   ngữ khó dịch; câu thoại ngắn, rõ.
+10. Độ dài: 3 đoạn, mỗi đoạn 60–140 chữ (truyện là một bài trong số báo).
 
-DANH SÁCH TỪ ĐÃ HỌC (trình độ N4):
-予約、案内、届ける、忘れ物、暖かい、駅、手紙、静か
+VÍ DỤ MỘT KỲ HAY (chỉ xem cách kể: hiểu lầm thành chuyện, có vật lạ, móc câu; KHÔNG chép nội dung):
+"Bà Hana ơi, khách phòng số ba muốn ăn sáng bằng... một tấm bản đồ!" Lin chạy vào bếp, tay vẫn cầm cuốn sổ nhỏ. Bà Hana đặt ấm trà xuống. "Bản đồ à?" StackChan lập tức chui vào tủ, lôi ra một chiếc đĩa. "Tớ có đĩa. Bản đồ thì chưa nấu bao giờ."
+Ông khách già trải lên bàn một tấm bản đồ cũ, mép giấy đã ngả vàng. Ở góc dưới có một vòng tròn đỏ, ngay chỗ khu vườn Kotoba bây giờ. "Ngày xưa, ở đây có một cái giếng," ông nói khẽ. "Tôi đã hứa sẽ quay lại."
+Bà Hana nhìn vòng tròn đỏ rất lâu mà không nói gì. Lin định hỏi thì ngoài sân vang lên tiếng nước chảy róc rách — ở đúng chỗ chưa từng có cái giếng nào.
 
-VÍ DỤ MỘT KỲ HAY (chỉ xem cách kể: nhầm mẫu câu thành chuyện, có vật lạ, móc câu; KHÔNG chép nội dung, nhân vật phụ, đồ vật):
-「お客様、お名前をお書きします！」リンさんは大きな声で言いました。お客様は目を丸くして、「えっ、書いてくれるんですか」と聞きました。はなさんが小さな声で「リンさん、『お書きください』ですよ」と言いました。
-リンさんの顔は真っ赤になりました。でも、お客様は笑って、古い地図をテーブルに出しました。「この村に、むかし小さな店がありましたか。」地図の山の中に、赤い丸が一つありました。
-はなさんは地図を見て、少しの間、何も言いませんでした。それから「あら、ここは……」とだけ言いました。スタックちゃんが窓の外を見ると、山の上に白いけむりが一本、まっすぐ上がっていました。
+TIN LÀNG HÔM NAY (in cùng số báo với kỳ truyện): 2–3 tin vặt có thật trong đời sống làng (chợ phiên, mùa màng, thời tiết, khách lạ, chuẩn bị lễ hội…), mỗi tin 2–3 câu, có thể nhắc nhẹ tới nhân vật nhưng KHÔNG kể lại truyện. Có tin NỐI TIẾP tin mấy hôm trước khi hợp (vd. hôm qua báo sắp có chợ phiên → hôm nay kể chợ phiên ra sao); không lặp lại nguyên tin cũ.
+TIN MẤY SỐ TRƯỚC:
+- 11-07 · （tin hôm qua: chợ phiên sắp mở）
+- 11-07 · （tin hôm qua: cây hồng chín）
 
-Trả về đúng một object JSON theo khuôn: dan_y (tiếng Việt: muon, tro_ngai, bat_ngo, moc_cau), tieu_de (tiếng Nhật, ngắn), doan = 3 đoạn tiếng Nhật (chữ Hán + kana, KHÔNG furigana, KHÔNG romaji, không [ ] { } |), dich = bản dịch tiếng Việt TỰ NHIÊN của từng đoạn (cùng số phần tử, không có chữ Nhật — tên riêng viết Latin: Lin, Hana, Stack-chan, quán Kotoba, làng Kotoba; không ghi chú trong ngoặc), tu_moi (≤ 2 từ ngoài danh sách: w, r = cách đọc bằng HIRAGANA, m = nghĩa tiếng Việt), nho (tiếng Việt: tom_tat = 2 câu chuyện gì xảy ra; nhan_vat_moi; bo_ngo = chỗ bỏ ngỏ kỳ sau cần giải quyết; da_giai = chỗ bỏ ngỏ cũ kỳ này đã giải quyết).
+MỤC THỨ BA (muc3): THÔNG BÁO CỦA LÀNG — 2–3 mục, mỗi mục một đoạn ngắn bắt đầu bằng "◆ " (giờ giấc, việc chung, lời nhắc); tieu_de kiểu "Thông báo của làng".
+
+Trả về đúng một object JSON theo khuôn: dan_y (muon, tro_ngai, bat_ngo, moc_cau), tieu_de (ngắn, 3–10 chữ), doan = 3 đoạn truyện tiếng Việt chữ trơn, nho (tom_tat = 2 câu chuyện gì xảy ra; nhan_vat_moi; bo_ngo = chỗ bỏ ngỏ kỳ sau cần giải quyết; da_giai = chỗ bỏ ngỏ cũ kỳ này đã giải quyết), tin = 2–3 tin (tieu_de, noi_dung), muc3 (tieu_de, doan).
 ```
 
 ### 2. Biên tập — lời nhắc (system: "Bạn là biên tập viên truyện khó tính nhưng công bằng.")
 
 ```text
-Bạn là biên tập viên truyện cho người Việt học tiếng Nhật trình độ N4: khó tính nhưng công bằng.
+Bạn là biên tập viên truyện dài kỳ của báo làng: khó tính nhưng công bằng. Truyện in bằng tiếng Việt và được kể lại bằng tiếng Nhật / tiếng Anh cho người mới học.
 
-Chấm kỳ 1 dưới đây, mỗi tiêu chí 1–5:
+Chấm kỳ 12 dưới đây, mỗi tiêu chí 1–5:
 - su_kien: có chuyện xảy ra (vấn đề cụ thể, nhân vật xoay xở), không phải cảnh sinh hoạt nhạt
 - nhan_vat: thoại và hành động đúng tính cách (theo hồ sơ), có cảm xúc
 - bat_ngo: có chi tiết bất ngờ / buồn cười
 - moc_cau: kết khiến người đọc muốn đọc kỳ sau, không kết bằng lời khuyên
 - khop: khớp kỳ trước, không mâu thuẫn chuyện đã xảy ra (kỳ 1 thì chấm 5)
-- trinh_do: từ, ngữ pháp, chữ Hán đúng trình độ N4, không thành ngữ khó
-- tu_nhien: tiếng Nhật tự nhiên, không gượng vì nhồi từ
-loi = lỗi ngữ pháp / dùng từ CỤ THỂ (chép câu sai → câu đúng); goi_y = góp ý cụ thể để viết lại hay hơn.
+- trinh_do: dễ kể lại bằng tiếng Nhật / tiếng Anh đơn giản (không chơi chữ tiếng Việt, thành ngữ khó, câu quá dài)
+- tu_nhien: tiếng Việt tự nhiên, đúng chính tả
+loi = lỗi cụ thể (chép câu sai → câu đúng); goi_y = góp ý cụ thể để viết lại hay hơn.
 
-TRUYỆN DÀI KỲ 『ことば村の小さな旅館』 — làng nhỏ ことば村 cạnh khu vườn ことば畑; mùa và thời tiết theo ngày thật ở Nhật.
+TRUYỆN DÀI KỲ "Quán trọ nhỏ ở làng Kotoba" — làng nhỏ yên bình cạnh khu vườn Kotoba, bốn mùa rõ rệt theo lịch
+thật. Mỗi kỳ được in trong báo làng bằng tiếng Việt, tiếng Nhật và tiếng Anh (bản tiếng Nhật / tiếng Anh kể lại cho người
+mới học).
 Nhân vật (mỗi người một điều muốn, một điều sợ, một câu cửa miệng; giữ nhất quán qua mọi kỳ):
-- リンさん: cô gái Việt Nam 22 tuổi mới đến làm ở quán trọ「ことば屋」. Muốn được はなさん tin tưởng giao việc một mình. Sợ nói sai làm
-  khách buồn. Hay nhầm kính ngữ / mẫu câu (đúng mẫu người học đang học), nhầm xong tự nhận ra và sửa. Câu cửa miệng:「がんばります！」
-- はなさん: bà chủ (女将さん) của ことば屋, khoảng 30 tuổi, điềm tĩnh, nói kính ngữ với khách, thân mật với Lin. Có một bí mật về quá
-  khứ của quán, hé ra dần qua nhiều đợt (chưa kể hết). Gọi là はなさん hoặc 女将さん, KHÔNG gọi là 店長.
-- スタックちゃん: robot nhỏ của khu vườn, tò mò, xưng ぼく, nói thân mật, hay vẽ tranh pixel. Hiểu câu nói thường ngày theo nghĩa đen
-  (gây cười) — chỉ dùng câu nói đơn giản, KHÔNG dùng thành ngữ khó.
-- 村長（そんちょう）: trưởng làng, hiền, thích kể chuyện ngày xưa, hay kể quá dài.
-- Nhân vật phụ của đợt (mỗi đợt chọn một): một vị khách trọ có mục đích riêng, người đưa thư 郵便屋さん, con mèo hoang trắng.
-Lời thoại trong「…」, ghi rõ ai nói; lời chào / nhờ vả hợp vai (Lin là người mới, nói よろしくお願いします với はなさん).
+- Lin: cô gái Việt Nam 22 tuổi mới đến làm ở quán trọ "Quán Kotoba". Muốn bà Hana tin tưởng giao quán một mình. Đang
+  học tiếng của làng, hay ghi chép vào cuốn sổ nhỏ, đôi khi nói nhầm một câu (lời chào, cách nói lịch sự) rồi tự sửa.
+  Câu cửa miệng: "Để em ghi lại đã!"
+- Bà Hana: bà chủ quán, khoảng 30 tuổi, điềm tĩnh, nói năng lịch sự với khách, thân mật với Lin. Có một bí mật về quá
+  khứ của quán, hé ra dần qua nhiều đợt.
+- StackChan: robot nhỏ của khu vườn, tò mò, nói câu ngắn, xưng "tớ", hay vẽ tranh pixel. Hiểu câu nói thường ngày theo
+  nghĩa đen (gây cười).
+- Ông trưởng làng: hiền, thích kể chuyện ngày xưa, hay kể quá dài.
+- Nhân vật phụ của đợt (mỗi đợt chọn một): một vị khách trọ có mục đích riêng, bác đưa thư, con mèo hoang trắng.
+Lời thoại để trong ngoặc kép "…", ghi rõ ai nói.
+
+KỲ TRƯỚC (kỳ 11):
+（nguyên văn kỳ 11, đoạn 1）
+（đoạn 2）
+
+NGƯỜI ĐỌC NHẬN XÉT CÁC KỲ TRƯỚC:
+- Kỳ 11: hay （dòng nhận xét của người đọc）
 
 KỲ TRUYỆN:
 {"tieu_de": "（kỳ truyện）", "doan": ["…"]}
@@ -136,7 +159,43 @@ KỲ TRUYỆN:
 Trả về đúng một object JSON theo khuôn.
 ```
 
-### 3. Viết cả số — system
+## Báo tiếng Nhật (畑新聞, N4)
+
+### 3. Kể lại truyện — lời nhắc
+
+```text
+KỂ LẠI kỳ 12 của truyện dài kỳ dưới đây bằng tiếng Nhật trình độ N4 cho người Việt đang học. Đây là cùng một câu chuyện in trong báo làng bằng nhiều thứ tiếng: GIỮ ĐÚNG sự việc, nhân vật, lời thoại chính, chi tiết bất ngờ và móc câu cuối; không thêm chuyện mới, không bỏ móc câu.
+
+Viết lại cho hợp trình độ: câu ngắn, tự nhiên như sách đọc cho người học; được rút gọn chi tiết phụ. Chỗ nhân vật nói nhầm (lời chào, cách nói lịch sự) thì cho nhầm theo kiểu của tiếng Nhật (vd. nhầm kính ngữ).
+
+TÊN GỌI (dùng đúng):
+- Lin → リンさん
+- bà Hana → はなさん（女将さん）
+- StackChan → スタックちゃん
+- ông trưởng làng → 村長さん
+- Quán Kotoba (quán trọ) → ことば屋（旅館）
+- làng Kotoba → ことば村
+- vườn Kotoba → ことば畑
+- bác đưa thư → 郵便屋さん
+- con mèo hoang trắng → 白いのらねこ
+
+Độ dài: đúng 3 đoạn như bản gốc, mỗi đoạn 60–150 ký tự tiếng Nhật.
+
+TỪ NGƯỜI HỌC ĐÃ HỌC (trình độ N4) — dùng khi hợp, ĐỪNG ép câu:
+予約、案内、届ける、忘れ物、暖かい、駅、手紙、静か
+
+MẪU NGỮ PHÁP ĐANG HỌC (dùng 1–2 mẫu trong lời thoại nếu tự nhiên):
+- 〜ばかりです: vừa mới
+- 〜までに: trước (hạn)
+- 〜場合は: trong trường hợp
+
+BẢN GỐC:
+{"tieu_de": "（truyện bản gốc tiếng Việt）", "doan": ["（đoạn 1）", "（đoạn 2）", "（đoạn 3）"]}
+
+Trả về đúng một object JSON theo khuôn: tieu_de (tiếng Nhật, ngắn), doan = các đoạn tiếng Nhật (chữ Hán + kana, KHÔNG furigana, KHÔNG romaji, không [ ] { } |), dich = bản dịch tiếng Việt TỰ NHIÊN của từng đoạn bạn vừa viết (cùng số phần tử, không có chữ Nhật; tên riêng viết Latin: Lin, Hana, Stack-chan, quán Kotoba, làng Kotoba; không ghi chú trong ngoặc), tu_moi (≤ 2 từ khó ngoài danh sách: w, r = cách đọc bằng HIRAGANA, m = nghĩa tiếng Việt).
+```
+
+### 4. Viết cả số — system
 
 ```text
 Bạn là người Nhật viết báo làng 『畑新聞』 cho người Việt Nam đang học tiếng Nhật trình độ N4.
@@ -164,21 +223,28 @@ QUY TẮC ĐÁNH DẤU FURIGANA (máy sẽ kiểm tra, sai là phải viết l�
 Trả về đúng MỘT object JSON theo khuôn, không viết gì thêm.
 ```
 
-### 3. Viết cả số — lời nhắc
+### 4. Viết cả số — lời nhắc
 
 ```text
-HÔM NAY: ngày 8/11/2026, mùa thu ở Nhật. Số báo 12.
+HÔM NAY: ngày 8/11/2026, mùa thu ở Nhật. Số báo 30. Thời tiết ở làng: cả ngày nhiều mây.
 
 CẤU TRÚC: bai gồm đúng 3 bài theo thứ tự:
 1. loai "tin_lang": tin trong làng ことば村 và khu vườn ことば畑, dùng nhân vật của truyện, 2–3 đoạn (đừng kể lại truyện).
-2. loai "truyen", "ky": 1: CHÉP NGUYÊN VĂN truyện đã viết sẵn dưới đây (tiêu đề + 3 đoạn), CHỈ THÊM đánh dấu furigana theo quy tắc ([漢字|かんじ], {表記|よみ|từ gốc} cho từ trong danh sách), không sửa chữ, không thêm bớt câu; "dich" để rỗng (máy tự điền).
+2. loai "truyen", "ky": 12: CHÉP NGUYÊN VĂN truyện đã viết sẵn dưới đây (tiêu đề + 3 đoạn), CHỈ THÊM đánh dấu furigana theo quy tắc ([漢字|かんじ], {表記|よみ|từ gốc} cho từ trong danh sách), không sửa chữ, không thêm bớt câu; "dich" để rỗng (máy tự điền).
 3. loai "thong_bao": お知らせ, 2–3 mục, mỗi mục là một đoạn bắt đầu bằng ◆, tiêu đề お[知|し]らせ.
 cau_hoi: 2–3 câu trắc nghiệm tiếng Nhật về nội dung CẢ SỐ (nên có 1 câu về truyện), mỗi câu đúng 3 lựa chọn, CHỈ MỘT đáp án đúng, "dung" là vị trí đáp án đúng tính từ 0 (đổi vị trí giữa các câu), "giai_thich" tiếng Việt chỉ ra câu trong bài.
 chinh_ta: 2–3 câu CHÉP NGUYÊN VĂN từ bài (8–30 ký tự, một câu trọn vẹn, không vắt qua dấu 「」), lấy cả từ truyện; "them_dap_an": cách viết khác vẫn đúng (僕/ぼく, 下さい/ください), không đánh dấu.
-TRUYỆN ĐÃ VIẾT SẴN (kỳ 1):
-{"tieu_de": "（truyện đã duyệt）", "doan": ["（đoạn 1）", "（đoạn 2）", "（đoạn 3）"]}
+TRUYỆN ĐÃ VIẾT SẴN (kỳ 12):
+{"tieu_de": "（truyện đã kể lại bằng tiếng của báo）", "doan": ["（đoạn 1）", "（đoạn 2）", "（đoạn 3）"]}
 
 ĐỘ DÀI: hai bài còn lại (tin_lang + bài 3, KHÔNG tính truyện) tổng khoảng 112–525 ký tự.
+
+TIN HÔM NAY CỦA LÀNG (bản gốc tiếng Việt — báo làng in bằng nhiều thứ tiếng, mọi bản đăng cùng tin):
+- （tin 1）: （nội dung tin 1）
+- （tin 2）: （nội dung tin 2）
+→ Bài tin_lang KỂ LẠI đúng các tin này bằng tiếng Nhật đúng trình độ (được rút gọn, gộp, chọn 2–3 tin); KHÔNG bịa tin khác.
+MỤC THỨ BA (bản gốc): （thông báo của làng） — ◆ （mục 1） / ◆ （mục 2）
+→ Bài thứ 3 kể lại mục này bằng tiếng Nhật (giữ ý, giữ dạng ◆ nếu có).
 
 dich: mỗi bài thêm "dich" = bản dịch tiếng Việt TỰ NHIÊN của từng đoạn (cùng số phần tử với doan; không có chữ Nhật — tên riêng viết Latin: Lin, Hana, Stack-chan, quán Kotoba; không furigana, không ghi chú trong ngoặc). Người học bấm "Dịch" mới thấy.
 
@@ -287,7 +353,7 @@ VÍ DỤ ĐỊNH DẠNG (chỉ xem cách đánh dấu, không chép nội dung):
 {"loai":"tin_lang","tieu_de":"スタックちゃん、[絵|え]を{発表|はっぴょう|発表する}","doan":["[昨日|きのう]の[夜|よる]、[村|むら]で[小|ちい]さな{発表会|はっぴょうかい|発表会}がありました。30{名|めい|〜名}の[人|ひと]が[来|き]ました。"]}
 ```
 
-### 4. Soát lần 2 — lời nhắc (cuối lời nhắc là cả số báo JSON)
+### 5. Soát lần 2 — lời nhắc (cuối lời nhắc là cả số báo JSON)
 
 ```text
 Bạn là biên tập viên người Nhật, soát lại số báo tiếng Nhật dưới đây dành cho người học trình độ N4 trước khi in.
@@ -409,142 +475,38 @@ SỐ BÁO:
 {"bai": [{"loai": "tin_lang", "tieu_de": "…", "doan": ["…"]}]}
 ```
 
-## Báo tiếng Anh (The Garden Gazette, A2, theo deck)
+## Báo tiếng Anh (The Garden Gazette, A2)
 
-### 0. Lập mạch truyện (system: như bước 1)
-
-```text
-TRUYỆN DÀI KỲ "The Little Café by the Garden" — Kotoba Village, làng nhỏ ven biển nói tiếng Anh cạnh khu vườn Kotoba
-Farm; mùa và thời tiết theo ngày thật ở Anh.
-Nhân vật (mỗi người một điều muốn, một điều sợ, một câu cửa miệng; tên viết đúng như sau, giữ nhất quán):
-- Linh: cô gái Việt Nam 22 tuổi mới đến làm ở quán "The Kettle Café". Muốn Hana tin tưởng giao quán một mình. Sợ khách cười
-  tiếng Anh của mình. Đôi khi nhầm từ / thì (đúng mẫu người học đang học), nhầm xong tự sửa. Câu cửa miệng: "I can do this!"
-- Hana: chủ The Kettle Café, khoảng 30 tuổi, điềm tĩnh, tốt bụng. Có một bí mật về quá khứ của quán, hé ra dần (chưa kể hết).
-- StackChan: robot nhỏ của khu vườn, tò mò, câu ngắn, vui vẻ, hay vẽ tranh pixel. Hiểu câu nói thường ngày theo nghĩa đen
-  (gây cười) — chỉ câu đơn giản ("Hold on", "Keep an eye on it"), không thành ngữ khó.
-- Mr. Oakley: trưởng làng (the mayor), hiền, kể chuyện ngày xưa quá dài.
-- Ben: người đưa thư vui tính, biết mọi tin trong làng.
-- Nhân vật phụ của đợt (mỗi đợt chọn một): một vị khách có mục đích riêng, một con mèo hoang trắng, một đứa trẻ trong làng.
-Lời thoại trong ngoặc kép "…", ghi rõ ai nói (said Linh, Hana asked…).
-
-CHỦ ĐỀ CỦA ĐỢT NÀY: Kinh dị nhẹ: chuyện lạ / chuyện ma trong làng (tiếng động ban đêm, bóng người bên giếng, đồ vật tự dời chỗ) gây rùng mình và tò mò; KHÔNG máu me, không bạo lực, không ai chết; lời giải có thể bất ngờ hoặc để lại một chút rợn. Người đọc cũng thích: Hài — có thể pha nhẹ, nhưng giữ Kinh dị nhẹ là chính.
-
-CÁC KỲ ĐÃ ĐĂNG:
-(chưa có kỳ nào)
-
-HÔM NAY: Sunday, ngày 8/11/2026, mùa thu ở Anh. Đợt mới bắt đầu từ kỳ 1.
-
-Lập MẠCH TRUYỆN cho một đợt 6–8 kỳ (mỗi kỳ đăng một ngày): ten = tên đợt (tiếng Việt); muc_tieu = điều nhân vật chính muốn đạt trong đợt; bi_an = câu hỏi / bí ẩn kéo suốt đợt; nhan_vat_phu = nhân vật phụ của đợt (một người / con vật, kèm điều họ muốn); buoc = mỗi phần tử là MỘT kỳ (tiếng Việt, 1–2 câu: chuyện gì xảy ra, trở ngại, móc câu); ket = đợt kết thúc thế nào (giải được bí ẩn, có thay đổi nhỏ ở nhân vật, để lại một sợi chỉ cho đợt sau). Nối tiếp các kỳ đã đăng, không lặp lại chuyện cũ. Hợp mùa hiện tại.
-
-Trả về đúng một object JSON theo khuôn.
-```
-
-### 1. Nhà văn — system
+### 3. Kể lại truyện — lời nhắc
 
 ```text
-Bạn là nhà văn viết truyện dài kỳ tiếng Anh dễ đọc cho người Việt học tiếng Anh trình độ A2. Viết hay như một truyện thật, không như bài tập.
-```
+KỂ LẠI kỳ 12 của truyện dài kỳ dưới đây bằng tiếng Anh trình độ A2 cho người Việt đang học. Đây là cùng một câu chuyện in trong báo làng bằng nhiều thứ tiếng: GIỮ ĐÚNG sự việc, nhân vật, lời thoại chính, chi tiết bất ngờ và móc câu cuối; không thêm chuyện mới, không bỏ móc câu.
 
-### 1. Nhà văn — lời nhắc
+Viết lại cho hợp trình độ: câu ngắn, tự nhiên như sách đọc cho người học; được rút gọn chi tiết phụ. Chỗ nhân vật nói nhầm (lời chào, cách nói lịch sự) thì cho nhầm theo kiểu của tiếng Anh.
 
-```text
-TRUYỆN DÀI KỲ "The Little Café by the Garden" — Kotoba Village, làng nhỏ ven biển nói tiếng Anh cạnh khu vườn Kotoba
-Farm; mùa và thời tiết theo ngày thật ở Anh.
-Nhân vật (mỗi người một điều muốn, một điều sợ, một câu cửa miệng; tên viết đúng như sau, giữ nhất quán):
-- Linh: cô gái Việt Nam 22 tuổi mới đến làm ở quán "The Kettle Café". Muốn Hana tin tưởng giao quán một mình. Sợ khách cười
-  tiếng Anh của mình. Đôi khi nhầm từ / thì (đúng mẫu người học đang học), nhầm xong tự sửa. Câu cửa miệng: "I can do this!"
-- Hana: chủ The Kettle Café, khoảng 30 tuổi, điềm tĩnh, tốt bụng. Có một bí mật về quá khứ của quán, hé ra dần (chưa kể hết).
-- StackChan: robot nhỏ của khu vườn, tò mò, câu ngắn, vui vẻ, hay vẽ tranh pixel. Hiểu câu nói thường ngày theo nghĩa đen
-  (gây cười) — chỉ câu đơn giản ("Hold on", "Keep an eye on it"), không thành ngữ khó.
-- Mr. Oakley: trưởng làng (the mayor), hiền, kể chuyện ngày xưa quá dài.
-- Ben: người đưa thư vui tính, biết mọi tin trong làng.
-- Nhân vật phụ của đợt (mỗi đợt chọn một): một vị khách có mục đích riêng, một con mèo hoang trắng, một đứa trẻ trong làng.
-Lời thoại trong ngoặc kép "…", ghi rõ ai nói (said Linh, Hana asked…).
+TÊN GỌI (dùng đúng):
+- Lin → Lin
+- bà Hana → Hana
+- StackChan → StackChan
+- ông trưởng làng → the mayor
+- Quán Kotoba (quán trọ) → the Kotoba Inn
+- làng Kotoba → Kotoba Village
+- vườn Kotoba → Kotoba Farm
+- bác đưa thư → the postman
+- con mèo hoang trắng → the white stray cat
 
-CHỦ ĐỀ TRUYỆN: Kinh dị nhẹ: chuyện lạ / chuyện ma trong làng (tiếng động ban đêm, bóng người bên giếng, đồ vật tự dời chỗ) gây rùng mình và tò mò; KHÔNG máu me, không bạo lực, không ai chết; lời giải có thể bất ngờ hoặc để lại một chút rợn. Người đọc cũng thích: Hài — có thể pha nhẹ, nhưng giữ Kinh dị nhẹ là chính.
+Độ dài: đúng 3 đoạn như bản gốc, mỗi đoạn 25–70 từ tiếng Anh.
 
-MẠCH CỦA ĐỢT「Tấm bản đồ cũ」: muốn: tìm cái giếng · bí ẩn: giếng ở đâu · nhân vật phụ: ông khách già · kết: …
-Các bước:
-→ kỳ 1: Kỳ 1: …
-  kỳ 2: Kỳ 2: …
-  kỳ 3: Kỳ 3: …
-  kỳ 4: Kỳ 4: …
-  kỳ 5: Kỳ 5: …
-  kỳ 6: Kỳ 6: …
-
-KỲ NÀY (kỳ 1) theo bước: Kỳ 1: …
-
-ĐÂY LÀ KỲ 1: Linh đến Kotoba Village và bắt đầu làm ở The Kettle Café.
-
-HÔM NAY: Sunday, ngày 8/11/2026, mùa thu ở Anh. Viết KỲ 1.
-
-MẪU NGỮ PHÁP ĐANG HỌC (dùng 1–2 mẫu làm CHẤT LIỆU của chuyện):
-- past simple (regular and irregular verbs): thì quá khứ đơn
-- past continuous: was / were + -ing: thì quá khứ tiếp diễn
-- going to (plans): dự định sẽ
-- will (decisions, predictions, offers): sẽ
-- comparatives: bigger / more beautiful than: so sánh hơn
-- superlatives: the biggest / the most beautiful: so sánh nhất
-
-CÁCH VIẾT MỘT KỲ HAY (bắt buộc):
-1. Một cảnh, 2–3 nhân vật. Mở đầu bằng hành động hoặc lời thoại, KHÔNG mở bằng tả thời tiết.
-2. Có MỘT vấn đề cụ thể: nhân vật muốn gì, cái gì cản (hiểu lầm, đồ bị mất, khách khó tính, lời nói nhầm…); nhân vật tự xoay xở.
-3. Dùng mẫu ngữ pháp đang học làm CHẤT LIỆU của chuyện (vd. nói nhầm mẫu → hiểu lầm → buồn cười), không chèn cho có.
-4. Có ít nhất một chi tiết bất ngờ hoặc buồn cười, và một khoảnh khắc cảm xúc nhỏ.
-5. Kết bằng một móc câu: câu hỏi chưa có lời đáp, vật lạ, câu nói bỏ dở. KHÔNG kết bằng bài học hay lời khuyên.
-6. Không liệt kê đồ vật, không câu chỉ để dùng từ (kiểu「〜が2個あります」). Không lặp lại tình huống của các kỳ trước.
-7. Nối tiếp kỳ trước: KHÔNG mâu thuẫn với chuyện đã xảy ra (đồ đã mở thì không "lần đầu mở" nữa…), giải quyết hoặc đẩy tiếp
-   một chỗ bỏ ngỏ.
-8. Thoại thể hiện tính cách, ghi rõ ai nói. Câu ngắn, tự nhiên, đúng trình độ: chỉ dùng từ trong DANH SÁCH TỪ và từ rất cơ
-   bản; tối đa 2 từ ngoài danh sách (ghi vào tu_moi kèm nghĩa). Không thành ngữ / chữ Hán khó hơn trình độ.
-9. Độ dài: đúng 3 đoạn, mỗi đoạn 25–70 từ tiếng Anh (truyện là một bài trong số báo, đừng viết dài hơn).
-
-DANH SÁCH TỪ ĐÃ HỌC (trình độ A2):
+TỪ NGƯỜI HỌC ĐÃ HỌC (trình độ A2) — dùng khi hợp, ĐỪNG ép câu:
 borrow, lighthouse, whisper, receipt, crowded, umbrella
 
-VÍ DỤ MỘT KỲ HAY (chỉ xem cách kể: nhầm mẫu câu thành chuyện, có vật lạ, móc câu; KHÔNG chép nội dung, nhân vật phụ, đồ vật):
-"Can I take your order?" Linh asked. The old man smiled. "Yes. One cup of tea, please. And one memory." Linh did not understand. "Sorry, we don't sell memories," she said. In the kitchen, Hana laughed softly.
-The man put an old photo on the table. It showed The Kettle Café, but the sign was different. A young girl stood at the door with a red umbrella. "Do you know her?" he asked.
-Hana came out and looked at the photo for a long time. Her finger stopped on the girl's face. "Where did you find this?" she whispered. Outside, the wind pushed the door open, and the little bell rang twice.
+BẢN GỐC:
+{"tieu_de": "（truyện bản gốc tiếng Việt）", "doan": ["（đoạn 1）", "（đoạn 2）", "（đoạn 3）"]}
 
-Trả về đúng một object JSON theo khuôn: dan_y (tiếng Việt: muon, tro_ngai, bat_ngo, moc_cau), tieu_de (tiếng Anh, 3–8 từ), doan = 3 đoạn tiếng Anh (chữ trơn, không đánh dấu), dich = bản dịch tiếng Việt TỰ NHIÊN của từng đoạn (cùng số phần tử, không có chữ Anh / Nhật — tên riêng viết Latin: Lin, Hana, Stack-chan, quán Kotoba, làng Kotoba; không ghi chú trong ngoặc), tu_moi (≤ 2 từ ngoài danh sách: w, r = phiên âm IPA /…/, m = nghĩa tiếng Việt), nho (tiếng Việt: tom_tat = 2 câu chuyện gì xảy ra; nhan_vat_moi; bo_ngo = chỗ bỏ ngỏ kỳ sau cần giải quyết; da_giai = chỗ bỏ ngỏ cũ kỳ này đã giải quyết).
+Trả về đúng một object JSON theo khuôn: tieu_de (tiếng Anh, 3–8 từ), doan = các đoạn tiếng Anh (chữ trơn, không đánh dấu), dich = bản dịch tiếng Việt TỰ NHIÊN của từng đoạn bạn vừa viết (cùng số phần tử, không có chữ Anh / Nhật; tên riêng viết Latin: Lin, Hana, Stack-chan, quán Kotoba, làng Kotoba; không ghi chú trong ngoặc), tu_moi (≤ 2 từ khó ngoài danh sách: w, r = phiên âm IPA /…/, m = nghĩa tiếng Việt).
 ```
 
-### 2. Biên tập — lời nhắc (system: "Bạn là biên tập viên truyện khó tính nhưng công bằng.")
-
-```text
-Bạn là biên tập viên truyện cho người Việt học tiếng Anh trình độ A2: khó tính nhưng công bằng.
-
-Chấm kỳ 1 dưới đây, mỗi tiêu chí 1–5:
-- su_kien: có chuyện xảy ra (vấn đề cụ thể, nhân vật xoay xở), không phải cảnh sinh hoạt nhạt
-- nhan_vat: thoại và hành động đúng tính cách (theo hồ sơ), có cảm xúc
-- bat_ngo: có chi tiết bất ngờ / buồn cười
-- moc_cau: kết khiến người đọc muốn đọc kỳ sau, không kết bằng lời khuyên
-- khop: khớp kỳ trước, không mâu thuẫn chuyện đã xảy ra (kỳ 1 thì chấm 5)
-- trinh_do: từ, ngữ pháp, chữ Hán đúng trình độ A2, không thành ngữ khó
-- tu_nhien: tiếng Anh tự nhiên, không gượng vì nhồi từ
-loi = lỗi ngữ pháp / dùng từ CỤ THỂ (chép câu sai → câu đúng); goi_y = góp ý cụ thể để viết lại hay hơn.
-
-TRUYỆN DÀI KỲ "The Little Café by the Garden" — Kotoba Village, làng nhỏ ven biển nói tiếng Anh cạnh khu vườn Kotoba
-Farm; mùa và thời tiết theo ngày thật ở Anh.
-Nhân vật (mỗi người một điều muốn, một điều sợ, một câu cửa miệng; tên viết đúng như sau, giữ nhất quán):
-- Linh: cô gái Việt Nam 22 tuổi mới đến làm ở quán "The Kettle Café". Muốn Hana tin tưởng giao quán một mình. Sợ khách cười
-  tiếng Anh của mình. Đôi khi nhầm từ / thì (đúng mẫu người học đang học), nhầm xong tự sửa. Câu cửa miệng: "I can do this!"
-- Hana: chủ The Kettle Café, khoảng 30 tuổi, điềm tĩnh, tốt bụng. Có một bí mật về quá khứ của quán, hé ra dần (chưa kể hết).
-- StackChan: robot nhỏ của khu vườn, tò mò, câu ngắn, vui vẻ, hay vẽ tranh pixel. Hiểu câu nói thường ngày theo nghĩa đen
-  (gây cười) — chỉ câu đơn giản ("Hold on", "Keep an eye on it"), không thành ngữ khó.
-- Mr. Oakley: trưởng làng (the mayor), hiền, kể chuyện ngày xưa quá dài.
-- Ben: người đưa thư vui tính, biết mọi tin trong làng.
-- Nhân vật phụ của đợt (mỗi đợt chọn một): một vị khách có mục đích riêng, một con mèo hoang trắng, một đứa trẻ trong làng.
-Lời thoại trong ngoặc kép "…", ghi rõ ai nói (said Linh, Hana asked…).
-
-KỲ TRUYỆN:
-{"tieu_de": "（kỳ truyện）", "doan": ["…"]}
-
-Trả về đúng một object JSON theo khuôn.
-```
-
-### 3. Viết cả số — system
+### 4. Viết cả số — system
 
 ```text
 Bạn là người bản xứ nói tiếng Anh, viết báo làng "The Garden Gazette" (bản tiếng Anh của 畑新聞) cho người Việt Nam đang học tiếng Anh trình độ A2 (CEFR).
@@ -564,10 +526,10 @@ QUY TẮC (máy sẽ kiểm tra, sai là phải viết lại):
 Trả về đúng MỘT object JSON theo khuôn, không viết gì thêm.
 ```
 
-### 3. Viết cả số — lời nhắc
+### 4. Viết cả số — lời nhắc
 
 ```text
-HÔM NAY: Sunday, ngày 8/11/2026, mùa thu ở Anh. Số báo 12.
+HÔM NAY: Sunday, ngày 8/11/2026, mùa thu. Số báo 30. Thời tiết ở làng: cả ngày nhiều mây.
 
 CẤU TRÚC: bai gồm đúng 2 bài theo thứ tự (KHÔNG viết truyện dài kỳ: máy tự chèn truyện đã viết sẵn làm bài giữa):
 1. loai "tin_lang": tin trong làng Kotoba Village và khu vườn Kotoba Farm, 2–3 đoạn (đừng kể lại truyện).
@@ -576,8 +538,15 @@ Tiêu đề viết kiểu tiêu đề báo tiếng Anh, ngắn (3–8 từ).
 cau_hoi: 2–3 câu trắc nghiệm TIẾNG ANH về nội dung CẢ SỐ (nên có 1 câu về truyện), mỗi câu đúng 3 lựa chọn tiếng Anh ngắn, CHỈ MỘT đáp án đúng, "dung" là vị trí đáp án đúng tính từ 0 (đổi vị trí giữa các câu), "giai_thich" tiếng Việt chỉ ra câu nào trong bài cho biết đáp án.
 chinh_ta: 2–3 câu CHÉP NGUYÊN VĂN từ bài hoặc truyện (một câu trọn vẹn, 4–14 từ, chép đúng cả dấu câu), nên chứa từ trong danh sách từ vựng, KHÔNG có tên riêng và không phải lời thoại trong ngoặc kép; "them_dap_an": thường để rỗng.
 ĐỘ DÀI: hai bài này tổng khoảng 64–255 từ (truyện không tính).
-TRUYỆN ĐÃ VIẾT SẴN (kỳ 1, để đặt câu hỏi / câu chép):
-{"tieu_de": "（truyện đã duyệt）", "doan": ["（đoạn 1）", "（đoạn 2）", "（đoạn 3）"]}
+TRUYỆN ĐÃ VIẾT SẴN (kỳ 12, để đặt câu hỏi / câu chép):
+{"tieu_de": "（truyện đã kể lại bằng tiếng của báo）", "doan": ["（đoạn 1）", "（đoạn 2）", "（đoạn 3）"]}
+
+TIN HÔM NAY CỦA LÀNG (bản gốc tiếng Việt — báo làng in bằng nhiều thứ tiếng, mọi bản đăng cùng tin):
+- （tin 1）: （nội dung tin 1）
+- （tin 2）: （nội dung tin 2）
+→ Bài tin_lang KỂ LẠI đúng các tin này bằng tiếng Anh đúng trình độ (được rút gọn, gộp, chọn 2–3 tin); KHÔNG bịa tin khác.
+MỤC THỨ BA (bản gốc): （thông báo của làng） — ◆ （mục 1） / ◆ （mục 2）
+→ Bài thứ 3 kể lại mục này bằng tiếng Anh (giữ ý, giữ dạng ◆ nếu có).
 
 dich: mỗi bài thêm "dich" = bản dịch tiếng Việt TỰ NHIÊN (có dấu) của từng đoạn (cùng số phần tử với doan; không ghi chú trong ngoặc). Người học bấm "Dịch" mới thấy.
 
@@ -637,7 +606,7 @@ VÍ DỤ ĐỊNH DẠNG (chỉ xem hình thức, không chép nội dung):
 {"loai":"tin_lang","tieu_de":"StackChan Paints the Old Bridge","doan":["Yesterday afternoon, StackChan carried a small box of paints to the old bridge. \"I want to make it happy,\" he said."]}
 ```
 
-### 4. Soát lần 2 — lời nhắc (cuối lời nhắc là cả số báo JSON)
+### 5. Soát lần 2 — lời nhắc (cuối lời nhắc là cả số báo JSON)
 
 ```text
 Bạn là biên tập viên người bản xứ, soát lại số báo tiếng Anh dưới đây dành cho người Việt học tiếng Anh trình độ A2 trước khi in.
@@ -649,7 +618,7 @@ Kiểm tra kỹ từng câu:
 5. Mỗi câu hỏi có đúng MỘT đáp án đúng, đáp án đó có trong bài, "dung" chỉ đúng vị trí; giai_thich đúng.
 6. Câu chép chính tả có chép nguyên văn một câu trong bài không.
 7. Tiêu đề, tom_tat, ky_truoc, giai_thich (tiếng Việt có dấu) viết đúng nghĩa với bài.
-8. Lời thoại: rõ ai nói câu nào; nhân vật nhất quán (Hana là chủ quán The Kettle Café, Linh là nhân viên mới).
+8. Lời thoại: rõ ai nói câu nào; nhân vật nhất quán (Hana là bà chủ the Kotoba Inn, Lin là nhân viên mới).
 9. Kết hợp từ tự nhiên như người bản xứ viết.
 10. Số báo thường phải đủ 3 bài: tin_lang, truyen, rồi thong_bao hoặc cot.
 Ghi mỗi chỗ đã sửa vào van_de (cho = vị trí như bai[1].doan[0], loi = lỗi gì bằng tiếng Việt, sua = câu mới). Không có lỗi thì van_de rỗng. "bao" là toàn bộ số báo sau khi sửa (không có lỗi thì trả nguyên). Giữ nguyên các id mau_cau, số kỳ truyện. Bài truyện (loai truyen) đã qua biên tập: chỉ sửa lỗi thật sự, không viết lại. "dich" (bản dịch tiếng Việt) giữ nguyên, chỉ sửa câu dịch của đoạn bạn vừa sửa.
@@ -712,222 +681,65 @@ SỐ BÁO:
 {"bai": [{"loai": "tin_lang", "tieu_de": "…", "doan": ["…"]}]}
 ```
 
-## Báo tiếng Việt (Báo Làng Kotoba, thẻ bất kỳ) — mới ở 1.25.1
+## Báo tiếng Việt (Báo Làng Kotoba — chỉ khi không học Nhật / Anh)
 
-### 0. Lập mạch truyện (system: như bước 1)
-
-```text
-TRUYỆN DÀI KỲ "Quán trọ nhỏ ở làng Kotoba" — làng nhỏ yên bình cạnh khu vườn Kotoba; mùa và thời tiết theo
-ngày thật ở Việt Nam.
-Nhân vật (mỗi người một điều muốn, một điều sợ, một câu cửa miệng; giữ nhất quán qua mọi kỳ):
-- Lin: cô gái 22 tuổi mới đến làm ở quán trọ "Quán Kotoba". Muốn bà Hana tin tưởng giao quán một mình. Ham học, hay ghi
-  chép vào cuốn sổ nhỏ, đôi khi nhớ nhầm một chi tiết rồi tự nhận ra và sửa. Câu cửa miệng: "Để em ghi lại đã!"
-- Bà Hana: bà chủ quán, khoảng 30 tuổi, điềm tĩnh, hiểu biết nhiều chuyện. Có một bí mật về quá khứ của quán, hé ra dần.
-- StackChan: robot nhỏ của khu vườn, tò mò, nói câu ngắn, xưng "tớ", hay vẽ tranh pixel. Hiểu câu nói thường ngày theo
-  nghĩa đen (gây cười).
-- Ông trưởng làng: hiền, thích kể chuyện ngày xưa, hay kể quá dài.
-- Nhân vật phụ của đợt (mỗi đợt chọn một): một vị khách trọ có mục đích riêng, bác đưa thư, con mèo hoang trắng.
-Lời thoại để trong ngoặc kép "…", ghi rõ ai nói.
-
-CHỦ ĐỀ CỦA ĐỢT NÀY: Kinh dị nhẹ: chuyện lạ / chuyện ma trong làng (tiếng động ban đêm, bóng người bên giếng, đồ vật tự dời chỗ) gây rùng mình và tò mò; KHÔNG máu me, không bạo lực, không ai chết; lời giải có thể bất ngờ hoặc để lại một chút rợn. Người đọc cũng thích: Hài — có thể pha nhẹ, nhưng giữ Kinh dị nhẹ là chính.
-
-CÁC KỲ ĐÃ ĐĂNG:
-(chưa có kỳ nào)
-
-HÔM NAY: Chủ Nhật, ngày 8/11/2026, mùa đông ở Việt Nam. Đợt mới bắt đầu từ kỳ 1.
-
-Lập MẠCH TRUYỆN cho một đợt 6–8 kỳ (mỗi kỳ đăng một ngày): ten = tên đợt (tiếng Việt); muc_tieu = điều nhân vật chính muốn đạt trong đợt; bi_an = câu hỏi / bí ẩn kéo suốt đợt; nhan_vat_phu = nhân vật phụ của đợt (một người / con vật, kèm điều họ muốn); buoc = mỗi phần tử là MỘT kỳ (tiếng Việt, 1–2 câu: chuyện gì xảy ra, trở ngại, móc câu); ket = đợt kết thúc thế nào (giải được bí ẩn, có thay đổi nhỏ ở nhân vật, để lại một sợi chỉ cho đợt sau). Nối tiếp các kỳ đã đăng, không lặp lại chuyện cũ. Hợp mùa hiện tại.
-
-Trả về đúng một object JSON theo khuôn.
-```
-
-### 1. Nhà văn — system
+### 4. Viết cả số — system
 
 ```text
-Bạn là nhà văn viết truyện dài kỳ tiếng Việt cho người đọc đang ôn bài bằng thẻ Anki. Viết hay như một truyện thật, không như bài giảng.
-```
-
-### 1. Nhà văn — lời nhắc
-
-```text
-TRUYỆN DÀI KỲ "Quán trọ nhỏ ở làng Kotoba" — làng nhỏ yên bình cạnh khu vườn Kotoba; mùa và thời tiết theo
-ngày thật ở Việt Nam.
-Nhân vật (mỗi người một điều muốn, một điều sợ, một câu cửa miệng; giữ nhất quán qua mọi kỳ):
-- Lin: cô gái 22 tuổi mới đến làm ở quán trọ "Quán Kotoba". Muốn bà Hana tin tưởng giao quán một mình. Ham học, hay ghi
-  chép vào cuốn sổ nhỏ, đôi khi nhớ nhầm một chi tiết rồi tự nhận ra và sửa. Câu cửa miệng: "Để em ghi lại đã!"
-- Bà Hana: bà chủ quán, khoảng 30 tuổi, điềm tĩnh, hiểu biết nhiều chuyện. Có một bí mật về quá khứ của quán, hé ra dần.
-- StackChan: robot nhỏ của khu vườn, tò mò, nói câu ngắn, xưng "tớ", hay vẽ tranh pixel. Hiểu câu nói thường ngày theo
-  nghĩa đen (gây cười).
-- Ông trưởng làng: hiền, thích kể chuyện ngày xưa, hay kể quá dài.
-- Nhân vật phụ của đợt (mỗi đợt chọn một): một vị khách trọ có mục đích riêng, bác đưa thư, con mèo hoang trắng.
-Lời thoại để trong ngoặc kép "…", ghi rõ ai nói.
-
-CHỦ ĐỀ TRUYỆN: Kinh dị nhẹ: chuyện lạ / chuyện ma trong làng (tiếng động ban đêm, bóng người bên giếng, đồ vật tự dời chỗ) gây rùng mình và tò mò; KHÔNG máu me, không bạo lực, không ai chết; lời giải có thể bất ngờ hoặc để lại một chút rợn. Người đọc cũng thích: Hài — có thể pha nhẹ, nhưng giữ Kinh dị nhẹ là chính.
-
-MẠCH CỦA ĐỢT「Tấm bản đồ cũ」: muốn: tìm cái giếng · bí ẩn: giếng ở đâu · nhân vật phụ: ông khách già · kết: …
-Các bước:
-→ kỳ 1: Kỳ 1: …
-  kỳ 2: Kỳ 2: …
-  kỳ 3: Kỳ 3: …
-  kỳ 4: Kỳ 4: …
-  kỳ 5: Kỳ 5: …
-  kỳ 6: Kỳ 6: …
-
-KỲ NÀY (kỳ 1) theo bước: Kỳ 1: …
-
-ĐÂY LÀ KỲ 1: Lin đến làng Kotoba và bắt đầu làm ở Quán Kotoba.
-
-HÔM NAY: Chủ Nhật, ngày 8/11/2026, mùa đông ở Việt Nam. Viết KỲ 1.
-
-CÁCH VIẾT MỘT KỲ HAY (bắt buộc):
-1. Một cảnh, 2–3 nhân vật. Mở đầu bằng hành động hoặc lời thoại, KHÔNG mở bằng tả thời tiết.
-2. Có MỘT vấn đề cụ thể: nhân vật muốn gì, cái gì cản (hiểu lầm, đồ bị mất, khách khó tính, nhớ nhầm…); nhân vật tự xoay xở.
-3. Dùng nội dung 2–4 thẻ trong DANH SÁCH THẺ làm CHẤT LIỆU của chuyện (nhân vật nhắc tới, tranh luận, nhớ nhầm rồi
-   sửa đúng theo thẻ…), đúng kiến thức ghi ở mặt sau; không chèn cho có, không giảng bài.
-4. Có ít nhất một chi tiết bất ngờ hoặc buồn cười, và một khoảnh khắc cảm xúc nhỏ.
-5. Kết bằng một móc câu: câu hỏi chưa có lời đáp, vật lạ, câu nói bỏ dở. KHÔNG kết bằng bài học hay lời khuyên.
-6. Không liệt kê, không lặp lại tình huống của các kỳ trước.
-7. Nối tiếp kỳ trước: KHÔNG mâu thuẫn với chuyện đã xảy ra, giải quyết hoặc đẩy tiếp một chỗ bỏ ngỏ.
-8. Thoại thể hiện tính cách, ghi rõ ai nói. Tiếng Việt tự nhiên, đúng chính tả, có dấu; chữ trơn (không [ ] { } |,
-   không markdown).
-9. Độ dài: 3 đoạn, mỗi đoạn 60–140 chữ (truyện là một bài trong số báo).
-
-DANH SÁCH THẺ NGƯỜI ĐỌC ĐANG ÔN (#số | mặt trước | mặt sau; ★ = đến hạn ôn hôm nay):
-#1 ★ | Ngô Quyền | Đánh bại quân Nam Hán trên sông Bạch Đằng năm 938
-#2 ★ | Ty thể | Bào quan tạo năng lượng (ATP) cho tế bào
-#3 ★ | 사랑 | tình yêu
-#4 | Định luật Ohm | I = U / R
-#5 | Hoàng thành Thăng Long | Di sản văn hóa thế giới, UNESCO 2010
-
-VÍ DỤ MỘT KỲ HAY (chỉ xem cách kể: hiểu lầm thành chuyện, có vật lạ, móc câu; KHÔNG chép nội dung):
-"Bà Hana ơi, khách phòng số ba muốn ăn sáng bằng... một tấm bản đồ!" Lin chạy vào bếp, tay vẫn cầm cuốn sổ nhỏ. Bà Hana đặt ấm trà xuống. "Bản đồ à?" StackChan lập tức chui vào tủ, lôi ra một chiếc đĩa. "Tớ có đĩa. Bản đồ thì chưa nấu bao giờ."
-Ông khách già trải lên bàn một tấm bản đồ cũ, mép giấy đã ngả vàng. Ở góc dưới có một vòng tròn đỏ, ngay chỗ khu vườn Kotoba bây giờ. "Ngày xưa, ở đây có một cái giếng," ông nói khẽ. "Tôi đã hứa sẽ quay lại."
-Bà Hana nhìn vòng tròn đỏ rất lâu mà không nói gì. Lin định hỏi thì ngoài sân vang lên tiếng nước chảy róc rách — ở đúng chỗ chưa từng có cái giếng nào.
-
-Trả về đúng một object JSON theo khuôn: dan_y (muon, tro_ngai, bat_ngo, moc_cau), tieu_de (ngắn, 3–10 chữ), doan = 3 đoạn tiếng Việt chữ trơn, dich = [] (để rỗng), tu_moi = [] (để rỗng), nho (tom_tat = 2 câu chuyện gì xảy ra; nhan_vat_moi; bo_ngo = chỗ bỏ ngỏ kỳ sau cần giải quyết; da_giai = chỗ bỏ ngỏ cũ kỳ này đã giải quyết).
-```
-
-### 2. Biên tập — lời nhắc (system: "Bạn là biên tập viên truyện khó tính nhưng công bằng.")
-
-```text
-Bạn là biên tập viên truyện tiếng Việt cho người đọc đang ôn bài bằng thẻ Anki: khó tính nhưng công bằng.
-
-Chấm kỳ 1 dưới đây, mỗi tiêu chí 1–5:
-- su_kien: có chuyện xảy ra (vấn đề cụ thể, nhân vật xoay xở), không phải cảnh sinh hoạt nhạt
-- nhan_vat: thoại và hành động đúng tính cách (theo hồ sơ), có cảm xúc
-- bat_ngo: có chi tiết bất ngờ / buồn cười
-- moc_cau: kết khiến người đọc muốn đọc kỳ sau, không kết bằng lời khuyên
-- khop: khớp kỳ trước, không mâu thuẫn chuyện đã xảy ra (kỳ 1 thì chấm 5)
-- trinh_do: kiến thức lấy từ thẻ ĐÚNG với mặt sau của thẻ, lồng tự nhiên (không giảng bài)
-- tu_nhien: tiếng Việt tự nhiên, đúng chính tả
-loi = lỗi cụ thể (chép câu sai → câu đúng, kể cả kiến thức sai so với thẻ); goi_y = góp ý cụ thể để viết lại hay hơn.
-
-TRUYỆN DÀI KỲ "Quán trọ nhỏ ở làng Kotoba" — làng nhỏ yên bình cạnh khu vườn Kotoba; mùa và thời tiết theo
-ngày thật ở Việt Nam.
-Nhân vật (mỗi người một điều muốn, một điều sợ, một câu cửa miệng; giữ nhất quán qua mọi kỳ):
-- Lin: cô gái 22 tuổi mới đến làm ở quán trọ "Quán Kotoba". Muốn bà Hana tin tưởng giao quán một mình. Ham học, hay ghi
-  chép vào cuốn sổ nhỏ, đôi khi nhớ nhầm một chi tiết rồi tự nhận ra và sửa. Câu cửa miệng: "Để em ghi lại đã!"
-- Bà Hana: bà chủ quán, khoảng 30 tuổi, điềm tĩnh, hiểu biết nhiều chuyện. Có một bí mật về quá khứ của quán, hé ra dần.
-- StackChan: robot nhỏ của khu vườn, tò mò, nói câu ngắn, xưng "tớ", hay vẽ tranh pixel. Hiểu câu nói thường ngày theo
-  nghĩa đen (gây cười).
-- Ông trưởng làng: hiền, thích kể chuyện ngày xưa, hay kể quá dài.
-- Nhân vật phụ của đợt (mỗi đợt chọn một): một vị khách trọ có mục đích riêng, bác đưa thư, con mèo hoang trắng.
-Lời thoại để trong ngoặc kép "…", ghi rõ ai nói.
-
-THẺ NGƯỜI ĐỌC ĐANG ÔN:
-#1 ★ | Ngô Quyền | Đánh bại quân Nam Hán trên sông Bạch Đằng năm 938
-#2 ★ | Ty thể | Bào quan tạo năng lượng (ATP) cho tế bào
-#3 ★ | 사랑 | tình yêu
-#4 | Định luật Ohm | I = U / R
-#5 | Hoàng thành Thăng Long | Di sản văn hóa thế giới, UNESCO 2010
-
-KỲ TRUYỆN:
-{"tieu_de": "（kỳ truyện）", "doan": ["…"]}
-
-Trả về đúng một object JSON theo khuôn.
-```
-
-### 3. Viết cả số — system
-
-```text
-Bạn là người viết báo làng "Báo Làng Kotoba" (bản tiếng Việt của 畑新聞) cho người Việt đang ôn bài bằng thẻ Anki (lịch sử, khoa học, y khoa, luật, ngoại ngữ… tuỳ thẻ của họ).
-Mục đích: đọc báo vui mà nhớ lại kiến thức trong thẻ. Đan nội dung các thẻ vào tin làng, truyện, góc ôn bài một cách tự nhiên, đúng kiến thức.
+Bạn là người viết báo làng "Báo Làng Kotoba" (bản tiếng Việt của 畑新聞) — báo vui hằng ngày của một làng nhỏ, có truyện dài kỳ khiến người đọc mong số sau.
 Viết tiếng Việt tự nhiên, ấm áp, hơi hài hước; câu rõ ràng. Nội dung hoàn toàn mới.
-Độ dài phần bài của cả số báo: khoảng 420–950 chữ.
+Độ dài tin làng + bài thứ ba (không tính truyện): khoảng 200–600 chữ.
 
 QUY TẮC (máy sẽ kiểm tra, sai là phải viết lại):
-- Viết HOÀN TOÀN bằng tiếng Việt có dấu, tự nhiên như báo / truyện Việt Nam; chữ của thẻ (từ tiếng nước ngoài, thuật ngữ)
-  được viết nguyên văn như trong thẻ.
-- Mỗi lần bài nhắc tới nội dung một thẻ trong DANH SÁCH THẺ, đánh dấu cụm chữ đó bằng {cụm chữ trong bài||#số của thẻ},
-  ví dụ: Năm 938, {Ngô Quyền||#12} đánh tan quân Nam Hán trên {sông Bạch Đằng||#13}. Mỗi thẻ đánh dấu 1–2 chỗ.
-  Số thẻ CHỈ nằm trong đánh dấu: không viết "Thẻ #12", "(#12)" hay số thẻ ra bài.
-  Không dùng [ ] { } | cho việc gì khác; không markdown (* _ #).
-- Kiến thức phải ĐÚNG với mặt sau của thẻ: không bịa thêm số liệu, tên, ngày tháng trái với thẻ. Không chắc thì viết
-  chung chung hơn.
-- Đây là báo vui cho người đang ôn bài, không phải sách giáo khoa: câu rõ, ấm áp, hơi hài hước.
+- Viết HOÀN TOÀN bằng tiếng Việt có dấu, tự nhiên như báo / truyện Việt Nam.
+- Chữ trơn: không dùng [ ] { } |, không markdown (* _ #).
+- Đây là báo vui của làng: câu rõ, ấm áp, hơi hài hước.
 
 Trả về đúng MỘT object JSON theo khuôn, không viết gì thêm.
 ```
 
-### 3. Viết cả số — lời nhắc
+### 4. Viết cả số — lời nhắc
 
 ```text
-HÔM NAY: Chủ Nhật, ngày 8/11/2026, mùa đông ở Việt Nam. Số báo 12.
+HÔM NAY: Chủ Nhật, ngày 8/11/2026, mùa thu. Số báo 30. Thời tiết ở làng: cả ngày nhiều mây.
 
-CẤU TRÚC: bai gồm đúng 2 bài theo thứ tự (KHÔNG viết truyện dài kỳ: máy tự chèn truyện đã viết sẵn làm bài giữa):
-1. loai "tin_lang": tin trong làng Kotoba và khu vườn Kotoba, dùng nhân vật của truyện, 3–4 đoạn (đừng kể lại truyện).
-2. loai "cot": "Góc ôn bài" — StackChan hoặc bà Hana kể lại / giải thích 3–5 thẻ (ưu tiên thẻ ★) một cách dễ nhớ (mẹo nhớ, so sánh, chuyện vui), mỗi thẻ một đoạn ngắn bắt đầu bằng "◆ "; tiêu đề kiểu "Sổ tay StackChan".
+CẤU TRÚC: bai gồm đúng 2 bài theo thứ tự (KHÔNG viết truyện dài kỳ: máy tự chèn truyện hôm nay làm bài giữa):
+1. loai "tin_lang": tin trong làng Kotoba, 3–4 đoạn (đừng kể lại truyện).
+2. loai "thong_bao": Thông báo của làng — 2–3 mục, mỗi mục một đoạn ngắn bắt đầu bằng "◆ "; tiêu đề "Thông báo của làng".
 Tiêu đề ngắn kiểu tiêu đề báo (4–10 chữ).
-cau_hoi: 3–4 câu trắc nghiệm tiếng Việt hỏi lại KIẾN THỨC CỦA THẺ có trong số báo (đáp án tìm được trong bài), mỗi câu đúng 3 lựa chọn ngắn, CHỈ MỘT đáp án đúng, "dung" là vị trí đáp án đúng tính từ 0 (đổi vị trí giữa các câu), "giai_thich" 1 câu chỉ ra bài nói gì.
-ĐỘ DÀI: hai bài này tổng khoảng 189–665 chữ (truyện không tính).
-TRUYỆN ĐÃ VIẾT SẴN (kỳ 1, để đặt câu hỏi):
-{"tieu_de": "（truyện đã duyệt）", "doan": ["（đoạn 1）", "（đoạn 2）", "（đoạn 3）"]}
+cau_hoi: 2–4 câu trắc nghiệm tiếng Việt về nội dung CẢ SỐ (nên có 1 câu về truyện), mỗi câu đúng 3 lựa chọn ngắn, CHỈ MỘT đáp án đúng, "dung" là vị trí đáp án đúng tính từ 0 (đổi vị trí giữa các câu), "giai_thich" 1 câu chỉ ra bài nói gì.
+ĐỘ DÀI: hai bài này tổng khoảng 200–600 chữ.
+TRUYỆN HÔM NAY (kỳ 12, để đặt câu hỏi):
+{"tieu_de": "（truyện đã kể lại bằng tiếng của báo）", "doan": ["（đoạn 1）", "（đoạn 2）", "（đoạn 3）"]}
+
+TIN HÔM NAY CỦA LÀNG (bản gốc tiếng Việt — báo làng in bằng nhiều thứ tiếng, mọi bản đăng cùng tin):
+- （tin 1）: （nội dung tin 1）
+- （tin 2）: （nội dung tin 2）
+→ Bài tin_lang viết từ đúng các tin này (được viết dài hơn, thêm chi tiết đời thường) (được rút gọn, gộp, chọn 2–3 tin); KHÔNG bịa tin khác.
+MỤC THỨ BA (bản gốc): （thông báo của làng） — ◆ （mục 1） / ◆ （mục 2）
+→ Bài thứ 3 kể lại mục này bằng tiếng Việt (giữ ý, giữ dạng ◆ nếu có).
 
 chinh_ta, mau_cau, tu_moi: để rỗng []. tom_tat: 1–2 câu tóm tắt số báo.
 
-DÙNG THẺ: nhắc tới nội dung của khoảng 8–15 thẻ khác nhau (ưu tiên thẻ ★ — người đọc phải ôn hôm nay), dùng được bao nhiêu thì dùng, đừng ép câu. Nhìn danh sách rồi chọn chủ đề của số báo sao cho nhiều thẻ hợp nhau. Thẻ ★: #1, #2, #3.
-
-DANH SÁCH THẺ NGƯỜI ĐỌC ĐANG ÔN (#số | mặt trước | mặt sau; ★ = đến hạn ôn hôm nay):
-#1 ★ | Ngô Quyền | Đánh bại quân Nam Hán trên sông Bạch Đằng năm 938
-#2 ★ | Ty thể | Bào quan tạo năng lượng (ATP) cho tế bào
-#3 ★ | 사랑 | tình yêu
-#4 | Định luật Ohm | I = U / R
-#5 | Hoàng thành Thăng Long | Di sản văn hóa thế giới, UNESCO 2010
-
 VÍ DỤ ĐỊNH DẠNG (chỉ xem hình thức, không chép nội dung):
-{"loai":"tin_lang","tieu_de":"StackChan vẽ lại trận Bạch Đằng","doan":["Chiều qua, StackChan bày cả hộp màu ra sân. \"Năm 938, {Ngô Quyền||#12} cắm cọc gỗ dưới lòng sông!\" cậu reo lên, rồi cắm luôn bút chì xuống luống rau."]}
+{"loai":"tin_lang","tieu_de":"Chợ phiên đầu đông","doan":["Sáng nay chợ phiên đông hơn mọi tuần. Bác đưa thư kể rằng có người mang tới cả một xe bí ngô to bằng cái ghế."]}
 ```
 
-### 4. Soát lần 2 — lời nhắc (cuối lời nhắc là cả số báo JSON)
+### 5. Soát lần 2 — lời nhắc (cuối lời nhắc là cả số báo JSON)
 
 ```text
-Bạn là biên tập viên, soát lại số báo tiếng Việt dưới đây trước khi in. Người đọc dùng báo để ôn lại thẻ Anki.
+Bạn là biên tập viên, soát lại số báo tiếng Việt dưới đây trước khi in.
 Kiểm tra kỹ:
-1. KIẾN THỨC: mọi chỗ nhắc tới thẻ có đúng với mặt sau của thẻ không (số liệu, tên, ngày tháng, định nghĩa). Sai → sửa cho đúng thẻ. Không bịa thêm chi tiết trái với thẻ.
-2. Đánh dấu {chữ||#số}: số có đúng thẻ được nhắc tới không; GIỮ NGUYÊN các đánh dấu đúng (người đọc bấm vào để xem lại thẻ), không gỡ bỏ.
-3. Tiếng Việt tự nhiên, đúng chính tả, có dấu; không lẫn tiếng Anh không cần thiết.
-4. Mỗi câu hỏi có đúng MỘT đáp án đúng, đáp án đó có trong bài, "dung" chỉ đúng vị trí; giai_thich đúng.
-5. Tiêu đề, tom_tat, ky_truoc viết đúng với bài; nhân vật nhất quán (bà Hana là chủ quán, Lin là nhân viên mới).
-6. Số báo thường phải đủ 3 bài: tin_lang, truyen, rồi cot.
-Ghi mỗi chỗ đã sửa vào van_de (cho = vị trí như bai[1].doan[0], loi = lỗi gì, sua = câu mới). Không có lỗi thì van_de rỗng. "bao" là toàn bộ số báo sau khi sửa (không có lỗi thì trả nguyên). Bài truyện (loai truyen) đã qua biên tập: chỉ sửa lỗi thật sự, không viết lại. chinh_ta, mau_cau, tu_moi để rỗng.
+1. Tiếng Việt tự nhiên, đúng chính tả, có dấu.
+2. Mỗi câu hỏi có đúng MỘT đáp án đúng, đáp án đó có trong bài, "dung" chỉ đúng vị trí; giai_thich đúng.
+3. Tiêu đề, tom_tat viết đúng với bài; nhân vật nhất quán (bà Hana là chủ quán, Lin là nhân viên mới).
+4. Số báo thường phải đủ 3 bài: tin_lang, truyen, rồi thong_bao hoặc cot.
+Ghi mỗi chỗ đã sửa vào van_de (cho = vị trí như bai[1].doan[0], loi = lỗi gì, sua = câu mới). Không có lỗi thì van_de rỗng. "bao" là toàn bộ số báo sau khi sửa (không có lỗi thì trả nguyên). Bài truyện (loai truyen) đã qua biên tập: chỉ sửa lỗi chính tả thật sự, không viết lại. chinh_ta, mau_cau, tu_moi để rỗng.
 
 QUY TẮC (máy sẽ kiểm tra, sai là phải viết lại):
-- Viết HOÀN TOÀN bằng tiếng Việt có dấu, tự nhiên như báo / truyện Việt Nam; chữ của thẻ (từ tiếng nước ngoài, thuật ngữ)
-  được viết nguyên văn như trong thẻ.
-- Mỗi lần bài nhắc tới nội dung một thẻ trong DANH SÁCH THẺ, đánh dấu cụm chữ đó bằng {cụm chữ trong bài||#số của thẻ},
-  ví dụ: Năm 938, {Ngô Quyền||#12} đánh tan quân Nam Hán trên {sông Bạch Đằng||#13}. Mỗi thẻ đánh dấu 1–2 chỗ.
-  Số thẻ CHỈ nằm trong đánh dấu: không viết "Thẻ #12", "(#12)" hay số thẻ ra bài.
-  Không dùng [ ] { } | cho việc gì khác; không markdown (* _ #).
-- Kiến thức phải ĐÚNG với mặt sau của thẻ: không bịa thêm số liệu, tên, ngày tháng trái với thẻ. Không chắc thì viết
-  chung chung hơn.
-- Đây là báo vui cho người đang ôn bài, không phải sách giáo khoa: câu rõ, ấm áp, hơi hài hước.
-
-DANH SÁCH THẺ (#số | mặt trước | mặt sau):
-#1 ★ | Ngô Quyền | Đánh bại quân Nam Hán trên sông Bạch Đằng năm 938
-#2 ★ | Ty thể | Bào quan tạo năng lượng (ATP) cho tế bào
-#3 ★ | 사랑 | tình yêu
-#4 | Định luật Ohm | I = U / R
-#5 | Hoàng thành Thăng Long | Di sản văn hóa thế giới, UNESCO 2010
+- Viết HOÀN TOÀN bằng tiếng Việt có dấu, tự nhiên như báo / truyện Việt Nam.
+- Chữ trơn: không dùng [ ] { } |, không markdown (* _ #).
+- Đây là báo vui của làng: câu rõ, ấm áp, hơi hài hước.
 
 SỐ BÁO:
 {"bai": [{"loai": "tin_lang", "tieu_de": "…", "doan": ["…"]}]}
@@ -935,10 +747,10 @@ SỐ BÁO:
 
 ## Không dùng deck (tiếng Nhật N3) — đoạn khác với khi có deck
 
-### 3. Viết cả số — lời nhắc (Tiết kiệm: truyện viết chung trong lượt này)
+### 4. Viết cả số — lời nhắc (không có bản gốc: truyện viết chung trong lượt này)
 
 ```text
-HÔM NAY: ngày 8/11/2026, mùa thu ở Nhật. Số báo 1.
+HÔM NAY: ngày 8/11/2026, mùa thu ở Nhật. Số báo 1. Thời tiết ở làng: cả ngày nhiều mây.
 
 CẤU TRÚC: bai gồm đúng 3 bài theo thứ tự:
 1. loai "tin_lang": tin trong làng ことば村 và khu vườn ことば畑, dùng nhân vật của truyện, 2–3 đoạn.

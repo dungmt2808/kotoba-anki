@@ -122,8 +122,13 @@ Sau khi trả lời có hiện cách đọc, Hán Việt, nghĩa (và cách dùn
 - **Hiệu ứng thành tích** (`web/joy.js`, Python tính `data.joy` = `more_core.joy_view`): **xong hết thẻ hôm nay** trong deck đang xem (`deck_due_tree` = 0 và hôm nay đã ôn ≥ 1 lượt) → cầu vồng trên ruộng và trên trời sân, giọt sương lấp lánh; **đạt mục tiêu ngày**; **cả vườn xanh tốt / ra hoa / trĩu quả** (≥ 5 cây, không cây nào héo, mọi cây từ Cây non / Ra hoa / Ra quả) → lá lấp lánh / cánh hoa anh đào bay / đốm sáng vàng bay lên; **mốc chuỗi ngày** (7, 14, 21, 30, 50, 75, 100, 150, 200, 250, 300, 365, 500, 730, 1000) → pháo hoa trên trời sân; **xong 3 nhiệm vụ** → đèn trời bay lên. Huy hiệu cạnh chú thích ruộng; dải chúc mừng + linh vật chúc mỗi thành tích **một lần mỗi ngày** (nhớ ở `localStorage kb-joy-<ngày>-<loại>`), đang ôn thẻ thì để dành tới khi đóng bảng ôn.
 - **Lưu trữ**: khoá collection mới `kotoba_batake_more` (`more_core.MORE_KEY`) — mục 4. Bản ≤ 1.13 ở máy khác không đọc khoá này nên không xoá được gì.
 
+### Mới ở 1.25.2: "Một làng, một truyện"
+- Mỗi ngày Gemini viết **một bản gốc tiếng Việt** (kỳ truyện + 2–3 tin làng + thông báo / cột) — `ai_core.ensure_master`, `story_core` (`MASTER_SCHEMA`), thư mục `user_files/bao_chung/` (bản gốc, bộ nhớ truyện, nhận xét, tin các ngày). Báo tiếng Nhật / tiếng Anh **kể lại** theo trình độ (`story_core.retell`), báo tiếng Việt in thẳng bản gốc (không còn lấy thẻ).
+- Thời tiết trong báo = trời của vườn (`story_core.weather_at`, cùng công thức `sky.js`); tin làng nối 3 số trước.
+- Báo muốn nhận: Nhật và / hoặc Anh, hoặc "Chỉ tiếng Việt".
+
 ### Mới ở 1.25.1: cho người không học tiếng Nhật / tiếng Anh, gói báo, chủ đề truyện
-- **Báo tiếng Việt "Báo Làng Kotoba"** (`ai_vi.py`, `user_files/bao_gemini_vi/`, khoá `kotoba_batake_paper_vi`): Gemini đan nội dung tối đa 60 thẻ bất kỳ (mặt trước / mặt sau) vào Tin làng, Truyện dài kỳ riêng, **Góc ôn bài**; 3–4 câu hỏi hỏi lại kiến thức của thẻ. Đánh dấu `{chữ||#số}` → bấm ra mặt trước / mặt sau. Không giọng đọc / chép chính tả / bản dịch / furigana. Dài hơn báo học tiếng (420–950 chữ).
+- **Báo tiếng Việt "Báo Làng Kotoba"** (`ai_vi.py`, `user_files/bao_gemini_vi/`, khoá `kotoba_batake_paper_vi`): không giọng đọc / chép chính tả / bản dịch / furigana. (1.25.1 đan nội dung thẻ vào báo; 1.25.2 bỏ — chỉ truyện + tin làng.)
 - **Không dùng deck** (tab Nguồn báo → Lấy từ / Lấy thẻ): Gemini viết theo trình độ, tự khai báo 8–12 từ mới (bảng tra của số). Deck đã chọn < 10 từ cũng viết theo trình độ.
 - **Gói báo**: 1 tuần 100 xu / 1 tháng 300 xu (thẻ Gói báo ở tab Nguồn báo), tặng 7 ngày cho số Gemini đầu tiên, **Tự gia hạn** khi đủ xu, tối đa 60 ngày phía trước; hết gói thì Gemini không viết số mới (số cũ vẫn đọc). Báo Claude Code không cần gói. Lưu `paper_sub` trong `kotoba_batake_more`.
 - **Chủ đề truyện chọn nhiều** (`gemini_story_tones`): thêm Dễ thương, Kinh dị nhẹ, Lãng mạn nhẹ, Kỳ ảo; mỗi đợt 6–8 kỳ một chủ đề, lần lượt.
