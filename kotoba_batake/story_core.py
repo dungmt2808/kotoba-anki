@@ -572,6 +572,7 @@ LATIN_RE = re.compile(r"[A-Za-z\uff21-\uff3a\uff41-\uff5a]")
 VI_RE = re.compile(r"[A-Za-zÀ-ỹĐđ]")
 VI_MARK = re.compile(r"[àáảãạăằắẳẵặâầấẩẫậèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵđ]", re.I)
 MARK_RE = re.compile(r"[\[\]{}|]")
+VI_ONLY_RE = re.compile("[ăắằẳẵặấầẩẫậđếềểễệốồổỗộơớờởỡợưứừửữựạảẹẻẽịỉọỏụủỳỵỷỹĩũõãẠẢẤẦẨẪẬẮẰẲẴẶĐẸẺẼẾỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴỶỸĨŨÕÃƠƯĂ]")
 KANA_RE = re.compile(r"^[\u3041-\u3096\u309d\u309e\u30a1-\u30fa\u30fc〜～・]+$")
 # ghi chú lọt vào bản dịch (thử thật 05/11: "(dùng dạng thân mật …)")
 NOTE_RE = re.compile(r"\s*[(（][^()（）]{0,80}?(?:dùng|dạng|nghĩa là|ghi chú|lưu ý|tức là|kính ngữ|thân mật|lịch sự|"
@@ -669,7 +670,7 @@ def check_story(st: Any, lang: str, level: str, bad_kanji: Any = None) -> tuple[
         elif lang == "en":
             if CJK_RE.search(p):
                 errs.append(where + ": có chữ Nhật / Trung / Hàn trong bài tiếng Anh")
-            if VI_MARK.search(p):
+            if VI_ONLY_RE.search(p):        # 1.25.2: chỉ chữ riêng của tiếng Việt (café, résumé vẫn được)
                 errs.append(where + ": có chữ tiếng Việt trong bài tiếng Anh")
         else:
             if LATIN_RE.search(p):

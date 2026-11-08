@@ -25,7 +25,7 @@ var GardenPaper = (function () {
   const LOAI = { tin_lang: "Tin làng", truyen: "Truyện dài kỳ", thong_bao: "お知らせ", cot: "Cột ngắn", tin_that: "Tin thật" };
   const LOAI_EN = { tin_lang: "Tin làng", truyen: "Truyện dài kỳ", thong_bao: "Thông báo", cot: "Cột ngắn", tin_that: "Tin thật" };
   // 1.25.1: báo tiếng Việt (Báo Làng Kotoba) — bài thứ ba là "Góc ôn bài" (thẻ đang ôn)
-  const LOAI_VI = { tin_lang: "Tin làng", truyen: "Truyện dài kỳ", thong_bao: "Thông báo", cot: "Góc ôn bài", tin_that: "Tin thật" };
+  const LOAI_VI = { tin_lang: "Tin làng", truyen: "Truyện dài kỳ", thong_bao: "Thông báo", cot: "Cột ngắn", tin_that: "Tin thật" };
   const VI_DAYS = ["Chủ Nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy"];
   const PAPER_NAME = { ja: "Báo tiếng Nhật", en: "Báo tiếng Anh", vi: "Báo tiếng Việt" };
   const MAST = { ja: "畑新聞", en: "The Garden Gazette", vi: "Báo Làng Kotoba" };
@@ -143,7 +143,7 @@ var GardenPaper = (function () {
   function defaultInfo() {
     const pl = paperLang();
     if (tab === "issue" && pl === "vi") {
-      setInfo("Bấm chữ gạch chân để xem lại thẻ đang ôn.");
+      setInfo("Truyện dài kỳ và tin làng hôm nay. Trả lời câu hỏi cuối số để nhận xu.");
     } else if (tab === "issue" && pl === "en") {
       setInfo("Bấm từ gạch chân để tra nghĩa (nhận cả dạng biến đổi: went → go). Gạch chấm: từ mới." + issueTip());
     } else if (tab === "issue") { setInfo("Bấm từ gạch chân để tra nghĩa. Gạch liền: từ đã học. Gạch chấm: từ mới." + issueTip()); }
@@ -433,17 +433,20 @@ var GardenPaper = (function () {
     r.appendChild(el("span", "kb-ai-k", "Báo muốn nhận"));
     const val = el("span", "kb-ai-v");
     const on = v.langs_on || [];
-    // 1.25.1: thêm báo tiếng Việt; chưa có deck của tiếng đó vẫn tick được (Gemini viết theo trình độ)
-    [["ja", "Tiếng Nhật"], ["en", "Tiếng Anh"], ["vi", "Tiếng Việt"]].forEach((x) => {
-      const lab = el("label", "kb-ai-tick");
+    // 1.25.1: thêm báo tiếng Việt; chưa có deck của tiếng đó vẫn tick được (Gemini viết theo trình độ).
+    // 1.25.2 "Một làng, một truyện": Nhật và / hoặc Anh, HOẶC chỉ tiếng Việt (báo Nhật / Anh đã có bản dịch tiếng Việt)
+    [["ja", "Tiếng Nhật"], ["en", "Tiếng Anh"], ["vi", "Chỉ tiếng Việt"]].forEach((x) => {
+      const lab = el("label", "kb-ai-tick" + (x[0] === "vi" ? " kb-ai-tick-vi" : ""));
       const cb = el("input");
       cb.type = "checkbox";
       cb.checked = on.indexOf(x[0]) >= 0;
       const none = !((v.decks || {})[x[0]] || []).length;
-      if (none) { lab.title = x[0] === "vi" ? "Chưa có deck: báo viết kiến thức chung" : "Chưa có deck " + LANG_NAME[x[0]] + ": báo viết theo trình độ"; }
-      else if (x[0] === "vi") { lab.title = "Báo tiếng Việt đan nội dung thẻ đang ôn (deck bất kỳ)"; }
+      if (x[0] === "vi") { lab.title = "Cho người không học tiếng Nhật / tiếng Anh: truyện + tin làng bằng tiếng Việt (thay cho hai báo kia)"; }
+      else if (none) { lab.title = "Chưa có deck " + LANG_NAME[x[0]] + ": báo viết theo trình độ"; }
       cb.addEventListener("change", () => {
-        const next = ["ja", "en", "vi"].filter((l) => (l === x[0] ? cb.checked : on.indexOf(l) >= 0));
+        let next;
+        if (x[0] === "vi") { next = cb.checked ? ["vi"] : []; }
+        else { next = ["ja", "en"].filter((l) => (l === x[0] ? cb.checked : on.indexOf(l) >= 0)); }
         aiSet({ langs: next });
       });
       lab.appendChild(cb);
@@ -451,6 +454,7 @@ var GardenPaper = (function () {
       val.appendChild(lab);
     });
     if (!on.length) { val.appendChild(el("span", "kb-ai-hint", "chưa chọn báo nào")); }
+    else if (on.length > 1) { val.appendChild(el("span", "kb-ai-hint", "hai báo cùng kể một chuyện")); }
     r.appendChild(val);
     return r;
   }
@@ -581,9 +585,11 @@ var GardenPaper = (function () {
     if (L.focus && L.focus[1] && L.today) { aiRow(rows, vi ? "Thẻ phải ôn" : "Từ phải ôn", "dùng " + L.focus[0] + " / " + L.focus[1] + (vi ? " thẻ" : " từ")); }
     if (L.audio_error && !L.running && !vi) { aiRow(rows, "Giọng đọc", "[i:warn] " + L.audio_error, null, "is-warn"); }
     if ((L.levels || []).length) { aiRow(rows, "Trình độ", chips((L.levels || []).map((x) => [x, x]), L.level, (x) => aiSet({ level: x }))); }
-    const picked = (v.picked || {})[lang] || [];
-    aiRow(rows, vi ? "Lấy thẻ" : "Lấy từ", sourcePicker(v, lang));
-    if (L.thieu && ((v.modes || {})[lang] || "deck") !== "level") { aiRow(rows, "", L.thieu, null, "kb-ai-sub-row"); }
+    const picked = vi ? [] : (v.picked || {})[lang] || [];
+    if (!vi) {            // 1.25.2: báo tiếng Việt chỉ truyện + tin làng, không lấy thẻ
+      aiRow(rows, "Lấy từ", sourcePicker(v, lang));
+      if (L.thieu && ((v.modes || {})[lang] || "deck") !== "level") { aiRow(rows, "", L.thieu, null, "kb-ai-sub-row"); }
+    } else { aiRow(rows, "Nội dung", "truyện dài kỳ + tin làng (cùng chuyện với báo Nhật / Anh)"); }
     if (picked.length && !deckOpen[lang]) {
       const names = ((v.decks || {})[lang] || []).filter((d) => picked.indexOf(d.id) >= 0).map((d) => d.name);
       aiRow(rows, "", names.join(", "), [btn("", "Đổi", () => { deckOpen[lang] = true; drawSource(); })], "kb-ai-sub-row");
@@ -972,8 +978,7 @@ var GardenPaper = (function () {
     }
     st.appendChild(el("div", "kb-p-credit",
       (v.credit ? "Giọng đọc: " + v.credit + ". " : "") + (v.voice_note ? v.voice_note + " " : "") +
-      "Báo do " + (v.may_viet || "Claude") + (vi ? " viết tự động từ thẻ của bạn; chỗ nào lệch với thẻ thì tin thẻ."
-        : " viết tự động, có thể còn chỗ chưa tự nhiên.")));
+      "Báo do " + (v.may_viet || "Claude") + " viết tự động" + (vi ? "." : ", có thể còn chỗ chưa tự nhiên.")));
     updateCoins(v.coins);
     dichButton();
     if (infoDefault) { defaultInfo(); }

@@ -13,7 +13,7 @@
 
 Chạy: python test_1251.py THƯ_MỤC_ADD_ON [THƯ_MỤC_ADD_ON_1.25.0]
 """
-import datetime, json, os, shutil, subprocess, sys, tempfile
+import datetime, json, os, re, shutil, subprocess, sys, tempfile
 
 ADDON = os.path.abspath(sys.argv[1])
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -42,179 +42,241 @@ def ok(cond, msg):
 
 TMP = tempfile.mkdtemp(prefix="kb1251_")
 
-print("== báo tiếng Việt: mục từ thẻ")
-ok(ai_vi.clean_text("<b>Ngô&nbsp;Quyền</b><br>[sound:a.mp3]", 120) == "Ngô Quyền", "bỏ HTML, &nbsp;, [sound:]")
-ok(ai_vi.clean_text("Năm {{c1::938}} có trận {{c2::Bạch Đằng::sông}}", 120) == "Năm 938 có trận Bạch Đằng", "cloze → chữ bên trong")
-ok(ai_vi.clean_text("a<div>b</div>c", 120) == "a · b · c", "xuống dòng → ·")
-ok(ai_vi.clean_text("x" * 300, 120).endswith("…") and len(ai_vi.clean_text("x" * 300, 120)) == 120, "cắt dài + …")
-ok(not ai_vi.kho_ok({"word": "<img src=a.png>", "meaning": "ảnh"}), "thẻ chỉ có ảnh ở mặt trước: bỏ")
-pk = {"kho": [{"word": "Ngô Quyền", "meaning": "Đánh thắng quân Nam Hán trên sông Bạch Đằng năm 938", "due": True},
-              {"word": "sông Bạch Đằng", "meaning": "Nơi diễn ra ba trận thủy chiến lớn (938, 981, 1288)", "due": True},
-              {"word": "Lý Thường Kiệt", "meaning": "Tác giả bài thơ Nam quốc sơn hà (theo truyền thuyết)", "due": False},
-              {"word": "ngô quyền", "meaning": "trùng", "due": False},
-              {"word": "사랑", "meaning": "tình yêu (tiếng Hàn)", "due": False},
-              {"word": "Ty thể", "meaning": "Bào quan tạo năng lượng ATP cho tế bào", "due": True},
-              {"word": "Định luật Ohm", "meaning": "I = U / R", "due": False},
-              {"word": "Hà Nội", "meaning": "Thủ đô của Việt Nam", "due": False}],
-      "decks": ["Lịch sử VN", "Sinh học"], "n_learned": 30}
-sc = ai_vi.scope_from_pick(pk)
-ok([m["id"] for m in sc["muc"]] == [1, 2, 3, 4, 5, 6, 7] and sc["muc"][3]["truoc"] == "사랑", "7 mục đánh số 1…7, bỏ mặt trước trùng (không phân biệt hoa thường)")
-ok(sc["can_on"] == [1, 2, 5] and sc["lang"] == "vi", "mục đến hạn ôn hôm nay = trọng tâm")
-ok("#1 ★ | Ngô Quyền |" in ai_vi.item_lines(sc) and ai_vi.item_lines(sc).splitlines()[0].startswith("#1 ★"), "danh sách thẻ gửi Gemini: ★ trước")
-
-print("== đánh dấu {chữ||#số}")
-notes = []
-items = ai_vi._items(sc)
-s = ai_vi.fix_marks("Năm 938, {Ngô Quyền|#1} và [sông Bạch Đằng|2] cùng {ai đó||#99} và **đậm**", items, notes)
-ok(s == "Năm 938, {Ngô Quyền||#1} và {sông Bạch Đằng||#2} cùng ai đó và đậm", "sửa kiểu lệch, bỏ số không có, bỏ markdown: " + s)
-ok(ai_vi.fix_marks("Giá {x} | y", items, []) == "Giá x / y", "ký tự đánh dấu lạ ngoài đánh dấu")
-leak = ai_vi.fix_marks("◆ Thẻ #1: {Ngô Quyền||#1} - đánh thắng (#2) năm 938 ở thẻ số #3.", items, [])
-ok(leak == "◆ {Ngô Quyền||#1} - đánh thắng năm 938 ở .", "bỏ số thẻ lộ ra bài (thử thật: \"Thẻ #1: …\"): " + leak)
-t = ai_vi._auto_link(["Hôm nay ở Hà Nội trời đẹp. Hà Nội đông vui.", "Cô Lin học về ty thể."], items)
-ok(t[0] == "Hôm nay ở {Hà Nội||#7} trời đẹp. Hà Nội đông vui." and "{ty thể||#5}" in t[1],
-   "máy nối mặt trước có nguyên văn (lần đầu, cả chữ thường): %s" % t)
-ok(ai_vi._auto_link(["Hà Nộiii"], items) == ["Hà Nộiii"], "không cắt giữa chữ")
-lim = ai_vi._limit_links(["{a||#1} {a||#1} {a||#1} {a||#1}"])
-ok(lim == ["{a||#1} {a||#1} {a||#1} a"], "mỗi mục tối đa 3 chỗ")
+print("== báo tiếng Việt: chỉ truyện + tin làng (1.25.2, không lấy thẻ)")
+sc = ai_vi.scope()
+ok(sc["lang"] == "vi" and not sc["kho"] and not sc["tu_vung"] and ai_vi.deck_count({}, sc) == 0, "phạm vi rỗng: không lấy thẻ")
+P = ("Sáng nay chợ phiên của làng Kotoba đông hơn mọi tuần. Bác đưa thư kể rằng có người mang tới cả một xe bí ngô "
+     "to bằng cái ghế, còn StackChan thì đứng cạnh vẽ lại từng quả bằng những ô vuông màu cam. Bà Hana mua một quả nhỏ "
+     "để nấu chè, và hẹn cả làng tối nay qua quán nếm thử. Ai cũng cười vì cái ghế bí ngô.")
 
 
-def vi_issue(n_items=6, diac=True):
-    para = ("Sáng nay, StackChan dựng một mô hình nhỏ ngoài vườn. \"Năm 938, {Ngô Quyền||#1} cắm cọc gỗ dưới lòng "
-            "{sông Bạch Đằng||#2}!\" cậu reo lên. Bà Hana mỉm cười, kể thêm rằng con sông ấy còn chứng kiến những trận "
-            "thủy chiến lớn khác. Lin ghi chép rất chăm chỉ vào cuốn sổ nhỏ, rồi hỏi mãi không thôi về ngày xưa của làng ta. ")
-    para2 = ("Buổi chiều, cả làng ra chợ. Ông trưởng làng kể về {Ty thể||#5} như một nhà máy điện tí hon trong tế bào, "
-             "còn {Định luật Ohm||#6} thì được bác thợ điện giải thích bằng ấm nước. Mọi người cười vang, rồi ai nấy "
-             "đều nhớ được bài học hôm nay. Lũ trẻ chạy theo, đòi nghe thêm chuyện về {Hà Nội||#7} ngày xưa. ")
-    if not diac:
-        para = para.replace("á", "a").replace("ầ", "a").replace("ư", "u").replace("ờ", "o").replace("ộ", "o").replace("ả", "a")
-        para = "".join(c for c in para if not ai_vi.VI_MARK_RE.match(c))
-    return {"bai": [{"loai": "tin_lang", "tieu_de": "StackChan dựng lại trận {Bạch Đằng||#2}", "doan": [para, para2, para]},
-                    {"loai": "truyen", "ky": 1, "tieu_de": "Tấm bản đồ cũ", "doan": [para2, para, para2]},
-                    {"loai": "cot", "tieu_de": "Sổ tay StackChan", "doan": ["◆ " + para, "◆ " + para2]}],
-            "cau_hoi": [{"hoi": "Ai cắm cọc gỗ ở sông Bạch Đằng năm 938?", "chon": ["Ngô Quyền", "Lý Thường Kiệt", "Trần Hưng Đạo"],
-                         "dung": 0, "giai_thich": "Tin làng kể Ngô Quyền cắm cọc năm 938."},
-                        {"hoi": "Ty thể làm gì?", "chon": ["Tạo năng lượng", "Chứa nước", "Phân chia"], "dung": 0,
-                         "giai_thich": "Ông trưởng làng ví ty thể như nhà máy điện."},
-                        {"hoi": "Định luật Ohm nói về gì?", "chon": ["Khối lượng", "Dòng điện", "Ánh sáng"], "dung": "1",
-                         "giai_thich": "Bác thợ điện giải thích bằng ấm nước."}],
+def vi_issue(diac=True):
+    para = P if diac else "".join(c for c in P if not ai_vi.VI_MARK_RE.match(c))
+    return {"bai": [{"loai": "tin_lang", "tieu_de": "Chợ phiên {đầu đông||#1}", "doan": [para, para]},
+                    {"loai": "truyen", "ky": 1, "tieu_de": "Tấm bản đồ cũ", "doan": [P, P, P]},
+                    {"loai": "cot", "tieu_de": "Góc của **StackChan**", "doan": ["◆ " + P]}],
+            "cau_hoi": [{"hoi": "Ai mang tới xe bí ngô?", "chon": ["Bác đưa thư kể có người mang tới", "Bà Hana", "StackChan"],
+                         "dung": 0, "giai_thich": "Tin làng kể bác đưa thư thấy xe bí ngô."},
+                        {"hoi": "Bà Hana mua bí để làm gì?", "chon": ["Làm đèn", "Nấu chè", "Vẽ tranh"], "dung": "1",
+                         "giai_thich": "Bà Hana mua một quả để nấu chè."}],
             "chinh_ta": [{"cau": "abc"}], "mau_cau": ["x"], "tu_moi": [{"w": "a", "m": "b"}],
-            "tom_tat": "Làng ôn lại trận Bạch Đằng và chuyện ty thể.", "tom_tat_truyen": "Lin tìm thấy tấm bản đồ cũ."}
+            "tom_tat": "Chợ phiên đông vui, bí ngô to bằng cái ghế.", "tom_tat_truyen": "Lin thấy tấm bản đồ cũ."}
 
 
-raw, notes = ai_vi.autofix(vi_issue(), sc, {"ky": 1})
-ok(raw["chinh_ta"] == [] and raw["mau_cau"] == [] and raw["tu_moi"] == [] and raw["cau_hoi"][2]["dung"] == 1,
-   "autofix: bỏ chép chính tả / mẫu câu / từ mới, \"dung\" chuỗi → số")
-rep = ai_vi.check(raw, sc, {"ky": 1})
-ok(not rep.errors, "số báo tốt: không lỗi (%s)" % rep.errors[:3])
-ok(ai_vi.deck_count(raw, sc) == 5 and ai_vi.focus_used(raw, sc) == [3, 3], "đếm mục dùng (5) và mục trọng tâm (3/3)")
-bad = ai_vi.autofix(vi_issue(diac=False), sc, {"ky": 1})[0]
-ok(any("CÓ DẤU" in e for e in ai_vi.check(bad, sc, {"ky": 1}).errors), "tiếng Việt không dấu → lỗi")
-b2 = vi_issue()
-b2["bai"][0]["doan"][0] += " {nhầm||#55}"
-ok(any("không trỏ tới mục" in e for e in ai_vi.check(b2, sc, {"ky": 1}).errors), "kiểm tra (chưa sửa máy): số không có → lỗi")
-b3 = ai_vi.autofix(vi_issue(), sc, {"ky": 1})[0]
+SP = {"tieu_de": "Tấm bản đồ cũ", "doan": [P, P, P]}
+raw, notes = ai_vi.autofix(vi_issue(), sc, {"ky": 1, "story_plain": SP})
+ok(raw["chinh_ta"] == [] and raw["mau_cau"] == [] and raw["tu_moi"] == [] and raw["cau_hoi"][1]["dung"] == 1
+   and raw["bai"][0]["tieu_de"] == "Chợ phiên đầu đông" and raw["bai"][2]["tieu_de"] == "Góc của StackChan",
+   "autofix: bỏ câu chép / mẫu câu / từ mới, bỏ đánh dấu + markdown, \"dung\" chuỗi → số")
+rep = ai_vi.check(raw, sc, {"ky": 1, "story_plain": SP})
+ok(not rep.errors, "số báo tốt (truyện chèn sẵn không tính độ dài): không lỗi (%s)" % rep.errors[:3])
+ok(any("CÓ DẤU" in e for e in ai_vi.check(ai_vi.autofix(vi_issue(False), sc, {})[0], sc, {"ky": 1}).errors), "không dấu → lỗi")
+b3 = ai_vi.autofix(vi_issue(), sc, {})[0]
 b3["cau_hoi"] = b3["cau_hoi"][:1]
-ok(any("câu hỏi" in e for e in ai_vi.check(b3, sc, {"ky": 1}).errors), "thiếu câu hỏi (cần 3–4) → lỗi")
-b4 = ai_vi.autofix(vi_issue(), sc, {"ky": 1})[0]
-for b in b4["bai"]:
-    b["tieu_de"] = paper.surface(b["tieu_de"])
-    b["doan"] = [paper.surface(p) for p in b["doan"]]
-big = dict(sc, muc=sc["muc"] + [{"id": n, "truoc": "Mục %d" % n, "sau": "nội dung %d" % n, "due": False} for n in range(8, 30)])
-ok(any("chỉ nhắc tới" in e for e in ai_vi.check(b4, big, {"ky": 1}).errors), "không dùng thẻ nào (danh sách dài) → lỗi")
-nd = ai_vi.scope_from_pick({"kho": []})
-nd["khong_deck"] = True
-ok(not any("chỉ nhắc tới" in e for e in ai_vi.check(b4, nd, {"ky": 1}).errors), "Không dùng deck: không đòi dùng thẻ")
-lk = ai_vi.build_lookup(paper.issue_texts(raw), sc)
-ok(lk["tra_tu"]["#1"] == ["Ngô Quyền", "", "Đánh thắng quân Nam Hán trên sông Bạch Đằng năm 938", "deck"]
-   and "#3" not in lk["tra_tu"] and lk["tra_sach"] == {"deck": "Lịch sử VN, Sinh học"}, "bảng tra: chỉ mục có trong bài")
-wp = ai_vi.write_prompt(sc, {"so": 3, "ky": 1, "tones": ["kinh_di", "hai"]}, [], [], datetime.date(2026, 11, 8))
-ok("DANH SÁCH THẺ" in wp and "{cụm chữ trong bài||#số" in ai_vi.system_prompt() and "Kinh dị nhẹ" in wp and "Hài" in wp
-   and "Chủ Nhật, ngày 8/11/2026" in wp, "lời nhắc: danh sách thẻ, cách đánh dấu, chủ đề, ngày tiếng Việt")
-ok("NGƯỜI ĐỌC CHƯA CHỌN THẺ" in ai_vi.write_prompt(nd, {"so": 1, "ky": 1}, [], [], datetime.date(2026, 11, 8)),
-   "lời nhắc Không dùng deck: kiến thức chung")
-
-print("== paper_core đọc số tiếng Việt")
-base = os.path.join(TMP, "bao_gemini_vi")
-saved = dict(raw, ngay="2026-11-08", so=3, ngon_ngu="vi", may_viet="Gemini (gemini-3.6-flash)", chinh_ta=[{"cau": "x"}])
-saved.update(lk)
-long_back = "dài " * 70
-saved["tra_tu"]["#2"] = ["sông Bạch Đằng " * 5, "", long_back, "deck"]
-ai._write_json(ai.issue_path(base, "2026-11-08"), saved)
-lib = paper.Library(base, "vi")
-iss = lib.issue("2026-11-08")
-ok(iss["lang"] == "vi" and iss["chinh_ta"] == [], "lang vi, không có câu chép (kể cả khi file có)")
-ok(len(iss["tra_tu"]["#2"][0]) > 40 and len(iss["tra_tu"]["#2"][2]) > 160, "bảng tra tiếng Việt giữ mặt trước / mặt sau dài hơn")
-voice = paper.Voice(tts=True, tts_en=True)
-v = paper.issue_view(lib, paper.empty_state(), "2026-11-08", voice)
-ok(not any(any(b["audio"]) for b in v["bai"]) and v["voice_note"] == "" and v["chinh_ta"] == [],
-   "không giọng đọc (kể cả máy có giọng), không câu chép")
-ok(v["tu"]["#1"]["w"] == "Ngô Quyền" and v["tu"]["#1"]["m"].startswith("Đánh thắng") and v["tu"]["#1"]["bai"] == "Lịch sử VN, Sinh học",
-   "bấm chữ gạch chân → mặt trước / mặt sau / deck")
-st = paper.empty_state()
-r1 = paper.answer_question(lib, st, "2026-11-08", 0, 0, voice)
-r2 = paper.answer_question(lib, st, "2026-11-08", 1, 0, voice)
-r3 = paper.answer_question(lib, st, "2026-11-08", 2, 1, voice)
-ok(r1["ok"] and r3["bonus"] == paper.ISSUE_BONUS and st["read"]["2026-11-08"]["coins"] == 3 * paper.Q_COINS + paper.ISSUE_BONUS,
-   "trả lời đủ 3 câu → +2 mỗi câu + 5 (không có câu chép vẫn nhận thưởng làm hết)")
-ok(paper.index_view(lib, st)["issues"][0]["lang"] == "vi", "Kệ báo: số ghi lang vi")
+ok(any("câu hỏi" in e for e in ai_vi.check(b3, sc, {"ky": 1, "story_plain": SP}).errors), "1 câu hỏi (cần 2–4) → lỗi")
+b4 = ai_vi.autofix(vi_issue(), sc, {})[0]
+b4["bai"][0]["doan"][0] += " {x}"
+ok(any("[ ] { } |" in e for e in ai_vi.check(b4, sc, {"ky": 1, "story_plain": SP}).errors), "còn ký tự đánh dấu → lỗi")
+wp = ai_vi.write_prompt(sc, {"so": 3, "ky": 4, "story_plain": SP, "thoi_tiet": "sáng mưa, chiều nắng",
+                             "tin_goc": [{"tieu_de": "Chợ phiên", "noi_dung": "Có xe bí ngô to."}]}, [], [], datetime.date(2026, 11, 8))
+ok("Chủ Nhật, ngày 8/11/2026, mùa thu" in wp and "Thời tiết ở làng: sáng mưa, chiều nắng" in wp
+   and "TIN HÔM NAY CỦA LÀNG" in wp and "Chợ phiên: Có xe bí ngô to." in wp and "DANH SÁCH THẺ" not in wp,
+   "lời nhắc báo tiếng Việt: ngày, thời tiết của vườn, tin của bản gốc, không thẻ")
+v = paper.clean_issue(dict(raw, ngon_ngu="vi"), "2026-11-08")
+ok(v["lang"] == "vi" and v["chinh_ta"] == [] and v["tra_tu"] == {}, "paper_core: số tiếng Việt, không câu chép, không bảng tra")
 
 
-print("== Job viết trọn một số tiếng Việt (Gemini giả)")
+print("== thời tiết của làng = trời trong vườn (sky.js)")
+D8 = datetime.date(2026, 11, 8)
+ok(story.weather_at(D8, 9) in story._WEATHER_VI and story.weather_at(D8, 9) == story.weather_at(D8, 10)
+   and story.weather_at(D8, 9) == story.weather_at(D8, 11), "cùng khung 3 giờ (9–12) cùng thời tiết, ổn định")
+vt = story.village_weather(D8)
+ok(vt.startswith("cả ngày ") or vt.startswith("sáng "), "câu thời tiết: " + vt)
+ok(any(story.weather_at(datetime.date(2026, 6, d), 9, "tsuyu") == "rain" for d in range(1, 30))
+   and sum(story.weather_at(datetime.date(2026, 6, d), 9, "tsuyu") == "rain" for d in range(1, 30))
+   >= sum(story.weather_at(datetime.date(2026, 6, d), 9) == "rain" for d in range(1, 30)), "giao diện Mùa mưa: mưa nhiều hơn")
+node = shutil.which("node")
+if node:
+    js = os.path.join(TMP, "sky.js")
+    open(js, "w").write("""const vm = require('vm'), fs = require('fs');
+const ctx = { window: {}, document: { getElementById() { return null; } }, localStorage: { getItem() { return null; }, setItem() {} }, console };
+vm.createContext(ctx); vm.runInContext(fs.readFileSync(process.argv[2], 'utf8') + ';this.GS = GardenSky;', ctx);
+const out = []; for (let i = 0; i < 40; i++) for (const h of [9, 15]) out.push(ctx.GS._weatherAuto(new Date(2026, 9, 1 + i, h, 0).getTime()));
+console.log(JSON.stringify(out));""")
+    r = subprocess.run([node, js, os.path.join(ADDON, "web", "sky.js")], capture_output=True, text=True)
+    jsw = json.loads(r.stdout) if r.returncode == 0 else []
+    pyw = [story.weather_at(datetime.date(2026, 10, 1) + datetime.timedelta(days=i), h) for i in range(40) for h in (9, 15)]
+    ok(jsw == pyw, "80 khung (01/10 → 09/11, 9 giờ / 15 giờ): Python ra đúng thời tiết như sky.js" + ("" if r.returncode == 0 else ": " + r.stderr[-200:]))
+
+
+print("== Một làng, một truyện: bản gốc chung, báo Nhật / Anh kể lại, báo Việt in bản gốc (Gemini giả)")
+REPO = os.path.join(HERE, "..", "..")
+JA_SCOPE = ai.scope_from_pham_vi(json.load(open(os.path.join(REPO, "kotoba_daily", "pham_vi.json"), encoding="utf-8")))
+JA_RAW = json.load(open(os.path.join(HERE, "..", "fixtures", "bao_112_n4.json"), encoding="utf-8"))
+JA_FIXED, _n = ai.autofix(json.loads(json.dumps(JA_RAW)), JA_SCOPE, {"max_new": 3, "ky": 1})
+JA_FIXED["tom_tat_truyen"] = "Lin bắt đầu làm ở ことば屋."
+_jsb = next(b for b in JA_FIXED["bai"] if b["loai"] == "truyen")
+JA_TELL = {"tieu_de": paper.surface(_jsb["tieu_de"]), "doan": [paper.surface(p) for p in _jsb["doan"]],
+           "dich": ["Lin bắt đầu làm việc ở quán trọ.", "Có một vị khách đến.", "Hộp đỏ khẽ rung lên."][:len(_jsb["doan"])],
+           "tu_moi": []}
+EN_ISSUE = json.load(open(os.path.join(HERE, "..", "fixtures", "bao_119_en_a2.json"), encoding="utf-8"))
+EN_DECK = json.load(open(os.path.join(HERE, "..", "fixtures", "en_deck_a2.json"), encoding="utf-8"))["tu_vung"]
+EN_SCOPE = ai_en.scope_from_plants([{"nid": i, "word": w, "reading": r, "meaning": m, "kind": "vocab", "lang": "en",
+                                     "stage": 2, "stability": 4.0} for i, (w, r, m) in enumerate(EN_DECK)], "A2")
+_esb = next(b for b in EN_ISSUE["bai"] if b["loai"] == "truyen")
+EN_TELL = {"tieu_de": paper.surface(_esb["tieu_de"]), "doan": [paper.surface(p) for p in _esb["doan"]],
+           "dich": ["Lin đến làng tuần này.", "Hôm qua cô phục vụ trà."][:len(_esb["doan"])], "tu_moi": []}
+MASTER = {"dan_y": {"muon": "a", "tro_ngai": "b", "bat_ngo": "c", "moc_cau": "d"}, "tieu_de": "Tấm bản đồ cũ",
+          "doan": [P, P, P], "nho": {"tom_tat": "Lin nhận một tấm bản đồ lạ.", "bo_ngo": ["cái giếng ở đâu"]},
+          "tin": [{"tieu_de": "Chợ phiên đầu đông", "noi_dung": "Sáng nay chợ phiên đông vui, có cả xe bí ngô to bằng cái ghế."},
+                  {"tieu_de": "Cây hồng chín", "noi_dung": "Cây hồng sau quán đã chín đỏ, bà Hana hẹn hái vào cuối tuần."}],
+          "muc3": {"tieu_de": "Góc của StackChan", "doan": ["Tớ vẽ được ba quả bí ngô hôm nay. Quả to nhất cười với tớ."]}}
 ARC = {"ten": "Tấm bản đồ cũ", "muc_tieu": "tìm cái giếng", "bi_an": "giếng ở đâu", "nhan_vat_phu": "ông khách",
        "buoc": ["b%d" % i for i in range(1, 8)], "ket": "tìm thấy"}
-p1 = ("\"Bà Hana ơi, khách phòng ba muốn ăn sáng bằng một tấm bản đồ!\" Lin chạy vào bếp, tay vẫn cầm cuốn sổ nhỏ. "
-      "Bà Hana đặt ấm trà xuống, nhìn cô rất lâu. StackChan lập tức chui vào tủ, lôi ra một chiếc đĩa sứ trắng. \"Tớ có đĩa. "
-      "Bản đồ thì chưa nấu bao giờ,\" cậu nói rất nghiêm túc. Lin bật cười, rồi chợt nhớ ra Ngô Quyền từng vẽ bản đồ sông.")
-PLAIN_VI = {"dan_y": {"muon": "a", "tro_ngai": "b", "bat_ngo": "c", "moc_cau": "d"}, "tieu_de": "Tấm bản đồ cũ",
-            "doan": [p1, p1, p1], "dich": [], "tu_moi": [],
-            "nho": {"tom_tat": "Lin nhận một tấm bản đồ lạ.", "bo_ngo": ["cái giếng ở đâu"]}}
 
 
-class FakeVi(ai.Gemini):
-    def __init__(self):
+class FakeVillage(ai.Gemini):
+    """Trả lời theo khuôn được hỏi; số báo theo đúng báo hỏi (system prompt)."""
+
+    def __init__(self, fail_master=False, fail_retell=False):
         super().__init__("x" * 39, sleep=lambda s: None)
         self.asked = []
+        self.fail_master, self.fail_retell = fail_master, fail_retell
 
     def models(self):
         return [{"name": "models/gemini-3.6-flash", "supportedGenerationMethods": ["generateContent"]}]
 
     def generate(self, model, system, prompt, schema=None, temperature=0.7, max_tokens=0, thinking=None):
         self.calls += 1
-        kind = ("mach" if schema is story.ARC_SCHEMA else "truyen" if schema is story.STORY_SCHEMA else
-                "bien_tap" if schema is story.EDIT_SCHEMA else "soat" if "van_de" in json.dumps(schema or {}) else "so")
-        self.asked.append((kind, system, prompt))
+        kind = ("mach" if schema is story.ARC_SCHEMA else "goc" if schema is story.MASTER_SCHEMA else
+                "ke_lai" if schema is story.RETELL_SCHEMA else "bien_tap" if schema is story.EDIT_SCHEMA else
+                "truyen" if schema is story.STORY_SCHEMA else "soat" if "van_de" in json.dumps(schema or {}) else "so")
+        lang = "vi" if "Báo Làng Kotoba" in system else "en" if "Garden Gazette" in system or "tiếng Anh" in system else "ja"
+        self.asked.append((kind, lang, prompt))
         if kind == "mach":
             return json.dumps(ARC, ensure_ascii=False)
-        if kind == "truyen":
-            return json.dumps(PLAIN_VI, ensure_ascii=False)
+        if kind == "goc":
+            if self.fail_master:
+                raise ai.AIError("Mọi model bận.", "busy")
+            return json.dumps(MASTER, ensure_ascii=False)
         if kind == "bien_tap":
             return json.dumps({"diem": {k: 4 for k in story.CRIT}, "loi": [], "goi_y": []}, ensure_ascii=False)
-        two = vi_issue()
-        two["bai"] = [two["bai"][0], two["bai"][2]]
+        if kind == "ke_lai":
+            if self.fail_retell:
+                return "{hỏng"
+            return json.dumps(EN_TELL if lang == "en" else JA_TELL, ensure_ascii=False)
+        m = re.search(r'"ky": (\d+)', prompt)
+        if lang == "vi":
+            iss = ai_vi.autofix(vi_issue(), sc, {})[0]
+            iss["bai"] = [iss["bai"][0], iss["bai"][2]]
+        elif lang == "en":
+            iss = json.loads(json.dumps(EN_ISSUE))
+        else:
+            iss = json.loads(json.dumps(JA_FIXED))
+        for b in iss["bai"]:
+            if b.get("loai") == "truyen" and m:
+                b["ky"] = int(m.group(1))
         if kind == "soat":
-            return json.dumps({"van_de": [], "bao": two}, ensure_ascii=False)
-        return json.dumps(two, ensure_ascii=False)
+            return json.dumps({"van_de": [], "bao": iss}, ensure_ascii=False)
+        return json.dumps(iss, ensure_ascii=False)
 
 
-vd = tempfile.mkdtemp(prefix="kb1251v_")
-fv = FakeVi()
-res = ai.Job(fv, vd, "2026-11-08", sc, {"max_new": 3, "story": "hay", "tones": ["kinh_di", "de_thuong"]}).run()
-kinds = [k for k, _s, _p in fv.asked]
-ok(res.get("ok") and res.get("lang") == "vi", "viết được số tiếng Việt (%s)" % (res.get("error") or res.get("loi") or "ok"))
-ok(kinds == ["mach", "truyen", "bien_tap", "so", "soat"], "mạch → nhà văn → biên tập → viết số → soát: %s" % kinds)
-wpv = next(p for k, _s, p in fv.asked if k == "truyen")
-ok("Quán trọ nhỏ ở làng Kotoba" in wpv and "Kinh dị nhẹ" in wpv and "DANH SÁCH THẺ" in wpv and "MẪU NGỮ PHÁP" not in wpv,
-   "lời nhắc nhà văn tiếng Việt: truyện riêng, chủ đề, thẻ (không mẫu ngữ pháp)")
-ok("nhà văn viết truyện dài kỳ tiếng Việt" in next(s for k, s, _p in fv.asked if k == "truyen"), "system nhà văn tiếng Việt")
-out = json.load(open(ai.issue_path(vd, "2026-11-08"), encoding="utf-8"))
-art = [b["loai"] for b in out["bai"]]
-ok(out["ngon_ngu"] == "vi" and art == ["tin_lang", "truyen", "cot"] and out["chinh_ta"] == [], "bao.json: ngon_ngu vi, 3 bài (truyện máy chèn), không câu chép")
-stb = out["bai"][1]
-ok(stb["ky"] == 1 and "dich" not in stb and "{Ngô Quyền||#1}" in stb["doan"][0], "truyện: không bản dịch, máy nối mục có nguyên văn (Ngô Quyền)")
-ok("#1" in out["tra_tu"] and out["tra_tu"]["#1"][0] == "Ngô Quyền", "bảng tra của số có mục #1")
-ok(story.load_arc(vd)["giong"] == "kinh_di", "đợt 1 theo chủ đề đầu tiên đã chọn (Kinh dị nhẹ)")
-log = json.load(open(os.path.join(vd, "nhat_ky", "2026-11-08.json"), encoding="utf-8"))
-ok("thẻ" in log["pham_vi"], "nhật ký: phạm vi ghi theo thẻ (%s)" % log["pham_vi"])
+SH = os.path.join(TMP, "bao_chung")
+JA_DIR, EN_DIR, VI_DIR = (os.path.join(TMP, x) for x in ("bao_gemini", "bao_gemini_en", "bao_gemini_vi"))
+D = "2026-11-08"
+OPTS = {"max_new": 3, "story": "hay", "tones": ["kinh_di", "hai"], "thoi_tiet": "sáng mưa, chiều nhiều mây", "story_base": SH}
+
+
+def run_lang(fake, base, scope, date=D, opts=None):
+    o = dict(OPTS, **(opts or {}))
+    m, mlog = ai.ensure_master(fake, SH, date, o)
+    o.update(master=m, _master_log=mlog)
+    return ai.Job(fake, base, date, scope, o).run(), m
+
+
+f1 = FakeVillage()
+r_ja, m1 = run_lang(f1, JA_DIR, JA_SCOPE)
+k1 = [k for k, _l, _p in f1.asked]
+ok(r_ja.get("ok") and m1 and m1["ky"] == 1, "báo tiếng Nhật đầu tiên trong ngày: viết bản gốc rồi số báo (%s)" % (r_ja.get("error") or r_ja.get("loi") or "ok"))
+ok(k1[:3] == ["mach", "goc", "bien_tap"] and "ke_lai" in k1 and k1.index("ke_lai") < k1.index("so"),
+   "thứ tự: lập mạch → bản gốc (truyện + tin) → biên tập → kể lại bằng tiếng Nhật → viết số: %s" % k1)
+gp = next(p for k, _l, p in f1.asked if k == "goc")
+ok("THỜI TIẾT HÔM NAY Ở LÀNG (khớp với trời trong vườn): sáng mưa, chiều nhiều mây" in gp and "TIN LÀNG HÔM NAY" in gp
+   and "Kinh dị nhẹ" in gp and "DANH SÁCH THẺ" not in gp and "MỤC THỨ BA (muc3): THÔNG BÁO" in gp,
+   "lời nhắc bản gốc: thời tiết của vườn, tin làng, chủ đề, mục thứ ba (08/11 ngày chẵn: thông báo), không thẻ")
+rp = next(p for k, _l, p in f1.asked if k == "ke_lai")
+ok("KỂ LẠI kỳ 1" in rp and P[:40] in rp and "Lin → リンさん" in rp and "N4" in rp, "lời nhắc kể lại: bản gốc tiếng Việt, bảng tên, trình độ")
+jp_issue_prompt = next(p for k, _l, p in f1.asked if k == "so")
+ok("TIN HÔM NAY CỦA LÀNG" in jp_issue_prompt and "Chợ phiên đầu đông" in jp_issue_prompt and "Thời tiết ở làng: sáng mưa" in jp_issue_prompt
+   and "TRUYỆN ĐÃ VIẾT SẴN" in jp_issue_prompt, "lượt viết số tiếng Nhật: truyện đã kể lại + tin làng của bản gốc + thời tiết")
+ok(story.load_master(SH, D) and story.load_master(SH, D)["tin"][0]["tieu_de"] == "Chợ phiên đầu đông", "bản gốc lưu ở bao_chung/ban_goc/2026-11-08.json")
+mem = story.load_story(SH)
+ok(mem and mem[-1]["ky"] == 1 and mem[-1]["nguyen_van"] == MASTER["doan"], "bộ nhớ truyện chung ghi kỳ 1 bằng BẢN GỐC (tiếng Việt)")
+ok(not os.path.isfile(os.path.join(JA_DIR, story.STORY_FILE)), "thư mục báo tiếng Nhật không còn bộ nhớ truyện riêng")
+ja_out = json.load(open(ai.issue_path(JA_DIR, D), encoding="utf-8"))
+ok(next(b for b in ja_out["bai"] if b["loai"] == "truyen")["ky"] == 1, "số tiếng Nhật: truyện kỳ 1")
+log1 = ai.log_summary(ai.last_log(JA_DIR, D))
+ok(any("Truyện chung hôm nay: kỳ 1" in x for x in log1) and any("Kể lại truyện" in x for x in log1),
+   "nhật ký báo tiếng Nhật ghi bước bản gốc + kể lại: " + " | ".join(log1[:3]))
+ok(story.set_feedback(SH, 1, "hay", "rùng mình thật"), "nhận xét \"Kỳ này hay\" ghi vào truyện chung")
+
+f2 = FakeVillage()
+r_en, m2 = run_lang(f2, EN_DIR, EN_SCOPE)
+k2 = [k for k, _l, _p in f2.asked]
+ok(r_en.get("ok") and m2["ky"] == 1 and "goc" not in k2 and "mach" not in k2 and k2[0] == "ke_lai",
+   "báo tiếng Anh cùng ngày: KHÔNG viết bản gốc lần nữa, chỉ kể lại + viết số: %s (%s)" % (k2, r_en.get("error") or "ok"))
+ok("Lin → Lin" in next(p for k, _l, p in f2.asked if k == "ke_lai") and "the Kotoba Inn" in next(p for k, _l, p in f2.asked if k == "ke_lai"),
+   "kể lại tiếng Anh: tên chung (Lin, the Kotoba Inn)")
+en_out = json.load(open(ai.issue_path(EN_DIR, D), encoding="utf-8"))
+ok(next(b for b in en_out["bai"] if b["loai"] == "truyen")["ky"] == 1, "số tiếng Anh: cùng kỳ 1")
+ok((story.feedback_of(SH, 1) or {}).get("y") == "hay", "báo thứ hai lưu lại kỳ 1 — nhận xét đã ghi vẫn còn")
+ok(len([e for e in story.load_story(SH) if e["ky"] == 1]) == 1, "bộ nhớ chung chỉ một kỳ 1")
+
+f3 = FakeVillage()
+r_vi, m3 = run_lang(f3, VI_DIR, sc)
+k3 = [k for k, _l, _p in f3.asked]
+vi_out = json.load(open(ai.issue_path(VI_DIR, D), encoding="utf-8"))
+vsb = next(b for b in vi_out["bai"] if b["loai"] == "truyen")
+ok(r_vi.get("ok") and k3 == ["so", "soat"], "báo tiếng Việt cùng ngày: không viết truyện / kể lại, chỉ viết số: %s (%s)" % (k3, r_vi.get("error") or "ok"))
+ok(vsb["doan"] == MASTER["doan"] and vsb["tieu_de"] == MASTER["tieu_de"] and [b["loai"] for b in vi_out["bai"]] == ["tin_lang", "truyen", "cot"],
+   "số tiếng Việt: truyện = nguyên văn bản gốc, 3 bài")
+vp = next(p for k, _l, p in f3.asked if k == "so")
+ok("Cây hồng chín" in vp and "viết từ đúng các tin này" in vp, "lượt viết số tiếng Việt: viết tin làng từ tin của bản gốc")
+
+print("== ngày hôm sau: kỳ 2 nối kỳ 1, tin nối tin")
+f4 = FakeVillage()
+r4, m4 = run_lang(f4, JA_DIR, JA_SCOPE, date="2026-11-09")
+gp4 = next(p for k, _l, p in f4.asked if k == "goc")
+ok(m4 and m4["ky"] == 2 and "NGUYÊN VĂN KỲ TRƯỚC (kỳ 1" in gp4 and P[:30] in gp4, "kỳ 2: nhà văn nhận nguyên văn kỳ 1 (tiếng Việt)")
+ok("TIN MẤY SỐ TRƯỚC" in gp4 and "11-08 · Chợ phiên đầu đông" in gp4, "tin làng hôm sau nhận tin của số trước để nối tiếp")
+ok("rùng mình thật" in gp4, "nhận xét của người đọc tới tay nhà văn kỳ sau")
+ok("MỤC THỨ BA (muc3): CỘT NGẮN" in gp4, "09/11 ngày lẻ: mục thứ ba là cột của nhân vật")
+
+print("== khi không viết được bản gốc / không kể lại được")
+f5 = FakeVillage(fail_master=True)
+m5, log5 = ai.ensure_master(f5, SH, "2026-11-10", OPTS)
+ok(m5 is None and any(x.get("buoc") == "ban_goc_khong_co" for x in log5), "Gemini bận khi viết bản gốc → không có bản gốc, ghi nhật ký")
+o5 = dict(OPTS, master=None, _master_log=log5)
+r5 = ai.Job(f5, JA_DIR, "2026-11-10", JA_SCOPE, o5).run()
+k5 = [k for k, _l, _p in f5.asked]
+ok("truyen" not in k5 and "mach" not in k5[1:] and r5.get("ok"), "báo tiếng Nhật tự viết truyện trong lượt viết số (không chạy cả quy trình truyện riêng): %s (%s)" % (k5, r5.get("error") or "ok"))
+ok([e["ky"] for e in story.load_story(SH)][-1] == 3, "kỳ 3 (báo tự viết) vẫn vào bộ nhớ chung")
+f6 = FakeVillage()
+m6, _l6 = ai.ensure_master(f6, SH, "2026-11-10", OPTS)
+ok(m6 and m6["ky"] == 3 and not f6.asked and m6["truyen"]["lang"] == "ja", "báo khác cùng ngày: lấy luôn kỳ 3 đã có làm bản gốc (không gọi Gemini, không lệch chuyện)")
+f7 = FakeVillage(fail_retell=True)
+r7, m7 = run_lang(f7, EN_DIR, EN_SCOPE, date="2026-11-11")
+ok(any(k == "ke_lai" for k, _l, _p in f7.asked) and "TRUYỆN HÔM NAY (bản gốc tiếng Việt, kỳ 4" in next(p for k, _l, p in f7.asked if k == "so"),
+   "kể lại riêng hỏng → lượt viết số tự kể lại truyện chung (kỳ 4)")
+
+print("== chuyển sang truyện chung lần đầu")
+OLDJ = os.path.join(TMP, "old_ja")
+story.save_episode(OLDJ, "2026-11-05", 7, {"doan": ["リンさんは…"], "nho": {"tom_tat": "Kỳ 7 cũ"}}, "古い地図")
+SH2 = os.path.join(TMP, "bao_chung2")
+ok(ai.migrate_story(SH2, [os.path.join(TMP, "khong_co"), OLDJ]) == OLDJ and story.load_story(SH2)[-1]["ky"] == 7,
+   "chép bộ nhớ truyện của báo tiếng Nhật sang truyện chung (nối tiếp kỳ 7, không bắt đầu lại)")
+ok(ai.migrate_story(SH2, [OLDJ]) == "", "đã có truyện chung thì không chép đè")
+ok(ai.next_ky(story.load_story(SH2), "2026-11-08") == 8, "kỳ tiếp theo: 8")
 
 
 print("== chủ đề truyện chọn nhiều")
@@ -227,13 +289,17 @@ ok(story.next_tone(["hai", "kinh_di", "de_thuong"], {"giong": "kinh_di"}) == "de
 tt = story.tone_text(["hai", "kinh_di"], "kinh_di")
 ok(tt.startswith("Kinh dị nhẹ:") and "KHÔNG máu me" in tt and "cũng thích: Hài" in tt, "câu dặn: chủ đề chính + pha nhẹ chủ đề khác")
 ok(set(story.TONES) >= {"am", "hai", "bi_an", "phieu_luu"} and len(story.TONES) == 8, "8 chủ đề, giữ id cũ của 1.23")
-# đợt đang chạy giữ chủ đề nếu còn trong danh sách; bỏ chủ đề đó → đợt mới
-fv2 = FakeVi()
-ai.Job(fv2, vd, "2026-11-09", sc, {"max_new": 3, "story": "hay", "tones": ["de_thuong", "kinh_di"]}).run()
-ok([k for k, _s, _p in fv2.asked][0] == "truyen" and story.load_arc(vd)["giong"] == "kinh_di", "kỳ 2: đợt kinh dị vẫn chạy (còn trong danh sách)")
-fv3 = FakeVi()
-ai.Job(fv3, vd, "2026-11-10", sc, {"max_new": 3, "story": "hay", "tones": ["hai"]}).run()
-ok([k for k, _s, _p in fv3.asked][0] == "mach" and story.load_arc(vd)["giong"] == "hai", "bỏ chủ đề của đợt → lập đợt mới theo chủ đề mới")
+# đợt đang chạy giữ chủ đề nếu còn trong danh sách; bỏ chủ đề đó → đợt mới (bản gốc chung)
+ok(story.load_arc(SH)["giong"] == "kinh_di", "đợt 1 theo chủ đề đầu tiên đã chọn (Kinh dị nhẹ)")
+fa = FakeVillage()
+ai.ensure_master(fa, SH, "2026-11-12", dict(OPTS, tones=["de_thuong", "kinh_di"]))
+ok([k for k, _l, _p in fa.asked][0] == "goc" and story.load_arc(SH)["giong"] == "kinh_di", "đợt kinh dị vẫn chạy (còn trong danh sách)")
+fb2 = FakeVillage()
+ai.ensure_master(fb2, SH, "2026-11-13", dict(OPTS, tones=["hai"]))
+ok([k for k, _l, _p in fb2.asked][0] == "mach" and story.load_arc(SH)["giong"] == "hai", "bỏ chủ đề của đợt → lập đợt mới theo chủ đề mới")
+ft = FakeVillage()
+ai.ensure_master(ft, SH, "2026-11-14", dict(OPTS, tones=["hai"], story="tiet_kiem"))
+ok([k for k, _l, _p in ft.asked] == ["goc"], "Truyện: Tiết kiệm → chỉ nhà văn (không biên tập / viết lại): %s" % [k for k, _l, _p in ft.asked])
 jp_scope = {"tu_vung": [], "kho": [], "ngu_phap": ai.builtin_grammar("N4"), "trinh_do": "N4", "khong_deck": True}
 jp = ai.write_prompt(jp_scope, {"so": 1, "ky": 2, "tones": ["kinh_di", "hai"], "max_new": 12}, [], [], datetime.date(2026, 11, 8))
 ok("CHỦ ĐỀ TRUYỆN: Kinh dị nhẹ" in jp, "báo tiếng Nhật (Tiết kiệm): chủ đề đã chọn")
@@ -361,6 +427,5 @@ print(json.dumps({"coins": data["coins"]}))
        "về 1.25.1: gói báo còn nguyên sau khi 1.25.0 lưu (xu +5)")
 
 shutil.rmtree(TMP, ignore_errors=True)
-shutil.rmtree(vd, ignore_errors=True)
 print("\nKẾT QUẢ: " + ("TẤT CẢ OK" if not FAIL else "%d LỖI" % len(FAIL)))
 sys.exit(1 if FAIL else 0)

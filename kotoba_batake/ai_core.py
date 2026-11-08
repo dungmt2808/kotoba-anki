@@ -2318,6 +2318,20 @@ class Job:
         """1.23: điền phần máy biết chắc vào bài truyện của số báo: số kỳ, tóm tắt kỳ trước, bản dịch, tóm tắt truyện.
         Báo tiếng Anh: chèn thẳng truyện đã duyệt (chữ trơn, máy tự nối tra từ sau)."""
         st = self.story
+        if isinstance(raw, dict):          # 1.25.2: kỳ trước thiếu tóm tắt → máy lấy từ bộ nhớ truyện chung
+            for b in raw.get("bai") if isinstance(raw.get("bai"), list) else []:
+                if isinstance(b, dict) and b.get("loai") == "truyen" and isinstance(b.get("ky"), int) and b["ky"] > 1 \
+                        and not (isinstance(b.get("ky_truoc"), str) and VI_LETTER_RE.search(b["ky_truoc"])):
+                    prev = [e for e in story_core.load_story(self.story_base) if e["ky"] < b["ky"] and e.get("tom_tat")]
+                    if prev:
+                        b["ky_truoc"] = prev[-1]["tom_tat"]
+        goc = self.opts.get("story_goc") if isinstance(self.opts.get("story_goc"), dict) else None
+        if not st and goc and isinstance(raw, dict):      # 1.25.2: số tự kể lại truyện chung → tóm tắt lấy của bản gốc
+            if not (isinstance(raw.get("tom_tat_truyen"), str) and raw["tom_tat_truyen"].strip()):
+                raw["tom_tat_truyen"] = (goc.get("nho") or {}).get("tom_tat") or ""
+            for b in raw.get("bai") if isinstance(raw.get("bai"), list) else []:
+                if isinstance(b, dict) and b.get("loai") == "truyen" and goc.get("ky_truoc") and not b.get("ky_truoc"):
+                    b["ky_truoc"] = goc["ky_truoc"]
         if not st or not isinstance(raw, dict) or not isinstance(raw.get("bai"), list):
             return
         bai = raw["bai"]
