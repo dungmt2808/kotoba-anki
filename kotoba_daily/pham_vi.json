@@ -15,91 +15,15 @@
   {
    "id": "gungun_n4",
    "ten": "GUNGUN N4",
-   "den": 29
+   "den": 30
   }
  ],
  "cai_dat": {
   "tu_moi_toi_da": 5,
   "tin_that": true
  },
- "so_bao_tiep_theo": 5,
+ "so_bao_tiep_theo": 9,
  "trong_tam": [
-  {
-   "bai": "gungun_n4:25",
-   "chu_de": "Quyết định và thay đổi thói quen: 〜にする, 〜ことにする, 〜ことになる, 〜ようにする, 〜ようになる; dự định",
-   "tu_vung": [
-    "再来週",
-    "新年会",
-    "石けん",
-    "睡眠",
-    "不足",
-    "睡眠不足",
-    "運動不足",
-    "ネクタイ",
-    "テーマ",
-    "スパゲッティ",
-    "パスタ",
-    "ステーキ",
-    "サンドイッチ",
-    "冷たい",
-    "急",
-    "大事",
-    "決める",
-    "禁煙する",
-    "早起きする",
-    "賛成する",
-    "離婚する",
-    "以前から",
-    "〜かな",
-    "納豆",
-    "暖房",
-    "水道",
-    "アイデア",
-    "〜代",
-    "電気代",
-    "水道代",
-    "無駄",
-    "踊る",
-    "年を取る",
-    "あいさつする",
-    "チャレンジする",
-    "チェックする",
-    "録音する",
-    "予習する",
-    "大体",
-    "すっかり",
-    "できるだけ",
-    "なるべく",
-    "最初は",
-    "大学院",
-    "郊外",
-    "連休",
-    "山登り",
-    "説明会",
-    "忘年会",
-    "ピンク",
-    "渡す",
-    "乗り換える",
-    "受ける",
-    "進学する",
-    "キャンセルする",
-    "就職する",
-    "ひさしぶりに〜",
-    "〜、よろしく"
-   ],
-   "ngu_phap": [
-    "gungun_n4:25-1",
-    "gungun_n4:25-2",
-    "gungun_n4:25-3",
-    "gungun_n4:25-4",
-    "gungun_n4:25-5",
-    "gungun_n4:25-6",
-    "gungun_n4:25-7",
-    "gungun_n4:25-8",
-    "gungun_n4:25-9",
-    "gungun_n4:25-10"
-   ]
-  },
   {
    "bai": "gungun_n4:26",
    "chu_de": "Lời khuyên 〜ほうがいい, liệt kê 〜たり, phát hiện 〜たら〜た, chưa làm 〜ていない, thời điểm 〜ところだ",
@@ -293,6 +217,62 @@
     "gungun_n4:29-5",
     "gungun_n4:29-6",
     "gungun_n4:29-7"
+   ]
+  },
+  {
+   "bai": "gungun_n4:30",
+   "chu_de": "Diễn tả thời điểm, khoảng thời gian: 〜とき, 〜間/間に, まで/までに, 〜かどうか, từ để hỏi + か, Vてみる",
+   "tu_vung": [
+    "小学校",
+    "小学生",
+    "中学校",
+    "中学生",
+    "高校",
+    "高校生",
+    "耳",
+    "電卓",
+    "ゆかた",
+    "コピー機",
+    "エレベーター",
+    "かく",
+    "隠れる",
+    "入学する",
+    "屋上",
+    "筋トレ",
+    "電気屋",
+    "代金",
+    "次",
+    "ロシア",
+    "アフリカ",
+    "いつごろ",
+    "生きる",
+    "任せる",
+    "ところで",
+    "玄関",
+    "相撲",
+    "生け花",
+    "茶道",
+    "宝くじ",
+    "不安",
+    "直る",
+    "話し合う",
+    "要る",
+    "当たる",
+    "絶対"
+   ],
+   "ngu_phap": [
+    "gungun_n4:30-1",
+    "gungun_n4:30-2",
+    "gungun_n4:30-3",
+    "gungun_n4:30-4",
+    "gungun_n4:30-5",
+    "gungun_n4:30-6",
+    "gungun_n4:30-7",
+    "gungun_n4:30-8",
+    "gungun_n4:30-9",
+    "gungun_n4:30-10",
+    "gungun_n4:30-11",
+    "gungun_n4:30-12"
    ]
   }
  ],
@@ -1507,71 +1487,61 @@
    "id": "gungun_n4:25-1",
    "mau": "Nにする",
    "nghia": "Chọn N, quyết định N",
-   "bai": "gungun_n4:25",
-   "vi_du": "飲み物は紅茶にします。"
+   "bai": "gungun_n4:25"
   },
   {
    "id": "gungun_n4:25-2",
    "mau": "Vる/Vない＋ことにする",
    "nghia": "Quyết định V, quyết định không V: do tự mình quyết định",
-   "bai": "gungun_n4:25",
-   "vi_du": "来年、日本へ留学することにしました。"
+   "bai": "gungun_n4:25"
   },
   {
    "id": "gungun_n4:25-3",
    "mau": "Vる/Vない＋ことになる",
    "nghia": "Được quyết định là ~: kết quả không do ý mình",
-   "bai": "gungun_n4:25",
-   "vi_du": "四月から大阪で働くことになりました。"
+   "bai": "gungun_n4:25"
   },
   {
    "id": "gungun_n4:25-4",
    "mau": "Vる/Vない＋ようにする",
    "nghia": "Cố gắng V, cố gắng không V: tạo thói quen, ようにしている là đang duy trì",
-   "bai": "gungun_n4:25",
-   "vi_du": "毎日野菜を食べるようにしています。"
+   "bai": "gungun_n4:25"
   },
   {
    "id": "gungun_n4:25-5",
    "mau": "Vる/Vない＋ようにしてください",
    "nghia": "Xin hãy cố gắng V, cố gắng đừng V",
-   "bai": "gungun_n4:25",
-   "vi_du": "授業に遅れないようにしてください。"
+   "bai": "gungun_n4:25"
   },
   {
    "id": "gungun_n4:25-6",
    "mau": "Vる＋ようになる",
    "nghia": "Bắt đầu (có thói quen) V, trở nên có thể V",
-   "bai": "gungun_n4:25",
-   "vi_du": "漢字が読めるようになりました。"
+   "bai": "gungun_n4:25"
   },
   {
    "id": "gungun_n4:25-7",
    "mau": "Vない → Vなくなる",
    "nghia": "Không còn V nữa, không còn V được nữa",
-   "bai": "gungun_n4:25",
-   "vi_du": "最近、テレビを見なくなりました。"
+   "bai": "gungun_n4:25"
   },
   {
    "id": "gungun_n4:25-8",
    "mau": "Nの/Vる＋予定だ",
    "nghia": "Dự định ~, theo kế hoạch ~: lịch trình đã định",
-   "bai": "gungun_n4:25",
-   "vi_du": "来週、東京へ出張する予定です。"
+   "bai": "gungun_n4:25"
   },
   {
    "id": "gungun_n4:25-9",
    "mau": "Vる/Vない＋つもりだ",
    "nghia": "Định V, định không V: ý định của bản thân",
-   "bai": "gungun_n4:25",
-   "vi_du": "夏休みは国に帰るつもりです。"
+   "bai": "gungun_n4:25"
   },
   {
    "id": "gungun_n4:25-10",
    "mau": "Vよう＋と思っている",
    "nghia": "Định V, đang tính V: ý định chưa chắc chắn",
-   "bai": "gungun_n4:25",
-   "vi_du": "車を買おうと思っています。"
+   "bai": "gungun_n4:25"
   },
   {
    "id": "gungun_n4:26-1",
@@ -1768,6 +1738,90 @@
    "nghia": "Tôn kính ngữ và yêu cầu lịch sự dạng đặc biệt của 来る, 見る, 寝る, 持つ, 座る",
    "bai": "gungun_n4:29",
    "vi_du": "どうぞ、こちらにお掛けください。"
+  },
+  {
+   "id": "gungun_n4:30-1",
+   "mau": "Nのとき、〜",
+   "nghia": "Khi, lúc N (thời kỳ, hoàn cảnh xảy ra việc ở vế sau)",
+   "bai": "gungun_n4:30",
+   "vi_du": "雨のとき、バスで学校に行きます。"
+  },
+  {
+   "id": "gungun_n4:30-2",
+   "mau": "Vる + とき、〜",
+   "nghia": "(Trước) khi V: việc ở vế sau xảy ra trước khi V bắt đầu, hoặc trong lúc V",
+   "bai": "gungun_n4:30",
+   "vi_du": "家を出るとき、窓を閉めます。"
+  },
+  {
+   "id": "gungun_n4:30-3",
+   "mau": "Vた + とき、〜",
+   "nghia": "(Sau) khi V: V đã xong rồi việc ở vế sau mới xảy ra",
+   "bai": "gungun_n4:30",
+   "vi_du": "駅に着いたとき、電話をください。"
+  },
+  {
+   "id": "gungun_n4:30-4",
+   "mau": "Vない + とき、〜",
+   "nghia": "Khi không V thì ~",
+   "bai": "gungun_n4:30",
+   "vi_du": "わからないとき、辞書を使います。"
+  },
+  {
+   "id": "gungun_n4:30-5",
+   "mau": "Aい / Aな + とき、〜",
+   "nghia": "Khi ở trạng thái A thì ~ (Aな giữ な)",
+   "bai": "gungun_n4:30",
+   "vi_du": "暇なとき、本を読みます。"
+  },
+  {
+   "id": "gungun_n4:30-6",
+   "mau": "Vる / Vている / Aい / Aな / Nの + 間",
+   "nghia": "Trong suốt lúc ~ thì việc ở vế sau cũng diễn ra liên tục",
+   "bai": "gungun_n4:30",
+   "vi_du": "子供が寝ている間、本を読んでいました。"
+  },
+  {
+   "id": "gungun_n4:30-7",
+   "mau": "Vる / Vている / Aい / Aな / Nの + 間に",
+   "nghia": "Trong lúc ~ thì một việc xảy ra (mang tính thời điểm)",
+   "bai": "gungun_n4:30",
+   "vi_du": "母が買い物している間に、部屋を片付けた。"
+  },
+  {
+   "id": "gungun_n4:30-8",
+   "mau": "N / Vる + まで",
+   "nghia": "Đến, tới ~: hành động kéo dài liên tục cho đến thời điểm đó",
+   "bai": "gungun_n4:30",
+   "vi_du": "バスが来るまで、ここで待ちましょう。"
+  },
+  {
+   "id": "gungun_n4:30-9",
+   "mau": "N / Vる + までに",
+   "nghia": "Trước ~, chậm nhất là ~: hạn chót để làm xong việc gì",
+   "bai": "gungun_n4:30",
+   "vi_du": "金曜日までに宿題を出してください。"
+  },
+  {
+   "id": "gungun_n4:30-10",
+   "mau": "V thể thường / Aい / Aな / N + かどうか、〜",
+   "nghia": "Có ~ hay không (lồng câu hỏi có/không vào câu; Aな, N bỏ だ)",
+   "bai": "gungun_n4:30",
+   "vi_du": "明日晴れるかどうか、わかりません。"
+  },
+  {
+   "id": "gungun_n4:30-11",
+   "mau": "Từ để hỏi + V thể thường / Aい / Aな / N + か、〜",
+   "nghia": "Lồng câu hỏi có từ để hỏi (何, どこ, いつ…) vào câu",
+   "bai": "gungun_n4:30",
+   "vi_du": "会議が何時に始まるか、教えてください。"
+  },
+  {
+   "id": "gungun_n4:30-12",
+   "mau": "Vて + みる",
+   "nghia": "Thử làm V (làm để xem thế nào)",
+   "bai": "gungun_n4:30",
+   "vi_du": "この服、着てみてもいいですか。"
   }
  ],
  "tu_vung_dang": "[từ, cách đọc, nghĩa, bài]",
@@ -11761,21 +11815,250 @@
    "おそれいります",
    "xin lỗi đã làm phiền (rất lịch sự)",
    "gungun_n4:29"
+  ],
+  [
+   "小学校",
+   "しょうがっこう",
+   "trường tiểu học",
+   "gungun_n4:30"
+  ],
+  [
+   "中学校",
+   "ちゅうがっこう",
+   "trường trung học cơ sở",
+   "gungun_n4:30"
+  ],
+  [
+   "中学生",
+   "ちゅうがくせい",
+   "học sinh trung học cơ sở",
+   "gungun_n4:30"
+  ],
+  [
+   "高校",
+   "こうこう",
+   "trường trung học phổ thông",
+   "gungun_n4:30"
+  ],
+  [
+   "高校生",
+   "こうこうせい",
+   "học sinh trung học phổ thông",
+   "gungun_n4:30"
+  ],
+  [
+   "耳",
+   "みみ",
+   "tai",
+   "gungun_n4:30"
+  ],
+  [
+   "電卓",
+   "でんたく",
+   "máy tính cầm tay",
+   "gungun_n4:30"
+  ],
+  [
+   "ゆかた",
+   "",
+   "yukata (trang phục truyền thống mùa hè)",
+   "gungun_n4:30"
+  ],
+  [
+   "コピー機",
+   "コピーき",
+   "máy phô-tô",
+   "gungun_n4:30"
+  ],
+  [
+   "エレベーター",
+   "",
+   "thang máy",
+   "gungun_n4:30"
+  ],
+  [
+   "かく",
+   "",
+   "đổ, toát (mồ hôi) (汗をかく)",
+   "gungun_n4:30"
+  ],
+  [
+   "隠れる",
+   "かくれる",
+   "trốn, nấp",
+   "gungun_n4:30"
+  ],
+  [
+   "入学する",
+   "にゅうがくする",
+   "nhập học",
+   "gungun_n4:30"
+  ],
+  [
+   "屋上",
+   "おくじょう",
+   "sân thượng",
+   "gungun_n4:30"
+  ],
+  [
+   "筋トレ",
+   "きんトレ",
+   "luyện tập cơ bắp",
+   "gungun_n4:30"
+  ],
+  [
+   "電気屋",
+   "でんきや",
+   "cửa hàng đồ điện",
+   "gungun_n4:30"
+  ],
+  [
+   "代金",
+   "だいきん",
+   "tiền mua đồ, khoản phải trả",
+   "gungun_n4:30"
+  ],
+  [
+   "次",
+   "つぎ",
+   "tiếp theo",
+   "gungun_n4:30"
+  ],
+  [
+   "ロシア",
+   "",
+   "nước Nga",
+   "gungun_n4:30"
+  ],
+  [
+   "アフリカ",
+   "",
+   "châu Phi",
+   "gungun_n4:30"
+  ],
+  [
+   "いつごろ",
+   "",
+   "khoảng khi nào?",
+   "gungun_n4:30"
+  ],
+  [
+   "生きる",
+   "いきる",
+   "sống",
+   "gungun_n4:30"
+  ],
+  [
+   "任せる",
+   "まかせる",
+   "giao phó, giao cho (ai đó)",
+   "gungun_n4:30"
+  ],
+  [
+   "ところで",
+   "",
+   "nhân tiện, à này (chuyển chủ đề)",
+   "gungun_n4:30"
+  ],
+  [
+   "玄関",
+   "げんかん",
+   "lối vào, chỗ cửa ra vào",
+   "gungun_n4:30"
+  ],
+  [
+   "相撲",
+   "すもう",
+   "môn vật sumo",
+   "gungun_n4:30"
+  ],
+  [
+   "生け花",
+   "いけばな",
+   "nghệ thuật cắm hoa",
+   "gungun_n4:30"
+  ],
+  [
+   "茶道",
+   "さどう",
+   "trà đạo",
+   "gungun_n4:30"
+  ],
+  [
+   "宝くじ",
+   "たからくじ",
+   "xổ số",
+   "gungun_n4:30"
+  ],
+  [
+   "不安",
+   "ふあん",
+   "bất an, lo lắng",
+   "gungun_n4:30"
+  ],
+  [
+   "直る",
+   "なおる",
+   "được sửa, khỏi (hỏng)",
+   "gungun_n4:30"
+  ],
+  [
+   "話し合う",
+   "はなしあう",
+   "nói chuyện, bàn bạc với nhau",
+   "gungun_n4:30"
+  ],
+  [
+   "要る",
+   "いる",
+   "cần",
+   "gungun_n4:30"
+  ],
+  [
+   "当たる",
+   "あたる",
+   "trúng (xổ số)",
+   "gungun_n4:30"
+  ],
+  [
+   "絶対",
+   "ぜったい",
+   "tuyệt đối, nhất định (絶対に)",
+   "gungun_n4:30"
   ]
  ],
- "kanji": "力動働知短医皿血工空試計説心思性地池公広去転遠園台始治正政王玉国主住所近辺切勉晩色発黄虫風強油決漢止歩歴史使品号味研丸究谷船里理野若菜番料奥鳥鳴島化便係宿私利科顔題速通週夫鉄妹姉妻天送弟引弱考者都暑開閉問質貸員店度黒点然声仕才事予服報指押洋遅様着有育教数楽薬記起港赤走場室屋堂院降部原反文済対糸緑経紙細練羽習馬駅験作低夜家宅客館",
+ "kanji": "力動働知短医皿血工空試計説心思性地池公広去転遠園台始治正政王玉国主住所近辺切勉晩色発黄虫風強油決漢止歩歴史使品号味研丸究谷船里理野若菜番料奥鳥鳴島化便係宿私利科顔題速通週夫鉄妹姉妻天送弟引弱考者都暑開閉問質貸員店度黒点然声仕才事予服報指押洋遅様着有育教数楽薬記起港赤走場室屋堂院降部原反文済対糸緑経紙細練羽習馬駅験作低夜家宅客館特持当急竹答映英青晴静",
  "tien_do": {
   "sap_quen": [
-   "蓋",
-   "(～を)剥がす",
-   "ドイツ",
-   "つい",
-   "筆箱",
-   "少しずつ"
+   "(～を)(人に)任せる",
+   "玄関",
+   "宝くじ",
+   "直る",
+   "小学校",
+   "小学生",
+   "中学生",
+   "高校",
+   "高校生",
+   "耳",
+   "電卓",
+   "エレベーター",
+   "隠れる",
+   "(～に)入学(する)",
+   "屋上",
+   "筋トレ",
+   "次",
+   "ロシア",
+   "生きる",
+   "ところで",
+   "相撲",
+   "不安",
+   "絶対(に)"
   ],
-  "loi_sai": [],
+  "loi_sai": [
+   "葉"
+  ],
   "chua_doc": [],
-  "cap_nhat": "2026-11-04T22:45"
+  "cap_nhat": "2026-11-08T08:10"
  },
  "bao_ton": {
   "so_chua_doc": 0,
@@ -11783,14 +12066,17 @@
   "cach_viet": "day_du"
  },
  "truyen": {
-  "ky_tiep_theo": 5,
-  "ky_cuoi_ngay": "2026-11-04"
+  "ky_tiep_theo": 9,
+  "ky_cuoi_ngay": "2026-11-08"
  },
  "lich_su_gan_day": [
-  "- 2026-11-01 | số 1 | mẫu: gungun_n4:25-2, gungun_n4:27-5, gungun_n4:29-3, gungun_n4:16-3 | từ ôn: お客様, 支度する, 渡す, 相談する, 会場, だんだん | Từ hôm nay đến 15/11 có thể ngắm hoa cúc ở Shinjuku Gyoen, còn làng ことば村 sẽ nướng khoai ngày 3/11. Truyện kỳ 1: Lin nhầm kính ngữ với vị khách đầu tiên, và ông cụ mang theo một tấm bản đồ cũ.",
   "- 2026-11-02 | số 2 | mẫu: gungun_n4:26-1, gungun_n4:26-6, gungun_n4:29-4, gungun_n4:18-3 | từ ôn: 元の場所, 支度する, 山登り, 〜以上, 濡れる, 滑る | Hôm nay mưa tuyết trên núi nên không nên leo núi, và lá StackChan gom để nướng khoai bị ướt hết. Truyện kỳ 2: chỗ vòng tròn đỏ là nơi cũ của ことば屋, còn ông cụ đang tìm một người phụ nữ giống hệt はなさん trong ảnh.",
   "- 2026-11-03 | số 3 | mẫu: gungun_n4:28-6, gungun_n4:25-6, gungun_n4:29-7, gungun_n4:20-5 | từ ôn: 過ごす, 最初は, 少しずつ, 乾かす, 用意する, 驚く | Ngày Văn hoá 3/11 trời đẹp ở nhiều nơi tại Nhật (Hokkaido có mưa rào), còn ことば畑 nướng khoai và StackChan khoe tranh “mùi khoai nướng”. Truyện kỳ 3: cậu bé trong album ảnh chính là ông cụ, và chiếc chìa khoá ông mang tới có ghi chữ 「はな」.",
-  "- 2026-11-04 | số 4 | mẫu: gungun_n4:26-3, gungun_n4:27-1, gungun_n4:25-4, gungun_n4:15-1 | từ ôn: 蓋, はっきり, 元の場所, 確かめる, 郊外, なるべく | Tối nay mưa to dần ở Kanto và Tokai (Tokyo mưa to nhất sáng mai), còn ở ことば畑 gió thổi bay tấm bạt của StackChan. Truyện kỳ 4: bà của はなさん cũng tên là はな, và chiếc chìa khoá mở được hộp gỗ cũ, bên trong có lá thư gửi 「けんちゃん」."
+  "- 2026-11-04 | số 4 | mẫu: gungun_n4:26-3, gungun_n4:27-1, gungun_n4:25-4, gungun_n4:15-1 | từ ôn: 蓋, はっきり, 元の場所, 確かめる, 郊外, なるべく | Tối nay mưa to dần ở Kanto và Tokai (Tokyo mưa to nhất sáng mai), còn ở ことば畑 gió thổi bay tấm bạt của StackChan. Truyện kỳ 4: bà của はなさん cũng tên là はな, và chiếc chìa khoá mở được hộp gỗ cũ, bên trong có lá thư gửi 「けんちゃん」.",
+  "- 2026-11-05 | số 5 | mẫu: gungun_n4:29-1, gungun_n4:25-3, gungun_n4:28-7, gungun_n4:23-6 | từ ôn: 蓋, つい, 少しずつ, 預ける, 気がつく, 少々 | Hôm nay áp suất khí quyển giảm ở nhiều nơi tại Nhật nên dễ đau đầu, mệt mỏi; còn ở ことば村, StackChan xin sạc pin trước lò sưởi nhà trưởng làng rồi ngủ quên đến sáng. Truyện kỳ 5: lá thư bà はな hẹn けんちゃん lớn lên quay lại gặp bà, và trên nắp hộp có hình cái cây với vòng tròn đỏ giống tấm bản đồ cũ.",
+  "- 2026-11-06 | số 6 | mẫu: gungun_n4:27-2, gungun_n4:25-9, gungun_n4:26-5, gungun_n4:21-7 | từ ôn: 冷たい, 選ぶ, 間, 本当に, 注意, 火事 | Hôm nay nhiều nơi ở Nhật ấm như mùa hè (Tokyo trên 25℃), nhưng mai trời lạnh đột ngột với gió bắc mạnh và từ 8/11 lạnh kéo dài; ở ことば畑, StackChan cùng trưởng làng nhổ được củ cải to hơn cả mình. Truyện kỳ 6: ông cụ gọi điện cho bà はな sau 60 năm, bà hẹn ngày mai gặp dưới gốc cây ở chỗ ことば屋 cũ và dặn nhớ mang theo chìa khoá.",
+  "- 2026-11-07 | số 7 | mẫu: gungun_n4:30-3, gungun_n4:30-10, gungun_n4:30-12, gungun_n4:18-6 | từ ôn: 筋トレ, 汗, 隠れる, 不安, 缶, 茶道 | Ngày lập đông 7/11, Sapporo có tuyết dày 10cm lúc 6 giờ sáng, nhiệt độ dưới 0 độ, đường trơn; ở ことば村, StackChan thử tập cơ bắp để xem robot có đổ mồ hôi không nhưng chỉ hết pin. Truyện kỳ 7: ông けん gặp lại bà はな dưới gốc cây sau 60 năm, và chiếc chìa khoá mở được một hộp thiếc hai người để dưới hòn đá mùa hè năm ấy.",
+  "- 2026-11-08 | số 8 | mẫu: gungun_n4:30-7, gungun_n4:30-9, gungun_n4:30-11, gungun_n4:29-5 | từ ôn: 任せる, 宝くじ, 不安, ところで, 気温, 用意する | Mai 9/11 từ Tohoku đến Kyushu mưa lạnh, Tokyo cao nhất chỉ khoảng 10 độ, lạnh như đầu tháng 1; ở ことば村, StackChan hái rau và gom lá trước cơn mưa, còn trưởng làng chưa dám xem vé số trúng hay không. Truyện kỳ 8: trong hộp thiếc có lá thư ông けん viết năm 10 tuổi và túi hạt giống; cái cây chính là do bà はな gieo, và dưới đáy túi còn một thứ nữa."
  ],
  "thieu": []
 }

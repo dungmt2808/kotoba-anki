@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>畑新聞</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
+<style>
+:root {
+  --grass: #6aa83a;
+  --paper: #ffffff;
+  --ink: #000000;
+  --muted: #4b5244;
+  --sky: #1e78c8;
+  --kaki: #d97000;
+  --leaf: #e6f2d9;
+  --ok: #2e7d32;
+  --bad: #c62828;
+  --edge: #000000;
+  --pixel: "DotGothic16", "Noto Sans CJK JP", "Noto Sans JP", monospace;
+  --ja: "Noto Sans CJK JP", "Noto Sans JP", "Hiragino Sans", "Yu Gothic", sans-serif;
+  --ui: "Noto Sans", "Ubuntu", "Segoe UI", "Noto Sans CJK JP", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --grass: #1b2a16; --paper: #252a20; --ink: #f0f0e6; --muted: #b8bdae;
+    --sky: #7cc4ff; --kaki: #ffb04d; --leaf: #2d3826; --ok: #81c784; --bad: #ef9a9a;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--grass); color: var(--ink); font-family: var(--ui); font-size: 16px; line-height: 1.6; }
+main { max-width: 720px; margin: 0 auto; padding: 24px 16px 48px; }
+.card { background: var(--paper); border: 3px solid var(--edge); box-shadow: 4px 4px 0 var(--edge); padding: 20px 22px; margin: 0 0 20px; }
+.mast { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 8px 20px; }
+.mast h1 { font-family: var(--pixel); font-weight: 400; font-size: 56px; line-height: 1; margin: 0; letter-spacing: 2px; }
+.mast .meta { font-family: var(--pixel); font-size: 18px; text-align: right; }
+.mast .where { font-size: 14px; color: var(--muted); width: 100%; }
+.bar { position: sticky; top: 0; z-index: 5; background: var(--paper); border: 3px solid var(--edge); box-shadow: 4px 4px 0 var(--edge); padding: 10px 14px; margin: 0 0 20px; }
+.bar .row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.bar .score { margin-left: auto; font-family: var(--pixel); font-size: 18px; }
+.info { margin-top: 8px; font-size: 14px; color: var(--muted); min-height: 1.6em; }
+.info .big { font-family: var(--ja); font-size: 22px; color: var(--ink); margin-right: 8px; }
+h2 { font-family: var(--pixel); font-weight: 400; font-size: 24px; line-height: 2.1; margin: 0 0 8px; }
+.ja { font-family: var(--ja); }
+.art p { font-family: var(--ja); font-size: 18px; line-height: 2.4; margin: 0 0 12px; }
+rt { font-size: 11px; color: var(--muted); font-family: var(--ja); }
+body.nofuri rt { visibility: hidden; }
+.tu { cursor: pointer; border-bottom: 3px solid var(--sky); }
+.tu.moi { border-bottom-style: dotted; border-bottom-color: var(--kaki); }
+.tu.quen { background: color-mix(in srgb, var(--kaki) 22%, transparent); }
+.tu.chon { background: color-mix(in srgb, var(--sky) 28%, transparent); }
+.tu:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid var(--sky); outline-offset: 2px; }
+.src { font-size: 13px; color: var(--muted); }
+.kind { font-size: 13px; color: var(--muted); }
+.art p.prev { font-family: var(--ui); font-size: 14px; line-height: 1.6; color: var(--muted); font-style: italic; }
+.src a { color: var(--sky); }
+button { font: inherit; font-size: 14px; background: var(--paper); color: var(--ink); border: 3px solid var(--edge); box-shadow: 3px 3px 0 var(--edge); padding: 4px 12px; cursor: pointer; }
+button:active { transform: translate(3px, 3px); box-shadow: none; }
+button.play { padding: 0 8px; font-size: 12px; margin-left: 6px; vertical-align: middle; }
+/* 2.3: bản dịch tiếng Việt ẩn sẵn — bấm "Dịch" cuối đoạn, hoặc "Hiện bản dịch" cho cả số */
+.art p.vi { display: none; font-family: var(--ui); font-size: 15px; line-height: 1.6; margin: -6px 0 14px; padding: 4px 10px;
+  border-left: 3px solid var(--kaki); background: color-mix(in srgb, var(--kaki) 12%, transparent); }
+.art p.vi.open, body.showdich .art p.vi { display: block; }
+button.dbtn.on, body.showdich button.dbtn, #dich.on { background: var(--kaki); color: #000; }
+.practice { background: var(--leaf); }
+.q { margin: 0 0 20px; }
+.q .hoi { font-family: var(--ja); font-size: 17px; line-height: 2.3; margin: 0 0 6px; }
+.opt { display: block; width: 100%; text-align: left; margin: 0 0 8px; font-family: var(--ja); font-size: 16px; line-height: 2.2; padding: 2px 12px; }
+.opt.dung { border-color: var(--ok); box-shadow: 3px 3px 0 var(--ok); }
+.opt.sai { border-color: var(--bad); box-shadow: 3px 3px 0 var(--bad); }
+.fb { font-size: 14px; min-height: 1.4em; }
+.fb.ok { color: var(--ok); } .fb.bad { color: var(--bad); }
+.ct { margin: 0 0 18px; }
+.ct .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 0 0 8px; }
+.ct input { flex: 1; min-width: 200px; font-family: var(--ja); font-size: 17px; padding: 6px 10px; border: 3px solid var(--edge); background: var(--paper); color: var(--ink); }
+.answer { font-family: var(--ja); font-size: 17px; line-height: 2.3; }
+.chips { display: flex; flex-wrap: wrap; gap: 10px; }
+.chip { font-family: var(--ja); font-size: 14px; }
+.foot { font-size: 13px; color: var(--muted); }
+@media (max-width: 520px) {
+  .mast h1 { font-size: 44px; }
+  .mast .meta { text-align: left; }
+  .card { padding: 16px; }
+}
+@media (prefers-reduced-motion: reduce) { button:active { transform: none; } }
+</style>
+</head>
+<body>
+<main>
+  <header class="card mast">
+    <h1 lang="ja">畑新聞</h1>
+    <div class="meta" lang="ja"><div id="ngay"></div><div id="so"></div></div>
+    <div class="where" id="where"></div>
+  </header>
+  <div class="bar">
+    <div class="row">
+      <button id="furi" type="button">Ẩn furigana</button>
+      <button id="dich" type="button" hidden>Hiện bản dịch</button>
+      <span class="score" id="score"></span>
+    </div>
+    <div class="info" id="info" aria-live="polite">Bấm vào từ gạch chân để tra nghĩa. Gạch liền là từ đã học, gạch chấm là từ mới.</div>
+  </div>
+  <div id="bai"></div>
+  <section class="card practice" id="luyen">
+    <h2>Câu hỏi</h2>
+    <div id="cauhoi"></div>
+    <h2>Chép chính tả</h2>
+    <p class="foot">Nghe rồi gõ lại câu bằng kana hoặc kanji.</p>
+    <div id="chinhta"></div>
+  </section>
+  <section class="card">
+    <h2>Mẫu câu trong số này</h2>
+    <div class="chips" id="mau"></div>
+    <p class="foot" id="credit"></p>
+  </section>
+</main>
+<script>
+const DATA = {"bao": {"ngay": "2026-11-07", "so": 7, "rut_gon": false, "bai": [{"loai": "tin_that", "tieu_de": "{立冬|りっとう|立冬}の[札幌|さっぽろ]は、もう[冬|ふゆ]", "nguon": "https://weathernews.jp/news/202611/070071/", "doan": ["[今日|きょう]11[月|がつ][7日|なのか]は{立冬|りっとう|立冬}です。[北海道|ほっかいどう]の[札幌|さっぽろ]では、[朝|あさ]3[時|じ]に3センチだった[雪|ゆき]が、6[時|じ]には10センチになって、[町|まち]が[白|しろ]くなりました。", "[朝|あさ]の[気温|きおん]は0[度|ど]より[低|ひく]くて、[道|みち]が{滑|すべ|滑る}りやすくなっています。[今日|きょう]は[一番|いちばん][暖|あたた]かいときも3[度|ど]ぐらいだそうです。[外|そと]を[歩|ある]くときは、ゆっくり[歩|ある]いて、{転|ころ|転ぶ}ばないように[気|き]をつけてください。"], "dich": ["Hôm nay, ngày 7 tháng 11, là lập đông. Ở Sapporo, Hokkaido, tuyết dày 3 cm lúc 3 giờ sáng đã lên tới 10 cm lúc 6 giờ, phủ trắng cả thành phố.", "Nhiệt độ buổi sáng dưới 0 độ, đường rất trơn. Nghe nói hôm nay lúc ấm nhất cũng chỉ khoảng 3 độ. Khi đi bộ ngoài trời, mọi người đi chậm và cẩn thận kẻo ngã nhé."]}, {"loai": "tin_lang", "tieu_de": "スタックちゃん、{筋トレ|きんトレ|筋トレ}をしてみる", "doan": ["[今朝|けさ]はことば[村|むら]にも[冷|つめ]たい[風|かぜ]が[吹|ふ]きました。[木|き]の{葉|は|葉}が[全部|ぜんぶ][落|お]ちて、[畑|はたけ]が[黄色|きいろ]くなりました。", "「[寒|さむ]いときは、[体|からだ]を[動|うご]かせばあたたかくなるよ。」{村長|そんちょう|村長}にそう[言|い]われて、スタックちゃんは[初|はじ]めて{筋トレ|きんトレ|筋トレ}をしてみました。「ロボットも{汗|あせ|汗}を{かく||かく}かどうか、[知|し]りたいんです。」", "30[分|ぷん]がんばりましたが、{汗|あせ|汗}は[出|で]ませんでした。[一緒|いっしょ]にやった{村長|そんちょう|村長}は、{汗|あせ|汗}をたくさん{かき||かく}ました。スタックちゃんは[電池|でんち]がなくなってしまいました。"], "dich": ["Sáng nay làng Kotoba cũng có gió lạnh thổi. Lá cây rụng hết, khu vườn ngả vàng.", "\"Khi trời lạnh, cứ vận động là người ấm lên ngay.\" Nghe trưởng làng nói vậy, Stack-chan lần đầu thử tập cơ bắp. \"Tớ muốn biết robot có đổ mồ hôi hay không.\"", "Cậu cố gắng suốt 30 phút nhưng chẳng ra giọt mồ hôi nào. Trưởng làng tập cùng thì mồ hôi đầm đìa. Còn Stack-chan thì hết sạch pin."]}, {"loai": "truyen", "ky": 7, "ky_truoc": "Ông cụ gọi điện cho bà はな sau 60 năm; bà hẹn hôm nay gặp dưới gốc cây ở chỗ ことば屋 cũ trên núi và dặn nhớ mang theo chìa khoá.", "tieu_de": "[木|き]の[下|した]の[約束|やくそく]", "doan": ["{立冬|りっとう|立冬}の[朝|あさ]、[三人|さんにん]は[昔|むかし]のことば[屋|や]があった[山|やま]へ[向|む]かいました。はなさんは、おばあさんが[本当|ほんとう]に[来|く]るかどうか、[少|すこ]し{不安|ふあん|不安}でした。[山|やま]に[着|つ]いたとき、[木|き]の[下|した]におばあさんが[立|た]っていました。", "おじいさんは[何|なに]も[言|い]えませんでした。おばあさんが[笑|わら]いました。「けんちゃん、[大|おお]きくなったわね。」「はなさんは、[全然|ぜんぜん][変|か]わりませんね。」リンさんの[目|め]も[赤|あか]くなりました。", "「あの[夏|なつ]、けんちゃんが[帰|かえ]るとき、この[石|いし]の[下|した]に{缶|かん|缶}を[置|お]いたでしょう？」おじいさんとリンさんで[大|おお]きい[石|いし]を[動|うご]かしてみたら、[古|ふる]い{缶|かん|缶}が[出|で]てきました。おじいさんが[鍵|かぎ]で{蓋|ふた|蓋}を[開|あ]けたとき、リンさんは「あっ！」と[声|こえ]を[出|だ]しました。"], "dich": ["Sáng lập đông, ba người lên ngọn núi nơi trước kia có quán trọ Kotoba. Chị Hana hơi lo không biết bà có đến thật hay không. Khi đến nơi, đã thấy bà đứng dưới gốc cây.", "Ông cụ không nói nên lời. Bà cười: \"Ken-chan, cháu lớn quá rồi nhỉ.\" \"Bà Hana thì chẳng thay đổi chút nào.\" Mắt Lin cũng đỏ hoe.", "\"Mùa hè năm ấy, lúc về, Ken-chan đã đặt một cái hộp thiếc dưới hòn đá này phải không?\" Ông cụ và Lin thử dịch hòn đá lớn ra thì thấy một hộp thiếc cũ. Khi ông cụ dùng chìa khoá mở nắp, Lin kêu lên: \"A!\""]}, {"loai": "cot", "tieu_de": "{村長|そんちょう|村長}のひとこと：[今年|ことし]の[冬|ふゆ]は", "doan": ["わたしが{小学生|しょうがくせい|小学生}のとき、{立冬|りっとう|立冬}のころにはもう[雪|ゆき]が[降|ふ]っていました。[冬|ふゆ]の{間|あいだ|間}、[子供|こども]たちは[雪|ゆき]の[中|なか]で{隠|かく|隠れる}れたり[走|はし]ったりして[遊|あそ]びました。", "[今年|ことし]の[冬|ふゆ]は[何|なに]をしてみようか、[考|かんが]えています。{茶道|さどう|茶道}か{生け花|いけばな|生け花}を[習|なら]ってみるかもしれません。"], "dich": ["Hồi tôi còn học tiểu học, khoảng lập đông là tuyết đã rơi rồi. Suốt mùa đông, bọn trẻ chơi trốn tìm và chạy nhảy trong tuyết.", "Tôi đang nghĩ xem mùa đông năm nay sẽ thử làm gì. Có khi tôi sẽ học thử trà đạo hoặc cắm hoa."]}], "cau_hoi": [{"hoi": "[札幌|さっぽろ]の[雪|ゆき]は、[朝|あさ]6[時|じ]に[何|なん]センチになりましたか。", "chon": ["3センチ", "10センチ", "6センチ"], "dung": 1, "giai_thich": "Tin thật, đoạn 1: 朝3時に3センチだった雪が、6時には10センチになって… (tuyết lúc 3 giờ sáng dày 3cm, đến 6 giờ đã thành 10cm)."}, {"hoi": "{筋トレ|きんトレ|筋トレ}のあと、スタックちゃんはどうなりましたか。", "chon": ["{汗|あせ|汗}をたくさん{かき||かく}ました", "[風邪|かぜ]をひきました", "[電池|でんち]がなくなってしまいました"], "dung": 2, "giai_thich": "Tin làng, đoạn 3: スタックちゃんは電池がなくなってしまいました (StackChan hết sạch pin). Người đổ nhiều mồ hôi là trưởng làng, không phải StackChan."}, {"hoi": "あの[夏|なつ]、おばあさんとけんちゃんは[石|いし]の[下|した]に[何|なに]を[置|お]きましたか。", "chon": ["{缶|かん|缶}", "[手紙|てがみ]", "[地図|ちず]"], "dung": 0, "giai_thich": "Truyện, đoạn 3: この石の下に缶を置いたでしょう？ (Hồi đó hai người đã đặt một cái hộp thiếc dưới hòn đá này). Lá thư và tấm bản đồ là chuyện ở các kỳ trước."}], "chinh_ta": [{"cau": "[木|き]の{葉|は|葉}が[全部|ぜんぶ][落|お]ちて、[畑|はたけ]が[黄色|きいろ]くなりました。", "them_dap_an": ["木のはが全部落ちて、畑が黄色くなりました"]}, {"cau": "ロボットも{汗|あせ|汗}を{かく||かく}かどうか、[知|し]りたいんです。", "them_dap_an": ["ロボットもあせをかくかどうか、知りたいんです"]}, {"cau": "[山|やま]に[着|つ]いたとき、[木|き]の[下|した]におばあさんが[立|た]っていました。", "them_dap_an": []}], "mau_cau": ["gungun_n4:30-3", "gungun_n4:30-10", "gungun_n4:30-12", "gungun_n4:18-6"], "tu_moi": [{"w": "立冬", "r": "りっとう", "m": "lập đông (ngày bắt đầu mùa đông theo lịch, khoảng 7/11)"}, {"w": "村長", "r": "そんちょう", "m": "trưởng làng"}, {"w": "葉", "r": "は", "m": "lá cây"}], "tom_tat": "Ngày lập đông 7/11, Sapporo có tuyết dày 10cm lúc 6 giờ sáng, nhiệt độ dưới 0 độ, đường trơn; ở ことば村, StackChan thử tập cơ bắp để xem robot có đổ mồ hôi không nhưng chỉ hết pin. Truyện kỳ 7: ông けん gặp lại bà はな dưới gốc cây sau 60 năm, và chiếc chìa khoá mở được một hộp thiếc hai người để dưới hòn đá mùa hè năm ấy."}, "tu": {"立冬": {"w": "立冬", "r": "りっとう", "m": "lập đông (ngày bắt đầu mùa đông theo lịch, khoảng 7/11)", "moi": true}, "滑る": {"w": "滑る", "r": "すべる", "m": "trơn trượt", "bai": "GUNGUN N4, bài 24"}, "転ぶ": {"w": "転ぶ", "r": "ころぶ", "m": "ngã, lăn", "bai": "GUNGUN N4, bài 24"}, "筋トレ": {"w": "筋トレ", "r": "きんトレ", "m": "luyện tập cơ bắp", "bai": "GUNGUN N4, bài 30", "quen": true}, "葉": {"w": "葉", "r": "は", "m": "lá cây", "moi": true}, "村長": {"w": "村長", "r": "そんちょう", "m": "trưởng làng", "moi": true}, "汗": {"w": "汗", "r": "あせ", "m": "mồ hôi", "bai": "GUNGUN N4, bài 24"}, "かく": {"w": "かく", "r": "", "m": "đổ, toát (mồ hôi) (汗をかく)", "bai": "GUNGUN N4, bài 30"}, "不安": {"w": "不安", "r": "ふあん", "m": "bất an, lo lắng", "bai": "GUNGUN N4, bài 30", "quen": true}, "缶": {"w": "缶", "r": "かん", "m": "cái lon", "bai": "GUNGUN N4, bài 27"}, "蓋": {"w": "蓋", "r": "ふた", "m": "nắp", "bai": "GUNGUN N4, bài 27"}, "小学生": {"w": "小学生", "r": "しょうがくせい", "m": "học sinh tiểu học", "bai": "GUNGUN N5, bài 13", "quen": true}, "間": {"w": "間", "r": "あいだ", "m": "ở giữa", "bai": "GUNGUN N5, bài 5"}, "隠れる": {"w": "隠れる", "r": "かくれる", "m": "trốn, nấp", "bai": "GUNGUN N4, bài 30", "quen": true}, "茶道": {"w": "茶道", "r": "さどう", "m": "trà đạo", "bai": "GUNGUN N4, bài 30"}, "生け花": {"w": "生け花", "r": "いけばな", "m": "nghệ thuật cắm hoa", "bai": "GUNGUN N4, bài 30"}}, "mau": [{"mau": "Vた + とき、〜", "nghia": "(Sau) khi V: V đã xong rồi việc ở vế sau mới xảy ra", "bai": "GUNGUN N4, bài 30"}, {"mau": "V thể thường / Aい / Aな / N + かどうか、〜", "nghia": "Có ~ hay không (lồng câu hỏi có/không vào câu; Aな, N bỏ だ)", "bai": "GUNGUN N4, bài 30"}, {"mau": "Vて + みる", "nghia": "Thử làm V (làm để xem thế nào)", "bai": "GUNGUN N4, bài 30"}, {"mau": "Aいく/Aなに＋なる", "nghia": "Trở nên ~: sự thay đổi trạng thái", "bai": "GUNGUN N4, bài 18"}], "trinh_do": "N4", "vi_tri": [{"id": "gungun_n5", "ten": "GUNGUN N5", "den": 14}, {"id": "gungun_n4", "ten": "GUNGUN N4", "den": 30}], "audio": {"giong": 2, "credit": "VOICEVOX:四国めたん", "bai": [["audio/bai_1_1.wav", "audio/bai_1_2.wav"], ["audio/bai_2_1.wav", "audio/bai_2_2.wav", "audio/bai_2_3.wav"], ["audio/bai_3_1.wav", "audio/bai_3_2.wav", "audio/bai_3_3.wav"], ["audio/bai_4_1.wav", "audio/bai_4_2.wav"]], "chinh_ta": [{"thuong": "audio/ct_1.wav", "cham": "audio/ct_1_cham.wav"}, {"thuong": "audio/ct_2.wav", "cham": "audio/ct_2_cham.wav"}, {"thuong": "audio/ct_3.wav", "cham": "audio/ct_3_cham.wav"}], "canh_bao": []}};
+(function () {
+  if (!DATA) { document.querySelector("main").textContent = "Thiếu dữ liệu báo. Hãy tạo trang bằng tools/render.py."; return; }
+  const B = DATA.bao;
+  const RE = /\{([^{}\[\]|]*)\|([^{}\[\]|]*)\|([^{}\[\]|]*)\}|\[([^{}\[\]|]*)\|([^{}\[\]|]*)\]/g;
+  const $ = (id) => document.getElementById(id);
+  function el(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+  function ruby(s, r) {
+    if (!r) return document.createTextNode(s);
+    const rb = el("ruby"); rb.appendChild(document.createTextNode(s)); rb.appendChild(el("rt", null, r)); return rb;
+  }
+  function md(text, link) {
+    const f = document.createDocumentFragment(); let last = 0, m; RE.lastIndex = 0;
+    while ((m = RE.exec(text))) {
+      if (m.index > last) f.appendChild(document.createTextNode(text.slice(last, m.index)));
+      if (m[4] !== undefined) f.appendChild(ruby(m[4], m[5]));
+      else {
+        const node = ruby(m[1], m[2]); const info = DATA.tu[m[3]];
+        if (link && info) {
+          const s = el("span", "tu" + (info.moi ? " moi" : "") + (info.quen ? " quen" : ""));
+          s.dataset.k = m[3]; s.tabIndex = 0; s.setAttribute("role", "button"); s.appendChild(node); f.appendChild(s);
+        } else f.appendChild(node);
+      }
+      last = RE.lastIndex;
+    }
+    if (last < text.length) f.appendChild(document.createTextNode(text.slice(last)));
+    return f;
+  }
+  const surface = (t) => t.replace(RE, (m, a, b, c, d) => (d !== undefined ? d : a));
+  const kana = (t) => t.replace(RE, (m, a, b, c, d, e) => (d !== undefined ? (e || d) : (b || a)));
+  const norm = (s) => s.replace(/[\s\u3000。、．，！？!?.,「」『』（）()…・〜～]/g, "").replace(/[\u30a1-\u30f6]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0x60));
+
+  const d = new Date(B.ngay + "T00:00:00");
+  $("ngay").textContent = (d.getMonth() + 1) + "月" + d.getDate() + "日（" + "日月火水木金土"[d.getDay()] + "）";
+  $("so").textContent = "第" + B.so + "号" + (B.rut_gon ? "・短縮版" : "");
+  $("where").textContent = "Trình độ " + DATA.trinh_do + ", viết trong phạm vi " +
+    DATA.vi_tri.map((v) => v.ten + " đến bài " + v.den).join(" và ") + ".";
+
+  let score = 0; const maxScore = (B.cau_hoi || []).length + (B.chinh_ta || []).length;
+  const showScore = () => { $("score").textContent = "Điểm " + score + "/" + maxScore; };
+  showScore();
+
+  const player = new Audio();
+  function play(src, fallbackText, rate, outEl) {
+    if (src) { player.src = src; player.play().catch(() => {}); return; }
+    if (!("speechSynthesis" in window)) { if (outEl) outEl.textContent = "Chưa có audio cho câu này."; return; }
+    const vs = speechSynthesis.getVoices(); const ja = vs.find((v) => (v.lang || "").toLowerCase().startsWith("ja"));
+    if (vs.length && !ja) { if (outEl) outEl.textContent = "Chưa có audio. Cài VOICEVOX để có giọng đọc (xem HUONG_DAN.md)."; return; }
+    const u = new SpeechSynthesisUtterance(fallbackText); u.lang = "ja-JP"; if (ja) u.voice = ja; u.rate = rate;
+    speechSynthesis.cancel(); speechSynthesis.speak(u);
+  }
+  if ("speechSynthesis" in window) speechSynthesis.getVoices();
+  const A = DATA.audio || {};
+
+  const bai = $("bai");
+  let hasDich = false;
+  B.bai.forEach((b, i) => {
+    const sec = el("article", "card art"); sec.lang = "ja";
+    if (b.loai === "truyen" && b.ky) { const k = el("div", "kind", "Truyện dài kỳ, kỳ " + b.ky); k.lang = "vi"; sec.appendChild(k); }
+    const h = el("h2"); h.appendChild(md(b.tieu_de, true)); sec.appendChild(h);
+    if (b.ky_truoc) { const k = el("p", "prev", "Kỳ trước: " + b.ky_truoc); k.lang = "vi"; sec.appendChild(k); }
+    const hasD = Array.isArray(b.dich) && b.dich.length === b.doan.length;
+    b.doan.forEach((p, j) => {
+      const para = el("p"); para.appendChild(md(p, true));
+      const src = A.bai && A.bai[i] && A.bai[i][j];
+      if (src) {
+        const btn = el("button", "play", "▶"); btn.type = "button"; btn.setAttribute("aria-label", "Nghe đoạn này");
+        btn.addEventListener("click", () => play(src)); para.appendChild(btn);
+      }
+      sec.appendChild(para);
+      if (hasD && b.dich[j]) {
+        const tr = el("p", "vi", b.dich[j]); tr.lang = "vi";
+        const db = el("button", "play dbtn", "Dịch"); db.type = "button"; db.title = "Xem / ẩn bản dịch đoạn này";
+        db.setAttribute("aria-expanded", "false");
+        db.addEventListener("click", () => {
+          const open = tr.classList.toggle("open"); db.classList.toggle("on", open); db.setAttribute("aria-expanded", String(open));
+        });
+        para.appendChild(db); sec.appendChild(tr); hasDich = true;
+      }
+    });
+    if (b.nguon) {
+      const s = el("p", "src"); s.lang = "vi"; s.appendChild(document.createTextNode("Viết lại từ tin: "));
+      const a = el("a", null, b.nguon); a.href = b.nguon; a.target = "_blank"; a.rel = "noopener"; s.appendChild(a); sec.appendChild(s);
+    }
+    bai.appendChild(sec);
+  });
+
+  const info = $("info");
+  function showWord(k) {
+    const w = DATA.tu[k]; if (!w) return;
+    info.textContent = "";
+    info.appendChild(el("span", "big", w.w)); 
+    if (w.r) info.appendChild(el("span", "ja", w.r + "  "));
+    info.appendChild(document.createTextNode(w.m || ""));
+    const note = w.moi ? "Từ mới trong số này." : (w.bai ? "Đã học ở " + w.bai + "." : "");
+    if (note || w.quen) {
+      info.appendChild(el("br"));
+      info.appendChild(document.createTextNode(note + (w.quen ? " Bạn sắp quên từ này, báo cố ý nhắc lại." : "")));
+    }
+    document.querySelectorAll(".tu.chon").forEach((x) => x.classList.remove("chon"));
+    document.querySelectorAll('.tu[data-k="' + CSS.escape(k) + '"]').forEach((x) => x.classList.add("chon"));
+  }
+  bai.addEventListener("click", (e) => { const t = e.target.closest(".tu"); if (t) showWord(t.dataset.k); });
+  bai.addEventListener("keydown", (e) => { const t = e.target.closest(".tu"); if (t && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); showWord(t.dataset.k); } });
+
+  $("furi").addEventListener("click", (e) => {
+    document.body.classList.toggle("nofuri");
+    e.currentTarget.textContent = document.body.classList.contains("nofuri") ? "Hiện furigana" : "Ẩn furigana";
+  });
+
+  // 2.3: "Hiện bản dịch" cho cả số (nhớ lựa chọn trên máy này)
+  const dBtn = $("dich");
+  function setDich(on) {
+    document.body.classList.toggle("showdich", on);
+    dBtn.classList.toggle("on", on); dBtn.textContent = on ? "Ẩn bản dịch" : "Hiện bản dịch";
+    try { localStorage.setItem("hatake-dich", on ? "1" : "0"); } catch (e) { /* trình duyệt chặn lưu: bỏ qua */ }
+  }
+  if (hasDich) {
+    dBtn.hidden = false;
+    let on = false;
+    try { on = localStorage.getItem("hatake-dich") === "1"; } catch (e) { on = false; }
+    setDich(on);
+    dBtn.addEventListener("click", () => {
+      document.querySelectorAll(".art p.vi.open").forEach((x) => x.classList.remove("open"));
+      document.querySelectorAll("button.dbtn.on").forEach((x) => { x.classList.remove("on"); x.setAttribute("aria-expanded", "false"); });
+      setDich(!document.body.classList.contains("showdich"));
+    });
+    info.textContent = "Bấm vào từ gạch chân để tra nghĩa. Gạch liền là từ đã học, gạch chấm là từ mới. Bấm \"Dịch\" cuối đoạn để xem bản dịch tiếng Việt.";
+  }
+
+  const qBox = $("cauhoi"); const qDone = {};
+  (B.cau_hoi || []).forEach((q, i) => {
+    const wrap = el("div", "q");
+    const hoi = el("p", "hoi"); hoi.lang = "ja"; hoi.appendChild(document.createTextNode((i + 1) + ". ")); hoi.appendChild(md(q.hoi, false)); wrap.appendChild(hoi);
+    const fb = el("div", "fb"); fb.setAttribute("aria-live", "polite");
+    q.chon.forEach((o, j) => {
+      const btn = el("button", "opt"); btn.type = "button"; btn.lang = "ja"; btn.appendChild(md(o, false));
+      btn.addEventListener("click", () => {
+        wrap.querySelectorAll(".opt").forEach((x) => x.classList.remove("dung", "sai"));
+        if (j === q.dung) {
+          btn.classList.add("dung");
+          if (!qDone[i]) { score++; showScore(); }
+          qDone[i] = "ok"; fb.className = "fb ok"; fb.textContent = "Đúng. " + q.giai_thich;
+        } else {
+          btn.classList.add("sai"); if (!qDone[i]) qDone[i] = "sai";
+          fb.className = "fb bad"; fb.textContent = "Chưa đúng, đọc lại bài rồi thử lần nữa.";
+        }
+      });
+      wrap.appendChild(btn);
+    });
+    wrap.appendChild(fb); qBox.appendChild(wrap);
+  });
+
+  const cBox = $("chinhta"); const cDone = {};
+  (B.chinh_ta || []).forEach((c, i) => {
+    const wrap = el("div", "ct");
+    const row1 = el("div", "row"); row1.appendChild(el("span", null, "Câu " + (i + 1)));
+    const fb = el("div", "fb"); fb.setAttribute("aria-live", "polite");
+    const audio = (A.chinh_ta && A.chinh_ta[i]) || {};
+    const b1 = el("button", null, "Nghe"); b1.type = "button"; b1.addEventListener("click", () => play(audio.thuong, surface(c.cau), 0.95, fb));
+    const b2 = el("button", null, "Nghe chậm"); b2.type = "button"; b2.addEventListener("click", () => play(audio.cham, surface(c.cau), 0.7, fb));
+    row1.appendChild(b1); row1.appendChild(b2); wrap.appendChild(row1);
+    const row2 = el("div", "row");
+    const inp = el("input"); inp.type = "text"; inp.lang = "ja"; inp.placeholder = "Gõ câu vừa nghe"; inp.setAttribute("aria-label", "Câu " + (i + 1));
+    const chk = el("button", null, "Kiểm tra"); chk.type = "button";
+    row2.appendChild(inp); row2.appendChild(chk); wrap.appendChild(row2);
+    const ans = el("div", "answer"); ans.lang = "ja";
+    const accepted = [surface(c.cau), kana(c.cau)].concat(c.them_dap_an || []).map(norm);
+    function check() {
+      ans.textContent = "";
+      if (!inp.value.trim()) { fb.className = "fb bad"; fb.textContent = "Gõ câu bạn nghe được trước đã."; return; }
+      if (accepted.includes(norm(inp.value))) {
+        fb.className = "fb ok"; fb.textContent = "Đúng rồi.";
+        if (!cDone[i]) { cDone[i] = 1; score++; showScore(); }
+      } else {
+        fb.className = "fb bad"; fb.textContent = "Chưa đúng. Đáp án:"; ans.appendChild(md(c.cau, false));
+      }
+    }
+    chk.addEventListener("click", check);
+    inp.addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.isComposing) check(); });
+    inp.addEventListener("input", () => { if (fb.classList.contains("bad")) { fb.textContent = ""; ans.textContent = ""; } });
+    wrap.appendChild(fb); wrap.appendChild(ans); cBox.appendChild(wrap);
+  });
+
+  const mBox = $("mau");
+  (DATA.mau || []).forEach((g) => {
+    const btn = el("button", "chip", g.mau); btn.type = "button";
+    btn.addEventListener("click", () => { info.textContent = g.mau + ": " + g.nghia + (g.bai ? " (" + g.bai + ")" : ""); });
+    mBox.appendChild(btn);
+  });
+  const credits = [];
+  if (A.credit) credits.push("Giọng đọc: " + A.credit + ".");
+  credits.push("Báo do Claude viết tự động, có thể còn chỗ chưa tự nhiên.");
+  $("credit").textContent = credits.join(" ");
+})();
+</script>
+</body>
+</html>

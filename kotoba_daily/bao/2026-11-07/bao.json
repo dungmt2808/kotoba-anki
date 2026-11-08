@@ -1,0 +1,136 @@
+{
+ "ngay": "2026-11-07",
+ "so": 7,
+ "rut_gon": false,
+ "bai": [
+  {
+   "loai": "tin_that",
+   "tieu_de": "{立冬|りっとう|立冬}の[札幌|さっぽろ]は、もう[冬|ふゆ]",
+   "nguon": "https://weathernews.jp/news/202611/070071/",
+   "doan": [
+    "[今日|きょう]11[月|がつ][7日|なのか]は{立冬|りっとう|立冬}です。[北海道|ほっかいどう]の[札幌|さっぽろ]では、[朝|あさ]3[時|じ]に3センチだった[雪|ゆき]が、6[時|じ]には10センチになって、[町|まち]が[白|しろ]くなりました。",
+    "[朝|あさ]の[気温|きおん]は0[度|ど]より[低|ひく]くて、[道|みち]が{滑|すべ|滑る}りやすくなっています。[今日|きょう]は[一番|いちばん][暖|あたた]かいときも3[度|ど]ぐらいだそうです。[外|そと]を[歩|ある]くときは、ゆっくり[歩|ある]いて、{転|ころ|転ぶ}ばないように[気|き]をつけてください。"
+   ],
+   "dich": [
+    "Hôm nay, ngày 7 tháng 11, là lập đông. Ở Sapporo, Hokkaido, tuyết dày 3 cm lúc 3 giờ sáng đã lên tới 10 cm lúc 6 giờ, phủ trắng cả thành phố.",
+    "Nhiệt độ buổi sáng dưới 0 độ, đường rất trơn. Nghe nói hôm nay lúc ấm nhất cũng chỉ khoảng 3 độ. Khi đi bộ ngoài trời, mọi người đi chậm và cẩn thận kẻo ngã nhé."
+   ]
+  },
+  {
+   "loai": "tin_lang",
+   "tieu_de": "スタックちゃん、{筋トレ|きんトレ|筋トレ}をしてみる",
+   "doan": [
+    "[今朝|けさ]はことば[村|むら]にも[冷|つめ]たい[風|かぜ]が[吹|ふ]きました。[木|き]の{葉|は|葉}が[全部|ぜんぶ][落|お]ちて、[畑|はたけ]が[黄色|きいろ]くなりました。",
+    "「[寒|さむ]いときは、[体|からだ]を[動|うご]かせばあたたかくなるよ。」{村長|そんちょう|村長}にそう[言|い]われて、スタックちゃんは[初|はじ]めて{筋トレ|きんトレ|筋トレ}をしてみました。「ロボットも{汗|あせ|汗}を{かく||かく}かどうか、[知|し]りたいんです。」",
+    "30[分|ぷん]がんばりましたが、{汗|あせ|汗}は[出|で]ませんでした。[一緒|いっしょ]にやった{村長|そんちょう|村長}は、{汗|あせ|汗}をたくさん{かき||かく}ました。スタックちゃんは[電池|でんち]がなくなってしまいました。"
+   ],
+   "dich": [
+    "Sáng nay làng Kotoba cũng có gió lạnh thổi. Lá cây rụng hết, khu vườn ngả vàng.",
+    "\"Khi trời lạnh, cứ vận động là người ấm lên ngay.\" Nghe trưởng làng nói vậy, Stack-chan lần đầu thử tập cơ bắp. \"Tớ muốn biết robot có đổ mồ hôi hay không.\"",
+    "Cậu cố gắng suốt 30 phút nhưng chẳng ra giọt mồ hôi nào. Trưởng làng tập cùng thì mồ hôi đầm đìa. Còn Stack-chan thì hết sạch pin."
+   ]
+  },
+  {
+   "loai": "truyen",
+   "ky": 7,
+   "ky_truoc": "Ông cụ gọi điện cho bà はな sau 60 năm; bà hẹn hôm nay gặp dưới gốc cây ở chỗ ことば屋 cũ trên núi và dặn nhớ mang theo chìa khoá.",
+   "tieu_de": "[木|き]の[下|した]の[約束|やくそく]",
+   "doan": [
+    "{立冬|りっとう|立冬}の[朝|あさ]、[三人|さんにん]は[昔|むかし]のことば[屋|や]があった[山|やま]へ[向|む]かいました。はなさんは、おばあさんが[本当|ほんとう]に[来|く]るかどうか、[少|すこ]し{不安|ふあん|不安}でした。[山|やま]に[着|つ]いたとき、[木|き]の[下|した]におばあさんが[立|た]っていました。",
+    "おじいさんは[何|なに]も[言|い]えませんでした。おばあさんが[笑|わら]いました。「けんちゃん、[大|おお]きくなったわね。」「はなさんは、[全然|ぜんぜん][変|か]わりませんね。」リンさんの[目|め]も[赤|あか]くなりました。",
+    "「あの[夏|なつ]、けんちゃんが[帰|かえ]るとき、この[石|いし]の[下|した]に{缶|かん|缶}を[置|お]いたでしょう？」おじいさんとリンさんで[大|おお]きい[石|いし]を[動|うご]かしてみたら、[古|ふる]い{缶|かん|缶}が[出|で]てきました。おじいさんが[鍵|かぎ]で{蓋|ふた|蓋}を[開|あ]けたとき、リンさんは「あっ！」と[声|こえ]を[出|だ]しました。"
+   ],
+   "dich": [
+    "Sáng lập đông, ba người lên ngọn núi nơi trước kia có quán trọ Kotoba. Chị Hana hơi lo không biết bà có đến thật hay không. Khi đến nơi, đã thấy bà đứng dưới gốc cây.",
+    "Ông cụ không nói nên lời. Bà cười: \"Ken-chan, cháu lớn quá rồi nhỉ.\" \"Bà Hana thì chẳng thay đổi chút nào.\" Mắt Lin cũng đỏ hoe.",
+    "\"Mùa hè năm ấy, lúc về, Ken-chan đã đặt một cái hộp thiếc dưới hòn đá này phải không?\" Ông cụ và Lin thử dịch hòn đá lớn ra thì thấy một hộp thiếc cũ. Khi ông cụ dùng chìa khoá mở nắp, Lin kêu lên: \"A!\""
+   ]
+  },
+  {
+   "loai": "cot",
+   "tieu_de": "{村長|そんちょう|村長}のひとこと：[今年|ことし]の[冬|ふゆ]は",
+   "doan": [
+    "わたしが{小学生|しょうがくせい|小学生}のとき、{立冬|りっとう|立冬}のころにはもう[雪|ゆき]が[降|ふ]っていました。[冬|ふゆ]の{間|あいだ|間}、[子供|こども]たちは[雪|ゆき]の[中|なか]で{隠|かく|隠れる}れたり[走|はし]ったりして[遊|あそ]びました。",
+    "[今年|ことし]の[冬|ふゆ]は[何|なに]をしてみようか、[考|かんが]えています。{茶道|さどう|茶道}か{生け花|いけばな|生け花}を[習|なら]ってみるかもしれません。"
+   ],
+   "dich": [
+    "Hồi tôi còn học tiểu học, khoảng lập đông là tuyết đã rơi rồi. Suốt mùa đông, bọn trẻ chơi trốn tìm và chạy nhảy trong tuyết.",
+    "Tôi đang nghĩ xem mùa đông năm nay sẽ thử làm gì. Có khi tôi sẽ học thử trà đạo hoặc cắm hoa."
+   ]
+  }
+ ],
+ "cau_hoi": [
+  {
+   "hoi": "[札幌|さっぽろ]の[雪|ゆき]は、[朝|あさ]6[時|じ]に[何|なん]センチになりましたか。",
+   "chon": [
+    "3センチ",
+    "10センチ",
+    "6センチ"
+   ],
+   "dung": 1,
+   "giai_thich": "Tin thật, đoạn 1: 朝3時に3センチだった雪が、6時には10センチになって… (tuyết lúc 3 giờ sáng dày 3cm, đến 6 giờ đã thành 10cm)."
+  },
+  {
+   "hoi": "{筋トレ|きんトレ|筋トレ}のあと、スタックちゃんはどうなりましたか。",
+   "chon": [
+    "{汗|あせ|汗}をたくさん{かき||かく}ました",
+    "[風邪|かぜ]をひきました",
+    "[電池|でんち]がなくなってしまいました"
+   ],
+   "dung": 2,
+   "giai_thich": "Tin làng, đoạn 3: スタックちゃんは電池がなくなってしまいました (StackChan hết sạch pin). Người đổ nhiều mồ hôi là trưởng làng, không phải StackChan."
+  },
+  {
+   "hoi": "あの[夏|なつ]、おばあさんとけんちゃんは[石|いし]の[下|した]に[何|なに]を[置|お]きましたか。",
+   "chon": [
+    "{缶|かん|缶}",
+    "[手紙|てがみ]",
+    "[地図|ちず]"
+   ],
+   "dung": 0,
+   "giai_thich": "Truyện, đoạn 3: この石の下に缶を置いたでしょう？ (Hồi đó hai người đã đặt một cái hộp thiếc dưới hòn đá này). Lá thư và tấm bản đồ là chuyện ở các kỳ trước."
+  }
+ ],
+ "chinh_ta": [
+  {
+   "cau": "[木|き]の{葉|は|葉}が[全部|ぜんぶ][落|お]ちて、[畑|はたけ]が[黄色|きいろ]くなりました。",
+   "them_dap_an": [
+    "木のはが全部落ちて、畑が黄色くなりました"
+   ]
+  },
+  {
+   "cau": "ロボットも{汗|あせ|汗}を{かく||かく}かどうか、[知|し]りたいんです。",
+   "them_dap_an": [
+    "ロボットもあせをかくかどうか、知りたいんです"
+   ]
+  },
+  {
+   "cau": "[山|やま]に[着|つ]いたとき、[木|き]の[下|した]におばあさんが[立|た]っていました。",
+   "them_dap_an": []
+  }
+ ],
+ "mau_cau": [
+  "gungun_n4:30-3",
+  "gungun_n4:30-10",
+  "gungun_n4:30-12",
+  "gungun_n4:18-6"
+ ],
+ "tu_moi": [
+  {
+   "w": "立冬",
+   "r": "りっとう",
+   "m": "lập đông (ngày bắt đầu mùa đông theo lịch, khoảng 7/11)"
+  },
+  {
+   "w": "村長",
+   "r": "そんちょう",
+   "m": "trưởng làng"
+  },
+  {
+   "w": "葉",
+   "r": "は",
+   "m": "lá cây"
+  }
+ ],
+ "tom_tat": "Ngày lập đông 7/11, Sapporo có tuyết dày 10cm lúc 6 giờ sáng, nhiệt độ dưới 0 độ, đường trơn; ở ことば村, StackChan thử tập cơ bắp để xem robot có đổ mồ hôi không nhưng chỉ hết pin. Truyện kỳ 7: ông けん gặp lại bà はな dưới gốc cây sau 60 năm, và chiếc chìa khoá mở được một hộp thiếc hai người để dưới hòn đá mùa hè năm ấy."
+}
