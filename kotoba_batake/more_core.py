@@ -7,6 +7,7 @@ Mọi số ngày ở đây là "ngày Anki" (col.sched.today), không phải ng�
 
 from __future__ import annotations
 
+import datetime
 import re
 from typing import Any
 
@@ -498,12 +499,84 @@ def delete_zone(more: dict[str, Any], zid: str) -> None:
 
 
 # ---------------------------------------------------------------------------
+# 1.25.1: Gói báo — mua bằng xu (người dùng: "người dùng có thể mua hằng tháng, hoặc hàng tuần (100 xu hoặc 300 xu)")
+# ---------------------------------------------------------------------------
+
+PAPER_PLANS = {"tuan": {"days": 7, "price": 100, "name": "1 tuần"}, "thang": {"days": 30, "price": 300, "name": "1 tháng"}}
+PAPER_PLAN_IDS = ("tuan", "thang")
+PAPER_TRIAL_DAYS = 7          # lần đầu cần gói (số báo Gemini đầu tiên): tặng 7 ngày
+PAPER_AHEAD_MAX = 60          # gói còn tối đa 60 ngày phía trước (bấm nhầm nhiều lần không trừ xu mãi)
+
+
+def _iso(v: Any) -> datetime.date | None:
+    if not isinstance(v, str):
+        return None
+    try:
+        return datetime.date.fromisoformat(v[:10])
+    except ValueError:
+        return None
+
+
+def clean_sub(raw: Any) -> dict[str, Any]:
+    """{"until": ngày cuối còn báo (gồm ngày đó) | None, "plan", "auto": tự gia hạn, "trial": ngày đã tặng thử | None,
+    "paid": ngày mua / gia hạn gần nhất | None}."""
+    raw = raw if isinstance(raw, dict) else {}
+    until, trial, paid = _iso(raw.get("until")), _iso(raw.get("trial")), _iso(raw.get("paid"))
+    return {"until": until.isoformat() if until else None,
+            "plan": raw.get("plan") if raw.get("plan") in PAPER_PLAN_IDS else "tuan",
+            "auto": raw.get("auto") is not False,
+            "trial": trial.isoformat() if trial else None,
+            "paid": paid.isoformat() if paid else None}
+
+
+def sub_left(sub: dict[str, Any], today: datetime.date) -> int:
+    """Số ngày còn báo, tính cả hôm nay (0 = hết hạn / chưa có gói)."""
+    until = _iso(sub.get("until"))
+    return max(0, (until - today).days + 1) if until else 0
+
+
+def sub_trial(sub: dict[str, Any], today: datetime.date) -> bool:
+    """Tặng gói thử một lần (chưa có gói, chưa thử bao giờ). Trả về True nếu vừa tặng."""
+    if sub.get("trial") or sub.get("until"):
+        return False
+    sub["until"] = (today + datetime.timedelta(days=PAPER_TRIAL_DAYS - 1)).isoformat()
+    sub["trial"] = today.isoformat()
+    return True
+
+
+def sub_buy(sub: dict[str, Any], plan: str, today: datetime.date) -> int:
+    """Mua / gia hạn: cộng thêm ngày vào sau ngày cuối còn báo (đang hết hạn thì tính từ hôm nay). Trả về giá."""
+    if plan not in PAPER_PLANS:
+        raise MoreError("Không có gói này.")
+    p = PAPER_PLANS[plan]
+    left = sub_left(sub, today)
+    if left + p["days"] > PAPER_AHEAD_MAX:
+        raise MoreError("Gói báo còn %d ngày — gần hết rồi hãy gia hạn tiếp." % left)
+    start = _iso(sub.get("until")) if left else today - datetime.timedelta(days=1)
+    sub["until"] = (start + datetime.timedelta(days=p["days"])).isoformat()
+    sub["plan"] = plan
+    sub["paid"] = today.isoformat()
+    if not sub.get("trial"):
+        sub["trial"] = today.isoformat()      # đã mua thì không tặng thử nữa
+    return p["price"]
+
+
+def sub_view(sub: dict[str, Any], today: datetime.date) -> dict[str, Any]:
+    left = sub_left(sub, today)
+    return {"until": sub.get("until"), "left": left, "active": left > 0, "plan": sub.get("plan", "tuan"),
+            "auto": bool(sub.get("auto", True)), "trial_used": bool(sub.get("trial")),
+            "in_trial": bool(left and sub.get("trial") and not sub.get("paid")),
+            "plans": [dict(PAPER_PLANS[k], id=k) for k in PAPER_PLAN_IDS], "ahead_max": PAPER_AHEAD_MAX,
+            "trial_days": PAPER_TRIAL_DAYS}
+
+
+# ---------------------------------------------------------------------------
 # Làm sạch + xem
 # ---------------------------------------------------------------------------
 
 def empty_more() -> dict[str, Any]:
     return {"repair": {"day": None, "seen": None, "back": None}, "pets": {}, "pet_auto": False,
-            "seeds": _clean_seeds(None), "zones": [], "znext": 1}
+            "seeds": _clean_seeds(None), "zones": [], "znext": 1, "paper_sub": clean_sub(None)}
 
 
 def clean_more(raw: Any, palette: dict[str, str]) -> dict[str, Any]:
@@ -515,6 +588,7 @@ def clean_more(raw: Any, palette: dict[str, str]) -> dict[str, Any]:
     more["pets"] = _clean_pets(raw.get("pets"))
     more["pet_auto"] = raw.get("pet_auto") is True
     more["seeds"] = _clean_seeds(raw.get("seeds"))
+    more["paper_sub"] = clean_sub(raw.get("paper_sub"))      # 1.25.1: gói báo
     zones = raw.get("zones") if isinstance(raw.get("zones"), list) else []
     seen: set[str] = set()
     for z in zones:
@@ -620,6 +694,7 @@ UI_GLOBAL: dict[str, tuple[str, ...]] = {
     "theme": ("garden", "paper"),                # màu bảng ôn: vàng / trắng giấy (1.23: bỏ "night" — Đêm vườn)
     "scene": ("normal", "large"),                # 1.23: cỡ cảnh trên màn chính: Vừa / Lớn
     "start": ("last", "yard"),                   # 1.23: mở vườn: cảnh đang chọn / luôn về Sân vườn
+    "deco": ("on", "off"),                       # 1.25: dây trang trí mùa (dải trên cùng, sân, trong nhà): Hiện / Ẩn
 }
 UI_PRESETS: dict[str, dict[str, Any]] = {
     "full": {},                                  # như cũ: mọi thứ chuyển động
@@ -656,7 +731,10 @@ def clean_ui(raw: Any) -> dict[str, Any]:
     return out
 
 
-def ui_preset(name: str) -> dict[str, Any]:
+UI_KEEP_ON_PRESET = ("scene", "start", "deco")    # 1.25: nhóm "Màn chính" không thuộc kiểu có sẵn → bấm kiểu không đổi
+
+
+def ui_preset(name: str, current: Any = None) -> dict[str, Any]:
     if name not in UI_PRESETS:
         raise MoreError("Không có kiểu giao diện này.")
     out = ui_default()
@@ -665,4 +743,8 @@ def ui_preset(name: str) -> dict[str, Any]:
             out[k].update(v)
         else:
             out[k] = v
+    if current is not None:
+        cur = clean_ui(current)
+        for k in UI_KEEP_ON_PRESET:
+            out[k] = cur[k]
     return out

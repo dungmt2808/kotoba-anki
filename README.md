@@ -34,15 +34,17 @@ Trời còn đổi theo giờ thật (sáng, hoàng hôn, đêm có đèn lồng
 
 ### Nhà & Cửa hàng
 
-Xây nhà từng bước, từ bãi đất trống tới gác mái có đèn lồng, rồi đổi kiểu nhà (nhà mái tranh minka, nhà trà chashitsu, lâu đài mini). Trang trí sân, bày nội thất, nuôi thú, mở thêm 6 vùng mới như bãi biển hay đền thần. Thỉnh thoảng có **khách ghé vườn**, như chim sẻ, cáo hay hươu Nara, tuỳ đồ bạn đặt và tuỳ mùa. Khách đã gặp được ghi vào Album khách.
+Xây nhà từng bước, từ bãi đất trống tới gác mái có đèn lồng, rồi đổi kiểu nhà (nhà mái tranh minka, nhà trà chashitsu, lâu đài mini). Xây xong thì **mở rộng nhà** một lần (2.000 xu) được cả **Bếp** và **Phòng ngủ** hai bên phòng chính, với 12 món đồ riêng như tủ lạnh, nồi cơm, giường, đèn ngủ, dây đèn sao. Ba gian theo kiểu nhà đang dùng (nhà gỗ: giấy dán tường hoa, sàn gỗ; minka: tường đất, chiếu tatami, cửa lùa vẽ sóng; nhà trà: cửa sổ tròn, hốc tokonoma; lâu đài: vách lá vàng vẽ tùng, cửa sổ hình chuông), đổi kiểu nhà là đổi cả ba gian. Ở màn chính bấm ◂ ▸ sang cảnh **Trong nhà** để thấy cả ngôi nhà đứng giữa vườn, mèo đi lại khắp nhà. Trang trí sân, bày nội thất, nuôi thú, mở thêm 6 vùng mới như bãi biển hay đền thần. Thỉnh thoảng có **khách ghé vườn**, như chim sẻ, cáo hay hươu Nara, tuỳ đồ bạn đặt và tuỳ mùa. Khách đã gặp được ghi vào Album khách.
 
 | Sân vườn | Trong nhà |
 |---|---|
 | ![Nhà & Cửa hàng, tab Trang trí sân](docs/anh/03_nha_trang_tri.png) | ![Trong nhà: kotatsu, bể cá, kệ sách, đèn andon, mèo ngủ](docs/anh/16_trong_nha.png) |
 
-### Ngắm cảnh cả cửa sổ
+![Nhà 3 gian ở màn chính: Bếp, phòng chính, Phòng ngủ, hai bên là vườn](docs/anh/18_nha_3_gian.png)
 
-Bấm vào ngôi nhà, nút **Ngắm** hoặc phím **V**: cả cửa sổ chỉ còn một cảnh, phóng to nét căng (pixel không nhoè). Đổi cảnh bằng ◂ ▸, thú nuôi vẫn đi lại, khách vẫn ghé, trời theo giờ thật. Bấm **Sắp xếp đồ** để di chuyển, cất hay bày đồ từ kho ngay trên khung lớn. Bật thêm F11 là Anki thành một khung ảnh động. Muốn dải cảnh ở màn chính to hơn: ⚙ → Giao diện → Màn chính → Cỡ cảnh **Lớn**.
+![Ba gian theo 4 kiểu nhà: nhà gỗ mái đỏ, minka mái tranh, nhà trà, lâu đài mini](docs/anh/18b_nha_4_kieu.png)
+
+Muốn dải cảnh ở màn chính to hơn: ⚙ → Giao diện → Màn chính → Cỡ cảnh **Lớn**. Không thích dây trang trí theo mùa (dải trên cùng cửa sổ, dây ngoài sân, trong nhà): ⚙ → Giao diện → Màn chính → Dây trang trí **Ẩn**.
 
 ### 6 vùng mới và vùng tự tạo
 
@@ -90,7 +92,13 @@ Hết tháng, nhật ký tự đóng thành **một cuốn** trên kệ sách: �
 
 ### Báo mỗi sáng và chép chính tả
 
-Mỗi sáng có một số báo tiếng Nhật 畑新聞 (hoặc báo tiếng Anh *The Garden Gazette*) viết bằng từ trong các deck bạn chọn. Báo có furigana, bấm vào từ để tra nghĩa, có giọng đọc, câu hỏi đọc hiểu và **truyện dài kỳ** (Gemini lập mạch truyện, viết, rồi một "biên tập viên" chấm điểm và bắt viết lại nếu nhạt). Mỗi đoạn có **bản dịch tiếng Việt ẩn sẵn**: kẹt câu nào thì bấm **Dịch** để kiểm tra mình hiểu đúng chưa. Dưới truyện có nút **Kỳ này hay / Nhạt** để Gemini viết kỳ sau hợp ý bạn. Báo do **Gemini** viết bằng khoá miễn phí của chính bạn (xem [cách lấy khoá](#báo-mỗi-sáng-bằng-gemini-miễn-phí)).
+Mỗi sáng có một số báo tiếng Nhật 畑新聞 (hoặc báo tiếng Anh *The Garden Gazette*) viết bằng từ trong các deck bạn chọn — chưa có deck thì viết theo trình độ. **Một làng, một truyện**: mỗi ngày làng có một kỳ truyện và vài tin làng chung; báo tiếng Nhật và báo tiếng Anh kể lại cùng câu chuyện theo trình độ của bạn, thời tiết trong báo đúng như trời trong vườn hôm đó. Báo có furigana, bấm vào từ để tra nghĩa, có giọng đọc, câu hỏi đọc hiểu và **truyện dài kỳ** (Gemini lập mạch truyện, viết, rồi một "biên tập viên" chấm điểm và bắt viết lại nếu nhạt). Mỗi đoạn có **bản dịch tiếng Việt ẩn sẵn**: kẹt câu nào thì bấm **Dịch** để kiểm tra mình hiểu đúng chưa. Dưới truyện có nút **Kỳ này hay / Nhạt** để Gemini viết kỳ sau hợp ý bạn; **chủ đề truyện** chọn được nhiều (ấm áp, hài, dễ thương, kinh dị nhẹ, bí ẩn, phiêu lưu, lãng mạn nhẹ, kỳ ảo). Báo do **Gemini** viết bằng khoá miễn phí của chính bạn (xem [cách lấy khoá](#báo-mỗi-sáng-bằng-gemini-miễn-phí)); mỗi số mới cần **gói báo mua bằng xu** (1 tuần 100 xu, 1 tháng 300 xu, 7 ngày đầu miễn phí).
+
+**Báo tiếng Việt** *Báo Làng Kotoba* (cho người không học tiếng Nhật / tiếng Anh, chọn "Chỉ tiếng Việt"): cùng truyện dài kỳ và tin làng ấy bằng tiếng Việt, có câu hỏi đọc hiểu để nhận xu; không có giọng đọc, chép chính tả.
+
+| Báo tiếng Việt | Báo muốn nhận, gói báo |
+|---|---|
+| ![Báo Làng Kotoba: truyện dài kỳ + tin làng](docs/anh/19_bao_tieng_viet.png) | ![Tab Nguồn báo: Báo muốn nhận "Chỉ tiếng Việt", Gói báo](docs/anh/19b_goi_bao.png) |
 
 **Chép chính tả** chạy với mọi deck: nghe câu ví dụ (hoặc từ) rồi gõ lại. Câu nào không có audio thì dùng giọng Gemini hoặc giọng tiếng Nhật của máy.
 
@@ -141,7 +149,8 @@ Phím tắt trong vườn: **R** Tưới ngay · **N** Nhà · **T** Trò chơi 
 1. Mở báo (phím **B**) → tab **Nguồn báo** → **Mở trang lấy khoá** (aistudio.google.com/apikey).
 2. Đăng nhập Google → **Create API key** → **Copy**.
 3. Dán khoá vào ô → **Thử khoá**.
-4. Chọn báo muốn nhận (tiếng Nhật, tiếng Anh), trình độ và deck lấy từ → **Bắt đầu viết**. Số đầu tiên về sau 1–2 phút. Từ hôm sau, Gemini tự viết khi bạn mở Anki.
+4. Chọn báo muốn nhận (tiếng Nhật và / hoặc tiếng Anh, hoặc chỉ tiếng Việt), trình độ và deck lấy từ (hoặc **Không dùng deck**) → **Bắt đầu viết**. Số đầu tiên về sau 1–2 phút. Từ hôm sau, Gemini tự viết khi bạn mở Anki.
+5. **Gói báo**: số đầu tiên được tặng 7 ngày. Sau đó mua ở thẻ **Gói báo** (1 tuần 100 xu, 1 tháng 300 xu); **Tự gia hạn** (bật sẵn) tự mua tiếp khi hết hạn nếu đủ xu. Hết gói thì không có số mới, số cũ vẫn đọc được.
 
 **Riêng tư:**
 
@@ -177,7 +186,10 @@ Không. Ôn trong vườn là lượt ôn Anki bình thường. Xu, nhà, trò c
 Mọi thứ lưu trong collection nên đồng bộ qua AnkiWeb sang máy khác (máy đó cũng cần cài add-on). Gỡ add-on không ảnh hưởng tới thẻ hay lịch ôn.
 
 **Deck của tôi không phải tiếng Nhật?**
-Deck **tiếng Anh** có đủ vườn, trò chơi, chép chính tả và báo tiếng Anh. Ngôn ngữ khác vẫn có vườn và các trò chơi chung.
+Deck **tiếng Anh** có đủ vườn, trò chơi, chép chính tả và báo tiếng Anh. Ngôn ngữ khác và deck kiến thức (lịch sử, y khoa…) có vườn, các trò chơi chung (cả Đuổi quạ: gõ đúng từ / câu trả lời ngắn) và **báo tiếng Việt** (truyện dài kỳ + tin làng).
+
+**Lời nhắc (prompt) gửi Gemini là gì?**
+Xem nguyên văn ở [docs/LOI_NHAC_GEMINI.md](docs/LOI_NHAC_GEMINI.md).
 
 **Giao diện có tiếng Anh không?**
 Hiện chỉ có tiếng Việt (kèm chữ Nhật trang trí).

@@ -97,7 +97,7 @@ GAME_MODES: dict[str, dict[str, list[str]]] = {
                "kanji": ["hanviet-word", "meaning-word", "word-hanviet", "word-reading", "mix"],
                "grammar": ["mix", "meaning-word", "word-meaning"],
                "en": ["mix", "meaning-word", "word-meaning", "reading-word"], "xx": ["mix", "meaning-word", "word-meaning"]},
-    "crow": {"vocab": ["vi", "jp"], "kanji": ["word", "hanviet"], "grammar": [], "en": ["spell"], "xx": []},
+    "crow": {"vocab": ["vi", "jp"], "kanji": ["word", "hanviet"], "grammar": [], "en": ["spell"], "xx": ["spell", "answer"]},
     "memory": {"vocab": ["mix", "meaning", "reading"], "kanji": ["hanviet", "meaning", "reading", "mix"],
                "grammar": ["meaning"], "en": ["mix", "meaning", "reading"], "xx": ["mix", "meaning", "reading"]},
     "cloze": {"vocab": ["word"], "kanji": ["word"], "grammar": ["word"], "en": ["word"], "xx": ["word"]},

@@ -295,6 +295,14 @@ st.save(d); kb._dialog.refresh(); result = q["list"]`);
     for (const it of C.items.filter((i) => i.scene === 'yard' && !i.season && !i.rare && !i.custom)) { await openHome('yard'); await buyItem(it); }
     await openHome('yard', 'yard'); await shot('03_tab_trang_tri_san', 'mua hết, “Đã có”');
   });
+  await phase('Mở rộng nhà (1.25: một lần mở cả Bếp lẫn Phòng ngủ)', async () => {
+    await openHome('build');
+    const c0 = await coins(), price = C.nha_price || 2000;
+    const r = await js('const c = document.querySelector(".kb-h-nha"); if (!c) return null; const b = c.querySelector(".kb-h-buy"); if (!b || b.disabled) return b ? "khoá" : null; b.click(); return b.textContent;');
+    const got = await waitPy('h = st.load()["home"]; result = (h.get("rooms") or []) == ["kitchen", "bedroom"]');
+    ok(got && c0 - (await coins()) === price, 'Mở rộng nhà: Bếp + Phòng ngủ ' + price + ' xu' + (r === 'Mở rộng' ? '' : ' — ' + r));
+    await openHome('build'); await shot('03b_mo_rong_nha', 'hai gian đã mở');
+  });
   await phase('Nội thất (mọi món, đặt trong phòng)', async () => {
     await openHome('room', 'room');
     for (const it of C.items.filter((i) => i.scene === 'room' && !i.season && !i.rare && !i.custom)) { await openHome('room'); await buyItem(it); }

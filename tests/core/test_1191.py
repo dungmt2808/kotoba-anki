@@ -163,7 +163,7 @@ ok(fr["fresh"] and len(fr["kho"]) == 40 and sum(1 for it in fr["kho"] if it["due
    "5 từ đã học + 35 thẻ mới của chính deck đó (%d)" % len(fr["kho"]))
 
 print("== khoá collection")
-ok(words.load_src(col) == {"ja": {"decks": []}, "en": {"decks": []}}, "chưa chọn → rỗng")
+ok({k: v["decks"] for k, v in words.load_src(col).items()} == {"ja": [], "en": [], "vi": []}, "chưa chọn → rỗng")
 col.set_config(words.SRC_KEY, {"ja": {"decks": [d_n5, 999999, d_n5, "x", d_n4], "ghi_chu": "giữ"},
                                "ko": {"decks": [d_ko]}, "_sau": 1})
 ok(words.load_src(col)["ja"]["decks"] == [d_n5, d_n4], "bỏ id deck không còn, trùng, sai kiểu")

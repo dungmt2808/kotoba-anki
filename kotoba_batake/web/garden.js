@@ -358,7 +358,6 @@ var Garden = (function () {
 
   // Phím tắt ở màn chính: R ôn, T trò chơi, N nhà, B báo, ← → đổi cảnh ngoài trời, Esc đóng thẻ thông tin.
   function mainKey(e) {
-    if (typeof GardenHome !== "undefined" && GardenHome.viewing && GardenHome.viewing()) { return; }   // 1.23: Ngắm cảnh tự xử lý phím
     if (!$("kb-panel").hidden) { return; }
     if (typeof GardenGames !== "undefined" && GardenGames.isOpen()) { return; }
     if (typeof GardenHome !== "undefined" && GardenHome.isOpen()) { return; }
@@ -383,7 +382,6 @@ var Garden = (function () {
     else if (k === "n") { e.preventDefault(); $("kb-house").click(); }
     else if (k === "b") { e.preventDefault(); openPaper(true); }
     else if (k === "l") { e.preventDefault(); openCal({}); }
-    else if (k === "v" && typeof GardenHome !== "undefined" && GardenHome.view) { e.preventDefault(); GardenHome.view(); }   // 1.23: Ngắm cảnh
     else if (k === "/") { e.preventDefault(); openDeckFind(); }
     else if ((k === "arrowleft" || k === "arrowright") && typeof GardenHome !== "undefined" && GardenHome.cycleMain) {
       if (GardenHome.cycleMain(k === "arrowleft" ? -1 : 1)) { e.preventDefault(); }
@@ -397,16 +395,20 @@ var Garden = (function () {
     var b = $("kb-paper-btn"), s = data && data.paper;
     if (!b) { return; }
     if (!s) { b.hidden = true; return; }
+    // 1.25.1: không có gì để chép (chỉ báo tiếng Việt, deck không có câu / audio) → không ghi "Chép 0/5"
+    var canDict = s.dict_ok !== false;
+    if (!canDict && !s.enabled && !s.ai_busy) { b.hidden = true; return; }
     b.hidden = false;
-    var dict = "Chép " + s.dict_done + "/" + s.dict_total;
+    var dict = canDict ? "Chép " + s.dict_done + "/" + s.dict_total : "";
+    var sep = dict ? " · " : "";
     if (s.ai_busy && !(s.enabled && s.unread > 0)) {          // 1.12: Gemini đang viết số hôm nay
-      b.textContent = "Báo: Gemini đang viết… · " + dict + " ▸";
+      b.textContent = "Báo: Gemini đang viết…" + sep + dict + " ▸";
       b.className = "kb-quest-btn kb-paper-btn kb-paper-busy";
     } else if (s.enabled && s.unread > 0) {
-      b.textContent = "Báo mới " + s.unread + " · " + dict + " ▸";
+      b.textContent = "Báo mới " + s.unread + sep + dict + " ▸";
       b.className = "kb-quest-btn kb-paper-btn kb-paper-new";
     } else {
-      b.textContent = (s.enabled ? "Báo · " : "") + dict + " ▸";
+      b.textContent = (s.enabled ? "Báo" + sep : "") + dict + " ▸";
       b.className = "kb-quest-btn kb-paper-btn" + (s.dict_total && s.dict_done >= s.dict_total ? " kb-quest-all" : "");
     }
   }

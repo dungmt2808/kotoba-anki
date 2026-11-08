@@ -33,8 +33,9 @@ except ImportError:   # test: thư mục add-on nằm trong sys.path, hoặc n�
 
 fields = core.fields
 
-SRC_KEY = "kotoba_batake_paper_src"   # {"ja": {"decks": [id…]}, "en": {"decks": […]}} — bản ≤ 1.19.0 không đụng
-LANGS = ("ja", "en")
+SRC_KEY = "kotoba_batake_paper_src"   # {"ja": {"decks": [id…], "mode": "deck"|"level"}, "en": …, "vi": …}
+LANGS = ("ja", "en", "vi")             # 1.25.1: "vi" = báo tiếng Việt (thẻ bất kỳ, không theo ngôn ngữ của loại note)
+MODES = ("deck", "level")              # 1.25.1: "level" = Không dùng deck (Gemini viết theo trình độ)
 MAX_DECKS = 5
 LIMIT = 100            # số note gửi Gemini mỗi số báo (tổng, không phải mỗi deck)
 DUE_SHARE = 0.7        # 70% chưa thuộc / 30% đã thuộc
@@ -70,7 +71,8 @@ def clean_src(raw: Any, exists: Callable[[int], bool] | None = None) -> dict[str
     out: dict[str, dict[str, Any]] = {}
     for lang in LANGS:
         part = raw.get(lang) if isinstance(raw.get(lang), dict) else {}
-        out[lang] = {"decks": clean_decks(part.get("decks"), exists)}
+        out[lang] = {"decks": clean_decks(part.get("decks"), exists),
+                     "mode": part.get("mode") if part.get("mode") in MODES else "deck"}
     return out
 
 
@@ -94,8 +96,9 @@ def load_src(col: Any) -> dict[str, dict[str, Any]]:
     return clean_src(raw, _deck_exists(col))
 
 
-def save_src(col: Any, lang: str, decks: Any) -> list[int]:
-    """Ghi deck đã chọn của một ngôn ngữ; giữ nguyên phần còn lại của khoá (kể cả khoá lạ của bản sau)."""
+def save_src(col: Any, lang: str, decks: Any, mode: str | None = None) -> list[int]:
+    """Ghi deck đã chọn của một ngôn ngữ; giữ nguyên phần còn lại của khoá (kể cả khoá lạ của bản sau).
+    1.25.1: `mode` "level" = Không dùng deck; chọn deck / Mọi deck thì về "deck"."""
     if lang not in LANGS:
         raise ValueError("ngôn ngữ không hỗ trợ")
     try:
@@ -106,6 +109,7 @@ def save_src(col: Any, lang: str, decks: Any) -> list[int]:
     keep = clean_decks(decks, _deck_exists(col))
     part = dict(raw.get(lang)) if isinstance(raw.get(lang), dict) else {}
     part["decks"] = keep
+    part["mode"] = mode if mode in MODES else "deck"
     raw[lang] = part
     col.set_config(SRC_KEY, raw)
     return keep
@@ -208,13 +212,23 @@ def _deck_rows(col: Any) -> list[dict[str, Any]]:
     return out
 
 
+def lang_mids(infos: dict[str, dict[str, Any]], lang: str, chosen: bool = False) -> list[str]:
+    """Loại note dùng cho báo `lang`. 1.25.1 báo tiếng Việt: "Mọi deck" = loại note không phải tiếng Nhật / tiếng Anh
+    (deck kiến thức, tiếng Hàn…); "Chọn deck" = mọi loại note trong deck đã chọn (vd. thuật ngữ y khoa tiếng Anh)."""
+    if lang == "vi":
+        return [m for m, i in infos.items() if chosen or i["lang"] not in ("ja", "en")]
+    return [m for m, i in infos.items() if i["lang"] == lang]
+
+
 def lang_decks(col: Any, cfg: dict[str, Any], infos: dict[str, dict[str, Any]] | None = None) -> dict[str, list[dict[str, Any]]]:
-    """{"ja": [{id, name, notes}], "en": […]}: deck (kể cả deck con) có note của ngôn ngữ đó, kèm số note."""
+    """{"ja": [{id, name, notes}], "en": […], "vi": […]}: deck (kể cả deck con) có note của ngôn ngữ đó, kèm số note.
+    1.25.1: "vi" liệt kê mọi deck có note (báo tiếng Việt chọn được deck bất kỳ); "vi_other" = số note không phải
+    tiếng Nhật / tiếng Anh của deck đó."""
     infos = infos if infos is not None else model_infos(col, cfg)
     out: dict[str, list[dict[str, Any]]] = {lang: [] for lang in LANGS}
     decks = _deck_rows(col)
     for lang in LANGS:
-        mids = [m for m, i in infos.items() if i["lang"] == lang]
+        mids = lang_mids(infos, lang, chosen=True)
         home: dict[int, set[int]] = {}
         for _cid, nid, did, _t, queue, _mid in _cards(col, mids):
             if queue != core.QUEUE_SUSPENDED:
@@ -269,10 +283,10 @@ def pick(col: Any, cfg: dict[str, Any], lang: str, deck_ids: list[int] | None, s
     Mỗi mục: {nid, word, reading, meaning, kind, due, learned}."""
     cfg = core.merged_config(cfg)
     infos = infos if infos is not None else model_infos(col, cfg)
-    mids = [m for m, i in infos.items() if i["lang"] == lang]
     ok = eligible or (lambda it: True)
     exists = _deck_exists(col)
     chosen = [d for d in (deck_ids or []) if exists(d)][:MAX_DECKS]
+    mids = lang_mids(infos, lang, bool(chosen))
     owner: dict[int, int] = {}            # deck (kể cả deck con) → deck đã chọn chứa nó
     for d in chosen:
         try:
@@ -354,7 +368,7 @@ def pick(col: Any, cfg: dict[str, Any], lang: str, deck_ids: list[int] | None, s
             details(chunk)
             for nid in chunk:
                 it = cache.get(nid)
-                if it and item_ok(it) and ok(it):
+                if it and (item_ok(it) or (lang == "vi" and it["kind"] == "other")) and ok(it):
                     out.append(it)
                     if len(out) >= n:
                         break

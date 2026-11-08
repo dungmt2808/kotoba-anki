@@ -50,7 +50,11 @@ var GardenPets = (function () {
   function petsOf(data) { return (data && data.wallet && data.wallet.more_view && data.wallet.more_view.pets) || []; }
   // vùng chân thú đứng được (toạ độ nghệ thuật của cảnh)
   // ngoài trời: bên phải nhà / công trình (cột 0–3 là nhà), trong nhà: cả sàn
-  function area(scene) { return scene === "room" ? { x0: 6, x1: 146, y0: 50, y1: 86 } : { x0: 72, x1: 246, y0: 40, y1: 74 }; }
+  // 1.24: "house" = cả nhà 3 gian ở màn chính (Bếp 0–144 · cột · phòng chính 148–308 · cột · Phòng ngủ 312–456)
+  function area(scene) {
+    if (scene === "house") { return { x0: 8, x1: 448, y0: 50, y1: 86 }; }
+    return scene === "room" ? { x0: 6, x1: 146, y0: 50, y1: 86 } : { x0: 72, x1: 246, y0: 40, y1: 74 };
+  }
   function rnd(a, b) { return a + Math.random() * (b - a); }
 
   function actor(scene, p) {
@@ -66,7 +70,7 @@ var GardenPets = (function () {
 
   function choose(a, p, now, st, scene) {
     const r = area(scene);
-    const night = st && st.tod === "night", wet = st && (st.rain || st.snow) && scene !== "room";
+    const night = st && st.tod === "night", wet = st && (st.rain || st.snow) && scene !== "room" && scene !== "house";
     if (night && p.id !== "neko") { a.act = "sleep"; a.until = now + 8000; return; }
     if (night && Math.random() < 0.7) { a.act = "sleep"; a.until = now + 9000; return; }
     if (p.state === "hungry") {
@@ -143,7 +147,8 @@ var GardenPets = (function () {
 
   // các thú đang ở cảnh này (để home.js xếp lớp với đồ vật theo chân đứng)
   function list(data, scene) {
-    return petsOf(data).filter((p) => p.scene === scene && p.state !== "away" && SPR[p.id]);
+    const sc = scene === "house" ? "room" : scene;      // 1.24: thú trong nhà đi khắp ba gian
+    return petsOf(data).filter((p) => p.scene === sc && p.state !== "away" && SPR[p.id]);
   }
   function place(data, scene, now, st) {
     const out = [];

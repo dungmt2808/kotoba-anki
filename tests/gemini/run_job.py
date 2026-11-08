@@ -3,6 +3,8 @@
 Chạy:  GEMINI_API_KEY=... python run_job.py ADDON OUT_DIR [--date 2026-11-03] [--scope PHAM_VI.json | --deck-n5]
                                             [--audio chinh_ta|ca_bai|tat] [--model TÊN] [--skip-test]
        1.19 báo tiếng Anh:  ... run_job.py ADDON OUT_DIR --lang en [--level A2] [--en-deck fixtures/en_deck_a2.json]
+       1.25.1 báo tiếng Việt: ... --lang vi [--vi-deck fixtures/vi_deck.json]; không dùng deck: --no-deck (ja / en / vi);
+              chủ đề truyện: --tones kinh_di,hai
 Kết quả: OUT_DIR/bao_gemini/ (tiếng Anh: OUT_DIR/bao_gemini_en/, cùng cấu trúc user_files/ của add-on) + nhật ký sửa lỗi."""
 import argparse, datetime, json, os, sys, time
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -14,7 +16,11 @@ ap.add_argument("--date", default=datetime.date.today().isoformat())
 ap.add_argument("--scope", default=os.path.join(_setup.HERE, "..", "..", "kotoba_daily", "pham_vi.json"))
 ap.add_argument("--deck-n5", action="store_true", help="giả lập người học N5 chỉ có deck (400 từ của giáo trình N5)")
 ap.add_argument("--audio", default="chinh_ta"); ap.add_argument("--model", default=""); ap.add_argument("--skip-test", action="store_true")
-ap.add_argument("--lang", default="ja", choices=["ja", "en"]); ap.add_argument("--level", default="A2")
+ap.add_argument("--lang", default="ja", choices=["ja", "en", "vi"]); ap.add_argument("--level", default="A2")
+ap.add_argument("--vi-deck", default=os.path.join(_setup.HERE, "..", "fixtures", "vi_deck.json"))
+ap.add_argument("--no-deck", action="store_true", help="1.25.1: Không dùng deck — Gemini viết theo trình độ")
+ap.add_argument("--tones", default="am", help="1.25.1: chủ đề truyện, vd. kinh_di,hai")
+ap.add_argument("--story", default="hay")
 ap.add_argument("--en-deck", default=os.path.join(_setup.HERE, "..", "fixtures", "en_deck_a2.json"))
 ap.add_argument("--voice", default="Kore")
 ap.add_argument("--pick", action="store_true", help="1.19.1: kho 100 từ (70 phải ôn / 30 đã thuộc) như words_core.pick")
@@ -39,8 +45,20 @@ def logged(self, method, path, body=None, timeout=ai.TEXT_TIMEOUT, model=""):
 
 ai.Gemini._request = logged
 client = ai.Gemini(_setup.key())
-raw = json.load(open(a.scope, encoding="utf-8")) if a.lang == "ja" else None
-if a.lang == "en":                          # 1.19: deck tiếng Anh mẫu → cây như build_garden trả về
+raw = json.load(open(a.scope, encoding="utf-8")) if a.lang == "ja" and not a.no_deck else None
+if a.no_deck:                               # 1.25.1: không dùng deck
+    import ai_en, ai_vi
+    empty = {"kho": [], "all": [], "grammar": [], "decks": []}
+    scope = (ai_en.scope_from_pick(empty, a.level) if a.lang == "en" else ai_vi.scope_from_pick(empty) if a.lang == "vi"
+             else ai.scope_from_pick(empty, a.level if a.level in ai.LEVELS else "N4"))
+    scope["khong_deck"] = True
+elif a.lang == "vi":                        # 1.25.1: thẻ kiến thức mẫu → kho như words_core.pick
+    import ai_vi
+    the = json.load(open(a.vi_deck, encoding="utf-8"))["the"]
+    pk = {"kho": [{"nid": i, "word": t[0], "meaning": t[1], "kind": "vocab", "due": bool(t[3]), "learned": True}
+                  for i, t in enumerate(the)], "decks": sorted({t[2] for t in the}), "n_learned": len(the)}
+    scope = ai_vi.scope_from_pick(pk)
+elif a.lang == "en":                          # 1.19: deck tiếng Anh mẫu → cây như build_garden trả về
     import ai_en
     rows = json.load(open(a.en_deck, encoding="utf-8"))["tu_vung"]
     plants = [{"nid": i, "word": r[0], "reading": r[1], "meaning": r[2], "kind": "vocab", "lang": "en",
@@ -53,7 +71,7 @@ elif a.deck_n5:
     scope = ai.scope_from_plants(plants, "N5")
 else:
     scope = ai.scope_from_pham_vi(raw)
-if a.pick:                                  # 1.19.1: lời nhắc chỉ gửi 100 từ, kiểm tra dùng mọi từ đã học
+if a.pick and a.lang != "vi" and not a.no_deck:     # 1.19.1: lời nhắc chỉ gửi 100 từ, kiểm tra dùng mọi từ đã học
     import random
     rows = [r for r in scope["tu_vung"] if r[0]]
     items = [{"nid": i, "word": r[0], "reading": r[1], "meaning": r[2], "kind": "vocab", "learned": True, "due": False}
@@ -72,11 +90,14 @@ t0 = time.time()
 prefer = ""
 if not a.skip_test:
     r = ai.test_key(client); prefer = r["model"]; print("THỬ KHOÁ:", r["model"], "| model chữ:", r["models"][:4], "| TTS:", r["tts"])
-base = os.path.join(a.out, "bao_gemini_en" if a.lang == "en" else "bao_gemini")
-res = ai.Job(client, base, a.date, scope, {"max_new": 3, "short": False, "model": a.model, "prefer": prefer},
+base = os.path.join(a.out, {"en": "bao_gemini_en", "vi": "bao_gemini_vi"}.get(a.lang, "bao_gemini"))
+tones = [t for t in a.tones.split(",") if t]
+res = ai.Job(client, base, a.date, scope, {"max_new": ai.NO_DECK_NEW if a.no_deck and a.lang != "vi" else 3, "short": False,
+                                           "model": a.model, "prefer": prefer, "story": a.story, "tones": tones,
+                                           "tone": tones[0] if tones else "am"},
              lambda m: print("  >", m, flush=True)).run()
 print("KẾT QUẢ:", json.dumps({k: v for k, v in res.items() if k != "exhausted"}, ensure_ascii=False))
-if res.get("ok") and a.audio != "tat":
+if res.get("ok") and a.audio != "tat" and a.lang != "vi":
     print("GIỌNG ĐỌC:", ai.make_audio(client, base, a.date, a.audio, a.voice, "", lambda m: print("  >", m, flush=True)))
 print("HẾT HẠN MỨC:", client.exhausted_state())
 print("TỔNG: %.1f giây, %d lượt gọi" % (time.time() - t0, client.calls))

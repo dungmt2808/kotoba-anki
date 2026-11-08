@@ -122,8 +122,32 @@ Sau khi trả lời có hiện cách đọc, Hán Việt, nghĩa (và cách dùn
 - **Hiệu ứng thành tích** (`web/joy.js`, Python tính `data.joy` = `more_core.joy_view`): **xong hết thẻ hôm nay** trong deck đang xem (`deck_due_tree` = 0 và hôm nay đã ôn ≥ 1 lượt) → cầu vồng trên ruộng và trên trời sân, giọt sương lấp lánh; **đạt mục tiêu ngày**; **cả vườn xanh tốt / ra hoa / trĩu quả** (≥ 5 cây, không cây nào héo, mọi cây từ Cây non / Ra hoa / Ra quả) → lá lấp lánh / cánh hoa anh đào bay / đốm sáng vàng bay lên; **mốc chuỗi ngày** (7, 14, 21, 30, 50, 75, 100, 150, 200, 250, 300, 365, 500, 730, 1000) → pháo hoa trên trời sân; **xong 3 nhiệm vụ** → đèn trời bay lên. Huy hiệu cạnh chú thích ruộng; dải chúc mừng + linh vật chúc mỗi thành tích **một lần mỗi ngày** (nhớ ở `localStorage kb-joy-<ngày>-<loại>`), đang ôn thẻ thì để dành tới khi đóng bảng ôn.
 - **Lưu trữ**: khoá collection mới `kotoba_batake_more` (`more_core.MORE_KEY`) — mục 4. Bản ≤ 1.13 ở máy khác không đọc khoá này nên không xoá được gì.
 
-### Mới ở 1.23: Ngắm cảnh, truyện Gemini quy trình mới, bản dịch, Kệ báo gộp, sửa lỗi
-- **Ngắm cảnh** (phím **V**, nút **Ngắm** trên dải cảnh và trong Nhà, bấm vào ngôi nhà ở màn chính): cả cửa sổ chỉ một cảnh, phóng nguyên lần lớn nhất (1920 × 1080: sân ×7, trong nhà ×11), trời / đất kéo dài kín khung; ◂ ▸ / ← → đổi cảnh (Sân vườn → Trong nhà → vùng → vùng tự tạo); Chụp ảnh; **Sắp xếp đồ** ngay trên khung lớn (Di chuyển / Cất vào kho / Đặt từ kho, luật như bảng Nhà). ⚙ → Giao diện → **Màn chính**: Cỡ cảnh Vừa / Lớn, Cảnh hiện (cảnh đang chọn / luôn về Sân vườn). Mã: `home.js` (`viewOpen`, `drawView`, `viewClick`…), `#kb-view` trong `body.html`.
+### Mới ở 1.25.2: "Một làng, một truyện"
+- Mỗi ngày Gemini viết **một bản gốc tiếng Việt** (kỳ truyện + 2–3 tin làng + thông báo / cột) — `ai_core.ensure_master`, `story_core` (`MASTER_SCHEMA`), thư mục `user_files/bao_chung/` (bản gốc, bộ nhớ truyện, nhận xét, tin các ngày). Báo tiếng Nhật / tiếng Anh **kể lại** theo trình độ (`story_core.retell`), báo tiếng Việt in thẳng bản gốc (không còn lấy thẻ).
+- Thời tiết trong báo = trời của vườn (`story_core.weather_at`, cùng công thức `sky.js`); tin làng nối 3 số trước.
+- Báo muốn nhận: Nhật và / hoặc Anh, hoặc "Chỉ tiếng Việt".
+
+### Mới ở 1.25.1: cho người không học tiếng Nhật / tiếng Anh, gói báo, chủ đề truyện
+- **Báo tiếng Việt "Báo Làng Kotoba"** (`ai_vi.py`, `user_files/bao_gemini_vi/`, khoá `kotoba_batake_paper_vi`): không giọng đọc / chép chính tả / bản dịch / furigana. (1.25.1 đan nội dung thẻ vào báo; 1.25.2 bỏ — chỉ truyện + tin làng.)
+- **Không dùng deck** (tab Nguồn báo → Lấy từ / Lấy thẻ): Gemini viết theo trình độ, tự khai báo 8–12 từ mới (bảng tra của số). Deck đã chọn < 10 từ cũng viết theo trình độ.
+- **Gói báo**: 1 tuần 100 xu / 1 tháng 300 xu (thẻ Gói báo ở tab Nguồn báo), tặng 7 ngày cho số Gemini đầu tiên, **Tự gia hạn** khi đủ xu, tối đa 60 ngày phía trước; hết gói thì Gemini không viết số mới (số cũ vẫn đọc). Báo Claude Code không cần gói. Lưu `paper_sub` trong `kotoba_batake_more`.
+- **Chủ đề truyện chọn nhiều** (`gemini_story_tones`): thêm Dễ thương, Kinh dị nhẹ, Lãng mạn nhẹ, Kỳ ảo; mỗi đợt 6–8 kỳ một chủ đề, lần lượt.
+- **Đuổi quạ cho Ngôn ngữ khác**: Nghĩa → gõ từ / Từ → gõ nghĩa (chữ cần gõ ≤ 24 ký tự). Luyện viết chỉ hiện khi học tiếng Nhật / tiếng Anh; thẻ Hôm nay không ghi "Chép 0/5" khi không có gì để chép.
+- Lời nhắc gửi Gemini (nguyên văn): `docs/LOI_NHAC_GEMINI.md` trong repo.
+
+### Mới ở 1.25: nhà 3 gian làm lại
+- **Mở rộng nhà một lần**: 2.000 xu được cả Bếp lẫn Phòng ngủ (tab Xây nhà, một thẻ "Mở rộng nhà: Bếp + Phòng ngủ"; lệnh `home:nha:open`, `GardenState.open_rooms`). Chưa mở: hai gian bên tối như nhau, hai biển giống nhau. Dữ liệu 1.24 mới mở một gian → coi như mở cả hai, không hoàn xu.
+- **Ba gian theo kiểu nhà** (`web/nha_art.js` → `bg(…, style)`): mỗi kiểu nhà một bộ nền chung (tường có lớp, sàn có vân, cột) + mỗi gian bên một điểm nhấn; đổi kiểu nhà đổi cả ba gian. Chỉ phòng chính có cửa sổ (kính rèm hồng / nửa shoji / tròn song tre / hình chuông).
+- **Màn chính "Trong nhà"**: cả nhà đứng giữa dải, hai bên là vườn (trời theo giờ, cỏ theo mùa), mái theo kiểu nhà phía trên (`drawHouseScene`). Hình nền 1920 × 1080 của cảnh này có mái đầy đủ + vườn kín khung. Thẻ kiểu nhà ở tab Xây nhà có ảnh nhỏ ba gian.
+- ⚙ → Giao diện → **Màn chính** → **Dây trang trí: Hiện / Ẩn** (`ui.deco`): ẩn dải trên cùng cửa sổ, dây ngoài sân và trong nhà của giao diện mùa.
+
+### Mới ở 1.24: nhà 3 gian, bỏ Ngắm cảnh
+- **Nhà 3 gian**: xây xong nhà (bước 7) thì tab **Xây nhà** có "Mở rộng nhà: Bếp" / "Phòng ngủ", 2.000 xu mỗi gian, thứ tự nào cũng được. Gian bên 9 ô × 4 hàng, không cửa sổ; gian chưa mở tối lại có biển giá. 12 món mới (tab **Nội thất**, nhóm Bếp / Phòng ngủ, đặt được ở cả ba gian; hình ở `web/nha_art.js`). Màn chính: cảnh **Trong nhà** (cả nhà) ở ◂ ▸, bấm gian nào mở bảng Nhà ở gian đó. Ảnh chụp nguyên nhà. Thú nuôi trong nhà đi khắp ba gian.
+- **Lưu trữ**: khoá collection mới `kotoba_batake_nha` (`garden_core.NHA_KEY`: gian đã mở, đồ mới, đồ đặt ở gian bên). Bản ≤ 1.23 ở máy khác không đọc / ghi khoá này; đồ cũ đặt ở gian bên mà bản cũ đặt thêm chỗ khác (vượt số đã có) thì về kho, không mất.
+- **Bỏ Ngắm cảnh** của 1.23 (vùng dưới chớp xanh, không cần thiết). Bấm ngôi nhà ở màn chính mở Nhà & Cửa hàng như trước.
+
+### Mới ở 1.23: truyện Gemini quy trình mới, bản dịch, Kệ báo gộp, sửa lỗi
+- ⚙ → Giao diện → **Màn chính**: Cỡ cảnh Vừa / Lớn, Cảnh hiện (cảnh đang chọn / luôn về Sân vườn). (Ngắm cảnh cả cửa sổ có ở 1.23, bỏ ở 1.24 vì vùng dưới chớp xanh và không cần thiết.)
 - **Báo Gemini**: chờ "Bắt đầu viết" mỗi khi nguồn vừa thành Gemini (`paper_confirmed`, `ai_waiting` trong `__init__.py`), "Đổi khoá" không đổi nguồn; chỉ chọn deck (bỏ "Giáo trình"); **mỗi số mang bảng tra nghĩa** (`tra_tu` / `tra_mau` / `tra_sach`, số cũ tra trong deck: `words_core.lookup`, `paper_core.missing_words` / `add_lookup`); **Kệ báo gộp** số Claude Code + Gemini (mã `ngày@nguồn`, khoá `kotoba_batake_paper_nguon`).
 - **Truyện dài kỳ quy trình mới** (`story_core.py`): lập mạch đợt 6–8 kỳ → nhà văn (chữ trơn + bản dịch) → máy kiểm → biên tập chấm 7 tiêu chí → viết lại khi có tiêu chí dưới 4 → lượt viết số chép truyện + furigana. Truyện: Hay hơn / Tiết kiệm / Tắt, Giọng truyện 4 kiểu (tab Nguồn báo). Dưới truyện: **Kỳ này hay / Nhạt** + một dòng.
 - **Bản dịch tiếng Việt ẩn sẵn**: nút **Dịch** từng đoạn, **Hiện bản dịch** cả số (localStorage `kb-p-dich`), **Dịch số này** cho số cũ (`ai_core.translate_issue`).
@@ -656,6 +680,8 @@ rm -f kotoba_batake/user_files/state.json* kotoba_batake/user_files/craft_px.jso
 ---
 
 ## 11. Lịch sử phiên bản
+- **1.25.0**: người dùng xem 1.24 trên máy thật: "2000 mua một lần mở rộng 2 gian luôn … tớ không thích cái thừa 2 bên lắm (ruy băng nữa, có thể bật tắt không). đổi thiết kế, của 3 căn với phong cách tương tự nhau … đổi nhà cũng đổi giao diện 3 gian trong nhà luôn" → duyệt 3 lượt ảnh phác (bố cục A: nhà giữa vườn; nội thất mới cho 4 kiểu) rồi "chốt làm v1.25" → xem "Mới ở 1.25" ở mục 1.
+- **1.24.0**: nhà 3 gian (Bếp · phòng chính · Phòng ngủ, 2.000 xu mỗi gian), 12 món mới, cảnh "Trong nhà" ở màn chính, khoá `kotoba_batake_nha`; bỏ Ngắm cảnh → xem "Mới ở 1.24".
 - **1.23.0**: người dùng: "thực hiện v1.23 … giải nén addon ra, thành 1 folder trên git … phần tưới cây nhỏ lúc ôn thẻ góc trên bên trái vào buổi tối … nhạt hơn 1 xíu … tắt giao diện học buổi tối luôn … sửa một số lỗi được tìm ra trong nhánh addon-1.22.8" → xem "Mới ở 1.23" ở mục 1. Nhà 3 gian (Bếp · Phòng ngủ) để 1.24.
 - **1.22.8**: người dùng: "ẩn thẻ claude code trong web là hợp lý, nếu config bên ngoài có thì mới hiện, còn không thì thôi, nhưng vẫn hướng dẫn người dùng nếu thích … phần readme tớ muốn nó giới thiệu và có ảnh luôn, video càng tốt" → thẻ Claude Code ở tab Nguồn báo chỉ hiện khi đã đặt `bao_dir`; `bao_source: "claude"` không có `bao_dir` = `auto`; nút Dùng Gemini khi thư mục kotoba_daily mất; hướng dẫn nâng cao ở `config.md`; README của repo viết lại cho người dùng (ảnh chụp + video quay trong Anki thật với bộ thẻ mẫu), tài liệu phát triển chuyển sang `PHAT_TRIEN.md`. Test `anki/e2e_1228.js`.
 - **1.22.7**: người dùng: "addon này hiện tại tương thích cho các bản anki nào … tớ muốn public addon này ra" → test trong Anki thật từ 2.1.50 tới 26.9.4 (`tests/anki/run_versions.sh`): hỗ trợ **23.10 → 26.9.4** (`min_point_version` 231000, `max_point_version` 260904); sửa việc nền Gemini trên bản không có `uses_collection`, cây không héo trên 23.10 – 24.06 (phép tìm `prop:r` của Anki hỏng → tự tính R); 2.1.x cần trình lập lịch v3 + không có FSRS nên không khai báo (mục "Sửa ở 1.22.7").

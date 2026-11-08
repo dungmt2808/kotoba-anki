@@ -1,0 +1,55 @@
+{
+ "ngay": "2026-11-09",
+ "ky": 2,
+ "truyen": {
+  "tieu_de": "Lời kể lúc bình minh",
+  "doan": [
+   "\"Bà Hana ơi, tối qua guốc gỗ tự xoay hướng thật mà!\" Lin vừa ôm chặt cuốn sổ nhỏ vừa nói, mắt vẫn còn quầng thâm vì mất ngủ. Sáng sớm thu nắng tràn qua hiên nhà Kotobaya, nhưng lưng Lin vẫn thấy lạnh ngắt. Ông trưởng làng Soncho bước vào, thong thả đặt chiếc gậy gỗ xuống sàn rồi ngẩng đầu thở dài. \"Chuyện này... làm ta nhớ đến câu chuyện từ năm mươi năm trước. Đêm nào bên giếng cổ cũng có bóng thiếu nữ mặc áo trắng đi lại tìm chiếc trâm cài tóc rơi mất. Tiếng lách cách chính là tiếng guốc gỗ của cô ấy đấy!\"",
+   "Lin nổi hết da gà, vội lấy bút ra ghi chép nhưng tay run đến mức suýt rơi cả sổ. \"Để em ghi lại... ôi không, nghe đáng sợ quá!\" cô thốt lên. Ông Soncho vẫn tiếp tục thao thao bất tuyệt về những chi tiết dông dài từ thế kỷ trước, từ màu sắc hoa cúc năm đó cho đến từng trận gió mùa thu. Bà Hana chỉ nhẹ nhàng rót tách trà nóng mời ông trưởng làng, ánh mắt trầm ngâm nhìn ra phía giếng cổ tràn ngập ánh nắng ban mai mà không hề lên tiếng bác bỏ.",
+   "Trong khi Lin đang co rúm vì sợ hãi, robot StackChan lại tò mò tiến đến góc hiên. Màn hình của nó chớp nháy liên tục rồi hiện lên một bức ảnh dạng ô vuông pixel. \"Tớ vẽ xong bóng ma rồi! Ma này hình vuông, có hai mắt màu đỏ rực!\" StackChan reo lên hồn nhiên làm không khí căng thẳng bỗng dịu lại. Nhưng khi Lin nhìn kỹ vào bức tranh pixel của chú robot, cô bỗng khựng lại vì nhận ra ở góc dưới chân 'bóng ma' vuông vức kia có một vệt màu trắng khác lạ."
+  ],
+  "ky_truoc": "Lin bắt đầu ca trực đêm đầu tiên tại quán trọ Kotobaya và vô tình dùng nhầm ngữ pháp trước khi tự sửa lại. Ngay sau đó, cô hoảng sợ khi thấy đôi guốc gỗ tự đổi hướng và tiếng động lạ phát ra từ giếng cổ.",
+  "nho": {
+   "tom_tat": "Sáng hôm sau, trưởng làng Soncho kể cho Lin nghe về truyền thuyết bóng ma thiếu nữ tìm trâm cài bên giếng cổ 50 năm trước. Trong khi Lin sợ hãi thì StackChan lại vẽ lại bóng ma bằng hình pixel vô cùng ngộ nghĩnh.",
+   "nhan_vat_moi": [
+    "Trưởng làng Soncho"
+   ],
+   "bo_ngo": [
+    "Vệt màu trắng lạ dưới chân bóng ma trong bức tranh pixel của StackChan.",
+    "Bí mật quá khứ quán trọ mà bà Hana im lặng không kể."
+   ],
+   "da_giai": [
+    "Giải thích nguồn gốc truyền thuyết về tiếng guốc và tiếng lách cách đêm qua qua lời kể của trưởng làng."
+   ]
+  },
+  "diem": {
+   "su_kien": 4,
+   "nhan_vat": 5,
+   "bat_ngo": 4,
+   "moc_cau": 4,
+   "khop": 5,
+   "trinh_do": 4,
+   "tu_nhien": 5
+  },
+  "lang": "vi"
+ },
+ "tin": [
+  {
+   "tieu_de": "Nắng thu đẹp nhất trong năm",
+   "noi_dung": "Thời tiết hôm nay cả ngày nắng vàng rực rỡ, rất thích hợp để du khách đi dạo quanh khu vườn Kotoba và chụp ảnh lá đỏ. Mọi người lưu ý giữ ấm vào buổi tối vì nhiệt độ hạ thấp nhanh."
+  },
+  {
+   "tieu_de": "Trưởng làng ghé thăm các quán trọ",
+   "noi_dung": "Ông Soncho bắt đầu chuyến đi thăm hỏi định kỳ các hộ kinh doanh trong làng để chuẩn bị cho lễ hội mùa thu sắp tới. Ông cũng nhắc nhở các quán trọ chú ý kiểm tra hệ thống đèn chiếu sáng ngoài sân vườn."
+  }
+ ],
+ "muc3": {
+  "tieu_de": "Góc của StackChan",
+  "doan": [
+   "Hôm nay trời nắng đẹp lắm! Tớ đã dùng 256 ô pixel để vẽ ông trưởng làng và một bóng ma. Ông trưởng làng nói nhiều từ ngữ dài quá, bộ nhớ của tớ suýt thì đầy.",
+   "Tớ thích bóng ma vì bóng ma không biết mắng StackChan. Đêm nay tớ sẽ ra giếng cổ rủ bóng ma chơi xếp hình cùng!"
+  ]
+ },
+ "thoi_tiet": "cả ngày nắng",
+ "giong": "kinh_di"
+}

@@ -107,6 +107,7 @@ ROOM_UNLOCK_LEVEL = 5
 YARD_COLS, YARD_ROWS, HOUSE_COLS = 16, 3, 4
 ROOM_COLS, ROOM_ROWS = 10, 4          # hàng 0 của phòng là tường
 ROOM_WINDOW = (4, 5)                  # 2 ô tường có cửa sổ
+NHA_UNLOCK_LEVEL = len(HOUSE_LEVELS) - 1   # 1.24: xây xong nhà (bước 7) mới mở rộng được
 
 # place: ground (sân) | floor | rug (trải sàn, đồ khác đặt lên được) | wall
 CATALOG: dict[str, dict[str, Any]] = {
@@ -274,6 +275,51 @@ for _k, _v in RARE_116.items():
 RARE_ORDER = RARE_ORDER + ["shika", "kabuto", "taikobashi", "kitsunemen", "pagoda", "koto", "yatai", "shamisen",
                            "kappa", "byobu", "hokora", "karesansui"]
 TIER2_ITEMS = frozenset(SEASON_ITEMS) | frozenset(RARE_116)   # đồ lưu ở SEASON_KEY
+
+# ---- 1.24: nhà 3 gian — Bếp (trái) · phòng chính · Phòng ngủ (phải) ----
+# Hai gian bên + đồ mới của hai gian lưu ở khoá collection riêng NHA_KEY (tầng 3). Bản ≤ 1.23 ở máy khác không đọc /
+# không ghi khoá này nên không xoá được gì; chỉ không thấy hai gian (đồ cũ đặt ở gian bên với bản cũ trông như còn trong
+# kho — xem attach_nha: vượt số đã có thì món ở gian bên về kho trước).
+NHA_KEY = "kotoba_batake_nha"
+SIDE_ROOMS = [
+    {"id": "kitchen", "name": "Bếp", "side": "left"},
+    {"id": "bedroom", "name": "Phòng ngủ", "side": "right"},
+]
+NHA_PRICE = 2000                      # 1.25: mở rộng nhà một lần được cả hai gian (1.24: mỗi gian 2.000 xu)
+SIDE_IDS = tuple(r["id"] for r in SIDE_ROOMS)
+SIDE_COLS, SIDE_ROWS = 9, 4           # như phòng chính: hàng 0 là tường (gian bên không có cửa sổ)
+NHA_ITEMS: dict[str, dict[str, Any]] = {
+    # --- Bếp
+    "reizouko": {"name": "Tủ lạnh", "price": 220, "scene": "room", "w": 1, "place": "floor", "group": "kitchen",
+                 "desc": "Thỉnh thoảng hé cửa, đèn trong sáng lên"},
+    "nagashi": {"name": "Bếp + bồn rửa", "price": 320, "scene": "room", "w": 2, "place": "floor", "group": "kitchen",
+                "desc": "Nồi canh bốc hơi"},
+    "shokutaku": {"name": "Bàn ăn", "price": 240, "scene": "room", "w": 2, "place": "floor", "group": "kitchen",
+                  "desc": "Bữa sáng kiểu Nhật: cơm, canh miso, cá nướng"},
+    "suihanki": {"name": "Nồi cơm điện", "price": 120, "scene": "room", "w": 1, "place": "floor", "group": "kitchen",
+                 "desc": "Hơi nước phụt lên, đèn báo nhấp nháy"},
+    "shokkidana": {"name": "Kệ chén", "price": 150, "scene": "room", "w": 1, "place": "wall", "group": "kitchen",
+                   "desc": "Chén bát xếp ngay ngắn"},
+    "yasaikago": {"name": "Giỏ rau", "price": 100, "scene": "room", "w": 1, "place": "floor", "group": "kitchen",
+                  "desc": "Rau củ hái từ vườn"},
+    # --- Phòng ngủ
+    "beddo": {"name": "Giường + chăn đệm", "price": 380, "scene": "room", "w": 2, "place": "floor", "group": "bedroom",
+              "desc": "Chăn bông phồng lên xẹp xuống"},
+    "tansu": {"name": "Tủ áo tansu", "price": 260, "scene": "room", "w": 1, "place": "floor", "group": "bedroom",
+              "desc": "Tủ gỗ nhiều ngăn kiểu Nhật"},
+    "nightlamp": {"name": "Đèn ngủ", "price": 140, "scene": "room", "w": 1, "place": "floor", "group": "bedroom",
+                  "desc": "Toả ánh trăng dịu ban đêm"},
+    "kyodai": {"name": "Bàn trang điểm", "price": 220, "scene": "room", "w": 1, "place": "floor", "group": "bedroom",
+               "desc": "Gương lấp lánh"},
+    "dakimakura": {"name": "Gối ôm", "price": 100, "scene": "room", "w": 1, "place": "floor", "group": "bedroom",
+                   "desc": "Gối hình mèo"},
+    "hoshizora": {"name": "Dây đèn sao", "price": 160, "scene": "room", "w": 2, "place": "wall", "group": "bedroom",
+                  "desc": "Nhấp nháy ban đêm"},
+}
+for _k, _v in NHA_ITEMS.items():
+    assert _k not in CATALOG, _k
+    CATALOG[_k] = _v
+TIER3_ITEMS = frozenset(NHA_ITEMS)    # đồ lưu ở NHA_KEY (sở hữu + mọi chỗ đặt)
 
 # Các cảnh: sân nhà + các vùng mới là ngoài trời (đồ ngoài trời đặt được ở mọi cảnh ngoài trời).
 OUTDOOR_SCENES = ("yard", "beach", "shrine", "festival", "bamboo", "onsen", "station")
@@ -443,9 +489,14 @@ def is_outdoor(scene: str) -> bool:
     return scene in OUTDOOR_SCENES or more.is_uzone(scene)
 
 
+def is_room(scene: str) -> bool:
+    """1.24: các gian trong nhà (phòng chính + Bếp + Phòng ngủ)."""
+    return scene == "room" or scene in SIDE_IDS
+
+
 def scene_names(home: dict[str, Any]) -> tuple[str, ...]:
-    """Mọi cảnh đặt đồ được: các cảnh có sẵn + vùng tự tạo của người dùng."""
-    return ALL_SCENES + tuple(home.get("uzones") or ())
+    """Mọi cảnh đặt đồ được: các cảnh có sẵn + gian bên đã mở (1.24) + vùng tự tạo của người dùng."""
+    return ALL_SCENES + tuple(r for r in SIDE_IDS if r in (home.get("rooms") or ())) + tuple(home.get("uzones") or ())
 
 
 def house_value(home: dict[str, Any]) -> int:
@@ -454,7 +505,7 @@ def house_value(home: dict[str, Any]) -> int:
 
 def fits_scene(info: dict[str, Any], scene: str) -> bool:
     if info["scene"] == "room":
-        return scene == "room"
+        return is_room(scene)          # 1.24: đồ trong nhà đặt được ở cả ba gian
     return is_outdoor(scene)
 
 
@@ -471,6 +522,11 @@ def home_catalog(data: dict[str, Any] | None = None, px: dict[str, str] | None =
         "room_unlock": ROOM_UNLOCK_LEVEL,
         "yard": {"cols": YARD_COLS, "rows": YARD_ROWS, "house_cols": HOUSE_COLS},
         "room": {"cols": ROOM_COLS, "rows": ROOM_ROWS, "window": list(ROOM_WINDOW)},
+        # 1.24: nhà 3 gian
+        "side": {"cols": SIDE_COLS, "rows": SIDE_ROWS},
+        "rooms": [dict(r) for r in SIDE_ROOMS],
+        "nha_price": NHA_PRICE,
+        "nha_unlock": NHA_UNLOCK_LEVEL,
         "zones": [dict(z, new=False) for z in ZONES],
         "styles": [dict(v, id=k) for k, v in HOUSE_STYLES.items()],
         "wear": [dict(v, id=k) for k, v in WEAR.items()],
@@ -489,8 +545,8 @@ def home_catalog(data: dict[str, Any] | None = None, px: dict[str, str] | None =
 
 
 def _empty_home() -> dict[str, Any]:
-    home: dict[str, Any] = {"house": 0, "owned": {}, "zones": [], "styles": [], "style": "classic"}
-    for scene in ALL_SCENES:
+    home: dict[str, Any] = {"house": 0, "owned": {}, "zones": [], "styles": [], "style": "classic", "rooms": []}
+    for scene in ALL_SCENES + SIDE_IDS:
         home[scene] = []
     return home
 
@@ -611,7 +667,9 @@ def apply_craft_fx(craft: dict[str, Any], ext: Any) -> None:
 
 
 def _tier(scene: str, item_id: str) -> int:
-    """0 = ví (bản 1.6.1 hiểu), 1 = EXT_KEY (phần của 1.7), 2 = SEASON_KEY (đồ theo mùa của 1.8)."""
+    """0 = ví (bản 1.6.1 hiểu), 1 = EXT_KEY (phần của 1.7), 2 = SEASON_KEY (đồ theo mùa của 1.8), 3 = NHA_KEY (1.24)."""
+    if item_id in TIER3_ITEMS:
+        return 3
     if item_id in TIER2_ITEMS:
         return 2
     return 1 if _is_ext_entry(scene, item_id) else 0
@@ -696,6 +754,113 @@ def merge_season(stored: dict[str, Any], store: Any) -> dict[str, Any]:
         home[scene] = base + [e for e in more if isinstance(e, dict) and e.get("id") in TIER2_ITEMS]
     out["home"] = home
     return out
+
+
+# ---- 1.24: tầng NHA_KEY (hai gian bên + đồ mới của hai gian) ----
+
+def split_nha(data: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any]]:
+    """Tách gian bên đã mở, đồ đặt ở gian bên và đồ mới của 1.24 (sở hữu + chỗ đặt ở mọi cảnh) → (phần còn lại, NHA_KEY).
+    Không sửa `data`."""
+    rest = json.loads(json.dumps(data))
+    store: dict[str, Any] = {"v": 1, "rooms": [], "owned": {}, "places": {}}
+    home = rest.get("home")
+    if not isinstance(home, dict):
+        return rest, store
+    opened = home.pop("rooms", None) or []
+    store["rooms"] = [r for r in SIDE_IDS if r in opened]
+    owned = home.get("owned") or {}
+    for k in list(owned):
+        if k in TIER3_ITEMS:
+            store["owned"][k] = owned.pop(k)
+    for sid in SIDE_IDS:
+        lst = home.pop(sid, None)
+        if isinstance(lst, list) and lst:
+            store["places"][sid] = lst
+    for scene in ALL_SCENES:
+        lst = home.get(scene)
+        if not isinstance(lst, list):
+            continue
+        move = [e for e in lst if isinstance(e, dict) and e.get("id") in TIER3_ITEMS]
+        if move:
+            home[scene] = [e for e in lst if not (isinstance(e, dict) and e.get("id") in TIER3_ITEMS)]
+            store["places"][scene] = move
+    return rest, store
+
+
+def keep_foreign_nha(store: dict[str, Any], prev: Any) -> dict[str, Any]:
+    """Giữ phần NHA_KEY của bản mới hơn (máy khác) mà bản này không hiểu: món / gian / cảnh lạ, khoá mới."""
+    if not isinstance(prev, dict):
+        return store
+    got = prev.get("rooms")
+    if isinstance(got, list):
+        store["rooms"] = store["rooms"] + [r for r in got if isinstance(r, str) and r not in SIDE_IDS and r not in store["rooms"]]
+    owned = prev.get("owned")
+    if isinstance(owned, dict):
+        for k, v in owned.items():
+            if isinstance(k, str) and k not in CATALOG and isinstance(v, int):
+                store["owned"].setdefault(k, v)
+    places = prev.get("places")
+    if isinstance(places, dict):
+        known = set(ALL_SCENES) | set(SIDE_IDS)
+        for scene, lst in places.items():
+            if not (isinstance(scene, str) and isinstance(lst, list)):
+                continue
+            foreign = [e for e in lst if isinstance(e, dict) and (scene not in known or e.get("id") not in CATALOG)]
+            if foreign and not more.is_uzone(scene):
+                store["places"][scene] = list(store["places"].get(scene, [])) + foreign
+    for k, v in prev.items():
+        if k not in store and isinstance(k, str):
+            store[k] = v
+    return store
+
+
+def merge_nha(stored: dict[str, Any], store: Any) -> dict[str, Any]:
+    """Gộp đồ mới của 1.24 (sở hữu + chỗ đặt ở các cảnh có sẵn) vào dữ liệu đã đọc, trước khi làm sạch; xếp sau cùng."""
+    if not isinstance(store, dict):
+        return stored
+    out = dict(stored)
+    raw = stored.get("home")
+    home = dict(raw) if isinstance(raw, dict) else {}
+    owned = dict(home.get("owned")) if isinstance(home.get("owned"), dict) else {}
+    for k, v in (store.get("owned") or {}).items() if isinstance(store.get("owned"), dict) else []:
+        if k in TIER3_ITEMS and isinstance(v, int):
+            owned[k] = max(v, owned.get(k, 0) if isinstance(owned.get(k), int) else 0)
+    home["owned"] = owned
+    places = store.get("places") if isinstance(store.get("places"), dict) else {}
+    for scene in ALL_SCENES:
+        base = home.get(scene) if isinstance(home.get(scene), list) else []
+        base = [e for e in base if not (isinstance(e, dict) and e.get("id") in TIER3_ITEMS)]
+        more_ = places.get(scene) if isinstance(places.get(scene), list) else []
+        home[scene] = base + [e for e in more_ if isinstance(e, dict) and e.get("id") in TIER3_ITEMS]
+    out["home"] = home
+    return out
+
+
+def attach_nha(data: dict[str, Any], store: Any) -> None:
+    """Gắn gian bên đã mở và đồ đặt ở đó vào data["home"] (sau khi đã làm sạch và gắn vùng tự tạo).
+    Bản cũ ở máy khác không thấy gian bên nên tưởng món đặt ở đó còn trong kho, có thể đặt ra chỗ khác: vượt số đã có
+    thì món ở gian bên về kho trước (không mất món đã mua)."""
+    home = data["home"]
+    got = store.get("rooms") if isinstance(store, dict) and isinstance(store.get("rooms"), list) else []
+    # 1.25: mở rộng nhà là một lần cho cả hai gian — dữ liệu 1.24 mới mở một gian cũng coi như mở cả hai
+    home["rooms"] = list(SIDE_IDS) if any(r in got for r in SIDE_IDS) else []
+    for sid in SIDE_IDS:
+        home[sid] = []
+    places = store.get("places") if isinstance(store, dict) and isinstance(store.get("places"), dict) else {}
+    cat = full_catalog(data)
+    for sid in home["rooms"]:
+        lst = places.get(sid) if isinstance(places.get(sid), list) else []
+        for e in lst:
+            if not (isinstance(e, dict) and e.get("id") in cat and fits_scene(cat[e["id"]], sid)
+                    and isinstance(e.get("x"), int) and isinstance(e.get("y"), int)):
+                continue
+            if home["owned"].get(e["id"], 0) - placed_count(home, e["id"]) <= 0:
+                continue
+            try:
+                check_spot(dict(home, house=len(HOUSE_LEVELS) - 1), sid, e["id"], e["x"], e["y"], cat=cat)
+            except HomeError:
+                continue
+            home[sid].append({"id": e["id"], "x": e["x"], "y": e["y"]})
 
 
 # ---- 1.14: tầng thứ tư MORE_KEY (sửa nhà, thú nuôi, giống cây, vùng tự tạo + đồ đặt ở vùng tự tạo) ----
@@ -834,12 +999,13 @@ def check_spot(home: dict[str, Any], scene: str, item_id: str, x: int, y: int, i
     else:
         if home["house"] < ROOM_UNLOCK_LEVEL:
             raise HomeError("Cần xây tới bước “Lắp cửa & cửa sổ” mới vào nhà được.")
-        if not (0 <= x and x + w <= ROOM_COLS and 0 <= y < ROOM_ROWS):
+        cols, window = (ROOM_COLS, ROOM_WINDOW) if scene == "room" else (SIDE_COLS, ())   # 1.24: gian bên 9 ô, không cửa sổ
+        if not (0 <= x and x + w <= cols and 0 <= y < ROOM_ROWS):
             raise HomeError("Chỗ này nằm ngoài căn phòng.")
         if item["place"] == "wall":
             if y != 0:
                 raise HomeError("Đồ treo tường chỉ đặt được trên tường.")
-            if any(cx in ROOM_WINDOW for cx, _ in _cells(item_id, x, y, cat)):
+            if any(cx in window for cx, _ in _cells(item_id, x, y, cat)):
                 raise HomeError("Chỗ đó là cửa sổ.")
         elif y == 0:
             raise HomeError("Đồ này phải đặt dưới sàn.")
@@ -2476,6 +2642,11 @@ class GardenState:
             data["season"] = season.clean_season(store)
         except (ValueError, AttributeError, TypeError):
             pass
+        nha = self._read_nha()      # 1.24: nhà 3 gian
+        try:
+            stored = merge_nha(stored, nha)
+        except (ValueError, AttributeError, TypeError):
+            pass
         try:
             for key in ("coins", "waters", "harvests", "game_coins"):
                 if isinstance(stored.get(key), int):
@@ -2504,6 +2675,12 @@ class GardenState:
         except (ValueError, AttributeError, TypeError, KeyError):
             data["more"]["zones"] = []
             data["home"]["uzones"] = []
+        try:
+            attach_nha(data, nha)
+        except (ValueError, AttributeError, TypeError, KeyError):
+            data["home"]["rooms"] = []
+            for sid in SIDE_IDS:
+                data["home"][sid] = []
         data["more_view"] = self._more_view(data)
         return data
 
@@ -2544,6 +2721,31 @@ class GardenState:
                 return None
         try:
             with open(self._more_path(), encoding="utf-8") as f:
+                return backup_data(json.load(f), col)
+        except (OSError, ValueError):
+            return None
+
+    def _nha_path(self) -> str:
+        return os.path.join(os.path.dirname(self.path), "nha.json")
+
+    def _read_nha(self) -> Any:
+        """1.24: đọc NHA_KEY; như EXT_KEY: collection có ví mà chưa có khoá này thì không lấy file sao lưu."""
+        col = self._col()
+        if col is not None:
+            try:
+                stored = col.get_config(NHA_KEY, None)
+            except Exception:
+                stored = None
+            if isinstance(stored, dict):
+                return stored
+            try:
+                has_wallet = isinstance(col.get_config(CONFIG_KEY, None), dict)
+            except Exception:
+                has_wallet = False
+            if has_wallet:
+                return None
+        try:
+            with open(self._nha_path(), encoding="utf-8") as f:
                 return backup_data(json.load(f), col)
         except (OSError, ValueError):
             return None
@@ -2641,6 +2843,11 @@ class GardenState:
         mobile = data.get("mobile")
         full = data
         data, more_store = split_more(full)
+        data, nha_store = split_nha(data)      # 1.24: trước các tầng cũ (đồ mới / gian bên không lọt vào EXT, SEASON)
+        try:
+            keep_foreign_nha(nha_store, self._read_nha())
+        except (ValueError, AttributeError, TypeError):
+            pass
         rest, store = split_season(data)
         try:
             keep_foreign_season(store, self._read_season())
@@ -2656,6 +2863,7 @@ class GardenState:
         except (ValueError, AttributeError, TypeError):
             pass
         self._write(MORE_KEY, self._more_path(), more_store, col)
+        self._write(NHA_KEY, self._nha_path(), nha_store, col)
         if isinstance(mobile, dict):
             self._write(MOBILE_KEY, self._mobile_path(), mobile, col)
         full["more_view"] = self._more_view(full)
@@ -2970,6 +3178,27 @@ class GardenState:
         self.save(data)
         return data
 
+    def open_rooms(self) -> dict[str, Any]:
+        """1.25: mở rộng nhà một lần — 2.000 xu được cả Bếp lẫn Phòng ngủ. Gọi lặp (bấm đúp) thì báo đã mở, không trừ lần hai."""
+        data = self.load()
+        home = data["home"]
+        if home["house"] < NHA_UNLOCK_LEVEL:
+            raise HomeError(f"Xây xong nhà (bước “{HOUSE_LEVELS[NHA_UNLOCK_LEVEL][0]}”) rồi mới mở rộng được.")
+        if all(r in home["rooms"] for r in SIDE_IDS):
+            raise HomeError("Nhà đã mở rộng rồi (có cả Bếp và Phòng ngủ).")
+        self._pay(data, NHA_PRICE)
+        home["rooms"] = list(SIDE_IDS)
+        for sid in SIDE_IDS:
+            home.setdefault(sid, [])
+        self.save(data)
+        return data
+
+    def open_room(self, room_id: str) -> dict[str, Any]:
+        """Lệnh cũ của 1.24 (kèm id gian): từ 1.25 mở cả hai gian một lần."""
+        if room_id not in SIDE_IDS:
+            raise HomeError("Không có gian này.")
+        return self.open_rooms()
+
     def buy_style(self, style_id: str) -> dict[str, Any]:
         if style_id not in HOUSE_STYLES or style_id == "classic":
             raise HomeError("Không có kiểu nhà này.")
@@ -3223,6 +3452,42 @@ class GardenState:
         self._pay(data, price)
         self.save(data)
         return data
+
+    # ---- 1.25.1: gói báo (mua bằng xu; ngày theo ngày thật như số báo) ----
+    @_more_errors
+    def paper_sub_buy(self, plan: str, today: str) -> dict[str, Any]:
+        """Mua / gia hạn gói báo (tuần 100 xu, tháng 300 xu); cộng ngày vào sau ngày cuối còn báo."""
+        day = datetime.date.fromisoformat(today)
+        data = self.load()
+        price = more.sub_buy(data["more"]["paper_sub"], plan, day)
+        self._pay(data, price)
+        self.save(data)
+        return data
+
+    def paper_sub_auto(self, on: bool) -> dict[str, Any]:
+        data = self.load()
+        data["more"]["paper_sub"]["auto"] = bool(on)
+        self.save(data)
+        return data
+
+    def paper_sub_ensure(self, today: str) -> tuple[str, int]:
+        """Trước khi Gemini viết số mới: còn gói → ("ok", 0); chưa có gói và chưa thử → tặng 7 ngày ("trial", 0);
+        hết hạn + Tự gia hạn + đủ xu → gia hạn gói cũ ("renewed", giá); không thì ("expired", 0)."""
+        day = datetime.date.fromisoformat(today)
+        data = self.load()
+        sub = data["more"]["paper_sub"]
+        if more.sub_left(sub, day) > 0:
+            return "ok", 0
+        if more.sub_trial(sub, day):
+            self.save(data)
+            return "trial", 0
+        price = more.PAPER_PLANS[sub["plan"]]["price"]
+        if sub.get("auto") and data["coins"] >= price:
+            more.sub_buy(sub, sub["plan"], day)
+            data["coins"] -= price
+            self.save(data)
+            return "renewed", price
+        return "expired", 0
 
     @_more_errors
     def pet_feed(self, pid: str | None) -> dict[str, Any]:

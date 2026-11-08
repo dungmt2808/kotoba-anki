@@ -755,6 +755,9 @@ html, html body, body.nightMode {
 .kb-h-build { grid-column: span 2; }
 .kb-h-icon { width: 68px; height: 68px; flex: none; image-rendering: pixelated; background: #e9f7ff; border: 2px solid #1b1b2f; }
 .kb-h-house { width: 64px; height: 76px; flex: none; image-rendering: pixelated; border: 2px solid #1b1b2f; }
+.kb-h-house3 { flex: none; image-rendering: pixelated; border: 2px solid #1b1b2f; align-self: flex-start; }   /* 1.25: ảnh nhỏ nhà 3 gian */
+.kb-h-info > .kb-h-house3 { margin: 2px 0; }
+.kb-h-btnrow { display: flex; gap: 6px; flex-wrap: wrap; }
 .kb-h-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .kb-h-name { font-weight: 700; font-size: 14px; }
 .kb-h-price { font-size: 13px; color: #8a4a22; }
@@ -959,7 +962,7 @@ button { cursor: pointer; }
 
 /* ---- v1.4: vùng mới, kiểu nhà, tủ đồ, xưởng chế tác ---- */
 .kb-home { position: relative; }
-.kb-h-scenes { flex-wrap: wrap; }
+.kb-h-scenes { flex-wrap: wrap; flex: 1 1 0; min-width: 0; }    /* 1.24: nhiều gian / vùng thì nút cảnh xuống dòng trong hàng của mình, Ví · Chụp ảnh · Thoát giữ bên phải */
 .kb-h-scenes .kb-btn { margin-left: 0; }
 .kb-h-scene-lock { background: #e9e9f2; }
 .kb-h-list { height: clamp(170px, calc(100vh - 720px), 420px); }
@@ -1246,6 +1249,7 @@ button { cursor: pointer; }
 /* ===== 1.8: Mùa & Lễ hội ===== */
 #kb-app { position: relative; z-index: 1; }
 #kb-app.kb-themed { padding-top: 30px; }
+#kb-app.kb-themed.kb-ui-deco-off { padding-top: 14px; }      /* 1.25: ẩn dây trang trí → không chừa chỗ cho dải trên cùng */
 .kb-theme-bg { position: fixed; left: 0; top: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 0; image-rendering: pixelated; }
 .kb-theme-band { position: absolute; left: 0; top: 0; width: 100%; height: 27px; pointer-events: none; z-index: 3; image-rendering: pixelated; }
 .kb-title { color: var(--kb-title, #ffffff); transition: color 0.6s; }
@@ -1381,6 +1385,9 @@ button { cursor: pointer; }
 .kb-ai-row.is-bad .kb-ai-v { color: #c21f3a; }
 .kb-ai-row.is-warn .kb-ai-v { color: #8a5a00; }
 .kb-ai-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+/* 1.25.1: thẻ Gói báo — nút mua không bấm được (thiếu xu / quá 60 ngày) nhìn rõ là khoá; chủ đề truyện chọn nhiều */
+.kb-ai-plan .kb-btn:disabled, .kb-p-acts .kb-btn:disabled { background: #e0e0e8; color: #6b7088; cursor: not-allowed; }
+.kb-ai-tones .kb-ai-v { display: flex; flex-direction: column; gap: 4px; }
 .kb-ai-chip { margin-left: 0; }
 /* 1.19.1: nút đang chọn chỉ đổi nền (giữ viền + bóng như nút bên cạnh, trước đây mất bóng nên trông thấp / lệch) */
 .kb-ai-chip.is-on { background: #ffd23f; }
@@ -1929,31 +1936,3 @@ button { cursor: pointer; }
 .kb-p-fbs .kb-btn.is-on { background: #ffd23f; }
 .kb-p-fbs-in { flex: 1 1 200px; min-width: 160px; font-size: 13px; padding: 3px 6px; }
 
-/* 1.23: Ngắm cảnh — cả cửa sổ chỉ một cảnh (canvas vẽ kín cửa sổ, thanh trên trong suốt) */
-.kb-view { position: fixed; inset: 0; z-index: 55; background: #1b1b2f; overflow: hidden; }
-.kb-view-canvas { position: absolute; left: 0; top: 0; display: block; image-rendering: pixelated; }
-.kb-view-bar { position: absolute; left: 0; right: 0; top: 0; display: flex; align-items: center; gap: 6px; padding: 6px 10px;
-  background: rgba(27, 27, 47, 0.72); color: #fff8dc; border-bottom: 3px solid #1b1b2f; font-size: 14px; flex-wrap: wrap; }
-.kb-view-title { font-weight: bold; margin-right: 6px; }
-.kb-view-nav { display: inline-flex; align-items: center; gap: 4px; }
-.kb-view-name { min-width: 120px; text-align: center; }
-.kb-view-sp { flex: 1 1 auto; }
-.kb-view-bar .kb-btn.is-on { background: #ffd23f; }
-.kb-view-tip { position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); max-width: calc(100% - 40px);
-  padding: 4px 10px; background: rgba(255, 248, 220, 0.92); color: #1b1b2f; border: 2px solid #1b1b2f; font-size: 13px;
-  box-shadow: 3px 3px 0 #1b1b2f; text-align: center; }
-.kb-view-tip:empty { display: none; }
-.kb-view-pop { position: absolute; z-index: 4; }
-.kb-view-kho { position: absolute; right: 8px; top: 52px; bottom: 50px; width: 230px; overflow-y: auto; padding: 8px;
-  background: #fff8dc; border: 3px solid #1b1b2f; box-shadow: 4px 4px 0 #1b1b2f; color: #1b1b2f; font-size: 13px; }
-.kb-view-kho-h { font-weight: bold; margin-bottom: 6px; }
-.kb-view-kho-empty { color: #5b5470; }
-.kb-view-kho-list { display: flex; flex-direction: column; gap: 6px; }
-.kb-view-kho-item { display: flex; align-items: center; gap: 6px; width: 100%; margin: 0; padding: 3px 6px; text-align: left;
-  font-size: 13px; justify-content: flex-start; }
-.kb-view-kho-item canvas { width: 40px; height: 40px; flex: 0 0 40px; image-rendering: pixelated; }
-.kb-view-kho-n { flex: 1 1 auto; }
-.kb-view-kho-c { color: #5b5470; }
-body.kb-viewing { overflow: hidden; }
-.kb-yard-view { font-size: 12px; }
-.kb-h-viewbtn { position: absolute; right: 8px; top: 8px; z-index: 2; font-size: 12px; }

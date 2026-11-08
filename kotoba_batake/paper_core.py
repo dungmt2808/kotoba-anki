@@ -30,6 +30,8 @@ text = core.text      # 1.17: chuẩn hoá chữ (furigana, tiếng Anh) — tex
 
 PAPER_KEY = "kotoba_batake_paper"
 PAPER_KEY_EN = "kotoba_batake_paper_en"   # 1.19: báo tiếng Anh (số đã đọc / câu đã làm theo ngày, tách khỏi báo tiếng Nhật)
+PAPER_KEY_VI = "kotoba_batake_paper_vi"   # 1.25.1: báo tiếng Việt (Báo Làng Kotoba)
+ISSUE_LANGS = ("ja", "en", "vi")
 DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 AUDIO_RE = re.compile(r"^audio/[A-Za-z0-9_.-]{1,80}\.(?:wav|mp3|ogg|m4a)$")
 MAX_JSON = 1_000_000
@@ -286,13 +288,16 @@ def clean_issue(raw: Any, date: str) -> dict[str, Any]:
             continue
         cts.append({"cau": _s(c.get("cau"), 120),
                     "them": [_s(x, 120) for x in _list(c.get("them_dap_an"), 6) if _s(x, 120)]})
+    lang = raw.get("ngon_ngu") if raw.get("ngon_ngu") in ISSUE_LANGS else "ja"
+    if lang == "vi":          # 1.25.1: báo tiếng Việt không có chép chính tả (tiếng mẹ đẻ, không nghe)
+        cts = []
     new_words = []
-    for w in _list(raw.get("tu_moi"), 6):
+    for w in _list(raw.get("tu_moi"), 12):      # 1.25.1: báo không cần deck khai báo tới 12 từ mới
         if isinstance(w, dict) and _s(w.get("w"), 40):
             new_words.append({"w": _s(w.get("w"), 40), "r": _s(w.get("r"), 60), "m": _s(w.get("m"), 120)})
     mau = [_s(x, 80) for x in _list(raw.get("mau_cau"), 10) if _s(x, 80)]
     return {
-        **clean_lookup(raw),
+        **clean_lookup(raw, wide=lang == "vi"),
         "ngay": date,
         "so": _int(raw.get("so"), 1, 1_000_000) or 0,
         "rut_gon": bool(raw.get("rut_gon")),
@@ -304,8 +309,8 @@ def clean_issue(raw: Any, date: str) -> dict[str, Any]:
         "tom_tat": _s(raw.get("tom_tat"), 400),
         # 1.12: ai viết số này (báo do Gemini viết ghi "Gemini (<model>)"; trống = bộ kotoba_daily / Claude)
         "may_viet": _s(raw.get("may_viet"), 60) if re.match(r"^[\w .()\-:/]*$", _s(raw.get("may_viet"), 60)) else "",
-        # 1.19: ngôn ngữ của số báo (bản tiếng Anh ghi "ngon_ngu": "en")
-        "lang": "en" if raw.get("ngon_ngu") == "en" else "ja",
+        # 1.19: ngôn ngữ của số báo (bản tiếng Anh ghi "ngon_ngu": "en"; 1.25.1: tiếng Việt "vi")
+        "lang": lang,
     }
 
 
@@ -313,14 +318,15 @@ TRA_MAX = 400          # 1.23: số mục tối đa của bảng tra nghĩa tron
 TRANS_BAD = re.compile(r"[\u3040-\u30ff\u3400-\u9fff\uf900-\ufaff\uac00-\ud7af\[\]{}|]")   # 1.23: bản dịch hỏng
 
 
-def _row4(v: Any) -> list[str] | None:
+def _row4(v: Any, wide: bool = False) -> list[str] | None:
+    """[từ, cách đọc, nghĩa, nguồn]. 1.25.1 `wide`: báo tiếng Việt — mục là thẻ bất kỳ (mặt trước / mặt sau dài hơn)."""
     if not isinstance(v, list) or len(v) < 3 or not all(isinstance(x, str) for x in v[:4]):
         return None
-    w, r, m = v[0].strip()[:40], v[1].strip()[:60], v[2].strip()[:160]
+    w, r, m = v[0].strip()[:120 if wide else 40], v[1].strip()[:60], v[2].strip()[:300 if wide else 160]
     return [w, r, m, v[3].strip()[:60] if len(v) > 3 else ""] if w and m else None
 
 
-def clean_lookup(raw: Any) -> dict[str, Any]:
+def clean_lookup(raw: Any, wide: bool = False) -> dict[str, Any]:
     """1.23: bảng tra nghĩa đi kèm từng số báo (`tra_tu`: từ gốc → [từ, cách đọc, nghĩa, nguồn]; `tra_mau`: mẫu câu,
     `tra_sach`: tên sách / deck). Trước đây mọi số tra chung một pham_vi.json, bị ghi đè mỗi lần Gemini viết số mới →
     số cũ viết theo phạm vi khác bấm từ không ra nghĩa (kế hoạch 1.23 mục 5b)."""
@@ -328,7 +334,7 @@ def clean_lookup(raw: Any) -> dict[str, Any]:
     tu: dict[str, list[str]] = {}
     src = raw.get("tra_tu") if isinstance(raw.get("tra_tu"), dict) else {}
     for k, v in list(src.items())[:TRA_MAX]:
-        row = _row4(v)
+        row = _row4(v, wide)
         if isinstance(k, str) and k.strip() and row:
             tu[k.strip()[:40]] = row
     mau: dict[str, list[str]] = {}
@@ -795,7 +801,8 @@ def issue_view(lib: Library, st: dict[str, Any], date: str, voice: Voice | None 
     arts = []
     fallback = False
     lang = iss["lang"]
-    machine = voice.tts_en if lang == "en" else voice.tts
+    # 1.25.1: báo tiếng Việt không có giọng đọc (tiếng mẹ đẻ, không nghe / chép)
+    machine = voice.tts_en if lang == "en" else (False if lang == "vi" else voice.tts)
     for i, b in enumerate(iss["bai"]):
         a = dict(b)
         files = audio["bai"][i] if i < len(audio["bai"]) else []
@@ -828,7 +835,7 @@ def issue_view(lib: Library, st: dict[str, Any], date: str, voice: Voice | None 
         "date": date, "so": iss["so"], "rut_gon": iss["rut_gon"], "bai": arts, "cau_hoi": questions,
         "chinh_ta": dict_items, "mau": mau, "tu": tu, "credit": audio["credit"], "may_viet": iss["may_viet"],
         "voice_note": "Câu chưa có giọng đọc dùng giọng dự phòng (Gemini hoặc giọng %s của máy)."
-        % ("tiếng Anh" if lang == "en" else "tiếng Nhật") if fallback else "",
+        % ("tiếng Anh" if lang == "en" else "tiếng Nhật") if fallback and lang != "vi" else "",
         "lang": lang,
         "coins": r["coins"], "complete": r["bonus"],
         "reward": {"q": Q_COINS, "ct": CT_COINS, "bonus": ISSUE_BONUS},

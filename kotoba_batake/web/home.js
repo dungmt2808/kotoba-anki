@@ -14,12 +14,19 @@ var GardenHome = (function () {
   let view = null;               // vị trí cảnh trên canvas của bảng {ox, oy, S, scene}
   const parts = {};               // hạt của từng cảnh (khởi tạo bên dưới, sau ZONE_IDS)
   let RARE = null;                // móc của rare_art.js (1.16: 12 món hiếm mới): frameOf, emit, pal
+  let NHA = null;                 // 1.24: móc của nha_art.js (đồ Bếp / Phòng ngủ, nền hai gian bên)
   let ART = null;                 // móc của season_art.js (đồ theo mùa): motion, pal, emit, stepPart, drawPart, frameOf
   let lastTs = 0, frame = 0;
 
   const T = 16;                                   // 1 ô = 16 điểm ảnh nghệ thuật
   const YARD = { W: 256, H: 76, SKY: 28 };
   const ROOM = { W: 160, H: 88, FLOOR: 40, WALL_Y: 12 };
+  // 1.24: nhà 3 gian — Bếp (trái) · phòng chính · Phòng ngủ (phải); gian bên 9 ô. "house" = cả nhà ở màn chính / ảnh chụp
+  const SIDE = { W: 144 };
+  const SIDE_IDS = ["kitchen", "bedroom"];
+  const HOUSE3 = { W: 456, POST: 4, X: { kitchen: 0, room: 148, bedroom: 312 } };
+  const isRoom = (s) => s === "room" || SIDE_IDS.indexOf(s) >= 0;
+  const roomW = (s) => (s === "room" ? ROOM.W : SIDE.W);
 
   const P = {
     k: "#1b1b2f", w: "#ffffff", y: "#ffd23f", o: "#ff9f1c", r: "#ff4f6d", R: "#c21f3a", p: "#ff7fa0",
@@ -32,9 +39,9 @@ var GardenHome = (function () {
   const ZONE_IDS = ["beach", "shrine", "festival", "bamboo", "onsen", "station"];
   const isUz = (s) => /^u\d{1,2}$/.test(String(s || ""));          // 1.14: vùng tự tạo (u1, u2…)
   const isOut = (s) => s === "yard" || ZONE_IDS.indexOf(s) >= 0 || isUz(s);
-  const SCENE_NAME = { yard: "Sân vườn", room: "Trong nhà", beach: "Bãi biển", shrine: "Đền trên núi", festival: "Phố lễ hội",
+  const SCENE_NAME = { yard: "Sân vườn", room: "Trong nhà", kitchen: "Bếp", bedroom: "Phòng ngủ", house: "Trong nhà", beach: "Bãi biển", shrine: "Đền trên núi", festival: "Phố lễ hội",
     bamboo: "Rừng tre", onsen: "Suối nước nóng", station: "Ga làng quê" };
-  ["yard", "room"].concat(ZONE_IDS).forEach((sc) => { parts[sc] = []; });
+  ["yard", "room"].concat(SIDE_IDS, ZONE_IDS).forEach((sc) => { parts[sc] = []; });
   function partsOf(sc) { return parts[sc] || (parts[sc] = []); }
 
   // ---------------------------------------------------------------------
@@ -1148,7 +1155,7 @@ var GardenHome = (function () {
   }
   function placedOf(id) {
     const home = homeState();
-    return ["yard", "room"].concat(ZONE_IDS, uzIds()).reduce((n, sc) => n + (home[sc] || []).filter((e) => e.id === id).length, 0);
+    return ["yard", "room"].concat(SIDE_IDS, ZONE_IDS, uzIds()).reduce((n, sc) => n + (home[sc] || []).filter((e) => e.id === id).length, 0);
   }
   // 1.14: vùng tự tạo của người dùng (wallet.more.zones), dữ liệu 1.14 tính sẵn (wallet.more_view)
   function moreData() { const d = H && H.data(); return (d && d.wallet && d.wallet.more) || { zones: [], pets: {}, seeds: { owned: [] } }; }
@@ -1160,13 +1167,14 @@ var GardenHome = (function () {
   function zoneOpen(z) { return isUz(z) ? !!uzone(z) : (homeState().zones || []).indexOf(z) >= 0; }
   function UIget(k) { return typeof GardenUI !== "undefined" && GardenUI.get ? GardenUI.get(k) : (k === "yard" || k === "field" ? "full" : "on"); }
   function canEnter(s) {
-    if (s === "room") { return homeState().house >= ((catalog() || {}).room_unlock || 5); }
+    if (s === "room" || s === "house") { return homeState().house >= ((catalog() || {}).room_unlock || 5); }
+    if (SIDE_IDS.indexOf(s) >= 0) { return (homeState().rooms || []).indexOf(s) >= 0; }      // 1.24: gian bên đã mở
     return s === "yard" || zoneOpen(s);
   }
   function mainScene() {
     let s = "yard";
     try { s = localStorage.getItem("kb-main-scene") || "yard"; } catch (e) { /* bỏ qua */ }
-    return isOut(s) && canEnter(s) ? s : "yard";
+    return (isOut(s) || s === "house") && canEnter(s) ? s : "yard";
   }
   let itemMap = {};
   function item(id) { catalog(); return itemMap[id] || null; }   // tra nhanh, dựng lại khi danh mục đổi
@@ -2035,6 +2043,7 @@ var GardenHome = (function () {
       if (e.id === "fumikiri") { return sceneName === "station" && trainNear(now) ? fr[1 + Math.floor(now / 380) % 2] : fr[0]; }
     }
     if (RARE) { const f = RARE.frameOf(e, now); if (f) { return f; } }
+    if (NHA) { const f = NHA.frameOf(e, now); if (f) { return f; } }
     if (ART) { const f = ART.frameOf(e, now); if (f) { return f; } }
     return BASE[e.id] || spr;
   }
@@ -2104,6 +2113,7 @@ var GardenHome = (function () {
     else if ((e.id === "milk" || e.id === "vending") && night) { pal = Object.assign({}, P, { l: "#d8f4ff", c: "#fff6d8" }); }
     else if (e.id === "hotaru" && night) { pal = Object.assign({}, P, { l: "#2b3a6b", w: "#3d4f8a", y: Math.floor(now / 260) % 2 ? "#fff36a" : "#c8e04a" }); }
     else if (RARE && RARE.pal(e, night)) { pal = RARE.pal(e, night); }
+    else if (NHA && NHA.pal(e, night)) { pal = NHA.pal(e, night); }
     else if (ART) { pal = ART.pal(e, night, now) || P; }
     const g = GLOW[e.id] || (it.custom && (it.fx === "glow" || it.fx === "pulse") ? [h / 2, Math.max(10, h * 0.7)] : null);
     if (g && night) {
@@ -2355,6 +2365,10 @@ var GardenHome = (function () {
   if (typeof GardenRareArt !== "undefined") {
     RARE = GardenRareArt.install({ grid, rect, disc, dot, outline, rows, gline, ellipseFill, SPR, GLOW, EXTRA: EXTRA17, P, box });
   }
+  // 1.24: đồ Bếp / Phòng ngủ + nền hai gian bên (nha_art.js)
+  if (typeof GardenNhaArt !== "undefined") {
+    NHA = GardenNhaArt.install({ grid, rect, disc, dot, outline, rows, SPR, GLOW, P, box });
+  }
 
   // Hạt phát ra từ món đồ (chỉ tính cho cảnh đang xem)
   function emit(sceneName, e, dt, night) {
@@ -2404,6 +2418,8 @@ var GardenHome = (function () {
       if (t >= 3800 && t < 4500) { add({ kind: "drip", x: bx.x + 3 + Math.random() * 3, y: bx.y + 12, vx: 0, vy: 8, life: 0.25 }); }
     } else if (RARE && RARE.ids.indexOf(e.id) >= 0) {
       RARE.emit(e, bx, dt, night, add);
+    } else if (NHA && NHA.ids.indexOf(e.id) >= 0) {
+      NHA.emit(e, bx, dt, night, add);
     } else if (ART && it.season) {
       ART.emit(e, bx, dt, night, add);
     }
@@ -2448,7 +2464,8 @@ var GardenHome = (function () {
     if (!list) { return; }
     if (sceneName === "yard") {
       const sty = home.house >= 7 ? (home.style || "classic") : "classic";
-      if (home.house >= 6 && (sty === "classic" || sty === "minka") && Math.random() < dt * 2.2) {
+      // 1.24: đã mở Bếp → ống khói bốc khói dày hơn (đang nấu ăn)
+      if (home.house >= 6 && (sty === "classic" || sty === "minka") && Math.random() < dt * ((home.rooms || []).indexOf("kitchen") >= 0 ? 3.6 : 2.2)) {
         const sx = sty === "minka" ? 31 : 47, sy = sty === "minka" ? 11 : 9;
         addPart("yard", { kind: "smoke", x: sx + Math.random() * 2, y: sy, vx: 2 + Math.random() * 3, vy: -6 - Math.random() * 3, life: 2.6 });
       }
@@ -2860,66 +2877,82 @@ var GardenHome = (function () {
     if (opts && opts.overlay) { opts.overlay(ctx, S, ox, oy); }
   }
 
-  function drawRoom(ctx, S, ox, oy, now, opts) {
-    const home = homeState();
-    lights.length = 0;
-    const tod = timeOfDay();
-    const sty = home.house >= 7 ? (home.style || "classic") : "classic";
-    const WALL = { classic: ["#ffe3cf", "#ffd6ba"], minka: ["#f1e2c2", "#e7d6b2"], teahouse: ["#efdfbe", "#e8d6b0"], castle: ["#f7f3ea", "#efe8d8"] }[sty];
-    box(ctx, ox, oy, ROOM.W, ROOM.FLOOR, WALL[0], S);
-    for (let x = 4; x < ROOM.W; x += 8) { box(ctx, ox + x, oy + 6, 2, ROOM.FLOOR - 9, WALL[1], S); }
-    if (sty === "minka") { [0, 40, 118, 158].forEach((x) => box(ctx, ox + x, oy + 5, 2, ROOM.FLOOR - 5, P.B, S)); box(ctx, ox, oy + 30, ROOM.W, 2, P.B, S); }
-    if (sty === "castle") { box(ctx, ox, oy + 7, ROOM.W, 1, P.i, S); [0, 158].forEach((x) => box(ctx, ox + x, oy + 5, 2, ROOM.FLOOR - 5, P.n, S)); }
-    box(ctx, ox, oy, ROOM.W, 5, sty === "castle" ? P.n : P.B, S); box(ctx, ox, oy + 5, ROOM.W, 1, P.k, S);
-    // cửa sổ (cột 4–5)
-    const sky = skyColors(tod);
-    const stR = skyNow();
-    if (sty === "teahouse") {   // cửa sổ tròn: vẽ bầu trời trong khung tròn
-      ctx.save(); ctx.beginPath(); ctx.arc((ox + 80) * S, (oy + 21) * S, 12 * S, 0, Math.PI * 2); ctx.clip();
-    }
-    box(ctx, ox + 66, oy + 9, 28, 24, P.k, S); box(ctx, ox + 67, oy + 10, 26, 22, sky[1], S);
-    box(ctx, ox + 67, oy + 10, 26, 10, sky[0], S);
-    if (tod === "night") { box(ctx, ox + 84, oy + 12, 4, 4, "#fff6c8", S); } else if (!stR || !stR.rain) { box(ctx, ox + 70, oy + 22, 8, 2, P.w, S); }
-    if (stR && (stR.rain || stR.snow)) {
-      ctx.save(); ctx.beginPath(); ctx.rect((ox + 67) * S, (oy + 10) * S, 26 * S, 22 * S); ctx.clip();
-      drawWeather(ctx, S, ox, oy + 10, now, 67, 93, 22, Object.assign({}, stR, { flash: 0 }));
-      ctx.restore();
-    }
-    if (sty === "classic") {
-      box(ctx, ox + 79, oy + 10, 2, 22, P.w, S); box(ctx, ox + 67, oy + 20, 26, 2, P.w, S);
-      box(ctx, ox + 64, oy + 8, 5, 27, P.p, S); box(ctx, ox + 91, oy + 8, 5, 27, P.p, S);
-      box(ctx, ox + 63, oy + 7, 34, 2, P.B, S);
-    } else if (sty === "teahouse") {
-      box(ctx, ox + 79, oy + 9, 2, 24, P.b, S); box(ctx, ox + 66, oy + 20, 28, 2, P.b, S);
-      box(ctx, ox + 72, oy + 9, 1, 24, P.b, S); box(ctx, ox + 87, oy + 9, 1, 24, P.b, S);
-      ctx.restore();
-      ctx.strokeStyle = P.B; ctx.lineWidth = 2 * S;
-      ctx.beginPath(); ctx.arc((ox + 80) * S, (oy + 21) * S, 12 * S, 0, Math.PI * 2); ctx.stroke();
-    } else {   // shoji
-      for (let x = 67; x < 93; x += 6) { box(ctx, ox + x, oy + 10, 1, 22, P.w, S); }
-      for (let y = 10; y < 32; y += 7) { box(ctx, ox + 67, oy + y, 26, 1, P.w, S); }
-      box(ctx, ox + 63, oy + 7, 34, 2, sty === "castle" ? P.n : P.B, S); box(ctx, ox + 63, oy + 33, 34, 2, sty === "castle" ? P.n : P.B, S);
-    }
-    // chân tường + sàn
-    box(ctx, ox, oy + ROOM.FLOOR - 3, ROOM.W, 3, sty === "castle" ? P.n : P.b, S); box(ctx, ox, oy + ROOM.FLOOR - 1, ROOM.W, 1, P.k, S);
-    if (sty === "minka" || sty === "teahouse") {   // chiếu tatami
-      box(ctx, ox, oy + ROOM.FLOOR, ROOM.W, ROOM.H - ROOM.FLOOR, "#cfc88a", S);
-      for (let y = ROOM.FLOOR, r = 0; y < ROOM.H; y += 16, r++) {
-        for (let x = (r % 2) * 16 - 16; x < ROOM.W; x += 32) {
-          box(ctx, ox + Math.max(0, x), oy + y, Math.min(32, x + 32) - Math.max(0, x), 1, "#3f5f2a", S);
-          box(ctx, ox + Math.max(0, x), oy + y + 15, Math.min(32, x + 32) - Math.max(0, x), 1, "#3f5f2a", S);
-          if (x >= 0) { box(ctx, ox + x, oy + y, 1, 16, "#8f8a4a", S); }
+  // 1.25: kiểu nhà của ba gian (nhà chưa xây xong 7 bước: kiểu gốc); opts.style: vẽ thử kiểu khác (tab Xây nhà)
+  function houseStyle(opts) {
+    const h = homeState();
+    return (opts && opts.style) || (h.house >= 7 ? (h.style || "classic") : "classic");
+  }
+  // 1.25: cửa sổ phòng chính (cột 4–5, x 64–96) theo kiểu nhà
+  function roomWindow(ctx, S, ox, oy, style, now) {
+    const tod = timeOfDay(), sky = skyColors(tod), stR = skyNow(), night = tod === "night";
+    const c = (x, y, w, h, col) => box(ctx, ox + x, oy + y, w, h, col, S);
+    const weather = (x, y, w, h) => {
+      if (!(stR && (stR.rain || stR.snow))) { return; }
+      ctx.save(); ctx.beginPath(); ctx.rect((ox + x) * S, (oy + y) * S, w * S, h * S); ctx.clip();
+      drawWeather(ctx, S, ox, oy + y, now, x, x + w, h, Object.assign({}, stR, { flash: 0 })); ctx.restore();
+    };
+    const glass = (x, y, w, h) => {
+      c(x, y, w, h, sky[1]); c(x, y, w, Math.ceil(h * 0.45), sky[0]);
+      if (night) { c(x + w - 8, y + 2, 3, 3, "#fff6c8"); }
+      else if (!stR || !stR.rain) { c(x + 3, y + Math.floor(h * 0.6), 7, 2, P.w); c(x + 5, y + Math.floor(h * 0.6) - 1, 3, 1, P.w); }
+      weather(x, y, w, h);
+    };
+    if (style === "classic") {            // kính khung trắng, rèm hồng có nếp + dây buộc, diềm rèm, chậu hoa ở bậu
+      c(67, 9, 26, 24, P.w); glass(68, 10, 24, 22); c(79, 10, 2, 22, P.w); c(68, 20, 24, 2, P.w);
+      c(66, 33, 28, 2, P.w); c(66, 35, 28, 1, "#d9c9b0");
+      c(70, 30, 6, 3, "#d9704a"); c(71, 28, 1, 2, P.g); c(73, 27, 1, 3, P.g); c(72, 28, 1, 1, P.p); c(74, 27, 1, 1, P.y);
+      [[60, 1], [93, -1]].forEach(([x, d]) => {
+        for (let y = 9; y < 35; y++) {
+          const pinch = y > 21 && y < 27 ? 2 : (y >= 27 ? 1 : 0), w = 7 - pinch, xs = d > 0 ? x : x + pinch;
+          c(xs, y, w, 1, "#f49ab0"); c(xs + 2, y, 1, 1, "#e07a96"); c(xs + 4, y, 1, 1, "#e07a96");
         }
-        for (let x = 4; x < ROOM.W; x += 6) { box(ctx, ox + x, oy + y + 4 + (x % 4), 2, 1, "#bdb576", S); }
-      }
-    } else {
-      const fl = sty === "castle" ? ["#8a5a34", "#6b4226"] : ["#e2a46a", "#c98a52"];
-      box(ctx, ox, oy + ROOM.FLOOR, ROOM.W, ROOM.H - ROOM.FLOOR, fl[0], S);
-      for (let y = ROOM.FLOOR + 5; y < ROOM.H; y += 6) { box(ctx, ox, oy + y, ROOM.W, 1, fl[1], S); }
-      for (let y = ROOM.FLOOR, k = 0; y < ROOM.H; y += 6, k++) {
-        for (let x = (k % 2) * 12; x < ROOM.W; x += 24) { box(ctx, ox + x, oy + y, 1, 5, fl[1], S); }
-      }
+        c(d > 0 ? x : x + 2, 24, 5, 1, "#e9b949");
+      });
+      c(59, 6, 42, 3, "#f49ab0"); c(59, 6, 42, 1, "#f8bccb"); for (let x = 59; x < 101; x += 2) { c(x, 9, 1, 1, "#f49ab0"); }
+    } else if (style === "minka") {       // nửa kính nhìn trời, nửa shoji khép
+      c(65, 8, 30, 27, "#3b2414"); glass(67, 10, 13, 23);
+      c(80, 10, 13, 23, night ? "#4a5470" : "#f3ecd8");
+      for (let x = 83; x < 93; x += 3) { c(x, 10, 1, 23, "#6b4226"); }
+      for (let y = 15; y < 33; y += 5) { c(80, y, 13, 1, "#6b4226"); }
+      c(79, 9, 2, 25, "#3b2414"); c(64, 34, 32, 2, "#4a2c18");
+    } else if (style === "teahouse") {    // cửa sổ tròn song tre
+      ctx.save(); ctx.beginPath(); ctx.arc((ox + 80) * S, (oy + 21) * S, 12 * S, 0, Math.PI * 2); ctx.clip();
+      glass(66, 8, 28, 26);
+      [[71, 8, 1, 26], [77, 8, 2, 26], [85, 8, 1, 26], [66, 14, 28, 1], [66, 22, 28, 2], [66, 29, 28, 1]].forEach(([x, y, w, h]) => c(x, y, w, h, "#a8884a"));
+      [[74, 18], [81, 25], [88, 16]].forEach(([x, y]) => c(x, y, 2, 2, "#8a6a34"));
+      ctx.restore();
+      ctx.strokeStyle = "#8a6238"; ctx.lineWidth = 2 * S; ctx.beginPath(); ctx.arc((ox + 80) * S, (oy + 21) * S, 12.5 * S, 0, Math.PI * 2); ctx.stroke();
+      ctx.strokeStyle = "#d9c094"; ctx.lineWidth = S; ctx.beginPath(); ctx.arc((ox + 80) * S, (oy + 21) * S, 14 * S, 0, Math.PI * 2); ctx.stroke();
+    } else {                              // lâu đài: cửa sổ hình chuông katōmado, khung đen viền vàng
+      const HW = { 8: 1, 9: 2, 10: 3, 11: 4, 12: 6, 13: 8, 14: 10, 15: 12, 16: 14, 17: 13 };
+      const half = (y) => (HW[y] !== undefined ? HW[y] : 12);
+      for (let y = 7; y <= 35; y++) { const hw = y === 7 ? 1 : half(Math.min(y, 34)) + 2; c(80 - hw, y, hw * 2, 1, "#1f1f33"); }
+      for (let y = 9; y <= 33; y++) { const hw = half(y); if (hw > 1) { c(80 - hw + 1, y, hw * 2 - 2, 1, y < 19 ? sky[0] : sky[1]); } }
+      if (night) { c(84, 21, 3, 3, "#fff6c8"); } else if (!stR || !stR.rain) { c(71, 24, 7, 2, P.w); c(73, 23, 3, 1, P.w); }
+      weather(69, 18, 22, 15);
+      c(79, 10, 2, 24, "#1f1f33"); c(69, 25, 22, 1, "#1f1f33");
+      for (let y = 7; y <= 35; y++) { const hw = y === 7 ? 1 : half(Math.min(y, 34)) + 2; c(80 - hw - 1, y, 1, 1, "#e9b949"); c(80 + hw, y, 1, 1, "#e9b949"); }
+      c(64, 35, 32, 2, "#1f1f33"); c(64, 35, 32, 1, "#e9b949");
     }
+  }
+  // vệt nắng từ cửa sổ xuống sàn (ban ngày, trời không mưa)
+  function sunbeam(ctx, S, ox, oy) {
+    const stR = skyNow();
+    if (timeOfDay() !== "day" || (stR && (stR.rain || stR.light <= 0.6))) { return; }
+    ctx.save(); ctx.globalAlpha = 0.12; ctx.fillStyle = "#fff4c0"; ctx.beginPath();
+    ctx.moveTo((ox + 67) * S, (oy + 41) * S); ctx.lineTo((ox + 93) * S, (oy + 41) * S);
+    ctx.lineTo((ox + 106) * S, (oy + 74) * S); ctx.lineTo((ox + 58) * S, (oy + 74) * S); ctx.closePath(); ctx.fill(); ctx.restore();
+  }
+  function drawRoom(ctx, S, ox, oy, now, opts) {
+    const kind = (opts && opts.kind) || "room";
+    if (kind !== "room") { drawSideRoom(ctx, S, ox, oy, now, kind, opts || {}); return; }      // 1.24: Bếp / Phòng ngủ
+    const home = homeState();
+    const L0 = opts && opts.keepLights ? lights.length : (lights.length = 0);
+    const tod = timeOfDay(), stR = skyNow();
+    const sty = houseStyle(opts);
+    if (NHA) { NHA.bg(ctx, S, ox, oy, "room", ROOM.W, ROOM.H, ROOM.FLOOR, sty); } else { box(ctx, ox, oy, ROOM.W, ROOM.H, "#f1e2c2", S); }
+    roomWindow(ctx, S, ox, oy, sty, now);
+    sunbeam(ctx, S, ox, oy);
     if (opts && opts.grid) {
       ctx.globalAlpha = 0.25;
       for (let gx = 0; gx <= 10; gx++) { box(ctx, ox + gx * T, oy + ROOM.FLOOR, 0.34, 48, P.k, S); }
@@ -2942,13 +2975,184 @@ var GardenHome = (function () {
       drawItem(ctx, S, ox, oy, e, "room", now, tod, ghost ? 0.3 : undefined);
     });
     drawPetsBefore(ctx, S, ox, oy, pets, pst, null, now);
-    if (stR && typeof GardenSky !== "undefined") {
-      drawNight(ctx, S, ox, oy, 0, ROOM.W, ROOM.H, Object.assign({}, stR, { light: 0.08 + stR.light * 0.8 }));
-      if (SEA()) { SEA().room(ctx, S, ox, oy, now, ROOM.W, 1, stR); }
-    } else if (tod !== "day") {
-      ctx.globalAlpha = 0.12; box(ctx, ox, oy, ROOM.W, ROOM.H, "#1b1b4f", S); ctx.globalAlpha = 1;
-    }
+    drawParts(ctx, S, ox, oy, "room");      // 1.24: hơi nước, nốt nhạc… của đồ trong nhà (trước đây tính mà không vẽ)
+    roomNight(ctx, S, ox, oy, now, ROOM.W, tod, stR, opts, L0);
     if (opts && opts.overlay) { opts.overlay(ctx, S, ox, oy); }
+  }
+  // tối trong phòng; lightDx: dời nguồn sáng của gian này về toạ độ cả nhà (vẽ đêm một lần cho cả 3 gian)
+  function roomNight(ctx, S, ox, oy, now, W, tod, stR, opts, L0) {
+    if (opts && opts.lightDx) { for (let i = L0; i < lights.length; i++) { lights[i].x += opts.lightDx; } }
+    if (opts && opts.noNight) { return; }
+    if (stR && typeof GardenSky !== "undefined") {
+      drawNight(ctx, S, ox, oy, 0, W, ROOM.H, Object.assign({}, stR, { light: 0.08 + stR.light * 0.8 }));
+      if (SEA()) { SEA().room(ctx, S, ox, oy, now, W, 1, stR); }
+    } else if (tod !== "day") {
+      ctx.globalAlpha = 0.12; box(ctx, ox, oy, W, ROOM.H, "#1b1b4f", S); ctx.globalAlpha = 1;
+    }
+  }
+  // ---- 1.24: gian bên (Bếp / Phòng ngủ): nền ở nha_art.js, đồ / lưới / đêm như phòng chính ----
+  function drawSideRoom(ctx, S, ox, oy, now, kind, opts) {
+    const home = homeState(), tod = timeOfDay(), stR = skyNow(), W = SIDE.W;
+    const L0 = opts.keepLights ? lights.length : (lights.length = 0);
+    if (NHA) { NHA.bg(ctx, S, ox, oy, kind, W, ROOM.H, ROOM.FLOOR, houseStyle(opts)); } else { box(ctx, ox, oy, W, ROOM.H, "#e8dcc8", S); }
+    if (opts.grid) {
+      ctx.globalAlpha = 0.25;
+      for (let gx = 0; gx <= 9; gx++) { box(ctx, ox + gx * T, oy + ROOM.FLOOR, 0.34, 48, P.k, S); box(ctx, ox + gx * T, oy + ROOM.WALL_Y, 0.34, 16, P.k, S); }
+      for (let gy = 0; gy <= 3; gy++) { box(ctx, ox, oy + ROOM.FLOOR + gy * T, W, 0.34, P.k, S); }
+      box(ctx, ox, oy + ROOM.WALL_Y, W, 0.34, P.k, S); box(ctx, ox, oy + ROOM.WALL_Y + 16, W, 0.34, P.k, S);
+      ctx.globalAlpha = 1;
+    }
+    if (SEA()) { SEA().room(ctx, S, ox, oy, now, W, 0, stR); }
+    const all = placedSorted(home[kind] || []);
+    const order = all.filter((e) => (item(e.id) || {}).place === "wall")
+      .concat(all.filter((e) => (item(e.id) || {}).place === "rug"))
+      .concat(all.filter((e) => ["floor", undefined].indexOf((item(e.id) || {}).place) >= 0));
+    order.forEach((e) => {
+      const ghost = placing && placing.index === e.index && placing.scene === kind;
+      drawItem(ctx, S, ox, oy, e, kind, now, tod, ghost ? 0.3 : undefined);
+    });
+    drawParts(ctx, S, ox, oy, kind);
+    roomNight(ctx, S, ox, oy, now, W, tod, stR, opts, L0);
+    if (opts.overlay) { opts.overlay(ctx, S, ox, oy); }
+  }
+  // gian chưa mở: tối lại như nhau ở cả hai bên, biển hai dòng giống nhau (1.25: một lần mở cả hai gian, bấm bên nào cũng được)
+  function lockedRoom(ctx, S, ox, oy, kind, opts) {
+    if (NHA) { NHA.bg(ctx, S, ox, oy, kind, SIDE.W, ROOM.H, ROOM.FLOOR, houseStyle(opts)); } else { box(ctx, ox, oy, SIDE.W, ROOM.H, "#e8dcc8", S); }
+    ctx.globalAlpha = 0.74; box(ctx, ox, oy, SIDE.W, ROOM.H, "#1b1b2f", S); ctx.globalAlpha = 1;
+    if (opts && opts.noSign) { return; }
+    const cat = catalog() || {}, info = (cat.rooms || []).find((r) => r.id === kind) || { name: SCENE_NAME[kind] };
+    const ready = homeState().house >= (cat.nha_unlock || 7);
+    const lines = [info.name, ready ? "Mở rộng nhà: cả 2 gian · " + Number(cat.nha_price || 2000).toLocaleString("vi-VN") + " xu" : "Xây xong nhà để mở rộng"];
+    const fs = Math.max(7, 6 * S), lh = fs + 3 * S, maxW = SIDE.W * S - 6 * S;
+    const font = (b) => (b ? "bold " : "") + fs + "px \"DotGothic16\", \"Noto Sans\", monospace";
+    ctx.font = font(true); let tw = ctx.measureText(lines[0]).width;
+    ctx.font = font(false); tw = Math.min(maxW, Math.max(tw, ctx.measureText(lines[1]).width) + 10 * S);
+    const th = lh * 2 + 3 * S, cx = (ox + SIDE.W / 2) * S, by = (oy + 44) * S;
+    ctx.fillStyle = "#1b1b2f"; ctx.fillRect(Math.round(cx - tw / 2 - S), Math.round(by - S), Math.round(tw + 2 * S), Math.round(th + 2 * S));
+    ctx.fillStyle = "#ffd23f"; ctx.fillRect(Math.round(cx - tw / 2), Math.round(by), Math.round(tw), Math.round(th));
+    ctx.textBaseline = "middle"; ctx.textAlign = "center";
+    lines.forEach((t, i) => {
+      ctx.fillStyle = i ? "#6b3b1f" : "#1b1b2f"; ctx.font = font(!i);
+      ctx.fillText(t, Math.round(cx), Math.round(by + 2 * S + lh * i + lh / 2), tw - 4 * S);
+    });
+    ctx.textAlign = "left"; ctx.textBaseline = "alphabetic";
+  }
+  // cả nhà 3 gian (màn chính "Trong nhà", ảnh chụp nguyên nhà): Bếp · cột · phòng chính · cột · Phòng ngủ, thú đi khắp nhà
+  //   opts.style: vẽ thử kiểu nhà khác · opts.open: vẽ như đã mở rộng (ảnh nhỏ ở tab Xây nhà) · opts.noSign: gian chưa mở không có biển
+  function drawHouse3(ctx, S, ox, oy, now, opts) {
+    opts = opts || {};
+    const rooms = homeState().rooms || [], stR = skyNow(), tod = timeOfDay(), sty = houseStyle(opts);
+    const isOpen3 = (k) => k === "room" || opts.open || rooms.indexOf(k) >= 0;
+    lights.length = 0;
+    ["kitchen", "room", "bedroom"].forEach((k) => {
+      const x = HOUSE3.X[k];
+      if (isOpen3(k)) {
+        drawRoom(ctx, S, ox + x, oy, now, { kind: k, noPets: true, noNight: true, keepLights: true, lightDx: x, style: opts.style });
+      } else { lockedRoom(ctx, S, ox + x, oy, k, opts); }
+    });
+    [144, 308].forEach((x) => {
+      if (NHA) { NHA.post(ctx, S, ox, oy, x, 0, ROOM.H, sty); }
+      else { box(ctx, ox + x, oy, HOUSE3.POST, ROOM.H, P.B, S); box(ctx, ox + x, oy + 5, HOUSE3.POST, 1, P.k, S); }
+    });
+    if (!opts.noPets && (isOpen || UIget("pets") !== "off") && typeof GardenPets !== "undefined") {
+      GardenPets.place(H.data(), "house", now, stR).forEach((e) => GardenPets.draw(ctx, S, ox, oy, e, now));
+    }
+    if (stR && typeof GardenSky !== "undefined") {
+      drawNight(ctx, S, ox, oy, 0, HOUSE3.W, ROOM.H, Object.assign({}, stR, { light: 0.08 + stR.light * 0.8 }));
+      if (SEA()) { ["kitchen", "room", "bedroom"].forEach((k) => { if (isOpen3(k)) { SEA().room(ctx, S, ox + HOUSE3.X[k], oy, now, roomW(k), 1, stR); } }); }
+    } else if (tod !== "day") {
+      ctx.globalAlpha = 0.12; box(ctx, ox, oy, HOUSE3.W, ROOM.H, "#1b1b4f", S); ctx.globalAlpha = 1;
+    }
+    lights.length = 0;
+  }
+  function houseRoomAt(ax) {        // toạ độ nghệ thuật trên cả nhà → gian (phần vườn hai bên: gian gần nhất)
+    return ax < 146 ? "kitchen" : ax < 310 ? "room" : "bedroom";
+  }
+  // ---- 1.25: cả nhà đứng giữa vườn (bố cục A): hai bên là vườn (trời theo giờ, đồi, cỏ theo mùa), chân trời ngang mép sàn,
+  // tường ngoài hai đầu, mái theo kiểu nhà phía trên (mái hiên khi chỉ còn chỗ hẹp, mái đầy đủ khi đủ cao), móng đá khi còn chỗ dưới.
+  // Vùng vẽ: VW × VH điểm ảnh nghệ thuật từ (0, 0); nhà ở (hx, hy).
+  function gardenBand(ctx, S, x0, x1, y0, y1, hz, st, side) {
+    const w = x1 - x0, mix = typeof GardenSky !== "undefined" && GardenSky.mix ? GardenSky.mix : (a) => a;
+    if (w <= 0) { return; }
+    const bands = 7;
+    for (let b = 0; b < bands; b++) {
+      const a = y0 + Math.floor((hz - y0) * b / bands), c = y0 + Math.floor((hz - y0) * (b + 1) / bands);
+      if (c > a) { box(ctx, x0, a, w, c - a, mix(st.top, st.bottom, b / (bands - 1)), S); }
+    }
+    if (st.light < 0.6) {
+      for (let i = 0; i < w / 6; i++) { box(ctx, x0 + ((i * 37 + 5) % Math.max(1, Math.floor(w))), y0 + ((i * 23 + 3) % Math.max(4, hz - y0 - 8)), 1, 1, i % 3 ? "#ffffff" : "#ffe9a8", S); }
+    } else if (!st.rain && w > 30 && side) {
+      const cx = side < 0 ? x0 + Math.floor(w * 0.35) : x0 + Math.floor(w * 0.55), cy = y0 + Math.max(3, Math.floor((hz - y0) * 0.3));
+      [[0, 2, 14, 3], [3, 0, 7, 2], [-3, 3, 4, 2]].forEach(([dx, dy, ww, hh]) => box(ctx, cx + dx, cy + dy, ww, hh, "#ffffff", S));
+    }
+    ctx.fillStyle = st.hills;
+    for (let i = Math.floor(x0); i < x1; i++) { const hh = 5 + Math.round(3 * Math.sin(i / 17) + 2 * Math.sin(i / 7)); ctx.fillRect(i * S, (hz - hh) * S, S, hh * S); }
+    const sea = SEA();
+    if (sea) { try { sea.decorHills(ctx, S, 0, 0, x0, x1, hz, st); } catch (e) { /* bỏ qua */ } }
+    box(ctx, x0, hz, w, y1 - hz, st.ground, S);
+    for (let i = Math.floor(x0 / 11) * 11 + 3; i < x1; i += 11) { if (i >= x0) { box(ctx, i, hz + 3 + (Math.abs(i) * 7) % Math.max(1, y1 - hz - 4), 1, 1, st.grass, S); } }
+    if (sea) { try { sea.decorGround(ctx, S, 0, 0, x0, x1, hz, y1, st); } catch (e) { /* bỏ qua */ } }
+    if (!side) { return; }
+    const bx = side < 0 ? x1 - 16 : x0 + 3, by = hz + 6;            // bụi cây + hoa sát tường nhà
+    if (bx >= x0 && bx + 13 <= x1 && by + 9 <= y1) {
+      box(ctx, bx + 1, by + 3, 12, 6, P.k, S); box(ctx, bx + 2, by + 1, 10, 7, P.G, S); box(ctx, bx + 3, by, 8, 6, P.g, S);
+      box(ctx, bx + 4, by + 2, 1, 1, P.p, S); box(ctx, bx + 8, by + 1, 1, 1, P.y, S); box(ctx, bx + 6, by + 4, 1, 1, P.w, S);
+    }
+    const fx = side < 0 ? x1 - 30 : x0 + 22;
+    if (fx >= x0 && fx + 10 <= x1 && by + 10 <= y1) { [0, 4, 8].forEach((d, i) => { box(ctx, fx + d, by + 6, 1, 4, P.G, S); box(ctx, fx + d - 1, by + 5, 3, 2, [P.p, P.y, P.r][i], S); }); }
+  }
+  function roofOver(ctx, S, hx, hy, style, night) {          // mái phía trên nhà: hy = chỗ trống phía trên (điểm ảnh nghệ thuật)
+    const r = (NHA && NHA.ROOF[style]) || { a: P.r, b: P.R, edge: P.k, board: P.B };
+    const x0 = hx - 12, x1 = hx + HOUSE3.W + 12;
+    if (hy >= 40) {                                           // đủ cao: mái đầy đủ hình thang + cửa sổ áp mái
+      const yE = hy - 1, yR = hy - Math.min(44, hy - 6), W0 = x1 - x0 + 4, a0 = x0 - 2, inset = Math.floor(W0 * 0.16);
+      for (let y = yR; y <= yE; y++) {
+        const t = (y - yR) / Math.max(1, yE - yR), a = a0 + Math.round(inset * (1 - t)), b = a0 + W0 - Math.round(inset * (1 - t));
+        box(ctx, a - 1, y, b - a + 2, 1, P.k, S); box(ctx, a, y, b - a, 1, (Math.floor((y - yR) / 3) % 2) ? r.b : r.a, S);
+        if ((y - yR) % 3 === 2) { for (let x = a + ((Math.floor((y - yR) / 3) % 2) * 4); x < b; x += 8) { box(ctx, x, y, 1, 1, r.edge, S); } }
+      }
+      box(ctx, a0 + inset - 2, yR - 3, W0 - 2 * inset + 4, 3, P.k, S); box(ctx, a0 + inset - 1, yR - 2, W0 - 2 * inset + 2, 1, r.board, S);
+      box(ctx, a0, yE - 1, W0, 2, r.board, S);
+      const cx = hx + HOUSE3.W / 2, cy = Math.floor((yR + yE) / 2);
+      box(ctx, cx - 6, cy - 5, 12, 11, P.k, S); box(ctx, cx - 5, cy - 4, 10, 9, night ? P.y : P.l, S);
+      box(ctx, cx, cy - 4, 1, 9, P.k, S); box(ctx, cx - 5, cy, 10, 1, P.k, S);
+      if (night) { lights.push({ x: cx, y: cy, r: 12 }); }
+      return;
+    }
+    if (hy <= 0) { return; }
+    for (let y = 0; y < hy - 2; y++) {                        // mái hiên cắt ngang (mái còn tiếp phía trên khung)
+      const k = y;
+      box(ctx, x0, y, x1 - x0, 1, (Math.floor(k / 3) % 2) ? r.b : r.a, S);
+      if (k % 3 === 2) { for (let x = x0 + ((Math.floor(k / 3) % 2) * 4); x < x1; x += 8) { box(ctx, x, y, 1, 1, r.edge, S); } }
+    }
+    box(ctx, x0, hy - 3, x1 - x0, 2, r.board, S); box(ctx, x0, hy - 1, x1 - x0, 1, P.k, S);
+  }
+  function drawHouseScene(ctx, S, VW, VH, hx, hy, now, opts) {
+    opts = opts || {};
+    const st = skyNow() || { top: "#8fd3ff", bottom: "#c4ecff", light: 1, clouds: 2, ground: "#5ed35e", grass: "#45bf4a", hills: "#7ed98a", rain: 0, snow: 0 };
+    const sty = houseStyle(opts), hz = hy + ROOM.FLOOR, night = st.light < 0.6;
+    lights.length = 0;
+    gardenBand(ctx, S, -1, hx - 4, -1, VH + 1, hz, st, -1);
+    gardenBand(ctx, S, hx + HOUSE3.W + 4, VW + 1, -1, VH + 1, hz, st, 1);
+    if (hy > 0) { gardenBand(ctx, S, hx - 4, hx + HOUSE3.W + 4, -1, hy + 1, Math.min(hz, hy + 1), st, 0); }
+    roofOver(ctx, S, hx, hy, sty, night);
+    const below = VH - (hy + ROOM.H);
+    if (below > 0) {                                          // đất + móng đá dưới nhà (hình nền)
+      gardenBand(ctx, S, hx - 4, hx + HOUSE3.W + 4, hy + ROOM.H, VH + 1, hy + ROOM.H, st, 0);
+      box(ctx, hx - 6, hy + ROOM.H, HOUSE3.W + 12, Math.min(6, below), P.k, S);
+      box(ctx, hx - 5, hy + ROOM.H + 1, HOUSE3.W + 10, Math.min(4, below - 1), P.S, S); box(ctx, hx - 5, hy + ROOM.H + 1, HOUSE3.W + 10, 1, P.s, S);
+    }
+    [-4, HOUSE3.W].forEach((x) => {
+      if (NHA) { NHA.post(ctx, S, hx, hy, x, 0, ROOM.H, sty); }
+      else { box(ctx, hx + x, Math.max(0, hy), 4, ROOM.H, P.B, S); }
+    });
+    if (typeof GardenSky !== "undefined") {                    // mưa / tuyết ngoài vườn, rồi tối theo trời ngoài (không có đèn trong nhà)
+      drawWeather(ctx, S, 0, 0, now, -1, hx - 4, VH + 1, st, hz);
+      drawWeather(ctx, S, 0, 0, now, hx + HOUSE3.W + 4, VW + 1, VH + 1, st, hz);
+      drawNight(ctx, S, 0, 0, -1, VW + 1, VH + 1, st);     // lights lúc này chỉ có cửa sổ áp mái
+    }
+    lights.length = 0;
+    drawHouse3(ctx, S, hx, hy, now, opts);
   }
 
   // ---------------------------------------------------------------------
@@ -2960,15 +3164,17 @@ var GardenHome = (function () {
     const it = item(id), home = homeState(), cat = catalog();
     if (!it || !cat) { return "?"; }
     const w = it.w;
-    if ((it.scene === "room") !== (sceneName === "room")) { return it.scene === "room" ? "Đồ trong nhà" : "Đồ ngoài trời"; }
+    if ((it.scene === "room") !== isRoom(sceneName)) { return it.scene === "room" ? "Đồ trong nhà" : "Đồ ngoài trời"; }
     if (isOut(sceneName)) {
       if (!canEnter(sceneName)) { return "Chưa mở vùng này"; }
       if (!(cat.yard.house_cols <= x && x + w <= cat.yard.cols && y >= 0 && y < cat.yard.rows)) { return "Ngoài khu đất hoặc đè lên công trình"; }
     } else {
-      if (!(x >= 0 && x + w <= cat.room.cols && y >= 0 && y < cat.room.rows)) { return "Ngoài căn phòng"; }
+      const cols = sceneName === "room" ? cat.room.cols : (cat.side || { cols: 9 }).cols, win = sceneName === "room" ? cat.room.window : [];
+      if (!canEnter(sceneName)) { return "Chưa mở gian này"; }
+      if (!(x >= 0 && x + w <= cols && y >= 0 && y < cat.room.rows)) { return "Ngoài căn phòng"; }
       if (it.place === "wall") {
         if (y !== 0) { return "Đồ treo tường"; }
-        if (cellsOf(id, x, y).some(([cx]) => cat.room.window.indexOf(cx) >= 0)) { return "Chỗ cửa sổ"; }
+        if (cellsOf(id, x, y).some(([cx]) => win.indexOf(cx) >= 0)) { return "Chỗ cửa sổ"; }
       } else if (y === 0) { return "Đặt dưới sàn"; }
     }
     const mine = cellsOf(id, x, y).map((c) => c.join(","));
@@ -2982,7 +3188,7 @@ var GardenHome = (function () {
       if (ay < YARD.SKY || ay >= YARD.H || ax < 0 || ax >= YARD.W) { return null; }
       return { x: Math.floor(ax / T), y: Math.floor((ay - YARD.SKY) / T) };
     }
-    if (ax < 0 || ax >= ROOM.W) { return null; }
+    if (ax < 0 || ax >= roomW(sceneName)) { return null; }
     if (ay >= ROOM.WALL_Y && ay < ROOM.WALL_Y + T) { return { x: Math.floor(ax / T), y: 0 }; }
     if (ay >= ROOM.FLOOR && ay < ROOM.H) { return { x: Math.floor(ax / T), y: 1 + Math.floor((ay - ROOM.FLOOR) / T) }; }
     return null;
@@ -3013,24 +3219,24 @@ var GardenHome = (function () {
     const cv = $("kb-yard");
     if (!cv || !mainView || typeof GardenPets === "undefined") { return null; }
     const r = cv.getBoundingClientRect();
-    return GardenPets.at(mainScene(), (ev.clientX - r.left) / mainView.S - mainView.ox, (ev.clientY - r.top) / mainView.S);
+    return GardenPets.at(mainScene(), (ev.clientX - r.left) / mainView.S - mainView.ox, (ev.clientY - r.top) / mainView.S - (mainView.oy || 0));
   }
   function mainGuestAt(ev) {
     const cv = $("kb-yard");
-    if (!cv || !mainView || typeof GardenGuests === "undefined") { return null; }
+    if (!cv || !mainView || mainView.house || typeof GardenGuests === "undefined") { return null; }
     const r = cv.getBoundingClientRect();
     return GardenGuests.at(mainScene(), (ev.clientX - r.left) / mainView.S - mainView.ox, (ev.clientY - r.top) / mainView.S);
   }
   function mainItemAt(ev) {
     const cv = $("kb-yard");
-    if (!cv || !mainView) { return null; }
+    if (!cv || !mainView || mainView.house) { return null; }
     const r = cv.getBoundingClientRect(), sc = mainScene();
     const ax = (ev.clientX - r.left) / mainView.S - mainView.ox, ay = (ev.clientY - r.top) / mainView.S;
     const idx = itemAt(sc, cellAt(sc, ax, ay));
     return idx >= 0 ? (homeState()[sc] || [])[idx] : null;
   }
-  // Các cảnh ngoài trời đã mở (để chuyển nhanh trên màn chính)
-  function outdoorList() { return ["yard"].concat(ZONE_IDS.filter((z) => zoneOpen(z)), uzIds()); }
+  // Các cảnh chuyển nhanh trên màn chính: Sân vườn → Trong nhà (1.24: cả nhà 3 gian) → các vùng đã mở → vùng tự tạo
+  function outdoorList() { return ["yard"].concat(canEnter("house") ? ["house"] : [], ZONE_IDS.filter((z) => zoneOpen(z)), uzIds()); }
   let mainSwitchAt = 0;
   function cycleMain(step) {
     const list = outdoorList();
@@ -3079,8 +3285,18 @@ var GardenHome = (function () {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.imageSmoothingEnabled = false;
     const ox = Math.floor((cw / S - YARD.W) / 2);
-    mainView = { S: S, ox: ox };
-    drawOutdoor(ctx, S, ox, 0, now, mainScene(), { bgFrom: -ox - 1, bgTo: cw / S - ox + 1, seen: !document.hidden });
+    if (mainScene() === "house") {
+      // 1.25 (bố cục A): cả nhà giữa dải, phóng nguyên lần vừa chiều cao (thấp quá thì bớt tối đa 12 điểm ảnh xà trên cùng),
+      // hai bên là vườn, mái phía trên
+      const Sh = Math.max(1, Math.min(S, Math.max(Math.floor(hgt / ROOM.H), 2), Math.floor(cw / (HOUSE3.W + 10))));
+      const VW = Math.ceil(cw / Sh), VH = Math.ceil(hgt / Sh);
+      const hx = Math.floor((cw / Sh - HOUSE3.W) / 2), hy = Math.max(-12, Math.floor(hgt / Sh - ROOM.H));
+      mainView = { S: Sh, ox: hx, oy: hy, house: true };
+      drawHouseScene(ctx, Sh, VW, VH, hx, hy, now, {});
+    } else {
+      mainView = { S: S, ox: ox };
+      drawOutdoor(ctx, S, ox, 0, now, mainScene(), { bgFrom: -ox - 1, bgTo: cw / S - ox + 1, seen: !document.hidden });
+    }
     const sw = now - mainSwitchAt;
     if (sw < 380 && UIget("yard") === "full") {          // chuyển cảnh: màn tối mờ dần
       ctx.globalAlpha = 0.65 * (1 - sw / 380); ctx.fillStyle = "#1b1b2f"; ctx.fillRect(0, 0, cw, hgt); ctx.globalAlpha = 1;
@@ -3112,7 +3328,7 @@ var GardenHome = (function () {
     if (++fitTick % 30 === 0) { fitHome(true); }
     const area = cv.parentNode;
     const cw = area.clientWidth, ch = area.clientHeight - 30;
-    const SW = isOut(scene) ? YARD.W : ROOM.W, SH = isOut(scene) ? YARD.H : ROOM.H;
+    const SW = isOut(scene) ? YARD.W : roomW(scene), SH = isOut(scene) ? YARD.H : ROOM.H;
     const S = Math.max(2, Math.min(Math.floor(cw / SW), Math.floor(ch / SH), 5));
     const dpr = window.devicePixelRatio || 1;
     const w = SW * S, h = SH * S;
@@ -3159,7 +3375,7 @@ var GardenHome = (function () {
       }
     };
     if (isOut(scene)) { drawOutdoor(ctx, S, 0, 0, now, scene, { grid: !!placing, overlay: overlay, seen: !document.hidden }); }
-    else { drawRoom(ctx, S, 0, 0, now, { grid: !!placing, overlay: overlay, seen: !document.hidden }); }
+    else { drawRoom(ctx, S, 0, 0, now, { kind: scene, grid: !!placing, overlay: overlay, seen: !document.hidden }); }
   }
 
   // ---- 1.22: chụp ảnh vườn — cảnh đang xem (sân / vùng / trong nhà) thành PNG có khung, ngày, tên giao diện mùa ----
@@ -3172,23 +3388,27 @@ var GardenHome = (function () {
   }
   function photoScene(ctx, S, ox, oy, sc, now, wide) {
     if (isOut(sc)) { drawOutdoor(ctx, S, ox, oy, now, sc, wide ? { bgFrom: -ox - 1, bgTo: wide - ox + 1 } : {}); }
-    else { drawRoom(ctx, S, ox, oy, now, {}); }
+    else if (sc === "house") { drawHouse3(ctx, S, ox, oy, now, {}); }        // 1.24: ảnh nguyên nhà
+    else { drawRoom(ctx, S, ox, oy, now, { kind: sc }); }
     lights.length = 0;
   }
   function photoCanvas(size, sc) {
     sc = sc || mainScene();
-    const out = isOut(sc), SW = out ? YARD.W : ROOM.W, SH = out ? YARD.H : ROOM.H, now = Date.now(), cap = photoCaption(sc);
+    const out = isOut(sc), SW = out ? YARD.W : sc === "house" ? HOUSE3.W : roomW(sc), SH = out ? YARD.H : ROOM.H, now = Date.now(), cap = photoCaption(sc);
     const cv = document.createElement("canvas"), ctx = cv.getContext("2d");
     const font = (px, bold) => (bold ? "700 " : "") + px + "px \"Noto Sans\", \"Noto Sans CJK JP\", \"Segoe UI\", sans-serif";
     if (size === "wall") {
-      const W = 1920, Hh = 1080, S = out ? 7 : 11;
+      const W = 1920, Hh = 1080, S = out ? 7 : sc === "house" ? 4 : sc === "room" ? 11 : 12;
       cv.width = W; cv.height = Hh; ctx.imageSmoothingEnabled = false;
-      const wide = W / S, ox = Math.floor((wide - SW) / 2), oy = Math.round((Hh / S - SH) * (out ? 0.56 : 0.45));
-      photoScene(ctx, S, out ? ox : Math.floor((wide - SW) / 2), oy, sc, now, out ? wide : 0);
+      const wide = W / S, ox = Math.floor((wide - SW) / 2), oy = Math.round((Hh / S - SH) * (out ? 0.56 : sc === "house" ? 0.62 : 0.45));
+      if (sc === "house") {       // 1.25: nhà đứng giữa vườn, mái đầy đủ, móng đá (như màn chính)
+        drawHouseScene(ctx, S, Math.ceil(wide), Math.ceil(Hh / S), ox, oy, now, {});
+        lights.length = 0;
+      } else { photoScene(ctx, S, out ? ox : Math.floor((wide - SW) / 2), oy, sc, now, out ? wide : 0); }
       // trời phía trên / đất phía dưới: kéo dài màu ở mép cảnh cho kín khung hình nền
       const top = ctx.getImageData(Math.floor(W / 2), oy * S, 1, 1).data, bot = ctx.getImageData(Math.floor(W / 2), (oy + SH) * S - 1, 1, 1).data;
       const rgb = (d) => "rgb(" + d[0] + "," + d[1] + "," + d[2] + ")";
-      if (out) {
+      if (sc === "house") { /* vườn đã kín khung */ } else if (out) {
         ctx.fillStyle = rgb(top); ctx.fillRect(0, 0, W, oy * S);
         ctx.fillStyle = rgb(bot); ctx.fillRect(0, (oy + SH) * S, W, Hh - (oy + SH) * S);
       } else {
@@ -3240,7 +3460,7 @@ var GardenHome = (function () {
     try { url = photoCanvas(size, sc).toDataURL("image/png"); } catch (e) { setTip("Không chụp được ảnh này."); return; }
     closeSnap();
     const d = new Date(), day = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
-    const name = "kotoba_batake_" + (isUz(sc) ? "vung" : sc) + "_" + day + (size === "wall" ? "_hinh_nen" : size === "l" ? "_lon" : "") + ".png";
+    const name = "kotoba_batake_" + (isUz(sc) ? "vung" : sc === "house" ? "nha" : sc) + "_" + day + (size === "wall" ? "_hinh_nen" : size === "l" ? "_lon" : "") + ".png";
     sfx("flip");
     H.send("snap:save:" + JSON.stringify({ name: name, url: url }));
   }
@@ -3264,11 +3484,13 @@ var GardenHome = (function () {
     frame++;
     if (!document.hidden) {
       const now = Date.now();
-      if (vw.open) { stepParts(vw.scene, dt); drawView(now); if (vw.arrange && vw.kho && frame % 10 === 0) { viewKho(); } }
-      else if (isOpen) { stepParts(scene, dt); drawPanel(now); }
+      if (isOpen) { stepParts(scene, dt); drawPanel(now); }
       else {
         const ym = UIget("yard");
-        if (ym === "full") { stepParts(mainScene(), dt); drawMainYard(now); }
+        if (ym === "full") {
+          if (mainScene() === "house") { ["kitchen", "room", "bedroom"].forEach((k) => stepParts(k, dt)); } else { stepParts(mainScene(), dt); }
+          drawMainYard(now);
+        }
         else if (ym !== "hide" && (stillDirty || now - stillAt > 30000)) { stillDirty = false; stillAt = now; drawMainYard(now); }
         if (frame % 15 === 0) { syncCare(); }
       }
@@ -3306,7 +3528,7 @@ var GardenHome = (function () {
   function setTip(text) { const t = $("kb-h-tip"); if (t) { t.textContent = text || ""; } }
   // 1.22.5: cảnh còn ô đặt được món này không (vườn nhiều đồ: mua thêm khi sân đã kín thì báo rõ thay vì "bấm vào ô trống")
   function hasFreeCell(sc, id) {
-    const c = catalog() || {}, g = isOut(sc) ? (c.yard || { cols: 16, rows: 4 }) : (c.room || { cols: 10, rows: 4 });
+    const c = catalog() || {}, g = isOut(sc) ? (c.yard || { cols: 16, rows: 4 }) : sc === "room" ? (c.room || { cols: 10, rows: 4 }) : { cols: (c.side || { cols: 9 }).cols, rows: 4 };
     for (let y = 0; y < g.rows; y++) { for (let x = 0; x < g.cols; x++) { if (!spotError(sc, id, x, y, placing && placing.index)) { return true; } } }
     return false;
   }
@@ -3412,7 +3634,13 @@ var GardenHome = (function () {
     if (!it) { return; }
     // đồ ngoài trời: đặt ở cảnh ngoài trời đang xem; nếu đang trong nhà thì về vùng của món (hoặc sân)
     let target = where || scene;
-    if (it.scene === "room") { target = "room"; }
+    if (it.scene === "room") {          // 1.24: gian đang xem; gian đó kín chỗ thì sang gian còn chỗ (mới mua / tự làm)
+      target = isRoom(target) && canEnter(target) ? target : "room";
+      if (index === undefined && canEnter(target) && !hasFreeCell(target, id)) {
+        const alt = ["room", "kitchen", "bedroom"].find((r) => r !== target && canEnter(r) && hasFreeCell(r, id));
+        if (alt) { target = alt; }
+      }
+    }
     else if (!isOut(target)) { target = canEnter(it.scene) ? it.scene : "yard"; }
     if (!canEnter(target)) {
       const lv = ((catalog() || {}).levels || [])[(catalog() || {}).room_unlock || 5];
@@ -3426,6 +3654,7 @@ var GardenHome = (function () {
   }
 
   function setScene(s) {
+    if (s === "house") { s = "room"; }          // 1.24: "Trong nhà" ở màn chính = cả nhà; bảng Nhà mở từng gian
     if (!canEnter(s)) { return; }
     scene = s;
     if (isOut(s)) { try { localStorage.setItem("kb-main-scene", s); } catch (e) { /* bỏ qua */ } }
@@ -3484,8 +3713,9 @@ var GardenHome = (function () {
     const box0 = document.querySelector(".kb-h-scenes");
     const cat = catalog();
     if (!box0) { return; }
-    const list = ["yard", "room"].concat(ZONE_IDS.filter((z) => zoneOpen(z)), uzIds());
+    const list = ["yard", "room"].concat(SIDE_IDS.filter((r) => canEnter(r)), ZONE_IDS.filter((z) => zoneOpen(z)), uzIds());
     const nextZone = ((cat && cat.zones) || []).find((z) => !zoneOpen(z.id));
+    // 1.24: gian chưa mở không có nút ở đây (thanh trên tràn ở 1024 px) — mở ở tab Xây nhà / bấm gian tối ở màn chính
     const key = list.map(sceneName).join(",") + "|" + list.join(",") + "|" + (nextZone ? nextZone.id : "") + "|" + scene + "|" + homeState().house;
     if (box0.getAttribute("data-key") === key) { fitHome(); return; }
     box0.setAttribute("data-key", key);
@@ -3522,6 +3752,18 @@ var GardenHome = (function () {
     const w = rowsArr[0].length, h = rowsArr.length;
     const S = Math.max(1, Math.floor(Math.min((size - 2) / w, (size - 2) / h)));
     sprite(ctx, rowsArr, Math.floor((size / S - w) / 2), Math.floor((size / S - h) / 2), S);
+    return cv;
+  }
+  // 1.25: ảnh nhỏ cả nhà 3 gian (tab Xây nhà): thẻ Mở rộng nhà (kiểu đang dùng) + từng kiểu nhà; vẽ như đã mở rộng
+  function house3Preview(style, cssW) {
+    const cv = document.createElement("canvas");
+    cv.width = HOUSE3.W; cv.height = ROOM.H;
+    cv.className = "kb-h-house3";
+    const ctx = cv.getContext("2d");
+    ctx.imageSmoothingEnabled = false;
+    drawHouse3(ctx, 1, 0, 0, Date.now(), { open: true, noPets: true, style: style || undefined });
+    lights.length = 0;
+    cv.style.width = cssW + "px"; cv.style.height = Math.round(cssW * ROOM.H / HOUSE3.W) + "px";
     return cv;
   }
   function housePreview(level, size, style, wear) {
@@ -3667,9 +3909,29 @@ var GardenHome = (function () {
         inf.appendChild(btn(money >= nx.price ? "Xây" : "Còn thiếu " + (nx.price - money) + " xu", "kb-h-buy", () => pay("home:build:" + (lv + 1)), money < nx.price));
         card.appendChild(inf);
         list.appendChild(card);
-        if (cat.styles) { list.appendChild(el("div", "kb-h-empty", "Xây xong cả 7 bước sẽ mở thêm các kiểu nhà khác: minka mái tranh, nhà trà, lâu đài mini.")); }
+        if (cat.styles) { list.appendChild(el("div", "kb-h-empty", "Xây xong 7 bước: mở thêm kiểu nhà, Bếp và Phòng ngủ.")); }
       } else {
         list.appendChild(el("div", "kb-h-empty", "Nhà đã xây xong! Giờ trang trí thôi ♪"));
+        // 1.24: nhà 3 gian
+        // 1.25: mở rộng nhà một lần được cả Bếp lẫn Phòng ngủ
+        sec("Mở rộng nhà");
+        {
+          const price = cat.nha_price || 2000, opened = (cat.rooms || []).every((rm) => canEnter(rm.id));
+          const card = el("div", "kb-h-card kb-h-build kb-h-room kb-h-nha" + (opened ? " kb-h-using" : ""));
+          card.appendChild(house3Preview(null, 228));
+          const inf = el("div", "kb-h-info");
+          inf.appendChild(el("div", "kb-h-name", "Bếp + Phòng ngủ"));
+          inf.appendChild(el("div", "kb-h-price", opened ? "Đã mở" : price + " xu"));
+          if (opened) {
+            const row = el("div", "kb-h-btnrow");
+            (cat.rooms || []).forEach((rm) => row.appendChild(btn(scene === rm.id ? "Đang ở " + rm.name : "Đến " + rm.name, "kb-h-buy", () => setScene(rm.id), scene === rm.id)));
+            inf.appendChild(row);
+          } else {
+            inf.appendChild(btn(money >= price ? "Mở rộng" : "Còn thiếu " + (price - money) + " xu", "kb-h-buy", () => pay("home:nha:open"), money < price));
+          }
+          card.appendChild(inf);
+          list.appendChild(card);
+        }
         sec("Kiểu nhà · đổi qua lại miễn phí sau khi mua");
         (cat.styles || []).forEach((stl) => {
           const own = stl.id === "classic" || (home.styles || []).indexOf(stl.id) >= 0;
@@ -3678,6 +3940,7 @@ var GardenHome = (function () {
           card.appendChild(housePreview(7, 64, stl.id));
           const inf = el("div", "kb-h-info");
           inf.appendChild(el("div", "kb-h-name", stl.name));
+          inf.appendChild(house3Preview(stl.id, 152));          // 1.25: ba gian bên trong theo kiểu này
           inf.appendChild(el("div", "kb-h-price", own ? (using ? "Đang dùng" : "Đã có") : stl.price + " xu"));
           if (own) { inf.appendChild(btn(using ? "Đang dùng" : "Dùng kiểu này", "kb-h-buy", () => H.send("home:style:use:" + stl.id), using)); }
           else {
@@ -3855,6 +4118,15 @@ var GardenHome = (function () {
       left.forEach((it) => itemCard(list, it, { inv: true }));
       if (left.length && done.length) { sec("Đã đặt hết (" + done.length + ")"); }
       done.forEach((it) => itemCard(list, it, { inv: true }));
+      return;
+    }
+    if (tab === "room") {      // 1.24: nhóm Phòng chính / Bếp / Phòng ngủ (đồ nào cũng đặt được ở cả ba gian)
+      [["", "Phòng chính"], ["kitchen", "Bếp"], ["bedroom", "Phòng ngủ"]].forEach(([g, name]) => {
+        const grp = items.filter((it) => (it.group || "") === g);
+        if (!grp.length) { return; }
+        sec(name);
+        grp.forEach((it) => itemCard(list, it, {}));
+      });
       return;
     }
     items.forEach((it) => itemCard(list, it, { inv: tab === "inv" }));
@@ -4469,11 +4741,7 @@ var GardenHome = (function () {
   }
 
   function onKey(e) {
-    if (vw.open) { viewKey(e); return; }     // (không chặn lan truyền: garden.js cần thấy Esc đã dùng → Anki không đóng cửa sổ)
     if (!isOpen) { return; }
-    if ((e.key === "v" || e.key === "V") && !placing && !e.ctrlKey && !e.metaKey && !e.altKey &&
-        !(e.target && /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) &&
-        !(typeof GardenCraft !== "undefined" && GardenCraft.isOpen())) { e.preventDefault(); viewOpen(scene); return; }
     if (typeof GardenCraft !== "undefined" && GardenCraft.isOpen()) { return; }
     if (e.key === "Escape") {
       e.preventDefault();
@@ -4599,289 +4867,6 @@ var GardenHome = (function () {
     selected = null; hidePop();
     renderList();
     if (!placing) { if (tipMsg) { setTip(tipMsg); } else { defaultTip(); } }
-    if (vw.open) { vw.selected = null; viewPopHide(); viewSync(); }
-  }
-
-  // ---------------------------------------------------------------------
-  // 1.23: Ngắm cảnh — cả cửa sổ chỉ một cảnh (phóng nguyên lần to nhất, pixel không nhoè), đổi cảnh ◂ ▸ / phím mũi
-  // tên, chụp ảnh, Sắp xếp đồ ngay trên khung lớn (luật đặt đồ như bảng Nhà; Python vẫn là nơi quyết định).
-  // Mở bằng nút Ngắm trên dải cảnh, nút Ngắm trong bảng Nhà, bấm vào ngôi nhà ở màn chính, phím V.
-  // ---------------------------------------------------------------------
-  const vw = { open: false, scene: "yard", arrange: false, placing: null, selected: null, hover: null, S: 2, ox: 0, oy: 0,
-    switchAt: 0, kho: false };
-  function viewList() { return ["yard"].concat(canEnter("room") ? ["room"] : [], ZONE_IDS.filter((z) => zoneOpen(z)), uzIds()); }
-  function viewOpen(sc) {
-    if (!H) { return; }
-    if (isOpen) { close(); }
-    if (typeof GardenGames !== "undefined") { GardenGames.close(); }
-    if (typeof GardenPaper !== "undefined") { GardenPaper.close(); }
-    if (typeof GardenCal !== "undefined") { GardenCal.close(); }
-    if (typeof GardenUI !== "undefined") { GardenUI.close(); }
-    if (H.closeReview) { H.closeReview(); }
-    vw.scene = sc && canEnter(sc) ? sc : mainScene();
-    vw.open = true; vw.arrange = false; vw.placing = null; vw.selected = null; vw.hover = null; vw.kho = false;
-    vw.switchAt = Date.now();
-    $("kb-view").hidden = false;
-    document.body.classList.add("kb-viewing");
-    viewSync();
-    sfx("flip");
-  }
-  function viewClose() {
-    if (!vw.open) { return; }
-    vw.open = false; vw.placing = null; vw.selected = null;
-    $("kb-view").hidden = true;
-    document.body.classList.remove("kb-viewing");
-    viewPopHide();
-    stillDirty = true;
-    window.dispatchEvent(new Event("kb-today-fit"));
-  }
-  function viewStep(step) {
-    const list = viewList();
-    if (list.length < 2) { return; }
-    const i = Math.max(0, list.indexOf(vw.scene));
-    viewGo(list[(i + step + list.length) % list.length]);
-  }
-  function viewGo(sc) {
-    if (!canEnter(sc)) { return; }
-    vw.scene = sc; vw.placing = null; vw.selected = null; vw.hover = null;
-    if (isOut(sc)) { try { localStorage.setItem("kb-main-scene", sc); } catch (e) { /* bỏ qua */ } }
-    vw.switchAt = Date.now();
-    viewPopHide();
-    viewSync();
-    sfx("flip");
-  }
-  function viewTip(text) { const t = $("kb-view-tip"); if (t && t.textContent !== text) { t.textContent = text || ""; } }
-  function viewDefaultTip() {
-    if (!vw.arrange) { viewTip("Bấm thú để vuốt ve · bấm đồ để xem tên · ◂ ▸ đổi cảnh · Esc để thoát"); return; }
-    if (vw.placing) {
-      const it = item(vw.placing.id);
-      viewTip("Đang đặt “" + (it ? it.name : vw.placing.id) + "”: bấm vào ô trống (xanh) · Esc để huỷ");
-    } else {
-      viewTip("Sắp xếp đồ: bấm một món để di chuyển hoặc cất vào kho · “Đặt từ kho” để bày thêm · mua đồ ở Nhà & Cửa hàng");
-    }
-  }
-  function viewSync() {
-    const list = viewList();
-    const nm = $("kb-view-name");
-    if (nm) { nm.textContent = sceneName(vw.scene) + " · " + (list.indexOf(vw.scene) + 1) + "/" + list.length; }
-    const nav = $("kb-view-nav");
-    if (nav) { nav.hidden = list.length < 2; }
-    const ar = $("kb-view-arrange");
-    if (ar) { ar.classList.toggle("is-on", vw.arrange); ar.setAttribute("aria-pressed", vw.arrange ? "true" : "false"); }
-    const kb = $("kb-view-khobtn");
-    if (kb) { kb.hidden = !vw.arrange; kb.classList.toggle("is-on", vw.kho); }
-    const k = $("kb-view-kho");
-    if (k) { k.hidden = !(vw.arrange && vw.kho); if (!k.hidden) { viewKho(); } }
-    viewDefaultTip();
-  }
-  // món còn trong kho đặt được ở cảnh đang xem (đồ trong nhà ↔ trong nhà; đồ ngoài trời ↔ mọi cảnh ngoài trời)
-  function viewKhoItems() {
-    const cat = catalog() || {}, home = homeState();
-    return (cat.items || []).filter((it) => (home.owned[it.id] || 0) > placedOf(it.id) &&
-      (vw.scene === "room" ? it.scene === "room" : it.scene !== "room"));
-  }
-  function viewKho() {
-    const k = $("kb-view-kho");
-    if (!k) { return; }
-    const items = viewKhoItems();
-    const sig = vw.scene + "|" + items.map((it) => it.id + ":" + ((homeState().owned[it.id] || 0) - placedOf(it.id))).join(",");
-    if (k.getAttribute("data-sig") === sig) { return; }
-    k.setAttribute("data-sig", sig);
-    k.textContent = "";
-    k.appendChild(el("div", "kb-view-kho-h", "Kho đồ · " + (vw.scene === "room" ? "đồ trong nhà" : "đồ ngoài trời")));
-    if (!items.length) { k.appendChild(el("div", "kb-view-kho-empty", "Kho không còn món nào đặt được ở đây. Mua thêm ở Nhà & Cửa hàng.")); return; }
-    const grid = el("div", "kb-view-kho-list");
-    items.forEach((it) => {
-      const b = el("button", "kb-btn kb-view-kho-item");
-      b.type = "button";
-      b.title = it.name;
-      b.appendChild(iconCanvas(SPR[it.id] || ["k"], 40));
-      b.appendChild(el("span", "kb-view-kho-n", it.name));
-      b.appendChild(el("span", "kb-view-kho-c", "×" + ((homeState().owned[it.id] || 0) - placedOf(it.id))));
-      b.addEventListener("click", () => { vw.placing = { id: it.id }; vw.selected = null; viewPopHide(); viewDefaultTip(); sfx("flip"); });
-      grid.appendChild(b);
-    });
-    k.appendChild(grid);
-  }
-  function viewPopHide() { const p = $("kb-view-pop"); if (p) { p.hidden = true; } }
-  function viewPop(e) {
-    const p = $("kb-view-pop");
-    if (!p) { return; }
-    const it = item(e.id) || { w: 1, name: e.id };
-    const r = cellRect(vw.scene, e.x, e.y, it.w);
-    p.querySelector(".kb-view-pop-name").textContent = it.name;
-    p.hidden = false;
-    const left = (vw.ox + r.x + r.w / 2) * vw.S - p.offsetWidth / 2, top = (vw.oy + r.y + r.h) * vw.S + 6;
-    p.style.left = Math.max(4, Math.min(window.innerWidth - p.offsetWidth - 4, left)) + "px";
-    p.style.top = Math.max(50, Math.min(window.innerHeight - p.offsetHeight - 4, top)) + "px";
-  }
-  function viewCell(ev) {
-    const cv = $("kb-view-canvas");
-    const r = cv.getBoundingClientRect();
-    return { ax: (ev.clientX - r.left) / vw.S - vw.ox, ay: (ev.clientY - r.top) / vw.S - vw.oy };
-  }
-  function viewMove(ev) {
-    if (!vw.open) { return; }
-    const p = viewCell(ev);
-    vw.hover = vw.arrange ? cellAt(vw.scene, p.ax, p.ay) : null;
-    const cv = $("kb-view-canvas");
-    const pet = typeof GardenPets !== "undefined" ? GardenPets.at(vw.scene, p.ax, p.ay) : null;
-    const idx = itemAt(vw.scene, cellAt(vw.scene, p.ax, p.ay));
-    cv.style.cursor = vw.placing ? "copy" : (pet || idx >= 0 || (isOut(vw.scene) && vw.scene === "yard" && p.ax >= 0 && p.ax < 64)) ? "pointer" : "";
-  }
-  function viewClick(ev) {
-    if (!vw.open) { return; }
-    const p = viewCell(ev), sc = vw.scene;
-    if (!vw.placing && typeof GardenPets !== "undefined") {
-      const pid = GardenPets.at(sc, p.ax, p.ay);
-      if (pid) {
-        GardenPets.cheer(pid); sfx("boop");
-        const pv = (moreView().pets || []).find((x) => x.id === pid);
-        viewTip((pv ? pv.name + " · " + petStateText(pv) : "") + " ♪");
-        return;
-      }
-    }
-    if (!vw.placing && typeof GardenGuests !== "undefined") {
-      const gid = GardenGuests.at(sc, p.ax, p.ay);
-      if (gid) { GardenGuests.react(sc); sfx("boop"); viewTip((guestName(gid) || "Khách") + " ghé vườn"); return; }
-    }
-    const cell = cellAt(sc, p.ax, p.ay);
-    if (vw.placing) {
-      if (!cell) { return; }
-      const err = spotError(sc, vw.placing.id, cell.x, cell.y, vw.placing.index);
-      if (err) { sfx("again"); viewTip("Không đặt được: " + err + " · Esc để huỷ"); return; }
-      pendingSpot = { scene: sc, id: vw.placing.id, x: cell.x, y: cell.y };
-      if (vw.placing.index !== undefined) { H.send("home:move:" + sc + ":" + vw.placing.index + ":" + cell.x + ":" + cell.y); }
-      else { H.send("home:place:" + sc + ":" + vw.placing.id + ":" + cell.x + ":" + cell.y); }
-      vw.placing = null;
-      return;
-    }
-    const idx = itemAt(sc, cell);
-    if (idx >= 0) {
-      const e = (homeState()[sc] || [])[idx], it = item(e.id);
-      if (vw.arrange) { vw.selected = { scene: sc, index: idx }; viewPop(e); sfx("flip"); return; }
-      if (e.id === "mailbox" && H.openPaper) { viewClose(); H.openPaper(); return; }
-      viewTip((it ? it.name : e.id) + (it && it.desc ? " · " + it.desc : ""));
-      sfx("flip");
-      return;
-    }
-    vw.selected = null; viewPopHide();
-    if (sc === "yard" && p.ax >= 0 && p.ax < 64 && canEnter("room") && !vw.arrange) { viewGo("room"); }
-  }
-  function drawView(now) {
-    const cv = $("kb-view-canvas");
-    if (!cv) { return; }
-    const cw = window.innerWidth, ch = window.innerHeight;
-    const bar = 44;
-    const side = vw.arrange && vw.kho ? 250 : 0;          // ngăn Kho đồ bên phải: cảnh thu vào phần còn lại, không bị che
-    const out = isOut(vw.scene);
-    const SW = out ? YARD.W : ROOM.W, SH = out ? YARD.H : ROOM.H;
-    const S = Math.max(1, Math.min(Math.floor((cw - side) / SW), Math.floor((ch - bar) / SH)));
-    const dpr = window.devicePixelRatio || 1;
-    if (cv._w !== cw || cv._h !== ch || cv._dpr !== dpr) {
-      cv.width = Math.round(cw * dpr); cv.height = Math.round(ch * dpr);
-      cv.style.width = cw + "px"; cv.style.height = ch + "px";
-      cv._w = cw; cv._h = ch; cv._dpr = dpr;
-    }
-    const ctx = cv.getContext("2d");
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.imageSmoothingEnabled = false;
-    const ox = Math.floor(((cw - side) / S - SW) / 2), oy = Math.max(Math.ceil(bar / S), Math.floor((ch / S - SH) / 2));
-    vw.S = S; vw.ox = ox; vw.oy = oy;
-    if (out) {
-      ctx.fillStyle = "#1b1b2f"; ctx.fillRect(0, 0, cw, ch);
-    } else {
-      ctx.fillStyle = "#2b211c"; ctx.fillRect(0, 0, cw, ch);
-      ctx.fillStyle = "#3a2c24";
-      for (let x = 0; x * S < cw; x += 12) { ctx.fillRect(x * S, 0, S, ch); }
-    }
-    const overlay = (c, s, x0, y0) => {
-      if (!vw.arrange) { return; }
-      if (vw.placing && vw.hover) {
-        const it = item(vw.placing.id);
-        const err = spotError(vw.scene, vw.placing.id, vw.hover.x, vw.hover.y, vw.placing.index);
-        const r = cellRect(vw.scene, vw.hover.x, vw.hover.y, it ? it.w : 1);
-        if (!err) { drawItem(c, s, x0, y0, { id: vw.placing.id, x: vw.hover.x, y: vw.hover.y }, vw.scene, now, timeOfDay(), 0.75); }
-        c.globalAlpha = 0.35; box(c, x0 + r.x, y0 + r.y, r.w, r.h, err ? "#ff4f6d" : "#6be08a", s); c.globalAlpha = 1;
-        c.strokeStyle = err ? "#c21f3a" : "#1f7a3a"; c.lineWidth = 2;
-        c.strokeRect((x0 + r.x) * s + 1, (y0 + r.y) * s + 1, r.w * s - 2, r.h * s - 2);
-      } else if (vw.selected && vw.selected.scene === vw.scene) {
-        const e = (homeState()[vw.scene] || [])[vw.selected.index];
-        if (e) {
-          const it = item(e.id), r = cellRect(vw.scene, e.x, e.y, it ? it.w : 1);
-          c.strokeStyle = "#ffd23f"; c.lineWidth = 3; c.strokeRect((x0 + r.x) * s, (y0 + r.y) * s, r.w * s, r.h * s);
-        }
-      }
-    };
-    const opts = { grid: vw.arrange && !!vw.placing, overlay: overlay, seen: !document.hidden };
-    if (out) {
-      drawOutdoor(ctx, S, ox, oy, now, vw.scene, Object.assign(opts, { bgFrom: -ox - 1, bgTo: cw / S - ox + 1 }));
-      // trời kéo dài lên trên, đất kéo dài xuống dưới cho kín khung — lấy đúng màu ở mép trên / dưới của cảnh cho liền
-      const pick = (y) => { const d = ctx.getImageData(Math.round(4 * dpr), Math.round(y * dpr), 1, 1).data; return "rgb(" + d[0] + "," + d[1] + "," + d[2] + ")"; };
-      const top = oy * S, bot = (oy + SH) * S;
-      if (top > 0) { ctx.fillStyle = pick(top + 1); ctx.fillRect(0, 0, cw, top); }
-      if (bot < ch) {
-        ctx.fillStyle = pick(bot - 2); ctx.fillRect(0, bot, cw, ch - bot);
-        ctx.fillStyle = "rgba(0,0,0,0.06)";
-        for (let y = oy + SH + 3; y * S < ch; y += 7) { ctx.fillRect(0, y * S, cw, S); }
-      }
-    } else {
-      drawRoom(ctx, S, ox, oy, now, opts);
-      ctx.strokeStyle = "#1b1b2f"; ctx.lineWidth = Math.max(3, S);
-      ctx.strokeRect(ox * S - ctx.lineWidth / 2, oy * S - ctx.lineWidth / 2, SW * S + ctx.lineWidth, SH * S + ctx.lineWidth);
-    }
-    const sw = now - vw.switchAt;
-    if (sw < 380) { ctx.globalAlpha = 0.65 * (1 - sw / 380); ctx.fillStyle = "#1b1b2f"; ctx.fillRect(0, 0, cw, ch); ctx.globalAlpha = 1; }
-  }
-  function viewKey(e) {
-    if (!vw.open || e.defaultPrevented) { return false; }     // phím V vừa mở Ngắm cảnh (garden.js) → đừng đóng lại ngay
-    if (e.key === "Escape") {
-      e.preventDefault();
-      if (vw.placing) { vw.placing = null; viewDefaultTip(); }
-      else if (vw.selected) { vw.selected = null; viewPopHide(); }
-      else if (vw.arrange) { vw.arrange = false; vw.kho = false; viewSync(); }
-      else { viewClose(); }
-      return true;
-    }
-    if (e.target && /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) { return false; }
-    if (e.key === "ArrowLeft" || e.key === "ArrowRight") { e.preventDefault(); viewStep(e.key === "ArrowLeft" ? -1 : 1); return true; }
-    if (e.key === "v" || e.key === "V") { e.preventDefault(); viewClose(); return true; }
-    return true;      // phím khác của màn chính (R, N, T…) không chạy khi đang ngắm
-  }
-  function viewInit() {
-    const cv = $("kb-view-canvas");
-    if (!cv) { return; }
-    cv.addEventListener("mousemove", viewMove);
-    cv.addEventListener("mouseleave", () => { vw.hover = null; });
-    cv.addEventListener("click", viewClick);
-    $("kb-view-exit").addEventListener("click", viewClose);
-    $("kb-view-prev").addEventListener("click", () => viewStep(-1));
-    $("kb-view-next").addEventListener("click", () => viewStep(1));
-    $("kb-view-arrange").addEventListener("click", () => {
-      vw.arrange = !vw.arrange; vw.placing = null; vw.selected = null; vw.kho = vw.arrange && vw.kho; viewPopHide(); viewSync(); sfx("flip");
-    });
-    $("kb-view-khobtn").addEventListener("click", () => { vw.kho = !vw.kho; viewSync(); });
-    $("kb-view-snap").addEventListener("click", (ev) => { ev.stopPropagation(); openSnap($("kb-view-snap"), vw.scene); });
-    $("kb-view-move").addEventListener("click", () => {
-      if (!vw.selected) { return; }
-      const e = (homeState()[vw.selected.scene] || [])[vw.selected.index];
-      if (e) { vw.placing = { id: e.id, index: vw.selected.index }; vw.selected = null; viewPopHide(); viewDefaultTip(); }
-    });
-    $("kb-view-take").addEventListener("click", () => {
-      if (!vw.selected) { return; }
-      H.send("home:take:" + vw.selected.scene + ":" + vw.selected.index);
-      vw.selected = null; viewPopHide();
-    });
-    $("kb-view-cancel").addEventListener("click", () => { vw.selected = null; viewPopHide(); });
-    Array.prototype.forEach.call(document.querySelectorAll("#kb-view button"), (b) => b.addEventListener("mousedown", (ev) => ev.preventDefault()));
-  }
-  // bấm trúng ngôi nhà trên dải cảnh ở màn chính (cột 0–3 của sân, khi đã xây tới bước có cửa)
-  function mainHouseAt(ev) {
-    const cv = $("kb-yard");
-    if (!cv || !mainView || mainScene() !== "yard" || homeState().house < 1) { return false; }
-    const r = cv.getBoundingClientRect();
-    const ax = (ev.clientX - r.left) / mainView.S - mainView.ox, ay = (ev.clientY - r.top) / mainView.S;
-    return ax >= 0 && ax < 64 && ay > 6 && ay < YARD.H - 4;
   }
 
   function error(msg) {
@@ -4890,7 +4875,6 @@ var GardenHome = (function () {
     sfx("again");
     mood("sad", 1200, "あれ？");
     setTip(msg);
-    if (vw.open) { viewTip(msg); }
   }
 
   return {
@@ -4947,14 +4931,6 @@ var GardenHome = (function () {
         document.addEventListener("click", () => closeSnap());
         document.addEventListener("keydown", (ev) => { if (ev.key === "Escape" && !spop.hidden) { ev.stopImmediatePropagation(); ev.preventDefault(); closeSnap(); } }, true);
       }
-      viewInit();
-      const yv = $("kb-yard-view");
-      if (yv) {
-        yv.addEventListener("mousedown", (ev) => ev.preventDefault());
-        yv.addEventListener("click", (ev) => { ev.stopPropagation(); viewOpen(mainScene()); });
-      }
-      const hv = $("kb-h-view");
-      if (hv) { hv.addEventListener("click", (ev) => { ev.stopPropagation(); viewOpen(scene); }); }
       $("kb-yard").addEventListener("click", (ev) => {
         const pid = mainPetAt(ev);
         if (pid) {
@@ -4978,12 +4954,15 @@ var GardenHome = (function () {
         }
         const hit = mainItemAt(ev);
         if (hit && hit.id === "mailbox" && H.openPaper) { H.openPaper(); return; }
-        // 1.23: bấm trúng ngôi nhà → Ngắm cảnh · Trong nhà (chưa có cửa thì ngắm sân); chỗ khác vẫn mở Nhà & Cửa hàng
-        if (!hit && mainHouseAt(ev)) { viewOpen(canEnter("room") ? "room" : "yard"); return; }
         if (typeof GardenGames !== "undefined") { GardenGames.close(); }
         if (typeof GardenPaper !== "undefined") { GardenPaper.close(); }
         if (typeof GardenCal !== "undefined") { GardenCal.close(); }
         H.closeReview();
+        if (mainView && mainView.house) {        // 1.24: bấm vào gian nào thì mở bảng Nhà ở gian đó (gian chưa mở → Xây nhà)
+          const r = $("kb-yard").getBoundingClientRect(), k = houseRoomAt((ev.clientX - r.left) / mainView.S - mainView.ox);
+          if (canEnter(k)) { open(k); } else { open("room"); tab = "build"; renderList(); }
+          return;
+        }
         open(mainScene());
       });
       $("kb-yard").addEventListener("mousemove", (ev) => {
@@ -4993,7 +4972,10 @@ var GardenHome = (function () {
         if (pv) { cv.title = pv.name + " · " + petStateText(pv) + " (bấm để chăm)"; cv.style.cursor = "pointer"; }
         else if (gid) { cv.title = (guestName(gid) || "Khách") + " ghé vườn (bấm để xem Album khách)"; cv.style.cursor = "pointer"; }
         else if (hit && hit.id === "mailbox") { cv.title = "Hòm thư: mở Báo (phím B)"; cv.style.cursor = "pointer"; }
-        else if (!hit && mainHouseAt(ev)) { cv.title = canEnter("room") ? "Ngắm trong nhà (phím V)" : "Ngắm cảnh (phím V)"; cv.style.cursor = "zoom-in"; }
+        else if (mainView && mainView.house) {
+          const r = cv.getBoundingClientRect(), k = houseRoomAt((ev.clientX - r.left) / mainView.S - mainView.ox);
+          cv.title = canEnter(k) ? sceneName(k) + ": bấm để bày đồ" : sceneName(k) + ": mở rộng nhà ở tab Xây nhà"; cv.style.cursor = "pointer";
+        }
         else { cv.removeAttribute("title"); cv.style.cursor = ""; }
       });
       const care = $("kb-care-btn");
@@ -5013,19 +4995,13 @@ var GardenHome = (function () {
     close: close,
     isOpen: () => isOpen,
     cycleMain: cycleMain,
-    // 1.23: Ngắm cảnh
-    view: function (sc) { if (vw.open) { viewClose(); } else { viewOpen(sc || (isOpen ? scene : mainScene())); } },
-    viewClose: viewClose,
-    viewing: () => vw.open,
-    _view: () => ({ open: vw.open, scene: vw.scene, arrange: vw.arrange, S: vw.S, ox: vw.ox, oy: vw.oy, placing: vw.placing,
-      kho: viewKhoItems().map((it) => it.id), list: viewList() }),
     // 1.20: bìa cuốn nhật ký — ảnh xem trước của giao diện mùa, và ảnh vườn tự chụp mỗi tuần (cảnh đang xem, ×2)
     themePreview: themePreview,
     snapshot: function () {
       const S = 2;
       const cv = document.createElement("canvas"); cv.width = YARD.W * S; cv.height = YARD.H * S;
       const ctx = cv.getContext("2d"); ctx.imageSmoothingEnabled = false;
-      drawOutdoor(ctx, S, 0, 0, Date.now(), mainScene(), {});
+      drawOutdoor(ctx, S, 0, 0, Date.now(), mainScene() === "house" ? "yard" : mainScene(), {});
       lights.length = 0;
       return cv.toDataURL("image/png");
     },
@@ -5082,6 +5058,8 @@ var GardenHome = (function () {
     icon: function (id, size) { return SPR[id] ? iconCanvas(SPR[id], size || 40) : null; },
     _state: () => ({ scene: scene, tab: tab, placing: placing, selected: selected, payWait: payWait, peekCode: peekCode }),
     _spotError: spotError,
+    // test / ảnh phác: hàm vẽ nội bộ (không dùng trong giao diện)
+    _lib: () => ({ SPR, P, T, ROOM, SIDE, HOUSE3, box, sprite, drawItem, drawNight, skyColors, skyNow, timeOfDay, lights, SEA, drawWeather }),
     _clickCell: function (x, y) {
       const cv = $("kb-home-canvas"), r = cv.getBoundingClientRect();
       const rc = cellRect(scene, x, y, 1);

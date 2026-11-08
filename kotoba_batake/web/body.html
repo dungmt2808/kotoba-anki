@@ -106,7 +106,6 @@
     </div>
     <div class="kb-h-view">
       <canvas id="kb-home-canvas" class="kb-home-canvas"></canvas>
-      <button type="button" id="kb-h-view" class="kb-yard-snap kb-h-viewbtn" title="Ngắm cảnh đang xem cả cửa sổ (phím V)">Ngắm</button>
       <div id="kb-h-tip" class="kb-h-tip"></div>
       <div id="kb-h-pop" class="kb-h-pop" hidden>
         <span class="kb-h-pop-name"></span>
@@ -266,7 +265,6 @@
         <button type="button" class="kb-yard-arrow" id="kb-yard-next" title="Cảnh sau (phím →)" aria-label="Cảnh sau">▸</button>
       </div>
       <button type="button" class="kb-yard-snap" id="kb-yard-snap" title="Chụp ảnh cảnh này" aria-label="Chụp ảnh vườn"><i class="kb-pi kb-pi-camera" aria-hidden="true"></i></button>
-      <button type="button" class="kb-yard-snap kb-yard-view" id="kb-yard-view" title="Ngắm cảnh cả cửa sổ (phím V)" aria-label="Ngắm cảnh">Ngắm</button>
     </div>
     <div class="kb-yard-side">
       <div id="kb-today" class="kb-today" hidden>
@@ -285,33 +283,6 @@
       </div>
     </div>
   </div>
-  <!-- 1.23: Ngắm cảnh — cả cửa sổ chỉ một cảnh -->
-  <section id="kb-view" class="kb-view" hidden aria-label="Ngắm cảnh">
-    <canvas id="kb-view-canvas" class="kb-view-canvas"></canvas>
-    <div class="kb-view-bar">
-      <span class="kb-view-title">眺め · Ngắm cảnh</span>
-      <span class="kb-view-nav" id="kb-view-nav">
-        <button type="button" class="kb-btn kb-btn-small" id="kb-view-prev" title="Cảnh trước (phím ←)" aria-label="Cảnh trước">◂</button>
-        <span class="kb-view-name" id="kb-view-name">Sân vườn</span>
-        <button type="button" class="kb-btn kb-btn-small" id="kb-view-next" title="Cảnh sau (phím →)" aria-label="Cảnh sau">▸</button>
-      </span>
-      <span class="kb-view-sp"></span>
-      <button type="button" class="kb-btn kb-btn-small" id="kb-view-arrange" aria-pressed="false" title="Di chuyển, cất vào kho, đặt từ kho ngay trên khung lớn">Sắp xếp đồ</button>
-      <button type="button" class="kb-btn kb-btn-small" id="kb-view-khobtn" hidden title="Món còn trong kho đặt được ở cảnh này">Đặt từ kho</button>
-      <button type="button" class="kb-btn kb-btn-small" id="kb-view-snap" title="Chụp ảnh cảnh này"><i class="kb-pi kb-pi-camera" aria-hidden="true"></i>Chụp ảnh</button>
-      <button type="button" class="kb-btn kb-btn-small" id="kb-view-exit">Thoát <span class="kb-key">Esc</span></button>
-    </div>
-    <div id="kb-view-tip" class="kb-view-tip"></div>
-    <div id="kb-view-pop" class="kb-h-pop kb-view-pop" hidden>
-      <div class="kb-h-pop-name kb-view-pop-name"></div>
-      <div class="kb-h-btns">
-        <button type="button" id="kb-view-move" class="kb-btn kb-btn-small">Di chuyển</button>
-        <button type="button" id="kb-view-take" class="kb-btn kb-btn-small">Cất vào kho</button>
-        <button type="button" id="kb-view-cancel" class="kb-btn kb-btn-small">Thôi</button>
-      </div>
-    </div>
-    <div id="kb-view-kho" class="kb-view-kho" hidden></div>
-  </section>
   <div id="kb-snap-pop" class="kb-snap-pop" hidden role="dialog" aria-label="Chụp ảnh vườn">
     <div class="kb-snap-head"><b>Chụp ảnh</b> <span id="kb-snap-scene"></span><button type="button" id="kb-snap-x" class="kb-snap-x" aria-label="Đóng">✕</button></div>
     <div class="kb-snap-note">Ảnh có khung, ngày và tên giao diện mùa.</div>

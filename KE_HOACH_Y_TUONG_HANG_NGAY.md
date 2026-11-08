@@ -1,4 +1,6 @@
-# Ý tưởng "mỗi ngày vào vườn có gì mới" (bản nháp, chưa chốt)
+# Ý tưởng "mỗi ngày vào vườn có gì mới" (đã chốt lộ trình 07/11)
+
+> **Lộ trình người dùng chốt 07/11/2026** (chi tiết bản gần nhất ở `KE_HOACH_1_26.md` mục 0): **1.26** màn chào khi mở vườn (thú nuôi ra chào, lần mở đầu mỗi ngày) + hiệu ứng chuyển cảnh + ý 1 Bảng tin làng · **1.27** ý 2 cây lấp lánh, 3 rút quẻ, 4 lịch trời Nhật + 歳時記, 5 kỷ niệm & mốc học · **1.28** ý 6 nhặt đồ + Hộp sưu tầm, 7 gánh hàng rong · **1.29** Nhạc làng (chuông làng tự soạn, nhạc theo buổi) + thêm hiệu ứng. Ý 8–14 chưa chọn; radio trùng với báo nên không làm. Câu hỏi ở mục 7 hỏi lại khi làm bản tương ứng.
 
 Ngày 06/11/2026. Chỉ là ý tưởng để người dùng chọn, **chưa sửa mã**, **không làm chung với 1.23** (1.23 đã nặng, xem `KE_HOACH_1_23.md`). Người dùng hỏi: "có thể lấy ý tưởng từ các game pixel xưa… người dùng mong mỗi ngày vào vườn được trải nghiệm gì mới… FOMO lành mạnh… đánh giá theo mức độ khó và đáng triển khai".
 

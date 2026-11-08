@@ -44,7 +44,7 @@ var GardenUI = (function () {
     const sub = c && c[m || mode];
     return (sub && sub[k]) || DEF[k];
   }
-  const GLOB_DEF = { card: "normal", theme: "garden", scene: "normal", start: "last" };
+  const GLOB_DEF = { card: "normal", theme: "garden", scene: "normal", start: "last", deco: "on" };
   function glob(k) { const c = conf(); return (c && c[k]) || GLOB_DEF[k] || "garden"; }
 
   // thẻ đang ôn nằm trong iframe: bảng tối thì thêm lớp nightMode (như Anki) + màu nền dịu.
@@ -73,7 +73,7 @@ var GardenUI = (function () {
     const app = $("kb-app");
     if (!app) { return; }
     const cls = ["kb-ui-m-" + mode, "kb-ui-yard-" + get("yard"), "kb-ui-field-" + get("field"),
-      "kb-ui-th-" + glob("theme"), "kb-ui-card-" + glob("card")];
+      "kb-ui-th-" + glob("theme"), "kb-ui-card-" + glob("card"), "kb-ui-deco-" + glob("deco")];
     if (get("sky") === "off") { cls.push("kb-ui-sky-off"); }
     const sig = cls.join(" ");
     syncFrame(glob("theme") === "night");
@@ -200,11 +200,12 @@ var GardenUI = (function () {
       });
       g.appendChild(box);
     };
-    // 1.23: nhóm "Màn chính" — cỡ dải cảnh, cảnh hiện khi mở vườn (Ngắm cảnh cả cửa sổ: nút Ngắm / phím V)
+    // 1.23: nhóm "Màn chính" — cỡ dải cảnh, cảnh hiện khi mở vườn
     st.appendChild(el("div", "kb-ui-h", "Màn chính"));
     g = el("div", "kb-ui-globals");
     radios("scene", "Cỡ cảnh", [["normal", "Vừa"], ["large", "Lớn (ruộng cây lùi xuống)"]]);
     radios("start", "Cảnh hiện", [["last", "Cảnh đang chọn"], ["yard", "Luôn về Sân vườn khi mở vườn"]]);
+    radios("deco", "Dây trang trí", [["on", "Hiện"], ["off", "Ẩn"]]);     // 1.25
     st.appendChild(g);
     st.appendChild(el("div", "kb-ui-h", "Bảng ôn thẻ"));
     g = el("div", "kb-ui-globals");
