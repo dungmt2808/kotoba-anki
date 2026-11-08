@@ -24,6 +24,11 @@ var GardenPaper = (function () {
   const RE = /\{([^{}\[\]|]*)\|([^{}\[\]|]*)\|([^{}\[\]|]*)\}|\[([^{}\[\]|]*)\|([^{}\[\]|]*)\]/g;
   const LOAI = { tin_lang: "Tin làng", truyen: "Truyện dài kỳ", thong_bao: "お知らせ", cot: "Cột ngắn", tin_that: "Tin thật" };
   const LOAI_EN = { tin_lang: "Tin làng", truyen: "Truyện dài kỳ", thong_bao: "Thông báo", cot: "Cột ngắn", tin_that: "Tin thật" };
+  // 1.25.1: báo tiếng Việt (Báo Làng Kotoba) — bài thứ ba là "Góc ôn bài" (thẻ đang ôn)
+  const LOAI_VI = { tin_lang: "Tin làng", truyen: "Truyện dài kỳ", thong_bao: "Thông báo", cot: "Góc ôn bài", tin_that: "Tin thật" };
+  const VI_DAYS = ["Chủ Nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy"];
+  const PAPER_NAME = { ja: "Báo tiếng Nhật", en: "Báo tiếng Anh", vi: "Báo tiếng Việt" };
+  const MAST = { ja: "畑新聞", en: "The Garden Gazette", vi: "Báo Làng Kotoba" };
   const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
@@ -81,6 +86,11 @@ var GardenPaper = (function () {
     if (isNaN(t.getTime())) { return d; }
     return DAYS[t.getDay()] + ", " + t.getDate() + " " + MONTHS[t.getMonth()] + " " + t.getFullYear();
   }
+  function viDate(d) {        // 1.25.1: Chủ Nhật, 8/11/2026
+    const t = new Date(d + "T00:00:00");
+    if (isNaN(t.getTime())) { return d; }
+    return VI_DAYS[t.getDay()] + ", " + t.getDate() + "/" + (t.getMonth() + 1) + "/" + t.getFullYear();
+  }
   function jpDate(d) {
     const t = new Date(d + "T00:00:00");
     if (isNaN(t.getTime())) { return d; }
@@ -112,7 +122,7 @@ var GardenPaper = (function () {
     Object.keys(n).forEach((l) => { if (n[l] > k) { k = n[l]; best = l; } });
     return best;
   }
-  const LANG_NAME = { ja: "tiếng Nhật", en: "tiếng Anh", other: "ngôn ngữ khác" };
+  const LANG_NAME = { ja: "tiếng Nhật", en: "tiếng Anh", vi: "tiếng Việt", other: "ngôn ngữ khác" };
   // 1.19.1: ngôn ngữ của báo đang đọc (nút chuyển ở Kệ báo; mở bảng thì Python chọn báo có số chưa đọc)
   function paperLang() {
     if (index && index.lang) { return index.lang; }
@@ -132,7 +142,9 @@ var GardenPaper = (function () {
   }
   function defaultInfo() {
     const pl = paperLang();
-    if (tab === "issue" && pl === "en") {
+    if (tab === "issue" && pl === "vi") {
+      setInfo("Bấm chữ gạch chân để xem lại thẻ đang ôn.");
+    } else if (tab === "issue" && pl === "en") {
       setInfo("Bấm từ gạch chân để tra nghĩa (nhận cả dạng biến đổi: went → go). Gạch chấm: từ mới." + issueTip());
     } else if (tab === "issue") { setInfo("Bấm từ gạch chân để tra nghĩa. Gạch liền: từ đã học. Gạch chấm: từ mới." + issueTip()); }
     else if (tab === "dict") {
@@ -170,7 +182,9 @@ var GardenPaper = (function () {
     if (w.r) { f.appendChild(el("span", "kb-p-ir", w.r)); }
     if (w.m) { f.appendChild(el("span", "kb-p-im", w.m)); }
     const notes = [];
+    const vi = issue && issue.lang === "vi";
     if (w.moi) { notes.push("Từ mới trong số này"); }
+    else if (w.bai && vi) { notes.push("Thẻ trong " + (w.bai === "deck" ? "deck" : w.bai)); }
     else if (w.bai) { notes.push("Đã học ở " + w.bai); }
     else if (w.thieu) { notes.push("Chưa có nghĩa trong deck"); }      // 1.23: vẫn hiện cách đọc, không để trống
     const p = plantOf(w.w);
@@ -289,12 +303,23 @@ var GardenPaper = (function () {
     if (bar) { st.appendChild(bar); }
     const box = el("div", "kb-p-empty");
     const s = H.data() && H.data().paper;
-    const en = paperLang() === "en";
+    const pl = paperLang(), ln = pl === "ja" ? "" : LANG_NAME[pl] + " ";
     const acts = el("div", "kb-p-acts");
-    if (source() === "gemini") {
+    const sub = index && index.sub;
+    if (source() === "gemini" && sub && !sub.active && sub.trial_used) {     // 1.25.1: gói báo đã hết hạn
+      box.appendChild(el("div", "kb-p-empty-h", "Gói báo đã hết hạn"));
+      box.appendChild(el("p", null, "Số cũ vẫn đọc được ở Kệ báo."));
+      (sub.plans || []).forEach((pn) => {
+        const b = btn("kb-p-go" + (pn.id === "tuan" ? " kb-ai-main" : ""), "Gia hạn " + pn.name + " · " + pn.price + " xu",
+          () => { aiFlash = null; H.send("ai:sub:" + JSON.stringify({ buy: pn.id })); setTab("src"); },
+          (sub.coins || 0) < pn.price ? "Chưa đủ xu (đang có " + (sub.coins || 0) + ")" : "");
+        b.disabled = (sub.coins || 0) < pn.price;
+        acts.appendChild(b);
+      });
+    } else if (source() === "gemini") {
       const busyNow = (s && s.ai_busy) || (index && index.ai_busy) || (aiView && aiView.gemini.running && aiView.gemini.run_lang === paperLang());
-      box.appendChild(el("div", "kb-p-empty-h", busyNow ? "Gemini đang viết số đầu tiên" + (en ? " (tiếng Anh)" : "") + "…"
-        : "Chưa có số báo " + (en ? "tiếng Anh " : "") + "nào"));
+      box.appendChild(el("div", "kb-p-empty-h", busyNow ? "Gemini đang viết số đầu tiên" + (ln ? " (" + ln.trim() + ")" : "") + "…"
+        : "Chưa có số báo " + ln + "nào"));
       if (busyNow) { box.appendChild(el("p", null, "Khoảng 1–2 phút. Xong sẽ về hòm thư.")); }
       else { acts.appendChild(btn("kb-p-go kb-ai-main", "Viết số hôm nay", () => { H.send("ai:write:" + JSON.stringify({ lang: paperLang() })); setTab("src"); })); }
     } else {
@@ -302,7 +327,7 @@ var GardenPaper = (function () {
       box.appendChild(el("p", null, "Thư mục kotoba_daily chưa có số nào."));
     }
     acts.appendChild(btn("kb-p-go", "Nguồn báo", () => setTab("src")));
-    acts.appendChild(btn("kb-p-go", "Chép chính tả", () => setTab("dict")));
+    if (pl !== "vi") { acts.appendChild(btn("kb-p-go", "Chép chính tả", () => setTab("dict"))); }
     box.appendChild(acts);
     st.appendChild(box);
     if (tab === "issue") { setInfo("Mỗi sáng có một số báo mới."); }
@@ -318,6 +343,20 @@ var GardenPaper = (function () {
       const b = btn("kb-ai-chip" + (o[0] === current ? " is-on" : ""), o[1], () => { if (o[0] !== current) { onPick(o[0]); } }, o[2]);
       b.setAttribute("aria-pressed", o[0] === current ? "true" : "false");
       if (disabled) { b.disabled = true; }
+      box.appendChild(b);
+    });
+    return box;
+  }
+  // 1.25.1: nút chọn nhiều (Chủ đề truyện) — luôn còn ít nhất một nút bật
+  function multiChips(options, on, onChange) {
+    const box = el("div", "kb-ai-chips kb-ai-multi");
+    options.forEach((o) => {
+      const yes = on.indexOf(o[0]) >= 0;
+      const b = btn("kb-ai-chip" + (yes ? " is-on" : ""), o[1], () => {
+        const next = yes ? on.filter((x) => x !== o[0]) : on.concat([o[0]]);
+        if (next.length) { onChange(options.map((x) => x[0]).filter((x) => next.indexOf(x) >= 0)); }
+      }, yes && on.length === 1 ? "Chọn ít nhất một chủ đề" : o[2]);
+      b.setAttribute("aria-pressed", yes ? "true" : "false");
       box.appendChild(b);
     });
     return box;
@@ -394,15 +433,17 @@ var GardenPaper = (function () {
     r.appendChild(el("span", "kb-ai-k", "Báo muốn nhận"));
     const val = el("span", "kb-ai-v");
     const on = v.langs_on || [];
-    [["ja", "Tiếng Nhật"], ["en", "Tiếng Anh"]].forEach((x) => {
+    // 1.25.1: thêm báo tiếng Việt; chưa có deck của tiếng đó vẫn tick được (Gemini viết theo trình độ)
+    [["ja", "Tiếng Nhật"], ["en", "Tiếng Anh"], ["vi", "Tiếng Việt"]].forEach((x) => {
       const lab = el("label", "kb-ai-tick");
       const cb = el("input");
       cb.type = "checkbox";
       cb.checked = on.indexOf(x[0]) >= 0;
       const none = !((v.decks || {})[x[0]] || []).length;
-      if (none && !cb.checked) { cb.disabled = true; lab.title = "Chưa có deck " + LANG_NAME[x[0]]; lab.classList.add("is-off"); }
+      if (none) { lab.title = x[0] === "vi" ? "Chưa có deck: báo viết kiến thức chung" : "Chưa có deck " + LANG_NAME[x[0]] + ": báo viết theo trình độ"; }
+      else if (x[0] === "vi") { lab.title = "Báo tiếng Việt đan nội dung thẻ đang ôn (deck bất kỳ)"; }
       cb.addEventListener("change", () => {
-        const next = ["ja", "en"].filter((l) => (l === x[0] ? cb.checked : on.indexOf(l) >= 0));
+        const next = ["ja", "en", "vi"].filter((l) => (l === x[0] ? cb.checked : on.indexOf(l) >= 0));
         aiSet({ langs: next });
       });
       lab.appendChild(cb);
@@ -418,15 +459,26 @@ var GardenPaper = (function () {
   // Lấy từ: Mọi deck (ngẫu nhiên) / Chọn deck (tối đa 5). 1.23: bỏ "Giáo trình" (báo Gemini chỉ lấy từ deck)
   function sourcePicker(v, lang) {
     const picked = (v.picked || {})[lang] || [];
+    const mode = (v.modes || {})[lang] || "deck";
+    const none = !((v.decks || {})[lang] || []).length;
+    const vi = lang === "vi";
     const opts = [];
-    opts.push(["all", "Mọi deck", "Mỗi số lấy ngẫu nhiên 100 từ trong mọi deck " + LANG_NAME[lang]]);
+    opts.push(["all", "Mọi deck", vi ? "Mỗi số lấy ngẫu nhiên 60 thẻ trong các deck không phải tiếng Nhật / tiếng Anh"
+      : "Mỗi số lấy ngẫu nhiên 100 từ trong mọi deck " + LANG_NAME[lang]]);
     opts.push(["pick", picked.length ? "Deck đã chọn (" + picked.length + ")" : "Chọn deck", "Tối đa " + (v.max_decks || 5) + " deck"]);
-    const cur = (picked.length || deckOpen[lang]) ? "pick" : "all";
-    return chips(opts, cur, (x) => {
+    // 1.25.1: không cần deck — Gemini viết theo trình độ (báo tiếng Việt: kiến thức chung)
+    opts.push(["level", "Không dùng deck", vi ? "Tin làng, truyện và kiến thức chung" : "Gemini viết theo trình độ, tự chọn từ đáng học"]);
+    const cur = mode === "level" ? "level" : (picked.length || deckOpen[lang]) ? "pick" : "all";
+    const box = chips(opts, cur, (x) => {
       aiFlash = null;
       if (x === "all") { deckOpen[lang] = false; H.send("ai:decks:" + JSON.stringify({ lang: lang, decks: [] })); }
+      else if (x === "level") { deckOpen[lang] = false; H.send("ai:decks:" + JSON.stringify({ lang: lang, decks: [], mode: "level" })); }
       else { deckOpen[lang] = true; drawSource(); }
     });
+    if (none) {        // chưa có deck nào của tiếng này: hai nút đầu không có gì để lấy
+      Array.prototype.forEach.call(box.children, (b, i) => { if (i < 2) { b.disabled = true; b.title = "Chưa có deck " + (vi ? "nào" : LANG_NAME[lang]); } });
+    }
+    return box;
   }
   function deckHas(name, q) {
     if (typeof Garden !== "undefined" && Garden.deckMatch) { return Garden.deckMatch(name, q); }
@@ -471,7 +523,7 @@ var GardenPaper = (function () {
       cb.disabled = !cb.checked && picked.length >= max;
       cb.addEventListener("change", () => {
         const next = cb.checked ? picked.concat([d.id]) : picked.filter((x) => x !== d.id);
-        H.send("ai:decks:" + JSON.stringify({ lang: lang, decks: next }));
+        H.send("ai:decks:" + JSON.stringify({ lang: lang, decks: next, mode: "deck" }));
       });
       lab.appendChild(cb);
       lab.appendChild(document.createTextNode(" " + d.name));
@@ -489,12 +541,12 @@ var GardenPaper = (function () {
     return box;
   }
   function langBlock(v, lang) {
-    const g = v.gemini, L = (g.langs || {})[lang] || {}, en = lang === "en";
+    const g = v.gemini, L = (g.langs || {})[lang] || {}, en = lang === "en", vi = lang === "vi";
     const box = el("div", "kb-ai-lang");
     const h = el("div", "kb-ai-lang-h");
-    h.appendChild(el("b", null, en ? "Báo tiếng Anh" : "Báo tiếng Nhật"));
-    const nm = el("span", "kb-ai-hint", en ? "The Garden Gazette" : "畑新聞");
-    if (!en) { nm.lang = "ja"; }
+    h.appendChild(el("b", null, PAPER_NAME[lang] || "Báo"));
+    const nm = el("span", "kb-ai-hint", MAST[lang] || "");
+    if (lang === "ja") { nm.lang = "ja"; }
     h.appendChild(nm);
     box.appendChild(h);
     const rows = el("div", "kb-ai-rows");
@@ -519,18 +571,19 @@ var GardenPaper = (function () {
         }) : null]);
     } else if ((g.waiting || []).indexOf(lang) >= 0 && !L.error) {   // 1.22.3 / 1.22.4: chờ bấm "Bắt đầu viết"
       aiRow(rows, "Hôm nay", "chờ bấm “Bắt đầu viết” bên dưới");
-    } else if (L.thieu) {
-      aiRow(rows, "Hôm nay", "[i:warn] " + L.thieu, [btn("", "Viết", () => { aiFlash = null; H.send("ai:write:" + JSON.stringify({ lang: lang })); })], "is-warn");
+    } else if (L.sub_off && v.sub && !v.sub.active) {                 // 1.25.1: gói báo hết hạn
+      aiRow(rows, "Hôm nay", "[i:warn] Gói báo hết hạn — gia hạn ở thẻ Gói báo", null, "is-warn");
     } else {
       aiRow(rows, "Hôm nay", L.error ? "✗ " + L.error : "chưa có số", [btn("kb-ai-main", L.error ? "Viết lại" : "Viết",
         () => { aiFlash = null; H.send("ai:write:" + JSON.stringify({ lang: lang })); }, g.running ? "Gemini đang viết báo khác" : "")],
         L.error ? "is-bad" : "");
     }
-    if (L.focus && L.focus[1] && L.today) { aiRow(rows, "Từ phải ôn", "dùng " + L.focus[0] + " / " + L.focus[1] + " từ"); }
-    if (L.audio_error && !L.running) { aiRow(rows, "Giọng đọc", "[i:warn] " + L.audio_error, null, "is-warn"); }
-    aiRow(rows, "Trình độ", chips((L.levels || []).map((x) => [x, x]), L.level, (x) => aiSet({ level: x })));
+    if (L.focus && L.focus[1] && L.today) { aiRow(rows, vi ? "Thẻ phải ôn" : "Từ phải ôn", "dùng " + L.focus[0] + " / " + L.focus[1] + (vi ? " thẻ" : " từ")); }
+    if (L.audio_error && !L.running && !vi) { aiRow(rows, "Giọng đọc", "[i:warn] " + L.audio_error, null, "is-warn"); }
+    if ((L.levels || []).length) { aiRow(rows, "Trình độ", chips((L.levels || []).map((x) => [x, x]), L.level, (x) => aiSet({ level: x }))); }
     const picked = (v.picked || {})[lang] || [];
-    aiRow(rows, "Lấy từ", sourcePicker(v, lang));
+    aiRow(rows, vi ? "Lấy thẻ" : "Lấy từ", sourcePicker(v, lang));
+    if (L.thieu && ((v.modes || {})[lang] || "deck") !== "level") { aiRow(rows, "", L.thieu, null, "kb-ai-sub-row"); }
     if (picked.length && !deckOpen[lang]) {
       const names = ((v.decks || {})[lang] || []).filter((d) => picked.indexOf(d.id) >= 0).map((d) => d.name);
       aiRow(rows, "", names.join(", "), [btn("", "Đổi", () => { deckOpen[lang] = true; drawSource(); })], "kb-ai-sub-row");
@@ -551,7 +604,7 @@ var GardenPaper = (function () {
   function startBlock(v) {
     const g = v.gemini, box = el("div", "kb-ai-start");
     const langs = v.langs_on || [], wait = g.waiting || [];
-    const names = wait.map((x) => (x === "en" ? "Báo tiếng Anh" : "Báo tiếng Nhật"));
+    const names = wait.map((x) => PAPER_NAME[x] || "Báo");
     const t = el("div", "kb-ai-start-t");
     if (g.first) {
       t.appendChild(el("b", null, "Bước 3 · "));
@@ -574,12 +627,45 @@ var GardenPaper = (function () {
       "Mỗi báo 1–2 phút, chạy nền · từ mai tự viết khi mở Anki" + (g.auto ? "" : " (đang tắt)")));
     return box;
   }
+  // 1.25.1: Gói báo — mua bằng xu (1 tuần 100 xu / 1 tháng 300 xu), lần đầu tặng 7 ngày, Tự gia hạn
+  function subCard(v) {
+    const sb = v.sub, card = el("section", "kb-ai-card kb-ai-plan" + (sb.active ? " is-on" : ""));
+    const h = el("div", "kb-ai-h");
+    h.appendChild(GardenIcons.fill(el("span", "kb-ai-name"), "[i:book] Gói báo"));
+    h.appendChild(el("span", "kb-ai-sub", "Gemini viết số mới khi còn gói · số cũ luôn đọc được"));
+    card.appendChild(h);
+    const rows = el("div", "kb-ai-rows");
+    const until = sb.until ? shortDate(sb.until) : "";
+    const state = sb.active ? (sb.in_trial ? "Dùng thử · còn " : "Còn ") + sb.left + " ngày (tới hết " + until + ")"
+      : sb.trial_used ? "[i:warn] Đã hết hạn" + (until ? " (" + until + ")" : "") : "Số báo đầu tiên được tặng " + (sb.trial_days || 7) + " ngày";
+    aiRow(rows, "Hiện tại", state, null, sb.active || !sb.trial_used ? "" : "is-warn");
+    const btns = el("span", "kb-ai-chips");
+    (sb.plans || []).forEach((pn) => {
+      const over = sb.left + pn.days > (sb.ahead_max || 60), poor = (sb.coins || 0) < pn.price;
+      const b = btn(pn.id === "tuan" ? "kb-ai-main" : "", (sb.active ? "Gia hạn " : "Mua ") + pn.name + " · " + pn.price + " xu",
+        () => { aiFlash = null; b.disabled = true; H.send("ai:sub:" + JSON.stringify({ buy: pn.id })); },
+        over ? "Gói còn " + sb.left + " ngày — gần hết rồi hãy gia hạn" : poor ? "Chưa đủ xu (đang có " + (sb.coins || 0) + ")" : "");
+      b.disabled = over || poor;
+      btns.appendChild(b);
+    });
+    aiRow(rows, "Mua", btns);
+    card.appendChild(rows);
+    const lab = el("label", "kb-ai-auto");
+    const cb = el("input");
+    cb.type = "checkbox";
+    cb.checked = !!sb.auto;
+    cb.addEventListener("change", () => { aiFlash = null; H.send("ai:sub:" + JSON.stringify({ auto: cb.checked })); });
+    lab.appendChild(cb);
+    lab.appendChild(document.createTextNode(" Tự gia hạn khi hết hạn (nếu đủ xu)"));
+    card.appendChild(lab);
+    return card;
+  }
   function geminiCard(v) {
     const g = v.gemini, on = !!g.key;
     const card = el("section", "kb-ai-card" + (on ? " is-on" : ""));
     const h = el("div", "kb-ai-h");
     h.appendChild(el("span", "kb-ai-name", "✦ Gemini"));
-    h.appendChild(el("span", "kb-ai-sub", "Gemini viết báo mỗi sáng · miễn phí"));
+    h.appendChild(el("span", "kb-ai-sub", "Gemini viết báo mỗi sáng · khoá miễn phí"));
     if (g.key && v.source !== "gemini" && (v.source === "claude" || v.want === "claude")) {
       h.appendChild(btn("", "Dùng Gemini cho báo tiếng Nhật", () => aiSet({ source: "gemini" })));
     }
@@ -593,22 +679,30 @@ var GardenPaper = (function () {
       card.appendChild(rows);
       (v.langs_on || []).forEach((lang) => card.appendChild(langBlock(v, lang)));
       if (g.first || (g.waiting || []).length) { card.appendChild(startBlock(v)); }
+      const listen = (v.langs_on || []).some((x) => x !== "vi");     // 1.25.1: báo tiếng Việt không có giọng đọc
 
       const opts = el("div", "kb-ai-opts");
       const voice = el("select", "kb-ai-voice");
       voice.setAttribute("aria-label", "Giọng đọc");
       v.voices.forEach((x) => { const o = el("option", null, x); o.value = x; if (x === g.voice) { o.selected = true; } voice.appendChild(o); });
       voice.addEventListener("change", () => aiSet({ voice: voice.value }));
-      aiRow(opts, "Giọng đọc", chips([["chinh_ta", "Câu chép", "Chỉ câu chép chính tả: ít lượt gọi nhất"], ["ca_bai", "Cả bài", "Thêm giọng đọc từng đoạn"], ["tat", "Tắt"]],
-        g.audio, (x) => aiSet({ audio: x })), [g.audio !== "tat" ? voice : null]);
-      if (!g.has_tts && g.audio !== "tat") { opts.lastChild.appendChild(el("span", "kb-ai-hint", "khoá chưa có giọng đọc")); }
+      if (listen) {
+        aiRow(opts, "Giọng đọc", chips([["chinh_ta", "Câu chép", "Chỉ câu chép chính tả: ít lượt gọi nhất"], ["ca_bai", "Cả bài", "Thêm giọng đọc từng đoạn"], ["tat", "Tắt"]],
+          g.audio, (x) => aiSet({ audio: x })), [g.audio !== "tat" ? voice : null]);
+        if (!g.has_tts && g.audio !== "tat") { opts.lastChild.appendChild(el("span", "kb-ai-hint", "khoá chưa có giọng đọc")); }
+      }
       // 1.23: truyện dài kỳ — Hay hơn (lập mạch, biên tập, viết lại) / Tiết kiệm (như cũ, ít lượt gọi) / Tắt
       aiRow(opts, "Truyện", chips([["hay", "Hay hơn", "Lập mạch truyện, biên tập chấm điểm, viết lại khi nhạt (thêm 2–3 lượt gọi mỗi số)"],
         ["tiet_kiem", "Tiết kiệm", "Viết chung một lượt với cả số báo, ít lượt gọi"], ["tat", "Tắt", "Số báo không có truyện"]],
         g.story || "hay", (x) => aiSet({ story: x })));
-      if ((g.story || "hay") !== "tat") {
-        aiRow(opts, "Giọng truyện", chips(g.tones || [["am", "Ấm áp đời thường"], ["hai", "Hài"], ["bi_an", "Bí ẩn nhẹ"], ["phieu_luu", "Phiêu lưu"]],
-          g.tone || "am", (x) => aiSet({ tone: x })));
+      if ((g.story || "hay") !== "tat") {       // 1.25.1: chọn nhiều chủ đề — mỗi đợt 6–8 kỳ một chủ đề, xoay vòng
+        const r = el("div", "kb-ai-row kb-ai-tones");
+        r.appendChild(el("span", "kb-ai-k", "Chủ đề truyện"));
+        const tv = el("span", "kb-ai-v");
+        tv.appendChild(multiChips(g.tones || [], g.tones_on || [g.tone || "am"], (next) => aiSet({ tones: next })));
+        if ((g.tones_on || []).length > 1) { tv.appendChild(el("span", "kb-ai-hint", "mỗi đợt 6–8 kỳ một chủ đề, lần lượt")); }
+        r.appendChild(tv);
+        opts.appendChild(r);
       }
       const lab = el("label", "kb-ai-auto");
       const cb = el("input");
@@ -696,10 +790,12 @@ var GardenPaper = (function () {
     }
     if (aiFlash && aiFlash.flash) { wrap.appendChild(el("div", "kb-ai-flash " + (aiFlash.ok ? "is-ok" : "is-bad"), aiFlash.flash)); }
     wrap.appendChild(wantRow(v));
+    if (v.gemini.key && v.sub) { wrap.appendChild(subCard(v)); }
     wrap.appendChild(geminiCard(v));
     // 1.22.8: thẻ Claude Code chỉ hiện khi đã đặt bao_dir trong config (cách nâng cao, hướng dẫn ở config.md / README)
     if (v.claude.set) { wrap.appendChild(claudeCard(v)); }
-    wrap.appendChild(voiceCard(v));
+    // 1.25.1: giọng cho câu chép chính tả — chỉ khi có báo tiếng Nhật / tiếng Anh (báo tiếng Việt không chép)
+    if ((v.langs_on || []).some((x) => x !== "vi") || !(v.langs_on || []).length) { wrap.appendChild(voiceCard(v)); }
     st.appendChild(wrap);
     st.scrollTop = keep;
     Array.prototype.forEach.call(st.querySelectorAll(".kb-ai-decks-list"), (e) => { e.scrollTop = deckScroll[e.getAttribute("data-lang")] || 0; });
@@ -713,7 +809,7 @@ var GardenPaper = (function () {
     if (v.flash !== undefined) { aiFlash = { flash: v.flash, ok: !!v.ok }; }
     if (v.flash && v.ok && /Khoá dùng được/.test(v.flash)) { keyOpen = false; }
     aiView = v;
-    if (index && index.lang !== "en") { index.source = v.source; }
+    if (index && index.lang === "ja") { index.source = v.source; }
     if (isOpen && tab === "src") { drawSource(); }
   }
   function onAiProgress(p) {
@@ -736,13 +832,13 @@ var GardenPaper = (function () {
     if (bar) { st.appendChild(bar); }
     const list = el("div", "kb-p-shelf");
     index.issues.forEach((x) => {
-      const en = x.lang === "en";
+      const en = x.lang === "en", vi = x.lang === "vi";
       const row = el("button", "kb-p-row" + (x.read ? "" : " is-unread"));
       row.type = "button";
       row.appendChild(el("span", "kb-p-row-date", shortDate(x.date)));
       const mid = el("span", "kb-p-row-mid");
-      const t = el("span", "kb-p-row-title", x.title || (en ? "No. " + x.so : "第" + x.so + "号"));
-      t.lang = en ? "en" : "ja";
+      const t = el("span", "kb-p-row-title", x.title || (en ? "No. " + x.so : vi ? "Số " + x.so : "第" + x.so + "号"));
+      t.lang = en ? "en" : vi ? "vi" : "ja";
       mid.appendChild(t);
       const meta = [];
       if (x.so) { meta.push("Số " + x.so); }
@@ -785,18 +881,19 @@ var GardenPaper = (function () {
 
   function drawIssue() {
     const v = issue, st = stage();
-    const en = v.lang === "en", lg = en ? "en" : "ja";     // 1.19: báo tiếng Anh — The Garden Gazette
+    const en = v.lang === "en", vi = v.lang === "vi", lg = en ? "en" : vi ? "vi" : "ja";   // 1.19: The Garden Gazette; 1.25.1: Báo Làng Kotoba
     st.textContent = "";
     furiButton();
     const mast = el("div", "kb-p-mast");
-    const name = el("div", "kb-p-name" + (en ? " kb-p-name-en" : ""), en ? "The Garden Gazette" : "畑新聞");
+    const name = el("div", "kb-p-name" + (en || vi ? " kb-p-name-en" : ""), MAST[lg]);
     name.lang = lg;
     mast.appendChild(name);
     const meta = el("div", "kb-p-meta");
     meta.lang = lg;
-    meta.appendChild(el("div", null, en ? enDate(v.date) : jpDate(v.date)));
+    meta.appendChild(el("div", null, en ? enDate(v.date) : vi ? viDate(v.date) : jpDate(v.date)));
     meta.appendChild(el("div", null, en ? "No. " + (v.so || "?") + (v.rut_gon ? " · short edition" : "")
-      : "第" + (v.so || "?") + "号" + (v.rut_gon ? "・短縮版" : "")));
+      : vi ? "Số " + (v.so || "?") + (v.rut_gon ? " · số ngắn" : "")
+        : "第" + (v.so || "?") + "号" + (v.rut_gon ? "・短縮版" : "")));
     mast.appendChild(meta);
     st.appendChild(mast);
     if (v.rut_gon) {
@@ -805,7 +902,7 @@ var GardenPaper = (function () {
     v.bai.forEach((b, i) => {
       const art = el("article", "kb-p-art kb-p-" + b.loai);
       art.lang = lg;
-      const head = el("div", "kb-p-kind", (en ? LOAI_EN : LOAI)[b.loai] + (b.ky ? " · Kỳ " + b.ky : ""));
+      const head = el("div", "kb-p-kind", (en ? LOAI_EN : vi ? LOAI_VI : LOAI)[b.loai] + (b.ky ? " · Kỳ " + b.ky : ""));
       head.lang = "vi";
       art.appendChild(head);
       if (b.tieu_de) {
@@ -875,7 +972,8 @@ var GardenPaper = (function () {
     }
     st.appendChild(el("div", "kb-p-credit",
       (v.credit ? "Giọng đọc: " + v.credit + ". " : "") + (v.voice_note ? v.voice_note + " " : "") +
-      "Báo do " + (v.may_viet || "Claude") + " viết tự động, có thể còn chỗ chưa tự nhiên."));
+      "Báo do " + (v.may_viet || "Claude") + (vi ? " viết tự động từ thẻ của bạn; chỗ nào lệch với thẻ thì tin thẻ."
+        : " viết tự động, có thể còn chỗ chưa tự nhiên.")));
     updateCoins(v.coins);
     dichButton();
     if (infoDefault) { defaultInfo(); }

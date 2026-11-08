@@ -182,10 +182,11 @@ result = {"en": en["read"].get("2026-11-03"), "ja": "2026-11-03" in ja["read"], 
   const src1 = await py(KB + 'result = mw.col.get_config("kotoba_batake_paper_src", None)');
   const fid = await py(KB + 'result = mw.col.decks.id_for_name("F::Tiếng Anh Basic")');
   ok(src1 && src1.en && src1.en.decks.length === 1 && src1.en.decks[0] === fid, 'lưu vào khoá collection kotoba_batake_paper_src: ' + JSON.stringify(src1));
-  const why = await py(KB + 'ok = kb.ai_start("manual", kb._dialog, "en")\nresult = [ok, kb._ai["why"], kb._ai["running"]]');
-  ok(why[0] === false && /Deck đã chọn mới có 8 từ/.test(why[1]) && !why[2], 'deck đã chọn < 10 từ: không gọi Gemini, báo lý do: ' + why[1]);
+  // 1.25.1: deck đã chọn < 10 từ không còn chặn — Gemini viết theo trình độ, kèm vài từ đã có (không gọi mạng ở đây)
+  const why = await py(KB + 'sc = kb._ai_scope(kb.config(), kb._ai_opts(kb.config()), "en")\nresult = [sc.get("khong_deck"), sc.get("it_tu"), len(sc.get("kho") or [])]');
+  ok(why[0] === true && why[1] === 8 && why[2] === 8, 'deck đã chọn < 10 từ (1.25.1): vẫn viết theo trình độ, 8 từ đã có gửi kèm: ' + JSON.stringify(why));
   await page.eval(W('GardenPaper.close(); GardenPaper.open("src"); return 1;'));
-  ok(await waitFor(page, '/Deck đã chọn mới có 8 từ/.test((document.querySelectorAll(".kb-ai-lang")[1] || {}).textContent || "")'), 'khối báo tiếng Anh ghi lý do');
+  ok(await waitFor(page, '/Không dùng deck/.test((document.querySelectorAll(".kb-ai-lang")[1] || {}).textContent || "")'), 'khối báo tiếng Anh có nút "Không dùng deck" (1.25.1)');
   for (let i = 0; i < 6; i++) {
     await page.eval(W('const b = Array.from(document.querySelectorAll(".kb-ai-deck input")).find(i => !i.checked && !i.disabled); if (b) b.click(); return 1;'));
     await sleep(700);

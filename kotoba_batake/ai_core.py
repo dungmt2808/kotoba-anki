@@ -814,6 +814,12 @@ def scope_from_pham_vi(raw: Any) -> dict[str, Any] | None:
 
 
 def describe_scope(scope: dict[str, Any]) -> str:
+    if scope.get("khong_deck"):
+        return "không dùng deck" + (" · trình độ %s" % scope["trinh_do"] if scope.get("trinh_do") else "")
+    if scope.get("lang") == "vi":
+        decks = scope.get("decks") or []
+        return "%d thẻ (%d thẻ phải ôn) · %s" % (len(scope.get("muc") or []), len(scope.get("can_on") or []),
+                                               ("deck " + ", ".join(decks)) if decks else "mọi deck")
     if scope.get("nguon") == "kotoba_daily":
         return "%d từ, %d mẫu câu · trình độ %s · theo giáo trình (kotoba_daily)" % (
             len(scope.get("tu_vung", [])), len(scope.get("ngu_phap", [])), scope.get("trinh_do", "?"))
@@ -1838,6 +1844,17 @@ def system_prompt(level: str) -> str:
         "Trả về đúng MỘT object JSON theo khuôn, không viết gì thêm." % (level, lo, hi, RULES))
 
 
+NO_DECK_NEW = 12      # 1.25.1: báo không dùng deck — số từ mới Gemini được khai báo (bảng tra của số báo)
+
+
+def no_deck_text(level: str, max_new: int = NO_DECK_NEW, few: int = 0) -> str:
+    head = ("NGƯỜI HỌC MỚI CÓ %d TỪ ĐÃ HỌC (danh sách bên dưới — dùng nếu hợp): còn lại viết" % few if few else
+            "NGƯỜI HỌC CHƯA CÓ DECK (không có danh sách từ đã học): viết")
+    return (head + " bằng từ thông dụng đúng trình độ %s. Chọn 8–%d "
+            "từ đáng học trong số (đúng trình độ, hợp chủ đề), khai báo trong tu_moi (w = từ, r = cách đọc HIRAGANA, m = "
+            "nghĩa tiếng Việt) và đánh dấu {表記|よみ|từ} ở chỗ dùng; mọi chữ Hán khác dùng [漢字|かんじ]." % (level, max_new))
+
+
 def write_prompt(scope: dict[str, Any], opts: dict[str, Any], story_list: list[dict[str, Any]],
                  history: list[dict[str, Any]], date: datetime.date) -> str:
     level = scope.get("trinh_do", "N5")
@@ -1908,6 +1925,8 @@ def write_prompt(scope: dict[str, Any], opts: dict[str, Any], story_list: list[d
         "Phần lớn là mẫu TRỌNG TÂM (nếu có), thêm 1 mẫu cũ để ôn.\n"
         "Đánh dấu {..|..|..} cho 8–20 từ đáng học (ưu tiên từ trọng tâm, từ sắp quên). tu_moi tối đa %d từ ngoài danh sách, "
         "mỗi từ phải được đánh dấu {..|..|từ} trong bài. tom_tat: 1–2 câu tiếng Việt tóm tắt số báo." % int(opts.get("max_new", 3)))
+    if scope.get("khong_deck"):         # 1.25.1: không dùng deck — viết theo trình độ, Gemini tự chọn từ đáng học
+        parts.append(no_deck_text(level, int(opts.get("max_new", NO_DECK_NEW)), int(scope.get("it_tu") or 0)))
     tt = scope.get("trong_tam", {}).get("tu", [])
     if tt and scope.get("kho"):
         parts.append(
@@ -1926,8 +1945,8 @@ def write_prompt(scope: dict[str, Any], opts: dict[str, Any], story_list: list[d
                      "; ".join("%s: %s" % (h.get("ngay"), ", ".join(h.get("mau", []))) for h in recent))
     if not short and not opts.get("no_story") and not opts.get("story_plain"):
         parts.append("TRUYỆN:\n" + STORY_SETUP)
-        if opts.get("tone") in story_core.TONES:
-            parts.append("GIỌNG TRUYỆN: " + story_core.TONE_TEXT[opts["tone"]])
+        if opts.get("tones") or opts.get("tone") in story_core.TONES:      # 1.25.1: chọn nhiều chủ đề
+            parts.append("CHỦ ĐỀ TRUYỆN: " + story_core.tone_text(opts.get("tones") or opts.get("tone")))
         if story_list:
             parts.append("ĐÃ XẢY RA:\n" + "\n".join("- Kỳ %s (%s): %s" % (s.get("ky"), s.get("ngay"), s.get("tom_tat"))
                                                      for s in story_list[-10:]))
@@ -1940,8 +1959,9 @@ def write_prompt(scope: dict[str, Any], opts: dict[str, Any], story_list: list[d
         else:
             parts.append("ĐÃ XẢY RA: (chưa có kỳ nào, đây là kỳ 1: リンさん bắt đầu làm ở ことば屋)")
     parts.append("DANH SÁCH NGỮ PHÁP (id|mẫu|nghĩa) — chỉ dùng ngữ pháp này và đơn giản hơn:\n" + _grammar_lines(scope))
-    parts.append("DANH SÁCH TỪ VỰNG ĐÃ HỌC (từ|cách đọc|nghĩa) — từ gốc trong {..|..|từ gốc} phải chép đúng cột đầu:\n"
-                 + _vocab_lines(scope))
+    if scope.get("kho") or scope.get("tu_vung"):
+        parts.append("DANH SÁCH TỪ VỰNG ĐÃ HỌC (từ|cách đọc|nghĩa) — từ gốc trong {..|..|từ gốc} phải chép đúng cột đầu:\n"
+                     + _vocab_lines(scope))
     parts.append(
         "VÍ DỤ ĐỊNH DẠNG (chỉ xem cách đánh dấu, không chép nội dung):\n"
         '{"loai":"tin_lang","tieu_de":"スタックちゃん、[絵|え]を{発表|はっぴょう|発表する}","doan":["[昨日|きのう]の[夜|よる]、'
@@ -2140,10 +2160,24 @@ def _en_module() -> Any:
     return ai_en
 
 
+def _vi_module() -> Any:
+    """1.25.1: phần riêng của báo tiếng Việt (ai_vi.py)."""
+    try:
+        from . import ai_vi
+    except ImportError:
+        import ai_vi  # type: ignore[no-redef]
+    return ai_vi
+
+
+LANG_LABEL = {"ja": "", "en": " (tiếng Anh)", "vi": " (tiếng Việt)"}
+
+
 class Job:
     """Viết một số báo. Chạy trong luồng nền (không đụng collection); progress(msg) để báo tiến độ.
 
-    1.19: scope["lang"] == "en" → báo tiếng Anh (lời nhắc, sửa máy, kiểm tra của ai_en; cùng các bước còn lại)."""
+    1.19: scope["lang"] == "en" → báo tiếng Anh (lời nhắc, sửa máy, kiểm tra của ai_en; cùng các bước còn lại).
+    1.25.1: scope["lang"] == "vi" → báo tiếng Việt (ai_vi, cùng giao diện hàm với ai_en: truyện chữ trơn máy chèn thẳng).
+    `self.en` là module của ngôn ngữ đó (ai_en / ai_vi), None với tiếng Nhật."""
 
     def __init__(self, client: Gemini, base: str, date: str, scope: dict[str, Any], opts: dict[str, Any],
                  progress: Callable[[str], None] | None = None) -> None:
@@ -2156,7 +2190,8 @@ class Job:
         self.log: list[dict[str, Any]] = []
         self.models: list[str] = []
         self.model = ""
-        self.en = _en_module() if scope.get("lang") == "en" else None
+        self.lang = scope.get("lang") if scope.get("lang") in ("en", "vi") else "ja"
+        self.en = _en_module() if self.lang == "en" else _vi_module() if self.lang == "vi" else None
         self.story: dict[str, Any] | None = None     # 1.23: kỳ truyện đã viết + biên tập (quy trình mới)
 
     def check_kanji(self, text: str) -> list[str]:
@@ -2315,12 +2350,13 @@ class Job:
         day = datetime.date.fromisoformat(self.date)
         en = self.en
         system = en.system_prompt(level) if en else system_prompt(level)
-        result: dict[str, Any] = {"ok": False, "date": self.date, "so": self.opts["so"], "lang": "en" if en else "ja"}
+        result: dict[str, Any] = {"ok": False, "date": self.date, "so": self.opts["so"], "lang": self.lang}
         try:
             if mode == "hay" and self.opts.get("ky"):
                 # 1.23: mạch truyện → nhà văn → biên tập → viết lại (story_core); lỗi / hết lượt → truyện viết chung như cũ
                 try:
-                    self.story = story_core.run(self, int(self.opts["ky"]), str(self.opts.get("tone") or "am"),
+                    self.story = story_core.run(self, int(self.opts["ky"]),
+                                                self.opts.get("tones") or self.opts.get("tone") or "am",
                                                 (en.season_text if en else season_text)(day))
                 except AIError as e:
                     if e.kind == "key":
@@ -2333,7 +2369,7 @@ class Job:
                     result["story"] = {"diem": self.story.get("diem") or {}, "viet_lai": bool(self.story.get("_viet_lai"))}
                 else:
                     self._note("truyen_viet_chung")
-            self.progress("Gemini đang viết số %d%s…" % (self.opts["so"], " (tiếng Anh)" if en else ""))
+            self.progress("Gemini đang viết số %d%s…" % (self.opts["so"], LANG_LABEL[self.lang]))
             prompt = (en.write_prompt if en else write_prompt)(self.scope, self.opts, story, history, day)
             first = self._gen(system, prompt, ISSUE_SCHEMA, 0.8)
             if isinstance(first, dict) and "_hong" in first:
@@ -2407,7 +2443,7 @@ class Job:
         out = {"ngay": self.date, "so": self.opts["so"], "rut_gon": bool(self.opts.get("short")),
                "may_viet": "Gemini (%s)" % self.model}
         if self.en:
-            out["ngon_ngu"] = "en"          # 1.19: báo tiếng Anh (paper_core.clean_issue đọc khoá này)
+            out["ngon_ngu"] = self.lang     # 1.19: báo tiếng Anh; 1.25.1: tiếng Việt (paper_core.clean_issue đọc khoá này)
         for k in ("bai", "cau_hoi", "chinh_ta", "mau_cau", "tu_moi", "tom_tat"):
             out[k] = raw.get(k, [] if k != "tom_tat" else "")
         for b in out["bai"]:
@@ -2421,7 +2457,10 @@ class Job:
             else:
                 b.pop("dich", None)
         # 1.23: mỗi số tự mang bảng tra nghĩa (pham_vi.json chung bị ghi đè khi số sau viết theo phạm vi khác)
-        out.update(paper.build_lookup(paper.issue_texts(out), out.get("mau_cau") or [], self.scope))
+        if self.lang == "vi":       # 1.25.1: mục "#số" → [mặt trước, "", mặt sau, deck]
+            out.update(self.en.build_lookup(paper.issue_texts(out), self.scope))
+        else:
+            out.update(paper.build_lookup(paper.issue_texts(out), out.get("mau_cau") or [], self.scope))
         write_scope(self.base, self.scope)
         _write_json(issue_path(self.base, self.date), out)
         sb = next((b for b in out["bai"] if b.get("loai") == "truyen"), None)

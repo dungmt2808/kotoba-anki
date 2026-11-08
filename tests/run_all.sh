@@ -10,6 +10,7 @@
 #   OLD121=<thư mục add-on bản 1.21.0> để test_122.py chạy mã 1.21.0 thật lưu ví / đặt luật / chế tác (giống tự vẽ còn nguyên).
 #   OLD123=<thư mục add-on bản 1.23.0> cho test_124.py (không đặt thì lấy từ git, commit ba0aa5a).
 #   OLD124=<thư mục add-on bản 1.24.0> cho test_125.py (không đặt thì lấy từ git, commit bc66f66).
+#   OLD125=<thư mục add-on bản 1.25.0> cho test_1251.py (không đặt thì lấy từ git, commit 1912fb7).
 HERE=$(cd "$(dirname "$0")" && pwd)
 ADDON=${1:-$HERE/../kotoba_batake}
 FAIL=0
@@ -37,6 +38,9 @@ OUT=$(python3 "$HERE/core/test_124.py" "$ADDON" ${OLD123:+"$OLD123"} 2>&1); RC=$
 echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
 echo "== core/test_125.py"
 OUT=$(python3 "$HERE/core/test_125.py" "$ADDON" ${OLD124:+"$OLD124"} 2>&1); RC=$?
+echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
+echo "== core/test_1251.py"
+OUT=$(python3 "$HERE/core/test_1251.py" "$ADDON" ${OLD125:+"$OLD125"} 2>&1); RC=$?
 echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
 echo "== core/test_kit.py (bộ kotoba_daily)"
 OUT=$(python3 "$HERE/core/test_kit.py" "$ADDON" 2>&1); RC=$?

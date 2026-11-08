@@ -49,7 +49,7 @@ Người dùng chọn: ai chào = **thú nuôi của mình**; chào **lần mở
 1. **Ảnh phác** trong Anki thật (như 1.25): màn chào (thú / StackChan, sáng / tối, có / không tin), 3 kiểu chuyển cảnh (ảnh từng khung), dòng Tin làng + bảng nhỏ → người dùng duyệt.
 2. Mã: `web/greet.js` (màn chào + chuyển cảnh, dùng hình thú của `pets.js`, StackChan, trời của `sky.js`), `event_core.py` + dữ liệu tin trong `data`, thẻ Hôm nay (`garden.js`), ⚙ (`ui.js`, `more_core.UI_GLOBAL` + `UI_KEEP_ON_PRESET`).
 3. Test: `tests/core/test_126.py` (tin theo ngày, khách gợi ý cố định trong ngày, sắp tới 7 ngày, khoá `greet` / `trans`); `tests/anki/e2e_126.js` (lần mở đầu có màn chào + thú đúng, tự vào sau ~4 s, bấm bỏ qua, lần mở thứ hai không chào, chưa nuôi thú → StackChan, thú đi chơi, tắt ở ⚙, mở thẳng bảng ôn không chào, chuyển cảnh ◂ ▸ / Trong nhà không chặn bấm, Dịu mắt, 720 × 520, không lỗi JS); chạy lại bộ cũ (26.9.4 đầy đủ + 23.10.1), `audit_full` / `audit_edge` (màn chào không chặn kịch bản cũ: test đặt sẵn "đã chào").
-4. Tài liệu: `PHAT_TRIEN.md` mục 2.6t, `config.md` (`ui.greet`, `ui.trans`), README, `tests/README.md`; xoá file này khi xong.
+4. Tài liệu: `PHAT_TRIEN.md` mục 2.6u (2.6t là bản 1.25.1), `config.md` (`ui.greet`, `ui.trans`), README, `tests/README.md`; xoá file này khi xong.
 
 ## 5. Câu hỏi để lúc làm ảnh phác (không chặn kế hoạch)
 

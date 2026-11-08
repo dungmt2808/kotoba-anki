@@ -186,7 +186,7 @@ ok(kinds[:4] == ["mach", "truyen", "bien_tap", "truyen"] and kinds[4] == "so",
    "thứ tự: lập mạch → nhà văn → biên tập → viết lại (điểm bất ngờ 3 < 4) → viết số: %s" % kinds)
 ok(len(kinds) <= 7, "tổng lượt gọi %d (cũ: 2, thêm 3–4 cho truyện)" % len(kinds))
 wp = dict(fs.asked)["truyen"]
-ok("Bí ẩn nhẹ" in wp and "MẠCH CỦA ĐỢT" in wp and "VÍ DỤ MỘT KỲ HAY" in wp and "ĐÂY LÀ KỲ 1" in wp,
+ok("Bí ẩn: " in wp and "MẠCH CỦA ĐỢT" in wp and "VÍ DỤ MỘT KỲ HAY" in wp and "ĐÂY LÀ KỲ 1" in wp,
    "lời nhắc nhà văn: giọng truyện, mạch, kỳ mẫu, kỳ 1")
 issue_prompt = next(p for k, p in fs.asked if k == "so")
 ok("TRUYỆN ĐÃ VIẾT SẴN" in issue_prompt and "CHÉP NGUYÊN VĂN" in issue_prompt, "lượt viết số nhận truyện đã duyệt, chép nguyên văn + furigana")

@@ -146,11 +146,15 @@ s = store.load()
 ok(s["lang"] == {mid_en: "en", mid_ko: "other"}, "khoá lang: " + str(s["lang"]))
 ok(s["games_lang"] == {"en": {"crow": "spell"}, "other": {"market": "word-meaning"}} and s["games"]["market"]["vocab"] == "reading-word",
    "games_lang tách khỏi games")
+# 1.25.1: Đuổi quạ có chế độ cho ngôn ngữ khác (Nghĩa → gõ từ / Từ → gõ nghĩa); chế độ lạ vẫn bị chặn
+store.set_game("crow", "xx", "answer")
+ok(store.load()["games_lang"]["other"].get("crow") == "answer", "Đuổi quạ cho ngôn ngữ khác: lưu chế độ \"answer\" (1.25.1)")
+store.set_game("crow", "xx", "spell")
 try:
-    store.set_game("crow", "xx", "spell")
-    ok(False, "Đuổi quạ cho ngôn ngữ khác phải bị chặn")
+    store.set_game("crow", "xx", "vi")
+    ok(False, "chế độ Đuổi quạ của tiếng Nhật không dùng cho ngôn ngữ khác")
 except ValueError:
-    ok(True, "Đuổi quạ không có chế độ cho ngôn ngữ khác")
+    ok(True, "chế độ lạ của Đuổi quạ (\"vi\") cho ngôn ngữ khác bị chặn")
 g = core.build_garden(col, col.decks.id_for_name("G::Tiếng Anh đầy đủ"), dict(cfg, _fields=s))
 ok(g["game_modes_lang"] == s["games_lang"] and g["note_types"][0]["configured"], "vườn gửi game_modes_lang sang trang")
 

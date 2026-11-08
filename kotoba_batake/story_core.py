@@ -37,14 +37,54 @@ except ImportError:  # chạy test
     import paper_core as paper  # type: ignore[no-redef]
 
 MODES = ("hay", "tiet_kiem", "tat")          # Truyện: Hay hơn (mặc định) / Tiết kiệm (như cũ, ít lượt) / Tắt
-TONES = ("am", "hai", "bi_an", "phieu_luu")  # Giọng truyện
-TONE_NAME = {"am": "Ấm áp đời thường", "hai": "Hài", "bi_an": "Bí ẩn nhẹ", "phieu_luu": "Phiêu lưu"}
+# Chủ đề truyện (1.23: "Giọng truyện", một lựa chọn; 1.25.1: thêm 4 chủ đề, chọn được nhiều — mỗi đợt 6–8 kỳ theo một
+# chủ đề trong số đã chọn, xoay vòng; người dùng: "chọn chủ đề họ muốn nghe (kinh dị, hài, dễ thương, hoặc chọn nhiều)")
+TONES = ("am", "hai", "de_thuong", "kinh_di", "bi_an", "phieu_luu", "lang_man", "ky_ao")
+TONE_NAME = {"am": "Ấm áp đời thường", "hai": "Hài", "de_thuong": "Dễ thương", "kinh_di": "Kinh dị nhẹ",
+             "bi_an": "Bí ẩn", "phieu_luu": "Phiêu lưu", "lang_man": "Lãng mạn nhẹ", "ky_ao": "Kỳ ảo"}
 TONE_TEXT = {
     "am": "Ấm áp đời thường: chuyện nhỏ trong làng và quán trọ nhưng CÓ CHUYỆN XẢY RA, cảm xúc dịu, xen chút hài.",
     "hai": "Hài: tình huống dở khóc dở cười, hiểu lầm, lời nói nhầm, thoại vui — vẫn nhẹ nhàng, không chế giễu ai.",
-    "bi_an": "Bí ẩn nhẹ: đồ vật lạ, dấu vết, câu hỏi chưa có lời đáp kéo dài nhiều kỳ; hồi hộp nhưng không đáng sợ.",
+    "de_thuong": "Dễ thương: chuyện nhỏ đáng yêu (con vật, trẻ con, món quà nhỏ, hiểu lầm ngộ nghĩnh), thoại tươi vui, "
+                 "kết ấm lòng.",
+    "kinh_di": "Kinh dị nhẹ: chuyện lạ / chuyện ma trong làng (tiếng động ban đêm, bóng người bên giếng, đồ vật tự dời chỗ) "
+               "gây rùng mình và tò mò; KHÔNG máu me, không bạo lực, không ai chết; lời giải có thể bất ngờ hoặc để lại "
+               "một chút rợn.",
+    "bi_an": "Bí ẩn: đồ vật lạ, dấu vết, câu hỏi chưa có lời đáp kéo dài nhiều kỳ; hồi hộp nhưng không đáng sợ.",
     "phieu_luu": "Phiêu lưu: nhân vật rời quán đi tìm / đi tới chỗ mới trong làng, gặp thử thách nhỏ, tự xoay xở.",
+    "lang_man": "Lãng mạn nhẹ: cảm mến e thẹn, lá thư không ký tên, cuộc hẹn bị lỡ… trong sáng, nhẹ nhàng, không uỷ mị.",
+    "ky_ao": "Kỳ ảo: một chút phép lạ như truyện cổ tích (cây biết nói, cánh cửa dẫn sang mùa khác, ngôi sao rơi xuống "
+             "vườn) với luật lệ riêng nhất quán qua các kỳ.",
 }
+
+
+def norm_tones(raw: Any) -> list[str]:
+    """Chủ đề đã chọn (chuỗi một chủ đề kiểu 1.23 hoặc danh sách) → danh sách hợp lệ, không rỗng."""
+    if isinstance(raw, str):
+        raw = [raw]
+    out = [t for t in dict.fromkeys(raw if isinstance(raw, (list, tuple)) else []) if t in TONES]
+    return out or ["am"]
+
+
+def next_tone(tones: Any, arc: dict[str, Any] | None) -> str:
+    """Chủ đề cho đợt mới: chủ đề kế tiếp (xoay vòng) sau chủ đề của đợt trước trong danh sách đã chọn."""
+    ts = norm_tones(tones)
+    prev = (arc or {}).get("giong")
+    if prev in ts:
+        return ts[(ts.index(prev) + 1) % len(ts)] if len(ts) > 1 else ts[0]
+    return ts[0]
+
+
+def tone_text(tones: Any, main: str | None = None) -> str:
+    """Câu dặn chủ đề cho lời nhắc: chủ đề chính (của đợt) + các chủ đề khác người đọc thích (pha nhẹ)."""
+    ts = norm_tones(tones)
+    main = main if main in TONES else ts[0]
+    rest = [t for t in ts if t != main]
+    out = TONE_TEXT[main]
+    if rest:
+        out += " Người đọc cũng thích: %s — có thể pha nhẹ, nhưng giữ %s là chính." % (
+            ", ".join(TONE_NAME[t] for t in rest), TONE_NAME[main])
+    return out
 ARC_LEN = (6, 8)            # số kỳ của một đợt
 MAX_CALLS = 6               # trần số lượt gọi THÀNH CÔNG cho phần truyện của một số báo (mạch, nháp ×2, biên tập, viết lại)
 MAX_REQUESTS = 24           # trần tổng số yêu cầu (kể cả lượt lỗi bận / hết hạn mức khi đổi model) — chặn chạy quá lâu
@@ -101,6 +141,36 @@ SAMPLE_JA = """「お客様、お名前をお書きします！」リンさん�
 SAMPLE_EN = """"Can I take your order?" Linh asked. The old man smiled. "Yes. One cup of tea, please. And one memory." Linh did not understand. "Sorry, we don't sell memories," she said. In the kitchen, Hana laughed softly.
 The man put an old photo on the table. It showed The Kettle Café, but the sign was different. A young girl stood at the door with a red umbrella. "Do you know her?" he asked.
 Hana came out and looked at the photo for a long time. Her finger stopped on the girl's face. "Where did you find this?" she whispered. Outside, the wind pushed the door open, and the little bell rang twice."""
+
+# 1.25.1: báo tiếng Việt (người không học tiếng Nhật / tiếng Anh) — cùng nhân vật, viết bằng tiếng Việt, chất liệu là
+# kiến thức trong thẻ người đọc đang ôn (không phải mẫu ngữ pháp)
+BIBLE_VI = """TRUYỆN DÀI KỲ "Quán trọ nhỏ ở làng Kotoba" — làng nhỏ yên bình cạnh khu vườn Kotoba; mùa và thời tiết theo
+ngày thật ở Việt Nam.
+Nhân vật (mỗi người một điều muốn, một điều sợ, một câu cửa miệng; giữ nhất quán qua mọi kỳ):
+- Lin: cô gái 22 tuổi mới đến làm ở quán trọ "Quán Kotoba". Muốn bà Hana tin tưởng giao quán một mình. Ham học, hay ghi
+  chép vào cuốn sổ nhỏ, đôi khi nhớ nhầm một chi tiết rồi tự nhận ra và sửa. Câu cửa miệng: "Để em ghi lại đã!"
+- Bà Hana: bà chủ quán, khoảng 30 tuổi, điềm tĩnh, hiểu biết nhiều chuyện. Có một bí mật về quá khứ của quán, hé ra dần.
+- StackChan: robot nhỏ của khu vườn, tò mò, nói câu ngắn, xưng "tớ", hay vẽ tranh pixel. Hiểu câu nói thường ngày theo
+  nghĩa đen (gây cười).
+- Ông trưởng làng: hiền, thích kể chuyện ngày xưa, hay kể quá dài.
+- Nhân vật phụ của đợt (mỗi đợt chọn một): một vị khách trọ có mục đích riêng, bác đưa thư, con mèo hoang trắng.
+Lời thoại để trong ngoặc kép "…", ghi rõ ai nói."""
+
+SAMPLE_VI = """"Bà Hana ơi, khách phòng số ba muốn ăn sáng bằng... một tấm bản đồ!" Lin chạy vào bếp, tay vẫn cầm cuốn sổ nhỏ. Bà Hana đặt ấm trà xuống. "Bản đồ à?" StackChan lập tức chui vào tủ, lôi ra một chiếc đĩa. "Tớ có đĩa. Bản đồ thì chưa nấu bao giờ."
+Ông khách già trải lên bàn một tấm bản đồ cũ, mép giấy đã ngả vàng. Ở góc dưới có một vòng tròn đỏ, ngay chỗ khu vườn Kotoba bây giờ. "Ngày xưa, ở đây có một cái giếng," ông nói khẽ. "Tôi đã hứa sẽ quay lại."
+Bà Hana nhìn vòng tròn đỏ rất lâu mà không nói gì. Lin định hỏi thì ngoài sân vang lên tiếng nước chảy róc rách — ở đúng chỗ chưa từng có cái giếng nào."""
+
+RULES_VI = """CÁCH VIẾT MỘT KỲ HAY (bắt buộc):
+1. Một cảnh, 2–3 nhân vật. Mở đầu bằng hành động hoặc lời thoại, KHÔNG mở bằng tả thời tiết.
+2. Có MỘT vấn đề cụ thể: nhân vật muốn gì, cái gì cản (hiểu lầm, đồ bị mất, khách khó tính, nhớ nhầm…); nhân vật tự xoay xở.
+3. Dùng nội dung 2–4 thẻ trong DANH SÁCH THẺ làm CHẤT LIỆU của chuyện (nhân vật nhắc tới, tranh luận, nhớ nhầm rồi
+   sửa đúng theo thẻ…), đúng kiến thức ghi ở mặt sau; không chèn cho có, không giảng bài.
+4. Có ít nhất một chi tiết bất ngờ hoặc buồn cười, và một khoảnh khắc cảm xúc nhỏ.
+5. Kết bằng một móc câu: câu hỏi chưa có lời đáp, vật lạ, câu nói bỏ dở. KHÔNG kết bằng bài học hay lời khuyên.
+6. Không liệt kê, không lặp lại tình huống của các kỳ trước.
+7. Nối tiếp kỳ trước: KHÔNG mâu thuẫn với chuyện đã xảy ra, giải quyết hoặc đẩy tiếp một chỗ bỏ ngỏ.
+8. Thoại thể hiện tính cách, ghi rõ ai nói. Tiếng Việt tự nhiên, đúng chính tả, có dấu; chữ trơn (không [ ] { } |,
+   không markdown)."""
 
 _S = {"type": "STRING"}
 _SL = {"type": "ARRAY", "items": _S}
@@ -291,11 +361,29 @@ def _ep_text(e: dict[str, Any]) -> str:
     return "\n".join(e.get("nguyen_van") or []) or e.get("tom_tat", "")
 
 
-def arc_prompt(lang: str, tone: str, story: list[dict[str, Any]], ky: int, season: str) -> str:
+def _bible(lang: str) -> str:
+    return BIBLE_EN if lang == "en" else BIBLE_VI if lang == "vi" else BIBLE_JA
+
+
+def _first_ep(lang: str) -> str:
+    return {"en": "Linh đến Kotoba Village và bắt đầu làm ở The Kettle Café.",
+            "vi": "Lin đến làng Kotoba và bắt đầu làm ở Quán Kotoba."}.get(lang, "リンさん bắt đầu làm ở ことば屋.")
+
+
+def _vi_items(scope: dict[str, Any], limit: int = 40) -> str:
+    """1.25.1: thẻ người đọc đang ôn (báo tiếng Việt), ★ = đến hạn ôn hôm nay."""
+    due = set(scope.get("can_on") or [])
+    rows = [m for m in scope.get("muc") or [] if isinstance(m, dict)]
+    rows = [m for m in rows if m.get("id") in due] + [m for m in rows if m.get("id") not in due]
+    return "\n".join("#%s%s | %s | %s" % (m.get("id"), " ★" if m.get("id") in due else "", m.get("truoc", ""), m.get("sau", ""))
+                     for m in rows[:limit])
+
+
+def arc_prompt(lang: str, tone: str, story: list[dict[str, Any]], ky: int, season: str, tones: Any = None) -> str:
     prev = "\n".join("- Kỳ %d: %s" % (e["ky"], e["tom_tat"]) for e in story[-8:] if e.get("tom_tat")) or "(chưa có kỳ nào)"
-    bible = BIBLE_EN if lang == "en" else BIBLE_JA
+    bible = _bible(lang)
     return "\n\n".join([
-        bible, "GIỌNG TRUYỆN: " + TONE_TEXT.get(tone, TONE_TEXT["am"]),
+        bible, "CHỦ ĐỀ CỦA ĐỢT NÀY: " + tone_text(tones or [tone], tone),
         "CÁC KỲ ĐÃ ĐĂNG:\n" + prev,
         "HÔM NAY: %s. Đợt mới bắt đầu từ kỳ %d." % (season, ky),
         "Lập MẠCH TRUYỆN cho một đợt %d–%d kỳ (mỗi kỳ đăng một ngày): ten = tên đợt (tiếng Việt); muc_tieu = điều nhân vật "
@@ -307,12 +395,12 @@ def arc_prompt(lang: str, tone: str, story: list[dict[str, Any]], ky: int, seaso
 
 
 def writer_prompt(lang: str, scope: dict[str, Any], ky: int, tone: str, arc: dict[str, Any] | None,
-                  story: list[dict[str, Any]], season: str, problems: list[str] | None = None) -> str:
+                  story: list[dict[str, Any]], season: str, problems: list[str] | None = None, tones: Any = None) -> str:
     level = scope.get("trinh_do", "A2" if lang == "en" else "N4")
     prev = [e for e in story if e["ky"] < ky]
     last = prev[-1] if prev else None
     step = arc_step(arc, ky)
-    parts = [BIBLE_EN if lang == "en" else BIBLE_JA, "GIỌNG TRUYỆN: " + TONE_TEXT.get(tone, TONE_TEXT["am"])]
+    parts = [_bible(lang), "CHỦ ĐỀ TRUYỆN: " + tone_text(tones or [tone], tone)]
     if arc:
         parts.append("MẠCH CỦA ĐỢT「%s」: muốn: %s · bí ẩn: %s · nhân vật phụ: %s · kết: %s\nCác bước:\n%s" % (
             arc["ten"], arc["muc_tieu"], arc["bi_an"], arc["nhan_vat_phu"], arc["ket"],
@@ -326,8 +414,7 @@ def writer_prompt(lang: str, scope: dict[str, Any], ky: int, tone: str, arc: dic
     if last and last.get("nguyen_van"):
         parts.append("NGUYÊN VĂN KỲ TRƯỚC (kỳ %d, viết tiếp từ đây, không mâu thuẫn):\n%s" % (last["ky"], _ep_text(last)))
     elif not prev:
-        parts.append("ĐÂY LÀ KỲ 1: " + ("Linh đến Kotoba Village và bắt đầu làm ở The Kettle Café." if lang == "en" else
-                                         "リンさん bắt đầu làm ở ことば屋."))
+        parts.append("ĐÂY LÀ KỲ 1: " + _first_ep(lang))
     th = open_threads(story, arc)
     if th:
         parts.append("CHỖ BỎ NGỎ CÒN MỞ (giải quyết hoặc đẩy tiếp 1 chỗ):\n- " + "\n- ".join(th))
@@ -337,11 +424,30 @@ def writer_prompt(lang: str, scope: dict[str, Any], ky: int, tone: str, arc: dic
             "- Kỳ %d: %s%s" % (e["ky"], "Hay" if e["phan_hoi"]["y"] == "hay" else "Nhạt",
                                 ' — "%s"' % e["phan_hoi"]["ghi"] if e["phan_hoi"].get("ghi") else "") for e in fb))
     parts.append("HÔM NAY: %s. Viết KỲ %d." % (season, ky))
-    parts.append("MẪU NGỮ PHÁP ĐANG HỌC (dùng 1–2 mẫu làm CHẤT LIỆU của chuyện):\n" + _grammar(scope))
     lo, hi = story_length(lang, level)
+    if lang == "vi":      # 1.25.1: báo tiếng Việt — chất liệu là thẻ người đọc đang ôn, không dịch, không từ mới
+        items = _vi_items(scope)
+        parts.append(RULES_VI + "\n9. Độ dài: 3 đoạn, mỗi đoạn %d–%d chữ (truyện là một bài trong số báo)." % (lo, hi))
+        parts.append(("DANH SÁCH THẺ NGƯỜI ĐỌC ĐANG ÔN (#số | mặt trước | mặt sau; ★ = đến hạn ôn hôm nay):\n" + items)
+                     if items else "NGƯỜI ĐỌC CHƯA CHỌN THẺ: viết truyện hay, có thể lồng một kiến thức chung chắc chắn đúng.")
+        parts.append("VÍ DỤ MỘT KỲ HAY (chỉ xem cách kể: hiểu lầm thành chuyện, có vật lạ, móc câu; KHÔNG chép nội dung):\n"
+                     + SAMPLE_VI)
+        if problems:
+            parts.append("BẢN TRƯỚC BỊ MÁY KIỂM TRA TRẢ LẠI (tránh các lỗi này):\n- " + "\n- ".join(problems[:12]))
+        parts.append(
+            "Trả về đúng một object JSON theo khuôn: dan_y (muon, tro_ngai, bat_ngo, moc_cau), tieu_de (ngắn, 3–10 chữ), "
+            "doan = 3 đoạn tiếng Việt chữ trơn, dich = [] (để rỗng), tu_moi = [] (để rỗng), nho (tom_tat = 2 câu chuyện gì "
+            "xảy ra; nhan_vat_moi; bo_ngo = chỗ bỏ ngỏ kỳ sau cần giải quyết; da_giai = chỗ bỏ ngỏ cũ kỳ này đã giải quyết).")
+        return "\n\n".join(parts)
+    parts.append("MẪU NGỮ PHÁP ĐANG HỌC (dùng 1–2 mẫu làm CHẤT LIỆU của chuyện):\n" + _grammar(scope))
     parts.append(RULES + "\n9. Độ dài: đúng 3 đoạn, mỗi đoạn %d–%d %s (truyện là một bài trong số báo, đừng viết dài hơn)." % (
         lo, hi, "từ tiếng Anh" if lang == "en" else "ký tự tiếng Nhật"))
-    parts.append(("DANH SÁCH TỪ ĐÃ HỌC (trình độ %s):\n" % level) + _vocab(scope, lang, 400))
+    vocab = _vocab(scope, lang, 400)
+    if vocab:
+        parts.append(("DANH SÁCH TỪ ĐÃ HỌC (trình độ %s):\n" % level) + vocab)
+    else:                 # 1.25.1: không dùng deck — viết theo trình độ
+        parts.append("KHÔNG CÓ DANH SÁCH TỪ (người học chưa chọn deck): dùng từ thông dụng đúng trình độ %s, tối đa 2 từ "
+                     "khó hơn (ghi vào tu_moi kèm nghĩa)." % level)
     parts.append("VÍ DỤ MỘT KỲ HAY (chỉ xem cách kể: nhầm mẫu câu thành chuyện, có vật lạ, móc câu; KHÔNG chép nội dung, "
                  "nhân vật phụ, đồ vật):\n" + (SAMPLE_EN if lang == "en" else SAMPLE_JA))
     if problems:
@@ -366,6 +472,28 @@ def editor_prompt(lang: str, scope: dict[str, Any], st: dict[str, Any], story: l
     prev = [e for e in story if e["ky"] < ky]
     last = prev[-1] if prev else None
     fb = [e for e in prev[-3:] if e.get("phan_hoi")]
+    if lang == "vi":      # 1.25.1: truyện tiếng Việt — "trinh_do" chấm độ đúng kiến thức của thẻ
+        items = _vi_items(scope)
+        return "\n\n".join(x for x in [
+            "Bạn là biên tập viên truyện tiếng Việt cho người đọc đang ôn bài bằng thẻ Anki: khó tính nhưng công bằng.",
+            "Chấm kỳ %d dưới đây, mỗi tiêu chí 1–5:\n"
+            "- su_kien: có chuyện xảy ra (vấn đề cụ thể, nhân vật xoay xở), không phải cảnh sinh hoạt nhạt\n"
+            "- nhan_vat: thoại và hành động đúng tính cách (theo hồ sơ), có cảm xúc\n"
+            "- bat_ngo: có chi tiết bất ngờ / buồn cười\n"
+            "- moc_cau: kết khiến người đọc muốn đọc kỳ sau, không kết bằng lời khuyên\n"
+            "- khop: khớp kỳ trước, không mâu thuẫn chuyện đã xảy ra (kỳ 1 thì chấm 5)\n"
+            "- trinh_do: kiến thức lấy từ thẻ ĐÚNG với mặt sau của thẻ, lồng tự nhiên (không giảng bài)\n"
+            "- tu_nhien: tiếng Việt tự nhiên, đúng chính tả\n"
+            "loi = lỗi cụ thể (chép câu sai → câu đúng, kể cả kiến thức sai so với thẻ); goi_y = góp ý cụ thể để viết lại "
+            "hay hơn." % ky,
+            BIBLE_VI,
+            ("KỲ TRƯỚC (kỳ %d):\n%s" % (last["ky"], _ep_text(last))) if last else "",
+            ("NGƯỜI ĐỌC NHẬN XÉT CÁC KỲ TRƯỚC:\n" + "\n".join(
+                "- Kỳ %d: %s %s" % (e["ky"], e["phan_hoi"]["y"], e["phan_hoi"].get("ghi", "")) for e in fb)) if fb else "",
+            ("THẺ NGƯỜI ĐỌC ĐANG ÔN:\n" + items) if items else "",
+            ("MÁY KIỂM TRA GỢI Ý:\n- " + "\n- ".join(warnings[:10])) if warnings else "",
+            "KỲ TRUYỆN:\n" + json.dumps({"tieu_de": st.get("tieu_de"), "doan": st.get("doan")}, ensure_ascii=False),
+            "Trả về đúng một object JSON theo khuôn."] if x)
     return "\n\n".join(x for x in [
         "Bạn là biên tập viên truyện cho người Việt học %s trình độ %s: khó tính nhưng công bằng." % (
             "tiếng Anh" if lang == "en" else "tiếng Nhật", level),
@@ -412,9 +540,12 @@ NOTE_RE = re.compile(r"\s*[(（][^()（）]{0,80}?(?:dùng|dạng|nghĩa là|ghi
 # độ dài MỖI đoạn (thử Gemini thật 07/11: đoạn 70–240 ký tự làm cả số N4 dài 1.380 ký tự, quá khung 280–700 → số hỏng)
 LEN_JA = {"N5": (40, 110), "N4": (60, 150), "N3": (80, 190), "N2": (90, 220), "N1": (90, 240)}
 LEN_EN = {"A1": (18, 55), "A2": (25, 70), "B1": (35, 90), "B2": (45, 110), "C1": (50, 130)}
+LEN_VI = (60, 140)        # 1.25.1: chữ tiếng Việt mỗi đoạn (tiếng mẹ đẻ: dài hơn một chút)
 
 
 def story_length(lang: str, level: str) -> tuple[int, int]:
+    if lang == "vi":
+        return LEN_VI
     return (LEN_EN.get(level, (25, 70)) if lang == "en" else LEN_JA.get(level, (60, 150)))
 
 
@@ -493,7 +624,10 @@ def check_story(st: Any, lang: str, level: str, bad_kanji: Any = None) -> tuple[
         where = "doan[%d]" % j if j < len(doan) else "tieu_de"
         if MARK_RE.search(p):
             errs.append(where + ": không dùng [ ] { } | (chữ trơn, chưa furigana)")
-        if lang == "en":
+        if lang == "vi":       # 1.25.1: truyện tiếng Việt (chữ của thẻ — tiếng Hàn, chữ Hán… — được giữ nguyên)
+            if len(p) >= 30 and not VI_MARK.search(p):
+                errs.append(where + ": phải viết bằng tiếng Việt CÓ DẤU")
+        elif lang == "en":
             if CJK_RE.search(p):
                 errs.append(where + ": có chữ Nhật / Trung / Hàn trong bài tiếng Anh")
             if VI_MARK.search(p):
@@ -508,7 +642,8 @@ def check_story(st: Any, lang: str, level: str, bad_kanji: Any = None) -> tuple[
                 errs.append(where + ": chữ Hán không phải của tiếng Nhật: " + "".join(bad))
         if j >= len(doan):
             continue
-        n = len(re.findall(r"[A-Za-z]+(?:['’][A-Za-z]+)*", p)) if lang == "en" else len(re.sub(r"\s", "", p))
+        n = len(re.findall(r"[A-Za-z]+(?:['’][A-Za-z]+)*", p)) if lang == "en" else \
+            len([w for w in p.split() if re.search(r"\w", w)]) if lang == "vi" else len(re.sub(r"\s", "", p))
         if n < lo * 0.7:
             errs.append(where + ": ngắn quá (%d, cần %d–%d)" % (n, lo, hi))
         elif n > hi * 1.35:
@@ -519,7 +654,7 @@ def check_story(st: Any, lang: str, level: str, bad_kanji: Any = None) -> tuple[
         warns.append("doan: nên đúng 3 đoạn")
     # từ mới chỉ là phần phụ: mục hỏng thì bỏ mục đó, không bỏ cả bản truyện (thử thật 07/11, Flash-Lite hai lần ghi
     # cách đọc 郵便屋さん bằng romaji → cả truyện rơi về "viết chung")
-    tm = st.get("tu_moi") if isinstance(st.get("tu_moi"), list) else []
+    tm = st.get("tu_moi") if isinstance(st.get("tu_moi"), list) and lang != "vi" else []
     good = []
     for w in tm:
         if not isinstance(w, dict) or not _str(w.get("w"), 40) or not _str(w.get("m"), 120):
@@ -533,7 +668,7 @@ def check_story(st: Any, lang: str, level: str, bad_kanji: Any = None) -> tuple[
     if len(good) > 2:
         warns.append("tu_moi: tối đa 2 từ mới (bỏ bớt)")
     st["tu_moi"] = good[:2]
-    if clean_translation(st.get("dich"), len(doan)) is None:
+    if lang != "vi" and clean_translation(st.get("dich"), len(doan)) is None:
         warns.append("dich: bản dịch thiếu / sai (không có nút Dịch cho truyện)")
     nho = st.get("nho") if isinstance(st.get("nho"), dict) else {}
     if not _str(nho.get("tom_tat"), 400):
@@ -556,10 +691,11 @@ def scores_low(edit: Any) -> list[str]:
 def run(job: Any, ky: int, tone: str, season: str) -> dict[str, Any] | None:
     """Viết kỳ `ky` theo quy trình mới. Trả về bản truyện đã duyệt (chữ trơn + dịch + bộ nhớ + điểm) hoặc None.
 
-    `job`: ai_core.Job (dùng job._gen, job.scope, job.base, job.c, job._note, job.progress, job.en, job.check_kanji)."""
-    lang = "en" if job.en else "ja"
+    `job`: ai_core.Job (dùng job._gen, job.scope, job.base, job.c, job._note, job.progress, job.en, job.check_kanji).
+    1.25.1: `tone` là danh sách chủ đề đã chọn (hoặc một chủ đề kiểu 1.23); mỗi đợt một chủ đề, xoay vòng."""
+    lang = getattr(job, "lang", "") or ("en" if job.en else "ja")
     level = job.scope.get("trinh_do", "A2" if lang == "en" else "N4")
-    tone = tone if tone in TONES else "am"
+    tones = norm_tones(tone)
     story = load_story(job.base)
     arc = load_arc(job.base)
     cached = load_draft(job.base, job.date, ky)
@@ -580,14 +716,19 @@ def run(job: Any, ky: int, tone: str, season: str) -> dict[str, Any] | None:
         r = _gen0(*a, **k)
         done[0] += 1
         return r
-    system = ("Bạn là nhà văn viết truyện dài kỳ %s dễ đọc cho người Việt học %s trình độ %s. Viết hay như một truyện thật, "
-              "không như bài tập." % ("tiếng Anh" if lang == "en" else "tiếng Nhật",
-                                      "tiếng Anh" if lang == "en" else "tiếng Nhật", level))
-    # 0. mạch của đợt
+    if lang == "vi":
+        system = ("Bạn là nhà văn viết truyện dài kỳ tiếng Việt cho người đọc đang ôn bài bằng thẻ Anki. Viết hay như một "
+                  "truyện thật, không như bài giảng.")
+    else:
+        system = ("Bạn là nhà văn viết truyện dài kỳ %s dễ đọc cho người Việt học %s trình độ %s. Viết hay như một truyện "
+                  "thật, không như bài tập." % ("tiếng Anh" if lang == "en" else "tiếng Nhật",
+                                                "tiếng Anh" if lang == "en" else "tiếng Nhật", level))
+    # 0. mạch của đợt (1.25.1: đợt mới khi hết đợt, hoặc chủ đề của đợt không còn trong danh sách đã chọn)
+    tone = arc["giong"] if arc and arc.get("giong") in tones and arc_step(arc, ky) is not None else next_tone(tones, arc)
     if arc_step(arc, ky) is None or (arc and arc.get("giong") != tone):
         job.progress("Gemini đang lập mạch truyện…")
         try:
-            raw = gen(system, arc_prompt(lang, tone, story, ky, season), ARC_SCHEMA, 0.9, thinking="low")
+            raw = gen(system, arc_prompt(lang, tone, story, ky, season, tones), ARC_SCHEMA, 0.9, thinking="low")
             buoc = _strs(raw.get("buoc") if isinstance(raw, dict) else None, ARC_LEN[1], 300)
             if len(buoc) >= 3:
                 arc = {"ten": _str(raw.get("ten"), 120), "muc_tieu": _str(raw.get("muc_tieu"), 300),
@@ -606,7 +747,7 @@ def run(job: Any, ky: int, tone: str, season: str) -> dict[str, Any] | None:
             arc = None
     # 1. nhà văn
     job.progress("Gemini đang viết kỳ %d của truyện…" % ky)
-    prompt = writer_prompt(lang, job.scope, ky, tone, arc, story, season)
+    prompt = writer_prompt(lang, job.scope, ky, tone, arc, story, season, tones=tones)
     best: dict[str, Any] | None = None
     problems: list[str] = []
     for attempt in range(2):
@@ -614,7 +755,7 @@ def run(job: Any, ky: int, tone: str, season: str) -> dict[str, Any] | None:
             break
         try:
             draft = gen(system, prompt if not problems else writer_prompt(lang, job.scope, ky, tone, arc, story,
-                                                                               season, problems),
+                                                                               season, problems, tones),
                              STORY_SCHEMA, 0.9, thinking="low")
         except Exception as e:      # noqa: BLE001
             if getattr(e, "kind", "") == "key":
@@ -659,7 +800,7 @@ def run(job: Any, ky: int, tone: str, season: str) -> dict[str, Any] | None:
                 raise
             job._note("viet_lai_loi", ly_do=str(e)[:160])
     best["diem"] = edit.get("diem") if isinstance(edit.get("diem"), dict) else {}
-    best["dich"] = clean_translation(best.get("dich"), len(best["doan"]))
+    best["dich"] = clean_translation(best.get("dich"), len(best["doan"])) if lang != "vi" else None
     best["doan"] = [p.strip() for p in best["doan"]]
     best["tieu_de"] = best["tieu_de"].strip()
     best["ky"] = ky

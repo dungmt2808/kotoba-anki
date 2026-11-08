@@ -1065,6 +1065,14 @@ def write_prompt(scope: dict[str, Any], opts: dict[str, Any], story: list[dict[s
         "Dùng 10–20 từ khác nhau trong DANH SÁCH TỪ VỰNG ĐÃ HỌC (ưu tiên từ trọng tâm, từ sắp quên). tu_moi tối đa %d từ "
         "ngoài danh sách thật sự cần (w = từ tiếng Anh như viết trong bài ở dạng gốc, r = phiên âm IPA dạng /.../, "
         "m = nghĩa tiếng Việt). tom_tat: 1–2 câu tiếng Việt tóm tắt số báo." % (level, int(opts.get("max_new", 3))))
+    if scope.get("khong_deck"):         # 1.25.1: không dùng deck — viết theo trình độ, Gemini tự chọn từ đáng học
+        few = int(scope.get("it_tu") or 0)
+        parts.append(
+            ("NGƯỜI HỌC MỚI CÓ %d TỪ ĐÃ HỌC (danh sách bên dưới — dùng nếu hợp): còn lại viết" % few if few else
+             "NGƯỜI HỌC CHƯA CÓ DECK (không có danh sách từ đã học): viết") +
+            " bằng từ thông dụng đúng trình độ %s. Chọn 8–%d "
+            "từ đáng học trong số (đúng trình độ, hợp chủ đề), khai báo trong tu_moi (w = từ ở dạng gốc, r = phiên âm IPA "
+            "/…/, m = nghĩa tiếng Việt); máy tự gạch chân." % (level, int(opts.get("max_new", ai.NO_DECK_NEW))))
     tt = scope.get("trong_tam", {}).get("tu", [])
     if tt and scope.get("kho"):
         parts.append(
@@ -1084,8 +1092,8 @@ def write_prompt(scope: dict[str, Any], opts: dict[str, Any], story: list[dict[s
                                for h in recent))
     if not short and not opts.get("no_story") and not opts.get("story_plain"):
         parts.append("TRUYỆN:\n" + STORY_SETUP)
-        if opts.get("tone") in ai.story_core.TONES:
-            parts.append("GIỌNG TRUYỆN: " + ai.story_core.TONE_TEXT[opts["tone"]])
+        if opts.get("tones") or opts.get("tone") in ai.story_core.TONES:      # 1.25.1: chọn nhiều chủ đề
+            parts.append("CHỦ ĐỀ TRUYỆN: " + ai.story_core.tone_text(opts.get("tones") or opts.get("tone")))
         if story:
             parts.append("ĐÃ XẢY RA:\n" + "\n".join("- Kỳ %s (%s): %s" % (s.get("ky"), s.get("ngay"), s.get("tom_tat"))
                                                      for s in story[-10:]))
@@ -1094,7 +1102,8 @@ def write_prompt(scope: dict[str, Any], opts: dict[str, Any], story: list[dict[s
         else:
             parts.append("ĐÃ XẢY RA: (chưa có kỳ nào, đây là kỳ 1: Linh đến Kotoba Village và bắt đầu làm ở The Kettle Café)")
     parts.append("DANH SÁCH NGỮ PHÁP (id|mẫu|nghĩa) — chỉ dùng ngữ pháp này và đơn giản hơn:\n" + ai._grammar_lines(scope))
-    parts.append("DANH SÁCH TỪ VỰNG ĐÃ HỌC (từ /phiên âm/ = nghĩa):\n" + _vocab_lines(scope))
+    if scope.get("kho") or scope.get("tu_vung"):
+        parts.append("DANH SÁCH TỪ VỰNG ĐÃ HỌC (từ /phiên âm/ = nghĩa):\n" + _vocab_lines(scope))
     parts.append(
         "VÍ DỤ ĐỊNH DẠNG (chỉ xem hình thức, không chép nội dung):\n"
         '{"loai":"tin_lang","tieu_de":"StackChan Paints the Old Bridge","doan":["Yesterday afternoon, StackChan '

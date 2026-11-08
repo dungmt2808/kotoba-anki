@@ -1385,6 +1385,9 @@ button { cursor: pointer; }
 .kb-ai-row.is-bad .kb-ai-v { color: #c21f3a; }
 .kb-ai-row.is-warn .kb-ai-v { color: #8a5a00; }
 .kb-ai-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+/* 1.25.1: thẻ Gói báo — nút mua không bấm được (thiếu xu / quá 60 ngày) nhìn rõ là khoá; chủ đề truyện chọn nhiều */
+.kb-ai-plan .kb-btn:disabled, .kb-p-acts .kb-btn:disabled { background: #e0e0e8; color: #6b7088; cursor: not-allowed; }
+.kb-ai-tones .kb-ai-v { display: flex; flex-direction: column; gap: 4px; }
 .kb-ai-chip { margin-left: 0; }
 /* 1.19.1: nút đang chọn chỉ đổi nền (giữ viền + bóng như nút bên cạnh, trước đây mất bóng nên trông thấp / lệch) */
 .kb-ai-chip.is-on { background: #ffd23f; }

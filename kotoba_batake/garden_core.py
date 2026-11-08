@@ -3453,6 +3453,42 @@ class GardenState:
         self.save(data)
         return data
 
+    # ---- 1.25.1: gói báo (mua bằng xu; ngày theo ngày thật như số báo) ----
+    @_more_errors
+    def paper_sub_buy(self, plan: str, today: str) -> dict[str, Any]:
+        """Mua / gia hạn gói báo (tuần 100 xu, tháng 300 xu); cộng ngày vào sau ngày cuối còn báo."""
+        day = datetime.date.fromisoformat(today)
+        data = self.load()
+        price = more.sub_buy(data["more"]["paper_sub"], plan, day)
+        self._pay(data, price)
+        self.save(data)
+        return data
+
+    def paper_sub_auto(self, on: bool) -> dict[str, Any]:
+        data = self.load()
+        data["more"]["paper_sub"]["auto"] = bool(on)
+        self.save(data)
+        return data
+
+    def paper_sub_ensure(self, today: str) -> tuple[str, int]:
+        """Trước khi Gemini viết số mới: còn gói → ("ok", 0); chưa có gói và chưa thử → tặng 7 ngày ("trial", 0);
+        hết hạn + Tự gia hạn + đủ xu → gia hạn gói cũ ("renewed", giá); không thì ("expired", 0)."""
+        day = datetime.date.fromisoformat(today)
+        data = self.load()
+        sub = data["more"]["paper_sub"]
+        if more.sub_left(sub, day) > 0:
+            return "ok", 0
+        if more.sub_trial(sub, day):
+            self.save(data)
+            return "trial", 0
+        price = more.PAPER_PLANS[sub["plan"]]["price"]
+        if sub.get("auto") and data["coins"] >= price:
+            more.sub_buy(sub, sub["plan"], day)
+            data["coins"] -= price
+            self.save(data)
+            return "renewed", price
+        return "expired", 0
+
     @_more_errors
     def pet_feed(self, pid: str | None) -> dict[str, Any]:
         today = self._need_day()

@@ -284,6 +284,18 @@ var GardenGames = (function () {
     p._en = out;
     return out;
   }
+  // 1.25.1: Đuổi quạ cho ngôn ngữ khác — chữ phải gõ ngắn (từ / câu trả lời ≤ 24 ký tự), không phải câu dài
+  function typedText(p, mode) { return String((mode && mode.type === "spell_m" ? p.meaning : p.word) || ""); }
+  function typeable(p, mode) {
+    const t = typedText(p, mode).replace(/<[^>]*>/g, "").trim();
+    return t.length >= 1 && t.length <= 24 && !!enNorm(t) && (mode.type !== "spell_m" || String(p.word || "").length <= 40);
+  }
+  function spellAnswers(text) {
+    const out = [];
+    const add = (x) => { const k = enNorm(x); if (k && out.indexOf(k) < 0) { out.push(k); } };
+    String(text || "").replace(/<[^>]*>/g, " ").split(/[,;/|；、]/).forEach((part) => { add(part.replace(/\([^)]*\)/g, " ")); add(part); });
+    return out;
+  }
   // Nghĩa ngắn gọn cho biển quạ (lấy vế đầu trước dấu ;)
   function shortMeaning(p) {
     let m = String(p.meaning || "").split(/[;；]/)[0].trim();
@@ -366,7 +378,11 @@ var GardenGames = (function () {
       grammar: [],
       en: [{ id: "spell", label: "Nghĩa → gõ từ tiếng Anh", show: "meaning", type: "spell", alt: [["meaning"]],
         desc: "Quạ mang nghĩa tiếng Việt bay tới trộm hạt. Gõ đúng chính tả từ tiếng Anh để đuổi." }],
-      xx: []
+      // 1.25.1: ngôn ngữ khác / deck kiến thức — gõ đúng chữ (chỉ thẻ có chữ cần gõ ngắn, ≤ 24 ký tự)
+      xx: [{ id: "spell", label: "Nghĩa → gõ từ", show: "meaning", type: "spell", alt: [["meaning"]],
+        desc: "Quạ mang nghĩa bay tới trộm hạt. Gõ đúng từ (mặt trước của thẻ) để đuổi. Không tính hoa thường, dấu câu." },
+      { id: "answer", label: "Từ → gõ nghĩa", show: "word", type: "spell_m", alt: [["meaning"]],
+        desc: "Quạ mang mặt trước của thẻ bay tới. Gõ đúng mặt sau (câu trả lời ngắn) để đuổi. Không tính hoa thường, dấu câu." }]
     },
     memory: {
       vocab: [{ id: "mix", label: "Trộn", alt: [["meaning"], ["reading"]] },
@@ -616,6 +632,7 @@ var GardenGames = (function () {
     if (!mode) { return { items: [], targets: [], learnedOnly: false, kind: kind, group: group, mode: null, base: base }; }
     let items = base;
     if (def.id === "market" || def.id === "memory" || def.id === "crow") { items = base.filter((p) => fits(p, mode)); }
+    if (def.id === "crow" && group === "xx") { items = items.filter((p) => typeable(p, mode)); }   // 1.25.1
     else if (def.id === "listen") { items = base.filter((p) => has(p, mode.ans)); }
     let targets = def.id === "listen" || def.id === "cloze" ? items.filter((p) => fits(p, mode)) : items.slice();
     const learned = targets.filter((p) => p.stage >= 1);
@@ -1634,14 +1651,18 @@ var GardenGames = (function () {
     const g = { timers: [], alive: true };
     const next = picker(pool.targets);
     const kind = pool.kind, cm = pool.mode;
-    const spell = cm.type === "spell";          // 1.17: tiếng Anh — gõ đúng chính tả, không đổi sang kana
+    const spell = cm.type === "spell" || cm.type === "spell_m";   // 1.17: tiếng Anh — gõ đúng chính tả, không đổi sang kana
     const SPD = CROW_SPEEDS[crowSpeed()];
     let lives = LIVES, score = 0, combo = 0, spawned = 0, scared = 0, spawnIn = 0.6, over = false;
     const crows = [];
-    const answersOf = (p) => spell ? enAnswers(p) : cm.type === "both" ? readingsOf(p).concat(wordForms(p)) : readingsOf(p);
+    const xx = pool.group === "xx";             // 1.25.1: ngôn ngữ khác — đáp án là đúng chữ của thẻ
+    const answersOf = (p) => cm.type === "spell_m" ? (p._sm || (p._sm = spellAnswers(p.meaning)))
+      : spell && xx ? (p._sw || (p._sw = spellAnswers(p.word)))
+        : spell ? enAnswers(p) : cm.type === "both" ? readingsOf(p).concat(wordForms(p)) : readingsOf(p);
     // chữ trên biển của quạ
     function labelOf(p) {
       if (cm.show === "meaning") { return shortMeaning(p); }
+      if (cm.type === "spell_m") { const w = String(p.word || ""); return w.length > 34 ? w.slice(0, 33) + "…" : w; }
       if (cm.show === "hanviet") {
         const m = String(p.meaning || "").split(/[;；,、]/)[0].trim();
         const t = String(p.hanviet || "").toUpperCase() + (m ? " · " + m : "");
@@ -1659,7 +1680,7 @@ var GardenGames = (function () {
     const row = el("div", "kb-gc-row");
     const input = el("input", "kb-gc-input");
     input.type = "text";
-    input.placeholder = spell ? "Gõ từ tiếng Anh… (vd. apple, look up)" : kind === "kanji" ? (cm.type === "both" ? "Gõ âm On / Kun (romaji, kana) hoặc chữ Hán (IME)…"
+    input.placeholder = cm.type === "spell_m" ? "Gõ mặt sau của thẻ…" : spell && xx ? "Gõ từ…" : spell ? "Gõ từ tiếng Anh… (vd. apple, look up)" : kind === "kanji" ? (cm.type === "both" ? "Gõ âm On / Kun (romaji, kana) hoặc chữ Hán (IME)…"
       : "Gõ âm On hoặc Kun… (romaji: chikara / kana)")
       : cm.type === "both" ? "Gõ từ tiếng Nhật: romaji (saraishuu), kana hoặc kanji (IME)…"
         : "Gõ cách đọc… (romaji: saraishuu / kana)";
@@ -1700,8 +1721,9 @@ var GardenGames = (function () {
 
     function showReveal(p) {
       reveal.textContent = "";
-      reveal.appendChild(el("b", null, p.word));
-      reveal.appendChild(el("span", null, spell ? (p.reading ? " " + p.reading : "") + (p.meaning ? "  (" + p.meaning + ")" : "")
+      reveal.appendChild(el("b", null, cm.type === "spell_m" ? p.meaning : p.word));
+      reveal.appendChild(el("span", null, cm.type === "spell_m" ? "  (" + p.word + ")"
+        : spell ? (p.reading ? " " + p.reading : "") + (p.meaning ? "  (" + p.meaning + ")" : "")
         : " → " + readingsOf(p)[0] + (p.meaning ? "  (" + p.meaning + ")" : "")));
       reveal.hidden = false;
       later(g, () => { reveal.hidden = true; }, 2600);
@@ -1839,7 +1861,7 @@ var GardenGames = (function () {
           ctx.fillStyle = "#1b1b2f"; ctx.textBaseline = "middle";
           lines.forEach((l, i) => ctx.fillText(l, bx + 8, by + 3 + lh / 2 + i * lh));
           const prog = 1 - (c.x - 70) / (w - 70);
-          const r0 = spell ? (enAnswers(c.p)[0] || "") : (readingsOf(c.p)[0] || normKana(c.p.word));
+          const r0 = spell ? (answersOf(c.p)[0] || "") : (readingsOf(c.p)[0] || normKana(c.p.word));
           if (prog > 0.55 && r0) {
             ctx.font = "15px 'Noto Sans CJK JP', sans-serif";
             const n = prog > 0.8 ? 2 : 1;
