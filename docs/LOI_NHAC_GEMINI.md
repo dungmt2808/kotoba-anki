@@ -24,6 +24,8 @@ Nhân vật (mỗi người một điều muốn, một điều sợ, một câu
   nghĩa đen (gây cười).
 - Ông trưởng làng: hiền, thích kể chuyện ngày xưa, hay kể quá dài.
 - Nhân vật phụ của đợt (mỗi đợt chọn một): một vị khách trọ có mục đích riêng, bác đưa thư, con mèo hoang trắng.
+Tên gọi giữ đúng như trên: ông trưởng làng KHÔNG có tên riêng (không đặt tên kiểu "Soncho"), quán gọi là "Quán Kotoba"
+(không phiên âm kiểu "Kotobaya"); không tự thêm tên riêng cho nhân vật chính.
 Lời thoại để trong ngoặc kép "…", ghi rõ ai nói.
 
 CHỦ ĐỀ CỦA ĐỢT NÀY: Kinh dị nhẹ: chuyện lạ / chuyện ma trong làng (tiếng động ban đêm, bóng người bên giếng, đồ vật tự dời chỗ) gây rùng mình và tò mò; KHÔNG máu me, không bạo lực, không ai chết; lời giải có thể bất ngờ hoặc để lại một chút rợn. Người đọc cũng thích: Hài — có thể pha nhẹ, nhưng giữ Kinh dị nhẹ là chính.
@@ -60,6 +62,8 @@ Nhân vật (mỗi người một điều muốn, một điều sợ, một câu
   nghĩa đen (gây cười).
 - Ông trưởng làng: hiền, thích kể chuyện ngày xưa, hay kể quá dài.
 - Nhân vật phụ của đợt (mỗi đợt chọn một): một vị khách trọ có mục đích riêng, bác đưa thư, con mèo hoang trắng.
+Tên gọi giữ đúng như trên: ông trưởng làng KHÔNG có tên riêng (không đặt tên kiểu "Soncho"), quán gọi là "Quán Kotoba"
+(không phiên âm kiểu "Kotobaya"); không tự thêm tên riêng cho nhân vật chính.
 Lời thoại để trong ngoặc kép "…", ghi rõ ai nói.
 
 CHỦ ĐỀ TRUYỆN: Kinh dị nhẹ: chuyện lạ / chuyện ma trong làng (tiếng động ban đêm, bóng người bên giếng, đồ vật tự dời chỗ) gây rùng mình và tò mò; KHÔNG máu me, không bạo lực, không ai chết; lời giải có thể bất ngờ hoặc để lại một chút rợn. Người đọc cũng thích: Hài — có thể pha nhẹ, nhưng giữ Kinh dị nhẹ là chính.
@@ -144,6 +148,8 @@ Nhân vật (mỗi người một điều muốn, một điều sợ, một câu
   nghĩa đen (gây cười).
 - Ông trưởng làng: hiền, thích kể chuyện ngày xưa, hay kể quá dài.
 - Nhân vật phụ của đợt (mỗi đợt chọn một): một vị khách trọ có mục đích riêng, bác đưa thư, con mèo hoang trắng.
+Tên gọi giữ đúng như trên: ông trưởng làng KHÔNG có tên riêng (không đặt tên kiểu "Soncho"), quán gọi là "Quán Kotoba"
+(không phiên âm kiểu "Kotobaya"); không tự thêm tên riêng cho nhân vật chính.
 Lời thoại để trong ngoặc kép "…", ghi rõ ai nói.
 
 KỲ TRƯỚC (kỳ 11):
@@ -170,9 +176,9 @@ Viết lại cho hợp trình độ: câu ngắn, tự nhiên như sách đọc 
 
 TÊN GỌI (dùng đúng):
 - Lin → リンさん
-- bà Hana → はなさん（女将さん）
+- bà Hana (chủ quán, khoảng 30 tuổi) → はなさん（女将さん; không gọi おばあさん）
 - StackChan → スタックちゃん
-- ông trưởng làng → 村長さん
+- ông trưởng làng (không có tên riêng) → 村長さん
 - Quán Kotoba (quán trọ) → ことば屋（旅館）
 - làng Kotoba → ことば村
 - vườn Kotoba → ことば畑
@@ -486,9 +492,9 @@ Viết lại cho hợp trình độ: câu ngắn, tự nhiên như sách đọc 
 
 TÊN GỌI (dùng đúng):
 - Lin → Lin
-- bà Hana → Hana
+- bà Hana (chủ quán, khoảng 30 tuổi) → Hana (not "Grandma")
 - StackChan → StackChan
-- ông trưởng làng → the mayor
+- ông trưởng làng (không có tên riêng) → the mayor
 - Quán Kotoba (quán trọ) → the Kotoba Inn
 - làng Kotoba → Kotoba Village
 - vườn Kotoba → Kotoba Farm

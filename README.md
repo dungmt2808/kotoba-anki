@@ -96,9 +96,9 @@ Mỗi sáng có một số báo tiếng Nhật 畑新聞 (hoặc báo tiếng An
 
 **Báo tiếng Việt** *Báo Làng Kotoba* (cho người không học tiếng Nhật / tiếng Anh, chọn "Chỉ tiếng Việt"): cùng truyện dài kỳ và tin làng ấy bằng tiếng Việt, có câu hỏi đọc hiểu để nhận xu; không có giọng đọc, chép chính tả.
 
-| Báo tiếng Việt | Gói báo, chủ đề truyện |
+| Báo tiếng Việt | Báo muốn nhận, gói báo |
 |---|---|
-| ![Báo Làng Kotoba: truyện dài kỳ + tin làng](docs/anh/19_bao_tieng_viet.png) | ![Tab Nguồn báo: Gói báo, Chỉ tiếng Việt, chủ đề truyện](docs/anh/19b_goi_bao.png) |
+| ![Báo Làng Kotoba: truyện dài kỳ + tin làng](docs/anh/19_bao_tieng_viet.png) | ![Tab Nguồn báo: Báo muốn nhận "Chỉ tiếng Việt", Gói báo](docs/anh/19b_goi_bao.png) |
 
 **Chép chính tả** chạy với mọi deck: nghe câu ví dụ (hoặc từ) rồi gõ lại. Câu nào không có audio thì dùng giọng Gemini hoặc giọng tiếng Nhật của máy.
 

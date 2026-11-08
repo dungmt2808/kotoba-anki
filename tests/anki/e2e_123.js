@@ -195,7 +195,7 @@ result = 1`);
   ok(fbn.join(",") === 'Kỳ này hay,Nhạt', 'dưới truyện có "Kỳ này hay / Nhạt" + ô ghi một dòng');
   await js('const i = document.querySelector(".kb-p-fbs-in"); i.value = "muốn thêm スタックちゃん"; [...document.querySelectorAll(".kb-p-fbs .kb-btn")][1].click(); return 1;'); await sleep(900);
   const fbs = await py(KB + 'import json as J\nraw = J.load(open(os.path.join(kb.AI_DIR, "truyen.json"), encoding="utf-8")) if os.path.exists(os.path.join(kb.AI_DIR, "truyen.json")) else []\nresult = [x.get("phan_hoi") for x in raw if isinstance(x, dict) and x.get("phan_hoi")]');
-  ok(fbs.some(f => f.y === 'nhat' && /スタックちゃん/.test(f.ghi)), 'bấm Nhạt → ghi nhận xét vào truyen.json (kỳ sau Gemini đọc) ' + JSON.stringify(fbs));
+  ok(fbs.some(f => f.y === 'nhat' && /スタックちゃん/.test(f.ghi)), 'bấm Nhạt (số kiểu cũ, không "truyen_chung") → ghi nhận xét vào truyen.json của báo đó (kỳ sau Gemini đọc) ' + JSON.stringify(fbs));
   ok(await waitFor('return document.querySelector(".kb-p-fbs .kb-btn.is-on") && document.querySelector(".kb-p-fbs .kb-btn.is-on").textContent === "Nhạt";'), 'nút Nhạt sáng lên sau khi ghi');
   await js('GardenPaper.close(); window.__kbIssue = null; GardenPaper.open("shelf"); return 1;'); await sleep(900);
   await js('[...document.querySelectorAll(".kb-p-row")].find(r => r.textContent.indexOf("02/11") >= 0).click(); return 1;');

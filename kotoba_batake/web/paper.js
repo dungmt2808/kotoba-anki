@@ -620,7 +620,9 @@ var GardenPaper = (function () {
       // 1.23: nguồn vừa thành Gemini (bấm "Dùng Gemini", thư mục kotoba_daily không thấy) cũng chờ, không tự viết
       const sw = wait.length && wait.every((x) => (g.switched || []).indexOf(x) >= 0);
       t.appendChild(el("b", null, (sw ? "Chuyển sang Gemini: " : "Vừa bật ") + names.join(", ") + " · "));
-      t.appendChild(document.createTextNode("Chọn trình độ và deck lấy từ ở trên, rồi bấm Bắt đầu viết."));
+      // 1.25.2: báo tiếng Việt không có trình độ / deck
+      t.appendChild(document.createTextNode(wait.every((x) => x === "vi") ? "Bấm Bắt đầu viết." :
+        "Chọn trình độ và deck lấy từ ở trên, rồi bấm Bắt đầu viết."));
     }
     box.appendChild(t);
     const busy = !!g.running;

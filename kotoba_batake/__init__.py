@@ -1229,10 +1229,10 @@ def ai_start(reason: str, dialog: Any = None, lang: str = "ja") -> bool:
             # 1.25.2 "Một làng, một truyện": bản gốc hôm nay (báo đầu tiên trong ngày viết, báo sau đọc lại)
             try:
                 master, mlog = ai.ensure_master(client, AI_DIR_SHARED, date, opts, progress)
-            except ai.AIError as err:
-                if err.kind == "key":
+            except Exception as err:      # bản gốc hỏng (kể cả lỗi bất ngờ) → báo tự viết truyện như cũ, không mất số
+                if getattr(err, "kind", "") == "key":
                     raise
-                master, mlog = None, [{"buoc": "ban_goc_loi", "ly_do": str(err)[:200]}]
+                master, mlog = None, [{"buoc": "ban_goc_loi", "ly_do": ("%s: %s" % (type(err).__name__, err))[:200]}]
             opts["master"] = master
             opts["_master_log"] = mlog
         res: dict[str, Any] = {"ok": True, "audio_only": True} if has else \
@@ -2712,9 +2712,9 @@ class GardenDialog(QDialog):
         gem = _is_gemini_dir(lib.base)
         view["fb_ok"] = gem
         if gem:
-            fb_base = AI_DIR_SHARED if os.path.isfile(os.path.join(AI_DIR_SHARED, story_core.STORY_FILE)) else lib.base
-            view["fb"] = {str(b["ky"]): story_core.feedback_of(fb_base, b["ky"]) for b in view["bai"]
-                          if b.get("loai") == "truyen" and b.get("ky")}
+            view["fb"] = {str(b["ky"]): story_core.feedback_of(ai.feedback_bases(AI_DIR_SHARED, lib.base, date, b["ky"])[0],
+                                                               b["ky"])
+                          for b in view["bai"] if b.get("loai") == "truyen" and isinstance(b.get("ky"), int)}
         return view
 
     def _paper_extra(self, action: str, arg: str) -> None:
@@ -2731,10 +2731,13 @@ class GardenDialog(QDialog):
         if action == "fb":
             ky = p.get("k")
             gem = _is_gemini_dir(lib.base)
-            # 1.25.2: nhận xét ghi vào truyện chung (mọi báo cùng một kỳ; kỳ sau nhà văn đọc)
-            if gem and isinstance(ky, int) and story_core.set_feedback(AI_DIR_SHARED, ky, str(p.get("y") or ""),
-                                                                       str(p.get("g") or "")):
-                self._js("notice", {"msg": "Đã ghi nhận xét. Kỳ sau Gemini sẽ đọc.", "ms": 3000})
+            # 1.25.2: số viết từ truyện chung → nhận xét ghi vào truyện chung (mọi báo cùng một kỳ; kỳ sau nhà văn đọc);
+            # số cũ → thư mục của báo đó (+ truyện chung nếu kỳ ấy đã chép sang) — xem ai.feedback_bases
+            if gem and isinstance(ky, int):
+                done = [story_core.set_feedback(b, ky, str(p.get("y") or ""), str(p.get("g") or ""))
+                        for b in ai.feedback_bases(AI_DIR_SHARED, lib.base, date, ky)]
+                if any(done):
+                    self._js("notice", {"msg": "Đã ghi nhận xét. Kỳ sau Gemini sẽ đọc.", "ms": 3000})
             self._reissue_ref(lang, lib, src, date)
             return
         if _dich_job["running"] or _ai["running"]:

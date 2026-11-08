@@ -817,10 +817,8 @@ def scope_from_pham_vi(raw: Any) -> dict[str, Any] | None:
 def describe_scope(scope: dict[str, Any]) -> str:
     if scope.get("khong_deck"):
         return "không dùng deck" + (" · trình độ %s" % scope["trinh_do"] if scope.get("trinh_do") else "")
-    if scope.get("lang") == "vi":
-        decks = scope.get("decks") or []
-        return "%d thẻ (%d thẻ phải ôn) · %s" % (len(scope.get("muc") or []), len(scope.get("can_on") or []),
-                                               ("deck " + ", ".join(decks)) if decks else "mọi deck")
+    if scope.get("lang") == "vi":          # 1.25.2: báo tiếng Việt không lấy thẻ
+        return "truyện + tin làng"
     if scope.get("nguon") == "kotoba_daily":
         return "%d từ, %d mẫu câu · trình độ %s · theo giáo trình (kotoba_daily)" % (
             len(scope.get("tu_vung", [])), len(scope.get("ngu_phap", [])), scope.get("trinh_do", "?"))
@@ -2202,10 +2200,10 @@ def ensure_master(client: "Gemini", shared: str, date: str, opts: dict[str, Any]
     st = None
     try:
         st = story_core.run(job, ky, tones, _vi_module().season_text(day))
-    except AIError as e:
-        if e.kind == "key":
+    except Exception as e:      # noqa: BLE001 — bản gốc hỏng thì mỗi báo tự viết như cũ, không mất số báo
+        if getattr(e, "kind", "") == "key":
             raise
-        job._note("ban_goc_loi", ly_do=str(e)[:200])
+        job._note("ban_goc_loi", ly_do=("%s: %s" % (type(e).__name__, e))[:200])
     if not st:
         job._note("ban_goc_khong_co")
         return None, job.log
@@ -2218,6 +2216,28 @@ def ensure_master(client: "Gemini", shared: str, date: str, opts: dict[str, Any]
     story_core.save_master(shared, date, m)
     job._note("ban_goc", ky=ky, tieu_de=st["tieu_de"], tin=len(m["tin"]), model=job.model)
     return story_core.clean_master(m), job.log
+
+
+def feedback_bases(shared: str, base: str, date: str, ky: int) -> list[str]:
+    """1.25.2: nhận xét Hay / Nhạt của kỳ `ky` (số ngày `date` ở thư mục báo `base`) ghi / đọc ở đâu.
+    Số viết từ truyện chung (bao.json có "truyen_chung") → bộ nhớ chung. Số cũ (trước 1.25.2) → thư mục của báo đó, và
+    cả bộ nhớ chung nếu kỳ ấy đã được chép sang (cùng kỳ, cùng ngày, cùng tóm tắt). Không tạo bộ nhớ chung ở đây — để
+    lần viết đầu tiên còn chép được truyện cũ sang (migrate_story)."""
+    try:
+        with open(issue_path(base, date), encoding="utf-8") as f:
+            raw = json.load(f)
+    except (OSError, ValueError):
+        raw = {}
+    if isinstance(raw, dict) and raw.get("truyen_chung"):
+        return [shared]
+    out = [base]
+    mine = [e for e in story_core.load_story(base) if e["ky"] == ky]
+    if mine and os.path.realpath(shared) != os.path.realpath(base):
+        for e in story_core.load_story(shared):
+            if e["ky"] == ky and e.get("ngay") == mine[0].get("ngay") and e.get("tom_tat") == mine[0].get("tom_tat"):
+                out.append(shared)
+                break
+    return out
 
 
 def migrate_story(shared: str, sources: list[str]) -> str:
@@ -2597,6 +2617,8 @@ class Job:
                "may_viet": "Gemini (%s)" % self.model}
         if self.en:
             out["ngon_ngu"] = self.lang     # 1.19: báo tiếng Anh; 1.25.1: tiếng Việt (paper_core.clean_issue đọc khoá này)
+        if os.path.realpath(self.story_base) != os.path.realpath(self.base):
+            out["truyen_chung"] = True      # 1.25.2: kỳ truyện của số này nằm trong bộ nhớ truyện chung (nhận xét ghi vào đó)
         for k in ("bai", "cau_hoi", "chinh_ta", "mau_cau", "tu_moi", "tom_tat"):
             out[k] = raw.get(k, [] if k != "tom_tat" else "")
         for b in out["bai"]:
@@ -3062,6 +3084,8 @@ def log_summary(log: dict[str, Any] | None) -> list[str]:
                                                                             s.get("tin", 0), s.get("model", "?")))
         elif b == "ban_goc_san":
             out.append("Dùng truyện chung đã viết hôm nay (kỳ %s)." % s.get("ky", "?"))
+        elif b == "ban_goc_loi":
+            out.append("Truyện chung lỗi (%s)." % str(s.get("ly_do", ""))[:90])
         elif b == "ban_goc_khong_co":
             out.append("Chưa viết được truyện chung hôm nay → báo tự viết truyện.")
         elif b == "mach_truyen":

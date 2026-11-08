@@ -160,11 +160,15 @@ Nhân vật (mỗi người một điều muốn, một điều sợ, một câu
   nghĩa đen (gây cười).
 - Ông trưởng làng: hiền, thích kể chuyện ngày xưa, hay kể quá dài.
 - Nhân vật phụ của đợt (mỗi đợt chọn một): một vị khách trọ có mục đích riêng, bác đưa thư, con mèo hoang trắng.
+Tên gọi giữ đúng như trên: ông trưởng làng KHÔNG có tên riêng (không đặt tên kiểu "Soncho"), quán gọi là "Quán Kotoba"
+(không phiên âm kiểu "Kotobaya"); không tự thêm tên riêng cho nhân vật chính.
 Lời thoại để trong ngoặc kép "…", ghi rõ ai nói."""
 
 # tên chung của các bản (tiếng Việt / tiếng Nhật / tiếng Anh) — bản kể lại dùng đúng bảng này
-NAMES = (("Lin", "リンさん", "Lin"), ("bà Hana", "はなさん（女将さん）", "Hana"), ("StackChan", "スタックちゃん", "StackChan"),
-         ("ông trưởng làng", "村長さん", "the mayor"), ("Quán Kotoba (quán trọ)", "ことば屋（旅館）", "the Kotoba Inn"),
+NAMES = (("Lin", "リンさん", "Lin"), ("bà Hana (chủ quán, khoảng 30 tuổi)", "はなさん（女将さん; không gọi おばあさん）",
+          "Hana (not \"Grandma\")"), ("StackChan", "スタックちゃん", "StackChan"),
+         ("ông trưởng làng (không có tên riêng)", "村長さん", "the mayor"),
+         ("Quán Kotoba (quán trọ)", "ことば屋（旅館）", "the Kotoba Inn"),
          ("làng Kotoba", "ことば村", "Kotoba Village"), ("vườn Kotoba", "ことば畑", "Kotoba Farm"),
          ("bác đưa thư", "郵便屋さん", "the postman"), ("con mèo hoang trắng", "白いのらねこ", "the white stray cat"))
 
@@ -277,6 +281,11 @@ def clean_episode(raw: Any) -> dict[str, Any] | None:
                            "nguyen_van": _strs(raw.get("nguyen_van"), 6, 1500), "tieu_de": _str(raw.get("tieu_de"), 120),
                            "nhan_vat_moi": _strs(raw.get("nhan_vat_moi"), 6, 120), "bo_ngo": _strs(raw.get("bo_ngo"), 8, 200),
                            "da_giai": _strs(raw.get("da_giai"), 8, 200)}
+    # 1.25.2: tên tự đặt trong bộ nhớ cũ ("quán Kotobaya" ở tóm tắt kỳ trước → Gemini viết theo) — phần tiếng Việt
+    out["tom_tat"] = fix_name_vi(out["tom_tat"])
+    for k in ("bo_ngo", "da_giai", "nhan_vat_moi"):
+        out[k] = [fix_name_vi(x) for x in out[k]]
+    out["nguyen_van"] = [fix_name_vi(x) if VI_MARK.search(x) else x for x in out["nguyen_van"]]
     d = raw.get("diem")
     if isinstance(d, dict):
         out["diem"] = {k: int(v) for k, v in d.items() if k in CRIT and isinstance(v, int) and not isinstance(v, bool)}
@@ -716,7 +725,43 @@ def check_story(st: Any, lang: str, level: str, bad_kanji: Any = None) -> tuple[
     if lang == "vi":      # 1.25.2: tin làng + mục thứ ba của bản gốc (hỏng thì bỏ — báo tự viết tin, không bỏ cả truyện)
         st["tin"] = clean_news(st.get("tin"), warns)
         st["muc3"] = clean_muc3(st.get("muc3"), warns)
+        fix_names_vi(st)
     return errs, warns
+
+
+# 1.25.2 (thử thật 09/11): Gemini đặt tên "Soncho" (phiên âm 村長) cho ông trưởng làng và gọi quán là "Kotobaya" —
+# rồi bản Anh in "Mayor Soncho". Đưa về đúng bảng tên trước khi bản gốc được lưu / kể lại.
+_SON = r"So[nm]-?ch[oō]u?"
+_NAME_FIX = ((re.compile(r"\b([Ôô]ng|[Bb]ác) trưởng làng " + _SON + r"\b"), r"\1 trưởng làng"),
+             (re.compile(r"\b([Ôô]ng|[Bb]ác|[Cc]ụ) " + _SON + r"\b"), r"\1 trưởng làng"),
+             (re.compile(r"\b" + _SON + r"\b"), "ông trưởng làng"),
+             (re.compile(r"\b(?:[Nn]hà|[Qq]uán)(?: trọ)? Kotoba-?ya\b"), "Quán Kotoba"),
+             (re.compile(r"\bKotoba-?ya\b"), "Quán Kotoba"))
+
+
+def fix_name_vi(text: str) -> str:
+    for rx, rep in _NAME_FIX:
+        text = rx.sub(rep, text)
+    return text
+
+
+def fix_names_vi(st: dict[str, Any]) -> None:
+    if isinstance(st.get("tieu_de"), str):
+        st["tieu_de"] = fix_name_vi(st["tieu_de"])
+    if isinstance(st.get("doan"), list):
+        st["doan"] = [fix_name_vi(p) if isinstance(p, str) else p for p in st["doan"]]
+    nho = st.get("nho")
+    if isinstance(nho, dict):
+        for k, v in list(nho.items()):
+            if isinstance(v, str):
+                nho[k] = fix_name_vi(v)
+            elif isinstance(v, list):
+                nho[k] = [fix_name_vi(x) if isinstance(x, str) else x for x in v]
+    for t in st.get("tin") or []:
+        t["tieu_de"], t["noi_dung"] = fix_name_vi(t["tieu_de"]), fix_name_vi(t["noi_dung"])
+    if st.get("muc3"):
+        st["muc3"]["tieu_de"] = fix_name_vi(st["muc3"]["tieu_de"])
+        st["muc3"]["doan"] = [fix_name_vi(p) for p in st["muc3"]["doan"]]
 
 
 def _vi_ok(x: str) -> bool:

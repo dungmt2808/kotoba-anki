@@ -86,6 +86,25 @@ v = paper.clean_issue(dict(raw, ngon_ngu="vi"), "2026-11-08")
 ok(v["lang"] == "vi" and v["chinh_ta"] == [] and v["tra_tu"] == {}, "paper_core: số tiếng Việt, không câu chép, không bảng tra")
 
 
+print("== tên gọi của bản gốc (thử thật 09/11: Gemini đặt tên \"Soncho\", \"Kotobaya\")")
+_g = {"tieu_de": "Ông Soncho kể chuyện", "doan": ["Ông trưởng làng Soncho bước vào hiên nhà Kotobaya.", "Soncho cười."],
+      "nho": {"tom_tat": "Ông Soncho kể chuyện ở quán Kotobaya.", "bo_ngo": ["Soncho giấu gì?"]},
+      "tin": [{"tieu_de": "Trưởng làng ghé quán", "noi_dung": "Ông Soncho thăm quán trọ Kotobaya."}],
+      "muc3": {"tieu_de": "Cột của Soncho", "doan": ["Bác Soncho nói dài."]}}
+story.fix_names_vi(_g)
+_flat = json.dumps(_g, ensure_ascii=False)
+ok("Soncho" not in _flat and "Kotobaya" not in _flat and _g["doan"][0] == "Ông trưởng làng bước vào hiên Quán Kotoba."
+   and _g["tieu_de"] == "Ông trưởng làng kể chuyện" and _g["nho"]["bo_ngo"] == ["ông trưởng làng giấu gì?"],
+   "bỏ tên tự đặt, đưa về bảng tên (%s)" % _g["doan"][0])
+_e = story.clean_episode({"ky": 1, "tom_tat": "Lin trực đêm ở quán trọ Kotobaya.", "bo_ngo": ["Soncho biết gì?"],
+                          "nguyen_van": ["Mayor Soncho smiled.", "Ông Soncho cười."]})
+ok(_e["tom_tat"] == "Lin trực đêm ở Quán Kotoba." and _e["bo_ngo"] == ["ông trưởng làng biết gì?"]
+   and _e["nguyen_van"] == ["Mayor Soncho smiled.", "Ông trưởng làng cười."],
+   "bộ nhớ cũ: sửa tên ở phần tiếng Việt (tóm tắt, bỏ ngỏ), không chèn tiếng Việt vào bản tiếng Anh")
+ok(story.fix_name_vi("Kotoba Village, làng Kotoba, vườn Kotoba") == "Kotoba Village, làng Kotoba, vườn Kotoba",
+   "tên đúng giữ nguyên")
+ok("Hana (not \"Grandma\")" in story.retell_prompt("en", {"trinh_do": "A2"}, {"ky": 2, "tieu_de": "x", "doan": ["a"]}),
+   "lời nhắc kể lại: Hana không gọi Grandma")
 print("== thời tiết của làng = trời trong vườn (sky.js)")
 D8 = datetime.date(2026, 11, 8)
 ok(story.weather_at(D8, 9) in story._WEATHER_VI and story.weather_at(D8, 9) == story.weather_at(D8, 10)
@@ -197,6 +216,8 @@ def run_lang(fake, base, scope, date=D, opts=None):
 f1 = FakeVillage()
 r_ja, m1 = run_lang(f1, JA_DIR, JA_SCOPE)
 k1 = [k for k, _l, _p in f1.asked]
+ok(json.load(open(ai.issue_path(JA_DIR, D), encoding="utf-8")).get("truyen_chung") is True
+   and ai.feedback_bases(SH, JA_DIR, D, 1) == [SH], "số báo ghi \"truyen_chung\": nhận xét Hay / Nhạt vào bao_chung")
 ok(r_ja.get("ok") and m1 and m1["ky"] == 1, "báo tiếng Nhật đầu tiên trong ngày: viết bản gốc rồi số báo (%s)" % (r_ja.get("error") or r_ja.get("loi") or "ok"))
 ok(k1[:3] == ["mach", "goc", "bien_tap"] and "ke_lai" in k1 and k1.index("ke_lai") < k1.index("so"),
    "thứ tự: lập mạch → bản gốc (truyện + tin) → biên tập → kể lại bằng tiếng Nhật → viết số: %s" % k1)
@@ -273,9 +294,28 @@ print("== chuyển sang truyện chung lần đầu")
 OLDJ = os.path.join(TMP, "old_ja")
 story.save_episode(OLDJ, "2026-11-05", 7, {"doan": ["リンさんは…"], "nho": {"tom_tat": "Kỳ 7 cũ"}}, "古い地図")
 SH2 = os.path.join(TMP, "bao_chung2")
+# số cũ (1.25.1) đọc lúc chưa viết số nào bằng 1.25.2: nhận xét vào thư mục báo đó, KHÔNG tạo truyện chung (để còn chép sang)
+os.makedirs(os.path.join(OLDJ, "bao", "2026-11-05"), exist_ok=True)
+json.dump({"ngay": "2026-11-05", "so": 7, "bai": []}, open(os.path.join(OLDJ, "bao", "2026-11-05", "bao.json"), "w", encoding="utf-8"))
+fb0 = ai.feedback_bases(SH2, OLDJ, "2026-11-05", 7)
+for b in fb0:
+    story.set_feedback(b, 7, "nhat", "chậm quá")
+ok(fb0 == [OLDJ] and not os.path.exists(SH2) and story.feedback_of(OLDJ, 7)["y"] == "nhat",
+   "nhận xét số cũ trước lần viết đầu: ghi ở báo đó, chưa tạo bao_chung (%s)" % fb0)
 ok(ai.migrate_story(SH2, [os.path.join(TMP, "khong_co"), OLDJ]) == OLDJ and story.load_story(SH2)[-1]["ky"] == 7,
    "chép bộ nhớ truyện của báo tiếng Nhật sang truyện chung (nối tiếp kỳ 7, không bắt đầu lại)")
 ok(ai.migrate_story(SH2, [OLDJ]) == "", "đã có truyện chung thì không chép đè")
+ok(story.feedback_of(SH2, 7) == {"y": "nhat", "ghi": "chậm quá"}, "nhận xét của số cũ đi theo sang truyện chung")
+fb1 = ai.feedback_bases(SH2, OLDJ, "2026-11-05", 7)
+ok(fb1 == [OLDJ, SH2], "số cũ, kỳ đã chép sang: nhận xét ghi cả hai nơi (%s)" % fb1)
+EN_OLD = os.path.join(TMP, "old_en")
+story.save_episode(EN_OLD, "2026-11-05", 7, {"doan": ["Linh smiled."], "nho": {"tom_tat": "Kettle Café kỳ 7"}}, "The Map")
+ok(ai.feedback_bases(SH2, EN_OLD, "2026-11-05", 7) == [EN_OLD], "số cũ của báo khác (truyện riêng, cùng số kỳ): chỉ báo đó")
+NEWJ = os.path.join(TMP, "new_ja")
+os.makedirs(os.path.join(NEWJ, "bao", "2026-11-08"), exist_ok=True)
+json.dump({"ngay": "2026-11-08", "so": 9, "truyen_chung": True, "bai": []},
+          open(os.path.join(NEWJ, "bao", "2026-11-08", "bao.json"), "w", encoding="utf-8"))
+ok(ai.feedback_bases(SH2, NEWJ, "2026-11-08", 8) == [SH2], "số viết từ truyện chung: nhận xét vào bao_chung")
 ok(ai.next_ky(story.load_story(SH2), "2026-11-08") == 8, "kỳ tiếp theo: 8")
 
 
