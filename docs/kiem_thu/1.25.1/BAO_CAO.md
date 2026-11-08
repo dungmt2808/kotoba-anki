@@ -6,9 +6,14 @@ Bản 1.25.1 làm theo yêu cầu "trước khi hiện thực thì tớ muốn l
 
 | Bộ | Anki 26.9.4 | Anki 23.10.1 |
 |---|---|---|
-| `tests/run_all.sh` (có `core/test_1251.py` mới — 75 kiểm tra, chạy cả **mã 1.25.0 thật** từ git `1912fb7`) | KẾT_QUA_OFFLINE | — |
-| `e2e_1251.js` (mới) | **E2E1251** | **E2E1251_V2310** |
-| bộ cũ | KET_QUA_CU | KET_QUA_CU_V2310 |
+| `tests/run_all.sh` (có `core/test_1251.py` mới — 75 kiểm tra, chạy cả **mã 1.25.0 thật** từ git `1912fb7`) | TẤT CẢ OK | — |
+| `e2e_1251.js` (mới) | **45/45** | **45/45** |
+| `e2e.js` · `e2e_tour.js` · `e2e_114` · `e2e_115` · `e2e_116` · `e2e_117` · `e2e_118` · `e2e_119` | 24/24 · 12/12 · 34/34 · 21/21 · 15/15 · 55/55 · 29/29 · 55/55 | `e2e_119` 55/55 |
+| `e2e_120` · `e2e_121` · `e2e_122` · `e2e_1223` · `e2e_1226` · `e2e_1228` · `e2e_123` · `e2e_kit23` · `e2e_124` · `e2e_125` | 103/103 · 46/46 · 64/64 · 49/49 · 40/40 · 26/26 · 65/65 · 10/10 · 23/23 · 30/30 | `e2e_125` 30/30 |
+| `audit_edge.js` · `audit_full.js` (1.000.000 xu, mua / dùng mọi thứ qua giao diện) | 58/58 · **181/181** (ảnh có cờ đo: 0/131) | — |
+
+- Test cũ đổi theo thiết kế mới (không phải lỗi): `test_117` (Đuổi quạ cho ngôn ngữ khác nay có chế độ, chế độ lạ vẫn bị chặn), `test_1191` (khoá deck đã chọn có thêm `"vi"`, `"mode"`), `test_123` (chip "Bí ẩn nhẹ" đổi tên "Bí ẩn"), `e2e_119` (Báo muốn nhận có ô Tiếng Việt; "Lấy từ" có "Không dùng deck"; deck đã chọn < 10 từ không còn chặn mà viết theo trình độ — kiểm bằng phạm vi, không gọi mạng).
+- Lần chạy đầu bộ cũ trượt ở `e2e_119` / `e2e_120` / `audit_edge` vì hai lần `run_ui.sh` chạy **song song** tắt Anki của nhau (`kill_anki.sh` dùng chung) — chạy lại tuần tự thì đạt hết.
 
 ## 2. Gemini thật (gói miễn phí, 08/11)
 
