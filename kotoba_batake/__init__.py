@@ -64,6 +64,8 @@ AI_DIR_VI = os.path.join(ADDON_DIR, "user_files", ai_vi.FOLDER)
 PAPER_VI = paper.PaperState(os.path.join(ADDON_DIR, "user_files", "paper_vi.json"), col_getter=lambda: mw.col,
                             key=paper.PAPER_KEY_VI)
 AI_DIRS = {"ja": AI_DIR, "en": AI_DIR_EN, "vi": AI_DIR_VI}
+# 1.25.2 "Một làng, một truyện": bộ nhớ truyện chung + bản gốc mỗi ngày (truyện + tin làng, tiếng Việt) cho mọi báo Gemini
+AI_DIR_SHARED = os.path.join(ADDON_DIR, "user_files", ai.SHARED_FOLDER)
 AI_MODS = {"en": ai_en, "vi": ai_vi}
 # 1.23: tiến độ đọc của nguồn báo tiếng Nhật thứ hai (Kệ báo gộp số Claude Code + Gemini), khoá collection riêng
 BOOK = paper.PaperState(os.path.join(ADDON_DIR, "user_files", "paper_nguon.json"), col_getter=lambda: mw.col,
@@ -321,8 +323,15 @@ def wanted_langs(cfg: dict[str, Any] | None = None) -> list[str]:
     cfg = cfg if cfg is not None else config()
     raw = cfg.get("gemini_langs")
     if isinstance(raw, list):
-        return [x for x in PAPER_LANGS if x in raw]
+        return clean_langs(raw)
     return ["ja"] + (["en"] if _en_has_issues() else [])
+
+
+def clean_langs(raw: Any) -> list[str]:
+    """1.25.2: tối đa 2 báo — tiếng Nhật và / hoặc tiếng Anh, HOẶC chỉ tiếng Việt (báo Nhật / Anh đã có bản dịch tiếng Việt,
+    ba báo cùng kể một chuyện thì thừa). Có cả Việt lẫn Nhật / Anh → bỏ Việt."""
+    out = [x for x in PAPER_LANGS if isinstance(raw, list) and x in raw]
+    return [x for x in out if x != "vi"] if len(out) > 1 else out
 
 
 def _old_waiting(cfg: dict[str, Any]) -> list[str]:
@@ -1035,17 +1044,17 @@ def _ai_scope(cfg: dict[str, Any], o: dict[str, Any], lang: str) -> dict[str, An
     en = lang == "en"
     src = words.load_src(mw.col)
     level = o["level_en"] if en else o["level"]
+    if lang == "vi":          # 1.25.2: báo tiếng Việt chỉ truyện + tin làng, không lấy thẻ
+        return ai_vi.scope()
     mod = AI_MODS.get(lang)
     builder = mod.scope_from_pick if mod else ai.scope_from_pick
     if src[lang]["mode"] == "level":     # 1.25.1: Không dùng deck — Gemini viết theo trình độ, tự chọn từ đáng học
         scope = builder({"kho": [], "all": [], "grammar": [], "decks": []}, level)
         scope["khong_deck"] = True
         return scope
-    pk = words.pick(mw.col, cfg, lang, src[lang]["decks"], ai_today(),
-                    limit=ai_vi.ITEMS if lang == "vi" else words.LIMIT,
-                    eligible=mod.kho_ok if mod else ai.kho_ok)
+    pk = words.pick(mw.col, cfg, lang, src[lang]["decks"], ai_today(), eligible=mod.kho_ok if mod else ai.kho_ok)
     scope = builder(pk, level)
-    n = len(scope.get("muc") or []) if lang == "vi" else len(scope.get("kho") or [])
+    n = len(scope.get("kho") or [])
     if n < words.MIN_WORDS:
         # 1.25.1: chưa có deck / deck đã chọn quá ít từ → vẫn viết, theo trình độ (từ ít ỏi đã có vẫn gửi kèm)
         scope["khong_deck"] = True
@@ -1055,6 +1064,22 @@ def _ai_scope(cfg: dict[str, Any], o: dict[str, Any], lang: str) -> dict[str, An
     except Exception as err:
         _warn("từ chép sai", err)
     return scope
+
+
+def _village_weather(date: str) -> str:
+    """1.25.2: thời tiết của làng hôm nay = trời trong vườn (cùng công thức với sky.js, có thiên hướng của giao diện mùa)."""
+    try:
+        day = datetime.date.fromisoformat(date)
+        theme = None
+        try:
+            from . import season_core
+            theme = season_core.active_theme(STATE.load()["season"], day)
+        except Exception:
+            theme = None
+        return story_core.village_weather(day, theme)
+    except Exception as err:
+        _warn("thời tiết của làng", err)
+        return ""
 
 
 def src_mode(lang: str) -> str:
@@ -1170,9 +1195,7 @@ def ai_start(reason: str, dialog: Any = None, lang: str = "ja") -> bool:
         st.pop("thieu", None)
         if scope.get("khong_deck") and scope.get("it_tu") is not None and src_mode(lang) != "level":
             n0 = scope["it_tu"]
-            st.update(thieu=("Chưa có thẻ nào — báo viết kiến thức chung." if lang == "vi" and not n0 else
-                             "Deck mới có %d thẻ — báo dùng thêm kiến thức chung." % n0 if lang == "vi" else
-                             "Chưa có từ %s nào — viết theo trình độ." % LANG_NAME[lang] if not n0 else
+            st.update(thieu=("Chưa có từ %s nào — viết theo trình độ." % LANG_NAME[lang] if not n0 else
                              "Deck mới có %d từ — viết theo trình độ." % n0), thieu_day=date)
         try:
             unread = paper.unread_dates(paper.Library(base, lang), paper_states(lang, "gemini")[1])
@@ -1180,7 +1203,15 @@ def ai_start(reason: str, dialog: Any = None, lang: str = "ja") -> bool:
             unread = []
         opts = {"max_new": ai.NO_DECK_NEW if scope.get("khong_deck") and lang != "vi" else 3, "short": len(unread) >= 3,
                 "model": o["model"], "prefer": st.get("model", "") or other.get("model", ""), "story": o["story"],
-                "tone": o["tones"][0], "tones": o["tones"]}
+                "tone": o["tones"][0], "tones": o["tones"],
+                # 1.25.2: truyện chung + thời tiết khớp với trời trong vườn
+                "story_base": AI_DIR_SHARED, "thoi_tiet": _village_weather(date)}
+        try:
+            src0 = ai.migrate_story(AI_DIR_SHARED, [AI_DIR, AI_DIR_EN, AI_DIR_VI])
+            if src0:
+                _warn("truyện chung", "chép bộ nhớ truyện từ " + os.path.basename(src0))
+        except OSError as err:
+            _warn("truyện chung", err)
         st["tries"] = int(st.get("tries") or 0) + 1
         st["scope"] = ai.describe_scope(scope)
     else:
@@ -1194,6 +1225,16 @@ def ai_start(reason: str, dialog: Any = None, lang: str = "ja") -> bool:
         mw.taskman.run_on_main(lambda: _ai_progress(msg))
 
     def task() -> dict[str, Any]:
+        if not has and not opts.get("short") and opts.get("story") != "tat":
+            # 1.25.2 "Một làng, một truyện": bản gốc hôm nay (báo đầu tiên trong ngày viết, báo sau đọc lại)
+            try:
+                master, mlog = ai.ensure_master(client, AI_DIR_SHARED, date, opts, progress)
+            except ai.AIError as err:
+                if err.kind == "key":
+                    raise
+                master, mlog = None, [{"buoc": "ban_goc_loi", "ly_do": str(err)[:200]}]
+            opts["master"] = master
+            opts["_master_log"] = mlog
         res: dict[str, Any] = {"ok": True, "audio_only": True} if has else \
             ai.Job(client, base, date, scope or {}, opts, progress).run()
         if res.get("ok") and o["audio"] != "tat" and lang != "vi":      # 1.25.1: báo tiếng Việt không có giọng đọc
@@ -2423,7 +2464,7 @@ class GardenDialog(QDialog):
             if isinstance(p.get("langs"), list):         # 1.19.1: ô tick "Báo muốn nhận"
                 cfg0 = config()
                 before = wanted_langs(cfg0)
-                changes["gemini_langs"] = [x for x in PAPER_LANGS if x in p["langs"]]
+                changes["gemini_langs"] = clean_langs(p["langs"])
                 if ai.clean_key(cfg0.get("gemini_key")) and not cfg0.get("gemini_wait_start"):
                     # 1.22.4: báo vừa tick thêm chờ chọn trình độ / deck rồi bấm "Bắt đầu viết", không viết ngay
                     old_w = cfg0.get("gemini_wait_langs") if isinstance(cfg0.get("gemini_wait_langs"), list) else []
@@ -2671,7 +2712,8 @@ class GardenDialog(QDialog):
         gem = _is_gemini_dir(lib.base)
         view["fb_ok"] = gem
         if gem:
-            view["fb"] = {str(b["ky"]): story_core.feedback_of(lib.base, b["ky"]) for b in view["bai"]
+            fb_base = AI_DIR_SHARED if os.path.isfile(os.path.join(AI_DIR_SHARED, story_core.STORY_FILE)) else lib.base
+            view["fb"] = {str(b["ky"]): story_core.feedback_of(fb_base, b["ky"]) for b in view["bai"]
                           if b.get("loai") == "truyen" and b.get("ky")}
         return view
 
@@ -2689,7 +2731,8 @@ class GardenDialog(QDialog):
         if action == "fb":
             ky = p.get("k")
             gem = _is_gemini_dir(lib.base)
-            if gem and isinstance(ky, int) and story_core.set_feedback(lib.base, ky, str(p.get("y") or ""),
+            # 1.25.2: nhận xét ghi vào truyện chung (mọi báo cùng một kỳ; kỳ sau nhà văn đọc)
+            if gem and isinstance(ky, int) and story_core.set_feedback(AI_DIR_SHARED, ky, str(p.get("y") or ""),
                                                                        str(p.get("g") or "")):
                 self._js("notice", {"msg": "Đã ghi nhận xét. Kỳ sau Gemini sẽ đọc.", "ms": 3000})
             self._reissue_ref(lang, lib, src, date)

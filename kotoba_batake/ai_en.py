@@ -252,7 +252,7 @@ NOT_DERIVED = {
     "under", "never", "ever", "river", "silver", "finger", "ginger", "danger", "hunger", "manners", "customs",
     "glasses", "wings", "pants", "goods", "kings", "rings", "things", "scissors",
 }
-NAMES = {"stackchan", "hana", "linh", "oakley", "ben", "kotoba"}      # nhân vật / tên riêng của báo: không tra
+NAMES = {"stackchan", "hana", "linh", "lin", "oakley", "ben", "kotoba", "mayor"}      # nhân vật / tên riêng của báo: không tra
 # tính từ một âm tiết hay gặp (so sánh hơn / nhất -er / -est); tính từ tận cùng -y thì luôn nhận -ier / -iest
 COMMON_ADJ = set("""big small tall short long old young new fast slow hot cold warm cool high low cheap rich poor strong
 weak quick quiet loud late near nice fine large wide safe close brave wise clean clear dark light bright deep fresh full
@@ -952,16 +952,17 @@ def deck_count(raw: Any, scope: dict[str, Any]) -> int:
 # Lời nhắc (prompt)
 # ---------------------------------------------------------------------------
 
-STORY_SETUP = """Truyện dài kỳ "The Little Café by the Garden". Kotoba Village là một làng nhỏ ven biển nói tiếng Anh,
-cạnh khu vườn Kotoba Farm; mùa và thời tiết theo ngày thật ở Anh.
+# 1.25.2 "Một làng, một truyện": cùng làng, cùng truyện với báo tiếng Nhật / tiếng Việt (tên theo story_core.NAMES)
+STORY_SETUP = """Truyện dài kỳ "The Little Inn of Kotoba Village" (bản tiếng Anh của truyện chung của làng). Kotoba Village
+là làng nhỏ cạnh khu vườn Kotoba Farm, bốn mùa rõ rệt theo lịch thật.
 Nhân vật (giữ nhất quán, tên viết đúng như sau):
 - StackChan: robot nhỏ của khu vườn, tò mò, hay khoe tranh pixel tự vẽ, nói câu ngắn, vui vẻ.
-- Hana: chủ quán "The Kettle Café", khoảng 30 tuổi, chu đáo, lịch sự với khách.
-- Linh: cô gái Việt Nam mới đến làng, làm ở The Kettle Café, đang học tiếng Anh, đôi khi nhầm từ nhưng rất cố gắng.
-- Mr. Oakley: trưởng làng (the mayor), hiền, thích kể chuyện ngày xưa.
-- Ben: người đưa thư vui tính, biết mọi tin trong làng.
+- Hana: bà chủ quán trọ "the Kotoba Inn", khoảng 30 tuổi, chu đáo, lịch sự với khách.
+- Lin: cô gái Việt Nam mới đến làng, làm ở the Kotoba Inn, đang học tiếng của làng, đôi khi nói nhầm nhưng rất cố gắng.
+- the mayor: trưởng làng, hiền, thích kể chuyện ngày xưa.
+- the postman: bác đưa thư vui tính, biết mọi tin trong làng.
 Mỗi kỳ là một tình huống nhỏ trong ngày ở quán hoặc trong làng, kết hơi bỏ ngỏ.
-Lời thoại để trong ngoặc kép "…" và ghi rõ ai nói (said Linh, Hana asked…)."""
+Lời thoại để trong ngoặc kép "…" và ghi rõ ai nói (said Lin, Hana asked…)."""
 
 RULES = """QUY TẮC (máy sẽ kiểm tra, sai là phải viết lại):
 - Bài, tiêu đề, câu hỏi, lựa chọn, câu chép chính tả viết HOÀN TOÀN bằng tiếng Anh: không chữ Việt, không chữ Nhật /
@@ -975,7 +976,7 @@ RULES = """QUY TẮC (máy sẽ kiểm tra, sai là phải viết lại):
 def season_text(date: datetime.date) -> str:
     m = date.month
     s = "xuân" if m in (3, 4, 5) else "hạ" if m in (6, 7, 8) else "thu" if m in (9, 10, 11) else "đông"
-    return "%s, ngày %d/%d/%d, mùa %s ở Anh" % (date.strftime("%A"), date.day, date.month, date.year, s)
+    return "%s, ngày %d/%d/%d, mùa %s" % (date.strftime("%A"), date.day, date.month, date.year, s)
 
 
 def system_prompt(level: str) -> str:
@@ -1009,7 +1010,8 @@ def write_prompt(scope: dict[str, Any], opts: dict[str, Any], story: list[dict[s
     ky = int(opts.get("ky") or 1)
     third = "thong_bao" if date.day % 2 == 0 else "cot"
     dlo, dhi = DICT_WORDS[level]
-    parts = ["HÔM NAY: %s. Số báo %d." % (season_text(date), int(opts.get("so") or 1))]
+    parts = ["HÔM NAY: %s. Số báo %d.%s" % (season_text(date), int(opts.get("so") or 1),
+                                           (" Thời tiết ở làng: %s." % opts["thoi_tiet"]) if opts.get("thoi_tiet") else "")]
     if short:
         parts.append(
             "ĐÂY LÀ SỐ RÚT GỌN (người học còn nhiều số chưa đọc): chỉ 1 bài loai \"tin_lang\" ngắn (2 đoạn), "
@@ -1056,6 +1058,9 @@ def write_prompt(scope: dict[str, Any], opts: dict[str, Any], story: list[dict[s
                 third, "Notices — 2–3 mục thông báo của làng, mỗi mục là một đoạn bắt đầu bằng \"◆ \", tiêu đề "
                 "\"Village Notices\"." if third == "thong_bao" else
                 "cột ngắn của một nhân vật (1–2 đoạn), tiêu đề kiểu \"StackChan's Corner\".", dlo, dhi, ky))
+    for extra in (ai.master_news(opts, "tiếng Anh"), ai.story_goc_text(opts, "tiếng Anh")):    # 1.25.2: tin / truyện chung
+        if extra:
+            parts.append(extra)
     if not short:
         parts.append("dich: mỗi bài thêm \"dich\" = bản dịch tiếng Việt TỰ NHIÊN (có dấu) của từng đoạn (cùng số phần tử "
                      "với doan; không ghi chú trong ngoặc). Người học bấm \"Dịch\" mới thấy.")
@@ -1100,7 +1105,7 @@ def write_prompt(scope: dict[str, Any], opts: dict[str, Any], story: list[dict[s
             if story[-1].get("nguyen_van"):     # 1.23: nguyên văn kỳ trước
                 parts.append("NGUYÊN VĂN KỲ TRƯỚC (viết tiếp, không mâu thuẫn):\n" + "\n".join(story[-1]["nguyen_van"]))
         else:
-            parts.append("ĐÃ XẢY RA: (chưa có kỳ nào, đây là kỳ 1: Linh đến Kotoba Village và bắt đầu làm ở The Kettle Café)")
+            parts.append("ĐÃ XẢY RA: (chưa có kỳ nào, đây là kỳ 1: Lin đến Kotoba Village và bắt đầu làm ở the Kotoba Inn)")
     parts.append("DANH SÁCH NGỮ PHÁP (id|mẫu|nghĩa) — chỉ dùng ngữ pháp này và đơn giản hơn:\n" + ai._grammar_lines(scope))
     if scope.get("kho") or scope.get("tu_vung"):
         parts.append("DANH SÁCH TỪ VỰNG ĐÃ HỌC (từ /phiên âm/ = nghĩa):\n" + _vocab_lines(scope))
@@ -1136,7 +1141,7 @@ def review_prompt(raw: Any, scope: dict[str, Any], warnings: list[str]) -> str:
         "5. Mỗi câu hỏi có đúng MỘT đáp án đúng, đáp án đó có trong bài, \"dung\" chỉ đúng vị trí; giai_thich đúng.\n"
         "6. Câu chép chính tả có chép nguyên văn một câu trong bài không.\n"
         "7. Tiêu đề, tom_tat, ky_truoc, giai_thich (tiếng Việt có dấu) viết đúng nghĩa với bài.\n"
-        "8. Lời thoại: rõ ai nói câu nào; nhân vật nhất quán (Hana là chủ quán The Kettle Café, Linh là nhân viên mới).\n"
+        "8. Lời thoại: rõ ai nói câu nào; nhân vật nhất quán (Hana là bà chủ the Kotoba Inn, Lin là nhân viên mới).\n"
         "9. Kết hợp từ tự nhiên như người bản xứ viết.\n"
         "10. Số báo thường phải đủ 3 bài: tin_lang, truyen, rồi thong_bao hoặc cot.\n"
         "Ghi mỗi chỗ đã sửa vào van_de (cho = vị trí như bai[1].doan[0], loi = lỗi gì bằng tiếng Việt, sua = câu mới). "

@@ -144,17 +144,29 @@ Hana came out and looked at the photo for a long time. Her finger stopped on the
 
 # 1.25.1: báo tiếng Việt (người không học tiếng Nhật / tiếng Anh) — cùng nhân vật, viết bằng tiếng Việt, chất liệu là
 # kiến thức trong thẻ người đọc đang ôn (không phải mẫu ngữ pháp)
-BIBLE_VI = """TRUYỆN DÀI KỲ "Quán trọ nhỏ ở làng Kotoba" — làng nhỏ yên bình cạnh khu vườn Kotoba; mùa và thời tiết theo
-ngày thật ở Việt Nam.
+# 1.25.2 "Một làng, một truyện" (người dùng chốt 08/11): mỗi ngày làng có MỘT kỳ truyện + tin làng, viết một lần bằng
+# tiếng Việt (bản gốc, thư mục bao_chung); báo tiếng Nhật / tiếng Anh kể lại bằng tiếng của mình theo trình độ, báo
+# tiếng Việt in thẳng bản gốc. Nhân vật / nơi chốn chung cho mọi báo (bảng tên NAMES).
+BIBLE_VI = """TRUYỆN DÀI KỲ "Quán trọ nhỏ ở làng Kotoba" — làng nhỏ yên bình cạnh khu vườn Kotoba, bốn mùa rõ rệt theo lịch
+thật. Mỗi kỳ được in trong báo làng bằng tiếng Việt, tiếng Nhật và tiếng Anh (bản tiếng Nhật / tiếng Anh kể lại cho người
+mới học).
 Nhân vật (mỗi người một điều muốn, một điều sợ, một câu cửa miệng; giữ nhất quán qua mọi kỳ):
-- Lin: cô gái 22 tuổi mới đến làm ở quán trọ "Quán Kotoba". Muốn bà Hana tin tưởng giao quán một mình. Ham học, hay ghi
-  chép vào cuốn sổ nhỏ, đôi khi nhớ nhầm một chi tiết rồi tự nhận ra và sửa. Câu cửa miệng: "Để em ghi lại đã!"
-- Bà Hana: bà chủ quán, khoảng 30 tuổi, điềm tĩnh, hiểu biết nhiều chuyện. Có một bí mật về quá khứ của quán, hé ra dần.
+- Lin: cô gái Việt Nam 22 tuổi mới đến làm ở quán trọ "Quán Kotoba". Muốn bà Hana tin tưởng giao quán một mình. Đang
+  học tiếng của làng, hay ghi chép vào cuốn sổ nhỏ, đôi khi nói nhầm một câu (lời chào, cách nói lịch sự) rồi tự sửa.
+  Câu cửa miệng: "Để em ghi lại đã!"
+- Bà Hana: bà chủ quán, khoảng 30 tuổi, điềm tĩnh, nói năng lịch sự với khách, thân mật với Lin. Có một bí mật về quá
+  khứ của quán, hé ra dần qua nhiều đợt.
 - StackChan: robot nhỏ của khu vườn, tò mò, nói câu ngắn, xưng "tớ", hay vẽ tranh pixel. Hiểu câu nói thường ngày theo
   nghĩa đen (gây cười).
 - Ông trưởng làng: hiền, thích kể chuyện ngày xưa, hay kể quá dài.
 - Nhân vật phụ của đợt (mỗi đợt chọn một): một vị khách trọ có mục đích riêng, bác đưa thư, con mèo hoang trắng.
 Lời thoại để trong ngoặc kép "…", ghi rõ ai nói."""
+
+# tên chung của các bản (tiếng Việt / tiếng Nhật / tiếng Anh) — bản kể lại dùng đúng bảng này
+NAMES = (("Lin", "リンさん", "Lin"), ("bà Hana", "はなさん（女将さん）", "Hana"), ("StackChan", "スタックちゃん", "StackChan"),
+         ("ông trưởng làng", "村長さん", "the mayor"), ("Quán Kotoba (quán trọ)", "ことば屋（旅館）", "the Kotoba Inn"),
+         ("làng Kotoba", "ことば村", "Kotoba Village"), ("vườn Kotoba", "ことば畑", "Kotoba Farm"),
+         ("bác đưa thư", "郵便屋さん", "the postman"), ("con mèo hoang trắng", "白いのらねこ", "the white stray cat"))
 
 SAMPLE_VI = """"Bà Hana ơi, khách phòng số ba muốn ăn sáng bằng... một tấm bản đồ!" Lin chạy vào bếp, tay vẫn cầm cuốn sổ nhỏ. Bà Hana đặt ấm trà xuống. "Bản đồ à?" StackChan lập tức chui vào tủ, lôi ra một chiếc đĩa. "Tớ có đĩa. Bản đồ thì chưa nấu bao giờ."
 Ông khách già trải lên bàn một tấm bản đồ cũ, mép giấy đã ngả vàng. Ở góc dưới có một vòng tròn đỏ, ngay chỗ khu vườn Kotoba bây giờ. "Ngày xưa, ở đây có một cái giếng," ông nói khẽ. "Tôi đã hứa sẽ quay lại."
@@ -162,15 +174,17 @@ Bà Hana nhìn vòng tròn đỏ rất lâu mà không nói gì. Lin định h�
 
 RULES_VI = """CÁCH VIẾT MỘT KỲ HAY (bắt buộc):
 1. Một cảnh, 2–3 nhân vật. Mở đầu bằng hành động hoặc lời thoại, KHÔNG mở bằng tả thời tiết.
-2. Có MỘT vấn đề cụ thể: nhân vật muốn gì, cái gì cản (hiểu lầm, đồ bị mất, khách khó tính, nhớ nhầm…); nhân vật tự xoay xở.
-3. Dùng nội dung 2–4 thẻ trong DANH SÁCH THẺ làm CHẤT LIỆU của chuyện (nhân vật nhắc tới, tranh luận, nhớ nhầm rồi
-   sửa đúng theo thẻ…), đúng kiến thức ghi ở mặt sau; không chèn cho có, không giảng bài.
+2. Có MỘT vấn đề cụ thể: nhân vật muốn gì, cái gì cản (hiểu lầm, đồ bị mất, khách khó tính, nói nhầm…); nhân vật tự xoay xở.
+3. Hợp mùa và thời tiết hôm nay (chi tiết nhỏ trong cảnh, không tả dài).
 4. Có ít nhất một chi tiết bất ngờ hoặc buồn cười, và một khoảnh khắc cảm xúc nhỏ.
-5. Kết bằng một móc câu: câu hỏi chưa có lời đáp, vật lạ, câu nói bỏ dở. KHÔNG kết bằng bài học hay lời khuyên.
+5. Kết bằng một móc câu: câu hỏi chưa có lời đáp, vật lạ, câu nói bỏ dở — để người đọc mong số sau. KHÔNG kết bằng bài
+   học hay lời khuyên.
 6. Không liệt kê, không lặp lại tình huống của các kỳ trước.
 7. Nối tiếp kỳ trước: KHÔNG mâu thuẫn với chuyện đã xảy ra, giải quyết hoặc đẩy tiếp một chỗ bỏ ngỏ.
 8. Thoại thể hiện tính cách, ghi rõ ai nói. Tiếng Việt tự nhiên, đúng chính tả, có dấu; chữ trơn (không [ ] { } |,
-   không markdown)."""
+   không markdown).
+9. Chuyện sẽ được kể lại bằng tiếng Nhật / tiếng Anh cho người mới học: tránh chơi chữ chỉ có trong tiếng Việt, thành
+   ngữ khó dịch; câu thoại ngắn, rõ."""
 
 _S = {"type": "STRING"}
 _SL = {"type": "ARRAY", "items": _S}
@@ -180,6 +194,8 @@ ARC_SCHEMA: dict[str, Any] = {
     "required": ["ten", "muc_tieu", "bi_an", "nhan_vat_phu", "buoc", "ket"],
     "propertyOrdering": ["ten", "muc_tieu", "bi_an", "nhan_vat_phu", "buoc", "ket"],
 }
+_NEWS = {"type": "OBJECT", "properties": {"tieu_de": _S, "noi_dung": _S}, "required": ["tieu_de", "noi_dung"],
+         "propertyOrdering": ["tieu_de", "noi_dung"]}
 STORY_SCHEMA: dict[str, Any] = {
     "type": "OBJECT",
     "properties": {
@@ -194,6 +210,24 @@ STORY_SCHEMA: dict[str, Any] = {
     },
     "required": ["dan_y", "tieu_de", "doan", "dich", "tu_moi", "nho"],
     "propertyOrdering": ["dan_y", "tieu_de", "doan", "dich", "tu_moi", "nho"],
+}
+# 1.25.2: bản gốc chung (tiếng Việt) = kỳ truyện + tin làng hôm nay + mục thứ ba (thông báo / cột của một nhân vật)
+MASTER_SCHEMA: dict[str, Any] = {
+    "type": "OBJECT",
+    "properties": {
+        "dan_y": STORY_SCHEMA["properties"]["dan_y"], "tieu_de": _S, "doan": _SL, "nho": STORY_SCHEMA["properties"]["nho"],
+        "tin": {"type": "ARRAY", "items": _NEWS},
+        "muc3": {"type": "OBJECT", "properties": {"tieu_de": _S, "doan": _SL}, "required": ["tieu_de", "doan"],
+                 "propertyOrdering": ["tieu_de", "doan"]},
+    },
+    "required": ["dan_y", "tieu_de", "doan", "nho", "tin", "muc3"],
+    "propertyOrdering": ["dan_y", "tieu_de", "doan", "nho", "tin", "muc3"],
+}
+RETELL_SCHEMA: dict[str, Any] = {
+    "type": "OBJECT",
+    "properties": {"tieu_de": _S, "doan": _SL, "dich": _SL, "tu_moi": STORY_SCHEMA["properties"]["tu_moi"]},
+    "required": ["tieu_de", "doan", "dich", "tu_moi"],
+    "propertyOrdering": ["tieu_de", "doan", "dich", "tu_moi"],
 }
 _I = {"type": "INTEGER"}
 CRIT = ("su_kien", "nhan_vat", "bat_ngo", "moc_cau", "khop", "trinh_do", "tu_nhien")
@@ -283,6 +317,7 @@ def save_episode(base: str, date: str, ky: int, story: dict[str, Any], plain_tit
     """Ghi kỳ vừa đăng vào truyen.json (giữ định dạng danh sách cũ, thêm khoá mới)."""
     raw = _read(os.path.join(base, STORY_FILE), [])
     raw = raw if isinstance(raw, list) else []
+    old = next((x for x in raw if isinstance(x, dict) and x.get("ky") == ky), None)
     keep = [x for x in raw if isinstance(x, dict) and x.get("ky") != ky]
     nho = story.get("nho") if isinstance(story.get("nho"), dict) else {}
     item = {"ky": ky, "ngay": date, "tom_tat": _str(nho.get("tom_tat"), 300) or _str(story.get("tom_tat"), 300),
@@ -292,6 +327,8 @@ def save_episode(base: str, date: str, ky: int, story: dict[str, Any], plain_tit
             "da_giai": _strs(nho.get("da_giai"), 8, 200)}
     if isinstance(story.get("diem"), dict):
         item["diem"] = story["diem"]
+    if isinstance(old, dict) and isinstance(old.get("phan_hoi"), dict):
+        item["phan_hoi"] = old["phan_hoi"]      # 1.25.2: báo thứ hai cùng ngày lưu lại kỳ đó — không mất nhận xét đã ghi
     keep.append(item)
     _write(os.path.join(base, STORY_FILE), keep[-60:])
 
@@ -366,17 +403,8 @@ def _bible(lang: str) -> str:
 
 
 def _first_ep(lang: str) -> str:
-    return {"en": "Linh đến Kotoba Village và bắt đầu làm ở The Kettle Café.",
+    return {"en": "Lin đến Kotoba Village và bắt đầu làm ở the Kotoba Inn.",
             "vi": "Lin đến làng Kotoba và bắt đầu làm ở Quán Kotoba."}.get(lang, "リンさん bắt đầu làm ở ことば屋.")
-
-
-def _vi_items(scope: dict[str, Any], limit: int = 40) -> str:
-    """1.25.1: thẻ người đọc đang ôn (báo tiếng Việt), ★ = đến hạn ôn hôm nay."""
-    due = set(scope.get("can_on") or [])
-    rows = [m for m in scope.get("muc") or [] if isinstance(m, dict)]
-    rows = [m for m in rows if m.get("id") in due] + [m for m in rows if m.get("id") not in due]
-    return "\n".join("#%s%s | %s | %s" % (m.get("id"), " ★" if m.get("id") in due else "", m.get("truoc", ""), m.get("sau", ""))
-                     for m in rows[:limit])
 
 
 def arc_prompt(lang: str, tone: str, story: list[dict[str, Any]], ky: int, season: str, tones: Any = None) -> str:
@@ -425,19 +453,31 @@ def writer_prompt(lang: str, scope: dict[str, Any], ky: int, tone: str, arc: dic
                                 ' — "%s"' % e["phan_hoi"]["ghi"] if e["phan_hoi"].get("ghi") else "") for e in fb))
     parts.append("HÔM NAY: %s. Viết KỲ %d." % (season, ky))
     lo, hi = story_length(lang, level)
-    if lang == "vi":      # 1.25.1: báo tiếng Việt — chất liệu là thẻ người đọc đang ôn, không dịch, không từ mới
-        items = _vi_items(scope)
-        parts.append(RULES_VI + "\n9. Độ dài: 3 đoạn, mỗi đoạn %d–%d chữ (truyện là một bài trong số báo)." % (lo, hi))
-        parts.append(("DANH SÁCH THẺ NGƯỜI ĐỌC ĐANG ÔN (#số | mặt trước | mặt sau; ★ = đến hạn ôn hôm nay):\n" + items)
-                     if items else "NGƯỜI ĐỌC CHƯA CHỌN THẺ: viết truyện hay, có thể lồng một kiến thức chung chắc chắn đúng.")
+    if lang == "vi":      # 1.25.2: bản gốc chung (tiếng Việt): kỳ truyện + tin làng hôm nay + mục thứ ba
+        if scope.get("thoi_tiet"):
+            parts.append("THỜI TIẾT HÔM NAY Ở LÀNG (khớp với trời trong vườn): " + scope["thoi_tiet"])
+        parts.append(RULES_VI + "\n10. Độ dài: 3 đoạn, mỗi đoạn %d–%d chữ (truyện là một bài trong số báo)." % (lo, hi))
         parts.append("VÍ DỤ MỘT KỲ HAY (chỉ xem cách kể: hiểu lầm thành chuyện, có vật lạ, móc câu; KHÔNG chép nội dung):\n"
                      + SAMPLE_VI)
+        news = [x for x in scope.get("tin_truoc") or [] if isinstance(x, str) and x.strip()]
+        parts.append(
+            "TIN LÀNG HÔM NAY (in cùng số báo với kỳ truyện): 2–3 tin vặt có thật trong đời sống làng (chợ phiên, mùa màng, "
+            "thời tiết, khách lạ, chuẩn bị lễ hội…), mỗi tin 2–3 câu, có thể nhắc nhẹ tới nhân vật nhưng KHÔNG kể lại truyện. "
+            "Có tin NỐI TIẾP tin mấy hôm trước khi hợp (vd. hôm qua báo sắp có chợ phiên → hôm nay kể chợ phiên ra sao); không "
+            "lặp lại nguyên tin cũ." + (("\nTIN MẤY SỐ TRƯỚC:\n- " + "\n- ".join(news[-8:])) if news else ""))
+        muc3 = scope.get("muc3") or "cot"
+        parts.append(
+            "MỤC THỨ BA (muc3): " + ("THÔNG BÁO CỦA LÀNG — 2–3 mục, mỗi mục một đoạn ngắn bắt đầu bằng \"◆ \" (giờ giấc, việc "
+                                     "chung, lời nhắc); tieu_de kiểu \"Thông báo của làng\"." if muc3 == "thong_bao" else
+                                     "CỘT NGẮN CỦA MỘT NHÂN VẬT (StackChan, bà Hana hoặc ông trưởng làng) — 1–2 đoạn, giọng "
+                                     "riêng của nhân vật, chuyện nhỏ trong ngày; tieu_de kiểu \"Góc của StackChan\"."))
         if problems:
             parts.append("BẢN TRƯỚC BỊ MÁY KIỂM TRA TRẢ LẠI (tránh các lỗi này):\n- " + "\n- ".join(problems[:12]))
         parts.append(
             "Trả về đúng một object JSON theo khuôn: dan_y (muon, tro_ngai, bat_ngo, moc_cau), tieu_de (ngắn, 3–10 chữ), "
-            "doan = 3 đoạn tiếng Việt chữ trơn, dich = [] (để rỗng), tu_moi = [] (để rỗng), nho (tom_tat = 2 câu chuyện gì "
-            "xảy ra; nhan_vat_moi; bo_ngo = chỗ bỏ ngỏ kỳ sau cần giải quyết; da_giai = chỗ bỏ ngỏ cũ kỳ này đã giải quyết).")
+            "doan = 3 đoạn truyện tiếng Việt chữ trơn, nho (tom_tat = 2 câu chuyện gì xảy ra; nhan_vat_moi; bo_ngo = chỗ bỏ ngỏ "
+            "kỳ sau cần giải quyết; da_giai = chỗ bỏ ngỏ cũ kỳ này đã giải quyết), tin = 2–3 tin (tieu_de, noi_dung), muc3 "
+            "(tieu_de, doan).")
         return "\n\n".join(parts)
     parts.append("MẪU NGỮ PHÁP ĐANG HỌC (dùng 1–2 mẫu làm CHẤT LIỆU của chuyện):\n" + _grammar(scope))
     parts.append(RULES + "\n9. Độ dài: đúng 3 đoạn, mỗi đoạn %d–%d %s (truyện là một bài trong số báo, đừng viết dài hơn)." % (
@@ -472,25 +512,24 @@ def editor_prompt(lang: str, scope: dict[str, Any], st: dict[str, Any], story: l
     prev = [e for e in story if e["ky"] < ky]
     last = prev[-1] if prev else None
     fb = [e for e in prev[-3:] if e.get("phan_hoi")]
-    if lang == "vi":      # 1.25.1: truyện tiếng Việt — "trinh_do" chấm độ đúng kiến thức của thẻ
-        items = _vi_items(scope)
+    if lang == "vi":      # 1.25.2: bản gốc chung — "trinh_do" chấm độ dễ kể lại cho người mới học
         return "\n\n".join(x for x in [
-            "Bạn là biên tập viên truyện tiếng Việt cho người đọc đang ôn bài bằng thẻ Anki: khó tính nhưng công bằng.",
+            "Bạn là biên tập viên truyện dài kỳ của báo làng: khó tính nhưng công bằng. Truyện in bằng tiếng Việt và được kể "
+            "lại bằng tiếng Nhật / tiếng Anh cho người mới học.",
             "Chấm kỳ %d dưới đây, mỗi tiêu chí 1–5:\n"
             "- su_kien: có chuyện xảy ra (vấn đề cụ thể, nhân vật xoay xở), không phải cảnh sinh hoạt nhạt\n"
             "- nhan_vat: thoại và hành động đúng tính cách (theo hồ sơ), có cảm xúc\n"
             "- bat_ngo: có chi tiết bất ngờ / buồn cười\n"
             "- moc_cau: kết khiến người đọc muốn đọc kỳ sau, không kết bằng lời khuyên\n"
             "- khop: khớp kỳ trước, không mâu thuẫn chuyện đã xảy ra (kỳ 1 thì chấm 5)\n"
-            "- trinh_do: kiến thức lấy từ thẻ ĐÚNG với mặt sau của thẻ, lồng tự nhiên (không giảng bài)\n"
+            "- trinh_do: dễ kể lại bằng tiếng Nhật / tiếng Anh đơn giản (không chơi chữ tiếng Việt, thành ngữ khó, câu quá dài)\n"
             "- tu_nhien: tiếng Việt tự nhiên, đúng chính tả\n"
-            "loi = lỗi cụ thể (chép câu sai → câu đúng, kể cả kiến thức sai so với thẻ); goi_y = góp ý cụ thể để viết lại "
+            "loi = lỗi cụ thể (chép câu sai → câu đúng); goi_y = góp ý cụ thể để viết lại "
             "hay hơn." % ky,
             BIBLE_VI,
             ("KỲ TRƯỚC (kỳ %d):\n%s" % (last["ky"], _ep_text(last))) if last else "",
             ("NGƯỜI ĐỌC NHẬN XÉT CÁC KỲ TRƯỚC:\n" + "\n".join(
                 "- Kỳ %d: %s %s" % (e["ky"], e["phan_hoi"]["y"], e["phan_hoi"].get("ghi", "")) for e in fb)) if fb else "",
-            ("THẺ NGƯỜI ĐỌC ĐANG ÔN:\n" + items) if items else "",
             ("MÁY KIỂM TRA GỢI Ý:\n- " + "\n- ".join(warnings[:10])) if warnings else "",
             "KỲ TRUYỆN:\n" + json.dumps({"tieu_de": st.get("tieu_de"), "doan": st.get("doan")}, ensure_ascii=False),
             "Trả về đúng một object JSON theo khuôn."] if x)
@@ -673,7 +712,41 @@ def check_story(st: Any, lang: str, level: str, bad_kanji: Any = None) -> tuple[
     nho = st.get("nho") if isinstance(st.get("nho"), dict) else {}
     if not _str(nho.get("tom_tat"), 400):
         warns.append("nho.tom_tat: thiếu tóm tắt")
+    if lang == "vi":      # 1.25.2: tin làng + mục thứ ba của bản gốc (hỏng thì bỏ — báo tự viết tin, không bỏ cả truyện)
+        st["tin"] = clean_news(st.get("tin"), warns)
+        st["muc3"] = clean_muc3(st.get("muc3"), warns)
     return errs, warns
+
+
+def _vi_ok(x: str) -> bool:
+    return bool(x) and not MARK_RE.search(x) and (len(x) < 30 or bool(VI_MARK.search(x)))
+
+
+def clean_news(raw: Any, warns: list[str] | None = None) -> list[dict[str, str]]:
+    """Tin làng của bản gốc: 2–3 tin {tieu_de, noi_dung} tiếng Việt có dấu, không ký tự đánh dấu."""
+    out = []
+    for x in raw if isinstance(raw, list) else []:
+        if not isinstance(x, dict):
+            continue
+        t, n = _str(x.get("tieu_de"), 100), _str(x.get("noi_dung"), 700)
+        if _vi_ok(t) and _vi_ok(n) and len(n) >= 20:
+            out.append({"tieu_de": t, "noi_dung": n})
+        elif warns is not None:
+            warns.append("tin: bỏ một tin hỏng (thiếu chữ / không dấu / có ký tự đánh dấu)")
+    if warns is not None and len(out) < 2:
+        warns.append("tin: cần 2–3 tin làng")
+    return out[:3]
+
+
+def clean_muc3(raw: Any, warns: list[str] | None = None) -> dict[str, Any] | None:
+    if not isinstance(raw, dict):
+        return None
+    t, d = _str(raw.get("tieu_de"), 100), [p for p in _strs(raw.get("doan"), 4, 700) if _vi_ok(p)]
+    if not _vi_ok(t) or not d:
+        if warns is not None:
+            warns.append("muc3: hỏng, bỏ (báo tự viết bài thứ ba)")
+        return None
+    return {"tieu_de": t, "doan": d}
 
 
 def scores_low(edit: Any) -> list[str]:
@@ -745,7 +818,8 @@ def run(job: Any, ky: int, tone: str, season: str) -> dict[str, Any] | None:
                 raise
             job._note("mach_truyen_loi", ly_do=str(e)[:160])
             arc = None
-    # 1. nhà văn
+    # 1. nhà văn (1.25.2: bản gốc tiếng Việt viết cả tin làng hôm nay + mục thứ ba trong cùng lượt gọi)
+    schema = MASTER_SCHEMA if lang == "vi" else STORY_SCHEMA
     job.progress("Gemini đang viết kỳ %d của truyện…" % ky)
     prompt = writer_prompt(lang, job.scope, ky, tone, arc, story, season, tones=tones)
     best: dict[str, Any] | None = None
@@ -756,7 +830,7 @@ def run(job: Any, ky: int, tone: str, season: str) -> dict[str, Any] | None:
         try:
             draft = gen(system, prompt if not problems else writer_prompt(lang, job.scope, ky, tone, arc, story,
                                                                                season, problems, tones),
-                             STORY_SCHEMA, 0.9, thinking="low")
+                             schema, 0.9, thinking="low")
         except Exception as e:      # noqa: BLE001
             if getattr(e, "kind", "") == "key":
                 raise
@@ -771,9 +845,9 @@ def run(job: Any, ky: int, tone: str, season: str) -> dict[str, Any] | None:
     if best is None:
         return None
     warns = check_story(best, lang, level, job.check_kanji if lang == "ja" else None)[1] + job.story_hints(best)
-    # 2. biên tập
+    # 2. biên tập (1.25.2: Truyện "Tiết kiệm" = chỉ nhà văn, không biên tập / viết lại)
     edit: dict[str, Any] = {}
-    if left() > 1:
+    if left() > 1 and getattr(job, "opts", {}).get("story") != "tiet_kiem":
         job.progress("Biên tập đang đọc kỳ %d…" % ky)
         try:
             edit = gen("Bạn là biên tập viên truyện khó tính nhưng công bằng.",
@@ -789,10 +863,13 @@ def run(job: Any, ky: int, tone: str, season: str) -> dict[str, Any] | None:
     if (low or edit.get("loi")) and left() >= 1:
         job.progress("Gemini đang viết lại kỳ %d theo góp ý…" % ky)
         try:
-            again = gen(system, rewrite_prompt(prompt, best, edit), STORY_SCHEMA, 0.8, thinking="low")
+            again = gen(system, rewrite_prompt(prompt, best, edit), schema, 0.8, thinking="low")
             errs2, _w2 = check_story(again, lang, level, job.check_kanji if lang == "ja" else None)
             job._note("viet_lai_truyen", tieu_chi_thap=low, loi=errs2[:12])
             if not errs2:
+                for k in ("tin", "muc3"):        # bản viết lại làm rơi tin làng → giữ tin của bản trước
+                    if lang == "vi" and not again.get(k) and best.get(k):
+                        again[k] = best[k]
                 best = again
                 best["_viet_lai"] = True
         except Exception as e:      # noqa: BLE001
@@ -809,6 +886,190 @@ def run(job: Any, ky: int, tone: str, season: str) -> dict[str, Any] | None:
     best["_lang"], best["_level"] = lang, level
     save_draft(job.base, job.date, ky, best)
     return best
+
+
+# ---------------------------------------------------------------------------
+# 1.25.2: bản gốc chung, kể lại bằng tiếng Nhật / tiếng Anh, thời tiết của làng
+# ---------------------------------------------------------------------------
+
+MASTER_DIR = "ban_goc"       # <thư mục chung>/ban_goc/<ngày>.json
+NEWS_FILE = "tin_lang.json"  # tin làng các ngày trước (nối tin)
+
+
+def master_path(base: str, date: str) -> str:
+    return os.path.join(base, MASTER_DIR, re.sub(r"[^0-9-]", "", date)[:10] + ".json")
+
+
+def clean_master(raw: Any) -> dict[str, Any] | None:
+    if not isinstance(raw, dict) or not isinstance(raw.get("ky"), int) or isinstance(raw.get("ky"), bool):
+        return None
+    t = raw.get("truyen") if isinstance(raw.get("truyen"), dict) else {}
+    doan = _strs(t.get("doan"), 6, 1500)
+    if not doan:
+        return None
+    nho = t.get("nho") if isinstance(t.get("nho"), dict) else {}
+    return {"ngay": _str(raw.get("ngay"), 10), "ky": raw["ky"],
+            "truyen": {"tieu_de": _str(t.get("tieu_de"), 120), "doan": doan, "ky_truoc": _str(t.get("ky_truoc"), 300),
+                       "nho": {"tom_tat": _str(nho.get("tom_tat"), 400), "nhan_vat_moi": _strs(nho.get("nhan_vat_moi"), 6, 120),
+                               "bo_ngo": _strs(nho.get("bo_ngo"), 8, 200), "da_giai": _strs(nho.get("da_giai"), 8, 200)},
+                       "diem": {k: v for k, v in (t.get("diem") or {}).items() if k in CRIT and isinstance(v, int)}
+                       if isinstance(t.get("diem"), dict) else {},
+                       "lang": t.get("lang") if t.get("lang") in ("vi", "ja", "en") else "vi"},
+            "tin": clean_news(raw.get("tin")), "muc3": clean_muc3(raw.get("muc3")),
+            "thoi_tiet": _str(raw.get("thoi_tiet"), 160), "giong": raw.get("giong") if raw.get("giong") in TONES else ""}
+
+
+def load_master(base: str, date: str) -> dict[str, Any] | None:
+    return clean_master(_read(master_path(base, date), None))
+
+
+def save_master(base: str, date: str, m: dict[str, Any]) -> None:
+    _write(master_path(base, date), m)
+    if m.get("tin"):       # nhớ tin làng để mấy số sau nối tiếp
+        hist = _read(os.path.join(base, NEWS_FILE), [])
+        hist = [h for h in (hist if isinstance(hist, list) else []) if isinstance(h, dict) and h.get("ngay") != date]
+        hist.append({"ngay": date, "tin": [x["tieu_de"] + ": " + x["noi_dung"] for x in m["tin"]][:3]})
+        _write(os.path.join(base, NEWS_FILE), hist[-14:])
+
+
+def recent_news(base: str, date: str, days: int = 3) -> list[str]:
+    hist = _read(os.path.join(base, NEWS_FILE), [])
+    rows = [h for h in hist if isinstance(h, dict) and isinstance(h.get("ngay"), str) and h["ngay"] < date] \
+        if isinstance(hist, list) else []
+    out: list[str] = []
+    for h in rows[-days:]:
+        out += ["%s · %s" % (h["ngay"][5:], _str(x, 300)) for x in h.get("tin") or [] if isinstance(x, str)]
+    return out
+
+
+def master_from_episode(e: dict[str, Any], date: str) -> dict[str, Any]:
+    """Kỳ hôm nay đã có trong bộ nhớ (báo khác viết theo cách cũ khi chưa có bản gốc) → làm bản gốc từ kỳ đó."""
+    return {"ngay": date, "ky": e["ky"], "truyen": {"tieu_de": e.get("tieu_de", ""), "doan": list(e.get("nguyen_van") or []),
+                                                     "ky_truoc": "", "nho": {"tom_tat": e.get("tom_tat", ""),
+                                                                             "bo_ngo": e.get("bo_ngo", [])},
+                                                     "diem": e.get("diem") or {}, "lang": "ja" if CJK_RE.search(
+                                                         "".join(e.get("nguyen_van") or [])) else "vi"},
+            "tin": [], "muc3": None, "thoi_tiet": "", "giong": ""}
+
+
+# thời tiết: cùng công thức với web/sky.js (weatherAuto, chế độ giờ thật) → báo nói trời mưa khi vườn đang mưa
+_WEATHER_VI = {"sunny": "nắng", "cloudy": "nhiều mây", "rain": "mưa", "storm": "giông", "snow": "tuyết"}
+THEME_WEATHER = {"winter": {"snow": 0.14}, "tsuyu": {"rain": 2.2}, "noel": {"snow": 0.2}}   # = VIS[id].weather (season.js)
+
+
+def _rand(seed: int) -> float:
+    m = 0xFFFFFFFF
+    x = (((seed ^ 0x9E3779B9) & m) * 0x85EBCA6B) & m
+    x = (((x ^ (x >> 13)) & m) * 0xC2B2AE35) & m
+    return ((x ^ (x >> 16)) & m) / 4294967296
+
+
+def weather_at(day: Any, hour: int, theme: str | None = None) -> str:
+    """Thời tiết của vườn lúc `hour` giờ ngày `day` (datetime.date) — giống hệt sky.js ở chế độ giờ thật."""
+    key = (day.year * 400 + (day.month - 1) * 32 + day.day) * 8 + hour // 3
+    r = _rand(key)
+    month = day.month
+    rainy = 5 <= month <= 10
+    winter = month == 12 or month <= 2
+    table = [["sunny", 0.36 if rainy else 0.5], ["cloudy", 0.24], ["rain", 0.28 if rainy else 0.16],
+             ["storm", 0.08 if rainy else 0.03], ["snow", 0.08 if winter else 0]]
+    bias = THEME_WEATHER.get(theme or "")
+    if bias and bias.get("rain"):
+        table[2][1] *= bias["rain"]
+        table[3][1] *= bias["rain"] ** 0.5
+        table[0][1] /= bias["rain"] ** 0.5
+    if bias and bias.get("snow"):
+        table[4][1] += bias["snow"]
+    total = sum(x[1] for x in table)
+    acc = 0.0
+    for name, w in table:
+        acc += w / total
+        if r < acc:
+            return name
+    return "sunny"
+
+
+def village_weather(day: Any, theme: str | None = None) -> str:
+    """"sáng mưa, chiều nhiều mây" (khung 9–12 giờ và 15–18 giờ của vườn)."""
+    a, b = _WEATHER_VI[weather_at(day, 9, theme)], _WEATHER_VI[weather_at(day, 15, theme)]
+    return ("cả ngày " + a) if a == b else "sáng %s, chiều %s" % (a, b)
+
+
+def retell_prompt(lang: str, scope: dict[str, Any], master: dict[str, Any], problems: list[str] | None = None) -> str:
+    level = scope.get("trinh_do", "A2" if lang == "en" else "N4")
+    lo, hi = story_length(lang, level)
+    col = 2 if lang == "en" else 1
+    names = "\n".join("- %s → %s" % (n[0], n[col]) for n in NAMES)
+    parts = [
+        "KỂ LẠI kỳ %d của truyện dài kỳ dưới đây bằng %s trình độ %s cho người Việt đang học. Đây là cùng một câu chuyện in "
+        "trong báo làng bằng nhiều thứ tiếng: GIỮ ĐÚNG sự việc, nhân vật, lời thoại chính, chi tiết bất ngờ và móc câu cuối; "
+        "không thêm chuyện mới, không bỏ móc câu." % (master.get("ky") or 1, "tiếng Anh" if lang == "en" else "tiếng Nhật",
+                                                       level),
+        "Viết lại cho hợp trình độ: câu ngắn, tự nhiên như sách đọc cho người học; được rút gọn chi tiết phụ. Chỗ nhân vật "
+        "nói nhầm (lời chào, cách nói lịch sự) thì cho nhầm theo kiểu của %s." % ("tiếng Anh" if lang == "en" else
+                                                                             "tiếng Nhật (vd. nhầm kính ngữ)"),
+        "TÊN GỌI (dùng đúng):\n" + names,
+        "Độ dài: đúng %d đoạn như bản gốc, mỗi đoạn %d–%d %s." % (
+            len(master.get("doan") or []) or 3, lo, hi, "từ tiếng Anh" if lang == "en" else "ký tự tiếng Nhật"),
+    ]
+    vocab = _vocab(scope, lang, 300)
+    if vocab:
+        parts.append("TỪ NGƯỜI HỌC ĐÃ HỌC (trình độ %s) — dùng khi hợp, ĐỪNG ép câu:\n%s" % (level, vocab))
+    gram = _grammar(scope, 3)
+    if gram and lang != "en":
+        parts.append("MẪU NGỮ PHÁP ĐANG HỌC (dùng 1–2 mẫu trong lời thoại nếu tự nhiên):\n" + gram)
+    if problems:
+        parts.append("BẢN TRƯỚC BỊ MÁY KIỂM TRA TRẢ LẠI (tránh các lỗi này):\n- " + "\n- ".join(problems[:12]))
+    parts.append("BẢN GỐC:\n" + json.dumps({"tieu_de": master.get("tieu_de"), "doan": master.get("doan")}, ensure_ascii=False))
+    parts.append(
+        "Trả về đúng một object JSON theo khuôn: tieu_de (%s), doan = các đoạn %s, dich = bản dịch tiếng Việt TỰ NHIÊN của "
+        "từng đoạn bạn vừa viết (cùng số phần tử, không có chữ %s; tên riêng viết Latin: Lin, Hana, Stack-chan, quán Kotoba, "
+        "làng Kotoba; không ghi chú trong ngoặc), tu_moi (≤ 2 từ khó ngoài danh sách: w, r = %s, m = nghĩa tiếng Việt)." % (
+            "tiếng Anh, 3–8 từ" if lang == "en" else "tiếng Nhật, ngắn",
+            "tiếng Anh (chữ trơn, không đánh dấu)" if lang == "en" else
+            "tiếng Nhật (chữ Hán + kana, KHÔNG furigana, KHÔNG romaji, không [ ] { } |)",
+            "Anh / Nhật" if lang == "en" else "Nhật", "phiên âm IPA /…/" if lang == "en" else "cách đọc bằng HIRAGANA"))
+    return "\n\n".join(parts)
+
+
+def retell(job: Any, master: dict[str, Any]) -> dict[str, Any] | None:
+    """Kể lại kỳ truyện chung (bản gốc) bằng tiếng của báo `job` (ja / en), một lượt gọi (thử lại một lần nếu máy kiểm tra
+    trả lại). Trả về bản truyện như `run` (để lượt viết số chép nguyên văn + furigana) hoặc None."""
+    lang = getattr(job, "lang", "") or ("en" if job.en else "ja")
+    level = job.scope.get("trinh_do", "A2" if lang == "en" else "N4")
+    ky = int(master.get("ky") or 1)
+    cached = load_draft(job.base, job.date, ky)
+    if cached and cached.get("_ke_lai"):
+        job._note("ke_lai_dung_lai", ky=ky)
+        return cached
+    t = master.get("truyen") or {}
+    src = {"ky": ky, "tieu_de": t.get("tieu_de"), "doan": t.get("doan")}
+    system = ("Bạn là người kể chuyện viết sách đọc %s cho người Việt học trình độ %s: giữ trọn câu chuyện, câu chữ dễ, "
+              "tự nhiên." % ("tiếng Anh" if lang == "en" else "tiếng Nhật", level))
+    problems: list[str] = []
+    for attempt in range(2):
+        job.progress("Gemini đang kể lại kỳ %d bằng %s…" % (ky, "tiếng Anh" if lang == "en" else "tiếng Nhật"))
+        try:
+            st = job._gen(system, retell_prompt(lang, job.scope, src, problems), RETELL_SCHEMA, 0.5, thinking="low")
+        except Exception as e:      # noqa: BLE001
+            if getattr(e, "kind", "") == "key":
+                raise
+            job._note("ke_lai_loi_goi", ly_do=str(e)[:160])
+            return None
+        if isinstance(st, dict):
+            st["nho"] = dict(t.get("nho") or {})
+        errs, warns = check_story(st, lang, level, job.check_kanji if lang == "ja" else None)
+        job._note("ke_lai", lan=attempt + 1, loi=errs[:12], canh_bao=warns[:6])
+        if not errs:
+            st["dich"] = clean_translation(st.get("dich"), len(st["doan"]))
+            st["doan"] = [p.strip() for p in st["doan"]]
+            st["tieu_de"] = st["tieu_de"].strip()
+            st.update(ky=ky, ky_truoc=t.get("ky_truoc") or "", diem=t.get("diem") or {}, _lang=lang, _level=level,
+                      _ke_lai=True)
+            save_draft(job.base, job.date, ky, st)
+            return st
+        problems = errs
+    return None
 
 
 _KEEP_CH = re.compile(r"[^\u3041-\u309f\u30a1-\u30ff\u3400-\u9fff\uf900-\ufaff々〆ヶA-Za-z0-9]")

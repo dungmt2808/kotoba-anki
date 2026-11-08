@@ -39,6 +39,7 @@ import math
 import operator
 import os
 import re
+import shutil
 import socket
 import ssl
 import sys
@@ -1855,13 +1856,41 @@ def no_deck_text(level: str, max_new: int = NO_DECK_NEW, few: int = 0) -> str:
             "nghĩa tiếng Việt) và đánh dấu {表記|よみ|từ} ở chỗ dùng; mọi chữ Hán khác dùng [漢字|かんじ]." % (level, max_new))
 
 
+def master_news(opts: dict[str, Any], lang_name: str) -> str:
+    """1.25.2 "Một làng, một truyện": tin làng + mục thứ ba của bản gốc (tiếng Việt) — mọi báo của làng đăng cùng tin."""
+    tin = [x for x in opts.get("tin_goc") or [] if isinstance(x, dict)]
+    muc3 = opts.get("muc3_goc") if isinstance(opts.get("muc3_goc"), dict) else None
+    if not tin and not muc3:
+        return ""
+    out = ["TIN HÔM NAY CỦA LÀNG (bản gốc tiếng Việt — báo làng in bằng nhiều thứ tiếng, mọi bản đăng cùng tin):"]
+    out += ["- %s: %s" % (x.get("tieu_de", ""), x.get("noi_dung", "")) for x in tin]
+    if tin:
+        out.append("→ Bài tin_lang KỂ LẠI đúng các tin này bằng %s đúng trình độ (được rút gọn, gộp, chọn 2–3 tin); KHÔNG "
+                   "bịa tin khác." % lang_name)
+    if muc3:
+        out.append("MỤC THỨ BA (bản gốc): %s — %s\n→ Bài thứ 3 kể lại mục này bằng %s (giữ ý, giữ dạng ◆ nếu có)." % (
+            muc3.get("tieu_de", ""), " / ".join(muc3.get("doan") or []), lang_name))
+    return "\n".join(out)
+
+
+def story_goc_text(opts: dict[str, Any], lang_name: str) -> str:
+    """Bản kể lại riêng hỏng → lượt viết số tự kể lại truyện chung trong bài truyen."""
+    t = opts.get("story_goc") if isinstance(opts.get("story_goc"), dict) else None
+    if not t:
+        return ""
+    return ("TRUYỆN HÔM NAY (bản gốc tiếng Việt, kỳ %s — mọi báo của làng đăng cùng chuyện): bài truyen phải KỂ LẠI đúng "
+            "chuyện này bằng %s đúng trình độ (giữ sự việc, lời thoại chính, móc câu; câu ngắn):\n%s" % (
+                opts.get("ky"), lang_name, json.dumps({"tieu_de": t.get("tieu_de"), "doan": t.get("doan")}, ensure_ascii=False)))
+
+
 def write_prompt(scope: dict[str, Any], opts: dict[str, Any], story_list: list[dict[str, Any]],
                  history: list[dict[str, Any]], date: datetime.date) -> str:
     level = scope.get("trinh_do", "N5")
     short = bool(opts.get("short"))
     ky = int(opts.get("ky") or 1)
     third = "thong_bao" if date.day % 2 == 0 else "cot"
-    parts = ["HÔM NAY: %s. Số báo %d." % (season_text(date), int(opts.get("so") or 1))]
+    parts = ["HÔM NAY: %s. Số báo %d.%s" % (season_text(date), int(opts.get("so") or 1),
+                                           (" Thời tiết ở làng: %s." % opts["thoi_tiet"]) if opts.get("thoi_tiet") else "")]
     if short:
         parts.append(
             "ĐÂY LÀ SỐ RÚT GỌN (người học còn nhiều số chưa đọc): chỉ 1 bài loai \"tin_lang\" ngắn (2 đoạn), "
@@ -1916,6 +1945,9 @@ def write_prompt(scope: dict[str, Any], opts: dict[str, Any], story_list: list[d
                 ky, ky, "\"\" (kỳ 1)" if ky == 1 else "1 câu tiếng Việt tóm tắt kỳ %d" % (ky - 1),
                 third, "お知らせ, 2–3 mục, mỗi mục là một đoạn bắt đầu bằng ◆, tiêu đề お[知|し]らせ."
                 if third == "thong_bao" else "cột ngắn của một nhân vật (1–2 đoạn), tiêu đề kiểu スタックちゃんの[一言|ひとこと].", ky))
+    for extra in (master_news(opts, "tiếng Nhật"), story_goc_text(opts, "tiếng Nhật")):
+        if extra:
+            parts.append(extra)
     if not short:
         parts.append("dich: mỗi bài thêm \"dich\" = bản dịch tiếng Việt TỰ NHIÊN của từng đoạn (cùng số phần tử với doan; không "
                      "có chữ Nhật — tên riêng viết Latin: Lin, Hana, Stack-chan, quán Kotoba; không furigana, không ghi chú "
@@ -2134,6 +2166,76 @@ def numbering(base: str, date: str) -> tuple[int, int]:
     return n + 1, ky + 1
 
 
+def next_ky(story: list[dict[str, Any]], date: str) -> int:
+    """1.25.2: kỳ truyện của ngày `date` theo bộ nhớ truyện chung (kỳ đã có của chính ngày đó thì dùng lại)."""
+    same = [e for e in story if e.get("ngay") == date and (e.get("nguyen_van") or e.get("tom_tat"))]
+    if same:
+        return int(same[-1]["ky"])
+    return max([int(e["ky"]) for e in story if e.get("ngay") or e.get("nguyen_van")] or [0]) + 1
+
+
+SHARED_FOLDER = "bao_chung"     # 1.25.2: bộ nhớ truyện chung + bản gốc mỗi ngày (truyện + tin làng, tiếng Việt)
+
+
+def ensure_master(client: "Gemini", shared: str, date: str, opts: dict[str, Any],
+                  progress: Callable[[str], None] | None = None) -> tuple[dict[str, Any] | None, list[dict[str, Any]]]:
+    """1.25.2 "Một làng, một truyện": bản gốc hôm nay (kỳ truyện + tin làng + mục thứ ba, tiếng Việt) — viết MỘT lần cho mọi
+    báo; báo đầu tiên trong ngày gọi Gemini, các báo sau đọc lại file. Trả (bản gốc | None, nhật ký các bước)."""
+    ensure_dir(shared)
+    m = story_core.load_master(shared, date)
+    if m:
+        return m, []
+    story = story_core.load_story(shared)
+    today = [e for e in story if e.get("ngay") == date and e.get("nguyen_van")]
+    if today:                   # báo khác đã tự viết kỳ hôm nay khi chưa có bản gốc → dùng kỳ đó (không lệch chuyện)
+        m = story_core.master_from_episode(today[-1], date)
+        story_core.save_master(shared, date, m)
+        return m, [{"buoc": "ban_goc_tu_ky", "ky": m["ky"]}]
+    if opts.get("story") == "tat":
+        return None, []
+    ky = next_ky(story, date)
+    day = datetime.date.fromisoformat(date)
+    scope = {"lang": "vi", "trinh_do": "", "thoi_tiet": opts.get("thoi_tiet") or "",
+             "tin_truoc": story_core.recent_news(shared, date), "muc3": "thong_bao" if day.day % 2 == 0 else "cot"}
+    job = Job(client, shared, date, scope, dict(opts, story_base=shared, master=None), progress)
+    tones = opts.get("tones") or opts.get("tone") or "am"
+    st = None
+    try:
+        st = story_core.run(job, ky, tones, _vi_module().season_text(day))
+    except AIError as e:
+        if e.kind == "key":
+            raise
+        job._note("ban_goc_loi", ly_do=str(e)[:200])
+    if not st:
+        job._note("ban_goc_khong_co")
+        return None, job.log
+    arc = story_core.load_arc(shared)
+    m = {"ngay": date, "ky": ky,
+         "truyen": {"tieu_de": st["tieu_de"], "doan": st["doan"], "ky_truoc": st.get("ky_truoc") or "",
+                    "nho": st.get("nho") or {}, "diem": st.get("diem") or {}, "lang": "vi"},
+         "tin": st.get("tin") or [], "muc3": st.get("muc3"), "thoi_tiet": opts.get("thoi_tiet") or "",
+         "giong": (arc or {}).get("giong", "")}
+    story_core.save_master(shared, date, m)
+    job._note("ban_goc", ky=ky, tieu_de=st["tieu_de"], tin=len(m["tin"]), model=job.model)
+    return story_core.clean_master(m), job.log
+
+
+def migrate_story(shared: str, sources: list[str]) -> str:
+    """1.25.2: lần đầu dùng truyện chung — chép bộ nhớ truyện (truyen.json + truyen_mach.json) của báo đang đọc (tiếng Nhật
+    trước) sang thư mục chung để truyện nối tiếp, không bắt đầu lại từ kỳ 1. Trả về thư mục đã chép (hoặc "")."""
+    if os.path.isfile(os.path.join(shared, story_core.STORY_FILE)):
+        return ""
+    for src in sources:
+        f = os.path.join(src, story_core.STORY_FILE)
+        if os.path.isfile(f) and story_core.load_story(src):
+            ensure_dir(shared)
+            for name in (story_core.STORY_FILE, story_core.ARC_FILE):
+                if os.path.isfile(os.path.join(src, name)):
+                    shutil.copyfile(os.path.join(src, name), os.path.join(shared, name))
+            return src
+    return ""
+
+
 def tts_text(markup: str) -> str:
     """Chữ gửi cho giọng đọc: giữ chữ Hán (để đúng ngữ điệu) trừ số đếm / từ nhiều cách đọc thì dùng kana."""
     return paper.speech_text(markup)
@@ -2193,6 +2295,13 @@ class Job:
         self.lang = scope.get("lang") if scope.get("lang") in ("en", "vi") else "ja"
         self.en = _en_module() if self.lang == "en" else _vi_module() if self.lang == "vi" else None
         self.story: dict[str, Any] | None = None     # 1.23: kỳ truyện đã viết + biên tập (quy trình mới)
+        # 1.25.2 "Một làng, một truyện": bộ nhớ truyện chung (thư mục bao_chung) + bản gốc hôm nay (truyện + tin làng)
+        self.story_base = str(self.opts.get("story_base") or base)
+        self.master = self.opts.get("master") if isinstance(self.opts.get("master"), dict) else None
+        if self.master:         # nhật ký: các bước viết bản gốc (nếu báo này viết) rồi tới các bước của chính báo này
+            self.log = [x for x in self.opts.pop("_master_log", None) or [] if isinstance(x, dict)] or \
+                [{"buoc": "ban_goc_san", "ky": self.master.get("ky")}]
+        self.opts.pop("_master_log", None)
 
     def check_kanji(self, text: str) -> list[str]:
         return _bad_kanji(text)
@@ -2334,10 +2443,17 @@ class Job:
         t0 = time.time()
         level = self.scope.get("trinh_do", "N5")
         ensure_dir(self.base)
-        story = story_core.load_story(self.base)        # 1.23: đọc cả định dạng cũ, thêm nguyên văn / chỗ bỏ ngỏ
+        story = story_core.load_story(self.story_base)  # 1.23: đọc cả định dạng cũ, thêm nguyên văn / chỗ bỏ ngỏ
         history = _read(os.path.join(self.base, "lich_su.json"), [])
         history = history if isinstance(history, list) else []
         so, ky = numbering(self.base, self.date)
+        if self.story_base != self.base:                # 1.25.2: số kỳ theo truyện chung, không theo từng báo
+            ky = next_ky(story, self.date)
+        if self.master:
+            ky = int(self.master["ky"])
+            self.opts.setdefault("thoi_tiet", self.master.get("thoi_tiet") or "")
+            self.opts["tin_goc"] = self.master.get("tin") or []
+            self.opts["muc3_goc"] = self.master.get("muc3")
         self.opts.setdefault("so", so)
         mode = self.opts.get("story") if self.opts.get("story") in story_core.MODES else "hay"
         if self.opts.get("short"):
@@ -2352,8 +2468,31 @@ class Job:
         system = en.system_prompt(level) if en else system_prompt(level)
         result: dict[str, Any] = {"ok": False, "date": self.date, "so": self.opts["so"], "lang": self.lang}
         try:
-            if mode == "hay" and self.opts.get("ky"):
+            if self.master and self.opts.get("ky") and self.master.get("truyen"):
+                # 1.25.2: truyện chung hôm nay — báo tiếng Việt in thẳng bản gốc, báo Nhật / Anh kể lại theo trình độ
+                t = self.master["truyen"]
+                if self.lang == "vi" and t.get("lang", "vi") == "vi":
+                    self.story = {"tieu_de": t["tieu_de"], "doan": list(t["doan"]), "dich": None, "tu_moi": [],
+                                  "ky": int(self.master["ky"]), "ky_truoc": t.get("ky_truoc") or "", "nho": t.get("nho") or {},
+                                  "diem": t.get("diem") or {}}
+                else:
+                    try:
+                        self.story = story_core.retell(self, self.master)
+                    except AIError as e:
+                        if e.kind == "key":
+                            raise
+                        self._note("ke_lai_bo_qua", ly_do=str(e)[:200])
+                        self.story = None
+                    if not self.story:
+                        self.opts["story_goc"] = t          # lượt viết số tự kể lại trong bài truyen
+                        self._note("ke_lai_trong_so")
+                if self.story:
+                    self.opts["story_plain"] = {k: self.story[k] for k in ("tieu_de", "doan")}
+                    self.opts["story_plain"]["tu_moi"] = self.story.get("tu_moi") or []
+                    result["story"] = {"diem": self.story.get("diem") or {}, "viet_lai": False, "chung": True}
+            elif mode == "hay" and self.opts.get("ky") and self.story_base == self.base:
                 # 1.23: mạch truyện → nhà văn → biên tập → viết lại (story_core); lỗi / hết lượt → truyện viết chung như cũ
+                # (1.25.2: chỉ khi không có truyện chung — báo Gemini dùng bản gốc ở trên)
                 try:
                     self.story = story_core.run(self, int(self.opts["ky"]),
                                                 self.opts.get("tones") or self.opts.get("tone") or "am",
@@ -2465,7 +2604,13 @@ class Job:
         _write_json(issue_path(self.base, self.date), out)
         sb = next((b for b in out["bai"] if b.get("loai") == "truyen"), None)
         ky = sb.get("ky") if sb else None
-        if ky and isinstance(ky, int):
+        if ky and isinstance(ky, int) and self.master and self.master.get("truyen") and int(self.master["ky"]) == ky:
+            # 1.25.2: bộ nhớ truyện chung ghi BẢN GỐC (cùng một kỳ cho mọi báo; báo thứ hai cùng ngày ghi lại y hệt)
+            t = self.master["truyen"]
+            story_core.save_episode(self.story_base, self.date, ky,
+                                    {"doan": t["doan"], "nho": t.get("nho") or {}, "diem": t.get("diem") or {}},
+                                    t.get("tieu_de") or "")
+        elif ky and isinstance(ky, int):
             # 1.23: bộ nhớ truyện ghi nguyên văn (chữ trơn), chỗ bỏ ngỏ, điểm biên tập — kỳ sau viết tiếp không mâu thuẫn
             ep: dict[str, Any] = dict(self.story) if self.story else {}
             ep["doan"] = [paper.surface(p) for p in sb.get("doan") or [] if isinstance(p, str)]
@@ -2474,7 +2619,7 @@ class Job:
                 nho["tom_tat"] = raw["tom_tat_truyen"].strip()[:300]
             ep["nho"] = nho
             if nho.get("tom_tat"):
-                story_core.save_episode(self.base, self.date, ky, ep, paper.surface(sb.get("tieu_de") or ""))
+                story_core.save_episode(self.story_base, self.date, ky, ep, paper.surface(sb.get("tieu_de") or ""))
         words = [paper.norm_key(k) for t in _all_jp(out) for k in paper.keys(t)]
         history = [h for h in history if isinstance(h, dict) and h.get("ngay") != self.date]
         history.append({"ngay": self.date, "so": out["so"], "mau": out["mau_cau"],
@@ -2897,6 +3042,27 @@ def log_summary(log: dict[str, Any] | None) -> list[str]:
             out.append("Bản soát lần 2 không đạt, dùng bản trước khi soát (đã sạch lỗi máy).")
         elif b == "soat_bo_qua":
             out.append("Bỏ qua soát lần 2: %s" % s.get("ly_do", ""))
+        # 1.25.2: truyện chung (bản gốc) + kể lại
+        elif b == "ban_goc":
+            out.append("Truyện chung hôm nay: kỳ %s「%s」 + %s tin làng (%s)." % (s.get("ky", "?"), s.get("tieu_de", ""),
+                                                                            s.get("tin", 0), s.get("model", "?")))
+        elif b == "ban_goc_san":
+            out.append("Dùng truyện chung đã viết hôm nay (kỳ %s)." % s.get("ky", "?"))
+        elif b == "ban_goc_khong_co":
+            out.append("Chưa viết được truyện chung hôm nay → báo tự viết truyện.")
+        elif b == "mach_truyen":
+            out.append("Lập mạch truyện đợt mới「%s」(%s kỳ)." % (s.get("ten", ""), s.get("so_ky", "?")))
+        elif b == "bien_tap":
+            d = s.get("diem") or {}
+            out.append("Biên tập chấm truyện: " + ", ".join("%s %s" % (k, v) for k, v in d.items()) if d else
+                       "Biên tập đã đọc truyện.")
+        elif b == "viet_lai_truyen":
+            out.append("Viết lại truyện theo góp ý của biên tập.")
+        elif b == "ke_lai":
+            out.append("Kể lại truyện bằng tiếng của báo (lần %s): %s." % (
+                s.get("lan", 1), "đạt" if not s.get("loi") else "%d lỗi máy" % len(s.get("loi") or [])))
+        elif b == "ke_lai_trong_so":
+            out.append("Kể lại riêng chưa được → kể lại ngay trong lượt viết số.")
         elif b == "ket_qua":
             if auto:
                 out.append("Máy tự sửa (không cần gọi Gemini): " + "; ".join(auto[:6]) + ("…" if len(auto) > 6 else ""))
