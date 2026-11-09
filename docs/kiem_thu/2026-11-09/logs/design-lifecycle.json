@@ -1,0 +1,58 @@
+{
+  "guarded": {
+    "open": true,
+    "tip": "Bấm Esc lần nữa để bỏ, không lưu hình này."
+  },
+  "created": {
+    "id": "c1",
+    "coins": 19800,
+    "items": {
+      "c1": {
+        "name": "Đèn audit",
+        "size": 16,
+        "kind": "ground",
+        "fx": "none"
+      }
+    }
+  },
+  "renamePrice": {
+    "price": 0,
+    "label": "Lưu sửa · miễn phí"
+  },
+  "renamed": {
+    "coins": 19800,
+    "item": {
+      "name": "Đèn đã sửa tên",
+      "size": 16,
+      "kind": "ground",
+      "fx": "none"
+    }
+  },
+  "paintPrice": 50,
+  "imported": {
+    "before": 19750,
+    "coins": 19550,
+    "id": "c2",
+    "same": true,
+    "peek": {
+      "t": "m",
+      "name": "Đèn đã sửa tên",
+      "size": 16,
+      "kind": "ground",
+      "fx": "none",
+      "px": "119.k16.k119.",
+      "price": 200
+    }
+  },
+  "builtin": {
+    "ine": {
+      "error": "Không tìm thấy thiết kế này."
+    },
+    "lamp": {
+      "error": "Không tìm thấy thiết kế này."
+    },
+    "neko": {
+      "error": "Không tìm thấy thiết kế này."
+    }
+  }
+}

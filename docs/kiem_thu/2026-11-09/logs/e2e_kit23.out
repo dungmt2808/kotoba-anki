@@ -1,0 +1,13 @@
+== số Claude Code (kotoba_daily 2.3) có bản dịch
+  ✓ mỗi đoạn (10 đoạn) có nút Dịch
+  ✓ bản dịch ẩn sẵn
+  ✓ nút đầu bảng là "Hiện bản dịch" (không phải "Dịch số này" của Gemini): Hiện bản dịch
+  ✓ bấm Dịch ở đoạn đầu truyện: hiện đúng bản dịch đoạn đó
+  ✓ số không có giọng đọc: gợi ý nói rõ chưa có giọng đọc (không còn ghi "▶ để nghe"): Bấm từ gạch chân để tra nghĩa. Gạch liền: từ đã học. Gạch chấm: từ mới. Số này chưa có giọng đọc từng đoạn (cần VOICEVOX). Dịch: xem bản dịch.
+  ✓ Hiện bản dịch: cả số
+== số có giọng đọc VOICEVOX (bao/2026-11-01 của repo) + bản dịch: nút ▶ vẫn còn cạnh nút Dịch
+  ✓ Kệ báo có số hôm nay (09/11)
+  ✓ số có giọng đọc: gợi ý "▶ để nghe": Bấm từ gạch chân để tra nghĩa. Gạch liền: từ đã học. Gạch chấm: từ mới. ▶ để nghe. Dịch: xem bản dịch.
+  ✓ mỗi đoạn có cả ▶ lẫn Dịch (đoạn / có ▶ / có Dịch: 8 / 8 / 8)
+  ✓ bấm ▶ đoạn đầu truyện → phát đúng file VOICEVOX: [["file","/tmp/kb_kit23_9611/bao/2026-11-09/audio/bai_3_1.wav",1]]
+KẾT QUẢ: 10/10 đạt

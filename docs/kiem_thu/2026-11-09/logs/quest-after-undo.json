@@ -1,0 +1,92 @@
+{
+  "before": {
+    "coins": 124,
+    "stats": {
+      "reviews": 8,
+      "streak": 1,
+      "day": 0
+    },
+    "quest": {
+      "day": 0,
+      "list": [
+        {
+          "id": "0-0",
+          "kind": "new",
+          "reward": 20,
+          "target": 10,
+          "text": "Gieo 10 hạt mới (học 10 thẻ mới)"
+        },
+        {
+          "id": "0-1",
+          "kind": "streak",
+          "reward": 20,
+          "target": 10,
+          "text": "Tưới liền 10 cây không bấm “Lại”"
+        },
+        {
+          "id": "0-2",
+          "kind": "win",
+          "reward": 20,
+          "target": 1,
+          "text": "Thắng 1 ván mini-game bất kỳ"
+        }
+      ],
+      "progress": {
+        "new": 8,
+        "stage": 8,
+        "streak": 10,
+        "streak_cur": 10
+      },
+      "done": [],
+      "chest": false,
+      "chest_item": null
+    }
+  },
+  "after": {
+    "coins": 144,
+    "stats": {
+      "reviews": 8,
+      "streak": 1,
+      "day": 0
+    },
+    "quest": {
+      "day": 0,
+      "list": [
+        {
+          "id": "0-0",
+          "kind": "new",
+          "reward": 20,
+          "target": 10,
+          "text": "Gieo 10 hạt mới (học 10 thẻ mới)"
+        },
+        {
+          "id": "0-1",
+          "kind": "streak",
+          "reward": 20,
+          "target": 10,
+          "text": "Tưới liền 10 cây không bấm “Lại”"
+        },
+        {
+          "id": "0-2",
+          "kind": "win",
+          "reward": 20,
+          "target": 1,
+          "text": "Thắng 1 ván mini-game bất kỳ"
+        }
+      ],
+      "progress": {
+        "games": 1,
+        "new": 8,
+        "stage": 8,
+        "streak": 10,
+        "streak_cur": 10
+      },
+      "done": [
+        "0-1"
+      ],
+      "chest": false,
+      "chest_item": null
+    }
+  },
+  "delta": 20
+}

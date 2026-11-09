@@ -1,0 +1,68 @@
+== báo muốn nhận: máy đã có báo tiếng Anh (1.19.0) → tick sẵn cả hai
+  ✓ mở hồ sơ lần đầu: ghi gemini_langs = ["ja", "en"] một lần
+== đang xem deck tiếng Anh: hòm thư cộng cả hai báo, mở bảng → báo tiếng Nhật (có số chưa đọc)
+  ✓ hòm thư: 2 số tiếng Nhật + 1 số tiếng Anh = {"enabled":true,"unread":3,"latest":"2026-11-03","dict_done":0,"dict_total":5,"lang":"ja","source":"gemini","ai_busy":false,"dict_ok":true}
+  ✓ chip “Báo mới 3”
+== Kệ báo: chuyển sang báo tiếng Anh
+  ✓ mở kệ báo (báo tiếng Nhật, không theo deck đang xem) + nút chuyển báo
+  ✓ kệ báo tiếng Nhật: 2 số
+  ✓ nút: Báo tiếng Nhật · 2 mới* | Báo tiếng Anh · 1 mới (không còn nhãn “Đọc báo:”)
+  ✓ không còn nút “Theo deck đang xem”
+  ✓ bấm “Báo tiếng Anh” → kệ báo tiếng Anh (1 số)
+  ✓ đang đọc báo tiếng Anh
+  ✓ đầu báo: The Garden Gazette
+  ✓ ngày + số kiểu tiếng Anh: Tuesday, 3 November 2026No. 1
+  ✓ bài + câu hỏi gắn lang="en"
+  ✓ không có nút Ẩn furigana, không có furigana
+  ✓ 24 chỗ bấm tra từ (máy tự nối)
+  ✓ nhãn bài: Tin làng | Truyện dài kỳ · Kỳ 1 | Thông báo
+  ✓ bấm “dropped” → drop /drɒp/ làm rơi (từ mới): {"w":"drop","r":"/drɒp/","m":"làm rơi","note":"Từ mới trong số này","sel":"dropped"}
+  ✓ bấm “letters” → letter (lá thư, đã học ở deck): {"sel":"letters","w":"letter","m":"lá thư","note":"Đã học ở deck đang học · Cây trong vườn: Hạt giống"}
+  ✓ đoạn không có audio → giọng máy en_US: TTSTag(field_text='Yesterday afternoon, the weather was cool and bright in Kotoba Village.
+== luyện tập
+  ✓ câu hỏi “What did Linh drop…” chọn “A cup” → đúng
+  ✓ câu chép tiếng Anh: đếm từ, ô gõ tiếng Anh: {"len":"7 từ","ph":"Gõ câu vừa nghe (hoa thường, dấu câu không tính)","lang":"en","hint":[]}
+  ✓ ▶ Chậm phát bản chậm của báo tiếng Anh: ser_files/bao_gemini_en/bao/2026-11-03/audio/ct_1_cham.wav')
+  ✓ gõ chữ thường, không dấu câu → đúng
+  ✓ gõ sai một từ → chưa đúng, hiện câu đúng
+  ✓ câu đúng hiện bằng chữ thường (không lộ đánh dấu ||): Please wait at the shop.Câu này sẽ quay lại để ôn sau 1 ngày.
+  ✓ đúng ngay lần đầu: +2 (câu hỏi) +2 (câu chép) = +4 xu (ví +4, kể cả nhiệm vụ)
+  ✓ đọc / làm số tiếng Anh 03/11 ghi vào khoá riêng, số tiếng Nhật cùng ngày vẫn chưa đọc: {"en":{"q":{"1":1},"ct":{"0":1,"2":0},"coins":4,"bonus":false},"ja":false,"miss":["shop"],"q":["p:2026-11-03:2"],"col":["kotoba_batake_paper_en"]}
+  ✓ chép sai → ghi từ chép sai (shop) + hàng ôn trong khoá kotoba_batake_paper_en
+  ✓ đọc xong số tiếng Anh: vẫn ở báo tiếng Anh (không tự nhảy), hòm thư còn 2 số tiếng Nhật: {"enabled":true,"unread":2,"latest":"2026-11-03","dict_done":0,"dict_total":5,"lang":"en","source":"gemini","ai_busy":false,"dict_ok":true}
+== chỉ tick tiếng Nhật
+  ✓ hòm thư chỉ tính báo tiếng Nhật, kể cả khi đang xem deck tiếng Anh
+  ✓ kệ báo tiếng Nhật
+  ✓ không có nút chuyển báo (chỉ một báo)
+== deck ngôn ngữ khác (tiếng Hàn): báo vẫn bình thường
+  ✓ chip Báo không đổi khi xem deck tiếng Hàn: {"enabled":true,"unread":2,"latest":"2026-11-03","dict_done":0,"dict_total":5,"lang":"ja","source":"gemini","ai_busy":false,"dict_ok":true}
+  ✓ tab Báo: 畑新聞 (không còn màn “Báo chưa hỗ trợ”)
+  ✓ không có chữ “chưa hỗ trợ”
+== chỉ tick tiếng Anh, xem deck tiếng Nhật
+  ✓ chỉ báo tiếng Anh (đã đọc hết): {"enabled":true,"unread":0,"latest":null,"dict_done":0,"dict_total":5,"lang":"en","source":"gemini","ai_busy":false,"dict_ok":true}
+  ✓ tab Báo: The Garden Gazette dù đang xem deck tiếng Nhật
+== tab Nguồn báo
+  ✓ thẻ Gemini: một khối cho mỗi báo đã tick
+  ✓ Báo muốn nhận (1.25.2: thêm Chỉ tiếng Việt): Tiếng Nhật* | Tiếng Anh* | Chỉ tiếng Việt
+  ✓ khối báo tiếng Nhật: {"h":"Báo tiếng Nhật畑新聞","lv":"N5,N4*,N3,N2,N1","src":"Mọi deck*,Chọn deck,Không dùng deck"}
+  ✓ khối báo tiếng Anh: {"h":"Báo tiếng AnhThe Garden Gazette","lv":"A1,A2*,B1,B2,C1","src":"Mọi deck*,Chọn deck,Không dùng deck"}
+  ✓ không còn chữ “deck đang xem”
+  ✓ chọn B1 → lưu gemini_level_en, báo tiếng Nhật giữ N4: B1,N4
+== chọn deck cho báo tiếng Anh
+  ✓ bấm “Chọn deck” → danh sách deck
+  ✓ chỉ deck có note tiếng Anh, kèm số note:  F8 note |  F::Tiếng Anh Basic8 note |  G8 note |  G::Tiếng Anh đầy đủ8 note
+  ✓ tick một deck
+  ✓ lưu vào khoá collection kotoba_batake_paper_src: {"en":{"decks":[1794220480339],"mode":"deck"}}
+  ✓ deck đã chọn < 10 từ (1.25.1): vẫn viết theo trình độ, 8 từ đã có gửi kèm: [true,8,8]
+  ✓ khối báo tiếng Anh có nút "Không dùng deck" (1.25.1)
+  ✓ tối đa 5 deck: các ô còn lại bị khoá [5,0]
+  ✓ bấm “Mọi deck” → bỏ chọn deck
+== bỏ tick tiếng Anh ở tab Nguồn báo
+  ✓ chỉ còn khối báo tiếng Nhật
+  ✓ lưu gemini_langs = ["ja"]
+  ✓ không tràn ngang
+== lỗi
+  ✓ không có lỗi JS
+  ✓ nhật ký lỗi add-on trống
+
+KẾT QUẢ: 55/55 đạt

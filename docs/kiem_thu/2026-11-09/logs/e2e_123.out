@@ -1,0 +1,81 @@
+== mục 3: lên 1.23 khi đang dùng Claude Code
+  ✓ lần đầu chạy 1.23: nguồn đã xác nhận = Claude Code (nguồn đang dùng)
+  ✓ đang dùng Claude Code: Gemini không viết
+== đường 1: bấm "Dùng Gemini cho báo tiếng Nhật"
+  ✓ thẻ Gemini có nút "Dùng Gemini cho báo tiếng Nhật"
+  ✓ nguồn báo tiếng Nhật thành Gemini
+  ✓ KHÔNG tự viết ngay (1.22.8: viết luôn) — lượt viết: 0
+  ✓ báo tiếng Nhật chờ "Bắt đầu viết" (vì vừa chuyển nguồn) [["ja"],["ja"]]
+  ✓ thẻ Gemini hiện khối "Chuyển sang Gemini · … Bắt đầu viết"
+== mục 2: thẻ Gemini chỉ chọn deck
+  ✓ không còn "Giáo trình" / "theo giáo trình", có Mọi deck / Chọn deck
+  ✓ Trình độ N5–N1 chọn được
+  ✓ làm mới vườn / mở hồ sơ (tự viết sau 8 giây): vẫn chờ
+== đường 2: "Đổi khoá" khi đang dùng Claude Code
+  ✓ đổi khoá đúng: nguồn vẫn là Claude Code (1.22.8: tự chuyển sang Gemini)
+  ✓ không viết số nào
+== đường 3: thư mục kotoba_daily tạm không thấy (bao_source "auto")
+  ✓ mất thư mục: nguồn thành Gemini nhưng không tự viết
+  ✓ thư mục có lại → về Claude Code
+== Bắt đầu viết
+  ✓ bấm Bắt đầu viết → Gemini viết
+  ✓ viết đúng một số (1)
+  ✓ nguồn đã xác nhận = Gemini
+  ✓ đã có số hôm nay: không viết thêm
+  ✓ người đã xác nhận Gemini: tự viết như bình thường (hôm sau / mở lại)
+== mục 4: Kệ báo gộp hai nguồn
+  ✓ kệ có số của cả Claude Code và Gemini (2026-11-09@gemini, 2026-11-03@gemini, 2026-11-02@gemini, 2026-11-01@claude)
+  ✓ số Claude Code 01/11 vẫn trong kệ khi đang dùng Gemini (1.22.8: biến mất)
+  ✓ mỗi số ghi nguồn (nhãn Claude Code / Gemini)
+  ✓ mở số Claude Code từ kệ khi đang dùng Gemini
+  ✓ tiến độ số Claude Code ghi đúng chỗ theo nguồn (mặc định claude) ["claude",false,true]
+  ✓ trả lời câu hỏi số Claude Code: xu không giảm (0 → 2)
+== mục 5b: số Gemini cũ thiếu nghĩa
+  ✓ mở số 30/10 từ kệ (viết trước 1.23, phạm vi đã đổi)
+  ✓ từ có trong deck: có nghĩa (tìm trong deck, 1.22.8: trống) — 学生: học sinh
+  ✓ từ không có ở đâu (cả deck lẫn kotoba_daily): vẫn có cách đọc うちゅうせん
+  ✓ nghĩa tìm được ghi bổ sung vào chính số đó: 先生, 学生
+  ✓ bấm 宇宙船: hiện cách đọc + "Chưa có nghĩa trong deck"
+== 5d: bản dịch ẩn sẵn, Dịch số này; 5c: Kỳ này hay / Nhạt
+  ✓ mở số hôm nay từ kệ (có bản dịch)
+  ✓ mỗi đoạn có nút Dịch, bản dịch ẩn sẵn
+  ✓ bấm Dịch: hiện bản dịch đoạn đó
+  ✓ nút "Hiện bản dịch" cạnh "Ẩn furigana"
+  ✓ Hiện bản dịch: cả số hiện bản dịch
+  ✓ dưới truyện có "Kỳ này hay / Nhạt" + ô ghi một dòng
+  ✓ bấm Nhạt (số kiểu cũ, không "truyen_chung") → ghi nhận xét vào truyen.json của báo đó (kỳ sau Gemini đọc) [{"y":"nhat","ghi":"muốn thêm スタックちゃん"}]
+  ✓ nút Nhạt sáng lên sau khi ghi
+  ✓ số cũ chưa có bản dịch
+  ✓ nút "Dịch số này"
+  ✓ Dịch số này → Gemini (giả) dịch, số hiện nút Dịch
+  ✓ bản dịch ghi vào bao.json của số đó
+== KB-01: gõ nhật ký rồi đóng cửa sổ vườn ngay
+  ✓ mở Lịch hoa · hôm nay
+  ✓ nhật ký còn đủ phần vừa gõ: "NHẬT KÝ ĐÃ LƯU DÒNG VỪA VIẾT" (1.22.8: mất " DÒNG VỪA VIẾT")
+  ✓ bản nháp luyện viết còn nguyên: "いい天気です。"
+== KB-03: ôn rồi Undo ba lần
+  ✓ mỗi lượt ôn được cộng xu: 5, 5, 5
+  ✓ Undo: revlog về như cũ (0 → 0)
+  ✓ sau 3 vòng ôn + Undo: xu và số lần tưới về như cũ [2,0,0] → [2,0,0] (1.22.8: +9 xu)
+  ✓ lần bù xu điện thoại sau Undo không trả lại xu cho lượt đã Undo
+== giao diện ôn buổi tối
+  ✓ bảng Giao diện: không còn "Ôn buổi tối" / "Đêm vườn"
+  ✓ config cũ "Ôn buổi tối" → bảng ôn Vàng vườn
+  ✓ chậu cây lúc 22 giờ đủ sáng: độ sáng trung bình 98 (1.22.8 đo được ~45)
+  ✗ nhật ký lỗi add-on trống: giọng đọc Gemini cho câu chép: AIError: Không kết nối được tới Gemini (kiểm tra mạng): Tunnel connection failed: 403 Forbidden
+  ✓ không có lỗi JS
+== Màn chính (1.24: bỏ Ngắm cảnh — vùng dưới chớp xanh, người dùng thấy không cần)
+  ✓ không còn Ngắm cảnh: phím V không mở gì, không còn nút Ngắm
+  ✓ bấm vào ngôi nhà ở màn chính → mở Nhà & Cửa hàng như 1.22
+  ✓ ⚙ Giao diện có nhóm Màn chính: Cỡ cảnh, Cảnh hiện
+  ✓ Cỡ cảnh Lớn: dải cảnh cao hơn (304 → 532 px)
+  ✓ lưu vào config (ui.scene = large)
+  ✗ nhật ký lỗi add-on vẫn trống sau phần Màn chính: giọng đọc Gemini cho câu chép: AIError: Không kết nối được tới Gemini (kiểm tra mạng): Tunnel connection failed: 403 Forbidden
+  ✓ không có lỗi JS
+== KB-02: hồ sơ Anki mới
+  ✓ đã mở hồ sơ mới (0 note)
+  ✓ hồ sơ mới: 0 xu, chưa có nhà (1.22.8: 12.345 xu, nhà cấp 7) — [0,0]
+  ✓ hồ sơ mới: không nhận tiến độ đọc báo của hồ sơ khác
+  ✓ về hồ sơ cũ: ví còn nguyên ["Test",12345,7] (trước: [5000,7])
+
+KẾT QUẢ: 63/65 đạt

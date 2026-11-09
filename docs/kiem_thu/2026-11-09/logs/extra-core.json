@@ -1,0 +1,1376 @@
+{
+  "roundtrips": [
+    {
+      "size": 16,
+      "kind": "ground",
+      "fx": "none",
+      "ok": true
+    },
+    {
+      "size": 16,
+      "kind": "ground",
+      "fx": "sway",
+      "ok": true
+    },
+    {
+      "size": 16,
+      "kind": "ground",
+      "fx": "bounce",
+      "ok": true
+    },
+    {
+      "size": 16,
+      "kind": "ground",
+      "fx": "float",
+      "ok": true
+    },
+    {
+      "size": 16,
+      "kind": "ground",
+      "fx": "sparkle",
+      "ok": true
+    },
+    {
+      "size": 16,
+      "kind": "ground",
+      "fx": "glow",
+      "ok": true
+    },
+    {
+      "size": 16,
+      "kind": "ground",
+      "fx": "hearts",
+      "ok": true
+    },
+    {
+      "size": 16,
+      "kind": "ground",
+      "fx": "notes",
+      "ok": true
+    },
+    {
+      "size": 16,
+      "kind": "ground",
+      "fx": "bubbles",
+      "ok": true
+    },
+    {
+      "size": 16,
+      "kind": "ground",
+      "fx": "pulse",
+      "ok": true
+    },
+    {
+      "size": 16,
+      "kind": "ground",
+      "fx": "spin",
+      "ok": true
+    },
+    {
+      "size": 16,
+      "kind": "floor",
+      "fx": "none",
+      "ok": true
+    },
+    {
+      "size": 16,
+      "kind": "floor",
+      "fx": "sway",
+      "ok": true
+    },
+    {
+      "size": 16,
+      "kind": "floor",
+      "fx": "bounce",
+      "ok": true
+    },
+    {
+      "size": 16,
+      "kind": "floor",
+      "fx": "float",
+      "ok": true
+    },
+    {
+      "size": 16,
+      "kind": "floor",
+      "fx": "sparkle",
+      "ok": true
+    },
+    {
+      "size": 16,
+      "kind": "floor",
+      "fx": "glow",
+      "ok": true
+    },
+    {
+      "size": 16,
+      "kind": "floor",
+      "fx": "hearts",
+      "ok": true
+    },
+    {
+      "size": 16,
+      "kind": "floor",
+      "fx": "notes",
+      "ok": true
+    },
+    {
+      "size": 16,
+      "kind": "floor",
+      "fx": "bubbles",
+      "ok": true
+    },
+    {
+      "size": 16,
+      "kind": "floor",
+      "fx": "pulse",
+      "ok": true
+    },
+    {
+      "size": 16,
+      "kind": "floor",
+      "fx": "spin",
+      "ok": true
+    },
+    {
+      "size": 16,
+      "kind": "wall",
+      "fx": "none",
+      "ok": true
+    },
+    {
+      "size": 16,
+      "kind": "wall",
+      "fx": "sway",
+      "ok": true
+    },
+    {
+      "size": 16,
+      "kind": "wall",
+      "fx": "bounce",
+      "ok": true
+    },
+    {
+      "size": 16,
+      "kind": "wall",
+      "fx": "float",
+      "ok": true
+    },
+    {
+      "size": 16,
+      "kind": "wall",
+      "fx": "sparkle",
+      "ok": true
+    },
+    {
+      "size": 16,
+      "kind": "wall",
+      "fx": "glow",
+      "ok": true
+    },
+    {
+      "size": 16,
+      "kind": "wall",
+      "fx": "hearts",
+      "ok": true
+    },
+    {
+      "size": 16,
+      "kind": "wall",
+      "fx": "notes",
+      "ok": true
+    },
+    {
+      "size": 16,
+      "kind": "wall",
+      "fx": "bubbles",
+      "ok": true
+    },
+    {
+      "size": 16,
+      "kind": "wall",
+      "fx": "pulse",
+      "ok": true
+    },
+    {
+      "size": 16,
+      "kind": "wall",
+      "fx": "spin",
+      "ok": true
+    },
+    {
+      "size": 24,
+      "kind": "ground",
+      "fx": "none",
+      "ok": true
+    },
+    {
+      "size": 24,
+      "kind": "ground",
+      "fx": "sway",
+      "ok": true
+    },
+    {
+      "size": 24,
+      "kind": "ground",
+      "fx": "bounce",
+      "ok": true
+    },
+    {
+      "size": 24,
+      "kind": "ground",
+      "fx": "float",
+      "ok": true
+    },
+    {
+      "size": 24,
+      "kind": "ground",
+      "fx": "sparkle",
+      "ok": true
+    },
+    {
+      "size": 24,
+      "kind": "ground",
+      "fx": "glow",
+      "ok": true
+    },
+    {
+      "size": 24,
+      "kind": "ground",
+      "fx": "hearts",
+      "ok": true
+    },
+    {
+      "size": 24,
+      "kind": "ground",
+      "fx": "notes",
+      "ok": true
+    },
+    {
+      "size": 24,
+      "kind": "ground",
+      "fx": "bubbles",
+      "ok": true
+    },
+    {
+      "size": 24,
+      "kind": "ground",
+      "fx": "pulse",
+      "ok": true
+    },
+    {
+      "size": 24,
+      "kind": "ground",
+      "fx": "spin",
+      "ok": true
+    },
+    {
+      "size": 24,
+      "kind": "floor",
+      "fx": "none",
+      "ok": true
+    },
+    {
+      "size": 24,
+      "kind": "floor",
+      "fx": "sway",
+      "ok": true
+    },
+    {
+      "size": 24,
+      "kind": "floor",
+      "fx": "bounce",
+      "ok": true
+    },
+    {
+      "size": 24,
+      "kind": "floor",
+      "fx": "float",
+      "ok": true
+    },
+    {
+      "size": 24,
+      "kind": "floor",
+      "fx": "sparkle",
+      "ok": true
+    },
+    {
+      "size": 24,
+      "kind": "floor",
+      "fx": "glow",
+      "ok": true
+    },
+    {
+      "size": 24,
+      "kind": "floor",
+      "fx": "hearts",
+      "ok": true
+    },
+    {
+      "size": 24,
+      "kind": "floor",
+      "fx": "notes",
+      "ok": true
+    },
+    {
+      "size": 24,
+      "kind": "floor",
+      "fx": "bubbles",
+      "ok": true
+    },
+    {
+      "size": 24,
+      "kind": "floor",
+      "fx": "pulse",
+      "ok": true
+    },
+    {
+      "size": 24,
+      "kind": "floor",
+      "fx": "spin",
+      "ok": true
+    },
+    {
+      "size": 24,
+      "kind": "wall",
+      "fx": "none",
+      "ok": true
+    },
+    {
+      "size": 24,
+      "kind": "wall",
+      "fx": "sway",
+      "ok": true
+    },
+    {
+      "size": 24,
+      "kind": "wall",
+      "fx": "bounce",
+      "ok": true
+    },
+    {
+      "size": 24,
+      "kind": "wall",
+      "fx": "float",
+      "ok": true
+    },
+    {
+      "size": 24,
+      "kind": "wall",
+      "fx": "sparkle",
+      "ok": true
+    },
+    {
+      "size": 24,
+      "kind": "wall",
+      "fx": "glow",
+      "ok": true
+    },
+    {
+      "size": 24,
+      "kind": "wall",
+      "fx": "hearts",
+      "ok": true
+    },
+    {
+      "size": 24,
+      "kind": "wall",
+      "fx": "notes",
+      "ok": true
+    },
+    {
+      "size": 24,
+      "kind": "wall",
+      "fx": "bubbles",
+      "ok": true
+    },
+    {
+      "size": 24,
+      "kind": "wall",
+      "fx": "pulse",
+      "ok": true
+    },
+    {
+      "size": 24,
+      "kind": "wall",
+      "fx": "spin",
+      "ok": true
+    },
+    {
+      "size": 32,
+      "kind": "ground",
+      "fx": "none",
+      "ok": true
+    },
+    {
+      "size": 32,
+      "kind": "ground",
+      "fx": "sway",
+      "ok": true
+    },
+    {
+      "size": 32,
+      "kind": "ground",
+      "fx": "bounce",
+      "ok": true
+    },
+    {
+      "size": 32,
+      "kind": "ground",
+      "fx": "float",
+      "ok": true
+    },
+    {
+      "size": 32,
+      "kind": "ground",
+      "fx": "sparkle",
+      "ok": true
+    },
+    {
+      "size": 32,
+      "kind": "ground",
+      "fx": "glow",
+      "ok": true
+    },
+    {
+      "size": 32,
+      "kind": "ground",
+      "fx": "hearts",
+      "ok": true
+    },
+    {
+      "size": 32,
+      "kind": "ground",
+      "fx": "notes",
+      "ok": true
+    },
+    {
+      "size": 32,
+      "kind": "ground",
+      "fx": "bubbles",
+      "ok": true
+    },
+    {
+      "size": 32,
+      "kind": "ground",
+      "fx": "pulse",
+      "ok": true
+    },
+    {
+      "size": 32,
+      "kind": "ground",
+      "fx": "spin",
+      "ok": true
+    },
+    {
+      "size": 32,
+      "kind": "floor",
+      "fx": "none",
+      "ok": true
+    },
+    {
+      "size": 32,
+      "kind": "floor",
+      "fx": "sway",
+      "ok": true
+    },
+    {
+      "size": 32,
+      "kind": "floor",
+      "fx": "bounce",
+      "ok": true
+    },
+    {
+      "size": 32,
+      "kind": "floor",
+      "fx": "float",
+      "ok": true
+    },
+    {
+      "size": 32,
+      "kind": "floor",
+      "fx": "sparkle",
+      "ok": true
+    },
+    {
+      "size": 32,
+      "kind": "floor",
+      "fx": "glow",
+      "ok": true
+    },
+    {
+      "size": 32,
+      "kind": "floor",
+      "fx": "hearts",
+      "ok": true
+    },
+    {
+      "size": 32,
+      "kind": "floor",
+      "fx": "notes",
+      "ok": true
+    },
+    {
+      "size": 32,
+      "kind": "floor",
+      "fx": "bubbles",
+      "ok": true
+    },
+    {
+      "size": 32,
+      "kind": "floor",
+      "fx": "pulse",
+      "ok": true
+    },
+    {
+      "size": 32,
+      "kind": "floor",
+      "fx": "spin",
+      "ok": true
+    },
+    {
+      "size": 32,
+      "kind": "wall",
+      "fx": "none",
+      "ok": true
+    },
+    {
+      "size": 32,
+      "kind": "wall",
+      "fx": "sway",
+      "ok": true
+    },
+    {
+      "size": 32,
+      "kind": "wall",
+      "fx": "bounce",
+      "ok": true
+    },
+    {
+      "size": 32,
+      "kind": "wall",
+      "fx": "float",
+      "ok": true
+    },
+    {
+      "size": 32,
+      "kind": "wall",
+      "fx": "sparkle",
+      "ok": true
+    },
+    {
+      "size": 32,
+      "kind": "wall",
+      "fx": "glow",
+      "ok": true
+    },
+    {
+      "size": 32,
+      "kind": "wall",
+      "fx": "hearts",
+      "ok": true
+    },
+    {
+      "size": 32,
+      "kind": "wall",
+      "fx": "notes",
+      "ok": true
+    },
+    {
+      "size": 32,
+      "kind": "wall",
+      "fx": "bubbles",
+      "ok": true
+    },
+    {
+      "size": 32,
+      "kind": "wall",
+      "fx": "pulse",
+      "ok": true
+    },
+    {
+      "size": 32,
+      "kind": "wall",
+      "fx": "spin",
+      "ok": true
+    }
+  ],
+  "malformed": [
+    {
+      "case": "more.seed.kind",
+      "value": "None",
+      "ok": true
+    },
+    {
+      "case": "myseed.kind",
+      "value": "None",
+      "ok": true
+    },
+    {
+      "case": "fields.kind",
+      "value": "None",
+      "ok": true
+    },
+    {
+      "case": "wallet.quest",
+      "value": "None",
+      "ok": true
+    },
+    {
+      "case": "paper.state",
+      "value": "None",
+      "ok": true
+    },
+    {
+      "case": "config",
+      "value": "None",
+      "ok": true
+    },
+    {
+      "case": "more.seed.kind",
+      "value": "False",
+      "ok": true
+    },
+    {
+      "case": "myseed.kind",
+      "value": "False",
+      "ok": true
+    },
+    {
+      "case": "fields.kind",
+      "value": "False",
+      "ok": true
+    },
+    {
+      "case": "wallet.quest",
+      "value": "False",
+      "ok": true
+    },
+    {
+      "case": "paper.state",
+      "value": "False",
+      "ok": true
+    },
+    {
+      "case": "config",
+      "value": "False",
+      "ok": true
+    },
+    {
+      "case": "more.seed.kind",
+      "value": "True",
+      "ok": true
+    },
+    {
+      "case": "myseed.kind",
+      "value": "True",
+      "ok": true
+    },
+    {
+      "case": "fields.kind",
+      "value": "True",
+      "ok": true
+    },
+    {
+      "case": "wallet.quest",
+      "value": "True",
+      "ok": false,
+      "exception": "AttributeError: 'bool' object has no attribute 'items'",
+      "trace": [
+        "                                                                                                                                                                                                                                                                                          ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+        "  File \"/workspace/work/kotoba-audit/latest/kotoba_batake/garden_core.py\", line 2277, in _clean_quest",
+        "    prog = {k: v for k, v in (raw.get(\"progress\") or {}).items() if isinstance(v, int)}",
+        "                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+        "AttributeError: 'bool' object has no attribute 'items'"
+      ]
+    },
+    {
+      "case": "paper.state",
+      "value": "True",
+      "ok": true
+    },
+    {
+      "case": "config",
+      "value": "True",
+      "ok": true
+    },
+    {
+      "case": "more.seed.kind",
+      "value": "0",
+      "ok": true
+    },
+    {
+      "case": "myseed.kind",
+      "value": "0",
+      "ok": true
+    },
+    {
+      "case": "fields.kind",
+      "value": "0",
+      "ok": true
+    },
+    {
+      "case": "wallet.quest",
+      "value": "0",
+      "ok": true
+    },
+    {
+      "case": "paper.state",
+      "value": "0",
+      "ok": true
+    },
+    {
+      "case": "config",
+      "value": "0",
+      "ok": true
+    },
+    {
+      "case": "more.seed.kind",
+      "value": "1",
+      "ok": true
+    },
+    {
+      "case": "myseed.kind",
+      "value": "1",
+      "ok": true
+    },
+    {
+      "case": "fields.kind",
+      "value": "1",
+      "ok": true
+    },
+    {
+      "case": "wallet.quest",
+      "value": "1",
+      "ok": false,
+      "exception": "AttributeError: 'int' object has no attribute 'items'",
+      "trace": [
+        "                                                                                                                                                                                                                                                                                          ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+        "  File \"/workspace/work/kotoba-audit/latest/kotoba_batake/garden_core.py\", line 2277, in _clean_quest",
+        "    prog = {k: v for k, v in (raw.get(\"progress\") or {}).items() if isinstance(v, int)}",
+        "                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+        "AttributeError: 'int' object has no attribute 'items'"
+      ]
+    },
+    {
+      "case": "paper.state",
+      "value": "1",
+      "ok": true
+    },
+    {
+      "case": "config",
+      "value": "1",
+      "ok": true
+    },
+    {
+      "case": "more.seed.kind",
+      "value": "-1",
+      "ok": true
+    },
+    {
+      "case": "myseed.kind",
+      "value": "-1",
+      "ok": true
+    },
+    {
+      "case": "fields.kind",
+      "value": "-1",
+      "ok": true
+    },
+    {
+      "case": "wallet.quest",
+      "value": "-1",
+      "ok": false,
+      "exception": "AttributeError: 'int' object has no attribute 'items'",
+      "trace": [
+        "                                                                                                                                                                                                                                                                                          ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+        "  File \"/workspace/work/kotoba-audit/latest/kotoba_batake/garden_core.py\", line 2277, in _clean_quest",
+        "    prog = {k: v for k, v in (raw.get(\"progress\") or {}).items() if isinstance(v, int)}",
+        "                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+        "AttributeError: 'int' object has no attribute 'items'"
+      ]
+    },
+    {
+      "case": "paper.state",
+      "value": "-1",
+      "ok": true
+    },
+    {
+      "case": "config",
+      "value": "-1",
+      "ok": true
+    },
+    {
+      "case": "more.seed.kind",
+      "value": "''",
+      "ok": true
+    },
+    {
+      "case": "myseed.kind",
+      "value": "''",
+      "ok": true
+    },
+    {
+      "case": "fields.kind",
+      "value": "''",
+      "ok": true
+    },
+    {
+      "case": "wallet.quest",
+      "value": "''",
+      "ok": true
+    },
+    {
+      "case": "paper.state",
+      "value": "''",
+      "ok": true
+    },
+    {
+      "case": "config",
+      "value": "''",
+      "ok": true
+    },
+    {
+      "case": "more.seed.kind",
+      "value": "'x'",
+      "ok": true
+    },
+    {
+      "case": "myseed.kind",
+      "value": "'x'",
+      "ok": true
+    },
+    {
+      "case": "fields.kind",
+      "value": "'x'",
+      "ok": true
+    },
+    {
+      "case": "wallet.quest",
+      "value": "'x'",
+      "ok": false,
+      "exception": "AttributeError: 'str' object has no attribute 'items'",
+      "trace": [
+        "                                                                                                                                                                                                                                                                                          ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+        "  File \"/workspace/work/kotoba-audit/latest/kotoba_batake/garden_core.py\", line 2277, in _clean_quest",
+        "    prog = {k: v for k, v in (raw.get(\"progress\") or {}).items() if isinstance(v, int)}",
+        "                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+        "AttributeError: 'str' object has no attribute 'items'"
+      ]
+    },
+    {
+      "case": "paper.state",
+      "value": "'x'",
+      "ok": true
+    },
+    {
+      "case": "config",
+      "value": "'x'",
+      "ok": true
+    },
+    {
+      "case": "more.seed.kind",
+      "value": "[]",
+      "ok": false,
+      "exception": "TypeError: unhashable type: 'list'",
+      "trace": [
+        "                    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^",
+        "  File \"/workspace/work/kotoba-audit/latest/kotoba_batake/more_core.py\", line 266, in _clean_seeds",
+        "    out[\"kind\"] = {k: kind[k] for k in SEED_KINDS if kind.get(k) in ok}",
+        "                                                     ^^^^^^^^^^^^^^^^^",
+        "TypeError: unhashable type: 'list'"
+      ]
+    },
+    {
+      "case": "myseed.kind",
+      "value": "[]",
+      "ok": false,
+      "exception": "TypeError: unhashable type: 'list'",
+      "trace": [
+        "                                                                                                                   ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+        "  File \"/workspace/work/kotoba-audit/latest/kotoba_batake/share_core.py\", line 88, in clean_myseeds",
+        "    out[\"rules\"][\"kind\"] = {k: kind[k] for k in more.SEED_KINDS if kind.get(k) in ok}",
+        "                                                                   ^^^^^^^^^^^^^^^^^",
+        "TypeError: unhashable type: 'list'"
+      ]
+    },
+    {
+      "case": "fields.kind",
+      "value": "[]",
+      "ok": false,
+      "exception": "TypeError: unhashable type: 'list'",
+      "trace": [
+        "                                                                                                                                                                                                                             ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^",
+        "  File \"/workspace/work/kotoba-audit/latest/kotoba_batake/fields_core.py\", line 150, in clean_model",
+        "    if not isinstance(raw, dict) or raw.get(\"kind\") not in KINDS:",
+        "                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+        "TypeError: unhashable type: 'list'"
+      ]
+    },
+    {
+      "case": "wallet.quest",
+      "value": "[]",
+      "ok": true
+    },
+    {
+      "case": "paper.state",
+      "value": "[]",
+      "ok": true
+    },
+    {
+      "case": "config",
+      "value": "[]",
+      "ok": true
+    },
+    {
+      "case": "more.seed.kind",
+      "value": "{}",
+      "ok": false,
+      "exception": "TypeError: unhashable type: 'dict'",
+      "trace": [
+        "                    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^",
+        "  File \"/workspace/work/kotoba-audit/latest/kotoba_batake/more_core.py\", line 266, in _clean_seeds",
+        "    out[\"kind\"] = {k: kind[k] for k in SEED_KINDS if kind.get(k) in ok}",
+        "                                                     ^^^^^^^^^^^^^^^^^",
+        "TypeError: unhashable type: 'dict'"
+      ]
+    },
+    {
+      "case": "myseed.kind",
+      "value": "{}",
+      "ok": false,
+      "exception": "TypeError: unhashable type: 'dict'",
+      "trace": [
+        "                                                                                                                   ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+        "  File \"/workspace/work/kotoba-audit/latest/kotoba_batake/share_core.py\", line 88, in clean_myseeds",
+        "    out[\"rules\"][\"kind\"] = {k: kind[k] for k in more.SEED_KINDS if kind.get(k) in ok}",
+        "                                                                   ^^^^^^^^^^^^^^^^^",
+        "TypeError: unhashable type: 'dict'"
+      ]
+    },
+    {
+      "case": "fields.kind",
+      "value": "{}",
+      "ok": false,
+      "exception": "TypeError: unhashable type: 'dict'",
+      "trace": [
+        "                                                                                                                                                                                                                             ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^",
+        "  File \"/workspace/work/kotoba-audit/latest/kotoba_batake/fields_core.py\", line 150, in clean_model",
+        "    if not isinstance(raw, dict) or raw.get(\"kind\") not in KINDS:",
+        "                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+        "TypeError: unhashable type: 'dict'"
+      ]
+    },
+    {
+      "case": "wallet.quest",
+      "value": "{}",
+      "ok": true
+    },
+    {
+      "case": "paper.state",
+      "value": "{}",
+      "ok": true
+    },
+    {
+      "case": "config",
+      "value": "{}",
+      "ok": true
+    },
+    {
+      "case": "more.seed.kind",
+      "value": "[None]",
+      "ok": false,
+      "exception": "TypeError: unhashable type: 'list'",
+      "trace": [
+        "                    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^",
+        "  File \"/workspace/work/kotoba-audit/latest/kotoba_batake/more_core.py\", line 266, in _clean_seeds",
+        "    out[\"kind\"] = {k: kind[k] for k in SEED_KINDS if kind.get(k) in ok}",
+        "                                                     ^^^^^^^^^^^^^^^^^",
+        "TypeError: unhashable type: 'list'"
+      ]
+    },
+    {
+      "case": "myseed.kind",
+      "value": "[None]",
+      "ok": false,
+      "exception": "TypeError: unhashable type: 'list'",
+      "trace": [
+        "                                                                                                                   ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+        "  File \"/workspace/work/kotoba-audit/latest/kotoba_batake/share_core.py\", line 88, in clean_myseeds",
+        "    out[\"rules\"][\"kind\"] = {k: kind[k] for k in more.SEED_KINDS if kind.get(k) in ok}",
+        "                                                                   ^^^^^^^^^^^^^^^^^",
+        "TypeError: unhashable type: 'list'"
+      ]
+    },
+    {
+      "case": "fields.kind",
+      "value": "[None]",
+      "ok": false,
+      "exception": "TypeError: unhashable type: 'list'",
+      "trace": [
+        "                                                                                                                                                                                                                             ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^",
+        "  File \"/workspace/work/kotoba-audit/latest/kotoba_batake/fields_core.py\", line 150, in clean_model",
+        "    if not isinstance(raw, dict) or raw.get(\"kind\") not in KINDS:",
+        "                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+        "TypeError: unhashable type: 'list'"
+      ]
+    },
+    {
+      "case": "wallet.quest",
+      "value": "[None]",
+      "ok": false,
+      "exception": "AttributeError: 'list' object has no attribute 'items'",
+      "trace": [
+        "                                                                                                                                                                                                                                                                                          ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+        "  File \"/workspace/work/kotoba-audit/latest/kotoba_batake/garden_core.py\", line 2277, in _clean_quest",
+        "    prog = {k: v for k, v in (raw.get(\"progress\") or {}).items() if isinstance(v, int)}",
+        "                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+        "AttributeError: 'list' object has no attribute 'items'"
+      ]
+    },
+    {
+      "case": "paper.state",
+      "value": "[None]",
+      "ok": true
+    },
+    {
+      "case": "config",
+      "value": "[None]",
+      "ok": true
+    },
+    {
+      "case": "more.seed.kind",
+      "value": "{'x': []}",
+      "ok": false,
+      "exception": "TypeError: unhashable type: 'dict'",
+      "trace": [
+        "                    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^",
+        "  File \"/workspace/work/kotoba-audit/latest/kotoba_batake/more_core.py\", line 266, in _clean_seeds",
+        "    out[\"kind\"] = {k: kind[k] for k in SEED_KINDS if kind.get(k) in ok}",
+        "                                                     ^^^^^^^^^^^^^^^^^",
+        "TypeError: unhashable type: 'dict'"
+      ]
+    },
+    {
+      "case": "myseed.kind",
+      "value": "{'x': []}",
+      "ok": false,
+      "exception": "TypeError: unhashable type: 'dict'",
+      "trace": [
+        "                                                                                                                   ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+        "  File \"/workspace/work/kotoba-audit/latest/kotoba_batake/share_core.py\", line 88, in clean_myseeds",
+        "    out[\"rules\"][\"kind\"] = {k: kind[k] for k in more.SEED_KINDS if kind.get(k) in ok}",
+        "                                                                   ^^^^^^^^^^^^^^^^^",
+        "TypeError: unhashable type: 'dict'"
+      ]
+    },
+    {
+      "case": "fields.kind",
+      "value": "{'x': []}",
+      "ok": false,
+      "exception": "TypeError: unhashable type: 'dict'",
+      "trace": [
+        "                                                                                                                                                                                                                             ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^",
+        "  File \"/workspace/work/kotoba-audit/latest/kotoba_batake/fields_core.py\", line 150, in clean_model",
+        "    if not isinstance(raw, dict) or raw.get(\"kind\") not in KINDS:",
+        "                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+        "TypeError: unhashable type: 'dict'"
+      ]
+    },
+    {
+      "case": "wallet.quest",
+      "value": "{'x': []}",
+      "ok": true
+    },
+    {
+      "case": "paper.state",
+      "value": "{'x': []}",
+      "ok": true
+    },
+    {
+      "case": "config",
+      "value": "{'x': []}",
+      "ok": true
+    },
+    {
+      "case": "more.seed.kind",
+      "value": "nan",
+      "ok": true
+    },
+    {
+      "case": "myseed.kind",
+      "value": "nan",
+      "ok": true
+    },
+    {
+      "case": "fields.kind",
+      "value": "nan",
+      "ok": true
+    },
+    {
+      "case": "wallet.quest",
+      "value": "nan",
+      "ok": false,
+      "exception": "AttributeError: 'float' object has no attribute 'items'",
+      "trace": [
+        "                                                                                                                                                                                                                                                                                          ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+        "  File \"/workspace/work/kotoba-audit/latest/kotoba_batake/garden_core.py\", line 2277, in _clean_quest",
+        "    prog = {k: v for k, v in (raw.get(\"progress\") or {}).items() if isinstance(v, int)}",
+        "                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+        "AttributeError: 'float' object has no attribute 'items'"
+      ]
+    },
+    {
+      "case": "paper.state",
+      "value": "nan",
+      "ok": true
+    },
+    {
+      "case": "config",
+      "value": "nan",
+      "ok": true
+    }
+  ],
+  "idempotence": [
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    },
+    {
+      "ok": true
+    }
+  ]
+}

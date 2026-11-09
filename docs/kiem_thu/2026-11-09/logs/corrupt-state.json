@@ -1,0 +1,30 @@
+{
+  "injected": {
+    "seeds": {
+      "kind": {
+        "vocab": []
+      }
+    }
+  },
+  "shots": [
+    {
+      "class": "QMessageBox",
+      "text": "",
+      "saved": true
+    }
+  ],
+  "errors": [
+    {
+      "where": "bù xu điện thoại",
+      "msg": "TypeError: unhashable type: 'list'"
+    },
+    {
+      "where": "nhà / thú nuôi",
+      "msg": "TypeError: unhashable type: 'list'"
+    },
+    {
+      "where": "dựng khu vườn",
+      "msg": "TypeError: unhashable type: 'list'"
+    }
+  ]
+}

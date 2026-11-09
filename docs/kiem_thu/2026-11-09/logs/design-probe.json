@@ -1,0 +1,16 @@
+{
+  "before": {
+    "size": 24,
+    "nonblank": 64,
+    "undo": 0,
+    "open": true
+  },
+  "after": {
+    "open": false,
+    "tip": "Vẽ bằng chuột (chuột phải = tẩy), hoặc bấm “Chọn ảnh…” để biến ảnh thành pixel art."
+  },
+  "reopened": {
+    "nonblank": 0,
+    "name": ""
+  }
+}

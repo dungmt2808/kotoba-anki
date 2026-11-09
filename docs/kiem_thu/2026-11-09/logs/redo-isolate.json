@@ -1,0 +1,5 @@
+{
+  "before": "undo: \"Answer Card\"\nlast_step: 215\n",
+  "after_raw_undo": "undo: \"Answer Card\"\nredo: \"Answer Card\"\nlast_step: 216\n",
+  "after_wallet_save": "undo: \"Answer Card\"\nlast_step: 222\n"
+}

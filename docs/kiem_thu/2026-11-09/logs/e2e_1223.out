@@ -1,0 +1,55 @@
+== dán khoá lần đầu → chờ bấm "Bắt đầu viết"
+  ✓ Thử khoá đúng → "✓ Khoá dùng được · model gemini-thu. Chọn báo muốn nhận, trình độ, deck rồi bấm “Bắt đầu viết”."
+  ✓ thử khoá xong KHÔNG tự viết (vườn đã làm mới)
+  ✓ đã lưu khoá AQ. + cờ chờ bấm Bắt đầu viết
+  ✓ thẻ Gemini có khối "Bước 3 · … Bắt đầu viết"
+  ✓ mỗi báo ghi "Hôm nay: chờ bấm Bắt đầu viết" (không có nút Viết riêng)
+  ✓ vườn làm mới / mở hồ sơ (tự viết) vẫn chờ, không viết
+== Chọn deck: 24 deck, cuộn + tick giữ vị trí, ô tìm deck
+  ✓ mở danh sách deck của báo tiếng Nhật
+  ✓ danh sách có 41 deck, có ô "Tìm deck…"
+  ✓ tick deck gần cuối: danh sách giữ vị trí cuộn (858 → 858, trước đây về 0)
+  ✓ đã lưu 1 deck vào collection
+  ✓ gõ "bai 2" (không dấu) → 11 deck: Bài 20–29, Bài 32
+  ✓ đếm "11 / 41 deck"
+  ✓ tick khi đang lọc: vẽ lại vẫn giữ chữ tìm + bộ lọc ({"q":"bai 2","vis":11})
+  ✓ Esc trong ô tìm: xoá chữ tìm, bảng Báo vẫn mở
+== bấm "Bắt đầu viết"
+  ✓ khối Bắt đầu viết biến mất
+  ✓ bấm "Bắt đầu viết" → bắt đầu viết ([["manual","ja"]])
+  ✓ bỏ cờ chờ: từ giờ tự viết như cũ
+  ✓ sau đó vườn mở lại thì tự viết bình thường
+== 1.22.4: đang có báo tiếng Nhật, tick thêm Tiếng Anh → chờ bấm "Bắt đầu viết"
+  ✓ bỏ tick Tiếng Anh → chỉ còn báo tiếng Nhật
+  ✓ tick thêm Tiếng Anh → KHÔNG tự viết báo tiếng Anh ([])
+  ✓ chỉ báo tiếng Anh chờ (gemini_wait_langs = ["en"])
+  ✓ khối "Vừa bật Báo tiếng Anh · … Bắt đầu viết"
+  ✓ báo tiếng Anh "chờ bấm", báo tiếng Nhật vẫn như cũ
+  ✓ vườn làm mới / tự viết: vẫn không viết báo tiếng Anh
+  ✓ đổi trình độ báo tiếng Anh: vẫn chờ
+  ✓ bấm "Bắt đầu viết" → khối biến mất
+  ✓ bấm "Bắt đầu viết" → viết báo tiếng Anh ([["manual","en"]])
+  ✓ hết chờ
+  ✓ đổi khoá khi đã có khoá: không phải bấm lại Bắt đầu viết
+  ✓ Xoá khoá rồi dán lại → lại chờ bấm Bắt đầu viết
+== tìm deck ở thanh trên (kính lúp, phím /)
+  ✓ 1366 px: nút kính lúp nằm giữa ô Deck và ô xu, không tràn ({"f":[673,701,28],"s":665,"c":720,"w":1366,"hs":false})
+  ✓ 1366 px: bảng tìm deck mở, con trỏ ở ô tìm, 52 deck, tô đậm deck đang xem, nằm trong cửa sổ
+  ✓ 1366 px: mỗi deck một dòng đọc được, không bị ép dẹt (cao 28/28/28/28/28 px)
+  ✓ 1366 px: không tràn ngang / không lọt khung
+  ✓ gõ "chi tu" (không dấu) → ["C::Chỉ từ + audio từ","D::Chỉ từ, không gì cả"]
+  ✓ gõ "bai 3": Bài 30… lên trước, Bài 23 / 13… sau (N4::Bài 30, N4::Bài 31, N4::Bài 32 … N4::Bài 38, N4::Bài 23)
+  ✓ Enter → đổi sang deck "C::Chỉ từ + audio từ", bảng đóng
+  ✓ 1024 px: nút kính lúp nằm giữa ô Deck và ô xu, không tràn ({"f":[416,444,28],"s":408,"c":463,"w":1024,"hs":false})
+  ✓ 1024 px: bảng tìm deck mở, con trỏ ở ô tìm, 52 deck, tô đậm deck đang xem, nằm trong cửa sổ
+  ✓ 1024 px: mỗi deck một dòng đọc được, không bị ép dẹt (cao 28/28/28/28/28 px)
+  ✓ 1024 px: không tràn ngang / không lọt khung
+  ✓ gõ "chi tu" (không dấu) → ["C::Chỉ từ + audio từ","D::Chỉ từ, không gì cả"]
+  ✓ gõ "bai 3": Bài 30… lên trước, Bài 23 / 13… sau (N4::Bài 30, N4::Bài 31, N4::Bài 32 … N4::Bài 38, N4::Bài 23)
+  ✓ Enter → đổi sang deck "C::Chỉ từ + audio từ", bảng đóng
+  ✓ phím / ở màn chính → mở bảng tìm deck
+  ✓ Esc chỉ đóng bảng tìm deck, cửa sổ vườn vẫn mở
+  ✓ bấm ra ngoài → đóng bảng tìm deck
+  ✓ không lỗi JS
+  ✓ nhật ký lỗi add-on trống
+KẾT QUẢ: 49/49

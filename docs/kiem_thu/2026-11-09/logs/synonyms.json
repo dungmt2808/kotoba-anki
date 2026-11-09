@@ -1,0 +1,49 @@
+{
+  "before": {
+    "screen": "play",
+    "answer": 2,
+    "state": "wait",
+    "served": 0,
+    "score": 0,
+    "timeLeft": 73.63340000000008,
+    "total": 1,
+    "waitNext": false,
+    "kind": "vocab",
+    "mode": "meaning-word",
+    "ask": "meaning",
+    "key": "word",
+    "bubble": "Ở đây có “to lớn” không?",
+    "options": [
+      "big",
+      "store",
+      "large",
+      "little"
+    ]
+  },
+  "chosen": 0,
+  "word": "big",
+  "after": {
+    "debug": {
+      "screen": "play",
+      "answer": 2,
+      "state": "thanks",
+      "served": 0,
+      "score": 0,
+      "timeLeft": 73.13350000000011,
+      "total": 1,
+      "waitNext": true,
+      "kind": "vocab",
+      "mode": "meaning-word",
+      "ask": "meaning",
+      "key": "word",
+      "bubble": "えっ、違うよ…",
+      "options": [
+        "big",
+        "store",
+        "large",
+        "little"
+      ]
+    },
+    "result": "Khách cần: large = to lớn\nKhách tiếp ▶Space"
+  }
+}

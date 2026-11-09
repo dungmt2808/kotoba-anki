@@ -1,0 +1,19 @@
+== kiemtra.py: bản dịch
+  ✓ số mẫu (có bản dịch mọi bài) → OK
+  ✓ bài thiếu dich → LỖI
+  ✓ thiếu một đoạn dịch (lệch số đoạn) → LỖI
+  ✓ tên riêng để chữ Nhật trong bản dịch → LỖI, nhắc viết Latin
+  ✓ câu tiếng Nhật giữ bằng romaji trong ngoặc kép → được
+  ✓ bản dịch không phải tiếng Việt → LỖI
+  ✓ dấu đánh dấu furigana trong bản dịch → LỖI
+  ✓ bản dịch ngắn hơn nhiều đoạn gốc → CẢNH BÁO
+  ✓ ghi chú ngữ pháp có chữ Nhật trong ngoặc → LỖI
+== kiemtra.py --chi-dich (thêm bản dịch cho số cũ)
+  ✗ số cũ chưa có dich → chỉ báo lỗi bản dịch (4 bài)
+  ✓ đã thêm dich → --chi-dich OK
+== render.py: bao.html
+  ✓ bao.html mang bản dịch (dựng bằng JS khi mở), có nút Hiện bản dịch
+== add-on: số của bộ 2.3 hiện được bản dịch
+  ✓ paper_core.clean_issue giữ bản dịch mọi bài của số mẫu (đúng luật add-on 1.23)
+
+KẾT QUẢ: 1 LỖI

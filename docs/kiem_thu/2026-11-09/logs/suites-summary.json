@@ -1,0 +1,140 @@
+[
+  {
+    "suite": "audit.out",
+    "summary": "Hoàn tất đo/chụp, nhật ký lỗi trống",
+    "assertions_seen": 0,
+    "failed": 0
+  },
+  {
+    "suite": "audit_edge.out",
+    "summary": "KẾT QUẢ: 58/58 đạt",
+    "assertions_seen": 58,
+    "failed": 0
+  },
+  {
+    "suite": "e2e.out",
+    "summary": "KẾT QUẢ: 23/24 đạt",
+    "assertions_seen": 24,
+    "failed": 1
+  },
+  {
+    "suite": "e2e_114.out",
+    "summary": "KẾT QUẢ: 34/34 đạt",
+    "assertions_seen": 34,
+    "failed": 0
+  },
+  {
+    "suite": "e2e_115.out",
+    "summary": "KẾT QUẢ: 21/21 đạt",
+    "assertions_seen": 21,
+    "failed": 0
+  },
+  {
+    "suite": "e2e_116.out",
+    "summary": "KẾT QUẢ: 15/15 đạt",
+    "assertions_seen": 15,
+    "failed": 0
+  },
+  {
+    "suite": "e2e_117.out",
+    "summary": "KẾT QUẢ: 55/55 đạt",
+    "assertions_seen": 55,
+    "failed": 0
+  },
+  {
+    "suite": "e2e_118.out",
+    "summary": "KẾT QUẢ: 29/29 đạt",
+    "assertions_seen": 29,
+    "failed": 0
+  },
+  {
+    "suite": "e2e_119.out",
+    "summary": "KẾT QUẢ: 55/55 đạt",
+    "assertions_seen": 55,
+    "failed": 0
+  },
+  {
+    "suite": "e2e_120.out",
+    "summary": "DỪNG: LỖI KỊCH BẢN: Error: TypeError: Cannot read properties of null (reading 'textContent')",
+    "assertions_seen": 43,
+    "failed": 0
+  },
+  {
+    "suite": "e2e_121.out",
+    "summary": "KẾT QUẢ: 46/46",
+    "assertions_seen": 46,
+    "failed": 0
+  },
+  {
+    "suite": "e2e_122.out",
+    "summary": "KẾT QUẢ: 64/64",
+    "assertions_seen": 64,
+    "failed": 0
+  },
+  {
+    "suite": "e2e_1223.out",
+    "summary": "KẾT QUẢ: 49/49",
+    "assertions_seen": 49,
+    "failed": 0
+  },
+  {
+    "suite": "e2e_1226.out",
+    "summary": "KẾT QUẢ: 40/40 đạt",
+    "assertions_seen": 40,
+    "failed": 0
+  },
+  {
+    "suite": "e2e_1228.out",
+    "summary": "KẾT QUẢ: 26/26 đạt",
+    "assertions_seen": 26,
+    "failed": 0
+  },
+  {
+    "suite": "e2e_123.out",
+    "summary": "KẾT QUẢ: 63/65 đạt",
+    "assertions_seen": 65,
+    "failed": 2
+  },
+  {
+    "suite": "e2e_124.out",
+    "summary": "KẾT QUẢ: 23/23 đạt",
+    "assertions_seen": 23,
+    "failed": 0
+  },
+  {
+    "suite": "e2e_125.out",
+    "summary": "KẾT QUẢ: 30/30 đạt",
+    "assertions_seen": 30,
+    "failed": 0
+  },
+  {
+    "suite": "e2e_1251.out",
+    "summary": "KẾT QUẢ: 48/48 đạt",
+    "assertions_seen": 48,
+    "failed": 0
+  },
+  {
+    "suite": "e2e_kit23.out",
+    "summary": "KẾT QUẢ: 10/10 đạt",
+    "assertions_seen": 10,
+    "failed": 0
+  },
+  {
+    "suite": "e2e_tour.out",
+    "summary": "KẾT QUẢ: 12/12 đạt",
+    "assertions_seen": 12,
+    "failed": 0
+  },
+  {
+    "suite": "audit_full.out",
+    "summary": "KẾT QUẢ: 181/181",
+    "assertions_seen": 181,
+    "failed": 0
+  },
+  {
+    "suite": "e2e_120_models_fixture.out",
+    "summary": "KẾT QUẢ: 103/103",
+    "assertions_seen": 103,
+    "failed": 0
+  }
+]

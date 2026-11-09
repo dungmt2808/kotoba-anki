@@ -1,0 +1,21 @@
+Roundtrip 99 99
+Config idempotence 80 80
+Malformed guards 60 78
+wallet.quest True AttributeError: 'bool' object has no attribute 'items'
+wallet.quest 1 AttributeError: 'int' object has no attribute 'items'
+wallet.quest -1 AttributeError: 'int' object has no attribute 'items'
+wallet.quest 'x' AttributeError: 'str' object has no attribute 'items'
+more.seed.kind [] TypeError: unhashable type: 'list'
+myseed.kind [] TypeError: unhashable type: 'list'
+fields.kind [] TypeError: unhashable type: 'list'
+more.seed.kind {} TypeError: unhashable type: 'dict'
+myseed.kind {} TypeError: unhashable type: 'dict'
+fields.kind {} TypeError: unhashable type: 'dict'
+more.seed.kind [None] TypeError: unhashable type: 'list'
+myseed.kind [None] TypeError: unhashable type: 'list'
+fields.kind [None] TypeError: unhashable type: 'list'
+wallet.quest [None] AttributeError: 'list' object has no attribute 'items'
+more.seed.kind {'x': []} TypeError: unhashable type: 'dict'
+myseed.kind {'x': []} TypeError: unhashable type: 'dict'
+fields.kind {'x': []} TypeError: unhashable type: 'dict'
+wallet.quest nan AttributeError: 'float' object has no attribute 'items'

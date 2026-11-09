@@ -1,0 +1,384 @@
+{
+  "source_commit": "472b3bc9416f8cbf2516b254a98eb2ce2ecf34fc",
+  "addon_version": "1.25.2",
+  "anki": "26.9.4",
+  "date": "2026-11-09",
+  "stdout_normalization": "Removed trailing whitespace only",
+  "files": [
+    {
+      "path": "BAO_CAO.md",
+      "bytes": 26304,
+      "sha256": "3dd781e17f4974438e5316bdffab51891816f555e8721f56c978aaf9933ddda1"
+    },
+    {
+      "path": "anh/01-giong-co-san.png",
+      "bytes": 95242,
+      "sha256": "706372fcce2740d99b94d196bc2f88febbdf30001ecb875c9f92e81f1a3433a1"
+    },
+    {
+      "path": "anh/02-thu-co-san.png",
+      "bytes": 98123,
+      "sha256": "978de98ea95546242d01468ae40bfe0a1b067e552774ca9e987aefc661bef8f1"
+    },
+    {
+      "path": "anh/03-den-co-san.png",
+      "bytes": 81428,
+      "sha256": "83eca70390389f54830442c4f00f95175865720ae053150eee407a9d6e25535d"
+    },
+    {
+      "path": "anh/04-xuong-chua-co-mau.png",
+      "bytes": 87153,
+      "sha256": "d647f4c434fb17bc4635a5e18b9445dd6bd4c88cbd42bf45017b08adc84a852f"
+    },
+    {
+      "path": "anh/05-resize-truoc-esc.png",
+      "bytes": 82606,
+      "sha256": "090337456dfcb4bdf0a5d2b407b87e7515b0ba9f94e18b71a4d402d234ca211a"
+    },
+    {
+      "path": "anh/06-resize-sau-mot-esc.png",
+      "bytes": 89929,
+      "sha256": "6e83ae6a4446410425ab7227f42aab499192014359132abf9c7a5176767cee7b"
+    },
+    {
+      "path": "anh/07-muc-tieu-truoc-undo.png",
+      "bytes": 50875,
+      "sha256": "fd1aa9561d08dd94f9b9d1446a15fa26f5e9919d0ddb652f0de8aa22008a3dcf"
+    },
+    {
+      "path": "anh/08-muc-tieu-da-undo.png",
+      "bytes": 50940,
+      "sha256": "0988b19914b706b88af446cb429087662267b1ee7b0e270dffe1dff1405e6689"
+    },
+    {
+      "path": "anh/09-muc-tieu-da-redo.png",
+      "bytes": 46047,
+      "sha256": "806b17c39ee000d3950f2e82111589504958d22b928123b3613db5a45786a625"
+    },
+    {
+      "path": "anh/11-menu-redo-bi-vo-hieu.png",
+      "bytes": 3573,
+      "sha256": "6bbbc1b0cf6ec0489ba56cdd74f753e61173f365f5f47d61a0033f2a8a385451"
+    },
+    {
+      "path": "anh/12-cho-hai-dap-an-dung.png",
+      "bytes": 53409,
+      "sha256": "4622e794c468c10997a9415391ba053383b83517763557a8382846f79fdc52eb"
+    },
+    {
+      "path": "anh/13-cho-tu-dong-nghia-bi-cham-sai.png",
+      "bytes": 57414,
+      "sha256": "83712c70a714dca0747499149e067047b1cd0557133c12e97a4e54fcc2e50269"
+    },
+    {
+      "path": "anh/14-esc-binh-thuong-co-canh-bao.png",
+      "bytes": 69596,
+      "sha256": "b3e7e7e3c46ff4697e7cb553d0538d34a8c0725e3ce49c82bcb6a9e7c978f117"
+    },
+    {
+      "path": "anh/15-thiet-ke-tu-tao-sua-chia-se.png",
+      "bytes": 85287,
+      "sha256": "0ffcbaa989870ee8c6d6b8cef687d43f22b712f03c7c9116f2dfe88b9054bc85"
+    },
+    {
+      "path": "anh/16-du-lieu-giong-loi-khong-mo-vuon.png",
+      "bytes": 12523,
+      "sha256": "ccfc8ba3a1bb95c338b58d8e9c2e0e42c72cd62b81d895b9d170f950175c6513"
+    },
+    {
+      "path": "anh/17-nhiem-vu-sau-undo-truoc-game.png",
+      "bytes": 88397,
+      "sha256": "6e44b6a8060c2ba0d0b84263cce31b788894d0fb359f230c0cb6187587895937"
+    },
+    {
+      "path": "anh/18-cho-het-gio-van-nhan-thuong-streak.png",
+      "bytes": 76957,
+      "sha256": "a4de08e437619fd468d82ecfe9371ef56e3fa2078b4b90b655f7290063690744"
+    },
+    {
+      "path": "anh/19-goi-y-deck-ban-dau.png",
+      "bytes": 102841,
+      "sha256": "65478d502175ca05b24f2c5d8ffe1c14ffe11d5d2b3ac522f1b549696dbba6a7"
+    },
+    {
+      "path": "anh/20-doi-nguon-van-goi-y-tu-cu.png",
+      "bytes": 100589,
+      "sha256": "c7caf4b6ee5f36fbf8a9edf4a099829c723b6b8a1469f74bf5d875946b28528e"
+    },
+    {
+      "path": "anh/21-ho-so-A-bia-co-nha.png",
+      "bytes": 70757,
+      "sha256": "9769f7b233ff6c3ccad3f3c2fae3bbd4f3ec02827a275daf4aefd2d23792b420"
+    },
+    {
+      "path": "anh/22-ho-so-B-trong-khong-nha.png",
+      "bytes": 42334,
+      "sha256": "2c8fa3beb12d5891e4b2ba86b8f8451ef8fcc54e57104773c4999a734d4a9481"
+    },
+    {
+      "path": "anh/23-ho-so-B-lay-nham-anh-A.png",
+      "bytes": 68558,
+      "sha256": "6e9362e6d87af83f88ce5a28b46efad2cbdb45921b1a06a28599400a3bb589a1"
+    },
+    {
+      "path": "anh/kiem-tra-1251_03_bao_tieng_viet.png",
+      "bytes": 137629,
+      "sha256": "99de0a0bf56a62174e22534f64ec1dd0d56673916b4af08bb2871afa62654bd7"
+    },
+    {
+      "path": "anh/kiem-tra-1251_04_cau_hoi.png",
+      "bytes": 57078,
+      "sha256": "0bd01534be964d96fbef14e2b939d4c813f4d8127aeba9d88ca34db754e37d99"
+    },
+    {
+      "path": "anh/kiem-tra-1251_10_nguon_bao_1366.png",
+      "bytes": 88245,
+      "sha256": "6529acbe328830824c52769c4a947ed18b8c88218945930716a0d9304f988a33"
+    },
+    {
+      "path": "anh/kiem-tra-1251_10_nguon_bao_720.png",
+      "bytes": 50622,
+      "sha256": "255cd22a4be40f2d6baa47b83ad1effdd1e59da5c45e862310be366368549149"
+    },
+    {
+      "path": "anh/kiem-tra-125_08_1366.png",
+      "bytes": 48870,
+      "sha256": "53090024a7622610e33d8b5c31402315dcc65941cf237634b38245a0a3b9fb1f"
+    },
+    {
+      "path": "anh/kiem-tra-125_08_720.png",
+      "bytes": 34886,
+      "sha256": "10e5ad67d14ec38ae530bf2c93c7916faa499f6813b6bf8610bc5b54016f4983"
+    },
+    {
+      "path": "logs/audit.json",
+      "bytes": 21247,
+      "sha256": "89ae25a965a39d45e8ed33123d8cc7a9e3429e68392b5ffe14f35dc58faf856c"
+    },
+    {
+      "path": "logs/audit.out",
+      "bytes": 3642,
+      "sha256": "5905fc33754038feaecf7c0381d9aa4ddb205dda03e5479090921e5e58adcd37"
+    },
+    {
+      "path": "logs/audit_edge.json",
+      "bytes": 14897,
+      "sha256": "8807edc0a8ad4646f40dc2686ec3964787caed89ddbffd457082e08a544cc265"
+    },
+    {
+      "path": "logs/audit_edge.out",
+      "bytes": 8435,
+      "sha256": "63d3d159a323bdd0374084f0229b13d9eb1490d44bd4be17d48c2228f200c4e7"
+    },
+    {
+      "path": "logs/audit_full.json",
+      "bytes": 31263,
+      "sha256": "ce466a7711bc7d98632b30d8bb742d22e4440c87e064ac0a6de99a3d0225ab65"
+    },
+    {
+      "path": "logs/audit_full.out",
+      "bytes": 14819,
+      "sha256": "d81f715d66f1abef2ebb21da0fa0edae87850d01708158d86040096fcce82e79"
+    },
+    {
+      "path": "logs/corrupt-state.json",
+      "bytes": 507,
+      "sha256": "26112c36d84bd9711d526a661c662d13a077ec1ff0eb66bbfb59367055f98603"
+    },
+    {
+      "path": "logs/design-lifecycle.json",
+      "bytes": 1096,
+      "sha256": "d297ddd921a27171964cf96348e72f8e4f8083a2454db19bab91c8027e5b691f"
+    },
+    {
+      "path": "logs/design-probe.json",
+      "bytes": 312,
+      "sha256": "f3e5346bf0d5ba7b85863bfac2617301e8a86e575af5c3b6c6b917bbe062c557"
+    },
+    {
+      "path": "logs/e2e.out",
+      "bytes": 2321,
+      "sha256": "dcbf5b031e1b22eae455d9dc9d3d62580447cd7bb7adb4891cc9c7086ca2dcb3"
+    },
+    {
+      "path": "logs/e2e120-model-discovery-error.json",
+      "bytes": 182,
+      "sha256": "2bfad3ae58c3ac0fbc538fb13fb9c7660c50b0c99bb43fe61d32c601242dd1f2"
+    },
+    {
+      "path": "logs/e2e120-model-fixture-diff.txt",
+      "bytes": 328,
+      "sha256": "4b3ad677a3f0dd8f41fe5a0422b735b7254f90aafc49ea6c5e64f9705d759e53"
+    },
+    {
+      "path": "logs/e2e_114.out",
+      "bytes": 1925,
+      "sha256": "0ac6c381660a213b2c359a648c13bd539efeb9d04a343afe6cb631bebefe93c3"
+    },
+    {
+      "path": "logs/e2e_115.out",
+      "bytes": 1588,
+      "sha256": "c1ed1635f1c4460231eea186ab243e77560ebb169b82dc3f840bfb24f2f27451"
+    },
+    {
+      "path": "logs/e2e_116.out",
+      "bytes": 1025,
+      "sha256": "f822210494ca63753b0fa11502aaab593e98786a4095b92df3a12a34761c0db9"
+    },
+    {
+      "path": "logs/e2e_117.out",
+      "bytes": 5012,
+      "sha256": "0e46e14851011b7476ce10f61a828f6d1a1d27e06bb4e0b27a3311533503d036"
+    },
+    {
+      "path": "logs/e2e_118.out",
+      "bytes": 2306,
+      "sha256": "b332224fae39f6888bb5e7f9653879ad13b1476a9658ae9fc1b7ec7b1ed51dc7"
+    },
+    {
+      "path": "logs/e2e_119.out",
+      "bytes": 5566,
+      "sha256": "bd889818b0e6aab1208bb79d7a40eb1893c0486f090219ead9de64c68d8bfd3a"
+    },
+    {
+      "path": "logs/e2e_120.out",
+      "bytes": 3277,
+      "sha256": "b50f422c8ce22b123c2901340f372994aa0d0aa86630072322282e2e5f2ac7f1"
+    },
+    {
+      "path": "logs/e2e_120_models_fixture.out",
+      "bytes": 7951,
+      "sha256": "f788d2120da8f2f895e8d201e87ae2fd6be338832871a14151d8c24245c541d7"
+    },
+    {
+      "path": "logs/e2e_121.out",
+      "bytes": 3210,
+      "sha256": "9de2637d6e0ee1ee8bda17ab8bd469c665e26cc9dfb150bf4e6fc8c7b22d473f"
+    },
+    {
+      "path": "logs/e2e_122.out",
+      "bytes": 4536,
+      "sha256": "32bef478cf2fe42d3584fb96fd8a11a7282ad4aee3981b52983e7d3ef813c15c"
+    },
+    {
+      "path": "logs/e2e_1223.out",
+      "bytes": 4111,
+      "sha256": "74bfba78648e95c280be73269e9e648744b43f86ec72524ab6b1bd883c7716a7"
+    },
+    {
+      "path": "logs/e2e_1226.out",
+      "bytes": 3316,
+      "sha256": "dfb0d2870a1e8e845c0c67e20ff8674d61adaaa5754a947e3662cec3415db301"
+    },
+    {
+      "path": "logs/e2e_1228.out",
+      "bytes": 2033,
+      "sha256": "f23bf2c27f94348449725318290f1437c4190276ea687c34774633254f23526d"
+    },
+    {
+      "path": "logs/e2e_123.out",
+      "bytes": 5603,
+      "sha256": "238aadc76bf7a31d2168c972cb239b0a4936c51025095662f2b03a44dcdca258"
+    },
+    {
+      "path": "logs/e2e_124.out",
+      "bytes": 1903,
+      "sha256": "f83ed2f6e94b3214150380d37091c718a5153c2bcc2c6fa93d11b68788e38529"
+    },
+    {
+      "path": "logs/e2e_125.out",
+      "bytes": 3192,
+      "sha256": "64144ac55e79cc55c1c927a8381db2655101c52192cf8609a6f6461d9934dd7c"
+    },
+    {
+      "path": "logs/e2e_1251.out",
+      "bytes": 5787,
+      "sha256": "cc35d9c9c157c624d412e5029ded54ca504887037cfad0af0637efd5b0b2b9eb"
+    },
+    {
+      "path": "logs/e2e_kit23.out",
+      "bytes": 1309,
+      "sha256": "e9ed10f318feab30cb96d8aa23058bbdba6fe1001b937b4d47002dd2497a11f0"
+    },
+    {
+      "path": "logs/e2e_tour.out",
+      "bytes": 546,
+      "sha256": "fb861c3d77af891e3ba5a0a9530723eb974a6fe39a2f15e6619bcee946acbd01"
+    },
+    {
+      "path": "logs/extra-1252.json",
+      "bytes": 5777,
+      "sha256": "95a3f74bf320faa870dd264345bfdb8028f66721ab0eda2cad7d63f47c755d08"
+    },
+    {
+      "path": "logs/extra-core.json",
+      "bytes": 29969,
+      "sha256": "c99a23e5a554eda9ca05e1a864a104be76f47f4ac0567de580ff3e5dd193bbfb"
+    },
+    {
+      "path": "logs/extra-core.log",
+      "bytes": 1140,
+      "sha256": "7d133c26bd1ef04233f34acdb67e0688908b9642bba34143147a8e5772a7defe"
+    },
+    {
+      "path": "logs/latest-offline.log",
+      "bytes": 4631,
+      "sha256": "bedd253c23a327957208bb2c23c016b3c868ff7a529c24da31345b10e038caa4"
+    },
+    {
+      "path": "logs/package-match.json",
+      "bytes": 194,
+      "sha256": "f5bcb9eec7756a884a296f3ad5487f796c9d2221c63a14e7584e0ab46a0b7f54"
+    },
+    {
+      "path": "logs/photo-a.json",
+      "bytes": 352,
+      "sha256": "1ed807f86f88226a765655ab703d118982b5ec1d79570cf12e98e3a9e4492703"
+    },
+    {
+      "path": "logs/photo-b.json",
+      "bytes": 252,
+      "sha256": "ab5b550269fa471983527a43c592f99f17776608f12f3fa92f1b9e1c7c912ca0"
+    },
+    {
+      "path": "logs/quest-after-undo.json",
+      "bytes": 1843,
+      "sha256": "06bb14f7edbb3d2c002a25988646277888aabcef97048bfd3c3c928f5c7d6308"
+    },
+    {
+      "path": "logs/redo-isolate.json",
+      "bytes": 209,
+      "sha256": "c0c87f5ef8a156b4badf170619d8770f7e5709faa9ca608b258287d1c2461763"
+    },
+    {
+      "path": "logs/source-cache.json",
+      "bytes": 386,
+      "sha256": "695d8fdd54986f5468b637fd82bb7f5ece65a5e56d5dfa4048f406afae9efa1b"
+    },
+    {
+      "path": "logs/suites-summary.json",
+      "bytes": 2945,
+      "sha256": "a4d40f45cc6fc775d31b8732fdeb4d285cf9766678ea0aca1f8dd651bd37d29c"
+    },
+    {
+      "path": "logs/suites-summary.md.txt",
+      "bytes": 2189,
+      "sha256": "f4bda42eab485a992c38fc8839a1bcc53eacd5a16fd4d41b51d0dfd901e6897e"
+    },
+    {
+      "path": "logs/synonyms.json",
+      "bytes": 972,
+      "sha256": "4cdd099e5a90c442c7d99cd7005517fe175fdd52d8bfacd9a2bca1f113135d97"
+    },
+    {
+      "path": "logs/test-kit-retry.log",
+      "bytes": 1078,
+      "sha256": "bd9db2d2f9877bbbfc7dfa9c6449b1d331951877cd784de76b698f44a9e7733b"
+    },
+    {
+      "path": "logs/undo-redo.json",
+      "bytes": 3788,
+      "sha256": "94778ee37284b578f051025a84dd8656ada6742ac19a2e33a3d03c7b634f610f"
+    }
+  ]
+}

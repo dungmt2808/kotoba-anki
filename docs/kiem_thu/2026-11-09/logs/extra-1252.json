@@ -1,0 +1,314 @@
+[
+  {
+    "name": "2026-12-31 tuan duration/price",
+    "ok": true
+  },
+  {
+    "name": "2026-12-31 inclusive expiry",
+    "ok": true
+  },
+  {
+    "name": "2026-12-31 paid cannot receive extra trial",
+    "ok": true
+  },
+  {
+    "name": "2026-12-31 thang duration/price",
+    "ok": true
+  },
+  {
+    "name": "2026-12-31 inclusive expiry",
+    "ok": true
+  },
+  {
+    "name": "2026-12-31 paid cannot receive extra trial",
+    "ok": true
+  },
+  {
+    "name": "2026-12-31 trial once",
+    "ok": true
+  },
+  {
+    "name": "2026-12-31 trial 7 days",
+    "ok": true
+  },
+  {
+    "name": "2027-01-31 tuan duration/price",
+    "ok": true
+  },
+  {
+    "name": "2027-01-31 inclusive expiry",
+    "ok": true
+  },
+  {
+    "name": "2027-01-31 paid cannot receive extra trial",
+    "ok": true
+  },
+  {
+    "name": "2027-01-31 thang duration/price",
+    "ok": true
+  },
+  {
+    "name": "2027-01-31 inclusive expiry",
+    "ok": true
+  },
+  {
+    "name": "2027-01-31 paid cannot receive extra trial",
+    "ok": true
+  },
+  {
+    "name": "2027-01-31 trial once",
+    "ok": true
+  },
+  {
+    "name": "2027-01-31 trial 7 days",
+    "ok": true
+  },
+  {
+    "name": "2028-02-28 tuan duration/price",
+    "ok": true
+  },
+  {
+    "name": "2028-02-28 inclusive expiry",
+    "ok": true
+  },
+  {
+    "name": "2028-02-28 paid cannot receive extra trial",
+    "ok": true
+  },
+  {
+    "name": "2028-02-28 thang duration/price",
+    "ok": true
+  },
+  {
+    "name": "2028-02-28 inclusive expiry",
+    "ok": true
+  },
+  {
+    "name": "2028-02-28 paid cannot receive extra trial",
+    "ok": true
+  },
+  {
+    "name": "2028-02-28 trial once",
+    "ok": true
+  },
+  {
+    "name": "2028-02-28 trial 7 days",
+    "ok": true
+  },
+  {
+    "name": "2028-02-29 tuan duration/price",
+    "ok": true
+  },
+  {
+    "name": "2028-02-29 inclusive expiry",
+    "ok": true
+  },
+  {
+    "name": "2028-02-29 paid cannot receive extra trial",
+    "ok": true
+  },
+  {
+    "name": "2028-02-29 thang duration/price",
+    "ok": true
+  },
+  {
+    "name": "2028-02-29 inclusive expiry",
+    "ok": true
+  },
+  {
+    "name": "2028-02-29 paid cannot receive extra trial",
+    "ok": true
+  },
+  {
+    "name": "2028-02-29 trial once",
+    "ok": true
+  },
+  {
+    "name": "2028-02-29 trial 7 days",
+    "ok": true
+  },
+  {
+    "name": "2028-03-01 tuan duration/price",
+    "ok": true
+  },
+  {
+    "name": "2028-03-01 inclusive expiry",
+    "ok": true
+  },
+  {
+    "name": "2028-03-01 paid cannot receive extra trial",
+    "ok": true
+  },
+  {
+    "name": "2028-03-01 thang duration/price",
+    "ok": true
+  },
+  {
+    "name": "2028-03-01 inclusive expiry",
+    "ok": true
+  },
+  {
+    "name": "2028-03-01 paid cannot receive extra trial",
+    "ok": true
+  },
+  {
+    "name": "2028-03-01 trial once",
+    "ok": true
+  },
+  {
+    "name": "2028-03-01 trial 7 days",
+    "ok": true
+  },
+  {
+    "name": "2026-11-09 tuan duration/price",
+    "ok": true
+  },
+  {
+    "name": "2026-11-09 inclusive expiry",
+    "ok": true
+  },
+  {
+    "name": "2026-11-09 paid cannot receive extra trial",
+    "ok": true
+  },
+  {
+    "name": "2026-11-09 thang duration/price",
+    "ok": true
+  },
+  {
+    "name": "2026-11-09 inclusive expiry",
+    "ok": true
+  },
+  {
+    "name": "2026-11-09 paid cannot receive extra trial",
+    "ok": true
+  },
+  {
+    "name": "2026-11-09 trial once",
+    "ok": true
+  },
+  {
+    "name": "2026-11-09 trial 7 days",
+    "ok": true
+  },
+  {
+    "name": "both side rooms for one payment",
+    "ok": true
+  },
+  {
+    "name": "duplicate expansion rejects atomically",
+    "ok": true
+  },
+  {
+    "name": "yard reizouko rejected placement no mutation",
+    "ok": true
+  },
+  {
+    "name": "yard nagashi rejected placement no mutation",
+    "ok": true
+  },
+  {
+    "name": "yard shokutaku rejected placement no mutation",
+    "ok": true
+  },
+  {
+    "name": "yard suihanki rejected placement no mutation",
+    "ok": true
+  },
+  {
+    "name": "yard shokkidana rejected placement no mutation",
+    "ok": true
+  },
+  {
+    "name": "yard yasaikago rejected placement no mutation",
+    "ok": true
+  },
+  {
+    "name": "room reizouko inventory bound",
+    "ok": true
+  },
+  {
+    "name": "room nagashi rejected placement no mutation",
+    "ok": true
+  },
+  {
+    "name": "room shokutaku rejected placement no mutation",
+    "ok": true
+  },
+  {
+    "name": "room suihanki rejected placement no mutation",
+    "ok": true
+  },
+  {
+    "name": "room shokkidana rejected placement no mutation",
+    "ok": true
+  },
+  {
+    "name": "room yasaikago rejected placement no mutation",
+    "ok": true
+  },
+  {
+    "name": "kitchen reizouko rejected placement no mutation",
+    "ok": true
+  },
+  {
+    "name": "kitchen nagashi inventory bound",
+    "ok": true
+  },
+  {
+    "name": "kitchen shokutaku rejected placement no mutation",
+    "ok": true
+  },
+  {
+    "name": "kitchen suihanki rejected placement no mutation",
+    "ok": true
+  },
+  {
+    "name": "kitchen shokkidana rejected placement no mutation",
+    "ok": true
+  },
+  {
+    "name": "kitchen yasaikago rejected placement no mutation",
+    "ok": true
+  },
+  {
+    "name": "bedroom reizouko rejected placement no mutation",
+    "ok": true
+  },
+  {
+    "name": "bedroom nagashi rejected placement no mutation",
+    "ok": true
+  },
+  {
+    "name": "bedroom shokutaku inventory bound",
+    "ok": true
+  },
+  {
+    "name": "bedroom suihanki rejected placement no mutation",
+    "ok": true
+  },
+  {
+    "name": "bedroom shokkidana rejected placement no mutation",
+    "ok": true
+  },
+  {
+    "name": "bedroom yasaikago rejected placement no mutation",
+    "ok": true
+  },
+  {
+    "name": "invalid room not-room",
+    "ok": true
+  },
+  {
+    "name": "invalid room house",
+    "ok": true
+  },
+  {
+    "name": "invalid room ",
+    "ok": true
+  },
+  {
+    "name": "invalid room None",
+    "ok": true
+  }
+]

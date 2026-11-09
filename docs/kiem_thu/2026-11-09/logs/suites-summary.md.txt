@@ -1,0 +1,35 @@
+Nguồn: 1.25.2 / 472b3bc9416f8cbf2516b254a98eb2ce2ecf34fc
+Anki 26.9.4 trên Linux. Không sửa assertion/mã nguồn.
+
+| Suite | Kết quả trong stdout | Assertion đã thấy | Đỏ |
+|---|---|---:|---:|
+| audit.out | Hoàn tất đo/chụp, nhật ký lỗi trống | 0 | 0 |
+| audit_edge.out | KẾT QUẢ: 58/58 đạt | 58 | 0 |
+| e2e.out | KẾT QUẢ: 23/24 đạt | 24 | 1 |
+| e2e_114.out | KẾT QUẢ: 34/34 đạt | 34 | 0 |
+| e2e_115.out | KẾT QUẢ: 21/21 đạt | 21 | 0 |
+| e2e_116.out | KẾT QUẢ: 15/15 đạt | 15 | 0 |
+| e2e_117.out | KẾT QUẢ: 55/55 đạt | 55 | 0 |
+| e2e_118.out | KẾT QUẢ: 29/29 đạt | 29 | 0 |
+| e2e_119.out | KẾT QUẢ: 55/55 đạt | 55 | 0 |
+| e2e_120.out | DỪNG: LỖI KỊCH BẢN: Error: TypeError: Cannot read properties of null (reading 'textContent') | 43 | 0 |
+| e2e_121.out | KẾT QUẢ: 46/46 | 46 | 0 |
+| e2e_122.out | KẾT QUẢ: 64/64 | 64 | 0 |
+| e2e_1223.out | KẾT QUẢ: 49/49 | 49 | 0 |
+| e2e_1226.out | KẾT QUẢ: 40/40 đạt | 40 | 0 |
+| e2e_1228.out | KẾT QUẢ: 26/26 đạt | 26 | 0 |
+| e2e_123.out | KẾT QUẢ: 63/65 đạt | 65 | 2 |
+| e2e_124.out | KẾT QUẢ: 23/23 đạt | 23 | 0 |
+| e2e_125.out | KẾT QUẢ: 30/30 đạt | 30 | 0 |
+| e2e_1251.out | KẾT QUẢ: 48/48 đạt | 48 | 0 |
+| e2e_kit23.out | KẾT QUẢ: 10/10 đạt | 10 | 0 |
+| e2e_tour.out | KẾT QUẢ: 12/12 đạt | 12 | 0 |
+| audit_full.out | KẾT QUẢ: 181/181 | 181 | 0 |
+| e2e_120_models_fixture.out | KẾT QUẢ: 103/103 | 103 | 0 |
+
+e2e_120.out: client.models() chưa được mock, bị proxy 403. e2e_120_models_fixture.out: giữ assertion/delay, thêm model giả → 103/103.
+e2e.out và e2e_123.out: đỏ ở yêu cầu nhật ký trống vì TTS bị proxy 403.
+test_kit.py: đỏ do fixture số báo 01/11 đã có bản dịch.
+audit.js: 91 ảnh đo; audit_full: 131 ảnh; audit_edge: 64 ảnh. Cả ba: 0 tràn ngang, 0 phần tử ngoài khung ngang, 0 lỗi JS.
+audit.js có 4 cờ cắt dòng metadata ở Kệ báo (cố ý dùng dấu …), không ghi thành lỗi mới.
+Chỉ đính kèm ảnh phát hiện và ảnh đại diện; stdout chỉ bỏ khoảng trắng cuối dòng.

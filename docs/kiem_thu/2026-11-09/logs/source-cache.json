@@ -1,0 +1,30 @@
+{
+  "before": [
+    "child",
+    "stop"
+  ],
+  "expected": {
+    "deck": "Audit::Synonyms",
+    "words": [
+      "store",
+      "large",
+      "start",
+      "little",
+      "small",
+      "big",
+      "shop",
+      "begin"
+    ],
+    "source": {
+      "decks": [
+        1794220109914
+      ],
+      "mode": "deck"
+    }
+  },
+  "after": [
+    "child",
+    "stop"
+  ],
+  "stale": true
+}

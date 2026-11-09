@@ -1,0 +1,33 @@
+== màn chính: Trong nhà (cả nhà 3 gian) ở ◂ ▸
+  ✓ phím → từ Sân vườn sang Trong nhà (cả nhà)
+  ✓ tên cảnh: Trong nhà
+  ✓ Bếp, Phòng ngủ chưa mở thì tối; phòng chính sáng (độ sáng sàn 82 / 176 / 66)
+== bấm gian chưa mở → tab Xây nhà, Mở rộng nhà
+  ✓ mở Nhà & Cửa hàng ở tab Xây nhà
+  ✓ 1.25: một thẻ "Mở rộng nhà · Bếp + Phòng ngủ"
+  ✓ bấm đúp "Mở rộng": mở cả Bếp lẫn Phòng ngủ, chỉ trừ 2.000 xu (còn 8000)
+  ✓ nút cảnh: có "Bếp" và "Phòng ngủ"
+== Bếp: mua + đặt tủ lạnh, đặt chậu cây từ Kho
+  ✓ chuyển sang gian Bếp
+  ✓ khung Bếp 9 ô (144 × 88): 288 × 176
+  ✓ tab Nội thất chia nhóm: Phòng chính | Bếp | Phòng ngủ
+  ✓ mua tủ lạnh
+  ✓ mua xong bấm ô (0, 1) của Bếp → đặt tủ lạnh trong Bếp
+  ✓ Kho đồ → Đặt chậu cây khi đang xem Bếp → đặt vào Bếp
+  ✓ đồ treo tường cũ (đồng hồ) treo trên tường Bếp
+== Phòng ngủ + đồ mới, thú nuôi đi khắp nhà
+  ✓ mở Phòng ngủ, bày giường / đèn ngủ / dây đèn sao / tủ áo
+  ✓ màn chính: cả nhà 3 gian
+== ảnh chụp nguyên nhà
+  ✓ hộp chụp ảnh: cảnh "Trong nhà"
+  ✓ ảnh cỡ thường của cả nhà: 934 × 224
+== bấm gian đã mở trên màn chính → bảng Nhà ở đúng gian
+  ✓ bấm Phòng ngủ → bảng Nhà mở ở Phòng ngủ
+== thanh trên của Nhà ở 1024 px (đủ Trong nhà · Bếp · Phòng ngủ)
+   [946,946,true,[777,113,878,144],[888,113,978,144]]
+  ✓ thanh trên không tràn, "Chụp ảnh" không đè "Thoát" (946 / 946)
+== cửa sổ nhỏ (720 × 520)
+  ✓ không tràn ngang, khung Phòng ngủ vừa, danh sách còn 142 px
+  ✓ nhật ký lỗi add-on trống
+  ✓ không có lỗi JS
+KẾT QUẢ: 23/23 đạt

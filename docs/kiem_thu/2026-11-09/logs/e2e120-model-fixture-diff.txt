@@ -1,0 +1,7 @@
+--- original e2e_120.js
++++ scratch e2e_120_models_fixture.js
+@@ -6 +6 @@
+-const { pages, Page, sleep } = require('./cdp');
++const { pages, Page, sleep } = require('/workspace/work/kotoba-audit/latest/tests/anki/cdp.js');
+@@ -72,0 +73 @@
++kb.ai.save_status(kb.ai.ensure_dir(kb.AI_DIR), {"models": ["gemini-flash-lite-latest"]})

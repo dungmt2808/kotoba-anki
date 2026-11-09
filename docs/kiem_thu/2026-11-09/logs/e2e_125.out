@@ -1,0 +1,38 @@
+== chưa mở rộng (1920 × 1080): nhà giữa dải, vườn hai bên, hai gian bên tối như nhau
+  ✓ màn chính đang ở "Trong nhà"
+  ✓ cả nhà ×3 nằm giữa dải: lề trái 83 / lề phải 83 điểm ảnh, phía trên 13
+  ✓ hai bên là vườn (trời trên / cỏ dưới), không còn nền gỗ tối: [[[148,214,255],[105,203,89]],[[148,214,255],[105,203,89]]]
+  ✓ Bếp / Phòng ngủ tối như nhau, phòng chính sáng (sàn 72 / 169 / 65)
+== tab Xây nhà: một thẻ "Mở rộng nhà", bấm đúp chỉ trừ 2.000 xu
+  ✓ bấm Bếp chưa mở → Nhà & Cửa hàng ở tab Xây nhà
+  ✓ một thẻ "Bếp + Phòng ngủ · 2000 xu" có ảnh nhỏ cả nhà
+  ✓ tiêu đề nhóm "Mở rộng nhà", thẻ không có đoạn giải thích
+  ✓ bấm đúp "Mở rộng": mở cả hai gian, chỉ trừ 2.000 xu (còn 8000)
+  ✓ thẻ đổi thành "Đã mở" + nút Đến Bếp / Đến Phòng ngủ
+  ✓ nút cảnh có cả Bếp và Phòng ngủ: Sân vườn · Trong nhà · Bếp · Phòng ngủ · Bãi biển
+  ✓ tab Xây nhà: 5 ảnh nhỏ nhà 3 gian (thẻ Mở rộng + 4 kiểu nhà)
+  ✓ ảnh nhỏ của 4 kiểu nhà khác nhau (tường Bếp): 247,249,251 | 236,214,168 | 246,241,228 | 233,185,73
+== sau khi mở: hai gian cùng sáng; 4 kiểu nhà × 3 gian đổi theo kiểu
+  ✓ Bếp, Phòng ngủ đã sáng như phòng chính (sàn 196 / 175 / 170)
+  ✓ mỗi điểm đo (tường / sàn của Bếp, phòng chính, Phòng ngủ) đổi theo cả 4 kiểu nhà: 4 4 4 4 4 4
+  ✓ đổi kiểu nhà không mất gian, không trừ thêm xu
+  ✓ bảng Nhà ở Bếp (144 × 88) đổi nền theo kiểu nhà: 247,243,234 → 216,189,138
+== hình nền nguyên nhà (1920 × 1080)
+  ✓ hình nền 1920 × 1080: trời ở hai góc trên, cỏ ở góc dưới (không còn gỗ tối): {"size":[1920,1080],"tl":[101,192,255],"bl":[105,203,89],"tr":[101,192,255],"mid":[227,174,112]}
+== ⚙ → Màn chính → Dây trang trí
+  ✓ có dòng "Dây trang trí: Hiện / Ẩn", mặc định Hiện
+  ✓ lưu cấu hình ui.deco = "off"
+  ✓ Ẩn: dải trên cùng ẩn, không chừa chỗ (padding 14px), giao diện mùa vẫn bật
+  ✓ dây trang trí trong nhà biến mất (dòng điểm ảnh dưới xà đổi: 26321 → 30695)
+  ✓ mở lại vườn: vẫn ẩn
+  ✓ bấm kiểu có sẵn (Dịu mắt → Đầy đủ): kiểu được áp dụng, Dây trang trí vẫn Ẩn [["off","still"],["off","full"]]
+  ✓ bật lại Hiện: dải trên cùng + dây trong nhà trở lại, cấu hình "on"
+== ban đêm
+  ✓ đêm: vườn tối hẳn (174 → 84), trong nhà vẫn sáng hơn vườn (140)
+== cửa sổ 1366 / 1024 / 720 × 520
+  ✓ 1366 px: ×2, nhà giữa (lề 100 / 100), không tràn ngang, hai bên là cỏ [[105,203,89],[105,203,89]]
+  ✓ 1024 px: ×2, nhà giữa (lề 14 / 15), không tràn ngang, hai bên là cỏ [[105,203,89],[105,203,89]]
+  ✓ 720 px: ×1, nhà giữa (lề 105 / 105), không tràn ngang, hai bên là cỏ [[105,203,89],[105,203,89]]
+  ✓ nhật ký lỗi add-on trống
+  ✓ không có lỗi JS
+KẾT QUẢ: 30/30 đạt
