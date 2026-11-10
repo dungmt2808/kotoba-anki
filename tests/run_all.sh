@@ -42,6 +42,9 @@ echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
 echo "== core/test_1251.py"
 OUT=$(python3 "$HERE/core/test_1251.py" "$ADDON" ${OLD125:+"$OLD125"} 2>&1); RC=$?
 echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
+echo "== core/test_1253.py"
+OUT=$(python3 "$HERE/core/test_1253.py" "$ADDON" 2>&1); RC=$?
+echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
 echo "== core/test_kit.py (bộ kotoba_daily)"
 OUT=$(python3 "$HERE/core/test_kit.py" "$ADDON" 2>&1); RC=$?
 echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1

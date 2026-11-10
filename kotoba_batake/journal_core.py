@@ -1254,6 +1254,28 @@ def photos(folder: str) -> list[str]:
     return sorted(n[:-4] for n in names if n.endswith(".png") and parse_date(n[:-4]))
 
 
+def profile_photo_dir(root: str, key: str, adopt: bool) -> str:
+    """1.25.3 (audit BUG-06): ảnh vườn tự chụp theo hồ sơ — `root/<mã hồ sơ>/`. Trước đây mọi hồ sơ trên máy dùng chung
+    `root/` (tên ảnh chỉ có ngày) nên hồ sơ mới tinh lấy bìa nhật ký là nhà của hồ sơ khác. Ảnh cũ ở `root/` (của bản
+    ≤ 1.25.2) về hồ sơ đầu tiên đã có ví (`adopt`) mở sau khi cập nhật; hồ sơ mới tinh không nhận. `key` rỗng
+    (không biết hồ sơ) thì dùng `root` như cũ."""
+    if not key or not re.fullmatch(r"[0-9a-f]{6,40}", key):
+        return root
+    folder = os.path.join(root, key)
+    if os.path.isdir(folder):
+        return folder
+    old = photos(root)
+    if old and not adopt:
+        return folder          # chưa tạo thư mục: hồ sơ có ví mở sau vẫn nhận được ảnh cũ
+    try:
+        os.makedirs(folder, exist_ok=True)
+        for ds in old:
+            os.replace(os.path.join(root, ds + ".png"), os.path.join(folder, ds + ".png"))
+    except OSError:
+        pass
+    return folder
+
+
 def photo_due(folder: str, today: _dt.date) -> bool:
     ps = photos(folder)
     if not ps:

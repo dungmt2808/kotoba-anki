@@ -260,14 +260,15 @@ def _clean_seeds(raw: Any) -> dict[str, Any]:
     ok = set(out["owned"]) | {MIX}
     deck = raw.get("deck") if isinstance(raw.get("deck"), dict) else {}
     for did, v in deck.items():
-        if isinstance(did, str) and re.fullmatch(r"\d{1,20}", did) and v in ok and len(out["deck"]) < 200:
+        # 1.25.3 (audit BUG-07): giá trị sai kiểu (danh sách, dict…) bị bỏ — trước đây `in set` ném TypeError, vườn không mở
+        if isinstance(did, str) and re.fullmatch(r"\d{1,20}", did) and isinstance(v, str) and v in ok and len(out["deck"]) < 200:
             out["deck"][did] = v
     kind = raw.get("kind") if isinstance(raw.get("kind"), dict) else {}
-    out["kind"] = {k: kind[k] for k in SEED_KINDS if kind.get(k) in ok}
+    out["kind"] = {k: kind[k] for k in SEED_KINDS if isinstance(kind.get(k), str) and kind[k] in ok}
     tags = raw.get("tag") if isinstance(raw.get("tag"), list) else []
     seen: set[str] = set()
     for row in tags:
-        if isinstance(row, list) and len(row) == 2 and row[1] in ok:
+        if isinstance(row, list) and len(row) == 2 and isinstance(row[1], str) and row[1] in ok:
             t = _clean_tag(row[0])
             if t and t.lower() not in seen and len(out["tag"]) < SEED_TAG_MAX:
                 seen.add(t.lower())
@@ -427,9 +428,10 @@ def _clean_zone(raw: Any, palette: dict[str, str]) -> dict[str, Any] | None:
     return {
         "id": raw["id"],
         "name": clean_text(raw.get("name"), 20, "Vùng của tớ"),
-        "bg": raw.get("bg") if raw.get("bg") in UZONE_BG else UZONE_DEFAULT["bg"],
-        "ground": raw.get("ground") if raw.get("ground") in UZONE_GROUND else UZONE_DEFAULT["ground"],
-        "hills": raw.get("hills") if raw.get("hills") in UZONE_HILLS else UZONE_DEFAULT["hills"],
+        # 1.25.3: sai kiểu (danh sách, dict…) → mặc định (trước đây `in dict` ném TypeError, vườn không mở)
+        "bg": raw.get("bg") if isinstance(raw.get("bg"), str) and raw.get("bg") in UZONE_BG else UZONE_DEFAULT["bg"],
+        "ground": raw.get("ground") if isinstance(raw.get("ground"), str) and raw.get("ground") in UZONE_GROUND else UZONE_DEFAULT["ground"],
+        "hills": raw.get("hills") if isinstance(raw.get("hills"), str) and raw.get("hills") in UZONE_HILLS else UZONE_DEFAULT["hills"],
         "lm": lm,
     }
 
@@ -729,6 +731,56 @@ def clean_ui(raw: Any) -> dict[str, Any]:
         if raw.get(k) in choices:
             out[k] = raw[k]
     return out
+
+
+# ---------------------------------------------------------------------------
+# 1.25.3: cài đặt riêng máy này (trời & giờ, nhạc, âm lượng, tắt tiếng, cảnh màn chính, Đuổi quạ…)
+# Trước đây chỉ nằm ở localStorage của trang vườn, mà Anki 26.x dựng webview bằng profile "không lưu"
+# (QWebEngineProfile() không tên → mọi thứ trong RAM) và máy chủ nội bộ đổi cổng mỗi lần mở → tắt Anki là mất.
+# Nay lưu ở config.json của add-on (khoá "prefs", không đồng bộ AnkiWeb), trang đọc lại khi mở.
+# ---------------------------------------------------------------------------
+
+PREF_KEY_RE = re.compile(r"^kb-[a-z0-9][a-z0-9-]{0,60}$")
+PREF_MAX_KEYS = 120
+PREF_MAX_LEN = 400
+PREF_JOY_RE = re.compile(r"^kb-joy-(-?\d{1,7})-")
+
+
+def clean_prefs(raw: Any) -> dict[str, str]:
+    """{khoá "kb-…": chuỗi}. Bỏ khoá lạ / giá trị không phải chuỗi / quá dài; dải chúc mừng (kb-joy-<ngày>-…) chỉ giữ
+    ngày mới nhất; tối đa 120 khoá (giữ các khoá ghi sau cùng)."""
+    if not isinstance(raw, dict):
+        return {}
+    out: dict[str, str] = {}
+    for k, v in raw.items():
+        if not isinstance(k, str) or not PREF_KEY_RE.match(k):
+            continue
+        if isinstance(v, bool) or not isinstance(v, (str, int, float)):
+            continue
+        s = v if isinstance(v, str) else str(v)
+        if len(s) > PREF_MAX_LEN:
+            continue
+        out[k] = s
+    days = [int(m.group(1)) for m in (PREF_JOY_RE.match(k) for k in out) if m]
+    if days:
+        last = max(days)
+        out = {k: v for k, v in out.items() if not (PREF_JOY_RE.match(k) and int(PREF_JOY_RE.match(k).group(1)) != last)}
+    if len(out) > PREF_MAX_KEYS:
+        out = dict(list(out.items())[-PREF_MAX_KEYS:])
+    return out
+
+
+def merge_prefs(current: Any, changes: Any) -> dict[str, str]:
+    """Gộp thay đổi trang gửi lên ({khoá: chuỗi | null = xoá}) vào cài đặt đang có, rồi làm sạch."""
+    out = dict(clean_prefs(current))
+    if isinstance(changes, dict):
+        for k, v in changes.items():
+            if not isinstance(k, str):
+                continue
+            out.pop(k, None)           # ghi sau cùng xếp sau cùng (khi phải cắt bớt thì giữ khoá mới)
+            if v is not None:
+                out[k] = v
+    return clean_prefs(out)
 
 
 UI_KEEP_ON_PRESET = ("scene", "start", "deco")    # 1.25: nhóm "Màn chính" không thuộc kiểu có sẵn → bấm kiểu không đổi

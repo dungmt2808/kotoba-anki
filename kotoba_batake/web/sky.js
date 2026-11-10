@@ -32,10 +32,22 @@ var GardenSky = (function () {
 
   const DEFAULTS = { mode: "real", dayMinutes: 24, fixedHour: 9, weather: "auto" };
   let cfg = Object.assign({}, DEFAULTS);
-  try {
-    const s = JSON.parse(localStorage.getItem("kb-sky") || "{}");
-    Object.keys(DEFAULTS).forEach((k) => { if (s[k] !== undefined) { cfg[k] = s[k]; } });
-  } catch (e) { /* dùng mặc định */ }
+  // 1.25.3: đọc qua GardenPrefs (config của add-on) — localStorage mất khi tắt Anki; giá trị lạ thì về mặc định
+  function clean(s) {
+    const out = Object.assign({}, DEFAULTS);
+    if (!s || typeof s !== "object") { return out; }
+    if (["real", "game", "fixed"].indexOf(s.mode) >= 0) { out.mode = s.mode; }
+    const dm = Number(s.dayMinutes);
+    if (isFinite(dm) && dm >= 2 && dm <= 1440) { out.dayMinutes = Math.round(dm); }
+    const fh = Number(s.fixedHour);
+    if (s.fixedHour !== null && s.fixedHour !== "" && isFinite(fh) && fh >= 0 && fh < 24) { out.fixedHour = fh; }
+    if (s.weather === "auto" || (typeof s.weather === "string" && Object.prototype.hasOwnProperty.call(WEATHER, s.weather))) { out.weather = s.weather; }
+    return out;
+  }
+  function loadRaw() {
+    try { return typeof GardenPrefs !== "undefined" ? GardenPrefs.get("kb-sky") : localStorage.getItem("kb-sky"); } catch (e) { return null; }
+  }
+  try { cfg = clean(JSON.parse(loadRaw() || "{}")); } catch (e) { /* dùng mặc định */ }
 
   // ---- tiện ích màu ----
   function hex(c) { return [parseInt(c.slice(1, 3), 16), parseInt(c.slice(3, 5), 16), parseInt(c.slice(5, 7), 16)]; }
@@ -181,12 +193,17 @@ var GardenSky = (function () {
     return cache;
   }
 
-  function save() { try { localStorage.setItem("kb-sky", JSON.stringify(cfg)); } catch (e) { /* bỏ qua */ } }
+  function save() {
+    try {
+      const v = JSON.stringify(cfg);
+      if (typeof GardenPrefs !== "undefined") { GardenPrefs.set("kb-sky", v); } else { localStorage.setItem("kb-sky", v); }
+    } catch (e) { /* bỏ qua */ }
+  }
 
   return {
     state: state,
     settings: () => Object.assign({}, cfg),
-    set: function (k, v) { cfg[k] = v; save(); cache = null; return state(); },
+    set: function (k, v) { const next = Object.assign({}, cfg); next[k] = v; cfg = clean(next); save(); cache = null; return state(); },
     onChange: function (fn) { listeners.push(fn); },
     mix: mix, shade: shade,
     WEATHER: WEATHER, PHASE_LABEL: PHASE_LABEL,

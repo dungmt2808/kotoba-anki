@@ -72,6 +72,7 @@ DEFAULT_CONFIG: dict[str, Any] = {
     "mobile_coins": True,
     "bao_dir": "",
     "ui": {},   # 1.14: giao diện tự chỉnh (more_core.clean_ui)
+    "prefs": {},   # 1.25.3: cài đặt riêng máy này (trời & giờ, nhạc, tắt tiếng…; more_core.clean_prefs) — trước ở localStorage
     # 1.12: nguồn báo + báo do Gemini viết (khoá chỉ lưu trên máy này, không đồng bộ)
     "bao_source": "auto",
     "gemini_key": "",
@@ -579,7 +580,7 @@ def _clean_home(raw: Any, cat: dict[str, dict[str, Any]] | None = None) -> dict[
             continue
         lst = raw.get(scene)
         for e in lst if isinstance(lst, list) else []:
-            if not (isinstance(e, dict) and e.get("id") in cat and fits_scene(cat[e["id"]], scene)
+            if not (isinstance(e, dict) and isinstance(e.get("id"), str) and e.get("id") in cat and fits_scene(cat[e["id"]], scene)
                     and isinstance(e.get("x"), int) and isinstance(e.get("y"), int)):
                 continue
             # dữ liệu gộp từ hai khoá (ví + EXT_KEY) có thể chồng nhau nếu bản cũ ở máy khác vừa đặt đồ vào
@@ -942,14 +943,15 @@ def _clean_wear(raw: Any) -> dict[str, Any]:
     wear: dict[str, Any] = {"owned": [], "on": {}, "faces": [], "faces_off": []}
     if not isinstance(raw, dict):
         return wear
-    wear["owned"] = [w for w in WEAR if w in (raw.get("owned") or [])]
+    lst = lambda v: v if isinstance(v, list) else []      # 1.25.3: sai kiểu (số, chữ…) → trống, không ném lỗi
+    wear["owned"] = [w for w in WEAR if w in lst(raw.get("owned"))]
     on = raw.get("on") if isinstance(raw.get("on"), dict) else {}
     for slot in WEAR_SLOTS:
         wid = on.get(slot)
-        if wid in wear["owned"] and WEAR[wid]["slot"] == slot:
+        if isinstance(wid, str) and wid in wear["owned"] and WEAR[wid]["slot"] == slot:
             wear["on"][slot] = wid
-    wear["faces"] = [f for f in FACES if f in (raw.get("faces") or [])]
-    wear["faces_off"] = [f for f in wear["faces"] if f in (raw.get("faces_off") or [])]
+    wear["faces"] = [f for f in FACES if f in lst(raw.get("faces"))]
+    wear["faces_off"] = [f for f in wear["faces"] if f in lst(raw.get("faces_off"))]
     return wear
 
 
@@ -965,10 +967,11 @@ def _clean_craft(raw: Any) -> dict[str, Any]:
     items = raw.get("items")
     if isinstance(items, dict):
         for cid, meta in items.items():
-            if (isinstance(cid, str) and re.fullmatch(r"c\d{1,6}", cid) and isinstance(meta, dict)
-                    and meta.get("size") in CRAFT_PRICES and meta.get("kind") in CRAFT_KINDS):
+            if (isinstance(cid, str) and re.fullmatch(r"c\d{1,6}", cid) and isinstance(meta, dict)      # 1.25.3: sai kiểu → bỏ món
+                    and isinstance(meta.get("size"), int) and meta.get("size") in CRAFT_PRICES
+                    and isinstance(meta.get("kind"), str) and meta.get("kind") in CRAFT_KINDS):
                 craft["items"][cid] = {"name": _clean_name(meta.get("name")), "size": meta["size"], "kind": meta["kind"],
-                                       "fx": meta.get("fx") if meta.get("fx") in CRAFT_FX else "none"}
+                                       "fx": meta.get("fx") if isinstance(meta.get("fx"), str) and meta.get("fx") in CRAFT_FX else "none"}
     nxt = raw.get("next")
     biggest = max([int(c[1:]) for c in craft["items"]] or [0])
     craft["next"] = max(nxt if isinstance(nxt, int) and nxt > 0 else 1, biggest + 1)
@@ -2272,12 +2275,15 @@ def _make_quests(day: int, due_avail: int, new_avail: int, extra: tuple[str, ...
 def _clean_quest(raw: Any) -> dict[str, Any] | None:
     if not isinstance(raw, dict) or not isinstance(raw.get("day"), int):
         return None
-    lst = [q for q in raw.get("list") or [] if isinstance(q, dict) and q.get("kind") in QUEST_TEXT
+    # 1.25.3: list / progress / done sai kiểu thì coi như trống (trước đây ném lỗi → mất cả nhiệm vụ hôm nay)
+    lst = [q for q in (raw.get("list") if isinstance(raw.get("list"), list) else [])
+           if isinstance(q, dict) and isinstance(q.get("kind"), str) and q.get("kind") in QUEST_TEXT
            and isinstance(q.get("target"), int)]
-    prog = {k: v for k, v in (raw.get("progress") or {}).items() if isinstance(v, int)}
-    done = [x for x in raw.get("done") or [] if isinstance(x, str)]
+    prog = {k: v for k, v in (raw.get("progress") if isinstance(raw.get("progress"), dict) else {}).items()
+            if isinstance(k, str) and isinstance(v, int) and not isinstance(v, bool)}
+    done = [x for x in (raw.get("done") if isinstance(raw.get("done"), list) else []) if isinstance(x, str)]
     return {"day": raw["day"], "list": lst, "progress": prog, "done": done, "chest": bool(raw.get("chest")),
-            "chest_item": raw.get("chest_item") if raw.get("chest_item") in CATALOG else None}
+            "chest_item": raw.get("chest_item") if isinstance(raw.get("chest_item"), str) and raw.get("chest_item") in CATALOG else None}
 
 
 def _ensure_quests(data: dict[str, Any], day: int, avail: Any) -> bool:
@@ -2518,6 +2524,12 @@ def undo_reward(data: dict[str, Any], entry: dict[str, Any]) -> int:
         for k, on in (("due", before == "review"), ("new", before == "new"), ("stage", bool(entry.get("stage_up")))):
             if on and pr.get(k):
                 pr[k] = max(0, int(pr[k]) - 1)
+        # 1.25.3: chuỗi "Tưới liền N cây không bấm Lại" về như trước lượt này (trước đây giữ nguyên → ván trò chơi sau đó
+        # chạy _settle_quests và trả lại thưởng nhiệm vụ chuỗi đã Undo). Undo của Anki đi ngược thứ tự nên mỗi lượt
+        # trả về đúng số của chính nó.
+        if isinstance(entry.get("streak0"), int) and isinstance(entry.get("streak_cur0"), int):
+            pr["streak_cur"] = max(0, entry["streak_cur0"])
+            pr["streak"] = max(0, min(int(pr.get("streak") or 0), entry["streak0"]))
         for qid in entry.get("quest_done") or []:
             if qid in q.get("done", []):
                 q["done"].remove(qid)
@@ -2594,6 +2606,10 @@ class GardenState:
     def __init__(self, path: str, col_getter: Any = None) -> None:
         self.path = path
         self.col_getter = col_getter
+        # 1.25.3: móc của __init__ (Undo lượt ôn): on_load(data) áp phần "trả lại xu" đang chờ vào ví vừa đọc, on_save(data)
+        # báo phần đó đã được ghi. Chờ vì ghi cấu hình collection ngay sau Undo làm Anki xoá mất Redo.
+        self.on_load: Any = None
+        self.on_save: Any = None
 
     def _col(self) -> Any:
         try:
@@ -2682,6 +2698,11 @@ class GardenState:
             for sid in SIDE_IDS:
                 data["home"][sid] = []
         data["more_view"] = self._more_view(data)
+        if self.on_load is not None:
+            try:
+                self.on_load(data)
+            except Exception as err:   # không để móc Undo làm hỏng việc đọc ví
+                print(f"[kotoba_batake] on_load: {err}")
         return data
 
     # -- 1.14 -----------------------------------------------------------------
@@ -2838,6 +2859,11 @@ class GardenState:
 
     def save(self, data: dict[str, Any]) -> None:
         """Ghi ví (phần bản 1.6.1 hiểu) vào CONFIG_KEY, phần của 1.7 vào EXT_KEY, Mùa & Lễ hội vào SEASON_KEY."""
+        if self.on_save is not None:
+            try:
+                self.on_save(data)
+            except Exception as err:
+                print(f"[kotoba_batake] on_save: {err}")
         if isinstance(data.get("home"), dict):
             _canon_order(data["home"])
         mobile = data.get("mobile")

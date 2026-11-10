@@ -226,12 +226,15 @@ var GardenGames = (function () {
     return out;
   }
 
+  // 1.25.3: cài đặt riêng máy qua GardenPrefs (config của add-on; localStorage mất khi tắt Anki)
+  function pget(k) { try { return typeof GardenPrefs !== "undefined" ? GardenPrefs.get(k) : localStorage.getItem(k); } catch (e) { return null; } }
+  function pset(k, v) { try { if (typeof GardenPrefs !== "undefined") { GardenPrefs.set(k, v); } else { localStorage.setItem(k, v); } } catch (e) { /* bỏ qua */ } }
   // Chế độ game Đuổi quạ: "vi" = biển nghĩa tiếng Việt, gõ từ Nhật (kana/romaji/kanji);
   // "jp" = biển chữ Nhật, gõ cách đọc.
   function crowMode() {
-    try { return localStorage.getItem("kb-crow-mode") === "jp" ? "jp" : "vi"; } catch (e) { return "vi"; }
+    return pget("kb-crow-mode") === "jp" ? "jp" : "vi";
   }
-  function setCrowMode(m) { try { localStorage.setItem("kb-crow-mode", m); } catch (e) { /* bỏ qua */ } }
+  function setCrowMode(m) { pset("kb-crow-mode", m); }
   // Tốc độ quạ: time = thời gian bay qua màn hình (nhân), gap = khoảng cách giữa các con, pts = hệ số điểm
   const CROW_SPEEDS = {
     vslow: { label: "Rất chậm", time: 2.0, gap: 1.6, pts: 0.6 },
@@ -240,9 +243,9 @@ var GardenGames = (function () {
     fast: { label: "Nhanh", time: 0.72, gap: 0.8, pts: 1.25 }
   };
   function crowSpeed() {
-    try { const v = localStorage.getItem("kb-crow-speed"); return CROW_SPEEDS[v] ? v : "normal"; } catch (e) { return "normal"; }
+    const v = pget("kb-crow-speed"); return v && Object.prototype.hasOwnProperty.call(CROW_SPEEDS, v) ? v : "normal";
   }
-  function setCrowSpeed(v) { try { localStorage.setItem("kb-crow-speed", v); } catch (e) { /* bỏ qua */ } }
+  function setCrowSpeed(v) { pset("kb-crow-speed", v); }
 
   // Các cách viết chữ được chấp nhận: 「(～に)賛成(する)」→ 賛成, 賛成する, ～に賛成する…
   function wordForms(p) {
@@ -462,13 +465,13 @@ var GardenGames = (function () {
   function curKind() {
     const c = kindsIn();
     let k = null;
-    try { k = localStorage.getItem("kb-game-kind"); } catch (e) { /* bỏ qua */ }
+    k = pget("kb-game-kind");
     if (k && c[k]) { return k; }
     let best = "vocab", n = 0;
     GROUP_IDS.forEach((id) => { if ((c[id] || 0) > n) { n = c[id]; best = id; } });
     return best;
   }
-  function setKind(k) { try { localStorage.setItem("kb-game-kind", k); } catch (e) { /* bỏ qua */ } }
+  function setKind(k) { pset("kb-game-kind", k); }
   function modeList(game, group) { return (MODES[game] && MODES[game][group]) || []; }
   function modeOf(game, group) {
     const list = modeList(game, group);
@@ -690,13 +693,17 @@ var GardenGames = (function () {
   const norm = (s) => String(s || "").trim().toLowerCase();
 
   // Đáp án đúng + các đáp án nhiễu, giá trị hiển thị (mặt key) không trùng nhau.
-  function choices(target, items, n, key, kind) {
+  // askKey (1.25.3, audit BUG-04): mặt của câu hỏi — bỏ các từ có cùng mặt câu hỏi với đáp án (vd. hỏi "to lớn" mà có cả
+  // big lẫn large; nghe はし mà có cả 橋 lẫn 箸), nếu không thì có hai đáp án đúng mà chỉ một cái được chấm đúng
+  function choices(target, items, n, key, kind, askKey) {
     const used = new Set([norm(faceText(target, key, kind)), norm(target.word)]);
+    const askT = askKey ? norm(faceText(target, askKey, kind)) : "";
     const out = [target];
     shuffle(items.slice()).forEach((p) => {
       if (out.length >= n || p.nid === target.nid) { return; }
       const k = norm(faceText(p, key, kind));
       if (!k || used.has(k) || used.has(norm(p.word))) { return; }
+      if (askT && norm(faceText(p, askKey, kind)) === askT) { return; }
       used.add(k); used.add(norm(p.word));
       out.push(p);
     });
@@ -1288,7 +1295,7 @@ var GardenGames = (function () {
         return;
       }
       target = next((p) => p === target);
-      opts = choices(target, pool.items, Math.min(6, pool.items.length), ans, kind);
+      opts = choices(target, pool.items, Math.min(6, pool.items.length), ans, kind, kind === "grammar" ? null : "reading");
       grid.textContent = "";
       info.textContent = "";
       info.className = "kb-gl-info";
@@ -1421,7 +1428,7 @@ var GardenGames = (function () {
       }
       const ask = pair[0], key = pair[1];
       const pickFrom = pool.items.filter((p) => has(p, key));
-      opts = choices(target, pickFrom, Math.min(4, pickFrom.length), key, kind);
+      opts = choices(target, pickFrom, Math.min(4, pickFrom.length), key, kind, ask);
       const size = stageSize();
       cust = { target: target, ask: ask, key: key, x: size.w + 60, state: "in", patience: PATIENCE,
         v: VARIANTS[rnd(VARIANTS.length)], mood: "" };
@@ -1712,8 +1719,10 @@ var GardenGames = (function () {
       for (let k = 0; k < LANES && used.indexOf(lane) >= 0; k++) { lane = (lane + 1) % LANES; }
       const travel = Math.max(7.5, 15 - spawned * 0.55) * SPD.time;
       const label = labelOf(p);
+      // 1.25.3: từ khác có cùng chữ trên biển (đồng nghĩa: big / large cùng "to lớn") cũng là đáp án đúng
+      const alts = (pool.items || pool.targets).filter((q) => q !== p && q.nid !== p.nid && labelOf(q) === label);
       crows.push({ p: p, lane: lane, x: size.w + 40, y: 0, state: "fly", speed: (size.w - 70) / travel,
-        label: label, t: 0, flap: Math.random() });
+        label: label, t: 0, flap: Math.random(), alts: alts });
       spawned++;
       hud();
       return true;
@@ -1729,6 +1738,10 @@ var GardenGames = (function () {
       later(g, () => { reveal.hidden = true; }, 2600);
     }
 
+    function crowAnswers(c) {
+      if (!c.alts || !c.alts.length) { return answersOf(c.p); }
+      return c._rs || (c._rs = c.alts.reduce((acc, q) => acc.concat(answersOf(q)), answersOf(c.p).slice()));
+    }
     function check(final) {
       const raw = input.value;
       const flyingNow = crows.filter((c) => c.state === "fly");
@@ -1737,14 +1750,14 @@ var GardenGames = (function () {
         typed = enNorm(raw) ? [enNorm(raw)] : [];
       } else {
         const vars = kanaVariants(raw);
-        const shown = vars.find((v) => flyingNow.some((c) => answersOf(c.p).some((r) => r.indexOf(normKana(v)) === 0))) || vars[0];
+        const shown = vars.find((v) => flyingNow.some((c) => crowAnswers(c).some((r) => r.indexOf(normKana(v)) === 0))) || vars[0];
         preview.textContent = raw && shown !== raw ? shown : "";
         typed = typedKana(raw, final);
       }
       if (!typed.length) { return false; }
       let best = null;
       flyingNow.forEach((c) => {
-        const rs = answersOf(c.p);
+        const rs = crowAnswers(c);
         if (typed.some((t) => rs.indexOf(t.replace(/[～〜~]/g, "")) >= 0) && (!best || c.x < best.x)) { best = c; }
       });
       if (!best) { return false; }
@@ -2268,6 +2281,7 @@ var GardenGames = (function () {
     _game: function () { return game; },
     _speed: function (k) { speed = k; },
     _toKana: toKana,
+    _choices: choices,          // 1.25.3: test lựa chọn không có hai đáp án cùng đúng
     _typedKana: typedKana,
     _variants: kanaVariants,
     _readings: readingsOf,

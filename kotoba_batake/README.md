@@ -122,6 +122,17 @@ Sau khi trả lời có hiện cách đọc, Hán Việt, nghĩa (và cách dùn
 - **Hiệu ứng thành tích** (`web/joy.js`, Python tính `data.joy` = `more_core.joy_view`): **xong hết thẻ hôm nay** trong deck đang xem (`deck_due_tree` = 0 và hôm nay đã ôn ≥ 1 lượt) → cầu vồng trên ruộng và trên trời sân, giọt sương lấp lánh; **đạt mục tiêu ngày**; **cả vườn xanh tốt / ra hoa / trĩu quả** (≥ 5 cây, không cây nào héo, mọi cây từ Cây non / Ra hoa / Ra quả) → lá lấp lánh / cánh hoa anh đào bay / đốm sáng vàng bay lên; **mốc chuỗi ngày** (7, 14, 21, 30, 50, 75, 100, 150, 200, 250, 300, 365, 500, 730, 1000) → pháo hoa trên trời sân; **xong 3 nhiệm vụ** → đèn trời bay lên. Huy hiệu cạnh chú thích ruộng; dải chúc mừng + linh vật chúc mỗi thành tích **một lần mỗi ngày** (nhớ ở `localStorage kb-joy-<ngày>-<loại>`), đang ôn thẻ thì để dành tới khi đóng bảng ôn.
 - **Lưu trữ**: khoá collection mới `kotoba_batake_more` (`more_core.MORE_KEY`) — mục 4. Bản ≤ 1.13 ở máy khác không đọc khoá này nên không xoá được gì.
 
+### Sửa ở 1.25.3: cài đặt không mất khi tắt Anki, trời cỡ Lớn, Undo / Redo, dữ liệu sai kiểu
+- **Cài đặt riêng máy lưu ở config "prefs"** (`more_core.clean_prefs / merge_prefs`, `web/prefs.js` = `GardenPrefs`): Trời & giờ, Thời tiết, Nhạc nền, Âm lượng, tắt tiếng, cảnh màn chính, Đuổi quạ, loại note của trò chơi, Hiện bản dịch, đã nhắc cấu hình trường, dải chúc mừng hôm nay. Trước đây chỉ ở `localStorage` — webview của Anki 26.x dùng profile **không lưu** (`QWebEngineProfile()` không tên) và cổng máy chủ nội bộ đổi mỗi lần mở → tắt Anki là mất. Python chèn `window.__kbPrefs` vào `<head>` (trước mọi script), trang gom thay đổi 250 ms rồi gửi `prefs:set:{…}`; `localStorage` vẫn ghi song song (đọc trước nếu có).
+- **Cỡ cảnh Lớn, Trong nhà**: trời phía trên mái dùng cùng đường chân trời với hai bên (trước đây dải màu bị nén → khối chữ nhật sáng hơn), mưa / tuyết / chớp cả phía trên mái (`drawHouseScene`).
+- **Undo lượt ôn giữ Redo** (audit BUG-01): mọi lần `set_config` sau Undo làm Anki xoá Redo, nên phần trả lại xu chỉ đánh dấu "chờ": ví đọc ra đã trừ (`GardenState.on_load`), ghi cùng lần ghi ví kế tiếp (`on_save`), khi Redo không còn dùng được (`operation_did_execute`), trước đồng bộ (`sync_will_start`) hoặc khi đóng hồ sơ. Redo trước đó thì không ghi gì.
+- **Undo lùi chuỗi "Tưới liền N cây"** (BUG-02): sổ phần thưởng ghi `streak0 / streak_cur0`, `undo_reward` trả về như trước lượt đó → ván trò chơi sau Undo không trao lại thưởng nhiệm vụ chuỗi.
+- **Xưởng**: đổi cỡ rồi Esc vẫn cảnh báo trước khi bỏ hình (BUG-03: `edited()` so thẳng hình đang có).
+- **Trò chơi**: Chợ sáng / Nghe tìm cây không đưa hai đáp án cùng đúng (từ đồng nghĩa big / large, đồng âm 橋 / 箸 — `choices(…, askKey)`); Đuổi quạ nhận cả từ khác có cùng chữ trên biển (BUG-04).
+- **Gợi ý luyện viết** nhớ tạm theo hồ sơ + deck đã chọn, đổi hồ sơ thì xoá (BUG-05). **Ảnh vườn tự chụp theo hồ sơ** `user_files/anh_vuon/<mã hồ sơ>/` (BUG-06; ảnh cũ về hồ sơ đầu tiên đã có ví).
+- **Dữ liệu sai kiểu** (BUG-07 + fuzz): luật giống / giống tự vẽ / cấu hình trường / nhiệm vụ / vùng tự tạo / tủ đồ / món tự làm / món đặt có giá trị sai kiểu thì chỉ bỏ phần đó. Trước đây một món đặt có `id` là danh sách làm nhà về cấp 0 và **lần lưu sau xoá luôn nhà + đồ đã đặt**.
+- **Ô Deck của vườn** đặt luôn deck hiện tại của Anki (như Tưới ngay) → đóng / mở lại vườn vẫn đúng deck.
+
 ### Mới ở 1.25.2: "Một làng, một truyện"
 - Mỗi ngày Gemini viết **một bản gốc tiếng Việt** (kỳ truyện + 2–3 tin làng + thông báo / cột) — `ai_core.ensure_master`, `story_core` (`MASTER_SCHEMA`), thư mục `user_files/bao_chung/` (bản gốc, bộ nhớ truyện, nhận xét, tin các ngày). Báo tiếng Nhật / tiếng Anh **kể lại** theo trình độ (`story_core.retell`), báo tiếng Việt in thẳng bản gốc (không còn lấy thẻ).
 - Thời tiết trong báo = trời của vườn (`story_core.weather_at`, cùng công thức `sky.js`); tin làng nối 3 số trước.
@@ -321,7 +332,8 @@ Sau khi trả lời có hiện cách đọc, Hán Việt, nghĩa (và cách dùn
    web.eval("Garden.fn(<json>)")               │ pycmd("lệnh:tham:số")
 ┌──────────────▼───────────────────────────────┴───────────────────────┐
 │ Trang web (web/*.js, mỗi file là một IIFE gắn vào biến toàn cục)     │
-│ diag.js → sky.js → season.js → fx.js → music.js → games.js → fields.js│
+│ diag.js → prefs.js → sky.js → season.js → fx.js → music.js → games.js │
+│ → fields.js                                                           │
 │ → season_art.js → home.js → craft.js → paper.js → garden.js          │
 │ GardenSky GardenSeason GardenFX GardenMusic GardenGames GardenFields │
 │ GardenSeasonArt GardenHome GardenCraft GardenPaper                   │
@@ -358,6 +370,7 @@ Nguyên tắc chính:
 | `web/garden.js` | ~1000 | `Garden`: render ruộng (canvas), chú giải, thẻ ghim, popover, bảng ôn và iframe, phím tắt, cài đặt âm thanh/trời, bố cục tự zoom, cầu nối |
 | `web/fx.js` | ~900 | `GardenFX`: linh vật StackChan (`paintFace`, đồ mặc, biểu cảm), chậu cây khi ôn, hạt (giọt nước, lấp lánh, xu, pháo giấy), bướm/đom đóm/mưa trên ruộng, âm thanh 8-bit |
 | `web/diag.js` | ~65 | `GardenDiag` (1.11, nạp đầu tiên): bắt lỗi JS của trang (`error`, `unhandledrejection`), gộp trùng, gửi `app:jserr`; `client()` = kích thước cửa sổ / màn hình / trình duyệt nhúng cho báo cáo |
+| `web/prefs.js` | ~60 | `GardenPrefs` (1.25.3, nạp ngay sau diag.js): cài đặt riêng máy — đọc `localStorage` rồi tới `window.__kbPrefs` (Python chèn vào `<head>` từ config `prefs`), ghi thì gom 250 ms gửi `prefs:set`. Không có Python (test node) thì như `localStorage` |
 | `web/sky.js` | ~195 | `GardenSky`: giờ (thật / game / cố định), thời tiết theo khung 3 giờ (nghiêng theo chủ đề mùa), màu trời, ánh sáng, mặt trời/trăng. Các module khác chỉ đọc `GardenSky.state()` |
 | `web/music.js` | ~320 | `GardenMusic`: nhạc chiptune 3 bản + 3 bản vườn theo mùa (Giáng sinh, Tết, Halloween), bộ lập lịch WebAudio |
 | `web/season.js` | ~630 | `GardenSeason` (1.8): chủ đề đang dùng (giống `active_theme` của Python) và xem thử, bảng giao diện `VIS` của 14 chủ đề, `themeSky()` (trời / đồi / đất / trang theo chủ đề), dây trang trí `GARLAND`, hạt bay tính theo thời gian (`flyer`), pháo hoa, Ngân Hà, diều, xe tuần lộc, trăng to, dải trang trí trên cùng + hạt rơi nền trang, cỏ ruộng, chip chủ đề |
@@ -441,6 +454,7 @@ Nguyên tắc chính:
 | `home:seed:buy:<id>` / `home:seed:rule:{where: deck\|kind\|tag, key, value}` | 1.14: giống cây (`value` "" = bỏ luật, "mix" = trộn); đổi luật thì `refresh()` |
 | `craft:zone:{id?, name, bg, ground, hills, px}` / `home:uzone:del:<id>` | 1.14: tạo / sửa / xoá vùng tự tạo (`px` = công trình 64×76 đã nén, "" = chưa vẽ) |
 | `ui:set:<json>` / `ui:preset:<full\|focus\|calm\|night>` | 1.14: lưu giao diện tự chỉnh → `Garden.uiSaved(ui)` |
+| `prefs:set:{"kb-…": "giá trị" \| null}` | 1.25.3: cài đặt riêng máy (trời & giờ, nhạc…) gom trong 250 ms → config `prefs` (`more_core.merge_prefs`); không trả lời |
 | `cal:month:<yyyy-mm>` / `cal:year:<yyyy>` / `cal:day:<yyyy-mm-dd>` / `cal:book:<yyyy-mm\|yyyy\|>` | 1.20: dữ liệu Lịch hoa → `Garden.calView({kind: month\|year\|day\|book, …})` |
 | `cal:mood:{d, m}` / `cal:note:{d, t}` / `cal:draft:{d, lang, t}` | 1.20: lưu sticker / nhật ký / bản nháp luyện viết (Python làm sạch, chặn ngày tương lai, luyện viết chỉ hôm nay, bài đã gửi thì khoá) → `Garden.calSaved` |
 | `cal:lang:<ja\|en>` / `cal:hint:<ngày>` / `cal:fix:<ngày>` / `cal:seen:<ngày>` | 1.20: đổi ngôn ngữ luyện viết, đổi gợi ý, nhờ Gemini sửa (luồng nền → `Garden.calFix`), đánh dấu đã xem bản sửa |
@@ -523,8 +537,8 @@ Cấu trúc `wallet` (sau `GardenState.load()`):
 
 **Mã nén điểm ảnh** (`px_encode` / `px_decode` trong Python, `encode` / `decode` trong craft.js, `pxDecode` trong home.js): chuỗi run-length, mỗi token gồm `[số lần lặp]<ký tự màu>`, ví dụ `"5.3kky"` = `.....kkky`. `.` là trong suốt. Ký tự màu là khoá của `CRAFT_PALETTE` (32 màu, trùng bảng `P` trong home.js). Python kiểm tra chặt: đúng `size²` ô, đúng màu, số lặp tối đa 4 chữ số.
 
-### Cài đặt riêng từng máy (`localStorage`, không đồng bộ)
-`kb-sky` (chế độ trời), `kb-main-scene` (cảnh ngoài trời trên màn chính, từ 1.14 có thể là vùng tự tạo `u<n>`), `kb-joy-<ngày>-<loại>` (1.14: dải chúc mừng đã hiện hôm nay), `kb-fields-warned-<id loại note>` (1.15: đã nhắc cấu hình trường), `kb-game-kind` (loại note đang ôn trong menu trò chơi, 1.9), `kb-crow-mode` (từ 1.9 chỉ là giá trị mặc định cho Đuổi quạ / Từ vựng khi chưa chọn chế độ), `kb-crow-speed`, `kb-muted`, `kb-music`, `kb-music-vol`. Mọi lần đọc/ghi đều bọc `try/catch`.
+### Cài đặt riêng từng máy (config `prefs`, không đồng bộ — trước 1.25.3 chỉ ở `localStorage`)
+1.25.3: Anki dựng webview bằng profile không lưu nên `localStorage` mất mỗi lần tắt Anki; các khoá dưới đây nay đi qua `GardenPrefs` (`web/prefs.js`) và nằm ở config `prefs` của add-on (`meta.json`; `more_core.clean_prefs`: khoá `kb-…`, giá trị chuỗi ≤ 400 ký tự, tối đa 120 khoá, `kb-joy-…` chỉ giữ ngày mới nhất). `kb-sky` (chế độ trời), `kb-main-scene` (cảnh ngoài trời trên màn chính, từ 1.14 có thể là vùng tự tạo `u<n>`), `kb-joy-<ngày>-<loại>` (1.14: dải chúc mừng đã hiện hôm nay), `kb-fields-warned-<id loại note>` (1.15: đã nhắc cấu hình trường), `kb-game-kind` (loại note đang ôn trong menu trò chơi, 1.9), `kb-crow-mode` (từ 1.9 chỉ là giá trị mặc định cho Đuổi quạ / Từ vựng khi chưa chọn chế độ), `kb-crow-speed`, `kb-muted`, `kb-music`, `kb-music-vol`. Mọi lần đọc/ghi đều bọc `try/catch`.
 
 ---
 

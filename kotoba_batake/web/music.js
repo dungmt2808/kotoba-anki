@@ -234,13 +234,17 @@ var GardenMusic = (function () {
   let step = 0, nextTime = 0, timer = null, prefLoaded = false, cfgDefault = true;
   const index = {};   // track -> voice -> step -> [notes]
 
+  // 1.25.3: cài đặt riêng máy qua GardenPrefs (config của add-on; localStorage mất khi tắt Anki)
+  function pget(k) { try { return typeof GardenPrefs !== "undefined" ? GardenPrefs.get(k) : localStorage.getItem(k); } catch (e) { return null; } }
+  function pset(k, v) { try { if (typeof GardenPrefs !== "undefined") { GardenPrefs.set(k, v); } else { localStorage.setItem(k, v); } } catch (e) { /* bỏ qua */ } }
+
   function loadPref() {
     if (prefLoaded) { return; }
     prefLoaded = true;
     try {
-      const m = localStorage.getItem("kb-music");
+      const m = pget("kb-music");
       if (m === "0" || m === "1") { enabled = m === "1"; } else { enabled = cfgDefault; }
-      const v = parseFloat(localStorage.getItem("kb-music-vol"));
+      const v = parseFloat(pget("kb-music-vol"));
       if (!isNaN(v)) { volume = Math.max(0, Math.min(1, v)); }
     } catch (e) { enabled = cfgDefault; }
   }
@@ -437,12 +441,12 @@ var GardenMusic = (function () {
     setEnabled: function (on) {
       loadPref();
       enabled = !!on;
-      try { localStorage.setItem("kb-music", enabled ? "1" : "0"); } catch (e) { /* bỏ qua */ }
+      pset("kb-music", enabled ? "1" : "0");
       apply();
     },
     setVolume: function (v) {
       volume = Math.max(0, Math.min(1, v));
-      try { localStorage.setItem("kb-music-vol", String(volume)); } catch (e) { /* bỏ qua */ }
+      pset("kb-music-vol", String(volume));
       if (ac && master) { master.gain.setTargetAtTime(targetGain(), ac.currentTime, 0.1); }
     },
     // cho test

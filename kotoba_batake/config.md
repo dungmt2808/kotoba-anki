@@ -61,6 +61,7 @@
 **Giao diện tự chỉnh** (từ bản 1.14) — sửa trong vườn: ⚙ → *Giao diện & chế độ học…*
 - `ui`: `{}` = như cũ (mọi thứ chuyển động). Mỗi chế độ `main` (màn chính), `review` (khi ôn thẻ), `panel` (Trò chơi / Báo / Cấu hình trường) có: `yard` và `field` = `"full"` (chuyển động) / `"still"` (đứng yên) / `"dim"` (mờ, đứng yên) / `"hide"` (ẩn); `sky`, `weather`, `pets`, `mascot`, `joy` = `"on"` / `"off"`. Chung: `card` = `"normal"` / `"tall"` (khung thẻ to hết chỗ), `theme` = `"garden"` / `"paper"` (màu bảng ôn; 1.23 bỏ `"night"` — Đêm vườn, config cũ về `"garden"`), `scene` = `"normal"` / `"large"` (1.23: cỡ dải cảnh ở màn chính Vừa / Lớn), `start` = `"last"` / `"yard"` (1.23: mở vườn ở cảnh đang chọn / luôn về Sân vườn), `deco` = `"on"` / `"off"` (1.25: dây trang trí của giao diện mùa — dải trên cùng cửa sổ, dây ngoài sân, dây trong nhà — Hiện / Ẩn; chọn ở ⚙ → Giao diện → Màn chính).
 - Ví dụ ẩn sân + ruộng khi ôn thẻ: `"ui": {"review": {"yard": "hide", "field": "hide"}, "card": "tall"}`. Nhanh hơn: bấm nút **Ẩn vườn** trên bảng ôn.
+- `prefs` (1.25.3): vườn tự ghi các chỉnh nhỏ trong ⚙ và trò chơi (Trời & giờ, Thời tiết, Nhạc nền, Âm lượng, tắt tiếng, cảnh màn chính, kiểu Đuổi quạ, Hiện bản dịch…) để tắt Anki rồi mở lại vẫn còn. Không cần sửa tay; xoá mục này (`"prefs": {}`) là về mặc định.
 
 **Hiệu ứng & âm thanh**
 - `effects`: hiệu ứng (bình tưới, lấp lánh, bướm, pháo giấy…). Mặc định `true`.
@@ -74,7 +75,7 @@
 - **Biểu tượng ngoài Anki**: menu Tools → *ことば畑 · Tạo biểu tượng trên màn hình nền* (hoặc trong vườn bấm ⚙ → *Tạo biểu tượng…*). Bấm biểu tượng đó là Anki tự mở (hoặc nhảy lên nếu đang chạy) và vào thẳng khu vườn. Windows: lối tắt ở màn hình nền và menu Start (chuột phải → Ghim vào thanh tác vụ); macOS: ứng dụng nhỏ ことば畑 ở màn hình nền (kéo vào Dock được); Linux: biểu tượng ở màn hình nền và menu ứng dụng. Biểu tượng mở file `user_files/kotoba_batake_open.apkg` bằng Anki — đó là “vé” mở vườn, không phải deck, đừng xoá.
 
 **Lịch hoa, nhật ký, luyện viết** (từ 1.20)
-- Không cần sửa config: mở bằng phím **L**, bấm “· N ngày liền” ở thẻ Hôm nay hoặc ⚙ → *Lịch hoa & nhật ký…*. Nhật ký đồng bộ qua AnkiWeb (khoá `kotoba_batake_journal_<năm>_<tháng>` trong collection) và không bao giờ gửi cho Gemini. Luyện viết dùng khoá Gemini ở tab Nguồn báo (Gemini sửa 1 lần mỗi ngày); `journal_lang` chỉ là ngôn ngữ luyện viết bạn chọn lần trước (`ja` / `en`). Ảnh vườn tự chụp mỗi tuần ở `user_files/anh_vuon/` (chỉ máy này).
+- Không cần sửa config: mở bằng phím **L**, bấm “· N ngày liền” ở thẻ Hôm nay hoặc ⚙ → *Lịch hoa & nhật ký…*. Nhật ký đồng bộ qua AnkiWeb (khoá `kotoba_batake_journal_<năm>_<tháng>` trong collection) và không bao giờ gửi cho Gemini. Luyện viết dùng khoá Gemini ở tab Nguồn báo (Gemini sửa 1 lần mỗi ngày); `journal_lang` chỉ là ngôn ngữ luyện viết bạn chọn lần trước (`ja` / `en`). Ảnh vườn tự chụp mỗi tuần ở `user_files/anh_vuon/<mã hồ sơ>/` (chỉ máy này; 1.25.3: mỗi hồ sơ Anki một thư mục).
 
 **Khách ghé vườn** (từ 1.21)
 - Không cần sửa config. Khách ghé tuỳ đồ đã đặt, vùng, mùa, giờ và thời tiết; vườn đang xem nhiều cây Ra quả thì ghé thường hơn. Album khách ở Nhà → tab *Album khách* (đồng bộ qua AnkiWeb, khoá `kotoba_batake_guests`). Ẩn cùng thú nuôi ở ⚙ → *Giao diện & chế độ học…* → "Thú nuôi, khách trên sân".

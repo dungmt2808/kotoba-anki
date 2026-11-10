@@ -71,7 +71,10 @@ var GardenFX = (function () {
   // ---------------------------------------------------------------------
   var audio = null;
   var muted = false;
-  try { muted = localStorage.getItem("kb-muted") === "1"; } catch (e) { muted = false; }
+  // 1.25.3: cài đặt riêng máy qua GardenPrefs (config của add-on; localStorage mất khi tắt Anki)
+  function pget(k) { try { return typeof GardenPrefs !== "undefined" ? GardenPrefs.get(k) : localStorage.getItem(k); } catch (e) { return null; } }
+  function pset(k, v) { try { if (typeof GardenPrefs !== "undefined") { GardenPrefs.set(k, v); } else { localStorage.setItem(k, v); } } catch (e) { /* bỏ qua */ } }
+  muted = pget("kb-muted") === "1";
 
   function soundOn() { return cfg.sound && !muted; }
 
@@ -741,7 +744,7 @@ var GardenFX = (function () {
     if (mute) {
       mute.addEventListener("click", function () {
         muted = !muted;
-        try { localStorage.setItem("kb-muted", muted ? "1" : "0"); } catch (e) { /* bỏ qua */ }
+        pset("kb-muted", muted ? "1" : "0");
         updateMute();
         if (!muted) { play("boop"); }
       });
@@ -802,7 +805,7 @@ var GardenFX = (function () {
     muted: function () { return muted; },
     setMuted: function (m) {
       muted = !!m;
-      try { localStorage.setItem("kb-muted", muted ? "1" : "0"); } catch (e) { /* bỏ qua */ }
+      pset("kb-muted", muted ? "1" : "0");
       if (!muted) { play("boop"); }
     },
     config: function (c) {

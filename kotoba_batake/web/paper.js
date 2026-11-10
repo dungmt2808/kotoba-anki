@@ -1012,7 +1012,7 @@ var GardenPaper = (function () {
   }
   // 1.23: nút ở đầu bảng: "Hiện bản dịch" (số có bản dịch) / "Dịch số này" (số cũ, Gemini dịch một lần)
   let showDich = false;
-  try { showDich = localStorage.getItem("kb-p-dich") === "1"; } catch (e) { showDich = false; }
+  try { showDich = (typeof GardenPrefs !== "undefined" ? GardenPrefs.get("kb-p-dich") : localStorage.getItem("kb-p-dich")) === "1"; } catch (e) { showDich = false; }
   function dichButton() {
     const b = $("kb-p-dich");
     if (!b) { return; }
@@ -1029,7 +1029,7 @@ var GardenPaper = (function () {
     if (!v) { return; }
     if (v.has_dich) {
       showDich = !showDich;
-      try { localStorage.setItem("kb-p-dich", showDich ? "1" : "0"); } catch (e) { /* bỏ qua */ }
+      try { if (typeof GardenPrefs !== "undefined") { GardenPrefs.set("kb-p-dich", showDich ? "1" : "0"); } else { localStorage.setItem("kb-p-dich", showDich ? "1" : "0"); } } catch (e) { /* bỏ qua */ }
       Array.prototype.forEach.call(document.querySelectorAll(".kb-p-dich.is-open"), (x) => x.classList.remove("is-open"));
       Array.prototype.forEach.call(document.querySelectorAll(".kb-p-dbtn.is-on"), (x) => x.classList.remove("is-on"));
       dichButton();
