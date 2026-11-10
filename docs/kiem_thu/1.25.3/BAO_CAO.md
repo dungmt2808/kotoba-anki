@@ -55,14 +55,30 @@ Môi trường: Linux, Python 3.13, gói `anki` / `aqt` **26.9.4** (Qt 6, QtWebE
 | Xưởng | Vẽ → đổi cỡ → Esc; chỉ đổi cỡ chưa vẽ → Esc | nhắc / đóng ngay |
 | Hồ sơ | Hồ sơ mới tinh không thấy ảnh của hồ sơ khác; ảnh cũ về hồ sơ đã có ví; chụp ảnh chỉ vào thư mục hồ sơ đó | đạt |
 | Deck | Chọn deck ở ô Deck → đóng / mở lại vườn | còn đúng deck |
+| Đồng bộ | Undo rồi đồng bộ AnkiWeb ngay | phần trả lại ghi trước khi đồng bộ |
+| Chèn cài đặt vào trang | giá trị có `</script>`, ký tự U+2028 | trang chạy bình thường, đọc lại nguyên vẹn |
 
 ## 5. Bộ test
 
 - `tests/run_all.sh` (offline, có `ANKI_PY`): **TẤT CẢ OK** (kể cả `core/test_kit.py` của TEST-01 và bộ mới `core/test_1253.py`).
-- Anki thật 26.9.4: `e2e_1253.js` (mới) **26/26**; chạy trên mã 1.25.2: trượt đúng các mục đã sửa (cài đặt sau khi mở lại, trời cỡ Lớn, mưa trên mái, Redo, Esc Xưởng).
+- Anki thật 26.9.4: `e2e_1253.js` (mới) **28/28**; chạy trên mã 1.25.2: trượt đúng các mục đã sửa (cài đặt sau khi mở lại, trời cỡ Lớn, mưa trên mái, Redo, Esc Xưởng).
 - Kịch bản cũ chạy lại trên 1.25.3: xem bảng dưới.
 
-KẾT_QUẢ_UI
+| Kịch bản | Kết quả | | Kịch bản | Kết quả |
+|---|---|---|---|---|
+| `e2e.js` | 24/24 | | `e2e_121.js` | 46/46 |
+| `e2e_114.js` | 34/34 | | `e2e_122.js` | 64/64 |
+| `e2e_115.js` | 21/21 | | `e2e_1223.js` | 49/49 |
+| `e2e_116.js` | 15/15 | | `e2e_1226.js` | 40/40 |
+| `e2e_117.js` | 55/55 | | `e2e_1228.js` | 26/26 |
+| `e2e_118.js` | 29/29 | | `e2e_124.js` | 23/23 |
+| `e2e_119.js` | 55/55 | | `e2e_1251.js` | 48/48 |
+| `e2e_120.js` | 103/103 (ảnh vườn đọc ở thư mục hồ sơ) | | `e2e_kit23.js` | 10/10 |
+| `audit_edge.js` | 58/58 | | `e2e_tour.js` | 12/12 |
+| `e2e_123.js` | 65/65 (Undo ba vòng, KB-02 hồ sơ mới) | | `e2e_125.js` | 30/30 |
+| `audit_full.js` | **181/181** (1.000.000 xu, mua / dùng mọi thứ) | | `e2e_1253.js` | 28/28 |
+
+Không chạy lại trên Anki 23.10 (bản cũ nhất hỗ trợ) trong phiên này; các móc dùng thêm (`operation_did_execute`, `sync_will_start`, `undo_status`) đều có từ trước 23.10 và được gọi qua `hasattr`.
 
 ## 6. Chưa làm / cần người dùng chọn
 
