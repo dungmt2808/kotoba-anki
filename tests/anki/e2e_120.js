@@ -401,7 +401,7 @@ result = len(rows)`);
   await page.shot(SHOTS + '/127b_ke_sach_nhieu_nam.png');
 
   console.log('== ảnh vườn tự chụp (bìa cuốn nhật ký)');
-  const photo = await py(KB + 'import os\nresult = sorted(os.listdir(kb.PHOTO_DIR)) if os.path.isdir(kb.PHOTO_DIR) else []');
+  const photo = await py(KB + 'import os\nd = kb._photo_dir() if hasattr(kb, "_photo_dir") else kb.PHOTO_DIR\nresult = sorted(os.listdir(d)) if os.path.isdir(d) else []');   // 1.25.3: ảnh theo hồ sơ
   ok(photo.some(p => p === T + '.png'), 'tuần này đã tự chụp một tấm: ' + photo.join(','));
 
   console.log('== cửa sổ 1024 px');

@@ -450,11 +450,11 @@ var Garden = (function () {
     var seenKey = function (t) { return "kb-fields-warned-" + t.id; };
     var fresh = pend.filter(function (t) {
       if (fieldsWarned[t.id]) { return false; }
-      try { if (localStorage.getItem(seenKey(t))) { fieldsWarned[t.id] = true; return false; } } catch (e) { /* bỏ qua */ }
+      try { if (typeof GardenPrefs !== "undefined" ? GardenPrefs.get(seenKey(t)) : localStorage.getItem(seenKey(t))) { fieldsWarned[t.id] = true; return false; } } catch (e) { /* bỏ qua */ }
       return true;
     });
     if (fresh.length) {
-      fresh.forEach(function (t) { fieldsWarned[t.id] = true; try { localStorage.setItem(seenKey(t), "1"); } catch (e) { /* bỏ qua */ } });
+      fresh.forEach(function (t) { fieldsWarned[t.id] = true; try { if (typeof GardenPrefs !== "undefined") { GardenPrefs.set(seenKey(t), "1"); } else { localStorage.setItem(seenKey(t), "1"); } } catch (e) { /* bỏ qua */ } });
       toast((fresh.length === 1 ? "Có loại note “" + fresh[0].name + "” chưa cấu hình trường."
         : "Có " + fresh.length + " loại note chưa cấu hình trường.") + " Bấm vào đây để cấu hình ▸",
       function () { openFields(fresh[0].id); }, 7000);
@@ -968,7 +968,7 @@ var Garden = (function () {
       : (typeof GardenHome !== "undefined" && GardenHome.isOpen()) ? "nhà"
       : (typeof GardenPaper !== "undefined" && GardenPaper.isOpen()) ? "báo" : "vườn";
     var scene = "";
-    try { scene = localStorage.getItem("kb-main-scene") || ""; } catch (e) { scene = ""; }
+    try { scene = (typeof GardenPrefs !== "undefined" ? GardenPrefs.get("kb-main-scene") : localStorage.getItem("kb-main-scene")) || ""; } catch (e) { scene = ""; }
     var c = typeof GardenDiag !== "undefined" ? GardenDiag.client({ panel: panel, scene: scene })
       : { w: window.innerWidth, h: window.innerHeight, panel: panel, scene: scene };
     send("app:report:" + JSON.stringify(c));

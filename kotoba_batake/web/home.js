@@ -1171,9 +1171,14 @@ var GardenHome = (function () {
     if (SIDE_IDS.indexOf(s) >= 0) { return (homeState().rooms || []).indexOf(s) >= 0; }      // 1.24: gian bên đã mở
     return s === "yard" || zoneOpen(s);
   }
+  // 1.25.3: cảnh màn chính lưu qua GardenPrefs (config của add-on; localStorage mất khi tắt Anki)
+  let benchScene = null;      // _bench vẽ thử cảnh khác mà không ghi cài đặt
+  function setMainPref(s) {
+    try { if (typeof GardenPrefs !== "undefined") { GardenPrefs.set("kb-main-scene", s); } else { localStorage.setItem("kb-main-scene", s); } } catch (e) { /* bỏ qua */ }
+  }
   function mainScene() {
     let s = "yard";
-    try { s = localStorage.getItem("kb-main-scene") || "yard"; } catch (e) { /* bỏ qua */ }
+    try { s = benchScene || (typeof GardenPrefs !== "undefined" ? GardenPrefs.get("kb-main-scene") : localStorage.getItem("kb-main-scene")) || "yard"; } catch (e) { /* bỏ qua */ }
     return (isOut(s) || s === "house") && canEnter(s) ? s : "yard";
   }
   let itemMap = {};
@@ -3134,7 +3139,9 @@ var GardenHome = (function () {
     lights.length = 0;
     gardenBand(ctx, S, -1, hx - 4, -1, VH + 1, hz, st, -1);
     gardenBand(ctx, S, hx + HOUSE3.W + 4, VW + 1, -1, VH + 1, hz, st, 1);
-    if (hy > 0) { gardenBand(ctx, S, hx - 4, hx + HOUSE3.W + 4, -1, hy + 1, Math.min(hz, hy + 1), st, 0); }
+    // 1.25.3: trời phía trên mái dùng cùng đường chân trời với hai bên (trước đây dải màu bị nén vào khoảng trống
+    // phía trên nhà → thành khối chữ nhật sáng hơn ở cỡ cảnh Lớn); đồi / đất của dải này nằm sau nhà nên không thấy
+    if (hy > 0) { gardenBand(ctx, S, hx - 4, hx + HOUSE3.W + 4, -1, hz + 1, hz, st, 0); }
     roofOver(ctx, S, hx, hy, sty, night);
     const below = VH - (hy + ROOM.H);
     if (below > 0) {                                          // đất + móng đá dưới nhà (hình nền)
@@ -3149,6 +3156,8 @@ var GardenHome = (function () {
     if (typeof GardenSky !== "undefined") {                    // mưa / tuyết ngoài vườn, rồi tối theo trời ngoài (không có đèn trong nhà)
       drawWeather(ctx, S, 0, 0, now, -1, hx - 4, VH + 1, st, hz);
       drawWeather(ctx, S, 0, 0, now, hx + HOUSE3.W + 4, VW + 1, VH + 1, st, hz);
+      // 1.25.3: cả trời phía trên mái cũng mưa / tuyết / chớp như hai bên (trước đây chỉ hai bên có)
+      if (hy > 0) { drawWeather(ctx, S, 0, 0, now, hx - 4, hx + HOUSE3.W + 4, hy, st); }
       drawNight(ctx, S, 0, 0, -1, VW + 1, VH + 1, st);     // lights lúc này chỉ có cửa sổ áp mái
     }
     lights.length = 0;
@@ -3243,7 +3252,7 @@ var GardenHome = (function () {
     if (list.length < 2) { return false; }
     const i = Math.max(0, list.indexOf(mainScene()));
     const next = list[(i + step + list.length) % list.length];
-    try { localStorage.setItem("kb-main-scene", next); } catch (e) { /* bỏ qua */ }
+    setMainPref(next);
     mainSwitchAt = Date.now();
     stillDirty = true;
     syncYardNav();
@@ -3473,7 +3482,7 @@ var GardenHome = (function () {
   function loop(ts) {
     if (!startDone && H && H.data() && H.data().ui) {
       startDone = true;
-      if (H.data().ui.start === "yard") { try { localStorage.setItem("kb-main-scene", "yard"); } catch (e) { /* bỏ qua */ } }
+      if (H.data().ui.start === "yard") { setMainPref("yard"); }
     }
     // 1.15: 15 khung/giây (5 khi ở nền), bám cùng nhịp 30 khung/giây với ruộng (fx.js) để vẽ chung khung hình
     const every = document.hasFocus() ? 2 : 6, tk = Math.floor(Math.floor(ts / 33.34) / every);
@@ -3657,7 +3666,7 @@ var GardenHome = (function () {
     if (s === "house") { s = "room"; }          // 1.24: "Trong nhà" ở màn chính = cả nhà; bảng Nhà mở từng gian
     if (!canEnter(s)) { return; }
     scene = s;
-    if (isOut(s)) { try { localStorage.setItem("kb-main-scene", s); } catch (e) { /* bỏ qua */ } }
+    if (isOut(s)) { setMainPref(s); }
     renderScenes();
     if (placing && placing.scene !== s) { placing = null; }
     selected = null; hidePop(); hover = null;
@@ -5075,13 +5084,10 @@ var GardenHome = (function () {
     _drawHouse: drawHouse,
     // cho test hiệu năng: vẽ sân màn chính n lần với cảnh sc, trả về ms / khung
     _bench: function (sc, n) {
-      let prev = null;
-      try { prev = localStorage.getItem("kb-main-scene"); localStorage.setItem("kb-main-scene", sc); } catch (e) { /* bỏ qua */ }
+      benchScene = sc;
       const t0 = performance.now(), base = Date.now();
-      for (let i = 0; i < n; i++) { stepParts(sc, 0.05); drawMainYard(base + i * 50); }
-      const ms = (performance.now() - t0) / n;
-      try { if (prev !== null) { localStorage.setItem("kb-main-scene", prev); } } catch (e) { /* bỏ qua */ }
-      return ms;
+      try { for (let i = 0; i < n; i++) { stepParts(sc, 0.05); drawMainYard(base + i * 50); } } finally { benchScene = null; }
+      return (performance.now() - t0) / n;
     }
   };
 })();

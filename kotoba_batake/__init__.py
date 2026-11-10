@@ -689,6 +689,16 @@ def _quest_snapshot() -> tuple[list[str], bool, int | None]:
     return list(q.get("done") or []), bool(q.get("chest")), q.get("day")
 
 
+def _streak_snapshot() -> tuple[int | None, int, int]:
+    """1.25.3: (ngày nhiệm vụ, chuỗi dài nhất, chuỗi đang tưới) trước lượt ôn — Undo trả về đúng các số này."""
+    try:
+        q = STATE.load().get("quest") or {}
+        pr = q.get("progress") or {}
+        return q.get("day"), int(pr.get("streak") or 0), int(pr.get("streak_cur") or 0)
+    except Exception:
+        return None, 0, 0
+
+
 def _last_rev(cid: int) -> int:
     try:
         return int(mw.col.db.scalar("select max(id) from revlog where cid = ?", int(cid)) or 0)
@@ -696,24 +706,86 @@ def _last_rev(cid: int) -> int:
         return 0
 
 
+# 1.25.3 (audit BUG-01): ghi cấu hình collection (kể cả set_config không tạo bước Undo) ngay sau Undo làm Anki xoá
+# Redo. Nên lượt ôn vừa Undo chỉ được đánh dấu "chờ" (`wait`): ví đọc ra luôn đã trừ phần thưởng của lượt đó (móc
+# STATE.on_load), còn việc ghi đợi tới lần ghi ví kế tiếp (ôn thẻ khác, mua đồ…: móc STATE.on_save đánh dấu đã trả),
+# tới lúc Redo không còn dùng được (thao tác khác của Anki), trước khi đồng bộ hoặc khi đóng hồ sơ. Redo trước đó thì
+# thôi chờ, không ghi gì.
+def _alive(e: dict[str, Any]) -> bool | None:
+    try:
+        return bool(mw.col.db.scalar("select count() from revlog where id = ? and cid = ?", e["rev"], e["cid"]))
+    except Exception:
+        return None
+
+
+def _redo_possible() -> bool:
+    try:
+        return bool(mw.col.undo_status().redo)
+    except Exception:
+        return False
+
+
+def _undo_waiting() -> bool:
+    return any(e.get("wait") for e in _ledger)
+
+
+def _undo_on_load(data: dict[str, Any]) -> None:
+    """STATE.on_load: áp phần trả lại của các lượt đang chờ vào ví vừa đọc (lượt mới Undo trước — đúng thứ tự Undo)."""
+    if not _undo_waiting() or not mw.col:
+        return
+    for e in reversed(_ledger):
+        if not e.get("wait"):
+            continue
+        if _alive(e):            # đã Redo (Anki không có móc riêng cho Redo) → thôi chờ
+            e["wait"] = False
+            continue
+        core.undo_reward(data, e)
+
+
+def _undo_on_save(_data: dict[str, Any]) -> None:
+    """STATE.on_save: ví sắp ghi được đọc qua on_load nên đã có phần trả lại → các lượt chờ coi như đã trả."""
+    for e in _ledger:
+        if e.get("wait"):
+            e["wait"] = False
+            e["undone"] = True
+
+
+def _flush_undo(force: bool = False) -> None:
+    """Ghi phần trả lại đang chờ khi Redo không còn dùng được (force: trước khi đồng bộ / đóng hồ sơ)."""
+    if not _undo_waiting() or not mw.col:
+        return
+    if not force and _redo_possible():
+        return
+    STATE.save(STATE.load())
+
+
 def check_undo() -> int:
-    """So sổ phần thưởng với revlog: lượt ôn đã bị Undo (dòng revlog mất) → trả lại xu; Redo (dòng revlog có lại) → cộng
-    lại. Gọi sau Undo của Anki (state_did_undo) và mỗi lần vườn làm mới. Trả về số xu chênh (âm = đã trừ)."""
+    """So sổ phần thưởng với revlog: lượt ôn đã bị Undo (dòng revlog mất) → trả lại xu (ghi khi Redo không còn dùng
+    được, xem trên); Redo (dòng revlog có lại) → thôi chờ / cộng lại. Gọi sau Undo của Anki (state_did_undo), sau mỗi
+    thao tác của Anki khi đang có lượt chờ, và mỗi lần vườn làm mới. Trả về số xu chênh (âm = đã trừ)."""
     if not _ledger or not mw.col:
         return 0
     delta = 0
+    fresh: list[dict[str, Any]] = []
     for e in reversed(_ledger):
-        try:
-            alive = bool(mw.col.db.scalar("select count() from revlog where id = ? and cid = ?", e["rev"], e["cid"]))
-        except Exception:
+        alive = _alive(e)
+        if alive is None:
             continue
-        if not alive and not e.get("undone"):
-            delta -= STATE.undo_answer(e)
-            e["undone"] = True
+        if not alive and not e.get("undone") and not e.get("wait"):
+            fresh.append(e)
+        elif alive and e.get("wait"):
+            e["wait"] = False                # Redo trước khi kịp ghi: không có gì để làm
         elif alive and e.get("undone"):
             delta += STATE.redo_answer(e)
             e["undone"] = False
-            e.update(goal=0, quest_coins=0, quest_done=[], chest=False)   # nhiệm vụ / mục tiêu không cộng lại
+            e.update(goal=0, quest_coins=0, quest_done=[], chest=False,      # nhiệm vụ / mục tiêu không cộng lại
+                     streak0=None, streak_cur0=None)
+    if fresh:
+        c0 = int(STATE.load().get("coins") or 0)
+        for e in fresh:
+            e["wait"] = True
+        delta += int(STATE.load().get("coins") or 0) - c0
+    _flush_undo()
     return delta
 
 
@@ -732,12 +804,30 @@ def _on_undo(*_args: Any) -> None:
         tooltip("ことば畑: đã hoàn tác lượt ôn, trả lại %d xu." % -delta, period=2500)
 
 
+def _on_op(*_args: Any) -> None:
+    """operation_did_execute: có lượt đang chờ thì xem đã Redo chưa / Redo còn dùng được không (ghi khi hết Redo)."""
+    if not _undo_waiting():
+        return
+    try:
+        check_undo()
+    except Exception as err:
+        _warn("hoàn tác lượt ôn", err)
+
+
+def _on_sync_start(*_args: Any) -> None:
+    try:
+        _flush_undo(force=True)
+    except Exception as err:
+        _warn("hoàn tác lượt ôn (đồng bộ)", err)
+
+
 def _record_answer(nid: int, old: int | None, ease: int, deck: str | None,
                    before: str | None = None, cid: int | None = None) -> dict[str, Any]:
     """Cộng xu, ghi số lần tưới. Trả về kết quả để làm hiệu ứng / thông báo."""
     cfg = config()
     new = core.note_stage(mw.col, nid, cfg["stage_days"], deck)
     done0, chest0, _qd = _quest_snapshot()
+    sday0, streak0, scur0 = _streak_snapshot()
     _wallet, gained = STATE.record_answer(ease, old, new, day=_today(), before=before)
     info: dict[str, Any] = {"nid": nid, "ease": ease, "old": old, "new": new, "gained": gained, "message": None,
                             "goal_bonus": 0}
@@ -765,6 +855,8 @@ def _record_answer(nid: int, old: int | None, ease: int, deck: str | None,
             "day": _today(), "ease": ease, "before": before,
             "stage_up": old is not None and new is not None and new > old,
             "harvest": old is not None and new == core.STAGE_FRUIT and old < core.STAGE_FRUIT,
+            # 1.25.3: chuỗi tưới trước lượt này (cùng ngày nhiệm vụ; ngày mới thì từ 0)
+            "streak0": streak0 if sday0 == qday else 0, "streak_cur0": scur0 if sday0 == qday else 0,
         })
         del _ledger[:-LEDGER_MAX]
     return info
@@ -837,6 +929,32 @@ def save_config(**changes: Any) -> None:
     raw = dict(mw.addonManager.getConfig(__name__) or {})
     raw.update(changes)
     mw.addonManager.writeConfig(__name__, raw)
+
+
+def prefs_script() -> str:
+    """1.25.3: <script> đặt window.__kbPrefs = cài đặt riêng máy đã lưu (config "prefs"), chèn vào <head> của trang vườn.
+    localStorage của trang không còn sau khi tắt Anki (webview của Anki dùng profile không lưu, cổng đổi mỗi lần mở)."""
+    try:
+        prefs = more_core.clean_prefs((mw.addonManager.getConfig(__name__) or {}).get("prefs"))
+    except Exception as err:
+        _warn("cài đặt riêng máy", err)
+        prefs = {}
+    data = json.dumps(prefs, ensure_ascii=True).replace("<", "\\u003c").replace(">", "\\u003e")
+    return f"<script>window.__kbPrefs = {data};</script>"
+
+
+def save_prefs(raw: str) -> None:
+    """Lệnh `prefs:set:{"kb-sky": "…", "kb-music": null…}` (trang gom các thay đổi rồi gửi một lần)."""
+    try:
+        changes = json.loads(raw)
+    except ValueError:
+        return
+    if not isinstance(changes, dict):
+        return
+    cur = (mw.addonManager.getConfig(__name__) or {}).get("prefs")
+    new = more_core.merge_prefs(cur, changes)
+    if new != more_core.clean_prefs(cur):
+        save_config(prefs=new)
 
 
 def ai_today() -> str:
@@ -1327,11 +1445,23 @@ def _ai_done(fut: Any, base: str, date: str, client: Any = None) -> None:
 
 JOURNAL_DIR = os.path.join(ADDON_DIR, "user_files", "journal")     # sao lưu nhật ký + nhật ký sửa bài (máy này)
 PHOTO_DIR = os.path.join(ADDON_DIR, "user_files", "anh_vuon")       # ảnh vườn tự chụp mỗi tuần (không đồng bộ)
+
+
+def _photo_dir() -> str:
+    """1.25.3 (audit BUG-06): thư mục ảnh vườn của hồ sơ đang mở (`anh_vuon/<mã hồ sơ>/`, xem journal.profile_photo_dir)."""
+    col = mw.col
+    if col is None:
+        return PHOTO_DIR
+    try:
+        has_wallet = isinstance(col.get_config(core.CONFIG_KEY, None), dict)
+    except Exception:
+        has_wallet = False
+    return journal.profile_photo_dir(PHOTO_DIR, core.profile_key(col), has_wallet)
 JOURNAL = journal.JournalStore(JOURNAL_DIR, col_getter=lambda: mw.col)
 # Việc nền "Gemini sửa bài": trạng thái RIÊNG, không dùng _ai["running"] của báo → hai việc chạy song song được
 _fix: dict[str, Any] = {"running": False, "date": "", "sent": 0.0}
 _quota_mem: dict[str, float] = {}       # model hết hạn mức do bài sửa gặp (dùng chung với báo qua _shared_exhausted)
-_words_cache: dict[tuple[str, str], dict[str, Any]] = {}     # (ngày, ngôn ngữ) → kết quả words.pick (gợi ý, từ đã học)
+_words_cache: dict[tuple[str, ...], dict[str, Any]] = {}     # (ngày, ngôn ngữ, collection, deck đã chọn) → words.pick (gợi ý, từ đã học)
 _pdf_jobs: list[Any] = []
 
 
@@ -1435,10 +1565,19 @@ def _write_level(cfg: dict[str, Any], lang: str) -> str:
 
 def _words_for(ds: str, lang: str, cfg: dict[str, Any]) -> dict[str, Any]:
     """Từ của báo `lang` hôm nay (deck đã chọn ở tab Nguồn báo, không chọn thì mọi deck) — gợi ý + từ đã học."""
-    k = (ds, lang)
+    # 1.25.3 (audit BUG-05): khoá có cả collection (hồ sơ) và deck đã chọn — trước chỉ (ngày, ngôn ngữ) nên đổi nguồn ở
+    # tab Nguồn báo / đổi hồ sơ trong ngày vẫn ra gợi ý + "từ đã học" của nguồn cũ
+    try:
+        src = words.load_src(mw.col)
+        mine = json.dumps(src.get(lang) or {}, sort_keys=True, default=str)
+    except Exception as err:
+        _warn("từ cho luyện viết", err)
+        src, mine = None, "?"
+    k = (ds, lang, str(getattr(mw.col, "path", "") or ""), mine)
     if k not in _words_cache:
         try:
-            src = words.load_src(mw.col)
+            if src is None:
+                raise ValueError("không đọc được deck đã chọn")
             if len(_words_cache) > 6:
                 _words_cache.clear()
             _words_cache[k] = words.pick(mw.col, cfg, lang, src[lang]["decks"], ds,
@@ -1486,7 +1625,7 @@ def journal_summary() -> dict[str, Any] | None:
             w = {"d": d.isoformat(), "st": st, "n": len(x.get("loi") or []), "today": back == 0}
             break
     return {"today": today.isoformat(), "asked": bool(e.get("m") or e.get("t")), "mood": e.get("m", ""), "w": w,
-            "photo_due": journal.photo_due(PHOTO_DIR, today), "fixing": bool(_fix["running"])}
+            "photo_due": journal.photo_due(_photo_dir(), today), "fixing": bool(_fix["running"])}
 
 
 def _push_journal() -> None:
@@ -1611,7 +1750,7 @@ def _book_month(y: int, m: int, today: datetime.date, cfg: dict[str, Any]) -> di
     entries = JOURNAL.month(y, m)
     goal = _cal_goal(cfg)
     plain = _cal_plain()
-    ph = journal.month_photo(PHOTO_DIR, y, m)
+    ph = journal.month_photo(_photo_dir(), y, m)
     return {"id": "%04d-%02d" % (y, m), "y": y, "m": m, "title": "Tháng %d · %d" % (m, y),
             "draft": (y, m) == (today.year, today.month), "th": journal.dominant_theme(y, m),
             "th_name": journal.theme_name(journal.dominant_theme(y, m), True), "plain": plain,
@@ -1901,13 +2040,14 @@ class GardenDialog(QDialog):
                 head = f"<style>body {{ zoom: {zoom}; }}</style>"
         except Exception:
             pass
+        head += prefs_script()      # 1.25.3: cài đặt riêng máy (trời & giờ, nhạc…) — có trước khi sky.js / music.js chạy
         self.web.stdHtml(
             _read_body(),
             head=head,
             default_css=False,
             css=[f"{WEB_BASE}/garden.css"],
             js=[
-                f"{WEB_BASE}/diag.js", f"{WEB_BASE}/icons.js", f"{WEB_BASE}/sky.js", f"{WEB_BASE}/season.js", f"{WEB_BASE}/fx.js", f"{WEB_BASE}/music.js",
+                f"{WEB_BASE}/diag.js", f"{WEB_BASE}/prefs.js", f"{WEB_BASE}/icons.js", f"{WEB_BASE}/sky.js", f"{WEB_BASE}/season.js", f"{WEB_BASE}/fx.js", f"{WEB_BASE}/music.js",
                 f"{WEB_BASE}/games.js", f"{WEB_BASE}/fields.js", f"{WEB_BASE}/season_art.js", f"{WEB_BASE}/rare_art.js", f"{WEB_BASE}/nha_art.js", f"{WEB_BASE}/pets.js", f"{WEB_BASE}/guests.js",
                 f"{WEB_BASE}/home.js", f"{WEB_BASE}/craft.js", f"{WEB_BASE}/paper.js", f"{WEB_BASE}/seeds.js",
                 f"{WEB_BASE}/joy.js", f"{WEB_BASE}/ui.js", f"{WEB_BASE}/calendar.js", f"{WEB_BASE}/garden.js",
@@ -2176,6 +2316,13 @@ class GardenDialog(QDialog):
                 self.deck_id = int(cmd.split(":", 1)[1])
             except ValueError:
                 return None
+            # 1.25.3: deck chọn ở ô Deck của vườn thành deck hiện tại của Anki (như khi bấm Tưới ngay) — trước đây chỉ
+            # xem rồi đóng vườn thì lần mở sau về deck cũ
+            try:
+                if mw.col.decks.get(self.deck_id, default=False):
+                    mw.col.decks.select(self.deck_id)
+            except Exception as err:
+                _warn("chọn deck", err)
             self._stop_review()
             self.refresh()
         elif cmd == "rv:start":
@@ -2203,6 +2350,8 @@ class GardenDialog(QDialog):
             self._on_ai(cmd[len("ai:"):])
         elif cmd.startswith("ui:"):
             self._on_ui(cmd[len("ui:"):])
+        elif cmd.startswith("prefs:set:"):
+            save_prefs(cmd[len("prefs:set:"):])
         elif cmd.startswith("cal:"):
             self._on_cal(cmd[len("cal:"):])
         elif cmd.startswith("guest:"):
@@ -3052,9 +3201,10 @@ class GardenDialog(QDialog):
                 export_pdf(self, p["html"], str(p.get("name") or ""))
         elif name == "photo":
             today = cal_today()
-            if journal.photo_due(PHOTO_DIR, today):
+            folder = _photo_dir()
+            if journal.photo_due(folder, today):
                 try:
-                    journal.save_photo(PHOTO_DIR, today, arg)
+                    journal.save_photo(folder, today, arg)
                 except (journal.JournalError, ValueError, OSError) as err:
                     _warn("ảnh vườn", err)
                 _push_journal()
@@ -3663,7 +3813,12 @@ def _on_profile_close() -> None:
     đóng: bấm gì cũng lỗi, mở hồ sơ khác thì vườn vẫn trỏ vào deck của hồ sơ cũ; Anki ghi "Window should have been
     closed")."""
     global _report_dialog
+    try:                                  # 1.25.3: lượt Undo còn chờ → ghi trước khi đóng (Redo cũng hết khi đóng)
+        _flush_undo(force=True)
+    except Exception as err:
+        _warn("hoàn tác lượt ôn (đóng hồ sơ)", err)
     _ledger.clear()                       # 1.23: sổ phần thưởng (Undo) chỉ cho collection đang mở
+    _words_cache.clear()                  # 1.25.3: gợi ý luyện viết của hồ sơ này không sang hồ sơ khác
     if _dialog is not None:
         try:
             _dialog.flush_unsaved()       # collection còn mở ở hook này → lưu được chữ đang gõ dở
@@ -3706,3 +3861,9 @@ gui_hooks.reviewer_will_answer_card.append(_will_answer)
 gui_hooks.reviewer_did_answer_card.append(_did_answer)
 if hasattr(gui_hooks, "state_did_undo"):          # 1.23 (KB-03): Undo lượt ôn → trả lại xu
     gui_hooks.state_did_undo.append(_on_undo)
+if hasattr(gui_hooks, "operation_did_execute"):   # 1.25.3: lượt Undo chờ ghi → xem Redo / thao tác khác
+    gui_hooks.operation_did_execute.append(_on_op)
+if hasattr(gui_hooks, "sync_will_start"):
+    gui_hooks.sync_will_start.append(_on_sync_start)
+STATE.on_load = _undo_on_load
+STATE.on_save = _undo_on_save

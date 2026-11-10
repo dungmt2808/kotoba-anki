@@ -82,14 +82,14 @@ def clean_myseeds(raw: Any) -> dict[str, Any]:
     rules = raw.get("rules") if isinstance(raw.get("rules"), dict) else {}
     deck = rules.get("deck") if isinstance(rules.get("deck"), dict) else {}
     for did, v in deck.items():
-        if isinstance(did, str) and re.fullmatch(r"\d{1,20}", did) and v in ok and len(out["rules"]["deck"]) < 200:
+        if isinstance(did, str) and re.fullmatch(r"\d{1,20}", did) and isinstance(v, str) and v in ok and len(out["rules"]["deck"]) < 200:
             out["rules"]["deck"][did] = v
     kind = rules.get("kind") if isinstance(rules.get("kind"), dict) else {}
-    out["rules"]["kind"] = {k: kind[k] for k in more.SEED_KINDS if kind.get(k) in ok}
+    out["rules"]["kind"] = {k: kind[k] for k in more.SEED_KINDS if isinstance(kind.get(k), str) and kind[k] in ok}   # 1.25.3: sai kiểu → bỏ
     tags = rules.get("tag") if isinstance(rules.get("tag"), list) else []
     seen: set[str] = set()
     for row in tags:
-        if isinstance(row, list) and len(row) == 2 and row[1] in ok:
+        if isinstance(row, list) and len(row) == 2 and isinstance(row[1], str) and row[1] in ok:
             t = more._clean_tag(row[0])
             if t and t.lower() not in seen and len(out["rules"]["tag"]) < more.SEED_TAG_MAX:
                 seen.add(t.lower())

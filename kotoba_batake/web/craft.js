@@ -47,7 +47,13 @@ var GardenCraft = (function () {
   function layerDims(l) { if (/^s\d$/.test(l)) { return [16, 16]; } const u = uzCat(); return l === "env" ? [u.env_w || 256, u.env_h || 76] : [u.w || 64, u.h || 76]; }
   function layerPx(l) { return l === layer ? px : (layers[l] ? layers[l].px : []); }
   function codeOf(l) { const f = layerPx(l).join(""); return f.replace(/\./g, "") ? encode(f) : ""; }
-  function edited() { return undo.length > 0 || ((zoneMode || seedMode) && Object.keys(layers).some((l) => l !== layer && layers[l].undo.length)); }
+  function edited() {
+    if (undo.length > 0) { return true; }
+    if (zoneMode || seedMode) { return Object.keys(layers).some((l) => l !== layer && layers[l].undo.length); }
+    // 1.25.3 (audit BUG-03): đổi cỡ xoá lịch sử hoàn tác → so thẳng hình đang có (món mới: còn ô nào đã tô; sửa món: khác hình gốc)
+    const flat = px.join("");
+    return design ? flat !== designOrig : /[^.]/.test(flat);
+  }
   function zoneBg() {         // nền có sẵn của vùng (trời ban ngày) vẽ dưới lưới
     if (!zoneMode || !zoneDraft || !(window.GardenHome && GardenHome.zoneBgCanvas)) { return null; }
     const sig = zoneDraft.bg + "|" + zoneDraft.ground + "|" + zoneDraft.hills;

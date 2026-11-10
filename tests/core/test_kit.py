@@ -68,6 +68,11 @@ ok(rc == 1, "ghi chú ngữ pháp có chữ Nhật trong ngoặc → LỖI")
 
 print("== kiemtra.py --chi-dich (thêm bản dịch cho số cũ)")
 old = os.path.join(K, "bao", "2026-11-01", "bao.json")
+# 1.25.3: số 01/11 của repo nay đã có bản dịch (commit 472b3bc) → bỏ "dich" trên bản sao để có đúng "số cũ chưa có dich"
+d = json.load(open(old, encoding="utf-8"))
+for b in d["bai"]:
+    b.pop("dich", None)
+json.dump(d, open(old, "w", encoding="utf-8"), ensure_ascii=False)
 rc, out = kiem("bao/2026-11-01/bao.json", "--chi-dich")
 ok(rc == 1 and out.count("LỖI") == 4 and "không có trong phạm vi" not in out, "số cũ chưa có dich → chỉ báo lỗi bản dịch (4 bài)")
 d = json.load(open(old, encoding="utf-8"))

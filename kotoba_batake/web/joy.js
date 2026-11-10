@@ -44,10 +44,10 @@ var GardenJoy = (function () {
   }
   // dải chúc mừng: mỗi thành tích chỉ một lần mỗi ngày (nhớ trên máy này)
   function seen(day, key) {
-    try { return localStorage.getItem("kb-joy-" + day + "-" + key) === "1"; } catch (e) { return false; }
+    try { return (typeof GardenPrefs !== "undefined" ? GardenPrefs.get("kb-joy-" + day + "-" + key) : localStorage.getItem("kb-joy-" + day + "-" + key)) === "1"; } catch (e) { return false; }
   }
   function mark(day, key) {
-    try { localStorage.setItem("kb-joy-" + day + "-" + key, "1"); } catch (e) { /* bỏ qua */ }
+    try { if (typeof GardenPrefs !== "undefined") { GardenPrefs.set("kb-joy-" + day + "-" + key, "1"); } else { localStorage.setItem("kb-joy-" + day + "-" + key, "1"); } } catch (e) { /* bỏ qua */ }
   }
   let bannerTimer = null;
   function banner(text) {

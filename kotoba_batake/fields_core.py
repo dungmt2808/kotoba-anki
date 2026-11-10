@@ -147,7 +147,7 @@ def _clean_text(v: Any, limit: int) -> str | None:
 
 def clean_model(raw: Any) -> dict[str, Any] | None:
     """{kind, f: {vai trò: tên trường}, name} hoặc None nếu hỏng."""
-    if not isinstance(raw, dict) or raw.get("kind") not in KINDS:
+    if not isinstance(raw, dict) or not isinstance(raw.get("kind"), str) or raw.get("kind") not in KINDS:   # 1.25.3: sai kiểu → bỏ
         return None
     kind = raw["kind"]
     allowed = set(role_ids(kind))
