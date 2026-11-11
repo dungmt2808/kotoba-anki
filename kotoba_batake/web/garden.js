@@ -1539,6 +1539,13 @@ var Garden = (function () {
     },
     // thông báo từ Python không bị thông báo sau thay mất (hàng chờ)
     notice: function (n) { if (n && n.msg) { toast(n.msg, null, n.ms || 8000); } },
+    // 1.25.5 (admin): bản sửa hình gốc vừa lưu / bỏ / nhập
+    fixes: function (p) {
+      if (typeof GardenFix !== "undefined") { GardenFix.set((p && p.fixes) || {}); }
+      if (typeof GardenCraft !== "undefined" && GardenCraft.baseSaved) { GardenCraft.baseSaved(); }
+      if (typeof GardenHome !== "undefined" && GardenHome.fixChanged) { GardenHome.fixChanged(); }
+      if (p && p.saved) { toast("Đã lưu hình."); } else if (p && p.reset) { toast("Đã về hình gốc."); }
+    },
     openCal: openCal,
     flip: flip,
     reviewDone: reviewDone,

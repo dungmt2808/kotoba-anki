@@ -61,6 +61,7 @@
 **Giao diện tự chỉnh** (từ bản 1.14) — sửa trong vườn: ⚙ → *Giao diện & chế độ học…*
 - `ui`: `{}` = như cũ (mọi thứ chuyển động). Mỗi chế độ `main` (màn chính), `review` (khi ôn thẻ), `panel` (Trò chơi / Báo / Cấu hình trường) có: `yard` và `field` = `"full"` (chuyển động) / `"still"` (đứng yên) / `"dim"` (mờ, đứng yên) / `"hide"` (ẩn); `sky`, `weather`, `pets`, `mascot`, `joy` = `"on"` / `"off"`. Chung: `card` = `"normal"` / `"tall"` (khung thẻ to hết chỗ), `theme` = `"garden"` / `"paper"` (màu bảng ôn; 1.23 bỏ `"night"` — Đêm vườn, config cũ về `"garden"`), `scene` = `"normal"` / `"large"` (1.23: cỡ dải cảnh ở màn chính Vừa / Lớn), `start` = `"last"` / `"yard"` (1.23: mở vườn ở cảnh đang chọn / luôn về Sân vườn), `deco` = `"on"` / `"off"` (1.25: dây trang trí của giao diện mùa — dải trên cùng cửa sổ, dây ngoài sân, dây trong nhà — Hiện / Ẩn; chọn ở ⚙ → Giao diện → Màn chính).
 - Ví dụ ẩn sân + ruộng khi ôn thẻ: `"ui": {"review": {"yard": "hide", "field": "hide"}, "card": "tall"}`. Nhanh hơn: bấm nút **Ẩn vườn** trên bảng ôn.
+- `admin` (1.25.5, mặc định `false`): `true` → nút **Sửa hình** cho hình có sẵn (đồ, thú, giống cây, khách) trong bảng Nhà. Bản sửa ở `user_files/mau_sua.json`; Xuất file rồi chép vào thư mục add-on (`mau_sua.json`) để mọi người nhận ở bản sau.
 - `prefs` (1.25.3): vườn tự ghi các chỉnh nhỏ trong ⚙ và trò chơi (Trời & giờ, Thời tiết, Nhạc nền, Âm lượng, tắt tiếng, cảnh màn chính, kiểu Đuổi quạ, Hiện bản dịch…) để tắt Anki rồi mở lại vẫn còn. Không cần sửa tay; xoá mục này (`"prefs": {}`) là về mặc định.
 
 **Hiệu ứng & âm thanh**

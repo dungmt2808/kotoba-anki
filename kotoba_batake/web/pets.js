@@ -177,6 +177,14 @@ var GardenPets = (function () {
     e.box = { x: x - ox, y: y - oy, w: w, h: h };
   }
   let lastBoxes = {};
+  // 1.25.5: bản sửa hình gốc (fix.js)
+  if (typeof GardenFix !== "undefined") {
+    GardenFix.register("thu", {
+      frames: (id) => { const o = {}; Object.keys(SPR[id] || {}).forEach((f) => { if (Array.isArray(SPR[id][f])) { o[f] = SPR[id][f]; } }); return o; },
+      set: (id, f, r) => { if (SPR[id]) { SPR[id][f] = r; } },
+      pal: () => PAL
+    });
+  }
   return {
     has: (id) => !!SPR[id],
     sprite: (id, frame) => (SPR[id] ? SPR[id][frame || "sit"] : null),

@@ -4,7 +4,7 @@
 const path = require('path'), fs = require('fs');
 const { chromium } = require('playwright');
 const ADDON = path.resolve(process.argv[2]), OUT = process.argv[3];
-const ORDER = ['diag', 'prefs', 'icons', 'sky', 'season', 'fx', 'music', 'games', 'fields', 'season_art', 'rare_art', 'nha_art',
+const ORDER = ['diag', 'prefs', 'fix', 'icons', 'sky', 'season', 'fx', 'music', 'games', 'fields', 'season_art', 'rare_art', 'nha_art',
   'pets', 'guests', 'home', 'craft', 'paper', 'seeds', 'joy', 'ui', 'calendar'];
 (async () => {
   const browser = await chromium.launch();

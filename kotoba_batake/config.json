@@ -38,5 +38,6 @@
     "gemini_story_tone": "am",
     "dict_voice": "auto",
     "ui": {},
-    "prefs": {}
+    "prefs": {},
+    "admin": false
 }

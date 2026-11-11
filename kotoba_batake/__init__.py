@@ -38,6 +38,7 @@ from . import journal_core as journal
 from . import launcher
 from . import garden_core as core
 from . import more_core
+from . import mau_core as mau
 from . import paper_core as paper
 from . import share_core
 from . import story_core
@@ -941,6 +942,26 @@ def prefs_script() -> str:
         prefs = {}
     data = json.dumps(prefs, ensure_ascii=True).replace("<", "\\u003c").replace(">", "\\u003e")
     return f"<script>window.__kbPrefs = {data};</script>"
+
+
+# 1.25.5: bản sửa hình gốc (chế độ admin) — kèm gói cho mọi người + bản của máy người sửa (mau_core)
+MAU_BUNDLED = os.path.join(ADDON_DIR, "mau_sua.json")
+MAU_LOCAL = os.path.join(ADDON_DIR, "user_files", "mau_sua.json")
+
+
+def fixes_merged() -> dict[str, Any]:
+    return mau.merge(mau.read(MAU_BUNDLED), mau.read(MAU_LOCAL))
+
+
+def fix_script() -> str:
+    """<script> đặt window.__kbFix = bản sửa hình (trước khi các file hình chạy)."""
+    try:
+        data = fixes_merged()["sua"]
+    except Exception as err:
+        _warn("bản sửa hình", err)
+        data = {}
+    text = json.dumps(data, ensure_ascii=True).replace("<", "\\u003c").replace(">", "\\u003e")
+    return f"<script>window.__kbFix = {text};</script>"
 
 
 def save_prefs(raw: str) -> None:
@@ -2041,13 +2062,14 @@ class GardenDialog(QDialog):
         except Exception:
             pass
         head += prefs_script()      # 1.25.3: cài đặt riêng máy (trời & giờ, nhạc…) — có trước khi sky.js / music.js chạy
+        head += fix_script()        # 1.25.5: bản sửa hình gốc
         self.web.stdHtml(
             _read_body(),
             head=head,
             default_css=False,
             css=[f"{WEB_BASE}/garden.css"],
             js=[
-                f"{WEB_BASE}/diag.js", f"{WEB_BASE}/prefs.js", f"{WEB_BASE}/icons.js", f"{WEB_BASE}/sky.js", f"{WEB_BASE}/season.js", f"{WEB_BASE}/fx.js", f"{WEB_BASE}/music.js",
+                f"{WEB_BASE}/diag.js", f"{WEB_BASE}/prefs.js", f"{WEB_BASE}/fix.js", f"{WEB_BASE}/icons.js", f"{WEB_BASE}/sky.js", f"{WEB_BASE}/season.js", f"{WEB_BASE}/fx.js", f"{WEB_BASE}/music.js",
                 f"{WEB_BASE}/games.js", f"{WEB_BASE}/fields.js", f"{WEB_BASE}/season_art.js", f"{WEB_BASE}/rare_art.js", f"{WEB_BASE}/nha_art.js", f"{WEB_BASE}/pets.js", f"{WEB_BASE}/guests.js",
                 f"{WEB_BASE}/home.js", f"{WEB_BASE}/craft.js", f"{WEB_BASE}/paper.js", f"{WEB_BASE}/seeds.js",
                 f"{WEB_BASE}/joy.js", f"{WEB_BASE}/ui.js", f"{WEB_BASE}/calendar.js", f"{WEB_BASE}/garden.js",
@@ -2084,6 +2106,7 @@ class GardenDialog(QDialog):
             except Exception as err:
                 _warn("giống cây", err)
             data["ui"] = more_core.clean_ui(cfg.get("ui"))
+            data["admin"] = bool(cfg.get("admin"))       # 1.25.5: nút "Sửa hình" cho hình có sẵn
             data["fx"] = {
                 "effects": bool(cfg["effects"]),
                 "sound": bool(cfg["sound"]),
@@ -2352,6 +2375,8 @@ class GardenDialog(QDialog):
             self._on_ui(cmd[len("ui:"):])
         elif cmd.startswith("prefs:set:"):
             save_prefs(cmd[len("prefs:set:"):])
+        elif cmd.startswith("base:"):
+            self._on_base(cmd[len("base:"):])
         elif cmd.startswith("cal:"):
             self._on_cal(cmd[len("cal:"):])
         elif cmd.startswith("guest:"):
@@ -3096,6 +3121,64 @@ class GardenDialog(QDialog):
             self._js("homeError", "Không đọc được mã này.")
 
     # -- 1.22: chụp ảnh vườn ------------------------------------------------------
+
+    # -- 1.25.5: admin sửa hình gốc -------------------------------------------
+
+    def _on_base(self, cmd: str) -> None:
+        action, _, arg = cmd.partition(":")
+        if not config().get("admin"):
+            return
+        try:
+            if action == "save":
+                p = json.loads(arg)
+                store = mau.set_fix(mau.read(MAU_LOCAL), p.get("key"), p.get("frames"))
+                mau.write(MAU_LOCAL, store)
+                self._js("fixes", {"fixes": fixes_merged()["sua"], "saved": p.get("key")})
+            elif action == "reset":
+                mau.write(MAU_LOCAL, mau.remove(mau.read(MAU_LOCAL), arg))
+                merged = fixes_merged()["sua"]
+                self._js("fixes", {"fixes": merged, "reset": arg})
+                if arg in merged:
+                    self._js("toast", "Hình này còn bản sửa đi kèm gói.")
+            elif action == "export":
+                data = fixes_merged()
+                if not data["sua"]:
+                    self._js("toast", "Chưa có hình nào được sửa.")
+                    return
+                from aqt.utils import getSaveFile
+                path = os.environ.get("KB_TEST_FIX_OUT") or getSaveFile(self, "Xuất bản sửa hình", "kotoba_batake_mau", "JSON",
+                                                                         ".json", "mau_sua.json")
+                if path:
+                    mau.write(path, data)
+                    self._js("toast", "Đã xuất %d hình: %s" % (len(data["sua"]), os.path.basename(path)))
+            elif action == "import":
+                path = os.environ.get("KB_TEST_FIX_IN")
+                if path:
+                    self._import_fixes(path)
+                else:
+                    getFile(self, "Nhập bản sửa hình", self._import_fixes, filter="Bản sửa hình (*.json)", key="kotoba_batake_mau")
+        except (ValueError, mau.MauError) as err:
+            self._js("toast", str(err) if isinstance(err, mau.MauError) else "Không lưu được hình này.")
+        except OSError as err:
+            showWarning(f"Không ghi được file bản sửa hình:\n{err}", parent=self)
+
+    def _import_fixes(self, path: Any) -> None:
+        if isinstance(path, (list, tuple)):
+            path = path[0] if path else ""
+        if not path:
+            return
+        try:
+            with open(path, encoding="utf-8") as f:
+                data = mau.parse_upload(f.read(mau.MAX_FILE + 1))
+            mau.write(MAU_LOCAL, mau.merge(mau.read(MAU_LOCAL), data))
+        except mau.MauError as err:
+            self._js("toast", str(err))
+            return
+        except OSError as err:
+            showWarning(f"Không đọc được file:\n{err}", parent=self)
+            return
+        self._js("fixes", {"fixes": fixes_merged()["sua"]})
+        self._js("toast", "Đã nhập %d hình." % len(data["sua"]))
 
     def _save_photo(self, raw: str) -> None:
         """snap:save:{name, url} — JS đã vẽ ảnh (PNG data URL); hỏi chỗ lưu rồi ghi file."""

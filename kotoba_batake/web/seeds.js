@@ -145,6 +145,14 @@ var GardenSeeds = (function () {
   }
   function mine(v) { if (!v || SPR[v]) { return null; } sync(); return MY[v] || null; }
 
+  // 1.25.5: bản sửa hình gốc (fix.js) — khung "0".."4" = 5 giai đoạn
+  if (typeof GardenFix !== "undefined") {
+    GardenFix.register("giong", {
+      frames: (v) => { const o = {}; (SPR[v] || []).forEach((r, i) => { if (Array.isArray(r)) { o[String(i)] = r; } }); return o; },
+      set: (v, i, r) => { if (SPR[v]) { SPR[v][Number(i)] = r; } },
+      pal: () => PAL
+    });
+  }
   return {
     ids: Object.keys(SPR).filter((k) => CAL_ONLY.indexOf(k) < 0),
     all: Object.keys(SPR),

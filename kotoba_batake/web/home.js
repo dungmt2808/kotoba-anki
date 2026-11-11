@@ -2376,6 +2376,30 @@ var GardenHome = (function () {
   if (typeof GardenNhaArt !== "undefined") {
     NHA = GardenNhaArt.install({ grid, rect, disc, dot, outline, rows, SPR, GLOW, P, box });
   }
+  // 1.25.5: bản sửa hình gốc (fix.js) — khung "spr" (cửa hàng + cảnh), "f<i>" (FRAMES khác spr), "base" (phần tĩnh)
+  if (typeof GardenFix !== "undefined") {
+    const isRows = (r) => Array.isArray(r) && r.length > 0 && typeof r[0] === "string";
+    GardenFix.register("do", {
+      frames: function (id) {
+        const out = {}, s = SPR[id];
+        if (!isRows(s)) { return out; }
+        out.spr = s;
+        (FRAMES[id] || []).forEach((f, i) => { if (isRows(f) && f !== s) { out["f" + i] = f; } });
+        if (isRows(BASE[id]) && BASE[id] !== s) { out.base = BASE[id]; }
+        return out;
+      },
+      set: function (id, name, r) {
+        if (name === "spr") {
+          const old = SPR[id];
+          SPR[id] = r;
+          (FRAMES[id] || []).forEach((f, i) => { if (f === old) { FRAMES[id][i] = r; } });
+          if (BASE[id] === old) { BASE[id] = r; }
+        } else if (name === "base") { BASE[id] = r; }
+        else if (/^f\d+$/.test(name) && FRAMES[id]) { FRAMES[id][Number(name.slice(1))] = r; }
+      },
+      pal: () => P
+    });
+  }
 
   // Hạt phát ra từ món đồ (chỉ tính cho cảnh đang xem)
   function emit(sceneName, e, dt, night) {
@@ -3856,6 +3880,15 @@ var GardenHome = (function () {
   const WEAR_SLOT_NAME = { head: "Mũ", face: "Mặt", neck: "Cổ", shell: "Vỏ" };
   let delArm = null;   // mẫu đang chờ bấm "Xoá" lần hai
 
+  // 1.25.5 (admin): nút "Sửa hình" cho hình có sẵn — mở Xưởng ở chế độ hình gốc
+  function fixBtn(row, group, id, name) {
+    const d = H && H.data();
+    if (!d || !d.admin || typeof GardenFix === "undefined" || typeof GardenCraft === "undefined" || !GardenCraft.openBase ||
+        !GardenFix.editable(group, id)) { return; }
+    const b = btn("Sửa hình", "kb-btn-small kb-h-fix" + (GardenFix.has(group, id) ? " is-fixed" : ""), () => GardenCraft.openBase({ group: group, id: id, name: name }));
+    if (GardenFix.has(group, id)) { b.title = "Đã sửa"; }
+    row.appendChild(b);
+  }
   function itemCard(list, it, opts) {
     const home = homeState(), money = coins(), cat = catalog();
     const owned = home.owned[it.id] || 0;
@@ -3883,6 +3916,7 @@ var GardenHome = (function () {
       row.appendChild(b);
     }
     if (avail > 0) { row.appendChild(btn("Đặt", "kb-btn-small kb-h-place", () => startPlacing(it.id))); }
+    if (!it.custom) { fixBtn(row, "do", it.id, it.name); }
     info.appendChild(row);
     card.appendChild(info);
     list.appendChild(card);
@@ -4260,6 +4294,7 @@ var GardenHome = (function () {
         nrow.appendChild(btn("Đặt tên", "kb-btn-small", save));
         inf.appendChild(nrow);
       }
+      const frow = el("div", "kb-h-btns"); fixBtn(frow, "thu", sp.id, sp.name); if (frow.childNodes.length) { inf.appendChild(frow); }
       card.appendChild(inf);
       list.appendChild(card);
       if (petFocus === sp.id) { focusCard = card; }
@@ -4319,6 +4354,7 @@ var GardenHome = (function () {
         inf.appendChild(el("div", "kb-h-desc", "Chưa gặp" + (e.season ? "" : " · chưa tới mùa")));
       }
       inf.appendChild(el("div", "kb-h-desc kb-h-guest-hint", "✦ " + e.hint));
+      const frow = el("div", "kb-h-btns"); fixBtn(frow, "khach", e.id, e.name || e.id); if (frow.childNodes.length) { inf.appendChild(frow); }
       card.appendChild(inf);
       list.appendChild(card);
       if (guestFocus === e.id) { focusCard = card; }
@@ -4438,6 +4474,7 @@ var GardenHome = (function () {
         inf.appendChild(btn(money >= x.price ? "Mua giống · " + x.price + " xu" : "Còn thiếu " + (x.price - money) + " xu", "kb-h-buy",
           () => pay("home:seed:buy:" + x.id), money < x.price));
       }
+      const frow = el("div", "kb-h-btns"); fixBtn(frow, "giong", x.id, x.name); if (frow.childNodes.length) { inf.appendChild(frow); }
       card.appendChild(inf);
       list.appendChild(card);
     });
@@ -5072,6 +5109,8 @@ var GardenHome = (function () {
     _step: (sc, dt) => stepParts(sc, dt),
     pxDecode: pxDecode, pxRows: pxRows, drawItemPreview: function (ctx, S, ox, oy, e, sceneName) { drawItem(ctx, S, ox, oy, e, sceneName, Date.now(), "day"); },
     setScene: setScene, mainScene: mainScene, startPlacing: startPlacing,
+    // 1.25.5: bản sửa hình gốc vừa đổi → vẽ lại danh sách (icon) + cảnh
+    fixChanged: function () { stillDirty = true; if (isOpen) { renderList(); } },
     _mainItemAt: mainItemAt, _mainView: function () { return mainView; },
     _popFor: function (sc, i) { setScene(sc); selected = { scene: sc, index: i }; showPop(homeState()[sc][i]); },
     setTab: function (t) { tab = t; renderList(); },

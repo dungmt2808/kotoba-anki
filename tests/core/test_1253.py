@@ -86,8 +86,9 @@ ok(m == {"kb-sky": "b", "kb-crow-mode": "jp"}, "gộp: ghi đè, null = xoá, kh
 m = more.merge_prefs(big, {"kb-new": "1"})
 ok("kb-new" in m and len(m) == more.PREF_MAX_KEYS, "đã đầy 120 khoá: khoá vừa ghi vẫn được giữ")
 src = open(os.path.join(ADDON, "__init__.py"), encoding="utf-8").read()
-ok('f"{WEB_BASE}/diag.js", f"{WEB_BASE}/prefs.js", f"{WEB_BASE}/icons.js", f"{WEB_BASE}/sky.js"' in src,
-   "prefs.js nạp trước sky.js / music.js / fx.js")
+_pos = lambda n: src.find('f"{WEB_BASE}/%s"' % n)
+ok(0 < _pos("diag.js") < _pos("prefs.js") < _pos("sky.js") < _pos("fx.js") < _pos("music.js") < _pos("games.js"),
+   "prefs.js nạp ngay sau diag.js, trước sky.js / music.js / fx.js / games.js")
 ok("head += prefs_script()" in src and 'elif cmd.startswith("prefs:set:")' in src, "trang nhận cài đặt trong <head>, lệnh prefs:set")
 web = os.path.join(ADDON, "web")
 left = []
