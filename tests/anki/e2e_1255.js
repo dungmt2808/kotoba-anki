@@ -124,6 +124,25 @@ kb.open_garden(); result = 1`);
   await esc(); await sleep(200);
   ok(await js('return !GardenCraft.isOpen();'), 'chưa vẽ gì: Esc một lần là đóng');
 
+  console.log('== các loại đồ khác: nội thất, treo tường, theo mùa, món hiếm, gian bếp');
+  for (const [id, nm] of [["kotatsu", "Kotatsu"], ["kakejiku", "Tranh cuộn"], ["kaki", "Cây hồng"], ["shika", "Hươu Nara"], ["reizouko", "Tủ lạnh"]]) {
+    const o = await js(`const L = GardenHome._lib(); if (!Array.isArray(L.SPR["${id}"])) { return null; }
+      GardenCraft.openBase({ group: "do", id: "${id}", name: "${nm}" }); const s = GardenCraft._state();
+      return { open: GardenCraft.isOpen(), base: s.base, gw: s.gw, gh: s.gh, w: L.SPR["${id}"][0].length, h: L.SPR["${id}"].length, n: s.frames.length };`);
+    if (!o) { ok(false, id + ': không có hình'); continue; }
+    await paint(0, 0, 'w');
+    await js('document.getElementById("kb-cf-save").click(); return 1;'); await sleep(900);
+    const after = await js('return [GardenHome._lib().SPR["' + id + '"][0][0], GardenCraft.isOpen()];');
+    ok(o.open && o.base === 'do:' + id && o.gw === o.w && o.gh === o.h && after[0] === 'w' && !after[1],
+      nm + ' (' + id + '): Xưởng ' + o.gw + ' × ' + o.gh + ', ' + o.n + ' khung → Lưu → hình đổi');
+  }
+
+  // khung trống hết (Xoá hết) → không cho lưu
+  await js('GardenCraft.openBase({ group: "do", id: "flowers", name: "Bụi hoa" }); document.getElementById("kb-cf-clear").click(); document.getElementById("kb-cf-save").click(); return 1;'); await sleep(600);
+  ok(await js('return GardenCraft.isOpen() && document.getElementById("kb-cf-tip").textContent === "Khung này đang trống." && GardenHome._lib().SPR.flowers.some(r => /[^.]/.test(r));'),
+    'Xoá hết rồi Lưu → không lưu, nhắc "Khung này đang trống." (món không biến mất)');
+  await js('document.getElementById("kb-cf-cancel").click(); return 1;'); await sleep(200);
+
   console.log('== bản sửa hỏng bị bỏ');
   await py(KB + `s = kb.mau.read(kb.MAU_LOCAL)
 s["sua"]["do:lantern"] = {"spr": ["k" * 5] * 5}

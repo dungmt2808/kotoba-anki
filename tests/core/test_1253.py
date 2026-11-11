@@ -111,22 +111,31 @@ const ctx = { window: { __kbPrefs: { "kb-sky": '{"mode":"fixed","fixedHour":18.4
   setTimeout: (fn, ms) => { timers.push(fn); return timers.length; }, clearTimeout() {} };
 vm.createContext(ctx);
 vm.runInContext(fs.readFileSync(path.join(ADDON, 'web/prefs.js'), 'utf8') + '\nthis.P = GardenPrefs;', ctx);
-const P = ctx.P, out = {};
+(async () => {
+const P = ctx.P, out = {}, tick = () => new Promise((r) => setImmediate(r));
 out.given = P.get("kb-sky"); out.music = P.get("kb-music"); out.bad = P.get("kb-bad"); out.none = P.get("kb-none");
 P.set("kb-music", "1"); P.set("kb-music-vol", 0.4); P.set("kb-sky", null);
 out.beforeFlush = sent.length; out.lsMusic = ls["kb-music"]; out.afterSet = P.get("kb-music"); out.skyGone = P.get("kb-sky");
-timers.forEach((f) => f());
+await tick();
 out.sent = sent.slice();
+P.set("kb-music-vol", 0.5); P.set("kb-music-vol", 0.6);        // dồn dập ngay sau lệnh trước → gom bằng hẹn giờ
+await tick();
+out.burstBefore = sent.length; out.timers = timers.length;
+timers.forEach((f) => f());
+out.burst = sent.slice(1);
 ls["kb-main-scene"] = "beach"; out.direct = P.get("kb-main-scene");
 console.log(JSON.stringify(out));
+})();
 """)
     ok(r and r["given"] == '{"mode":"fixed","fixedHour":18.4,"weather":"rain"}' and r["music"] == "0" and r["bad"] is None and r["none"] is None,
        "đọc cài đặt Python đưa vào (localStorage trống như sau khi mở lại Anki); giá trị không phải chuỗi bỏ")
     ok(r and r["beforeFlush"] == 0 and r["lsMusic"] == "1" and r["afterSet"] == "1" and r["skyGone"] is None,
-       "set(): đổi ngay trong trang + localStorage, chưa gửi lệnh nào (gom 250 ms); null = xoá")
+       "set(): đổi ngay trong trang + localStorage; null = xoá")
     want = {"kb-music": "1", "kb-music-vol": "0.4", "kb-sky": None}
     ok(r and len(r["sent"]) == 1 and r["sent"][0].startswith("prefs:set:") and json.loads(r["sent"][0][10:]) == want,
-       "hết 250 ms: một lệnh prefs:set gửi cả ba thay đổi " + (r["sent"][0] if r and r["sent"] else ""))
+       "cuối lượt xử lý: một lệnh prefs:set gửi cả ba thay đổi (1.25.4: chờ 250 ms → đóng cửa sổ ngay là mất) " + (r["sent"][0] if r and r["sent"] else ""))
+    ok(r and r["burstBefore"] == 1 and r["timers"] == 1 and len(r["burst"]) == 1 and json.loads(r["burst"][0][10:]) == {"kb-music-vol": "0.6"},
+       "thay đổi dồn dập (kéo thanh âm lượng) gom một lệnh sau 250 ms, giữ giá trị cuối")
     ok(r and r["direct"] == "beach", "chỗ nào ghi thẳng localStorage (test cũ) vẫn đọc được")
 
     print("== sky.js / music.js / fx.js / games.js đọc qua GardenPrefs (node)")
@@ -141,13 +150,14 @@ function load(prefs, files) {
   let code = fs.readFileSync(path.join(ADDON, 'web/prefs.js'), 'utf8');
   files.forEach((f) => { code += '\n' + fs.readFileSync(path.join(ADDON, 'web/' + f), 'utf8'); });
   vm.runInContext(code + '\nthis.S = typeof GardenSky !== "undefined" ? GardenSky : null; this.M = typeof GardenMusic !== "undefined" ? GardenMusic : null; this.F = typeof GardenFx !== "undefined" ? GardenFx : null; this.G = typeof GardenGames !== "undefined" ? GardenGames : null; this.P = GardenPrefs;', ctx);
-  ctx.flush = () => { timers.splice(0).forEach((f) => f()); return sent; };
+  ctx.flush = async () => { await new Promise((r) => setImmediate(r)); timers.splice(0).forEach((f) => f()); return sent; };
   return ctx;
 }
+(async () => {
 let c = load({ "kb-sky": '{"mode":"fixed","fixedHour":18.4,"weather":"rain","dayMinutes":60}' }, ['sky.js']);
 out.sky = c.S.settings(); out.skyW = c.S.state().weather; out.skyH = c.S.state().hour;
 c.S.set("weather", "snow"); c.S.set("mode", "game");
-const s1 = c.flush(); out.skySent = s1.length === 1 ? JSON.parse(JSON.parse(s1[0].slice(10))["kb-sky"]) : s1;
+const s1 = await c.flush(); out.skySent = s1.length === 1 ? JSON.parse(JSON.parse(s1[0].slice(10))["kb-sky"]) : s1;
 c = load({ "kb-sky": '{"mode":"sao","fixedHour":99,"weather":"bão","dayMinutes":-3}' }, ['sky.js']);
 out.skyBad = c.S.settings();
 c.S.set("fixedHour", "abc"); out.skyBadSet = c.S.settings().fixedHour;
@@ -155,10 +165,11 @@ c = load({ "kb-sky": '{không phải json' }, ['sky.js']); out.skyJunk = c.S.set
 c = load({ "kb-music": "0", "kb-music-vol": "0.25" }, ['music.js']);
 out.music = [c.M.enabled(), c.M.volume()];
 c = load({ "kb-crow-mode": "jp", "kb-crow-speed": "slow" }, ['games.js']);
-c.G._setCrowMode("vi"); out.crow = c.flush().map((x) => JSON.parse(x.slice(10)));
+c.G._setCrowMode("vi"); out.crow = (await c.flush()).map((x) => JSON.parse(x.slice(10)));
 c = load({}, ['games.js']);
 out.crowSpeedProto = (c.P.set("kb-crow-speed", "constructor"), null);
 console.log(JSON.stringify(out));
+})();
 """)
     ok(r and r["sky"] == {"mode": "fixed", "dayMinutes": 60, "fixedHour": 18.4, "weather": "rain"} and r["skyW"] == "rain"
        and abs(r["skyH"] - 18.4) < 1e-9, "mở lại Anki: trời / giờ lấy đúng cài đặt đã lưu (Cố định 18:24, Mưa)")

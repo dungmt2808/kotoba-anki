@@ -91,6 +91,12 @@ async function restartAnki() {
   await js('document.getElementById("kb-sound-pop").hidden = false; return 1;'); await sleep(300);
   await page.shot(SHOTS + '/1253_01_cai_dat_sau_khi_mo_lai.png');
   await js('document.getElementById("kb-sound-pop").hidden = true; return 1;');
+  // 1.25.5 (kiểm tra lần cuối): chỉnh rồi đóng cửa sổ vườn ngay — vẫn lưu (1.25.4: trang chờ 250 ms mới gửi → mất)
+  await js('GardenSky.set("weather", "snow"); return 1;');
+  await py(KB + 'kb._dialog.close(); result = 1'); await sleep(1200);
+  const quick = await py(KB + 'result = json.loads(((mw.addonManager.getConfig("kotoba_batake") or {}).get("prefs") or {}).get("kb-sky") or "{}").get("weather")');
+  ok(quick === 'snow', 'chọn Tuyết rồi đóng cửa sổ vườn ngay: vẫn lưu (' + quick + ')');
+  await openGarden();
 
   console.log('== 2. cỡ cảnh Lớn: trời phía trên mái khớp hai bên, mưa cả phía trên mái');
   await py(KB + `d = st.load(); d["coins"] = 10000; d["home"]["house"] = 7; st.save(d)
@@ -168,6 +174,12 @@ kb.save_config(ui={"scene": "large"}); kb._dialog.resize(1920, 1080); kb._dialog
   await py(KB + 'from aqt.operations.collection import undo; undo(parent=mw); result = 1'); await sleep(1500);
   const sy = await py(KB + 'a = [st.load()["coins"], ' + raw + ']\nkb._on_sync_start()\nresult = a + [' + raw + ']');
   ok(sy[0] < sy[1] && sy[2] === sy[0], 'Undo rồi đồng bộ: trước đồng bộ ví ghi đúng ' + sy[0] + ' xu (collection ' + sy[1] + ' → ' + sy[2] + ')');
+  // Undo rồi đóng hồ sơ (đổi hồ sơ / tắt Anki) ngay: phần trả lại ghi trước khi đóng, sổ phần thưởng xoá
+  await answer();
+  await py(KB + 'from aqt.operations.collection import undo; undo(parent=mw); result = 1'); await sleep(1500);
+  const pc = await py(KB + 'a = [st.load()["coins"], ' + raw + ']\nkb._on_profile_close()\nresult = a + [' + raw + ', len(kb._ledger)]');
+  ok(pc[0] < pc[1] && pc[2] === pc[0] && pc[3] === 0, 'Undo rồi đóng hồ sơ: ghi ' + pc[0] + ' xu trước khi đóng (collection ' + pc[1] + ' → ' + pc[2] + '), sổ phần thưởng xoá');
+  await openGarden();
 
   console.log('== 4. Xưởng: vẽ → đổi cỡ → Esc');
   await js('GardenCraft.open(); return 1;'); await sleep(600);
@@ -257,6 +269,10 @@ kb.save_config(ui={"scene": "large"}); kb._dialog.resize(1850, 1000); kb._dialog
   await page.shot(SHOTS + '/1253_04_lon_x5_trong_nha.png');
   await js('localStorage.setItem("kb-main-scene", "yard"); return 1;'); await sleep(800);
   await page.shot(SHOTS + '/1253_05_lon_x5_san.png');
+  await js('GardenSky.set("weather", "storm"); GardenSky.set("fixedHour", 21); return 1;'); await sleep(500);
+  const ms = await js('return GardenHome._bench("yard", 40);');
+  ok(ms < 12, 'cỡ Lớn ×5 lúc giông ban đêm: vẽ sân ' + ms.toFixed(2) + ' ms / khung');
+  await js('GardenSky.set("weather", "sunny"); GardenSky.set("fixedHour", 12); return 1;');
   await py(KB + 'kb.save_config(ui={}); kb._dialog.refresh(); result = 1'); await sleep(1200);
   const md = await js('const R = document.getElementById("kb-yard").getBoundingClientRect(), v = GardenHome._mainView(); return { S: v.S, oy: v.oy || 0, h: R.height };');
   ok(md.oy === 0 && Math.abs(md.h - md.S * 76) < 1, 'cỡ Vừa không đổi: ×' + md.S + ', không có trời thêm');

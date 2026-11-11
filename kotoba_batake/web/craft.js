@@ -942,6 +942,9 @@ var GardenCraft = (function () {
       layers[layer].px = px;
       const key = baseInfo.group + ":" + baseInfo.id, frames = {};
       Object.keys(layers).forEach((l) => { if (baseChanged(l)) { frames[l] = rowsOf(l); } });
+      // 1.25.5: khung trống hết thì món đồ biến mất khỏi vườn của mọi người → không cho lưu
+      const empty = Object.keys(layers).find((l) => !layerPx(l).some((c) => c !== "."));
+      if (empty) { setLayer(empty); tip("Khung này đang trống."); return; }
       saving = true; syncButtons(); tip("Đang lưu…");
       H.send(Object.keys(frames).length ? "base:save:" + JSON.stringify({ key: key, frames: frames }) : "base:reset:" + key);
       return;
