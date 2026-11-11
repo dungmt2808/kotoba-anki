@@ -72,7 +72,6 @@ DEFAULT_CONFIG: dict[str, Any] = {
     "mobile_coins": True,
     "bao_dir": "",
     "ui": {},   # 1.14: giao diện tự chỉnh (more_core.clean_ui)
-    "admin": False,   # 1.25.5: chế độ admin — nút "Sửa hình" cho hình có sẵn (mau_core)
     "prefs": {},   # 1.25.3: cài đặt riêng máy này (trời & giờ, nhạc, tắt tiếng…; more_core.clean_prefs) — trước ở localStorage
     # 1.12: nguồn báo + báo do Gemini viết (khoá chỉ lưu trên máy này, không đồng bộ)
     "bao_source": "auto",

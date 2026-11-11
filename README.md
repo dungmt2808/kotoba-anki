@@ -201,6 +201,8 @@ Vào ⚙ để tắt hiệu ứng hoặc đổi giao diện từng chế độ (
 
 Vào **Tools → ことば畑 · Báo lỗi**, ghi vài dòng ở mục *Mô tả lỗi*, bấm **Chép**, rồi dán vào một [issue trên GitHub](https://github.com/dungmt2808/kotoba-anki/issues). Báo cáo có nhật ký lỗi và phiên bản Anki. Khoá Gemini và đường dẫn trên máy bạn được tự động che đi, và bạn sửa hay xoá bớt được trước khi gửi. Add-on không tự gửi gì lên mạng.
 
+Thấy hình có sẵn bị lỗi (thiếu một điểm viền, lệch màu…)? Mở **Nhà**, ở thẻ món bạn đã có bấm **Góp ý hình**, vẽ lại rồi **Lưu file góp ý**, đính kèm file đó vào issue. Vườn của bạn không đổi; bản sửa được nhận sẽ có ở bản cập nhật sau cho mọi người.
+
 ## Cho người phát triển
 
 - Tài liệu phát triển (kiến trúc, dữ liệu, luật chơi, quyết định đã chốt, lịch sử phiên bản): [`PHAT_TRIEN.md`](PHAT_TRIEN.md).

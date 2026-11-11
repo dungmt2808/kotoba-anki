@@ -1539,6 +1539,11 @@ var Garden = (function () {
     },
     // thông báo từ Python không bị thông báo sau thay mất (hàng chờ)
     notice: function (n) { if (n && n.msg) { toast(n.msg, null, n.ms || 8000); } },
+    // 1.25.7: góp ý hình đã lưu ra file (vườn không đổi)
+    baseSuggested: function (r) {
+      if (typeof GardenCraft !== "undefined" && GardenCraft.baseSuggested) { GardenCraft.baseSuggested(r); }
+      if (r && r.ok) { toast("Đã lưu " + r.file + " · gửi file này cho người làm add-on."); }
+    },
     // 1.25.5 (admin): bản sửa hình gốc vừa lưu / bỏ / nhập
     fixes: function (p) {
       if (typeof GardenFix !== "undefined") { GardenFix.set((p && p.fixes) || {}); }

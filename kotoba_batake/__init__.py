@@ -947,9 +947,21 @@ def prefs_script() -> str:
 # 1.25.5: bản sửa hình gốc (chế độ admin) — kèm gói cho mọi người + bản của máy người sửa (mau_core)
 MAU_BUNDLED = os.path.join(ADDON_DIR, "mau_sua.json")
 MAU_LOCAL = os.path.join(ADDON_DIR, "user_files", "mau_sua.json")
+# 1.25.7 (người dùng chọn "góp ý sửa hình"): chế độ admin bật bằng file user_files/admin trên máy người làm add-on
+# (không còn config "admin" — ai cũng tự bật được rồi vẽ lại đồ có sẵn miễn phí). Gói phát hành không có file này,
+# cập nhật add-on vẫn giữ. Người dùng thường chỉ có "Góp ý hình": vẽ thử rồi lưu file gửi đi, vườn của họ không đổi.
+ADMIN_FILE = os.path.join(ADDON_DIR, "user_files", "admin")
+
+
+def admin_on() -> bool:
+    return os.path.isfile(ADMIN_FILE)
 
 
 def fixes_merged() -> dict[str, Any]:
+    # 1.25.7: bản sửa của máy chỉ áp khi có file admin — chép file vào user_files/ không đổi được vườn;
+    # admin xoá file admin là thấy đúng như người dùng sẽ thấy (chỉ bản đi kèm gói)
+    if not admin_on():
+        return mau.read(MAU_BUNDLED)
     return mau.merge(mau.read(MAU_BUNDLED), mau.read(MAU_LOCAL))
 
 
@@ -2106,7 +2118,7 @@ class GardenDialog(QDialog):
             except Exception as err:
                 _warn("giống cây", err)
             data["ui"] = more_core.clean_ui(cfg.get("ui"))
-            data["admin"] = bool(cfg.get("admin"))       # 1.25.5: nút "Sửa hình" cho hình có sẵn
+            data["admin"] = admin_on()       # 1.25.5: "Sửa hình" (admin) · 1.25.7: người dùng thường "Góp ý hình"
             data["fx"] = {
                 "effects": bool(cfg["effects"]),
                 "sound": bool(cfg["sound"]),
@@ -3126,7 +3138,10 @@ class GardenDialog(QDialog):
 
     def _on_base(self, cmd: str) -> None:
         action, _, arg = cmd.partition(":")
-        if not config().get("admin"):
+        if action == "suggest":          # 1.25.7: ai cũng góp ý được — chỉ ghi ra file, không đổi hình trong vườn
+            self._suggest_fix(arg)
+            return
+        if not admin_on():
             return
         try:
             if action == "save":
@@ -3161,6 +3176,29 @@ class GardenDialog(QDialog):
             self._js("toast", str(err) if isinstance(err, mau.MauError) else "Không lưu được hình này.")
         except OSError as err:
             showWarning(f"Không ghi được file bản sửa hình:\n{err}", parent=self)
+
+    def _suggest_fix(self, arg: str) -> None:
+        try:
+            p = json.loads(arg)
+            data = mau.set_fix({}, p.get("key"), p.get("frames"))
+        except (ValueError, AttributeError, mau.MauError) as err:
+            self._js("toast", str(err) if isinstance(err, mau.MauError) else "Không lưu được góp ý này.")
+            self._js("baseSuggested", {"ok": False})
+            return
+        key = next(iter(data["sua"]))
+        name = "gop_y_" + re.sub(r"[^A-Za-z0-9_]", "_", key) + ".json"
+        from aqt.utils import getSaveFile
+        path = os.environ.get("KB_TEST_FIX_OUT") or getSaveFile(self, "Lưu file góp ý hình", "kotoba_batake_mau", "JSON", ".json", name)
+        if not path:
+            self._js("baseSuggested", {"ok": False})
+            return
+        try:
+            mau.write(path, data)
+        except OSError as err:
+            showWarning(f"Không ghi được file:\n{err}", parent=self)
+            self._js("baseSuggested", {"ok": False})
+            return
+        self._js("baseSuggested", {"ok": True, "file": os.path.basename(path)})
 
     def _import_fixes(self, path: Any) -> None:
         if isinstance(path, (list, tuple)):

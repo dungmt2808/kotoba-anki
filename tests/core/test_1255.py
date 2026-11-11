@@ -116,15 +116,23 @@ ok(not errs, "%d lần gọi với dữ liệu sai kiểu: không ném lỗi, k�
 
 print("== nối dây")
 init = open(os.path.join(ADDON, "__init__.py"), encoding="utf-8").read()
-ok(core.DEFAULT_CONFIG.get("admin") is False and json.load(open(os.path.join(ADDON, "config.json")))["admin"] is False, "config admin mặc định tắt")
-ok('if not config().get("admin"):\n            return' in init, "lệnh base:* chỉ chạy khi bật admin")
+ok("admin" not in core.DEFAULT_CONFIG and "admin" not in json.load(open(os.path.join(ADDON, "config.json"))),
+   "1.25.7: không còn config admin (ai cũng tự bật được)")
+ok('ADMIN_FILE = os.path.join(ADDON_DIR, "user_files", "admin")' in init and 'if not admin_on():\n            return' in init,
+   "admin chỉ bật bằng file user_files/admin; lệnh sửa / xuất / nhập chỉ chạy khi có file")
+fm = init[init.find("def fixes_merged"):init.find("def fix_script")]
+ok("if not admin_on():\n        return mau.read(MAU_BUNDLED)" in fm and "mau.read(MAU_LOCAL)" in fm,
+   "không có file admin: chỉ áp bản đi kèm gói (chép mau_sua.json vào user_files/ không đổi được vườn)")
+i_s, i_a = init.find('if action == "suggest":'), init.find("if not admin_on():\n            return")
+ok(0 < i_s < i_a and "self._suggest_fix(arg)" in init, "Góp ý hình (base:suggest) chạy được cho mọi người, trước bước kiểm admin")
 ok('f"{WEB_BASE}/prefs.js", f"{WEB_BASE}/fix.js", f"{WEB_BASE}/icons.js"' in init and "head += fix_script()" in init,
    "fix.js nạp trước mọi file hình, bản sửa có sẵn trong <head>")
 web = os.path.join(ADDON, "web")
 for f, g in (("home.js", "do"), ("pets.js", "thu"), ("seeds.js", "giong"), ("guests.js", "khach")):
     ok('GardenFix.register("%s"' % g in open(os.path.join(web, f), encoding="utf-8").read(), "%s đăng ký nhóm %s" % (f, g))
 home = open(os.path.join(web, "home.js"), encoding="utf-8").read()
-ok(home.count("fixBtn(") >= 5 and '"Sửa hình"' in home, "nút \"Sửa hình\" ở thẻ đồ / thú / giống / khách")
+ok(home.count("fixBtn(") >= 5 and '"Sửa hình"' in home and '"Góp ý hình"' in home and "(!d.admin && !owned)" in home,
+   "nút \"Sửa hình\" (admin, mọi thẻ) / \"Góp ý hình\" (người dùng, chỉ món đang có) ở thẻ đồ / thú / giống / khách")
 body = open(os.path.join(web, "body.html"), encoding="utf-8").read()
 ok(all(('>%s</button>' % t) in body for t in ("Về gốc", "Xuất file", "Nhập file")), "Xưởng: Về gốc · Xuất file · Nhập file (chữ ngắn)")
 # pack.py: mau_sua.json ở gốc add-on vào gói, bản trong user_files/ thì không
@@ -132,13 +140,15 @@ src = os.path.join(TMP, "src", "kotoba_batake")
 shutil.copytree(ADDON, src, ignore=shutil.ignore_patterns("__pycache__", "meta.json"))
 mau.write(os.path.join(src, "mau_sua.json"), over)
 mau.write(os.path.join(src, "user_files", "mau_sua.json"), base)
+open(os.path.join(src, "user_files", "admin"), "w").close()
 pack = os.path.join(HERE, "..", "tools", "pack.py")
 out = os.path.join(TMP, "goi.ankiaddon")
 r = subprocess.run([sys.executable, pack, src, out], capture_output=True, text=True)
 if r.returncode == 0 and os.path.exists(out):
     import zipfile
     names = zipfile.ZipFile(out).namelist()
-    ok("mau_sua.json" in names and "user_files/mau_sua.json" not in names, "gói có mau_sua.json đi kèm, không có bản của máy (user_files)")
+    ok("mau_sua.json" in names and "user_files/mau_sua.json" not in names and "user_files/admin" not in names,
+       "gói có mau_sua.json đi kèm, không có bản của máy và file admin (user_files)")
 else:
     print("  – bỏ qua kiểm tra gói (pack.py không nhận thư mục / đường ra): " + (r.stderr or r.stdout)[-160:])
 

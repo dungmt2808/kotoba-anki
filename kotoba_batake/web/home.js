@@ -3880,11 +3880,18 @@ var GardenHome = (function () {
   const WEAR_SLOT_NAME = { head: "Mũ", face: "Mặt", neck: "Cổ", shell: "Vỏ" };
   let delArm = null;   // mẫu đang chờ bấm "Xoá" lần hai
 
-  // 1.25.5 (admin): nút "Sửa hình" cho hình có sẵn — mở Xưởng ở chế độ hình gốc
-  function fixBtn(row, group, id, name) {
+  // 1.25.5 (admin): nút "Sửa hình" cho hình có sẵn — mở Xưởng ở chế độ hình gốc.
+  // 1.25.7: người dùng thường có "Góp ý hình" ở món mình đang có — vẽ thử rồi lưu file gửi người làm add-on, vườn không đổi
+  function fixBtn(row, group, id, name, owned) {
     const d = H && H.data();
-    if (!d || !d.admin || typeof GardenFix === "undefined" || typeof GardenCraft === "undefined" || !GardenCraft.openBase ||
-        !GardenFix.editable(group, id)) { return; }
+    if (!d || typeof GardenFix === "undefined" || typeof GardenCraft === "undefined" || !GardenCraft.openBase ||
+        !GardenFix.editable(group, id) || (!d.admin && !owned)) { return; }
+    if (!d.admin) {
+      const g = btn("Góp ý hình", "kb-btn-small kb-h-fix", () => GardenCraft.openBase({ group: group, id: id, name: name, suggest: true }));
+      g.title = "Thấy hình lỗi? Vẽ lại rồi gửi file cho người làm add-on";
+      row.appendChild(g);
+      return;
+    }
     const b = btn("Sửa hình", "kb-btn-small kb-h-fix" + (GardenFix.has(group, id) ? " is-fixed" : ""), () => GardenCraft.openBase({ group: group, id: id, name: name }));
     if (GardenFix.has(group, id)) { b.title = "Đã sửa"; }
     row.appendChild(b);
@@ -3916,7 +3923,7 @@ var GardenHome = (function () {
       row.appendChild(b);
     }
     if (avail > 0) { row.appendChild(btn("Đặt", "kb-btn-small kb-h-place", () => startPlacing(it.id))); }
-    if (!it.custom) { fixBtn(row, "do", it.id, it.name); }
+    if (!it.custom) { fixBtn(row, "do", it.id, it.name, owned > 0); }
     info.appendChild(row);
     card.appendChild(info);
     list.appendChild(card);
@@ -4294,7 +4301,7 @@ var GardenHome = (function () {
         nrow.appendChild(btn("Đặt tên", "kb-btn-small", save));
         inf.appendChild(nrow);
       }
-      const frow = el("div", "kb-h-btns"); fixBtn(frow, "thu", sp.id, sp.name); if (frow.childNodes.length) { inf.appendChild(frow); }
+      const frow = el("div", "kb-h-btns"); fixBtn(frow, "thu", sp.id, sp.name, !!p); if (frow.childNodes.length) { inf.appendChild(frow); }
       card.appendChild(inf);
       list.appendChild(card);
       if (petFocus === sp.id) { focusCard = card; }
@@ -4354,7 +4361,7 @@ var GardenHome = (function () {
         inf.appendChild(el("div", "kb-h-desc", "Chưa gặp" + (e.season ? "" : " · chưa tới mùa")));
       }
       inf.appendChild(el("div", "kb-h-desc kb-h-guest-hint", "✦ " + e.hint));
-      const frow = el("div", "kb-h-btns"); fixBtn(frow, "khach", e.id, e.name || e.id); if (frow.childNodes.length) { inf.appendChild(frow); }
+      const frow = el("div", "kb-h-btns"); fixBtn(frow, "khach", e.id, e.name || e.id, !!e.met); if (frow.childNodes.length) { inf.appendChild(frow); }
       card.appendChild(inf);
       list.appendChild(card);
       if (guestFocus === e.id) { focusCard = card; }
@@ -4474,7 +4481,7 @@ var GardenHome = (function () {
         inf.appendChild(btn(money >= x.price ? "Mua giống · " + x.price + " xu" : "Còn thiếu " + (x.price - money) + " xu", "kb-h-buy",
           () => pay("home:seed:buy:" + x.id), money < x.price));
       }
-      const frow = el("div", "kb-h-btns"); fixBtn(frow, "giong", x.id, x.name); if (frow.childNodes.length) { inf.appendChild(frow); }
+      const frow = el("div", "kb-h-btns"); fixBtn(frow, "giong", x.id, x.name, own); if (frow.childNodes.length) { inf.appendChild(frow); }
       card.appendChild(inf);
       list.appendChild(card);
     });

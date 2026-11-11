@@ -51,7 +51,8 @@ const esc = () => js('document.dispatchEvent(new KeyboardEvent("keydown", { key:
   await py(KB + `d = st.load(); d["coins"] = 100000; d["home"]["house"] = 7; st.save(d)
 for p in (kb.MAU_LOCAL, kb.MAU_BUNDLED):
     if os.path.exists(p): os.remove(p)
-kb.save_config(show_tooltips=False, admin=False)
+kb.save_config(show_tooltips=False)
+if os.path.exists(kb.ADMIN_FILE): os.remove(kb.ADMIN_FILE)
 kb.open_garden(); result = 1`);
   await sleep(2500);
   page = await gardenPage();
@@ -67,7 +68,8 @@ kb.open_garden(); result = 1`);
   ok(!(await py(KB + 'result = os.path.exists(kb.MAU_LOCAL)')), 'lệnh lưu gửi thẳng khi chưa bật admin bị bỏ (không ghi file)');
 
   console.log('== bật admin: sửa đèn lồng giấy');
-  await py(KB + 'kb.save_config(admin=True); kb._dialog.refresh(); result = 1'); await sleep(900);
+  // 1.25.7: admin bật bằng file user_files/admin (không còn config "admin")
+  await py(KB + 'open(kb.ADMIN_FILE, "w").close(); kb._dialog.refresh(); result = 1'); await sleep(900);
   await js('GardenHome.setTab("yard"); return 1;'); await sleep(400);
   const nfix = await js('return document.querySelectorAll(".kb-h-fix").length;');
   ok(nfix >= 10, 'thẻ đồ có nút "Sửa hình" (' + nfix + ' nút ở Trang trí sân)');
@@ -176,17 +178,62 @@ result = 1`);
   ok(await js('return GardenHome._lib().SPR.bench[0] === ' + JSON.stringify(benchNew[0]) + ';') && !!(await local())['do:bench'], 'Nhập file người khác gửi → hình đổi, gộp vào bản sửa của máy');
   await js('if (GardenCraft.isOpen()) { document.getElementById("kb-cf-cancel").click(); } return 1;'); await sleep(200);
 
+  console.log('== người dùng thường: Góp ý hình (vườn không đổi)');
+  const local0 = await local();
+  await py(KB + `if os.path.exists(kb.ADMIN_FILE): os.remove(kb.ADMIN_FILE)
+kb.save_config(admin=True)
+st.buy("chochin")
+os.environ["KB_TEST_FIX_OUT"] = "${OUT}"
+if os.path.exists("${OUT}"): os.remove("${OUT}")
+result = 1`);
+  await reopen();
+  ok(await js('return GardenHome._lib().SPR.chochin.join("|") === ' + JSON.stringify(goc.join('|')) + ' && GardenHome._lib().SPR.bench.join("|") === ' + JSON.stringify(bench.join('|')) + ';') && !!local0['do:bench'],
+    'bỏ file admin: vườn về hình gốc, bản sửa của máy (ghế gỗ) còn trong file nhưng không áp');
+  await js('document.getElementById("kb-house").click(); return 1;'); await sleep(700);
+  await js('GardenHome.setTab("yard"); return 1;'); await sleep(400);
+  const gy = await js(`const cards = [...document.querySelectorAll("#kb-h-list .kb-h-card")], btn = (re) => { const c = cards.find(x => re.test(x.textContent)); const b = c && c.querySelector(".kb-h-fix"); return b ? b.textContent : ""; };
+    return { lamp: btn(/Đèn lồng giấy/), stone: btn(/Đèn đá/), sua: [...document.querySelectorAll(".kb-h-fix")].filter(b => b.textContent === "Sửa hình").length };`);
+  ok(gy.lamp === 'Góp ý hình' && gy.stone === '' && gy.sua === 0,
+    'config "admin": true không còn tác dụng; món đang có (đèn lồng) có "Góp ý hình", món chưa có (đèn đá) không có nút: ' + JSON.stringify(gy));
+  ok(await cardFix('yard', '/Đèn lồng giấy/'), 'bấm "Góp ý hình"'); await sleep(500);
+  const gs2 = await js(`const s = GardenCraft._state(); return { suggest: s.suggest, title: document.querySelector("#kb-craft .kb-g-title").textContent,
+    save: document.getElementById("kb-cf-save").textContent, tip: document.getElementById("kb-cf-tip").textContent,
+    hidden: ["kb-cf-export", "kb-cf-import"].map(id => document.getElementById(id).hidden), revert: !document.getElementById("kb-cf-revert").hidden };`);
+  ok(gs2.suggest && gs2.title === '工房 · Góp ý hình' && gs2.save === 'Lưu file góp ý' && gs2.tip === 'Góp ý hình · Đèn lồng giấy' && gs2.hidden.every(Boolean) && gs2.revert,
+    'Xưởng "Góp ý hình": nút "Lưu file góp ý", không có Xuất / Nhập file: ' + JSON.stringify(gs2));
+  await page.shot(SHOTS + '/1255_02_gop_y_hinh.png');
+  await js('document.getElementById("kb-cf-save").click(); return 1;'); await sleep(300);
+  ok(await js('return GardenCraft.isOpen() && document.getElementById("kb-cf-tip").textContent === "Chưa sửa gì.";'), 'chưa vẽ gì mà bấm lưu → "Chưa sửa gì."');
+  await paint(0, 0, 'k');
+  await js('document.getElementById("kb-cf-save").click(); return 1;'); await sleep(1200);
+  const gf = await py(KB + 'result = [json.load(open("' + OUT + '")) if os.path.exists("' + OUT + '") else None, kb.mau.read(kb.MAU_LOCAL)["sua"]]');
+  ok(gf[0] && Object.keys(gf[0].sua).join() === 'do:chochin' && gf[0].sua['do:chochin'].spr[0][0] === 'k' && JSON.stringify(gf[1]) === JSON.stringify(local0),
+    'lưu file góp ý chỉ có hình vừa sửa; không ghi bản sửa của máy');
+  ok(await js('return !GardenCraft.isOpen() && GardenHome._lib().SPR.chochin.join("|") === ' + JSON.stringify(goc.join('|')) + ';'), 'Xưởng đóng, đèn lồng trong vườn vẫn như gốc');
+  await py(KB + `open(kb.ADMIN_FILE, "w").close()
+os.environ["KB_TEST_FIX_IN"] = "${OUT}"
+result = 1`);
+  await reopen();
+  await js('GardenCraft.openBase({ group: "do", id: "chochin", name: "Đèn lồng giấy" }); return 1;'); await sleep(300);
+  await js('document.getElementById("kb-cf-import").click(); return 1;'); await sleep(1000);
+  ok(await js('return GardenHome._lib().SPR.chochin[0][0] === "k";') && !!(await local())['do:chochin'],
+    'máy admin Nhập file góp ý → đèn lồng đổi, vào bản sửa của máy (để Xuất file ra bản mới)');
+  await js('if (GardenCraft.isOpen()) { document.getElementById("kb-cf-cancel").click(); } return 1;'); await sleep(200);
+  await py(KB + 'kb.save_config(admin=False); result = 1');
+  await js('GardenHome.close && GardenHome.close(); return 1;').catch(() => 0);
+
   console.log('== file đi kèm gói: người dùng thường nhận');
   const fence = await js('return GardenHome._lib().SPR.fence.slice();');
   const fenceNew = fence.map((r, i) => i === 0 ? 'k' + r.slice(1) : r);
   await py(KB + `kb.mau.write(kb.MAU_BUNDLED, {"v": 1, "sua": {"do:fence": {"spr": ${JSON.stringify(fenceNew)}}}})
 if os.path.exists(kb.MAU_LOCAL): os.remove(kb.MAU_LOCAL)
-kb.save_config(admin=False); result = 1`);
+if os.path.exists(kb.ADMIN_FILE): os.remove(kb.ADMIN_FILE)
+result = 1`);
   await reopen();
   ok(await js('return GardenHome._lib().SPR.fence[0] === ' + JSON.stringify(fenceNew[0]) + ' && GardenHome._lib().SPR.chochin.join("|") === ' + JSON.stringify(goc.join('|')) + ';'), 'kotoba_batake/mau_sua.json đi kèm gói → hàng rào đổi cho cả người không bật admin');
   await js('document.getElementById("kb-house").click(); return 1;'); await sleep(700);
   await js('GardenHome.setTab("yard"); return 1;'); await sleep(400);
-  ok(await js('return document.querySelectorAll(".kb-h-fix").length === 0;'), 'không bật admin: không có nút "Sửa hình"');
+  ok(await js('return ![...document.querySelectorAll(".kb-h-fix")].some(b => b.textContent === "Sửa hình");'), 'không có file admin: không có nút "Sửa hình"');
   await py(KB + 'os.remove(kb.MAU_BUNDLED)\nresult = 1');
 
   const errs = await py(KB + 'result = [e.get("where") + ": " + str(e.get("msg"))[:100] for e in kb.ERRORS.entries()]');
