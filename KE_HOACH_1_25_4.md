@@ -1,4 +1,6 @@
-# Kế hoạch 1.25.4 — admin sửa hình gốc + cỡ cảnh Lớn bớt "pixel bự" (11/11, CHƯA LÀM — chờ người dùng chọn)
+# Kế hoạch 1.25.4 — admin sửa hình gốc + cỡ cảnh Lớn bớt "pixel bự" (11/11)
+
+> **Mục 2 đã làm ở 1.25.4**: người dùng chọn **A'** (×5) + bỏ bụi cây vuông hai bên nhà (`PHAT_TRIEN.md` mục 2.6t4). **Mục 1 (admin) chưa làm.**
 
 Người dùng (11/11, sau 1.25.3): "tớ nghĩ là ra bản mới cho người dùng add-on luôn, ví dụ có 1 vài thiết kế có sẵn, có những chi tiết
 bị thiếu, như cái đèn này, thiếu 1 pixel viền đen chỗ cái cán rất khó chịu, nên nhiều khi tớ và người dùng khác muốn sửa nó …
@@ -35,4 +37,4 @@ lộ màu) — nhạy, nhiều chỗ cố ý (khe giữa chân, nan rào, bậc 
 | B · Làm mịn tự động (Scale3x) | Vẽ cảnh 1 điểm ảnh / ô, máy chia mỗi điểm thành 3 × 3 và bo cạnh chéo, rồi phóng ×2 | khung nhìn như hiện tại, cây / hòm thư tròn hơn; nét hơi "mềm", tốn thêm vài ms mỗi khung |
 | C · Vẽ lại chi tiết gấp đôi | ~270 hình × 4 lần số điểm ảnh | đẹp nhất nhưng rất lâu, không đề xuất |
 
-Chờ người dùng chọn A / A' / B (có thể là tuỳ chọn trong ⚙ → Màn chính → Cỡ cảnh).
+Người dùng chọn **A'** (11/11) → làm ở 1.25.4.

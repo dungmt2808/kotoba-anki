@@ -1592,7 +1592,7 @@ var GardenHome = (function () {
   // Nền của các vùng (vẽ dài ra hai bên giống sân)
   function drawZoneBg(ctx, S, ox, oy, now, zid, x0, x1, st) {
     const BW = x1 - x0, G0 = YARD.SKY;
-    drawSky(ctx, S, ox, oy, now, x0, x1, G0, st);
+    drawSky(ctx, S, ox, oy - skyPad, now, x0, x1, G0 + skyPad, st);
     if (zid === "beach") {
       const sea = GardenSky.mix(tone("#3aa6e0", st, 0.3), st.bottom, 0.25);
       box(ctx, ox + x0, oy + 15, BW, G0 - 15, sea, S);
@@ -1787,6 +1787,8 @@ var GardenHome = (function () {
     return st ? [st.top, st.bottom] : ["#8fd3ff", "#c4ecff"];
   }
 
+  // 1.25.4: số hàng trời thêm phía trên cảnh (cỡ cảnh Lớn) — drawOutdoor đặt trong lúc vẽ nền vùng
+  let skyPad = 0;
   // Bầu trời: dải màu, sao, mặt trời / mặt trăng theo giờ, mây theo thời tiết.
   function drawSky(ctx, S, ox, oy, now, x0, x1, H, st) {
     const W = x1 - x0, mix = GardenSky.mix;
@@ -2610,7 +2612,7 @@ var GardenHome = (function () {
   }
   function drawUzoneBg(ctx, S, ox, oy, now, z, x0, x1, st) {
     const G0 = YARD.SKY, BW = x1 - x0, bg = z.bg || "meadow";
-    drawSky(ctx, S, ox, oy, now, x0, x1, G0, st);
+    drawSky(ctx, S, ox, oy - skyPad, now, x0, x1, G0 + skyPad, st);
     const hill = snowy(tone(z.hills || "#7ed98a", st, 0.35), st, 0.5), hill2 = GardenSky.shade(hill, 0.85);
     const ground = snowy(tone(z.ground || "#5ed35e", st), st), dark = GardenSky.shade(ground, 0.86), lite = GardenSky.mix(ground, "#ffffff", 0.3);
     if (bg === "lake") {
@@ -2827,16 +2829,21 @@ var GardenHome = (function () {
     snowRoof = !!(st.snow || st.cover);
     const sea = typeof GardenSky !== "undefined" ? SEA() : null;
     const uz = isUz(sceneName) ? (opts && opts.uz) || uzone(sceneName) : null;
+    // 1.25.4 (cỡ cảnh Lớn, người dùng chọn A'): opts.padTop hàng trời thêm phía trên cảnh (cảnh vẽ ở oy, trời bắt đầu ở oy − padTop)
+    const P0 = Math.max(0, Math.floor((opts && opts.padTop) || 0));
     if (sceneName !== "yard" && typeof GardenSky !== "undefined") {
-      if (uz) { drawUzoneBg(ctx, S, ox, oy, now, uz, bx0, bx1, st); } else { drawZoneBg(ctx, S, ox, oy, now, sceneName, bx0, bx1, st); }
+      skyPad = P0;
+      try {
+        if (uz) { drawUzoneBg(ctx, S, ox, oy, now, uz, bx0, bx1, st); } else { drawZoneBg(ctx, S, ox, oy, now, sceneName, bx0, bx1, st); }
+      } finally { skyPad = 0; }
       if (sea) { sea.decorGround(ctx, S, ox, oy, bx0, bx1, YARD.SKY, YARD.H, st); }
       drawPuddles(ctx, S, ox, oy, now, bx0, bx1, st);
-      if (sea) { sea.garland(ctx, S, ox, oy, now, bx0, bx1, 0, st); }
+      if (sea) { sea.garland(ctx, S, ox, oy - P0, now, bx0, bx1, 0, st); }
       if (uz) { drawUzEnv(ctx, S, ox, oy, uz); drawUzLandmark(ctx, S, ox, oy, uz, now, tod === "night"); }
       else if (LANDMARK[sceneName]) { LANDMARK[sceneName](ctx, S, (x) => ox + x, (y) => oy + y, now, tod === "night"); }
     } else {
-    if (typeof GardenSky !== "undefined") { drawSky(ctx, S, ox, oy, now, bx0, bx1, YARD.SKY, st); }
-    else { box(ctx, ox + bx0, oy, BW, YARD.SKY, st.top, S); }
+    if (typeof GardenSky !== "undefined") { drawSky(ctx, S, ox, oy - P0, now, bx0, bx1, YARD.SKY + P0, st); }
+    else { box(ctx, ox + bx0, oy - P0, BW, YARD.SKY + P0, st.top, S); }
     // đồi xa
     ctx.fillStyle = st.hills;
     for (let i = Math.floor(bx0); i < bx1; i++) {
@@ -2850,7 +2857,7 @@ var GardenHome = (function () {
     if (sea) { sea.decorGround(ctx, S, ox, oy, bx0, bx1, YARD.SKY, YARD.H, st); }
     box(ctx, ox + 28, oy + 74, 8, 2, "#d9ae72", S);
     if (typeof GardenSky !== "undefined") { drawPuddles(ctx, S, ox, oy, now, bx0, bx1, st); }
-    if (sea) { sea.garland(ctx, S, ox, oy, now, bx0, bx1, 0, st); }
+    if (sea) { sea.garland(ctx, S, ox, oy - P0, now, bx0, bx1, 0, st); }
     drawHouse(ctx, S, ox, oy, home.house, now, tod, home.style);
     drawWear(ctx, S, ox, oy, home, now, st, opts && opts.wear);
     }
@@ -2874,7 +2881,11 @@ var GardenHome = (function () {
       GardenJoy.drawYard(ctx, S, ox, oy, now, bx0, bx1, YARD.SKY, st);
     }
     if (typeof GardenSky !== "undefined" && (isOpen || UIget("weather") !== "off")) {
-      drawWeather(ctx, S, ox, oy, now, bx0, bx1, YARD.H, st, YARD.SKY);
+      drawWeather(ctx, S, ox, oy - P0, now, bx0, bx1, YARD.H + P0, st, YARD.SKY + P0);
+      if (P0) {                       // 1.25.4: phần trời thêm cũng tối theo giờ (đèn chỉ ở trong cảnh)
+        const dark = Math.max(0, 0.55 - st.light) * 0.75;
+        if (dark > 0.01) { ctx.globalAlpha = dark; box(ctx, ox + bx0, oy - P0, bx1 - bx0, P0, "#0b0b2a", S); ctx.globalAlpha = 1; }
+      }
       drawNight(ctx, S, ox, oy, bx0, bx1, YARD.H, st);
       if (sea) { sea.nightTop(ctx, S, ox, oy, now, bx0, bx1, YARD.H, st); }
     }
@@ -3098,11 +3109,8 @@ var GardenHome = (function () {
     for (let i = Math.floor(x0 / 11) * 11 + 3; i < x1; i += 11) { if (i >= x0) { box(ctx, i, hz + 3 + (Math.abs(i) * 7) % Math.max(1, y1 - hz - 4), 1, 1, st.grass, S); } }
     if (sea) { try { sea.decorGround(ctx, S, 0, 0, x0, x1, hz, y1, st); } catch (e) { /* bỏ qua */ } }
     if (!side) { return; }
-    const bx = side < 0 ? x1 - 16 : x0 + 3, by = hz + 6;            // bụi cây + hoa sát tường nhà
-    if (bx >= x0 && bx + 13 <= x1 && by + 9 <= y1) {
-      box(ctx, bx + 1, by + 3, 12, 6, P.k, S); box(ctx, bx + 2, by + 1, 10, 7, P.G, S); box(ctx, bx + 3, by, 8, 6, P.g, S);
-      box(ctx, bx + 4, by + 2, 1, 1, P.p, S); box(ctx, bx + 8, by + 1, 1, 1, P.y, S); box(ctx, bx + 6, by + 4, 1, 1, P.w, S);
-    }
+    // 1.25.4: bỏ bụi cây vuông sát tường nhà (người dùng: "ô vuông xanh 2 bên nhà … nhìn không đẹp lắm"); giữ mấy bông hoa nhỏ
+    const by = hz + 6;
     const fx = side < 0 ? x1 - 30 : x0 + 22;
     if (fx >= x0 && fx + 10 <= x1 && by + 10 <= y1) { [0, 4, 8].forEach((d, i) => { box(ctx, fx + d, by + 6, 1, 4, P.G, S); box(ctx, fx + d - 1, by + 5, 3, 2, [P.p, P.y, P.r][i], S); }); }
   }
@@ -3234,13 +3242,13 @@ var GardenHome = (function () {
     const cv = $("kb-yard");
     if (!cv || !mainView || mainView.house || typeof GardenGuests === "undefined") { return null; }
     const r = cv.getBoundingClientRect();
-    return GardenGuests.at(mainScene(), (ev.clientX - r.left) / mainView.S - mainView.ox, (ev.clientY - r.top) / mainView.S);
+    return GardenGuests.at(mainScene(), (ev.clientX - r.left) / mainView.S - mainView.ox, (ev.clientY - r.top) / mainView.S - (mainView.oy || 0));
   }
   function mainItemAt(ev) {
     const cv = $("kb-yard");
     if (!cv || !mainView || mainView.house) { return null; }
     const r = cv.getBoundingClientRect(), sc = mainScene();
-    const ax = (ev.clientX - r.left) / mainView.S - mainView.ox, ay = (ev.clientY - r.top) / mainView.S;
+    const ax = (ev.clientX - r.left) / mainView.S - mainView.ox, ay = (ev.clientY - r.top) / mainView.S - (mainView.oy || 0);
     const idx = itemAt(sc, cellAt(sc, ax, ay));
     return idx >= 0 ? (homeState()[sc] || [])[idx] : null;
   }
@@ -3274,14 +3282,19 @@ var GardenHome = (function () {
     const wrap = cv.parentNode;
     const cw = wrap.clientWidth;
     // cửa sổ thấp thì thu nhỏ sân; phóng to màn hình thì sân to theo (tối đa ×4)
-    let maxS = window.innerHeight < 860 ? 2 : window.innerHeight < 1000 ? 3 : 4;
-    // 1.23: ⚙ → Màn chính → Cỡ cảnh: Lớn — phóng thêm (dải cảnh tới ~55 % chiều cao cửa sổ); cửa sổ thấp hơn 900 px giữ Vừa
+    const maxS = window.innerHeight < 860 ? 2 : window.innerHeight < 1000 ? 3 : 4;
+    const Svua = Math.max(2, Math.min(maxS, Math.floor(cw / YARD.W)));
+    let S = Svua, pad = 0;
+    // 1.23: ⚙ → Màn chính → Cỡ cảnh: Lớn — dải cảnh tới ~55 % chiều cao cửa sổ; cửa sổ thấp hơn 900 px giữ Vừa.
+    // 1.25.4 (người dùng chọn A'): không phóng điểm ảnh tới ×7 nữa ("pixel bự lên nhìn không đẹp") — điểm ảnh bằng 5/7,
+    // dải vẫn cao như cũ, phần cao thêm là trời phía trên cảnh (padTop)
     if (typeof GardenUI !== "undefined" && GardenUI.glob && GardenUI.glob("scene") === "large" && window.innerHeight >= 900) {
-      maxS = Math.max(maxS, Math.floor(window.innerHeight * 0.55 / YARD.H));
+      const big = Math.max(2, Math.min(Math.max(maxS, Math.floor(window.innerHeight * 0.55 / YARD.H)), Math.floor(cw / YARD.W)));
+      S = Math.max(Svua, Math.min(big, Math.round(big * 5 / 7)));
+      pad = Math.max(0, Math.round(big * YARD.H / S) - YARD.H);
     }
-    const S = Math.max(2, Math.min(maxS, Math.floor(cw / YARD.W)));
     const dpr = window.devicePixelRatio || 1;
-    const hgt = YARD.H * S;
+    const hgt = (YARD.H + pad) * S;
     if (cv._w !== cw || cv._h !== hgt || cv._dpr !== dpr) {
       cv.width = Math.round(cw * dpr); cv.height = Math.round(hgt * dpr);
       cv.style.width = cw + "px"; cv.style.height = hgt + "px";
@@ -3303,8 +3316,8 @@ var GardenHome = (function () {
       mainView = { S: Sh, ox: hx, oy: hy, house: true };
       drawHouseScene(ctx, Sh, VW, VH, hx, hy, now, {});
     } else {
-      mainView = { S: S, ox: ox };
-      drawOutdoor(ctx, S, ox, 0, now, mainScene(), { bgFrom: -ox - 1, bgTo: cw / S - ox + 1, seen: !document.hidden });
+      mainView = { S: S, ox: ox, oy: pad };
+      drawOutdoor(ctx, S, ox, pad, now, mainScene(), { bgFrom: -ox - 1, bgTo: cw / S - ox + 1, seen: !document.hidden, padTop: pad });
     }
     const sw = now - mainSwitchAt;
     if (sw < 380 && UIget("yard") === "full") {          // chuyển cảnh: màn tối mờ dần

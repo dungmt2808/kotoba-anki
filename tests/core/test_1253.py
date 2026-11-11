@@ -403,6 +403,22 @@ console.log(JSON.stringify(out));
        "mọi hàng phía trên mái cùng màu với hai bên (cách cũ lệch %s hàng ở các độ cao %s)" % (
            [x[2] for x in r] if r else "?", [x[0] for x in r] if r else "?"))
 
+print("== 1.25.4: cỡ cảnh Lớn ×5 (người dùng chọn A'), bỏ bụi cây vuông cạnh nhà, đèn lồng giấy")
+mainy = home[home.index("function drawMainYard("):home.index("// Bảng Nhà & Cửa hàng")]
+ok("Math.round(big * 5 / 7)" in mainy and "padTop: pad" in mainy and "const hgt = (YARD.H + pad) * S" in mainy,
+   "Lớn: điểm ảnh bằng 5/7 trước (×7 → ×5), dải cao như cũ, phần thêm là trời (padTop)")
+outd = home[home.index("function drawOutdoor("):home.index("function houseStyle(")]
+ok("drawSky(ctx, S, ox, oy - P0, now, bx0, bx1, YARD.SKY + P0, st)" in outd and "drawWeather(ctx, S, ox, oy - P0" in outd
+   and outd.count("sea.garland(ctx, S, ox, oy - P0") == 2 and "skyPad = P0" in outd,
+   "trời / mưa / dây trang trí trải cả phần trời thêm, cả ở các vùng (skyPad)")
+ok(home.count("drawSky(ctx, S, ox, oy - skyPad, now, x0, x1, G0 + skyPad, st)") == 2, "nền vùng có sẵn + vùng tự tạo dùng trời cao")
+ok(home.count("/ mainView.S - (mainView.oy || 0)") == 3, "bấm vào thú / khách / đồ trên màn chính tính cả độ lệch dọc")
+band = home[home.index("function gardenBand("):home.index("function roofOver(")]
+ok("box(ctx, bx + 1, by + 3, 12, 6, P.k, S)" not in band, "dải Trong nhà: bỏ bụi cây vuông xanh sát tường (giữ hoa nhỏ)")
+cho = home[home.index("SPR.chochin = ["):home.index("SPR.maneki")]
+rows = re.findall(r'"([^"]+)"', re.sub(r"//[^\n]*", "", cho))
+ok(len(rows) == 18 and rows[11] == "....kbk..." and len(set(map(len, rows))) == 1, "đèn lồng giấy: cán nối liền thân (hàng 12: ....kbk...)")
+
 shutil.rmtree(TMP, ignore_errors=True)
 print()
 print("KẾT QUẢ: " + ("TẤT CẢ OK" if not FAIL else "%d LỖI" % len(FAIL)))
