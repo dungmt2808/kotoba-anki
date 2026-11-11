@@ -1,0 +1,2 @@
+Fontconfig error: No writable cache directories
+{"cases": 235, "counts": {"PASS": 179, "FAIL": 56}, "images": 164, "links_ok": true, "product_unchanged": true}

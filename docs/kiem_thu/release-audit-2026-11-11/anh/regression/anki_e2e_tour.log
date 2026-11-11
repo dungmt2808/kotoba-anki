@@ -1,0 +1,42 @@
+Starting Anki 26.09.4...
+2026-11-11 23:53:27,568:INFO:aqt.mediasrv: Serving on http://127.0.0.1:36661
+[2086:2111:1111/235327.629858:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+Fontconfig error: No writable cache directories
+
+DevTools listening on ws://127.0.0.1:9336/devtools/browser/85bf5538-23c8-4bb1-a4c7-e7586cd27b04
+[2086:2127:1111/235327.846882:ERROR:../../../qtwebengine/src/3rdparty/chromium/content/browser/zygote_host/zygote_host_impl_linux.cc:283] Failed to adjust OOM score of renderer with pid 2128: Read-only file system (30)
+[2086:2127:1111/235327.864447:ERROR:../../../qtwebengine/src/3rdparty/chromium/content/browser/zygote_host/zygote_host_impl_linux.cc:283] Failed to adjust OOM score of renderer with pid 2136: Read-only file system (30)
+[2086:2127:1111/235327.876282:ERROR:../../../qtwebengine/src/3rdparty/chromium/content/browser/zygote_host/zygote_host_impl_linux.cc:283] Failed to adjust OOM score of renderer with pid 2143: Read-only file system (30)
+[2086:2127:1111/235328.180065:ERROR:../../../qtwebengine/src/3rdparty/chromium/content/browser/zygote_host/zygote_host_impl_linux.cc:283] Failed to adjust OOM score of renderer with pid 2173: Read-only file system (30)
+[2086:2111:1111/235334.489293:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[2086:2111:1111/235334.489327:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[2086:2111:1111/235334.489332:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[2086:2111:1111/235336.424887:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[2086:2111:1111/235336.424921:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[2086:2111:1111/235336.424926:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[2086:2111:1111/235338.401481:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[2086:2111:1111/235338.401513:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[2086:2111:1111/235338.401518:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[2086:2111:1111/235340.336904:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[2086:2111:1111/235340.336938:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[2086:2111:1111/235340.336943:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[2086:2111:1111/235343.813601:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[2086:2111:1111/235343.813632:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[2086:2111:1111/235343.813636:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+Qt info: Sandboxing disabled by user. 
+Qt warning: QRhiGles2: Failed to create temporary context 
+Qt warning: QRhiGles2: Failed to create context 
+Qt warning: Failed to create RHI for backend: OpenGL 
+Starting main loop...
+Qt debug: Remote debugging server started successfully. Try pointing a Chromium-based browser to http://127.0.0.1:9336 
+mpv not found, reverting to mplayer
+Qt warning: This plugin does not support propagateSizeHints() 
+Qt warning: This plugin does not support raise() 
+update check failed: A network error occurred.
+
+Error details: ⁨error sending request for url ()⁩
+Qt warning: This plugin does not support propagateSizeHints() 
+Qt warning: This plugin does not support propagateSizeHints() 
+Qt warning: This plugin does not support propagateSizeHints() 
+Qt warning: This plugin does not support raise() 
+2026-11-11 23:53:48,868:WARNING:waitress: unhandled close event

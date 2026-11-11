@@ -1,0 +1,2302 @@
+[
+  {
+    "id": "U001",
+    "name": "Đóng vườn sau đổi prefs 0 ms",
+    "expected": "config giữ new-value",
+    "actual": {
+      "delay_ms": 0,
+      "saved": null
+    },
+    "status": "FAIL",
+    "finding": "F03",
+    "image": ""
+  },
+  {
+    "id": "U002",
+    "name": "Đóng vườn sau đổi prefs 50 ms",
+    "expected": "config giữ new-value",
+    "actual": {
+      "delay_ms": 50,
+      "saved": null
+    },
+    "status": "FAIL",
+    "finding": "F03",
+    "image": ""
+  },
+  {
+    "id": "U003",
+    "name": "Đóng vườn sau đổi prefs 150 ms",
+    "expected": "config giữ new-value",
+    "actual": {
+      "delay_ms": 150,
+      "saved": null
+    },
+    "status": "FAIL",
+    "finding": "F03",
+    "image": ""
+  },
+  {
+    "id": "U004",
+    "name": "Đóng vườn sau đổi prefs 350 ms",
+    "expected": "config giữ new-value",
+    "actual": {
+      "delay_ms": 350,
+      "saved": "new-value"
+    },
+    "status": "PASS",
+    "finding": "F03",
+    "image": ""
+  },
+  {
+    "id": "U005",
+    "name": "Prefs flush chủ động",
+    "expected": "config đã nhận giá trị",
+    "actual": "flush-value",
+    "status": "PASS",
+    "finding": "",
+    "image": ""
+  },
+  {
+    "id": "U006",
+    "name": "Cache ngôn ngữ sau hook đổi hồ sơ (nguồn model giả lập)",
+    "expected": "B chỉ Hàn không có Nhật/Anh",
+    "actual": {
+      "source_A": {
+        "ja": true,
+        "en": false
+      },
+      "source_B": {
+        "ja": true,
+        "en": false
+      },
+      "expected_B": {
+        "ja": false,
+        "en": false
+      }
+    },
+    "status": "FAIL",
+    "finding": "F08",
+    "image": ""
+  },
+  {
+    "id": "U007",
+    "name": "Revlog tương lai +60 giây",
+    "expected": "không tính vào lượt đã ôn",
+    "actual": {
+      "ahead_seconds": 60,
+      "timestamp_ms": 1794440869534,
+      "now_ms": 1794440809536,
+      "counted": 1
+    },
+    "status": "FAIL",
+    "finding": "F11",
+    "image": ""
+  },
+  {
+    "id": "U008",
+    "name": "Revlog tương lai +300 giây",
+    "expected": "không tính vào lượt đã ôn",
+    "actual": {
+      "ahead_seconds": 300,
+      "timestamp_ms": 1794441109539,
+      "now_ms": 1794440809540,
+      "counted": 1
+    },
+    "status": "FAIL",
+    "finding": "F11",
+    "image": ""
+  },
+  {
+    "id": "U009",
+    "name": "Revlog tương lai +900 giây",
+    "expected": "không tính vào lượt đã ôn",
+    "actual": {
+      "ahead_seconds": 900,
+      "timestamp_ms": 1794441709542,
+      "now_ms": 1794440809543,
+      "counted": 1
+    },
+    "status": "FAIL",
+    "finding": "F11",
+    "image": ""
+  },
+  {
+    "id": "U010",
+    "name": "Bài tiếng Anh 30 từ qua giao diện đóng/mở",
+    "expected": "giữ nguyên 599 ký tự, 30 từ",
+    "actual": {
+      "before": 599,
+      "units": 30,
+      "after": 400,
+      "text": "extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong ",
+      "beforeImage": "anh/f02-bai-viet-truoc-luu.png"
+    },
+    "status": "FAIL",
+    "finding": "F02",
+    "image": "anh/f02-bai-viet-sau-mo-lai.png"
+  },
+  {
+    "id": "U011",
+    "name": "Esc khi DOM đang composition",
+    "expected": "Lịch hoa còn mở",
+    "actual": {
+      "open": false
+    },
+    "status": "FAIL",
+    "finding": "F04",
+    "image": "anh/f04-ime-sau-esc.png"
+  },
+  {
+    "id": "U012",
+    "name": "Nhật ký chứa chuỗi HTML",
+    "expected": "hiện chữ nguyên, không chạy mã",
+    "actual": {
+      "text": "<img src=x onerror=window.__auditXss=1>",
+      "executed": false
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": ""
+  },
+  {
+    "id": "U013",
+    "name": "Menu trần xu game 0",
+    "expected": "hiển thị /0.",
+    "actual": "Dùng 8 từ (Từ vựng) của deck “A::Có câu ví dụ + audio”, có cả note mới. Xu từ game hôm nay: 0/40. Không tính vào lịch ôn.",
+    "status": "FAIL",
+    "finding": "F05",
+    "image": "anh/f05-tran-xu-game-0.png"
+  },
+  {
+    "id": "U014",
+    "name": "Menu trần xu game 1",
+    "expected": "hiển thị /1.",
+    "actual": "Dùng 8 từ (Từ vựng) của deck “A::Có câu ví dụ + audio”, có cả note mới. Xu từ game hôm nay: 0/1. Không tính vào lịch ôn.",
+    "status": "PASS",
+    "finding": "",
+    "image": ""
+  },
+  {
+    "id": "U015",
+    "name": "Menu trần xu game 40",
+    "expected": "hiển thị /40.",
+    "actual": "Dùng 8 từ (Từ vựng) của deck “A::Có câu ví dụ + audio”, có cả note mới. Xu từ game hôm nay: 0/40. Không tính vào lịch ôn.",
+    "status": "PASS",
+    "finding": "",
+    "image": ""
+  },
+  {
+    "id": "U016",
+    "name": "Menu trần xu game 200",
+    "expected": "hiển thị /200.",
+    "actual": "Dùng 8 từ (Từ vựng) của deck “A::Có câu ví dụ + audio”, có cả note mới. Xu từ game hôm nay: 0/200. Không tính vào lịch ôn.",
+    "status": "PASS",
+    "finding": "",
+    "image": ""
+  },
+  {
+    "id": "U017",
+    "name": "Thời tiết vườn và lời nhắc sunny",
+    "expected": "mô tả trong lời nhắc có thời tiết thủ công đã chọn",
+    "actual": {
+      "garden": "sunny",
+      "prompt": "cả ngày nắng",
+      "predicted": "cả ngày nắng"
+    },
+    "status": "PASS",
+    "finding": "F06",
+    "image": ""
+  },
+  {
+    "id": "U018",
+    "name": "Thời tiết vườn và lời nhắc rain",
+    "expected": "mô tả trong lời nhắc có thời tiết thủ công đã chọn",
+    "actual": {
+      "garden": "rain",
+      "prompt": "cả ngày nắng",
+      "predicted": "cả ngày nắng"
+    },
+    "status": "FAIL",
+    "finding": "F06",
+    "image": ""
+  },
+  {
+    "id": "U019",
+    "name": "Thời tiết vườn và lời nhắc snow",
+    "expected": "mô tả trong lời nhắc có thời tiết thủ công đã chọn",
+    "actual": {
+      "garden": "snow",
+      "prompt": "cả ngày nắng",
+      "predicted": "cả ngày nắng"
+    },
+    "status": "FAIL",
+    "finding": "F06",
+    "image": "anh/f06-vuon-tuyet.png"
+  },
+  {
+    "id": "U020",
+    "name": "Thông báo chen trong khoảng 250 ms",
+    "expected": "B vẫn đến lượt trước C",
+    "actual": {
+      "visible": "AUDIT C",
+      "sequence": "A → queue B → click A → 80 ms → C → 350 ms"
+    },
+    "status": "FAIL",
+    "finding": "F07",
+    "image": "anh/f07-thong-bao-bi-chen.png"
+  },
+  {
+    "id": "U021",
+    "name": "Thông báo B sau khi C hết hạn",
+    "expected": "B vẫn được hiển thị",
+    "actual": {
+      "hidden": true,
+      "text": "AUDIT C"
+    },
+    "status": "FAIL",
+    "finding": "F07",
+    "image": ""
+  },
+  {
+    "id": "U022",
+    "name": "Cất đồ tự làm kitchen qua state thật",
+    "expected": "không còn id c1",
+    "actual": [
+      {
+        "id": "c1",
+        "x": 2,
+        "y": 1
+      }
+    ],
+    "status": "FAIL",
+    "finding": "F01",
+    "image": "anh/f01-kitchen-sau-cat.png"
+  },
+  {
+    "id": "U023",
+    "name": "Cất đồ tự làm bedroom qua state thật",
+    "expected": "không còn id c2",
+    "actual": [
+      {
+        "id": "c2",
+        "x": 2,
+        "y": 1
+      }
+    ],
+    "status": "FAIL",
+    "finding": "F01",
+    "image": "anh/f01-bedroom-sau-cat.png"
+  },
+  {
+    "id": "U024",
+    "name": "Bố cục Nhà build 720×520",
+    "expected": "11 tab thấy được, đúng tab, không tràn trang",
+    "actual": {
+      "viewport": [
+        720,
+        520
+      ],
+      "scroll": 706,
+      "client": 706,
+      "rect": [
+        16,
+        6,
+        690,
+        514
+      ],
+      "tabs": 11,
+      "active": "build",
+      "hidden": false,
+      "clipped": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/layout-720x520-build.png"
+  },
+  {
+    "id": "U025",
+    "name": "Bố cục Nhà yard 720×520",
+    "expected": "11 tab thấy được, đúng tab, không tràn trang",
+    "actual": {
+      "viewport": [
+        720,
+        520
+      ],
+      "scroll": 706,
+      "client": 706,
+      "rect": [
+        16,
+        6,
+        690,
+        514
+      ],
+      "tabs": 11,
+      "active": "yard",
+      "hidden": false,
+      "clipped": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/layout-720x520-yard.png"
+  },
+  {
+    "id": "U026",
+    "name": "Bố cục Nhà room 720×520",
+    "expected": "11 tab thấy được, đúng tab, không tràn trang",
+    "actual": {
+      "viewport": [
+        720,
+        520
+      ],
+      "scroll": 706,
+      "client": 706,
+      "rect": [
+        16,
+        6,
+        690,
+        514
+      ],
+      "tabs": 11,
+      "active": "room",
+      "hidden": false,
+      "clipped": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/layout-720x520-room.png"
+  },
+  {
+    "id": "U027",
+    "name": "Bố cục Nhà zone 720×520",
+    "expected": "11 tab thấy được, đúng tab, không tràn trang",
+    "actual": {
+      "viewport": [
+        720,
+        520
+      ],
+      "scroll": 706,
+      "client": 706,
+      "rect": [
+        16,
+        6,
+        690,
+        514
+      ],
+      "tabs": 11,
+      "active": "zone",
+      "hidden": false,
+      "clipped": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/layout-720x520-zone.png"
+  },
+  {
+    "id": "U028",
+    "name": "Bố cục Nhà pet 720×520",
+    "expected": "11 tab thấy được, đúng tab, không tràn trang",
+    "actual": {
+      "viewport": [
+        720,
+        520
+      ],
+      "scroll": 706,
+      "client": 706,
+      "rect": [
+        16,
+        6,
+        690,
+        514
+      ],
+      "tabs": 11,
+      "active": "pet",
+      "hidden": false,
+      "clipped": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/layout-720x520-pet.png"
+  },
+  {
+    "id": "U029",
+    "name": "Bố cục Nhà guest 720×520",
+    "expected": "11 tab thấy được, đúng tab, không tràn trang",
+    "actual": {
+      "viewport": [
+        720,
+        520
+      ],
+      "scroll": 706,
+      "client": 706,
+      "rect": [
+        16,
+        6,
+        690,
+        514
+      ],
+      "tabs": 11,
+      "active": "guest",
+      "hidden": false,
+      "clipped": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/layout-720x520-guest.png"
+  },
+  {
+    "id": "U030",
+    "name": "Bố cục Nhà seed 720×520",
+    "expected": "11 tab thấy được, đúng tab, không tràn trang",
+    "actual": {
+      "viewport": [
+        720,
+        520
+      ],
+      "scroll": 706,
+      "client": 706,
+      "rect": [
+        16,
+        6,
+        690,
+        514
+      ],
+      "tabs": 11,
+      "active": "seed",
+      "hidden": false,
+      "clipped": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/layout-720x520-seed.png"
+  },
+  {
+    "id": "U031",
+    "name": "Bố cục Nhà season 720×520",
+    "expected": "11 tab thấy được, đúng tab, không tràn trang",
+    "actual": {
+      "viewport": [
+        720,
+        520
+      ],
+      "scroll": 706,
+      "client": 706,
+      "rect": [
+        16,
+        6,
+        690,
+        514
+      ],
+      "tabs": 11,
+      "active": "season",
+      "hidden": false,
+      "clipped": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/layout-720x520-season.png"
+  },
+  {
+    "id": "U032",
+    "name": "Bố cục Nhà wear 720×520",
+    "expected": "11 tab thấy được, đúng tab, không tràn trang",
+    "actual": {
+      "viewport": [
+        720,
+        520
+      ],
+      "scroll": 706,
+      "client": 706,
+      "rect": [
+        16,
+        6,
+        690,
+        514
+      ],
+      "tabs": 11,
+      "active": "wear",
+      "hidden": false,
+      "clipped": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/layout-720x520-wear.png"
+  },
+  {
+    "id": "U033",
+    "name": "Bố cục Nhà craft 720×520",
+    "expected": "11 tab thấy được, đúng tab, không tràn trang",
+    "actual": {
+      "viewport": [
+        720,
+        520
+      ],
+      "scroll": 706,
+      "client": 706,
+      "rect": [
+        16,
+        6,
+        690,
+        514
+      ],
+      "tabs": 11,
+      "active": "craft",
+      "hidden": false,
+      "clipped": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/layout-720x520-craft.png"
+  },
+  {
+    "id": "U034",
+    "name": "Bố cục Nhà inv 720×520",
+    "expected": "11 tab thấy được, đúng tab, không tràn trang",
+    "actual": {
+      "viewport": [
+        720,
+        520
+      ],
+      "scroll": 706,
+      "client": 706,
+      "rect": [
+        16,
+        6,
+        690,
+        514
+      ],
+      "tabs": 11,
+      "active": "inv",
+      "hidden": false,
+      "clipped": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/layout-720x520-inv.png"
+  },
+  {
+    "id": "U035",
+    "name": "Bố cục Nhà build 1024×700",
+    "expected": "11 tab thấy được, đúng tab, không tràn trang",
+    "actual": {
+      "viewport": [
+        1024,
+        700
+      ],
+      "scroll": 1010,
+      "client": 1010,
+      "rect": [
+        16,
+        80,
+        994,
+        666.984375
+      ],
+      "tabs": 11,
+      "active": "build",
+      "hidden": false,
+      "clipped": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/layout-1024x700-build.png"
+  },
+  {
+    "id": "U036",
+    "name": "Bố cục Nhà yard 1024×700",
+    "expected": "11 tab thấy được, đúng tab, không tràn trang",
+    "actual": {
+      "viewport": [
+        1024,
+        700
+      ],
+      "scroll": 1010,
+      "client": 1010,
+      "rect": [
+        16,
+        80,
+        994,
+        666.984375
+      ],
+      "tabs": 11,
+      "active": "yard",
+      "hidden": false,
+      "clipped": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/layout-1024x700-yard.png"
+  },
+  {
+    "id": "U037",
+    "name": "Bố cục Nhà room 1024×700",
+    "expected": "11 tab thấy được, đúng tab, không tràn trang",
+    "actual": {
+      "viewport": [
+        1024,
+        700
+      ],
+      "scroll": 1010,
+      "client": 1010,
+      "rect": [
+        16,
+        80,
+        994,
+        666.984375
+      ],
+      "tabs": 11,
+      "active": "room",
+      "hidden": false,
+      "clipped": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/layout-1024x700-room.png"
+  },
+  {
+    "id": "U038",
+    "name": "Bố cục Nhà zone 1024×700",
+    "expected": "11 tab thấy được, đúng tab, không tràn trang",
+    "actual": {
+      "viewport": [
+        1024,
+        700
+      ],
+      "scroll": 1010,
+      "client": 1010,
+      "rect": [
+        16,
+        80,
+        994,
+        666.984375
+      ],
+      "tabs": 11,
+      "active": "zone",
+      "hidden": false,
+      "clipped": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/layout-1024x700-zone.png"
+  },
+  {
+    "id": "U039",
+    "name": "Bố cục Nhà pet 1024×700",
+    "expected": "11 tab thấy được, đúng tab, không tràn trang",
+    "actual": {
+      "viewport": [
+        1024,
+        700
+      ],
+      "scroll": 1010,
+      "client": 1010,
+      "rect": [
+        16,
+        80,
+        994,
+        666.984375
+      ],
+      "tabs": 11,
+      "active": "pet",
+      "hidden": false,
+      "clipped": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/layout-1024x700-pet.png"
+  },
+  {
+    "id": "U040",
+    "name": "Bố cục Nhà guest 1024×700",
+    "expected": "11 tab thấy được, đúng tab, không tràn trang",
+    "actual": {
+      "viewport": [
+        1024,
+        700
+      ],
+      "scroll": 1010,
+      "client": 1010,
+      "rect": [
+        16,
+        80,
+        994,
+        666.984375
+      ],
+      "tabs": 11,
+      "active": "guest",
+      "hidden": false,
+      "clipped": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/layout-1024x700-guest.png"
+  },
+  {
+    "id": "U041",
+    "name": "Bố cục Nhà seed 1024×700",
+    "expected": "11 tab thấy được, đúng tab, không tràn trang",
+    "actual": {
+      "viewport": [
+        1024,
+        700
+      ],
+      "scroll": 1010,
+      "client": 1010,
+      "rect": [
+        16,
+        80,
+        994,
+        666.984375
+      ],
+      "tabs": 11,
+      "active": "seed",
+      "hidden": false,
+      "clipped": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/layout-1024x700-seed.png"
+  },
+  {
+    "id": "U042",
+    "name": "Bố cục Nhà season 1024×700",
+    "expected": "11 tab thấy được, đúng tab, không tràn trang",
+    "actual": {
+      "viewport": [
+        1024,
+        700
+      ],
+      "scroll": 1010,
+      "client": 1010,
+      "rect": [
+        16,
+        80,
+        994,
+        666.984375
+      ],
+      "tabs": 11,
+      "active": "season",
+      "hidden": false,
+      "clipped": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/layout-1024x700-season.png"
+  },
+  {
+    "id": "U043",
+    "name": "Bố cục Nhà wear 1024×700",
+    "expected": "11 tab thấy được, đúng tab, không tràn trang",
+    "actual": {
+      "viewport": [
+        1024,
+        700
+      ],
+      "scroll": 1010,
+      "client": 1010,
+      "rect": [
+        16,
+        80,
+        994,
+        666.984375
+      ],
+      "tabs": 11,
+      "active": "wear",
+      "hidden": false,
+      "clipped": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/layout-1024x700-wear.png"
+  },
+  {
+    "id": "U044",
+    "name": "Bố cục Nhà craft 1024×700",
+    "expected": "11 tab thấy được, đúng tab, không tràn trang",
+    "actual": {
+      "viewport": [
+        1024,
+        700
+      ],
+      "scroll": 1010,
+      "client": 1010,
+      "rect": [
+        16,
+        80,
+        994,
+        666.984375
+      ],
+      "tabs": 11,
+      "active": "craft",
+      "hidden": false,
+      "clipped": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/layout-1024x700-craft.png"
+  },
+  {
+    "id": "U045",
+    "name": "Bố cục Nhà inv 1024×700",
+    "expected": "11 tab thấy được, đúng tab, không tràn trang",
+    "actual": {
+      "viewport": [
+        1024,
+        700
+      ],
+      "scroll": 1010,
+      "client": 1010,
+      "rect": [
+        16,
+        80,
+        994,
+        666.984375
+      ],
+      "tabs": 11,
+      "active": "inv",
+      "hidden": false,
+      "clipped": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/layout-1024x700-inv.png"
+  },
+  {
+    "id": "U046",
+    "name": "Bố cục Nhà build 1366×768",
+    "expected": "11 tab thấy được, đúng tab, không tràn trang",
+    "actual": {
+      "viewport": [
+        1366,
+        768
+      ],
+      "scroll": 1352,
+      "client": 1352,
+      "rect": [
+        16,
+        80,
+        1336,
+        734.984375
+      ],
+      "tabs": 11,
+      "active": "build",
+      "hidden": false,
+      "clipped": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/layout-1366x768-build.png"
+  },
+  {
+    "id": "U047",
+    "name": "Bố cục Nhà yard 1366×768",
+    "expected": "11 tab thấy được, đúng tab, không tràn trang",
+    "actual": {
+      "viewport": [
+        1366,
+        768
+      ],
+      "scroll": 1352,
+      "client": 1352,
+      "rect": [
+        16,
+        80,
+        1336,
+        734.984375
+      ],
+      "tabs": 11,
+      "active": "yard",
+      "hidden": false,
+      "clipped": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/layout-1366x768-yard.png"
+  },
+  {
+    "id": "U048",
+    "name": "Bố cục Nhà room 1366×768",
+    "expected": "11 tab thấy được, đúng tab, không tràn trang",
+    "actual": {
+      "viewport": [
+        1366,
+        768
+      ],
+      "scroll": 1352,
+      "client": 1352,
+      "rect": [
+        16,
+        80,
+        1336,
+        734.984375
+      ],
+      "tabs": 11,
+      "active": "room",
+      "hidden": false,
+      "clipped": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/layout-1366x768-room.png"
+  },
+  {
+    "id": "U049",
+    "name": "Bố cục Nhà zone 1366×768",
+    "expected": "11 tab thấy được, đúng tab, không tràn trang",
+    "actual": {
+      "viewport": [
+        1366,
+        768
+      ],
+      "scroll": 1352,
+      "client": 1352,
+      "rect": [
+        16,
+        80,
+        1336,
+        734.984375
+      ],
+      "tabs": 11,
+      "active": "zone",
+      "hidden": false,
+      "clipped": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/layout-1366x768-zone.png"
+  },
+  {
+    "id": "U050",
+    "name": "Bố cục Nhà pet 1366×768",
+    "expected": "11 tab thấy được, đúng tab, không tràn trang",
+    "actual": {
+      "viewport": [
+        1366,
+        768
+      ],
+      "scroll": 1352,
+      "client": 1352,
+      "rect": [
+        16,
+        80,
+        1336,
+        734.984375
+      ],
+      "tabs": 11,
+      "active": "pet",
+      "hidden": false,
+      "clipped": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/layout-1366x768-pet.png"
+  },
+  {
+    "id": "U051",
+    "name": "Bố cục Nhà guest 1366×768",
+    "expected": "11 tab thấy được, đúng tab, không tràn trang",
+    "actual": {
+      "viewport": [
+        1366,
+        768
+      ],
+      "scroll": 1352,
+      "client": 1352,
+      "rect": [
+        16,
+        80,
+        1336,
+        734.984375
+      ],
+      "tabs": 11,
+      "active": "guest",
+      "hidden": false,
+      "clipped": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/layout-1366x768-guest.png"
+  },
+  {
+    "id": "U052",
+    "name": "Bố cục Nhà seed 1366×768",
+    "expected": "11 tab thấy được, đúng tab, không tràn trang",
+    "actual": {
+      "viewport": [
+        1366,
+        768
+      ],
+      "scroll": 1352,
+      "client": 1352,
+      "rect": [
+        16,
+        80,
+        1336,
+        734.984375
+      ],
+      "tabs": 11,
+      "active": "seed",
+      "hidden": false,
+      "clipped": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/layout-1366x768-seed.png"
+  },
+  {
+    "id": "U053",
+    "name": "Bố cục Nhà season 1366×768",
+    "expected": "11 tab thấy được, đúng tab, không tràn trang",
+    "actual": {
+      "viewport": [
+        1366,
+        768
+      ],
+      "scroll": 1352,
+      "client": 1352,
+      "rect": [
+        16,
+        80,
+        1336,
+        734.984375
+      ],
+      "tabs": 11,
+      "active": "season",
+      "hidden": false,
+      "clipped": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/layout-1366x768-season.png"
+  },
+  {
+    "id": "U054",
+    "name": "Bố cục Nhà wear 1366×768",
+    "expected": "11 tab thấy được, đúng tab, không tràn trang",
+    "actual": {
+      "viewport": [
+        1366,
+        768
+      ],
+      "scroll": 1352,
+      "client": 1352,
+      "rect": [
+        16,
+        80,
+        1336,
+        734.984375
+      ],
+      "tabs": 11,
+      "active": "wear",
+      "hidden": false,
+      "clipped": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/layout-1366x768-wear.png"
+  },
+  {
+    "id": "U055",
+    "name": "Bố cục Nhà craft 1366×768",
+    "expected": "11 tab thấy được, đúng tab, không tràn trang",
+    "actual": {
+      "viewport": [
+        1366,
+        768
+      ],
+      "scroll": 1352,
+      "client": 1352,
+      "rect": [
+        16,
+        80,
+        1336,
+        734.984375
+      ],
+      "tabs": 11,
+      "active": "craft",
+      "hidden": false,
+      "clipped": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/layout-1366x768-craft.png"
+  },
+  {
+    "id": "U056",
+    "name": "Bố cục Nhà inv 1366×768",
+    "expected": "11 tab thấy được, đúng tab, không tràn trang",
+    "actual": {
+      "viewport": [
+        1366,
+        768
+      ],
+      "scroll": 1352,
+      "client": 1352,
+      "rect": [
+        16,
+        80,
+        1336,
+        734.984375
+      ],
+      "tabs": 11,
+      "active": "inv",
+      "hidden": false,
+      "clipped": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/layout-1366x768-inv.png"
+  },
+  {
+    "id": "U057",
+    "name": "Bố cục Nhà build 1920×1080",
+    "expected": "11 tab thấy được, đúng tab, không tràn trang",
+    "actual": {
+      "viewport": [
+        1920,
+        1080
+      ],
+      "scroll": 1906,
+      "client": 1906,
+      "rect": [
+        16,
+        80,
+        1890,
+        1046.984375
+      ],
+      "tabs": 11,
+      "active": "build",
+      "hidden": false,
+      "clipped": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/layout-1920x1080-build.png"
+  },
+  {
+    "id": "U058",
+    "name": "Bố cục Nhà yard 1920×1080",
+    "expected": "11 tab thấy được, đúng tab, không tràn trang",
+    "actual": {
+      "viewport": [
+        1920,
+        1080
+      ],
+      "scroll": 1906,
+      "client": 1906,
+      "rect": [
+        16,
+        80,
+        1890,
+        1046.984375
+      ],
+      "tabs": 11,
+      "active": "yard",
+      "hidden": false,
+      "clipped": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/layout-1920x1080-yard.png"
+  },
+  {
+    "id": "U059",
+    "name": "Bố cục Nhà room 1920×1080",
+    "expected": "11 tab thấy được, đúng tab, không tràn trang",
+    "actual": {
+      "viewport": [
+        1920,
+        1080
+      ],
+      "scroll": 1906,
+      "client": 1906,
+      "rect": [
+        16,
+        80,
+        1890,
+        1046.984375
+      ],
+      "tabs": 11,
+      "active": "room",
+      "hidden": false,
+      "clipped": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/layout-1920x1080-room.png"
+  },
+  {
+    "id": "U060",
+    "name": "Bố cục Nhà zone 1920×1080",
+    "expected": "11 tab thấy được, đúng tab, không tràn trang",
+    "actual": {
+      "viewport": [
+        1920,
+        1080
+      ],
+      "scroll": 1906,
+      "client": 1906,
+      "rect": [
+        16,
+        80,
+        1890,
+        1046.984375
+      ],
+      "tabs": 11,
+      "active": "zone",
+      "hidden": false,
+      "clipped": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/layout-1920x1080-zone.png"
+  },
+  {
+    "id": "U061",
+    "name": "Bố cục Nhà pet 1920×1080",
+    "expected": "11 tab thấy được, đúng tab, không tràn trang",
+    "actual": {
+      "viewport": [
+        1920,
+        1080
+      ],
+      "scroll": 1906,
+      "client": 1906,
+      "rect": [
+        16,
+        80,
+        1890,
+        1046.984375
+      ],
+      "tabs": 11,
+      "active": "pet",
+      "hidden": false,
+      "clipped": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/layout-1920x1080-pet.png"
+  },
+  {
+    "id": "U062",
+    "name": "Bố cục Nhà guest 1920×1080",
+    "expected": "11 tab thấy được, đúng tab, không tràn trang",
+    "actual": {
+      "viewport": [
+        1920,
+        1080
+      ],
+      "scroll": 1906,
+      "client": 1906,
+      "rect": [
+        16,
+        80,
+        1890,
+        1046.984375
+      ],
+      "tabs": 11,
+      "active": "guest",
+      "hidden": false,
+      "clipped": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/layout-1920x1080-guest.png"
+  },
+  {
+    "id": "U063",
+    "name": "Bố cục Nhà seed 1920×1080",
+    "expected": "11 tab thấy được, đúng tab, không tràn trang",
+    "actual": {
+      "viewport": [
+        1920,
+        1080
+      ],
+      "scroll": 1906,
+      "client": 1906,
+      "rect": [
+        16,
+        80,
+        1890,
+        1046.984375
+      ],
+      "tabs": 11,
+      "active": "seed",
+      "hidden": false,
+      "clipped": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/layout-1920x1080-seed.png"
+  },
+  {
+    "id": "U064",
+    "name": "Bố cục Nhà season 1920×1080",
+    "expected": "11 tab thấy được, đúng tab, không tràn trang",
+    "actual": {
+      "viewport": [
+        1920,
+        1080
+      ],
+      "scroll": 1906,
+      "client": 1906,
+      "rect": [
+        16,
+        80,
+        1890,
+        1046.984375
+      ],
+      "tabs": 11,
+      "active": "season",
+      "hidden": false,
+      "clipped": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/layout-1920x1080-season.png"
+  },
+  {
+    "id": "U065",
+    "name": "Bố cục Nhà wear 1920×1080",
+    "expected": "11 tab thấy được, đúng tab, không tràn trang",
+    "actual": {
+      "viewport": [
+        1920,
+        1080
+      ],
+      "scroll": 1906,
+      "client": 1906,
+      "rect": [
+        16,
+        80,
+        1890,
+        1046.984375
+      ],
+      "tabs": 11,
+      "active": "wear",
+      "hidden": false,
+      "clipped": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/layout-1920x1080-wear.png"
+  },
+  {
+    "id": "U066",
+    "name": "Bố cục Nhà craft 1920×1080",
+    "expected": "11 tab thấy được, đúng tab, không tràn trang",
+    "actual": {
+      "viewport": [
+        1920,
+        1080
+      ],
+      "scroll": 1906,
+      "client": 1906,
+      "rect": [
+        16,
+        80,
+        1890,
+        1046.984375
+      ],
+      "tabs": 11,
+      "active": "craft",
+      "hidden": false,
+      "clipped": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/layout-1920x1080-craft.png"
+  },
+  {
+    "id": "U067",
+    "name": "Bố cục Nhà inv 1920×1080",
+    "expected": "11 tab thấy được, đúng tab, không tràn trang",
+    "actual": {
+      "viewport": [
+        1920,
+        1080
+      ],
+      "scroll": 1906,
+      "client": 1906,
+      "rect": [
+        16,
+        80,
+        1890,
+        1046.984375
+      ],
+      "tabs": 11,
+      "active": "inv",
+      "hidden": false,
+      "clipped": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/layout-1920x1080-inv.png"
+  },
+  {
+    "id": "U068",
+    "name": "Màn garden 720×520",
+    "expected": "không tràn ngang toàn trang",
+    "actual": {
+      "width": 720,
+      "scroll": 720,
+      "height": 520,
+      "errors": "object"
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/screen-720x520-garden.png"
+  },
+  {
+    "id": "U069",
+    "name": "Màn calendar 720×520",
+    "expected": "không tràn ngang toàn trang",
+    "actual": {
+      "width": 720,
+      "scroll": 706,
+      "height": 520,
+      "errors": "object"
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/screen-720x520-calendar.png"
+  },
+  {
+    "id": "U070",
+    "name": "Màn games 720×520",
+    "expected": "không tràn ngang toàn trang",
+    "actual": {
+      "width": 720,
+      "scroll": 706,
+      "height": 520,
+      "errors": "object"
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/screen-720x520-games.png"
+  },
+  {
+    "id": "U071",
+    "name": "Màn settings 720×520",
+    "expected": "không tràn ngang toàn trang",
+    "actual": {
+      "width": 720,
+      "scroll": 720,
+      "height": 520,
+      "errors": "object"
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/screen-720x520-settings.png"
+  },
+  {
+    "id": "U072",
+    "name": "Màn paper 720×520",
+    "expected": "không tràn ngang toàn trang",
+    "actual": {
+      "width": 720,
+      "scroll": 706,
+      "height": 520,
+      "errors": "object"
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/screen-720x520-paper.png"
+  },
+  {
+    "id": "U073",
+    "name": "Màn fields 720×520",
+    "expected": "không tràn ngang toàn trang",
+    "actual": {
+      "width": 720,
+      "scroll": 706,
+      "height": 520,
+      "errors": "object"
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/screen-720x520-fields.png"
+  },
+  {
+    "id": "U074",
+    "name": "Màn craft 720×520",
+    "expected": "không tràn ngang toàn trang",
+    "actual": {
+      "width": 720,
+      "scroll": 720,
+      "height": 520,
+      "errors": "object"
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/screen-720x520-craft.png"
+  },
+  {
+    "id": "U075",
+    "name": "Màn garden 1024×640",
+    "expected": "không tràn ngang toàn trang",
+    "actual": {
+      "width": 1024,
+      "scroll": 1024,
+      "height": 640,
+      "errors": "object"
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/screen-1024x640-garden.png"
+  },
+  {
+    "id": "U076",
+    "name": "Màn calendar 1024×640",
+    "expected": "không tràn ngang toàn trang",
+    "actual": {
+      "width": 1024,
+      "scroll": 1010,
+      "height": 640,
+      "errors": "object"
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/screen-1024x640-calendar.png"
+  },
+  {
+    "id": "U077",
+    "name": "Màn games 1024×640",
+    "expected": "không tràn ngang toàn trang",
+    "actual": {
+      "width": 1024,
+      "scroll": 1010,
+      "height": 640,
+      "errors": "object"
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/screen-1024x640-games.png"
+  },
+  {
+    "id": "U078",
+    "name": "Màn settings 1024×640",
+    "expected": "không tràn ngang toàn trang",
+    "actual": {
+      "width": 1024,
+      "scroll": 1024,
+      "height": 640,
+      "errors": "object"
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/screen-1024x640-settings.png"
+  },
+  {
+    "id": "U079",
+    "name": "Màn paper 1024×640",
+    "expected": "không tràn ngang toàn trang",
+    "actual": {
+      "width": 1024,
+      "scroll": 1010,
+      "height": 640,
+      "errors": "object"
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/screen-1024x640-paper.png"
+  },
+  {
+    "id": "U080",
+    "name": "Màn fields 1024×640",
+    "expected": "không tràn ngang toàn trang",
+    "actual": {
+      "width": 1024,
+      "scroll": 1010,
+      "height": 640,
+      "errors": "object"
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/screen-1024x640-fields.png"
+  },
+  {
+    "id": "U081",
+    "name": "Màn craft 1024×640",
+    "expected": "không tràn ngang toàn trang",
+    "actual": {
+      "width": 1024,
+      "scroll": 1024,
+      "height": 640,
+      "errors": "object"
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/screen-1024x640-craft.png"
+  },
+  {
+    "id": "U082",
+    "name": "Màn garden 1366×768",
+    "expected": "không tràn ngang toàn trang",
+    "actual": {
+      "width": 1366,
+      "scroll": 1366,
+      "height": 768,
+      "errors": "object"
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/screen-1366x768-garden.png"
+  },
+  {
+    "id": "U083",
+    "name": "Màn calendar 1366×768",
+    "expected": "không tràn ngang toàn trang",
+    "actual": {
+      "width": 1366,
+      "scroll": 1352,
+      "height": 768,
+      "errors": "object"
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/screen-1366x768-calendar.png"
+  },
+  {
+    "id": "U084",
+    "name": "Màn games 1366×768",
+    "expected": "không tràn ngang toàn trang",
+    "actual": {
+      "width": 1366,
+      "scroll": 1352,
+      "height": 768,
+      "errors": "object"
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/screen-1366x768-games.png"
+  },
+  {
+    "id": "U085",
+    "name": "Màn settings 1366×768",
+    "expected": "không tràn ngang toàn trang",
+    "actual": {
+      "width": 1366,
+      "scroll": 1366,
+      "height": 768,
+      "errors": "object"
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/screen-1366x768-settings.png"
+  },
+  {
+    "id": "U086",
+    "name": "Màn paper 1366×768",
+    "expected": "không tràn ngang toàn trang",
+    "actual": {
+      "width": 1366,
+      "scroll": 1352,
+      "height": 768,
+      "errors": "object"
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/screen-1366x768-paper.png"
+  },
+  {
+    "id": "U087",
+    "name": "Màn fields 1366×768",
+    "expected": "không tràn ngang toàn trang",
+    "actual": {
+      "width": 1366,
+      "scroll": 1352,
+      "height": 768,
+      "errors": "object"
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/screen-1366x768-fields.png"
+  },
+  {
+    "id": "U088",
+    "name": "Màn craft 1366×768",
+    "expected": "không tràn ngang toàn trang",
+    "actual": {
+      "width": 1366,
+      "scroll": 1366,
+      "height": 768,
+      "errors": "object"
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/screen-1366x768-craft.png"
+  },
+  {
+    "id": "U089",
+    "name": "Màn garden 1920×1080",
+    "expected": "không tràn ngang toàn trang",
+    "actual": {
+      "width": 1920,
+      "scroll": 1920,
+      "height": 1080,
+      "errors": "object"
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/screen-1920x1080-garden.png"
+  },
+  {
+    "id": "U090",
+    "name": "Màn calendar 1920×1080",
+    "expected": "không tràn ngang toàn trang",
+    "actual": {
+      "width": 1920,
+      "scroll": 1906,
+      "height": 1080,
+      "errors": "object"
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/screen-1920x1080-calendar.png"
+  },
+  {
+    "id": "U091",
+    "name": "Màn games 1920×1080",
+    "expected": "không tràn ngang toàn trang",
+    "actual": {
+      "width": 1920,
+      "scroll": 1906,
+      "height": 1080,
+      "errors": "object"
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/screen-1920x1080-games.png"
+  },
+  {
+    "id": "U092",
+    "name": "Màn settings 1920×1080",
+    "expected": "không tràn ngang toàn trang",
+    "actual": {
+      "width": 1920,
+      "scroll": 1920,
+      "height": 1080,
+      "errors": "object"
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/screen-1920x1080-settings.png"
+  },
+  {
+    "id": "U093",
+    "name": "Màn paper 1920×1080",
+    "expected": "không tràn ngang toàn trang",
+    "actual": {
+      "width": 1920,
+      "scroll": 1906,
+      "height": 1080,
+      "errors": "object"
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/screen-1920x1080-paper.png"
+  },
+  {
+    "id": "U094",
+    "name": "Màn fields 1920×1080",
+    "expected": "không tràn ngang toàn trang",
+    "actual": {
+      "width": 1920,
+      "scroll": 1906,
+      "height": 1080,
+      "errors": "object"
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/screen-1920x1080-fields.png"
+  },
+  {
+    "id": "U095",
+    "name": "Màn craft 1920×1080",
+    "expected": "không tràn ngang toàn trang",
+    "actual": {
+      "width": 1920,
+      "scroll": 1920,
+      "height": 1080,
+      "errors": "object"
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/screen-1920x1080-craft.png"
+  },
+  {
+    "id": "U096",
+    "name": "Cảnh mùa tet lúc 10h",
+    "expected": "đúng giao diện, canvas có hình, không lỗi JS mới",
+    "actual": {
+      "canvas": {
+        "theme": "tet",
+        "width": 1326,
+        "height": 152,
+        "nonzero": 255
+      },
+      "errors": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/theme-tet-10.png"
+  },
+  {
+    "id": "U097",
+    "name": "Cảnh mùa tet lúc 22h",
+    "expected": "đúng giao diện, canvas có hình, không lỗi JS mới",
+    "actual": {
+      "canvas": {
+        "theme": "tet",
+        "width": 1326,
+        "height": 152,
+        "nonzero": 255
+      },
+      "errors": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/theme-tet-22.png"
+  },
+  {
+    "id": "U098",
+    "name": "Cảnh mùa noel lúc 10h",
+    "expected": "đúng giao diện, canvas có hình, không lỗi JS mới",
+    "actual": {
+      "canvas": {
+        "theme": "noel",
+        "width": 1326,
+        "height": 152,
+        "nonzero": 255
+      },
+      "errors": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/theme-noel-10.png"
+  },
+  {
+    "id": "U099",
+    "name": "Cảnh mùa noel lúc 22h",
+    "expected": "đúng giao diện, canvas có hình, không lỗi JS mới",
+    "actual": {
+      "canvas": {
+        "theme": "noel",
+        "width": 1326,
+        "height": 152,
+        "nonzero": 255
+      },
+      "errors": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/theme-noel-22.png"
+  },
+  {
+    "id": "U100",
+    "name": "Cảnh mùa shogatsu lúc 10h",
+    "expected": "đúng giao diện, canvas có hình, không lỗi JS mới",
+    "actual": {
+      "canvas": {
+        "theme": "shogatsu",
+        "width": 1326,
+        "height": 152,
+        "nonzero": 255
+      },
+      "errors": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/theme-shogatsu-10.png"
+  },
+  {
+    "id": "U101",
+    "name": "Cảnh mùa shogatsu lúc 22h",
+    "expected": "đúng giao diện, canvas có hình, không lỗi JS mới",
+    "actual": {
+      "canvas": {
+        "theme": "shogatsu",
+        "width": 1326,
+        "height": 152,
+        "nonzero": 255
+      },
+      "errors": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/theme-shogatsu-22.png"
+  },
+  {
+    "id": "U102",
+    "name": "Cảnh mùa tsukimi lúc 10h",
+    "expected": "đúng giao diện, canvas có hình, không lỗi JS mới",
+    "actual": {
+      "canvas": {
+        "theme": "tsukimi",
+        "width": 1326,
+        "height": 152,
+        "nonzero": 255
+      },
+      "errors": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/theme-tsukimi-10.png"
+  },
+  {
+    "id": "U103",
+    "name": "Cảnh mùa tsukimi lúc 22h",
+    "expected": "đúng giao diện, canvas có hình, không lỗi JS mới",
+    "actual": {
+      "canvas": {
+        "theme": "tsukimi",
+        "width": 1326,
+        "height": 152,
+        "nonzero": 255
+      },
+      "errors": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/theme-tsukimi-22.png"
+  },
+  {
+    "id": "U104",
+    "name": "Cảnh mùa halloween lúc 10h",
+    "expected": "đúng giao diện, canvas có hình, không lỗi JS mới",
+    "actual": {
+      "canvas": {
+        "theme": "halloween",
+        "width": 1326,
+        "height": 152,
+        "nonzero": 255
+      },
+      "errors": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/theme-halloween-10.png"
+  },
+  {
+    "id": "U105",
+    "name": "Cảnh mùa halloween lúc 22h",
+    "expected": "đúng giao diện, canvas có hình, không lỗi JS mới",
+    "actual": {
+      "canvas": {
+        "theme": "halloween",
+        "width": 1326,
+        "height": 152,
+        "nonzero": 255
+      },
+      "errors": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/theme-halloween-22.png"
+  },
+  {
+    "id": "U106",
+    "name": "Cảnh mùa momiji lúc 10h",
+    "expected": "đúng giao diện, canvas có hình, không lỗi JS mới",
+    "actual": {
+      "canvas": {
+        "theme": "momiji",
+        "width": 1326,
+        "height": 152,
+        "nonzero": 255
+      },
+      "errors": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/theme-momiji-10.png"
+  },
+  {
+    "id": "U107",
+    "name": "Cảnh mùa momiji lúc 22h",
+    "expected": "đúng giao diện, canvas có hình, không lỗi JS mới",
+    "actual": {
+      "canvas": {
+        "theme": "momiji",
+        "width": 1326,
+        "height": 152,
+        "nonzero": 255
+      },
+      "errors": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/theme-momiji-22.png"
+  },
+  {
+    "id": "U108",
+    "name": "Cảnh mùa tanabata lúc 10h",
+    "expected": "đúng giao diện, canvas có hình, không lỗi JS mới",
+    "actual": {
+      "canvas": {
+        "theme": "tanabata",
+        "width": 1326,
+        "height": 152,
+        "nonzero": 255
+      },
+      "errors": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/theme-tanabata-10.png"
+  },
+  {
+    "id": "U109",
+    "name": "Cảnh mùa tanabata lúc 22h",
+    "expected": "đúng giao diện, canvas có hình, không lỗi JS mới",
+    "actual": {
+      "canvas": {
+        "theme": "tanabata",
+        "width": 1326,
+        "height": 152,
+        "nonzero": 255
+      },
+      "errors": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/theme-tanabata-22.png"
+  },
+  {
+    "id": "U110",
+    "name": "Cảnh mùa natsumatsuri lúc 10h",
+    "expected": "đúng giao diện, canvas có hình, không lỗi JS mới",
+    "actual": {
+      "canvas": {
+        "theme": "natsumatsuri",
+        "width": 1326,
+        "height": 152,
+        "nonzero": 255
+      },
+      "errors": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/theme-natsumatsuri-10.png"
+  },
+  {
+    "id": "U111",
+    "name": "Cảnh mùa natsumatsuri lúc 22h",
+    "expected": "đúng giao diện, canvas có hình, không lỗi JS mới",
+    "actual": {
+      "canvas": {
+        "theme": "natsumatsuri",
+        "width": 1326,
+        "height": 152,
+        "nonzero": 255
+      },
+      "errors": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/theme-natsumatsuri-22.png"
+  },
+  {
+    "id": "U112",
+    "name": "Cảnh mùa tsuyu lúc 10h",
+    "expected": "đúng giao diện, canvas có hình, không lỗi JS mới",
+    "actual": {
+      "canvas": {
+        "theme": "tsuyu",
+        "width": 1326,
+        "height": 152,
+        "nonzero": 255
+      },
+      "errors": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/theme-tsuyu-10.png"
+  },
+  {
+    "id": "U113",
+    "name": "Cảnh mùa tsuyu lúc 22h",
+    "expected": "đúng giao diện, canvas có hình, không lỗi JS mới",
+    "actual": {
+      "canvas": {
+        "theme": "tsuyu",
+        "width": 1326,
+        "height": 152,
+        "nonzero": 255
+      },
+      "errors": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/theme-tsuyu-22.png"
+  },
+  {
+    "id": "U114",
+    "name": "Cảnh mùa hanami lúc 10h",
+    "expected": "đúng giao diện, canvas có hình, không lỗi JS mới",
+    "actual": {
+      "canvas": {
+        "theme": "hanami",
+        "width": 1326,
+        "height": 152,
+        "nonzero": 255
+      },
+      "errors": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/theme-hanami-10.png"
+  },
+  {
+    "id": "U115",
+    "name": "Cảnh mùa hanami lúc 22h",
+    "expected": "đúng giao diện, canvas có hình, không lỗi JS mới",
+    "actual": {
+      "canvas": {
+        "theme": "hanami",
+        "width": 1326,
+        "height": 152,
+        "nonzero": 255
+      },
+      "errors": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/theme-hanami-22.png"
+  },
+  {
+    "id": "U116",
+    "name": "Cảnh mùa spring lúc 10h",
+    "expected": "đúng giao diện, canvas có hình, không lỗi JS mới",
+    "actual": {
+      "canvas": {
+        "theme": "spring",
+        "width": 1326,
+        "height": 152,
+        "nonzero": 255
+      },
+      "errors": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/theme-spring-10.png"
+  },
+  {
+    "id": "U117",
+    "name": "Cảnh mùa spring lúc 22h",
+    "expected": "đúng giao diện, canvas có hình, không lỗi JS mới",
+    "actual": {
+      "canvas": {
+        "theme": "spring",
+        "width": 1326,
+        "height": 152,
+        "nonzero": 255
+      },
+      "errors": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/theme-spring-22.png"
+  },
+  {
+    "id": "U118",
+    "name": "Cảnh mùa summer lúc 10h",
+    "expected": "đúng giao diện, canvas có hình, không lỗi JS mới",
+    "actual": {
+      "canvas": {
+        "theme": "summer",
+        "width": 1326,
+        "height": 152,
+        "nonzero": 255
+      },
+      "errors": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/theme-summer-10.png"
+  },
+  {
+    "id": "U119",
+    "name": "Cảnh mùa summer lúc 22h",
+    "expected": "đúng giao diện, canvas có hình, không lỗi JS mới",
+    "actual": {
+      "canvas": {
+        "theme": "summer",
+        "width": 1326,
+        "height": 152,
+        "nonzero": 255
+      },
+      "errors": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/theme-summer-22.png"
+  },
+  {
+    "id": "U120",
+    "name": "Cảnh mùa autumn lúc 10h",
+    "expected": "đúng giao diện, canvas có hình, không lỗi JS mới",
+    "actual": {
+      "canvas": {
+        "theme": "autumn",
+        "width": 1326,
+        "height": 152,
+        "nonzero": 255
+      },
+      "errors": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/theme-autumn-10.png"
+  },
+  {
+    "id": "U121",
+    "name": "Cảnh mùa autumn lúc 22h",
+    "expected": "đúng giao diện, canvas có hình, không lỗi JS mới",
+    "actual": {
+      "canvas": {
+        "theme": "autumn",
+        "width": 1326,
+        "height": 152,
+        "nonzero": 255
+      },
+      "errors": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/theme-autumn-22.png"
+  },
+  {
+    "id": "U122",
+    "name": "Cảnh mùa winter lúc 10h",
+    "expected": "đúng giao diện, canvas có hình, không lỗi JS mới",
+    "actual": {
+      "canvas": {
+        "theme": "winter",
+        "width": 1326,
+        "height": 152,
+        "nonzero": 255
+      },
+      "errors": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/theme-winter-10.png"
+  },
+  {
+    "id": "U123",
+    "name": "Cảnh mùa winter lúc 22h",
+    "expected": "đúng giao diện, canvas có hình, không lỗi JS mới",
+    "actual": {
+      "canvas": {
+        "theme": "winter",
+        "width": 1326,
+        "height": 152,
+        "nonzero": 255
+      },
+      "errors": []
+    },
+    "status": "PASS",
+    "finding": "",
+    "image": "anh/theme-winter-22.png"
+  }
+]

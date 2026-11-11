@@ -1,0 +1,90 @@
+{
+  "baseline": "1984446d6917192426510c4cd685e2797641defd",
+  "version": "1.25.3",
+  "python": "3.13.5",
+  "anki": "26.09.4",
+  "qt": "6.12.0",
+  "node": "24.22.1",
+  "cases": 235,
+  "counts": {
+    "PASS": 179,
+    "FAIL": 56
+  },
+  "findings": 13,
+  "regression": [
+    {
+      "script": "e2e_tour.js",
+      "passed": 12,
+      "failed": 0
+    },
+    {
+      "script": "e2e_117.js",
+      "passed": 55,
+      "failed": 0
+    },
+    {
+      "script": "e2e_125.js",
+      "passed": 30,
+      "failed": 0
+    },
+    {
+      "script": "e2e_1251.js",
+      "passed": 48,
+      "failed": 0
+    }
+  ],
+  "source_sha256": {
+    "kotoba_batake/README.md": "c5955ea56b6bb887901784a53b0e18859890c5f58e0c027731973af2a8a7328d",
+    "kotoba_batake/__init__.py": "22391e5359c764f5dc9c662dd1c9b0e3cd3086d2bf96f27495a8502adabd6cbe",
+    "kotoba_batake/ai_core.py": "58db98e9ecbeae2aa281eddc42ef9699821ab238bd7975181b782614baf951ad",
+    "kotoba_batake/ai_en.py": "d2270d9f136de746c8dddcd0730fb7bf3652b4767bc34f9eb97728849c854609",
+    "kotoba_batake/ai_vi.py": "cbcba03057ed6b9dd9dd20577683a9ac04de48b194591304a9d36b7018e36161",
+    "kotoba_batake/config.json": "42e324ed69ec6ddc52b991ebb49f9583a5b167ce78518958283ace5aa67f7b8e",
+    "kotoba_batake/config.md": "f8b7a11799e89a52f7fa66cb87d65c378300df06e6eb9d02d5d9faf1106f2841",
+    "kotoba_batake/diag.py": "7273bdc412d09380abc066e577d2205459bdc74772ea2374810d39c906f6078f",
+    "kotoba_batake/fields_core.py": "7736ce993caa3e577f748a1aed15a94fc22af75cda9f9693018c893a5c34b681",
+    "kotoba_batake/garden_core.py": "0908cc393a0c8fabcc595e081c9ff497c6c00b2d836fd117a54a3e1a44a287e9",
+    "kotoba_batake/guest_core.py": "2a6cd8c315f3a49c615f487ce0344200b01b900c965a34a303310cab93391c9f",
+    "kotoba_batake/journal_core.py": "207dc069ff1c469f53fafc723bb514cf13de7501a1ee8fc1ff74aa8227e26a8f",
+    "kotoba_batake/launcher.py": "6f1ac1ab3d6764f6c5520aefb1cf9ee5d5ee7d9a9e9f2da357558e5f8daaa248",
+    "kotoba_batake/manifest.json": "968ef8a5691958f3076631f499545a932f9cce1156043bb28e0a9ab2555fb96e",
+    "kotoba_batake/more_core.py": "b004c22ffedece056fb486c0a8adddf3859ad1ce2c7435400b52c8ae32e368d3",
+    "kotoba_batake/paper_core.py": "1ce9c57048890dee2f6fa355470720f5c68860f8955a56c0a0b1c9c591b70002",
+    "kotoba_batake/season_core.py": "baef6d3466c52eee6ff0c0ff60a988ff4a3c8a33d8117fd6aa24addc9282fede",
+    "kotoba_batake/share_core.py": "497693d3dae6459a62d57661b5ea197d511873dab7494af386e71aae36ffc9a0",
+    "kotoba_batake/story_core.py": "331c8891167d770dc69cabf44ca6ca7e2dfb71aaa9d2d827e5531dd17911ab17",
+    "kotoba_batake/text_core.py": "dbd946a73e5956b57b8d21a5459365c74e722c3110079c2bc594dd6890dca651",
+    "kotoba_batake/words_core.py": "b74ab69a5913b602b41f1d4b85d98a4868e73177f8eab50e3101f3bd550780a9",
+    "kotoba_batake/icons/kotoba.icns": "a1cbe2cdb5479cbb9c70898f58f00039c043fe423a470c25a09863484e806a68",
+    "kotoba_batake/icons/kotoba.ico": "53ab24c3bfebe87b103d93c2a7c1d31680451d39d42a2d08eb9cea56c5d2fb43",
+    "kotoba_batake/icons/kotoba.png": "a3e9a9ac64bc25989c6156c632d995053127c8519cd30e4c81550902551463ad",
+    "kotoba_batake/icons/toolbar.png": "9776e4dff10530e236d733b590237e5555654e942f6397cf47e6d7f4180457d3",
+    "kotoba_batake/user_files/README.txt": "438e8464e4cb0db5c668567cedd9995a9efb3bf9a4851f457a5cde3c53670c70",
+    "kotoba_batake/web/body.html": "272438651442adfaf970fdae95d7785719afd482db7d3908077e42c91e0d7090",
+    "kotoba_batake/web/calendar.js": "45e3d6e8b1e300fea9c587f186502c2fa36c7d460c4798214be71c156c341cb3",
+    "kotoba_batake/web/craft.js": "14b4a3a9168b77456a882b0569fa903e162e8340bed482f3d0f0e6459d6deeed",
+    "kotoba_batake/web/diag.js": "02bc7c6faa545f8b1dbab074abd74abf7279fd892784729d4c6fca2eb73e6720",
+    "kotoba_batake/web/fields.js": "47c5e4ea801e37af1b893b5e89cf2be351a5ffd2bde2d8cef2884cd587eba980",
+    "kotoba_batake/web/fx.js": "e304e1b7413f65437956c5c86f1d619d75cd5dfd5aaa947173e0371769eaa2dd",
+    "kotoba_batake/web/games.js": "9ace38fdd99c382fb98eab6c90fc84bc372e6b1a604135cd840b2acc1d9729f7",
+    "kotoba_batake/web/garden.css": "67cd502b729d8f51830d5d5f868f9df63f294995ecc0603c29a120fa16d33e4e",
+    "kotoba_batake/web/garden.js": "3b51badca49feae52746b6e80cebe9b8d5e121364a8ac6a27e37322806e74998",
+    "kotoba_batake/web/guests.js": "c3dcbacb971b40f2e5c2bb6174ab8d8896b17fd38a5113ff1825b58bac5db61d",
+    "kotoba_batake/web/home.js": "310678bd0667b32d184a63ade5e3654feac1b1a331f0c28003a2b923f8e122bc",
+    "kotoba_batake/web/icons.js": "0f7069b1ec7ede83c617ccf0a70905f8a968959fedb6e575e5edb1874988d52e",
+    "kotoba_batake/web/joy.js": "099fb3a1cb87f3fd4f4038451316438df169b48778e29bceb2d45fb7a3175bc5",
+    "kotoba_batake/web/music.js": "a87f1be625bfb6263c9ac004461f564a9fa094e174c36e4e520344b7a409ee3c",
+    "kotoba_batake/web/nha_art.js": "cfbfe011ae90749d2194e541d75d5776227c5dfcf02a962f354140aef622f581",
+    "kotoba_batake/web/paper.js": "3bbc0d0a63149f79df8efde080abc906f7b57697dc10a3bac65aac5fb4847b7d",
+    "kotoba_batake/web/pets.js": "f0794955ab1c233564b2db10ae40e77e86c425afb2e846f70764a4aa0b0d44eb",
+    "kotoba_batake/web/prefs.js": "7f764c8244744edb8da1f66430f22339c0c95ee75c1dc35cd4917ed49366bfda",
+    "kotoba_batake/web/rare_art.js": "8e0c8b93117a0d9ce7070dbce866040594bc1315210ef91e5a266e35a8696034",
+    "kotoba_batake/web/season.js": "53290eebe48bc2cf519f5025fb0725b70e25e706dc01f98507387c6bcecfd4f1",
+    "kotoba_batake/web/season_art.js": "01751fd9b272959ddab1701a1c42043bb3f1e11c963c76f8bfe50faaad3a429a",
+    "kotoba_batake/web/seeds.js": "2519a57f0eec0fb7a4b833def5bd7fa6d54acb79e59defa9f3cfd231360204ab",
+    "kotoba_batake/web/sky.js": "5a6c25c2b412b4747fd4f074278f53962349c9d59682802b689594bca7100a0b",
+    "kotoba_batake/web/ui.js": "60f45abcd7bbbac5b7c62137a0b46e308dcf8801fcb620fa093dcfac0790246d"
+  },
+  "package_sha256": "c864d420af3adf94418971b92f07d967d35dabf0036b99f1d9aeab011f2f090f",
+  "images": 164
+}

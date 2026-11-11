@@ -95,7 +95,7 @@ for scene in ["yard", "room"]:
         got = st.load()["home"][scene]
         case("Đối chứng cất mẫu ở " + scene + "/" + kind, "món biến khỏi cảnh", lambda g=got: (not g, g))
 
-for lang, text in [("en", "extraordinarilylong " * n) for n in [1, 19, 20, 21, 29, 30]] + [("ja", "あ" * n) for n in [1, 59, 60]]:
+for lang, text in [("en", "extraordinarilylong " * n) for n in [1, 19, 20, 21, 29, 30]] + [("ja", "あ" * n) for n in [1, 59, 60]] + [("en", "internationalization " * 30)]:
     text = text.strip()
     got = j.clean_writing(dict(lang=lang, goc=text, st=""))["goc"]
     case(f"Lưu luyện viết {lang}/{j.count_units(text,lang)} đơn vị/{len(text)} ký tự",

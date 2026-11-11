@@ -1,0 +1,113 @@
+{"id": "C001", "name": "Đặt mẫu kitchen-floor-16", "expected": "1 món đặt, sở hữu 1", "actual": [{"id": "c1", "x": 0, "y": 1}], "status": "PASS", "finding": ""}
+{"id": "C002", "name": "Lưu lặp kitchen-floor-16", "expected": "NHA_KEY luôn 1 placement", "actual": [2, 3, 4], "status": "FAIL", "finding": "F01"}
+{"id": "C003", "name": "Cất rồi đọc lại kitchen-floor-16", "expected": "gian trống, món về kho", "actual": [{"id": "c1", "x": 0, "y": 1}], "status": "FAIL", "finding": "F01"}
+{"id": "C004", "name": "Đặt mẫu kitchen-floor-24", "expected": "1 món đặt, sở hữu 1", "actual": [{"id": "c1", "x": 0, "y": 1}], "status": "PASS", "finding": ""}
+{"id": "C005", "name": "Lưu lặp kitchen-floor-24", "expected": "NHA_KEY luôn 1 placement", "actual": [2, 3, 4], "status": "FAIL", "finding": "F01"}
+{"id": "C006", "name": "Cất rồi đọc lại kitchen-floor-24", "expected": "gian trống, món về kho", "actual": [{"id": "c1", "x": 0, "y": 1}], "status": "FAIL", "finding": "F01"}
+{"id": "C007", "name": "Đặt mẫu kitchen-floor-32", "expected": "1 món đặt, sở hữu 1", "actual": [{"id": "c1", "x": 0, "y": 1}], "status": "PASS", "finding": ""}
+{"id": "C008", "name": "Lưu lặp kitchen-floor-32", "expected": "NHA_KEY luôn 1 placement", "actual": [2, 3, 4], "status": "FAIL", "finding": "F01"}
+{"id": "C009", "name": "Cất rồi đọc lại kitchen-floor-32", "expected": "gian trống, món về kho", "actual": [{"id": "c1", "x": 0, "y": 1}], "status": "FAIL", "finding": "F01"}
+{"id": "C010", "name": "Đặt mẫu kitchen-wall-16", "expected": "1 món đặt, sở hữu 1", "actual": [{"id": "c1", "x": 0, "y": 0}], "status": "PASS", "finding": ""}
+{"id": "C011", "name": "Lưu lặp kitchen-wall-16", "expected": "NHA_KEY luôn 1 placement", "actual": [2, 3, 4], "status": "FAIL", "finding": "F01"}
+{"id": "C012", "name": "Cất rồi đọc lại kitchen-wall-16", "expected": "gian trống, món về kho", "actual": [{"id": "c1", "x": 0, "y": 0}], "status": "FAIL", "finding": "F01"}
+{"id": "C013", "name": "Đặt mẫu kitchen-wall-24", "expected": "1 món đặt, sở hữu 1", "actual": [{"id": "c1", "x": 0, "y": 0}], "status": "PASS", "finding": ""}
+{"id": "C014", "name": "Lưu lặp kitchen-wall-24", "expected": "NHA_KEY luôn 1 placement", "actual": [2, 3, 4], "status": "FAIL", "finding": "F01"}
+{"id": "C015", "name": "Cất rồi đọc lại kitchen-wall-24", "expected": "gian trống, món về kho", "actual": [{"id": "c1", "x": 0, "y": 0}], "status": "FAIL", "finding": "F01"}
+{"id": "C016", "name": "Đặt mẫu kitchen-wall-32", "expected": "1 món đặt, sở hữu 1", "actual": [{"id": "c1", "x": 0, "y": 0}], "status": "PASS", "finding": ""}
+{"id": "C017", "name": "Lưu lặp kitchen-wall-32", "expected": "NHA_KEY luôn 1 placement", "actual": [2, 3, 4], "status": "FAIL", "finding": "F01"}
+{"id": "C018", "name": "Cất rồi đọc lại kitchen-wall-32", "expected": "gian trống, món về kho", "actual": [{"id": "c1", "x": 0, "y": 0}], "status": "FAIL", "finding": "F01"}
+{"id": "C019", "name": "Đặt mẫu bedroom-floor-16", "expected": "1 món đặt, sở hữu 1", "actual": [{"id": "c1", "x": 0, "y": 1}], "status": "PASS", "finding": ""}
+{"id": "C020", "name": "Lưu lặp bedroom-floor-16", "expected": "NHA_KEY luôn 1 placement", "actual": [2, 3, 4], "status": "FAIL", "finding": "F01"}
+{"id": "C021", "name": "Cất rồi đọc lại bedroom-floor-16", "expected": "gian trống, món về kho", "actual": [{"id": "c1", "x": 0, "y": 1}], "status": "FAIL", "finding": "F01"}
+{"id": "C022", "name": "Đặt mẫu bedroom-floor-24", "expected": "1 món đặt, sở hữu 1", "actual": [{"id": "c1", "x": 0, "y": 1}], "status": "PASS", "finding": ""}
+{"id": "C023", "name": "Lưu lặp bedroom-floor-24", "expected": "NHA_KEY luôn 1 placement", "actual": [2, 3, 4], "status": "FAIL", "finding": "F01"}
+{"id": "C024", "name": "Cất rồi đọc lại bedroom-floor-24", "expected": "gian trống, món về kho", "actual": [{"id": "c1", "x": 0, "y": 1}], "status": "FAIL", "finding": "F01"}
+{"id": "C025", "name": "Đặt mẫu bedroom-floor-32", "expected": "1 món đặt, sở hữu 1", "actual": [{"id": "c1", "x": 0, "y": 1}], "status": "PASS", "finding": ""}
+{"id": "C026", "name": "Lưu lặp bedroom-floor-32", "expected": "NHA_KEY luôn 1 placement", "actual": [2, 3, 4], "status": "FAIL", "finding": "F01"}
+{"id": "C027", "name": "Cất rồi đọc lại bedroom-floor-32", "expected": "gian trống, món về kho", "actual": [{"id": "c1", "x": 0, "y": 1}], "status": "FAIL", "finding": "F01"}
+{"id": "C028", "name": "Đặt mẫu bedroom-wall-16", "expected": "1 món đặt, sở hữu 1", "actual": [{"id": "c1", "x": 0, "y": 0}], "status": "PASS", "finding": ""}
+{"id": "C029", "name": "Lưu lặp bedroom-wall-16", "expected": "NHA_KEY luôn 1 placement", "actual": [2, 3, 4], "status": "FAIL", "finding": "F01"}
+{"id": "C030", "name": "Cất rồi đọc lại bedroom-wall-16", "expected": "gian trống, món về kho", "actual": [{"id": "c1", "x": 0, "y": 0}], "status": "FAIL", "finding": "F01"}
+{"id": "C031", "name": "Đặt mẫu bedroom-wall-24", "expected": "1 món đặt, sở hữu 1", "actual": [{"id": "c1", "x": 0, "y": 0}], "status": "PASS", "finding": ""}
+{"id": "C032", "name": "Lưu lặp bedroom-wall-24", "expected": "NHA_KEY luôn 1 placement", "actual": [2, 3, 4], "status": "FAIL", "finding": "F01"}
+{"id": "C033", "name": "Cất rồi đọc lại bedroom-wall-24", "expected": "gian trống, món về kho", "actual": [{"id": "c1", "x": 0, "y": 0}], "status": "FAIL", "finding": "F01"}
+{"id": "C034", "name": "Đặt mẫu bedroom-wall-32", "expected": "1 món đặt, sở hữu 1", "actual": [{"id": "c1", "x": 0, "y": 0}], "status": "PASS", "finding": ""}
+{"id": "C035", "name": "Lưu lặp bedroom-wall-32", "expected": "NHA_KEY luôn 1 placement", "actual": [2, 3, 4], "status": "FAIL", "finding": "F01"}
+{"id": "C036", "name": "Cất rồi đọc lại bedroom-wall-32", "expected": "gian trống, món về kho", "actual": [{"id": "c1", "x": 0, "y": 0}], "status": "FAIL", "finding": "F01"}
+{"id": "C037", "name": "Đối chứng cất mẫu ở yard/ground", "expected": "món biến khỏi cảnh", "actual": [], "status": "PASS", "finding": ""}
+{"id": "C038", "name": "Đối chứng cất mẫu ở room/floor", "expected": "món biến khỏi cảnh", "actual": [], "status": "PASS", "finding": ""}
+{"id": "C039", "name": "Đối chứng cất mẫu ở room/wall", "expected": "món biến khỏi cảnh", "actual": [], "status": "PASS", "finding": ""}
+{"id": "C040", "name": "Lưu luyện viết en/1 đơn vị/19 ký tự", "expected": "giữ nguyên bài trong giới hạn 30 từ / 60 ký tự", "actual": {"before": 19, "after": 19, "text": "extraordinarilylong"}, "status": "PASS", "finding": "F02"}
+{"id": "C041", "name": "Lưu luyện viết en/19 đơn vị/379 ký tự", "expected": "giữ nguyên bài trong giới hạn 30 từ / 60 ký tự", "actual": {"before": 379, "after": 379, "text": "extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong"}, "status": "PASS", "finding": "F02"}
+{"id": "C042", "name": "Lưu luyện viết en/20 đơn vị/399 ký tự", "expected": "giữ nguyên bài trong giới hạn 30 từ / 60 ký tự", "actual": {"before": 399, "after": 399, "text": "extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong"}, "status": "PASS", "finding": "F02"}
+{"id": "C043", "name": "Lưu luyện viết en/21 đơn vị/419 ký tự", "expected": "giữ nguyên bài trong giới hạn 30 từ / 60 ký tự", "actual": {"before": 419, "after": 400, "text": "extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong "}, "status": "FAIL", "finding": "F02"}
+{"id": "C044", "name": "Lưu luyện viết en/29 đơn vị/579 ký tự", "expected": "giữ nguyên bài trong giới hạn 30 từ / 60 ký tự", "actual": {"before": 579, "after": 400, "text": "extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong "}, "status": "FAIL", "finding": "F02"}
+{"id": "C045", "name": "Lưu luyện viết en/30 đơn vị/599 ký tự", "expected": "giữ nguyên bài trong giới hạn 30 từ / 60 ký tự", "actual": {"before": 599, "after": 400, "text": "extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong extraordinarilylong "}, "status": "FAIL", "finding": "F02"}
+{"id": "C046", "name": "Lưu luyện viết ja/1 đơn vị/1 ký tự", "expected": "giữ nguyên bài trong giới hạn 30 từ / 60 ký tự", "actual": {"before": 1, "after": 1, "text": "あ"}, "status": "PASS", "finding": "F02"}
+{"id": "C047", "name": "Lưu luyện viết ja/59 đơn vị/59 ký tự", "expected": "giữ nguyên bài trong giới hạn 30 từ / 60 ký tự", "actual": {"before": 59, "after": 59, "text": "あああああああああああああああああああああああああああああああああああああああああああああああああああああああああああ"}, "status": "PASS", "finding": "F02"}
+{"id": "C048", "name": "Lưu luyện viết ja/60 đơn vị/60 ký tự", "expected": "giữ nguyên bài trong giới hạn 30 từ / 60 ký tự", "actual": {"before": 60, "after": 60, "text": "ああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああ"}, "status": "PASS", "finding": "F02"}
+{"id": "C049", "name": "Lưu luyện viết en/30 đơn vị/629 ký tự", "expected": "giữ nguyên bài trong giới hạn 30 từ / 60 ký tự", "actual": {"before": 629, "after": 400, "text": "internationalization internationalization internationalization internationalization internationalization internationalization internationalization internationalization internationalization internationalization internationalization internationalization internationalization internationalization internationalization internationalization internationalization internationalization internationalization i"}, "status": "FAIL", "finding": "F02"}
+{"id": "C050", "name": "Cắt đúng đơn vị ja/61", "expected": "không vượt giới hạn, không cắt giữa từ", "actual": "ああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああ", "status": "PASS", "finding": ""}
+{"id": "C051", "name": "Cắt đúng đơn vị ja/120", "expected": "không vượt giới hạn, không cắt giữa từ", "actual": "ああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああ", "status": "PASS", "finding": ""}
+{"id": "C052", "name": "Cắt đúng đơn vị en/31", "expected": "không vượt giới hạn, không cắt giữa từ", "actual": "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word", "status": "PASS", "finding": ""}
+{"id": "C053", "name": "Cắt đúng đơn vị en/60", "expected": "không vượt giới hạn, không cắt giữa từ", "actual": "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word", "status": "PASS", "finding": ""}
+{"id": "C054", "name": "Bù xu cùng ngày theo đợt [999]", "expected": "tổng trả 999 (trần 1000/ngày)", "actual": {"total": 999, "batches": [999]}, "status": "PASS", "finding": "F10"}
+{"id": "C055", "name": "Bù lặp [999]", "expected": "không trả thêm xu", "actual": {"reviews": 0, "coins": 0, "goal": 0, "goal_days": [], "rev_today": 0, "new_today": 0, "days": 0}, "status": "PASS", "finding": ""}
+{"id": "C056", "name": "Bù xu cùng ngày theo đợt [1000]", "expected": "tổng trả 1000 (trần 1000/ngày)", "actual": {"total": 1000, "batches": [1000]}, "status": "PASS", "finding": "F10"}
+{"id": "C057", "name": "Bù lặp [1000]", "expected": "không trả thêm xu", "actual": {"reviews": 0, "coins": 0, "goal": 0, "goal_days": [], "rev_today": 0, "new_today": 0, "days": 0}, "status": "PASS", "finding": ""}
+{"id": "C058", "name": "Bù xu cùng ngày theo đợt [1001]", "expected": "tổng trả 1000 (trần 1000/ngày)", "actual": {"total": 1000, "batches": [1000]}, "status": "PASS", "finding": "F10"}
+{"id": "C059", "name": "Bù lặp [1001]", "expected": "không trả thêm xu", "actual": {"reviews": 0, "coins": 0, "goal": 0, "goal_days": [], "rev_today": 0, "new_today": 0, "days": 0}, "status": "PASS", "finding": ""}
+{"id": "C060", "name": "Bù xu cùng ngày theo đợt [1500]", "expected": "tổng trả 1000 (trần 1000/ngày)", "actual": {"total": 1000, "batches": [1000]}, "status": "PASS", "finding": "F10"}
+{"id": "C061", "name": "Bù lặp [1500]", "expected": "không trả thêm xu", "actual": {"reviews": 0, "coins": 0, "goal": 0, "goal_days": [], "rev_today": 0, "new_today": 0, "days": 0}, "status": "PASS", "finding": ""}
+{"id": "C062", "name": "Bù xu cùng ngày theo đợt [600, 600]", "expected": "tổng trả 1000 (trần 1000/ngày)", "actual": {"total": 1200, "batches": [600, 600]}, "status": "FAIL", "finding": "F10"}
+{"id": "C063", "name": "Bù lặp [600, 600]", "expected": "không trả thêm xu", "actual": {"reviews": 0, "coins": 0, "goal": 0, "goal_days": [], "rev_today": 0, "new_today": 0, "days": 0}, "status": "PASS", "finding": ""}
+{"id": "C064", "name": "Bù xu cùng ngày theo đợt [800, 800]", "expected": "tổng trả 1000 (trần 1000/ngày)", "actual": {"total": 1600, "batches": [800, 800]}, "status": "FAIL", "finding": "F10"}
+{"id": "C065", "name": "Bù lặp [800, 800]", "expected": "không trả thêm xu", "actual": {"reviews": 0, "coins": 0, "goal": 0, "goal_days": [], "rev_today": 0, "new_today": 0, "days": 0}, "status": "PASS", "finding": ""}
+{"id": "C066", "name": "Bù xu cùng ngày theo đợt [1000, 1]", "expected": "tổng trả 1000 (trần 1000/ngày)", "actual": {"total": 1001, "batches": [1000, 1]}, "status": "FAIL", "finding": "F10"}
+{"id": "C067", "name": "Bù lặp [1000, 1]", "expected": "không trả thêm xu", "actual": {"reviews": 0, "coins": 0, "goal": 0, "goal_days": [], "rev_today": 0, "new_today": 0, "days": 0}, "status": "PASS", "finding": ""}
+{"id": "C068", "name": "Bù xu cùng ngày theo đợt [400, 400, 400]", "expected": "tổng trả 1000 (trần 1000/ngày)", "actual": {"total": 1200, "batches": [400, 400, 400]}, "status": "FAIL", "finding": "F10"}
+{"id": "C069", "name": "Bù lặp [400, 400, 400]", "expected": "không trả thêm xu", "actual": {"reviews": 0, "coins": 0, "goal": 0, "goal_days": [], "rev_today": 0, "new_today": 0, "days": 0}, "status": "PASS", "finding": ""}
+{"id": "C070", "name": "Mốc cây [90, 3, 21]", "expected": "ba mốc dương, tăng nghiêm ngặt sau làm sạch", "actual": [90, 3, 21], "status": "FAIL", "finding": "F13"}
+{"id": "C071", "name": "Mốc cây [3, 3, 90]", "expected": "ba mốc dương, tăng nghiêm ngặt sau làm sạch", "actual": [3, 3, 90], "status": "FAIL", "finding": "F13"}
+{"id": "C072", "name": "Mốc cây [3, 90, 21]", "expected": "ba mốc dương, tăng nghiêm ngặt sau làm sạch", "actual": [3, 90, 21], "status": "FAIL", "finding": "F13"}
+{"id": "C073", "name": "Mốc cây [21, 3, 90]", "expected": "ba mốc dương, tăng nghiêm ngặt sau làm sạch", "actual": [21, 3, 90], "status": "FAIL", "finding": "F13"}
+{"id": "C074", "name": "Mốc cây [0, 21, 90]", "expected": "ba mốc dương, tăng nghiêm ngặt sau làm sạch", "actual": [3, 21, 90], "status": "PASS", "finding": "F13"}
+{"id": "C075", "name": "Mốc cây [3, 21, 90]", "expected": "ba mốc dương, tăng nghiêm ngặt sau làm sạch", "actual": [3, 21, 90], "status": "PASS", "finding": "F13"}
+{"id": "C076", "name": "Nhiệm vụ thiếu id", "expected": "loại bỏ / tái tạo nhiệm vụ hỏng, không ném lỗi", "actual": "KeyError: 'id'", "status": "FAIL", "finding": "F12"}
+{"id": "C077", "name": "Nhiệm vụ thiếu reward", "expected": "loại bỏ / tái tạo nhiệm vụ hỏng, không ném lỗi", "actual": "KeyError: 'reward'", "status": "FAIL", "finding": "F12"}
+{"id": "C078", "name": "Nhiệm vụ thiếu text", "expected": "loại bỏ / tái tạo nhiệm vụ hỏng, không ném lỗi", "actual": "KeyError: 'text'", "status": "FAIL", "finding": "F12"}
+{"id": "C079", "name": "Điểm ảnh hồ sơ A", "expected": "đọc đúng PX_KEY của A", "actual": {"c1": "fixture-pixels-A"}, "status": "PASS", "finding": ""}
+{"id": "C080", "name": "Hồ sơ B mới đọc kho điểm ảnh", "expected": "không nhận điểm ảnh A (metadata B vẫn trống)", "actual": {"pixels": {"c1": "fixture-pixels-A"}, "metadata": {}}, "status": "FAIL", "finding": "F09"}
+{"id": "C081", "name": "Config daily_goal=9", "expected": "10", "actual": 10, "status": "PASS", "finding": ""}
+{"id": "C082", "name": "Config daily_goal=10", "expected": "10", "actual": 10, "status": "PASS", "finding": ""}
+{"id": "C083", "name": "Config daily_goal=10000", "expected": "10000", "actual": 10000, "status": "PASS", "finding": ""}
+{"id": "C084", "name": "Config daily_bonus=-1", "expected": "0", "actual": 0, "status": "PASS", "finding": ""}
+{"id": "C085", "name": "Config daily_bonus=0", "expected": "0", "actual": 0, "status": "PASS", "finding": ""}
+{"id": "C086", "name": "Config daily_bonus=100", "expected": "100", "actual": 100, "status": "PASS", "finding": ""}
+{"id": "C087", "name": "Config daily_bonus=101", "expected": "100", "actual": 100, "status": "PASS", "finding": ""}
+{"id": "C088", "name": "Config game_daily_coins=-1", "expected": "0", "actual": 0, "status": "PASS", "finding": ""}
+{"id": "C089", "name": "Config game_daily_coins=0", "expected": "0", "actual": 0, "status": "PASS", "finding": ""}
+{"id": "C090", "name": "Config game_daily_coins=200", "expected": "200", "actual": 200, "status": "PASS", "finding": ""}
+{"id": "C091", "name": "Config game_daily_coins=201", "expected": "200", "actual": 200, "status": "PASS", "finding": ""}
+{"id": "C092", "name": "Config max_plants=0", "expected": "1", "actual": 1, "status": "PASS", "finding": ""}
+{"id": "C093", "name": "Config max_plants=1", "expected": "1", "actual": 1, "status": "PASS", "finding": ""}
+{"id": "C094", "name": "Config max_plants=5000", "expected": "5000", "actual": 5000, "status": "PASS", "finding": ""}
+{"id": "C095", "name": "Config max_plants=5001", "expected": "5000", "actual": 5000, "status": "PASS", "finding": ""}
+{"id": "C096", "name": "Config music_volume=-0.1", "expected": "0", "actual": 0.0, "status": "PASS", "finding": ""}
+{"id": "C097", "name": "Config music_volume=0", "expected": "0", "actual": 0.0, "status": "PASS", "finding": ""}
+{"id": "C098", "name": "Config music_volume=1", "expected": "1", "actual": 1.0, "status": "PASS", "finding": ""}
+{"id": "C099", "name": "Config music_volume=1.1", "expected": "1", "actual": 1.0, "status": "PASS", "finding": ""}
+{"id": "C100", "name": "Prefs 0 khóa", "expected": "tối đa 120, giữ khóa mới nhất và làm sạch lặp ổn định", "actual": {"count": 0}, "status": "PASS", "finding": ""}
+{"id": "C101", "name": "Prefs 1 khóa", "expected": "tối đa 120, giữ khóa mới nhất và làm sạch lặp ổn định", "actual": {"count": 1}, "status": "PASS", "finding": ""}
+{"id": "C102", "name": "Prefs 119 khóa", "expected": "tối đa 120, giữ khóa mới nhất và làm sạch lặp ổn định", "actual": {"count": 119}, "status": "PASS", "finding": ""}
+{"id": "C103", "name": "Prefs 120 khóa", "expected": "tối đa 120, giữ khóa mới nhất và làm sạch lặp ổn định", "actual": {"count": 120}, "status": "PASS", "finding": ""}
+{"id": "C104", "name": "Prefs 121 khóa", "expected": "tối đa 120, giữ khóa mới nhất và làm sạch lặp ổn định", "actual": {"count": 120}, "status": "PASS", "finding": ""}
+{"id": "C105", "name": "Prefs 1000 khóa", "expected": "tối đa 120, giữ khóa mới nhất và làm sạch lặp ổn định", "actual": {"count": 120}, "status": "PASS", "finding": ""}
+{"id": "C106", "name": "Nhật ký làm sạch '<script>alert(1)</script'", "expected": "giới hạn 200, không ký tự điều khiển, idempotent", "actual": "<script>alert(1)</script>", "status": "PASS", "finding": ""}
+{"id": "C107", "name": "Nhật ký làm sạch 'Cà phê 日本語'", "expected": "giới hạn 200, không ký tự điều khiển, idempotent", "actual": "Cà phê 日本語", "status": "PASS", "finding": ""}
+{"id": "C108", "name": "Nhật ký làm sạch 'a\\x00b\\n c'", "expected": "giới hạn 200, không ký tự điều khiển, idempotent", "actual": "ab c", "status": "PASS", "finding": ""}
+{"id": "C109", "name": "Nhật ký làm sạch 'xxxxxxxxxxxxxxxxxxxxxxxx'", "expected": "giới hạn 200, không ký tự điều khiển, idempotent", "actual": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", "status": "PASS", "finding": ""}
+{"id": "C110", "name": "Nhật ký làm sạch ''", "expected": "giới hạn 200, không ký tự điều khiển, idempotent", "actual": "", "status": "PASS", "finding": ""}
+{"id": "C111", "name": "Nhật ký làm sạch 'a\\r\\nb'", "expected": "giới hạn 200, không ký tự điều khiển, idempotent", "actual": "a b", "status": "PASS", "finding": ""}
+{"id": "C112", "name": "Nhật ký làm sạch 'a\\t b'", "expected": "giới hạn 200, không ký tự điều khiển, idempotent", "actual": "a b", "status": "PASS", "finding": ""}
+{"PASS": 72, "FAIL": 40, "ERROR": 0}
