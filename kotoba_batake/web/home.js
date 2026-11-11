@@ -182,7 +182,7 @@ var GardenHome = (function () {
     ".krrrrrrk.",
     "..kRRRRk..",
     "...kkkk...",
-    "....kk....",
+    "....kbk...",      // 1.25.3: cán nối liền thân đèn (trước "....kk...." hụt một điểm viền bên phải)
     "....kbk...",
     "....kbk...",
     "....kbk...",
