@@ -845,7 +845,8 @@ var GardenGames = (function () {
   }
 
   function clearStage() {
-    if (game) { game.alive = false; (game.timers || []).forEach(clearTimeout); if (game.stop) { game.stop(); } }
+    // 1.25.8: rời trò chơi (Esc về menu, chọn trò khác) thì tắt từ / câu đang đọc ở mọi trò (Chợ sáng, Lật thẻ… không có stop riêng)
+    if (game) { game.alive = false; (game.timers || []).forEach(clearTimeout); if (game.stop) { game.stop(); } H.send("game:stop"); }
     game = null;
     parts.length = 0;
     const st = $("kb-g-stage");
@@ -1328,7 +1329,7 @@ var GardenGames = (function () {
       info.className = "kb-gl-info kb-gl-info-show" + (ok ? " kb-gl-info-ok" : "");
       waitNext = true;
     }
-    function goNext() { if (waitNext && g.alive) { waitNext = false; nextRound(); } }
+    function goNext() { if (waitNext && g.alive) { waitNext = false; H.send("game:stop"); nextRound(); } }
 
     function choose(i) {
       if (locked || !g.alive) { return; }
@@ -1481,6 +1482,7 @@ var GardenGames = (function () {
     function goNext() {
       if (!waitNext || over || !g.alive) { return; }
       waitNext = false;
+      H.send("game:stop");     // 1.25.8: khách mới thì tắt từ đang đọc
       bubble.hidden = true;
       cust = null;
       if (timeLeft <= 0) { end(); } else { newCustomer(); }
@@ -2193,9 +2195,11 @@ var GardenGames = (function () {
       info.className = "kb-gl-info kb-gl-info-show" + (ok ? " kb-gl-info-ok" : "");
       if (target.ex_meaning) { hint.textContent = "Câu: " + target.ex_meaning; hint.className = "kb-gz-hint kb-gz-hint-show"; }
       waitNext = true;
-      later(g, playSentence, 350);
+      const tg = target;    // 1.25.8: bấm "Câu tiếp" trong 350 ms thì không đọc câu mới (lộ đáp án)
+      later(g, () => { if (waitNext && target === tg) { playSentence(); } }, 350);
     }
-    function goNext() { if (waitNext && g.alive) { waitNext = false; nextRound(); } }
+    // 1.25.8: sang câu mới thì tắt câu / từ đang đọc (trước đây câu cũ còn đọc tiếp ở câu mới)
+    function goNext() { if (waitNext && g.alive) { waitNext = false; H.send("game:stop"); nextRound(); } }
 
     function choose(i) {
       if (locked || !g.alive) { return; }

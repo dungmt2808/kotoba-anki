@@ -528,6 +528,21 @@ var Garden = (function () {
   }
 
   // ---- Nhiệm vụ hằng ngày ----
+  // 1.25.8: nhiệm vụ đổi ngoài lần làm mới cả vườn (trò chơi, báo, chép chính tả…) → cập nhật luôn huy hiệu
+  // "Xong 3 nhiệm vụ" + đèn trời (data.joy chỉ tính lại khi làm mới — trước đây phải đổi deck mới hiện)
+  function questsUpdated(q) {
+    if (q && q.view && data) {
+      data.quests = q.view;
+      drawQuests();
+      var lst = q.view.list || [], all = lst.length > 0 && lst.every(function (x) { return x.done; });
+      if (data.joy && !!data.joy.quests !== all) {
+        data.joy = Object.assign({}, data.joy, { quests: all });
+        if (typeof GardenJoy !== "undefined") { GardenJoy.render(data.joy); }
+      }
+    }
+    fx("quests", q);
+  }
+  // ---- Nhiệm vụ hằng ngày ----
   function drawQuests() {
     var q = data && data.quests, btn = $("kb-quest");
     if (!btn) { return; }
@@ -1376,10 +1391,7 @@ var Garden = (function () {
       GardenGames.init({
         data: function () { return data; }, send: send,
         openFields: function (mid) { openFields(mid, "games"); },
-        questResult: function (q) {
-          if (q && q.view && data) { data.quests = q.view; drawQuests(); }
-          fx("quests", q);
-        },
+        questResult: questsUpdated,
         sprites: SPRITES, pal: PAL, dry: DRY, art: plantArt,
         drawGrass: drawGrass, drawSoil: drawSoil, drawSprite: drawSprite,
         setWallet: function (w) {
@@ -1419,10 +1431,7 @@ var Garden = (function () {
           chip.classList.remove("kb-bump"); void chip.offsetWidth; chip.classList.add("kb-bump");
         },
         setSummary: function (s) { if (data && s) { data.paper = s; drawPaperChip(); } },
-        questResult: function (q) {
-          if (q && q.view && data) { data.quests = q.view; drawQuests(); }
-          fx("quests", q);
-        }
+        questResult: questsUpdated
       });
     }
     if (typeof GardenCraft !== "undefined") {
@@ -1457,18 +1466,12 @@ var Garden = (function () {
     showAnswer: showAnswer,
     celebrate: function (info) {
       fx("celebrate", info);
-      if (info && info.quests) {
-        if (info.quests.view && data) { data.quests = info.quests.view; drawQuests(); }
-        fx("quests", info.quests);
-      }
+      if (info && info.quests) { questsUpdated(info.quests); }
     },
     // 1.11: vừa bù xu cho lượt ôn trên điện thoại (Python đã cộng xu; trang chỉ thông báo)
     mobilePaid: function (info) {
       if (!info) { return; }
-      if (info.quests) {
-        if (info.quests.view && data) { data.quests = info.quests.view; drawQuests(); }
-        fx("quests", info.quests);
-      }
+      if (info.quests) { questsUpdated(info.quests); }
       var chip = $("kb-coins");
       if (chip) { chip.classList.remove("kb-bump"); void chip.offsetWidth; chip.classList.add("kb-bump"); }
       var msg = (info.message || "").replace(/^ことば畑: /, "");

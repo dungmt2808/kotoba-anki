@@ -237,6 +237,12 @@ def _save_claude_dich(date: str, dich: list[list[str] | None]) -> bool:
     return True
 
 
+def _claude_story_dir(cfg: dict[str, Any]) -> str | None:
+    """1.25.8: thư mục kotoba_daily (báo Claude Code) để truyện chung nối với truyện của Claude — chỉ khi đã đặt bao_dir."""
+    base = paper.resolve_dir(cfg.get("bao_dir")) if _bao_dir_set(cfg) else None
+    return base if base and os.path.isdir(os.path.join(base, "bao")) else None
+
+
 def _source_lib(src: str) -> paper.Library | None:
     """1.23: thư mục báo tiếng Nhật của một nguồn cụ thể (để Kệ báo gộp hiện cả số của nguồn không dùng nữa)."""
     cfg = config()
@@ -1363,6 +1369,10 @@ def ai_start(reason: str, dialog: Any = None, lang: str = "ja") -> bool:
                 _warn("truyện chung", "chép bộ nhớ truyện từ " + os.path.basename(src0))
         except OSError as err:
             _warn("truyện chung", err)
+        try:      # 1.25.8: báo Claude Code đã đăng kỳ nào sau kỳ cuối của truyện chung → chép sang (truyện nối tiếp)
+            opts["noi_claude"] = ai.import_claude_story(AI_DIR_SHARED, _claude_story_dir(cfg), date)
+        except Exception as err:      # noqa: BLE001 — số báo Claude hỏng không làm dừng báo Gemini
+            _warn("truyện chung (Claude Code)", err)
         st["tries"] = int(st.get("tries") or 0) + 1
         st["scope"] = ai.describe_scope(scope)
     else:
@@ -1371,6 +1381,7 @@ def ai_start(reason: str, dialog: Any = None, lang: str = "ja") -> bool:
     ai.save_status(base, st)
     client = ai.Gemini(key, exhausted=_shared_exhausted())
     voice = o["voice_en"] if en else o["voice"]
+    claude_story = _claude_story_dir(cfg)
 
     def progress(msg: str) -> None:
         mw.taskman.run_on_main(lambda: _ai_progress(msg))
@@ -1385,9 +1396,16 @@ def ai_start(reason: str, dialog: Any = None, lang: str = "ja") -> bool:
                     raise
                 master, mlog = None, [{"buoc": "ban_goc_loi", "ly_do": ("%s: %s" % (type(err).__name__, err))[:200]}]
             opts["master"] = master
+            if opts.get("noi_claude") and master:      # nhật ký viết báo (không phải nhật ký lỗi)
+                mlog = [{"buoc": "noi_claude", "so_ky": opts["noi_claude"]}] + (mlog or [{"buoc": "ban_goc_san", "ky": master.get("ky")}])
             opts["_master_log"] = mlog
         res: dict[str, Any] = {"ok": True, "audio_only": True} if has else \
             ai.Job(client, base, date, scope or {}, opts, progress).run()
+        if not has:
+            try:      # 1.25.8: kỳ Gemini vừa viết → kotoba_daily/truyen_chung.json (báo Claude Code viết nối tiếp)
+                ai.export_story_for_claude(AI_DIR_SHARED, claude_story)
+            except Exception as err:      # noqa: BLE001
+                res["export_err"] = str(err)[:200]
         if res.get("ok") and o["audio"] != "tat" and lang != "vi":      # 1.25.1: báo tiếng Việt không có giọng đọc
             try:
                 res["audio"] = ai.make_audio(client, base, date, o["audio"], voice, o["tts_model"], progress)

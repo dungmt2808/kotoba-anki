@@ -15,6 +15,7 @@ kotoba_daily/
   truyen.md             nhân vật và tóm tắt truyện dài kỳ (bạn sửa được)
   lich_su.md            mỗi số báo một dòng, Claude tự ghi
   pham_vi.json          do script tạo ra mỗi sáng, đừng sửa tay
+  truyen_chung.json     (nếu có) add-on ことば畑 ghi: các kỳ Gemini viết khi không có báo của bạn — đừng sửa tay
   nguon/<giáo trình>/<chương>.json    từ vựng, ngữ pháp, kanji của từng chương
   bao/<ngày>/bao.json   số báo của ngày đó (dữ liệu)
   bao/<ngày>/bao.html   trang để đọc
@@ -183,9 +184,13 @@ Mỗi số báo có sẵn bản dịch tiếng Việt từng đoạn, ẩn đi �
 
 Số báo viết trước bản 2.3 chưa có bản dịch. Muốn thêm: trong Claude Code (đứng ở thư mục tiếng Nhật) gõ "Đọc và làm đúng theo file kotoba_daily/prompts/them_ban_dich.md" — mỗi lần làm tối đa 10 số, chỉ thêm bản dịch, không sửa chữ của số cũ. Hoặc trong add-on bấm **Dịch số này** (cần khoá Gemini; bản dịch lưu trong add-on, không ghi vào thư mục này).
 
+## Truyện chung với add-on Gemini (từ bản 2.4, add-on 1.25.8)
+
+Ngày nào không có báo của Claude Code mà add-on ことば畑 viết báo bằng Gemini (bạn chuyển nguồn sang Gemini, hoặc báo tiếng Anh viết trước trong ngày) trên máy có thư mục này, Gemini viết tiếp **đúng truyện này**: add-on đọc các kỳ trong `bao/` và mục "Đã xảy ra" của `truyen.md`. Ngược lại add-on ghi các kỳ Gemini viết vào `truyen_chung.json`; sáng hôm sau `pham_vi.py` đọc file đó, Claude viết nối tiếp và ghi các kỳ ấy vào `truyen.md` (dòng có chữ "add-on"). Kỳ hôm nay add-on đã viết cho báo tiếng Anh thì Claude kể lại đúng kỳ đó bằng tiếng Nhật. Máy khác không có thư mục này (không đặt `bao_dir`) thì Gemini ở máy đó không thấy truyện của bạn.
+
 ## Cập nhật bộ này lên bản mới
 
-Chỉ chép đè `tools/`, `prompts/`, `vi_du/` và `HUONG_DAN.md` từ bản mới. **Không** chép đè `lo_trinh.json`, `truyen.md`, `lich_su.md`, `nguon/`, `bao/` (dữ liệu của bạn). Tác vụ lịch không cần sửa: nó luôn đọc `prompts/bao_hang_ngay.md` mới nhất.
+Chỉ chép đè `tools/`, `prompts/`, `vi_du/` và `HUONG_DAN.md` từ bản mới. **Không** chép đè `lo_trinh.json`, `truyen.md`, `lich_su.md`, `truyen_chung.json`, `nguon/`, `bao/` (dữ liệu của bạn). Tác vụ lịch không cần sửa: nó luôn đọc `prompts/bao_hang_ngay.md` mới nhất.
 
 ## Gỡ rối
 
