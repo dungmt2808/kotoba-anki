@@ -182,7 +182,7 @@ var GardenHome = (function () {
     ".krrrrrrk.",
     "..kRRRRk..",
     "...kkkk...",
-    "....kk....",
+    "....kbk...",      // 1.25.3: cán nối liền thân đèn (trước "....kk...." hụt một điểm viền bên phải)
     "....kbk...",
     "....kbk...",
     "....kbk...",
@@ -1592,7 +1592,7 @@ var GardenHome = (function () {
   // Nền của các vùng (vẽ dài ra hai bên giống sân)
   function drawZoneBg(ctx, S, ox, oy, now, zid, x0, x1, st) {
     const BW = x1 - x0, G0 = YARD.SKY;
-    drawSky(ctx, S, ox, oy, now, x0, x1, G0, st);
+    drawSky(ctx, S, ox, oy - skyPad, now, x0, x1, G0 + skyPad, st);
     if (zid === "beach") {
       const sea = GardenSky.mix(tone("#3aa6e0", st, 0.3), st.bottom, 0.25);
       box(ctx, ox + x0, oy + 15, BW, G0 - 15, sea, S);
@@ -1787,6 +1787,8 @@ var GardenHome = (function () {
     return st ? [st.top, st.bottom] : ["#8fd3ff", "#c4ecff"];
   }
 
+  // 1.25.4: số hàng trời thêm phía trên cảnh (cỡ cảnh Lớn) — drawOutdoor đặt trong lúc vẽ nền vùng
+  let skyPad = 0;
   // Bầu trời: dải màu, sao, mặt trời / mặt trăng theo giờ, mây theo thời tiết.
   function drawSky(ctx, S, ox, oy, now, x0, x1, H, st) {
     const W = x1 - x0, mix = GardenSky.mix;
@@ -2374,6 +2376,30 @@ var GardenHome = (function () {
   if (typeof GardenNhaArt !== "undefined") {
     NHA = GardenNhaArt.install({ grid, rect, disc, dot, outline, rows, SPR, GLOW, P, box });
   }
+  // 1.25.5: bản sửa hình gốc (fix.js) — khung "spr" (cửa hàng + cảnh), "f<i>" (FRAMES khác spr), "base" (phần tĩnh)
+  if (typeof GardenFix !== "undefined") {
+    const isRows = (r) => Array.isArray(r) && r.length > 0 && typeof r[0] === "string";
+    GardenFix.register("do", {
+      frames: function (id) {
+        const out = {}, s = SPR[id];
+        if (!isRows(s)) { return out; }
+        out.spr = s;
+        (FRAMES[id] || []).forEach((f, i) => { if (isRows(f) && f !== s) { out["f" + i] = f; } });
+        if (isRows(BASE[id]) && BASE[id] !== s) { out.base = BASE[id]; }
+        return out;
+      },
+      set: function (id, name, r) {
+        if (name === "spr") {
+          const old = SPR[id];
+          SPR[id] = r;
+          (FRAMES[id] || []).forEach((f, i) => { if (f === old) { FRAMES[id][i] = r; } });
+          if (BASE[id] === old) { BASE[id] = r; }
+        } else if (name === "base") { BASE[id] = r; }
+        else if (/^f\d+$/.test(name) && FRAMES[id]) { FRAMES[id][Number(name.slice(1))] = r; }
+      },
+      pal: () => P
+    });
+  }
 
   // Hạt phát ra từ món đồ (chỉ tính cho cảnh đang xem)
   function emit(sceneName, e, dt, night) {
@@ -2610,7 +2636,7 @@ var GardenHome = (function () {
   }
   function drawUzoneBg(ctx, S, ox, oy, now, z, x0, x1, st) {
     const G0 = YARD.SKY, BW = x1 - x0, bg = z.bg || "meadow";
-    drawSky(ctx, S, ox, oy, now, x0, x1, G0, st);
+    drawSky(ctx, S, ox, oy - skyPad, now, x0, x1, G0 + skyPad, st);
     const hill = snowy(tone(z.hills || "#7ed98a", st, 0.35), st, 0.5), hill2 = GardenSky.shade(hill, 0.85);
     const ground = snowy(tone(z.ground || "#5ed35e", st), st), dark = GardenSky.shade(ground, 0.86), lite = GardenSky.mix(ground, "#ffffff", 0.3);
     if (bg === "lake") {
@@ -2827,16 +2853,21 @@ var GardenHome = (function () {
     snowRoof = !!(st.snow || st.cover);
     const sea = typeof GardenSky !== "undefined" ? SEA() : null;
     const uz = isUz(sceneName) ? (opts && opts.uz) || uzone(sceneName) : null;
+    // 1.25.4 (cỡ cảnh Lớn, người dùng chọn A'): opts.padTop hàng trời thêm phía trên cảnh (cảnh vẽ ở oy, trời bắt đầu ở oy − padTop)
+    const P0 = Math.max(0, Math.floor((opts && opts.padTop) || 0));
     if (sceneName !== "yard" && typeof GardenSky !== "undefined") {
-      if (uz) { drawUzoneBg(ctx, S, ox, oy, now, uz, bx0, bx1, st); } else { drawZoneBg(ctx, S, ox, oy, now, sceneName, bx0, bx1, st); }
+      skyPad = P0;
+      try {
+        if (uz) { drawUzoneBg(ctx, S, ox, oy, now, uz, bx0, bx1, st); } else { drawZoneBg(ctx, S, ox, oy, now, sceneName, bx0, bx1, st); }
+      } finally { skyPad = 0; }
       if (sea) { sea.decorGround(ctx, S, ox, oy, bx0, bx1, YARD.SKY, YARD.H, st); }
       drawPuddles(ctx, S, ox, oy, now, bx0, bx1, st);
-      if (sea) { sea.garland(ctx, S, ox, oy, now, bx0, bx1, 0, st); }
+      if (sea) { sea.garland(ctx, S, ox, oy - P0, now, bx0, bx1, 0, st); }
       if (uz) { drawUzEnv(ctx, S, ox, oy, uz); drawUzLandmark(ctx, S, ox, oy, uz, now, tod === "night"); }
       else if (LANDMARK[sceneName]) { LANDMARK[sceneName](ctx, S, (x) => ox + x, (y) => oy + y, now, tod === "night"); }
     } else {
-    if (typeof GardenSky !== "undefined") { drawSky(ctx, S, ox, oy, now, bx0, bx1, YARD.SKY, st); }
-    else { box(ctx, ox + bx0, oy, BW, YARD.SKY, st.top, S); }
+    if (typeof GardenSky !== "undefined") { drawSky(ctx, S, ox, oy - P0, now, bx0, bx1, YARD.SKY + P0, st); }
+    else { box(ctx, ox + bx0, oy - P0, BW, YARD.SKY + P0, st.top, S); }
     // đồi xa
     ctx.fillStyle = st.hills;
     for (let i = Math.floor(bx0); i < bx1; i++) {
@@ -2850,7 +2881,7 @@ var GardenHome = (function () {
     if (sea) { sea.decorGround(ctx, S, ox, oy, bx0, bx1, YARD.SKY, YARD.H, st); }
     box(ctx, ox + 28, oy + 74, 8, 2, "#d9ae72", S);
     if (typeof GardenSky !== "undefined") { drawPuddles(ctx, S, ox, oy, now, bx0, bx1, st); }
-    if (sea) { sea.garland(ctx, S, ox, oy, now, bx0, bx1, 0, st); }
+    if (sea) { sea.garland(ctx, S, ox, oy - P0, now, bx0, bx1, 0, st); }
     drawHouse(ctx, S, ox, oy, home.house, now, tod, home.style);
     drawWear(ctx, S, ox, oy, home, now, st, opts && opts.wear);
     }
@@ -2874,7 +2905,11 @@ var GardenHome = (function () {
       GardenJoy.drawYard(ctx, S, ox, oy, now, bx0, bx1, YARD.SKY, st);
     }
     if (typeof GardenSky !== "undefined" && (isOpen || UIget("weather") !== "off")) {
-      drawWeather(ctx, S, ox, oy, now, bx0, bx1, YARD.H, st, YARD.SKY);
+      drawWeather(ctx, S, ox, oy - P0, now, bx0, bx1, YARD.H + P0, st, YARD.SKY + P0);
+      if (P0) {                       // 1.25.4: phần trời thêm cũng tối theo giờ (đèn chỉ ở trong cảnh)
+        const dark = Math.max(0, 0.55 - st.light) * 0.75;
+        if (dark > 0.01) { ctx.globalAlpha = dark; box(ctx, ox + bx0, oy - P0, bx1 - bx0, P0, "#0b0b2a", S); ctx.globalAlpha = 1; }
+      }
       drawNight(ctx, S, ox, oy, bx0, bx1, YARD.H, st);
       if (sea) { sea.nightTop(ctx, S, ox, oy, now, bx0, bx1, YARD.H, st); }
     }
@@ -3098,11 +3133,8 @@ var GardenHome = (function () {
     for (let i = Math.floor(x0 / 11) * 11 + 3; i < x1; i += 11) { if (i >= x0) { box(ctx, i, hz + 3 + (Math.abs(i) * 7) % Math.max(1, y1 - hz - 4), 1, 1, st.grass, S); } }
     if (sea) { try { sea.decorGround(ctx, S, 0, 0, x0, x1, hz, y1, st); } catch (e) { /* bỏ qua */ } }
     if (!side) { return; }
-    const bx = side < 0 ? x1 - 16 : x0 + 3, by = hz + 6;            // bụi cây + hoa sát tường nhà
-    if (bx >= x0 && bx + 13 <= x1 && by + 9 <= y1) {
-      box(ctx, bx + 1, by + 3, 12, 6, P.k, S); box(ctx, bx + 2, by + 1, 10, 7, P.G, S); box(ctx, bx + 3, by, 8, 6, P.g, S);
-      box(ctx, bx + 4, by + 2, 1, 1, P.p, S); box(ctx, bx + 8, by + 1, 1, 1, P.y, S); box(ctx, bx + 6, by + 4, 1, 1, P.w, S);
-    }
+    // 1.25.4: bỏ bụi cây vuông sát tường nhà (người dùng: "ô vuông xanh 2 bên nhà … nhìn không đẹp lắm"); giữ mấy bông hoa nhỏ
+    const by = hz + 6;
     const fx = side < 0 ? x1 - 30 : x0 + 22;
     if (fx >= x0 && fx + 10 <= x1 && by + 10 <= y1) { [0, 4, 8].forEach((d, i) => { box(ctx, fx + d, by + 6, 1, 4, P.G, S); box(ctx, fx + d - 1, by + 5, 3, 2, [P.p, P.y, P.r][i], S); }); }
   }
@@ -3234,13 +3266,13 @@ var GardenHome = (function () {
     const cv = $("kb-yard");
     if (!cv || !mainView || mainView.house || typeof GardenGuests === "undefined") { return null; }
     const r = cv.getBoundingClientRect();
-    return GardenGuests.at(mainScene(), (ev.clientX - r.left) / mainView.S - mainView.ox, (ev.clientY - r.top) / mainView.S);
+    return GardenGuests.at(mainScene(), (ev.clientX - r.left) / mainView.S - mainView.ox, (ev.clientY - r.top) / mainView.S - (mainView.oy || 0));
   }
   function mainItemAt(ev) {
     const cv = $("kb-yard");
     if (!cv || !mainView || mainView.house) { return null; }
     const r = cv.getBoundingClientRect(), sc = mainScene();
-    const ax = (ev.clientX - r.left) / mainView.S - mainView.ox, ay = (ev.clientY - r.top) / mainView.S;
+    const ax = (ev.clientX - r.left) / mainView.S - mainView.ox, ay = (ev.clientY - r.top) / mainView.S - (mainView.oy || 0);
     const idx = itemAt(sc, cellAt(sc, ax, ay));
     return idx >= 0 ? (homeState()[sc] || [])[idx] : null;
   }
@@ -3274,14 +3306,19 @@ var GardenHome = (function () {
     const wrap = cv.parentNode;
     const cw = wrap.clientWidth;
     // cửa sổ thấp thì thu nhỏ sân; phóng to màn hình thì sân to theo (tối đa ×4)
-    let maxS = window.innerHeight < 860 ? 2 : window.innerHeight < 1000 ? 3 : 4;
-    // 1.23: ⚙ → Màn chính → Cỡ cảnh: Lớn — phóng thêm (dải cảnh tới ~55 % chiều cao cửa sổ); cửa sổ thấp hơn 900 px giữ Vừa
+    const maxS = window.innerHeight < 860 ? 2 : window.innerHeight < 1000 ? 3 : 4;
+    const Svua = Math.max(2, Math.min(maxS, Math.floor(cw / YARD.W)));
+    let S = Svua, pad = 0;
+    // 1.23: ⚙ → Màn chính → Cỡ cảnh: Lớn — dải cảnh tới ~55 % chiều cao cửa sổ; cửa sổ thấp hơn 900 px giữ Vừa.
+    // 1.25.4 (người dùng chọn A'): không phóng điểm ảnh tới ×7 nữa ("pixel bự lên nhìn không đẹp") — điểm ảnh bằng 5/7,
+    // dải vẫn cao như cũ, phần cao thêm là trời phía trên cảnh (padTop)
     if (typeof GardenUI !== "undefined" && GardenUI.glob && GardenUI.glob("scene") === "large" && window.innerHeight >= 900) {
-      maxS = Math.max(maxS, Math.floor(window.innerHeight * 0.55 / YARD.H));
+      const big = Math.max(2, Math.min(Math.max(maxS, Math.floor(window.innerHeight * 0.55 / YARD.H)), Math.floor(cw / YARD.W)));
+      S = Math.max(Svua, Math.min(big, Math.round(big * 5 / 7)));
+      pad = Math.max(0, Math.round(big * YARD.H / S) - YARD.H);
     }
-    const S = Math.max(2, Math.min(maxS, Math.floor(cw / YARD.W)));
     const dpr = window.devicePixelRatio || 1;
-    const hgt = YARD.H * S;
+    const hgt = (YARD.H + pad) * S;
     if (cv._w !== cw || cv._h !== hgt || cv._dpr !== dpr) {
       cv.width = Math.round(cw * dpr); cv.height = Math.round(hgt * dpr);
       cv.style.width = cw + "px"; cv.style.height = hgt + "px";
@@ -3303,8 +3340,8 @@ var GardenHome = (function () {
       mainView = { S: Sh, ox: hx, oy: hy, house: true };
       drawHouseScene(ctx, Sh, VW, VH, hx, hy, now, {});
     } else {
-      mainView = { S: S, ox: ox };
-      drawOutdoor(ctx, S, ox, 0, now, mainScene(), { bgFrom: -ox - 1, bgTo: cw / S - ox + 1, seen: !document.hidden });
+      mainView = { S: S, ox: ox, oy: pad };
+      drawOutdoor(ctx, S, ox, pad, now, mainScene(), { bgFrom: -ox - 1, bgTo: cw / S - ox + 1, seen: !document.hidden, padTop: pad });
     }
     const sw = now - mainSwitchAt;
     if (sw < 380 && UIget("yard") === "full") {          // chuyển cảnh: màn tối mờ dần
@@ -3843,6 +3880,22 @@ var GardenHome = (function () {
   const WEAR_SLOT_NAME = { head: "Mũ", face: "Mặt", neck: "Cổ", shell: "Vỏ" };
   let delArm = null;   // mẫu đang chờ bấm "Xoá" lần hai
 
+  // 1.25.5 (admin): nút "Sửa hình" cho hình có sẵn — mở Xưởng ở chế độ hình gốc.
+  // 1.25.7: người dùng thường có "Góp ý hình" ở món mình đang có — vẽ thử rồi lưu file gửi người làm add-on, vườn không đổi
+  function fixBtn(row, group, id, name, owned) {
+    const d = H && H.data();
+    if (!d || typeof GardenFix === "undefined" || typeof GardenCraft === "undefined" || !GardenCraft.openBase ||
+        !GardenFix.editable(group, id) || (!d.admin && !owned)) { return; }
+    if (!d.admin) {
+      const g = btn("Góp ý hình", "kb-btn-small kb-h-fix", () => GardenCraft.openBase({ group: group, id: id, name: name, suggest: true }));
+      g.title = "Thấy hình lỗi? Vẽ lại rồi gửi file cho người làm add-on";
+      row.appendChild(g);
+      return;
+    }
+    const b = btn("Sửa hình", "kb-btn-small kb-h-fix" + (GardenFix.has(group, id) ? " is-fixed" : ""), () => GardenCraft.openBase({ group: group, id: id, name: name }));
+    if (GardenFix.has(group, id)) { b.title = "Đã sửa"; }
+    row.appendChild(b);
+  }
   function itemCard(list, it, opts) {
     const home = homeState(), money = coins(), cat = catalog();
     const owned = home.owned[it.id] || 0;
@@ -3870,6 +3923,7 @@ var GardenHome = (function () {
       row.appendChild(b);
     }
     if (avail > 0) { row.appendChild(btn("Đặt", "kb-btn-small kb-h-place", () => startPlacing(it.id))); }
+    if (!it.custom) { fixBtn(row, "do", it.id, it.name, owned > 0); }
     info.appendChild(row);
     card.appendChild(info);
     list.appendChild(card);
@@ -4247,6 +4301,7 @@ var GardenHome = (function () {
         nrow.appendChild(btn("Đặt tên", "kb-btn-small", save));
         inf.appendChild(nrow);
       }
+      const frow = el("div", "kb-h-btns"); fixBtn(frow, "thu", sp.id, sp.name, !!p); if (frow.childNodes.length) { inf.appendChild(frow); }
       card.appendChild(inf);
       list.appendChild(card);
       if (petFocus === sp.id) { focusCard = card; }
@@ -4306,6 +4361,7 @@ var GardenHome = (function () {
         inf.appendChild(el("div", "kb-h-desc", "Chưa gặp" + (e.season ? "" : " · chưa tới mùa")));
       }
       inf.appendChild(el("div", "kb-h-desc kb-h-guest-hint", "✦ " + e.hint));
+      const frow = el("div", "kb-h-btns"); fixBtn(frow, "khach", e.id, e.name || e.id, !!e.met); if (frow.childNodes.length) { inf.appendChild(frow); }
       card.appendChild(inf);
       list.appendChild(card);
       if (guestFocus === e.id) { focusCard = card; }
@@ -4425,6 +4481,7 @@ var GardenHome = (function () {
         inf.appendChild(btn(money >= x.price ? "Mua giống · " + x.price + " xu" : "Còn thiếu " + (x.price - money) + " xu", "kb-h-buy",
           () => pay("home:seed:buy:" + x.id), money < x.price));
       }
+      const frow = el("div", "kb-h-btns"); fixBtn(frow, "giong", x.id, x.name, own); if (frow.childNodes.length) { inf.appendChild(frow); }
       card.appendChild(inf);
       list.appendChild(card);
     });
@@ -5059,6 +5116,8 @@ var GardenHome = (function () {
     _step: (sc, dt) => stepParts(sc, dt),
     pxDecode: pxDecode, pxRows: pxRows, drawItemPreview: function (ctx, S, ox, oy, e, sceneName) { drawItem(ctx, S, ox, oy, e, sceneName, Date.now(), "day"); },
     setScene: setScene, mainScene: mainScene, startPlacing: startPlacing,
+    // 1.25.5: bản sửa hình gốc vừa đổi → vẽ lại danh sách (icon) + cảnh
+    fixChanged: function () { stillDirty = true; if (isOpen) { renderList(); } },
     _mainItemAt: mainItemAt, _mainView: function () { return mainView; },
     _popFor: function (sc, i) { setScene(sc); selected = { scene: sc, index: i }; showPop(homeState()[sc][i]); },
     setTab: function (t) { tab = t; renderList(); },

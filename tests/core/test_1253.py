@@ -86,8 +86,9 @@ ok(m == {"kb-sky": "b", "kb-crow-mode": "jp"}, "gộp: ghi đè, null = xoá, kh
 m = more.merge_prefs(big, {"kb-new": "1"})
 ok("kb-new" in m and len(m) == more.PREF_MAX_KEYS, "đã đầy 120 khoá: khoá vừa ghi vẫn được giữ")
 src = open(os.path.join(ADDON, "__init__.py"), encoding="utf-8").read()
-ok('f"{WEB_BASE}/diag.js", f"{WEB_BASE}/prefs.js", f"{WEB_BASE}/icons.js", f"{WEB_BASE}/sky.js"' in src,
-   "prefs.js nạp trước sky.js / music.js / fx.js")
+_pos = lambda n: src.find('f"{WEB_BASE}/%s"' % n)
+ok(0 < _pos("diag.js") < _pos("prefs.js") < _pos("sky.js") < _pos("fx.js") < _pos("music.js") < _pos("games.js"),
+   "prefs.js nạp ngay sau diag.js, trước sky.js / music.js / fx.js / games.js")
 ok("head += prefs_script()" in src and 'elif cmd.startswith("prefs:set:")' in src, "trang nhận cài đặt trong <head>, lệnh prefs:set")
 web = os.path.join(ADDON, "web")
 left = []
@@ -110,22 +111,31 @@ const ctx = { window: { __kbPrefs: { "kb-sky": '{"mode":"fixed","fixedHour":18.4
   setTimeout: (fn, ms) => { timers.push(fn); return timers.length; }, clearTimeout() {} };
 vm.createContext(ctx);
 vm.runInContext(fs.readFileSync(path.join(ADDON, 'web/prefs.js'), 'utf8') + '\nthis.P = GardenPrefs;', ctx);
-const P = ctx.P, out = {};
+(async () => {
+const P = ctx.P, out = {}, tick = () => new Promise((r) => setImmediate(r));
 out.given = P.get("kb-sky"); out.music = P.get("kb-music"); out.bad = P.get("kb-bad"); out.none = P.get("kb-none");
 P.set("kb-music", "1"); P.set("kb-music-vol", 0.4); P.set("kb-sky", null);
 out.beforeFlush = sent.length; out.lsMusic = ls["kb-music"]; out.afterSet = P.get("kb-music"); out.skyGone = P.get("kb-sky");
-timers.forEach((f) => f());
+await tick();
 out.sent = sent.slice();
+P.set("kb-music-vol", 0.5); P.set("kb-music-vol", 0.6);        // dồn dập ngay sau lệnh trước → gom bằng hẹn giờ
+await tick();
+out.burstBefore = sent.length; out.timers = timers.length;
+timers.forEach((f) => f());
+out.burst = sent.slice(1);
 ls["kb-main-scene"] = "beach"; out.direct = P.get("kb-main-scene");
 console.log(JSON.stringify(out));
+})();
 """)
     ok(r and r["given"] == '{"mode":"fixed","fixedHour":18.4,"weather":"rain"}' and r["music"] == "0" and r["bad"] is None and r["none"] is None,
        "đọc cài đặt Python đưa vào (localStorage trống như sau khi mở lại Anki); giá trị không phải chuỗi bỏ")
     ok(r and r["beforeFlush"] == 0 and r["lsMusic"] == "1" and r["afterSet"] == "1" and r["skyGone"] is None,
-       "set(): đổi ngay trong trang + localStorage, chưa gửi lệnh nào (gom 250 ms); null = xoá")
+       "set(): đổi ngay trong trang + localStorage; null = xoá")
     want = {"kb-music": "1", "kb-music-vol": "0.4", "kb-sky": None}
     ok(r and len(r["sent"]) == 1 and r["sent"][0].startswith("prefs:set:") and json.loads(r["sent"][0][10:]) == want,
-       "hết 250 ms: một lệnh prefs:set gửi cả ba thay đổi " + (r["sent"][0] if r and r["sent"] else ""))
+       "cuối lượt xử lý: một lệnh prefs:set gửi cả ba thay đổi (1.25.4: chờ 250 ms → đóng cửa sổ ngay là mất) " + (r["sent"][0] if r and r["sent"] else ""))
+    ok(r and r["burstBefore"] == 1 and r["timers"] == 1 and len(r["burst"]) == 1 and json.loads(r["burst"][0][10:]) == {"kb-music-vol": "0.6"},
+       "thay đổi dồn dập (kéo thanh âm lượng) gom một lệnh sau 250 ms, giữ giá trị cuối")
     ok(r and r["direct"] == "beach", "chỗ nào ghi thẳng localStorage (test cũ) vẫn đọc được")
 
     print("== sky.js / music.js / fx.js / games.js đọc qua GardenPrefs (node)")
@@ -140,13 +150,14 @@ function load(prefs, files) {
   let code = fs.readFileSync(path.join(ADDON, 'web/prefs.js'), 'utf8');
   files.forEach((f) => { code += '\n' + fs.readFileSync(path.join(ADDON, 'web/' + f), 'utf8'); });
   vm.runInContext(code + '\nthis.S = typeof GardenSky !== "undefined" ? GardenSky : null; this.M = typeof GardenMusic !== "undefined" ? GardenMusic : null; this.F = typeof GardenFx !== "undefined" ? GardenFx : null; this.G = typeof GardenGames !== "undefined" ? GardenGames : null; this.P = GardenPrefs;', ctx);
-  ctx.flush = () => { timers.splice(0).forEach((f) => f()); return sent; };
+  ctx.flush = async () => { await new Promise((r) => setImmediate(r)); timers.splice(0).forEach((f) => f()); return sent; };
   return ctx;
 }
+(async () => {
 let c = load({ "kb-sky": '{"mode":"fixed","fixedHour":18.4,"weather":"rain","dayMinutes":60}' }, ['sky.js']);
 out.sky = c.S.settings(); out.skyW = c.S.state().weather; out.skyH = c.S.state().hour;
 c.S.set("weather", "snow"); c.S.set("mode", "game");
-const s1 = c.flush(); out.skySent = s1.length === 1 ? JSON.parse(JSON.parse(s1[0].slice(10))["kb-sky"]) : s1;
+const s1 = await c.flush(); out.skySent = s1.length === 1 ? JSON.parse(JSON.parse(s1[0].slice(10))["kb-sky"]) : s1;
 c = load({ "kb-sky": '{"mode":"sao","fixedHour":99,"weather":"bão","dayMinutes":-3}' }, ['sky.js']);
 out.skyBad = c.S.settings();
 c.S.set("fixedHour", "abc"); out.skyBadSet = c.S.settings().fixedHour;
@@ -154,10 +165,11 @@ c = load({ "kb-sky": '{không phải json' }, ['sky.js']); out.skyJunk = c.S.set
 c = load({ "kb-music": "0", "kb-music-vol": "0.25" }, ['music.js']);
 out.music = [c.M.enabled(), c.M.volume()];
 c = load({ "kb-crow-mode": "jp", "kb-crow-speed": "slow" }, ['games.js']);
-c.G._setCrowMode("vi"); out.crow = c.flush().map((x) => JSON.parse(x.slice(10)));
+c.G._setCrowMode("vi"); out.crow = (await c.flush()).map((x) => JSON.parse(x.slice(10)));
 c = load({}, ['games.js']);
 out.crowSpeedProto = (c.P.set("kb-crow-speed", "constructor"), null);
 console.log(JSON.stringify(out));
+})();
 """)
     ok(r and r["sky"] == {"mode": "fixed", "dayMinutes": 60, "fixedHour": 18.4, "weather": "rain"} and r["skyW"] == "rain"
        and abs(r["skyH"] - 18.4) < 1e-9, "mở lại Anki: trời / giờ lấy đúng cài đặt đã lưu (Cố định 18:24, Mưa)")
@@ -402,6 +414,22 @@ console.log(JSON.stringify(out));
     ok(r and all(x[1] == 0 for x in r) and any(x[2] > 0 for x in r),
        "mọi hàng phía trên mái cùng màu với hai bên (cách cũ lệch %s hàng ở các độ cao %s)" % (
            [x[2] for x in r] if r else "?", [x[0] for x in r] if r else "?"))
+
+print("== 1.25.4: cỡ cảnh Lớn ×5 (người dùng chọn A'), bỏ bụi cây vuông cạnh nhà, đèn lồng giấy")
+mainy = home[home.index("function drawMainYard("):home.index("// Bảng Nhà & Cửa hàng")]
+ok("Math.round(big * 5 / 7)" in mainy and "padTop: pad" in mainy and "const hgt = (YARD.H + pad) * S" in mainy,
+   "Lớn: điểm ảnh bằng 5/7 trước (×7 → ×5), dải cao như cũ, phần thêm là trời (padTop)")
+outd = home[home.index("function drawOutdoor("):home.index("function houseStyle(")]
+ok("drawSky(ctx, S, ox, oy - P0, now, bx0, bx1, YARD.SKY + P0, st)" in outd and "drawWeather(ctx, S, ox, oy - P0" in outd
+   and outd.count("sea.garland(ctx, S, ox, oy - P0") == 2 and "skyPad = P0" in outd,
+   "trời / mưa / dây trang trí trải cả phần trời thêm, cả ở các vùng (skyPad)")
+ok(home.count("drawSky(ctx, S, ox, oy - skyPad, now, x0, x1, G0 + skyPad, st)") == 2, "nền vùng có sẵn + vùng tự tạo dùng trời cao")
+ok(home.count("/ mainView.S - (mainView.oy || 0)") == 3, "bấm vào thú / khách / đồ trên màn chính tính cả độ lệch dọc")
+band = home[home.index("function gardenBand("):home.index("function roofOver(")]
+ok("box(ctx, bx + 1, by + 3, 12, 6, P.k, S)" not in band, "dải Trong nhà: bỏ bụi cây vuông xanh sát tường (giữ hoa nhỏ)")
+cho = home[home.index("SPR.chochin = ["):home.index("SPR.maneki")]
+rows = re.findall(r'"([^"]+)"', re.sub(r"//[^\n]*", "", cho))
+ok(len(rows) == 18 and rows[11] == "....kbk..." and len(set(map(len, rows))) == 1, "đèn lồng giấy: cán nối liền thân (hàng 12: ....kbk...)")
 
 shutil.rmtree(TMP, ignore_errors=True)
 print()

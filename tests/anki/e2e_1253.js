@@ -91,6 +91,12 @@ async function restartAnki() {
   await js('document.getElementById("kb-sound-pop").hidden = false; return 1;'); await sleep(300);
   await page.shot(SHOTS + '/1253_01_cai_dat_sau_khi_mo_lai.png');
   await js('document.getElementById("kb-sound-pop").hidden = true; return 1;');
+  // 1.25.5 (kiểm tra lần cuối): chỉnh rồi đóng cửa sổ vườn ngay — vẫn lưu (1.25.4: trang chờ 250 ms mới gửi → mất)
+  await js('GardenSky.set("weather", "snow"); return 1;');
+  await py(KB + 'kb._dialog.close(); result = 1'); await sleep(1200);
+  const quick = await py(KB + 'result = json.loads(((mw.addonManager.getConfig("kotoba_batake") or {}).get("prefs") or {}).get("kb-sky") or "{}").get("weather")');
+  ok(quick === 'snow', 'chọn Tuyết rồi đóng cửa sổ vườn ngay: vẫn lưu (' + quick + ')');
+  await openGarden();
 
   console.log('== 2. cỡ cảnh Lớn: trời phía trên mái khớp hai bên, mưa cả phía trên mái');
   await py(KB + `d = st.load(); d["coins"] = 10000; d["home"]["house"] = 7; st.save(d)
@@ -168,6 +174,12 @@ kb.save_config(ui={"scene": "large"}); kb._dialog.resize(1920, 1080); kb._dialog
   await py(KB + 'from aqt.operations.collection import undo; undo(parent=mw); result = 1'); await sleep(1500);
   const sy = await py(KB + 'a = [st.load()["coins"], ' + raw + ']\nkb._on_sync_start()\nresult = a + [' + raw + ']');
   ok(sy[0] < sy[1] && sy[2] === sy[0], 'Undo rồi đồng bộ: trước đồng bộ ví ghi đúng ' + sy[0] + ' xu (collection ' + sy[1] + ' → ' + sy[2] + ')');
+  // Undo rồi đóng hồ sơ (đổi hồ sơ / tắt Anki) ngay: phần trả lại ghi trước khi đóng, sổ phần thưởng xoá
+  await answer();
+  await py(KB + 'from aqt.operations.collection import undo; undo(parent=mw); result = 1'); await sleep(1500);
+  const pc = await py(KB + 'a = [st.load()["coins"], ' + raw + ']\nkb._on_profile_close()\nresult = a + [' + raw + ', len(kb._ledger)]');
+  ok(pc[0] < pc[1] && pc[2] === pc[0] && pc[3] === 0, 'Undo rồi đóng hồ sơ: ghi ' + pc[0] + ' xu trước khi đóng (collection ' + pc[1] + ' → ' + pc[2] + '), sổ phần thưởng xoá');
+  await openGarden();
 
   console.log('== 4. Xưởng: vẽ → đổi cỡ → Esc');
   await js('GardenCraft.open(); return 1;'); await sleep(600);
@@ -212,6 +224,58 @@ result = [did, cur]`); await sleep(1200);
   ok(await js('const s = document.querySelector("#kb-deck, select[id*=deck]"); return !s || String(s.value) === "' + dk[0] + '";'), 'ô Deck trên thanh trên hiện đúng deck B');
   ok(await js('return GardenPrefs.get("kb-test-x") === "</script><b>x</b>\u2028" && typeof Garden !== "undefined" && !document.querySelector("body > b");'),
     'cài đặt có "</script>" trong giá trị: trang vẫn chạy, giá trị đọc lại nguyên vẹn (chèn vào <head> an toàn)');
+
+  console.log('== 7. (1.25.4, người dùng chọn A\') cỡ cảnh Lớn: điểm ảnh ×5 thay vì ×7, trời cao hơn; bỏ bụi cây vuông cạnh nhà');
+  await py(KB + `d = st.load(); d["coins"] = 100000; d["home"]["house"] = 7; st.save(d)
+for it, x, y in (("mailbox", 6, 2), ("chochin", 13, 1)):
+    try:
+        st.buy(it); st.place("yard", it, x, y)
+    except Exception:
+        pass
+kb.save_config(ui={"scene": "large"}); kb._dialog.resize(1850, 1000); kb._dialog.refresh(); result = 1`); await sleep(1500);
+  await js('localStorage.setItem("kb-main-scene", "yard"); GardenSky.set("mode", "fixed"); GardenSky.set("fixedHour", 12); GardenSky.set("weather", "sunny"); return 1;'); await sleep(1500);
+  const PX = `const cv = document.getElementById("kb-yard"), c = cv.getContext("2d"), v = GardenHome._mainView(), R = cv.getBoundingClientRect(), d = cv.width / R.width;
+    const at = (ax, ay) => { const p = c.getImageData(Math.round((ax + 0.5) * v.S * d), Math.round((ay + 0.5) * v.S * d), 1, 1).data; return [p[0], p[1], p[2]]; };
+    const hex = (h) => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
+    const near = (a, b, t) => Math.abs(a[0] - b[0]) <= t && Math.abs(a[1] - b[1]) <= t && Math.abs(a[2] - b[2]) <= t;`;
+  const lg = await js(PX + `const maxS = innerHeight < 860 ? 2 : innerHeight < 1000 ? 3 : 4, old = Math.max(2, Math.min(Math.max(maxS, Math.floor(innerHeight * 0.55 / 76)), Math.floor(R.width / 256)));
+    return { S: v.S, oy: v.oy, h: R.height, old: old };`);
+  ok(lg.S === Math.max(2, Math.round(lg.old * 5 / 7)) && lg.S < lg.old, 'cỡ Lớn: điểm ảnh ×' + lg.S + ' (1.25.3: ×' + lg.old + ')');
+  ok(lg.oy > 10 && Math.abs(lg.h - lg.old * 76) <= lg.S, 'dải vẫn cao như cũ (' + Math.round(lg.h) + ' px), phần thêm là ' + lg.oy + ' hàng trời phía trên cảnh');
+  const seam = await js(PX + `const st = GardenSky.state(), H = 28 + v.oy, bands = [];
+    for (let b = 0; b < 7; b++) { bands.push(hex(GardenSky.mix(st.top, st.bottom, b / 6))); }
+    const band = (p) => bands.findIndex((q) => near(p, q, 3));
+    let good = 0, seen = 0; const W = Math.floor(R.width / v.S);
+    for (let x = 3; x < W - 3; x += 17) { const a = band(at(x, v.oy - 1)), b = band(at(x, v.oy)); if (a < 0 || b < 0) { continue; } seen++; if (b - a === 0 || b - a === 1) { good++; } }
+    return { good: good, seen: seen };`);
+  ok(seam.seen > 10 && seam.good === seam.seen, 'trời liền một dải qua mép trên cảnh (' + seam.good + '/' + seam.seen + ' cột; trời không bắt đầu lại ở hàng ' + lg.oy + ')');
+  await js('GardenSky.set("weather", "rain"); GardenSky.set("fixedHour", 10); return 1;'); await sleep(900);
+  const rainTop = await js(PX + `let n = 0; const W = Math.floor(R.width / v.S); for (let k = 0; k < 4; k++) { for (let y = 0; y < v.oy; y++) { for (let x = 0; x < W; x += 2) { if (near(at(x, y), [0x4f, 0x8f, 0xd8], 8)) { n++; } } } } return n;`);
+  ok(rainTop > 0, 'trời mưa: có mưa ở phần trời thêm (' + rainTop + ' điểm ảnh)');
+  await js('GardenSky.set("weather", "sunny"); GardenSky.set("fixedHour", 22); return 1;'); await sleep(900);
+  const dark = await js(PX + `const lum = (p) => 0.2126 * p[0] + 0.7152 * p[1] + 0.0722 * p[2]; let a = 0, b = 0, na = 0, nb = 0; const W = Math.floor(R.width / v.S);
+    for (let x = 2; x < W - 2; x += 5) { a += lum(at(x, v.oy - 2)); na++; b += lum(at(x, v.oy + 1)); nb++; } return [Math.round(a / na), Math.round(b / nb)];`);
+  ok(Math.abs(dark[0] - dark[1]) <= 18, 'ban đêm: phần trời thêm tối như trời trong cảnh (độ sáng ' + dark[0] + ' / ' + dark[1] + ')');
+  await js('GardenSky.set("fixedHour", 12); return 1;'); await sleep(600);
+  const hit = await js(`const cv = document.getElementById("kb-yard"), r = cv.getBoundingClientRect(), v = GardenHome._mainView();
+    const e = (GardenHome._mainItemAt({ clientX: r.left + (v.ox + 6 * 16 + 8) * v.S, clientY: r.top + (v.oy + 28 + 2 * 16 + 8) * v.S }) || {}).id;
+    const top = GardenHome._mainItemAt({ clientX: r.left + (v.ox + 6 * 16 + 8) * v.S, clientY: r.top + (2 * 16 + 8) * v.S }); return [e, !!top];`);
+  ok(hit[0] === 'mailbox' && !hit[1], 'bấm vào hòm thư (có độ lệch trời phía trên) vẫn trúng hòm thư: ' + JSON.stringify(hit));
+  await js('localStorage.setItem("kb-main-scene", "house"); return 1;'); await sleep(1200);
+  const bush = await js(PX + `const hz = v.oy + 40, cols = [hex("#1b1b2f"), hex("#2e8b3a"), hex("#3ccb5e")];
+    const pts = [[v.ox - 4 - 16 + 7, hz + 6 + 4], [v.ox - 4 - 16 + 3, hz + 6 + 6], [v.ox + 456 + 4 + 3 + 7, hz + 6 + 4], [v.ox + 456 + 4 + 3 + 3, hz + 6 + 6]];
+    return pts.map(([x, y]) => cols.some((q) => near(at(x, y), q, 6))).filter(Boolean).length;`);
+  ok(bush === 0, 'Trong nhà: không còn bụi cây vuông xanh hai bên nhà (' + bush + ' điểm đo trúng màu bụi / viền)');
+  await page.shot(SHOTS + '/1253_04_lon_x5_trong_nha.png');
+  await js('localStorage.setItem("kb-main-scene", "yard"); return 1;'); await sleep(800);
+  await page.shot(SHOTS + '/1253_05_lon_x5_san.png');
+  await js('GardenSky.set("weather", "storm"); GardenSky.set("fixedHour", 21); return 1;'); await sleep(500);
+  const ms = await js('return GardenHome._bench("yard", 40);');
+  ok(ms < 12, 'cỡ Lớn ×5 lúc giông ban đêm: vẽ sân ' + ms.toFixed(2) + ' ms / khung');
+  await js('GardenSky.set("weather", "sunny"); GardenSky.set("fixedHour", 12); return 1;');
+  await py(KB + 'kb.save_config(ui={}); kb._dialog.refresh(); result = 1'); await sleep(1200);
+  const md = await js('const R = document.getElementById("kb-yard").getBoundingClientRect(), v = GardenHome._mainView(); return { S: v.S, oy: v.oy || 0, h: R.height };');
+  ok(md.oy === 0 && Math.abs(md.h - md.S * 76) < 1, 'cỡ Vừa không đổi: ×' + md.S + ', không có trời thêm');
 
   const boxes = await py('from aqt.qt import QApplication, QMessageBox\nresult = [w.text()[:160] for w in QApplication.topLevelWidgets() if isinstance(w, QMessageBox) and w.isVisible()]');
   if (boxes.length) { console.log('  (hộp thoại đang mở: ' + boxes.join(' | ') + ')'); }

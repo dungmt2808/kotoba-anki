@@ -25,8 +25,9 @@ Thư mục làm việc là thư mục tiếng Nhật; mọi file của nhiệm v
 
 Không đọc lại PDF giáo trình. Đọc:
 
-- `kotoba_daily/pham_vi.json`: `trinh_do`, `nen_tang`, `trong_tam` (các chương mới học), `ngu_phap`, `tu_vung`, `tien_do` (`sap_quen`, `loi_sai`, `chua_doc` nếu có), `bao_ton`, `truyen` (`ky_tiep_theo`), `lich_su_gan_day`, `so_bao_tiep_theo`, `cai_dat`.
+- `kotoba_daily/pham_vi.json`: `trinh_do`, `nen_tang`, `trong_tam` (các chương mới học), `ngu_phap`, `tu_vung`, `tien_do` (`sap_quen`, `loi_sai`, `chua_doc` nếu có), `bao_ton`, `truyen` (`ky_tiep_theo`, `ky_them`, `ban_goc_hom_nay`), `lich_su_gan_day`, `so_bao_tiep_theo`, `cai_dat`.
 - `kotoba_daily/truyen.md`.
+- Truyện chung với add-on ことば畑: những ngày không có báo của bạn, Gemini trong add-on viết tiếp **cùng truyện** (bằng tiếng Việt). `truyen.ky_them` là các kỳ đó (mới hơn kỳ cuối của bạn): coi như đã xảy ra, đọc `tom_tat`, `bo_ngo` và nguyên văn `doan` của kỳ cuối. `truyen.ban_goc_hom_nay` (nếu có) là kỳ của **hôm nay** mà add-on đã viết cho báo khác (tiếng Anh / tiếng Việt).
 - `kotoba_daily/vi_du/bao_mau.json`: chỉ để xem định dạng, không chép nội dung.
 
 ## Bước 3. Lên kế hoạch
@@ -60,7 +61,9 @@ Cấu trúc giống `vi_du/bao_mau.json`:
 Số báo gồm 3 bài theo thứ tự:
 
 1. `tin_lang`: tin trong làng ことば村 và khu vườn ことば畑, dùng nhân vật trong `truyen.md`.
-2. `truyen`: kỳ tiếp theo của truyện dài kỳ theo `truyen.md`, 2–3 đoạn, kết hơi bỏ ngỏ. Trường `ky` bằng `truyen.ky_tiep_theo` trong `pham_vi.json`; `ky_truoc` là một câu tiếng Việt tóm tắt kỳ trước (lấy từ mục "Đã xảy ra" của `truyen.md`).
+2. `truyen`: kỳ tiếp theo của truyện dài kỳ theo `truyen.md`, 2–3 đoạn, kết hơi bỏ ngỏ. Trường `ky` bằng `truyen.ky_tiep_theo` trong `pham_vi.json`; `ky_truoc` là một câu tiếng Việt tóm tắt kỳ trước (lấy từ mục "Đã xảy ra" của `truyen.md`, hoặc `tom_tat` của kỳ cuối trong `truyen.ky_them` nếu có).
+   - Có `truyen.ky_them`: viết nối tiếp kỳ cuối của danh sách đó (không lặp lại, không bỏ qua chuyện đã xảy ra trong các kỳ ấy).
+   - Có `truyen.ban_goc_hom_nay`: **không viết kỳ mới**. Kể lại đúng kỳ đó bằng tiếng Nhật theo trình độ (giữ sự việc, lời thoại chính, móc câu cuối; câu ngắn, dùng từ / mẫu câu trong phạm vi), `ky` bằng `ky` của nó; `dich` sát với `doan` tiếng Việt của bản đó. Hai báo cùng ngày kể cùng một chuyện.
 3. `thong_bao` (お知らせ, 2–3 mục bắt đầu bằng ◆) hoặc `cot` (cột ngắn của một nhân vật). Ngày chẵn dùng `thong_bao`, ngày lẻ dùng `cot`.
 
 Nếu `cai_dat.tin_that` là true, thêm bài `tin_that` ở đầu (xem quy tắc tin thật bên dưới).
@@ -126,9 +129,10 @@ Chạy `python3 kotoba_daily/tools/kiemtra.py bao/NGAY/bao.json`. Sửa mọi d�
 
 - Thêm một dòng vào cuối `kotoba_daily/lich_su.md`, đúng dạng: `- NGAY | số N | mẫu: <các id> | từ ôn: <3–6 từ> | <tom_tat>`
 - Thêm 1–2 dòng vào mục "Đã xảy ra" của `kotoba_daily/truyen.md`: kỳ N có chuyện gì, nhân vật mới nếu có. Không xoá nội dung cũ.
+- Có `truyen.ky_them`: trước dòng của kỳ hôm nay, thêm mỗi kỳ trong đó một dòng theo cùng dạng, ghi "(add-on)" sau ngày, ví dụ `- Kỳ 9 (2026-11-09, add-on): <tom_tat> (bỏ ngỏ: <bo_ngo>)`.
 
 ## Giới hạn
 
-- Chỉ ghi vào `kotoba_daily/bao/`, `kotoba_daily/lich_su.md`, `kotoba_daily/truyen.md` và `kotoba_daily/nguon/` (khi trích chương thiếu). `pham_vi.json` do script ghi.
+- Chỉ ghi vào `kotoba_daily/bao/`, `kotoba_daily/lich_su.md`, `kotoba_daily/truyen.md` và `kotoba_daily/nguon/` (khi trích chương thiếu). `pham_vi.json` do script ghi; `truyen_chung.json` do add-on ghi (chỉ đọc qua `pham_vi.json`).
 - Không sửa `lo_trinh.json`, `tools/`, `prompts/`, `vi_du/`. Không xoá file. Không cài phần mềm. Lệnh được chạy: `date`, `ls`, `mkdir`, và `python3 kotoba_daily/tools/*.py`.
 - Kết thúc bằng một câu: "Đã làm số N ngày NGAY: <tom_tat>", hoặc lý do không làm được.

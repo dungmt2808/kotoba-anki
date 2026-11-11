@@ -1,5 +1,12 @@
 # Hình pixel của 1.14 (giống cây, thú nuôi)
 
+## Soát viền mọi hình có sẵn (1.25.3)
+```bash
+NODE_PATH=$(npm root -g) node tests/tools/art/dump_all.js kotoba_batake /tmp/kb_art/all.json   # 266 hình: đồ, thú, giống, khách
+python3 tests/tools/art/check_outline.py /tmp/kb_art/all.json /tmp/kb_art kotoba_batake        # → khuyet_vien.png, lo_mau.png
+```
+"Khuyết viền" = điểm trong suốt bị viền đen bao 3 / 4 phía (như cán đèn lồng giấy trước 1.25.3); "lộ màu" = điểm màu chạm nền trong suốt. Nhiều chỗ cố ý (khe giữa chân, nan rào, bậc cây thông) — xem ảnh rồi tự quyết.
+
 Dựng bằng hình cơ bản (`spr.py`: điểm, đường, hình tròn, elip + tự viền đen) thay vì gõ tay từng điểm ảnh.
 
 ```bash

@@ -8,7 +8,9 @@ In ra:
                                   (chương trọng tâm in trước; nên trích theo đúng thứ tự in ra)
   LỖI   <file>: <lý do>           file chương sai định dạng
 """
+import datetime
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -164,6 +166,32 @@ def main():
                         last_ky, last_ky_day = ky, issue.parent.name
             except Exception:  # noqa: BLE001
                 continue
+    # Truyện chung với add-on (ことば畑 1.25.8): add-on ghi truyen_chung.json = các kỳ Gemini viết những ngày không có
+    # báo của bạn (hoặc báo tiếng Anh / tiếng Việt viết trước trong ngày). Kỳ mới hơn kỳ cuối của bạn → nối tiếp.
+    today = os.environ.get("KB_TODAY") or datetime.date.today().isoformat()
+    ky_them, ban_goc = [], None
+    chung = BASE / "truyen_chung.json"
+    if chung.is_file():
+        try:
+            rows = load(chung).get("ky") or []
+        except Exception as e:  # noqa: BLE001
+            rows = []
+            errors.append("truyen_chung.json: không đọc được (%s)" % e)
+        for r in rows:
+            if not (isinstance(r, dict) and isinstance(r.get("ky"), int) and isinstance(r.get("ngay"), str)
+                    and isinstance(r.get("doan"), list)):
+                continue
+            if r["ngay"] <= last_ky_day:
+                continue
+            item = {k: r.get(k) for k in ("ky", "ngay", "tieu_de", "tom_tat", "bo_ngo", "doan", "tin")}
+            if r["ngay"] == today:
+                ban_goc = item
+            elif r["ngay"] < today:
+                ky_them.append(item)
+        ky_them.sort(key=lambda r: r["ngay"])
+    ky_next = max([last_ky] + [r["ky"] for r in ky_them]) + 1
+    if ban_goc:
+        ky_next = ban_goc["ky"]
 
     out = {
         "_ghi_chu": "File này do tools/pham_vi.py tạo ra, đừng sửa tay.",
@@ -183,7 +211,8 @@ def main():
         "kanji": "".join(kanji.keys()),
         "tien_do": tien_do,
         "bao_ton": {"so_chua_doc": backlog, "khi_ton": mode, "cach_viet": cach_viet},
-        "truyen": {"ky_tiep_theo": last_ky + 1, "ky_cuoi_ngay": last_ky_day},
+        "truyen": {"ky_tiep_theo": ky_next, "ky_cuoi_ngay": last_ky_day,
+                   "ky_them": ky_them, "ban_goc_hom_nay": ban_goc},
         "lich_su_gan_day": history,
         "thieu": missing,
     }
@@ -194,7 +223,11 @@ def main():
     print("Trình độ: %s | %d từ | %d mẫu câu | %d kanji | số báo tiếp theo: %d" % (
         level, len(vocab), len(grammar), len(kanji), n_issues + 1))
     print("Trọng tâm: %s" % ", ".join(f["bai"] for f in focus) if focus else "Trọng tâm: (chưa có)")
-    print("Báo chưa đọc: %d → cách viết hôm nay: %s | truyện kỳ tiếp theo: %d" % (backlog, cach_viet, last_ky + 1))
+    print("Báo chưa đọc: %d → cách viết hôm nay: %s | truyện kỳ tiếp theo: %d" % (backlog, cach_viet, ky_next))
+    for r in ky_them:
+        print("TRUYỆN CHUNG: kỳ %d (%s) đã đăng trong add-on — nối tiếp, ghi vào truyen.md" % (r["ky"], r["ngay"]))
+    if ban_goc:
+        print("TRUYỆN CHUNG: kỳ %d hôm nay đã có trong add-on — kể lại kỳ này bằng tiếng Nhật" % ban_goc["ky"])
     for m in missing:
         print("THIẾU %s chương %d (thư mục: %s)" % (m["giao_trinh"], m["chuong"], m["thu_muc"] or "?"))
     for e in errors:

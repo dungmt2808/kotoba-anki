@@ -292,6 +292,10 @@ def clean_episode(raw: Any) -> dict[str, Any] | None:
     fb = raw.get("phan_hoi")
     if isinstance(fb, dict) and fb.get("y") in FEEDBACK:
         out["phan_hoi"] = {"y": fb["y"], "ghi": _str(fb.get("ghi"), 200)}
+    if raw.get("nguon") == "claude":        # 1.25.8: kỳ chép từ báo Claude Code (kotoba_daily) sang
+        out["nguon"] = "claude"
+        if isinstance(raw.get("ky_claude"), int) and not isinstance(raw.get("ky_claude"), bool):
+            out["ky_claude"] = raw["ky_claude"]
     return out
 
 
@@ -338,6 +342,9 @@ def save_episode(base: str, date: str, ky: int, story: dict[str, Any], plain_tit
         item["diem"] = story["diem"]
     if isinstance(old, dict) and isinstance(old.get("phan_hoi"), dict):
         item["phan_hoi"] = old["phan_hoi"]      # 1.25.2: báo thứ hai cùng ngày lưu lại kỳ đó — không mất nhận xét đã ghi
+    if isinstance(old, dict) and old.get("nguon") == "claude" and old.get("ngay") == date:
+        item["nguon"] = "claude"                # 1.25.8: báo tiếng Anh kể lại kỳ của Claude Code — vẫn là kỳ của Claude
+        item["ky_claude"] = old.get("ky_claude")
     keep.append(item)
     _write(os.path.join(base, STORY_FILE), keep[-60:])
 

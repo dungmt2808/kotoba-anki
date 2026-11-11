@@ -246,7 +246,7 @@ var GardenUI = (function () {
     },
     get: get,
     glob: glob,
-    mode: () => mode,
+    mode: () => detect(),     // 1.25.8: chế độ lúc gọi (biến `mode` chỉ cập nhật mỗi 200 ms — vừa đóng bảng vẫn còn "panel")
     allow: (k) => get(k) !== "off",
     open: open,
     close: close,

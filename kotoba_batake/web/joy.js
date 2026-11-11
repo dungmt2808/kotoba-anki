@@ -63,8 +63,9 @@ var GardenJoy = (function () {
   }
   function celebrate() {
     if (!joy || joy.day === null || joy.day === undefined) { return; }
-    // đang ôn thẻ / đã tắt hiệu ứng: để dành, hiện khi về màn chính (bảng ôn đóng thì ui.js báo kb-ui-change)
-    if (!on() || (typeof GardenUI !== "undefined" && GardenUI.mode && GardenUI.mode() === "review")) { return; }
+    // đang ôn thẻ / đang mở Trò chơi, Báo… (1.25.8: xong nhiệm vụ thứ ba trong trò chơi thì dải chúc mừng nấp sau bảng)
+    // / đã tắt hiệu ứng: để dành, hiện khi về màn chính (đóng bảng thì ui.js báo kb-ui-change)
+    if (!on() || (typeof GardenUI !== "undefined" && GardenUI.mode && GardenUI.mode() !== "main")) { return; }
     const list = badges(joy).filter((b) => b[3] && b[4] && !seen(joy.day, b[3]));
     if (!list.length) { return; }
     list.forEach((b) => mark(joy.day, b[3]));

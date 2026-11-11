@@ -122,6 +122,24 @@ Sau khi trả lời có hiện cách đọc, Hán Việt, nghĩa (và cách dùn
 - **Hiệu ứng thành tích** (`web/joy.js`, Python tính `data.joy` = `more_core.joy_view`): **xong hết thẻ hôm nay** trong deck đang xem (`deck_due_tree` = 0 và hôm nay đã ôn ≥ 1 lượt) → cầu vồng trên ruộng và trên trời sân, giọt sương lấp lánh; **đạt mục tiêu ngày**; **cả vườn xanh tốt / ra hoa / trĩu quả** (≥ 5 cây, không cây nào héo, mọi cây từ Cây non / Ra hoa / Ra quả) → lá lấp lánh / cánh hoa anh đào bay / đốm sáng vàng bay lên; **mốc chuỗi ngày** (7, 14, 21, 30, 50, 75, 100, 150, 200, 250, 300, 365, 500, 730, 1000) → pháo hoa trên trời sân; **xong 3 nhiệm vụ** → đèn trời bay lên. Huy hiệu cạnh chú thích ruộng; dải chúc mừng + linh vật chúc mỗi thành tích **một lần mỗi ngày** (nhớ ở `localStorage kb-joy-<ngày>-<loại>`), đang ôn thẻ thì để dành tới khi đóng bảng ôn.
 - **Lưu trữ**: khoá collection mới `kotoba_batake_more` (`more_core.MORE_KEY`) — mục 4. Bản ≤ 1.13 ở máy khác không đọc khoá này nên không xoá được gì.
 
+### Mới ở 1.25.8: một truyện cho cả báo Claude Code lẫn Gemini
+- Có thư mục kotoba_daily (báo Claude Code) mà hôm nào Gemini viết báo trên cùng máy đó (đổi nguồn sang Gemini, báo tiếng Anh viết trước): Gemini **viết tiếp đúng truyện của Claude** — đọc các kỳ trong `bao/` (bản dịch tiếng Việt) và "Đã xảy ra" của `truyen.md`. Claude đã viết hôm nay thì báo tiếng Anh kể lại đúng kỳ đó. Máy không thấy thư mục kotoba_daily thì không nối được (bộ nhớ truyện của Gemini nằm ở `user_files/`, không đồng bộ).
+- Ngược lại add-on ghi các kỳ Gemini viết vào `kotoba_daily/truyen_chung.json`; bộ kotoba_daily 2.4 (`tools/pham_vi.py` + `prompts/bao_hang_ngay.md` mới) cho Claude viết nối tiếp, hoặc kể lại kỳ hôm nay Gemini đã viết. Chép `tools/`, `prompts/`, `HUONG_DAN.md` mới vào thư mục kotoba_daily của bạn.
+- Trò chơi: bấm **Câu tiếp** (Điền vào câu, Nghe tìm cây, Chợ sáng) thì câu / từ đang đọc dừng ngay. Xong nhiệm vụ thứ ba trong trò chơi / báo thì huy hiệu **Xong 3 nhiệm vụ** + đèn trời hiện liền (dải chúc mừng hiện khi đóng bảng).
+
+### Mới ở 1.25.7: Góp ý hình
+- Thấy hình có sẵn bị lỗi (thiếu viền, lệch màu…)? Thẻ đồ / thú nuôi / giống cây / khách **bạn đã có** trong bảng Nhà có nút **Góp ý hình** → vẽ lại → **Lưu file góp ý** (`gop_y_<nhóm>_<id>.json`) → gửi file cho người làm add-on. Vườn của bạn không đổi; bản sửa được duyệt sẽ có ở bản sau cho mọi người.
+- Người làm add-on: tạo file trống `user_files/admin` trong thư mục add-on (Tools → Add-ons → View Files) → nút **Sửa hình** như dưới, **Nhập file** góp ý để xem, **Xuất file** để ra bản mới. Config `admin` của 1.25.5 không còn dùng; không có file admin thì chỉ áp `mau_sua.json` đi kèm gói (bản sửa trong `user_files/` bị bỏ qua).
+
+### Mới ở 1.25.5: admin sửa hình gốc rồi ra bản mới
+- Có file `user_files/admin` (1.25.7; 1.25.5 là config `"admin": true`) → thẻ đồ / thú nuôi / giống cây / khách trong bảng Nhà có nút **Sửa hình** → Xưởng "Hình gốc": đúng cỡ hình gốc, bảng màu của nhóm, mỗi khung một nút (phím 1–9). **Lưu** → `user_files/mau_sua.json`, hình đổi ngay. **Về gốc** (bấm Lưu để lưu), **Xuất file** (mọi bản sửa → `mau_sua.json`), **Nhập file** (file người khác gửi, gộp vào).
+- **Ra bản mới**: chép file đã xuất vào `kotoba_batake/mau_sua.json`, `python3 tests/tools/pack.py`, đăng gói → mọi người cập nhật là thấy (không cần file admin). Trang gộp file đi kèm gói + bản của máy (máy thắng từng khung).
+- Khoá `"<nhóm>:<id>"` (`do` đồ, `thu` thú, `giong` giống cây, `khach` khách), khung: đồ `spr` / `f<i>` (khung động) / `base` (phần tĩnh); thú `walk0 walk1 sit sleep`; giống `0`–`4`; khách theo tên khung. `mau_core.py` kiểm cấu trúc; `web/fix.js` (`GardenFix`) chỉ áp khi cùng cỡ với hình gốc và mọi màu có trong bảng màu. Chưa sửa được: vài khung động riêng của món hiếm / nội thất (hươu cúi chào, kappa chớp mắt, tủ lạnh mở, giường).
+
+### Sửa ở 1.25.4: cỡ cảnh Lớn ×5, bỏ bụi cây vuông cạnh nhà
+- **Cỡ cảnh Lớn** không phóng điểm ảnh tới ×7 nữa: điểm ảnh bằng 5/7 cỡ cũ (×5 ở 1850 × 1000), dải vẫn cao như trước, phần thêm là **trời phía trên cảnh** (`drawOutdoor(…, {padTop})`, cả vùng có sẵn / vùng tự tạo qua `skyPad`); mưa / tuyết / ban đêm / dây trang trí phủ cả phần đó. `mainView.oy` = số hàng trời thêm (bấm vào thú / khách / đồ trừ đi).
+- Dải **Trong nhà**: bỏ bụi cây vuông sát tường hai bên nhà (giữ hoa nhỏ). Đèn lồng giấy nối liền cán.
+
 ### Sửa ở 1.25.3: cài đặt không mất khi tắt Anki, trời cỡ Lớn, Undo / Redo, dữ liệu sai kiểu
 - **Cài đặt riêng máy lưu ở config "prefs"** (`more_core.clean_prefs / merge_prefs`, `web/prefs.js` = `GardenPrefs`): Trời & giờ, Thời tiết, Nhạc nền, Âm lượng, tắt tiếng, cảnh màn chính, Đuổi quạ, loại note của trò chơi, Hiện bản dịch, đã nhắc cấu hình trường, dải chúc mừng hôm nay. Trước đây chỉ ở `localStorage` — webview của Anki 26.x dùng profile **không lưu** (`QWebEngineProfile()` không tên) và cổng máy chủ nội bộ đổi mỗi lần mở → tắt Anki là mất. Python chèn `window.__kbPrefs` vào `<head>` (trước mọi script), trang gom thay đổi 250 ms rồi gửi `prefs:set:{…}`; `localStorage` vẫn ghi song song (đọc trước nếu có).
 - **Cỡ cảnh Lớn, Trong nhà**: trời phía trên mái dùng cùng đường chân trời với hai bên (trước đây dải màu bị nén → khối chữ nhật sáng hơn), mưa / tuyết / chớp cả phía trên mái (`drawHouseScene`).
@@ -370,6 +388,7 @@ Nguyên tắc chính:
 | `web/garden.js` | ~1000 | `Garden`: render ruộng (canvas), chú giải, thẻ ghim, popover, bảng ôn và iframe, phím tắt, cài đặt âm thanh/trời, bố cục tự zoom, cầu nối |
 | `web/fx.js` | ~900 | `GardenFX`: linh vật StackChan (`paintFace`, đồ mặc, biểu cảm), chậu cây khi ôn, hạt (giọt nước, lấp lánh, xu, pháo giấy), bướm/đom đóm/mưa trên ruộng, âm thanh 8-bit |
 | `web/diag.js` | ~65 | `GardenDiag` (1.11, nạp đầu tiên): bắt lỗi JS của trang (`error`, `unhandledrejection`), gộp trùng, gửi `app:jserr`; `client()` = kích thước cửa sổ / màn hình / trình duyệt nhúng cho báo cáo |
+| `web/fix.js` | ~90 | `GardenFix` (1.25.5, nạp sau prefs.js): bản sửa hình gốc `window.__kbFix` — các file hình đăng ký nhóm (`register`), chỉ áp khi cùng cỡ + màu hợp lệ, giữ hình gốc |
 | `web/prefs.js` | ~60 | `GardenPrefs` (1.25.3, nạp ngay sau diag.js): cài đặt riêng máy — đọc `localStorage` rồi tới `window.__kbPrefs` (Python chèn vào `<head>` từ config `prefs`), ghi thì gom 250 ms gửi `prefs:set`. Không có Python (test node) thì như `localStorage` |
 | `web/sky.js` | ~195 | `GardenSky`: giờ (thật / game / cố định), thời tiết theo khung 3 giờ (nghiêng theo chủ đề mùa), màu trời, ánh sáng, mặt trời/trăng. Các module khác chỉ đọc `GardenSky.state()` |
 | `web/music.js` | ~320 | `GardenMusic`: nhạc chiptune 3 bản + 3 bản vườn theo mùa (Giáng sinh, Tết, Halloween), bộ lập lịch WebAudio |
@@ -454,6 +473,8 @@ Nguyên tắc chính:
 | `home:seed:buy:<id>` / `home:seed:rule:{where: deck\|kind\|tag, key, value}` | 1.14: giống cây (`value` "" = bỏ luật, "mix" = trộn); đổi luật thì `refresh()` |
 | `craft:zone:{id?, name, bg, ground, hills, px}` / `home:uzone:del:<id>` | 1.14: tạo / sửa / xoá vùng tự tạo (`px` = công trình 64×76 đã nén, "" = chưa vẽ) |
 | `ui:set:<json>` / `ui:preset:<full\|focus\|calm\|night>` | 1.14: lưu giao diện tự chỉnh → `Garden.uiSaved(ui)` |
+| `base:save:{key, frames}` · `base:reset:<key>` · `base:export` · `base:import` | 1.25.5 (chỉ khi có file `user_files/admin`): bản sửa hình gốc → `user_files/mau_sua.json` → `Garden.fixes({fixes, saved / reset})` |
+| `base:suggest:{key, frames}` | 1.25.7 (mọi người): Góp ý hình → hộp lưu file `gop_y_<nhóm>_<id>.json` (định dạng `mau_sua.json`), không đổi vườn → `Garden.baseSuggested({ok, file})` |
 | `prefs:set:{"kb-…": "giá trị" \| null}` | 1.25.3: cài đặt riêng máy (trời & giờ, nhạc…) gom trong 250 ms → config `prefs` (`more_core.merge_prefs`); không trả lời |
 | `cal:month:<yyyy-mm>` / `cal:year:<yyyy>` / `cal:day:<yyyy-mm-dd>` / `cal:book:<yyyy-mm\|yyyy\|>` | 1.20: dữ liệu Lịch hoa → `Garden.calView({kind: month\|year\|day\|book, …})` |
 | `cal:mood:{d, m}` / `cal:note:{d, t}` / `cal:draft:{d, lang, t}` | 1.20: lưu sticker / nhật ký / bản nháp luyện viết (Python làm sạch, chặn ngày tương lai, luyện viết chỉ hôm nay, bài đã gửi thì khoá) → `Garden.calSaved` |

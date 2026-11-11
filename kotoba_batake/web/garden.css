@@ -767,6 +767,8 @@ html, html body, body.nightMode {
 .kb-h-buy { margin-left: 0; padding: 3px 10px; font-size: 13px; background: #6be08a; }   /* 1.19.1: cùng cỡ với nút nhỏ bên cạnh */
 .kb-h-buy:disabled { background: #e0e0e8; color: #6b7088; cursor: not-allowed; }
 .kb-h-place { background: #ffd23f; }
+.kb-h-fix { background: #e7d4ff; }
+.kb-h-fix.is-fixed { background: #c77dff; }
 .kb-h-steps { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 2px; }
 .kb-h-step { font-size: 12px; padding: 0 5px; border: 1px solid #9aa0b5; color: #6b7088; background: #ffffff; }
 .kb-h-step.is-done { border-color: #2e8b3a; color: #1f7a3a; background: #c8f7d2; }

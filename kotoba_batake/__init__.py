@@ -38,6 +38,7 @@ from . import journal_core as journal
 from . import launcher
 from . import garden_core as core
 from . import more_core
+from . import mau_core as mau
 from . import paper_core as paper
 from . import share_core
 from . import story_core
@@ -234,6 +235,12 @@ def _save_claude_dich(date: str, dich: list[list[str] | None]) -> bool:
         json.dump({"bai": dich}, f, ensure_ascii=False)
     os.replace(tmp, os.path.join(DICH_DIR, date + ".json"))
     return True
+
+
+def _claude_story_dir(cfg: dict[str, Any]) -> str | None:
+    """1.25.8: thư mục kotoba_daily (báo Claude Code) để truyện chung nối với truyện của Claude — chỉ khi đã đặt bao_dir."""
+    base = paper.resolve_dir(cfg.get("bao_dir")) if _bao_dir_set(cfg) else None
+    return base if base and os.path.isdir(os.path.join(base, "bao")) else None
 
 
 def _source_lib(src: str) -> paper.Library | None:
@@ -943,6 +950,38 @@ def prefs_script() -> str:
     return f"<script>window.__kbPrefs = {data};</script>"
 
 
+# 1.25.5: bản sửa hình gốc (chế độ admin) — kèm gói cho mọi người + bản của máy người sửa (mau_core)
+MAU_BUNDLED = os.path.join(ADDON_DIR, "mau_sua.json")
+MAU_LOCAL = os.path.join(ADDON_DIR, "user_files", "mau_sua.json")
+# 1.25.7 (người dùng chọn "góp ý sửa hình"): chế độ admin bật bằng file user_files/admin trên máy người làm add-on
+# (không còn config "admin" — ai cũng tự bật được rồi vẽ lại đồ có sẵn miễn phí). Gói phát hành không có file này,
+# cập nhật add-on vẫn giữ. Người dùng thường chỉ có "Góp ý hình": vẽ thử rồi lưu file gửi đi, vườn của họ không đổi.
+ADMIN_FILE = os.path.join(ADDON_DIR, "user_files", "admin")
+
+
+def admin_on() -> bool:
+    return os.path.isfile(ADMIN_FILE)
+
+
+def fixes_merged() -> dict[str, Any]:
+    # 1.25.7: bản sửa của máy chỉ áp khi có file admin — chép file vào user_files/ không đổi được vườn;
+    # admin xoá file admin là thấy đúng như người dùng sẽ thấy (chỉ bản đi kèm gói)
+    if not admin_on():
+        return mau.read(MAU_BUNDLED)
+    return mau.merge(mau.read(MAU_BUNDLED), mau.read(MAU_LOCAL))
+
+
+def fix_script() -> str:
+    """<script> đặt window.__kbFix = bản sửa hình (trước khi các file hình chạy)."""
+    try:
+        data = fixes_merged()["sua"]
+    except Exception as err:
+        _warn("bản sửa hình", err)
+        data = {}
+    text = json.dumps(data, ensure_ascii=True).replace("<", "\\u003c").replace(">", "\\u003e")
+    return f"<script>window.__kbFix = {text};</script>"
+
+
 def save_prefs(raw: str) -> None:
     """Lệnh `prefs:set:{"kb-sky": "…", "kb-music": null…}` (trang gom các thay đổi rồi gửi một lần)."""
     try:
@@ -1330,6 +1369,10 @@ def ai_start(reason: str, dialog: Any = None, lang: str = "ja") -> bool:
                 _warn("truyện chung", "chép bộ nhớ truyện từ " + os.path.basename(src0))
         except OSError as err:
             _warn("truyện chung", err)
+        try:      # 1.25.8: báo Claude Code đã đăng kỳ nào sau kỳ cuối của truyện chung → chép sang (truyện nối tiếp)
+            opts["noi_claude"] = ai.import_claude_story(AI_DIR_SHARED, _claude_story_dir(cfg), date)
+        except Exception as err:      # noqa: BLE001 — số báo Claude hỏng không làm dừng báo Gemini
+            _warn("truyện chung (Claude Code)", err)
         st["tries"] = int(st.get("tries") or 0) + 1
         st["scope"] = ai.describe_scope(scope)
     else:
@@ -1338,6 +1381,7 @@ def ai_start(reason: str, dialog: Any = None, lang: str = "ja") -> bool:
     ai.save_status(base, st)
     client = ai.Gemini(key, exhausted=_shared_exhausted())
     voice = o["voice_en"] if en else o["voice"]
+    claude_story = _claude_story_dir(cfg)
 
     def progress(msg: str) -> None:
         mw.taskman.run_on_main(lambda: _ai_progress(msg))
@@ -1352,9 +1396,16 @@ def ai_start(reason: str, dialog: Any = None, lang: str = "ja") -> bool:
                     raise
                 master, mlog = None, [{"buoc": "ban_goc_loi", "ly_do": ("%s: %s" % (type(err).__name__, err))[:200]}]
             opts["master"] = master
+            if opts.get("noi_claude") and master:      # nhật ký viết báo (không phải nhật ký lỗi)
+                mlog = [{"buoc": "noi_claude", "so_ky": opts["noi_claude"]}] + (mlog or [{"buoc": "ban_goc_san", "ky": master.get("ky")}])
             opts["_master_log"] = mlog
         res: dict[str, Any] = {"ok": True, "audio_only": True} if has else \
             ai.Job(client, base, date, scope or {}, opts, progress).run()
+        if not has:
+            try:      # 1.25.8: kỳ Gemini vừa viết → kotoba_daily/truyen_chung.json (báo Claude Code viết nối tiếp)
+                ai.export_story_for_claude(AI_DIR_SHARED, claude_story)
+            except Exception as err:      # noqa: BLE001
+                res["export_err"] = str(err)[:200]
         if res.get("ok") and o["audio"] != "tat" and lang != "vi":      # 1.25.1: báo tiếng Việt không có giọng đọc
             try:
                 res["audio"] = ai.make_audio(client, base, date, o["audio"], voice, o["tts_model"], progress)
@@ -2041,13 +2092,14 @@ class GardenDialog(QDialog):
         except Exception:
             pass
         head += prefs_script()      # 1.25.3: cài đặt riêng máy (trời & giờ, nhạc…) — có trước khi sky.js / music.js chạy
+        head += fix_script()        # 1.25.5: bản sửa hình gốc
         self.web.stdHtml(
             _read_body(),
             head=head,
             default_css=False,
             css=[f"{WEB_BASE}/garden.css"],
             js=[
-                f"{WEB_BASE}/diag.js", f"{WEB_BASE}/prefs.js", f"{WEB_BASE}/icons.js", f"{WEB_BASE}/sky.js", f"{WEB_BASE}/season.js", f"{WEB_BASE}/fx.js", f"{WEB_BASE}/music.js",
+                f"{WEB_BASE}/diag.js", f"{WEB_BASE}/prefs.js", f"{WEB_BASE}/fix.js", f"{WEB_BASE}/icons.js", f"{WEB_BASE}/sky.js", f"{WEB_BASE}/season.js", f"{WEB_BASE}/fx.js", f"{WEB_BASE}/music.js",
                 f"{WEB_BASE}/games.js", f"{WEB_BASE}/fields.js", f"{WEB_BASE}/season_art.js", f"{WEB_BASE}/rare_art.js", f"{WEB_BASE}/nha_art.js", f"{WEB_BASE}/pets.js", f"{WEB_BASE}/guests.js",
                 f"{WEB_BASE}/home.js", f"{WEB_BASE}/craft.js", f"{WEB_BASE}/paper.js", f"{WEB_BASE}/seeds.js",
                 f"{WEB_BASE}/joy.js", f"{WEB_BASE}/ui.js", f"{WEB_BASE}/calendar.js", f"{WEB_BASE}/garden.js",
@@ -2084,6 +2136,7 @@ class GardenDialog(QDialog):
             except Exception as err:
                 _warn("giống cây", err)
             data["ui"] = more_core.clean_ui(cfg.get("ui"))
+            data["admin"] = admin_on()       # 1.25.5: "Sửa hình" (admin) · 1.25.7: người dùng thường "Góp ý hình"
             data["fx"] = {
                 "effects": bool(cfg["effects"]),
                 "sound": bool(cfg["sound"]),
@@ -2352,6 +2405,8 @@ class GardenDialog(QDialog):
             self._on_ui(cmd[len("ui:"):])
         elif cmd.startswith("prefs:set:"):
             save_prefs(cmd[len("prefs:set:"):])
+        elif cmd.startswith("base:"):
+            self._on_base(cmd[len("base:"):])
         elif cmd.startswith("cal:"):
             self._on_cal(cmd[len("cal:"):])
         elif cmd.startswith("guest:"):
@@ -3096,6 +3151,90 @@ class GardenDialog(QDialog):
             self._js("homeError", "Không đọc được mã này.")
 
     # -- 1.22: chụp ảnh vườn ------------------------------------------------------
+
+    # -- 1.25.5: admin sửa hình gốc -------------------------------------------
+
+    def _on_base(self, cmd: str) -> None:
+        action, _, arg = cmd.partition(":")
+        if action == "suggest":          # 1.25.7: ai cũng góp ý được — chỉ ghi ra file, không đổi hình trong vườn
+            self._suggest_fix(arg)
+            return
+        if not admin_on():
+            return
+        try:
+            if action == "save":
+                p = json.loads(arg)
+                store = mau.set_fix(mau.read(MAU_LOCAL), p.get("key"), p.get("frames"))
+                mau.write(MAU_LOCAL, store)
+                self._js("fixes", {"fixes": fixes_merged()["sua"], "saved": p.get("key")})
+            elif action == "reset":
+                mau.write(MAU_LOCAL, mau.remove(mau.read(MAU_LOCAL), arg))
+                merged = fixes_merged()["sua"]
+                self._js("fixes", {"fixes": merged, "reset": arg})
+                if arg in merged:
+                    self._js("toast", "Hình này còn bản sửa đi kèm gói.")
+            elif action == "export":
+                data = fixes_merged()
+                if not data["sua"]:
+                    self._js("toast", "Chưa có hình nào được sửa.")
+                    return
+                from aqt.utils import getSaveFile
+                path = os.environ.get("KB_TEST_FIX_OUT") or getSaveFile(self, "Xuất bản sửa hình", "kotoba_batake_mau", "JSON",
+                                                                         ".json", "mau_sua.json")
+                if path:
+                    mau.write(path, data)
+                    self._js("toast", "Đã xuất %d hình: %s" % (len(data["sua"]), os.path.basename(path)))
+            elif action == "import":
+                path = os.environ.get("KB_TEST_FIX_IN")
+                if path:
+                    self._import_fixes(path)
+                else:
+                    getFile(self, "Nhập bản sửa hình", self._import_fixes, filter="Bản sửa hình (*.json)", key="kotoba_batake_mau")
+        except (ValueError, mau.MauError) as err:
+            self._js("toast", str(err) if isinstance(err, mau.MauError) else "Không lưu được hình này.")
+        except OSError as err:
+            showWarning(f"Không ghi được file bản sửa hình:\n{err}", parent=self)
+
+    def _suggest_fix(self, arg: str) -> None:
+        try:
+            p = json.loads(arg)
+            data = mau.set_fix({}, p.get("key"), p.get("frames"))
+        except (ValueError, AttributeError, mau.MauError) as err:
+            self._js("toast", str(err) if isinstance(err, mau.MauError) else "Không lưu được góp ý này.")
+            self._js("baseSuggested", {"ok": False})
+            return
+        key = next(iter(data["sua"]))
+        name = "gop_y_" + re.sub(r"[^A-Za-z0-9_]", "_", key) + ".json"
+        from aqt.utils import getSaveFile
+        path = os.environ.get("KB_TEST_FIX_OUT") or getSaveFile(self, "Lưu file góp ý hình", "kotoba_batake_mau", "JSON", ".json", name)
+        if not path:
+            self._js("baseSuggested", {"ok": False})
+            return
+        try:
+            mau.write(path, data)
+        except OSError as err:
+            showWarning(f"Không ghi được file:\n{err}", parent=self)
+            self._js("baseSuggested", {"ok": False})
+            return
+        self._js("baseSuggested", {"ok": True, "file": os.path.basename(path)})
+
+    def _import_fixes(self, path: Any) -> None:
+        if isinstance(path, (list, tuple)):
+            path = path[0] if path else ""
+        if not path:
+            return
+        try:
+            with open(path, encoding="utf-8") as f:
+                data = mau.parse_upload(f.read(mau.MAX_FILE + 1))
+            mau.write(MAU_LOCAL, mau.merge(mau.read(MAU_LOCAL), data))
+        except mau.MauError as err:
+            self._js("toast", str(err))
+            return
+        except OSError as err:
+            showWarning(f"Không đọc được file:\n{err}", parent=self)
+            return
+        self._js("fixes", {"fixes": fixes_merged()["sua"]})
+        self._js("toast", "Đã nhập %d hình." % len(data["sua"]))
 
     def _save_photo(self, raw: str) -> None:
         """snap:save:{name, url} — JS đã vẽ ảnh (PNG data URL); hỏi chỗ lưu rồi ghi file."""

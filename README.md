@@ -162,11 +162,13 @@ Không dán khoá thì add-on **không gửi gì lên mạng**; vườn, trò ch
 
 ### Nâng cao: báo do Claude Code viết (tuỳ chọn)
 
-Cách này dành cho số ít người đã dùng [Claude Code](https://claude.com/claude-code) và muốn báo bám **đúng giáo trình** mình đang học (chương nào, ngữ pháp nào), kèm giọng đọc VOICEVOX. Mỗi sáng, Claude Code chạy theo lịch trên máy bạn, đọc phạm vi đã học rồi viết một số báo vào thư mục `kotoba_daily`. Add-on chỉ đọc thư mục đó.
+Cách này dành cho số ít người đã dùng [Claude Code](https://claude.com/claude-code) và muốn báo bám **đúng giáo trình** mình đang học (chương nào, ngữ pháp nào), kèm giọng đọc VOICEVOX. Mỗi sáng, Claude Code chạy theo lịch trên máy bạn, đọc phạm vi đã học rồi viết một số báo vào thư mục `kotoba_daily`. Add-on đọc thư mục đó (chỉ ghi tiến độ đọc `tien_do.json` và truyện chung `truyen_chung.json`).
 
 1. Chép thư mục [`kotoba_daily/`](kotoba_daily/) về máy và làm theo [`kotoba_daily/HUONG_DAN.md`](kotoba_daily/HUONG_DAN.md). Cần Claude Code, Python 3 và PDF giáo trình của bạn.
 2. Trong Anki: **Tools → Add-ons → ことば畑 → Config**, đặt `"bao_dir": "<đường dẫn tới kotoba_daily>"`.
 3. Mở lại vườn. Tab **Nguồn báo** có thêm thẻ **Claude Code** để chọn thư mục và đổi qua lại với Gemini.
+
+Từ bộ `kotoba_daily` 2.4 (add-on 1.25.8), báo Claude Code và báo Gemini **kể cùng một truyện**: hôm nào Gemini viết thay (bạn đổi nguồn sang Gemini) hay báo tiếng Anh viết trước, Gemini viết tiếp đúng kỳ Claude đã đăng; add-on ghi các kỳ đó vào `kotoba_daily/truyen_chung.json` để sáng hôm sau Claude viết nối tiếp. Cần add-on thấy thư mục `kotoba_daily` (`bao_dir` đặt sẵn) — máy khác không có thư mục này thì Gemini ở máy đó vẫn viết truyện riêng.
 
 Từ bộ `kotoba_daily` 2.3, số báo Claude Code viết cũng có **bản dịch tiếng Việt ẩn sẵn** từng đoạn như báo Gemini. Đang dùng bộ cũ thì chép đè `tools/`, `prompts/`, `vi_du/`, `HUONG_DAN.md` (giữ nguyên dữ liệu của bạn); số cũ thêm bản dịch bằng `prompts/them_ban_dich.md`.
 
@@ -200,6 +202,8 @@ Vào ⚙ để tắt hiệu ứng hoặc đổi giao diện từng chế độ (
 ## Báo lỗi và góp ý
 
 Vào **Tools → ことば畑 · Báo lỗi**, ghi vài dòng ở mục *Mô tả lỗi*, bấm **Chép**, rồi dán vào một [issue trên GitHub](https://github.com/dungmt2808/kotoba-anki/issues). Báo cáo có nhật ký lỗi và phiên bản Anki. Khoá Gemini và đường dẫn trên máy bạn được tự động che đi, và bạn sửa hay xoá bớt được trước khi gửi. Add-on không tự gửi gì lên mạng.
+
+Thấy hình có sẵn bị lỗi (thiếu một điểm viền, lệch màu…)? Mở **Nhà**, ở thẻ món bạn đã có bấm **Góp ý hình**, vẽ lại rồi **Lưu file góp ý**, đính kèm file đó vào issue. Vườn của bạn không đổi; bản sửa được nhận sẽ có ở bản cập nhật sau cho mọi người.
 
 ## Cho người phát triển
 

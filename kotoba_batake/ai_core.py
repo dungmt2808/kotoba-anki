@@ -2256,6 +2256,217 @@ def migrate_story(shared: str, sources: list[str]) -> str:
     return ""
 
 
+# ---------------------------------------------------------------------------
+# 1.25.8: truyện chung với báo Claude Code (bộ kotoba_daily). Người dùng hỏi "bình thường claude sẽ soạn báo cho mình,
+# nhưng hôm khác gemini soạn thì câu chuyện có đồng bộ không" — trước đây là hai truyện khác nhau (Claude nhớ ở
+# kotoba_daily/truyen.md, Gemini ở bao_chung/truyen.json). Nay:
+#   Claude → Gemini: trước khi Gemini viết, các kỳ Claude đã đăng (sau kỳ cuối của bộ nhớ chung) được chép vào bộ nhớ
+#     chung — nguyên văn = bản dịch tiếng Việt của số đó, tóm tắt + chỗ bỏ ngỏ từ "Đã xảy ra" của truyen.md; Claude đã
+#     viết hôm nay thì số đó thành bản gốc hôm nay (báo tiếng Anh / Việt kể lại đúng kỳ của Claude).
+#   Gemini → Claude: các kỳ Gemini viết ghi ra kotoba_daily/truyen_chung.json; tools/pham_vi.py đọc file này (kỳ tiếp
+#     theo, các kỳ đã đăng ở add-on, kỳ hôm nay đã có) và lời nhắc của Claude viết nối tiếp / kể lại.
+# ---------------------------------------------------------------------------
+
+CLAUDE_EXPORT = "truyen_chung.json"
+_KANA_ROMA = dict(zip(
+    "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをんがぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽ",
+    ["a", "i", "u", "e", "o", "ka", "ki", "ku", "ke", "ko", "sa", "shi", "su", "se", "so", "ta", "chi", "tsu", "te", "to",
+     "na", "ni", "nu", "ne", "no", "ha", "hi", "fu", "he", "ho", "ma", "mi", "mu", "me", "mo", "ya", "yu", "yo", "ra", "ri",
+     "ru", "re", "ro", "wa", "o", "n", "ga", "gi", "gu", "ge", "go", "za", "ji", "zu", "ze", "zo", "da", "ji", "zu", "de", "do",
+     "ba", "bi", "bu", "be", "bo", "pa", "pi", "pu", "pe", "po"]))
+_VI_PLACE = (("スタックちゃん", "StackChan"), ("リンさん", "Lin"), ("はなさん", "Hana"), ("女将さん", "bà chủ quán"),
+             ("村長（そんちょう）", "trưởng làng"), ("村長", "trưởng làng"), ("ことば屋", "Quán Kotoba"),
+             ("ことば村", "làng Kotoba"), ("ことば畑", "vườn Kotoba"))
+_KANA_NAME = re.compile(r"(?<![\u3041-\u30ff\u3400-\u9fff\uf900-\ufaff])([\u3041-\u3093\u30a1-\u30f3\u30fc]{1,6}?)(ちゃん|さん|くん)?(?![\u3041-\u30ff\u3400-\u9fff\uf900-\ufaff])")   # tên kana đứng riêng (không sát chữ Nhật khác)
+
+
+def _kana_romaji(word: str) -> str:
+    """Tên ngắn bằng kana → romaji (けん → ken, はな → hana, きょう → kyou). Có chữ lạ thì trả ""."""
+    word = "".join(chr(ord(c) - 0x60) if "\u30a1" <= c <= "\u30f3" else c for c in word)   # katakana → hiragana
+    out, double = "", False
+    for c in word:
+        if c in "ゃゅょ" and out.endswith("i"):
+            v = {"ゃ": "a", "ゅ": "u", "ょ": "o"}[c]
+            out = out[:-1] + v if out.endswith(("shi", "chi", "ji")) else out[:-1] + "y" + v
+            continue
+        if c == "っ":
+            double = True
+            continue
+        if c == "ー":
+            continue
+        r = _KANA_ROMA.get(c)
+        if r is None:
+            return ""
+        out += (r[0] if double else "") + r
+        double = False
+    return out
+
+
+def vi_names(text: str) -> str:
+    """Tóm tắt tiếng Việt của truyen.md (Claude viết lẫn tên tiếng Nhật: "bà はな", "ông けん") → tên Latin cho bản gốc."""
+    for a, b in _VI_PLACE:
+        text = text.replace(a, b)
+
+    def sub(m: re.Match[str]) -> str:
+        r = _kana_romaji(m.group(1))
+        if not r:
+            return m.group(0)
+        suffix = {"ちゃん": "-chan", "くん": "-kun"}.get(m.group(2) or "", "")
+        return r[:1].upper() + r[1:] + suffix
+
+    # chỉ tên ngắn đứng riêng (không đụng câu tiếng Nhật trong ngoặc 「」)
+    parts = re.split(r"(「[^」]*」)", text)
+    return "".join(p if p.startswith("「") else _KANA_NAME.sub(sub, p) for p in parts)
+
+
+def _claude_summaries(claude_dir: str) -> dict[int, dict[str, Any]]:
+    """Mục "Đã xảy ra" của kotoba_daily/truyen.md → {kỳ: {tom_tat, bo_ngo}} ("- Kỳ N (ngày): …" + các dòng sau nó)."""
+    try:
+        with open(os.path.join(claude_dir, "truyen.md"), encoding="utf-8") as f:
+            text = f.read(400_000)
+    except OSError:
+        return {}
+    m0 = re.search(r"^##\s*Đã xảy ra.*$", text, re.M)
+    out: dict[int, dict[str, Any]] = {}
+    cur: dict[str, Any] | None = None
+    for line in text[m0.end():].splitlines() if m0 else []:
+        if line.startswith("#"):
+            break
+        line = line.strip()
+        if not line.startswith("- "):
+            continue
+        m = re.match(r"-\s*Kỳ\s+(\d+)\s*(?:\([^)]*\))?\s*:?\s*(.*)", line)
+        if m:
+            cur = out.setdefault(int(m.group(1)), {"tom_tat": [], "bo_ngo": []})
+            body = m.group(2)
+        elif cur is not None:
+            body = line[2:]
+        else:
+            continue
+        for b in re.findall(r"\(\s*[Bb]ỏ ngỏ\s*:\s*([^)]*)\)", body):
+            cur["bo_ngo"].append(vi_names(b.strip())[:200])
+        body = re.sub(r"\s*\(\s*[Bb]ỏ ngỏ\s*:[^)]*\)\s*", " ", body).strip()
+        if body:
+            cur["tom_tat"].append(vi_names(body))
+    return {k: {"tom_tat": " ".join(v["tom_tat"])[:400], "bo_ngo": v["bo_ngo"][:4]} for k, v in out.items()}
+
+
+def _teaser(text: str, words: int = 8) -> str:
+    """Mấy chữ đầu của câu đầu (làm tiêu đề tiếng Việt cho bài của số Claude Code — tiêu đề gốc là tiếng Nhật)."""
+    t = re.sub(r"[\"“”「」]", "", text.strip())
+    first = re.split(r"(?<=[.!?…])\s", t, maxsplit=1)[0].strip(" .,!?…:;")
+    w = first.split()
+    return " ".join(w[:words]) + ("…" if len(w) > words else "")
+
+
+def claude_episodes(claude_dir: str, until: str) -> list[dict[str, Any]]:
+    """Các kỳ truyện trong số báo Claude Code (bao/<ngày>/bao.json, ngày ≤ until), cũ trước."""
+    bao = os.path.join(claude_dir, "bao")
+    try:
+        days = sorted(d for d in os.listdir(bao) if paper.DATE_RE.match(d) and d <= until)
+    except OSError:
+        return []
+    summ = _claude_summaries(claude_dir)
+    out: list[dict[str, Any]] = []
+    for d in days[-60:]:
+        try:
+            raw = paper._read_json(os.path.join(bao, d, "bao.json"))
+        except (OSError, ValueError, paper.PaperError):
+            continue
+        arts = [b for b in (raw.get("bai") if isinstance(raw, dict) else None) or [] if isinstance(b, dict)]
+        st = next((b for b in arts if b.get("loai") == "truyen" and isinstance(b.get("ky"), int)
+                   and not isinstance(b.get("ky"), bool) and b["ky"] >= 1), None)
+        if not st:
+            continue                              # số rút gọn: không có truyện
+        dich = [x for x in st.get("dich") or [] if isinstance(x, str) and x.strip()] if isinstance(st.get("dich"), list) else []
+        if dich and story_core.CJK_RE.search("".join(dich)):
+            dich = []
+        s = summ.get(st["ky"]) or {}
+        tom = s.get("tom_tat") or ""
+        if not tom:                               # kỳ chưa ghi vào truyen.md: câu tóm tắt "Truyện kỳ N: …" của số đó
+            m = re.search(r"Truyện kỳ \d+\s*:\s*(.+)$", str(raw.get("tom_tat") or ""))
+            tom = vi_names(m.group(1))[:400] if m else ""
+
+        def plain(b: dict[str, Any]) -> list[str]:
+            v = [x.strip() for x in b.get("dich") or [] if isinstance(x, str) and x.strip()] if isinstance(b.get("dich"), list) else []
+            return [] if story_core.CJK_RE.search("".join(v)) else v
+
+        # tin làng / thông báo của số đó (bản dịch; tiêu đề số Claude không dịch → lấy mấy chữ đầu của bài)
+        tin = [{"tieu_de": _teaser(plain(b)[0]), "noi_dung": " ".join(plain(b))[:600]}
+               for b in arts if b.get("loai") == "tin_lang" and plain(b)]
+        tb = next((b for b in arts if b.get("loai") in ("thong_bao", "cot") and plain(b)), None)
+        out.append({"ngay": d, "ky": st["ky"], "tieu_de": paper.surface(str(st.get("tieu_de") or ""))[:120],
+                    "tieu_de_vi": _teaser(dich[0]) if dich else "",
+                    "nguyen_van": dich[:6], "tom_tat": tom, "bo_ngo": s.get("bo_ngo") or [], "tin": tin[:3],
+                    "muc3": {"tieu_de": "Thông báo của làng Kotoba" if tb.get("loai") == "thong_bao" else "Góc nhỏ của làng",
+                             "doan": plain(tb)[:3]} if tb else None})
+    return out
+
+
+def import_claude_story(shared: str, claude_dir: str | None, until: str) -> int:
+    """Claude → Gemini: chép các kỳ của báo Claude Code đăng SAU kỳ cuối của bộ nhớ chung vào bộ nhớ chung. Trả số kỳ."""
+    if not claude_dir or not os.path.isdir(os.path.join(claude_dir, "bao")):
+        return 0
+    eps = claude_episodes(claude_dir, until)
+    if not eps:
+        return 0
+    path = os.path.join(shared, story_core.STORY_FILE)
+    raw = story_core._read(path, [])
+    raw = [x for x in raw if isinstance(x, dict)] if isinstance(raw, list) else []
+    mem = story_core.load_story(shared)
+    last_day = max([e["ngay"] for e in mem if e.get("ngay")] or [""])
+    last_ky = max([e["ky"] for e in mem] or [0])
+    new = [c for c in eps if c["ngay"] > last_day]
+    if not new:
+        return 0
+    for c in new:
+        ky = c["ky"] if c["ky"] > last_ky else last_ky + 1     # bộ nhớ chung trống → giữ đúng số kỳ của Claude
+        last_ky = ky
+        raw = [x for x in raw if x.get("ky") != ky]
+        raw.append({"ky": ky, "ngay": c["ngay"], "tieu_de": c["tieu_de"], "tom_tat": c["tom_tat"] or c["tieu_de"],
+                    "nguyen_van": c["nguyen_van"], "nhan_vat_moi": [], "bo_ngo": c["bo_ngo"], "da_giai": [],
+                    "nguon": "claude", "ky_claude": c["ky"]})
+        c["ky_moi"] = ky
+    ensure_dir(shared)
+    story_core._write(path, raw[-60:])
+    try:                       # mạch của đợt cũ là của truyện kia → lập mạch mới nối tiếp các kỳ vừa chép
+        os.remove(os.path.join(shared, story_core.ARC_FILE))
+    except OSError:
+        pass
+    for c in new[-3:]:         # bản gốc cho mấy ngày gần nhất (hôm nay: báo khác kể lại đúng kỳ này; tin làng nối tin)
+        if c["nguyen_van"] and not story_core.load_master(shared, c["ngay"]):
+            story_core.save_master(shared, c["ngay"], {
+                "ngay": c["ngay"], "ky": c["ky_moi"], "nguon": "claude",
+                "truyen": {"tieu_de": c["tieu_de_vi"] or c["tieu_de"], "doan": c["nguyen_van"], "ky_truoc": "",
+                           "nho": {"tom_tat": c["tom_tat"], "bo_ngo": c["bo_ngo"]}, "diem": {}, "lang": "vi"},
+                "tin": story_core.clean_news(c["tin"]), "muc3": story_core.clean_muc3(c["muc3"]), "thoi_tiet": "", "giong": ""})
+    return len(new)
+
+
+def export_story_for_claude(shared: str, claude_dir: str | None) -> bool:
+    """Gemini → Claude: các kỳ Gemini đã viết (không phải kỳ chép từ Claude) → kotoba_daily/truyen_chung.json."""
+    if not claude_dir or not os.path.isdir(claude_dir):
+        return False
+    target = os.path.join(claude_dir, CLAUDE_EXPORT)
+    eps = [e for e in story_core.load_story(shared) if e.get("nguon") != "claude" and e.get("ngay") and e.get("nguyen_van")][-10:]
+    if not eps and not os.path.isfile(target):
+        return False
+    news = story_core._read(os.path.join(shared, story_core.NEWS_FILE), [])
+    news = {h["ngay"]: h.get("tin") or [] for h in news if isinstance(h, dict) and isinstance(h.get("ngay"), str)} \
+        if isinstance(news, list) else {}
+    data = {"_ghi_chu": "Add-on ことば畑 ghi file này: các kỳ truyện Gemini viết trong add-on (những ngày không có báo "
+                        "Claude Code, hoặc báo tiếng Anh / tiếng Việt viết trước). tools/pham_vi.py đọc để truyện nối tiếp. "
+                        "Đừng sửa tay.",
+            "ky": [{"ky": e["ky"], "ngay": e["ngay"], "tieu_de": e.get("tieu_de", ""), "tom_tat": e.get("tom_tat", ""),
+                    "bo_ngo": e.get("bo_ngo", []), "doan": e["nguyen_van"], "tin": [x for x in news.get(e["ngay"], []) if isinstance(x, str)][:3]}
+                   for e in eps]}
+    old = story_core._read(target, None)
+    if old == data:
+        return False
+    story_core._write(target, data)
+    return True
+
+
 def tts_text(markup: str) -> str:
     """Chữ gửi cho giọng đọc: giữ chữ Hán (để đúng ngữ điệu) trừ số đếm / từ nhiều cách đọc thì dùng kana."""
     return paper.speech_text(markup)
@@ -3082,6 +3293,8 @@ def log_summary(log: dict[str, Any] | None) -> list[str]:
         elif b == "ban_goc":
             out.append("Truyện chung hôm nay: kỳ %s「%s」 + %s tin làng (%s)." % (s.get("ky", "?"), s.get("tieu_de", ""),
                                                                             s.get("tin", 0), s.get("model", "?")))
+        elif b == "noi_claude":         # 1.25.8
+            out.append("Nối %s kỳ của báo Claude Code vào truyện chung." % s.get("so_ky", "?"))
         elif b == "ban_goc_san":
             out.append("Dùng truyện chung đã viết hôm nay (kỳ %s)." % s.get("ky", "?"))
         elif b == "ban_goc_loi":

@@ -395,6 +395,14 @@ var GardenGuests = (function () {
     return ax >= b.x - 2 && ax <= b.x + b.w + 2 && ay >= b.y - 3 && ay <= b.y + b.h + 2 ? a.id : null;
   }
 
+  // 1.25.5: bản sửa hình gốc (fix.js)
+  if (typeof GardenFix !== "undefined") {
+    GardenFix.register("khach", {
+      frames: (id) => { const o = {}; Object.keys(SPR[id] || {}).forEach((f) => { if (Array.isArray(SPR[id][f])) { o[f] = SPR[id][f]; } }); return o; },
+      set: (id, f, r) => { if (SPR[id]) { SPR[id][f] = r; } },
+      pal: () => PAL
+    });
+  }
   return {
     init: function (helpers) { H = helpers; },
     place: place,
@@ -418,6 +426,6 @@ var GardenGuests = (function () {
       return true;
     },
     _vis: (scene) => vis[scene] || null,
-    _want: want, _told: told, _spr: SPR, _clear: function (scene) { if (scene) { delete vis[scene]; } else { Object.keys(vis).forEach((k) => delete vis[k]); } }
+    _want: want, _told: told, _spr: SPR, pal: PAL, _clear: function (scene) { if (scene) { delete vis[scene]; } else { Object.keys(vis).forEach((k) => delete vis[k]); } }
   };
 })();
