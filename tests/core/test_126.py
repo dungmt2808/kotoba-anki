@@ -149,14 +149,14 @@ ok(p["greet"] == "off" and p["trans"] == "off", "bấm kiểu có sẵn giữ Ch
 
 print("== nối dây")
 init = src("__init__.py")
-ok('f"{WEB_BASE}/greet.js", f"{WEB_BASE}/garden.js"' in init, "greet.js nạp ngay trước garden.js")
+ok('f"{WEB_BASE}/greet.js", f"{WEB_BASE}/tour.js", f"{WEB_BASE}/garden.js"' in init, "greet.js (+ tour.js 1.26.1) nạp ngay trước garden.js")
 ok("GREET_TEST_OFF = False" in init and "data[\"news\"], data[\"greet\"] = _news_and_greet(data, today, cfg)" in init, "Python gửi data.news / data.greet")
 zz = open(os.path.join(HERE, "..", "anki", "zz_kbtest", "__init__.py"), encoding="utf-8").read()
 ok("GREET_TEST_OFF = True" in zz, "add-on test tắt màn chào cho kịch bản cũ")
 body = src("web", "body.html")
 ok('id="kb-news-btn"' in body and 'id="kb-news-pop"' in body and 'id="kb-news-today"' in body and 'id="kb-news-soon"' in body, "nút + bảng Tin làng")
 hjs = src("web", "home.js")
-ok("GardenGreet.strip(ctx, cw, hgt, sw / SWITCH_MS, switchSnap, switchKind, switchDir)" in hjs and 'cur === "house" || next === "house" ? "curtain" : "sweep"' in hjs,
+ok("GardenGreet.strip(ctx, cw, hgt, sw / swMs, switchSnap, switchKind, switchDir)" in hjs and 'cur === "house" || next === "house" ? "curtain" : "sweep"' in hjs,
    "home.js: đổi cảnh ◂ ▸ → dải lá, Trong nhà → rèm")
 gjs = src("web", "garden.js")
 ok("GardenGreet.render(d)" in gjs and "GardenGreet.closeNews()" in gjs, "garden.js: vẽ Tin làng / màn chào, mở Nhiệm vụ thì đóng Tin làng")

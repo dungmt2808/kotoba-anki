@@ -1964,12 +1964,14 @@ button { cursor: pointer; }
   pointer-events: none; }
 .kb-greet-tap i { display: inline-block; width: 8px; height: 8px; margin: 0 3px; background: #1b1b2f; }
 .kb-greet-tap i.off { opacity: .25; }
-.kb-greet-out { animation: kb-greet-out .3s ease-in forwards; }
+.kb-greet-out { animation: kb-greet-out .45s ease-in forwards; }
 @keyframes kb-greet-out { to { opacity: 0; } }
 @media (max-height: 600px) { .kb-greet-hi { font-size: 30px; } .kb-greet-date { top: 14px; font-size: 18px; } .kb-greet-news { font-size: 14px; } }
 .kb-trans { position: fixed; inset: 0; z-index: 310; pointer-events: none; image-rendering: pixelated; }
-.kb-pop { animation: kb-pop .15s ease-out; }
-@keyframes kb-pop { from { transform: scale(.96); opacity: .4; } to { transform: none; opacity: 1; } }
+/* 1.26.1: tên riêng — 1.26.0 dùng lại tên kb-pop nên bong bóng linh vật / Combo / nút Nhiệm vụ mất kiểu nảy cũ */
+.kb-panel-in { animation: kb-panel-in .24s ease-out; }
+@keyframes kb-panel-in { from { transform: scale(.96); opacity: .4; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .kb-panel-in { animation: none; } }
 .kb-news-btn { background: #fffbe6; }
 .kb-today-list .kb-news-btn.kb-squeezed { display: none; }
 .kb-news-pop { width: 380px; }
@@ -1979,3 +1981,21 @@ button { cursor: pointer; }
 .kb-news-list li.is-soon { background: #eef4ff; }
 .kb-news-t { flex: 1; min-width: 0; }
 .kb-news-d { margin-left: auto; color: #6b6b80; font-size: 12px; white-space: nowrap; }
+
+/* 1.26.1: hướng dẫn 3 bước cho người mới (tour.js) — khung vàng quanh chỗ cần bấm, lớp mờ không chặn bấm */
+.kb-tour-frame { position: absolute; z-index: 290; pointer-events: none; border: 4px solid #ffd23f; outline: 3px solid #1b1b2f;
+  box-shadow: 0 0 0 9999px rgba(27, 27, 47, .38); animation: kb-tour-blink 1.2s steps(2) infinite; }
+@keyframes kb-tour-blink { 50% { border-color: #fff6c2; } }
+.kb-tour { position: absolute; z-index: 300; width: 320px; max-width: calc(100vw - 16px); box-sizing: border-box; padding: 10px 12px;
+  background: #fffbe6; border: 3px solid #1b1b2f; box-shadow: 5px 5px 0 #1b1b2f; color: #1b1b2f; font-size: 14px; line-height: 1.4; }
+.kb-tour:before { content: ""; position: absolute; top: -13px; left: var(--kb-tour-arrow, 40px); margin-left: -10px;
+  border: 10px solid transparent; border-top: 0; border-bottom: 10px solid #1b1b2f; }
+.kb-tour.kb-tour-up:before { top: auto; bottom: -13px; border-bottom: 0; border-top: 10px solid #1b1b2f; }
+.kb-tour-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; }
+.kb-tour-n { font-size: 12px; padding: 0 5px; background: #1b1b2f; color: #ffd23f; }
+.kb-tour-title { font-weight: 700; font-size: 16px; }
+.kb-tour-row { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+.kb-tour-dots { display: flex; gap: 4px; margin-right: auto; }
+.kb-tour-dots i { width: 8px; height: 8px; background: #1b1b2f; opacity: .25; }
+.kb-tour-dots i.on { opacity: 1; background: #e9a800; outline: 2px solid #1b1b2f; }
+@media (prefers-reduced-motion: reduce) { .kb-tour-frame { animation: none; } }

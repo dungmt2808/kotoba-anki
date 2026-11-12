@@ -137,6 +137,8 @@ Muốn có biểu tượng ngoài màn hình nền để vào thẳng vườn: *
 
 ## Bắt đầu trong 5 phút
 
+Lần đầu mở vườn có **hướng dẫn 3 bước** ngay trên màn hình (chọn deck → ôn → xem cây lớn); xem lại ở ⚙ → *Hướng dẫn 3 bước*.
+
 1. **Chọn deck** ở ô Deck trên cùng. Cây mọc theo note của deck đó.
 2. Nếu thẻ **Hôm nay** có dòng ⚠ **Cấu hình trường**, bấm vào để chỉ cho vườn biết trường nào là *Từ*, *Nghĩa*, *Câu ví dụ*… Vườn tự đoán sẵn, bạn chỉ cần kiểm lại rồi bấm Lưu.
 3. Bấm **Tưới ngay** để ôn các thẻ đến hạn và nhận xu.

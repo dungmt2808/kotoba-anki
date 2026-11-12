@@ -1059,6 +1059,9 @@ def run_fix(client: Any, models: list[str], goc: str, lang: str, level: str, hin
                 raise
             if e.kind == "quota" and e.daily:
                 continue
+            if e.kind == "model":       # 1.26.1: model Google còn liệt kê nhưng gọi thì 404 → bỏ qua vài ngày, thử model sau
+                client.mark_exhausted(name, getattr(ai, "MISSING_SKIP", 3 * 86400))
+                continue
             if tries >= 3:
                 break
     if all(client.is_exhausted(n) for n in order):

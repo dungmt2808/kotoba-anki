@@ -238,7 +238,7 @@ def check(raw: Any, scope: dict[str, Any], opts: dict[str, Any]) -> Any:
 STORY_SETUP = """Truyện dài kỳ "Quán trọ nhỏ ở làng Kotoba" (truyện chung của báo làng). Làng Kotoba là làng nhỏ yên bình
 cạnh khu vườn Kotoba, bốn mùa rõ rệt theo lịch thật.
 Nhân vật (giữ nhất quán): Lin (cô gái Việt Nam mới đến làm ở Quán Kotoba, ham học, câu cửa miệng "Để em ghi lại đã!"),
-bà Hana (bà chủ quán, điềm tĩnh, có một bí mật về quá khứ của quán), StackChan (robot nhỏ của khu vườn, xưng "tớ", hiểu
+chị Hana (chủ quán, khoảng 30 tuổi, điềm tĩnh, có một bí mật về quá khứ của quán), StackChan (robot nhỏ của khu vườn, xưng "tớ", hiểu
 câu nói theo nghĩa đen), ông trưởng làng (thích kể chuyện ngày xưa quá dài).
 Mỗi kỳ là một tình huống nhỏ trong làng hoặc ở quán, kết hơi bỏ ngỏ. Lời thoại để trong ngoặc kép, ghi rõ ai nói."""
 
@@ -275,7 +275,7 @@ def write_prompt(scope: dict[str, Any], opts: dict[str, Any], story: list[dict[s
                                            (" Thời tiết ở làng: %s." % opts["thoi_tiet"]) if opts.get("thoi_tiet") else "")]
     third_text = ("loai \"thong_bao\": Thông báo của làng — 2–3 mục, mỗi mục một đoạn ngắn bắt đầu bằng \"◆ \"; tiêu đề "
                   "\"Thông báo của làng\"." if third == "thong_bao" else
-                  "loai \"cot\": cột ngắn của một nhân vật (StackChan, bà Hana hoặc ông trưởng làng), 1–2 đoạn, giọng riêng "
+                  "loai \"cot\": cột ngắn của một nhân vật (StackChan, chị Hana hoặc ông trưởng làng), 1–2 đoạn, giọng riêng "
                   "của nhân vật; tiêu đề kiểu \"Góc của StackChan\".")
     qtext = ("cau_hoi: %d–%d câu trắc nghiệm tiếng Việt về nội dung CẢ SỐ (nên có 1 câu về truyện), mỗi câu đúng 3 lựa chọn "
              "ngắn, CHỈ MỘT đáp án đúng, \"dung\" là vị trí đáp án đúng tính từ 0 (đổi vị trí giữa các câu), \"giai_thich\" "
@@ -343,7 +343,7 @@ def review_prompt(raw: Any, scope: dict[str, Any], warnings: list[str]) -> str:
         "Bạn là biên tập viên, soát lại số báo tiếng Việt dưới đây trước khi in.\nKiểm tra kỹ:\n"
         "1. Tiếng Việt tự nhiên, đúng chính tả, có dấu.\n"
         "2. Mỗi câu hỏi có đúng MỘT đáp án đúng, đáp án đó có trong bài, \"dung\" chỉ đúng vị trí; giai_thich đúng.\n"
-        "3. Tiêu đề, tom_tat viết đúng với bài; nhân vật nhất quán (bà Hana là chủ quán, Lin là nhân viên mới).\n"
+        "3. Tiêu đề, tom_tat viết đúng với bài; nhân vật nhất quán (chị Hana là chủ quán, Lin là nhân viên mới).\n"
         "4. Số báo thường phải đủ 3 bài: tin_lang, truyen, rồi thong_bao hoặc cot.\n"
         "Ghi mỗi chỗ đã sửa vào van_de (cho = vị trí như bai[1].doan[0], loi = lỗi gì, sua = câu mới). Không có lỗi thì "
         "van_de rỗng. \"bao\" là toàn bộ số báo sau khi sửa (không có lỗi thì trả nguyên). Bài truyện (loai truyen) đã qua "

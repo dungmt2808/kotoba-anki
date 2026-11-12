@@ -1273,13 +1273,18 @@ def paper_sub_view() -> dict[str, Any]:
         return {"active": True, "left": 0, "plans": [], "coins": 0, "auto": True}
 
 
-def paper_sub_ensure(date: str) -> tuple[str, int]:
-    """Trước khi Gemini viết số mới. Báo Claude Code (bộ kotoba_daily của người dùng) không cần gói."""
+def paper_sub_ensure(date: str, commit: bool = True) -> tuple[str, int]:
+    """Gói báo cho số Gemini mới. Báo Claude Code (bộ kotoba_daily của người dùng) không cần gói.
+
+    1.26.1: ai_start chỉ xem (`commit=False`: hết hạn thì không viết); tặng thử / gia hạn (trừ xu) ở _ai_done khi số báo đã
+    viết xong — Gemini lỗi thì không mất xu, gói thử chưa bắt đầu."""
     try:
-        res, price = STATE.paper_sub_ensure(date)
+        res, price = STATE.paper_sub_ensure(date, commit)
     except Exception as err:
         _warn("gói báo", err)
         return "ok", 0
+    if not commit:
+        return res, price
     note = ""
     if res == "trial":
         note = "Tặng %d ngày đọc báo miễn phí. Sau đó: gói 1 tuần 100 xu, 1 tháng 300 xu." % more_core.PAPER_TRIAL_DAYS
@@ -1355,8 +1360,9 @@ def ai_start(reason: str, dialog: Any = None, lang: str = "ja") -> bool:
     odir = AI_DIR if lang != "ja" else AI_DIR_EN
     other = ai.load_status(odir) if os.path.isdir(odir) else {}
     if not has:
-        # 1.25.1: số mới cần gói báo (lần đầu tặng 7 ngày; hết hạn + Tự gia hạn + đủ xu thì tự gia hạn)
-        sub, price = paper_sub_ensure(date)
+        # 1.25.1: số mới cần gói báo (lần đầu tặng 7 ngày; hết hạn + Tự gia hạn + đủ xu thì tự gia hạn).
+        # 1.26.1: ở đây chỉ xem; tặng thử / trừ xu khi số báo đã viết xong (_ai_done)
+        sub, price = paper_sub_ensure(date, commit=False)
         if sub == "expired":
             _ai["why"] = "Gói báo đã hết hạn — gia hạn ở thẻ Gói báo (tab Nguồn báo)."
             st.update(sub_off=date)
@@ -1462,6 +1468,8 @@ def _ai_done(fut: Any, base: str, date: str, client: Any = None) -> None:
     except Exception as err:
         _warn("Gemini", err)
         res = {"ok": False, "error": "Lỗi không mong đợi (%s), xem Báo lỗi." % type(err).__name__}
+    if res.get("ok") and not res.get("audio_only") and ai.has_issue(base, date):
+        paper_sub_ensure(date)      # 1.26.1: số mới đã về → bây giờ mới tặng thử / gia hạn gói báo (trừ xu)
     st = ai.load_status(base)
     st["log_day"] = date if not res.get("audio_only") else st.get("log_day", date)
     if res.get("ok"):
@@ -1575,6 +1583,7 @@ def _daily_stats(col: Any = None) -> dict[str, int]:
 # 1.26: màn chào khi mở vườn. Add-on chỉ dùng để test (tests/anki/zz_kbtest) đặt True để các kịch bản cũ không bị màn chào
 # chặn; kịch bản của màn chào đặt lại False.
 GREET_TEST_OFF = False
+TOUR_TEST_OFF = False       # 1.26.1: add-on test (zz_kbtest) tắt hướng dẫn 3 bước cho kịch bản cũ
 _day_total: dict[str, Any] = {"key": None, "v": 0}
 
 
@@ -2191,7 +2200,7 @@ class GardenDialog(QDialog):
                 f"{WEB_BASE}/diag.js", f"{WEB_BASE}/prefs.js", f"{WEB_BASE}/fix.js", f"{WEB_BASE}/icons.js", f"{WEB_BASE}/sky.js", f"{WEB_BASE}/season.js", f"{WEB_BASE}/fx.js", f"{WEB_BASE}/music.js",
                 f"{WEB_BASE}/games.js", f"{WEB_BASE}/fields.js", f"{WEB_BASE}/season_art.js", f"{WEB_BASE}/rare_art.js", f"{WEB_BASE}/nha_art.js", f"{WEB_BASE}/pets.js", f"{WEB_BASE}/guests.js",
                 f"{WEB_BASE}/home.js", f"{WEB_BASE}/craft.js", f"{WEB_BASE}/paper.js", f"{WEB_BASE}/seeds.js",
-                f"{WEB_BASE}/joy.js", f"{WEB_BASE}/ui.js", f"{WEB_BASE}/calendar.js", f"{WEB_BASE}/greet.js", f"{WEB_BASE}/garden.js",
+                f"{WEB_BASE}/joy.js", f"{WEB_BASE}/ui.js", f"{WEB_BASE}/calendar.js", f"{WEB_BASE}/greet.js", f"{WEB_BASE}/tour.js", f"{WEB_BASE}/garden.js",
             ],
             context=self,
         )
@@ -2283,6 +2292,7 @@ class GardenDialog(QDialog):
             except Exception as err:
                 _warn("tin làng", err)
                 data["news"], data["greet"] = None, None
+            data["tour"] = not TOUR_TEST_OFF and event_core.is_new_player(data["wallet"])     # 1.26.1: hướng dẫn 3 bước
         except Exception as err:
             _warn("dựng khu vườn", err)
             showWarning(f"ことば畑: không dựng được khu vườn.\n\n{err!r}\n\nMenu Tools → ことば畑 · Báo lỗi để lấy thông tin gửi người làm ことば畑.",

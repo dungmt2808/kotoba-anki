@@ -15,10 +15,11 @@ TRUYỆN DÀI KỲ "Quán trọ nhỏ ở làng Kotoba" — làng nhỏ yên bì
 thật. Mỗi kỳ được in trong báo làng bằng tiếng Việt, tiếng Nhật và tiếng Anh (bản tiếng Nhật / tiếng Anh kể lại cho người
 mới học).
 Nhân vật (mỗi người một điều muốn, một điều sợ, một câu cửa miệng; giữ nhất quán qua mọi kỳ):
-- Lin: cô gái Việt Nam 22 tuổi mới đến làm ở quán trọ "Quán Kotoba". Muốn bà Hana tin tưởng giao quán một mình. Đang
+- Lin: cô gái Việt Nam 22 tuổi mới đến làm ở quán trọ "Quán Kotoba". Muốn chị Hana tin tưởng giao quán một mình. Đang
   học tiếng của làng, hay ghi chép vào cuốn sổ nhỏ, đôi khi nói nhầm một câu (lời chào, cách nói lịch sự) rồi tự sửa.
   Câu cửa miệng: "Để em ghi lại đã!"
-- Bà Hana: bà chủ quán, khoảng 30 tuổi, điềm tĩnh, nói năng lịch sự với khách, thân mật với Lin. Có một bí mật về quá
+- Chị Hana: chủ quán, khoảng 30 tuổi (Lin gọi là "chị Hana"; "bà" chỉ dành cho người già, vd. bà của chị Hana),
+  điềm tĩnh, nói năng lịch sự với khách, thân mật với Lin. Có một bí mật về quá
   khứ của quán, hé ra dần qua nhiều đợt.
 - StackChan: robot nhỏ của khu vườn, tò mò, nói câu ngắn, xưng "tớ", hay vẽ tranh pixel. Hiểu câu nói thường ngày theo
   nghĩa đen (gây cười).
@@ -53,10 +54,11 @@ TRUYỆN DÀI KỲ "Quán trọ nhỏ ở làng Kotoba" — làng nhỏ yên bì
 thật. Mỗi kỳ được in trong báo làng bằng tiếng Việt, tiếng Nhật và tiếng Anh (bản tiếng Nhật / tiếng Anh kể lại cho người
 mới học).
 Nhân vật (mỗi người một điều muốn, một điều sợ, một câu cửa miệng; giữ nhất quán qua mọi kỳ):
-- Lin: cô gái Việt Nam 22 tuổi mới đến làm ở quán trọ "Quán Kotoba". Muốn bà Hana tin tưởng giao quán một mình. Đang
+- Lin: cô gái Việt Nam 22 tuổi mới đến làm ở quán trọ "Quán Kotoba". Muốn chị Hana tin tưởng giao quán một mình. Đang
   học tiếng của làng, hay ghi chép vào cuốn sổ nhỏ, đôi khi nói nhầm một câu (lời chào, cách nói lịch sự) rồi tự sửa.
   Câu cửa miệng: "Để em ghi lại đã!"
-- Bà Hana: bà chủ quán, khoảng 30 tuổi, điềm tĩnh, nói năng lịch sự với khách, thân mật với Lin. Có một bí mật về quá
+- Chị Hana: chủ quán, khoảng 30 tuổi (Lin gọi là "chị Hana"; "bà" chỉ dành cho người già, vd. bà của chị Hana),
+  điềm tĩnh, nói năng lịch sự với khách, thân mật với Lin. Có một bí mật về quá
   khứ của quán, hé ra dần qua nhiều đợt.
 - StackChan: robot nhỏ của khu vườn, tò mò, nói câu ngắn, xưng "tớ", hay vẽ tranh pixel. Hiểu câu nói thường ngày theo
   nghĩa đen (gây cười).
@@ -106,9 +108,9 @@ CÁCH VIẾT MỘT KỲ HAY (bắt buộc):
 10. Độ dài: 3 đoạn, mỗi đoạn 60–140 chữ (truyện là một bài trong số báo).
 
 VÍ DỤ MỘT KỲ HAY (chỉ xem cách kể: hiểu lầm thành chuyện, có vật lạ, móc câu; KHÔNG chép nội dung):
-"Bà Hana ơi, khách phòng số ba muốn ăn sáng bằng... một tấm bản đồ!" Lin chạy vào bếp, tay vẫn cầm cuốn sổ nhỏ. Bà Hana đặt ấm trà xuống. "Bản đồ à?" StackChan lập tức chui vào tủ, lôi ra một chiếc đĩa. "Tớ có đĩa. Bản đồ thì chưa nấu bao giờ."
+"Chị Hana ơi, khách phòng số ba muốn ăn sáng bằng... một tấm bản đồ!" Lin chạy vào bếp, tay vẫn cầm cuốn sổ nhỏ. Chị Hana đặt ấm trà xuống. "Bản đồ à?" StackChan lập tức chui vào tủ, lôi ra một chiếc đĩa. "Tớ có đĩa. Bản đồ thì chưa nấu bao giờ."
 Ông khách già trải lên bàn một tấm bản đồ cũ, mép giấy đã ngả vàng. Ở góc dưới có một vòng tròn đỏ, ngay chỗ khu vườn Kotoba bây giờ. "Ngày xưa, ở đây có một cái giếng," ông nói khẽ. "Tôi đã hứa sẽ quay lại."
-Bà Hana nhìn vòng tròn đỏ rất lâu mà không nói gì. Lin định hỏi thì ngoài sân vang lên tiếng nước chảy róc rách — ở đúng chỗ chưa từng có cái giếng nào.
+Chị Hana nhìn vòng tròn đỏ rất lâu mà không nói gì. Lin định hỏi thì ngoài sân vang lên tiếng nước chảy róc rách — ở đúng chỗ chưa từng có cái giếng nào.
 
 TIN LÀNG HÔM NAY (in cùng số báo với kỳ truyện): 2–3 tin vặt có thật trong đời sống làng (chợ phiên, mùa màng, thời tiết, khách lạ, chuẩn bị lễ hội…), mỗi tin 2–3 câu, có thể nhắc nhẹ tới nhân vật nhưng KHÔNG kể lại truyện. Có tin NỐI TIẾP tin mấy hôm trước khi hợp (vd. hôm qua báo sắp có chợ phiên → hôm nay kể chợ phiên ra sao); không lặp lại nguyên tin cũ.
 TIN MẤY SỐ TRƯỚC:
@@ -139,10 +141,11 @@ TRUYỆN DÀI KỲ "Quán trọ nhỏ ở làng Kotoba" — làng nhỏ yên bì
 thật. Mỗi kỳ được in trong báo làng bằng tiếng Việt, tiếng Nhật và tiếng Anh (bản tiếng Nhật / tiếng Anh kể lại cho người
 mới học).
 Nhân vật (mỗi người một điều muốn, một điều sợ, một câu cửa miệng; giữ nhất quán qua mọi kỳ):
-- Lin: cô gái Việt Nam 22 tuổi mới đến làm ở quán trọ "Quán Kotoba". Muốn bà Hana tin tưởng giao quán một mình. Đang
+- Lin: cô gái Việt Nam 22 tuổi mới đến làm ở quán trọ "Quán Kotoba". Muốn chị Hana tin tưởng giao quán một mình. Đang
   học tiếng của làng, hay ghi chép vào cuốn sổ nhỏ, đôi khi nói nhầm một câu (lời chào, cách nói lịch sự) rồi tự sửa.
   Câu cửa miệng: "Để em ghi lại đã!"
-- Bà Hana: bà chủ quán, khoảng 30 tuổi, điềm tĩnh, nói năng lịch sự với khách, thân mật với Lin. Có một bí mật về quá
+- Chị Hana: chủ quán, khoảng 30 tuổi (Lin gọi là "chị Hana"; "bà" chỉ dành cho người già, vd. bà của chị Hana),
+  điềm tĩnh, nói năng lịch sự với khách, thân mật với Lin. Có một bí mật về quá
   khứ của quán, hé ra dần qua nhiều đợt.
 - StackChan: robot nhỏ của khu vườn, tò mò, nói câu ngắn, xưng "tớ", hay vẽ tranh pixel. Hiểu câu nói thường ngày theo
   nghĩa đen (gây cười).
@@ -176,7 +179,7 @@ Viết lại cho hợp trình độ: câu ngắn, tự nhiên như sách đọc 
 
 TÊN GỌI (dùng đúng):
 - Lin → リンさん
-- bà Hana (chủ quán, khoảng 30 tuổi) → はなさん（女将さん; không gọi おばあさん）
+- chị Hana (chủ quán, khoảng 30 tuổi) → はなさん（女将さん; không gọi おばあさん）
 - StackChan → スタックちゃん
 - ông trưởng làng (không có tên riêng) → 村長さん
 - Quán Kotoba (quán trọ) → ことば屋（旅館）
@@ -492,7 +495,7 @@ Viết lại cho hợp trình độ: câu ngắn, tự nhiên như sách đọc 
 
 TÊN GỌI (dùng đúng):
 - Lin → Lin
-- bà Hana (chủ quán, khoảng 30 tuổi) → Hana (not "Grandma")
+- chị Hana (chủ quán, khoảng 30 tuổi) → Hana (not "Grandma")
 - StackChan → StackChan
 - ông trưởng làng (không có tên riêng) → the mayor
 - Quán Kotoba (quán trọ) → the Kotoba Inn
@@ -738,7 +741,7 @@ Bạn là biên tập viên, soát lại số báo tiếng Việt dưới đây 
 Kiểm tra kỹ:
 1. Tiếng Việt tự nhiên, đúng chính tả, có dấu.
 2. Mỗi câu hỏi có đúng MỘT đáp án đúng, đáp án đó có trong bài, "dung" chỉ đúng vị trí; giai_thich đúng.
-3. Tiêu đề, tom_tat viết đúng với bài; nhân vật nhất quán (bà Hana là chủ quán, Lin là nhân viên mới).
+3. Tiêu đề, tom_tat viết đúng với bài; nhân vật nhất quán (chị Hana là chủ quán, Lin là nhân viên mới).
 4. Số báo thường phải đủ 3 bài: tin_lang, truyen, rồi thong_bao hoặc cot.
 Ghi mỗi chỗ đã sửa vào van_de (cho = vị trí như bai[1].doan[0], loi = lỗi gì, sua = câu mới). Không có lỗi thì van_de rỗng. "bao" là toàn bộ số báo sau khi sửa (không có lỗi thì trả nguyên). Bài truyện (loai truyen) đã qua biên tập: chỉ sửa lỗi chính tả thật sự, không viết lại. chinh_ta, mau_cau, tu_moi để rỗng.
 

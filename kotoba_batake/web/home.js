@@ -3286,7 +3286,8 @@ var GardenHome = (function () {
   let mainSwitchAt = 0;
   // 1.26: chuyển cảnh — giữ hình cảnh cũ để dải lá / rèm quét qua (GardenGreet.strip)
   let switchSnap = null, switchKind = "sweep", switchDir = 1;
-  const SWITCH_MS = 350;
+  // 1.26.1: chậm hơn (1.26.0: 350 ms dải lá / rèm, 380 ms mờ dần — người dùng thấy nhanh quá)
+  const SWITCH_MS = { sweep: 600, curtain: 760 }, SWITCH_FADE_MS = 520;
   function cycleMain(step) {
     const list = outdoorList();
     if (list.length < 2) { return false; }
@@ -3366,12 +3367,13 @@ var GardenHome = (function () {
     }
     const sw = now - mainSwitchAt;
     const tmode = typeof GardenGreet !== "undefined" ? GardenGreet.mode() : "fade";
-    if (sw < SWITCH_MS && UIget("yard") === "full" && tmode === "full" && switchSnap) {
-      GardenGreet.strip(ctx, cw, hgt, sw / SWITCH_MS, switchSnap, switchKind, switchDir);     // 1.26: dải lá / rèm
-    } else if (sw < 380 && UIget("yard") === "full" && tmode !== "none") {          // chuyển cảnh: màn tối mờ dần
-      ctx.globalAlpha = 0.65 * (1 - sw / 380); ctx.fillStyle = "#1b1b2f"; ctx.fillRect(0, 0, cw, hgt); ctx.globalAlpha = 1;
+    const swMs = SWITCH_MS[switchKind] || SWITCH_MS.sweep;
+    if (sw < swMs && UIget("yard") === "full" && tmode === "full" && switchSnap) {
+      GardenGreet.strip(ctx, cw, hgt, sw / swMs, switchSnap, switchKind, switchDir);     // 1.26: dải lá / rèm
+    } else if (sw < SWITCH_FADE_MS && UIget("yard") === "full" && tmode !== "none") {          // chuyển cảnh: màn tối mờ dần
+      ctx.globalAlpha = 0.65 * (1 - sw / SWITCH_FADE_MS); ctx.fillStyle = "#1b1b2f"; ctx.fillRect(0, 0, cw, hgt); ctx.globalAlpha = 1;
     }
-    if (switchSnap && sw >= SWITCH_MS) { switchSnap = null; }
+    if (switchSnap && sw >= swMs) { switchSnap = null; }
     if (frame % 15 === 0 || stillDirty) { syncYardNav(); }
     const chip = document.getElementById("kb-weather");
     const st = skyNow();
