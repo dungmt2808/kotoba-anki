@@ -44,7 +44,7 @@ var GardenUI = (function () {
     const sub = c && c[m || mode];
     return (sub && sub[k]) || DEF[k];
   }
-  const GLOB_DEF = { card: "normal", theme: "garden", scene: "normal", start: "last", deco: "on" };
+  const GLOB_DEF = { card: "normal", theme: "garden", scene: "normal", start: "last", deco: "on", greet: "on", trans: "on" };
   function glob(k) { const c = conf(); return (c && c[k]) || GLOB_DEF[k] || "garden"; }
 
   // thẻ đang ôn nằm trong iframe: bảng tối thì thêm lớp nightMode (như Anki) + màu nền dịu.
@@ -206,6 +206,8 @@ var GardenUI = (function () {
     radios("scene", "Cỡ cảnh", [["normal", "Vừa"], ["large", "Lớn (ruộng cây lùi xuống)"]]);
     radios("start", "Cảnh hiện", [["last", "Cảnh đang chọn"], ["yard", "Luôn về Sân vườn khi mở vườn"]]);
     radios("deco", "Dây trang trí", [["on", "Hiện"], ["off", "Ẩn"]]);     // 1.25
+    radios("greet", "Chào khi mở vườn", [["on", "Bật"], ["off", "Tắt"]]);     // 1.26
+    radios("trans", "Chuyển cảnh", [["on", "Bật"], ["off", "Tắt"]]);
     st.appendChild(g);
     st.appendChild(el("div", "kb-ui-h", "Bảng ôn thẻ"));
     g = el("div", "kb-ui-globals");

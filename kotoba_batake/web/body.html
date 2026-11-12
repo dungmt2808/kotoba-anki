@@ -281,6 +281,7 @@
         <div class="kb-today-list">
           <button type="button" id="kb-quest" class="kb-quest-btn" hidden title="Nhiệm vụ hôm nay (phím Q)">Nhiệm vụ 0/3 ▸</button>
           <button type="button" id="kb-paper-btn" class="kb-quest-btn kb-paper-btn" hidden title="Báo và chép chính tả (phím B)">Chép chính tả ▸</button>
+          <button type="button" id="kb-news-btn" class="kb-quest-btn kb-news-btn" hidden title="Tin làng: hôm nay và 7 ngày tới"></button>
           <button type="button" id="kb-care-btn" class="kb-quest-btn kb-care-btn" hidden title="Thú nuôi đang đói / nhà cần sửa — bấm để chăm"></button>
           <button type="button" id="kb-cal-write" class="kb-quest-btn kb-cal-write-btn" hidden title="Luyện viết: mở Lịch hoa ở ngày đó"></button>
           <button type="button" id="kb-cal-ask" class="kb-quest-btn kb-cal-ask" hidden title="Nhật ký một dòng + sticker tâm trạng (phím L)">Hôm nay thế nào? ▸</button>
@@ -303,6 +304,14 @@
     <ul id="kb-quest-list" class="kb-quest-list"></ul>
     <div id="kb-quest-chest" class="kb-quest-chest"></div>
     <div class="kb-quest-note">Nhiệm vụ đổi mỗi ngày (theo giờ qua ngày của Anki). Ôn ở màn ôn của Anki cũng được tính.</div>
+  </div>
+
+  <div id="kb-news-pop" class="kb-quest-pop kb-news-pop" hidden role="dialog" aria-label="Tin làng">
+    <div class="kb-quest-head"><span id="kb-news-date">Tin làng</span> <button type="button" id="kb-news-x" class="kb-pin-x" aria-label="Đóng">✕</button></div>
+    <div class="kb-news-sec">Hôm nay</div>
+    <ul id="kb-news-today" class="kb-news-list"></ul>
+    <div class="kb-news-sec">Sắp tới</div>
+    <ul id="kb-news-soon" class="kb-news-list"></ul>
   </div>
 
   <div class="kb-legend-row">

@@ -592,6 +592,7 @@ var Garden = (function () {
     var pop = $("kb-quest-pop"), btn = $("kb-quest");
     if (show === undefined) { show = pop.hidden; }
     if (!show) { pop.hidden = true; return; }
+    if (typeof GardenGreet !== "undefined") { GardenGreet.closeNews(); }
     drawQuests();
     pop.hidden = false;
     var anchor = $("kb-today") && $("kb-today").offsetParent ? $("kb-today") : btn;     // 1.15: mở dưới cả thẻ Hôm nay, không che các dòng khác
@@ -643,12 +644,16 @@ var Garden = (function () {
   function fitTodayList() {
     var list = document.querySelector("#kb-today .kb-today-list");
     if (!list || !list.clientHeight) { return; }
+    var nb = $("kb-news-btn");
+    if (nb) { nb.classList.remove("kb-squeezed"); }
     var tight = list.classList.contains("kb-today-tight");
     if (!tight && list.scrollHeight > list.clientHeight + 1) { list.classList.add("kb-today-tight"); }
     else if (tight) {
       list.classList.remove("kb-today-tight");
       if (list.scrollHeight > list.clientHeight + 1) { list.classList.add("kb-today-tight"); }
     }
+    // 1.26: xếp sát vẫn không vừa (sân thấp, nhiều dòng việc) → bớt dòng Tin làng trước (tin đã có ở màn chào)
+    if (nb && !nb.hidden && list.scrollHeight > list.clientHeight + 1) { nb.classList.add("kb-squeezed"); }
   }
 
   function onMove(ev) {
@@ -1165,6 +1170,7 @@ var Garden = (function () {
     if (typeof GardenMusic !== "undefined") { GardenMusic.config(d.fx); }
     if (typeof GardenJoy !== "undefined") { GardenJoy.render(d.joy); }
     syncSoundUi();
+    if (typeof GardenGreet !== "undefined") { GardenGreet.render(d); fitTodayList(); }      // 1.26: Tin làng, màn chào
   }
 
   // ---- 1.22.3: tìm deck theo tên (nút kính lúp cạnh ô Deck, phím /) ----
@@ -1582,6 +1588,7 @@ var Garden = (function () {
     flip: flip,
     reviewDone: reviewDone,
     toast: toast,
+    closeQuests: function () { toggleQuests(false); },     // 1.26: mở Tin làng thì đóng Nhiệm vụ
     key: key,
     fit: fitCard,
     frameReady: onFrameReady,

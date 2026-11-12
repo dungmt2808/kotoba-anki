@@ -13,6 +13,15 @@ def _play_tags(tags):
         LOG.append({"t": round(time.time(), 2), "tag": repr(t)})
 
 
+# 1.26: màn chào khi mở vườn che trang → các kịch bản cũ tắt nó; kịch bản của màn chào (e2e_126.js) đặt lại False
+try:
+    import sys as _sys
+    _kb = _sys.modules.get("kotoba_batake")
+    if _kb is not None:
+        _kb.GREET_TEST_OFF = True
+except Exception:
+    pass
+
 av_player.play_tags = _play_tags
 av_player.stop_and_clear_queue = lambda: LOG.append({"t": round(time.time(), 2), "tag": "STOP"})
 

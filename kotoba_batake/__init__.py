@@ -32,6 +32,7 @@ from . import ai_core as ai
 from . import ai_en
 from . import ai_vi
 from . import diag
+from . import event_core
 from . import fields_core
 from . import guest_core as guests
 from . import journal_core as journal
@@ -1571,6 +1572,51 @@ def _daily_stats(col: Any = None) -> dict[str, int]:
     return core.daily_stats(col or mw.col, STATE.frozen_days())
 
 
+# 1.26: màn chào khi mở vườn. Add-on chỉ dùng để test (tests/anki/zz_kbtest) đặt True để các kịch bản cũ không bị màn chào
+# chặn; kịch bản của màn chào đặt lại False.
+GREET_TEST_OFF = False
+_day_total: dict[str, Any] = {"key": None, "v": 0}
+
+
+def _news_and_greet(data: dict[str, Any], today: dict[str, Any], cfg: dict[str, Any]) -> tuple[dict[str, Any], Any]:
+    """1.26: Tin làng (Hôm nay / Sắp tới + dòng cho thẻ Hôm nay) và nội dung màn chào (None = không chào)."""
+    w = data["wallet"]
+    mv = w.get("more_view") or {}
+    day = today.get("day")
+    cday = cal_today()
+    home = w.get("home") or {}
+    reviewed = int(today.get("reviews") or 0) > 0
+    try:          # các ngày trước hôm nay: đếm một lần mỗi ngày Anki (quét cả revlog), hôm nay cộng riêng
+        key = (str(getattr(mw.col, "path", "")), day)
+        if _day_total.get("key") != key:
+            _day_total.update(key=key, v=core.review_day_total(mw.col, before_today=True))
+        total = int(_day_total["v"]) + (1 if reviewed else 0)
+    except Exception:
+        total = 0
+    ctx = {"today": cday, "day": day, "paper": data.get("paper") or {}, "streak": int(today.get("streak") or 0),
+           "reviewed_today": reviewed, "total_days": total, "freeze": (w.get("more") or {}).get("freeze") or {},
+           "pets": mv.get("pets") or [], "wear": mv.get("wear") or {}, "season": w.get("season") or {}, "home": home,
+           "scenes": _guest_scenes(w), "album": GUESTS.album(), "sub": (w.get("more") or {}).get("paper_sub") or {}}
+    nw = event_core.news(ctx)
+    greet = None
+    if not GREET_TEST_OFF and more_core.clean_ui(cfg.get("ui")).get("greet") != "off":
+        g = event_core.greeter(mv.get("pets") or [], day if isinstance(day, int) else cday.toordinal())
+        items: list[str] = []
+        theme_name = ""
+        try:
+            from . import season_core
+            theme = season_core.active_theme(w.get("season") or {}, cday)
+            if theme:
+                items = [k for k in season_core.theme_items(theme) if season_core.SEASON_ITEMS[k].get("scene") == "yard"][:4]
+                theme_name = next((t["name"] for t in season_core.THEMES if t["id"] == theme), "")
+        except Exception:
+            theme = None
+        greet = dict(g, day=day, date=nw["date"], news=nw["greet"], fest=event_core.festival(cday), theme=theme,
+                     items=items, theme_name=theme_name,
+                     freeze=any(x.get("id") == "freeze_used" for x in nw["today"]), reviews=int(today.get("reviews") or 0))
+    return nw, greet
+
+
 def _freeze_settle() -> list[str]:
     """1.25.9: hôm qua (hai hôm trước) chưa ôn mà còn vé giữ chuỗi → dùng vé. Trả về các ngày vừa dùng vé."""
     try:
@@ -2145,7 +2191,7 @@ class GardenDialog(QDialog):
                 f"{WEB_BASE}/diag.js", f"{WEB_BASE}/prefs.js", f"{WEB_BASE}/fix.js", f"{WEB_BASE}/icons.js", f"{WEB_BASE}/sky.js", f"{WEB_BASE}/season.js", f"{WEB_BASE}/fx.js", f"{WEB_BASE}/music.js",
                 f"{WEB_BASE}/games.js", f"{WEB_BASE}/fields.js", f"{WEB_BASE}/season_art.js", f"{WEB_BASE}/rare_art.js", f"{WEB_BASE}/nha_art.js", f"{WEB_BASE}/pets.js", f"{WEB_BASE}/guests.js",
                 f"{WEB_BASE}/home.js", f"{WEB_BASE}/craft.js", f"{WEB_BASE}/paper.js", f"{WEB_BASE}/seeds.js",
-                f"{WEB_BASE}/joy.js", f"{WEB_BASE}/ui.js", f"{WEB_BASE}/calendar.js", f"{WEB_BASE}/garden.js",
+                f"{WEB_BASE}/joy.js", f"{WEB_BASE}/ui.js", f"{WEB_BASE}/calendar.js", f"{WEB_BASE}/greet.js", f"{WEB_BASE}/garden.js",
             ],
             context=self,
         )
@@ -2232,6 +2278,11 @@ class GardenDialog(QDialog):
             except Exception as err:
                 _warn("hiệu ứng thành tích", err)
                 data["joy"] = None
+            try:      # 1.26: Tin làng + màn chào
+                data["news"], data["greet"] = _news_and_greet(data, today, cfg)
+            except Exception as err:
+                _warn("tin làng", err)
+                data["news"], data["greet"] = None, None
         except Exception as err:
             _warn("dựng khu vườn", err)
             showWarning(f"ことば畑: không dựng được khu vườn.\n\n{err!r}\n\nMenu Tools → ことば畑 · Báo lỗi để lấy thông tin gửi người làm ことば畑.",
