@@ -225,9 +225,11 @@ var GardenCal = (function () {
     lg.appendChild(el("span", "sp"));
     lg.appendChild(el("i", "kb-cal-dot kb-cal-dot-s"));
     lg.appendChild(el("span", null, "có nhật ký"));
-    if (v.days.some((d) => d.fz)) {
-      lg.appendChild(GardenIcons.el("snow"));
-      lg.appendChild(el("span", null, "dùng vé"));
+    if (v.days.some((d) => d.fz)) {          // bông tuyết + chữ xuống dòng cùng nhau
+      const fz = el("span", "kb-cal-lg-fz");
+      fz.appendChild(GardenIcons.el("snow"));
+      fz.appendChild(el("span", null, "dùng vé"));
+      lg.appendChild(fz);
     }
     L.appendChild(lg);
     if (v.freeze) { L.appendChild(freezeRow(v)); }

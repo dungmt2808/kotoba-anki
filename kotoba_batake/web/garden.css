@@ -1727,6 +1727,7 @@ button { cursor: pointer; }
 .kb-cal-freeze .kb-cal-freeze-t { flex: 1; min-width: 0; }
 .kb-cal-freeze .kb-cal-freeze-t b { color: #1b1b2f; }
 .kb-cal-freeze .kb-cal-freeze-buy { flex: none; }
+.kb-cal-lg-fz { display: inline-flex; align-items: center; white-space: nowrap; }
 .kb-cal-day .kb-cal-fz { position: absolute; right: 4px; top: 4px; margin: 0; }
 .kb-cal-right { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
 .kb-cal-card { background: #ffffff; border: 3px solid #1b1b2f; box-shadow: 3px 3px 0 #1b1b2f; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; font-size: 14px; min-width: 0; }

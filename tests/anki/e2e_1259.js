@@ -75,7 +75,7 @@ st.save(d)
 result = {"today": today.isoformat(), "yday": (today - datetime.timedelta(days=1)).isoformat(), "before": kb.core.daily_stats(col)["streak"]}`);
   ok(setup.before === 0, 'chưa dùng vé: chuỗi đứt (0 ngày) vì hôm qua chưa ôn');
   await py(KB + 'kb._dialog.refresh(); result = 1');
-  const shown = await waitFor('document.getElementById("kb-toast") && !document.getElementById("kb-toast").hidden && /vé giữ chuỗi/.test(document.getElementById("kb-toast").textContent)', 4000);
+  const shown = await waitFor('document.getElementById("kb-toast") && !document.getElementById("kb-toast").hidden && /vé giữ chuỗi/.test(document.getElementById("kb-toast").textContent)', 20000);   // khách ghé có thể hiện trước: chờ tới lượt
   const tmsg = await js('return document.getElementById("kb-toast").textContent;');
   ok(shown && /Hôm qua chưa ôn — đã dùng 1 vé giữ chuỗi, chuỗi 3 ngày vẫn còn/.test(tmsg), 'mở vườn → thông báo: "' + tmsg + '"');
   await page.shot(SHOTS + '/1259_01_dung_ve.png');
