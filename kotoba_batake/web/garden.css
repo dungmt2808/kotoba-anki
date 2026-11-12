@@ -1721,6 +1721,13 @@ button { cursor: pointer; }
 .kb-cal-legend { display: flex; align-items: center; gap: 6px; margin-top: 10px; font-size: 12px; color: #4a4a66; flex-wrap: wrap; }
 .kb-cal-legend .kb-cal-fl { width: 36px; height: 40px; }
 .kb-cal-legend .sp { flex: 1; }
+/* 1.25.9: vé giữ chuỗi */
+.kb-cal-freeze { display: flex; align-items: center; gap: 6px; margin-top: 8px; padding: 5px 8px; font-size: 12px; color: #4a4a66;
+  background: #eef6ff; border: 2px solid #1b1b2f; }
+.kb-cal-freeze .kb-cal-freeze-t { flex: 1; min-width: 0; }
+.kb-cal-freeze .kb-cal-freeze-t b { color: #1b1b2f; }
+.kb-cal-freeze .kb-cal-freeze-buy { flex: none; }
+.kb-cal-day .kb-cal-fz { position: absolute; right: 4px; top: 4px; margin: 0; }
 .kb-cal-right { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
 .kb-cal-card { background: #ffffff; border: 3px solid #1b1b2f; box-shadow: 3px 3px 0 #1b1b2f; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; font-size: 14px; min-width: 0; }
 .kb-cal-wait-load { color: #4a4a66; }

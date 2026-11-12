@@ -8,7 +8,7 @@
 - `example_field`, `example_audio_field`: câu ví dụ và audio câu ví dụ (Example/例文…, Example_Audio…), dùng cho game “Điền vào câu”. Câu ví dụ có thể viết furigana kiểu `漢字[かんじ]` hoặc ruby HTML.
 
 **Khu vườn**
-- `stage_days`: độ bền trí nhớ FSRS (ngày) để cây lên **Cây non**, **Ra hoa**, **Ra quả**. Mặc định `[3, 21, 90]`.
+- `stage_days`: độ bền trí nhớ FSRS (ngày) để cây lên **Cây non**, **Ra hoa**, **Ra quả**. Mặc định `[3, 21, 90]`. Ba số phải tăng dần; sai thì dùng mặc định.
 - `wilt_retrievability`: cây **héo** khi xác suất nhớ thấp hơn mức này. Mặc định `0.7`. Héo chỉ đổi màu cây; giọt nước và số trên nút Tưới ngay chỉ tính thẻ Anki cho ôn ngay (từ 1.18).
 - `max_plants`: số cây tối đa hiển thị trong một deck. Mặc định `400`; deck lớn hơn thì ưu tiên hiện cây đã học.
 

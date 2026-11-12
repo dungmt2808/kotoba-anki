@@ -56,6 +56,8 @@ STICKER_NAMES = {"vui": "Vui", "hao_hung": "Hào hứng", "thu_thai": "Thư thá
 DIARY_MAX = 200
 WRITE_LANGS = ("ja", "en")
 WRITE_MAX = {"ja": 60, "en": 30}
+# 1.25.9: trần ký tự khi lưu, sau khi đã cắt theo từ / ký tự (30 từ tiếng Anh dài có thể quá 400 ký tự)
+WRITE_CHARS = 1200
 WRITE_UNIT = {"ja": "ký tự", "en": "từ"}
 FIX_LIMIT = {"ja": 72, "en": 36}           # câu đã sửa: ≤ bài gốc + 20%
 ERR_PART = {"ja": 15, "en": 5}             # "chỗ sai → sửa" của một lỗi: chỉ trích đúng chỗ sai
@@ -195,18 +197,25 @@ def level(n: int, goal: int) -> int:
     return 4
 
 
-def streaks(days: set[str], today: _dt.date) -> tuple[int, int]:
-    """(chuỗi hiện tại, chuỗi dài nhất) trong tập ngày có ôn. Hôm nay chưa ôn thì chuỗi tính tới hôm qua."""
+def streaks(days: set[str], today: _dt.date, frozen: Any = ()) -> tuple[int, int]:
+    """(chuỗi hiện tại, chuỗi dài nhất) trong tập ngày có ôn. Hôm nay chưa ôn thì chuỗi tính tới hôm qua.
+    1.25.9: `frozen` = ngày đã dùng vé giữ chuỗi — nối chuỗi, không cộng."""
+    fz = {s for s in frozen if isinstance(s, str) and s < today.isoformat()} if frozen else set()
     cur = 0
     d = today if today.isoformat() in days else today - _dt.timedelta(days=1)
-    while d.isoformat() in days:
-        cur += 1
+    while d.isoformat() in days or d.isoformat() in fz:
+        cur += 1 if d.isoformat() in days else 0
         d -= _dt.timedelta(days=1)
     best = run = 0
     prev: _dt.date | None = None
-    for s in sorted(days):
-        x = _dt.date.fromisoformat(s)
-        run = run + 1 if prev is not None and (x - prev).days == 1 else 1
+    for s in sorted(set(days) | fz):
+        try:
+            x = _dt.date.fromisoformat(s)
+        except ValueError:
+            continue
+        if prev is None or (x - prev).days != 1:
+            run = 0
+        run += 1 if s in days else 0
         best = max(best, run)
         prev = x
     return cur, best
@@ -335,6 +344,17 @@ def clip_units(s: str, lang: str, limit: int) -> tuple[str, bool]:
     return "".join(out).rstrip(), True
 
 
+def clip_chars(s: str, limit: int) -> str:
+    """Cắt theo số ký tự nhưng không cắt giữa một từ có dấu cách (bỏ cả từ dở); chữ liền (tiếng Nhật) cắt thẳng."""
+    if len(s) <= limit:
+        return s
+    cut = s[:limit]
+    sp = cut.rfind(" ")
+    if sp > limit // 2 and not s[limit].isspace():
+        cut = cut[:sp]
+    return cut.rstrip()
+
+
 def _clean_err(raw: Any) -> dict[str, str] | None:
     if not isinstance(raw, dict):
         return None
@@ -351,8 +371,7 @@ def clean_writing(raw: Any) -> dict[str, Any] | None:
     if not isinstance(raw, dict):
         return None
     lang = raw.get("lang") if raw.get("lang") in WRITE_LANGS else "ja"
-    goc = clean_line(raw.get("goc"), 400)
-    goc, _ = clip_units(goc, lang, WRITE_MAX[lang])
+    goc = clip_chars(clip_units(clean_line(raw.get("goc"), 4000), lang, WRITE_MAX[lang])[0], WRITE_CHARS)
     st = raw.get("st") if raw.get("st") in WRITE_STATES else ""
     w: dict[str, Any] = {"lang": lang, "goc": goc, "st": st}
     hints = raw.get("goi_y")
@@ -364,10 +383,11 @@ def clean_writing(raw: Any) -> dict[str, Any] | None:
         if isinstance(raw.get(k), (int, float)) and raw[k] > 0:
             w[k] = float(raw[k])
     if st == "done":
-        w["sua"] = clean_line(raw.get("sua"), 400)
+        w["sua"] = clip_chars(clean_line(raw.get("sua"), 4000), WRITE_CHARS)
         w["loi"] = [e for e in (_clean_err(x) for x in (raw.get("loi") if isinstance(raw.get("loi"), list) else [])[:MAX_ERRORS]) if e]
-        for k, lim in (("con_lai", MORE_MAX + 20), ("tu_nhien", 400), ("nhan_xet", NOTE_MAX + 40), ("model", 80)):
+        for k, lim in (("con_lai", MORE_MAX + 20), ("nhan_xet", NOTE_MAX + 40), ("model", 80)):
             w[k] = clean_line(raw.get(k), lim)
+        w["tu_nhien"] = clip_chars(clean_line(raw.get("tu_nhien"), 4000), WRITE_CHARS)
         w["seen"] = bool(raw.get("seen"))
     if st in ("", "queue") and clean_line(raw.get("err"), 160):
         w["err"] = clean_line(raw.get("err"), 160)
@@ -545,7 +565,7 @@ def month_view(y: int, m: int, today: _dt.date, counts: dict[str, dict[str, int]
 
 
 def year_view(y: int, today: _dt.date, counts: dict[str, dict[str, int]], entries: dict[str, dict[str, Any]],
-              goal: int, first: _dt.date | None, streak: int = 0) -> dict[str, Any]:
+              goal: int, first: _dt.date | None, streak: int = 0, frozen: Any = ()) -> dict[str, Any]:
     spans = theme_spans(y, y)
     months = []
     for m in range(1, 13):
@@ -572,7 +592,7 @@ def year_view(y: int, today: _dt.date, counts: dict[str, dict[str, int]], entrie
         if ds.startswith("%04d-" % y) and e.get("m"):
             moods[e["m"]] = moods.get(e["m"], 0) + 1
     top = max(moods.items(), key=lambda kv: (kv[1], -STICKERS.index(kv[0]))) if moods else None
-    _cur, best = streaks({k for k in ys if counts[k]["n"] > 0}, today)
+    _cur, best = streaks({k for k in ys if counts[k]["n"] > 0}, today, [s for s in frozen if str(s).startswith("%04d-" % y)])
     lo = first.year if first else today.year
     for ds in entries:
         d = parse_date(ds)

@@ -76,6 +76,8 @@ Nút **Chụp ảnh** lưu khu vườn thành ảnh, có cỡ hình nền 1920 �
 
 Mỗi ngày bạn ôn là một chậu hoa trên lịch, loài hoa đổi theo giao diện mùa. Ngày ôn càng nhiều, hoa càng lớn. Bấm vào một ngày để viết **nhật ký một dòng** (tối đa 200 ký tự) và chọn **sticker tâm trạng**. Nhật ký đồng bộ qua AnkiWeb và không gửi cho Gemini.
 
+Sợ đứt chuỗi ngày ôn? Mua **vé giữ chuỗi** ngay trong Lịch hoa (150 xu một vé, giữ tối đa 2 vé). Hôm nào quên ôn, vườn tự dùng một vé và chuỗi không đứt. Ngày dùng vé có bông tuyết trên lịch. Vé chỉ giữ con số chuỗi, không đổi lịch ôn thẻ.
+
 Hết tháng, nhật ký tự đóng thành **một cuốn** trên kệ sách: ảnh vườn của tháng, số ngày ôn, ngày ôn nhiều nhất, tâm trạng cả tháng, từng dòng nhật ký. Cuốn nhật ký **xuất được ra PDF** khổ A5 để in hay giữ làm kỷ niệm. Có thêm ô **luyện viết** một hai câu tiếng Nhật hoặc tiếng Anh, Gemini sửa một lần mỗi ngày.
 
 | Lịch tháng + nhật ký | Cuốn nhật ký |
@@ -203,7 +205,7 @@ Vào ⚙ để tắt hiệu ứng hoặc đổi giao diện từng chế độ (
 
 Vào **Tools → ことば畑 · Báo lỗi**, ghi vài dòng ở mục *Mô tả lỗi*, bấm **Chép**, rồi dán vào một [issue trên GitHub](https://github.com/dungmt2808/kotoba-anki/issues). Báo cáo có nhật ký lỗi và phiên bản Anki. Khoá Gemini và đường dẫn trên máy bạn được tự động che đi, và bạn sửa hay xoá bớt được trước khi gửi. Add-on không tự gửi gì lên mạng.
 
-Thấy hình có sẵn bị lỗi (thiếu một điểm viền, lệch màu…)? Mở **Nhà**, ở thẻ món bạn đã có bấm **Góp ý hình**, vẽ lại rồi **Lưu file góp ý**, đính kèm file đó vào issue. Vườn của bạn không đổi; bản sửa được nhận sẽ có ở bản cập nhật sau cho mọi người.
+Thấy hình có sẵn bị lỗi (thiếu một điểm viền, lệch màu…)? Mở **Nhà**, ở thẻ món bạn đã có bấm **Góp ý hình**, vẽ lại (cả khung động như hươu cúi chào, tủ lạnh mở, đài phun nước đóng băng…) rồi **Lưu file góp ý**, đính kèm file đó vào issue. Vườn của bạn không đổi; bản sửa được nhận sẽ có ở bản cập nhật sau cho mọi người.
 
 ## Cho người phát triển
 

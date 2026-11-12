@@ -62,7 +62,7 @@ ok(m({"effects": "có lẽ"})["effects"] is True and m({"open_maximized": [1]})[
 print("== stage_days")
 ok(m({"stage_days": "3,21,90"})["stage_days"] == [3, 21, 90], '"3,21,90" → [3, 21, 90] (trước: so chuỗi với số → lỗi)')
 ok(m({"stage_days": [2.5, 21, 90]})["stage_days"] == [2.5, 21, 90], "số lẻ giữ nguyên")
-ok(m({"stage_days": [3]})["stage_days"] == [3], "ít hơn 3 số giữ nguyên (stage_of tự bù mặc định)")
+ok(m({"stage_days": [3]})["stage_days"] == [3, 21, 90], "ít hơn 3 số → bù mặc định (1.25.9: bù luôn khi đọc, như stage_of)")
 ok(m({"stage_days": [0, 21, 90]})["stage_days"] == [3, 21, 90], "số ≤ 0 → mặc định")
 ok(m({"stage_days": ["a", 2, 3]})["stage_days"] == [3, 21, 90], "chữ → mặc định")
 ok(m({"stage_days": 5})["stage_days"] == [3, 21, 90] and m({"stage_days": []})["stage_days"] == [3, 21, 90], "một số / rỗng → mặc định")

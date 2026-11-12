@@ -621,7 +621,8 @@ var Garden = (function () {
     tt.appendChild(sk);
     box.querySelector(".kb-today-main").title = "Số lượt ôn hôm nay (tính cả ôn ở màn ôn của Anki)" +
       (goal ? (t.claimed ? ". Đã nhận thưởng +" + t.bonus + " xu hôm nay." : ". Đạt " + goal + " lượt được thưởng +" + t.bonus + " xu.") : "") +
-      (t.streak ? " Chuỗi " + t.streak + " ngày ôn liên tiếp." : "");
+      (t.streak ? " Chuỗi " + t.streak + " ngày ôn liên tiếp." : "") +
+      (t.freeze ? " Vé giữ chuỗi: " + t.freeze.n + "/" + t.freeze.max + " (mua ở Lịch hoa)." : "");
     $("kb-today-fill").style.width = (goal ? Math.min(100, Math.round(t.reviews / goal * 100)) : 100) + "%";
     box.className = "kb-today" + (goal && t.reviews >= goal ? " kb-today-done" : "");
     fitToday();
@@ -1100,14 +1101,17 @@ var Garden = (function () {
   }
   // 1.20: hàng chờ thông báo. Thông báo quan trọng (bấm được hoặc hiện ≥ 5 giây, vd. "Báo mới…", "Gemini đã sửa
   // bài…") không bị câu sau thay mất: câu sau chờ tới lượt. Thông báo ngắn thường thì vẫn thay nhau như cũ.
-  var toastQ = [], toastCur = null;
+  // 1.25.9: toastPend = câu đã lấy khỏi hàng, đang chờ 250 ms để hiện — câu mới tới lúc này xếp sau nó (trước đây câu
+  // mới hiện luôn và xoá hẹn giờ của câu đang chờ → câu đó mất hẳn)
+  var toastQ = [], toastCur = null, toastPend = null;
   // onClick: bấm vào thông báo để làm luôn (vd. mở Cấu hình trường); ms: thời gian hiện
   function toast(msg, onClick, ms) {
     var item = { msg: String(msg || ""), onClick: onClick || null, ms: ms || 2600 };
     item.imp = !!onClick || item.ms >= 5000;
     var t = $("kb-toast");
-    if (toastCur && toastCur.imp && t && !t.hidden) {
-      if (toastCur.msg !== item.msg && !toastQ.some(function (x) { return x.msg === item.msg; }) && toastQ.length < 5) { toastQ.push(item); }
+    if (toastPend || (toastCur && toastCur.imp && t && !t.hidden)) {
+      var same = (toastCur && toastCur.msg === item.msg) || (toastPend && toastPend.msg === item.msg);
+      if (!same && !toastQ.some(function (x) { return x.msg === item.msg; }) && toastQ.length < 5) { toastQ.push(item); }
       return;
     }
     showToast(item);
@@ -1127,7 +1131,11 @@ var Garden = (function () {
     clearTimeout(toastTimer);
     if (t) { t.hidden = true; t.onclick = null; }
     toastCur = null;
-    if (toastQ.length) { var n = toastQ.shift(); toastTimer = setTimeout(function () { showToast(n); }, 250); }
+    toastPend = null;
+    if (toastQ.length) {
+      toastPend = toastQ.shift();
+      toastTimer = setTimeout(function () { var n = toastPend; toastPend = null; if (n) { showToast(n); } }, 250);
+    }
   }
 
   function render(d) {
@@ -1304,6 +1312,11 @@ var Garden = (function () {
         rate(Number(e.currentTarget.getAttribute("data-ease")));
       });
     }
+    // 1.25.9: phím bấm khi bộ gõ (IME tiếng Nhật / Telex…) đang chọn chữ là của bộ gõ — không tới phím tắt nào của vườn,
+    // kể cả Esc đóng bảng / đóng cửa sổ (Anki nghe Esc ở document). Nghe ở window, pha capture: chạy trước mọi bộ nghe.
+    window.addEventListener("keydown", function (e) {
+      if (e.isComposing || e.keyCode === 229) { e.stopPropagation(); }
+    }, true);
     document.addEventListener("keydown", key);
     document.addEventListener("keydown", mainKey);
     // 1.13: Esc đã được một bảng dùng (preventDefault) thì Python không đóng cửa sổ (xem GardenDialog._on_esc).
@@ -1515,7 +1528,18 @@ var Garden = (function () {
       if (typeof GardenPaper !== "undefined") { GardenPaper.aiProgress(p); }
     },
     // 1.20: Lịch hoa / nhật ký / luyện viết
-    calView: function (v) { if (cal()) { cal().view(v); } },
+    calView: function (v) {
+      if (v && v.freeze && data) {          // 1.25.9: mua vé giữ chuỗi ở Lịch hoa → số xu ở thanh trên
+        if (data.wallet && data.wallet.coins !== v.freeze.coins) {
+          data.wallet.coins = v.freeze.coins;
+          var chip = $("kb-coins");
+          chip.textContent = v.freeze.coins + " xu";
+          chip.classList.remove("kb-bump"); void chip.offsetWidth; chip.classList.add("kb-bump");
+        }
+        if (data.today) { data.today.freeze = v.freeze; }
+      }
+      if (cal()) { cal().view(v); }
+    },
     calSaved: function (r) { if (cal()) { cal().saved(r); } },
     calPdf: function (r) { if (cal()) { cal().pdf(r); } },
     calFix: function (r) {

@@ -8,6 +8,9 @@ var GardenFix = (function () {
   let fixes = {};
   const groups = {};   // nhóm → {frames(id) → {khung: hàng}, set(id, khung, hàng), pal(id)}
   const orig = {};     // khoá → {khung: hàng gốc} (lấy lúc áp bản sửa lần đầu)
+  // 1.25.9: khung thay thế của đồ (ALT ở home.js / rare_art.js / nha_art.js)
+  const ALT_LABEL = { cui: "Cúi chào", chop: "Chớp mắt", loe: "Loé sáng", mo: "Mở cửa", phong: "Chăn phồng",
+    bang: "Đóng băng", vang: "Mùa thu" };
   const LABEL = {
     thu: { walk0: "Đi 1", walk1: "Đi 2", sit: "Ngồi", sleep: "Ngủ" },
     giong: { 0: "Hạt", 1: "Mầm", 2: "Cây non", 3: "Ra hoa", 4: "Ra quả" }
@@ -65,7 +68,10 @@ var GardenFix = (function () {
     original: original,
     pal: function (group, id) { return groups[group] ? groups[group].pal(id) || {} : {}; },
     label: function (group, name, i) {
-      if (group === "do") { return name === "spr" ? "Chính" : name === "base" ? "Tĩnh" : "Khung " + name.slice(1); }
+      if (group === "do") {
+        if (ALT_LABEL[name]) { return ALT_LABEL[name]; }
+        return name === "spr" ? "Chính" : name === "base" ? "Tĩnh" : /^f\d+$/.test(name) ? "Khung " + name.slice(1) : name;
+      }
       return (LABEL[group] && LABEL[group][name]) || String(i + 1);
     },
     count: function () { return Object.keys(fixes).length; },

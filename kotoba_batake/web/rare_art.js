@@ -6,6 +6,7 @@ var GardenRareArt = (function () {
 
   function install(L) {
     const { grid, rect, disc, dot, outline, rows, gline, ellipseFill, SPR, BASE, GLOW, EXTRA, P, box } = L;
+    const ALT = L.ALT || {};      // 1.25.9: khung thay thế (sửa được ở Sửa hình / Góp ý hình)
     const ol = (g) => rows(outline(g));
     if (!P.Q) { P.Q = "#3a3a66"; }      // ô cửa tháp chùa (ban đêm đổi sang vàng)
     const IDS = ["shika", "kabuto", "taikobashi", "kitsunemen", "pagoda", "koto", "yatai", "shamisen", "kappa", "byobu", "hokora", "karesansui"];
@@ -33,7 +34,7 @@ var GardenRareArt = (function () {
       return ol(g);
     }
     SPR.shika = deer(false);
-    const SHIKA_BOW = deer(true);
+    ALT.shika = { cui: deer(true) };
 
     // ---------------------------------------------------------------- Mũ giáp kabuto (trong nhà)
     function kabuto(shine) {
@@ -49,7 +50,7 @@ var GardenRareArt = (function () {
       return ol(g);
     }
     SPR.kabuto = kabuto(false);
-    const KABUTO_SHINE = kabuto(true);
+    ALT.kabuto = { loe: kabuto(true) };
 
     // ---------------------------------------------------------------- Cầu cong đỏ (2 ô)
     SPR.taikobashi = (function () {
@@ -159,7 +160,7 @@ var GardenRareArt = (function () {
       return ol(g);
     }
     SPR.kappa = kappa(false);
-    const KAPPA_BLINK = kappa(true);
+    ALT.kappa = { chop: kappa(true) };
 
     // ---------------------------------------------------------------- Bình phong hạc (2 ô, trong nhà)
     SPR.byobu = (function () {
@@ -233,9 +234,9 @@ var GardenRareArt = (function () {
 
     // ---- hình theo thời điểm (khung hoạt hình) ----
     function frameOf(e, now) {
-      if (e.id === "shika") { const t = (now + e.x * 1700) % 9000; return t > 7600 ? SHIKA_BOW : null; }
-      if (e.id === "kappa") { const t = (now + e.x * 900) % 3800; return t < 160 ? KAPPA_BLINK : null; }
-      if (e.id === "kabuto") { return Math.floor(now / 230 + e.x * 3) % 14 === 0 ? KABUTO_SHINE : null; }
+      if (e.id === "shika") { const t = (now + e.x * 1700) % 9000; return t > 7600 ? ALT.shika.cui : null; }
+      if (e.id === "kappa") { const t = (now + e.x * 900) % 3800; return t < 160 ? ALT.kappa.chop : null; }
+      if (e.id === "kabuto") { return Math.floor(now / 230 + e.x * 3) % 14 === 0 ? ALT.kabuto.loe : null; }
       return null;
     }
     // hạt bay ra: khói nồi mì, nốt nhạc đàn, lá phong, hơi nến

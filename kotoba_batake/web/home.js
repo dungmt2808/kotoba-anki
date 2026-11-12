@@ -668,6 +668,9 @@ var GardenHome = (function () {
   // =====================================================================
   const FRAMES = {};   // id -> [khung0, khung1, …] cùng cỡ với SPR[id] (đồ có hoạt hình nhiều khung)
   const BASE = {};     // id -> phần tĩnh khi vẽ trong cảnh (vải, dây, gàu… vẽ động riêng); SPR[id] là hình đầy đủ cho cửa hàng
+  // 1.25.9: hình thay thế theo lúc / mùa / thời tiết — id -> {tên khung: hàng} (hươu cúi chào, kappa chớp mắt, đài phun
+  // nước đóng băng, lúa vàng mùa thu…). Để chung một chỗ thì Sửa hình / Góp ý hình sửa được (trước đây chỉ có trong mã).
+  const ALT = {};
   function withExtra(base, fn) { const g = base.map((r) => r.split("")); fn(g); return rows(g); }
   function gline(g, x0, y0, x1, y1, c) {
     const n = Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0), 1);
@@ -779,7 +782,7 @@ var GardenHome = (function () {
     return rows(outline(g));
   }
   SPR.fountain = fountainSprite(false);
-  const FOUNTAIN_ICE = fountainSprite(true);
+  ALT.fountain = { bang: fountainSprite(true) };
 
   // ---- trong nhà ----
   SPR.ikebana = (function () {
@@ -1065,7 +1068,7 @@ var GardenHome = (function () {
     return rows(outline(g));
   }
   SPR.rice = riceSprite(false);
-  const RICE_GOLD = riceSprite(true);
+  ALT.rice = { vang: riceSprite(true) };
   function crossing(on) {
     const g = grid(15, 35);
     for (let y = 15; y < 32; y++) { dot(g, 7, y, Math.floor(y / 3) % 2 ? "k" : "w"); dot(g, 8, y, Math.floor(y / 3) % 2 ? "n" : "s"); }
@@ -2036,8 +2039,8 @@ var GardenHome = (function () {
   // Hình vẽ trong cảnh: khung hoạt hình / phần tĩnh / hình theo mùa – thời tiết
   function sceneSprite(e, it, spr, now, sceneName, st, ghost) {
     if (ghost && BASE[e.id]) { return spr; }      // bóng mờ khi đang đặt: hình đầy đủ (phần động không vẽ cho bóng mờ)
-    if (e.id === "fountain" && st && (st.snow || st.cover)) { return FOUNTAIN_ICE; }
-    if (e.id === "rice" && isAutumn()) { return RICE_GOLD; }
+    if (e.id === "fountain" && st && (st.snow || st.cover)) { return ALT.fountain.bang; }
+    if (e.id === "rice" && isAutumn()) { return ALT.rice.vang; }
     const fr = FRAMES[e.id];
     if (fr) {
       const wind = windOf(st);
@@ -2370,11 +2373,11 @@ var GardenHome = (function () {
   }
   // 1.16: món hiếm mới của rương nhiệm vụ (sprite + chuyển động ở rare_art.js)
   if (typeof GardenRareArt !== "undefined") {
-    RARE = GardenRareArt.install({ grid, rect, disc, dot, outline, rows, gline, ellipseFill, SPR, GLOW, EXTRA: EXTRA17, P, box });
+    RARE = GardenRareArt.install({ grid, rect, disc, dot, outline, rows, gline, ellipseFill, SPR, ALT, GLOW, EXTRA: EXTRA17, P, box });
   }
   // 1.24: đồ Bếp / Phòng ngủ + nền hai gian bên (nha_art.js)
   if (typeof GardenNhaArt !== "undefined") {
-    NHA = GardenNhaArt.install({ grid, rect, disc, dot, outline, rows, SPR, GLOW, P, box });
+    NHA = GardenNhaArt.install({ grid, rect, disc, dot, outline, rows, SPR, ALT, GLOW, P, box });
   }
   // 1.25.5: bản sửa hình gốc (fix.js) — khung "spr" (cửa hàng + cảnh), "f<i>" (FRAMES khác spr), "base" (phần tĩnh)
   if (typeof GardenFix !== "undefined") {
@@ -2386,6 +2389,7 @@ var GardenHome = (function () {
         out.spr = s;
         (FRAMES[id] || []).forEach((f, i) => { if (isRows(f) && f !== s) { out["f" + i] = f; } });
         if (isRows(BASE[id]) && BASE[id] !== s) { out.base = BASE[id]; }
+        Object.keys(ALT[id] || {}).forEach((n) => { if (isRows(ALT[id][n])) { out[n] = ALT[id][n]; } });
         return out;
       },
       set: function (id, name, r) {
@@ -2396,6 +2400,7 @@ var GardenHome = (function () {
           if (BASE[id] === old) { BASE[id] = r; }
         } else if (name === "base") { BASE[id] = r; }
         else if (/^f\d+$/.test(name) && FRAMES[id]) { FRAMES[id][Number(name.slice(1))] = r; }
+        else if (ALT[id] && ALT[id][name]) { ALT[id][name] = r; }
       },
       pal: () => P
     });
@@ -5127,7 +5132,7 @@ var GardenHome = (function () {
     _state: () => ({ scene: scene, tab: tab, placing: placing, selected: selected, payWait: payWait, peekCode: peekCode }),
     _spotError: spotError,
     // test / ảnh phác: hàm vẽ nội bộ (không dùng trong giao diện)
-    _lib: () => ({ SPR, P, T, ROOM, SIDE, HOUSE3, box, sprite, drawItem, drawNight, skyColors, skyNow, timeOfDay, lights, SEA, drawWeather }),
+    _lib: () => ({ SPR, ALT, P, T, ROOM, SIDE, HOUSE3, box, sprite, drawItem, drawNight, skyColors, skyNow, timeOfDay, lights, SEA, drawWeather }),
     _clickCell: function (x, y) {
       const cv = $("kb-home-canvas"), r = cv.getBoundingClientRect();
       const rc = cellRect(scene, x, y, 1);

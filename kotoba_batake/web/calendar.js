@@ -155,6 +155,7 @@ var GardenCal = (function () {
   function onView(v) {
     if (!v || !isOpen) { return; }
     if (v.kind === "month") {
+      if (v.bought) { sfx("coin"); }
       month = v;
       if (tab !== "month") { return; }
       if (!sel || sel.slice(0, 7) !== v.id) {
@@ -224,7 +225,13 @@ var GardenCal = (function () {
     lg.appendChild(el("span", "sp"));
     lg.appendChild(el("i", "kb-cal-dot kb-cal-dot-s"));
     lg.appendChild(el("span", null, "có nhật ký"));
+    if (v.days.some((d) => d.fz)) {
+      lg.appendChild(el("span", "sp"));
+      lg.appendChild(GardenIcons.el("snow"));
+      lg.appendChild(el("span", null, "dùng vé"));
+    }
     L.appendChild(lg);
+    if (v.freeze) { L.appendChild(freezeRow(v)); }
     body.appendChild(L);
     const R = el("div", "kb-cal-right");
     R.id = "kb-cal-right";
@@ -232,6 +239,25 @@ var GardenCal = (function () {
     st.appendChild(body);
     if (day && day.d === sel) { drawDay(); } else { R.appendChild(el("div", "kb-cal-card kb-cal-wait-load", "Đang mở…")); }
     st.scrollTop = keepScroll;
+  }
+  // 1.25.9: vé giữ chuỗi — quên ôn một ngày thì tự dùng 1 vé, chuỗi không đứt (chỉ giữ số ngày liền, không đổi lịch ôn)
+  function freezeRow(v) {
+    const f = v.freeze;
+    const row = el("div", "kb-cal-freeze");
+    row.appendChild(GardenIcons.el("snow"));
+    const t = el("span", "kb-cal-freeze-t");
+    t.appendChild(el("b", null, "Vé giữ chuỗi " + f.n + "/" + f.max));
+    t.appendChild(document.createTextNode(" · quên ôn 1 ngày thì tự dùng 1 vé"));
+    row.appendChild(t);
+    const full = f.n >= f.max, poor = f.coins < f.price;
+    const b = btn("kb-cal-freeze-buy", full ? "Đã đủ vé" : "Mua · " + f.price + " xu", () => {
+      b.disabled = true;
+      H.send("cal:freeze:" + v.id);
+    }, full ? "Giữ tối đa " + f.max + " vé" : poor ? "Còn thiếu " + (f.price - f.coins) + " xu" :
+      "Mua 1 vé giữ chuỗi (" + f.price + " xu). Vé chỉ giữ số ngày ôn liên tiếp, không đổi lịch ôn.");
+    b.disabled = full || poor;
+    row.appendChild(b);
+    return row;
   }
   function go(ym) {
     if (!ym) { return; }
@@ -250,11 +276,13 @@ var GardenCal = (function () {
       c.appendChild(flower(d.sp, d.lv, 3, d.day));
       if (d.mood && GardenIcons.face) { const s = GardenIcons.face(d.mood, 18); s.classList.add("kb-cal-stk"); c.appendChild(s); }
       if (d.note) { c.appendChild(el("i", "kb-cal-dot")); }
+      if (d.fz) { const z = GardenIcons.el("snow"); z.classList.add("kb-cal-fz"); c.appendChild(z); }
     }
     const strip = el("i", "kb-cal-strip");
     strip.style.background = COLOR[d.th] || "transparent";
     c.appendChild(strip);
-    c.title = (d.fut ? "Ngày chưa tới" : d.n ? d.n + " lượt ôn · " + LV_NAME[d.lv] : "Chưa ôn") + (d.th ? " · " + (SHORT[d.th] || "") : "");
+    c.title = (d.fut ? "Ngày chưa tới" : d.n ? d.n + " lượt ôn · " + LV_NAME[d.lv] : d.fz ? "Chưa ôn · dùng vé giữ chuỗi" : "Chưa ôn") +
+      (d.th ? " · " + (SHORT[d.th] || "") : "");
     const pick = () => {
       if (sel === d.d) { return; }
       flushAll();
