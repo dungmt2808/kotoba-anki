@@ -122,6 +122,12 @@ Sau khi trả lời có hiện cách đọc, Hán Việt, nghĩa (và cách dùn
 - **Hiệu ứng thành tích** (`web/joy.js`, Python tính `data.joy` = `more_core.joy_view`): **xong hết thẻ hôm nay** trong deck đang xem (`deck_due_tree` = 0 và hôm nay đã ôn ≥ 1 lượt) → cầu vồng trên ruộng và trên trời sân, giọt sương lấp lánh; **đạt mục tiêu ngày**; **cả vườn xanh tốt / ra hoa / trĩu quả** (≥ 5 cây, không cây nào héo, mọi cây từ Cây non / Ra hoa / Ra quả) → lá lấp lánh / cánh hoa anh đào bay / đốm sáng vàng bay lên; **mốc chuỗi ngày** (7, 14, 21, 30, 50, 75, 100, 150, 200, 250, 300, 365, 500, 730, 1000) → pháo hoa trên trời sân; **xong 3 nhiệm vụ** → đèn trời bay lên. Huy hiệu cạnh chú thích ruộng; dải chúc mừng + linh vật chúc mỗi thành tích **một lần mỗi ngày** (nhớ ở `localStorage kb-joy-<ngày>-<loại>`), đang ôn thẻ thì để dành tới khi đóng bảng ôn.
 - **Lưu trữ**: khoá collection mới `kotoba_batake_more` (`more_core.MORE_KEY`) — mục 4. Bản ≤ 1.13 ở máy khác không đọc khoá này nên không xoá được gì.
 
+### Mới ở 1.26: thú nuôi ra chào, chuyển cảnh, Tin làng
+- **Lần mở vườn đầu tiên mỗi ngày**: thú thân nhất của bạn chạy ra chào (おはよう！ / こんにちは！ / こんばんは！ theo giờ trong vườn, ngày lễ có câu riêng như メリークリスマス！), kèm 1–3 tin hôm nay. Tự vào vườn sau ~4 giây, bấm hay gõ phím bất kỳ để vào ngay. Chưa nuôi thú thì StackChan chào.
+- **Chuyển cảnh** kiểu game pixel: vòng tròn khi vào vườn, dải lá / cánh hoa / tuyết theo giao diện mùa khi đổi cảnh ◂ ▸, rèm khi vào Trong nhà, các bảng bật nhẹ khi mở.
+- **Tin làng** trong thẻ Hôm nay: khách có thể ghé, mốc học sắp chạm, giao diện mùa, gói báo sắp hết hạn, vé giữ chuỗi…
+- Tắt ở ⚙ → Giao diện → Màn chính: **Chào khi mở vườn**, **Chuyển cảnh**.
+
 ### Mới ở 1.25.9: vé giữ chuỗi
 - **Lịch hoa → Tháng** có dòng **Vé giữ chuỗi**: mua 150 xu một vé, giữ tối đa 2. Quên ôn một ngày thì lần mở vườn sau tự dùng 1 vé, chuỗi ngày liền không đứt (ngày đó có bông tuyết trên lịch, không cộng vào chuỗi). Vé chỉ dùng cho ngày từ hôm mua trở đi; quên nhiều ngày hơn số vé thì chuỗi đứt và vé còn nguyên. Không đổi lịch ôn thẻ.
 - **Góp ý hình / Sửa hình** sửa được cả khung động (hươu cúi chào, kappa chớp mắt, mũ kabuto loé, tủ lạnh mở cửa, giường chăn phồng) và hình theo mùa / thời tiết (đài phun nước đóng băng, ruộng lúa mùa thu).

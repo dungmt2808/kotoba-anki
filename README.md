@@ -112,7 +112,8 @@ Mỗi sáng có một số báo tiếng Nhật 畑新聞 (hoặc báo tiếng An
 
 - Mục tiêu 30 lượt ôn mỗi ngày (đổi được), thưởng +15 xu.
 - 3 nhiệm vụ mỗi ngày. Làm đủ cả 3 thì mở rương quà có đồ hiếm.
-- Chuỗi ngày ôn liên tục.
+- Chuỗi ngày ôn liên tục, có **vé giữ chuỗi** cho hôm lỡ quên.
+- Lần mở vườn đầu tiên mỗi ngày, **thú nuôi của bạn chạy ra chào** (ngày lễ có câu chào riêng) và kể vài tin hôm nay. Dòng **Tin làng** trong thẻ Hôm nay báo khách có thể ghé, mốc học sắp chạm, mùa lễ sắp tới. Tắt được ở ⚙.
 - Không có điểm trừ, không mất đồ, không có gì bắt bạn phải chơi: học là chính.
 
 ---

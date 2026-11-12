@@ -592,6 +592,7 @@ var Garden = (function () {
     var pop = $("kb-quest-pop"), btn = $("kb-quest");
     if (show === undefined) { show = pop.hidden; }
     if (!show) { pop.hidden = true; return; }
+    if (typeof GardenGreet !== "undefined") { GardenGreet.closeNews(); }
     drawQuests();
     pop.hidden = false;
     var anchor = $("kb-today") && $("kb-today").offsetParent ? $("kb-today") : btn;     // 1.15: mở dưới cả thẻ Hôm nay, không che các dòng khác
@@ -1165,6 +1166,7 @@ var Garden = (function () {
     if (typeof GardenMusic !== "undefined") { GardenMusic.config(d.fx); }
     if (typeof GardenJoy !== "undefined") { GardenJoy.render(d.joy); }
     syncSoundUi();
+    if (typeof GardenGreet !== "undefined") { GardenGreet.render(d); fitTodayList(); }      // 1.26: Tin làng, màn chào
   }
 
   // ---- 1.22.3: tìm deck theo tên (nút kính lúp cạnh ô Deck, phím /) ----
@@ -1582,6 +1584,7 @@ var Garden = (function () {
     flip: flip,
     reviewDone: reviewDone,
     toast: toast,
+    closeQuests: function () { toggleQuests(false); },     // 1.26: mở Tin làng thì đóng Nhiệm vụ
     key: key,
     fit: fitCard,
     frameReady: onFrameReady,

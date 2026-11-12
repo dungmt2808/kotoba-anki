@@ -3284,11 +3284,27 @@ var GardenHome = (function () {
   // Các cảnh chuyển nhanh trên màn chính: Sân vườn → Trong nhà (1.24: cả nhà 3 gian) → các vùng đã mở → vùng tự tạo
   function outdoorList() { return ["yard"].concat(canEnter("house") ? ["house"] : [], ZONE_IDS.filter((z) => zoneOpen(z)), uzIds()); }
   let mainSwitchAt = 0;
+  // 1.26: chuyển cảnh — giữ hình cảnh cũ để dải lá / rèm quét qua (GardenGreet.strip)
+  let switchSnap = null, switchKind = "sweep", switchDir = 1;
+  const SWITCH_MS = 350;
   function cycleMain(step) {
     const list = outdoorList();
     if (list.length < 2) { return false; }
-    const i = Math.max(0, list.indexOf(mainScene()));
+    const cur = mainScene();
+    const i = Math.max(0, list.indexOf(cur));
     const next = list[(i + step + list.length) % list.length];
+    switchSnap = null;
+    const cv = $("kb-yard");
+    if (cv && cv.width && cv.height && typeof GardenGreet !== "undefined" && GardenGreet.mode() === "full") {
+      try {
+        const snap = document.createElement("canvas");
+        snap.width = cv.width; snap.height = cv.height;
+        snap.getContext("2d").drawImage(cv, 0, 0);
+        switchSnap = snap;
+      } catch (e) { switchSnap = null; }
+    }
+    switchKind = cur === "house" || next === "house" ? "curtain" : "sweep";
+    switchDir = step < 0 ? -1 : 1;
     setMainPref(next);
     mainSwitchAt = Date.now();
     stillDirty = true;
@@ -3349,9 +3365,13 @@ var GardenHome = (function () {
       drawOutdoor(ctx, S, ox, pad, now, mainScene(), { bgFrom: -ox - 1, bgTo: cw / S - ox + 1, seen: !document.hidden, padTop: pad });
     }
     const sw = now - mainSwitchAt;
-    if (sw < 380 && UIget("yard") === "full") {          // chuyển cảnh: màn tối mờ dần
+    const tmode = typeof GardenGreet !== "undefined" ? GardenGreet.mode() : "fade";
+    if (sw < SWITCH_MS && UIget("yard") === "full" && tmode === "full" && switchSnap) {
+      GardenGreet.strip(ctx, cw, hgt, sw / SWITCH_MS, switchSnap, switchKind, switchDir);     // 1.26: dải lá / rèm
+    } else if (sw < 380 && UIget("yard") === "full" && tmode !== "none") {          // chuyển cảnh: màn tối mờ dần
       ctx.globalAlpha = 0.65 * (1 - sw / 380); ctx.fillStyle = "#1b1b2f"; ctx.fillRect(0, 0, cw, hgt); ctx.globalAlpha = 1;
     }
+    if (switchSnap && sw >= SWITCH_MS) { switchSnap = null; }
     if (frame % 15 === 0 || stillDirty) { syncYardNav(); }
     const chip = document.getElementById("kb-weather");
     const st = skyNow();

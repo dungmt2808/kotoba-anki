@@ -1815,6 +1815,16 @@ def review_days(col: Collection) -> tuple[set[int], datetime.date]:
     return days, datetime.datetime.fromtimestamp(start).date()
 
 
+def review_day_total(col: Collection, before_today: bool = False) -> int:
+    """1.26: số ngày (ngày Anki) có ít nhất một lượt ôn, từ trước tới nay — cho mốc "đủ 100 ngày có ôn".
+    before_today: chỉ đếm các ngày trước hôm nay (để nhớ một lần mỗi ngày, hôm nay cộng riêng)."""
+    start = int(col.sched.day_cutoff) - 86400
+    sql = "select count(distinct cast((id / 1000.0 - ?) / 86400.0 + 100000 as int)) from revlog where type < 4"
+    if before_today:
+        return int(col.db.scalar(sql + " and id < ?", start, start * 1000) or 0)
+    return int(col.db.scalar(sql, start) or 0)
+
+
 def daily_stats(col: Collection, frozen: Any = ()) -> dict[str, int]:
     """Số lượt ôn hôm nay (theo ngày của Anki) và số ngày ôn liên tiếp. 1.25.9: `frozen` = ngày đã dùng vé giữ chuỗi
     ("yyyy-mm-dd") — nối chuỗi, không cộng thêm."""

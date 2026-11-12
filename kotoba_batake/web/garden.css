@@ -1946,3 +1946,35 @@ button { cursor: pointer; }
 .kb-p-fbs .kb-btn.is-on { background: #ffd23f; }
 .kb-p-fbs-in { flex: 1 1 200px; min-width: 160px; font-size: 13px; padding: 3px 6px; }
 
+
+/* ---- 1.26: màn chào, chuyển cảnh, Tin làng ---- */
+.kb-greet { position: fixed; inset: 0; z-index: 300; overflow: hidden; cursor: pointer; background: #8fd3ff; }
+.kb-greet-cv { position: absolute; inset: 0; image-rendering: pixelated; }
+.kb-greet-bubble { position: absolute; min-width: 300px; max-width: min(560px, 90vw); padding: 14px 20px 12px; background: #ffffff;
+  border: 3px solid #1b1b2f; box-shadow: 5px 5px 0 #1b1b2f; cursor: default; }
+.kb-greet-bubble:after { content: ""; position: absolute; left: 50%; bottom: -17px; margin-left: -10px; border: 10px solid transparent;
+  border-top: 14px solid #1b1b2f; }
+.kb-greet-hi { font-family: "Noto Sans CJK JP", "Noto Sans JP", sans-serif; font-weight: 700; font-size: 40px; line-height: 1.15; color: #1b1b2f; }
+.kb-greet-vi { font-size: 18px; margin-top: 2px; color: #1b1b2f; }
+.kb-greet-news { margin-top: 10px; padding-top: 8px; border-top: 2px dashed #9aa0b5; display: flex; flex-direction: column; gap: 4px;
+  font-size: 16px; color: #1b1b2f; }
+.kb-greet-date { position: absolute; left: 0; right: 0; top: 34px; text-align: center; font-size: 22px; color: #1b1b2f;
+  text-shadow: 2px 2px 0 rgba(255, 255, 255, .7); pointer-events: none; }
+.kb-greet-tap { position: absolute; left: 0; right: 0; bottom: 26px; text-align: center; font-size: 16px; color: #1b1b2f; opacity: .6;
+  pointer-events: none; }
+.kb-greet-tap i { display: inline-block; width: 8px; height: 8px; margin: 0 3px; background: #1b1b2f; }
+.kb-greet-tap i.off { opacity: .25; }
+.kb-greet-out { animation: kb-greet-out .3s ease-in forwards; }
+@keyframes kb-greet-out { to { opacity: 0; } }
+@media (max-height: 600px) { .kb-greet-hi { font-size: 30px; } .kb-greet-date { top: 14px; font-size: 18px; } .kb-greet-news { font-size: 14px; } }
+.kb-trans { position: fixed; inset: 0; z-index: 310; pointer-events: none; image-rendering: pixelated; }
+.kb-pop { animation: kb-pop .15s ease-out; }
+@keyframes kb-pop { from { transform: scale(.96); opacity: .4; } to { transform: none; opacity: 1; } }
+.kb-news-btn { background: #fffbe6; }
+.kb-news-pop { width: 380px; }
+.kb-news-sec { font-weight: 700; font-size: 13px; color: #6b3b1f; margin: 6px 0 4px; }
+.kb-news-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.kb-news-list li { display: flex; align-items: center; gap: 8px; padding: 5px 8px; background: #fff8dc; border: 2px solid #1b1b2f; font-size: 14px; }
+.kb-news-list li.is-soon { background: #eef4ff; }
+.kb-news-t { flex: 1; min-width: 0; }
+.kb-news-d { margin-left: auto; color: #6b6b80; font-size: 12px; white-space: nowrap; }
