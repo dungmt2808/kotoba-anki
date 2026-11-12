@@ -160,6 +160,8 @@ ok("GardenGreet.strip(ctx, cw, hgt, sw / SWITCH_MS, switchSnap, switchKind, swit
    "home.js: đổi cảnh ◂ ▸ → dải lá, Trong nhà → rèm")
 gjs = src("web", "garden.js")
 ok("GardenGreet.render(d)" in gjs and "GardenGreet.closeNews()" in gjs, "garden.js: vẽ Tin làng / màn chào, mở Nhiệm vụ thì đóng Tin làng")
+ok('nb.classList.add("kb-squeezed")' in gjs and ".kb-news-btn.kb-squeezed { display: none; }" in src("web", "garden.css"),
+   "thẻ Hôm nay chật (xếp sát vẫn không vừa) → bớt dòng Tin làng")
 ujs = src("web", "ui.js")
 ok('radios("greet", "Chào khi mở vườn"' in ujs and 'radios("trans", "Chuyển cảnh"' in ujs and 'greet: "on", trans: "on"' in ujs, "ui.js: 2 dòng ở ⚙ → Màn chính")
 

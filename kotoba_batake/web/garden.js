@@ -644,12 +644,16 @@ var Garden = (function () {
   function fitTodayList() {
     var list = document.querySelector("#kb-today .kb-today-list");
     if (!list || !list.clientHeight) { return; }
+    var nb = $("kb-news-btn");
+    if (nb) { nb.classList.remove("kb-squeezed"); }
     var tight = list.classList.contains("kb-today-tight");
     if (!tight && list.scrollHeight > list.clientHeight + 1) { list.classList.add("kb-today-tight"); }
     else if (tight) {
       list.classList.remove("kb-today-tight");
       if (list.scrollHeight > list.clientHeight + 1) { list.classList.add("kb-today-tight"); }
     }
+    // 1.26: xếp sát vẫn không vừa (sân thấp, nhiều dòng việc) → bớt dòng Tin làng trước (tin đã có ở màn chào)
+    if (nb && !nb.hidden && list.scrollHeight > list.clientHeight + 1) { nb.classList.add("kb-squeezed"); }
   }
 
   function onMove(ev) {
