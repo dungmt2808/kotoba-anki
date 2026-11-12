@@ -76,7 +76,7 @@ var Mock126 = (function () {
 
   // ------------------------------------------------------------------ 1.26 màn chào
   function sky() { return (typeof GardenSky !== "undefined" && GardenSky.state()) || { top: "#8fd3ff", bottom: "#c4ecff", hills: "#7ed98a", ground: "#5ed35e", grass: "#45bf4a", light: 1 }; }
-  function scene(ctx, W, H, st, now) {
+  function scene(ctx, W, H, st, now, noFlowers) {
     const mix = GardenSky.mix, hz = Math.round(H * 0.6);
     for (let b = 0; b < 12; b++) { ctx.fillStyle = mix(st.top, st.bottom, b / 11); ctx.fillRect(0, Math.floor(hz * b / 12), W, Math.ceil(hz / 12) + 1); }
     if (st.light < 0.6) { for (let i = 0; i < 140; i++) { ctx.fillStyle = i % 4 ? "#ffffff" : "#ffe9a8"; const s = i % 7 ? 3 : 5; ctx.fillRect((i * 137) % W, (i * 71) % (hz - 60), s, s); } }
@@ -88,7 +88,7 @@ var Mock126 = (function () {
     // hàng rào + hoa ở hai bên
     const S = 6;
     if (SPR.fence) { for (let x = -20; x < W * 0.3; x += 16 * S) { sprite(ctx, SPR.fence, x / S, (hz + 30) / S, S); } for (let x = W * 0.72; x < W + 20; x += 16 * S) { sprite(ctx, SPR.fence, x / S, (hz + 30) / S, S); } }
-    ["flower", "tulip", "sunflower"].forEach((id, k) => { if (SPR[id]) { sprite(ctx, SPR[id], (W * (0.12 + k * 0.07)) / S, (H * 0.8) / S, S); sprite(ctx, SPR[id], (W * (0.74 + k * 0.07)) / S, (H * 0.82) / S, S); } });
+    if (!noFlowers) ["flower", "tulip", "sunflower"].forEach((id, k) => { if (SPR[id]) { sprite(ctx, SPR[id], (W * (0.12 + k * 0.07)) / S, (H * 0.8) / S, S); sprite(ctx, SPR[id], (W * (0.74 + k * 0.07)) / S, (H * 0.82) / S, S); } });
     return hz;
   }
   function stackchan(ctx, x, y, w) {      // chép hình StackChan đang vẽ ở góc trái
@@ -101,7 +101,7 @@ var Mock126 = (function () {
     ensureCss(); clear();
     const W = window.innerWidth, H = window.innerHeight;
     const g = el("div", "mk-greet"); const [cv, ctx] = canvasFor(W, H); g.appendChild(cv); document.body.appendChild(g);
-    const st = sky(), hz = scene(ctx, W, H, st, Date.now());
+    const st = sky(), hz = scene(ctx, W, H, st, Date.now(), o.noFlowers);
     const cx = Math.round(W / 2), base = Math.round(hz + (H - hz) * 0.42);
     if (o.who === "stack") {
       ctx.fillStyle = "rgba(0,0,0,.18)"; ctx.fillRect(cx - 70, base - 6, 140, 12);
@@ -155,7 +155,7 @@ var Mock126 = (function () {
       const n = r0.cloneNode(true); n.classList.add("mk-row", "mk-hl");
       n.querySelector(".kb-ui-l").textContent = label;
       const ops = n.querySelectorAll(".kb-ui-opt"); ops[0].lastChild.textContent = " " + a; ops[1].lastChild.textContent = " " + bb;
-      ops[0].classList.add("is-on"); ops[1].classList.remove("is-on"); const ins = n.querySelectorAll("input"); ins[0].checked = true; ins[1].checked = false;
+      ops[0].classList.add("is-on"); ops[1].classList.remove("is-on"); const ins = n.querySelectorAll("input"); ins.forEach((i) => { i.name = "mk-" + label; }); ins[0].checked = true; ins[1].checked = false;
       after.parentNode.insertBefore(n, after.nextSibling); after = n;
     });
     after.scrollIntoView({ block: "center" });

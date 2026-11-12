@@ -1,4 +1,4 @@
-# Kế hoạch ことば畑 1.26 — màn chào + hiệu ứng chuyển cảnh + Bảng tin làng (đã chốt, có ảnh phác, chưa làm)
+# Kế hoạch ことば畑 1.26 — màn chào + hiệu ứng chuyển cảnh + Bảng tin làng (đã chốt, ảnh phác làm lại 12/11 trên 1.25.9, chờ duyệt)
 
 Ngày 07/11/2026. Người dùng: "tớ nghĩ bây giờ cũng xong khoảng 70-80% rồi, chốt những cái mình sẽ phát triển tiếp đi, nhằm FOMO lành mạnh, dễ thương, chill. 1 tính năng tớ nghĩ là nhỏ nhưng có thể sẽ hiệu quả (như là mới khởi động game thì chưa hiển thị vùng liền), sẽ có 1 NPC hoặc con vật ra chào mình, hiệu ứng chuyển cảnh,..."
 
@@ -21,6 +21,8 @@ Người dùng chọn: ai chào = **thú nuôi của mình**; chào **lần mở
   - dưới bong bóng 1–3 dòng **tin hôm nay** (lấy từ Bảng tin, mục 3), ví dụ "Báo mới đã tới", "Hôm nay cáo có thể ghé Đền".
 - **Ai chào:** thú thân nhất (cùng mức thì chọn theo ngày, cố định trong ngày). Chưa nuôi thú → **StackChan** (mặc đồ đang mặc). Thú đang "đi chơi" (đói 2 ngày) → StackChan chào, nói nhẹ "Mít đi chơi rồi, cho ăn là về" — không trách.
 - **Kết thúc:** tự vào vườn sau ~4 giây (rê chuột lên màn chào thì dừng đếm), hoặc bấm / phím bất kỳ → hiệu ứng chuyển cảnh vào vườn. Không có nút phụ, không chữ hướng dẫn dài (chỉ một dòng mờ "bấm để vào vườn").
+- **Vé giữ chuỗi (1.25.9):** vừa dùng vé lúc mở vườn → báo ngay trên màn chào ("Đã dùng 1 vé giữ chuỗi · chuỗi 27 ngày", thú nói "Hôm qua bận hả? Chuỗi vẫn còn nè!") thay cho thông báo nhỏ ở góc; tắt màn chào thì vẫn là thông báo nhỏ như 1.25.9.
+- **Câu chào theo giao diện mùa (đề xuất, chờ duyệt):** đang bật giao diện mùa có ngày lễ thì đổi câu chào và bày vài món của mùa hai bên (Giáng sinh: メリークリスマス！ + cây thông, hộp quà, xe tuần lộc, tuyết; Tết: あけましておめでとう！…); mùa thường giữ おはよう / こんにちは / こんばんは.
 - **Âm thanh:** một tiếng chuông nhỏ có sẵn (1.29 thay bằng chuông làng tự soạn). Theo nút tắt tiếng của vườn.
 - **Lưu:** "đã chào hôm nay" theo máy (`localStorage`, theo số ngày Anki) — không đồng bộ, không đụng dữ liệu collection.
 
@@ -39,8 +41,8 @@ Người dùng chọn: ai chào = **thú nuôi của mình**; chào **lần mở
 ## 3. Bảng tin làng
 
 - **Một dòng** trong thẻ Hôm nay: "Tin làng ▸" kèm tin đầu tiên, chỉ hiện khi có tin chưa nằm sẵn trong thẻ (không lặp Nhiệm vụ / Báo / thú đói). Bấm → bảng nhỏ:
-  - **Hôm nay:** khách có thể ghé (khách nặng ký nhất theo đồ / vùng / tháng, `guest_core.weight`), giao diện mùa đang có, nhà cần sửa, thú cần cho ăn, mốc sắp chạm (vd. "còn 3 ngày nữa đủ 100 ngày có ôn");
-  - **Sắp tới (7 ngày):** giao diện mùa sắp bắt đầu / kết thúc. 1.27 thêm tiết khí, quẻ, sao băng; 1.28 thêm phiên gánh hàng.
+  - **Hôm nay:** khách có thể ghé (khách nặng ký nhất theo đồ / vùng / tháng, `guest_core.weight`), giao diện mùa đang có, nhà cần sửa, thú cần cho ăn, mốc sắp chạm (vd. "còn 3 ngày nữa đủ 100 ngày có ôn"), số vé giữ chuỗi đang có (1.25.9);
+  - **Sắp tới (7 ngày):** giao diện mùa sắp bắt đầu / kết thúc, gói báo sắp hết hạn (1.25.1, ghi "tự gia hạn" nếu bật). 1.27 thêm tiết khí, quẻ, sao băng; 1.28 thêm phiên gánh hàng.
 - **Nguồn tin:** Python, module mới `event_core.py` (thuần, test offline bằng ngày giả) tổng hợp theo ngày Anki từ dữ liệu có sẵn; JS chỉ vẽ. Không khoá dữ liệu mới ở 1.26.
 - Chữ ngắn, một tin một dòng (người dùng: "không cần giải thích dài dòng").
 
@@ -56,18 +58,20 @@ Người dùng chọn: ai chào = **thú nuôi của mình**; chào **lần mở
 - Câu chào có đổi theo giao diện mùa / ngày lễ không (vd. Tết: あけましておめでとう)? Đề xuất: có, vài câu theo mùa.
 - Thú có món quà nhỏ thỉnh thoảng (sticker nhật ký) khi chào không? Đề xuất: chưa, để 1.28 (gắn với Hộp sưu tầm).
 
-## 5b. Ảnh phác giao diện 1.26 → 1.29 (07/11, chờ người dùng duyệt)
+## 5b. Ảnh phác giao diện 1.26 → 1.29
 
-Người dùng: "soạn trước giao diện cho các phần trên đi". Vẽ trên vườn mẫu trong Anki thật (`tests/anki/setup_demo.sh` + `mock_126.js` / `mock_126_lib.js`; chuyển cảnh ghép bằng `mock_126_ghep.py` từ ảnh gốc). Ảnh ở `docs/ke_hoach_1_26/`:
+07/11 người dùng: "soạn trước giao diện cho các phần trên đi" → ảnh phác 1.26 → 1.29 trên vườn bản 1.22 (`mock_126.js`). **12/11** người dùng: "làm ảnh phác đi" → **làm lại phần 1.26** trên giao diện 1.25.9 (nhà 3 gian, thẻ Hôm nay mới, Trong nhà ở ◂ ▸, vé giữ chuỗi), cửa sổ 1366 × 860: `tests/anki/mock_126_v2.js` (+ `mock_126_lib.js`) trên bộ thẻ mẫu `setup_demo.sh`, chuyển cảnh ghép bằng `mock_126_v2_ghep.py`. Ảnh 1.27 → 1.29 vẫn là bản 07/11. Ảnh ở `docs/ke_hoach_1_26/`:
 
 | Ảnh | Bản | Nội dung |
 |---|---|---|
 | `126_01_chao_sang.png` | 1.26 | màn chào sáng: mèo "Mít" nhảy vẫy, おはよう！, 3 tin hôm nay, "bấm để vào vườn" + chấm đếm |
 | `126_02_chao_toi_stackchan.png` | 1.26 | chưa nuôi thú → StackChan chào, buổi tối có sao |
 | `126_03_chao_thu_di_choi.png` | 1.26 | thú đang đi chơi → StackChan báo nhẹ |
-| `126_04_tin_lang.png` | 1.26 | dòng "Tin làng ▸" trong thẻ Hôm nay + bảng Hôm nay / Sắp tới |
-| `126_05_cai_dat.png` | 1.26 | ⚙ → Màn chính: Chào khi mở vườn, Chuyển cảnh (khung đỏ = dòng mới) |
-| `126_06_chuyen_iris.png` · `126_07_chuyen_la.png` · `126_08_chuyen_rem.png` | 1.26 | khung hình chuyển cảnh: vòng tròn (màn chào → vườn), dải lá (◂ ▸), rèm (Trong nhà) |
+| `126_04_chao_ve_giu_chuoi.png` | 1.26 (mới 12/11) | quên ôn hôm qua → màn chào báo đã dùng vé giữ chuỗi, chuỗi 27 ngày vẫn còn |
+| `126_05_chao_theo_mua.png` | 1.26 (đề xuất 12/11) | câu chào theo giao diện mùa: Giáng sinh メリークリスマス！ + đồ của mùa + tuyết |
+| `126_06_tin_lang.png` | 1.26 | dòng "Tin làng ▸" trong thẻ Hôm nay + bảng Hôm nay (khách, mùa, nhà, mốc, vé giữ chuỗi) / Sắp tới (giao diện mùa, gói báo) |
+| `126_07_cai_dat.png` | 1.26 | ⚙ → Màn chính: Chào khi mở vườn, Chuyển cảnh (khung đỏ = dòng mới) |
+| `126_08_chuyen_iris.png` · `126_09_chuyen_la.png` · `126_10_chuyen_rem.png` · `126_11_bat_nhe.png` | 1.26 | khung hình chuyển cảnh: vòng tròn (màn chào → vườn), dải lá (◂ ▸ giữa các vùng), rèm (Sân vườn ⇄ Trong nhà), bật nhẹ khi mở bảng |
 | `127_01_cay_lap_lanh.png` | 1.27 | 3 cây đến hạn phát sáng + thẻ cây "Cây lấp lánh" |
 | `127_02_que.png` | 1.27 | hộp quẻ ở Đền + tờ quẻ 中吉 (学問 / 待ち人 / 失せ物 / từ may mắn) |
 | `127_03_dem_sao_bang.png` | 1.27 | trăng lưỡi liềm thật + mưa sao băng, dòng Tin làng |

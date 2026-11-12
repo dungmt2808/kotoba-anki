@@ -839,7 +839,7 @@ def _record_answer(nid: int, old: int | None, ease: int, deck: str | None,
     info: dict[str, Any] = {"nid": nid, "ease": ease, "old": old, "new": new, "gained": gained, "message": None,
                             "goal_bonus": 0}
     try:
-        today = core.daily_stats(mw.col)
+        today = _daily_stats()
         info["goal_bonus"] = STATE.claim_goal(
             today["day"], today["reviews"], int(cfg["daily_goal"]), int(cfg["daily_bonus"])
         )
@@ -1233,9 +1233,23 @@ def _village_weather(date: str) -> str:
             theme = season_core.active_theme(STATE.load()["season"], day)
         except Exception:
             theme = None
+        fixed = _fixed_weather() if date == ai_today() else ""
+        if fixed:                       # 1.25.9: người dùng chọn trời cố định trong ⚙ → báo hôm nay theo đúng trời đó
+            return "cả ngày " + fixed
         return story_core.village_weather(day, theme)
     except Exception as err:
         _warn("thời tiết của làng", err)
+        return ""
+
+
+def _fixed_weather() -> str:
+    """Trời cố định đã chọn ở ⚙ (config prefs "kb-sky") → "mưa" / "tuyết"…; "" nếu để Tự động."""
+    try:
+        prefs = more_core.clean_prefs((mw.addonManager.getConfig(__name__) or {}).get("prefs"))
+        sky = json.loads(prefs.get("kb-sky") or "{}")
+        w = sky.get("weather") if isinstance(sky, dict) else None
+        return story_core._WEATHER_VI.get(w, "") if isinstance(w, str) else ""
+    except (ValueError, TypeError, AttributeError):
         return ""
 
 
@@ -1552,6 +1566,21 @@ def cal_today() -> datetime.date:
     return journal.anki_today(mw.col)
 
 
+def _daily_stats(col: Any = None) -> dict[str, int]:
+    """core.daily_stats + ngày đã dùng vé giữ chuỗi (1.25.9)."""
+    return core.daily_stats(col or mw.col, STATE.frozen_days())
+
+
+def _freeze_settle() -> list[str]:
+    """1.25.9: hôm qua (hai hôm trước) chưa ôn mà còn vé giữ chuỗi → dùng vé. Trả về các ngày vừa dùng vé."""
+    try:
+        days, today = core.review_days(mw.col)
+        return STATE.freeze_settle(days, today)
+    except Exception as err:
+        _warn("vé giữ chuỗi", err)
+        return []
+
+
 def _cal_goal(cfg: dict[str, Any] | None = None) -> int:
     try:
         g = int((cfg or config()).get("daily_goal") or 30)
@@ -1591,15 +1620,17 @@ def write_langs(cfg: dict[str, Any] | None = None) -> list[str]:
     return [x for x in journal.WRITE_LANGS if have.get(x)]
 
 
-_presence: dict[str, Any] = {"t": 0.0, "v": {}}
+_presence: dict[str, Any] = {"t": 0.0, "v": {}, "col": ""}
 
 
 def _lang_presence() -> dict[str, bool]:
-    """Collection có note tiếng Nhật / tiếng Anh không (đọc lại tối đa mỗi 60 giây)."""
-    if time.time() - _presence["t"] > 60 or not _presence["v"]:
+    """Collection có note tiếng Nhật / tiếng Anh không (đọc lại tối đa mỗi 60 giây). 1.25.9: gắn với collection đang
+    mở — đổi hồ sơ trong 60 giây không còn nhận kết quả của hồ sơ cũ."""
+    path = str(getattr(mw.col, "path", "") or "")
+    if time.time() - _presence["t"] > 60 or not _presence["v"] or _presence["col"] != path:
         infos = words.model_infos(mw.col, core.merged_config(config()))
         langs = {i["lang"] for i in infos.values()}
-        _presence.update(t=time.time(), v={"ja": "ja" in langs, "en": "en" in langs})
+        _presence.update(t=time.time(), v={"ja": "ja" in langs, "en": "en" in langs}, col=path)
     return _presence["v"]
 
 
@@ -1702,10 +1733,21 @@ def cal_month(ym: str) -> dict[str, Any]:
     first = journal.first_review_day(mw.col)
     counts = _counts(datetime.date(y, m, 1), datetime.date(y, m, journal.month_days(y, m)), cfg)
     try:
-        streak = int(core.daily_stats(mw.col).get("streak", 0))
+        streak = int(_daily_stats().get("streak", 0))
     except Exception:
         streak = 0
-    return journal.month_view(y, m, today, counts, JOURNAL.month(y, m), _cal_goal(cfg), first, _cal_plain(), streak)
+    v = journal.month_view(y, m, today, counts, JOURNAL.month(y, m), _cal_goal(cfg), first, _cal_plain(), streak)
+    try:       # 1.25.9: vé giữ chuỗi — số vé, nút mua, ngày đã dùng vé (ô lịch có bông tuyết)
+        data = STATE.load()
+        fz = data["more"]["freeze"]
+        v["freeze"] = more_core.freeze_view(fz, int(data.get("coins") or 0))
+        used = set(fz["days"])
+        for d in v["days"]:
+            if d["d"] in used:
+                d["fz"] = True
+    except Exception as err:
+        _warn("vé giữ chuỗi", err)
+    return v
 
 
 def cal_year(ys: str) -> dict[str, Any]:
@@ -1719,10 +1761,11 @@ def cal_year(ys: str) -> dict[str, Any]:
     counts = _counts(datetime.date(y, 1, 1), datetime.date(y, 12, 31), cfg)
     entries = JOURNAL.months([(y, m) for m in range(1, 13)])
     try:
-        streak = int(core.daily_stats(mw.col).get("streak", 0))
+        streak = int(_daily_stats().get("streak", 0))
     except Exception:
         streak = 0
-    return journal.year_view(y, today, counts, entries, _cal_goal(cfg), journal.first_review_day(mw.col), streak)
+    return journal.year_view(y, today, counts, entries, _cal_goal(cfg), journal.first_review_day(mw.col), streak,
+                             STATE.frozen_days())
 
 
 def _paper_day(ds: str) -> str:
@@ -2125,6 +2168,7 @@ class GardenDialog(QDialog):
             fed = STATE.touch()
         except Exception as err:
             _warn("nhà / thú nuôi", err)
+        frozen_now = _freeze_settle()      # 1.25.9: trước khi đọc ví (số vé còn lại đúng)
         try:
             cfg = config()
             data = core.build_garden(mw.col, self.deck_id, cfg)
@@ -2146,12 +2190,13 @@ class GardenDialog(QDialog):
             }
             data["catalog"] = core.home_catalog(data["wallet"], STATE.load_px())
             try:
-                today = core.daily_stats(mw.col)
+                today = _daily_stats()
             except Exception:
                 today = {"reviews": 0, "streak": 0, "day": 0}
             today["goal"] = int(cfg["daily_goal"])
             today["bonus"] = int(cfg["daily_bonus"])
             today["claimed"] = data["wallet"].get("goal_day") == today["day"]
+            today["freeze"] = more_core.freeze_view(data["wallet"]["more"]["freeze"], int(data["wallet"].get("coins") or 0))
             data["today"] = today
             data["mobile_on"] = bool(cfg.get("mobile_coins", True))
             try:      # 1.20: ô "Hôm nay thế nào?", dòng luyện viết, ảnh vườn tự chụp
@@ -2198,6 +2243,11 @@ class GardenDialog(QDialog):
         if paid:
             paid["message"] = mobile_message(paid)
             self._js("mobilePaid", paid)
+        if frozen_now:
+            n = len(frozen_now)
+            msg = ("[i:snow] " + ("Hôm qua" if n == 1 else f"{n} ngày qua") + f" chưa ôn — đã dùng {n} vé giữ chuỗi, "
+                   f"chuỗi {int(data['today'].get('streak', 0))} ngày vẫn còn.")
+            self.web.eval(f"Garden.toast({json.dumps(msg, ensure_ascii=False)}, null, 6000)")
         # 1.12: báo Gemini — chưa có số hôm nay thì viết (chạy nền, mỗi ngày tối đa vài lần); 1.19.1: mọi báo đã tick
         try:
             ai_start_all("auto")
@@ -3059,7 +3109,7 @@ class GardenDialog(QDialog):
             elif parts[0] == "theme" and len(parts) == 3 and parts[1] in ("buy", "streak"):
                 stats = {"streak": 0, "day": 0}
                 if parts[1] == "streak":   # chuỗi ngày tính lại từ lịch sử ôn, không tin số từ giao diện
-                    stats = core.daily_stats(mw.col)
+                    stats = _daily_stats()
                 data = STATE.unlock_theme(parts[2], "coins" if parts[1] == "buy" else "streak",
                                           stats["streak"], stats["day"])
             elif parts[0] == "theme" and len(parts) == 3 and parts[1] == "use":
@@ -3283,6 +3333,17 @@ class GardenDialog(QDialog):
             self._js("calView", dict(cal_day(arg), kind="day"))
         elif name == "book":
             self._js("calView", cal_book(arg))
+        elif name == "freeze":          # 1.25.9: mua vé giữ chuỗi
+            try:
+                STATE.freeze_buy(cal_today())
+                self._js("toast", "[i:snow] Đã mua 1 vé giữ chuỗi · −%d xu" % more_core.FREEZE_PRICE)
+                sfx_ok = True
+            except core.HomeError as err:
+                self._js("toast", str(err))
+                sfx_ok = False
+            v = cal_month(arg)
+            v["bought"] = sfx_ok
+            self._js("calView", v)
         elif name in ("mood", "note", "draft"):
             try:
                 p = json.loads(arg or "{}")
@@ -3685,7 +3746,7 @@ def report_info(client: Any = None) -> dict[str, Any]:
         except Exception:
             pass
         try:
-            st = core.daily_stats(col)
+            st = core.daily_stats(col, STATE.frozen_days())
             rows.append(("Hôm nay", f"{st['reviews']} lượt ôn · chuỗi {st['streak']} ngày"))
         except Exception as err:
             rows.append(("Hôm nay", f"không đọc được ({type(err).__name__})"))
@@ -3958,6 +4019,7 @@ def _on_profile_close() -> None:
         _warn("hoàn tác lượt ôn (đóng hồ sơ)", err)
     _ledger.clear()                       # 1.23: sổ phần thưởng (Undo) chỉ cho collection đang mở
     _words_cache.clear()                  # 1.25.3: gợi ý luyện viết của hồ sơ này không sang hồ sơ khác
+    _presence.update(t=0.0, v={}, col="")  # 1.25.9: ngôn ngữ có trong collection cũng vậy
     if _dialog is not None:
         try:
             _dialog.flush_unsaved()       # collection còn mở ở hook này → lưu được chữ đang gõ dở

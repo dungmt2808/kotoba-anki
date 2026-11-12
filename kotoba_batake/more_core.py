@@ -576,9 +576,94 @@ def sub_view(sub: dict[str, Any], today: datetime.date) -> dict[str, Any]:
 # Làm sạch + xem
 # ---------------------------------------------------------------------------
 
+# 1.25.9: vé giữ chuỗi — quên ôn một (hai) ngày thì tự dùng vé, chuỗi ngày ôn liên tiếp không đứt. Chỉ giữ con số chuỗi
+# (ngày dùng vé không cộng thêm), không đụng lịch ôn / thẻ. "days": ngày đã dùng vé (ngày Anki, "yyyy-mm-dd"); "since":
+# vé chỉ dùng cho ngày từ hôm mua trở đi (mua sau khi chuỗi đã đứt thì không vá lại được).
+FREEZE_PRICE = 150
+FREEZE_MAX = 2
+FREEZE_KEEP = 120          # nhớ chừng này ngày đã dùng vé gần nhất
+
+
+def clean_freeze(raw: Any) -> dict[str, Any]:
+    raw = raw if isinstance(raw, dict) else {}
+    n = raw.get("n")
+    n = max(0, min(FREEZE_MAX, n)) if isinstance(n, int) and not isinstance(n, bool) else 0
+    days = sorted({d.isoformat() for d in (_iso(x) for x in (raw.get("days") if isinstance(raw.get("days"), list) else [])) if d})
+    since = _iso(raw.get("since"))
+    return {"n": n, "days": days[-FREEZE_KEEP:], "since": since.isoformat() if since and n else None}
+
+
+def freeze_buy(fz: dict[str, Any], today: datetime.date) -> None:
+    if fz["n"] <= 0 or not fz.get("since"):
+        fz["since"] = today.isoformat()
+    fz["n"] += 1
+
+
+def freeze_settle(fz: dict[str, Any], days: set[int], today: datetime.date) -> list[str]:
+    """Dùng vé cho các ngày chưa ôn nằm trong chuỗi đang có (days: ngày có ôn, 0 = hôm nay, -1 = hôm qua…). Mỗi chỗ hổng
+    chỉ vá khi đủ vé lấp hết tới một ngày có ôn / đã dùng vé, và mọi ngày của chỗ hổng từ hôm mua vé trở đi (không thì
+    chuỗi đứt dù sao, giữ vé lại). Sửa `fz` tại chỗ, trả về các ngày vừa dùng vé."""
+    n = fz.get("n", 0)
+    since = _iso(fz.get("since"))
+    if n <= 0 or since is None:
+        return []
+    lo = (since - today).days            # ngày sớm nhất vé dùng được (số âm)
+    frozen = frozen_rel(fz.get("days"), today)
+    covered = lambda x: x in days or x in frozen   # noqa: E731
+    used: list[int] = []
+    d = 0 if 0 in days else -1
+    while n > 0:
+        while covered(d):
+            d -= 1
+        start, k = d, 0
+        while not covered(d) and k <= n and d >= lo:
+            k += 1
+            d -= 1
+        if k == 0 or k > n or not covered(d) or start - k + 1 < lo:
+            break
+        gap = list(range(start, start - k, -1))
+        used += gap
+        frozen.update(gap)
+        n -= k
+    if not used:
+        return []
+    out = sorted((today + datetime.timedelta(days=x)).isoformat() for x in used)
+    fz["n"] = n
+    fz["days"] = sorted(set(fz.get("days") or []) | set(out))[-FREEZE_KEEP:]
+    fz["since"] = (today + datetime.timedelta(days=max(used) + 1)).isoformat() if n else None
+    return out
+
+
+def frozen_rel(days: Any, today: datetime.date) -> set[int]:
+    """Ngày đã dùng vé → số ngày so với hôm nay (âm = đã qua); bỏ hôm nay / ngày tới."""
+    out: set[int] = set()
+    for s in days if isinstance(days, (list, tuple, set)) else []:
+        d = _iso(s)
+        if d and d < today:
+            out.add((d - today).days)
+    return out
+
+
+def streak_with(days: set[int], frozen: set[int]) -> int:
+    """Chuỗi ngày ôn liên tiếp tới hôm nay (hôm nay chưa ôn thì tới hôm qua); ngày dùng vé nối chuỗi nhưng không cộng."""
+    d = 0 if 0 in days else -1
+    n = 0
+    while d in days or d in frozen:
+        if d in days:
+            n += 1
+        d -= 1
+    return n
+
+
+def freeze_view(fz: dict[str, Any], coins: int) -> dict[str, Any]:
+    return {"n": fz.get("n", 0), "max": FREEZE_MAX, "price": FREEZE_PRICE, "coins": coins,
+            "last": (fz.get("days") or [None])[-1]}
+
+
 def empty_more() -> dict[str, Any]:
     return {"repair": {"day": None, "seen": None, "back": None}, "pets": {}, "pet_auto": False,
-            "seeds": _clean_seeds(None), "zones": [], "znext": 1, "paper_sub": clean_sub(None)}
+            "seeds": _clean_seeds(None), "zones": [], "znext": 1, "paper_sub": clean_sub(None),
+            "freeze": clean_freeze(None)}
 
 
 def clean_more(raw: Any, palette: dict[str, str]) -> dict[str, Any]:
@@ -591,6 +676,7 @@ def clean_more(raw: Any, palette: dict[str, str]) -> dict[str, Any]:
     more["pet_auto"] = raw.get("pet_auto") is True
     more["seeds"] = _clean_seeds(raw.get("seeds"))
     more["paper_sub"] = clean_sub(raw.get("paper_sub"))      # 1.25.1: gói báo
+    more["freeze"] = clean_freeze(raw.get("freeze"))         # 1.25.9: vé giữ chuỗi
     zones = raw.get("zones") if isinstance(raw.get("zones"), list) else []
     seen: set[str] = set()
     for z in zones:

@@ -1014,7 +1014,7 @@ var GardenGames = (function () {
     const today = new Date();
     const day = today.getFullYear() + "-" + String(today.getMonth() + 1).padStart(2, "0") + "-" + String(today.getDate()).padStart(2, "0");
     const earned = wallet.game_day === day ? (wallet.game_coins || 0) : 0;
-    const cap = (d.fx && d.fx.game_daily_coins) || 40;
+    const cap = d.fx && typeof d.fx.game_daily_coins === "number" ? d.fx.game_daily_coins : 40;   // 1.25.9: 0 là 0
     box.appendChild(el("div", "kb-gmenu-note",
       "Dùng " + (kinds[kind] || 0) + " " + (UNIT[kind] || "từ") + " (" + (GROUPS[kind] || "") + ") của deck “" + ((d.deck && d.deck.name) || "") + "”" +
       (all.learnedOnly ? ", ưu tiên cây đã học đang khát / héo." : ", có cả note mới.") +

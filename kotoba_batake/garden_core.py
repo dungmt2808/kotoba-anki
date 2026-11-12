@@ -719,14 +719,14 @@ def keep_foreign_season(store: dict[str, Any], prev: Any) -> dict[str, Any]:
     owned = prev.get("owned")
     if isinstance(owned, dict):
         for k, v in owned.items():
-            if isinstance(k, str) and k not in CATALOG and isinstance(v, int):
+            if isinstance(k, str) and not known_item(k) and isinstance(v, int):
                 store["owned"].setdefault(k, v)
     places = prev.get("places")
     if isinstance(places, dict):
         for scene, lst in places.items():
             if not (isinstance(scene, str) and isinstance(lst, list)):
                 continue
-            foreign = [e for e in lst if isinstance(e, dict) and (scene not in ALL_SCENES or e.get("id") not in CATALOG)]
+            foreign = [e for e in lst if isinstance(e, dict) and (scene not in ALL_SCENES or not known_item(e.get("id")))]
             if foreign:
                 store["places"][scene] = list(store["places"].get(scene, [])) + foreign
     for k, v in prev.items():   # khoá mới của bản sau: giữ nguyên
@@ -788,6 +788,15 @@ def split_nha(data: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any]]:
     return rest, store
 
 
+_CRAFT_ID = re.compile(r"c\d{1,6}")
+
+
+def known_item(i: Any) -> bool:
+    """Món bản này hiểu: món có sẵn hoặc món tự làm của Xưởng (id c1, c2…). 1.25.9: món tự làm từng bị coi là
+    món của bản mới hơn → chỗ đặt cũ ở Bếp / Phòng ngủ được ghép lại sau mỗi lần lưu, cất rồi vẫn hiện lại."""
+    return i in CATALOG or (isinstance(i, str) and _CRAFT_ID.fullmatch(i) is not None)
+
+
 def keep_foreign_nha(store: dict[str, Any], prev: Any) -> dict[str, Any]:
     """Giữ phần NHA_KEY của bản mới hơn (máy khác) mà bản này không hiểu: món / gian / cảnh lạ, khoá mới."""
     if not isinstance(prev, dict):
@@ -798,7 +807,7 @@ def keep_foreign_nha(store: dict[str, Any], prev: Any) -> dict[str, Any]:
     owned = prev.get("owned")
     if isinstance(owned, dict):
         for k, v in owned.items():
-            if isinstance(k, str) and k not in CATALOG and isinstance(v, int):
+            if isinstance(k, str) and not known_item(k) and isinstance(v, int):
                 store["owned"].setdefault(k, v)
     places = prev.get("places")
     if isinstance(places, dict):
@@ -806,7 +815,7 @@ def keep_foreign_nha(store: dict[str, Any], prev: Any) -> dict[str, Any]:
         for scene, lst in places.items():
             if not (isinstance(scene, str) and isinstance(lst, list)):
                 continue
-            foreign = [e for e in lst if isinstance(e, dict) and (scene not in known or e.get("id") not in CATALOG)]
+            foreign = [e for e in lst if isinstance(e, dict) and (scene not in known or not known_item(e.get("id")))]
             if foreign and not more.is_uzone(scene):
                 store["places"][scene] = list(store["places"].get(scene, [])) + foreign
     for k, v in prev.items():
@@ -1084,7 +1093,11 @@ def _clean_value(key: str, val: Any, default: Any) -> Any:
             if not 0 < f < float("inf"):
                 return list(default)
             out.append(int(f) if f == int(f) else f)
-        return out or list(default)
+        out = (out + list(default)[len(out):])[:3] if out else list(default)
+        # 1.25.9: ba mốc phải tăng dần (vd. [90, 3, 21] → cây nhảy giai đoạn / không bao giờ ra hoa) → về mặc định
+        if not out[0] < out[1] < out[2]:
+            return list(default)
+        return out
     return val
 
 
@@ -1789,24 +1802,29 @@ def card_due_in(col: Collection, card: Any) -> int | None:
         return None
 
 
-def daily_stats(col: Collection) -> dict[str, int]:
-    """Số lượt ôn hôm nay (theo ngày của Anki) và số ngày ôn liên tiếp."""
+def review_days(col: Collection) -> tuple[set[int], datetime.date]:
+    """Các ngày có ôn trong 400 ngày gần nhất (0 = hôm nay, -1 = hôm qua…) + ngày lịch của ngày Anki hôm nay."""
     cutoff = int(col.sched.day_cutoff)
     start = cutoff - 86400
-    reviews = col.db.scalar(
-        "select count() from revlog where id >= ? and type < 4", start * 1000
-    ) or 0
     since = start - 400 * 86400
     days = set(col.db.list(
         "select distinct cast((id / 1000.0 - ?) / 86400.0 + 100000 as int) - 100000 "
         "from revlog where id >= ? and type < 4",
         start, since * 1000,
     ))
-    d = 0 if 0 in days else -1
-    streak = 0
-    while d in days:
-        streak += 1
-        d -= 1
+    return days, datetime.datetime.fromtimestamp(start).date()
+
+
+def daily_stats(col: Collection, frozen: Any = ()) -> dict[str, int]:
+    """Số lượt ôn hôm nay (theo ngày của Anki) và số ngày ôn liên tiếp. 1.25.9: `frozen` = ngày đã dùng vé giữ chuỗi
+    ("yyyy-mm-dd") — nối chuỗi, không cộng thêm."""
+    cutoff = int(col.sched.day_cutoff)
+    start = cutoff - 86400
+    reviews = col.db.scalar(
+        "select count() from revlog where id >= ? and type < 4", start * 1000
+    ) or 0
+    days, today = review_days(col)
+    streak = more.streak_with(days, more.frozen_rel(frozen, today))
     return {"reviews": int(reviews), "streak": streak, "day": int(col.sched.today)}
 
 
@@ -2272,13 +2290,18 @@ def _make_quests(day: int, due_avail: int, new_avail: int, extra: tuple[str, ...
     return out
 
 
+def _qint(v: Any, lo: int) -> bool:
+    return isinstance(v, int) and not isinstance(v, bool) and lo <= v <= 100000
+
+
 def _clean_quest(raw: Any) -> dict[str, Any] | None:
     if not isinstance(raw, dict) or not isinstance(raw.get("day"), int):
         return None
     # 1.25.3: list / progress / done sai kiểu thì coi như trống (trước đây ném lỗi → mất cả nhiệm vụ hôm nay)
     lst = [q for q in (raw.get("list") if isinstance(raw.get("list"), list) else [])
            if isinstance(q, dict) and isinstance(q.get("kind"), str) and q.get("kind") in QUEST_TEXT
-           and isinstance(q.get("target"), int)]
+           and _qint(q.get("target"), 1) and isinstance(q.get("id"), str) and isinstance(q.get("text"), str)
+           and _qint(q.get("reward"), 0)]       # 1.25.9: thiếu id / text / reward → bỏ (trước đây KeyError)
     prog = {k: v for k, v in (raw.get("progress") if isinstance(raw.get("progress"), dict) else {}).items()
             if isinstance(k, str) and isinstance(v, int) and not isinstance(v, bool)}
     done = [x for x in (raw.get("done") if isinstance(raw.get("done"), list) else []) if isinstance(x, str)]
@@ -2389,6 +2412,8 @@ def clean_mobile(raw: Any) -> dict[str, Any] | None:
             continue
         if isinstance(v, dict):
             days[str(d)] = {f: _nonneg(v.get(f)) for f in MOBILE_FIELDS}
+            if _nonneg(v.get("paid")):
+                days[str(d)]["paid"] = min(_nonneg(v.get("paid")), MOBILE_DAY_CAP)
     goals = sorted({g for g in raw.get("goals") or [] if isinstance(g, int) and not isinstance(g, bool)}) \
         if isinstance(raw.get("goals"), list) else []
     tot = raw.get("total") if isinstance(raw.get("total"), dict) else {}
@@ -2457,7 +2482,9 @@ def settle_mobile(data: dict[str, Any], counts: dict[int, dict[str, int]], today
         c = m["days"].get(str(d)) or {f: 0 for f in MOBILE_FIELDS}
         delta = {f: max(0, r.get(f, 0) - c.get(f, 0)) for f in MOBILE_FIELDS}
         if delta["all"] or delta["ok"]:
-            gained = min(delta["ok"], MOBILE_DAY_CAP)
+            # 1.25.9: trần tính cho cả ngày (cộng các lần bù trước), không phải cho từng lần đồng bộ
+            paid = _nonneg(c.get("paid"))
+            gained = min(delta["ok"], max(0, MOBILE_DAY_CAP - paid))
             data["coins"] += gained
             data["waters"] = data.get("waters", 0) + delta["all"]
             res["reviews"] += delta["all"]
@@ -2466,6 +2493,8 @@ def settle_mobile(data: dict[str, Any], counts: dict[int, dict[str, int]], today
             if d == today:
                 res["rev_today"], res["new_today"] = delta["rev"], delta["new"]
             m["days"][str(d)] = {f: max(c.get(f, 0), r.get(f, 0)) for f in MOBILE_FIELDS}
+            if paid + gained:
+                m["days"][str(d)]["paid"] = paid + gained
         if (goal > 0 and d >= start_day and r.get("day_all", 0) >= goal and d not in m["goals"]
                 and data.get("goal_day") != d):
             m["goals"].append(d)
@@ -2909,12 +2938,13 @@ class GardenState:
         if not isinstance(stored, dict):
             try:
                 with open(self._px_path(), encoding="utf-8") as f:
-                    stored = json.load(f)
+                    # 1.25.9: file sao lưu dùng chung mọi hồ sơ → chỉ nhận khi ghi đúng chủ (như ví / nhà)
+                    stored = backup_data(json.load(f), col)
             except (OSError, ValueError):
                 stored = None
         if not isinstance(stored, dict):
             return {}
-        return {k: v for k, v in stored.items() if isinstance(k, str) and isinstance(v, str)}
+        return {k: v for k, v in stored.items() if isinstance(k, str) and isinstance(v, str) and k != OWNER_KEY}
 
     def save_px(self, px: dict[str, str]) -> None:
         col = self._col()
@@ -2927,7 +2957,7 @@ class GardenState:
             os.makedirs(os.path.dirname(self.path), exist_ok=True)
             tmp = self._px_path() + ".tmp"
             with open(tmp, "w", encoding="utf-8") as f:
-                json.dump(px, f, ensure_ascii=False)
+                json.dump(backup_payload(px, col), f, ensure_ascii=False)
             os.replace(tmp, self._px_path())
         except OSError as err:
             if col is None:
@@ -3478,6 +3508,32 @@ class GardenState:
         self._pay(data, price)
         self.save(data)
         return data
+
+    # ---- 1.25.9: vé giữ chuỗi ----
+    def frozen_days(self) -> list[str]:
+        try:
+            return list(self.load()["more"]["freeze"]["days"])
+        except Exception:
+            return []
+
+    def freeze_buy(self, today: datetime.date) -> dict[str, Any]:
+        """Mua 1 vé giữ chuỗi (today: ngày Anki hôm nay — vé dùng được cho ngày từ hôm nay trở đi)."""
+        data = self.load()
+        fz = data["more"]["freeze"]
+        if fz["n"] >= more.FREEZE_MAX:
+            raise HomeError(f"Đã có đủ {more.FREEZE_MAX} vé rồi.")
+        self._pay(data, more.FREEZE_PRICE)
+        more.freeze_buy(fz, today)
+        self.save(data)
+        return data
+
+    def freeze_settle(self, days: set[int], today: datetime.date) -> list[str]:
+        """Ngày chưa ôn ngay trước hôm nay → dùng vé (nếu đủ). Trả về các ngày vừa dùng vé."""
+        data = self.load()
+        used = more.freeze_settle(data["more"]["freeze"], days, today)
+        if used:
+            self.save(data)
+        return used
 
     # ---- 1.25.1: gói báo (mua bằng xu; ngày theo ngày thật như số báo) ----
     @_more_errors

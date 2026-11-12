@@ -7,6 +7,7 @@ var GardenNhaArt = (function () {
 
   function install(L) {
     const { grid, rect, disc, dot, outline, rows, SPR, GLOW, P, box } = L;
+    const ALT = L.ALT || {};      // 1.25.9: khung thay thế (sửa được ở Sửa hình / Góp ý hình)
     const ol = (g) => rows(outline(g));
     const IDS = ["reizouko", "nagashi", "shokutaku", "suihanki", "shokkidana", "yasaikago",
       "beddo", "tansu", "nightlamp", "kyodai", "dakimakura", "hoshizora"];
@@ -29,7 +30,7 @@ var GardenNhaArt = (function () {
       return ol(g);
     }
     SPR.reizouko = fridge(false);
-    const FRIDGE_OPEN = fridge(true);
+    ALT.reizouko = { mo: fridge(true) };
 
     // ---------------------------------------------------------------- Bếp + bồn rửa (nồi canh bốc hơi)
     SPR.nagashi = (function () {
@@ -100,7 +101,7 @@ var GardenNhaArt = (function () {
       return ol(g);
     }
     SPR.beddo = bed(false);
-    const BED_UP = bed(true);
+    ALT.beddo = { phong: bed(true) };
 
     // ---------------------------------------------------------------- Tủ áo tansu
     SPR.tansu = (function () {
@@ -156,8 +157,8 @@ var GardenNhaArt = (function () {
     GLOW.hoshizora = [6, 16];
 
     function frameOf(e, now) {
-      if (e.id === "reizouko") { const t = (now + e.x * 1300) % 11000; return t > 9800 ? FRIDGE_OPEN : null; }
-      if (e.id === "beddo") { return Math.floor((now + e.x * 400) / 1600) % 2 ? BED_UP : null; }
+      if (e.id === "reizouko") { const t = (now + e.x * 1300) % 11000; return t > 9800 ? ALT.reizouko.mo : null; }
+      if (e.id === "beddo") { return Math.floor((now + e.x * 400) / 1600) % 2 ? ALT.beddo.phong : null; }
       return null;
     }
     function emit(e, bx, dt, night, add) {
