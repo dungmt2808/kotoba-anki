@@ -208,9 +208,9 @@ kb.event_core.festival = lambda d: {"hi": "メリークリスマス！", "vi": "
   }
   ok(sawCurtain, 'vào / ra Trong nhà: rèm');
   await js('GardenHome.open(); return 1;'); await sleep(40);
-  ok(await js('return document.getElementById("kb-home").classList.contains("kb-pop");'), 'mở bảng Nhà: bật nhẹ (lớp kb-pop)');
-  await sleep(400);
-  ok(!(await js('return document.getElementById("kb-home").classList.contains("kb-pop");')), 'hết hiệu ứng thì gỡ lớp kb-pop');
+  ok(await js('return document.getElementById("kb-home").classList.contains("kb-panel-in");'), 'mở bảng Nhà: bật nhẹ (lớp kb-panel-in)');
+  await sleep(600);
+  ok(!(await js('return document.getElementById("kb-home").classList.contains("kb-panel-in");')), 'hết hiệu ứng thì gỡ lớp kb-panel-in');
   await js('GardenHome.close(); return 1;'); await sleep(300);
 
   console.log('== 8. ⚙ Chào khi mở vườn / Chuyển cảnh, Dịu mắt');

@@ -3562,22 +3562,29 @@ class GardenState:
         self.save(data)
         return data
 
-    def paper_sub_ensure(self, today: str) -> tuple[str, int]:
-        """Trước khi Gemini viết số mới: còn gói → ("ok", 0); chưa có gói và chưa thử → tặng 7 ngày ("trial", 0);
-        hết hạn + Tự gia hạn + đủ xu → gia hạn gói cũ ("renewed", giá); không thì ("expired", 0)."""
+    def paper_sub_ensure(self, today: str, commit: bool = True) -> tuple[str, int]:
+        """Gói báo cho số Gemini mới: còn gói → ("ok", 0); chưa có gói và chưa thử → tặng 7 ngày ("trial", 0);
+        hết hạn + Tự gia hạn + đủ xu → gia hạn gói cũ ("renewed", giá); không thì ("expired", 0).
+
+        1.26.1: `commit=False` chỉ xem (không ghi, không trừ xu) — add-on xem trước khi Gemini viết rồi mới tặng thử /
+        gia hạn **sau khi số báo đã viết xong** (trước đây trừ xu trước: Gemini lỗi / hết hạn mức / khoá bị thu hồi thì mất
+        xu mà không có báo, khoá hỏng hẳn thì tuần nào cũng bị trừ; gói thử cũng bắt đầu dù chưa có số nào)."""
         day = datetime.date.fromisoformat(today)
         data = self.load()
         sub = data["more"]["paper_sub"]
         if more.sub_left(sub, day) > 0:
             return "ok", 0
-        if more.sub_trial(sub, day):
-            self.save(data)
+        if not sub.get("trial") and not sub.get("until"):
+            if commit:
+                more.sub_trial(sub, day)
+                self.save(data)
             return "trial", 0
         price = more.PAPER_PLANS[sub["plan"]]["price"]
         if sub.get("auto") and data["coins"] >= price:
-            more.sub_buy(sub, sub["plan"], day)
-            data["coins"] -= price
-            self.save(data)
+            if commit:
+                more.sub_buy(sub, sub["plan"], day)
+                data["coins"] -= price
+                self.save(data)
             return "renewed", price
         return "expired", 0
 

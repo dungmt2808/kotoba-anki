@@ -7,7 +7,7 @@
      (rê chuột lên thì dừng đếm), bấm / phím bất kỳ để vào ngay.
    - Chuyển cảnh (⚙ → Màn chính → Chuyển cảnh): màn chào → vườn (vòng tròn khép rồi mở), mở vườn các lần sau (vòng tròn
      mở), đổi cảnh ◂ ▸ (dải lá / cánh hoa / tuyết theo giao diện mùa quét ngang — home.js gọi strip()), vào / ra Trong
-     nhà (rèm), mở bảng Nhà / Trò chơi / Báo / Lịch hoa (bật nhẹ). Kiểu Dịu mắt / Tắt hạt bay: chỉ mờ dần. Tắt: không có.
+     nhà (rèm), mở bảng Nhà / Trò chơi / Báo / Lịch hoa (bật nhẹ, lớp kb-panel-in). Kiểu Dịu mắt / Tắt hạt bay: chỉ mờ dần. Tắt: không có.
    Lớp phủ hiệu ứng không nhận chuột (pointer-events: none) — không chặn bấm. */
 var GardenGreet = (function () {
   "use strict";
@@ -15,6 +15,8 @@ var GardenGreet = (function () {
   const INK = "#1b1b2f";
   const PX = 8;                 // cỡ bậc thang của vòng tròn
   const GREET_MS = 4000;        // tự vào vườn sau chừng này (không tính lúc rê chuột lên màn chào)
+  // 1.26.1 (người dùng: "thời gian chuyển cảnh nó đang bị nhanh quá, chậm lại một chút") — chậm hơn 1.26.0 khoảng 1,7 lần
+  const T = { close: 450, open: 620, first: 650, fade: 480, out: 450 };
   let first = true;             // lần vẽ đầu tiên của trang (= vừa mở vườn)
   let greet = null;             // màn chào đang hiện
   let newsOpen = false;
@@ -228,10 +230,10 @@ var GardenGreet = (function () {
     const m = mode();
     const gone = () => { if (box.parentNode) { box.parentNode.removeChild(box); } greet = null; };
     if (m === "full") {
-      irisClose(260, px, py, () => { gone(); irisOpen(360, window.innerWidth / 2, window.innerHeight / 2); });
+      irisClose(T.close, px, py, () => { gone(); irisOpen(T.open, window.innerWidth / 2, window.innerHeight / 2); });
     } else if (m === "fade") {
       box.classList.add("kb-greet-out");
-      setTimeout(gone, 320);
+      setTimeout(gone, T.out + 20);
     } else { gone(); }
   }
 
@@ -244,10 +246,10 @@ var GardenGreet = (function () {
         const t = r.target;
         if (t.hidden || r.oldValue === null) { return; }       // vừa hiện (trước đó có thuộc tính hidden)
         if (mode() !== "full") { return; }
-        t.classList.remove("kb-pop"); void t.offsetWidth; t.classList.add("kb-pop");
+        t.classList.remove("kb-panel-in"); void t.offsetWidth; t.classList.add("kb-panel-in");
       });
     });
-    POP_IDS.forEach((id) => { const e = $(id); if (e) { mo.observe(e, { attributes: true, attributeFilter: ["hidden"], attributeOldValue: true }); e.addEventListener("animationend", () => e.classList.remove("kb-pop")); } });
+    POP_IDS.forEach((id) => { const e = $(id); if (e) { mo.observe(e, { attributes: true, attributeFilter: ["hidden"], attributeOldValue: true }); e.addEventListener("animationend", (ev) => { if (ev.target === e) { e.classList.remove("kb-panel-in"); } }); } });
   }
 
   // ---------------------------------------------------------------- đổi cảnh trên dải cảnh (home.js gọi khi vẽ)
@@ -381,7 +383,7 @@ var GardenGreet = (function () {
       const g = d && d.greet;
       if (g && glob("greet") !== "off" && prefGet("kb-greet-day") !== String(g.day)) { show(g); return; }
       const m = mode();
-      if (m === "full") { irisOpen(400, window.innerWidth / 2, window.innerHeight / 2); } else if (m === "fade") { fadeIn(300); }
+      if (m === "full") { irisOpen(T.first, window.innerWidth / 2, window.innerHeight / 2); } else if (m === "fade") { fadeIn(T.fade); }
     },
     mode: mode,
     strip: strip,

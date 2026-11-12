@@ -19,6 +19,7 @@ try:
     _kb = _sys.modules.get("kotoba_batake")
     if _kb is not None:
         _kb.GREET_TEST_OFF = True
+        _kb.TOUR_TEST_OFF = True      # 1.26.1: hướng dẫn 3 bước cho người mới (e2e_1261.js bật lại)
 except Exception:
     pass
 

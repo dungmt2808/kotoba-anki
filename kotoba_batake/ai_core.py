@@ -67,6 +67,7 @@ MAX_REPAIRS = 2            # số lần gửi lại danh sách lỗi cho Gemini 
 MAX_AUTO_TRIES = 2         # số lần tự viết thất bại tối đa mỗi ngày (bấm tay thì không giới hạn)
 MAX_MODELS = 8             # 1.13: số model viết chữ thử tối đa mỗi lượt (cả Flash-Lite, hạn mức riêng)
 TEXT_TIMEOUT = 240
+MISSING_SKIP = 3 * 86400    # 1.26.1: model Google còn liệt kê nhưng gọi thì 404 → bỏ qua 3 ngày
 TTS_TIMEOUT = 120
 MAX_OUT_TOKENS = 65536     # trần token trả về (tính cả token "suy nghĩ" của Gemini 2.5 / 3.x)
 THINK_BUDGET = {"low": 2048, "medium": 8192, "high": 24576}   # Gemini 2.5 (thinkingBudget)
@@ -179,7 +180,7 @@ def explain_http(code: int, body: bytes, model: str = "") -> AIError:
         return AIError("Hết hạn mức miễn phí của Gemini%s, thử lại %s." % ((" (" + model + ")") if model else "", when),
                        "quota", retry_after=delay, daily=daily, quota_model=hit)
     if code == 404:
-        return AIError("Không có model %s (Google vừa đổi tên?). Xoá gemini_model trong Config để tự chọn." % (model or "?"), "model")
+        return AIError("Google không còn model %s." % (model or "?"), "model")     # 1.26.1: lời khuyên Config chỉ khi model do người dùng đặt (Job._gen)
     if code >= 500:
         return AIError("Máy chủ Gemini đang bận (%d), thử lại sau." % code, "busy")
     if code == 400 and ("thinking" in low or "thinkinglevel" in low or "thinking_level" in low or "thinkingbudget" in low):
@@ -1563,6 +1564,11 @@ def _fix_jp(text: Any, scope_keys: set[str], new_keys: set[str], notes: list[str
     return "".join(out)
 
 
+def _strip_marks(text: str) -> str:
+    """Bỏ ký tự đánh dấu còn sót (đánh dấu lệch mà paper.surface không tách được)."""
+    return re.sub(r"[{}\[\]|]", "", text)
+
+
 def autofix(raw: Any, scope: dict[str, Any], opts: dict[str, Any]) -> tuple[Any, list[str]]:
     notes: list[str] = []
     if not isinstance(raw, dict):
@@ -1620,7 +1626,28 @@ def autofix(raw: Any, scope: dict[str, Any], opts: dict[str, Any]) -> tuple[Any,
             c["cau"] = fx(c.get("cau"))
             if not isinstance(c.get("them_dap_an"), list):
                 c["them_dap_an"] = []
-            c["them_dap_an"] = [x.strip() for x in c["them_dap_an"] if isinstance(x, str) and x.strip()]
+            alt = [x.strip() for x in c["them_dap_an"] if isinstance(x, str) and x.strip()]
+            # 1.26.1 (thử thật 12/11, Flash-Lite): cách viết khác có đánh dấu furigana / romaji → máy gỡ đánh dấu, bỏ romaji
+            # (danh sách này chỉ thêm đáp án được chấp nhận, bỏ bớt không sai gì)
+            alt2 = []
+            for x in alt:
+                y = _strip_marks(paper.surface(x)) if any(ch in x for ch in "{}[]|") else x
+                if y and not LATIN_RE.search(y) and y not in alt2:
+                    alt2.append(y)
+            if alt2 != alt:
+                notes.append("gỡ đánh dấu / bỏ romaji trong cách viết khác của câu chép")
+            c["them_dap_an"] = alt2
+    # 1.26.1 (thử thật 12/11): phần tiếng Việt (giải thích câu hỏi, tóm tắt) lọt đánh dấu furigana của chữ Nhật được trích
+    # → chỉ giữ chữ (không cần gọi Gemini sửa — lượt sửa hay không gọi được khi các model đã hết hạn mức)
+    vi_fields = [(q, "giai_thich") for q in raw.get("cau_hoi", []) if isinstance(q, dict)] \
+        if isinstance(raw.get("cau_hoi"), list) else []
+    vi_fields += [(raw, "tom_tat"), (raw, "tom_tat_truyen")]
+    vi_fields += [(b, "ky_truoc") for b in raw.get("bai", []) if isinstance(b, dict)] if isinstance(raw.get("bai"), list) else []
+    for obj, k in vi_fields:
+        v = obj.get(k)
+        if isinstance(v, str) and any(ch in v for ch in "{}[]|"):
+            obj[k] = re.sub(r"\s+", " ", _strip_marks(paper.surface(v))).strip()
+            notes.append("gỡ đánh dấu furigana trong phần tiếng Việt")
     # từ mới khai báo nhưng không dùng trong bài → bỏ khai báo
     used = set()
     for text in _all_jp(raw):
@@ -2274,7 +2301,9 @@ _KANA_ROMA = dict(zip(
      "na", "ni", "nu", "ne", "no", "ha", "hi", "fu", "he", "ho", "ma", "mi", "mu", "me", "mo", "ya", "yu", "yo", "ra", "ri",
      "ru", "re", "ro", "wa", "o", "n", "ga", "gi", "gu", "ge", "go", "za", "ji", "zu", "ze", "zo", "da", "ji", "zu", "de", "do",
      "ba", "bi", "bu", "be", "bo", "pa", "pi", "pu", "pe", "po"]))
-_VI_PLACE = (("スタックちゃん", "StackChan"), ("リンさん", "Lin"), ("はなさん", "Hana"), ("女将さん", "bà chủ quán"),
+# 1.26.1: はなさん (chủ quán, ~30 tuổi) → "chị Hana" như bản dịch của Claude; "bà はな" (bà của chị Hana) → "bà Hana"
+_VI_PLACE = (("スタックちゃん", "StackChan"), ("リンさん", "Lin"), ("bà はなさん", "bà Hana"), ("Bà はなさん", "Bà Hana"),
+             ("はなさん", "chị Hana"), ("女将さん", "chủ quán"),
              ("村長（そんちょう）", "trưởng làng"), ("村長", "trưởng làng"), ("ことば屋", "Quán Kotoba"),
              ("ことば村", "làng Kotoba"), ("ことば畑", "vườn Kotoba"))
 _KANA_NAME = re.compile(r"(?<![\u3041-\u30ff\u3400-\u9fff\uf900-\ufaff])([\u3041-\u3093\u30a1-\u30f3\u30fc]{1,6}?)(ちゃん|さん|くん)?(?![\u3041-\u30ff\u3400-\u9fff\uf900-\ufaff])")   # tên kana đứng riêng (không sát chữ Nhật khác)
@@ -2612,6 +2641,7 @@ class Job:
     def _gen(self, system: str, prompt: str, schema: dict[str, Any], temperature: float,
              thinking: str | None = None) -> Any:
         last: AIError | None = None
+        real: AIError | None = None       # 1.26.1: lỗi cuối không phải "model không còn" (lý do thật khi mọi model hỏng)
         for name in self._models():
             try:
                 text = self.c.generate(name, system, prompt, schema, temperature, thinking=thinking)
@@ -2622,11 +2652,21 @@ class Job:
                     return {"_hong": text[:20000]}
             except AIError as e:
                 last = e
+                if e.kind != "model":
+                    real = e
+                if e.kind == "model" and not self.opts.get("model"):
+                    # 1.26.1 (thử thật 12/11): Google còn liệt kê gemini-2.5-flash nhưng gọi thì 404 → mỗi bước (lập mạch,
+                    # viết, biên tập, kể lại, sửa, soát) lại thử một lần. Bỏ qua model này 3 ngày (nhớ cùng chỗ hết hạn mức).
+                    self.c.mark_exhausted(name, MISSING_SKIP)
                 if e.kind in ("quota", "model", "busy", "format", "bad", "blocked"):
                     self._note("doi_model", model=name, ly_do=str(e)[:160])
                     continue        # model khác (vd. Flash-Lite có hạn mức riêng)
                 raise
-        raise last or AIError("Không gọi được Gemini.", "busy")
+        if last is not None and last.kind == "model" and self.opts.get("model"):
+            raise AIError(str(last) + " Xoá gemini_model trong Config để tự chọn.", "model")
+        # thử thật: model cuối danh sách là model 404 → báo "Google không còn model …" trong khi lý do thật là các model kia
+        # bận / hết hạn mức
+        raise real or last or AIError("Không gọi được Gemini.", "busy")
 
     def _clean(self, raw: Any) -> tuple[Any, Report]:
         if isinstance(raw, dict) and "_hong" in raw:
@@ -2771,6 +2811,7 @@ class Job:
             # soát lần 2 (biên tập viên)
             self.progress("Đang soát lần 2…")
             reviewed: Any = None
+            rep2: Report | None = None
             try:
                 rp = (en.review_prompt if en else review_prompt)(raw, self.scope, rep.warnings)
                 res = self._gen(system, rp, REVIEW_SCHEMA, 0.1, thinking="medium")
@@ -2797,8 +2838,10 @@ class Job:
                 self._note("soat_bo_qua", ly_do=str(e))
             final = reviewed if reviewed is not None else good
             if final is None:
-                result["error"] = "Gemini viết còn %d lỗi sau %d lần sửa, chưa lưu số này." % (len(rep.errors), MAX_REPAIRS)
-                result["loi"] = rep.errors[:20]
+                # 1.26.1: báo số lỗi của bản gần xong nhất (thử thật: bản soát còn 7 lỗi mà thông báo ghi 27 của bản đầu)
+                left = rep2.errors if rep2 is not None and len(rep2.errors) < len(rep.errors) else rep.errors
+                result["error"] = "Gemini viết còn %d lỗi sau %d lần sửa, chưa lưu số này." % (len(left), MAX_REPAIRS)
+                result["loi"] = left[:20]
                 return result
             if reviewed is None:
                 self._note("dung_ban_truoc_soat")

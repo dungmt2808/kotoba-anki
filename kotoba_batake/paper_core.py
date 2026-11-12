@@ -237,6 +237,25 @@ def _s(value: Any, limit: int) -> str:
     return value.strip()[:limit]
 
 
+def clip(value: Any, limit: int) -> str:
+    """1.26.1: cắt chữ dài cho vừa `limit` ký tự ở chỗ hết câu / hết từ, thêm "…" (thử thật: dòng "Kỳ trước" tóm tắt từ
+    truyen.md của Claude dài 400 ký tự, cắt cứng còn "…Trời tối dần, Ha")."""
+    if not isinstance(value, str):
+        return ""
+    s = value.strip()
+    if len(s) <= limit:
+        return s
+    cut = s[:limit - 1]
+    for sep in (". ", "。", "! ", "? ", "; "):
+        i = cut.rfind(sep)
+        if i >= limit * 0.6:
+            return cut[:i + len(sep)].rstrip() + " …" if sep != "。" else cut[:i + 1] + "…"
+    i = cut.rfind(" ")
+    if i >= limit * 0.6:
+        cut = cut[:i]
+    return cut.rstrip(" ,;:—-") + "…"
+
+
 def _list(value: Any, limit: int) -> list[Any]:
     return value[:limit] if isinstance(value, list) else []
 
@@ -268,7 +287,7 @@ def clean_issue(raw: Any, date: str) -> dict[str, Any]:
             # 1.23: bản dịch tiếng Việt từng đoạn (ẩn sẵn) — đúng số đoạn, không có chữ Nhật / dấu đánh dấu thì mới dùng
             "dich": dich if len(dich) == len(doan) and all(dich) and not any(TRANS_BAD.search(x) for x in dich) else [],
             "ky": _int(b.get("ky"), 1, 100000),
-            "ky_truoc": _s(b.get("ky_truoc"), 300),
+            "ky_truoc": clip(b.get("ky_truoc"), 300),
             "nguon": nguon if re.match(r"^https?://", nguon) else "",
         })
     if not arts:

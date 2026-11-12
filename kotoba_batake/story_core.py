@@ -151,10 +151,11 @@ BIBLE_VI = """TRUYỆN DÀI KỲ "Quán trọ nhỏ ở làng Kotoba" — làng 
 thật. Mỗi kỳ được in trong báo làng bằng tiếng Việt, tiếng Nhật và tiếng Anh (bản tiếng Nhật / tiếng Anh kể lại cho người
 mới học).
 Nhân vật (mỗi người một điều muốn, một điều sợ, một câu cửa miệng; giữ nhất quán qua mọi kỳ):
-- Lin: cô gái Việt Nam 22 tuổi mới đến làm ở quán trọ "Quán Kotoba". Muốn bà Hana tin tưởng giao quán một mình. Đang
+- Lin: cô gái Việt Nam 22 tuổi mới đến làm ở quán trọ "Quán Kotoba". Muốn chị Hana tin tưởng giao quán một mình. Đang
   học tiếng của làng, hay ghi chép vào cuốn sổ nhỏ, đôi khi nói nhầm một câu (lời chào, cách nói lịch sự) rồi tự sửa.
   Câu cửa miệng: "Để em ghi lại đã!"
-- Bà Hana: bà chủ quán, khoảng 30 tuổi, điềm tĩnh, nói năng lịch sự với khách, thân mật với Lin. Có một bí mật về quá
+- Chị Hana: chủ quán, khoảng 30 tuổi (Lin gọi là "chị Hana"; "bà" chỉ dành cho người già, vd. bà của chị Hana),
+  điềm tĩnh, nói năng lịch sự với khách, thân mật với Lin. Có một bí mật về quá
   khứ của quán, hé ra dần qua nhiều đợt.
 - StackChan: robot nhỏ của khu vườn, tò mò, nói câu ngắn, xưng "tớ", hay vẽ tranh pixel. Hiểu câu nói thường ngày theo
   nghĩa đen (gây cười).
@@ -165,16 +166,18 @@ Tên gọi giữ đúng như trên: ông trưởng làng KHÔNG có tên riêng 
 Lời thoại để trong ngoặc kép "…", ghi rõ ai nói."""
 
 # tên chung của các bản (tiếng Việt / tiếng Nhật / tiếng Anh) — bản kể lại dùng đúng bảng này
-NAMES = (("Lin", "リンさん", "Lin"), ("bà Hana (chủ quán, khoảng 30 tuổi)", "はなさん（女将さん; không gọi おばあさん）",
+# 1.26.1: "chị Hana" (bản 1.25.2 ghi "bà Hana" — trùng với bà của chị Hana trong truyện của báo Claude Code, và là gốc của
+# "Grandma Hana" ở báo tiếng Anh)
+NAMES = (("Lin", "リンさん", "Lin"), ("chị Hana (chủ quán, khoảng 30 tuổi)", "はなさん（女将さん; không gọi おばあさん）",
           "Hana (not \"Grandma\")"), ("StackChan", "スタックちゃん", "StackChan"),
          ("ông trưởng làng (không có tên riêng)", "村長さん", "the mayor"),
          ("Quán Kotoba (quán trọ)", "ことば屋（旅館）", "the Kotoba Inn"),
          ("làng Kotoba", "ことば村", "Kotoba Village"), ("vườn Kotoba", "ことば畑", "Kotoba Farm"),
          ("bác đưa thư", "郵便屋さん", "the postman"), ("con mèo hoang trắng", "白いのらねこ", "the white stray cat"))
 
-SAMPLE_VI = """"Bà Hana ơi, khách phòng số ba muốn ăn sáng bằng... một tấm bản đồ!" Lin chạy vào bếp, tay vẫn cầm cuốn sổ nhỏ. Bà Hana đặt ấm trà xuống. "Bản đồ à?" StackChan lập tức chui vào tủ, lôi ra một chiếc đĩa. "Tớ có đĩa. Bản đồ thì chưa nấu bao giờ."
+SAMPLE_VI = """"Chị Hana ơi, khách phòng số ba muốn ăn sáng bằng... một tấm bản đồ!" Lin chạy vào bếp, tay vẫn cầm cuốn sổ nhỏ. Chị Hana đặt ấm trà xuống. "Bản đồ à?" StackChan lập tức chui vào tủ, lôi ra một chiếc đĩa. "Tớ có đĩa. Bản đồ thì chưa nấu bao giờ."
 Ông khách già trải lên bàn một tấm bản đồ cũ, mép giấy đã ngả vàng. Ở góc dưới có một vòng tròn đỏ, ngay chỗ khu vườn Kotoba bây giờ. "Ngày xưa, ở đây có một cái giếng," ông nói khẽ. "Tôi đã hứa sẽ quay lại."
-Bà Hana nhìn vòng tròn đỏ rất lâu mà không nói gì. Lin định hỏi thì ngoài sân vang lên tiếng nước chảy róc rách — ở đúng chỗ chưa từng có cái giếng nào."""
+Chị Hana nhìn vòng tròn đỏ rất lâu mà không nói gì. Lin định hỏi thì ngoài sân vang lên tiếng nước chảy róc rách — ở đúng chỗ chưa từng có cái giếng nào."""
 
 RULES_VI = """CÁCH VIẾT MỘT KỲ HAY (bắt buộc):
 1. Một cảnh, 2–3 nhân vật. Mở đầu bằng hành động hoặc lời thoại, KHÔNG mở bằng tả thời tiết.
@@ -485,7 +488,7 @@ def writer_prompt(lang: str, scope: dict[str, Any], ky: int, tone: str, arc: dic
         parts.append(
             "MỤC THỨ BA (muc3): " + ("THÔNG BÁO CỦA LÀNG — 2–3 mục, mỗi mục một đoạn ngắn bắt đầu bằng \"◆ \" (giờ giấc, việc "
                                      "chung, lời nhắc); tieu_de kiểu \"Thông báo của làng\"." if muc3 == "thong_bao" else
-                                     "CỘT NGẮN CỦA MỘT NHÂN VẬT (StackChan, bà Hana hoặc ông trưởng làng) — 1–2 đoạn, giọng "
+                                     "CỘT NGẮN CỦA MỘT NHÂN VẬT (StackChan, chị Hana hoặc ông trưởng làng) — 1–2 đoạn, giọng "
                                      "riêng của nhân vật, chuyện nhỏ trong ngày; tieu_de kiểu \"Góc của StackChan\"."))
         if problems:
             parts.append("BẢN TRƯỚC BỊ MÁY KIỂM TRA TRẢ LẠI (tránh các lỗi này):\n- " + "\n- ".join(problems[:12]))
@@ -962,7 +965,7 @@ def clean_master(raw: Any) -> dict[str, Any] | None:
         return None
     nho = t.get("nho") if isinstance(t.get("nho"), dict) else {}
     return {"ngay": _str(raw.get("ngay"), 10), "ky": raw["ky"],
-            "truyen": {"tieu_de": _str(t.get("tieu_de"), 120), "doan": doan, "ky_truoc": _str(t.get("ky_truoc"), 300),
+            "truyen": {"tieu_de": _str(t.get("tieu_de"), 120), "doan": doan, "ky_truoc": paper.clip(t.get("ky_truoc"), 300),
                        "nho": {"tom_tat": _str(nho.get("tom_tat"), 400), "nhan_vat_moi": _strs(nho.get("nhan_vat_moi"), 6, 120),
                                "bo_ngo": _strs(nho.get("bo_ngo"), 8, 200), "da_giai": _strs(nho.get("da_giai"), 8, 200)},
                        "diem": {k: v for k, v in (t.get("diem") or {}).items() if k in CRIT and isinstance(v, int)}

@@ -77,7 +77,7 @@ OPTS = {"max_new": 3, "story": "hay", "tones": ["am"], "thoi_tiet": "sáng nắn
 
 print("== tên tiếng Nhật trong tóm tắt của Claude → tên Latin")
 for a, b in (("bà はな và ông けん gặp lại", "bà Hana và ông Ken gặp lại"), ("けんちゃん viết thư", "Ken-chan viết thư"),
-             ("はなさん cười", "Hana cười"), ("hỏi 村長（そんちょう）", "hỏi trưởng làng"), ("スタックちゃん vẽ", "StackChan vẽ"),
+             ("はなさん cười", "chị Hana cười"), ("bà はな cười", "bà Hana cười"), ("hỏi 村長（そんちょう）", "hỏi trưởng làng"), ("スタックちゃん vẽ", "StackChan vẽ"),
              ("ở ことば屋", "ở Quán Kotoba"), ("nói nhầm お書きします", "nói nhầm お書きします"), ("「はな」", "「はな」"),
              ("きょうこ", "Kyouko"), ("まっちゃ", "Maccha")):
     ok(ai.vi_names(a) == b, "%r → %r (%r)" % (a, b, ai.vi_names(a)))
@@ -89,7 +89,7 @@ ok(all(e["nguyen_van"] and not story.CJK_RE.search("".join(e["nguyen_van"])) for
 e8 = eps[-1]
 ok("hộp thiếc" in e8["tom_tat"] and "Ken" in e8["tom_tat"] and not story.CJK_RE.search(e8["tom_tat"].split("「")[0]),
    "tóm tắt kỳ 8 lấy từ \"Đã xảy ra\" của truyen.md, tên Latin: " + e8["tom_tat"][:90])
-ok(e8["bo_ngo"] == ["đó là gì"] and eps[1]["bo_ngo"] and "bà của Hana" in eps[1]["bo_ngo"][0], "chỗ bỏ ngỏ: %s / %s" % (e8["bo_ngo"], eps[1]["bo_ngo"]))
+ok(e8["bo_ngo"] == ["đó là gì"] and eps[1]["bo_ngo"] and "bà của chị Hana" in eps[1]["bo_ngo"][0], "chỗ bỏ ngỏ: %s / %s" % (e8["bo_ngo"], eps[1]["bo_ngo"]))
 ok(e8["tin"] and story.clean_news(e8["tin"]) and e8["muc3"] and e8["tieu_de_vi"].startswith("Trong hộp thiếc"),
    "tin làng + thông báo của số (bản dịch), tiêu đề tiếng Việt: %r" % e8["tieu_de_vi"])
 ok([e["ky"] for e in ai.claude_episodes(KD, "2026-11-05")] == [1, 2, 3, 4, 5], "chỉ lấy số tới ngày đang viết")

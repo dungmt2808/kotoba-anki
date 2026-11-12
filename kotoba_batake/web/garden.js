@@ -1171,6 +1171,7 @@ var Garden = (function () {
     if (typeof GardenJoy !== "undefined") { GardenJoy.render(d.joy); }
     syncSoundUi();
     if (typeof GardenGreet !== "undefined") { GardenGreet.render(d); fitTodayList(); }      // 1.26: Tin làng, màn chào
+    if (typeof GardenTour !== "undefined") { GardenTour.render(d); }      // 1.26.1: hướng dẫn 3 bước cho người mới
   }
 
   // ---- 1.22.3: tìm deck theo tên (nút kính lúp cạnh ô Deck, phím /) ----
@@ -1350,6 +1351,7 @@ var Garden = (function () {
     });
     $("kb-report").addEventListener("click", openReport);
     $("kb-cal-open").addEventListener("click", function () { $("kb-sound-pop").hidden = true; openCal({ tab: "month" }); });
+    if ($("kb-tour-open")) { $("kb-tour-open").addEventListener("click", function (ev) { ev.stopPropagation(); $("kb-sound-pop").hidden = true; if (typeof GardenTour !== "undefined") { GardenTour.open(); } }); }
     $("kb-cal-ask").addEventListener("click", function (e) { e.stopPropagation(); openCal({ tab: "month", date: data && data.journal && data.journal.today }); });
     $("kb-cal-write").addEventListener("click", function (e) { e.stopPropagation(); openCal({ tab: "month", date: $("kb-cal-write").getAttribute("data-d") }); });
     if (typeof GardenDiag !== "undefined") {
