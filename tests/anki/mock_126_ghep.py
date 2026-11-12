@@ -1,4 +1,4 @@
-"""Ghép ảnh phác chuyển cảnh 1.26 từ ảnh gốc của mock_126.js: python3 mock_126_ghep.py THƯ_MỤC_ẢNH
+"""(Bản 07/11, ra cu_126_*.png — bản 12/11 là mock_126_v2_ghep.py.) Ghép ảnh phác chuyển cảnh 1.26 từ ảnh gốc của mock_126.js: python3 mock_126_ghep.py THƯ_MỤC_ẢNH
   126_06_chuyen_iris.png   màn chào → vườn: vòng tròn khép lại rồi mở ra (viền bậc thang pixel)
   126_07_chuyen_la.png     đổi cảnh ◂ ▸ (Sân vườn → Trong nhà): dải lá phong quét ngang
   126_08_chuyen_rem.png    vào / ra Trong nhà: hai tấm rèm kéo khép rồi mở"""
@@ -64,7 +64,7 @@ w, h = a.size
 cx, cy, R = w // 2, int(h * 0.68), math.hypot(w, h)
 fr = [a, iris(a, cx, cy, R * 0.32), iris(a, cx, cy, 70), iris(b, w // 2, h // 2, 260), iris(b, w // 2, h // 2, R * 0.45), b]
 sheet(fr, ["0 s", "0,15 s", "0,25 s", "0,35 s", "0,45 s", "0,6 s"],
-      "Màn chào → vườn: vòng tròn khép về chỗ thú đứng, mở ra ở giữa vườn (~0,6 giây)", "126_06_chuyen_iris.png", 0.17)
+      "Màn chào → vườn: vòng tròn khép về chỗ thú đứng, mở ra ở giữa vườn (~0,6 giây)", "cu_126_06_chuyen_iris.png", 0.17)
 
 # 2. dải lá phong quét ngang: Sân vườn → Trong nhà (dải cảnh)
 s1 = Image.open(os.path.join(D, "raw_dai_san.png")).convert("RGB")
@@ -101,7 +101,7 @@ for t in (0.0, 0.3, 0.55, 0.8, 1.05):
 frames[-1] = s2
 vsheet(frames, ["0 s", "0,1 s", "0,2 s", "0,3 s", "0,35 s"],
        "Đổi cảnh ◂ ▸: dải lá theo giao diện mùa quét ngang (Mùa lá đỏ: lá phong; không có giao diện mùa: ô vuông pixel)",
-       "126_07_chuyen_la.png", 0.6)
+       "cu_126_07_chuyen_la.png", 0.6)
 
 # 3. rèm kéo: ra / vào Trong nhà
 def curtain(img, k):
@@ -119,4 +119,4 @@ def curtain(img, k):
 
 
 fr = [s1, curtain(s1, 0.55), curtain(s1, 1.0), curtain(s2, 0.55), s2]
-vsheet(fr, ["0 s", "0,1 s", "0,18 s", "0,26 s", "0,35 s"], "Vào / ra Trong nhà: rèm kéo khép rồi mở", "126_08_chuyen_rem.png", 0.6)
+vsheet(fr, ["0 s", "0,1 s", "0,18 s", "0,26 s", "0,35 s"], "Vào / ra Trong nhà: rèm kéo khép rồi mở", "cu_126_08_chuyen_rem.png", 0.6)

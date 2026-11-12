@@ -1,3 +1,4 @@
+// 12/11: phần 1.26 đã làm lại trên giao diện 1.25.9 bằng mock_126_v2.js (ảnh 126_*.png); phần 1.26 ở đây ra cu_126_*.png.
 // Ảnh phác giao diện 1.26 → 1.29 (chưa phải mã thật) trên vườn mẫu (bộ thẻ demo_col.py, có cây đủ giai đoạn):
 //   1.26 màn chào (thú / StackChan / thú đi chơi), Bảng tin làng, ⚙ · ảnh gốc để ghép chuyển cảnh (tools: mock_126_ghep.py)
 //   1.27 cây lấp lánh, quẻ, trăng + sao băng, sổ 歳時記, mốc học · 1.28 chỗ lấp lánh, Hộp sưu tầm, gánh hàng rong
@@ -82,13 +83,13 @@ kb.open_garden(); result = 1`);
 
   console.log('== 1.26');
   await M('greet({ who: "neko", hi: "おはよう！", vi: "Mít · Chào buổi sáng!", date: "Thứ bảy 07/11 · Mùa lá đỏ", news: ["[i:book] Báo mới đã tới", "[i:paw] Hôm nay cáo có thể ghé Đền trên núi", "[i:star] Còn 3 ngày nữa đủ 100 ngày có ôn"] })');
-  await shot('126_01_chao_sang');
+  await shot('cu_126_01_chao_sang');
   await sky(20); await sleep(1200);
   await M('greet({ who: "stack", hi: "こんばんは！", vi: "Chào buổi tối! Hôm nay ôn 24 thẻ rồi đó.", date: "Thứ bảy 07/11", news: ["[i:target] Còn 6 lượt nữa là đủ mục tiêu ngày", "[i:moon] Trăng lưỡi liềm cuối tháng"] })');
-  await shot('126_02_chao_toi_stackchan');
+  await shot('cu_126_02_chao_toi_stackchan');
   await sky(14); await sleep(1200);
   await M('greet({ who: "stack", out: true, hi: "こんにちは！", vi: "Mít đi chơi rồi — cho ăn là về nhé.", date: "Thứ bảy 07/11", news: ["[i:paw] Nhà → Thú nuôi → Cho ăn"] })');
-  await shot('126_03_chao_thu_di_choi');
+  await shot('cu_126_03_chao_thu_di_choi');
   // ảnh gốc cho chuyển cảnh: màn chào sáng · vườn · Trong nhà
   await sky(8); await sleep(1000);
   await M('greet({ who: "neko", hi: "おはよう！", vi: "Mít · Chào buổi sáng!", date: "Thứ bảy 07/11 · Mùa lá đỏ", news: ["[i:book] Báo mới đã tới", "[i:paw] Hôm nay cáo có thể ghé Đền trên núi"] })');
@@ -101,11 +102,11 @@ kb.open_garden(); result = 1`);
   // Bảng tin làng
   await M('newsLine("[i:star] Tin làng: cáo có thể ghé Đền ▸")');
   await M('newsPop([["[i:paw] Cáo có thể ghé Đền trên núi", ""], ["[i:leaf] Mùa lá đỏ · tới 15/11", ""], ["[i:wrench] Nhà hơi cũ (rêu bám)", "Sửa ở Xây nhà"], ["[i:star] Còn 3 ngày nữa đủ 100 ngày có ôn", ""]], [["[i:blossom] 立冬 りっとう · Lập đông", "CN 08/11"], ["[i:gift] Gánh hàng ghé Ga", "T4 11/11"], ["[i:snow] Giáng sinh bắt đầu", "15/11"], ["[i:star] Mưa sao băng Sư Tử", "17/11"]])');
-  await shot('126_04_tin_lang');
+  await shot('cu_126_04_tin_lang');
   await M('clear()');
   await js('GardenUI.open(); return 1;'); await sleep(800);
   await M('uiRows([["Chào khi mở vườn", "Bật", "Tắt"], ["Chuyển cảnh", "Bật", "Tắt"]])'); await sleep(300);
-  await clip('126_05_cai_dat', '#kb-ui-stage');
+  await clip('cu_126_05_cai_dat', '#kb-ui-stage');
   await js('document.getElementById("kb-ui-exit").click(); return 1;'); await sleep(800);
 
   console.log('== 1.27');

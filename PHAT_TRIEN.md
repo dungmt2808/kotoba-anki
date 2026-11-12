@@ -8,6 +8,8 @@ Cập nhật: 2026-11-12. Add-on **1.25.9** (1.25.9: **vé giữ chuỗi** — m
 
 ## 0. Đọc nhanh (cho phiên chat mới)
 
+> 12/11: người dùng "làm ảnh phác đi" → ảnh phác **1.26** làm lại trên giao diện 1.25.9 (`docs/ke_hoach_1_26/126_01` … `126_11`, `tests/anki/mock_126_v2.js` + `mock_126_v2_ghep.py`): thêm màn chào báo đã dùng vé giữ chuỗi, câu chào theo giao diện mùa (đề xuất), Tin làng có vé / gói báo, khung "bật nhẹ" khi mở bảng. **Chờ người dùng duyệt** (`KE_HOACH_1_26.md` mục 5b).
+
 > 12/11: **1.25.9** — người dùng: "Góp ý / Sửa hình còn thiếu: vài khung động … chưa sửa được. Sửa cái này. Thêm phần giữ chuỗi hoặc đóng băng chuỗi gì đó. Một số lỗi được tìm ra ở nhánh audit/release-review-2026-11-11, kiểm tra lại xem có đúng không, nếu đúng thì sửa. Kiểm tra lại giao diện logic, tính năng lần cuối" — mục 2.6t9. **Việc đang chờ tiếp theo vẫn là `KE_HOACH_1_26.md`.**
 
 > 11/11: **1.25.8** — người dùng: "còn gì chưa hiện thực nữa không … claude sẽ soạn báo cho mình, nhưng hôm khác gemini soạn thì câu chuyện có đồng bộ không … \"Điền từ\" … âm thanh câu cũ vẫn phát … hộp quà xong 3 nhiệm vụ không hiện liền … kiểm tra lại tất cả lần cuối" — mục 2.6t8. **Việc đang chờ tiếp theo vẫn là `KE_HOACH_1_26.md`.**
