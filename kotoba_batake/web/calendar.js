@@ -226,7 +226,6 @@ var GardenCal = (function () {
     lg.appendChild(el("i", "kb-cal-dot kb-cal-dot-s"));
     lg.appendChild(el("span", null, "có nhật ký"));
     if (v.days.some((d) => d.fz)) {
-      lg.appendChild(el("span", "sp"));
       lg.appendChild(GardenIcons.el("snow"));
       lg.appendChild(el("span", null, "dùng vé"));
     }
