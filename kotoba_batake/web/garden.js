@@ -1582,12 +1582,13 @@ var Garden = (function () {
       delete v.new;
       data.life = v;
       if (typeof GardenHome !== "undefined") { GardenHome.dataChanged(); }
-      if (isNew) {
+      // chỉ báo khi đang ở màn chính: không che nút chấm điểm lúc ôn thẻ, không chen vào trò chơi / báo
+      if (isNew && (!ui() || !ui().mode || ui().mode() === "main")) {
         var def = (v.defs || {})[isNew];
         if (def) {
           toast("[i:book] Sinh hoạt mới: " + def.name + " · " + def.ja + " ▸", function () {
             if (typeof GardenHome !== "undefined" && GardenHome.openLife) { closeOthersForCal(); if (cal()) { cal().close(); } GardenHome.openLife(); }
-          }, 7000);
+          }, 4500);
         }
       }
     },

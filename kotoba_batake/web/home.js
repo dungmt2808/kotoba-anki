@@ -3038,6 +3038,16 @@ var GardenHome = (function () {
     ctx.save(); ctx.globalAlpha = 0.12; ctx.fillStyle = "#fff4c0"; ctx.beginPath();
     ctx.moveTo((ox + 67) * S, (oy + 41) * S); ctx.lineTo((ox + 93) * S, (oy + 41) * S);
     ctx.lineTo((ox + 106) * S, (oy + 74) * S); ctx.lineTo((ox + 58) * S, (oy + 74) * S); ctx.closePath(); ctx.fill(); ctx.restore();
+    // 1.30: bụi nắng lơ lửng trong vệt nắng (cảnh Đứng yên / Dịu mắt thì thôi)
+    if (UIget("yard") !== "full" && !isOpen) { return; }
+    const t = Date.now() / 1000;
+    for (let i = 0; i < 6; i++) {
+      const k = (t / (9 + i * 2.3) + i * 0.37) % 1, y = 43 + k * 30, half = 13 + (y - 41) * 0.33;
+      const x = 80 + Math.sin(t / (3 + i) + i * 2.1) * half * 0.8;
+      ctx.globalAlpha = 0.55 * Math.sin(k * Math.PI);
+      box(ctx, ox + x, oy + y, 1, 1, "#fffbe0", S);
+    }
+    ctx.globalAlpha = 1;
   }
   function drawRoom(ctx, S, ox, oy, now, opts) {
     const kind = (opts && opts.kind) || "room";
@@ -3075,12 +3085,20 @@ var GardenHome = (function () {
     roomNight(ctx, S, ox, oy, now, ROOM.W, tod, stR, opts, L0);
     if (opts && opts.overlay) { opts.overlay(ctx, S, ox, oy); }
   }
+  // 1.30: chiều tối trong nhà ngả màu đèn vàng ấm (nhẹ, phủ sau lớp tối)
+  function warmGlow(ctx, S, ox, oy, W, stR) {
+    if (!stR || stR.light >= 0.8) { return; }
+    ctx.globalAlpha = Math.min(0.1, (0.8 - stR.light) * 0.2);
+    box(ctx, ox, oy, W, ROOM.H, "#ff9d3c", S);
+    ctx.globalAlpha = 1;
+  }
   // tối trong phòng; lightDx: dời nguồn sáng của gian này về toạ độ cả nhà (vẽ đêm một lần cho cả 3 gian)
   function roomNight(ctx, S, ox, oy, now, W, tod, stR, opts, L0) {
     if (opts && opts.lightDx) { for (let i = L0; i < lights.length; i++) { lights[i].x += opts.lightDx; } }
     if (opts && opts.noNight) { return; }
     if (stR && typeof GardenSky !== "undefined") {
       drawNight(ctx, S, ox, oy, 0, W, ROOM.H, Object.assign({}, stR, { light: 0.08 + stR.light * 0.8 }));
+      warmGlow(ctx, S, ox, oy, W, stR);
       if (SEA()) { SEA().room(ctx, S, ox, oy, now, W, 1, stR); }
     } else if (tod !== "day") {
       ctx.globalAlpha = 0.12; box(ctx, ox, oy, W, ROOM.H, "#1b1b4f", S); ctx.globalAlpha = 1;
@@ -3160,6 +3178,7 @@ var GardenHome = (function () {
     }
     if (stR && typeof GardenSky !== "undefined") {
       drawNight(ctx, S, ox, oy, 0, HOUSE3.W, ROOM.H, Object.assign({}, stR, { light: 0.08 + stR.light * 0.8 }));
+      warmGlow(ctx, S, ox, oy, HOUSE3.W, stR);
       if (SEA()) { ["kitchen", "room", "bedroom"].forEach((k) => { if (isOpen3(k)) { SEA().room(ctx, S, ox + HOUSE3.X[k], oy, now, roomW(k), 1, stR); } }); }
     } else if (tod !== "day") {
       ctx.globalAlpha = 0.12; box(ctx, ox, oy, HOUSE3.W, ROOM.H, "#1b1b4f", S); ctx.globalAlpha = 1;

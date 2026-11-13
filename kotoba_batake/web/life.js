@@ -25,6 +25,8 @@ var GardenLife = (function () {
   const SPOT = { room: [80, 80], kitchen: [72, 80], bedroom: [72, 80], yard: [150, 70], beach: [150, 60], shrine: [78, 70],
     festival: [150, 66], bamboo: [118, 71], onsen: [118, 64], station: [58, 68], u: [150, 66] };
   const SIDE_PREF = { ryouri: -1, arau: 1, gohan: 1, terebi: -1 };
+  // chỗ đứng riêng của vài việc không cần đồ: [x, y, hướng mặt]
+  const ACT_SPOT = { omairi: [78, 70, -1], suzu: [72, 72, -1], yatai: [74, 71, -1], densha: [58, 68, 1], te_furu: [50, 68, 1] };
   const PLACE_W = { home: 3, yard: 1.2 };                            // ưu tiên trong nhà (người dùng: "ưu tiên trong nhà")
   const SHELL = { sky: ["#cde9ff", "#86bde8"], matcha: ["#d5edb8", "#93c26c"], sakura: ["#ffd9e6", "#ff9fbf"], gold: ["#ffe58a", "#d9a92e"] };
   const PAL = { k: "#1b1b2f", s: "#e8e8f0", S: "#b8b8c8", n: "#111122", w: "#ffffff", p: "#ff7fa0", a: "#8a8fa8", d: "#3d8bff",
@@ -314,8 +316,7 @@ var GardenLife = (function () {
       const px = ph.length ? ph[0].x - HOUSE_X.room : pr.length ? pr[0].x : null, py = ph.length ? ph[0].y : pr.length ? pr[0].y : 0;
       if (px !== null && px > 20 && px < 140) { const c = clampFloor(sc, px + 15, py + 1); t.x = c[0]; t.y = c[1]; t.dir = -1; return t; }
     }
-    if (sc === "shrine") { t.dir = -1; }
-    if (sc === "station") { t.raw = true; return t; }
+    if (ACT_SPOT[cur.id]) { const q = ACT_SPOT[cur.id]; t.x = q[0]; t.y = q[1]; t.dir = q[2]; return t; }
     const f = freeSpot(sc, t.x, t.y, spots); t.x = f[0]; t.y = f[1];
     return t;
   }
@@ -495,10 +496,21 @@ var GardenLife = (function () {
     if (doing) { seen(a, e, now); }
   }
   function box(e, x, y, w, h) { lastBox = { scene: e.scene, x: x, y: y, w: w, h: h, t: Date.now() }; }
+  // đang ở màn chính (không ôn thẻ / chơi / đọc báo) và cảnh nằm trong khung nhìn — không thì không tính là "đã thấy"
+  function watching() {
+    if (document.hidden) { return false; }
+    if (typeof GardenUI !== "undefined" && GardenUI.mode && GardenUI.mode() !== "main") { return false; }
+    const open = typeof GardenHome !== "undefined" && GardenHome.isOpen && GardenHome.isOpen();
+    const cv = $(open ? "kb-home-canvas" : "kb-yard");
+    if (!cv || !cv.getBoundingClientRect) { return true; }
+    const r = cv.getBoundingClientRect();
+    return r.width > 0 && r.bottom > 24 && r.top < (window.innerHeight || 0) - 24;
+  }
   function seen(a, e, now) {
-    if (!e.seen || !a.act || document.hidden) { return; }
+    if (!e.seen || !a.act || !watching()) { a.seenAt = 0; return; }
     if (!a.seenAt) { a.seenAt = now; }
-    const dt = Math.min(0.25, (now - a.seenAt) / 1000); a.seenAt = now;
+    // cảnh Đứng yên chỉ vẽ lại mỗi ~30 giây: lần vẽ sau coi như đã nhìn đủ lâu
+    const dt = Math.min(still() ? 2 : 0.25, (now - a.seenAt) / 1000); a.seenAt = now;
     a.seen += dt;
     const v = data();
     if (a.seen >= SEEN_S && v && told[a.act] !== v.today && H && H.send) {
