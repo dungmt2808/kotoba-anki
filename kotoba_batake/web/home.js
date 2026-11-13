@@ -3320,6 +3320,7 @@ var GardenHome = (function () {
         switchSnap = snap;
       } catch (e) { switchSnap = null; }
     }
+    if (typeof GardenFinds !== "undefined") { GardenFinds.closeCard(); GardenFinds.closePed(); }    // 1.28: thẻ / bảng của cảnh cũ
     switchKind = cur === "house" || next === "house" ? "curtain" : "sweep";
     switchDir = step < 0 ? -1 : 1;
     setMainPref(next);
@@ -4876,6 +4877,7 @@ var GardenHome = (function () {
   // ---------------------------------------------------------------------
   function open(which) {
     if (!H) { return; }
+    if (typeof GardenFinds !== "undefined") { GardenFinds.closeCard(); }
     if (typeof GardenFields !== "undefined") { GardenFields.close(); }
     if (typeof GardenUI !== "undefined") { GardenUI.close(); }
     isOpen = true;

@@ -96,6 +96,16 @@ var GardenFinds = (function () {
     ctx.fillRect(Math.round(cx * S), Math.round((cy - arm) * S), S, (arm * 2 + 1) * S);
     ctx.fillStyle = "#ffffff";
     ctx.fillRect(Math.round(cx * S), Math.round(cy * S), S, S);
+    if (!calm) {                            // mỗi ~2,4 giây một tia sáng bay lên (dễ thấy ở cảnh nhiều đồ / khách)
+      const ph = ((now / 2400) + k * 0.37) % 1;
+      if (ph < 0.45) {
+        const t = ph / 0.45, yy = cy - 3 - t * 12;
+        ctx.globalAlpha = 1 - t; ctx.fillStyle = "#ffffff";
+        ctx.fillRect(Math.round((cx - 1) * S), Math.round(yy * S), 3 * S, S);
+        ctx.fillRect(Math.round(cx * S), Math.round((yy - 1) * S), S, 3 * S);
+        ctx.globalAlpha = 1;
+      }
+    }
     if (!calm) {                            // hai đốm nhỏ quay quanh
       const a = now / 520 + k;
       ctx.fillStyle = "#fffbe0";
@@ -162,7 +172,7 @@ var GardenFinds = (function () {
   function hit(h, sc, ev) {
     if (!h) { return; }
     if (ev && ev.stopPropagation) { ev.stopPropagation(); }     // cú bấm này không được đóng luôn bảng vừa mở
-    if (h.kind === "ped") { sfx("boop"); openPed(); return; }
+    if (h.kind === "ped") { sfx("boop"); pedAnchor = ev ? { x: ev.clientX, y: ev.clientY } : null; openPed(); return; }
     if (h.kind === "spot") { pick(h.k, sc, ev, { x: h.box.x + 7, y: h.box.y + 8 }); }
   }
   let lastPick = null;
@@ -222,7 +232,8 @@ var GardenFinds = (function () {
 
   // ---- bảng gánh hàng rong ----
   let pedOpen = false;
-  function closePed() { const p = $("kb-ped-pop"); if (p) { p.hidden = true; } pedOpen = false; }
+  let pedAnchor = null;            // chỗ vừa bấm người bán: bảng mở bên phải, không che người bán
+  function closePed() { const p = $("kb-ped-pop"); if (p) { p.hidden = true; } pedOpen = false; pedAnchor = null; }
   function placeItem(id) {
     const d = H && H.data && H.data();
     const it = d && d.catalog && (d.catalog.items || []).find((x) => x.id === id);
@@ -282,7 +293,7 @@ var GardenFinds = (function () {
         b.addEventListener("click", () => {
           if (pending && Date.now() - pending < 4000) { return; }
           pending = Date.now(); b.disabled = true;
-          H.send("ped:buy:" + g.slot);
+          H.send("ped:buy:" + g.slot + ":" + (v.day || ""));
         });
       }
       b.type = "button";
@@ -299,6 +310,7 @@ var GardenFinds = (function () {
       ($("kb-app") || document.body).appendChild(p);
     }
     renderPed();
+    closeCard();
     p.hidden = false; pedOpen = true;
     placePed();
   }
@@ -309,8 +321,10 @@ var GardenFinds = (function () {
     p.style.maxHeight = Math.max(160, vh - 2 * M) + "px";
     const y = $("kb-yard"), r = y && y.offsetParent ? y.getBoundingClientRect() : { top: 80, left: 0, right: vw, bottom: 300 };
     const w = p.offsetWidth, h = p.offsetHeight;
-    p.style.left = Math.max(M, Math.min(vw - w - M, r.left + (r.right - r.left) / 2 - w / 2)) + "px";
-    p.style.top = Math.max(M, Math.min(vh - h - M, r.top + 20)) + "px";
+    let left = r.left + (r.right - r.left) / 2 - w / 2;
+    if (pedAnchor) { left = pedAnchor.x + 48 + w <= vw - M ? pedAnchor.x + 48 : pedAnchor.x - 48 - w; }
+    p.style.left = Math.max(M, Math.min(vw - w - M, left)) + "px";
+    p.style.top = Math.max(M, Math.min(vh - h - M, r.top + 12)) + "px";
   }
 
   // ---- kết quả từ Python ----
@@ -423,6 +437,7 @@ var GardenFinds = (function () {
     icon: icon,
     openPed: openPed,
     closePed: closePed,
+    closeCard: closeCard,
     fromNews: fromNews,
     count: function () { const v = data(); return v && v.box ? v.box.found : 0; },
     isOpen: () => pedOpen || !!($("kb-find-card") && !$("kb-find-card").hidden),

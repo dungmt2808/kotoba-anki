@@ -194,6 +194,18 @@ result = 1`);
   ok(/Sân vườn · 6 \/ 6 — đã nhận Tủ kính sưu tầm/.test(box.sec[0]) && /mở vùng để nhặt/.test(box.sec[1]), 'bộ Sân vườn đủ, Bãi biển "mở vùng để nhặt"');
   ok(/\? \?/.test(box.unknown), 'ô chưa nhặt: "? ?" (' + box.unknown + ')');
   await page.shot(SHOTS + '/128_04_hop_suu_tam.png');
+  for (const [w, h] of [[1024, 700], [720, 520]]) {          // ô Hộp sưu tầm không tràn chữ ở cửa sổ nhỏ
+    await py(KB + `kb._dialog.resize(${w}, ${h}); result = 1`); await sleep(700);
+    const lay = await js(`const L = document.getElementById("kb-h-list"), lr = L.getBoundingClientRect();
+      const cells = [...L.querySelectorAll(".kb-box-cell")];
+      const over = cells.filter((c) => c.scrollWidth > c.clientWidth + 1 || [...c.children].some((x) => x.getBoundingClientRect().right > c.getBoundingClientRect().right + 1));
+      const out = cells.filter((c) => { const r = c.getBoundingClientRect(); return r.left < lr.left - 1 || r.right > lr.right + 1; });
+      const cols = new Set(cells.slice(0, 6).map((c) => Math.round(c.getBoundingClientRect().top))).size === 1 ? 6 : new Set(cells.slice(0, 6).map((c) => Math.round(c.getBoundingClientRect().left))).size;
+      return {over: over.map((c) => c.getAttribute("data-find")), out: out.length, cols: cols, hscroll: document.scrollingElement.scrollWidth > innerWidth + 1};`);
+    ok(!lay.over.length && !lay.out && !lay.hscroll, w + '×' + h + ': ô Hộp sưu tầm không tràn chữ / ra ngoài danh sách (' + lay.cols + ' cột' + (lay.over.length ? ', tràn: ' + lay.over.join(',') : '') + ')');
+    await page.shot(SHOTS + '/128_04_hop_suu_tam_' + w + '.png');
+  }
+  await py(KB + 'kb._dialog.resize(1366, 860); result = 1'); await sleep(500);
   await js('document.querySelector(\'.kb-album-chip[data-album="guest"]\').click(); return 1;');
   await sleep(300);
   ok(await js('return !!document.querySelector(".kb-h-guestcard") && !document.querySelector(".kb-box-grid");'), 'nút Khách ghé vườn → album khách như cũ');

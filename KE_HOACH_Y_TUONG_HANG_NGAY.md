@@ -1,5 +1,7 @@
 # Ý tưởng "mỗi ngày vào vườn có gì mới" (đã chốt lộ trình 07/11)
 
+> **13/11: ý 6 (nhặt đồ theo vùng + Hộp sưu tầm) và ý 7 (gánh hàng rong) đã làm ở bản 1.28.0** (`PHAT_TRIEN.md` mục 2.6w) — trước 1.27 theo yêu cầu người dùng. Câu hỏi mục 7 Claude tự chọn: Q3 thứ Tư + Chủ nhật, Q4 theo lượt ôn (mỗi 10 lượt), Q6 tên Nhật + cách đọc + nghĩa. Còn 1.27 (ý 2–5) và 1.29. Đề xuất thêm: `docs/de_xuat/1.28/DE_XUAT_TINH_NANG.md`.
+
 > **Lộ trình người dùng chốt 07/11/2026** (bảng lộ trình ở `PHAT_TRIEN.md` mục 10.0; 1.26 đã làm ở bản 1.26.0): **1.26** màn chào khi mở vườn (thú nuôi ra chào, lần mở đầu mỗi ngày) + hiệu ứng chuyển cảnh + ý 1 Bảng tin làng · **1.27** ý 2 cây lấp lánh, 3 rút quẻ, 4 lịch trời Nhật + 歳時記, 5 kỷ niệm & mốc học · **1.28** ý 6 nhặt đồ + Hộp sưu tầm, 7 gánh hàng rong · **1.29** Nhạc làng (chuông làng tự soạn, nhạc theo buổi) + thêm hiệu ứng. Ý 8–14 chưa chọn; radio trùng với báo nên không làm. Câu hỏi ở mục 7 hỏi lại khi làm bản tương ứng.
 
 Ngày 06/11/2026. Chỉ là ý tưởng để người dùng chọn, **chưa sửa mã**, **không làm chung với 1.23** (1.23 đã nặng, xem `KE_HOACH_1_23.md`). Người dùng hỏi: "có thể lấy ý tưởng từ các game pixel xưa… người dùng mong mỗi ngày vào vườn được trải nghiệm gì mới… FOMO lành mạnh… đánh giá theo mức độ khó và đáng triển khai".

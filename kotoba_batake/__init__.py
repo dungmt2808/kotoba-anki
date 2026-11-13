@@ -3388,7 +3388,10 @@ class GardenDialog(QDialog):
                        "item": finds.item_view(res["id"], ev, today), "new": res["new"], "coins": res["coins"],
                        "set": {"name": st["name"], "n": st["n"], "total": st["total"], "done": res["set_done"],
                                "reward": gift or "", "reward_name": core.CATALOG[gift]["name"] if gift else ""}}
-            elif parts[:2] == ["ped", "buy"] and len(parts) == 3:
+            elif parts[:2] == ["ped", "buy"] and len(parts) in (3, 4):
+                if len(parts) == 4 and parts[3] != today.isoformat():
+                    # bảng mở từ hôm qua (qua giờ đổi ngày của Anki): hàng của phiên đó không còn
+                    raise finds.FindError("Phiên đó đã qua — mở lại bảng gánh hàng nhé.")
                 if not finds.is_market(today):
                     raise finds.FindError("Hôm nay gánh hàng không ghé — phiên sau: " +
                                           event_core.short_date(finds.next_market(today), today) + ".")

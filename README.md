@@ -52,9 +52,23 @@ Ngoài sân nhà còn 6 vùng mở bằng xu: **Bãi biển, Đền trên núi, 
 
 ![Sân vườn, 6 vùng và một vùng tự tạo (Tiệm bánh nhỏ)](docs/anh/16b_cac_vung.png)
 
+### Nhặt đồ theo vùng và gánh hàng rong (mới ở 1.28)
+
+- **Chỗ lấp lánh**: cứ **10 lượt ôn** trong ngày (ôn ở màn ôn thường hay trên điện thoại cũng tính, bấm Lại cũng tính) là một chỗ lấp lánh hiện ra ở sân hoặc một vùng đã mở, tối đa 3 chỗ một ngày. Bấm vào để nhặt: vỏ sò 貝殻, bùa お守り, vé tàu cũ 切符… mỗi món có **chữ Nhật, cách đọc và nghĩa**. Dòng Tin làng cho biết chỗ lấp lánh ở đâu, bấm là tới.
+- **Hộp sưu tầm** (Nhà → Album): 42 món chia 7 bộ theo cảnh. Món chưa có được ưu tiên, nhặt trùng đổi 3 xu. Đủ một bộ được tặng một món trang trí (tủ kính bày đồ sưu tầm, chuông gió vỏ sò, đèn lồng cá vàng…). Món theo mùa năm sau có lại; lỡ ngày nào cũng không mất gì.
+- **Gánh hàng rong** ghé vào **thứ Tư và Chủ nhật** (ở Ga làng quê nếu đã mở, không thì ở sân): một món chỉ gánh hàng mới có (đèn kéo quân, nón lá, đồng hồ quả lắc…, khoảng 4 tuần quay lại một lần), ba món cửa hàng và một giống cây giảm 25 %.
+
+| Chỗ lấp lánh → nhặt được | Hộp sưu tầm |
+|---|---|
+| ![Bấm chỗ lấp lánh ở Phố lễ hội: nhặt được お面 (mặt nạ lễ hội)](docs/anh/128_b_nhat_duoc.png) | ![Album → Hộp sưu tầm: bộ Sân vườn đủ 6/6, các bộ khác còn ô "? ?"](docs/anh/128_c_hop_suu_tam.png) |
+
+| Gánh hàng rong ở Ga làng quê | Đồ mới ban đêm |
+|---|---|
+| ![Người bán gánh hàng rong và bảng 5 món của phiên Chủ nhật](docs/anh/128_d_bang_ganh_hang.png) | ![Đèn lồng cá vàng, đèn ống tre, đèn kéo quân sáng ban đêm](docs/anh/128_e_do_moi_dem.png) |
+
 ### Đồ đạc, tủ đồ, kho đồ
 
-- **133 món đồ**: 91 món ngoài sân (cổng torii, ao cá koi, cây anh đào, đài phun nước…), 24 món nội thất (kotatsu, bể cá, radio cổ…) và 18 món hiếm chỉ có trong rương quà nhiệm vụ.
+- **160 món đồ**: hơn 100 món ngoài sân và các vùng (cổng torii, ao cá koi, cây anh đào, đài phun nước…), 50 món nội thất cho cả ba gian (kotatsu, bể cá, tủ lạnh, giường…), 18 món hiếm chỉ có trong rương quà nhiệm vụ và 15 món của Hộp sưu tầm / gánh hàng rong.
 - **6 thú nuôi**: gà, vịt, thỏ, rùa, mèo mướp, chó Shiba. Thú có tên, có độ thân, đi lại khắp sân.
 - **Tủ đồ**: 17 món cho StackChan (linh vật ở góc trái): mũ rơm, nón lá, kính tròn, khăn quàng, vỏ màu sakura… cùng 7 biểu cảm.
 - **Kho đồ**: mọi món đã có, kể cả quà của giao diện mùa. Đặt ra sân, di chuyển hay cất lại lúc nào cũng được, không mất gì.
@@ -113,6 +127,7 @@ Mỗi sáng có một số báo tiếng Nhật 畑新聞 (hoặc báo tiếng An
 - Mục tiêu 30 lượt ôn mỗi ngày (đổi được), thưởng +15 xu.
 - 3 nhiệm vụ mỗi ngày. Làm đủ cả 3 thì mở rương quà có đồ hiếm.
 - Chuỗi ngày ôn liên tục, có **vé giữ chuỗi** cho hôm lỡ quên.
+- Cứ 10 lượt ôn mở một **chỗ lấp lánh** để nhặt đồ; thứ Tư, Chủ nhật có **gánh hàng rong**.
 - Lần mở vườn đầu tiên mỗi ngày, **thú nuôi của bạn chạy ra chào** (ngày lễ có câu chào riêng) và kể vài tin hôm nay. Dòng **Tin làng** trong thẻ Hôm nay báo khách có thể ghé, mốc học sắp chạm, mùa lễ sắp tới. Tắt được ở ⚙.
 - Không có điểm trừ, không mất đồ, không có gì bắt bạn phải chơi: học là chính.
 
