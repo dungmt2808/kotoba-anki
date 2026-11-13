@@ -315,11 +315,46 @@ var GardenCal = (function () {
   // ---------------------------------------------------------------------
   // Khung ngày: số liệu · nhật ký · luyện viết
   // ---------------------------------------------------------------------
+  // 1.28 (audit 12/11 F01): dựng lại khung ngày (kết quả sửa bài về, Python gửi lại ngày…) không được làm mất chữ đang gõ
+  // ở ô nhật ký / bài luyện viết chưa tự lưu: lưu ngay chữ đó, dựng lại bằng chữ đó, giữ con trỏ + vùng chọn + focus
+  function grabTyping(R, d) {
+    const out = {};
+    if (R.getAttribute("data-d") !== d) { return out; }
+    Array.prototype.forEach.call(R.querySelectorAll("textarea"), (ta) => {
+      const k = ta.classList.contains("kb-cal-note") ? "note" : ta.classList.contains("kb-cal-ta") ? "write" : "";
+      if (!k || ta.readOnly) { return; }
+      const dirty = ta._kbDirty ? ta._kbDirty() : false;
+      if (dirty && ta._kbSave && !composing) { ta._kbSave(); }
+      out[k] = { val: ta.value, a: ta.selectionStart, b: ta.selectionEnd, dir: ta.selectionDirection,
+                 focus: document.activeElement === ta, dirty: dirty, top: ta.scrollTop };
+    });
+    return out;
+  }
+  function putTyping(R, keepT) {
+    Array.prototype.forEach.call(R.querySelectorAll("textarea"), (ta) => {
+      const k = ta.classList.contains("kb-cal-note") ? "note" : ta.classList.contains("kb-cal-ta") ? "write" : "";
+      const s = keepT[k];
+      if (!s || ta.readOnly) { return; }
+      if (s.dirty && ta.value !== s.val) {
+        ta.value = s.val;
+        ta.dispatchEvent(new Event("kb-sync"));
+      }
+      if (s.focus) {
+        try { ta.focus({ preventScroll: true }); } catch (e) { ta.focus(); }
+        try { ta.setSelectionRange(s.a, s.b, s.dir || "none"); } catch (e) { /* ô đã đổi */ }
+        ta.scrollTop = s.top;
+      }
+    });
+  }
   function drawDay() {
     const R = $("kb-cal-right");
     if (!R || !day) { return; }
     const v = day;
+    const keepT = grabTyping(R, v.d);
+    if (keepT.note && keepT.note.dirty) { v.t = keepT.note.val; }          // vừa lưu ở grabTyping
+    if (keepT.write && keepT.write.dirty && v.w && !v.w.locked) { v.w.goc = keepT.write.val; }
     R.textContent = "";
+    R.setAttribute("data-d", v.d);
     const c1 = el("div", "kb-cal-card");
     const h1 = el("div", "kb-cal-h");
     h1.appendChild(el("span", null, v.title));
@@ -346,12 +381,14 @@ var GardenCal = (function () {
       }
       if (v.paper) { row("Báo", v.paper); }
       if (v.guests && v.guests.length) { row("Khách mới", v.guests.join(" · "), "Khách ghé vườn lần đầu hôm này (Album khách ở Nhà)."); }
+      if (v.finds && v.finds.length) { row("Nhặt được", v.finds.join(" · "), "Món nhặt lần đầu ở chỗ lấp lánh hôm này (Hộp sưu tầm ở Nhà → Album)."); }
     }
     c1.appendChild(stats);
     R.appendChild(c1);
     if (v.editable) { R.appendChild(diaryCard(v)); }
     if (v.w) { R.appendChild(writeCard(v)); }
     autoGrowAll(R);
+    putTyping(R, keepT);
   }
 
   function diaryCard(v) {
@@ -403,7 +440,9 @@ var GardenCal = (function () {
     });
     ta.addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey && !e.isComposing) { e.preventDefault(); ta.blur(); } });
     ta.addEventListener("blur", save);
+    ta.addEventListener("kb-sync", () => { cnt.textContent = ta.value.length + " / " + ta.maxLength + " ký tự"; grow(ta); });
     ta._kbSave = save;
+    ta._kbDirty = () => ta.value !== (v.t || "");
     c.appendChild(ta);
     c.appendChild(meta);
     return c;
@@ -516,7 +555,9 @@ var GardenCal = (function () {
       });
       ta.addEventListener("compositionend", () => { setTimeout(() => { limit(); paint(units(ta.value, w.lang), w.used); clearTimeout(timers.write); timers.write = setTimeout(save, 800); }, 0); });
       ta.addEventListener("blur", save);
+      ta.addEventListener("kb-sync", () => { paint(units(ta.value, w.lang), w.used); grow(ta); actsFor(c, v); });
       ta._kbSave = save;
+      ta._kbDirty = () => ta.value !== (w.goc || "");
     }
     if (w.st === "wait") {
       const box = el("div", "kb-cal-wait");
@@ -666,7 +707,17 @@ var GardenCal = (function () {
   // Gemini sửa xong (bảng có thể đang mở đúng ngày đó → cập nhật tại chỗ, không cần thông báo)
   function onFix(r) {
     if (isOpen && tab === "month" && r && r.d === sel && r.view) {
-      onView(Object.assign({ kind: "day" }, r.view));
+      const R = $("kb-cal-right");
+      const old = R && R.getAttribute("data-d") === r.d ? R.querySelector(".kb-cal-write") : null;
+      if (day && day.d === r.d && old && r.view.w) {
+        // 1.28 (F01): bài sửa về → chỉ thay khung Luyện viết; khung Nhật ký (đang gõ, chưa tự lưu) giữ nguyên
+        day.w = r.view.w;
+        const nc = writeCard(day);
+        old.parentNode.replaceChild(nc, old);
+        autoGrowAll(nc);
+      } else {
+        onView(Object.assign({ kind: "day" }, r.view));
+      }
       if (!r.ok) { setInfo(r.msg, true); }
       return true;
     }

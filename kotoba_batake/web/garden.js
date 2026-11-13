@@ -1439,6 +1439,7 @@ var Garden = (function () {
       });
     }
     if (typeof GardenGuests !== "undefined") { GardenGuests.init({ data: function () { return data; }, send: send }); }
+    if (typeof GardenFinds !== "undefined") { GardenFinds.init({ data: function () { return data; }, send: send, toast: toast }); }
     if (typeof GardenSeeds !== "undefined" && GardenSeeds.source) { GardenSeeds.source(function () { return data && data.catalog; }); }
     if (typeof GardenPaper !== "undefined") {
       GardenPaper.init({
@@ -1518,6 +1519,7 @@ var Garden = (function () {
       if (typeof GardenGames !== "undefined" && GardenGames.modesChanged) { GardenGames.modesChanged(g); }
     },
     home: function (res) { if (typeof GardenHome !== "undefined") { GardenHome.update(res); } },
+    finds: function (res) { if (typeof GardenFinds !== "undefined") { GardenFinds.result(res); } },      // 1.28
     uiSaved: function (c) { if (ui()) { ui().saved(c); } },
     homeError: function (msg) { if (typeof GardenHome !== "undefined") { GardenHome.error(msg); } },
     shareCode: function (p) { if (typeof GardenHome !== "undefined" && GardenHome.shareCode) { GardenHome.shareCode(p); } },

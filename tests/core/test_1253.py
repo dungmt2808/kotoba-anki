@@ -424,7 +424,7 @@ ok("drawSky(ctx, S, ox, oy - P0, now, bx0, bx1, YARD.SKY + P0, st)" in outd and 
    and outd.count("sea.garland(ctx, S, ox, oy - P0") == 2 and "skyPad = P0" in outd,
    "trời / mưa / dây trang trí trải cả phần trời thêm, cả ở các vùng (skyPad)")
 ok(home.count("drawSky(ctx, S, ox, oy - skyPad, now, x0, x1, G0 + skyPad, st)") == 2, "nền vùng có sẵn + vùng tự tạo dùng trời cao")
-ok(home.count("/ mainView.S - (mainView.oy || 0)") == 3, "bấm vào thú / khách / đồ trên màn chính tính cả độ lệch dọc")
+ok(home.count("/ mainView.S - (mainView.oy || 0)") == 4, "bấm vào thú / khách / đồ / chỗ lấp lánh (1.28) trên màn chính tính cả độ lệch dọc")
 band = home[home.index("function gardenBand("):home.index("function roofOver(")]
 ok("box(ctx, bx + 1, by + 3, 12, 6, P.k, S)" not in band, "dải Trong nhà: bỏ bụi cây vuông xanh sát tường (giữ hoa nhỏ)")
 cho = home[home.index("SPR.chochin = ["):home.index("SPR.maneki")]

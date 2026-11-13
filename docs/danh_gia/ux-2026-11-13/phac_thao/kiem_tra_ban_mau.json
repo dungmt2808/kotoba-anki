@@ -1,0 +1,265 @@
+{
+  "scope": "HTML design prototype only; not Anki product regression tests",
+  "browser": "Chromium",
+  "layouts": [
+    {
+      "width": 1366,
+      "height": 860,
+      "screen": "garden",
+      "viewportWidth": 1366,
+      "clientWidth": 1366,
+      "scrollWidth": 1366,
+      "scrollHeight": 860,
+      "visibleScreen": "garden",
+      "noHorizontalOverflow": true
+    },
+    {
+      "width": 1366,
+      "height": 860,
+      "screen": "shop",
+      "viewportWidth": 1366,
+      "clientWidth": 1366,
+      "scrollWidth": 1366,
+      "scrollHeight": 860,
+      "visibleScreen": "shop",
+      "noHorizontalOverflow": true
+    },
+    {
+      "width": 1366,
+      "height": 860,
+      "screen": "journal",
+      "viewportWidth": 1366,
+      "clientWidth": 1351,
+      "scrollWidth": 1351,
+      "scrollHeight": 862,
+      "visibleScreen": "journal",
+      "noHorizontalOverflow": true
+    },
+    {
+      "width": 1366,
+      "height": 860,
+      "screen": "reading",
+      "viewportWidth": 1366,
+      "clientWidth": 1366,
+      "scrollWidth": 1366,
+      "scrollHeight": 860,
+      "visibleScreen": "reading",
+      "noHorizontalOverflow": true
+    },
+    {
+      "width": 1366,
+      "height": 768,
+      "screen": "garden",
+      "viewportWidth": 1366,
+      "clientWidth": 1351,
+      "scrollWidth": 1351,
+      "scrollHeight": 813,
+      "visibleScreen": "garden",
+      "noHorizontalOverflow": true
+    },
+    {
+      "width": 1366,
+      "height": 768,
+      "screen": "shop",
+      "viewportWidth": 1366,
+      "clientWidth": 1351,
+      "scrollWidth": 1351,
+      "scrollHeight": 848,
+      "visibleScreen": "shop",
+      "noHorizontalOverflow": true
+    },
+    {
+      "width": 1366,
+      "height": 768,
+      "screen": "journal",
+      "viewportWidth": 1366,
+      "clientWidth": 1351,
+      "scrollWidth": 1351,
+      "scrollHeight": 862,
+      "visibleScreen": "journal",
+      "noHorizontalOverflow": true
+    },
+    {
+      "width": 1366,
+      "height": 768,
+      "screen": "reading",
+      "viewportWidth": 1366,
+      "clientWidth": 1351,
+      "scrollWidth": 1351,
+      "scrollHeight": 836,
+      "visibleScreen": "reading",
+      "noHorizontalOverflow": true
+    },
+    {
+      "width": 1024,
+      "height": 700,
+      "screen": "garden",
+      "viewportWidth": 1024,
+      "clientWidth": 1009,
+      "scrollWidth": 1009,
+      "scrollHeight": 817,
+      "visibleScreen": "garden",
+      "noHorizontalOverflow": true
+    },
+    {
+      "width": 1024,
+      "height": 700,
+      "screen": "shop",
+      "viewportWidth": 1024,
+      "clientWidth": 1009,
+      "scrollWidth": 1009,
+      "scrollHeight": 1002,
+      "visibleScreen": "shop",
+      "noHorizontalOverflow": true
+    },
+    {
+      "width": 1024,
+      "height": 700,
+      "screen": "journal",
+      "viewportWidth": 1024,
+      "clientWidth": 1009,
+      "scrollWidth": 1009,
+      "scrollHeight": 862,
+      "visibleScreen": "journal",
+      "noHorizontalOverflow": true
+    },
+    {
+      "width": 1024,
+      "height": 700,
+      "screen": "reading",
+      "viewportWidth": 1024,
+      "clientWidth": 1009,
+      "scrollWidth": 1009,
+      "scrollHeight": 858,
+      "visibleScreen": "reading",
+      "noHorizontalOverflow": true
+    },
+    {
+      "width": 720,
+      "height": 520,
+      "screen": "garden",
+      "viewportWidth": 720,
+      "clientWidth": 705,
+      "scrollWidth": 705,
+      "scrollHeight": 1137,
+      "visibleScreen": "garden",
+      "noHorizontalOverflow": true
+    },
+    {
+      "width": 720,
+      "height": 520,
+      "screen": "shop",
+      "viewportWidth": 720,
+      "clientWidth": 705,
+      "scrollWidth": 705,
+      "scrollHeight": 1375,
+      "visibleScreen": "shop",
+      "noHorizontalOverflow": true
+    },
+    {
+      "width": 720,
+      "height": 520,
+      "screen": "journal",
+      "viewportWidth": 720,
+      "clientWidth": 705,
+      "scrollWidth": 705,
+      "scrollHeight": 1363,
+      "visibleScreen": "journal",
+      "noHorizontalOverflow": true
+    },
+    {
+      "width": 720,
+      "height": 520,
+      "screen": "reading",
+      "viewportWidth": 720,
+      "clientWidth": 705,
+      "scrollWidth": 705,
+      "scrollHeight": 1105,
+      "visibleScreen": "reading",
+      "noHorizontalOverflow": true
+    }
+  ],
+  "checks": [
+    {
+      "case": "initial-6-items",
+      "pass": true
+    },
+    {
+      "case": "accent-insensitive-item-search",
+      "pass": true,
+      "observed": [
+        {
+          "query": "den long",
+          "actual": [
+            "Đèn lồng giấy"
+          ],
+          "pass": true
+        },
+        {
+          "query": "ĐÈN LỒNG",
+          "actual": [
+            "Đèn lồng giấy"
+          ],
+          "pass": true
+        },
+        {
+          "query": "đèn lồng",
+          "actual": [
+            "Đèn lồng giấy"
+          ],
+          "pass": true
+        }
+      ]
+    },
+    {
+      "case": "owned-filter-3-items",
+      "pass": true
+    },
+    {
+      "case": "unplaced-owned-item-action",
+      "pass": true
+    },
+    {
+      "case": "mock-completion-preserves-draft-and-selection",
+      "pass": true,
+      "observed": {
+        "text": "Nháp cần giữ khi kết quả về.",
+        "focus": true,
+        "start": 5,
+        "end": 12,
+        "result": true
+      }
+    },
+    {
+      "case": "mock-local-save",
+      "pass": true
+    },
+    {
+      "case": "editor-tab-preserves-mock-draft",
+      "pass": true
+    },
+    {
+      "case": "reading-tools-toggle",
+      "pass": true
+    },
+    {
+      "case": "mock-news-dialog-fits-720x520",
+      "pass": true,
+      "observed": {
+        "left": 152.5,
+        "top": 90.84375,
+        "right": 552.5,
+        "bottom": 429.140625,
+        "width": 720,
+        "height": 520,
+        "open": true
+      }
+    },
+    {
+      "case": "mock-news-native-escape",
+      "pass": true
+    }
+  ],
+  "errors": [],
+  "checkedAt": "2026-11-13"
+}

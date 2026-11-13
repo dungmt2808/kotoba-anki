@@ -236,7 +236,7 @@ kb._dialog.refresh(); result = 1`); await sleep(900);
     let r = await click(/^Xây$/);
     cases.push(['Xây "' + C.levels[1].name + '"', r && await waitPy('result = st.load()["home"]["house"] == 1')]);
     // một món sân rẻ nhất
-    const yardItem = C.items.filter((i) => i.scene === 'yard' && !i.rare && !i.zone && !i.season && !i.custom).sort((a, b) => a.price - b.price)[0];
+    const yardItem = C.items.filter((i) => i.scene === 'yard' && !i.rare && !i.only && !i.zone && !i.season && !i.custom).sort((a, b) => a.price - b.price)[0];
     await setCoins(yardItem.price); await openHome('yard');
     r = await click(/^Mua$/, yardItem.name);
     cases.push(['Mua "' + yardItem.name + '" ' + yardItem.price + ' xu', r && await waitPy(`result = st.load()["home"]["owned"].get("${yardItem.id}", 0) == 1`)]);
@@ -323,7 +323,7 @@ kb._dialog.refresh(); result = 1`);
     ok(h1 - h0 === 2 && c0 - c1 === C.levels[h0 + 1].price + C.levels[h0 + 2].price,
       'Bấm "Xây" hai lần riêng (cách 0,35 giây): xây ' + (h1 - h0) + ' bước, trả ' + (c0 - c1) + ' xu (= ' + C.levels[h0 + 1].price + ' + ' + C.levels[h0 + 2].price + ')');
     // Mua đồ sân (đồ có nhiều cái được)
-    const it = C.items.filter((i) => i.scene === 'yard' && !i.rare && !i.zone && !i.season && !i.custom && (i.max || 99) > 1)[0];
+    const it = C.items.filter((i) => i.scene === 'yard' && !i.rare && !i.only && !i.zone && !i.season && !i.custom && (i.max || 99) > 1)[0];
     await openHome('yard');
     c0 = await coins(); let o0 = await py(KB + `result = st.load()["home"]["owned"].get("${it.id}", 0)`);
     await dblAt(BTN(/^Mua$/, it.name)); await sleep(1800);
@@ -439,7 +439,7 @@ result = [st.share_code(list(d["craft"]["items"])[0])[0], st.share_code(d["more"
     ok(nTags === 12 && /Tối đa 12/.test(t), 'Luật tag thứ 13: báo "' + t.slice(0, 40) + '", vẫn 12 luật (' + nTags + ')');
     await shot('04_gioi_han_12_tag', '12 luật tag');
     // món chỉ có một cái
-    const uniq = C.items.find((i) => i.max === 1 && i.scene === 'yard' && !i.rare && !i.zone && !i.season);
+    const uniq = C.items.find((i) => i.max === 1 && i.scene === 'yard' && !i.rare && !i.only && !i.zone && !i.season);
     if (uniq) {
       await py(KB + `d = st.load(); d["home"]["owned"]["${uniq.id}"] = 1; st.save(d); kb._dialog.refresh(); result = 1`); await sleep(800);
       await openHome('yard');

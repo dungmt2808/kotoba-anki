@@ -34,6 +34,7 @@ from . import ai_vi
 from . import diag
 from . import event_core
 from . import fields_core
+from . import finds_core as finds
 from . import guest_core as guests
 from . import journal_core as journal
 from . import launcher
@@ -1435,7 +1436,8 @@ def ai_start(reason: str, dialog: Any = None, lang: str = "ja") -> bool:
         return res
 
     _ai.update(running=True, msg="Đang chuẩn bị…", lang=lang)
-    _bg(task, lambda fut: _ai_done(fut, base, date, client))
+    owner = _owner_now()      # 1.28 (audit 12/11 F09): việc nền gắn với hồ sơ bắt đầu viết
+    _bg(task, lambda fut: _ai_done(fut, base, date, client, owner))
     _ai_push()
     if _dialog is not None:
         _dialog._js("paperSummary", paper_summary(_dialog, ai_busy=True))
@@ -1461,15 +1463,79 @@ def ai_start_all(reason: str = "auto") -> bool:
     return False
 
 
-def _ai_done(fut: Any, base: str, date: str, client: Any = None) -> None:
+def _owner_now() -> str:
+    """Mã hồ sơ đang mở ("" khi chưa mở hồ sơ nào) — để việc nền biết nó thuộc hồ sơ nào."""
+    try:
+        return core.profile_key(mw.col) if mw.col is not None else ""
+    except Exception:
+        return ""
+
+
+SUB_PENDING = os.path.join(ADDON_DIR, "user_files", "goi_bao_cho.json")
+
+
+def _sub_pending_load() -> dict[str, list[str]]:
+    try:
+        with open(SUB_PENDING, encoding="utf-8") as f:
+            raw = json.load(f)
+    except (OSError, ValueError):
+        return {}
+    out: dict[str, list[str]] = {}
+    for k, v in raw.items() if isinstance(raw, dict) else []:
+        if isinstance(k, str) and re.fullmatch(r"[0-9a-f]{16}", k) and isinstance(v, list):
+            days = sorted({x for x in v if isinstance(x, str) and re.fullmatch(r"\d{4}-\d{2}-\d{2}", x)})
+            if days:
+                out[k] = days[-14:]
+    return out
+
+
+def _sub_pending_save(data: dict[str, list[str]]) -> None:
+    try:
+        os.makedirs(os.path.dirname(SUB_PENDING), exist_ok=True)
+        tmp = SUB_PENDING + ".tmp"
+        with open(tmp, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False)
+        os.replace(tmp, SUB_PENDING)
+    except OSError as err:
+        _warn("gói báo (chờ hồ sơ)", err)
+
+
+def sub_pending_settle() -> int:
+    """1.28 (audit 12/11 F09): số báo viết xong khi hồ sơ đã đổi → tính gói báo cho đúng hồ sơ đã bắt đầu viết, lúc hồ
+    sơ đó mở lại (không bao giờ lấy xu / gia hạn gói của hồ sơ đang mở thay cho hồ sơ khác)."""
+    owner = _owner_now()
+    if not owner:
+        return 0
+    data = _sub_pending_load()
+    days = data.pop(owner, None)
+    if not days:
+        return 0
+    _sub_pending_save(data)
+    n = 0
+    for d in days:
+        paper_sub_ensure(d)
+        n += 1
+    return n
+
+
+def _ai_done(fut: Any, base: str, date: str, client: Any = None, owner: str | None = None) -> None:
     _ai.update(running=False, msg="")
     try:
         res = fut.result()
     except Exception as err:
         _warn("Gemini", err)
         res = {"ok": False, "error": "Lỗi không mong đợi (%s), xem Báo lỗi." % type(err).__name__}
+    # 1.28 (audit 12/11 F09): hồ sơ đã đổi (hoặc đóng) trong lúc Gemini viết → không đụng ví / gói của hồ sơ đang mở;
+    # ghi chờ, hồ sơ bắt đầu viết mở lại thì mới tặng thử / gia hạn (sub_pending_settle)
+    moved = owner is not None and owner != _owner_now()
     if res.get("ok") and not res.get("audio_only") and ai.has_issue(base, date):
-        paper_sub_ensure(date)      # 1.26.1: số mới đã về → bây giờ mới tặng thử / gia hạn gói báo (trừ xu)
+        if moved:
+            if owner:
+                data = _sub_pending_load()
+                data[owner] = sorted(set(data.get(owner, [])) | {date})[-14:]
+                _sub_pending_save(data)
+        else:
+            paper_sub_ensure(date)      # 1.26.1: số mới đã về → bây giờ mới tặng thử / gia hạn gói báo (trừ xu)
     st = ai.load_status(base)
     st["log_day"] = date if not res.get("audio_only") else st.get("log_day", date)
     if res.get("ok"):
@@ -1496,6 +1562,8 @@ def _ai_done(fut: Any, base: str, date: str, client: Any = None) -> None:
         msg = ""
     else:
         msg = "✗ Gemini chưa viết được báo%s: " % lname + str(res.get("error") or "")
+    if moved:
+        msg = ""                  # việc của hồ sơ khác: không báo trong vườn / thanh Anki của hồ sơ này
     if _dialog is not None:
         try:
             _dialog.refresh()          # refresh() gọi ai_start_all → báo kế tiếp (nếu có)
@@ -1507,6 +1575,8 @@ def _ai_done(fut: Any, base: str, date: str, client: Any = None) -> None:
     else:
         if msg and config().get("show_tooltips", True):
             tooltip("ことば畑: " + msg, period=6000)
+        if not mw.col:
+            return                # hồ sơ đã đóng: báo kế tiếp chờ hồ sơ mở lại
         try:
             ai_start_all("auto")
         except Exception as err:
@@ -1596,7 +1666,11 @@ def _news_and_greet(data: dict[str, Any], today: dict[str, Any], cfg: dict[str, 
     home = w.get("home") or {}
     reviewed = int(today.get("reviews") or 0) > 0
     try:          # các ngày trước hôm nay: đếm một lần mỗi ngày Anki (quét cả revlog), hôm nay cộng riêng
-        key = (str(getattr(mw.col, "path", "")), day)
+        # 1.28 (audit 12/11 F07): khoá có thêm số lượt ôn trước hôm nay (đếm theo khoá chính, rất nhanh) → đồng bộ /
+        # nhập / khôi phục mang thêm lịch sử cũ về thì tính lại (trước: giữ tổng cũ tới hôm sau)
+        start_ms = core.ngay.days_of(mw.col).rel_start(0) * 1000
+        key = (str(getattr(mw.col, "path", "")), day,
+               int(mw.col.db.scalar("select count() from revlog where id < ?", start_ms) or 0))
         if _day_total.get("key") != key:
             _day_total.update(key=key, v=core.review_day_total(mw.col, before_today=True))
         total = int(_day_total["v"]) + (1 if reviewed else 0)
@@ -1605,7 +1679,8 @@ def _news_and_greet(data: dict[str, Any], today: dict[str, Any], cfg: dict[str, 
     ctx = {"today": cday, "day": day, "paper": data.get("paper") or {}, "streak": int(today.get("streak") or 0),
            "reviewed_today": reviewed, "total_days": total, "freeze": (w.get("more") or {}).get("freeze") or {},
            "pets": mv.get("pets") or [], "wear": mv.get("wear") or {}, "season": w.get("season") or {}, "home": home,
-           "scenes": _guest_scenes(w), "album": GUESTS.album(), "sub": (w.get("more") or {}).get("paper_sub") or {}}
+           "scenes": _guest_scenes(w), "album": GUESTS.album(), "sub": (w.get("more") or {}).get("paper_sub") or {},
+           "finds": data.get("finds") or {}}
     nw = event_core.news(ctx)
     greet = None
     if not GREET_TEST_OFF and more_core.clean_ui(cfg.get("ui")).get("greet") != "off":
@@ -1871,6 +1946,11 @@ def cal_day(ds: str) -> dict[str, Any]:
     except Exception as err:
         _warn("khách ghé vườn", err)
         v["guests"] = []
+    try:      # 1.28: món nhặt được lần đầu hôm đó
+        v["finds"] = ["%s (%s)" % (x["ja"], x["vi"]) for x in finds.new_between(EVENTS.load(), d, d)]
+    except Exception as err:
+        _warn("nhặt đồ", err)
+        v["finds"] = []
     w = e.get("w")
     is_today = d == today
     v["w"] = None
@@ -2001,12 +2081,14 @@ def fix_start(ds: str, auto: bool = False) -> str:
         return journal.run_fix(client, names, goc, lang, level, hints)
 
     _fix.update(running=True, date=d.isoformat(), sent=sent)
-    _bg(task, lambda fut: _fix_done(fut, d, sent, client, goc, lang))
+    owner = _owner_now()
+    _bg(task, lambda fut: _fix_done(fut, d, sent, client, goc, lang, owner))
     _push_journal()
     return ""
 
 
-def _fix_done(fut: Any, d: datetime.date, sent: float, client: Any, goc: str, lang: str) -> None:
+def _fix_done(fut: Any, d: datetime.date, sent: float, client: Any, goc: str, lang: str,
+              owner: str | None = None) -> None:
     _fix.update(running=False, date="", sent=0.0)
     try:
         _save_quota(client.exhausted_state())
@@ -2014,6 +2096,8 @@ def _fix_done(fut: Any, d: datetime.date, sent: float, client: Any, goc: str, la
         _warn("hạn mức Gemini (sửa bài)", err)
     if not mw.col:
         return
+    if owner is not None and owner != _owner_now():
+        return               # 1.28: bài của hồ sơ khác — hồ sơ đó mở lại thì bài "đang sửa" quá hạn tự gửi lại được
     ds = d.isoformat()
     e = JOURNAL.entry(d)
     w = e.get("w") or {}
@@ -2081,6 +2165,72 @@ def fix_auto() -> bool:
 # -- 1.21: khách ghé vườn + Album khách ----------------------------------------------------------------------------
 
 GUESTS = guests.GuestStore(os.path.join(ADDON_DIR, "user_files", "guests.json"), col_getter=lambda: mw.col)
+# 1.28: chỗ lấp lánh + Hộp sưu tầm, gánh hàng rong (khoá collection kotoba_batake_events)
+EVENTS = finds.EventStore(os.path.join(ADDON_DIR, "user_files", "events.json"), col_getter=lambda: mw.col)
+
+
+def _ped_shop_items() -> list[str]:
+    """Món cửa hàng gánh hàng có thể giảm giá: món bán ở cửa hàng (không phải hiếm / theo mùa / quà / món riêng)."""
+    return [k for k, v in core.CATALOG.items()
+            if int(v.get("price") or 0) > 0 and not v.get("rare") and not v.get("only") and not v.get("season")]
+
+
+def _ped_goods(wallet: dict[str, Any], ev: dict[str, Any], day: datetime.date) -> list[dict[str, Any]]:
+    home = wallet.get("home") or {}
+    owned_seeds = set(((wallet.get("more") or {}).get("seeds") or {}).get("owned") or [])
+    bought = set(ev["ped"].get(day.isoformat()) or [])
+    out = []
+    for g in finds.stock(day, _ped_shop_items(), list(more_core.SEEDS)):
+        if g["kind"] == "seed":
+            sd = more_core.SEEDS[g["id"]]
+            price = int(sd["price"])
+            lock = "Đã có giống này" if g["id"] in owned_seeds else ""
+            out.append(dict(g, name="Giống cây: " + sd["name"], desc=sd.get("desc", ""), price=price, now=finds.disc(price),
+                            bought=g["slot"] in bought, lock=lock, scene="", place="", w=1))
+            continue
+        it = core.CATALOG[g["id"]]
+        price = int(it["price"])
+        now = price if g["kind"] == "only" else finds.disc(price)
+        lock = ""
+        if it.get("zone") and it["zone"] not in (home.get("zones") or []):
+            lock = "Mở vùng " + next(z["name"] for z in core.ZONES if z["id"] == it["zone"]) + " trước"
+        elif it["scene"] == "room" and int(home.get("house") or 0) < core.ROOM_UNLOCK_LEVEL:
+            lock = "Xây nhà tới bước Lắp cửa trước"
+        elif (home.get("owned") or {}).get(g["id"], 0) >= it.get("max", 99):
+            lock = "Đã có"
+        out.append(dict(g, name=it["name"], desc=it.get("desc") or core.ITEM_DESC.get(g["id"], ""), price=price, now=now,
+                        bought=g["slot"] in bought, lock=lock, scene=it["scene"], place=it.get("place", ""), w=it.get("w", 1)))
+    return out
+
+
+def finds_view(wallet: dict[str, Any], reviews: int, save: bool = True) -> dict[str, Any]:
+    """1.28: chỗ lấp lánh hôm nay, gánh hàng rong, Hộp sưu tầm (data.finds)."""
+    today = cal_today()
+    zones = list((wallet.get("home") or {}).get("zones") or [])
+    ev = EVENTS.load()
+    if finds.ensure_day(ev, zones, today) and save and mw.col is not None:
+        EVENTS.save(ev)
+    if save and mw.col is not None:
+        # đã ghi "đủ bộ" mà quà chưa vào kho (tắt Anki đúng lúc nhặt, hai máy ghi đè nhau) → tặng lại; quà không bán / bỏ
+        # được nên số đang có = 0 nghĩa là chưa nhận
+        own = (wallet.get("home") or {}).get("owned") or {}
+        for sc in ev["sets"]:
+            gift = finds.SET_REWARD.get(sc)
+            if gift and gift in core.FIND_ITEMS and not own.get(gift):
+                wallet.update(STATE.find_reward(0, gift))
+                own = wallet["home"]["owned"]
+    market = finds.is_market(today)
+    nxt = finds.next_market(today)
+    rewards = {k: v["name"] for k, v in core.FIND_ITEMS.items()}
+    return {
+        "day": today.isoformat(), "reviews": int(reviews), "per": finds.PER_SPOT, "max": finds.MAX_SPOTS,
+        "open": finds.open_count(reviews), "next": finds.next_at(reviews),
+        "spots": finds.spots_view(ev, reviews, today),
+        "ped": {"today": market, "scene": "station" if "station" in zones else "yard",
+                "date": event_core.date_label(today), "next": event_core.short_date(nxt, today), "next_iso": nxt.isoformat(),
+                "goods": _ped_goods(wallet, ev, today) if market else []},
+        "box": finds.box_view(ev, zones, today, rewards),
+    }
 
 
 def _guest_scenes(wallet: dict[str, Any]) -> list[str]:
@@ -2199,7 +2349,7 @@ class GardenDialog(QDialog):
             js=[
                 f"{WEB_BASE}/diag.js", f"{WEB_BASE}/prefs.js", f"{WEB_BASE}/fix.js", f"{WEB_BASE}/icons.js", f"{WEB_BASE}/sky.js", f"{WEB_BASE}/season.js", f"{WEB_BASE}/fx.js", f"{WEB_BASE}/music.js",
                 f"{WEB_BASE}/games.js", f"{WEB_BASE}/fields.js", f"{WEB_BASE}/season_art.js", f"{WEB_BASE}/rare_art.js", f"{WEB_BASE}/nha_art.js", f"{WEB_BASE}/pets.js", f"{WEB_BASE}/guests.js",
-                f"{WEB_BASE}/home.js", f"{WEB_BASE}/craft.js", f"{WEB_BASE}/paper.js", f"{WEB_BASE}/seeds.js",
+                f"{WEB_BASE}/finds_art.js", f"{WEB_BASE}/finds.js", f"{WEB_BASE}/home.js", f"{WEB_BASE}/craft.js", f"{WEB_BASE}/paper.js", f"{WEB_BASE}/seeds.js",
                 f"{WEB_BASE}/joy.js", f"{WEB_BASE}/ui.js", f"{WEB_BASE}/calendar.js", f"{WEB_BASE}/greet.js", f"{WEB_BASE}/tour.js", f"{WEB_BASE}/garden.js",
             ],
             context=self,
@@ -2264,6 +2414,11 @@ class GardenDialog(QDialog):
             except Exception as err:
                 _warn("khách ghé vườn", err)
                 data["guests"] = None
+            try:      # 1.28: chỗ lấp lánh, gánh hàng rong, Hộp sưu tầm
+                data["finds"] = finds_view(data["wallet"], int(today.get("reviews") or 0))
+            except Exception as err:
+                _warn("nhặt đồ / gánh hàng", err)
+                data["finds"] = None
             self._plants = data["plants"]
             _dict_possible = bool(self._dict_candidates(_voice(cfg)) or self._word_candidates(_voice(cfg)))
             try:
@@ -2522,6 +2677,8 @@ class GardenDialog(QDialog):
             self._on_cal(cmd[len("cal:"):])
         elif cmd.startswith("guest:"):
             self._on_guest(cmd[len("guest:"):])
+        elif cmd.startswith("find:") or cmd.startswith("ped:"):
+            self._on_find(cmd)
         elif cmd.startswith("share:"):
             self._on_share(cmd[len("share:"):])
         elif cmd.startswith("snap:save:"):
@@ -3203,6 +3360,73 @@ class GardenDialog(QDialog):
         if regrow:
             self.refresh()
         self._js("home", out)
+
+    # -- 1.28: chỗ lấp lánh (nhặt đồ), gánh hàng rong ----------------------------------
+
+    def _on_find(self, cmd: str) -> None:
+        """find:pick:<k>:<cảnh> — nhặt chỗ lấp lánh thứ k · ped:buy:<ô> — mua ở gánh hàng rong.
+        Python xét lại mọi thứ (lượt ôn hôm nay, chỗ đã nhặt, phiên hôm nay, giá, xu) rồi mới ghi."""
+        parts = cmd.split(":")
+        today = cal_today()
+        out: dict[str, Any] = {"ok": False}
+        try:
+            stats = _daily_stats()
+            reviews = int(stats.get("reviews") or 0)
+            wallet = STATE.load()
+            zones = list((wallet.get("home") or {}).get("zones") or [])
+            ev = EVENTS.load()
+            if parts[:2] == ["find", "pick"] and len(parts) == 4 and parts[2].isdigit():
+                res = finds.pick(ev, int(parts[2]), parts[3], reviews, zones, today)
+                gift = res["reward"] if res["set_done"] else None
+                if gift and gift not in core.FIND_ITEMS:
+                    raise finds.FindError("Quà của bộ này chưa có trong danh mục.")
+                EVENTS.save(ev)                       # ghi "đã nhặt" trước: lỗi ở bước sau không cho nhặt lại hai lần
+                wallet = STATE.find_reward(res["coins"], gift)
+                box = finds.box_view(ev, zones, today, {k: v["name"] for k, v in core.FIND_ITEMS.items()})
+                st = next(x for x in box["sets"] if x["scene"] == parts[3])
+                out = {"ok": True, "act": "pick", "k": int(parts[2]), "scene": parts[3],
+                       "item": finds.item_view(res["id"], ev, today), "new": res["new"], "coins": res["coins"],
+                       "set": {"name": st["name"], "n": st["n"], "total": st["total"], "done": res["set_done"],
+                               "reward": gift or "", "reward_name": core.CATALOG[gift]["name"] if gift else ""}}
+            elif parts[:2] == ["ped", "buy"] and len(parts) in (3, 4):
+                if len(parts) == 4 and parts[3] != today.isoformat():
+                    # bảng mở từ hôm qua (qua giờ đổi ngày của Anki): hàng của phiên đó không còn
+                    raise finds.FindError("Phiên đó đã qua — mở lại bảng gánh hàng nhé.")
+                if not finds.is_market(today):
+                    raise finds.FindError("Hôm nay gánh hàng không ghé — phiên sau: " +
+                                          event_core.short_date(finds.next_market(today), today) + ".")
+                goods = {g["slot"]: g for g in _ped_goods(wallet, ev, today)}
+                g = goods.get(parts[2])
+                if g is None:
+                    raise finds.FindError("Phiên này không có món đó.")
+                if g["bought"]:
+                    raise finds.FindError("Món này phiên này đã mua rồi.")
+                if g["kind"] == "seed":
+                    wallet = STATE.seed_buy_at(g["id"], g["now"])
+                else:
+                    wallet = STATE.buy_at(g["id"], g["now"])
+                ds = today.isoformat()
+                ev["ped"][ds] = sorted(set(ev["ped"].get(ds) or []) | {g["slot"]})
+                finds.trim(ev, today)
+                EVENTS.save(ev)
+                out = {"ok": True, "act": "buy", "slot": g["slot"], "id": g["id"], "kind": g["kind"], "name": g["name"],
+                       "paid": g["now"], "scene": g.get("scene", ""), "place": g.get("place", "")}
+            else:
+                return
+        except (finds.FindError, core.HomeError) as err:
+            out = {"ok": False, "msg": str(err)}
+            wallet = None
+        except Exception as err:
+            _warn("nhặt đồ / gánh hàng", err)
+            out = {"ok": False, "msg": "Không làm được (%s)." % type(err).__name__}
+            wallet = None
+        if wallet is not None:
+            out["wallet"] = wallet
+            try:
+                out["finds"] = finds_view(wallet, reviews, save=False)
+            except Exception as err:
+                _warn("nhặt đồ / gánh hàng", err)
+        self._js("finds", out)
 
     # -- 1.21: khách ghé vườn ------------------------------------------------------
 
@@ -4050,6 +4274,10 @@ def _on_profile_open() -> None:
             print("[kotoba_batake] đã chuyển dữ liệu sang collection (đồng bộ AnkiWeb)")
     except Exception as err:
         _warn("migrate", err)
+    try:                                  # 1.28 (F09): số báo đã viết xong cho hồ sơ này lúc hồ sơ khác đang mở
+        sub_pending_settle()
+    except Exception as err:
+        _warn("gói báo (chờ hồ sơ)", err)
     # 1.11: lần đầu chỉ đặt mốc; sau đó bù lượt ôn ở máy khác / điện thoại đã có sẵn trong collection
     res = mobile_catch_up()
     if res and config().get("show_tooltips", True):
@@ -4079,6 +4307,7 @@ def _on_profile_close() -> None:
     except Exception as err:
         _warn("hoàn tác lượt ôn (đóng hồ sơ)", err)
     _ledger.clear()                       # 1.23: sổ phần thưởng (Undo) chỉ cho collection đang mở
+    _day_total.update(key=None, v=0)      # 1.28: tổng ngày có ôn của hồ sơ này không sang hồ sơ khác
     _words_cache.clear()                  # 1.25.3: gợi ý luyện viết của hồ sơ này không sang hồ sơ khác
     _presence.update(t=0.0, v={}, col="")  # 1.25.9: ngôn ngữ có trong collection cũng vậy
     if _dialog is not None:
@@ -4098,6 +4327,7 @@ def _on_profile_close() -> None:
 def _on_sync_finished() -> None:
     # Sau khi đồng bộ AnkiWeb: xu/nhà/nhiệm vụ có thể vừa được cập nhật từ máy khác,
     # và lượt ôn trên điện thoại vừa về → bù xu (vườn đang mở thì refresh tự bù và báo trong vườn).
+    _day_total.update(key=None, v=0)      # 1.28 (F07): lịch sử ôn vừa đổi → mốc "N ngày có ôn" tính lại
     if _dialog is not None:
         try:
             _dialog.refresh()

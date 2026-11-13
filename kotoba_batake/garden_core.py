@@ -21,6 +21,7 @@ from anki.utils import ids2str, strip_html
 try:   # chạy trong Anki (gói add-on)
     from . import fields_core as fields
     from . import more_core as more
+    from . import ngay_core as ngay
     from . import season_core as season
     from . import share_core as share
     from . import text_core as text
@@ -36,6 +37,7 @@ except ImportError:   # nạp riêng file này (test): nạp season_core.py / fi
     season = _load_side("kotoba_season_core", "season_core.py")
     fields = _load_side("kotoba_fields_core", "fields_core.py")
     more = _load_side("kotoba_more_core", "more_core.py")
+    ngay = _load_side("kotoba_ngay_core", "ngay_core.py")
     text = _load_side("kotoba_text_core", "text_core.py")
     share = _load_side("kotoba_share_core", "share_core.py")
     share.more = more
@@ -320,7 +322,48 @@ NHA_ITEMS: dict[str, dict[str, Any]] = {
 for _k, _v in NHA_ITEMS.items():
     assert _k not in CATALOG, _k
     CATALOG[_k] = _v
-TIER3_ITEMS = frozenset(NHA_ITEMS)    # đồ lưu ở NHA_KEY (sở hữu + mọi chỗ đặt)
+
+# 1.28: quà đủ bộ Hộp sưu tầm (only = "set") + món chỉ có ở gánh hàng rong (only = "ped", giá của gánh hàng). Không bán
+# ở cửa hàng. Lưu cùng tầng NHA_KEY: bản 1.24 – 1.27 ở máy khác giữ hộ món lạ ở tầng này (keep_foreign_nha), bản ≤ 1.23
+# không đọc tầng này nên không xoá.
+FIND_ITEMS: dict[str, dict[str, Any]] = {
+    # --- quà đủ bộ (finds_core.SET_REWARD)
+    "tukinh": {"name": "Tủ kính sưu tầm", "price": 0, "scene": "room", "w": 1, "place": "floor", "only": "set", "set": "yard",
+               "desc": "Bày đồ đã nhặt, nhặt càng nhiều càng đầy"},
+    "kaifurin": {"name": "Chuông gió vỏ sò", "price": 0, "scene": "room", "w": 1, "place": "wall", "only": "set", "set": "beach",
+                 "desc": "Vỏ sò đung đưa leng keng"},
+    "mikujikake": {"name": "Giá buộc quẻ", "price": 0, "scene": "yard", "w": 1, "place": "ground", "only": "set", "set": "shrine",
+                   "desc": "Quẻ giấy trắng buộc kín dây"},
+    "kingyochochin": {"name": "Đèn lồng cá vàng", "price": 0, "scene": "yard", "w": 1, "place": "ground", "only": "set",
+                      "set": "festival", "desc": "Lắc lư theo gió, sáng đỏ ban đêm"},
+    "takeakari": {"name": "Đèn ống tre", "price": 0, "scene": "yard", "w": 1, "place": "ground", "only": "set", "set": "bamboo",
+                  "desc": "Ánh nến lọt qua lỗ khắc trên ống tre"},
+    "ashiyu": {"name": "Bồn ngâm chân ashiyu", "price": 0, "scene": "yard", "w": 2, "place": "ground", "only": "set",
+               "set": "onsen", "desc": "Nước ấm bốc hơi nghi ngút"},
+    "posuto": {"name": "Hòm thư bưu điện đỏ", "price": 0, "scene": "yard", "w": 1, "place": "ground", "only": "set",
+               "set": "station", "desc": "Hòm thư tròn kiểu Showa"},
+    # --- chỉ có ở gánh hàng rong (finds_core.PED_ONLY)
+    "denkeoquan": {"name": "Đèn kéo quân", "price": 280, "scene": "yard", "w": 1, "place": "ground", "only": "ped",
+                   "desc": "Trời tối thì bóng hình chạy vòng quanh"},
+    "luunuoc": {"name": "Lu nước", "price": 160, "scene": "yard", "w": 1, "place": "ground", "only": "ped",
+                "desc": "Lu sành mát lạnh, gáo dừa vắt ngang"},
+    "hoagiay": {"name": "Chậu hoa giấy", "price": 180, "scene": "yard", "w": 1, "place": "ground", "only": "ped",
+                "desc": "Hoa giấy hồng rủ xuống thành chùm"},
+    "mushikago": {"name": "Lồng dế", "price": 150, "scene": "yard", "w": 1, "place": "ground", "only": "ped",
+                  "desc": "Lồng tre nhỏ, đêm có tiếng dế"},
+    "nonla": {"name": "Nón lá", "price": 120, "scene": "room", "w": 1, "place": "wall", "only": "ped",
+              "desc": "Treo tường, quai lụa hồng"},
+    "binhgom": {"name": "Bình gốm men lam", "price": 220, "scene": "room", "w": 1, "place": "floor", "only": "ped",
+                "desc": "Gốm men lam vẽ hoa sen"},
+    "dongholac": {"name": "Đồng hồ quả lắc", "price": 320, "scene": "room", "w": 1, "place": "wall", "only": "ped",
+                  "desc": "Quả lắc đung đưa theo giây"},
+    "tetsubin": {"name": "Ấm sắt tetsubin", "price": 200, "scene": "room", "w": 1, "place": "floor", "only": "ped",
+                 "desc": "Hơi nước bốc lên từ vòi ấm"},
+}
+for _k, _v in FIND_ITEMS.items():
+    assert _k not in CATALOG, _k
+    CATALOG[_k] = _v
+TIER3_ITEMS = frozenset(NHA_ITEMS) | frozenset(FIND_ITEMS)    # đồ lưu ở NHA_KEY (sở hữu + mọi chỗ đặt)
 
 # Các cảnh: sân nhà + các vùng mới là ngoài trời (đồ ngoài trời đặt được ở mọi cảnh ngoài trời).
 OUTDOOR_SCENES = ("yard", "beach", "shrine", "festival", "bamboo", "onsen", "station")
@@ -700,9 +743,9 @@ def split_season(data: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any]]:
         lst = home.get(scene)
         if not isinstance(lst, list):
             continue
-        move = [e for e in lst if e.get("id") in TIER2_ITEMS]
+        move = [e for e in lst if _eid(e) in TIER2_ITEMS]
         if move:
-            home[scene] = [e for e in lst if e.get("id") not in TIER2_ITEMS]
+            home[scene] = [e for e in lst if _eid(e) not in TIER2_ITEMS]
             store["places"][scene] = move
     return rest, store
 
@@ -750,11 +793,22 @@ def merge_season(stored: dict[str, Any], store: Any) -> dict[str, Any]:
     places = store.get("places") if isinstance(store.get("places"), dict) else {}
     for scene in ALL_SCENES:
         base = home.get(scene) if isinstance(home.get(scene), list) else []
-        base = [e for e in base if not (isinstance(e, dict) and e.get("id") in TIER2_ITEMS)]
+        base = [e for e in base if _eid(e) not in TIER2_ITEMS]
         more = places.get(scene) if isinstance(places.get(scene), list) else []
-        home[scene] = base + [e for e in more if isinstance(e, dict) and e.get("id") in TIER2_ITEMS]
+        home[scene] = base + [e for e in more if _eid(e) in TIER2_ITEMS]
     out["home"] = home
     return out
+
+
+def _eid(e: Any) -> str | None:
+    """id của một bản ghi đặt đồ, None nếu bản ghi hỏng (không phải dict / id không phải chữ). 1.28 (audit 12/11 F06):
+    trước đây `e.get("id") in cat` với id là list / dict báo TypeError → cả hai gian bên bị coi như chưa mở, lần lưu sau
+    xoá luôn trạng thái mở rộng nhà + mọi chỗ đặt ở đó. Nay chỉ bỏ đúng bản ghi hỏng."""
+    if isinstance(e, dict):
+        v = e.get("id")
+        if isinstance(v, str):
+            return v
+    return None
 
 
 # ---- 1.24: tầng NHA_KEY (hai gian bên + đồ mới của hai gian) ----
@@ -781,9 +835,9 @@ def split_nha(data: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any]]:
         lst = home.get(scene)
         if not isinstance(lst, list):
             continue
-        move = [e for e in lst if isinstance(e, dict) and e.get("id") in TIER3_ITEMS]
+        move = [e for e in lst if _eid(e) in TIER3_ITEMS]
         if move:
-            home[scene] = [e for e in lst if not (isinstance(e, dict) and e.get("id") in TIER3_ITEMS)]
+            home[scene] = [e for e in lst if _eid(e) not in TIER3_ITEMS]
             store["places"][scene] = move
     return rest, store
 
@@ -839,9 +893,9 @@ def merge_nha(stored: dict[str, Any], store: Any) -> dict[str, Any]:
     places = store.get("places") if isinstance(store.get("places"), dict) else {}
     for scene in ALL_SCENES:
         base = home.get(scene) if isinstance(home.get(scene), list) else []
-        base = [e for e in base if not (isinstance(e, dict) and e.get("id") in TIER3_ITEMS)]
+        base = [e for e in base if _eid(e) not in TIER3_ITEMS]
         more_ = places.get(scene) if isinstance(places.get(scene), list) else []
-        home[scene] = base + [e for e in more_ if isinstance(e, dict) and e.get("id") in TIER3_ITEMS]
+        home[scene] = base + [e for e in more_ if _eid(e) in TIER3_ITEMS]
     out["home"] = home
     return out
 
@@ -852,6 +906,7 @@ def attach_nha(data: dict[str, Any], store: Any) -> None:
     thì món ở gian bên về kho trước (không mất món đã mua)."""
     home = data["home"]
     got = store.get("rooms") if isinstance(store, dict) and isinstance(store.get("rooms"), list) else []
+    got = [r for r in got if isinstance(r, str)]
     # 1.25: mở rộng nhà là một lần cho cả hai gian — dữ liệu 1.24 mới mở một gian cũng coi như mở cả hai
     home["rooms"] = list(SIDE_IDS) if any(r in got for r in SIDE_IDS) else []
     for sid in SIDE_IDS:
@@ -861,7 +916,7 @@ def attach_nha(data: dict[str, Any], store: Any) -> None:
     for sid in home["rooms"]:
         lst = places.get(sid) if isinstance(places.get(sid), list) else []
         for e in lst:
-            if not (isinstance(e, dict) and e.get("id") in cat and fits_scene(cat[e["id"]], sid)
+            if not (_eid(e) in cat and fits_scene(cat[e["id"]], sid)
                     and isinstance(e.get("x"), int) and isinstance(e.get("y"), int)):
                 continue
             if home["owned"].get(e["id"], 0) - placed_count(home, e["id"]) <= 0:
@@ -924,7 +979,7 @@ def attach_uzones(data: dict[str, Any], raw: Any) -> None:
     for uid in ids:
         lst = places.get(uid) if isinstance(places.get(uid), list) else []
         for e in lst:
-            if not (isinstance(e, dict) and e.get("id") in cat and fits_scene(cat[e["id"]], uid)
+            if not (_eid(e) in cat and fits_scene(cat[e["id"]], uid)
                     and isinstance(e.get("x"), int) and isinstance(e.get("y"), int)):
                 continue
             if home["owned"].get(e["id"], 0) - placed_count(home, e["id"]) <= 0:
@@ -1802,39 +1857,50 @@ def card_due_in(col: Collection, card: Any) -> int | None:
         return None
 
 
-def review_days(col: Collection) -> tuple[set[int], datetime.date]:
-    """Các ngày có ôn trong 400 ngày gần nhất (0 = hôm nay, -1 = hôm qua…) + ngày lịch của ngày Anki hôm nay."""
-    cutoff = int(col.sched.day_cutoff)
-    start = cutoff - 86400
-    since = start - 400 * 86400
-    days = set(col.db.list(
-        "select distinct cast((id / 1000.0 - ?) / 86400.0 + 100000 as int) - 100000 "
-        "from revlog where id >= ? and type < 4",
-        start, since * 1000,
-    ))
-    return days, datetime.datetime.fromtimestamp(start).date()
+def review_days(col: Collection, back: int = 400) -> tuple[set[int], datetime.date]:
+    """Các ngày có ôn trong `back` ngày gần nhất (0 = hôm nay, -1 = hôm qua…) + ngày lịch của ngày Anki hôm nay.
+
+    1.28 (audit 12/11 F02): ngày Anki theo lịch địa phương (ngay_core), không chia 86400 giây — ngày đổi giờ mùa hè
+    không còn đẩy lượt ôn sang ngày bên cạnh."""
+    D = ngay.days_of(col)
+    since = D.rel_start(-int(back))
+    rows = col.db.list(
+        "select distinct " + D.sql_day() + " from revlog where id >= ? and type < 4",
+        D.mod, since * 1000,
+    )
+    days = {r for r in (D.rel_of_iso(x) for x in rows) if r is not None}
+    return days, D.today
 
 
 def review_day_total(col: Collection, before_today: bool = False) -> int:
     """1.26: số ngày (ngày Anki) có ít nhất một lượt ôn, từ trước tới nay — cho mốc "đủ 100 ngày có ôn".
     before_today: chỉ đếm các ngày trước hôm nay (để nhớ một lần mỗi ngày, hôm nay cộng riêng)."""
-    start = int(col.sched.day_cutoff) - 86400
-    sql = "select count(distinct cast((id / 1000.0 - ?) / 86400.0 + 100000 as int)) from revlog where type < 4"
+    D = ngay.days_of(col)
+    sql = "select count(distinct " + D.sql_day() + ") from revlog where type < 4"
     if before_today:
-        return int(col.db.scalar(sql + " and id < ?", start, start * 1000) or 0)
-    return int(col.db.scalar(sql, start) or 0)
+        return int(col.db.scalar(sql + " and id < ?", D.mod, D.rel_start(0) * 1000) or 0)
+    return int(col.db.scalar(sql, D.mod) or 0)
 
 
 def daily_stats(col: Collection, frozen: Any = ()) -> dict[str, int]:
     """Số lượt ôn hôm nay (theo ngày của Anki) và số ngày ôn liên tiếp. 1.25.9: `frozen` = ngày đã dùng vé giữ chuỗi
-    ("yyyy-mm-dd") — nối chuỗi, không cộng thêm."""
-    cutoff = int(col.sched.day_cutoff)
-    start = cutoff - 86400
+    ("yyyy-mm-dd") — nối chuỗi, không cộng thêm.
+
+    1.28 (audit 12/11 F03): chuỗi dài hơn cửa sổ 400 ngày không còn bị chặn ở 401 — chuỗi chạm mép cửa sổ thì đọc
+    thêm lịch sử cho tới chỗ đứt đầu tiên."""
+    D = ngay.days_of(col)
     reviews = col.db.scalar(
-        "select count() from revlog where id >= ? and type < 4", start * 1000
+        "select count() from revlog where id >= ? and type < 4", D.rel_start(0) * 1000
     ) or 0
-    days, today = review_days(col)
-    streak = more.streak_with(days, more.frozen_rel(frozen, today))
+    back = 400
+    while True:
+        days, today = review_days(col, back)
+        fz = more.frozen_rel(frozen, today)
+        streak = more.streak_with(days, fz)
+        edge = -back                     # ngày cũ nhất trong cửa sổ: chuỗi còn chạm tới đó thì có thể dài hơn
+        if (edge not in days and edge not in fz) or back >= 100000:
+            break
+        back *= 4
     return {"reviews": int(reviews), "streak": streak, "day": int(col.sched.today)}
 
 
@@ -2442,21 +2508,22 @@ def revlog_by_day(col: Collection, start_ms: int, window: int = MOBILE_WINDOW) -
 
     day_all: mọi lượt của ngày (như "Hôm nay X lượt", dùng cho mục tiêu ngày);
     all / ok / rev / new: chỉ lượt sau mốc (id > start_ms) — mọi lượt / nhớ được (Khó, Được, Dễ) /
-    thẻ ôn (revlog type 1) / thẻ mới học lần đầu (lượt đầu tiên của thẻ). Bỏ qua lượt "đổi lịch tay" (type ≥ 4)."""
-    cutoff = int(col.sched.day_cutoff)
+    thẻ ôn (revlog type 1) / thẻ mới học lần đầu (lượt đầu tiên của thẻ). Bỏ qua lượt "đổi lịch tay" (type ≥ 4).
+    1.28: ngày Anki theo lịch địa phương (ngay_core)."""
+    D = ngay.days_of(col)
     today = int(col.sched.today)
-    day0 = cutoff - 86400
-    lo = (day0 - (window - 1) * 86400) * 1000
+    lo = D.rel_start(-(window - 1)) * 1000
     rows = col.db.all(
-        "select r.id, cast((r.id / 1000.0 - ?) / 86400.0 + 100000 as int) - 100000, r.type, r.ease, "
+        "select r.id, " + D.sql_day("r.id") + ", r.type, r.ease, "
         "case when r.type = 0 then not exists (select 1 from revlog p where p.cid = r.cid and p.id < r.id "
         "and p.type < 4) else 0 end "
         "from revlog r where r.id >= ? and r.type < 4",
-        day0, lo,
+        D.mod, lo,
     )
     out: dict[int, dict[str, int]] = {}
-    for rid, rel, typ, ease, first in rows:
-        if rel > 0:          # đồng hồ máy khác chạy trước: để tới ngày đó mới tính
+    for rid, ds, typ, ease, first in rows:
+        rel = D.rel_of_iso(ds)
+        if rel is None or rel > 0:          # đồng hồ máy khác chạy trước: để tới ngày đó mới tính
             continue
         c = out.setdefault(today + int(rel), {"day_all": 0, "all": 0, "ok": 0, "rev": 0, "new": 0})
         c["day_all"] += 1
@@ -2473,8 +2540,8 @@ def revlog_by_day(col: Collection, start_ms: int, window: int = MOBILE_WINDOW) -
 
 
 def mobile_day_of(start_ms: int, day_cutoff: int, today: int) -> int:
-    """Ngày Anki chứa mốc start_ms."""
-    return today + int((start_ms // 1000 - (day_cutoff - 86400)) // 86400)
+    """Ngày Anki chứa mốc start_ms (1.28: theo lịch địa phương)."""
+    return today + ngay.Days(day_cutoff).rel_of(start_ms // 1000)
 
 
 def settle_mobile(data: dict[str, Any], counts: dict[int, dict[str, int]], today: int, start_day: int,
@@ -2733,7 +2800,9 @@ class GardenState:
         try:
             attach_nha(data, nha)
         except (ValueError, AttributeError, TypeError, KeyError):
-            data["home"]["rooms"] = []
+            # 1.28 (F06): lỗi bất ngờ khi đặt đồ → vẫn giữ trạng thái đã mở rộng nhà (đồ ở gian bên tạm về kho, không mất)
+            got = nha.get("rooms") if isinstance(nha, dict) and isinstance(nha.get("rooms"), list) else []
+            data["home"]["rooms"] = list(SIDE_IDS) if any(isinstance(r, str) and r in SIDE_IDS for r in got) else []
             for sid in SIDE_IDS:
                 data["home"][sid] = []
         data["more_view"] = self._more_view(data)
@@ -3155,6 +3224,21 @@ class GardenState:
         item, home = CATALOG[item_id], data["home"]
         if item.get("rare"):
             raise HomeError("Món này không bán, chỉ có trong rương nhiệm vụ hằng ngày.")
+        if item.get("only") == "ped":
+            raise HomeError("Món này chỉ có ở gánh hàng rong (thứ Tư, Chủ nhật).")
+        if item.get("only"):
+            raise HomeError("Món này là quà khi đủ một bộ trong Hộp sưu tầm.")
+        self._buy_checks(data, item_id)
+        if data["coins"] < item["price"]:
+            raise HomeError(f"Chưa đủ xu: cần {item['price']}, đang có {data['coins']}.")
+        data["coins"] -= item["price"]
+        home["owned"][item_id] = home["owned"].get(item_id, 0) + 1
+        self.save(data)
+        return data
+
+    def _buy_checks(self, data: dict[str, Any], item_id: str) -> None:
+        """Điều kiện mua chung của cửa hàng và gánh hàng rong (1.28): vùng / giao diện mùa đã mở, số tối đa, nhà có cửa."""
+        item, home = CATALOG[item_id], data["home"]
         if item.get("zone") and item["zone"] not in home["zones"]:
             zname = next(z["name"] for z in ZONES if z["id"] == item["zone"])
             raise HomeError(f"Mở khoá vùng “{zname}” trước đã.")
@@ -3165,10 +3249,41 @@ class GardenState:
             raise HomeError("Món này chỉ có một cái thôi.")
         if item["scene"] == "room" and home["house"] < ROOM_UNLOCK_LEVEL:
             raise HomeError("Xây nhà tới bước “Lắp cửa & cửa sổ” rồi mới mua nội thất được.")
-        if data["coins"] < item["price"]:
-            raise HomeError(f"Chưa đủ xu: cần {item['price']}, đang có {data['coins']}.")
-        data["coins"] -= item["price"]
-        home["owned"][item_id] = home["owned"].get(item_id, 0) + 1
+
+    # -- 1.28: Hộp sưu tầm, gánh hàng rong -----------------------------------------------
+
+    def find_reward(self, coins: int = 0, gift: str | None = None) -> dict[str, Any]:
+        """Nhặt trùng → cộng xu; đủ một bộ sưu tầm → tặng món trang trí (vào Kho đồ)."""
+        data = self.load()
+        if coins > 0:
+            data["coins"] += int(coins)
+        if gift and gift in FIND_ITEMS:
+            own = data["home"]["owned"]
+            own[gift] = own.get(gift, 0) + 1
+        if coins > 0 or gift:
+            self.save(data)
+        return data
+
+    def buy_at(self, item_id: str, price: int) -> dict[str, Any]:
+        """Gánh hàng rong: mua món cửa hàng (đã giảm giá) hoặc món chỉ có ở gánh hàng, theo giá đã tính sẵn."""
+        if item_id not in CATALOG:
+            raise HomeError("Không có món này.")
+        item = CATALOG[item_id]
+        if item.get("rare") or item.get("only") == "set" or item.get("season"):
+            raise HomeError("Món này không bán ở gánh hàng.")
+        data = self.load()
+        self._buy_checks(data, item_id)
+        self._pay(data, int(price))
+        own = data["home"]["owned"]
+        own[item_id] = own.get(item_id, 0) + 1
+        self.save(data)
+        return data
+
+    @_more_errors
+    def seed_buy_at(self, sid: str, price: int) -> dict[str, Any]:
+        data = self.load()
+        more.buy_seed(data["more"], sid)
+        self._pay(data, int(price))
         self.save(data)
         return data
 

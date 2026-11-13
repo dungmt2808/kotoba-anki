@@ -124,7 +124,8 @@ var GardenGreet = (function () {
 
   // ---------------------------------------------------------------- màn chào
   function hello(g, st) {
-    const h = Math.floor(st.hour || 9);
+    // 1.28 (audit 12/11 F04): 0 giờ là giờ hợp lệ (trước: `st.hour || 9` biến 00:00 thành 9 giờ → "Chào buổi sáng")
+    const h = Math.floor(typeof st.hour === "number" && isFinite(st.hour) ? st.hour : 9);
     const byHour = h >= 4 && h < 11 ? ["おはよう！", "Chào buổi sáng!"] : h >= 11 && h < 18 ? ["こんにちは！", "Xin chào!"] : ["こんばんは！", "Chào buổi tối!"];
     let hi = byHour[0], vi = byHour[1];
     if (g.fest) { hi = g.fest.hi; vi = g.fest.vi; }
@@ -337,6 +338,14 @@ var GardenGreet = (function () {
         const li = el("li", soon ? "is-soon" : "");
         fill(li.appendChild(el("span", "kb-news-t")), "[i:" + (x.icon || "star") + "] " + x.text);
         if (x.d || x.hint) { li.appendChild(el("span", "kb-news-d", x.d || x.hint)); }
+        // 1.28: "chỗ lấp lánh" → sang cảnh có chỗ lấp lánh; "gánh hàng rong" → mở bảng gánh hàng
+        if (!soon && (x.id === "finds" || x.id === "ped") && typeof GardenFinds !== "undefined") {
+          li.classList.add("is-link"); li.tabIndex = 0; li.setAttribute("role", "button");
+          li.appendChild(el("span", "kb-news-go", "▸"));
+          const go = (e) => { e.stopPropagation(); closeNews(); GardenFinds.fromNews(x.id); };
+          li.addEventListener("click", go);
+          li.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(e); } });
+        }
         u.appendChild(li);
       });
       u.previousElementSibling.hidden = !rows.length;
@@ -354,10 +363,22 @@ var GardenGreet = (function () {
     newsOpen = true;
     buildPop(d.news);
     p.hidden = false;
+    placeNews();
+  }
+  // 1.28 (audit 12/11 F05): bảng Tin làng nằm trong cửa sổ — cao tối đa bằng cửa sổ, phần dưới cuộn trong bảng, đặt lại khi
+  // đổi cỡ / cuộn trang (trước: toạ độ tính một lần lúc mở, tin dài vượt đáy, thu cửa sổ thì bảng nằm ngoài khung nhìn)
+  function placeNews() {
+    const p = $("kb-news-pop"), btn = $("kb-news-btn");
+    if (!p || p.hidden) { return; }
+    const M = 8, vw = document.documentElement.clientWidth || window.innerWidth, vh = window.innerHeight;
+    p.style.maxHeight = Math.max(140, vh - 2 * M) + "px";
     const anchor = $("kb-today") && $("kb-today").offsetParent ? $("kb-today") : btn;
-    const r = anchor.getBoundingClientRect(), app = $("kb-app").getBoundingClientRect();
-    p.style.top = (r.bottom - app.top + 6) + "px";
-    p.style.left = Math.max(8, Math.min(app.width - p.offsetWidth - 8, r.right - app.left - p.offsetWidth)) + "px";
+    const r = anchor ? anchor.getBoundingClientRect() : { bottom: M, right: vw - M };
+    const w = p.offsetWidth, h = p.offsetHeight;
+    let top = r.bottom + 6;
+    if (top + h > vh - M) { top = vh - M - h; }
+    p.style.top = Math.max(M, top) + "px";
+    p.style.left = Math.max(M, Math.min(vw - w - M, r.right - w)) + "px";
   }
   function closeNews() { toggleNews(false); }
 
@@ -371,6 +392,10 @@ var GardenGreet = (function () {
     if (p) { p.addEventListener("click", (e) => e.stopPropagation()); }
     document.addEventListener("click", () => { if (newsOpen) { closeNews(); } });
     document.addEventListener("keydown", (e) => { if (newsOpen && e.key === "Escape") { e.preventDefault(); closeNews(); } });
+    let raf = 0;
+    const again = () => { if (newsOpen && !raf) { raf = requestAnimationFrame(() => { raf = 0; placeNews(); }); } };
+    window.addEventListener("resize", again);
+    window.addEventListener("scroll", again, true);
   }
   if (document.readyState === "loading") { document.addEventListener("DOMContentLoaded", init); } else { init(); }
 
@@ -388,6 +413,19 @@ var GardenGreet = (function () {
     mode: mode,
     strip: strip,
     closeNews: closeNews,
+    placeNews: placeNews,
+    // 1.28: nhặt đồ / mua ở gánh hàng xong → dòng Tin làng đổi theo (Python gửi lại data.finds, chưa gửi lại tin)
+    refreshNews: function () {
+      const d = typeof Garden !== "undefined" && Garden._data ? Garden._data() : null;
+      if (!d || !d.news || !d.finds) { return; }
+      const left = (d.finds.spots || []).filter((x) => x.open && !x.picked);
+      d.news.today = (d.news.today || []).filter((x) => x.id !== "finds" || left.length);
+      if (d.news.line && /chỗ lấp lánh/.test(d.news.line) && !left.length) {
+        const nx = (d.news.today || []).find((x) => x.id !== "paper" && x.id !== "pet_hungry" && x.id !== "pet_away" && x.id !== "repair");
+        d.news.line = nx ? (nx.short || nx.text) : null;
+      }
+      drawNews(d);
+    },
     isGreeting: () => !!greet && !greet.done,
     leave: leave,
     _state: () => (greet ? { who: greet.g.who, hi: greet.bub.querySelector(".kb-greet-hi").textContent, vi: greet.bub.querySelector(".kb-greet-vi").textContent,

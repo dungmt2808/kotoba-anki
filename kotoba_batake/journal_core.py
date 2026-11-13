@@ -26,9 +26,11 @@ import time
 from typing import Any, Callable
 
 try:
+    from . import ngay_core as ngay
     from . import season_core as season
     from . import text_core as text
 except ImportError:  # chạy test: thư mục add-on nằm trong sys.path
+    import ngay_core as ngay  # type: ignore[no-redef]
     import season_core as season  # type: ignore[no-redef]
     import text_core as text  # type: ignore[no-redef]
 
@@ -129,12 +131,11 @@ def ddmm(d: _dt.date) -> str:
 
 def anki_today(col: Any) -> _dt.date:
     """Ngày (lịch) của ngày Anki hiện tại: lúc 2 giờ sáng mà giờ qua ngày là 4 giờ thì vẫn là hôm qua."""
-    cutoff = int(col.sched.day_cutoff)
-    return _dt.datetime.fromtimestamp(cutoff - 86400).date()
+    return ngay.days_of(col).today
 
 
 # ---------------------------------------------------------------------------
-# Đếm revlog theo ngày (một truy vấn gộp cho cả khoảng)
+# Đếm revlog theo ngày (một truy vấn gộp cho cả khoảng) — 1.28: ngày Anki theo lịch địa phương (ngay_core, audit F02)
 # ---------------------------------------------------------------------------
 
 
@@ -143,20 +144,21 @@ def revlog_days(col: Any, start: _dt.date, end: _dt.date, fruit_ivl: int = 90) -
 
     Theo ngày của Anki (giờ qua ngày của Anki), bỏ lượt "đổi lịch tay" (type ≥ 4). Thẻ mới = thẻ có lượt type 0
     trong ngày. Lên Ra quả = lượt có ivl ≥ mốc mà lastIvl < mốc (revlog không lưu độ bền FSRS từng lượt)."""
-    cutoff = int(col.sched.day_cutoff)
-    day0 = cutoff - 86400
-    today = anki_today(col)
-    lo = day0 + (start - today).days * 86400
-    hi = day0 + (end - today).days * 86400 + 86400
+    D = ngay.days_of(col)
+    lo = D.start_of(start)
+    hi = D.start_of(end + _dt.timedelta(days=1))
     rows = col.db.all(
-        "select cast((id / 1000.0 - ?) / 86400.0 + 100000 as int) - 100000 as rel, count(), "
+        "select " + D.sql_day() + " as ds, count(), "
         "count(distinct case when type = 0 then cid end), "
         "count(distinct case when ivl >= ? and lastIvl < ? and type in (1, 2, 3) then cid end) "
-        "from revlog where id >= ? and id < ? and type < 4 group by rel",
-        day0, int(fruit_ivl), int(fruit_ivl), lo * 1000, hi * 1000)
+        "from revlog where id >= ? and id < ? and type < 4 group by ds",
+        D.mod, int(fruit_ivl), int(fruit_ivl), lo * 1000, hi * 1000)
     out: dict[str, dict[str, int]] = {}
-    for rel, n, new, fruit in rows:
-        d = today + _dt.timedelta(days=int(rel))
+    for ds, n, new, fruit in rows:
+        try:
+            d = _dt.date.fromisoformat(str(ds))
+        except ValueError:
+            continue
         if d < start or d > end:
             continue
         out[d.isoformat()] = {"n": int(n or 0), "new": int(new or 0), "fruit": int(fruit or 0)}
@@ -165,12 +167,11 @@ def revlog_days(col: Any, start: _dt.date, end: _dt.date, fruit_ivl: int = 90) -
 
 def fruit_cards(col: Any, day: _dt.date, fruit_ivl: int = 90) -> list[int]:
     """Thẻ lên Ra quả (gần đúng) trong một ngày: id thẻ theo thứ tự lượt ôn."""
-    cutoff = int(col.sched.day_cutoff)
-    day0 = cutoff - 86400
-    lo = day0 + (day - anki_today(col)).days * 86400
+    D = ngay.days_of(col)
+    lo, hi = D.start_of(day), D.start_of(day + _dt.timedelta(days=1))
     rows = col.db.list(
         "select cid from revlog where id >= ? and id < ? and type in (1, 2, 3) and ivl >= ? and lastIvl < ? order by id",
-        lo * 1000, (lo + 86400) * 1000, int(fruit_ivl), int(fruit_ivl))
+        lo * 1000, hi * 1000, int(fruit_ivl), int(fruit_ivl))
     return list(dict.fromkeys(int(x) for x in rows))
 
 
@@ -178,9 +179,7 @@ def first_review_day(col: Any) -> _dt.date | None:
     v = col.db.scalar("select min(id) from revlog where type < 4")
     if not v:
         return None
-    cutoff = int(col.sched.day_cutoff)
-    rel = math.floor((int(v) / 1000.0 - (cutoff - 86400)) / 86400.0)
-    return anki_today(col) + _dt.timedelta(days=rel)
+    return ngay.days_of(col).date_of(int(v) / 1000.0)
 
 
 def level(n: int, goal: int) -> int:

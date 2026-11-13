@@ -53,7 +53,10 @@ result = {"coins": w["coins"], "waters": w.get("waters"), "bench": [p for p in y
           "pet": {k: [v.get("name"), v.get("fed")] for k, v in pets.items()}, "mood": j.get("m"), "note": j.get("t"),
           "freeze": (w["more"].get("freeze") or {}).get("n"), "sub": w["more"]["paper_sub"].get("until"),
           "read": sorted((paper.get("read") or {}).keys()), "keys": keys, "today": today,
-          "sky": (kb.config().get("prefs") or {}).get("kb-sky"), "greet_day": (kb.config().get("prefs") or {}).get("kb-greet-day")}`;
+          "sky": (kb.config().get("prefs") or {}).get("kb-sky"), "greet_day": (kb.config().get("prefs") or {}).get("kb-greet-day"),
+          # 1.28: Hộp sưu tầm (khoá kotoba_batake_events) + món gánh hàng / quà (tầng NHA_KEY)
+          "found": sorted(((col.get_config("kotoba_batake_events", {}) or {}).get("found") or {}).keys()),
+          "owned_new": {k: w["home"]["owned"].get(k, 0) for k in kb.core.FIND_ITEMS if w["home"]["owned"].get(k)}}`;
 
 (async () => {
   if (PHASE === 'a') {
@@ -98,8 +101,30 @@ d0 = sorted(lib.issues())[-1]
 iss = json.load(open(kb.ai.issue_path(kb.AI_DIR, d0), encoding="utf-8"))
 result = [d0, iss["cau_hoi"][0]["dung"]]`);
     await send('paper:q:' + JSON.stringify({ d: iss[0] + '@gemini', i: 0, c: Number(iss[1]) })); await sleep(900);
+    // 1.28: 10 lượt ôn trên "điện thoại" (revlog) mở 1 chỗ lấp lánh → nhặt; gánh hàng (giả hôm nay là thứ Tư) → mua món riêng
+    await py(KB + `col = mw.col
+cids = col.db.list("select id from cards order by id limit 20")
+start = kb.core.ngay.days_of(col).rel_start(0) * 1000
+for i in range(10):
+    col.db.execute("insert into revlog(id,cid,usn,ease,ivl,lastIvl,factor,time,type) values (?,?,?,?,?,?,?,?,?)", start + 2000 + i * 53, cids[i % len(cids)], -1, 3, 10, 5, 2500, 1000, 1)
+kb._dialog.refresh()
+result = 1`); await sleep(1500);
+    const spot = await js('const f = Garden._data().finds; const s = f.spots.find((x) => x.open && !x.picked); return s ? s.k + ":" + s.scene : "";');
+    if (spot) { await send('find:pick:' + spot); await sleep(900); }
+    const wed = await py(KB + `real = kb.cal_today
+d = real()
+while d.weekday() != 2:
+    d += datetime.timedelta(days=1)
+kb._real_cal_today = real
+kb.cal_today = (lambda: d)
+w = st.load(); w["home"]["house"] = 7; st.save(w)      # nhà có cửa: món riêng là đồ trong nhà cũng mua được
+result = d.isoformat()`);
+    await send('ped:buy:x1:' + wed); await sleep(900);
+    await py(KB + 'kb.cal_today = kb._real_cal_today\nkb._dialog.refresh()\nresult = 1'); await sleep(1200);
     await js('GardenPrefs.set("kb-sky", JSON.stringify({mode: "fixed", fixedHour: 18.4, dayMinutes: 24, weather: "snow"})); return 1;'); await sleep(1500);
     const s = await py(KB + SNAP);
+    ok(!!spot && s.found.length === 1, '10 lượt ôn → 1 chỗ lấp lánh (' + spot + ') → nhặt được ' + JSON.stringify(s.found));
+    ok(Object.keys(s.owned_new).length === 1, 'gánh hàng (' + wed + '): mua món riêng ' + JSON.stringify(s.owned_new));
     ok(s.bench.length === 1, 'Ghế gỗ đặt ở sân ' + JSON.stringify(s.bench));
     const aday = await py(KB + 'result = int(mw.col.sched.today)');
     ok(s.pet.neko && s.pet.neko[1] === aday, 'nhận nuôi + cho mèo ăn hôm nay (ngày Anki ' + aday + '): ' + JSON.stringify(s.pet));
@@ -120,7 +145,7 @@ result = [d0, iss["cau_hoi"][0]["dung"]]`);
     await py(KB + 'kb.GREET_TEST_OFF = False\nkb.TOUR_TEST_OFF = False\nresult = 1');
     if (m2) {
       const uf = await py(KB + 'result = sorted(x for x in os.listdir(os.path.join(kb.ADDON_DIR, "user_files")) if x not in ("README.txt",))');
-      ok(!uf.some((x) => /state|more|journal|paper\.json|nha|season/.test(x)), 'máy 2 chưa có file sao lưu nào: ' + JSON.stringify(uf));
+      ok(!uf.some((x) => /state|more|journal|paper\.json|nha|season|events/.test(x)), 'máy 2 chưa có file sao lưu nào: ' + JSON.stringify(uf));
     }
     await py(KB + 'kb.open_garden(); result = 1');
     page = await gardenPage();
@@ -136,6 +161,8 @@ result = [d0, iss["cau_hoi"][0]["dung"]]`);
     ok(s.sub === exp.sub, 'gói báo tới ' + s.sub);
     ok(JSON.stringify(s.read) === JSON.stringify(exp.read), 'trạng thái đọc báo: ' + JSON.stringify(s.read));
     ok(JSON.stringify(s.keys) === JSON.stringify(exp.keys), 'đủ ' + s.keys.length + ' khoá kotoba_batake_* trong collection');
+    ok(JSON.stringify(s.found) === JSON.stringify(exp.found) && s.found.length === 1, 'Hộp sưu tầm còn món đã nhặt: ' + JSON.stringify(s.found));
+    ok(JSON.stringify(s.owned_new) === JSON.stringify(exp.owned_new), 'món gánh hàng còn trong kho: ' + JSON.stringify(s.owned_new));
     const ui = await js('const d = Garden._data(); return {coins: d.wallet.coins, tour: d.tour, greeting: GardenGreet.isGreeting(), sky: GardenPrefs.get("kb-sky")};');
     ok(ui.coins === exp.coins, 'giao diện hiện ' + ui.coins + ' xu');
     ok(!ui.tour, 'không có hướng dẫn người mới');

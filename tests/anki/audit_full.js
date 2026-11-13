@@ -292,7 +292,7 @@ st.save(d); kb._dialog.refresh(); result = q["list"]`);
 
   await phase('Trang trí sân (mọi món, đặt ra sân)', async () => {
     await openHome('yard', 'yard');
-    for (const it of C.items.filter((i) => i.scene === 'yard' && !i.season && !i.rare && !i.custom)) { await openHome('yard'); await buyItem(it); }
+    for (const it of C.items.filter((i) => i.scene === 'yard' && !i.season && !i.rare && !i.only && !i.custom)) { await openHome('yard'); await buyItem(it); }
     await openHome('yard', 'yard'); await shot('03_tab_trang_tri_san', 'mua hết, “Đã có”');
   });
   await phase('Mở rộng nhà (1.25: một lần mở cả Bếp lẫn Phòng ngủ)', async () => {
@@ -305,7 +305,7 @@ st.save(d); kb._dialog.refresh(); result = q["list"]`);
   });
   await phase('Nội thất (mọi món, đặt trong phòng)', async () => {
     await openHome('room', 'room');
-    for (const it of C.items.filter((i) => i.scene === 'room' && !i.season && !i.rare && !i.custom)) { await openHome('room'); await buyItem(it); }
+    for (const it of C.items.filter((i) => i.scene === 'room' && !i.season && !i.rare && !i.only && !i.custom)) { await openHome('room'); await buyItem(it); }
     await openHome('room', 'room'); await shot('04_tab_noi_that_phong_day');
   });
   await phase('6 vùng + đồ của từng vùng', async () => {
@@ -661,6 +661,30 @@ st.save(d); kb._dialog.refresh(); result = 1`); await sleep(1800); await hideToa
     const first = await js('const e = document.querySelector("#kb-h-list > *"); return e ? e.textContent : "";');
     ok(left === 0 || /^Trong kho · chưa đặt/.test(first), 'Kho đồ: món còn trong kho lên đầu ("' + first.slice(0, 40) + '")');
     await shot('11_kho_do_co_do_hiem');
+  });
+
+  await phase('1.28: quà Hộp sưu tầm + món gánh hàng rong (15 món) đặt từ Kho đồ', async () => {
+    await py(KB + `d = st.load()
+for k, v in kb.core.CATALOG.items():
+    if v.get("only"): d["home"]["owned"][k] = max(1, d["home"]["owned"].get(k, 0))
+st.save(d); kb._dialog.refresh(); result = 1`); await sleep(1800); await hideToast();
+    let put = 0, left = 0;
+    for (const it of C.items.filter((i) => i.only)) {
+      await openHome('inv', it.scene === 'room' ? 'room' : 'yard');
+      const r = await cardBtn(it.name, /^Đặt$/);
+      if (!r.btn) { left++; continue; }
+      const sc = it.scene === 'room' ? 'room' : 'yard';
+      let p = await placeNow(it.id);
+      if (!p.placed && sc === 'yard') {
+        for (const z of C.zones.map((x) => x.id)) { await js(`GardenHome.startPlacing(${JSON.stringify(it.id)}, undefined, ${JSON.stringify(z)}); return 1;`); p = await placeNow(it.id); if (p.placed) break; }
+      }
+      if (p.placed) put++; else left++;
+    }
+    ok(put >= 10, 'Đặt đồ mới 1.28: ' + put + ' món ra cảnh, ' + left + ' món còn trong kho (hết chỗ)');
+    await openHome('inv');
+    const first = await js('const e = document.querySelector("#kb-h-list > *"); return e ? e.textContent : "";');
+    ok(left === 0 || /^Trong kho · chưa đặt/.test(first), 'Kho đồ: món còn trong kho lên đầu ("' + first.slice(0, 40) + '")');
+    await shot('11b_kho_do_moi_128');
   });
 
   await phase('Vùng tự tạo (công trình + cảnh nền) + mã chia sẻ', async () => {
