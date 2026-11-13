@@ -1974,7 +1974,9 @@ button { cursor: pointer; }
 @media (prefers-reduced-motion: reduce) { .kb-panel-in { animation: none; } }
 .kb-news-btn { background: #fffbe6; }
 .kb-today-list .kb-news-btn.kb-squeezed { display: none; }
-.kb-news-pop { width: 380px; }
+.kb-news-pop { width: 380px; max-width: calc(100vw - 16px); box-sizing: border-box; position: fixed; z-index: 60;
+  overflow-y: auto; overscroll-behavior: contain; }      /* 1.28 (F05): theo cửa sổ, cuộn trong bảng */
+.kb-news-pop .kb-quest-head { position: sticky; top: -10px; background: inherit; z-index: 1; padding-top: 2px; }
 .kb-news-sec { font-weight: 700; font-size: 13px; color: #6b3b1f; margin: 6px 0 4px; }
 .kb-news-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
 .kb-news-list li { display: flex; align-items: center; gap: 8px; padding: 5px 8px; background: #fff8dc; border: 2px solid #1b1b2f; font-size: 14px; }

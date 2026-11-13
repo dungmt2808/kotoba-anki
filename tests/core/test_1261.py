@@ -91,9 +91,11 @@ st = fresh("off", 900, {"until": "2026-11-15", "plan": "thang", "auto": False, "
 ok(st.paper_sub_ensure("2026-11-16", commit=False) == ("expired", 0) and st.load()["coins"] == 900, "tắt Tự gia hạn → hết hạn")
 init = src("__init__.py")
 ok("sub, price = paper_sub_ensure(date, commit=False)" in init, "ai_start chỉ xem gói (commit=False)")
-done = init[init.index("def _ai_done("):init.index("def _ai_done(") + 900]
-ok('if res.get("ok") and not res.get("audio_only") and ai.has_issue(base, date):\n        paper_sub_ensure(date)' in done,
-   "_ai_done: số mới đã có trong thư mục → mới tặng thử / gia hạn")
+done = init[init.index("def _ai_done("):init.index("def _ai_done(") + 1600]
+# 1.28 (audit F09): cùng hồ sơ thì tính ngay; hồ sơ đã đổi thì ghi chờ cho đúng hồ sơ bắt đầu viết
+ok('if res.get("ok") and not res.get("audio_only") and ai.has_issue(base, date):\n        if moved:' in done
+   and "        else:\n            paper_sub_ensure(date)" in done,
+   "_ai_done: số mới đã có trong thư mục → mới tặng thử / gia hạn (đúng hồ sơ)")
 ok("if not commit:\n        return res, price" in init, "xem trước không hiện thông báo 'Đã gia hạn'")
 
 print("== model còn trong danh sách nhưng gọi thì 404 (gemini-2.5-flash)")

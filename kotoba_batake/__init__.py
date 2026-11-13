@@ -1435,7 +1435,8 @@ def ai_start(reason: str, dialog: Any = None, lang: str = "ja") -> bool:
         return res
 
     _ai.update(running=True, msg="Đang chuẩn bị…", lang=lang)
-    _bg(task, lambda fut: _ai_done(fut, base, date, client))
+    owner = _owner_now()      # 1.28 (audit 12/11 F09): việc nền gắn với hồ sơ bắt đầu viết
+    _bg(task, lambda fut: _ai_done(fut, base, date, client, owner))
     _ai_push()
     if _dialog is not None:
         _dialog._js("paperSummary", paper_summary(_dialog, ai_busy=True))
@@ -1461,15 +1462,79 @@ def ai_start_all(reason: str = "auto") -> bool:
     return False
 
 
-def _ai_done(fut: Any, base: str, date: str, client: Any = None) -> None:
+def _owner_now() -> str:
+    """Mã hồ sơ đang mở ("" khi chưa mở hồ sơ nào) — để việc nền biết nó thuộc hồ sơ nào."""
+    try:
+        return core.profile_key(mw.col) if mw.col is not None else ""
+    except Exception:
+        return ""
+
+
+SUB_PENDING = os.path.join(ADDON_DIR, "user_files", "goi_bao_cho.json")
+
+
+def _sub_pending_load() -> dict[str, list[str]]:
+    try:
+        with open(SUB_PENDING, encoding="utf-8") as f:
+            raw = json.load(f)
+    except (OSError, ValueError):
+        return {}
+    out: dict[str, list[str]] = {}
+    for k, v in raw.items() if isinstance(raw, dict) else []:
+        if isinstance(k, str) and re.fullmatch(r"[0-9a-f]{16}", k) and isinstance(v, list):
+            days = sorted({x for x in v if isinstance(x, str) and re.fullmatch(r"\d{4}-\d{2}-\d{2}", x)})
+            if days:
+                out[k] = days[-14:]
+    return out
+
+
+def _sub_pending_save(data: dict[str, list[str]]) -> None:
+    try:
+        os.makedirs(os.path.dirname(SUB_PENDING), exist_ok=True)
+        tmp = SUB_PENDING + ".tmp"
+        with open(tmp, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False)
+        os.replace(tmp, SUB_PENDING)
+    except OSError as err:
+        _warn("gói báo (chờ hồ sơ)", err)
+
+
+def sub_pending_settle() -> int:
+    """1.28 (audit 12/11 F09): số báo viết xong khi hồ sơ đã đổi → tính gói báo cho đúng hồ sơ đã bắt đầu viết, lúc hồ
+    sơ đó mở lại (không bao giờ lấy xu / gia hạn gói của hồ sơ đang mở thay cho hồ sơ khác)."""
+    owner = _owner_now()
+    if not owner:
+        return 0
+    data = _sub_pending_load()
+    days = data.pop(owner, None)
+    if not days:
+        return 0
+    _sub_pending_save(data)
+    n = 0
+    for d in days:
+        paper_sub_ensure(d)
+        n += 1
+    return n
+
+
+def _ai_done(fut: Any, base: str, date: str, client: Any = None, owner: str | None = None) -> None:
     _ai.update(running=False, msg="")
     try:
         res = fut.result()
     except Exception as err:
         _warn("Gemini", err)
         res = {"ok": False, "error": "Lỗi không mong đợi (%s), xem Báo lỗi." % type(err).__name__}
+    # 1.28 (audit 12/11 F09): hồ sơ đã đổi (hoặc đóng) trong lúc Gemini viết → không đụng ví / gói của hồ sơ đang mở;
+    # ghi chờ, hồ sơ bắt đầu viết mở lại thì mới tặng thử / gia hạn (sub_pending_settle)
+    moved = owner is not None and owner != _owner_now()
     if res.get("ok") and not res.get("audio_only") and ai.has_issue(base, date):
-        paper_sub_ensure(date)      # 1.26.1: số mới đã về → bây giờ mới tặng thử / gia hạn gói báo (trừ xu)
+        if moved:
+            if owner:
+                data = _sub_pending_load()
+                data[owner] = sorted(set(data.get(owner, [])) | {date})[-14:]
+                _sub_pending_save(data)
+        else:
+            paper_sub_ensure(date)      # 1.26.1: số mới đã về → bây giờ mới tặng thử / gia hạn gói báo (trừ xu)
     st = ai.load_status(base)
     st["log_day"] = date if not res.get("audio_only") else st.get("log_day", date)
     if res.get("ok"):
@@ -1496,6 +1561,8 @@ def _ai_done(fut: Any, base: str, date: str, client: Any = None) -> None:
         msg = ""
     else:
         msg = "✗ Gemini chưa viết được báo%s: " % lname + str(res.get("error") or "")
+    if moved:
+        msg = ""                  # việc của hồ sơ khác: không báo trong vườn / thanh Anki của hồ sơ này
     if _dialog is not None:
         try:
             _dialog.refresh()          # refresh() gọi ai_start_all → báo kế tiếp (nếu có)
@@ -1507,6 +1574,8 @@ def _ai_done(fut: Any, base: str, date: str, client: Any = None) -> None:
     else:
         if msg and config().get("show_tooltips", True):
             tooltip("ことば畑: " + msg, period=6000)
+        if not mw.col:
+            return                # hồ sơ đã đóng: báo kế tiếp chờ hồ sơ mở lại
         try:
             ai_start_all("auto")
         except Exception as err:
@@ -1596,7 +1665,11 @@ def _news_and_greet(data: dict[str, Any], today: dict[str, Any], cfg: dict[str, 
     home = w.get("home") or {}
     reviewed = int(today.get("reviews") or 0) > 0
     try:          # các ngày trước hôm nay: đếm một lần mỗi ngày Anki (quét cả revlog), hôm nay cộng riêng
-        key = (str(getattr(mw.col, "path", "")), day)
+        # 1.28 (audit 12/11 F07): khoá có thêm số lượt ôn trước hôm nay (đếm theo khoá chính, rất nhanh) → đồng bộ /
+        # nhập / khôi phục mang thêm lịch sử cũ về thì tính lại (trước: giữ tổng cũ tới hôm sau)
+        start_ms = core.ngay.days_of(mw.col).rel_start(0) * 1000
+        key = (str(getattr(mw.col, "path", "")), day,
+               int(mw.col.db.scalar("select count() from revlog where id < ?", start_ms) or 0))
         if _day_total.get("key") != key:
             _day_total.update(key=key, v=core.review_day_total(mw.col, before_today=True))
         total = int(_day_total["v"]) + (1 if reviewed else 0)
@@ -2001,12 +2074,14 @@ def fix_start(ds: str, auto: bool = False) -> str:
         return journal.run_fix(client, names, goc, lang, level, hints)
 
     _fix.update(running=True, date=d.isoformat(), sent=sent)
-    _bg(task, lambda fut: _fix_done(fut, d, sent, client, goc, lang))
+    owner = _owner_now()
+    _bg(task, lambda fut: _fix_done(fut, d, sent, client, goc, lang, owner))
     _push_journal()
     return ""
 
 
-def _fix_done(fut: Any, d: datetime.date, sent: float, client: Any, goc: str, lang: str) -> None:
+def _fix_done(fut: Any, d: datetime.date, sent: float, client: Any, goc: str, lang: str,
+              owner: str | None = None) -> None:
     _fix.update(running=False, date="", sent=0.0)
     try:
         _save_quota(client.exhausted_state())
@@ -2014,6 +2089,8 @@ def _fix_done(fut: Any, d: datetime.date, sent: float, client: Any, goc: str, la
         _warn("hạn mức Gemini (sửa bài)", err)
     if not mw.col:
         return
+    if owner is not None and owner != _owner_now():
+        return               # 1.28: bài của hồ sơ khác — hồ sơ đó mở lại thì bài "đang sửa" quá hạn tự gửi lại được
     ds = d.isoformat()
     e = JOURNAL.entry(d)
     w = e.get("w") or {}
@@ -4050,6 +4127,10 @@ def _on_profile_open() -> None:
             print("[kotoba_batake] đã chuyển dữ liệu sang collection (đồng bộ AnkiWeb)")
     except Exception as err:
         _warn("migrate", err)
+    try:                                  # 1.28 (F09): số báo đã viết xong cho hồ sơ này lúc hồ sơ khác đang mở
+        sub_pending_settle()
+    except Exception as err:
+        _warn("gói báo (chờ hồ sơ)", err)
     # 1.11: lần đầu chỉ đặt mốc; sau đó bù lượt ôn ở máy khác / điện thoại đã có sẵn trong collection
     res = mobile_catch_up()
     if res and config().get("show_tooltips", True):
@@ -4079,6 +4160,7 @@ def _on_profile_close() -> None:
     except Exception as err:
         _warn("hoàn tác lượt ôn (đóng hồ sơ)", err)
     _ledger.clear()                       # 1.23: sổ phần thưởng (Undo) chỉ cho collection đang mở
+    _day_total.update(key=None, v=0)      # 1.28: tổng ngày có ôn của hồ sơ này không sang hồ sơ khác
     _words_cache.clear()                  # 1.25.3: gợi ý luyện viết của hồ sơ này không sang hồ sơ khác
     _presence.update(t=0.0, v={}, col="")  # 1.25.9: ngôn ngữ có trong collection cũng vậy
     if _dialog is not None:
@@ -4098,6 +4180,7 @@ def _on_profile_close() -> None:
 def _on_sync_finished() -> None:
     # Sau khi đồng bộ AnkiWeb: xu/nhà/nhiệm vụ có thể vừa được cập nhật từ máy khác,
     # và lượt ôn trên điện thoại vừa về → bù xu (vườn đang mở thì refresh tự bù và báo trong vườn).
+    _day_total.update(key=None, v=0)      # 1.28 (F07): lịch sử ôn vừa đổi → mốc "N ngày có ôn" tính lại
     if _dialog is not None:
         try:
             _dialog.refresh()

@@ -10,7 +10,7 @@ var GardenTour = (function () {
   const $ = (id) => document.getElementById(id);
   const STEPS = [
     { target: () => ($("kb-deck") && $("kb-deck").closest("label.kb-deck")) || $("kb-deck"), title: "Chọn deck",
-      text: "Chọn deck bạn đang học. Mỗi thẻ trong deck là một cây trong ruộng." },
+      text: "Chọn deck bạn đang học. Mỗi từ (note) trong deck là một cây trong ruộng." },
     { target: () => $("kb-review"), title: "Tưới cây",
       text: "Bấm Tưới ngay để ôn thẻ đến hạn ngay trong vườn. Nhớ được thì +xu." },
     { target: () => $("kb-legend"), up: true, title: "Xem cây lớn",      // bong bóng phía trên: không che cây vừa lớn
@@ -107,6 +107,10 @@ var GardenTour = (function () {
     reviewing = false;
     if (i === 0) { deck0 = deckNow(); }
     if (busy()) { hide(); } else { draw(); }
+    // 1.28 (audit 12/11 F08): mở từ ⚙ khi đang có bảng (Trò chơi, Lịch hoa, Nhà, Báo) → chưa vẽ được, nhưng vẫn phải có nhịp
+    // tick để hiện khi bảng đóng (trước: interval chỉ tạo trong draw() → hướng dẫn ẩn mãi)
+    clearInterval(timer);
+    timer = setInterval(tick, 400);
   }
   function tick() {
     if (step < 0) { clearInterval(timer); return; }
