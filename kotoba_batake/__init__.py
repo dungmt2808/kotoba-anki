@@ -36,6 +36,7 @@ from . import event_core
 from . import fields_core
 from . import finds_core as finds
 from . import guest_core as guests
+from . import life_core
 from . import journal_core as journal
 from . import launcher
 from . import garden_core as core
@@ -2169,6 +2170,26 @@ GUESTS = guests.GuestStore(os.path.join(ADDON_DIR, "user_files", "guests.json"),
 EVENTS = finds.EventStore(os.path.join(ADDON_DIR, "user_files", "events.json"), col_getter=lambda: mw.col)
 
 
+# 1.30: sinh hoạt của StackChan (khoá collection kotoba_batake_life)
+LIFE = life_core.LifeStore(os.path.join(ADDON_DIR, "user_files", "life.json"), col_getter=lambda: mw.col)
+
+
+def _life_ctx(wallet: dict[str, Any]) -> tuple[dict[str, Any], list[str], bool]:
+    """(nhà, các cảnh StackChan tới được, có thú nuôi đang ở trong nhà không)."""
+    home = wallet.get("home") or {}
+    scenes = life_core.open_scenes(home, core.ROOM_UNLOCK_LEVEL)
+    pets = ((wallet.get("more_view") or {}).get("pets")) or []
+    pets_home = any(isinstance(p, dict) and p.get("scene") == "room" and p.get("state") != "away" for p in pets)
+    return home, scenes, pets_home
+
+
+def life_view(wallet: dict[str, Any]) -> dict[str, Any]:
+    """1.30: việc StackChan làm được ở từng cảnh hôm nay + sổ Sinh hoạt (data.life)."""
+    home, scenes, pets_home = _life_ctx(wallet)
+    names = {k: v["name"] for k, v in core.CATALOG.items()}
+    return life_core.view(LIFE.seen(), home, scenes, cal_today(), pets_home, names)
+
+
 def _ped_shop_items() -> list[str]:
     """Món cửa hàng gánh hàng có thể giảm giá: món bán ở cửa hàng (không phải hiếm / theo mùa / quà / món riêng)."""
     return [k for k, v in core.CATALOG.items()
@@ -2419,6 +2440,11 @@ class GardenDialog(QDialog):
             except Exception as err:
                 _warn("nhặt đồ / gánh hàng", err)
                 data["finds"] = None
+            try:      # 1.30: sinh hoạt của StackChan + sổ Sinh hoạt
+                data["life"] = life_view(data["wallet"])
+            except Exception as err:
+                _warn("sinh hoạt", err)
+                data["life"] = None
             self._plants = data["plants"]
             _dict_possible = bool(self._dict_candidates(_voice(cfg)) or self._word_candidates(_voice(cfg)))
             try:
@@ -2677,6 +2703,8 @@ class GardenDialog(QDialog):
             self._on_cal(cmd[len("cal:"):])
         elif cmd.startswith("guest:"):
             self._on_guest(cmd[len("guest:"):])
+        elif cmd.startswith("life:"):
+            self._on_life(cmd[len("life:"):])
         elif cmd.startswith("find:") or cmd.startswith("ped:"):
             self._on_find(cmd)
         elif cmd.startswith("share:"):
@@ -3319,6 +3347,12 @@ class GardenDialog(QDialog):
                 data = STATE.zone_delete(parts[2])
             elif parts == ["nha", "open"]:          # 1.25: mở rộng nhà một lần (cả Bếp lẫn Phòng ngủ)
                 data = STATE.open_rooms()
+            elif parts[0] == "decor" and len(parts) == 3 and parts[1] == "buy":      # 1.30: giấy dán tường / sàn
+                data = STATE.decor_buy(parts[2])
+            elif parts[0] == "decor" and len(parts) == 5 and parts[1] == "use":
+                data = STATE.decor_use(parts[2], parts[3], parts[4])
+            elif parts[0] == "tile" and len(parts) == 3 and parts[1] == "del":
+                data = STATE.tile_delete(parts[2])
             elif len(parts) == 3 and (parts[0], parts[1]) in two:
                 data = two[(parts[0], parts[1])](parts[2])
                 regrow = parts[0] == "myseed"      # 1.22: xoá giống tự vẽ → cây mang giống đó về cây gốc
@@ -3355,7 +3389,7 @@ class GardenDialog(QDialog):
             return
         out: dict[str, Any] = {"wallet": data, "action": parts[0],
                                "sub": parts[1] if len(parts) > 2 or parts[0] in ("theme", "repair") else ""}
-        if parts[0] in ("craft", "myseed"):
+        if parts[0] in ("craft", "myseed", "tile"):
             out["catalog"] = core.home_catalog(data, STATE.load_px())
         if regrow:
             self.refresh()
@@ -3451,6 +3485,32 @@ class GardenDialog(QDialog):
             return
         view["new"] = gid if new else ""
         self._js("guests", view)
+
+    # -- 1.30: sinh hoạt của StackChan ---------------------------------------------------
+
+    def _on_life(self, cmd: str) -> None:
+        """life:seen:<việc>:<cảnh> — JS vừa cho người dùng thấy StackChan làm việc này (≥ 1,5 giây trên cảnh đang xem).
+        Python xét lại việc đó có làm được ở cảnh đó không (đồ đã đặt, gian / vùng đã mở, tháng) rồi mới ghi sổ; mỗi việc
+        ghi một lần mỗi ngày."""
+        parts = cmd.split(":")
+        if len(parts) != 3 or parts[0] != "seen" or parts[1] not in life_core.ACTS:
+            return
+        aid, scene = parts[1], parts[2]
+        try:
+            wallet = STATE.load()
+            today = cal_today()
+            home, scenes, pets_home = _life_ctx(wallet)
+            if not life_core.can_do(aid, scene, home, scenes, today, pets_home):
+                return
+            _seen, new, wrote = LIFE.mark(aid, scene, today)
+            if not wrote:
+                return
+            view = life_view(wallet)
+        except Exception as err:
+            _warn("sinh hoạt", err)
+            return
+        view["new"] = aid if new else ""
+        self._js("life", view)
 
     # -- 1.22: mã chia sẻ thiết kế --------------------------------------------------
 
@@ -3829,6 +3889,19 @@ class GardenDialog(QDialog):
                 return
             self.refresh()           # cây mang giống này đổi hình ngay
             self._js("home", {"wallet": data, "action": "myseed", "sub": "save", "id": data.get("myseed_id"),
+                              "catalog": core.home_catalog(data, STATE.load_px())})
+            return
+        if cmd.startswith("tile:"):   # 1.30: mẫu giấy dán tường / sàn tự vẽ (một ô 16×16 lặp lại)
+            try:
+                data = STATE.tile_save(json.loads(cmd[len("tile:"):]))
+            except core.HomeError as err:
+                self._js("homeError", str(err))
+                return
+            except (ValueError, OSError) as err:
+                _warn("mẫu tường / sàn", err)
+                self._js("homeError", "Không lưu được mẫu này.")
+                return
+            self._js("home", {"wallet": data, "action": "tile", "sub": "save", "id": data.get("tile_id"),
                               "catalog": core.home_catalog(data, STATE.load_px())})
             return
         if not cmd.startswith("save:"):

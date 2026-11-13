@@ -2937,6 +2937,27 @@ var GardenHome = (function () {
     const h = homeState();
     return (opts && opts.style) || (h.house >= 7 ? (h.style || "classic") : "classic");
   }
+  // 1.30: giấy dán tường + sàn riêng của từng gian (ví: more.decor.use[gian] = {wall, floor}; trống = theo kiểu nhà).
+  // decoTry: đang xem thử một mẫu trong bảng Nhà (không lưu). opts.style (vẽ thử kiểu nhà khác ở tab Xây nhà): nền thuần.
+  let decoTry = null;
+  let tileSig = "", tileMap = {};
+  function decorState() { return moreData().decor || { own: [], use: {}, mine: { items: {} } }; }
+  function tileRows() {
+    const tiles = (catalog() || {}).tiles || [];
+    const sig = tiles.map((t) => t.id + "=" + t.px).join("|");
+    if (sig !== tileSig) {
+      tileSig = sig; tileMap = {};
+      tiles.forEach((t) => { const flat = t.px ? pxDecode(t.px, 16) : null; if (flat) { tileMap[t.id] = pxRows(flat, 16, false); } });
+    }
+    return tileMap;
+  }
+  function decoOf(kind, opts) {
+    if (opts && opts.style) { return null; }
+    const use = (decorState().use || {})[kind] || {};
+    let wall = use.wall || null, floor = use.floor || null;
+    if (decoTry && isOpen && decoTry.room === kind) { if (decoTry.slot === "wall") { wall = decoTry.id || null; } else { floor = decoTry.id || null; } }
+    return wall || floor ? { wall: wall, floor: floor, tiles: tileRows() } : null;
+  }
   // 1.25: cửa sổ phòng chính (cột 4–5, x 64–96) theo kiểu nhà
   function roomWindow(ctx, S, ox, oy, style, now) {
     const tod = timeOfDay(), sky = skyColors(tod), stR = skyNow(), night = tod === "night";
@@ -3005,7 +3026,7 @@ var GardenHome = (function () {
     const L0 = opts && opts.keepLights ? lights.length : (lights.length = 0);
     const tod = timeOfDay(), stR = skyNow();
     const sty = houseStyle(opts);
-    if (NHA) { NHA.bg(ctx, S, ox, oy, "room", ROOM.W, ROOM.H, ROOM.FLOOR, sty); } else { box(ctx, ox, oy, ROOM.W, ROOM.H, "#f1e2c2", S); }
+    if (NHA) { NHA.bg(ctx, S, ox, oy, "room", ROOM.W, ROOM.H, ROOM.FLOOR, sty, decoOf("room", opts)); } else { box(ctx, ox, oy, ROOM.W, ROOM.H, "#f1e2c2", S); }
     roomWindow(ctx, S, ox, oy, sty, now);
     sunbeam(ctx, S, ox, oy);
     if (opts && opts.grid) {
@@ -3049,7 +3070,7 @@ var GardenHome = (function () {
   function drawSideRoom(ctx, S, ox, oy, now, kind, opts) {
     const home = homeState(), tod = timeOfDay(), stR = skyNow(), W = SIDE.W;
     const L0 = opts.keepLights ? lights.length : (lights.length = 0);
-    if (NHA) { NHA.bg(ctx, S, ox, oy, kind, W, ROOM.H, ROOM.FLOOR, houseStyle(opts)); } else { box(ctx, ox, oy, W, ROOM.H, "#e8dcc8", S); }
+    if (NHA) { NHA.bg(ctx, S, ox, oy, kind, W, ROOM.H, ROOM.FLOOR, houseStyle(opts), decoOf(kind, opts)); } else { box(ctx, ox, oy, W, ROOM.H, "#e8dcc8", S); }
     if (opts.grid) {
       ctx.globalAlpha = 0.25;
       for (let gx = 0; gx <= 9; gx++) { box(ctx, ox + gx * T, oy + ROOM.FLOOR, 0.34, 48, P.k, S); box(ctx, ox + gx * T, oy + ROOM.WALL_Y, 0.34, 16, P.k, S); }
@@ -3767,6 +3788,9 @@ var GardenHome = (function () {
     if (placing && placing.scene !== s) { placing = null; }
     selected = null; hidePop(); hover = null;
     defaultTip();
+    // 1.30: đang ở "Tường & sàn" thì danh sách theo gian đang xem
+    if (decoTry) { decoTry = null; }
+    if (isOpen && tab === "room" && roomView === "decor") { renderList(); }
   }
   // Nhiều vùng (6 vùng + vùng tự tạo) thì hàng nút cảnh xuống 2–3 dòng: bớt chiều cao khung xem / danh sách
   // đúng bằng phần thanh trên cao thêm, để bảng Nhà (và Xưởng phủ lên nó) vẫn vừa cửa sổ, trang không phải cuộn.
@@ -4240,9 +4264,11 @@ var GardenHome = (function () {
       sec("Hộp sưu tầm · gánh hàng rong");
       extra.forEach((it) => itemCard(list, it, {}));
     };
+    if (tab === "room") { roomChips(list); }       // 1.30: Đồ nội thất · Tường & sàn
     if (tab === "room" && home.house < unlock) {
       list.appendChild(el("div", "kb-h-empty", "Xây nhà tới bước “" + cat.levels[unlock].name + "” để mua nội thất."));
     }
+    if (tab === "room" && roomView === "decor") { if (home.house >= unlock) { renderDecor(list, cat, money); } return; }
     if (tab === "inv" && !items.length) { list.appendChild(el("div", "kb-h-empty", "Kho đang trống. Mua đồ ở tab “Trang trí sân” hoặc “Nội thất”.")); }
     if (tab === "inv" && items.length) {
       // có nhiều đồ (hơn 100 món khi mua hết) thì món còn trong kho lên đầu, khỏi phải tìm nút "Đặt" giữa đồ đã đặt
@@ -4265,6 +4291,125 @@ var GardenHome = (function () {
     }
     items.forEach((it) => itemCard(list, it, { inv: tab === "inv" }));
     extraSec();
+  }
+  // ---- 1.30: tab Nội thất → "Tường & sàn": giấy dán tường + sàn cho từng gian ----
+  let roomView = "items";      // items | decor
+  let pendingDecor = null;     // mẫu vừa bấm Mua → mua xong dùng luôn cho gian đang xem
+  let tileDelArm = null;
+  function decoRoom() { return isRoom(scene) && canEnter(scene) ? scene : "room"; }
+  function roomChips(list) {
+    const row = el("div", "kb-h-btns kb-album-chips kb-room-chips");
+    [["items", "Đồ nội thất"], ["decor", "Tường & sàn"]].forEach(([k, label]) => {
+      const b = btn(label, "kb-btn-small kb-album-chip" + (roomView === k ? " is-on" : ""), () => {
+        roomView = k; decoTry = null;
+        if (k === "decor" && !isRoom(scene) && canEnter("room")) { setScene("room"); return; }
+        renderList();
+      });
+      b.setAttribute("data-roomview", k);
+      b.setAttribute("aria-pressed", roomView === k ? "true" : "false");
+      row.appendChild(b);
+    });
+    list.appendChild(row);
+  }
+  function swatchCanvas(id, tile) {
+    const cv = document.createElement("canvas"), sc = 2;
+    cv.width = 34 * sc; cv.height = 34 * sc; cv.className = "kb-h-icon kb-h-swatch";
+    const ctx = cv.getContext("2d"); ctx.imageSmoothingEnabled = false;
+    if (!id) {               // Theo kiểu nhà: một góc phòng của kiểu đang dùng
+      if (NHA) { NHA.bg(ctx, sc, -60, tile === "floor" ? -47 : -5, "room", ROOM.W, ROOM.H, ROOM.FLOOR, houseStyle(null), null); }
+      return cv;
+    }
+    if (NHA && NHA.swatch) {
+      const rowsArr = tile && tileRows()[id] ? { rows: tileRows()[id], slot: tile } : null;
+      if (rowsArr || !tile) { NHA.swatch(ctx, sc, 0, 0, 34, 34, id, rowsArr); }
+    }
+    return cv;
+  }
+  function renderDecor(list, cat, money) {
+    const dc = cat.decor || { walls: [], floors: [], rooms: [], tile: { price: 250, edit: 50, max: 12 } };
+    const dec = decorState(), room = decoRoom(), rname = sceneName(room === "room" ? "room" : room);
+    const roomLabel = room === "room" ? "Phòng chính" : rname;
+    const use = (dec.use || {})[room] || {};
+    const tiles = cat.tiles || [];
+    const head = el("div", "kb-h-card kb-h-wear-top kb-decor-head");
+    const hi = el("div", "kb-h-info");
+    hi.appendChild(el("div", "kb-h-name", "Đang trang trí: " + roomLabel));
+    hi.appendChild(el("div", "kb-h-desc", "Mua một lần, dùng cho gian nào cũng được. Đổi gian bằng nút cảnh phía trên."));
+    head.appendChild(hi);
+    list.appendChild(head);
+    const usedIn = (id) => ["room", "kitchen", "bedroom"].filter((r) => { const u = (dec.use || {})[r] || {}; return u.wall === id || u.floor === id; })
+      .map((r) => (r === "room" ? "Phòng chính" : sceneName(r)));
+    const tryBtn = (slot, id) => {
+      const on = decoTry && decoTry.room === room && decoTry.slot === slot && decoTry.id === id;
+      return btn(on ? "Dừng xem thử" : "Xem thử", "kb-btn-small", () => { decoTry = on ? null : { room: room, slot: slot, id: id }; renderList(); });
+    };
+    [["wall", "Giấy dán tường", dc.walls || []], ["floor", "Sàn", dc.floors || []]].forEach(([slot, title, presets]) => {
+      list.appendChild(el("div", "kb-h-sec", title));
+      const cur = use[slot] || "";
+      {   // Theo kiểu nhà
+        const card = el("div", "kb-h-card kb-decor-card" + (!cur ? " kb-h-using" : ""));
+        card.setAttribute("data-decor", slot + ":");
+        card.appendChild(swatchCanvas("", slot));
+        const inf = el("div", "kb-h-info");
+        inf.appendChild(el("div", "kb-h-name", "Theo kiểu nhà"));
+        inf.appendChild(el("div", "kb-h-price", "Có sẵn"));
+        const row = el("div", "kb-h-btns");
+        row.appendChild(btn(!cur ? "Đang dùng" : "Dùng cho " + roomLabel, "kb-h-buy", () => { decoTry = null; H.send("home:decor:use:" + room + ":" + slot + ":none"); }, !cur));
+        inf.appendChild(row); card.appendChild(inf); list.appendChild(card);
+      }
+      presets.forEach((it) => {
+        const own = (dec.own || []).indexOf(it.id) >= 0, using = cur === it.id, where = usedIn(it.id);
+        const card = el("div", "kb-h-card kb-decor-card" + (using ? " kb-h-using" : ""));
+        card.setAttribute("data-decor", slot + ":" + it.id);
+        card.appendChild(swatchCanvas(it.id, null));
+        const inf = el("div", "kb-h-info");
+        const nm = el("div", "kb-h-name", it.name);
+        if (it.ja) { nm.appendChild(el("span", "kb-h-guest-ja", it.ja)); }
+        inf.appendChild(nm);
+        if (it.desc) { inf.appendChild(el("div", "kb-h-desc", it.desc)); }
+        inf.appendChild(el("div", own ? "kb-h-own" : "kb-h-price", own ? (where.length ? "Đang dùng: " + where.join(", ") : "Đã có") : it.price + " xu"));
+        const row = el("div", "kb-h-btns");
+        if (own) {
+          row.appendChild(btn(using ? "Đang dùng" : "Dùng cho " + roomLabel, "kb-h-buy", () => { decoTry = null; H.send("home:decor:use:" + room + ":" + slot + ":" + it.id); }, using));
+        } else {
+          row.appendChild(btn("Mua", "kb-h-buy", () => { if (pay("home:decor:buy:" + it.id)) { pendingDecor = { room: room, slot: slot, id: it.id }; } },
+            money < it.price, money < it.price ? "Còn thiếu " + (it.price - money) + " xu" : "Mua xong dùng luôn cho " + roomLabel));
+          row.appendChild(tryBtn(slot, it.id));
+        }
+        inf.appendChild(row); card.appendChild(inf); list.appendChild(card);
+      });
+      tiles.filter((t) => t.kind === slot).forEach((t) => {
+        const using = cur === t.id, where = usedIn(t.id);
+        const card = el("div", "kb-h-card kb-decor-card kb-h-craftcard" + (using ? " kb-h-using" : ""));
+        card.setAttribute("data-decor", slot + ":" + t.id);
+        card.appendChild(swatchCanvas(t.id, slot));
+        const inf = el("div", "kb-h-info");
+        inf.appendChild(el("div", "kb-h-name", t.name));
+        inf.appendChild(el("div", "kb-h-own", "Tự vẽ" + (where.length ? " · đang dùng: " + where.join(", ") : "")));
+        const row = el("div", "kb-h-btns");
+        row.appendChild(btn(using ? "Đang dùng" : "Dùng cho " + roomLabel, "kb-h-buy", () => { decoTry = null; H.send("home:decor:use:" + room + ":" + slot + ":" + t.id); }, using));
+        row.appendChild(btn("Sửa · " + dc.tile.edit + " xu", "kb-btn-small", () => { if (typeof GardenCraft !== "undefined" && GardenCraft.openTile) { GardenCraft.openTile(t); } }, false,
+          "Đổi tên miễn phí, vẽ lại " + dc.tile.edit + " xu"));
+        const armed = tileDelArm === t.id;
+        row.appendChild(btn(armed ? "Bấm lần nữa để xoá" : "Xoá mẫu", "kb-btn-small kb-h-del" + (armed ? " is-armed" : ""), () => {
+          if (tileDelArm === t.id) { tileDelArm = null; H.send("home:tile:del:" + t.id); } else { tileDelArm = t.id; renderList(); }
+        }));
+        inf.appendChild(row); card.appendChild(inf); list.appendChild(card);
+      });
+      {   // tự vẽ
+        const full = tiles.length >= dc.tile.max, poor = !full && money < dc.tile.price;
+        const add = el("div", "kb-h-card kb-h-craft-new kb-decor-card");
+        add.setAttribute("data-decor", slot + ":new");
+        add.appendChild(el("div", "kb-h-craft-plus", "＋"));
+        const ai = el("div", "kb-h-info");
+        ai.appendChild(el("div", "kb-h-name", slot === "wall" ? "Tự vẽ giấy dán tường" : "Tự vẽ sàn"));
+        ai.appendChild(el("div", "kb-h-price", dc.tile.price + " xu · " + tiles.length + "/" + dc.tile.max + " mẫu"));
+        ai.appendChild(btn(poor ? "Còn thiếu " + (dc.tile.price - money) + " xu" : "Mở xưởng", "kb-h-buy",
+          () => { if (typeof GardenCraft !== "undefined" && GardenCraft.openTile) { GardenCraft.openTile(null, slot); } },
+          full || poor, full ? "Đã đủ " + dc.tile.max + " mẫu" : ""));
+        add.appendChild(ai); list.appendChild(add);
+      }
+    });
   }
   let pendingPlace = null;
   let pendingSpot = null;
@@ -4921,7 +5066,7 @@ var GardenHome = (function () {
     if (payload.catalog && H.setCatalog) { H.setCatalog(payload.catalog); }
     if (payload.wallet) { H.setWallet(payload.wallet); }
     const a = payload.action, sub = payload.sub;
-    delArm = null; seedDelArm = null; payWait = 0;
+    delArm = null; seedDelArm = null; tileDelArm = null; payWait = 0;
     if (a === "build") {
       const lvl = homeState().house;
       const name = ((catalog() || {}).levels || [])[lvl];
@@ -5016,6 +5161,23 @@ var GardenHome = (function () {
         mood("star", 2200, "新しい種！ Đã có giống mới");
         tab = "seed"; tipMsg = "Giống mới ở cuối tab · chọn chỗ gieo ở mục “Gieo ở đâu”";
       }
+    } else if (a === "decor") {           // 1.30: giấy dán tường / sàn
+      decoTry = null;
+      if (sub === "buy") {
+        sfx("coin"); mood("happy", 1200, "いい感じ！");
+        const pd = pendingDecor; pendingDecor = null;
+        if (pd && (decorState().own || []).indexOf(pd.id) >= 0) { H.send("home:decor:use:" + pd.room + ":" + pd.slot + ":" + pd.id); }
+      } else { sfx("good"); mood("happy", 900, "模様替え！ Đổi không khí ♪"); }
+    } else if (a === "tile") {
+      decoTry = null;
+      if (sub === "save") {
+        sfx("stage");
+        const isNew = typeof GardenCraft !== "undefined" && GardenCraft.savedTile ? GardenCraft.savedTile(payload) : true;
+        mood("star", 2000, isNew ? "できた！ Mẫu mới xong rồi" : "Đã sửa mẫu ♪");
+        tab = "room"; roomView = "decor";
+        const t = ((catalog() || {}).tiles || []).find((x) => x.id === payload.id);
+        if (isNew && t) { H.send("home:decor:use:" + decoRoom() + ":" + t.kind + ":" + t.id); }
+      } else { sfx("flip"); }
     } else if (a === "craft") {
       if (sub === "save") {
         sfx("stage");
@@ -5031,7 +5193,7 @@ var GardenHome = (function () {
   }
 
   function error(msg) {
-    pendingPlace = null; payWait = 0;
+    pendingPlace = null; pendingDecor = null; payWait = 0;
     if (typeof GardenCraft !== "undefined" && GardenCraft.isOpen()) { GardenCraft.error(msg); }
     sfx("again");
     mood("sad", 1200, "あれ？");
