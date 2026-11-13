@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>ことば畑 · Một buổi ở nhà</title>
+  <link rel="stylesheet" href="nha.css">
+</head>
+<body>
+  <div class="demo-strip"><span>BẢN MÔ PHỎNG · 13.11.2026</span><span>Dữ liệu minh họa</span></div>
+  <div class="app">
+    <header class="toolbar">
+      <a class="brand" href="#" aria-label="ことば畑 · Về ngôi nhà"><i class="mascot" aria-hidden="true"></i><strong>ことば畑</strong></a>
+      <div class="deck"><span>Deck</span><b>Tiếng Nhật · N4</b></div>
+      <span class="wallet">Ví <b>1.280 xu</b></span>
+      <button id="motion-toggle" class="motion-toggle" aria-pressed="false">Dừng chuyển động</button>
+      <button id="after-study" class="primary">Thử về nhà sau buổi ôn</button>
+    </header>
+    <nav class="navigation" aria-label="Bản mô phỏng">
+      <button class="selected" aria-current="page">Ngôi nhà</button>
+      <button id="album-open">Khoảnh khắc <span id="album-count" class="badge">0</span></button>
+      <button id="help-open">Cách thử</button>
+      <span class="nav-note">おかえり · Mừng cậu về nhà</span>
+    </nav>
+
+    <div class="page-heading"><div><p class="eyebrow">おうち · MỘT BUỔI Ở NHÀ</p><h1>Về nhà, ngắm một chút.</h1><p>Một góc nhỏ để nghỉ sau những buổi học.</p></div><div class="season-tag"><i class="pixel-leaf" aria-hidden="true"></i>Mùa lá đỏ</div></div>
+
+    <main class="workspace">
+      <div class="scene-column">
+        <section class="scene-card pixel-panel" aria-label="Ngôi nhà pixel ba gian">
+          <header class="scene-heading"><div><i class="tiny-house" aria-hidden="true"></i><b>Trong nhà</b><span> Bếp · Phòng chính · Phòng ngủ</span></div><span id="garden-clock">16:40 · Trời mưa</span></header>
+          <div class="canvas-wrap" id="canvas-wrap"><canvas id="house" width="800" height="360" tabindex="0" role="img" aria-label="Nhà pixel ba gian. Có thể bấm vào Mochi và StackChan; các nút tương đương nằm dưới cảnh."></canvas><span class="scene-chip" id="scene-chip">Chiều mưa</span><div class="camera-flash" aria-hidden="true"></div></div>
+          <div class="scene-caption"><div class="caption-icon" aria-hidden="true"><i></i></div><div><h2 id="moment-title">Mưa ngoài cửa, ấm trong nhà.</h2><p id="moment-description">Mochi tìm một góc êm, StackChan mở cuốn sách còn đọc dở.</p></div><span id="saved-mark" class="saved-mark" hidden>Đã lưu</span></div>
+          <div class="character-actions"><button id="pet-action">Vuốt Mochi</button><button id="robot-action">Chào StackChan</button><button id="next-moment">Xem một cảnh khác</button><span id="character-response" role="status">Thử bấm vào hai bạn trong nhà.</span></div>
+        </section>
+
+        <section class="quick-scenes" aria-label="Ba khung cảnh để thử">
+          <button data-preset="morning" class="quick-scene"><canvas width="240" height="120" aria-hidden="true"></canvas><span><b>Nắng buổi sáng</b><small>Một chỗ êm bên cửa sổ</small></span></button>
+          <button data-preset="rain" class="quick-scene selected" aria-pressed="true"><canvas width="240" height="120" aria-hidden="true"></canvas><span><b>Chiều mưa</b><small>Ngồi nghe mưa một chút</small></span></button>
+          <button data-preset="night" class="quick-scene"><canvas width="240" height="120" aria-hidden="true"></canvas><span><b>Một tối ấm</b><small>Bật đèn, đọc tiếp vài trang</small></span></button>
+        </section>
+        <div class="study-note" id="study-note" hidden><i class="pixel-check" aria-hidden="true"></i><div><b>Buổi ôn minh họa đã xong.</b><span>18 lượt ôn · Bây giờ cậu có thể ngắm nhà hoặc nghỉ.</span></div><button id="study-note-close" aria-label="Đóng thông báo buổi ôn">Đóng</button></div>
+      </div>
+
+      <aside class="control-column">
+        <section class="pixel-panel atmosphere"><p class="eyebrow">KHÔNG KHÍ TRONG VƯỜN</p><div class="control-pair"><label>Buổi<select id="time-select"><option value="morning">Buổi sáng</option><option value="afternoon" selected>Buổi chiều</option><option value="night">Buổi tối</option></select></label><label>Thời tiết<select id="weather-select"><option value="clear">Quang đãng</option><option value="rain" selected>Mưa nhẹ</option><option value="snow">Tuyết</option></select></label></div><p class="small-note">Đổi buổi để thử ngay.</p></section>
+
+        <section class="capture-card pixel-panel"><p class="eyebrow">GIỮ LẠI KHOẢNH KHẮC NÀY</p><button id="capture" class="primary wide"><i class="camera-icon" aria-hidden="true"></i>Chụp khoảnh khắc <kbd>C</kbd></button><p id="capture-status" class="small-note" role="status">Ảnh lưu trong trình duyệt này; có thể tải PNG.</p></section>
+
+        <section class="pixel-panel furniture"><header><div><p class="eyebrow">ĐỒ VẬT & SINH HOẠT</p><h2>Đồ trong nhà</h2></div></header><div id="furniture-list" class="furniture-list"></div><p class="small-note">Bật/tắt đồ để xem hành vi thay đổi.</p></section>
+
+        <section class="pixel-panel tea-card"><div class="tea-heading"><canvas id="tea-icon" width="48" height="42" aria-hidden="true"></canvas><div><h2>Một khay trà ấm</h2><p>Cho một buổi ở nhà chậm rãi.</p></div></div><button id="tea-prepare" class="wide" aria-pressed="false">Chuẩn bị trà</button><p id="tea-status" class="small-note" role="status">Một nghi thức nhỏ, không thêm việc hằng ngày.</p></section>
+
+      </aside>
+    </main>
+    <footer class="footer"><span>Cảnh vẽ bằng Canvas 2D · Sprite từ Kotoba Batake 1.26.1</span><span>Mô phỏng độc lập, không kết nối Anki hoặc Gemini</span></footer>
+  </div>
+
+  <dialog id="album-dialog" class="album-dialog"><header class="dialog-heading"><div><p class="eyebrow">思い出</p><h2>Những buổi ở nhà</h2><p>Những cảnh cậu muốn giữ lại.</p></div><button data-close="album-dialog" aria-label="Đóng album">Đóng <kbd>Esc</kbd></button></header><div id="album-empty" class="album-empty"><i class="large-camera camera-icon" aria-hidden="true"></i><h3>Chưa có ảnh nào.</h3><p>Thử đổi buổi, đặt đồ rồi chụp một khoảnh khắc.</p><button id="capture-from-album" class="primary">Chụp cảnh hiện tại</button></div><div id="album-grid" class="album-grid"></div><p class="album-storage" id="album-storage">Album chỉ lưu ở trình duyệt này. Tải ảnh để giữ riêng.</p></dialog>
+
+  <dialog id="photo-dialog" class="photo-dialog"><header class="dialog-heading"><h2 id="photo-heading">Khoảnh khắc</h2><button data-close="photo-dialog">Đóng <kbd>Esc</kbd></button></header><img id="photo-image" alt="Ảnh khoảnh khắc đã chụp"><div class="photo-edit"><label>Tên kỷ niệm<input id="photo-name" type="text" maxlength="64"></label><button id="photo-save" class="primary">Lưu tên</button><button id="photo-download">Tải PNG</button></div><p id="photo-date" class="small-note"></p></dialog>
+
+  <dialog id="help-dialog" class="help-dialog"><header class="dialog-heading"><h2>Thử một buổi ở nhà</h2><button data-close="help-dialog">Đóng</button></header><ol><li>Chọn <b>Nắng buổi sáng / Chiều mưa / Một tối ấm</b> dưới cảnh.</li><li>Bật/tắt <b>đệm, bàn đọc sách, đèn và kotatsu</b> để xem vị trí, hành vi thay đổi.</li><li>Bấm <b>Chuẩn bị trà</b>, hoặc chạm Mochi / StackChan.</li><li>Chọn <b>Chụp khoảnh khắc</b>, mở album để đặt tên và tải PNG.</li><li>Bấm <b>Thử về nhà sau buổi ôn</b> để xem một cách kết thúc buổi học.</li></ol><p>Buổi và thời tiết là lựa chọn xem thử. Không có xu, phần thưởng hay lượt ôn thật được tạo.</p><p>Phím <b>C</b> chụp ảnh; <b>A</b> mở album; <b>Esc</b> đóng bảng. Có thể dừng chuyển động ở thanh đầu.</p></dialog>
+  <div id="toast" class="toast" role="status" hidden></div>
+  <script src="sprites.js"></script>
+  <script src="nha.js"></script>
+</body>
+</html>

@@ -23,6 +23,8 @@ Ngày 13/11/2026. Bản nguồn được đánh giá: **1.26.1, commit `6021c579
 
 Bản mẫu có tìm/lọc sáu món minh họa, chọn món, chọn ngày, gõ nhật ký, giả lập bài sửa về, ẩn furigana, mở bản dịch và Tin làng. Không gọi Anki/Gemini hoặc sửa dữ liệu thật; nhật ký bản mẫu chỉ lưu vào localStorage riêng của trình duyệt. Cảnh và đồ pixel dùng hình hiện có trong repo. Số xu, số lượt, bài đọc và kết quả sửa là dữ liệu minh họa. Hình dựng bằng công cụ tạo ảnh có thể khác chi tiết; tên và hành vi đề xuất được xác định bằng tài liệu này.
 
+**Bổ sung theo yêu cầu mô phỏng bằng code:** [Một buổi ở nhà](mo_phong_ngoi_nha/README.md) có Canvas động, đồ vật ảnh hưởng hành vi, pha trà, chụp/đổi tên/tải ảnh và album. [Tải HTML tự chứa](mo_phong_ngoi_nha/XEM_THU.html) để mở trực tiếp trong trình duyệt; [xem GIF chạy thực tế](mo_phong_ngoi_nha/anh/mo_phong.gif).
+
 ## 2. Những phần nên giữ
 
 | Phần | Giá trị cụ thể | Điều cần giữ khi cải tiến |

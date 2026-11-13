@@ -1,0 +1,274 @@
+{
+  "scope": "Only the standalone Canvas design prototype; not product regression tests.",
+  "checkedAt": "2026-11-13",
+  "checks": [
+    {
+      "case": "standalone-no-external-assets",
+      "pass": true,
+      "actual": true
+    },
+    {
+      "case": "rain-scene-starts-with-cushion",
+      "pass": true,
+      "actual": true
+    },
+    {
+      "case": "canvas-800x360",
+      "pass": true,
+      "actual": true
+    },
+    {
+      "case": "remove-cushion-changes-cat-behavior",
+      "pass": true,
+      "actual": true
+    },
+    {
+      "case": "morning-cat-window",
+      "pass": true,
+      "actual": true
+    },
+    {
+      "case": "morning-with-plant",
+      "pass": true,
+      "actual": true
+    },
+    {
+      "case": "no-cushion-no-plant-falls-back",
+      "pass": true,
+      "actual": true
+    },
+    {
+      "case": "night-reading-needs-desk-and-lamp",
+      "pass": true,
+      "actual": true
+    },
+    {
+      "case": "remove-lamp-removes-reading-scene",
+      "pass": true,
+      "actual": true
+    },
+    {
+      "case": "remove-desk-removes-reading-scene",
+      "pass": true,
+      "actual": true
+    },
+    {
+      "case": "animation-is-running",
+      "pass": true
+    },
+    {
+      "case": "pause-freezes-animation",
+      "pass": true
+    },
+    {
+      "case": "pet-interaction-has-text-feedback",
+      "pass": true,
+      "actual": true
+    },
+    {
+      "case": "tea-preparation-visible",
+      "pass": true,
+      "actual": true
+    },
+    {
+      "case": "tea-preparation-finishes",
+      "pass": true,
+      "actual": true
+    },
+    {
+      "case": "capture-persists-one-photo",
+      "pass": true,
+      "actual": true
+    },
+    {
+      "case": "same-moment-does-not-duplicate",
+      "pass": true,
+      "actual": true
+    },
+    {
+      "case": "different-scenes-create-four-photos",
+      "pass": true,
+      "actual": true
+    },
+    {
+      "case": "album-opens-as-dialog",
+      "pass": true,
+      "actual": true
+    },
+    {
+      "case": "rename-photo-persists",
+      "pass": true,
+      "actual": true
+    },
+    {
+      "case": "download-real-png-with-caption",
+      "pass": true,
+      "dimensions": [
+        840,
+        435
+      ]
+    },
+    {
+      "case": "escape-closes-only-top-dialog",
+      "pass": true,
+      "actual": true
+    },
+    {
+      "case": "escape-closes-album",
+      "pass": true,
+      "actual": true
+    },
+    {
+      "case": "reload-keeps-album-and-title",
+      "pass": true,
+      "actual": true
+    },
+    {
+      "case": "after-study-is-explicit-demo",
+      "pass": true,
+      "actual": true
+    },
+    {
+      "case": "storage-failure-reports-session-only",
+      "pass": true,
+      "actual": true
+    },
+    {
+      "case": "storage-failure-preserves-persisted-album",
+      "pass": true
+    },
+    {
+      "case": "ephemeral-photo-not-reported-persisted",
+      "pass": true,
+      "actual": true
+    },
+    {
+      "case": "invalid-local-storage-sanitized",
+      "pass": true,
+      "actual": true
+    }
+  ],
+  "layouts": [
+    {
+      "width": 1440,
+      "height": 1100,
+      "scene": "morning",
+      "client": 1440,
+      "scroll": 1440,
+      "pass": true
+    },
+    {
+      "width": 1440,
+      "height": 1100,
+      "scene": "rain",
+      "client": 1440,
+      "scroll": 1440,
+      "pass": true
+    },
+    {
+      "width": 1440,
+      "height": 1100,
+      "scene": "night",
+      "client": 1440,
+      "scroll": 1440,
+      "pass": true
+    },
+    {
+      "width": 1366,
+      "height": 1071,
+      "scene": "morning",
+      "client": 1351,
+      "scroll": 1351,
+      "pass": true
+    },
+    {
+      "width": 1366,
+      "height": 1071,
+      "scene": "rain",
+      "client": 1351,
+      "scroll": 1351,
+      "pass": true
+    },
+    {
+      "width": 1366,
+      "height": 1071,
+      "scene": "night",
+      "client": 1351,
+      "scroll": 1351,
+      "pass": true
+    },
+    {
+      "width": 1024,
+      "height": 1092,
+      "scene": "morning",
+      "client": 1009,
+      "scroll": 1009,
+      "pass": true
+    },
+    {
+      "width": 1024,
+      "height": 1092,
+      "scene": "rain",
+      "client": 1009,
+      "scroll": 1009,
+      "pass": true
+    },
+    {
+      "width": 1024,
+      "height": 1092,
+      "scene": "night",
+      "client": 1009,
+      "scroll": 1009,
+      "pass": true
+    },
+    {
+      "width": 720,
+      "height": 1331,
+      "scene": "morning",
+      "client": 705,
+      "scroll": 705,
+      "pass": true
+    },
+    {
+      "width": 720,
+      "height": 1331,
+      "scene": "rain",
+      "client": 705,
+      "scroll": 705,
+      "pass": true
+    },
+    {
+      "width": 720,
+      "height": 1331,
+      "scene": "night",
+      "client": 705,
+      "scroll": 705,
+      "pass": true
+    },
+    {
+      "width": 390,
+      "height": 1585,
+      "scene": "morning",
+      "client": 375,
+      "scroll": 375,
+      "pass": true
+    },
+    {
+      "width": 390,
+      "height": 1585,
+      "scene": "rain",
+      "client": 375,
+      "scroll": 375,
+      "pass": true
+    },
+    {
+      "width": 390,
+      "height": 1585,
+      "scene": "night",
+      "client": 375,
+      "scroll": 375,
+      "pass": true
+    }
+  ],
+  "runtimeErrors": []
+}
