@@ -11,6 +11,7 @@
 #   OLD123=<thư mục add-on bản 1.23.0> cho test_124.py (không đặt thì lấy từ git, commit ba0aa5a).
 #   OLD124=<thư mục add-on bản 1.24.0> cho test_125.py (không đặt thì lấy từ git, commit bc66f66).
 #   OLD125=<thư mục add-on bản 1.25.0> cho test_1251.py (không đặt thì lấy từ git, commit 1912fb7).
+#   OLD1261=<thư mục add-on bản 1.26.1> cho test_128.py (không đặt thì lấy từ git, commit 6021c57).
 HERE=$(cd "$(dirname "$0")" && pwd)
 ADDON=${1:-$HERE/../kotoba_batake}
 FAIL=0
@@ -60,6 +61,12 @@ echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
 echo "== core/test_1261.py"
 OUT=$(python3 "$HERE/core/test_1261.py" "$ADDON" 2>&1); RC=$?
 echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
+echo "== core/test_128.py"
+OUT=$(python3 "$HERE/core/test_128.py" "$ADDON" ${OLD1261:+"$OLD1261"} 2>&1); RC=$?
+echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
+echo "== audit_20261112/core_audit.py (1.28: lỗi đã sửa → giữ làm kiểm tra hồi quy)"
+OUT=$(python3 "$HERE/audit_20261112/core_audit.py" "$ADDON" --out "${TMPDIR:-/tmp}/kb_core_audit.json" 2>&1); RC=$?
+echo "$OUT" | grep -E "^FAIL|CORE AUDIT"; [ $RC = 0 ] || FAIL=1
 echo "== core/test_kit.py (bộ kotoba_daily)"
 OUT=$(python3 "$HERE/core/test_kit.py" "$ADDON" 2>&1); RC=$?
 echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1

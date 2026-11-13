@@ -322,7 +322,48 @@ NHA_ITEMS: dict[str, dict[str, Any]] = {
 for _k, _v in NHA_ITEMS.items():
     assert _k not in CATALOG, _k
     CATALOG[_k] = _v
-TIER3_ITEMS = frozenset(NHA_ITEMS)    # đồ lưu ở NHA_KEY (sở hữu + mọi chỗ đặt)
+
+# 1.28: quà đủ bộ Hộp sưu tầm (only = "set") + món chỉ có ở gánh hàng rong (only = "ped", giá của gánh hàng). Không bán
+# ở cửa hàng. Lưu cùng tầng NHA_KEY: bản 1.24 – 1.27 ở máy khác giữ hộ món lạ ở tầng này (keep_foreign_nha), bản ≤ 1.23
+# không đọc tầng này nên không xoá.
+FIND_ITEMS: dict[str, dict[str, Any]] = {
+    # --- quà đủ bộ (finds_core.SET_REWARD)
+    "tukinh": {"name": "Tủ kính sưu tầm", "price": 0, "scene": "room", "w": 1, "place": "floor", "only": "set", "set": "yard",
+               "desc": "Bày đồ đã nhặt, nhặt càng nhiều càng đầy"},
+    "kaifurin": {"name": "Chuông gió vỏ sò", "price": 0, "scene": "room", "w": 1, "place": "wall", "only": "set", "set": "beach",
+                 "desc": "Vỏ sò đung đưa leng keng"},
+    "mikujikake": {"name": "Giá buộc quẻ", "price": 0, "scene": "yard", "w": 1, "place": "ground", "only": "set", "set": "shrine",
+                   "desc": "Quẻ giấy trắng buộc kín dây"},
+    "kingyochochin": {"name": "Đèn lồng cá vàng", "price": 0, "scene": "yard", "w": 1, "place": "ground", "only": "set",
+                      "set": "festival", "desc": "Lắc lư theo gió, sáng đỏ ban đêm"},
+    "takeakari": {"name": "Đèn ống tre", "price": 0, "scene": "yard", "w": 1, "place": "ground", "only": "set", "set": "bamboo",
+                  "desc": "Ánh nến lọt qua lỗ khắc trên ống tre"},
+    "ashiyu": {"name": "Bồn ngâm chân ashiyu", "price": 0, "scene": "yard", "w": 2, "place": "ground", "only": "set",
+               "set": "onsen", "desc": "Nước ấm bốc hơi nghi ngút"},
+    "posuto": {"name": "Hòm thư bưu điện đỏ", "price": 0, "scene": "yard", "w": 1, "place": "ground", "only": "set",
+               "set": "station", "desc": "Hòm thư tròn kiểu Showa"},
+    # --- chỉ có ở gánh hàng rong (finds_core.PED_ONLY)
+    "denkeoquan": {"name": "Đèn kéo quân", "price": 280, "scene": "yard", "w": 1, "place": "ground", "only": "ped",
+                   "desc": "Trời tối thì bóng hình chạy vòng quanh"},
+    "luunuoc": {"name": "Lu nước", "price": 160, "scene": "yard", "w": 1, "place": "ground", "only": "ped",
+                "desc": "Lu sành mát lạnh, gáo dừa vắt ngang"},
+    "hoagiay": {"name": "Chậu hoa giấy", "price": 180, "scene": "yard", "w": 1, "place": "ground", "only": "ped",
+                "desc": "Hoa giấy hồng rủ xuống thành chùm"},
+    "mushikago": {"name": "Lồng dế", "price": 150, "scene": "yard", "w": 1, "place": "ground", "only": "ped",
+                  "desc": "Lồng tre nhỏ, đêm có tiếng dế"},
+    "nonla": {"name": "Nón lá", "price": 120, "scene": "room", "w": 1, "place": "wall", "only": "ped",
+              "desc": "Treo tường, quai lụa hồng"},
+    "binhgom": {"name": "Bình gốm men lam", "price": 220, "scene": "room", "w": 1, "place": "floor", "only": "ped",
+                "desc": "Gốm men lam vẽ hoa sen"},
+    "dongholac": {"name": "Đồng hồ quả lắc", "price": 320, "scene": "room", "w": 1, "place": "wall", "only": "ped",
+                  "desc": "Quả lắc đung đưa theo giây"},
+    "tetsubin": {"name": "Ấm sắt tetsubin", "price": 200, "scene": "room", "w": 1, "place": "floor", "only": "ped",
+                 "desc": "Hơi nước bốc lên từ vòi ấm"},
+}
+for _k, _v in FIND_ITEMS.items():
+    assert _k not in CATALOG, _k
+    CATALOG[_k] = _v
+TIER3_ITEMS = frozenset(NHA_ITEMS) | frozenset(FIND_ITEMS)    # đồ lưu ở NHA_KEY (sở hữu + mọi chỗ đặt)
 
 # Các cảnh: sân nhà + các vùng mới là ngoài trời (đồ ngoài trời đặt được ở mọi cảnh ngoài trời).
 OUTDOOR_SCENES = ("yard", "beach", "shrine", "festival", "bamboo", "onsen", "station")
@@ -3183,6 +3224,21 @@ class GardenState:
         item, home = CATALOG[item_id], data["home"]
         if item.get("rare"):
             raise HomeError("Món này không bán, chỉ có trong rương nhiệm vụ hằng ngày.")
+        if item.get("only") == "ped":
+            raise HomeError("Món này chỉ có ở gánh hàng rong (thứ Tư, Chủ nhật).")
+        if item.get("only"):
+            raise HomeError("Món này là quà khi đủ một bộ trong Hộp sưu tầm.")
+        self._buy_checks(data, item_id)
+        if data["coins"] < item["price"]:
+            raise HomeError(f"Chưa đủ xu: cần {item['price']}, đang có {data['coins']}.")
+        data["coins"] -= item["price"]
+        home["owned"][item_id] = home["owned"].get(item_id, 0) + 1
+        self.save(data)
+        return data
+
+    def _buy_checks(self, data: dict[str, Any], item_id: str) -> None:
+        """Điều kiện mua chung của cửa hàng và gánh hàng rong (1.28): vùng / giao diện mùa đã mở, số tối đa, nhà có cửa."""
+        item, home = CATALOG[item_id], data["home"]
         if item.get("zone") and item["zone"] not in home["zones"]:
             zname = next(z["name"] for z in ZONES if z["id"] == item["zone"])
             raise HomeError(f"Mở khoá vùng “{zname}” trước đã.")
@@ -3193,10 +3249,41 @@ class GardenState:
             raise HomeError("Món này chỉ có một cái thôi.")
         if item["scene"] == "room" and home["house"] < ROOM_UNLOCK_LEVEL:
             raise HomeError("Xây nhà tới bước “Lắp cửa & cửa sổ” rồi mới mua nội thất được.")
-        if data["coins"] < item["price"]:
-            raise HomeError(f"Chưa đủ xu: cần {item['price']}, đang có {data['coins']}.")
-        data["coins"] -= item["price"]
-        home["owned"][item_id] = home["owned"].get(item_id, 0) + 1
+
+    # -- 1.28: Hộp sưu tầm, gánh hàng rong -----------------------------------------------
+
+    def find_reward(self, coins: int = 0, gift: str | None = None) -> dict[str, Any]:
+        """Nhặt trùng → cộng xu; đủ một bộ sưu tầm → tặng món trang trí (vào Kho đồ)."""
+        data = self.load()
+        if coins > 0:
+            data["coins"] += int(coins)
+        if gift and gift in FIND_ITEMS:
+            own = data["home"]["owned"]
+            own[gift] = own.get(gift, 0) + 1
+        if coins > 0 or gift:
+            self.save(data)
+        return data
+
+    def buy_at(self, item_id: str, price: int) -> dict[str, Any]:
+        """Gánh hàng rong: mua món cửa hàng (đã giảm giá) hoặc món chỉ có ở gánh hàng, theo giá đã tính sẵn."""
+        if item_id not in CATALOG:
+            raise HomeError("Không có món này.")
+        item = CATALOG[item_id]
+        if item.get("rare") or item.get("only") == "set" or item.get("season"):
+            raise HomeError("Món này không bán ở gánh hàng.")
+        data = self.load()
+        self._buy_checks(data, item_id)
+        self._pay(data, int(price))
+        own = data["home"]["owned"]
+        own[item_id] = own.get(item_id, 0) + 1
+        self.save(data)
+        return data
+
+    @_more_errors
+    def seed_buy_at(self, sid: str, price: int) -> dict[str, Any]:
+        data = self.load()
+        more.buy_seed(data["more"], sid)
+        self._pay(data, int(price))
         self.save(data)
         return data
 

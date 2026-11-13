@@ -16,6 +16,7 @@ var GardenHome = (function () {
   let RARE = null;                // móc của rare_art.js (1.16: 12 món hiếm mới): frameOf, emit, pal
   let NHA = null;                 // 1.24: móc của nha_art.js (đồ Bếp / Phòng ngủ, nền hai gian bên)
   let ART = null;                 // móc của season_art.js (đồ theo mùa): motion, pal, emit, stepPart, drawPart, frameOf
+  let FIND = null;                // 1.28: móc của finds_art.js (quà Hộp sưu tầm, món gánh hàng rong): frameOf, pal
   let lastTs = 0, frame = 0;
 
   const T = 16;                                   // 1 ô = 16 điểm ảnh nghệ thuật
@@ -2054,6 +2055,7 @@ var GardenHome = (function () {
     }
     if (RARE) { const f = RARE.frameOf(e, now); if (f) { return f; } }
     if (NHA) { const f = NHA.frameOf(e, now); if (f) { return f; } }
+    if (FIND) { const f = FIND.frameOf(e, now); if (f) { return f; } }
     if (ART) { const f = ART.frameOf(e, now); if (f) { return f; } }
     return BASE[e.id] || spr;
   }
@@ -2378,6 +2380,10 @@ var GardenHome = (function () {
   // 1.24: đồ Bếp / Phòng ngủ + nền hai gian bên (nha_art.js)
   if (typeof GardenNhaArt !== "undefined") {
     NHA = GardenNhaArt.install({ grid, rect, disc, dot, outline, rows, SPR, ALT, GLOW, P, box });
+  }
+  // 1.28: quà đủ bộ Hộp sưu tầm + món chỉ có ở gánh hàng rong (finds_art.js)
+  if (typeof GardenFindArt !== "undefined") {
+    FIND = GardenFindArt.install({ SPR, ALT, GLOW, EXTRA: EXTRA17, P, box });
   }
   // 1.25.5: bản sửa hình gốc (fix.js) — khung "spr" (cửa hàng + cảnh), "f<i>" (FRAMES khác spr), "base" (phần tĩnh)
   if (typeof GardenFix !== "undefined") {
@@ -2919,6 +2925,10 @@ var GardenHome = (function () {
       if (sea) { sea.nightTop(ctx, S, ox, oy, now, bx0, bx1, YARD.H, st); }
     }
     guestsTop(ctx, S, ox, oy, sceneName, now, st, opts);
+    // 1.28: gánh hàng rong + chỗ lấp lánh (không vẽ ở ảnh xem trước / ảnh chụp / bản vẽ của Xưởng)
+    if (typeof GardenFinds !== "undefined" && !(opts && (opts.noGuests || opts.noPets || opts.uz))) {
+      GardenFinds.draw(ctx, S, ox, oy, sceneName, now, st, () => spotsFor(sceneName, "*"), !!(opts && opts.photo));
+    }
     if (opts && opts.overlay) { opts.overlay(ctx, S, ox, oy); }
   }
 
@@ -3267,6 +3277,12 @@ var GardenHome = (function () {
     const r = cv.getBoundingClientRect();
     return GardenPets.at(mainScene(), (ev.clientX - r.left) / mainView.S - mainView.ox, (ev.clientY - r.top) / mainView.S - (mainView.oy || 0));
   }
+  function mainFindAt(ev) {
+    const cv = $("kb-yard");
+    if (!cv || !mainView || mainView.house || typeof GardenFinds === "undefined") { return null; }
+    const r = cv.getBoundingClientRect();
+    return GardenFinds.at(mainScene(), (ev.clientX - r.left) / mainView.S - mainView.ox, (ev.clientY - r.top) / mainView.S - (mainView.oy || 0));
+  }
   function mainGuestAt(ev) {
     const cv = $("kb-yard");
     if (!cv || !mainView || mainView.house || typeof GardenGuests === "undefined") { return null; }
@@ -3312,6 +3328,16 @@ var GardenHome = (function () {
     syncYardNav();
     sfx("flip");
     return true;
+  }
+  // 1.28: Tin làng / chỗ lấp lánh → đưa dải cảnh màn chính tới đúng cảnh (đi một bước theo hướng gần nhất)
+  function showMain(sc) {
+    const list = outdoorList(), cur = mainScene();
+    if (!sc || sc === cur || list.indexOf(sc) < 0) { return false; }
+    const i = list.indexOf(cur), j = list.indexOf(sc), n = list.length;
+    const fwd = (j - i + n) % n, back = (i - j + n) % n;
+    const ok = cycleMain(fwd <= back ? 1 : -1);
+    if (ok && mainScene() !== sc) { setMainPref(sc); stillDirty = true; syncYardNav(); }
+    return ok;
   }
   function syncYardNav() {
     const nav = $("kb-yard-nav");
@@ -3460,7 +3486,7 @@ var GardenHome = (function () {
     return { title: "ことば畑 · " + sceneName(sc), sub: dd + (th ? " · " + th.name : "") };
   }
   function photoScene(ctx, S, ox, oy, sc, now, wide) {
-    if (isOut(sc)) { drawOutdoor(ctx, S, ox, oy, now, sc, wide ? { bgFrom: -ox - 1, bgTo: wide - ox + 1 } : {}); }
+    if (isOut(sc)) { drawOutdoor(ctx, S, ox, oy, now, sc, wide ? { bgFrom: -ox - 1, bgTo: wide - ox + 1, photo: true } : { photo: true }); }
     else if (sc === "house") { drawHouse3(ctx, S, ox, oy, now, {}); }        // 1.24: ảnh nguyên nhà
     else { drawRoom(ctx, S, ox, oy, now, { kind: sc }); }
     lights.length = 0;
@@ -3651,6 +3677,11 @@ var GardenHome = (function () {
   function onCanvasMove(ev) { hover = canvasCell(ev); }
   function onCanvasClick(ev) {
     const cell = canvasCell(ev);
+    if (!placing && typeof GardenFinds !== "undefined" && view && isOut(scene)) {      // 1.28: chỗ lấp lánh / gánh hàng
+      const cv = $("kb-home-canvas"), r = cv.getBoundingClientRect();
+      const fh = GardenFinds.at(scene, (ev.clientX - r.left) / view.S, (ev.clientY - r.top) / view.S);
+      if (fh) { GardenFinds.hit(fh, scene, ev); return; }
+    }
     if (!placing && typeof GardenPets !== "undefined" && view) {
       const cv = $("kb-home-canvas"), r = cv.getBoundingClientRect();
       const pid = GardenPets.at(scene, (ev.clientX - r.left) / view.S, (ev.clientY - r.top) / view.S);
@@ -3659,7 +3690,7 @@ var GardenHome = (function () {
     if (!placing && typeof GardenGuests !== "undefined" && view) {      // 1.21: bấm khách → Album khách
       const cv = $("kb-home-canvas"), r = cv.getBoundingClientRect();
       const gid = GardenGuests.at(scene, (ev.clientX - r.left) / view.S, (ev.clientY - r.top) / view.S);
-      if (gid) { GardenGuests.react(scene); sfx("boop"); guestFocus = gid; tab = "guest"; renderList(); return; }
+      if (gid) { GardenGuests.react(scene); sfx("boop"); guestFocus = gid; tab = "guest"; albumView = "guest"; renderList(); return; }
     }
     if (placing) {
       if (!cell) { return; }
@@ -3928,7 +3959,8 @@ var GardenHome = (function () {
     const owned = home.owned[it.id] || 0;
     const placed = placedOf(it.id);
     const avail = owned - placed;
-    const card = el("div", "kb-h-card" + (it.rare ? " kb-h-card-rare" : "") + (it.rare && !owned ? " kb-h-locked" : ""));
+    const special = it.rare || !!it.only;       // 1.28: quà Hộp sưu tầm / món gánh hàng rong: không bán ở cửa hàng
+    const card = el("div", "kb-h-card" + (it.rare ? " kb-h-card-rare" : it.only ? " kb-h-card-only" : "") + (special && !owned ? " kb-h-locked" : ""));
     card.appendChild(iconCanvas(SPR[it.id] || ["k"], 68));
     const info = el("div", "kb-h-info");
     const nm = el("div", "kb-h-name", it.name);
@@ -3936,12 +3968,15 @@ var GardenHome = (function () {
     info.appendChild(nm);
     if (it.desc) { info.appendChild(el("div", "kb-h-desc", "✦ " + it.desc)); }
     if (!opts.inv && !it.custom) {
-      info.appendChild(el("div", "kb-h-price" + (it.rare ? " kb-h-rare" : ""), (it.rare ? "Quà rương nhiệm vụ" : it.price + " xu") +
+      const SETN = { yard: "Sân vườn", beach: "Bãi biển", shrine: "Đền trên núi", festival: "Phố lễ hội", bamboo: "Rừng tre", onsen: "Suối nước nóng", station: "Ga làng quê" };
+      const label = it.rare ? "Quà rương nhiệm vụ" : it.only === "set" ? "Quà đủ bộ " + (SETN[it.set] || "") + " (Hộp sưu tầm)" :
+        it.only === "ped" ? "Chỉ có ở gánh hàng rong · " + it.price + " xu" : it.price + " xu";
+      info.appendChild(el("div", "kb-h-price" + (it.rare ? " kb-h-rare" : it.only ? " kb-h-only" : ""), label +
         (it.w > 1 ? " · rộng " + it.w + " ô" : "") + (it.place === "wall" ? " · treo tường" : "")));
     }
     if (owned) { info.appendChild(el("div", "kb-h-own", "Có " + owned + (placed ? " · đã đặt " + placed : "") + (avail ? " · trong kho " + avail : ""))); }
     const row = el("div", "kb-h-btns");
-    if (!opts.inv && !it.rare && !it.custom) {
+    if (!opts.inv && !special && !it.custom) {
       const locked = (it.scene === "room" && home.house < cat.room_unlock) || (it.zone && !zoneOpen(it.zone)) ||
         (it.season && !themeOpen(it.season));
       const maxed = owned >= it.max;
@@ -4046,7 +4081,7 @@ var GardenHome = (function () {
 
     if (tab === "season") { renderSeason(list, cat, money); return; }
     if (tab === "pet") { renderPets(list, cat, money); return; }
-    if (tab === "guest") { renderGuests(list); return; }
+    if (tab === "guest") { renderAlbum(list); return; }
     if (tab === "seed") { renderSeeds(list, cat, money); return; }
 
     if (tab === "zone") {
@@ -4194,9 +4229,16 @@ var GardenHome = (function () {
     }
 
     let items = cat.items.filter((i) => !i.custom);
+    let extra = [];        // 1.28: quà Hộp sưu tầm + món gánh hàng rong — nhóm riêng cuối danh sách
     if (tab === "yard") { items = items.filter((i) => i.scene === "yard" && !i.season); }
     else if (tab === "room") { items = items.filter((i) => i.scene === "room" && !i.season); }
     else { items = cat.items.filter((i) => (home.owned[i.id] || 0) > 0); }
+    if (tab === "yard" || tab === "room") { extra = items.filter((i) => i.only); items = items.filter((i) => !i.only); }
+    const extraSec = () => {
+      if (!extra.length) { return; }
+      sec("Hộp sưu tầm · gánh hàng rong");
+      extra.forEach((it) => itemCard(list, it, {}));
+    };
     if (tab === "room" && home.house < unlock) {
       list.appendChild(el("div", "kb-h-empty", "Xây nhà tới bước “" + cat.levels[unlock].name + "” để mua nội thất."));
     }
@@ -4217,9 +4259,11 @@ var GardenHome = (function () {
         sec(name);
         grp.forEach((it) => itemCard(list, it, {}));
       });
+      extraSec();
       return;
     }
     items.forEach((it) => itemCard(list, it, { inv: tab === "inv" }));
+    extraSec();
   }
   let pendingPlace = null;
   let pendingSpot = null;
@@ -4360,6 +4404,28 @@ var GardenHome = (function () {
     const w = rows[0].length, h = rows.length;
     GardenGuests.paint(ctx, rows, Math.floor((22 - w) / 2), Math.max(0, 22 - h - 1), sc, false);
     return cv;
+  }
+  // 1.28: tab Album = Khách ghé vườn + Hộp sưu tầm (hai nút chọn ở đầu danh sách)
+  let albumView = "guest", boxFocus = null;
+  function albumChips(list) {
+    const row = el("div", "kb-h-btns kb-album-chips");
+    const g = guestData(), f = H && H.data() && H.data().finds;
+    [["guest", "Khách ghé vườn" + (g ? " · " + g.met + "/" + g.total : "")],
+      ["box", "Hộp sưu tầm" + (f && f.box ? " · " + f.box.found + "/" + f.box.total : "")]].forEach(([k, label]) => {
+      const b = btn(label, "kb-btn-small kb-album-chip" + (albumView === k ? " is-on" : ""), () => { albumView = k; renderList(); });
+      b.setAttribute("data-album", k);
+      b.setAttribute("aria-pressed", albumView === k ? "true" : "false");
+      row.appendChild(b);
+    });
+    list.appendChild(row);
+  }
+  function renderAlbum(list) {
+    if (typeof GardenFinds !== "undefined") { albumChips(list); }
+    if (albumView === "box" && typeof GardenFinds !== "undefined") {
+      GardenFinds.box(list, boxFocus); boxFocus = null;
+      return;
+    }
+    renderGuests(list);
   }
   function renderGuests(list) {
     const g = guestData();
@@ -5025,6 +5091,8 @@ var GardenHome = (function () {
         document.addEventListener("keydown", (ev) => { if (ev.key === "Escape" && !spop.hidden) { ev.stopImmediatePropagation(); ev.preventDefault(); closeSnap(); } }, true);
       }
       $("kb-yard").addEventListener("click", (ev) => {
+        const fh = mainFindAt(ev);
+        if (fh) { GardenFinds.hit(fh, mainScene(), ev); return; }       // 1.28: chỗ lấp lánh / gánh hàng rong
         const pid = mainPetAt(ev);
         if (pid) {
           if (typeof GardenGames !== "undefined") { GardenGames.close(); }
@@ -5042,7 +5110,7 @@ var GardenHome = (function () {
           if (typeof GardenCal !== "undefined") { GardenCal.close(); }
           H.closeReview();
           GardenGuests.react(mainScene());
-          open(mainScene()); guestFocus = gid; tab = "guest"; renderList();
+          open(mainScene()); guestFocus = gid; tab = "guest"; albumView = "guest"; renderList();
           return;
         }
         const hit = mainItemAt(ev);
@@ -5149,7 +5217,10 @@ var GardenHome = (function () {
     _popFor: function (sc, i) { setScene(sc); selected = { scene: sc, index: i }; showPop(homeState()[sc][i]); },
     setTab: function (t) { tab = t; renderList(); },
     // 1.21: mở Nhà ở tab Album khách, cuộn tới khách id
-    openGuests: function (id) { open(mainScene()); guestFocus = id || null; tab = "guest"; renderList(); },
+    openGuests: function (id) { open(mainScene()); guestFocus = id || null; tab = "guest"; albumView = "guest"; renderList(); },
+    // 1.28: mở Nhà ở tab Album → Hộp sưu tầm, cuộn tới bộ của cảnh sc
+    openBox: function (sc) { open(mainScene() === "house" ? "yard" : mainScene()); tab = "guest"; albumView = "box"; boxFocus = sc || null; renderList(); },
+    showMain: showMain,
     icon: function (id, size) { return SPR[id] ? iconCanvas(SPR[id], size || 40) : null; },
     _state: () => ({ scene: scene, tab: tab, placing: placing, selected: selected, payWait: payWait, peekCode: peekCode }),
     _spotError: spotError,

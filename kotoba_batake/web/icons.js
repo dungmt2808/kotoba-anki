@@ -28,6 +28,9 @@ var GardenIcons = (function () {
     snow: ["...u....", ".u.u.u..", "..uuu...", "uuuwuuu.", "..uuu...", ".u.u.u..", "...u....", "........"],
     leaf: ["......gG", "....ggGG", "...gGGg.", "..gGGg..", ".gGGg...", ".Gg.....", "G.......", "........"],
     blossom: ["...pp...", ".pppppp.", ".ppyypp.", "pppyyppp", ".ppyypp.", ".pppppp.", "...pp...", "........"],
+    // 1.28: chỗ lấp lánh, gánh hàng rong
+    sparkle: ["...y....", "...y....", "..yyy...", "yyywyyy.", "..yyy...", "...y..y.", "...y.yyy", "......y."],
+    peddler: ["BBBBBBBB", "k.k..k.k", ".k....k.", "kgk..kok", "bbb..bbb", "bBb..bBb", "bbb..bbb", ".B....B."],
     apple: ["....G...", "...Gg...", ".rr.rr..", "rrrrrrr.", "rwrrrrr.", "rrrrrrr.", ".rrrrr..", "..r.r..."],
     rainbow: ["..rrrr..", ".roooor.", "royyyyor", "roy..yor", "roy..yor", "........", "........", "........"],
     target: ["..rrrr..", ".rwwwwr.", "rwrrrrwr", "rwrwwrwr", "rwrwwrwr", "rwrrrrwr", ".rwwwwr.", "..rrrr.."],

@@ -338,6 +338,14 @@ var GardenGreet = (function () {
         const li = el("li", soon ? "is-soon" : "");
         fill(li.appendChild(el("span", "kb-news-t")), "[i:" + (x.icon || "star") + "] " + x.text);
         if (x.d || x.hint) { li.appendChild(el("span", "kb-news-d", x.d || x.hint)); }
+        // 1.28: "chỗ lấp lánh" → sang cảnh có chỗ lấp lánh; "gánh hàng rong" → mở bảng gánh hàng
+        if (!soon && (x.id === "finds" || x.id === "ped") && typeof GardenFinds !== "undefined") {
+          li.classList.add("is-link"); li.tabIndex = 0; li.setAttribute("role", "button");
+          li.appendChild(el("span", "kb-news-go", "▸"));
+          const go = (e) => { e.stopPropagation(); closeNews(); GardenFinds.fromNews(x.id); };
+          li.addEventListener("click", go);
+          li.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(e); } });
+        }
         u.appendChild(li);
       });
       u.previousElementSibling.hidden = !rows.length;
@@ -406,6 +414,18 @@ var GardenGreet = (function () {
     strip: strip,
     closeNews: closeNews,
     placeNews: placeNews,
+    // 1.28: nhặt đồ / mua ở gánh hàng xong → dòng Tin làng đổi theo (Python gửi lại data.finds, chưa gửi lại tin)
+    refreshNews: function () {
+      const d = typeof Garden !== "undefined" && Garden._data ? Garden._data() : null;
+      if (!d || !d.news || !d.finds) { return; }
+      const left = (d.finds.spots || []).filter((x) => x.open && !x.picked);
+      d.news.today = (d.news.today || []).filter((x) => x.id !== "finds" || left.length);
+      if (d.news.line && /chỗ lấp lánh/.test(d.news.line) && !left.length) {
+        const nx = (d.news.today || []).find((x) => x.id !== "paper" && x.id !== "pet_hungry" && x.id !== "pet_away" && x.id !== "repair");
+        d.news.line = nx ? (nx.short || nx.text) : null;
+      }
+      drawNews(d);
+    },
     isGreeting: () => !!greet && !greet.done,
     leave: leave,
     _state: () => (greet ? { who: greet.g.who, hi: greet.bub.querySelector(".kb-greet-hi").textContent, vi: greet.bub.querySelector(".kb-greet-vi").textContent,

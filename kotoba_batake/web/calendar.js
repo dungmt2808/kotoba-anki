@@ -381,6 +381,7 @@ var GardenCal = (function () {
       }
       if (v.paper) { row("Báo", v.paper); }
       if (v.guests && v.guests.length) { row("Khách mới", v.guests.join(" · "), "Khách ghé vườn lần đầu hôm này (Album khách ở Nhà)."); }
+      if (v.finds && v.finds.length) { row("Nhặt được", v.finds.join(" · "), "Món nhặt lần đầu ở chỗ lấp lánh hôm này (Hộp sưu tầm ở Nhà → Album)."); }
     }
     c1.appendChild(stats);
     R.appendChild(c1);

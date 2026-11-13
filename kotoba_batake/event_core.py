@@ -158,6 +158,28 @@ def news(ctx: dict[str, Any]) -> dict[str, Any]:
     # 3. mốc học
     for m in _milestones(int(ctx.get("total_days") or 0), bool(ctx.get("reviewed_today")), int(ctx.get("streak") or 0)):
         items.append(dict(m, dup=False))
+    # 3b. 1.28: chỗ lấp lánh (mở theo lượt ôn hôm nay) + gánh hàng rong
+    fd = ctx.get("finds") or {}
+    left = [x for x in fd.get("spots") or [] if x.get("open") and not x.get("picked")]
+    if left:
+        where = []
+        for x in left:
+            nm = SCENE_NAMES.get(x.get("scene"), "")
+            if nm and nm not in where:
+                where.append(nm)
+        items.append({"id": "finds", "icon": "sparkle", "dup": False,
+                      "text": "%d chỗ lấp lánh: %s" % (len(left), " · ".join(where)),
+                      "short": "%d chỗ lấp lánh ở %s" % (len(left), where[0] if len(where) == 1 else "%d nơi" % len(where))})
+    elif fd.get("next") and int(fd.get("open") or 0) < int(fd.get("max") or 3):
+        need = int(fd["next"]) - int(fd.get("reviews") or 0)
+        if need > 0:
+            items.append({"id": "finds_next", "icon": "sparkle", "dup": False, "low": True,
+                          "text": "Ôn thêm %d lượt nữa mở một chỗ lấp lánh" % need})
+    ped = fd.get("ped") or {}
+    if ped.get("today"):
+        nm = SCENE_NAMES.get(ped.get("scene"), "Sân vườn")
+        items.append({"id": "ped", "icon": "peddler", "dup": False, "text": "Gánh hàng rong ghé %s hôm nay" % nm,
+                      "short": "gánh hàng rong ghé %s" % nm})
     # 4. khách đáng chú ý
     sc = ctx.get("scenes")
     g = _guest_line(ctx.get("home") or {}, [x for x in sc if isinstance(x, str)] if isinstance(sc, list) else [], ctx.get("album") or {}, today)
@@ -206,6 +228,14 @@ def news(ctx: dict[str, Any]) -> dict[str, Any]:
             if 0 < (s - today).days <= SOON_DAYS:
                 soon.append({"id": "theme_start", "icon": "blossom", "d": short_date(s, today), "at": s.isoformat(),
                              "text": "%s bắt đầu%s" % (t["name"], "" if t["id"] in unlocked else " · chưa mở")})
+    if ped.get("next_iso"):         # 1.28: phiên gánh hàng kế tiếp (thứ Tư / Chủ nhật — luôn trong 7 ngày tới)
+        try:
+            nd = _dt.date.fromisoformat(ped["next_iso"])
+        except (TypeError, ValueError):
+            nd = None
+        if nd and 0 < (nd - today).days <= SOON_DAYS:
+            soon.append({"id": "ped_next", "icon": "peddler", "d": short_date(nd, today), "at": nd.isoformat(),
+                         "text": "Gánh hàng rong ghé " + SCENE_NAMES.get(ped.get("scene"), "Sân vườn")})
     sub = ctx.get("sub") or {}
     try:
         until = _dt.date.fromisoformat(sub["until"]) if sub.get("until") else None

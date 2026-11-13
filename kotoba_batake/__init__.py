@@ -34,6 +34,7 @@ from . import ai_vi
 from . import diag
 from . import event_core
 from . import fields_core
+from . import finds_core as finds
 from . import guest_core as guests
 from . import journal_core as journal
 from . import launcher
@@ -1678,7 +1679,8 @@ def _news_and_greet(data: dict[str, Any], today: dict[str, Any], cfg: dict[str, 
     ctx = {"today": cday, "day": day, "paper": data.get("paper") or {}, "streak": int(today.get("streak") or 0),
            "reviewed_today": reviewed, "total_days": total, "freeze": (w.get("more") or {}).get("freeze") or {},
            "pets": mv.get("pets") or [], "wear": mv.get("wear") or {}, "season": w.get("season") or {}, "home": home,
-           "scenes": _guest_scenes(w), "album": GUESTS.album(), "sub": (w.get("more") or {}).get("paper_sub") or {}}
+           "scenes": _guest_scenes(w), "album": GUESTS.album(), "sub": (w.get("more") or {}).get("paper_sub") or {},
+           "finds": data.get("finds") or {}}
     nw = event_core.news(ctx)
     greet = None
     if not GREET_TEST_OFF and more_core.clean_ui(cfg.get("ui")).get("greet") != "off":
@@ -1944,6 +1946,11 @@ def cal_day(ds: str) -> dict[str, Any]:
     except Exception as err:
         _warn("khách ghé vườn", err)
         v["guests"] = []
+    try:      # 1.28: món nhặt được lần đầu hôm đó
+        v["finds"] = ["%s (%s)" % (x["ja"], x["vi"]) for x in finds.new_between(EVENTS.load(), d, d)]
+    except Exception as err:
+        _warn("nhặt đồ", err)
+        v["finds"] = []
     w = e.get("w")
     is_today = d == today
     v["w"] = None
@@ -2158,6 +2165,72 @@ def fix_auto() -> bool:
 # -- 1.21: khách ghé vườn + Album khách ----------------------------------------------------------------------------
 
 GUESTS = guests.GuestStore(os.path.join(ADDON_DIR, "user_files", "guests.json"), col_getter=lambda: mw.col)
+# 1.28: chỗ lấp lánh + Hộp sưu tầm, gánh hàng rong (khoá collection kotoba_batake_events)
+EVENTS = finds.EventStore(os.path.join(ADDON_DIR, "user_files", "events.json"), col_getter=lambda: mw.col)
+
+
+def _ped_shop_items() -> list[str]:
+    """Món cửa hàng gánh hàng có thể giảm giá: món bán ở cửa hàng (không phải hiếm / theo mùa / quà / món riêng)."""
+    return [k for k, v in core.CATALOG.items()
+            if int(v.get("price") or 0) > 0 and not v.get("rare") and not v.get("only") and not v.get("season")]
+
+
+def _ped_goods(wallet: dict[str, Any], ev: dict[str, Any], day: datetime.date) -> list[dict[str, Any]]:
+    home = wallet.get("home") or {}
+    owned_seeds = set(((wallet.get("more") or {}).get("seeds") or {}).get("owned") or [])
+    bought = set(ev["ped"].get(day.isoformat()) or [])
+    out = []
+    for g in finds.stock(day, _ped_shop_items(), list(more_core.SEEDS)):
+        if g["kind"] == "seed":
+            sd = more_core.SEEDS[g["id"]]
+            price = int(sd["price"])
+            lock = "Đã có giống này" if g["id"] in owned_seeds else ""
+            out.append(dict(g, name="Giống cây: " + sd["name"], desc=sd.get("desc", ""), price=price, now=finds.disc(price),
+                            bought=g["slot"] in bought, lock=lock, scene="", place="", w=1))
+            continue
+        it = core.CATALOG[g["id"]]
+        price = int(it["price"])
+        now = price if g["kind"] == "only" else finds.disc(price)
+        lock = ""
+        if it.get("zone") and it["zone"] not in (home.get("zones") or []):
+            lock = "Mở vùng " + next(z["name"] for z in core.ZONES if z["id"] == it["zone"]) + " trước"
+        elif it["scene"] == "room" and int(home.get("house") or 0) < core.ROOM_UNLOCK_LEVEL:
+            lock = "Xây nhà tới bước Lắp cửa trước"
+        elif (home.get("owned") or {}).get(g["id"], 0) >= it.get("max", 99):
+            lock = "Đã có"
+        out.append(dict(g, name=it["name"], desc=it.get("desc") or core.ITEM_DESC.get(g["id"], ""), price=price, now=now,
+                        bought=g["slot"] in bought, lock=lock, scene=it["scene"], place=it.get("place", ""), w=it.get("w", 1)))
+    return out
+
+
+def finds_view(wallet: dict[str, Any], reviews: int, save: bool = True) -> dict[str, Any]:
+    """1.28: chỗ lấp lánh hôm nay, gánh hàng rong, Hộp sưu tầm (data.finds)."""
+    today = cal_today()
+    zones = list((wallet.get("home") or {}).get("zones") or [])
+    ev = EVENTS.load()
+    if finds.ensure_day(ev, zones, today) and save and mw.col is not None:
+        EVENTS.save(ev)
+    if save and mw.col is not None:
+        # đã ghi "đủ bộ" mà quà chưa vào kho (tắt Anki đúng lúc nhặt, hai máy ghi đè nhau) → tặng lại; quà không bán / bỏ
+        # được nên số đang có = 0 nghĩa là chưa nhận
+        own = (wallet.get("home") or {}).get("owned") or {}
+        for sc in ev["sets"]:
+            gift = finds.SET_REWARD.get(sc)
+            if gift and gift in core.FIND_ITEMS and not own.get(gift):
+                wallet.update(STATE.find_reward(0, gift))
+                own = wallet["home"]["owned"]
+    market = finds.is_market(today)
+    nxt = finds.next_market(today)
+    rewards = {k: v["name"] for k, v in core.FIND_ITEMS.items()}
+    return {
+        "day": today.isoformat(), "reviews": int(reviews), "per": finds.PER_SPOT, "max": finds.MAX_SPOTS,
+        "open": finds.open_count(reviews), "next": finds.next_at(reviews),
+        "spots": finds.spots_view(ev, reviews, today),
+        "ped": {"today": market, "scene": "station" if "station" in zones else "yard",
+                "date": event_core.date_label(today), "next": event_core.short_date(nxt, today), "next_iso": nxt.isoformat(),
+                "goods": _ped_goods(wallet, ev, today) if market else []},
+        "box": finds.box_view(ev, zones, today, rewards),
+    }
 
 
 def _guest_scenes(wallet: dict[str, Any]) -> list[str]:
@@ -2276,7 +2349,7 @@ class GardenDialog(QDialog):
             js=[
                 f"{WEB_BASE}/diag.js", f"{WEB_BASE}/prefs.js", f"{WEB_BASE}/fix.js", f"{WEB_BASE}/icons.js", f"{WEB_BASE}/sky.js", f"{WEB_BASE}/season.js", f"{WEB_BASE}/fx.js", f"{WEB_BASE}/music.js",
                 f"{WEB_BASE}/games.js", f"{WEB_BASE}/fields.js", f"{WEB_BASE}/season_art.js", f"{WEB_BASE}/rare_art.js", f"{WEB_BASE}/nha_art.js", f"{WEB_BASE}/pets.js", f"{WEB_BASE}/guests.js",
-                f"{WEB_BASE}/home.js", f"{WEB_BASE}/craft.js", f"{WEB_BASE}/paper.js", f"{WEB_BASE}/seeds.js",
+                f"{WEB_BASE}/finds_art.js", f"{WEB_BASE}/finds.js", f"{WEB_BASE}/home.js", f"{WEB_BASE}/craft.js", f"{WEB_BASE}/paper.js", f"{WEB_BASE}/seeds.js",
                 f"{WEB_BASE}/joy.js", f"{WEB_BASE}/ui.js", f"{WEB_BASE}/calendar.js", f"{WEB_BASE}/greet.js", f"{WEB_BASE}/tour.js", f"{WEB_BASE}/garden.js",
             ],
             context=self,
@@ -2341,6 +2414,11 @@ class GardenDialog(QDialog):
             except Exception as err:
                 _warn("khách ghé vườn", err)
                 data["guests"] = None
+            try:      # 1.28: chỗ lấp lánh, gánh hàng rong, Hộp sưu tầm
+                data["finds"] = finds_view(data["wallet"], int(today.get("reviews") or 0))
+            except Exception as err:
+                _warn("nhặt đồ / gánh hàng", err)
+                data["finds"] = None
             self._plants = data["plants"]
             _dict_possible = bool(self._dict_candidates(_voice(cfg)) or self._word_candidates(_voice(cfg)))
             try:
@@ -2599,6 +2677,8 @@ class GardenDialog(QDialog):
             self._on_cal(cmd[len("cal:"):])
         elif cmd.startswith("guest:"):
             self._on_guest(cmd[len("guest:"):])
+        elif cmd.startswith("find:") or cmd.startswith("ped:"):
+            self._on_find(cmd)
         elif cmd.startswith("share:"):
             self._on_share(cmd[len("share:"):])
         elif cmd.startswith("snap:save:"):
@@ -3280,6 +3360,70 @@ class GardenDialog(QDialog):
         if regrow:
             self.refresh()
         self._js("home", out)
+
+    # -- 1.28: chỗ lấp lánh (nhặt đồ), gánh hàng rong ----------------------------------
+
+    def _on_find(self, cmd: str) -> None:
+        """find:pick:<k>:<cảnh> — nhặt chỗ lấp lánh thứ k · ped:buy:<ô> — mua ở gánh hàng rong.
+        Python xét lại mọi thứ (lượt ôn hôm nay, chỗ đã nhặt, phiên hôm nay, giá, xu) rồi mới ghi."""
+        parts = cmd.split(":")
+        today = cal_today()
+        out: dict[str, Any] = {"ok": False}
+        try:
+            stats = _daily_stats()
+            reviews = int(stats.get("reviews") or 0)
+            wallet = STATE.load()
+            zones = list((wallet.get("home") or {}).get("zones") or [])
+            ev = EVENTS.load()
+            if parts[:2] == ["find", "pick"] and len(parts) == 4 and parts[2].isdigit():
+                res = finds.pick(ev, int(parts[2]), parts[3], reviews, zones, today)
+                gift = res["reward"] if res["set_done"] else None
+                if gift and gift not in core.FIND_ITEMS:
+                    raise finds.FindError("Quà của bộ này chưa có trong danh mục.")
+                EVENTS.save(ev)                       # ghi "đã nhặt" trước: lỗi ở bước sau không cho nhặt lại hai lần
+                wallet = STATE.find_reward(res["coins"], gift)
+                box = finds.box_view(ev, zones, today, {k: v["name"] for k, v in core.FIND_ITEMS.items()})
+                st = next(x for x in box["sets"] if x["scene"] == parts[3])
+                out = {"ok": True, "act": "pick", "k": int(parts[2]), "scene": parts[3],
+                       "item": finds.item_view(res["id"], ev, today), "new": res["new"], "coins": res["coins"],
+                       "set": {"name": st["name"], "n": st["n"], "total": st["total"], "done": res["set_done"],
+                               "reward": gift or "", "reward_name": core.CATALOG[gift]["name"] if gift else ""}}
+            elif parts[:2] == ["ped", "buy"] and len(parts) == 3:
+                if not finds.is_market(today):
+                    raise finds.FindError("Hôm nay gánh hàng không ghé — phiên sau: " +
+                                          event_core.short_date(finds.next_market(today), today) + ".")
+                goods = {g["slot"]: g for g in _ped_goods(wallet, ev, today)}
+                g = goods.get(parts[2])
+                if g is None:
+                    raise finds.FindError("Phiên này không có món đó.")
+                if g["bought"]:
+                    raise finds.FindError("Món này phiên này đã mua rồi.")
+                if g["kind"] == "seed":
+                    wallet = STATE.seed_buy_at(g["id"], g["now"])
+                else:
+                    wallet = STATE.buy_at(g["id"], g["now"])
+                ds = today.isoformat()
+                ev["ped"][ds] = sorted(set(ev["ped"].get(ds) or []) | {g["slot"]})
+                finds.trim(ev, today)
+                EVENTS.save(ev)
+                out = {"ok": True, "act": "buy", "slot": g["slot"], "id": g["id"], "kind": g["kind"], "name": g["name"],
+                       "paid": g["now"], "scene": g.get("scene", ""), "place": g.get("place", "")}
+            else:
+                return
+        except (finds.FindError, core.HomeError) as err:
+            out = {"ok": False, "msg": str(err)}
+            wallet = None
+        except Exception as err:
+            _warn("nhặt đồ / gánh hàng", err)
+            out = {"ok": False, "msg": "Không làm được (%s)." % type(err).__name__}
+            wallet = None
+        if wallet is not None:
+            out["wallet"] = wallet
+            try:
+                out["finds"] = finds_view(wallet, reviews, save=False)
+            except Exception as err:
+                _warn("nhặt đồ / gánh hàng", err)
+        self._js("finds", out)
 
     # -- 1.21: khách ghé vườn ------------------------------------------------------
 
