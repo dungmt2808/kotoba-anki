@@ -46,7 +46,7 @@ GROUP_NAMES = dict(GROUPS)
 #   need: cần một trong các món này đặt ở cảnh đó (StackChan đứng cạnh món đó); không có = không cần đồ
 #   pet: cần có thú nuôi đang ở trong nhà · hours: các khoảng giờ [từ, đến) · months: tháng (None = quanh năm)
 #   wx: any / dry (không mưa, không tuyết) / rain / snow / nosnow · w: trọng số khi chọn
-#   pose / prop / at: tư thế, đồ cầm tay, chỗ đứng so với món đồ (JS dùng: front / behind / on / side / window / spot)
+#   pose / prop / at: tư thế, đồ cầm tay, chỗ đứng so với món đồ (JS dùng: front / on / side / window / spot / roam…)
 ACTS: dict[str, dict[str, Any]] = {
     # ---------------------------------------------------------------- trong nhà
     "neru": {"name": "Ngủ", "ja": "寝る", "kana": "ねる", "vi": "ngủ", "where": "home", "need": ("beddo", "futon"),
@@ -63,12 +63,12 @@ ACTS: dict[str, dict[str, Any]] = {
               "need": ("suihanki",), "hours": ((6.0, 7.5), (11.0, 12.0), (17.0, 18.5)), "w": 16, "pose": "reach", "at": "side"},
     "ryouri": {"name": "Nấu ăn", "ja": "料理を作る", "kana": "りょうりをつくる", "vi": "nấu ăn", "where": "home",
                "need": ("nagashi", "irori"), "hours": ((6.5, 8.0), (11.0, 12.5), (17.5, 19.5)), "w": 30, "pose": "cook",
-               "prop": "ladle", "at": "front"},
+               "prop": "ladle", "at": "side"},
     "taberu": {"name": "Ăn cơm", "ja": "ご飯を食べる", "kana": "ごはんをたべる", "vi": "ăn cơm", "where": "home",
                "need": ("shokutaku", "kotatsu"), "hours": ((7.0, 8.5), (12.0, 13.0), (18.5, 20.0)), "w": 30, "pose": "eat",
-               "prop": "bowl", "at": "behind"},
+               "prop": "bowl", "at": "side"},
     "arau": {"name": "Rửa bát", "ja": "皿を洗う", "kana": "さらをあらう", "vi": "rửa bát", "where": "home",
-             "need": ("nagashi",), "hours": ((8.0, 9.0), (13.0, 13.8), (20.0, 20.8)), "w": 14, "pose": "cook", "at": "front"},
+             "need": ("nagashi",), "hours": ((8.0, 9.0), (13.0, 13.8), (20.0, 20.8)), "w": 14, "pose": "cook", "at": "side"},
     "oyatsu": {"name": "Ăn quà vặt", "ja": "おやつを食べる", "kana": "おやつをたべる", "vi": "ăn quà vặt", "where": "home",
                "need": ("reizouko",), "hours": ((10.0, 10.8), (15.0, 16.0), (20.5, 21.5)), "w": 12, "pose": "hold",
                "prop": "snack", "at": "side"},
@@ -85,7 +85,7 @@ ACTS: dict[str, dict[str, Any]] = {
     "shinbun": {"name": "Đọc báo", "ja": "新聞を読む", "kana": "しんぶんをよむ", "vi": "đọc báo", "where": "home",
                 "hours": ((6.5, 9.0),), "w": 8, "pose": "read", "prop": "paper", "at": "spot"},
     "terebi": {"name": "Xem TV", "ja": "テレビを見る", "kana": "テレビをみる", "vi": "xem ti vi", "where": "home",
-               "need": ("tv",), "hours": ((12.0, 13.5), (19.0, 22.5)), "w": 16, "pose": "sit", "at": "front"},
+               "need": ("tv",), "hours": ((12.0, 13.5), (19.0, 22.5)), "w": 16, "pose": "sit", "at": "side"},
     "rajio": {"name": "Nghe radio", "ja": "ラジオを聞く", "kana": "ラジオをきく", "vi": "nghe radio", "where": "home",
               "need": ("radio",), "hours": ((6.5, 9.0), (15.0, 18.0)), "w": 12, "pose": "sit", "at": "side"},
     "gakki": {"name": "Chơi đàn", "ja": "楽器を弾く", "kana": "がっきをひく", "vi": "chơi nhạc cụ", "where": "home",
@@ -97,7 +97,7 @@ ACTS: dict[str, dict[str, Any]] = {
            "need": ("irori",), "hours": ((19.5, 22.5), (5.5, 6.5)), "w": 14, "pose": "sit", "at": "side"},
     "kotatsu": {"name": "Ngồi bàn sưởi", "ja": "こたつに入る", "kana": "こたつにはいる", "vi": "ngồi vào bàn sưởi kotatsu",
                 "where": "home", "need": ("kotatsu",), "hours": ((15.0, 17.0), (20.0, 22.5)), "months": COLD, "w": 16,
-                "pose": "eat", "prop": "mikan", "at": "behind"},
+                "pose": "eat", "prop": "mikan", "at": "side"},
     "hirune": {"name": "Ngủ trưa", "ja": "昼寝をする", "kana": "ひるねをする", "vi": "ngủ trưa", "where": "home",
                "need": ("futon", "beddo", "dakimakura", "rug", "kotatsu"), "hours": ((13.0, 14.5),), "w": 18, "pose": "sleep",
                "at": "on"},
@@ -207,7 +207,7 @@ ACTS: dict[str, dict[str, Any]] = {
 ORDER = list(ACTS)
 POSES = ("stand", "walk", "sit", "sleep", "stretch", "reach", "hold", "cook", "eat", "read", "sweep", "pray", "wave",
          "bath", "swim")
-ATS = ("front", "behind", "on", "side", "window", "spot", "roam", "pet", "sea", "shore", "bath")
+ATS = ("front", "on", "side", "window", "spot", "roam", "pet", "sea", "shore", "bath")
 for _k, _a in ACTS.items():
     assert _a["pose"] in POSES and _a["at"] in ATS and _a.get("wx", "any") in WX, _k
     assert _a["where"] in ("home", "yard", "out") or _a["where"] in ZONES, _k

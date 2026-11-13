@@ -2824,17 +2824,26 @@ var GardenHome = (function () {
   // 1.21: cùng lớp với thú nuôi là khách ghé vườn (guests.js) — tắt "Thú nuôi, khách trên sân" thì ẩn cả hai
   function petsFor(sceneName, now, st, opts) {
     if (!isOpen && UIget("pets") === "off") { return []; }
-    let list = typeof GardenPets !== "undefined" ? GardenPets.place(H.data(), sceneName, now, st) : [];
+    let list = typeof GardenPets !== "undefined" ? GardenPets.place(H.data(), sceneName, now, st, (ids) => spotsFor(sceneName, ids)) : [];
     if (typeof GardenGuests !== "undefined" && !(opts && opts.noGuests)) {
       const g = GardenGuests.place(sceneName, now, st, { spots: (ids) => spotsFor(sceneName, ids), seen: !!(opts && opts.seen) });
       if (g.length) { list = list.concat(g).sort((a, b) => a.base - b.base); }
     }
+    const lf = opts && opts.noGuests ? [] : lifeFor(sceneName, now, st, opts);       // 1.30: StackChan sinh hoạt
+    if (lf.length) { list = list.concat(lf).sort((a, b) => a.base - b.base); }
     return list;
+  }
+  // 1.30: StackChan đang sinh hoạt ở cảnh / gian này (life.js) — xếp lớp với đồ theo chân đứng như thú nuôi
+  function lifeFor(sceneName, now, st, opts) {
+    if (typeof GardenLife === "undefined" || (!isOpen && UIget("pets") === "off")) { return []; }
+    if (isOpen && placing) { return []; }               // đang đặt đồ: không che ô
+    return GardenLife.place(sceneName, now, st, { spots: (ids, sc) => spotsFor(sc || sceneName, ids), seen: !!(opts && opts.seen) });
   }
   function drawPetsBefore(ctx, S, ox, oy, list, state, base, now) {
     while (state.i < list.length && (base === null || list[state.i].base <= base)) {
       const e = list[state.i++];
-      if (e.guest) { GardenGuests.draw(ctx, S, ox, oy, e, now); } else { GardenPets.draw(ctx, S, ox, oy, e, now); }
+      if (e.life) { GardenLife.draw(ctx, S, ox, oy, e, now); }
+      else if (e.guest) { GardenGuests.draw(ctx, S, ox, oy, e, now); } else { GardenPets.draw(ctx, S, ox, oy, e, now); }
     }
   }
   // chỗ các món đồ ở cảnh (toạ độ nghệ thuật) để khách đứng / đậu cạnh món mình thích
@@ -2844,6 +2853,17 @@ var GardenHome = (function () {
       const b = itemBox(e, sc);
       return b ? { id: e.id, cx: b.x + b.w / 2, top: b.y, bottom: b.y + b.h, w: b.w, left: b.x, right: b.x + b.w, cell: e.x + "," + e.y } : null;
     }).filter(Boolean);
+  }
+  // 1.30: chỗ các món đồ trong cả nhà (toạ độ cả nhà 3 gian) — thú trong nhà tìm chỗ ưa thích
+  function houseSpots(ids) {
+    const rooms = homeState().rooms || [];
+    let out = [];
+    ["kitchen", "room", "bedroom"].forEach((k) => {
+      if (k !== "room" && rooms.indexOf(k) < 0) { return; }
+      const dx = HOUSE3.X[k];
+      out = out.concat(spotsFor(k, ids).filter((sp) => sp.bottom >= ROOM.FLOOR).map((sp) => Object.assign({}, sp, { cx: sp.cx + dx, left: sp.left + dx, right: sp.right + dx })));
+    });
+    return out;
   }
   function guestsTop(ctx, S, ox, oy, sceneName, now, st, opts) {
     if (typeof GardenGuests === "undefined" || (opts && (opts.noGuests || opts.noPets)) || (!isOpen && UIget("pets") === "off")) { return; }
@@ -3043,7 +3063,7 @@ var GardenHome = (function () {
       .concat(all.filter((e) => (item(e.id) || {}).place === "rug"))
       .concat(all.filter((e) => ["floor", undefined].indexOf((item(e.id) || {}).place) >= 0));
     drawRoomWear(ctx, S, ox, oy, now, stR, opts && opts.wear);
-    const pets = opts && opts.noPets ? [] : petsFor("room", now, stR, opts), pst = { i: 0 };
+    const pets = opts && opts.noPets ? (opts.life ? lifeFor("room", now, stR, opts) : []) : petsFor("room", now, stR, opts), pst = { i: 0 };
     order.forEach((e) => {
       const ghost = placing && placing.index === e.index && placing.scene === "room";
       const pl = (item(e.id) || {}).place;
@@ -3083,10 +3103,14 @@ var GardenHome = (function () {
     const order = all.filter((e) => (item(e.id) || {}).place === "wall")
       .concat(all.filter((e) => (item(e.id) || {}).place === "rug"))
       .concat(all.filter((e) => ["floor", undefined].indexOf((item(e.id) || {}).place) >= 0));
+    const lf = !opts.noPets || opts.life ? lifeFor(kind, now, stR, opts) : [], pst = { i: 0 };     // 1.30
     order.forEach((e) => {
       const ghost = placing && placing.index === e.index && placing.scene === kind;
+      const pl = (item(e.id) || {}).place;
+      if (pl !== "wall" && pl !== "rug") { drawPetsBefore(ctx, S, ox, oy, lf, pst, ROOM.FLOOR + e.y * T - 1, now); }
       drawItem(ctx, S, ox, oy, e, kind, now, tod, ghost ? 0.3 : undefined);
     });
+    drawPetsBefore(ctx, S, ox, oy, lf, pst, null, now);
     drawParts(ctx, S, ox, oy, kind);
     roomNight(ctx, S, ox, oy, now, W, tod, stR, opts, L0);
     if (opts.overlay) { opts.overlay(ctx, S, ox, oy); }
@@ -3123,7 +3147,8 @@ var GardenHome = (function () {
     ["kitchen", "room", "bedroom"].forEach((k) => {
       const x = HOUSE3.X[k];
       if (isOpen3(k)) {
-        drawRoom(ctx, S, ox + x, oy, now, { kind: k, noPets: true, noNight: true, keepLights: true, lightDx: x, style: opts.style });
+        drawRoom(ctx, S, ox + x, oy, now, { kind: k, noPets: true, noNight: true, keepLights: true, lightDx: x, style: opts.style,
+          life: !!opts.life, seen: !!opts.seen });
       } else { lockedRoom(ctx, S, ox + x, oy, k, opts); }
     });
     [144, 308].forEach((x) => {
@@ -3131,7 +3156,7 @@ var GardenHome = (function () {
       else { box(ctx, ox + x, oy, HOUSE3.POST, ROOM.H, P.B, S); box(ctx, ox + x, oy + 5, HOUSE3.POST, 1, P.k, S); }
     });
     if (!opts.noPets && (isOpen || UIget("pets") !== "off") && typeof GardenPets !== "undefined") {
-      GardenPets.place(H.data(), "house", now, stR).forEach((e) => GardenPets.draw(ctx, S, ox, oy, e, now));
+      GardenPets.place(H.data(), "house", now, stR, houseSpots).forEach((e) => GardenPets.draw(ctx, S, ox, oy, e, now));
     }
     if (stR && typeof GardenSky !== "undefined") {
       drawNight(ctx, S, ox, oy, 0, HOUSE3.W, ROOM.H, Object.assign({}, stR, { light: 0.08 + stR.light * 0.8 }));
@@ -3298,6 +3323,12 @@ var GardenHome = (function () {
     const r = cv.getBoundingClientRect();
     return GardenPets.at(mainScene(), (ev.clientX - r.left) / mainView.S - mainView.ox, (ev.clientY - r.top) / mainView.S - (mainView.oy || 0));
   }
+  function mainLifeAt(ev) {       // 1.30: bấm trúng StackChan đang sinh hoạt
+    const cv = $("kb-yard");
+    if (!cv || !mainView || typeof GardenLife === "undefined") { return false; }
+    const r = cv.getBoundingClientRect();
+    return GardenLife.at(mainScene(), (ev.clientX - r.left) / mainView.S - mainView.ox, (ev.clientY - r.top) / mainView.S - (mainView.oy || 0));
+  }
   function mainFindAt(ev) {
     const cv = $("kb-yard");
     if (!cv || !mainView || mainView.house || typeof GardenFinds === "undefined") { return null; }
@@ -3408,7 +3439,7 @@ var GardenHome = (function () {
       const VW = Math.ceil(cw / Sh), VH = Math.ceil(hgt / Sh);
       const hx = Math.floor((cw / Sh - HOUSE3.W) / 2), hy = Math.max(-12, Math.floor(hgt / Sh - ROOM.H));
       mainView = { S: Sh, ox: hx, oy: hy, house: true };
-      drawHouseScene(ctx, Sh, VW, VH, hx, hy, now, {});
+      drawHouseScene(ctx, Sh, VW, VH, hx, hy, now, { life: true, seen: !document.hidden });
     } else {
       mainView = { S: S, ox: ox, oy: pad };
       drawOutdoor(ctx, S, ox, pad, now, mainScene(), { bgFrom: -ox - 1, bgTo: cw / S - ox + 1, seen: !document.hidden, padTop: pad });
@@ -3509,7 +3540,7 @@ var GardenHome = (function () {
   }
   function photoScene(ctx, S, ox, oy, sc, now, wide) {
     if (isOut(sc)) { drawOutdoor(ctx, S, ox, oy, now, sc, wide ? { bgFrom: -ox - 1, bgTo: wide - ox + 1, photo: true } : { photo: true }); }
-    else if (sc === "house") { drawHouse3(ctx, S, ox, oy, now, {}); }        // 1.24: ảnh nguyên nhà
+    else if (sc === "house") { drawHouse3(ctx, S, ox, oy, now, { life: true }); }        // 1.24: ảnh nguyên nhà (1.30: có StackChan)
     else { drawRoom(ctx, S, ox, oy, now, { kind: sc }); }
     lights.length = 0;
   }
@@ -3979,6 +4010,24 @@ var GardenHome = (function () {
     if (GardenFix.has(group, id)) { b.title = "Đã sửa"; }
     row.appendChild(b);
   }
+  // 1.30: món đồ / vùng này cho StackChan làm việc gì (data.life.defs) → dòng nhỏ trên thẻ cửa hàng
+  let lifeSig = null, lifeByItem = {}, lifeByZone = {};
+  function lifeIndex() {
+    const lf = H && H.data() && H.data().life, defs = (lf && lf.defs) || null;
+    if (defs === lifeSig) { return; }
+    lifeSig = defs; lifeByItem = {}; lifeByZone = {};
+    Object.keys(defs || {}).forEach((k) => {
+      const d = defs[k];
+      (d.need || []).forEach((i) => { (lifeByItem[i] = lifeByItem[i] || []).push(d.name); });
+      if (!(d.need || []).length && ZONE_IDS.indexOf(d.where) >= 0) { (lifeByZone[d.where] = lifeByZone[d.where] || []).push(d.name); }
+    });
+  }
+  function lifeLine(names) {
+    if (!names || !names.length) { return null; }
+    const row = GardenIcons.fill(el("div", "kb-h-desc kb-h-life"), "[i:stack] " + names.slice(0, 3).join(" · ") + (names.length > 3 ? "…" : ""));
+    row.title = "StackChan: " + names.join(", ") + " (đúng giờ thì tự làm)";
+    return row;
+  }
   function itemCard(list, it, opts) {
     const home = homeState(), money = coins(), cat = catalog();
     const owned = home.owned[it.id] || 0;
@@ -3992,6 +4041,7 @@ var GardenHome = (function () {
     if (it.new && !owned) { nm.appendChild(el("span", "kb-h-newtag", "Mới")); }
     info.appendChild(nm);
     if (it.desc) { info.appendChild(el("div", "kb-h-desc", "✦ " + it.desc)); }
+    if (!opts.inv) { lifeIndex(); const ll = lifeLine(lifeByItem[it.id]); if (ll) { info.appendChild(ll); } }
     if (!opts.inv && !it.custom) {
       const SETN = { yard: "Sân vườn", beach: "Bãi biển", shrine: "Đền trên núi", festival: "Phố lễ hội", bamboo: "Rừng tre", onsen: "Suối nước nóng", station: "Ga làng quê" };
       const label = it.rare ? "Quà rương nhiệm vụ" : it.only === "set" ? "Quà đủ bộ " + (SETN[it.set] || "") + " (Hộp sưu tầm)" :
@@ -4120,6 +4170,7 @@ var GardenHome = (function () {
         if (z.new && !open) { zn.appendChild(el("span", "kb-h-newtag", "Mới")); }
         info.appendChild(zn);
         info.appendChild(el("div", "kb-h-desc", ZONE_NOTE[z.id] || ""));
+        { lifeIndex(); const ll = lifeLine(lifeByZone[z.id]); if (ll) { info.appendChild(ll); } }
         if (open) {
           info.appendChild(btn(scene === z.id ? "Đang ở đây" : "Đến " + z.name, "kb-h-buy", () => setScene(z.id), scene === z.id));
         } else if (isNext) {
@@ -4556,8 +4607,11 @@ var GardenHome = (function () {
   function albumChips(list) {
     const row = el("div", "kb-h-btns kb-album-chips");
     const g = guestData(), f = H && H.data() && H.data().finds;
-    [["guest", "Khách ghé vườn" + (g ? " · " + g.met + "/" + g.total : "")],
-      ["box", "Hộp sưu tầm" + (f && f.box ? " · " + f.box.found + "/" + f.box.total : "")]].forEach(([k, label]) => {
+    const lf = H && H.data() && H.data().life;
+    const chips = [["guest", "Khách ghé vườn" + (g ? " · " + g.met + "/" + g.total : "")],
+      ["box", "Hộp sưu tầm" + (f && f.box ? " · " + f.box.found + "/" + f.box.total : "")]];
+    if (typeof GardenLife !== "undefined") { chips.push(["life", "Sinh hoạt" + (lf ? " · " + lf.seen + "/" + lf.total : "")]); }   // 1.30
+    chips.forEach(([k, label]) => {
       const b = btn(label, "kb-btn-small kb-album-chip" + (albumView === k ? " is-on" : ""), () => { albumView = k; renderList(); });
       b.setAttribute("data-album", k);
       b.setAttribute("aria-pressed", albumView === k ? "true" : "false");
@@ -4571,6 +4625,7 @@ var GardenHome = (function () {
       GardenFinds.box(list, boxFocus); boxFocus = null;
       return;
     }
+    if (albumView === "life" && typeof GardenLife !== "undefined") { GardenLife.book(list); return; }
     renderGuests(list);
   }
   function renderGuests(list) {
@@ -5257,6 +5312,7 @@ var GardenHome = (function () {
       $("kb-yard").addEventListener("click", (ev) => {
         const fh = mainFindAt(ev);
         if (fh) { GardenFinds.hit(fh, mainScene(), ev); return; }       // 1.28: chỗ lấp lánh / gánh hàng rong
+        if (mainLifeAt(ev)) { ev.stopPropagation(); GardenLife.poke(ev); return; }       // 1.30: StackChan đang sinh hoạt
         const pid = mainPetAt(ev);
         if (pid) {
           if (typeof GardenGames !== "undefined") { GardenGames.close(); }
@@ -5294,7 +5350,9 @@ var GardenHome = (function () {
         const hit = mainItemAt(ev), pid = mainPetAt(ev), gid = pid ? null : mainGuestAt(ev);
         const cv = $("kb-yard");
         const pv = pid ? (moreView().pets || []).find((p) => p.id === pid) : null;
-        if (pv) { cv.title = pv.name + " · " + petStateText(pv) + " (bấm để chăm)"; cv.style.cursor = "pointer"; }
+        const lw = !pid && mainLifeAt(ev) ? GardenLife.where() : null;
+        if (lw) { cv.title = "StackChan: " + lw.name + " (bấm để xem)"; cv.style.cursor = "pointer"; }
+        else if (pv) { cv.title = pv.name + " · " + petStateText(pv) + " (bấm để chăm)"; cv.style.cursor = "pointer"; }
         else if (gid) { cv.title = (guestName(gid) || "Khách") + " ghé vườn (bấm để xem Album khách)"; cv.style.cursor = "pointer"; }
         else if (hit && hit.id === "mailbox") { cv.title = "Hòm thư: mở Báo (phím B)"; cv.style.cursor = "pointer"; }
         else if (mainView && mainView.house) {
@@ -5384,6 +5442,8 @@ var GardenHome = (function () {
     openGuests: function (id) { open(mainScene()); guestFocus = id || null; tab = "guest"; albumView = "guest"; renderList(); },
     // 1.28: mở Nhà ở tab Album → Hộp sưu tầm, cuộn tới bộ của cảnh sc
     openBox: function (sc) { open(mainScene() === "house" ? "yard" : mainScene()); tab = "guest"; albumView = "box"; boxFocus = sc || null; renderList(); },
+    // 1.30: mở Nhà ở tab Album → Sinh hoạt
+    openLife: function () { open(mainScene() === "house" ? "room" : mainScene()); tab = "guest"; albumView = "life"; renderList(); },
     showMain: showMain,
     icon: function (id, size) { return SPR[id] ? iconCanvas(SPR[id], size || 40) : null; },
     _state: () => ({ scene: scene, tab: tab, placing: placing, selected: selected, payWait: payWait, peekCode: peekCode }),

@@ -2054,3 +2054,26 @@ button { cursor: pointer; }
 @media (max-width: 760px) { .kb-box-grid { grid-template-columns: repeat(3, minmax(86px, 1fr)); } }
 .kb-h-card-only { background: #fff4e0; border-color: #b0651a; }        /* 1.28: quà Hộp sưu tầm / món gánh hàng rong */
 .kb-h-only { color: #9a5310; font-weight: 700; }
+
+/* ---- 1.30: sinh hoạt của StackChan (chip, thẻ, sổ) + Tường & sàn ---- */
+.kb-life-chip { gap: 5px; max-width: 190px; padding: 1px 7px; }
+.kb-life-chip[hidden] { display: none; }
+.kb-life-chip .kb-pi { margin: 0; }
+.kb-life-chip-t { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.kb-life-chip.is-away { background: #fff2b3; }
+.kb-ui-m-main.kb-ui-yard-hide .kb-life-chip { display: none !important; }
+.kb-yard-short .kb-life-chip { max-width: 130px; }
+@media (max-width: 860px) { .kb-life-chip-t { display: none; } }
+.kb-life-ico { flex: none; image-rendering: pixelated; background: #fffbe6; border: 2px solid #1b1b2f; }
+.kb-life-card .kb-life-ico { width: 78px; height: 54px; }
+.kb-life-btns { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.kb-life-btns .kb-btn { margin-left: 0; }
+.kb-life-grid { grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); }
+.kb-life-cell .kb-life-ico { width: 52px; height: 36px; border: 0; background: transparent; }
+.kb-h-life { color: #3a3a55; }
+.kb-h-life .kb-pi { width: 12px; height: 12px; margin-right: 4px; vertical-align: -1px; }
+.kb-life-name { font-size: 12px; font-weight: 700; line-height: 1.25; }
+.kb-life-hint { font-size: 10.5px; }
+.kb-h-swatch { width: 68px; height: 68px; background: #ffffff; }
+.kb-room-chips { margin-bottom: 4px; }
+.kb-decor-head .kb-h-desc { margin-top: 2px; }

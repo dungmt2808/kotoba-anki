@@ -1952,6 +1952,11 @@ def cal_day(ds: str) -> dict[str, Any]:
     except Exception as err:
         _warn("nhặt đồ", err)
         v["finds"] = []
+    try:      # 1.30: việc của StackChan thấy lần đầu hôm đó
+        v["life"] = ["%s (%s)" % (x["ja"], x["name"]) for x in life_core.new_between(LIFE.seen(), d, d)]
+    except Exception as err:
+        _warn("sinh hoạt", err)
+        v["life"] = []
     w = e.get("w")
     is_today = d == today
     v["w"] = None
@@ -2370,7 +2375,7 @@ class GardenDialog(QDialog):
             js=[
                 f"{WEB_BASE}/diag.js", f"{WEB_BASE}/prefs.js", f"{WEB_BASE}/fix.js", f"{WEB_BASE}/icons.js", f"{WEB_BASE}/sky.js", f"{WEB_BASE}/season.js", f"{WEB_BASE}/fx.js", f"{WEB_BASE}/music.js",
                 f"{WEB_BASE}/games.js", f"{WEB_BASE}/fields.js", f"{WEB_BASE}/season_art.js", f"{WEB_BASE}/rare_art.js", f"{WEB_BASE}/nha_art.js", f"{WEB_BASE}/pets.js", f"{WEB_BASE}/guests.js",
-                f"{WEB_BASE}/finds_art.js", f"{WEB_BASE}/finds.js", f"{WEB_BASE}/home.js", f"{WEB_BASE}/craft.js", f"{WEB_BASE}/paper.js", f"{WEB_BASE}/seeds.js",
+                f"{WEB_BASE}/finds_art.js", f"{WEB_BASE}/finds.js", f"{WEB_BASE}/life.js", f"{WEB_BASE}/home.js", f"{WEB_BASE}/craft.js", f"{WEB_BASE}/paper.js", f"{WEB_BASE}/seeds.js",
                 f"{WEB_BASE}/joy.js", f"{WEB_BASE}/ui.js", f"{WEB_BASE}/calendar.js", f"{WEB_BASE}/greet.js", f"{WEB_BASE}/tour.js", f"{WEB_BASE}/garden.js",
             ],
             context=self,
