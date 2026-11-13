@@ -1,0 +1,209 @@
+{
+  "reviewed_commit": "6021c579b1062f7e6c707a6e55a9d7feb7a8fa00",
+  "complete": true,
+  "scripts": [
+    {
+      "script": "e2e.js",
+      "summary": "KẾT QUẢ: 23/24 đạt",
+      "failures": [
+        "  ✗ nhật ký lỗi của add-on trống: [{\"kind\":\"Python\",\"where\":\"giọng đọc Gemini cho câu chép\",\"msg\":\"AIError: Không kết nối được tới Gemini (kiểm tra mạng): Tunnel connection failed: 403 Forbidden\",\"detail\":\"Traceback (most recent call last):\\n  File \\\"/tmp/kotoba-audit-latest-baseline/addons21/kotoba_batake/__init__.py\\\", line 645, in done\\n    res = fut.result()\\n  File \\\"/usr/lib/python3.13/concurrent/futures/_base.py\\\", line 449"
+      ],
+      "errors": [],
+      "provider_stub_summary": "KẾT QUẢ: 24/24 đạt"
+    },
+    {
+      "script": "e2e_tour.js",
+      "summary": "KẾT QUẢ: 12/12 đạt",
+      "failures": [],
+      "errors": [],
+      "provider_stub_summary": null
+    },
+    {
+      "script": "e2e_114.js",
+      "summary": "KẾT QUẢ: 34/34 đạt",
+      "failures": [],
+      "errors": [],
+      "provider_stub_summary": null
+    },
+    {
+      "script": "e2e_115.js",
+      "summary": "KẾT QUẢ: 21/21 đạt",
+      "failures": [],
+      "errors": [],
+      "provider_stub_summary": null
+    },
+    {
+      "script": "e2e_116.js",
+      "summary": "KẾT QUẢ: 15/15 đạt",
+      "failures": [],
+      "errors": [],
+      "provider_stub_summary": null
+    },
+    {
+      "script": "e2e_117.js",
+      "summary": "KẾT QUẢ: 55/55 đạt",
+      "failures": [],
+      "errors": [],
+      "provider_stub_summary": null
+    },
+    {
+      "script": "e2e_118.js",
+      "summary": "KẾT QUẢ: 29/29 đạt",
+      "failures": [],
+      "errors": [],
+      "provider_stub_summary": null
+    },
+    {
+      "script": "e2e_119.js",
+      "summary": "KẾT QUẢ: 55/55 đạt",
+      "failures": [],
+      "errors": [],
+      "provider_stub_summary": null
+    },
+    {
+      "script": "e2e_120.js",
+      "summary": null,
+      "failures": [],
+      "errors": [
+        "LỖI KỊCH BẢN: Error: TypeError: Cannot read properties of null (reading 'textContent')"
+      ],
+      "provider_stub_summary": "KẾT QUẢ: 103/103"
+    },
+    {
+      "script": "e2e_121.js",
+      "summary": "KẾT QUẢ: 46/46",
+      "failures": [],
+      "errors": [],
+      "provider_stub_summary": null
+    },
+    {
+      "script": "e2e_122.js",
+      "summary": "KẾT QUẢ: 64/64",
+      "failures": [],
+      "errors": [],
+      "provider_stub_summary": null
+    },
+    {
+      "script": "e2e_1223.js",
+      "summary": "KẾT QUẢ: 49/49",
+      "failures": [],
+      "errors": [],
+      "provider_stub_summary": null
+    },
+    {
+      "script": "e2e_1226.js",
+      "summary": "KẾT QUẢ: 40/40 đạt",
+      "failures": [],
+      "errors": [],
+      "provider_stub_summary": null
+    },
+    {
+      "script": "e2e_1228.js",
+      "summary": "KẾT QUẢ: 26/26 đạt",
+      "failures": [],
+      "errors": [],
+      "provider_stub_summary": null
+    },
+    {
+      "script": "e2e_123.js",
+      "summary": "KẾT QUẢ: 63/65 đạt",
+      "failures": [
+        "  ✗ nhật ký lỗi add-on trống: giọng đọc Gemini cho câu chép: AIError: Không kết nối được tới Gemini (kiểm tra mạng): Tunnel connection failed: 403 Forbidden",
+        "  ✗ nhật ký lỗi add-on vẫn trống sau phần Màn chính: giọng đọc Gemini cho câu chép: AIError: Không kết nối được tới Gemini (kiểm tra mạng): Tunnel connection failed: 403 Forbidden"
+      ],
+      "errors": [],
+      "provider_stub_summary": "KẾT QUẢ: 65/65 đạt"
+    },
+    {
+      "script": "e2e_124.js",
+      "summary": "KẾT QUẢ: 23/23 đạt",
+      "failures": [],
+      "errors": [],
+      "provider_stub_summary": null
+    },
+    {
+      "script": "e2e_125.js",
+      "summary": "KẾT QUẢ: 30/30 đạt",
+      "failures": [],
+      "errors": [],
+      "provider_stub_summary": null
+    },
+    {
+      "script": "e2e_1251.js",
+      "summary": "KẾT QUẢ: 48/48 đạt",
+      "failures": [],
+      "errors": [],
+      "provider_stub_summary": null
+    },
+    {
+      "script": "e2e_1253.js",
+      "summary": "KẾT QUẢ: 39/39 đạt",
+      "failures": [],
+      "errors": [],
+      "provider_stub_summary": null
+    },
+    {
+      "script": "e2e_1255.js",
+      "summary": "KẾT QUẢ: 48/48 đạt",
+      "failures": [],
+      "errors": [],
+      "provider_stub_summary": null
+    },
+    {
+      "script": "e2e_1258.js",
+      "summary": "KẾT QUẢ: 25/25 đạt",
+      "failures": [],
+      "errors": [],
+      "provider_stub_summary": null
+    },
+    {
+      "script": "e2e_1259.js",
+      "summary": "KẾT QUẢ: 36/36",
+      "failures": [],
+      "errors": [],
+      "provider_stub_summary": null
+    },
+    {
+      "script": "e2e_126.js",
+      "summary": "KẾT QUẢ: 39/39",
+      "failures": [],
+      "errors": [],
+      "provider_stub_summary": null
+    },
+    {
+      "script": "e2e_1261.js",
+      "summary": "KẾT QUẢ: 41/41",
+      "failures": [],
+      "errors": [],
+      "provider_stub_summary": null
+    },
+    {
+      "script": "e2e_kit23.js",
+      "summary": "KẾT QUẢ: 10/10 đạt",
+      "failures": [],
+      "errors": [],
+      "provider_stub_summary": null
+    },
+    {
+      "script": "audit_edge.js",
+      "summary": "KẾT QUẢ: 58/58 đạt",
+      "failures": [],
+      "errors": [],
+      "provider_stub_summary": null
+    },
+    {
+      "script": "audit_full.js",
+      "summary": "KẾT QUẢ: 181/181",
+      "failures": [],
+      "errors": [],
+      "provider_stub_summary": null
+    },
+    {
+      "script": "audit.js",
+      "summary": null,
+      "failures": [],
+      "errors": [],
+      "provider_stub_summary": null
+    }
+  ]
+}
