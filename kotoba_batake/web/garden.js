@@ -239,13 +239,35 @@ var Garden = (function () {
       var lart = plantArt({ v: legendV, stage: st });
       drawSprite(ctx, lart.rows, 0, 0, 2, lart.pal);
       var label = document.createElement("span");
+      label.className = "kb-legend-name";
       label.textContent = names[st];
+      item.title = names[st] + ": " + (counts[st] || 0) + " cây";
       var count = document.createElement("span");
       count.className = "kb-legend-count";
       count.textContent = String(counts[st] || 0);
       item.appendChild(c); item.appendChild(label); item.appendChild(count);
       box.appendChild(item);
     }
+    fitLegendRow();
+  }
+  // 1.30.2: hàng dưới cảnh (nút của cảnh · chú thích ruộng · Hôm nay · chuỗi) vừa một dòng: chật thì chú thích chỉ còn hình + số,
+  // rồi chip StackChan chỉ còn hình; vẫn chật (cửa sổ rất hẹp) thì mới xuống dòng
+  function fitLegendRow() {
+    var row = document.querySelector(".kb-legend-row"), lg = $("kb-legend"), sb = $("kb-scene-bar");
+    if (!row || !lg || !row.offsetParent) { return; }
+    var wrapped = function () {
+      var top = null, out = false;
+      Array.prototype.forEach.call(row.children, function (k) {
+        if (!k.offsetParent || !k.offsetHeight) { return; }
+        var t = k.getBoundingClientRect().top;
+        if (top === null) { top = t; } else if (Math.abs(t - top) > 6) { out = true; }
+      });
+      return out;
+    };
+    lg.classList.remove("is-compact"); if (sb) { sb.classList.remove("is-compact"); }
+    if (!wrapped()) { return; }
+    lg.classList.add("is-compact");
+    if (wrapped() && sb) { sb.classList.add("is-compact"); }
   }
 
   function drawHeader() {
@@ -278,7 +300,7 @@ var Garden = (function () {
       note.textContent = "Deck này chưa có thẻ nào để gieo.";
     } else if (st.shown < st.total_notes) {
       note.textContent = "Đang hiện " + st.shown + "/" + st.total_notes + " từ (ưu tiên từ đã học).";
-      note.title = "Muốn hiện thêm: tăng max_plants ở Tools → Add-ons → ことば畑 → Config.";
+      note.title = "Muốn hiện thêm cây: Tools → Add-ons → ことば畑 → Config, tăng số max_plants.";
     } else {
       note.textContent = "";
     }
@@ -627,6 +649,33 @@ var Garden = (function () {
     $("kb-today-fill").style.width = (goal ? Math.min(100, Math.round(t.reviews / goal * 100)) : 100) + "%";
     box.className = "kb-today" + (goal && t.reviews >= goal ? " kb-today-done" : "");
     fitToday();
+    syncTodayTog();
+  }
+  // 1.30.1: thu gọn bảng Hôm nay (người dùng: "có nút thu gọn bảng thông báo, tránh chèn giao diện"); 1.30.2: nút "Hôm nay ▴"
+  // ở hàng ngay dưới cảnh, phía phải (ngay dưới bảng); thu gọn thì nút ghi "Hôm nay 18/30 ▾" + chấm đỏ khi có báo mới / quà
+  // nhiệm vụ / bài sửa chờ xem. Lưu ở ⚙ Giao diện (ui.today, theo máy).
+  function todayMini() { return typeof GardenUI !== "undefined" && GardenUI.glob && GardenUI.glob("today") === "mini"; }
+  function syncTodayTog() {
+    var b = $("kb-today-tog");
+    if (!b) { return; }
+    var mini = todayMini(), t = data && data.today;
+    var lab = b.querySelector(".kb-today-tog-t"), arr = b.querySelector(".kb-today-tog-a");
+    var txt = "Hôm nay" + (mini && t ? " " + t.reviews + (t.goal ? "/" + t.goal : "") : "");
+    if (lab && lab.textContent !== txt) { lab.textContent = txt; }
+    if (arr && arr.textContent !== (mini ? "▾" : "▴")) { arr.textContent = mini ? "▾" : "▴"; }
+    var has = function (id, cls) { var e = $(id); return !!(e && !e.hidden && e.classList.contains(cls)); };
+    var news = has("kb-paper-btn", "kb-paper-new") || has("kb-quest", "kb-quest-all") || has("kb-cal-write", "is-new");
+    b.classList.toggle("is-mini", mini);
+    b.classList.toggle("is-new", mini && news);
+    var tt = mini ? "Hiện bảng Hôm nay" + (t ? " · đã ôn " + t.reviews + (t.goal ? "/" + t.goal : "") + " lượt" : "") + (news ? " · có việc mới" : "") : "Thu gọn bảng Hôm nay";
+    if (b.title !== tt) { b.title = tt; b.setAttribute("aria-label", tt); }
+    b.setAttribute("aria-pressed", mini ? "true" : "false");
+  }
+  function toggleTodayMini() {
+    if (typeof GardenUI === "undefined" || !GardenUI.setGlob) { return; }
+    GardenUI.setGlob("today", todayMini() ? "open" : "mini");
+    syncTodayTog();
+    if (!todayMini()) { setTimeout(fitToday, 0); }
   }
   // chuỗi ngày dài ("Hôm nay 30/30 lượt ✓ · 120 ngày liền") không vừa một dòng: đưa "N ngày liền" xuống dòng thay vì cắt "…"
   var fitPending = false;
@@ -949,7 +998,7 @@ var Garden = (function () {
     var blocked = fxOk && GardenFX.soundAllowed && !GardenFX.soundAllowed();
     sfxOn.checked = fxOk && !blocked ? !GardenFX.muted() : false;     // 1.17: bị tắt trong config thì không hiện "đã bật"
     sfxOn.disabled = blocked;
-    sfxOn.parentNode.title = blocked ? "Đang tắt trong Tools → Add-ons → Config (sound = false)" : "";
+    sfxOn.parentNode.title = blocked ? "Âm thanh đang tắt ở Tools → Add-ons → ことば畑 → Config (mục sound)" : "";
     if (typeof GardenMusic !== "undefined") {
       musicOn.checked = GardenMusic.enabled();
       vol.value = String(Math.round(GardenMusic.volume() * 100));
@@ -965,7 +1014,7 @@ var Garden = (function () {
     if (!el || !data) { return; }
     var m = data.wallet && data.wallet.mobile;
     if (data.mobile_on === false) {
-      el.textContent = "Đang tắt (config mobile_coins = false).";
+      el.textContent = "Đang tắt (Tools → Add-ons → ことば畑 → Config, mục mobile_coins).";
     } else if (!m) {
       el.textContent = "Bắt đầu tính từ bây giờ.";
     } else if (m.total && m.total.reviews > 0) {
@@ -1335,6 +1384,21 @@ var Garden = (function () {
     });
     $("kb-pin-x").addEventListener("click", hidePin);
     $("kb-quest").addEventListener("click", function (e) { e.stopPropagation(); toggleQuests(); });
+    var mailB = $("kb-mail");
+    if (mailB) { mailB.addEventListener("click", function (e) { e.stopPropagation(); send("app:mail"); }); }
+    var tog = $("kb-today-tog");
+    if (tog) {
+      tog.addEventListener("mousedown", function (e) { e.preventDefault(); });
+      tog.addEventListener("click", function (e) { e.stopPropagation(); toggleTodayMini(); });
+      setInterval(function () { syncTodayTog(); fitLegendRow(); }, 1000);   // báo mới / quà nhiệm vụ, tên việc của StackChan đổi lúc khác
+      window.addEventListener("resize", fitLegendRow);
+      window.addEventListener("kb-ui-change", syncTodayTog);      // đổi ở ⚙ Giao diện
+    }
+    var hide = $("kb-today-hide");          // nút "–" ngay trên bảng: thu gọn (mở lại bằng nút ở góc dải cảnh)
+    if (hide) {
+      hide.addEventListener("mousedown", function (e) { e.preventDefault(); });
+      hide.addEventListener("click", function (e) { e.stopPropagation(); if (!todayMini()) { toggleTodayMini(); } });
+    }
     $("kb-paper-btn").addEventListener("click", function (e) { e.stopPropagation(); openPaper(false); });
     $("kb-fields-btn").addEventListener("click", function (e) { e.stopPropagation(); openFields($("kb-fields-btn").getAttribute("data-mid")); });
     $("kb-fields-open").addEventListener("click", function () { $("kb-sound-pop").hidden = true; openFields(null); });
@@ -1604,7 +1668,7 @@ var Garden = (function () {
     // 1.25.7: góp ý hình đã lưu ra file (vườn không đổi)
     baseSuggested: function (r) {
       if (typeof GardenCraft !== "undefined" && GardenCraft.baseSuggested) { GardenCraft.baseSuggested(r); }
-      if (r && r.ok) { toast("Đã lưu " + r.file + " · gửi file này cho người làm add-on."); }
+      if (r && r.ok) { toast("Đã lưu " + r.file + " · gửi file này qua email maitrongdung10@gmail.com", null, 10000); }
     },
     // 1.25.5 (admin): bản sửa hình gốc vừa lưu / bỏ / nhập
     fixes: function (p) {

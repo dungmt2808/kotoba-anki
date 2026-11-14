@@ -95,7 +95,7 @@ result = {"today": today.isoformat(), "yday": (today - datetime.timedelta(days=1
       hud: document.getElementById("kb-c-hud") ? document.getElementById("kb-c-hud").textContent : "", legend: document.querySelector(".kb-cal-legend").textContent };`);
   ok(cal.text && /Vé giữ chuỗi 0\/2/.test(cal.text) && cal.btn === 'Mua · 150 xu' && !cal.dis, 'Lịch hoa: "' + (cal.text || '').slice(0, 40) + '…" + nút "' + cal.btn + '"');
   ok(cal.fz && /dùng vé giữ chuỗi/.test(cal.title) && /dùng vé/.test(cal.legend), 'ô hôm qua có bông tuyết, chú thích "' + cal.title + '"');
-  ok(/Chuỗi\s*3 ngày/.test(cal.hud), 'thanh dưới: ' + cal.hud.replace(/\s+/g, ' ').trim());
+  ok(/Ôn liền\s*3 ngày/.test(cal.hud), 'thanh dưới (1.30.1: "Ôn liền" thay "Chuỗi"): ' + cal.hud.replace(/\s+/g, ' ').trim());
   await page.shot(SHOTS + '/1259_02_lich_hoa_ve.png');
   await js('document.querySelector(".kb-cal-freeze button").click(); return 1;');
   await waitFor('/Vé giữ chuỗi 1\\/2/.test(document.querySelector(".kb-cal-freeze").textContent)', 5000);
@@ -110,7 +110,7 @@ result = {"today": today.isoformat(), "yday": (today - datetime.timedelta(days=1
   await page.shot(SHOTS + '/1259_03_mua_ve.png');
   await js('document.querySelector(".kb-c-tab[data-ctab=\\"year\\"]").click(); return 1;'); await sleep(900);
   const yh = await js('return document.getElementById("kb-c-hud") ? document.getElementById("kb-c-hud").textContent : "";');
-  ok(/Dài nhất\s*3 ngày/.test(yh), 'Lịch năm: ' + yh.replace(/\s+/g, ' ').trim());
+  ok(/Liền lâu nhất\s*3 ngày/.test(yh), 'Lịch năm: ' + yh.replace(/\s+/g, ' ').trim());
   await closeAll();
   // ít xu: nút mua khoá, ghi thiếu bao nhiêu
   await py(KB + 'd = st.load(); d["coins"] = 100; d["more"]["freeze"]["n"] = 0; st.save(d); kb._dialog.refresh(); result = 1'); await sleep(900);

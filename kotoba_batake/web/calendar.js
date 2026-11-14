@@ -187,7 +187,10 @@ var GardenCal = (function () {
     const st = stage();
     const keepScroll = st.scrollTop;
     st.textContent = "";
-    setHud([["Chuỗi", (v.streak || 0) + " ngày"], ["Tháng này", v.reviewed + " ngày ôn"]]);
+    // 1.30.1 (người dùng: "sửa cách diễn đạt … đơn giản dễ hiểu (ví dụ 21 ngày có ôn là gì)"): ghi rõ ôn bao nhiêu ngày trên
+    // bao nhiêu ngày đã qua của tháng
+    const passed = v.days.filter((d) => !v.today || d.d <= v.today).length;
+    setHud([["Ôn liền", (v.streak || 0) + " ngày"], ["Tháng này", "đã ôn " + v.reviewed + "/" + passed + " ngày"]]);
     const body = el("div", "kb-cal-body");
     const L = el("div", "kb-cal-left");
     const nav = el("div", "kb-cal-nav");
@@ -221,7 +224,7 @@ var GardenCal = (function () {
     const lg = el("div", "kb-cal-legend");
     const sp = (v.days.find((d) => d.d === v.today) || v.days[0] || {}).sp || "goc";
     for (let l = 0; l <= 4; l++) { const f = flower(sp, l, 2, l); f.title = LV_NAME[l]; lg.appendChild(f); }
-    lg.appendChild(el("span", null, "nở rộ = đạt mục tiêu ngày (" + v.goal + " lượt)"));
+    lg.appendChild(el("span", null, "hoa nở rộ: ôn đủ " + v.goal + " lượt trong ngày"));
     lg.appendChild(el("span", "sp"));
     lg.appendChild(el("i", "kb-cal-dot kb-cal-dot-s"));
     lg.appendChild(el("span", null, "có nhật ký"));
@@ -252,8 +255,10 @@ var GardenCal = (function () {
     row.appendChild(t);
     const full = f.n >= f.max, poor = f.coins < f.price;
     const b = btn("kb-cal-freeze-buy", full ? "Đã đủ vé" : "Mua · " + f.price + " xu", () => {
-      b.disabled = true;
-      H.send("cal:freeze:" + v.id);
+      const buy = () => { b.disabled = true; H.send("cal:freeze:" + v.id); };
+      if (typeof GardenUI !== "undefined" && GardenUI.ask) {      // 1.30.1: hỏi lại trước khi trả xu
+        GardenUI.ask({ title: "Mua 1 vé giữ chuỗi?", price: f.price, note: "Quên ôn 1 ngày thì vé tự dùng, chuỗi ngày ôn không đứt.", then: buy });
+      } else { buy(); }
     }, full ? "Giữ tối đa " + f.max + " vé" : poor ? "Còn thiếu " + (f.price - f.coins) + " xu" :
       "Mua 1 vé giữ chuỗi (" + f.price + " xu). Vé chỉ giữ số ngày ôn liên tiếp, không đổi lịch ôn.");
     b.disabled = full || poor;
@@ -376,7 +381,7 @@ var GardenCal = (function () {
     } else {
       row("Ôn", v.n ? v.n + " lượt" + (v.new ? " · " + v.new + " thẻ mới" : "") : "Chưa ôn");
       if (v.fruit) {
-        row("Lên Ra quả", v.fruit + " từ" + (v.fruit_words.length ? ": " + v.fruit_words.slice(0, 4).join(" · ") : ""),
+        row("Thành cây Ra quả", v.fruit + " từ" + (v.fruit_words.length ? ": " + v.fruit_words.slice(0, 4).join(" · ") : ""),
           "Gần đúng: thẻ có khoảng ôn vượt mốc Ra quả trong ngày này (lịch sử ôn không lưu độ bền FSRS từng lượt).");
       }
       if (v.paper) { row("Báo", v.paper); }
@@ -732,7 +737,7 @@ var GardenCal = (function () {
     const v = year;
     const st = stage();
     st.textContent = "";
-    setHud([["Chuỗi", (v.streak || 0) + " ngày"], ["Dài nhất", (v.sum.best || 0) + " ngày"]]);
+    setHud([["Ôn liền", (v.streak || 0) + " ngày"], ["Liền lâu nhất", (v.sum.best || 0) + " ngày"]]);
     const nav = el("div", "kb-cal-nav kb-cal-ynav");
     const prev = btn("kb-cal-arrow", "◂", () => { H.send("cal:year:" + v.prev); sfx("flip"); }, "Năm trước");
     const next = btn("kb-cal-arrow", "▸", () => { H.send("cal:year:" + v.next); sfx("flip"); }, "Năm sau");
@@ -740,12 +745,12 @@ var GardenCal = (function () {
     nav.appendChild(prev); nav.appendChild(el("div", "kb-cal-month", "Năm " + v.y)); nav.appendChild(next);
     st.appendChild(nav);
     const sum = el("div", "kb-cal-sum");
-    sum.appendChild(chip("Ngày ôn", nf(v.sum.days)));
-    sum.appendChild(chip("Lượt ôn", nf(v.sum.reviews)));
+    sum.appendChild(chip("Số ngày đã ôn", nf(v.sum.days)));
+    sum.appendChild(chip("Số lượt ôn", nf(v.sum.reviews)));
     const fr = chip("Từ ra quả mới", nf(v.sum.fruit));
     fr.title = "Gần đúng: số lượt thẻ vượt mốc Ra quả trong năm";
     sum.appendChild(fr);
-    sum.appendChild(chip("Nhật ký", v.sum.notes + " ngày"));
+    sum.appendChild(chip("Ngày có nhật ký", nf(v.sum.notes)));
     if (v.sum.mood) {
       const c = el("div", "kb-g-chip kb-cal-moodchip");
       c.appendChild(el("span", "kb-g-chip-l", "Hay gặp nhất"));
@@ -819,11 +824,11 @@ var GardenCal = (function () {
     p.appendChild(coverCanvas(b, true));
     const s = b.stats;
     const g = el("div", "kb-page-stats");
-    g.appendChild(statCell("Ngày ôn", s.days + " / " + s.of));
-    g.appendChild(statCell("Lượt ôn", nf(s.reviews)));
+    g.appendChild(statCell("Số ngày đã ôn", s.days + " / " + s.of));
+    g.appendChild(statCell("Số lượt ôn", nf(s.reviews)));
     g.appendChild(statCell("Từ ra quả mới", nf(s.fruit)));
-    g.appendChild(statCell(b.m ? "Ngày ôn nhiều nhất" : "Tháng ôn nhiều nhất", s.best || "–"));
-    g.appendChild(statCell("Nhật ký", s.notes + " ngày"));
+    g.appendChild(statCell(b.m ? "Ngày ôn nhiều lượt nhất" : "Tháng ôn nhiều lượt nhất", s.best || "–"));
+    g.appendChild(statCell("Ngày có nhật ký", String(s.notes)));
     g.appendChild(statCell("Luyện viết", s.writes + " bài · " + s.sentences + " câu"));
     p.appendChild(g);
     if (s.moods && s.moods.length) {

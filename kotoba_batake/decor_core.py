@@ -5,7 +5,8 @@ mua giấy dán tường không". Từ 1.25 nền ba gian đi theo kiểu nhà; 
 được giấy dán tường và sàn:
   - mặc định "Theo kiểu nhà" (như 1.25, miễn phí, đổi kiểu nhà là đổi theo);
   - mẫu có sẵn: mua một lần, dùng cho gian nào cũng được, đổi qua lại miễn phí;
-  - mẫu tự vẽ ở Xưởng: một ô 16×16 lặp lại kín tường / sàn (giá như món chế tác nhỏ, vẽ lại 50 xu, đổi tên miễn phí).
+  - mẫu tự vẽ ở Xưởng: một ô 16×16 lặp lại kín tường / sàn (giá như món chế tác nhỏ, vẽ lại 50 xu, đổi tên miễn phí);
+  - (1.30.1) nền theo kiểu nhà của gian khác (Sàn Bếp cho phòng chính…): miễn phí, id w_h… / f_h… (HOUSE).
 Xà trên cùng, nẹp chân tường, cột ngăn gian, cửa sổ phòng chính vẫn theo kiểu nhà để ba gian liền nhau.
 
 Lưu ở khoá "decor" ngay tầng trên cùng của MORE_KEY (như "myseeds" của 1.22): bản 1.14 – 1.28 ở máy khác giữ hộ khoá lạ ở
@@ -63,13 +64,31 @@ FLOORS: dict[str, dict[str, Any]] = {
     "f_tham": {"name": "Thảm len", "ja": "じゅうたん", "price": 350, "desc": "Thảm len hồng đất, mềm chân"},
     "f_co": {"name": "Thảm cỏ", "ja": "芝生", "price": 300, "desc": "Như mang vườn vào nhà"},
 }
+# 1.30.1: nền "theo kiểu nhà" của từng gian dùng được cho gian khác — miễn phí, không cần mua, vẽ theo kiểu nhà đang dùng.
+# Người dùng (14/11): "nhà mặc định, sàn bếp khác sàn phòng khách và phòng ngủ, trong nội thất thì có sàn đó nhưng không thay
+# cho bếp được, và sàn bếp cũng không có trong phần nội thất luôn". Sàn phòng chính và Phòng ngủ giống nhau ở cả 4 kiểu nhà
+# nên chỉ có một id sàn cho hai gian đó. Hình: web/nha_art.js (HOUSE_DECO) gọi lại hàm vẽ nền của kiểu nhà.
+HOUSE: dict[str, dict[str, Any]] = {
+    "w_hroom": {"name": "Tường Phòng chính", "slot": "wall", "room": "room"},
+    "w_hkitchen": {"name": "Tường Bếp", "slot": "wall", "room": "kitchen"},
+    "w_hbedroom": {"name": "Tường Phòng ngủ", "slot": "wall", "room": "bedroom"},
+    "f_hroom": {"name": "Sàn Phòng chính", "slot": "floor", "room": "room"},
+    "f_hkitchen": {"name": "Sàn Bếp", "slot": "floor", "room": "kitchen"},
+}
+HOUSE_SAME = {("floor", "bedroom"): "f_hroom"}      # nền theo kiểu nhà của gian này = mẫu nhà nào (để khỏi hiện trùng)
 PRESETS: dict[str, dict[str, Any]] = {}
 for _k, _v in WALLS.items():
     PRESETS[_k] = dict(_v, slot="wall")
 for _k, _v in FLOORS.items():
     PRESETS[_k] = dict(_v, slot="floor")
-for _k in PRESETS:
-    assert ID_RE.match(_k) and _k[0] == PRESETS[_k]["slot"][0], _k
+for _k in list(PRESETS) + list(HOUSE):
+    assert ID_RE.match(_k) and _k[0] == (PRESETS.get(_k) or HOUSE.get(_k))["slot"][0], _k
+assert not set(PRESETS) & set(HOUSE)
+
+
+def house_id(room: str, slot: str) -> str:
+    """Id mẫu nhà ứng với nền theo kiểu nhà của gian này."""
+    return HOUSE_SAME.get((slot, room)) or ("w_h" if slot == "wall" else "f_h") + room
 
 
 class DecorError(ValueError):
@@ -125,6 +144,8 @@ def usable(dec: dict[str, Any], did: Any, slot: str) -> bool:
     """Mẫu này đang có và đúng chỗ (tường / sàn)?"""
     if not isinstance(did, str):
         return False
+    if did in HOUSE:
+        return HOUSE[did]["slot"] == slot
     if TILE_RE.match(did):
         meta = dec["mine"]["items"].get(did)
         return bool(meta) and meta["kind"] == slot
@@ -133,6 +154,8 @@ def usable(dec: dict[str, Any], did: Any, slot: str) -> bool:
 
 def buy(dec: dict[str, Any], did: Any) -> int:
     """Mua một mẫu có sẵn → giá phải trả."""
+    if did in HOUSE:
+        raise DecorError("Mẫu này có sẵn, không cần mua.")
     if did not in PRESETS:
         raise DecorError("Không có mẫu này.")
     if did in dec["own"]:
@@ -147,17 +170,17 @@ def use(dec: dict[str, Any], room: Any, slot: Any, did: Any, rooms_open: list[st
         raise DecorError("Không có gian này.")
     if room != "room" and room not in rooms_open:
         raise DecorError("Mở rộng nhà (tab Xây nhà) rồi mới trang trí " + ROOM_NAMES[room] + " được.")
-    if did in (None, "", "none"):
+    if did in (None, "", "none") or did == house_id(room, slot):      # nền nhà của chính gian này = Theo kiểu nhà
         dec["use"][room].pop(slot, None)
         return
     if not usable(dec, did, slot):
-        wrong = (did in PRESETS and PRESETS[did]["slot"] != slot) or (
+        wrong = (did in PRESETS and PRESETS[did]["slot"] != slot) or (did in HOUSE and HOUSE[did]["slot"] != slot) or (
             isinstance(did, str) and did in dec["mine"]["items"] and dec["mine"]["items"][did]["kind"] != slot)
         if wrong:
             raise DecorError("Mẫu này dành cho " + ("sàn" if slot == "wall" else "tường") + ".")
         raise DecorError("Chưa có mẫu này." if (did in PRESETS or (isinstance(did, str) and TILE_RE.match(did)))
                          else "Không có mẫu này.")
-    if did not in PRESETS and not TILE_RE.match(did):
+    if did not in PRESETS and did not in HOUSE and not TILE_RE.match(did):
         raise DecorError("Mẫu này của bản mới hơn, cập nhật để dùng nhé.")
     dec["use"][room][slot] = did
 
@@ -220,6 +243,8 @@ def tile_delete(dec: dict[str, Any], tid: Any) -> None:
 
 def catalog_view() -> dict[str, Any]:
     return {"walls": [dict(v, id=k) for k, v in WALLS.items()], "floors": [dict(v, id=k) for k, v in FLOORS.items()],
+            "house": [dict(v, id=k) for k, v in HOUSE.items()],
+            "house_same": {slot + ":" + room: did for (slot, room), did in HOUSE_SAME.items()},
             "rooms": [{"id": r, "name": ROOM_NAMES[r]} for r in ROOMS],
             "tile": {"price": TILE_PRICE, "edit": TILE_EDIT, "max": TILE_MAX, "w": TILE_W}}
 

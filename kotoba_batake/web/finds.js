@@ -290,10 +290,14 @@ var GardenFinds = (function () {
         b = el("button", "kb-btn kb-btn-small kb-ped-buy", g.now + " xu");
         b.disabled = money < g.now;
         if (money < g.now) { b.title = "Còn thiếu " + (g.now - money) + " xu"; }
-        b.addEventListener("click", () => {
+        const buy = () => {
           if (pending && Date.now() - pending < 4000) { return; }
           pending = Date.now(); b.disabled = true;
           H.send("ped:buy:" + g.slot + ":" + (v.day || ""));
+        };
+        b.addEventListener("click", (e) => {      // 1.30.1: hỏi lại trước khi trả xu
+          e.stopPropagation();
+          if (typeof GardenUI !== "undefined" && GardenUI.ask) { GardenUI.ask({ title: "Mua " + g.name + " ở gánh hàng?", price: g.now, then: buy }); } else { buy(); }
         });
       }
       b.type = "button";

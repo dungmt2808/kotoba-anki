@@ -32,6 +32,10 @@ var GardenPaper = (function () {
   const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
+  // 1.30.1: hỏi lại trước khi trả xu cho gói báo
+  function subAsk(pn, buy) {
+    if (typeof GardenUI !== "undefined" && GardenUI.ask) { GardenUI.ask({ title: "Mua gói báo " + pn.name + "?", price: pn.price, then: buy }); } else { buy(); }
+  }
   function sfx(n) { if (typeof GardenFX !== "undefined" && GardenFX.sound) { GardenFX.sound(n); } }
   function el(tag, cls, text) {
     const e = document.createElement(tag);
@@ -311,7 +315,7 @@ var GardenPaper = (function () {
       box.appendChild(el("p", null, "Số cũ vẫn đọc được ở Kệ báo."));
       (sub.plans || []).forEach((pn) => {
         const b = btn("kb-p-go" + (pn.id === "tuan" ? " kb-ai-main" : ""), "Gia hạn " + pn.name + " · " + pn.price + " xu",
-          () => { aiFlash = null; H.send("ai:sub:" + JSON.stringify({ buy: pn.id })); setTab("src"); },
+          () => subAsk(pn, () => { aiFlash = null; H.send("ai:sub:" + JSON.stringify({ buy: pn.id })); setTab("src"); }),
           (sub.coins || 0) < pn.price ? "Chưa đủ xu (đang có " + (sub.coins || 0) + ")" : "");
         b.disabled = (sub.coins || 0) < pn.price;
         acts.appendChild(b);
@@ -651,7 +655,7 @@ var GardenPaper = (function () {
     (sb.plans || []).forEach((pn) => {
       const over = sb.left + pn.days > (sb.ahead_max || 60), poor = (sb.coins || 0) < pn.price;
       const b = btn(pn.id === "tuan" ? "kb-ai-main" : "", (sb.active ? "Gia hạn " : "Mua ") + pn.name + " · " + pn.price + " xu",
-        () => { aiFlash = null; b.disabled = true; H.send("ai:sub:" + JSON.stringify({ buy: pn.id })); },
+        () => subAsk(pn, () => { aiFlash = null; b.disabled = true; H.send("ai:sub:" + JSON.stringify({ buy: pn.id })); }),
         over ? "Gói còn " + sb.left + " ngày — gần hết rồi hãy gia hạn" : poor ? "Chưa đủ xu (đang có " + (sb.coins || 0) + ")" : "");
       b.disabled = over || poor;
       btns.appendChild(b);

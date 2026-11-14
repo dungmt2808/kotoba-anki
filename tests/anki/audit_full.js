@@ -407,7 +407,7 @@ st.save(d); kb._dialog.refresh(); result = {k: v for k, v in d["more"]["pets"].i
     await shot('08_tab_giao_dien_mua_dau');
     const T = C.themes;
     const first = T.find((t) => t.streak <= 10);
-    const r0 = await cardBtn(first.name, /^Đổi chuỗi/);
+    const r0 = await cardBtn(first.name, /^Đổi \d+ ngày ôn liền/);
     ok(r0.btn && !r0.disabled && await waitPy(`result = ${JSON.stringify(first.id)} in st.load()["season"]["unlocked"]`), 'Mở "' + first.name + '" bằng chuỗi ngày ôn (' + (r0.text || '') + ')');
     for (const t of T) {
       if (await py(KB + `result = ${JSON.stringify(t.id)} in st.load()["season"]["unlocked"]`)) continue;

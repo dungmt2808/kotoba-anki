@@ -55,15 +55,33 @@ var GardenPets = (function () {
     if (scene === "house") { return { x0: 8, x1: 448, y0: 50, y1: 86 }; }
     return scene === "room" ? { x0: 6, x1: 146, y0: 50, y1: 86 } : { x0: 72, x1: 246, y0: 40, y1: 74 };
   }
+  // 1.30.1: cả nhà 3 gian — mỗi gian một đoạn sàn (chừa cột ngăn gian). Người dùng: "mấy con thú có chạy ngang hẳn qua nhà
+  // luôn, nhìn không hợp lý" → thú đi dạo trong gian mình đang ở, thỉnh thoảng mới sang gian bên (qua cửa giữa hai gian);
+  // gian chưa mở rộng (tối) thì không vào.
+  const HSEG = { kitchen: [10, 134], room: [158, 298], bedroom: [322, 446] };
+  function houseSegs(data) {
+    const h = data && data.wallet && data.wallet.home, rooms = (h && Array.isArray(h.rooms)) ? h.rooms : [];
+    return ["kitchen", "room", "bedroom"].filter((k) => k === "room" || rooms.indexOf(k) >= 0).map((k) => HSEG[k]);
+  }
+  function segOf(segs, x) {
+    let best = segs[0], bd = Infinity;
+    segs.forEach((g) => { const d = x < g[0] ? g[0] - x : x > g[1] ? x - g[1] : 0; if (d < bd) { bd = d; best = g; } });
+    return best;
+  }
   function rnd(a, b) { return a + Math.random() * (b - a); }
 
-  function actor(scene, p) {
+  function actor(scene, p, data) {
     const key = scene + "|" + p.id;
     let a = actors[key];
     if (!a) {
-      const r = area(scene), h = hash(p.id.length * 7 + p.id.charCodeAt(0));
-      a = actors[key] = { x: r.x0 + 20 + h * (r.x1 - r.x0 - 40), y: r.y0 + 6 + hash(h * 99) * (r.y1 - r.y0 - 10), dir: h > 0.5 ? 1 : -1,
+      const h = hash(p.id.length * 7 + p.id.charCodeAt(0)), r = area(scene);
+      const g = scene === "house" ? HSEG.room : [r.x0 + 20, r.x1 - 20];
+      a = actors[key] = { x: g[0] + h * (g[1] - g[0]), y: r.y0 + 6 + hash(h * 99) * (r.y1 - r.y0 - 10), dir: h > 0.5 ? 1 : -1,
         act: "sit", until: 0, tx: 0, ty: 0, hop: 0, fx: [] };
+    }
+    if (scene === "house") {          // gian chưa mở (dữ liệu đổi, hồ sơ khác): đưa về phần nhà đang mở; cửa giữa hai gian mở thì đi qua được
+      const segs = houseSegs(data), lo = segs[0][0], hi = segs[segs.length - 1][1];
+      if (a.x < lo - 2 || a.x > hi + 2) { a.x = Math.max(lo, Math.min(hi, a.x)); a.tx = a.x; }
     }
     return a;
   }
@@ -77,7 +95,7 @@ var GardenPets = (function () {
     niwatori: { sleep: ["fence", "birdhouse", "scarecrow"], day: ["flowers", "sunflower", "rice", "scarecrow"] },
     ahiru: { sleep: ["pond", "fountain"], day: ["pond", "fountain", "well", "luunuoc"] }
   };
-  function favSpot(p, kind, scene, spots) {
+  function favSpot(p, kind, scene, spots, data) {
     const ids = (FAV[p.id] || {})[kind];
     if (!ids || typeof spots !== "function") { return null; }
     let list = [];
@@ -85,13 +103,24 @@ var GardenPets = (function () {
     if (!list.length) { return null; }
     const r = area(scene), sp = list[Math.floor(hash(p.id.charCodeAt(0) + Math.floor(Date.now() / 600000)) * list.length) % list.length];
     const side = hash(p.id.length + sp.cx) > 0.5 ? 1 : -1;
-    return { x: Math.max(r.x0, Math.min(r.x1, sp.cx + side * (sp.w / 2 + 6))), y: Math.max(r.y0, Math.min(r.y1, sp.bottom + 2)) };
+    let x = Math.max(r.x0, Math.min(r.x1, sp.cx + side * (sp.w / 2 + 6)));
+    if (scene === "house") { const g = segOf(houseSegs(data), sp.cx); x = Math.max(g[0], Math.min(g[1], x)); }     // 1.30.1: cạnh món, trong gian của món (không đứng trên cột)
+    return { x: x, y: Math.max(r.y0, Math.min(r.y1, sp.bottom + 2)) };
   }
-  function choose(a, p, now, st, scene, spots) {
+  function choose(a, p, now, st, scene, spots, data) {
     const r = area(scene);
+    if (scene === "house") {          // đi dạo trong gian đang ở; ~1/12 lần sang gian khác đang mở
+      const segs = houseSegs(data), cur = segOf(segs, a.x);
+      if (a.x < cur[0] - 1 || a.x > cur[1] + 1) {        // đang đứng ở cửa giữa hai gian (đi dở): vào hẳn trong gian rồi mới nghỉ
+        a.tx = a.x < cur[0] ? cur[0] + rnd(4, 24) : cur[1] - rnd(4, 24); a.ty = Math.max(r.y0, Math.min(r.y1, a.y));
+        a.act = "walk"; a.until = now + 12000; return;
+      }
+      const g = segs.length > 1 && Math.random() < 0.08 ? segs.filter((x) => x !== cur)[Math.floor(Math.random() * (segs.length - 1))] : cur;
+      r.x0 = g[0]; r.x1 = g[1];
+    }
     const night = st && st.tod === "night", wet = st && (st.rain || st.snow) && scene !== "room" && scene !== "house";
     if (night) {
-      const bed = a.bedAt && now - a.bedAt < 600000 ? null : favSpot(p, "sleep", scene, spots);
+      const bed = a.bedAt && now - a.bedAt < 600000 ? null : favSpot(p, "sleep", scene, spots, data);
       if (bed && Math.hypot(bed.x - a.x, bed.y - a.y) > 3 && (p.id !== "neko" || Math.random() < 0.8)) {
         a.tx = bed.x; a.ty = bed.y; a.act = "walk"; a.then = "sleep"; a.bedAt = now; a.until = now + 20000; return;
       }
@@ -105,20 +134,21 @@ var GardenPets = (function () {
       a.tx = rnd(r.x0, r.x0 + 20); a.ty = r.y1 - 2; a.act = "walk"; a.until = now + 9000; return;
     }
     if (p.state !== "hungry" && Math.random() < 0.3) {       // ghé chỗ ưa thích rồi ngồi chơi một lúc
-      const fav = favSpot(p, "day", scene, spots);
+      const fav = favSpot(p, "day", scene, spots, data);
       if (fav && Math.hypot(fav.x - a.x, fav.y - a.y) > 6) { a.tx = fav.x; a.ty = fav.y; a.act = "walk"; a.then = "sit"; a.until = now + 20000; return; }
     }
     const lazy = p.id === "kame" || p.id === "neko" ? 0.25 : 0.12;
     if (Math.random() < lazy) { a.act = "sleep"; a.until = now + rnd(5000, 12000); return; }
     if (Math.random() < 0.4) { a.act = "sit"; a.until = now + rnd(1800, 5000); return; }
     const far = p.id === "shiba" ? 120 : p.id === "kame" ? 30 : 70;
-    a.tx = Math.max(r.x0, Math.min(r.x1, a.x + rnd(-far, far)));
+    const fx = a.x >= r.x0 && a.x <= r.x1 ? a.x : rnd(r.x0, r.x1);         // sang gian khác: chọn chỗ trong gian đó
+    a.tx = Math.max(r.x0, Math.min(r.x1, fx + rnd(-far, far)));
     a.ty = Math.max(r.y0, Math.min(r.y1, a.y + rnd(-14, 14)));
-    a.act = "walk"; a.until = now + 15000;
+    a.act = "walk"; a.until = now + Math.max(15000, Math.abs(a.tx - a.x) / (SPEED[p.id] || 6) * 1000 * 1.8);     // đi xa (sang gian khác): đủ thời gian tới nơi
   }
 
-  function step(a, p, dt, now, st, scene, spots) {
-    if (now >= a.until) { a.then = ""; choose(a, p, now, st, scene, spots); }
+  function step(a, p, dt, now, st, scene, spots, data) {
+    if (now >= a.until) { a.then = ""; choose(a, p, now, st, scene, spots, data); }
     if (a.act === "walk") {
       const dx = a.tx - a.x, dy = a.ty - a.y, d = Math.hypot(dx, dy);
       const sp = (SPEED[p.id] || 6) * (p.state === "hungry" ? 0.6 : 1) * ((st && st.rain && p.id === "ahiru") ? 1.6 : 1);
@@ -185,11 +215,11 @@ var GardenPets = (function () {
   }
   function place(data, scene, now, st, spots) {
     const out = [];
-    const dt = lastAt[scene] ? Math.min(0.25, (now - lastAt[scene]) / 1000) : 0;
+    const dt = lastAt[scene] ? Math.max(0, Math.min(0.25, (now - lastAt[scene]) / 1000)) : 0;      // 1.30.1: đồng hồ lùi (chỉnh giờ máy) không làm khách / thú đi ngược ra xa
     lastAt[scene] = now;
     list(data, scene).forEach((p) => {
-      const a = actor(scene, p);
-      step(a, p, dt, now, st, scene, spots);
+      const a = actor(scene, p, data);
+      step(a, p, dt, now, st, scene, spots, data);
       out.push({ p: p, a: a, base: a.y });
     });
     return out.sort((x, y) => x.base - y.base);

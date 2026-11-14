@@ -1664,6 +1664,7 @@ def _daily_stats(col: Any = None) -> dict[str, int]:
 # chặn; kịch bản của màn chào đặt lại False.
 GREET_TEST_OFF = False
 TOUR_TEST_OFF = False       # 1.26.1: add-on test (zz_kbtest) tắt hướng dẫn 3 bước cho kịch bản cũ
+ASK_TEST_OFF = False        # 1.30.1: add-on test (zz_kbtest) tắt hộp "Hỏi trước khi trả xu" cho kịch bản cũ (bấm Mua là mua ngay)
 LIFE_TEST_OFF = False       # 1.30: add-on test (zz_kbtest) tắt StackChan sinh hoạt cho kịch bản cũ — không vẽ, không chip, không
                             # ghi sổ (thông báo "Sinh hoạt mới" chen vào hàng chờ thông báo; StackChan đứng trúng điểm ảnh kịch bản
                             # đang đo). e2e_130 / e2e_fuzz / release_sync / audit.js bật lại
@@ -2497,9 +2498,11 @@ class GardenDialog(QDialog):
                 _warn("tin làng", err)
                 data["news"], data["greet"] = None, None
             data["tour"] = not TOUR_TEST_OFF and event_core.is_new_player(data["wallet"])     # 1.26.1: hướng dẫn 3 bước
+            if ASK_TEST_OFF:
+                data["ask_off"] = True
         except Exception as err:
             _warn("dựng khu vườn", err)
-            showWarning(f"ことば畑: không dựng được khu vườn.\n\n{err!r}\n\nMenu Tools → ことば畑 · Báo lỗi để lấy thông tin gửi người làm ことば畑.",
+            showWarning(f"ことば畑: không dựng được khu vườn.\n\n{err!r}\n\nMenu Tools → ことば畑 · Báo lỗi để lấy thông tin gửi người làm ことば畑 ({CONTACT_EMAIL}).",
                         parent=self)
             return
         self._js("render", data)
@@ -2742,6 +2745,8 @@ class GardenDialog(QDialog):
             self._js("appIcon", create_desktop_icon())
         elif cmd.startswith("app:jserr:"):
             self._js_error(cmd[len("app:jserr:"):])
+        elif cmd == "app:mail":              # 1.30.1: ⚙ → "Góp ý, báo lỗi: … Gửi thư"
+            open_mail("ことば畑 · Góp ý", self)
         elif cmd.startswith("app:report:"):
             try:
                 client = json.loads(cmd[len("app:report:"):] or "{}")
@@ -4203,6 +4208,31 @@ def _save_report(parent: Any, text: str) -> None:
         showWarning(f"Không lưu được file:\n{err}", parent=parent)
 
 
+# 1.30.1: liên hệ người làm ことば畑 (người dùng: "báo lỗi, góp ý thêm liên lạc của tớ … email là …").
+# Add-on vẫn không tự gửi gì: nút "Gửi email…" chỉ chép báo cáo rồi mở chương trình thư của máy với địa chỉ này.
+CONTACT_EMAIL = "maitrongdung10@gmail.com"
+
+
+def open_mail(subject: str, parent: Any = None) -> bool:
+    """Mở chương trình thư của máy (mailto:) tới CONTACT_EMAIL; không mở được thì chép địa chỉ và nhắc."""
+    from aqt import qt as _qt
+    from urllib.parse import quote
+    url = "mailto:" + CONTACT_EMAIL + "?subject=" + quote(subject)
+    ok = False
+    try:
+        if not os.environ.get("KB_TEST_NO_MAIL"):
+            ok = bool(_qt.QDesktopServices.openUrl(_qt.QUrl(url)))
+    except Exception:
+        ok = False
+    if not ok:
+        try:
+            _qt.QApplication.clipboard().setText(CONTACT_EMAIL)
+        except Exception:
+            pass
+        tooltip("Không mở được chương trình thư. Đã chép địa chỉ " + CONTACT_EMAIL + " — dán vào Gmail / thư của bạn.", period=6000)
+    return ok
+
+
 def show_report(parent: Any = None, client: Any = None) -> Any:
     """Cửa sổ Báo lỗi: báo cáo sửa được, nút Chép / Lưu ra file / Xoá nhật ký / Đóng. Không gửi gì lên mạng."""
     global _report_dialog
@@ -4216,15 +4246,18 @@ def show_report(parent: Any = None, client: Any = None) -> Any:
     dlg = _qt.QDialog(parent or mw)
     dlg.setWindowTitle("ことば畑 · Báo lỗi")
     lay = _qt.QVBoxLayout(dlg)
-    intro = _qt.QLabel("Gửi nội dung dưới đây cho người làm ことば畑, kèm ảnh chụp màn hình nếu có. "
-                       "Hãy ghi vài dòng ở mục “Mô tả lỗi”. Bạn sửa hay xoá bớt được trước khi gửi. "
-                       "ことば畑 không tự gửi gì lên mạng.")
+    intro = _qt.QLabel("Gửi nội dung dưới đây cho người làm ことば畑 qua email <b>" + CONTACT_EMAIL + "</b>, kèm ảnh chụp màn hình "
+                       "nếu có. Ghi vài dòng ở mục “Mô tả lỗi”; sửa hay xoá bớt được trước khi gửi. "
+                       "Góp ý, ý tưởng cũng gửi về địa chỉ này. ことば畑 không tự gửi gì lên mạng.")
     intro.setWordWrap(True)
+    intro.setTextInteractionFlags(_qt.Qt.TextInteractionFlag.TextSelectableByMouse)
     lay.addWidget(intro)
     edit = _qt.QPlainTextEdit()
     edit.setPlainText(text)
     lay.addWidget(edit)
     row = _qt.QHBoxLayout()
+    b_mail = _qt.QPushButton("Gửi email…")
+    b_mail.setToolTip("Chép báo cáo rồi mở chương trình thư tới " + CONTACT_EMAIL + " — dán báo cáo vào thư rồi gửi")
     b_copy = _qt.QPushButton("Chép")
     b_save = _qt.QPushButton("Lưu ra file…")
     b_clear = _qt.QPushButton("Xoá nhật ký lỗi")
@@ -4239,11 +4272,17 @@ def show_report(parent: Any = None, client: Any = None) -> Any:
         edit.setPlainText(report_text(client))
         tooltip("Đã xoá nhật ký lỗi.", period=2000)
 
+    def mail() -> None:
+        _qt.QApplication.clipboard().setText(edit.toPlainText())
+        if open_mail("ことば畑 · Báo lỗi", dlg):
+            tooltip("Đã chép báo cáo — dán vào thư vừa mở rồi gửi.", period=4000)
+
+    qconnect(b_mail.clicked, mail)
     qconnect(b_copy.clicked, copy)
     qconnect(b_save.clicked, lambda: _save_report(dlg, edit.toPlainText()))
     qconnect(b_clear.clicked, clear)
     qconnect(b_close.clicked, dlg.close)
-    for b in (b_copy, b_save, b_clear):
+    for b in (b_mail, b_copy, b_save, b_clear):
         row.addWidget(b)
     row.addStretch()
     row.addWidget(b_close)

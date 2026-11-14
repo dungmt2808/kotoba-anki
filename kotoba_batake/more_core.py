@@ -785,6 +785,8 @@ UI_GLOBAL: dict[str, tuple[str, ...]] = {
     "deco": ("on", "off"),                       # 1.25: dây trang trí mùa (dải trên cùng, sân, trong nhà): Hiện / Ẩn
     "greet": ("on", "off"),                      # 1.26: màn chào lần mở vườn đầu tiên mỗi ngày
     "trans": ("on", "off"),                      # 1.26: hiệu ứng chuyển cảnh (vòng tròn, dải lá, rèm, bật nhẹ)
+    "today": ("open", "mini"),                   # 1.30.1: bảng Hôm nay trên dải cảnh: mở / thu gọn (nút ở góc dải cảnh)
+    "buyask": ("on", "off"),                     # 1.30.1: hỏi lại trước khi trả xu (mua đồ, xây, mở vùng…)
 }
 UI_PRESETS: dict[str, dict[str, Any]] = {
     "full": {},                                  # như cũ: mọi thứ chuyển động
@@ -871,7 +873,7 @@ def merge_prefs(current: Any, changes: Any) -> dict[str, str]:
     return clean_prefs(out)
 
 
-UI_KEEP_ON_PRESET = ("scene", "start", "deco", "greet", "trans")    # 1.25: nhóm "Màn chính" không thuộc kiểu có sẵn → bấm kiểu không đổi
+UI_KEEP_ON_PRESET = ("scene", "start", "deco", "greet", "trans", "today", "buyask")    # 1.25: nhóm "Màn chính" không thuộc kiểu có sẵn → bấm kiểu không đổi
 
 
 def ui_preset(name: str, current: Any = None) -> dict[str, Any]:

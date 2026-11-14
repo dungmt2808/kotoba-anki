@@ -996,6 +996,13 @@ var GardenCraft = (function () {
     clearInterval(previewTimer); previewTimer = null;
     $("kb-craft").hidden = true;
   }
+  // 1.30.1: lần lưu tốn xu (tạo mới / vẽ lại) thì hỏi lại trước (sau khi đã kiểm hình); đổi tên miễn phí thì lưu ngay
+  function commit(cmd, what, yes) {
+    const price = priceOf(size);
+    const go = () => { if (saving) { return; } saving = true; syncButtons(); tip("Đang lưu…"); H.send(cmd); };
+    if (price > 0 && typeof GardenUI !== "undefined" && GardenUI.ask) { GardenUI.ask({ title: what + "?", price: price, yes: yes || "Lưu", then: go }); }
+    else { go(); }
+  }
   function save() {
     if (saving) { return; }
     const flat = px.join("");
@@ -1020,8 +1027,7 @@ var GardenCraft = (function () {
       if (!flat.replace(/\./g, "")) { tip("Hình còn trống, vẽ gì đó đã nhé!"); return; }
       const payload = { name: $("kb-cf-name").value.trim() || "Mẫu của tớ", kind: tileKind, px: encode(flat) };
       if (tileDesign) { payload.id = tileDesign.id; }
-      saving = true; syncButtons(); tip("Đang lưu…");
-      H.send("craft:tile:" + JSON.stringify(payload));
+      commit("craft:tile:" + JSON.stringify(payload), tileDesign ? "Lưu mẫu đã vẽ lại" : "Tạo mẫu " + (tileKind === "wall" ? "giấy dán tường" : "sàn") + " mới");
       return;
     }
     if (seedMode) {
@@ -1029,23 +1035,20 @@ var GardenCraft = (function () {
       if (n < need) { tip("Vẽ ít nhất " + need + " giai đoạn đã nhé (mới có " + n + ")."); return; }
       const payload = { name: $("kb-cf-name").value.trim() || "Giống của tớ", st: seedCodes() };
       if (seedDesign) { payload.id = seedDesign.id; }
-      saving = true; syncButtons(); tip("Đang lưu…");
-      H.send("craft:seed:" + JSON.stringify(payload));
+      commit("craft:seed:" + JSON.stringify(payload), seedDesign ? "Lưu giống đã vẽ lại" : "Tạo giống cây mới");
       return;
     }
     if (zoneMode) {
       const payload = { name: $("kb-cf-name").value.trim() || "Vùng của tớ", bg: zoneDraft.bg, ground: zoneDraft.ground, hills: zoneDraft.hills,
         px: codeOf("lm"), env: codeOf("env") };
       if (zone) { payload.id = zone.id; }
-      saving = true; syncButtons(); tip("Đang lưu…");
-      H.send("craft:zone:" + JSON.stringify(payload));
+      commit("craft:zone:" + JSON.stringify(payload), zone ? "Lưu vùng đã vẽ lại" : "Tạo vùng mới", zone ? "Lưu" : "Tạo vùng");
       return;
     }
     if (!flat.replace(/\./g, "")) { tip("Hình còn trống, vẽ gì đó đã nhé!"); return; }
     const payload = { name: $("kb-cf-name").value.trim() || "Món tự làm", size: size, kind: kind, fx: fx, px: encode(flat) };
     if (design) { payload.id = design.id; }
-    saving = true; syncButtons(); tip("Đang lưu…");
-    H.send("craft:save:" + JSON.stringify(payload));
+    commit("craft:save:" + JSON.stringify(payload), design ? "Lưu món đã vẽ lại" : "Chế tác món mới", design ? "Lưu" : "Chế tác");
   }
 
   return {
