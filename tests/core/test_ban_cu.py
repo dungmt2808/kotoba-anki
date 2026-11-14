@@ -25,7 +25,8 @@ import more_core
 D = core.decor
 FAIL = []
 TMP = tempfile.mkdtemp(prefix="kbold_")
-OLD = [("1.23.0", "ba0aa5a"), ("1.24.0", "bc66f66"), ("1.25.0", "1912fb7"), ("1.26.1", "6021c57"), ("1.28.0", "59e43c5")]
+OLD = [("1.23.0", "ba0aa5a"), ("1.24.0", "bc66f66"), ("1.25.0", "1912fb7"), ("1.26.1", "6021c57"), ("1.28.0", "59e43c5"),
+       ("1.30.3", "36bb57b")]       # 1.31: + 1.30.3 (bản trước đồ tự vẽ cho StackChan)
 
 
 def ok(cond, msg):
@@ -71,6 +72,9 @@ def rich(path):
     import datetime as dt
     st.freeze_buy(dt.date(2026, 11, 13))
     st.paper_sub_buy("tuan", "2026-11-13")
+    # 1.31: đồ tự vẽ cho StackChan (mũ đang mặc + vỏ chưa mặc)
+    st.mywear_save({"name": "Mũ", "slot": "head", "px": more_core.px_encode("." * 60 + "r" * 20 + "." * 80)})
+    st.mywear_save({"name": "Vỏ", "slot": "shell", "c": ["g", "G"]}); st.take_off("shell")
     return st
 
 
@@ -85,7 +89,7 @@ def view(st):
         "wear": d["wear"], "craft": d["craft"], "season_unlocked": d["season"]["unlocked"],
         "decor": m[D.DECOR_KEY], "pets": sorted(m["pets"]), "seeds": m["seeds"]["owned"], "uzones": [z["id"] for z in m["zones"]],
         "myseeds": sorted(m["myseeds"]["items"]), "freeze": m["freeze"]["n"], "sub": m["paper_sub"].get("until"),
-        "px": dict(st.load_px()),
+        "px": dict(st.load_px()), "mywear": m.get("mywear"),
     }
 
 
@@ -129,7 +133,9 @@ for ver, commit in OLD:
     ok(not diff, "%s (%s): 1.30 đọc lại không mất gì%s" % (ver, commit, "" if not diff else " — khác: " + ", ".join(
         "%s: %s → %s" % (k, json.dumps(want[k], ensure_ascii=False)[:160], json.dumps(got[k], ensure_ascii=False)[:160]) for k in diff)))
     c_now = st.load()["coins"]
-    ok(c_now == out["coins"] and out["decor"] is False, "%s: xu khớp với thao tác của bản cũ (%d), bản cũ không biết tường & sàn" % (ver, c_now))
+    knows = ver >= "1.30"           # 1.30.x đã có tường & sàn (chỉ chưa có đồ tự vẽ cho StackChan)
+    ok(c_now == out["coins"] and out["decor"] is knows, "%s: xu khớp với thao tác của bản cũ (%d)%s" % (
+        ver, c_now, "" if knows else ", bản cũ không biết tường & sàn"))
 
 print("== hai lượt qua lại 1.28 ↔ 1.30")
 o = os.path.join(TMP, "old_1.28.0", "kotoba_batake")

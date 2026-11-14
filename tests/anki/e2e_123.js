@@ -277,7 +277,10 @@ st.save(d); kb._dialog.refresh(); result = 1`); await sleep(1500);
   await page.send('Input.dispatchMouseEvent', { type: 'mousePressed', x: yv[0], y: yv[1], button: 'left', clickCount: 1 });
   await page.send('Input.dispatchMouseEvent', { type: 'mouseReleased', x: yv[0], y: yv[1], button: 'left', clickCount: 1 });
   await sleep(900);
-  ok(await js('return !document.getElementById("kb-home").hidden;'), 'bấm vào ngôi nhà ở màn chính → mở Nhà & Cửa hàng như 1.22');
+  // 1.31 (người dùng: "chỉ vào cửa hàng, nhà khi bấm vào mục 'Nhà & Cửa hàng' thôi"): bấm ngôi nhà không mở, nút mở
+  ok(await js('return document.getElementById("kb-home").hidden;'), 'bấm vào ngôi nhà ở màn chính không mở Nhà & Cửa hàng (1.31)');
+  await js('document.getElementById("kb-yard-home").click(); return 1;'); await sleep(900);
+  ok(await js('return !document.getElementById("kb-home").hidden;'), 'nút “Nhà & Cửa hàng ▸” mở Nhà & Cửa hàng');
   await js('GardenHome.close(); return 1;'); await sleep(400);
   await js('GardenUI.open(); return 1;'); await sleep(400);
   ok(await js('return /Màn chính/.test(document.getElementById("kb-ui-stage").textContent) && /Cỡ cảnh/.test(document.getElementById("kb-ui-stage").textContent) && /Mở vườn ở/.test(document.getElementById("kb-ui-stage").textContent);'), '⚙ Giao diện có nhóm Màn chính: Cỡ cảnh, Mở vườn ở');

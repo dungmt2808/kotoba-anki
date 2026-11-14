@@ -564,7 +564,9 @@ def month_view(y: int, m: int, today: _dt.date, counts: dict[str, dict[str, int]
 
 
 def year_view(y: int, today: _dt.date, counts: dict[str, dict[str, int]], entries: dict[str, dict[str, Any]],
-              goal: int, first: _dt.date | None, streak: int = 0, frozen: Any = ()) -> dict[str, Any]:
+              goal: int, first: _dt.date | None, streak: int = 0, frozen: Any = (),
+              streak_days: Any = None) -> dict[str, Any]:
+    """streak_days (1.31): ngày tính vào chuỗi (từ lúc ことば畑 chạy lần đầu) — None = mọi ngày có ôn."""
     spans = theme_spans(y, y)
     months = []
     for m in range(1, 13):
@@ -591,7 +593,10 @@ def year_view(y: int, today: _dt.date, counts: dict[str, dict[str, int]], entrie
         if ds.startswith("%04d-" % y) and e.get("m"):
             moods[e["m"]] = moods.get(e["m"], 0) + 1
     top = max(moods.items(), key=lambda kv: (kv[1], -STICKERS.index(kv[0]))) if moods else None
-    _cur, best = streaks({k for k in ys if counts[k]["n"] > 0}, today, [s for s in frozen if str(s).startswith("%04d-" % y)])
+    sd = {k for k in ys if counts[k]["n"] > 0}
+    if streak_days is not None:
+        sd &= set(streak_days)
+    _cur, best = streaks(sd, today, [s for s in frozen if str(s).startswith("%04d-" % y)])
     lo = first.year if first else today.year
     for ds in entries:
         d = parse_date(ds)

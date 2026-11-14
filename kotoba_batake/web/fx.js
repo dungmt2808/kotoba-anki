@@ -154,6 +154,16 @@ var GardenFX = (function () {
   var BOUNCY = { happy: 1, star: 1, heart: 1, wink: 1, kira: 1, cool: 1 };
   var wearCache = {};
   function wearRows(id) {
+    if (id && typeof id === "object") {     // 1.31: hình đang vẽ ở Xưởng {rows, dy} — vẽ đúng như vẽ, không thêm viền
+      return id.rows && id.rows.length ? { dy: id.dy || 0, rows: id.rows, pal: craftPal() } : null;
+    }
+    if (/^w\d/.test(String(id))) {           // 1.31: món tự vẽ (bảng 32 màu của Xưởng, không thêm viền)
+      var m = mineItems()[id];               // (danh mục đổi → bỏ hình cũ trong wearCache)
+      if (wearCache[id]) { return wearCache[id]; }
+      if (!m || !m.rows || !m.rows.length) { return null; }
+      wearCache[id] = { dy: m.dy || 0, rows: m.rows, pal: craftPal() };
+      return wearCache[id];
+    }
     if (wearCache[id]) { return wearCache[id]; }
     var a = WEAR_ART[id];
     if (!a) { return null; }
@@ -174,9 +184,37 @@ var GardenFX = (function () {
     wearCache[id] = { dy: a.dy - (a.flat ? 0 : 1), rows: rows.map(function (r) { return r.join(""); }), shellColor: a.shellColor };
     return wearCache[id];
   }
+  // 1.31: đồ tự vẽ (catalog.mywears: {id, slot, rows, dy, hex}) — món có sẵn và món tự vẽ dùng chung một bảng "đang mặc"
+  var mineList = null, mineMap = {}, mineSigStr = "";
+  function mineItems() {
+    var d = G && G.data && G.data();
+    var list = (d && d.catalog && d.catalog.mywears) || [];
+    if (list !== mineList) {
+      mineList = list; mineMap = {};
+      list.forEach(function (e) { mineMap[e.id] = e; });
+      mineSigStr = list.map(function (e) { return e.id + ":" + (e.px || "") + ":" + (e.c || []).join(""); }).join(",");
+      Object.keys(wearCache).forEach(function (k) { if (/^w\d/.test(k)) { delete wearCache[k]; } });
+    }
+    return mineMap;
+  }
+  function craftPal() {
+    var d = G && G.data && G.data();
+    return (d && d.catalog && d.catalog.craft && d.catalog.craft.palette) || WEAR_PAL;
+  }
   function walletWear() {
     var d = G && G.data && G.data();
-    return (d && d.wallet && d.wallet.wear) || null;
+    var w = (d && d.wallet && d.wallet.wear) || null;
+    var mine = d && d.wallet && d.wallet.more && d.wallet.more.mywear;
+    if (!mine || !mine.on || !Object.keys(mine.on).length) { return w; }
+    return Object.assign({}, w || {}, { on: Object.assign({}, (w && w.on) || {}, mine.on) });
+  }
+  // vỏ: id có sẵn → 2 màu; id tự vẽ → màu đã chọn; đối tượng {hex} (Xưởng đang xem trước)
+  function shellOf(id) {
+    if (!id) { return null; }
+    if (typeof id === "object") { return id.hex || null; }
+    if (SHELL[id]) { return SHELL[id]; }
+    var m = mineItems()[id];
+    return m && m.hex ? m.hex : null;
   }
   // Biểu cảm đã mua & đang bật → thay cho biểu cảm thường (khoảng 60% số lần)
   function variantFor(mood) {
@@ -251,7 +289,8 @@ var GardenFX = (function () {
       lx = mascot.look;
     }
     var ww = walletWear();
-    var sig = mood + "|" + lx + "|" + faceQuantum(mood, now) + "|" + cv.width + "x" + cv.height + "|" + JSON.stringify((ww && ww.on) || {});
+    mineItems();
+    var sig = mood + "|" + lx + "|" + faceQuantum(mood, now) + "|" + cv.width + "x" + cv.height + "|" + JSON.stringify((ww && ww.on) || {}) + "|" + mineSigStr;
     if (sig === faceSig) { return; }
     faceSig = sig;
     var ctx = cv.getContext("2d");
@@ -268,7 +307,7 @@ var GardenFX = (function () {
     lx = lx || 0;
     if (wearOn === undefined) { var ww = walletWear(); wearOn = (ww && ww.on) || {}; }
     wearOn = wearOn || {};
-    var shell = SHELL[wearOn.shell];
+    var shell = shellOf(wearOn.shell);
     var bob = 0;
     if (!reduced) {
       if (BOUNCY[mood]) { bob = Math.floor(now / 160) % 2; }
@@ -384,7 +423,7 @@ var GardenFX = (function () {
       if (slot === "face" && mood === "cool") { return; }    // kính ngầu thay cho kính thường
       var a = id && wearRows(id);
       if (!a) { return; }
-      var pal = a.shellColor ? Object.assign({}, WEAR_PAL, { s: shell ? shell[0] : C.s }) : WEAR_PAL;
+      var pal = a.pal || (a.shellColor ? Object.assign({}, WEAR_PAL, { s: shell ? shell[0] : C.s }) : WEAR_PAL);
       spr(ctx, a.rows, 0, oy + a.dy, s, pal);
     });
   }
@@ -795,6 +834,8 @@ var GardenFX = (function () {
     lib: {
       spr: spr, dot: dot, C: C, STAR: STAR, TWINKLE: TWINKLE, HEART: HEART, COIN: COIN,
       CAN: CAN, CLOUD: CLOUD, CONF: CONF, BFLY: BFLY, paintFace: paintFace, reduced: reduced,
+      wearOn: function () { var w = walletWear(); return Object.assign({}, (w && w.on) || {}); },   // 1.31: đang mặc (có sẵn + tự vẽ)
+      shellOf: shellOf, wearItem: function (id) { return mineItems()[id] || null; },
       FACE_W: MW, FACE_H: MH, FACE_TOP: TOP + 2
     },
     mood: function (m, ms) { setMood(m, ms); },

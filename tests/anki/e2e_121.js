@@ -111,11 +111,15 @@ result = 1`);
   const pt = await yardPoint(sg.box.x + sg.box.w / 2, sg.box.y + sg.box.h / 2);
   await mouse('mouseMoved', pt[0], pt[1]); await sleep(300);
   const tip = await page.eval(W('const c = document.getElementById("kb-yard"); return [c.title, c.style.cursor];'));
-  ok(/Cò trắng ghé vườn \(bấm để xem Album khách\)/.test(tip[0]) && tip[1] === 'pointer', 'rê chuột: chú thích + con trỏ tay (' + tip[0] + ')');
+  ok(/Cò trắng ghé vườn/.test(tip[0]) && tip[1] === 'pointer', 'rê chuột: chú thích + con trỏ tay (' + tip[0] + ')');
   await page.shot(SHOTS + '/121_co_o_ao.png');
   await mouse('mousePressed', pt[0], pt[1]); await mouse('mouseReleased', pt[0], pt[1]); await sleep(800);
+  // 1.31: bấm khách → thẻ nhỏ (bảng Nhà không mở thẳng) → nút "Album khách ▸"
+  ok(await page.eval(W('const c = document.getElementById("kb-scene-card"); return !!c && !c.hidden && c.getAttribute("data-id") === "sagi" && document.getElementById("kb-home").hidden;')),
+    'bấm cò → thẻ nhỏ của Cò trắng, bảng Nhà chưa mở (1.31)');
+  await page.eval(W('document.querySelector("#kb-scene-card .kb-btn").click(); return 1;')); await sleep(800);
   ok(await waitFor(page, W('const c = document.querySelector(".kb-h-guestcard.kb-h-focus"); return !document.getElementById("kb-home").hidden && c && c.getAttribute("data-guest") === "sagi";')),
-    'bấm cò → Nhà mở Album, tô thẻ Cò trắng');
+    'nút "Album khách ▸" → Nhà mở Album, tô thẻ Cò trắng');
   ok((await vis('yard')).mark, 'khách được bấm có dấu "!"');
   await page.eval(W('GardenHome.close(); return 1;')); await hideToast();
   void p1;

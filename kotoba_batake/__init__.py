@@ -1655,9 +1655,21 @@ def cal_today() -> datetime.date:
     return journal.anki_today(mw.col)
 
 
+def _streak_start(col: Any = None) -> int | None:
+    """1.31: mốc tính chuỗi (lúc ことば畑 chạy lần đầu trên collection này) — lượt ôn trước mốc không vào chuỗi."""
+    if STREAK_TEST_ALL:
+        return None
+    try:
+        return STATE.streak_start(col or mw.col)
+    except Exception as err:
+        _warn("mốc chuỗi", err)
+        return None
+
+
 def _daily_stats(col: Any = None) -> dict[str, int]:
-    """core.daily_stats + ngày đã dùng vé giữ chuỗi (1.25.9)."""
-    return core.daily_stats(col or mw.col, STATE.frozen_days())
+    """core.daily_stats + ngày đã dùng vé giữ chuỗi (1.25.9) + mốc tính chuỗi (1.31)."""
+    col = col or mw.col
+    return core.daily_stats(col, STATE.frozen_days(), _streak_start(col))
 
 
 # 1.26: màn chào khi mở vườn. Add-on chỉ dùng để test (tests/anki/zz_kbtest) đặt True để các kịch bản cũ không bị màn chào
@@ -1668,6 +1680,8 @@ ASK_TEST_OFF = False        # 1.30.1: add-on test (zz_kbtest) tắt hộp "Hỏi
 LIFE_TEST_OFF = False       # 1.30: add-on test (zz_kbtest) tắt StackChan sinh hoạt cho kịch bản cũ — không vẽ, không chip, không
                             # ghi sổ (thông báo "Sinh hoạt mới" chen vào hàng chờ thông báo; StackChan đứng trúng điểm ảnh kịch bản
                             # đang đo). e2e_130 / e2e_fuzz / release_sync / audit.js bật lại
+STREAK_TEST_ALL = False     # 1.31: add-on test (zz_kbtest) cho kịch bản cũ đếm chuỗi từ cả lịch sử ôn của collection mẫu (như
+                            # ≤ 1.30.3); e2e_131.js đặt lại False để thử "mới cài → chuỗi 0"
 _day_total: dict[str, Any] = {"key": None, "v": 0}
 
 
@@ -1718,7 +1732,7 @@ def _news_and_greet(data: dict[str, Any], today: dict[str, Any], cfg: dict[str, 
 def _freeze_settle() -> list[str]:
     """1.25.9: hôm qua (hai hôm trước) chưa ôn mà còn vé giữ chuỗi → dùng vé. Trả về các ngày vừa dùng vé."""
     try:
-        days, today = core.review_days(mw.col)
+        days, today = core.review_days(mw.col, start_ms=_streak_start())     # 1.31: lượt ôn trước mốc không nối chuỗi
         return STATE.freeze_settle(days, today)
     except Exception as err:
         _warn("vé giữ chuỗi", err)
@@ -1908,8 +1922,13 @@ def cal_year(ys: str) -> dict[str, Any]:
         streak = int(_daily_stats().get("streak", 0))
     except Exception:
         streak = 0
+    try:     # 1.31: "Liền lâu nhất" chỉ tính ngày từ mốc tính chuỗi (lúc ことば畑 chạy lần đầu)
+        sdays = core.streak_iso_days(mw.col, _streak_start(), datetime.date(y, 1, 1), datetime.date(y, 12, 31))
+    except Exception as err:
+        _warn("chuỗi dài nhất", err)
+        sdays = None
     return journal.year_view(y, today, counts, entries, _cal_goal(cfg), journal.first_review_day(mw.col), streak,
-                             STATE.frozen_days())
+                             STATE.frozen_days(), sdays)
 
 
 def _paper_day(ds: str) -> str:
@@ -3375,6 +3394,7 @@ class GardenDialog(QDialog):
             ("face", "buy"): STATE.buy_face, ("face", "toggle"): STATE.toggle_face,
             ("craft", "copy"): STATE.craft_copy, ("craft", "del"): STATE.craft_delete,
             ("myseed", "del"): STATE.myseed_delete,
+            ("mywear", "del"): STATE.mywear_delete,     # 1.31: xoá đồ tự vẽ cho StackChan
             ("nha", "open"): STATE.open_room,       # 1.24: mở rộng nhà kèm id gian (1.25: vẫn mở cả hai gian)
         }
         regrow = False   # đổi giống cây → dựng lại ruộng
@@ -3444,7 +3464,7 @@ class GardenDialog(QDialog):
             return
         out: dict[str, Any] = {"wallet": data, "action": parts[0],
                                "sub": parts[1] if len(parts) > 2 or parts[0] in ("theme", "repair") else ""}
-        if parts[0] in ("craft", "myseed", "tile"):
+        if parts[0] in ("craft", "myseed", "tile", "mywear"):
             out["catalog"] = core.home_catalog(data, STATE.load_px())
         if parts[0] in LIFE_HOME_ACTIONS:
             # 1.30: đặt / chuyển / cất đồ, mở vùng / gian, thú đổi chỗ → việc StackChan làm được + gợi ý trong sổ đổi ngay
@@ -3955,6 +3975,19 @@ class GardenDialog(QDialog):
             self._js("home", {"wallet": data, "action": "myseed", "sub": "save", "id": data.get("myseed_id"),
                               "catalog": core.home_catalog(data, STATE.load_px())})
             return
+        if cmd.startswith("wear:"):   # 1.31: đồ tự vẽ cho StackChan (mũ / mặt / cổ vẽ trên thân hộp, vỏ hai màu)
+            try:
+                data = STATE.mywear_save(_json_obj(cmd[len("wear:"):]))
+            except core.HomeError as err:
+                self._js("homeError", str(err))
+                return
+            except (ValueError, OSError) as err:
+                _warn("đồ tự vẽ cho StackChan", err)
+                self._js("homeError", "Không lưu được món đồ này.")
+                return
+            self._js("home", {"wallet": data, "action": "mywear", "sub": "save", "id": data.get("mywear_id"),
+                              "catalog": core.home_catalog(data, STATE.load_px())})
+            return
         if cmd.startswith("tile:"):   # 1.30: mẫu giấy dán tường / sàn tự vẽ (một ô 16×16 lặp lại)
             try:
                 data = STATE.tile_save(json.loads(cmd[len("tile:"):]))
@@ -4169,7 +4202,7 @@ def report_info(client: Any = None) -> dict[str, Any]:
         except Exception:
             pass
         try:
-            st = core.daily_stats(col, STATE.frozen_days())
+            st = _daily_stats(col)
             rows.append(("Hôm nay", f"{st['reviews']} lượt ôn · chuỗi {st['streak']} ngày"))
         except Exception as err:
             rows.append(("Hôm nay", f"không đọc được ({type(err).__name__})"))
@@ -4450,6 +4483,8 @@ def _on_profile_open() -> None:
         sub_pending_settle()
     except Exception as err:
         _warn("gói báo (chờ hồ sơ)", err)
+    # 1.31: mốc tính chuỗi ngày ôn — trước lần lập sổ bù xu (cài mới: mốc = bây giờ → chuỗi bắt đầu từ 0)
+    _streak_start()
     # 1.11: lần đầu chỉ đặt mốc; sau đó bù lượt ôn ở máy khác / điện thoại đã có sẵn trong collection
     res = mobile_catch_up()
     if res and config().get("show_tooltips", True):

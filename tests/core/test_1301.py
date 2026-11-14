@@ -113,7 +113,7 @@ for f, cmd in (("web/finds.js", "ped:buy:"), ("web/calendar.js", "cal:freeze:"),
     s = src(f)
     ok("GardenUI.ask(" in s and cmd in s, "%s: %s hỏi trước" % (f, cmd))
 craft = src("web/craft.js")
-ok("function commit(cmd, what, yes)" in craft and craft.count("commit(\"craft:") == 4 and "price > 0" in craft,
+ok("function commit(cmd, what, yes)" in craft and craft.count("commit(\"craft:") == 5 and "price > 0" in craft,   # 1.31: + đồ tự vẽ cho StackChan
    "Xưởng: tạo / vẽ lại (tốn xu) hỏi sau khi kiểm hình, đổi tên miễn phí lưu ngay")
 init = src("__init__.py")
 ok("ASK_TEST_OFF = False" in init and 'data["ask_off"] = True' in init, "bản phát hành: luôn hỏi (ASK_TEST_OFF mặc định False)")

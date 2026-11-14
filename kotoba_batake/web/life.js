@@ -173,9 +173,126 @@ var GardenLife = (function () {
     if (!cache[key]) { const g = G(14, 10); head(g, 0, 0, face); cache[key] = g.map((r) => r.join("")); }
     return cache[key];
   }
-  function pal() {
-    const on = ((wallet().wear || {}).on || {}).shell, sh = SHELL[on];
+  // ---------------------------------------------------------------------
+  // 1.31: đồ đang mặc (người dùng: "thay đồ cho stack chan ngoài stack-chan góc trái thì stack-chan thật đang sinh hoạt có
+  // được đổi đồ luôn không") — cùng bảng "đang mặc" với linh vật góc trái (GardenFX.lib.wearOn: đồ có sẵn + đồ tự vẽ).
+  // Đầu StackChan nhỏ 14 cột (linh vật 20 cột) nên mỗi món có sẵn có bản vẽ nhỏ riêng (MINI_WEAR); món tự vẽ thì tự thu
+  // nhỏ (miniWear). Lưới 16 cột: cột 0 = một cột bên trái đầu (vành mũ chìa ra được); dy = hàng so với đỉnh đầu.
+  // ---------------------------------------------------------------------
+  const MINI_WEAR = {
+    leaf: { dy: -4, rows: ["........gg......", "......ggGg......", ".......gg.......", "........g......."] },
+    hachimaki: { dy: -2, rows: ["..w.............", "...w............", "................", ".wwwwwwrrwwwwww."] },
+    catears: { dy: -3, rows: ["..s..........s..", "..ss........ss..", "..sPs......sPs.."], shell: true },
+    straw: { dy: -4, rows: ["......hhth......", ".....hhhhhh.....", ".....rrrrrr.....", ".hhhhthhhhhhth.."] },
+    santa: { dy: -5, rows: ["............ww..", "..........rrww..", ".......rrrrr....", ".....rrrrrrrr...", "..wwwwwwwwwwww.."] },
+    nonla: { dy: -4, rows: [".......cc.......", ".....cchccc.....", "...cccccchccc...", ".cccccccccccccc."] },
+    grad: { dy: -4, rows: ["......nnnn......", ".nnnnnnnnnnnnny.", "...nnnnnnnnn.y..", "...nnnnnnnnn.yy."] },
+    crown: { dy: -3, rows: ["....y..yy..y....", "....yyyyyyyy....", "....yryydyry...."] },
+    glasses: { dy: 2, flat: true, rows: ["....iiiiiiii....", "....i..ii..i....", "....i..ii..i....", "....iiiiiiii...."] },
+    bandaid: { dy: 5, flat: true, rows: ["..........hh....", ".........hch...."] },
+    bow: { dy: 9, rows: [".....rr..rr.....", ".....rrRRrr.....", ".....rr..rr....."] },
+    scarf: { dy: 9, rows: ["..rrrrrrrrrrrr..", "..RRrRRrRRrRRr..", "...rr...........", "...rR..........."] },
+    bell: { dy: 9, rows: ["...rrrrrrrrrr...", ".......yy.......", "......yyyy......", ".......kk......."] }
+  };
+  const WPAL = Object.assign({}, PAL, { h: "#f5b971", i: "#e9b949", R: "#c21f3a", n: "#2b2b44", c: "#fff2b3", t: "#e2a46a" });
+  const SLOT_ORDER = ["neck", "face", "head"];
+  // linh vật (thân hộp 20 cột, hàng 0 = đỉnh hộp) → StackChan nhỏ: cột / hàng nhỏ = a + (gốc − b) · k
+  const MINI_MAP = {
+    head: { kx: 0.7, ky: 0.7, ax: 0, bx: 0, ay: 0, by: 0 },
+    face: { kx: 10 / 14, ky: 6 / 9, ax: 2, bx: 3, ay: 2, by: 3 },      // màn hình 14 × 9 → 10 × 6
+    neck: { kx: 0.7, ky: 0.7, ax: 0, bx: 0, ay: 9, by: 12 }
+  };
+  function outline(rows) {        // thêm viền mực quanh hình (như đồ có sẵn của linh vật)
+    const w = rows[0].length, g = [new Array(w).fill(".")].concat(rows.map((r) => r.split("")), [new Array(w).fill(".")]);
+    const out = g.map((r) => r.slice());
+    for (let j = 0; j < g.length; j++) {
+      for (let i = 0; i < w; i++) {
+        if (g[j][i] !== ".") { continue; }
+        if ((g[j - 1] && g[j - 1][i] !== ".") || (g[j + 1] && g[j + 1][i] !== ".") || (i > 0 && g[j][i - 1] !== ".") || (i < w - 1 && g[j][i + 1] !== ".")) { out[j][i] = "k"; }
+      }
+    }
+    return out.map((r) => r.join(""));
+  }
+  // hình 20 cột của linh vật (rows, dy so với đỉnh hộp) → 16 cột của StackChan nhỏ; mỗi điểm ảnh nhỏ lấy màu nhiều nhất
+  // trong phần hình gốc nó phủ (≥ 30 % có màu mới tô) — nét mảnh 1 ô vẫn còn
+  function miniWear(rows, dy, slot) {
+    const m = MINI_MAP[slot];
+    if (!m || !rows || !rows.length) { return null; }
+    const w = rows[0].length, h = rows.length;
+    const y0 = Math.floor(m.ay + (dy - m.by) * m.ky), y1 = Math.ceil(m.ay + (dy + h - m.by) * m.ky);
+    const out = [];
+    for (let j = y0; j < y1; j++) {
+      let line = "";
+      for (let i = -1; i < 15; i++) {
+        const cnt = {};
+        let any = 0;
+        for (let sy = 0; sy < 4; sy++) {
+          for (let sx = 0; sx < 4; sx++) {
+            const gx0 = Math.floor(m.bx + (i + (sx + 0.5) / 4 - m.ax) / m.kx);
+            const gy0 = Math.floor(m.by + (j + (sy + 0.5) / 4 - m.ay) / m.ky) - dy;
+            if (gy0 < 0 || gy0 >= h || gx0 < 0 || gx0 >= w) { continue; }
+            const c = rows[gy0][gx0];
+            if (c && c !== ".") { any++; cnt[c] = (cnt[c] || 0) + 1; }
+          }
+        }
+        let best = ".", bn = 0;
+        if (any >= 5) { Object.keys(cnt).forEach((c) => { if (cnt[c] > bn) { bn = cnt[c]; best = c; } }); }
+        line += best;
+      }
+      out.push(line);
+    }
+    let a = 0, b = out.length;
+    while (a < b && !/[^.]/.test(out[a])) { a++; }
+    while (b > a && !/[^.]/.test(out[b - 1])) { b--; }
+    return a < b ? { dy: y0 + a, rows: out.slice(a, b), pal: craftPal() } : null;
+  }
+  function craftPal() { const d = H && H.data && H.data(); return (d && d.catalog && d.catalog.craft && d.catalog.craft.palette) || PAL; }
+  const miniCache = {};
+  function wearOn() {
+    const L = typeof GardenFX !== "undefined" && GardenFX.lib;
+    if (L && L.wearOn) { return L.wearOn(); }
+    return Object.assign({}, (wallet().wear || {}).on || {});
+  }
+  // một món (id có sẵn / id tự vẽ / đối tượng {rows, dy} đang vẽ ở Xưởng) ở một chỗ → {dy, rows, pal}
+  function miniOf(id, slot) {
+    if (!id) { return null; }
+    if (typeof id === "object") { return miniWear(id.rows, id.dy || 0, slot); }
+    if (MINI_WEAR[id]) {
+      if (!miniCache[id]) { const a = MINI_WEAR[id]; miniCache[id] = { dy: a.flat ? a.dy : a.dy - 1, rows: a.flat ? a.rows : outline(a.rows), shell: a.shell }; }
+      return miniCache[id];
+    }
+    const L = typeof GardenFX !== "undefined" && GardenFX.lib, it = L && L.wearItem ? L.wearItem(id) : null;
+    if (!it || !it.rows || !it.rows.length) { return null; }
+    const key = id + "|" + (it.px || "");
+    if (!miniCache[key]) { miniCache[key] = miniWear(it.rows, it.dy || 0, slot); }
+    return miniCache[key];
+  }
+  function shellHex(on) {
+    const id = on.shell;
+    if (!id) { return null; }
+    if (SHELL[id]) { return SHELL[id]; }
+    const L = typeof GardenFX !== "undefined" && GardenFX.lib;
+    return L && L.shellOf ? L.shellOf(id) : null;
+  }
+  function pal(on) {
+    const sh = shellHex(on || wearOn());
     return sh ? Object.assign({}, PAL, { s: sh[0], S: sh[1] }) : PAL;
+  }
+  // vẽ đồ đang mặc lên đầu StackChan nhỏ: (x, y) = góc trên trái của đầu (cột 0 của đầu) trên cảnh; skip = chỗ không vẽ
+  // (ngâm suối: khăn trên đầu, chỉ thấy đầu → bỏ mũ + cổ; bơi: phao che cổ). Trả số hàng mũ nhô lên trên đầu.
+  function wearOver(ctx, S, x, y, flip, skip, on) {
+    on = on || wearOn();
+    let up = 0;
+    const p = pal(on);
+    SLOT_ORDER.forEach((slot) => {
+      if (skip && skip.indexOf(slot) >= 0) { return; }
+      const a = miniOf(on[slot], slot);
+      if (!a) { return; }
+      const P = a.pal || (a.shell ? Object.assign({}, WPAL, { s: p.s }) : WPAL);
+      paint(ctx, a.rows, x - 1, y + a.dy, S, flip, undefined, P);
+      if (slot === "head") { up = Math.max(up, -a.dy); }
+    });
+    return up;
   }
   function paint(ctx, rows, x, y, S, flip, alpha, p) {
     p = p || pal();
@@ -202,6 +319,7 @@ var GardenLife = (function () {
     let rows = !def ? build("sit", 0, "") : def.pose === "sleep" ? dozeRows() : build(def.pose === "walk" ? "stand" : def.pose, 0, def.prop);
     if (seen === false) { rows = rows.map((r) => r.replace(/[^.]/g, "n")); }
     paint(ctx, rows, 1, 18 - rows.length - 1, sc, false, seen === false ? 0.5 : undefined);
+    if (seen !== false && !(def && (def.pose === "bath" || def.pose === "swim"))) { wearOver(ctx, sc, 1 + HX, 18 - rows.length - 1, false, ["head"]); }   // 1.31 (mũ nhô khỏi ô)
     return cv;
   }
 
@@ -454,12 +572,14 @@ var GardenLife = (function () {
       rows = headOnly("sleep");
       bx = sp.box.left + (sp.item === "beddo" ? -3 : -2); by = sp.box.top + (sp.item === "beddo" ? -3 : -1);
       paint(ctx, rows, ox + bx, oy + by, S, false);
+      wearOver(ctx, S, ox + bx, oy + by, false, ["head", "neck"]);          // 1.31: nằm gối — chỉ đồ trên mặt
       emit(a, def, now); drawFx(ctx, S, ox, oy, a, bx + 7, by, now);
       box(e, bx, by, 14, 10); seen(a, e, now); return;
     } else if (sp.mode === "tub" && sp.box) {               // ngâm trong bồn đá
       rows = build("bath", Math.floor(now / 2600) % 2, "");
       bx = sp.box.cx - 12; by = sp.box.top - 3 + (still() ? 0 : Math.round(Math.sin(now / 900) * 0.6));
       paint(ctx, rows.slice(0, 11), ox + bx, oy + by, S, false);
+      wearOver(ctx, S, ox + bx + HX, oy + by + 2, false, ["head", "neck"]);  // khăn trên đầu, cổ ngập nước
       emit(a, def, now); drawFx(ctx, S, ox, oy, a, sp.box.cx, by, now);
       box(e, bx + 5, by, 14, 12); seen(a, e, now); return;
     } else if (sp.mode === "house") {                       // tắm trong nhà tắm: ló đầu ở cửa sổ, hơi nước trên mái
@@ -475,6 +595,7 @@ var GardenLife = (function () {
       by = y - 13 + (still() ? 0 : Math.round(Math.sin(now / 600) * 1));
       ctx.save(); ctx.beginPath(); ctx.rect(0, 0, ctx.canvas.width, Math.round((oy + 28) * S)); ctx.clip();
       paint(ctx, rows, ox + x - GW / 2, oy + by, S, flip);
+      wearOver(ctx, S, ox + x - GW / 2 + HX, oy + by + 2, flip, ["neck"]);   // phao che cổ
       ctx.restore();
       emit(a, def, now); drawFx(ctx, S, ox, oy, a, x, by, now);
       box(e, x - 8, by, 16, 13); seen(a, e, now); return;
@@ -490,9 +611,10 @@ var GardenLife = (function () {
     }
     ctx.globalAlpha = 0.2; ctx.fillStyle = "#1b1b2f"; ctx.fillRect(Math.round((ox + x - 5) * S), Math.round((oy + (sp.mode === "on" && doing ? yy + rows.length : y) - 1) * S), 10 * S, S); ctx.globalAlpha = 1;
     paint(ctx, rows, ox + x - GW / 2, oy + yy, S, flip);
+    const up = wearOver(ctx, S, ox + x - GW / 2 + HX, oy + yy, flip, null);   // 1.31: đồ đang mặc
     if (doing) { emit(a, def, now); }
-    drawFx(ctx, S, ox, oy, a, x, yy, now);
-    box(e, x - 8, yy, 16, rows.length);
+    drawFx(ctx, S, ox, oy, a, x, yy - up, now);
+    box(e, x - 8, yy - up, 16, rows.length + up);
     if (doing) { seen(a, e, now); }
   }
   function box(e, x, y, w, h) { lastBox = { scene: e.scene, x: x, y: y, w: w, h: h, t: Date.now() }; }
@@ -687,6 +809,14 @@ var GardenLife = (function () {
     closeCard: closeCard,
     sync: syncChip,
     count: function () { const v = data(); return v ? v.seen : 0; },
+    // 1.31: xem trước ở Xưởng / Tủ đồ — StackChan nhỏ đứng, mặc `on` (id hoặc {rows, dy} / {hex}); (x, y) = góc trên trái lưới 24 cột
+    preview: function (ctx, S, x, y, on, pose) {
+      const rows = build(pose || "stand", 0, "");
+      const sh = on && on.shell && typeof on.shell === "object" ? on.shell.hex : shellHex(on || wearOn());
+      paint(ctx, rows, x, y, S, false, undefined, sh ? Object.assign({}, PAL, { s: sh[0], S: sh[1] }) : PAL);
+      return wearOver(ctx, S, x + HX, y, false, null, on || wearOn());
+    },
+    miniWear: miniWear, _miniOf: miniOf,
     // đồ vừa được đặt / chuyển / cất: tìm lại chỗ đứng của việc đang làm (món có thể đã sang ô khác)
     rethink: function () { if (actor && actor.phase !== "new") { actor.phase = "seek"; actor.spec = null; } syncChip(); },
     isOpen: () => !!($("kb-life-card") && !$("kb-life-card").hidden),

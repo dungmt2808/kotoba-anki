@@ -24,6 +24,7 @@ try:
         _kb.LIFE_TEST_OFF = True      # 1.30: tắt StackChan sinh hoạt (không vẽ, không chip, không ghi sổ) cho kịch bản cũ —
         #                               thông báo "Sinh hoạt mới" chen vào hàng chờ thông báo (e2e_1259 F07), StackChan đứng trúng
         #                               điểm ảnh đang đo (e2e_124); e2e_130 / e2e_fuzz / release_sync / shots_130 / audit.js bật lại
+        _kb.STREAK_TEST_ALL = True    # 1.31: chuỗi đếm cả lịch sử ôn của collection mẫu (như ≤ 1.30.3) — e2e_131.js đặt lại False
 except Exception:
     pass
 
