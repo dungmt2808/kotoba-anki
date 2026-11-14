@@ -199,6 +199,9 @@ ok("sceneCard(\"pet\"" in clk and "sceneCard(\"guest\"" in clk and "GardenLife.p
 ok('<button type="button" id="kb-yard-home" class="kb-yard-hint"' in body and 'title="Bấm để vào Nhà' not in body, "nhãn là <button> id kb-yard-home; khung cảnh bỏ chú thích \"Bấm để vào\"")
 ok(re.search(r"\.kb-yard-hint \{[^}]*pointer-events: none", css) is None and ".kb-yard-hint:focus-visible" in css, "nút bấm được (không pointer-events: none), hiện khi Tab tới")
 ok(re.search(r"\.kb-yard-wrap \{[^}]*cursor: pointer", css) is None, "khung cảnh không còn con trỏ bàn tay ở mọi chỗ")
+hint_css = re.search(r"\n\.kb-yard-hint \{([^}]*)\}", css)
+ok(hint_css is not None and hint_css.group(1).find("font: inherit") < hint_css.group(1).find("line-height: 1.3"),
+   "nút: \"font: inherit\" viết trước line-height (khung cảnh line-height 0 → nút dẹt, chữ bị cắt — lỗi tìm ra qua ảnh chụp)")
 ok('yh.addEventListener("click", (ev) => { ev.stopPropagation(); closeSceneCard(); openFromMain(); })' in home and 'const hb = $("kb-house")' in home,
    "nút mở bảng Nhà như nút Nhà ở thanh trên (đóng bảng khác trước)")
 ok("bấm để bày đồ" not in home and "(bấm để chăm)" not in home and "bấm để xem Album khách" not in home, "chú thích rê chuột không hứa \"bấm để …\" nữa")

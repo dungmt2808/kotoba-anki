@@ -107,6 +107,10 @@ StackChan giờ **sống trong ngôi nhà của bạn**. Cứ vài phút bạn �
 - **Kho đồ**: mọi món đã có, kể cả quà của giao diện mùa. Đặt ra sân, di chuyển hay cất lại lúc nào cũng được, không mất gì.
 - **Xưởng**: tự vẽ đồ pixel (bút, đổ màu, kẻ thẳng, đối xứng, 3 cỡ 16 / 24 / 32), giống cây riêng và vùng riêng, hoặc chọn một tấm ảnh để chuyển thành pixel. Thiết kế chia sẻ được cho bạn bè bằng một đoạn mã.
 
+| Tự vẽ mũ cho StackChan ở Xưởng | StackChan trong nhà đội mũ vừa vẽ |
+|---|---|
+| ![Xưởng: vẽ mũ đỏ trên hình mờ của StackChan, bên phải xem trước hai StackChan](docs/anh/131_a_xuong_ve_mu.png) | ![Phòng chính (phóng to): StackChan đội mũ đỏ tự vẽ](docs/anh/131_b_stackchan_mu_tu_ve.png) |
+
 | Tủ đồ | Kho đồ |
 |---|---|
 | ![Tủ đồ: StackChan đội mũ rơm, đeo kính, khăn quàng đỏ](docs/anh/15_tu_do.png) | ![Kho đồ: các món chưa đặt, có nút Đặt](docs/anh/15b_kho_do.png) |

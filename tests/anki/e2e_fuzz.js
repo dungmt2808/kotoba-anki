@@ -96,7 +96,11 @@ kb.open_garden(); result = 1`);
     () => 'home:build' + (rnd() < 0.5 ? ':' + num(0, 9) : ''),
     () => 'home:zone:' + val(cat.zones), () => 'home:nha:open' + (rnd() < 0.5 ? ':' + val(['kitchen', 'bedroom']) : ''),
     () => 'home:style:' + pick(['buy', 'use', 'x']) + ':' + val(cat.styles),
-    () => 'home:wear:' + pick(['buy', 'on', 'off', 'x']) + ':' + val(cat.wear.concat(['head', 'face', 'neck', 'shell'])),
+    () => 'home:wear:' + pick(['buy', 'on', 'off', 'x']) + ':' + val(cat.wear.concat(['head', 'face', 'neck', 'shell', 'w1', 'w2', 'w99'])),
+    // 1.31: đồ tự vẽ cho StackChan (mũ 20×8 = 160 ô, mặt 20×9 = 180, cổ 20×5 = 100, vỏ hai màu)
+    () => 'craft:wear:' + jsonOr({ name: val(['Mũ', 'Vỏ']), slot: val(['head', 'face', 'neck', 'shell']), px: rnd() < 0.8 ? pick(['160r', '180y', '100k', '80r80.']) : px16(),
+      c: rnd() < 0.8 ? [val(['g', 'p', 'y']), val(['G', 'R', 'o'])] : val([['g'], '#'] ), id: rnd() < 0.3 ? val(['w1', 'w2', 'w9']) : undefined }),
+    () => 'home:mywear:del:' + val(['w1', 'w2', 'w3']),
     () => 'home:face:' + pick(['buy', 'toggle']) + ':' + val(cat.faces),
     () => 'home:decor:buy:' + val(cat.walls.concat(cat.floors)),
     () => 'home:decor:use:' + val(ROOMS) + ':' + val(['wall', 'floor']) + ':' + val(cat.walls.concat(cat.floors, ['none', 't1', 't2'])),
