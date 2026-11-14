@@ -15,7 +15,7 @@
 
 Điểm cần biết trước khi phát hành:
 - Lần kiểm tra này tìm ra **một lỗi có từ các bản trước**: lệnh nội bộ có tham số JSON sai dạng làm Anki bật hộp lỗi (mục 3, lỗi 1). Người dùng bình thường không tự gửi được lệnh như vậy (trang không bao giờ gửi), nhưng đã sửa để chắc.
-- Hai kịch bản cũ **trượt ngẫu nhiên** (không phải lỗi sản phẩm) đã được làm cho chắc (mục 3, lỗi 6–7). Trước đây chúng có thể báo đỏ oan khoảng 1/12 lần chạy hoặc khi chạy test vào ban đêm.
+- Hai kịch bản cũ **trượt ngẫu nhiên** (không phải lỗi sản phẩm) đã được làm cho chắc (mục 3, lỗi 7–8). Trước đây chúng có thể báo đỏ oan khoảng 1/12 lần chạy hoặc khi chạy test vào ban đêm.
 
 Môi trường: Linux (Ubuntu 24.04, container), Anki **26.9.4** (Python 3.13, Qt 6.12) và **23.10.1** (Python 3.9, Qt 6.6), chạy không màn hình, điều khiển webview qua DevTools (`tests/anki/cdp.js`). Mỗi kịch bản một thư mục Anki mới.
 
@@ -26,7 +26,7 @@ Môi trường: Linux (Ubuntu 24.04, container), Anki **26.9.4** (Python 3.13, Q
 | 1. Sinh hoạt trong nhà / ngoài nhà theo đồ + giờ | StackChan sống trong nhà: 67 việc (29 trong nhà — ưu tiên ×3, 11 ngoài sân, 27 ở vùng), mỗi việc một câu tiếng Nhật, Sổ sinh hoạt; thú nuôi tìm món ưa thích | `test_130.py`, `test_life.js`, `e2e_130.js` mục 6–11 |
 | 2. Thiết kế bên trong nhà + việc riêng của vùng | 12 giấy dán tường + 9 sàn cho từng gian, vẽ mẫu riêng 16×16; mỗi vùng 3–6 việc riêng (tắm biển, tắm suối nước nóng, viếng đền, vớt cá vàng, ngồi thiền, đợi tàu…) | `test_130.py`, `e2e_130.js` mục 1–5, 10 |
 | 3. Giao diện ấm cúng, chill | nền kem thay trắng (80 chỗ), vệt nắng, đốm cỏ, ánh đèn vàng buổi tối, bụi nắng ở cửa sổ | `audit.js` (đo bố cục mọi màn), ảnh trước / sau bên dưới |
-| 4. Kiểm tra kỹ + thêm kịch bản + đánh giá | 6 bộ test mới (mục 2), 7 lỗi tìm ra và sửa (mục 3), chạy lại toàn bộ bộ cũ (mục 4) | báo cáo này |
+| 4. Kiểm tra kỹ + thêm kịch bản + đánh giá | 6 bộ test mới (mục 2), 8 lỗi tìm ra và sửa (mục 3), chạy lại toàn bộ bộ cũ (mục 4) | báo cáo này |
 
 ![Trước (1.28.0) và sau (1.30.0): nhà buổi tối — tường / sàn từng gian, ánh đèn ấm, StackChan đang ăn quà vặt cạnh tủ lạnh](anh/truoc_sau_nha_toi.png)
 
@@ -54,7 +54,7 @@ Môi trường: Linux (Ubuntu 24.04, container), Anki **26.9.4** (Python 3.13, Q
 | `core/test_life.js` (offline, node) | `life.js` với đồng hồ giả: chọn việc theo giờ / đồ / thời tiết, ưu tiên trong nhà, đi → làm → ghi sổ một lần, không ghi khi không ở màn chính, đồ đổi ô → đi theo, mọi tư thế dựng được | **47/47** |
 | `core/test_ngau_nhien.py` (offline) | **12 hạt × 350 thao tác ngẫu nhiên** trên ví thật, sau mỗi thao tác xét bất biến (xu ≥ 0, đặt ≤ có, gian bên mở cả đôi, mẫu đang dùng là mẫu đang có, lưu rồi đọc lại giống hệt) + giá trừ đúng từng xu | **đạt, 0 vi phạm / 4.200 thao tác** |
 | `core/test_ban_cu.py` (offline) | ví 1.30 đầy đủ cho **mã thật** của 1.23, 1.24, 1.25, 1.26.1, 1.28 (lấy từ git) đọc → mua → lưu, rồi 1.30 đọc lại | **đạt: không mất món / gian / mẫu / khoá nào** |
-| `anki/e2e_130.js` | bấm chuột thật trong Anki: Tường & sàn, Xưởng vẽ mẫu, StackChan theo giờ, thẻ, Sổ, vùng, tắt, Đứng yên, cửa sổ nhỏ, đặt / cất đồ → việc đổi ngay | **74/74** (26.9.4) · @E130_2310@ (23.10.1) |
+| `anki/e2e_130.js` | bấm chuột thật trong Anki: Tường & sàn, Xưởng vẽ mẫu, StackChan theo giờ, thẻ, Sổ, vùng, tắt, Đứng yên, cửa sổ nhỏ, đặt / cất đồ → việc đổi ngay, chip ở 4 cỡ cửa sổ | **76/76** (26.9.4) · @E130_2310@ (23.10.1) |
 | `anki/e2e_fuzz.js` — **bấm bừa** | ~1.100 lệnh cầu nối ngẫu nhiên mỗi hạt (id lạ, số âm, JSON hỏng / `null` / mảng, chuỗi 1.800 ký tự, thiếu tham số…); sau mỗi 40 lệnh: không lỗi chưa bắt, Anki không bật hộp lỗi, cửa sổ còn mở, ví hợp lệ, xu không tăng bất thường | lần đầu **4/6 — tìm ra lỗi 1**; sau khi sửa **6/6** với hạt 130, 7 (1.120 lệnh), 2026, 99 (2.400 lệnh) trên 26.9.4 và hạt 130 trên 23.10.1 |
 | `anki/release_sync.js` (mở rộng) | máy 1 dùng một ngày (thêm: mở rộng nhà, dán tường Bếp, vẽ mẫu sàn lát Phòng ngủ, ghi Sổ sinh hoạt) → tắt hẳn Anki, mở lại → **máy 2 chỉ có collection** (như sau khi đồng bộ AnkiWeb) | @REL26@ (26.9.4) · @REL2310@ (23.10.1) |
 
@@ -67,8 +67,9 @@ Môi trường: Linux (Ubuntu 24.04, container), Anki **26.9.4** (Python 3.13, Q
 | 3 | Thông báo "Sinh hoạt mới" hiện **đè lên nút chấm điểm** lúc đang ôn thẻ (việc được tính là đã thấy dù dải cảnh đang khuất) | 1.30 (lúc làm) | `e2e_130.js` | chỉ tính "đã thấy" khi ở màn chính và cảnh nằm trong khung nhìn; thông báo chỉ hiện ở màn chính |
 | 4 | Ngồi lên ghế / mép bồn: hình StackChan không vẽ (toạ độ NaN) | 1.30 (lúc làm) | `test_life.js` | tính chiều cao món từ `bottom − top` |
 | 5 | Đặt / cất đồ xong, StackChan **chưa biết** việc mới (phải mở lại vườn); đồ đổi ô thì vẫn đứng cạnh ô cũ | 1.30 (lúc làm) | đọc lại mã | lệnh `home:place / move / take / zone / nha / build / pet / uzone` trả kèm việc làm được; `GardenLife.rethink()` tìm lại chỗ đứng |
-| 6 | Kịch bản `e2e_121` "đom đóm sáng trên nền tối" trượt ngẫu nhiên (~1/12 lần chạy): chụp một lần, trúng lúc cả đàn đang nhấp nháy dịu | 1.21 (kịch bản) | hồi quy, đo 60 mẫu trên cả 1.28 và 1.30 | kịch bản lấy lúc sáng nhất trong 2,5 giây. Không đổi mã sản phẩm |
-| 7 | Kịch bản `e2e_1258` "đèn trời bay" trượt khi máy chạy test đang là **ban đêm** (so màu chính xác, lớp tối ban đêm làm lệch màu) — bản 1.28 cũng trượt y hệt | 1.25.8 (kịch bản) | hồi quy lúc 0:30 | kịch bản giữ trời 10 giờ trước khi đếm màu. Không đổi mã sản phẩm |
+| 6 | Ở cửa sổ **1366 × 768 / 1280 × 720** cảnh Trong nhà: chip tên việc nằm đè lên góc dưới trái Bếp, **che StackChan đang ăn cơm ở bàn ăn**; tên việc dài bị cắt chữ ("Tắm suối nư…") | 1.30 (lúc làm) | `audit.js` (cờ "cắt chữ"), chụp ở 6 cỡ cửa sổ | chip lên trên hàng nút khi ở cảnh Trong nhà, chỉ còn hình khi vẫn chạm nhà, rộng tối đa 180 px (tên dài nhất 171 px); `e2e_130` kiểm ở 1024 / 1280 / 1366 / 1920 px |
+| 7 | Kịch bản `e2e_121` "đom đóm sáng trên nền tối" trượt ngẫu nhiên (~1/12 lần chạy): chụp một lần, trúng lúc cả đàn đang nhấp nháy dịu | 1.21 (kịch bản) | hồi quy, đo 60 mẫu trên cả 1.28 và 1.30 | kịch bản lấy lúc sáng nhất trong 2,5 giây. Không đổi mã sản phẩm |
+| 8 | Kịch bản `e2e_1258` "đèn trời bay" trượt khi máy chạy test đang là **ban đêm** (so màu chính xác, lớp tối ban đêm làm lệch màu) — bản 1.28 cũng trượt y hệt | 1.25.8 (kịch bản) | hồi quy lúc 0:30 | kịch bản giữ trời 10 giờ trước khi đếm màu. Không đổi mã sản phẩm |
 
 Ngoài ra chỉnh trong lúc làm: StackChan che TV / đè món khác → đứng cạnh món, tránh ô có đồ; Đền trên núi và Phố lễ hội thêm việc không cần đồ (Rung chuông đền, Ăn ở quầy hàng) để mở vùng là có việc ngay.
 

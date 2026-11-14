@@ -3335,6 +3335,7 @@ var GardenHome = (function () {
   // Sân trên màn chính
   // ---------------------------------------------------------------------
   let mainView = null;
+  let mainViewKey = "";        // 1.30: cảnh + tỉ lệ + lề + bề rộng của lần vẽ trước (đổi thì xếp lại chip sinh hoạt)
   // Món đồ ở chỗ bấm trên sân màn chính (để bấm hòm thư thì mở báo)
   function mainPetAt(ev) {
     const cv = $("kb-yard");
@@ -3463,6 +3464,9 @@ var GardenHome = (function () {
       mainView = { S: S, ox: ox, oy: pad };
       drawOutdoor(ctx, S, ox, pad, now, mainScene(), { bgFrom: -ox - 1, bgTo: cw / S - ox + 1, seen: !document.hidden, padTop: pad });
     }
+    // 1.30: khung nhìn đổi (đổi cảnh / đổi cỡ cửa sổ) → xếp lại chip sinh hoạt ngay, không chờ nhịp 1 giây của nó
+    const vkey = mainScene() + "|" + mainView.S + "|" + mainView.ox + "|" + cw;
+    if (vkey !== mainViewKey) { mainViewKey = vkey; if (typeof GardenLife !== "undefined" && GardenLife.sync) { GardenLife.sync(); } }
     const sw = now - mainSwitchAt;
     const tmode = typeof GardenGreet !== "undefined" ? GardenGreet.mode() : "fade";
     const swMs = SWITCH_MS[switchKind] || SWITCH_MS.sweep;

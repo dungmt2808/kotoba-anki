@@ -552,6 +552,31 @@ var GardenLife = (function () {
     const tt = "StackChan " + (here ? "đang: " + w.name : "đang " + (isRoom(w.scene) ? "ở trong nhà" : "ở " + sceneName(w.scene)) + " · " + w.name) + " (bấm để xem)";
     if (chip.title !== tt) { chip.title = tt; }
     chip.classList.toggle("is-away", !here);
+    layoutChip(chip, view);
+  }
+  // Chỗ của chip: bình thường cùng hàng với nút đổi cảnh + chụp ảnh (góc dưới trái dải cảnh).
+  // - Cảnh Trong nhà: cửa sổ rộng ≤ ~1900 px thì hàng nút chạm mép trái ngôi nhà → chip đè lên góc Bếp, che cả StackChan đang
+  //   ăn cơm. Tên việc dài nhất mà không vừa khoảng sân bên trái nhà thì chip luôn nằm trên hàng nút (is-up — xét theo bề rộng
+  //   tối đa chứ không theo tên việc lúc này, để chip không nhảy chỗ mỗi lần đổi việc); vẫn chạm nhà thì chỉ còn hình (is-mini).
+  // - Cảnh ngoài trời: chỉ dời lên khi chip đang che đúng chỗ StackChan đứng (cửa sổ rất hẹp).
+  const CHIP_MAX = 180;          // khớp max-width của .kb-life-chip
+  function layoutChip(chip, view) {
+    chip.classList.remove("is-up", "is-mini");
+    if (typeof GardenHome === "undefined" || !GardenHome._mainView || !chip.getBoundingClientRect) { return; }
+    const mv = GardenHome._mainView(), cv = $("kb-yard");
+    if (!mv || !cv || !isFinite(mv.ox * mv.S)) { return; }
+    const cr = cv.getBoundingClientRect(), r = chip.getBoundingClientRect();
+    if (view === "house") {
+      const houseLeft = cr.left + mv.ox * mv.S;                              // mép trái ngôi nhà trên màn hình
+      if (r.left + CHIP_MAX <= houseLeft + 2) { return; }
+      chip.classList.add("is-up");
+      if (chip.getBoundingClientRect().right > houseLeft + 24) { chip.classList.add("is-mini"); }
+      return;
+    }
+    const bx = lastBox;
+    if (!bx || !actor || bx.scene !== view) { return; }
+    const ax = cr.left + (mv.ox + bx.x) * mv.S, ay = cr.top + ((mv.oy || 0) + bx.y) * mv.S;
+    if (!(r.right <= ax || r.left >= ax + bx.w * mv.S || r.bottom <= ay || r.top >= ay + bx.h * mv.S)) { chip.classList.add("is-up"); }
   }
   function closeCard() { const c = $("kb-life-card"); if (c) { c.hidden = true; } cardFor = ""; }
   function goBook() {

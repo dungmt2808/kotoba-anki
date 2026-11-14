@@ -361,6 +361,27 @@ const PUT = (list) => list.map(([sc, id, x, y]) => `st.buy("${id}"); st.place("$
   ok(await js('const r = document.getElementById("kb-life-card").getBoundingClientRect(); return r.left >= 0 && r.top >= 0 && r.right <= innerWidth && r.bottom <= innerHeight;'), '720 × 520: thẻ trong cửa sổ');
   await shot('11_hep');
   await js('GardenLife.closeCard(); GardenLife._force(null); return 1;');
+  // chip không che StackChan, không cắt chữ ở các cỡ cửa sổ hay gặp (1.30: ở 1366 px chip từng đè lên góc Bếp, che StackChan đang ăn cơm)
+  const chipAt = () => js(`GardenLife.sync(); const chip = document.getElementById("kb-life-chip"), cv = document.getElementById("kb-yard").getBoundingClientRect(), v = GardenHome._mainView(),
+      r = chip.getBoundingClientRect(), lab = chip.querySelector(".kb-life-chip-t"), b = GardenLife._box(), HX = { kitchen: 0, room: 148, bedroom: 312 };
+    const ax = cv.left + (v.ox + (HX[b.scene] !== undefined && v.house ? HX[b.scene] : 0) + b.x) * v.S, ay = cv.top + ((v.oy || 0) + b.y) * v.S;
+    const hit = !(r.right <= ax || r.left >= ax + b.w * v.S || r.bottom <= ay || r.top >= ay + b.h * v.S);
+    const wr = document.getElementById("kb-yard-wrap").getBoundingClientRect();
+    return { up: chip.classList.contains("is-up"), mini: chip.classList.contains("is-mini"), over: Math.round(r.right - (cv.left + v.ox * v.S)), hit: hit,
+      cut: lab.scrollWidth > lab.clientWidth + 1, inside: r.left >= wr.left - 1 && r.top >= wr.top - 1 && r.right <= wr.right + 1 && r.bottom <= wr.bottom + 1 };`);
+  const sizes = [[1024, 700], [1280, 720], [1366, 768], [1920, 1080]], chipBad = [];
+  for (const [w, h] of sizes) {
+    await py(KB + 'kb._dialog.showNormal(); kb._dialog.resize(' + w + ', ' + h + '); result = 1'); await sleep(900);
+    for (const [view, act, scene] of [['house', 'taberu', 'kitchen'], ['house', 'mado', 'room'], ['onsen', 'gyunyu', 'onsen'], ['beach', 'suna', 'beach']]) {
+      await js('GardenHome.showMain("' + view + '"); GardenLife._force("' + act + '", "' + scene + '"); return 1;'); await sleep(600);
+      await js('GardenLife._snap(); return 1;'); await sleep(700);
+      const c = await chipAt();
+      if (c.hit || c.cut || !c.inside || (view === 'house' && c.over > 24)) { chipBad.push(w + ' ' + act + ' ' + JSON.stringify(c)); }
+      if (w === 1366 && act === 'taberu') { ok(c.up && !c.mini && !c.hit, '1366 × 768, Trong nhà: chip nằm trên hàng nút, còn tên việc, không che StackChan đang ăn cơm: ' + JSON.stringify(c)); await shot('12_chip_1366'); }
+    }
+  }
+  ok(!chipBad.length, 'chip ở ' + sizes.map((x) => x[0]).join(' / ') + ' px × 4 việc: không che StackChan, không cắt chữ, không lấn vào nhà quá 24 px, nằm trong dải cảnh' + (chipBad.length ? ' — ' + chipBad.slice(0, 3).join(' · ') : ''));
+  await js('GardenLife._force(null); GardenHome.showMain("yard"); return 1;');
   await py(KB + 'kb._dialog.resize(1366, 860); result = 1'); await sleep(500);
 
   console.log('== 12. lỗi');
