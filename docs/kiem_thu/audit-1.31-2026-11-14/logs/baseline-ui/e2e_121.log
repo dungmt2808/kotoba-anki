@@ -1,0 +1,58 @@
+== Python: ai được ghé, tần suất, album
+  ✓ album 16 khách, chưa gặp ai
+  ✓ sân: ghế gỗ gọi mèo (×3), bụi hoa gọi chim sẻ (×3), ao gọi cò, đèn đá gọi cú (×3)
+  ✓ hải âu chỉ ở Bãi biển, hươu ở Đền
+  ✓ chuông gió trong nhà gọi vành khuyên
+  ✓ deck chưa có cây Ra quả → khách ghé thỉnh thoảng (0,3)
+  ✓ trang có dữ liệu khách (data.guests)
+== mèo hoang nằm trên ghế gỗ, gặp lần đầu
+  ✓ mèo đi vào rồi ở lại
+  ✓ nằm giữa ghế gỗ
+  ✓ vẽ sau ghế (nằm trên ghế, không bị ghế che)
+  ✓ ghế đang có mèo nằm → không vẽ chim sẻ nhỏ đậu ghế (khỏi đè lên mèo)
+  ✓ thông báo "Khách mới ghé vườn: Mèo hoang · xem Album ▸"
+  ✓ Python ghi album: gặp lần đầu ở Sân vườn
+  ✓ bấm thông báo → Nhà mở tab Album khách
+  ✓ thẻ Mèo hoang được tô viền
+  ✓ tab Album: 16 thẻ, "1/16", dòng tần suất theo cây Ra quả
+  ✓ thẻ đã gặp: tên, tên Nhật, ngày gặp, cảnh, số ngày
+  ✓ thẻ chưa gặp: "???", bóng đen, gợi ý chỗ gặp
+== bấm khách trên sân → Album khách
+  ✓ cò hiện ở ao (hiện dần)
+  ✓ cò đứng ở mép ao
+  ✓ rê chuột: chú thích + con trỏ tay (Cò trắng ghé vườn)
+  ✓ bấm cò → thẻ nhỏ của Cò trắng, bảng Nhà chưa mở (1.31)
+  ✓ nút "Album khách ▸" → Nhà mở Album, tô thẻ Cò trắng
+  ✓ khách được bấm có dấu "!"
+== Python xét lại trước khi ghi album
+  ✓ khách không được ghé (ếch ngoài mùa) → không ghi album
+  ✓ hải âu ở sân (chỉ ghé Bãi biển) → không ghi album
+  ✓ cùng ngày gặp lại không đếm thêm
+== ban đêm: cú trên đèn đá, đom đóm
+  ✓ cú hiện dần
+  ✓ cú đậu trên đỉnh đèn đá, vẽ sau đèn
+  ✓ cú ban đêm ở sân có đèn đá → ghi album
+  ✓ đom đóm sáng trên nền tối (lúc sáng nhất 20 điểm ảnh lõi sáng quanh chỗ lượn)
+== trong nhà: vành khuyên ở bậu cửa sổ
+  ✓ vành khuyên hiện ở bậu cửa
+  ✓ trong khung cửa sổ (x 66–94), đứng trên bậu
+  ✓ ghi album: gặp trong nhà
+  ✓ thẻ Album ghi "Trong nhà"
+== tắt "Thú nuôi, khách, StackChan sinh hoạt" (trước 1.30: "Thú nuôi, khách trên sân")
+  ✓ bảng Giao diện có dòng "Thú nuôi, khách, StackChan sinh hoạt"
+  ✓ nhãn mới hiện trong bảng Giao diện
+  ✓ tắt thì khách không được vẽ trên sân (null)
+== Lịch hoa: "Khách mới" ở khung ngày, bìa cuốn nhật ký
+  ✓ khung hôm nay có dòng "Khách mới"
+  ✓ liệt kê khách mới hôm nay: Mèo hoang · Cò trắng · Cú · Chim vành khuyên
+  ✓ bìa cuốn nhật ký tháng này: "Khách mới: …"
+  ✓ trang đầu vẫn vừa khung
+== khách tự ghé theo khung giờ (tần suất 1)
+  ✓ khung giờ này có khách → khách tự ghé: suzume
+  ✓ 1366 px: 11 tab của Nhà rộng bằng nhau (113–113)
+== cửa sổ 1024 px
+  ✓ 11 tab của Nhà vẫn một hàng ở 1024 px
+  ✓ Album không tràn ngang, chữ không lọt khỏi thẻ
+  ✓ không lỗi JS
+  ✓ nhật ký lỗi add-on trống
+KẾT QUẢ: 47/47

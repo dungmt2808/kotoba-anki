@@ -1,0 +1,141 @@
+== 1. chỉ nút "Nhà & Cửa hàng" mở bảng Nhà
+  ✓ nhãn "Nhà & Cửa hàng ▸" là nút bấm được: ["BUTTON","auto","Nhà & Cửa hàng ▸","Nhà & Cửa hàng (phím N)"]
+  ✓ khung cảnh không còn chú thích "Bấm để vào Nhà & Cửa hàng"
+POINTER_TARGET {"x":950,"y":276,"target":["CANVAS","kb-yard","kb-yard",""],"card":null,"inside":false}
+  ✓ bấm cỏ trống bên phải trên sân: không mở bảng Nhà
+POINTER_TARGET {"x":380,"y":234,"target":["CANVAS","kb-yard","kb-yard",""],"card":null,"inside":false}
+  ✓ bấm ngôi nhà trên sân: không mở bảng Nhà
+POINTER_TARGET {"x":680,"y":294,"target":["CANVAS","kb-yard","kb-yard",""],"card":null,"inside":false}
+  ✓ bấm giữa sân trên sân: không mở bảng Nhà
+POINTER_TARGET {"x":1040,"y":144,"target":["DIV","kb-today","kb-today","\n        \n          Hôm nay 0/30 lượt · Lịch hoa–\n          \n        \n"],"card":null,"inside":false}
+  ✓ bấm trời trên sân: không mở bảng Nhà
+  ✓ rê chuột lên cảnh: nút hiện rõ
+  ✓ nút đủ cao, chữ không bị cắt (128 × 25 px, line-height 16.9px)
+  ✓ con trỏ trên cỏ trống không phải bàn tay
+POINTER_TARGET {"x":92.1796875,"y":104.4453125,"target":["BUTTON","kb-yard-home","kb-yard-hint","Nhà & Cửa hàng ▸"],"card":null,"inside":false}
+  ✓ bấm nút → bảng Nhà mở đúng cảnh Sân vườn
+  ✓ Esc đóng bảng Nhà
+POINTER_TARGET {"x":340,"y":276,"target":["CANVAS","kb-yard","kb-yard",""],"card":null,"inside":false}
+  ✓ Trong nhà: bấm Bếp không mở bảng Nhà
+POINTER_TARGET {"x":660,"y":276,"target":["CANVAS","kb-yard","kb-yard",""],"card":null,"inside":false}
+  ✓ Trong nhà: bấm phòng chính không mở bảng Nhà
+POINTER_TARGET {"x":980,"y":276,"target":["CANVAS","kb-yard","kb-yard",""],"card":null,"inside":false}
+  ✓ Trong nhà: bấm Phòng ngủ không mở bảng Nhà
+  ✓ Trong nhà: không còn chú thích "bấm để bày đồ"
+POINTER_TARGET {"x":92.1796875,"y":104.4453125,"target":["BUTTON","kb-yard-home","kb-yard-hint","Nhà & Cửa hàng ▸"],"card":null,"inside":false}
+  ✓ Trong nhà: nút mở bảng Nhà ở phòng chính
+  ✓ phím N vẫn mở bảng Nhà
+POINTER_TARGET {"x":1099.3828125,"y":41,"target":["BUTTON","kb-house","kb-btn kb-btn-house","Nhà"],"card":null,"inside":false}
+  ✓ nút Nhà ở thanh trên vẫn mở bảng Nhà
+POINTER_TARGET {"x":740,"y":264,"target":["CANVAS","kb-yard","kb-yard",""],"card":null,"inside":false}
+  ✓ Bãi biển: bấm cát không mở bảng Nhà
+== 1b. bấm thú nuôi / khách → thẻ nhỏ
+  ✓ thấy Shiba ngoài sân [628.896446122415,255.02955730136773,"shiba"]
+POINTER_TARGET {"x":628.896446122415,"y":255.02955730136773,"target":["CANVAS","kb-yard","kb-yard",""],"card":null,"inside":false}
+  ✓ bấm thú: thẻ nhỏ hiện, bảng Nhà không mở — Chó ShibaNo bụng ♥✕Thú nuôi ▸
+  ✓ thẻ có nút vào tab Thú nuôi
+  ✓ Esc đóng thẻ, cửa sổ vườn vẫn mở
+POINTER_TARGET {"x":628.896446122415,"y":255.02955730136773,"target":["CANVAS","kb-yard","kb-yard",""],"card":null,"inside":false}
+POINTER_TARGET {"x":980,"y":144,"target":["CANVAS","kb-yard","kb-yard",""],"card":[640,118,940,245],"inside":false}
+  ✓ bấm ra chỗ khác: thẻ đóng, không mở bảng Nhà
+POINTER_TARGET {"x":628.896446122415,"y":255.02955730136773,"target":["CANVAS","kb-yard","kb-yard",""],"card":null,"inside":false}
+POINTER_TARGET {"x":702.5546875,"y":216.5,"target":["BUTTON","","kb-btn kb-btn-small","Thú nuôi ▸"],"card":[640,118,940,245],"inside":true}
+  ✓ nút trong thẻ → bảng Nhà ở tab Thú nuôi
+  ✓ khách Cò trắng ghé ao
+  ✓ rê chuột lên khách: chú thích tên
+POINTER_TARGET {"x":676.9850603283992,"y":249.0328099816179,"target":["CANVAS","kb-yard","kb-yard",""],"card":null,"inside":false}
+  ✓ bấm khách: thẻ nhỏ (tên, Album khách ▸), bảng Nhà không mở
+POINTER_TARGET {"x":759.328125,"y":210.5,"target":["BUTTON","","kb-btn kb-btn-small","Album khách ▸"],"card":[688,106,988,239],"inside":true}
+  ✓ nút trong thẻ → Album, tô thẻ Cò trắng
+  ✓ hòm thư: chưa đặt (bỏ qua)
+== 2. chuỗi ngày khi mới cài
+  ✓ trước 1.31 (đếm cả lịch sử Anki): chuỗi 41 ngày
+  ✓ mới cài: chuỗi 0 ngày (lịch sử ôn trước khi cài không tính)
+  ✓ lượt ôn hôm nay vẫn đếm đủ (5 lượt, cho mục tiêu ngày)
+  ✓ mốc = lúc mở hồ sơ (trước khi lập sổ bù xu)
+  ✓ (cách tính cũ) thẻ Hôm nay ghi "41 ngày liền" ngay khi vừa cài
+  ✓ thẻ Hôm nay: không ghi "N ngày liền"
+  ✓ ôn một lượt sau khi cài: chuỗi 1 ngày ({"reviews":6,"streak":1,"day":0})
+  ✓ thẻ Hôm nay: "1 ngày liền"
+  ✓ Lịch hoa: Ôn liền 1 ngày, Liền lâu nhất 1 ngày ({"m":1,"y":1,"best":1,"days":41})
+  ✓ Lịch hoa vẫn có hoa của các ngày ôn trước khi cài (41 ngày trong năm nay)
+  ✓ Lịch hoa hiện "Ôn liền 1 ngày": Ôn liền1 ngàyTháng nàyđã ôn 14/14 ngày | Ôn liền1 ngày | Tháng nàyđã ôn 14/14 ngày
+  ✓ mở hồ sơ lần nữa: mốc giữ nguyên, chuỗi vẫn 1
+  ✓ đã dùng bản cũ (sổ bù xu lập 10 ngày trước): chuỗi 11 ngày (10 ngày trước + hôm nay)
+  ✓ Giao diện mùa đổi bằng ngày ôn liền dùng chuỗi mới (1 ngày → chưa đổi được: Cần 7 ngày ôn liền để đổi (đang có 1 ngày).)
+== 3. tự vẽ đồ cho StackChan
+  ✓ tab Xưởng có lối vào "Tự vẽ đồ cho StackChan"
+POINTER_TARGET {"x":141.578125,"y":430.5,"target":["BUTTON","","kb-btn kb-h-buy","Tủ đồ ▸"],"card":null,"inside":false}
+  ✓ nút "Tủ đồ ▸" chuyển sang tab Tủ đồ
+  ✓ Tủ đồ có phần Tự vẽ: Mũ · Mặt · Cổ · Vỏ
+  ✓ thẻ đầu Tủ đồ có cả StackChan sinh hoạt (mặc cùng bộ)
+POINTER_TARGET {"x":151.203125,"y":430.5,"target":["BUTTON","","kb-btn kb-btn-small kb-h-buy","Mũ"],"card":null,"inside":false}
+  ✓ Xưởng mở chế độ Mũ, lưới 20 × 8 (["head",20,8])
+  ✓ tiêu đề "工房 · Mũ cho StackChan", nút "Tạo · 200 xu"
+  ✓ ô trống ở đỉnh hộp có hình mờ của StackChan (tối hơn ô phía trên): [[132,133,145,255],[220,222,226,255]]
+POINTER_TARGET {"x":1104.625,"y":430,"target":["BUTTON","","kb-cf-sw",""],"card":null,"inside":false}
+POINTER_TARGET {"x":224.5,"y":445.5,"target":["CANVAS","kb-cf-grid","kb-cf-grid",""],"card":null,"inside":false}
+POINTER_TARGET {"x":394.5,"y":411.5,"target":["CANVAS","kb-cf-grid","kb-cf-grid",""],"card":null,"inside":false}
+POINTER_TARGET {"x":428.5,"y":377.5,"target":["CANVAS","kb-cf-grid","kb-cf-grid",""],"card":null,"inside":false}
+POINTER_TARGET {"x":462.5,"y":343.5,"target":["CANVAS","kb-cf-grid","kb-cf-grid",""],"card":null,"inside":false}
+  ✓ vẽ bằng chuột thật: 36 ô đỏ
+  ✓ khung xem trước có mũ đỏ trên cả hai StackChan (522 điểm ảnh)
+  ✓ StackChan sinh hoạt (bên phải khung xem trước) đội mũ tự thu nhỏ (198 điểm ảnh)
+  ✓ cửa sổ 1024 × 640: không tràn ngang, lưới 604 × 244 px, nút Tạo nằm trong cửa sổ
+POINTER_TARGET {"x":1267.1875,"y":109.5,"target":["BUTTON","kb-cf-save","kb-btn kb-h-buy","Tạo · 200 xu"],"card":null,"inside":false}
+  ✓ hỏi trước khi trả xu: "Tạo mũ mới cho StackChan?"
+POINTER_TARGET {"x":739.125,"y":460.625,"target":["BUTTON","","kb-btn kb-ask-yes","Tạo · 200 xu"],"card":null,"inside":false}
+  ✓ trừ 200 xu (3065 → 2865)
+  ✓ lưu món w1 (tên, chỗ Mũ), mặc luôn, điểm ảnh ở PX_KEY: {"items":{"w1":{"name":"Mũ đỏ của tớ","slot":"head"}},"next":2,"on":{"head":"w1"}}
+  ✓ lưu xong Xưởng đóng
+  ✓ linh vật góc trái đội mũ đỏ (324 điểm ảnh đỏ phần trên)
+  ✓ thẻ món tự vẽ ghi "đang mặc"
+  ✓ StackChan sinh hoạt ngoài sân đội mũ tự vẽ (183 điểm ảnh đỏ)
+  ✓ StackChan sinh hoạt trong nhà đội mũ tự vẽ (88 điểm ảnh đỏ)
+POINTER_TARGET {"x":179.34375,"y":430.5,"target":["BUTTON","","kb-btn kb-btn-small","Sửa"],"card":null,"inside":false}
+  ✓ mở lại món: chưa sửa → "Lưu · miễn phí"
+POINTER_TARGET {"x":1261.515625,"y":109.5,"target":["BUTTON","kb-cf-save","kb-btn kb-h-buy","Lưu · miễn phí"],"card":null,"inside":false}
+  ✓ đổi tên: không hỏi, không trừ xu
+POINTER_TARGET {"x":179.34375,"y":430.5,"target":["BUTTON","","kb-btn kb-btn-small","Sửa"],"card":null,"inside":false}
+POINTER_TARGET {"x":1285.875,"y":430,"target":["BUTTON","","kb-cf-sw",""],"card":null,"inside":false}
+POINTER_TARGET {"x":496.5,"y":377.5,"target":["CANVAS","kb-cf-grid","kb-cf-grid",""],"card":null,"inside":false}
+  ✓ vẽ thêm → "Lưu · 50 xu"
+POINTER_TARGET {"x":1270.15625,"y":109.5,"target":["BUTTON","kb-cf-save","kb-btn kb-h-buy","Lưu · 50 xu"],"card":null,"inside":false}
+POINTER_TARGET {"x":742.3203125,"y":460.625,"target":["BUTTON","","kb-btn kb-ask-yes","Lưu · 50 xu"],"card":null,"inside":false}
+  ✓ vẽ lại: trừ 50 xu
+  ✓ linh vật đổi hình ngay (có điểm vàng mới)
+POINTER_TARGET {"x":755.75,"y":430.5,"target":["BUTTON","","kb-btn kb-h-buy","Mua"],"card":null,"inside":false}
+POINTER_TARGET {"x":739.5703125,"y":460.625,"target":["BUTTON","","kb-btn kb-ask-yes","Mua · 120 xu"],"card":null,"inside":false}
+  ✓ mua Mũ rơm: mặc Mũ rơm, bỏ mũ tự vẽ ([2695,"straw",null])
+  ✓ StackChan sinh hoạt đội Mũ rơm (đồ có sẵn, bản vẽ nhỏ) — 80 điểm ảnh
+POINTER_TARGET {"x":126.1640625,"y":430.5,"target":["BUTTON","","kb-btn kb-h-buy","Mặc"],"card":null,"inside":false}
+  ✓ bấm Mặc ở món tự vẽ: thay Mũ rơm ([null,"w1"])
+POINTER_TARGET {"x":296.3203125,"y":430.5,"target":["BUTTON","","kb-btn kb-btn-small kb-h-buy","Vỏ"],"card":null,"inside":false}
+  ✓ Vỏ: chế độ chọn màu (Thân / Viền dưới), ẩn công cụ vẽ
+POINTER_TARGET {"x":541.0078125,"y":109.5,"target":["BUTTON","","kb-btn kb-btn-small is-on","Thân"],"card":null,"inside":false}
+POINTER_TARGET {"x":1223,"y":233,"target":["BUTTON","","kb-cf-sw",""],"card":null,"inside":false}
+POINTER_TARGET {"x":628.4140625,"y":109.5,"target":["BUTTON","","kb-btn kb-btn-small","Viền dưới"],"card":null,"inside":false}
+POINTER_TARGET {"x":1261,"y":233,"target":["BUTTON","","kb-cf-sw",""],"card":null,"inside":false}
+  ✓ chọn thân xanh lá, viền xanh đậm → "Tạo · 150 xu"
+POINTER_TARGET {"x":1267.1875,"y":109.5,"target":["BUTTON","kb-cf-save","kb-btn kb-h-buy","Tạo · 150 xu"],"card":null,"inside":false}
+POINTER_TARGET {"x":739.125,"y":460.625,"target":["BUTTON","","kb-btn kb-ask-yes","Tạo · 150 xu"],"card":null,"inside":false}
+  ✓ vỏ w2: trừ 150 xu, mặc luôn ({"name":"Đồ của tớ","slot":"shell","c":["g","G"]})
+  ✓ linh vật góc trái vỏ xanh lá
+  ✓ StackChan sinh hoạt vỏ xanh lá (144 điểm ảnh)
+POINTER_TARGET {"x":231.9609375,"y":430.5,"target":["BUTTON","","kb-btn kb-btn-small kb-h-del","Xoá"],"card":null,"inside":false}
+  ✓ Xoá: bấm lần đầu chỉ hỏi lại
+POINTER_TARGET {"x":283.359375,"y":430.5,"target":["BUTTON","","kb-btn kb-btn-small kb-h-del is-armed","Bấm lần nữa để xoá"],"card":null,"inside":false}
+  ✓ xoá w1: chỉ còn vỏ w2, cởi mũ, điểm ảnh xoá ([["w2"],{"shell":"w2"},false])
+  ✓ 11 lệnh sai dạng (JSON null / mảng, hình hỏng, chỗ lạ, màu lạ, id lạ): không trừ xu, vườn vẫn chạy
+  ✓ Anki không bật hộp lỗi
+== 4. cài mới hoàn toàn trên collection đã ôn Anki lâu (đúng tình huống người dùng hỏi)
+  ✓ collection sạch dữ liệu ことば畑 (11 khoá, 11 file), lịch sử ôn còn 41 ngày, xu 0
+  ✓ mở hồ sơ lần đầu sau khi cài: chuỗi 0, đặt mốc
+  ✓ không "bù xu điện thoại" cho lượt ôn trước khi cài
+  ✓ người mới: có hướng dẫn 3 bước
+  ✓ thẻ Hôm nay: "Hôm nay 6/30 lượt · Lịch hoa" — không có chuỗi, 0 xu
+  ✓ Tin làng không nhắc chuỗi cũ: Báo mới đã tới | Ôn thêm 4 lượt nữa mở một chỗ lấp lánh | Hôm nay chồn tuyết có thể ghé Sân vườn lúc tuyết rơi
+  ✓ ôn thẻ đầu tiên trong vườn: chuỗi 1 ngày, có xu (3)
+  ✓ thẻ Hôm nay ghi "1 ngày liền"
+  ✓ không lỗi JS
+KẾT QUẢ: 89/89 — TẤT CẢ OK

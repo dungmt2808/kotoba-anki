@@ -1,0 +1,80 @@
+{
+  "metadata": {
+    "anki": "23.10.1",
+    "version": "1.31.0"
+  },
+  "cases": 7,
+  "passed": 6,
+  "failed": 1,
+  "results": [
+    {
+      "case": "diary/profile-A-backup",
+      "pass": true,
+      "actual": {
+        "diary": "Synthetic private diary in profile A",
+        "backup": "Synthetic private diary in profile A"
+      },
+      "expected": {
+        "diary": "Synthetic private diary in profile A",
+        "backup": "Synthetic private diary in profile A"
+      }
+    },
+    {
+      "case": "diary/profile-B-starts-empty",
+      "pass": true,
+      "actual": "",
+      "expected": ""
+    },
+    {
+      "case": "diary/profile-B-does-not-overwrite-A-backup",
+      "pass": false,
+      "actual": {
+        "same_file": true,
+        "backup_A_exists": false
+      },
+      "expected": {
+        "same_file": false,
+        "backup_A_exists": true
+      }
+    },
+    {
+      "case": "diary/profile-A-collection-still-correct",
+      "pass": true,
+      "actual": "Synthetic private diary in profile A",
+      "expected": "Synthetic private diary in profile A"
+    },
+    {
+      "case": "paper/profile-A-fixture",
+      "pass": true,
+      "actual": "SYNTHETIC PROFILE A ONLY",
+      "expected": "SYNTHETIC PROFILE A ONLY"
+    },
+    {
+      "case": "paper/observed-machine-wide-library",
+      "pass": true,
+      "actual": [
+        true,
+        "SYNTHETIC PROFILE A ONLY",
+        false
+      ],
+      "expected": [
+        true,
+        "SYNTHETIC PROFILE A ONLY",
+        false
+      ],
+      "detail": {
+        "notes": 0,
+        "same_library": true,
+        "title": "SYNTHETIC PROFILE A ONLY",
+        "started_for_B": false,
+        "tasks": 0
+      }
+    },
+    {
+      "case": "paper/profile-B-has-no-profile-A-notes",
+      "pass": true,
+      "actual": 0,
+      "expected": 0
+    }
+  ]
+}

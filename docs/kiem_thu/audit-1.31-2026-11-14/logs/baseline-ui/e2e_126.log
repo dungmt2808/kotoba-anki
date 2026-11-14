@@ -1,0 +1,50 @@
+== 1. lần mở đầu ngày: thú chào
+  ✓ màn chào hiện khi mở vườn lần đầu trong ngày
+  ✓ mèo Mít chào: ["neko","おはよう！","Mít · Chào buổi sáng!"]
+  ✓ tin hôm nay trên màn chào: ["Hôm nay chồn tuyết có thể ghé Sân vườn lúc tuyết rơi"]
+  ✓ ghi "đã chào hôm nay" (kb-greet-day = ngày Anki 0)
+  ✓ bong bóng nằm gọn trong cửa sổ 1366 × 860
+  ✓ tự vào vườn sau ~4 giây
+  ✓ màn chào gỡ khỏi trang sau vòng tròn
+  ✓ lớp vòng tròn tắt sau khi mở xong
+== 2. lần mở sau cùng ngày: không chào, chỉ vòng tròn mở
+  ✓ không chào lần thứ hai trong ngày
+  ✓ vòng tròn mở ~0,4 giây rồi tắt
+  ✓ lớp hiệu ứng không nhận chuột (không chặn bấm)
+== 3. rê chuột dừng đếm, bấm / phím để vào
+  ✓ rê chuột lên màn chào: không tự vào sau 5 giây
+  ✓ rời chuột: đếm tiếp rồi vào vườn
+  ✓ bấm vào màn chào → vào vườn ngay
+  ✓ phím N: chỉ vào vườn, không mở bảng Nhà
+  ✓ Esc: vào vườn, cửa sổ vườn không đóng
+== 4. ai chào
+  ✓ thú đi chơi → StackChan báo nhẹ: Mít đi chơi rồi — cho ăn là về nhé.
+  ✓ chưa nuôi thú → StackChan: Chào buổi sáng!
+  ✓ buổi tối: こんばんは！
+== 5. vé giữ chuỗi, ngày lễ
+  ✓ vừa dùng vé giữ chuỗi: Mít · Hôm qua bận hả? Chuỗi vẫn còn nè! / Đã dùng 1 vé giữ chuỗi · chuỗi 3 ngày
+  ✓ ngày lễ: メリークリスマス！ / Mít · Giáng sinh vui vẻ!
+== 6. Tin làng
+  ✓ dòng trong thẻ Hôm nay: "Tin làng: đã dùng vé giữ chuỗi ▸"
+  ✓ bảng Tin làng: Tin làng · Thứ Bảy 14/11 · 3 tin hôm nay, 2 sắp tới
+  ✓ có tin vé giữ chuỗi: ["Đã dùng 1 vé giữ chuỗi · chuỗi 3 ngày","Ôn thêm 10 lượt nữa mở một chỗ lấp lánh","Hôm nay chồn tuyết có thể ghé Sân vườn lúc tuyết rơi"]
+  ✓ Esc đóng bảng Tin làng (cửa sổ vẫn mở)
+  ✓ mở Nhiệm vụ thì bảng Tin làng đóng
+== 7. chuyển cảnh
+  ✓ ▸ (house): ["curtain"] · nút ["◂","▸"]
+  ✓ ◂ (beach): ["sweep"]
+  ✓ vào / ra Trong nhà: rèm
+  ✓ mở bảng Nhà: bật nhẹ (lớp kb-panel-in)
+  ✓ hết hiệu ứng thì gỡ lớp kb-panel-in
+== 8. ⚙ Chào khi mở vườn / Chuyển cảnh, Dịu mắt
+  ✓ ⚙ có 2 dòng mới: ["Cỡ cảnh","Mở vườn ở","Dây trang trí","Chào khi mở vườn","Chuyển cảnh","Bảng Hôm nay","Hỏi trước khi trả xu","Màu bảng","Khung thẻ"]
+  ✓ lưu ui.greet / ui.trans = off
+  ✓ tắt cả hai: không chào, không vòng tròn
+  ✓ tắt chuyển cảnh: đổi cảnh ◂ ▸ không có dải lá
+  ✓ Dịu mắt: giữ Chào / Chuyển cảnh, chuyển cảnh chỉ mờ dần (["on","on"])
+== 9. cửa sổ nhỏ 720 × 520
+  ✓ bong bóng vừa cửa sổ 720 × 520: [138,70,583,229,720,520]
+  ✓ không lỗi JS
+  ✓ nhật ký lỗi add-on trống
+
+KẾT QUẢ: 39/39

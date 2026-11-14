@@ -1,0 +1,24 @@
+Path override failed for key base::DIR_APP_DICTIONARIES and path '/workspace/kotoba-anki/work/release-audit-20261114/anki23-venv/lib/python3.12/site-packages/PyQt6/Qt6/libexec/qtwebengine_dictionaries'
+
+DevTools listening on ws://127.0.0.1:11231/devtools/browser/9cd57bcc-3728-4589-93de-577945c9a5b3
+Path override failed for key base::DIR_APP_DICTIONARIES and path '/workspace/kotoba-anki/work/release-audit-20261114/anki23-venv/lib/python3.12/site-packages/PyQt6/Qt6/libexec/qtwebengine_dictionaries'
+Preparing to run...
+Qt info: Sandboxing disabled by user.
+Qt warning: Path override failed for key base::DIR_APP_DICTIONARIES and path '/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/qtwebengine_dictionaries'
+Starting main loop...
+Qt warning: Remote debugging server started successfully. Try pointing a Chromium-based browser to http://127.0.0.1:11231
+mpv not found, reverting to mplayer
+Qt warning: This plugin does not support propagateSizeHints()
+Qt warning: This plugin does not support raise()
+update check failed: A network error occurred.
+
+Error details: ⁨error sending request for url (): error trying to connect: unsuccessful tunnel⁩
+Qt warning: This plugin does not support propagateSizeHints()
+Qt warning: This plugin does not support propagateSizeHints()
+Qt warning: This plugin does not support propagateSizeHints()
+Qt warning: This plugin does not support raise()
+JS error /_addons/kotoba_batake/web/home.js:1149 Uncaught TypeError: Cannot read properties of undefined (reading 'replace')
+JS error /_addons/kotoba_batake/web/home.js:1149 Uncaught TypeError: Cannot read properties of undefined (reading 'replace')
+JS error /_addons/kotoba_batake/web/home.js:1149 Uncaught TypeError: Cannot read properties of undefined (reading 'replace')
+JS error /_addons/kotoba_batake/web/home.js:1149 Uncaught TypeError: Cannot read properties of undefined (reading 'replace')
+[kotoba_batake] đồ tự vẽ cho StackChan: invalid literal for int() with base 10: '²'

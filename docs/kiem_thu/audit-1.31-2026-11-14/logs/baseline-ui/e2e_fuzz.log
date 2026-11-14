@@ -1,0 +1,12 @@
+danh mục: 160 món, 67 việc · hạt 130 · 28 × 40 lệnh
+  … 280 lệnh, xu 40, nhật ký (đã bắt) 21, sổ sinh hoạt 1
+  … 560 lệnh, xu 40, nhật ký (đã bắt) 34, sổ sinh hoạt 1
+  … 840 lệnh, xu 0, nhật ký (đã bắt) 40, sổ sinh hoạt 1
+  … 1120 lệnh, xu 0, nhật ký (đã bắt) 40, sổ sinh hoạt 1
+  ✓ 1120 lệnh ngẫu nhiên: không lỗi chưa bắt, không hộp thoại, cửa sổ còn mở, ví hợp lệ
+  ✓ xu không tăng quá mức kiếm được hợp lệ (đầu 650, cao nhất 650, trần trò chơi 40)
+  ✓ sổ Sinh hoạt sau khi bấm bừa đọc được (0 mục nay không còn làm được do đồ đã cất — vẫn hợp lệ lúc ghi)
+  ✓ trang vườn còn sống sau khi bấm bừa
+  ✓ không lỗi JS
+  (nhật ký lỗi đã bắt trong lúc bấm bừa: 40 mục)
+KẾT QUẢ: 5/5

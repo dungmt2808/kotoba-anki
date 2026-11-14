@@ -1,0 +1,41 @@
+== 1. Vé giữ chuỗi
+  ✓ chưa dùng vé: chuỗi đứt (0 ngày) vì hôm qua chưa ôn
+  ✓ mở vườn → thông báo: "Hôm qua chưa ôn — đã dùng 1 vé giữ chuỗi, chuỗi 3 ngày vẫn còn."
+  ✓ thẻ Hôm nay: "· 3 ngày liền", chú thích có số vé
+  ✓ ghi ngày dùng vé: 2026-11-13
+  ✓ làm mới lần nữa: không dùng thêm vé
+  ✓ Lịch hoa: "Vé giữ chuỗi 0/2 · quên ôn 1 ngày thì tự…" + nút "Mua · 150 xu"
+  ✓ ô hôm qua có bông tuyết, chú thích "Chưa ôn · dùng vé giữ chuỗi · Mùa lá đỏ"
+  ✓ thanh dưới (1.30.1: "Ôn liền" thay "Chuỗi"): Ôn liền3 ngàyTháng nàyđã ôn 3/14 ngày
+  ✓ mua 1 vé: −150 xu (thanh trên 850 xu), ngày mua = hôm nay
+  ✓ mua vé thứ hai: "Đã đủ vé" (khoá), 700 xu
+  ✓ Lịch năm: Ôn liền3 ngàyLiền lâu nhất3 ngày
+  ✓ ít xu: nút khoá, "Thiếu 50 xu"
+== 2. Sửa hình: khung động + hình dựng từ hình khác
+  ✓ shika: khung ["Chính","Cúi chào"]
+  ✓ kappa: khung ["Chính","Chớp mắt"]
+  ✓ kabuto: khung ["Chính","Loé sáng"]
+  ✓ reizouko: khung ["Chính","Mở cửa"]
+  ✓ beddo: khung ["Chính","Chăn phồng"]
+  ✓ fountain: khung ["Chính","Đóng băng"]
+  ✓ rice: khung ["Chính","Mùa thu"]
+  ✓ Nhà → thẻ Hươu → nút Sửa hình mở Xưởng (tab yard)
+  ✓ lưu khung "Cúi chào": chỉ ghi khung đó (cui), cảnh dùng ngay: r.....…
+  ✓ mở lại vườn: bản sửa khung động vẫn áp
+  ✓ Góp ý hình (người dùng thường): ["Chính","Đóng băng"]
+== 3. Lỗi của nhánh audit 11/11
+  ✓ F01: cất món tự làm ở Bếp → không còn ở gian (collection: 0 chỗ đặt)
+  ✓ F02: bài tiếng Anh 30 từ (629 ký tự) đóng / mở lại còn nguyên (629)
+  ✓ F04: Esc lúc đang chọn chữ (bộ gõ của Chromium + sự kiện isComposing) → Lịch hoa và cửa sổ vườn vẫn mở
+  ✓ F04: Esc thường (đã chốt chữ) vẫn đóng Lịch hoa
+  ✓ F05: trần 0 → menu "xu trò chơi hôm nay 0/0"
+  ✓ F05: trần 40 → menu "xu trò chơi hôm nay 0/40"
+  ✓ F06: trời snow → báo "cả ngày tuyết"
+  ✓ F06: trời rain → báo "cả ngày mưa"
+  ✓ F06: trời auto → báo "sáng nắng, chiều mưa"
+  ✓ F07: câu chen vào lúc chuyển không làm mất câu đang chờ (B rồi C)
+  ✓ F03: đổi cài đặt rồi đóng vườn ngay (0 ms) → vẫn lưu
+  ✓ F08: đóng hồ sơ / collection khác → đọc lại ngôn ngữ ([{"ja":true,"en":false},{"ja":false,"en":false},{"ja":false,"en":false}])
+  ✓ không lỗi JS
+
+KẾT QUẢ: 36/36

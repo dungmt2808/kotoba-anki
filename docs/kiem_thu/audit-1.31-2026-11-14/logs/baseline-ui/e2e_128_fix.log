@@ -1,0 +1,36 @@
+== F09: hoàn tất khi không có hồ sơ nào mở
+  ✓ A bắt đầu viết (chưa trừ xu)
+  ✓ việc nền xong lúc không có hồ sơ → không lỗi
+  ✓ ghi chờ gói báo cho đúng hồ sơ A ({"3e6b9c45c3d73fe6":["2026-11-14"]})
+  ✓ mở lại A: −100 xu, gia hạn ({"profile":"Test","coins":150,"until":"2026-11-20"})
+  ✓ file chờ trống sau khi tính
+== F09: A → B → A rồi mới xong
+  ✓ xong khi A đang mở → tính ngay cho A ({"profile":"Test","coins":300,"until":"2026-11-20"})
+  ✓ không ghi chờ
+  ✓ B không đổi (900)
+== F09: bài luyện viết của A xong khi đang ở B
+  ✓ nhật ký của B không đổi
+  ✓ không lỗi sửa bài ([])
+== F01: bộ gõ đang soạn chữ khi bài sửa về
+  ✓ ô nhật ký giữ nguyên phần tử, chữ, con trỏ, focus; bài sửa hiện ({"same":true,"v":"Sáng nay ","s":5,"focus":true,"fix":true})
+== F01: Python gửi lại khung ngày khi nhật ký chưa tự lưu
+  ✓ khung ngày dựng lại: chữ + con trỏ + focus còn ({"v":"Chiều mưa to","s":6,"focus":true})
+  ✓ chữ đó đã lưu vào collection ("Chiều mưa to")
+== F08: Hướng dẫn mở từ bảng Nhà
+  ✓ đang mở Nhà: hướng dẫn chờ
+  ✓ đóng Nhà → hướng dẫn hiện bước 1
+  ✓ Esc tắt hướng dẫn, cửa sổ vẫn mở
+== F05: Tin làng theo cửa sổ
+  ✓ 1366×860: bảng trong cửa sổ, nút đóng thấy được, cuộn trong bảng (1366×860)
+  ✓ 1024×700: bảng trong cửa sổ, nút đóng thấy được, cuộn trong bảng (1024×700)
+  ✓ 720×520: bảng trong cửa sổ, nút đóng thấy được, cuộn trong bảng (720×520)
+  ✓ 1366×768: bảng trong cửa sổ, nút đóng thấy được, cuộn trong bảng (1366×768)
+== F04: câu chào theo giờ cố định
+  ✓ 0 giờ → こんばんは！
+  ✓ 23.98 giờ → こんばんは！
+  ✓ 4 giờ → おはよう！
+  ✓ 12 giờ → こんにちは！
+== gánh hàng: lệnh của phiên đã qua
+  ✓ mua theo bảng của CN 15/11 khi đã là T4 18/11 → từ chối (Phiên đó đã qua — mở lại bảng gánh hàng nhé.)
+  ✓ không lỗi JS
+KẾT QUẢ: 26/26

@@ -1,0 +1,13 @@
+[TypeError: fetch failed] {
+  [cause]: Error: bad port
+      at makeNetworkError (node:internal/deps/undici/undici:11898:35)
+      at mainFetch (node:internal/deps/undici/undici:13280:22)
+      at fetching (node:internal/deps/undici/undici:13267:7)
+      at fetch (node:internal/deps/undici/undici:13131:20)
+      at fetch (node:internal/deps/undici/undici:17998:10)
+      at fetch (node:internal/bootstrap/web/exposed-window-or-worker:83:12)
+      at pages (/workspace/kotoba-anki/tests/anki/cdp.js:4:19)
+      at gardenPage (/workspace/kotoba-anki/tests/anki/e2e_1301.js:26:31)
+      at reopen (/workspace/kotoba-anki/tests/anki/e2e_1301.js:54:16)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+}

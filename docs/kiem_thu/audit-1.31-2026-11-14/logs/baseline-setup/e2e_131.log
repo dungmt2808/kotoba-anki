@@ -1,0 +1,56 @@
+== 1. chỉ nút "Nhà & Cửa hàng" mở bảng Nhà
+  ✓ nhãn "Nhà & Cửa hàng ▸" là nút bấm được: ["BUTTON","auto","Nhà & Cửa hàng ▸","Nhà & Cửa hàng (phím N)"]
+  ✓ khung cảnh không còn chú thích "Bấm để vào Nhà & Cửa hàng"
+  ✓ bấm cỏ trống bên phải trên sân: không mở bảng Nhà
+  ✓ bấm ngôi nhà trên sân: không mở bảng Nhà
+  ✓ bấm giữa sân trên sân: không mở bảng Nhà
+  ✓ bấm trời trên sân: không mở bảng Nhà
+  ✓ rê chuột lên cảnh: nút hiện rõ
+  ✓ nút đủ cao, chữ không bị cắt (128 × 25 px, line-height 16.9px)
+  ✓ con trỏ trên cỏ trống không phải bàn tay
+  ✓ bấm nút → bảng Nhà mở đúng cảnh Sân vườn
+  ✓ Esc đóng bảng Nhà
+  ✓ Trong nhà: bấm Bếp không mở bảng Nhà
+  ✓ Trong nhà: bấm phòng chính không mở bảng Nhà
+  ✓ Trong nhà: bấm Phòng ngủ không mở bảng Nhà
+  ✓ Trong nhà: không còn chú thích "bấm để bày đồ"
+  ✓ Trong nhà: nút mở bảng Nhà ở phòng chính
+  ✓ phím N vẫn mở bảng Nhà
+  ✓ nút Nhà ở thanh trên vẫn mở bảng Nhà
+  ✓ Bãi biển: bấm cát không mở bảng Nhà
+== 1b. bấm thú nuôi / khách → thẻ nhỏ
+  ✓ thấy Shiba ngoài sân [622.0076025318401,261.01461951769113,"shiba"]
+  ✓ bấm thú: thẻ nhỏ hiện, bảng Nhà không mở — Chó ShibaNo bụng ♥✕Thú nuôi ▸
+  ✓ thẻ có nút vào tab Thú nuôi
+  ✓ Esc đóng thẻ, cửa sổ vườn vẫn mở
+  ✓ bấm ra chỗ khác: thẻ đóng, không mở bảng Nhà
+  ✓ nút trong thẻ → bảng Nhà ở tab Thú nuôi
+  ✓ khách Cò trắng ghé ao
+  ✓ rê chuột lên khách: chú thích tên
+  ✓ bấm khách: thẻ nhỏ (tên, Album khách ▸), bảng Nhà không mở
+  ✓ nút trong thẻ → Album, tô thẻ Cò trắng
+  ✓ hòm thư: chưa đặt (bỏ qua)
+== 2. chuỗi ngày khi mới cài
+  ✓ trước 1.31 (đếm cả lịch sử Anki): chuỗi 41 ngày
+  ✓ mới cài: chuỗi 0 ngày (lịch sử ôn trước khi cài không tính)
+  ✓ lượt ôn hôm nay vẫn đếm đủ (5 lượt, cho mục tiêu ngày)
+  ✗ mốc = lúc mở hồ sơ (trước khi lập sổ bù xu)
+  ✓ (cách tính cũ) thẻ Hôm nay ghi "41 ngày liền" ngay khi vừa cài
+  ✓ thẻ Hôm nay: không ghi "N ngày liền"
+  ✓ ôn một lượt sau khi cài: chuỗi 1 ngày ({"reviews":6,"streak":1,"day":0})
+  ✓ thẻ Hôm nay: "1 ngày liền"
+  ✓ Lịch hoa: Ôn liền 1 ngày, Liền lâu nhất 1 ngày ({"m":1,"y":1,"best":1,"days":41})
+  ✓ Lịch hoa vẫn có hoa của các ngày ôn trước khi cài (41 ngày trong năm nay)
+  ✓ Lịch hoa hiện "Ôn liền 1 ngày": Ôn liền1 ngàyTháng nàyđã ôn 14/14 ngày | Ôn liền1 ngày | Tháng nàyđã ôn 14/14 ngày
+  ✓ mở hồ sơ lần nữa: mốc giữ nguyên, chuỗi vẫn 1
+Error: Traceback (most recent call last):
+  File "/tmp/kotoba-audit-ui-swWbPD/addons21/zz_kbtest/__init__.py", line 46, in run
+    exec(code, g)
+    ~~~~^^^^^^^^^
+  File "<string>", line 9, in <module>
+TypeError: 'NoneType' object does not support item assignment
+
+    at py (/workspace/kotoba-anki/tests/anki/e2e_131.js:23:46)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async /workspace/kotoba-anki/tests/anki/e2e_131.js:264:19
+KẾT QUẢ: 41/42 (dừng giữa chừng)
