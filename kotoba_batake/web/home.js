@@ -3141,7 +3141,7 @@ var GardenHome = (function () {
     if (opts && opts.noSign) { return; }
     const cat = catalog() || {}, info = (cat.rooms || []).find((r) => r.id === kind) || { name: SCENE_NAME[kind] };
     const ready = homeState().house >= (cat.nha_unlock || 7);
-    const lines = [info.name, ready ? "Mở rộng nhà: cả 2 gian · " + Number(cat.nha_price || 2000).toLocaleString("vi-VN") + " xu" : "Xây xong nhà để mở rộng"];
+    const lines = [info.name, ready ? "Mở rộng nhà: cả 2 gian · " + kbXu(cat.nha_price || 2000) + " xu" : "Xây xong nhà để mở rộng"];
     const fs = Math.max(7, 6 * S), lh = fs + 3 * S, maxW = SIDE.W * S - 6 * S;
     const font = (b) => (b ? "bold " : "") + fs + "px \"DotGothic16\", \"Noto Sans\", monospace";
     ctx.font = font(true); let tw = ctx.measureText(lines[0]).width;
@@ -3712,18 +3712,18 @@ var GardenHome = (function () {
     if (placing) {
       const it = item(placing.id), nm = it ? it.name : placing.id;
       if (placing.index === undefined && !hasFreeCell(placing.scene, placing.id)) {
-        setTip("“" + sceneName(placing.scene) + "” hết chỗ cho “" + nm + "” · món đã vào Kho đồ: cất bớt đồ hoặc sang cảnh khác rồi bấm Đặt (Esc để thôi)");
+        setTip("“" + sceneName(placing.scene) + "” hết chỗ · “" + nm + "” đã vào Kho đồ: cất bớt đồ rồi bấm Đặt · Esc: huỷ");
         return;
       }
-      setTip("Đang đặt “" + nm + "”: bấm vào ô trống (xanh) để đặt · Esc để huỷ");
+      setTip("Đang đặt “" + nm + "”: bấm ô xanh để đặt · Esc: huỷ");
     } else if (ZONE_IDS.indexOf(scene) >= 0 || isUz(scene)) {
-      setTip(sceneName(scene) + ": bấm một món đồ để di chuyển hoặc cất vào kho · đồ ngoài trời đặt ở mọi vùng được");
+      setTip(sceneName(scene) + ": bấm món đồ để dời chỗ hoặc cất kho");
     } else if (scene === "yard") {
       setTip(homeState().house >= ((catalog() || {}).room_unlock || 5) ?
-        "Bấm vào ngôi nhà để vào trong · bấm một món đồ để di chuyển hoặc cất vào kho" :
-        "Xây nhà ở tab “Xây nhà” · bấm một món đồ để di chuyển hoặc cất vào kho");
+        "Bấm ngôi nhà để vào trong · bấm món đồ để dời chỗ hoặc cất kho" :
+        "Chưa có nhà · xây ở tab Xây nhà");
     } else {
-      setTip("Đồ treo tường đặt ở hàng trên, đồ còn lại đặt dưới sàn · thảm đặt dưới bàn được");
+      setTip("Đồ treo tường ở hàng trên, đồ khác dưới sàn · thảm đặt dưới bàn được");
     }
   }
 
@@ -4074,7 +4074,7 @@ var GardenHome = (function () {
     if (!opts.inv && !it.custom) {
       const SETN = { yard: "Sân vườn", beach: "Bãi biển", shrine: "Đền trên núi", festival: "Phố lễ hội", bamboo: "Rừng tre", onsen: "Suối nước nóng", station: "Ga làng quê" };
       const label = it.rare ? "Quà rương nhiệm vụ" : it.only === "set" ? "Quà đủ bộ " + (SETN[it.set] || "") + " (Hộp sưu tầm)" :
-        it.only === "ped" ? "Chỉ có ở gánh hàng rong · " + it.price + " xu" : it.price + " xu";
+        it.only === "ped" ? "Chỉ có ở gánh hàng rong · " + kbXu(it.price) + " xu" : kbXu(it.price) + " xu";
       info.appendChild(el("div", "kb-h-price" + (it.rare ? " kb-h-rare" : it.only ? " kb-h-only" : ""), label +
         (it.w > 1 ? " · rộng " + it.w + " ô" : "") + (it.place === "wall" ? " · treo tường" : "")));
     }
@@ -4085,8 +4085,8 @@ var GardenHome = (function () {
         (it.season && !themeOpen(it.season));
       const maxed = owned >= it.max;
       const short = !locked && !maxed && money < it.price;      // 1.30.1: thiếu xu thì nút ghi luôn còn thiếu bao nhiêu
-      const b = btn(maxed ? "Đã có" : short ? "Thiếu " + (it.price - money) + " xu" : "Mua", "kb-h-buy", () => pay("home:buy:" + it.id, { title: "Mua " + it.name + "?", price: it.price, note: "Mua xong đặt luôn vào cảnh." }, () => { pendingPlace = it.id; }),
-        locked || maxed || money < it.price, !locked && !maxed && money < it.price ? "Còn thiếu " + (it.price - money) + " xu" : "");
+      const b = btn(maxed ? "Đã có" : short ? "Thiếu " + kbXu(it.price - money) + " xu" : "Mua", "kb-h-buy", () => pay("home:buy:" + it.id, { title: "Mua " + it.name + "?", price: it.price, note: "Mua xong đặt luôn vào cảnh." }, () => { pendingPlace = it.id; }),
+        locked || maxed || money < it.price, !locked && !maxed && money < it.price ? "Thiếu " + kbXu(it.price - money) + " xu" : "");
       row.appendChild(b);
     }
     if (avail > 0) { row.appendChild(btn("Đặt", "kb-btn-small kb-h-place", () => startPlacing(it.id))); }
@@ -4110,7 +4110,7 @@ var GardenHome = (function () {
       b.classList.toggle("is-on", b.getAttribute("data-tab") === tab);
     });
     const home = homeState(), money = coins();
-    $("kb-h-coins").textContent = money + " xu";
+    $("kb-h-coins").textContent = kbXu(money) + " xu";
     if (!cat) { list.appendChild(el("div", "kb-h-empty", "Đang tải…")); return; }
     renderScenes();
     const unlock = cat.room_unlock;
@@ -4134,9 +4134,9 @@ var GardenHome = (function () {
         card.appendChild(housePreview(lv + 1, 64));
         const inf = el("div", "kb-h-info");
         inf.appendChild(el("div", "kb-h-name", "Bước tiếp: " + nx.name));
-        inf.appendChild(el("div", "kb-h-price", nx.price + " xu"));
+        inf.appendChild(el("div", "kb-h-price", kbXu(nx.price) + " xu"));
         if (lv + 1 === unlock) { inf.appendChild(el("div", "kb-h-note", "Mở khoá: vào trong nhà và mua nội thất")); }
-        inf.appendChild(btn(money >= nx.price ? "Xây" : "Còn thiếu " + (nx.price - money) + " xu", "kb-h-buy", () => pay("home:build:" + (lv + 1), { title: "Xây bước tiếp: " + nx.name + "?", price: nx.price, yes: "Xây" }), money < nx.price));
+        inf.appendChild(btn(money >= nx.price ? "Xây" : "Thiếu " + kbXu(nx.price - money) + " xu", "kb-h-buy", () => pay("home:build:" + (lv + 1), { title: "Xây bước tiếp: " + nx.name + "?", price: nx.price, yes: "Xây" }), money < nx.price));
         card.appendChild(inf);
         list.appendChild(card);
         if (cat.styles) { list.appendChild(el("div", "kb-h-empty", "Xây xong 7 bước: mở thêm kiểu nhà, Bếp và Phòng ngủ.")); }
@@ -4151,13 +4151,13 @@ var GardenHome = (function () {
           card.appendChild(house3Preview(null, 228));
           const inf = el("div", "kb-h-info");
           inf.appendChild(el("div", "kb-h-name", "Bếp + Phòng ngủ"));
-          inf.appendChild(el("div", "kb-h-price", opened ? "Đã mở" : price + " xu"));
+          inf.appendChild(el("div", "kb-h-price", opened ? "Đã mở" : kbXu(price) + " xu"));
           if (opened) {
             const row = el("div", "kb-h-btnrow");
             (cat.rooms || []).forEach((rm) => row.appendChild(btn(scene === rm.id ? "Đang ở " + rm.name : "Đến " + rm.name, "kb-h-buy", () => setScene(rm.id), scene === rm.id)));
             inf.appendChild(row);
           } else {
-            inf.appendChild(btn(money >= price ? "Mở rộng" : "Còn thiếu " + (price - money) + " xu", "kb-h-buy", () => pay("home:nha:open", { title: "Mở rộng nhà: thêm Bếp và Phòng ngủ?", price: price, yes: "Mở rộng" }), money < price));
+            inf.appendChild(btn(money >= price ? "Mở rộng" : "Thiếu " + kbXu(price - money) + " xu", "kb-h-buy", () => pay("home:nha:open", { title: "Mở rộng nhà: thêm Bếp và Phòng ngủ?", price: price, yes: "Mở rộng" }), money < price));
           }
           card.appendChild(inf);
           list.appendChild(card);
@@ -4171,10 +4171,10 @@ var GardenHome = (function () {
           const inf = el("div", "kb-h-info");
           inf.appendChild(el("div", "kb-h-name", stl.name));
           inf.appendChild(house3Preview(stl.id, 152));          // 1.25: ba gian bên trong theo kiểu này
-          inf.appendChild(el("div", "kb-h-price", own ? (using ? "Đang dùng" : "Đã có") : stl.price + " xu"));
+          inf.appendChild(el("div", "kb-h-price", own ? (using ? "Đang dùng" : "Đã có") : kbXu(stl.price) + " xu"));
           if (own) { inf.appendChild(btn(using ? "Đang dùng" : "Dùng kiểu này", "kb-h-buy", () => H.send("home:style:use:" + stl.id), using)); }
           else {
-            inf.appendChild(btn(money >= stl.price ? "Mua · " + stl.price + " xu" : "Còn thiếu " + (stl.price - money) + " xu", "kb-h-buy",
+            inf.appendChild(btn(money >= stl.price ? "Mua · " + kbXu(stl.price) + " xu" : "Thiếu " + kbXu(stl.price - money) + " xu", "kb-h-buy",
               () => pay("home:style:buy:" + stl.id, { title: "Mua kiểu nhà " + stl.name + "?", price: stl.price }), money < stl.price));
           }
           card.appendChild(inf);
@@ -4204,11 +4204,11 @@ var GardenHome = (function () {
         if (open) {
           info.appendChild(btn(scene === z.id ? "Đang ở đây" : "Đến " + z.name, "kb-h-buy", () => setScene(z.id), scene === z.id));
         } else if (isNext) {
-          info.appendChild(el("div", "kb-h-price", z.price + " xu"));
-          info.appendChild(btn(money >= z.price ? "Mở khoá" : "Còn thiếu " + (z.price - money) + " xu", "kb-h-buy",
+          info.appendChild(el("div", "kb-h-price", kbXu(z.price) + " xu"));
+          info.appendChild(btn(money >= z.price ? "Mở khoá" : "Thiếu " + kbXu(z.price - money) + " xu", "kb-h-buy",
             () => pay("home:zone:" + z.id, { title: "Mở khoá vùng " + z.name + "?", price: z.price, yes: "Mở khoá" }), money < z.price));
         } else {
-          info.appendChild(el("div", "kb-h-price", z.price + " xu · mở sau “" + cat.zones[i - 1].name + "”"));
+          info.appendChild(el("div", "kb-h-price", kbXu(z.price) + " xu · mở sau “" + cat.zones[i - 1].name + "”"));
         }
         card.appendChild(info);
         list.appendChild(card);
@@ -4244,10 +4244,10 @@ var GardenHome = (function () {
           card.appendChild(mascotCanvas(preview, "idle", 2));
           const inf = el("div", "kb-h-info");
           inf.appendChild(el("div", "kb-h-name", it.name));
-          inf.appendChild(el("div", "kb-h-price", own ? (on ? "Đang mặc" : "Đã có") : it.price + " xu"));
+          inf.appendChild(el("div", "kb-h-price", own ? (on ? "Đang mặc" : "Đã có") : kbXu(it.price) + " xu"));
           const row = el("div", "kb-h-btns");
           if (own) { row.appendChild(on ? btn("Cởi", "kb-btn-small", () => H.send("home:wear:off:" + slot)) : btn("Mặc", "kb-h-buy", () => H.send("home:wear:on:" + it.id))); }
-          else { row.appendChild(btn(money < it.price ? "Thiếu " + (it.price - money) + " xu" : "Mua", "kb-h-buy", () => pay("home:wear:buy:" + it.id, { title: "Mua " + it.name + " cho StackChan?", price: it.price }), money < it.price, money < it.price ? "Còn thiếu " + (it.price - money) + " xu" : "")); }
+          else { row.appendChild(btn(money < it.price ? "Thiếu " + kbXu(it.price - money) + " xu" : "Mua", "kb-h-buy", () => pay("home:wear:buy:" + it.id, { title: "Mua " + it.name + " cho StackChan?", price: it.price }), money < it.price, money < it.price ? "Thiếu " + kbXu(it.price - money) + " xu" : "")); }
           inf.appendChild(row);
           card.appendChild(inf);
           list.appendChild(card);
@@ -4264,7 +4264,7 @@ var GardenHome = (function () {
         inf.appendChild(el("div", "kb-h-desc", "Dùng " + f.moods.map((m) => MOOD_TXT[m] || m).join(", ")));
         const row = el("div", "kb-h-btns");
         if (own) { row.appendChild(btn(off ? "Đang tắt · bật lại" : "Đang dùng · tắt", "kb-btn-small", () => H.send("home:face:toggle:" + f.id))); }
-        else { row.appendChild(btn("Mua · " + f.price + " xu", "kb-h-buy", () => pay("home:face:buy:" + f.id, { title: "Mua biểu cảm " + f.name + "?", price: f.price }), money < f.price)); }
+        else { row.appendChild(btn("Mua · " + kbXu(f.price) + " xu", "kb-h-buy", () => pay("home:face:buy:" + f.id, { title: "Mua biểu cảm " + f.name + "?", price: f.price }), money < f.price)); }
         inf.appendChild(row);
         card.appendChild(inf);
         list.appendChild(card);
@@ -4280,14 +4280,14 @@ var GardenHome = (function () {
       add.appendChild(el("div", "kb-h-craft-plus", "＋"));
       const ai = el("div", "kb-h-info");
       ai.appendChild(el("div", "kb-h-name", "Tạo món đồ mới"));
-      ai.appendChild(el("div", "kb-h-desc", "Tự vẽ pixel, hoặc chọn một tấm ảnh để tự chuyển thành pixel art rồi sửa lại."));
-      ai.appendChild(el("div", "kb-h-price", "16×16: " + cc.prices["16"] + " xu · 24×24: " + cc.prices["24"] + " xu · 32×32: " + cc.prices["32"] + " xu"));
+      ai.appendChild(el("div", "kb-h-desc", "Tự vẽ, hoặc chọn một tấm ảnh để chuyển thành pixel rồi sửa."));
+      ai.appendChild(el("div", "kb-h-price", "16×16: " + kbXu(cc.prices["16"]) + " xu · 24×24: " + kbXu(cc.prices["24"]) + " xu · 32×32: " + kbXu(cc.prices["32"]) + " xu"));
       // 1.22.5: chưa đủ xu cho cỡ nhỏ nhất thì khoá như "Tạo vùng mới" / "Tự vẽ giống cây" (trước đây mở được, vẽ xong mới
       // biết không lưu được — đóng Xưởng là mất hình)
       const cheap = Math.min.apply(null, Object.keys(cc.prices || {}).map((k) => Number(cc.prices[k])).filter((n) => n > 0).concat([200]));
       const cfull = mine.length >= cc.max, cpoor = !cfull && money < cheap;
-      ai.appendChild(btn(cpoor ? "Còn thiếu " + (cheap - money) + " xu" : "Mở xưởng", "kb-h-buy", () => { if (typeof GardenCraft !== "undefined") { GardenCraft.open(null); } },
-        cfull || cpoor, cfull ? "Đã đủ " + cc.max + " mẫu" : cpoor ? "Món nhỏ nhất (16×16) " + cheap + " xu" : ""));
+      ai.appendChild(btn(cpoor ? "Thiếu " + kbXu(cheap - money) + " xu" : "Mở xưởng", "kb-h-buy", () => { if (typeof GardenCraft !== "undefined") { GardenCraft.open(null); } },
+        cfull || cpoor, cfull ? "Đã đủ " + cc.max + " mẫu" : cpoor ? "Món nhỏ nhất (16×16) " + kbXu(cheap) + " xu" : ""));
       add.appendChild(ai);
       list.appendChild(add);
       const ms = cat.myseed || { price: 500 };
@@ -4296,9 +4296,9 @@ var GardenHome = (function () {
       const si = el("div", "kb-h-info");
       si.appendChild(el("div", "kb-h-name", "Tự vẽ giống cây"));
       si.appendChild(el("div", "kb-h-desc", "Cây 16×16 cho từng giai đoạn, gieo cho deck / loại note / tag ở tab Giống cây."));
-      si.appendChild(el("div", "kb-h-price", ms.price + " xu · " + mySeeds().length + "/" + (ms.max || 12) + " giống"));
+      si.appendChild(el("div", "kb-h-price", kbXu(ms.price) + " xu · " + mySeeds().length + "/" + (ms.max || 12) + " giống"));
       const sfull = mySeeds().length >= (ms.max || 12), spoor = !sfull && money < ms.price;
-      si.appendChild(btn(spoor ? "Còn thiếu " + (ms.price - money) + " xu" : "Mở xưởng", "kb-h-buy", () => { if (typeof GardenCraft !== "undefined" && GardenCraft.openSeed) { GardenCraft.openSeed(null); } },
+      si.appendChild(btn(spoor ? "Thiếu " + kbXu(ms.price - money) + " xu" : "Mở xưởng", "kb-h-buy", () => { if (typeof GardenCraft !== "undefined" && GardenCraft.openSeed) { GardenCraft.openSeed(null); } },
         sfull || spoor, sfull ? "Đã đủ " + (ms.max || 12) + " giống" : ""));
       addS.appendChild(si);
       list.appendChild(addS);
@@ -4318,10 +4318,10 @@ var GardenHome = (function () {
         inf.appendChild(el("div", "kb-h-own", "Có " + owned + (placed ? " · đã đặt " + placed : "") + (avail ? " · trong kho " + avail : "")));
         const row = el("div", "kb-h-btns");
         if (avail > 0) { row.appendChild(btn("Đặt", "kb-btn-small kb-h-place", () => startPlacing(it.id))); }
-        row.appendChild(btn("Sửa · " + cc.edit + " xu", "kb-btn-small", () => { if (typeof GardenCraft !== "undefined") { GardenCraft.open(it); } }, false,
-          "Đổi tên / hiệu ứng miễn phí, vẽ lại hình " + cc.edit + " xu"));
+        row.appendChild(btn("Sửa · " + kbXu(cc.edit) + " xu", "kb-btn-small", () => { if (typeof GardenCraft !== "undefined") { GardenCraft.open(it); } }, false,
+          "Đổi tên / hiệu ứng miễn phí, vẽ lại hình " + kbXu(cc.edit) + " xu"));
         const half = Math.floor((cc.prices[String(it.size)] || 0) / 2);
-        row.appendChild(btn("+1 cái · " + half + " xu", "kb-btn-small", () => pay("home:craft:copy:" + it.id, { title: "Làm thêm 1 cái " + it.name + "?", price: half, yes: "Làm thêm" }), money < half));
+        row.appendChild(btn("+1 cái · " + kbXu(half) + " xu", "kb-btn-small", () => pay("home:craft:copy:" + it.id, { title: "Làm thêm 1 cái " + it.name + "?", price: half, yes: "Làm thêm" }), money < half));
         row.appendChild(shareBtn(it.id));
         const armed = delArm === it.id;
         row.appendChild(btn(armed ? "Bấm lần nữa để xoá" : "Xoá mẫu", "kb-btn-small kb-h-del" + (armed ? " is-armed" : ""), () => {
@@ -4468,14 +4468,14 @@ var GardenHome = (function () {
         if (it.ja) { nm.appendChild(el("span", "kb-h-guest-ja", it.ja)); }
         inf.appendChild(nm);
         if (it.desc) { inf.appendChild(el("div", "kb-h-desc", it.desc)); }
-        inf.appendChild(el("div", own ? "kb-h-own" : "kb-h-price", own ? (where.length ? "Đang dùng: " + where.join(", ") : "Đã có") : it.price + " xu"));
+        inf.appendChild(el("div", own ? "kb-h-own" : "kb-h-price", own ? (where.length ? "Đang dùng: " + where.join(", ") : "Đã có") : kbXu(it.price) + " xu"));
         const row = el("div", "kb-h-btns");
         if (own) {
           row.appendChild(btn(using ? "Đang dùng" : "Dùng cho " + roomLabel, "kb-h-buy", () => { decoTry = null; H.send("home:decor:use:" + room + ":" + slot + ":" + it.id); }, using));
         } else {
-          row.appendChild(btn(money < it.price ? "Thiếu " + (it.price - money) + " xu" : "Mua", "kb-h-buy", () => pay("home:decor:buy:" + it.id, { title: "Mua " + (slot === "wall" ? "giấy dán tường " : "sàn ") + it.name + "?", price: it.price,
+          row.appendChild(btn(money < it.price ? "Thiếu " + kbXu(it.price - money) + " xu" : "Mua", "kb-h-buy", () => pay("home:decor:buy:" + it.id, { title: "Mua " + (slot === "wall" ? "giấy dán tường " : "sàn ") + it.name + "?", price: it.price,
             note: "Mua một lần, dùng cho gian nào cũng được. Mua xong dán luôn cho " + roomLabel + "." }, () => { pendingDecor = { room: room, slot: slot, id: it.id }; }),
-            money < it.price, money < it.price ? "Còn thiếu " + (it.price - money) + " xu" : "Mua xong dùng luôn cho " + roomLabel));
+            money < it.price, money < it.price ? "Thiếu " + kbXu(it.price - money) + " xu" : "Mua xong dùng luôn cho " + roomLabel));
           row.appendChild(tryBtn(slot, it.id));
         }
         inf.appendChild(row); card.appendChild(inf); list.appendChild(card);
@@ -4490,8 +4490,8 @@ var GardenHome = (function () {
         inf.appendChild(el("div", "kb-h-own", "Tự vẽ" + (where.length ? " · đang dùng: " + where.join(", ") : "")));
         const row = el("div", "kb-h-btns");
         row.appendChild(btn(using ? "Đang dùng" : "Dùng cho " + roomLabel, "kb-h-buy", () => { decoTry = null; H.send("home:decor:use:" + room + ":" + slot + ":" + t.id); }, using));
-        row.appendChild(btn("Sửa · " + dc.tile.edit + " xu", "kb-btn-small", () => { if (typeof GardenCraft !== "undefined" && GardenCraft.openTile) { GardenCraft.openTile(t); } }, false,
-          "Đổi tên miễn phí, vẽ lại " + dc.tile.edit + " xu"));
+        row.appendChild(btn("Sửa · " + kbXu(dc.tile.edit) + " xu", "kb-btn-small", () => { if (typeof GardenCraft !== "undefined" && GardenCraft.openTile) { GardenCraft.openTile(t); } }, false,
+          "Đổi tên miễn phí, vẽ lại " + kbXu(dc.tile.edit) + " xu"));
         const armed = tileDelArm === t.id;
         row.appendChild(btn(armed ? "Bấm lần nữa để xoá" : "Xoá mẫu", "kb-btn-small kb-h-del" + (armed ? " is-armed" : ""), () => {
           if (tileDelArm === t.id) { tileDelArm = null; H.send("home:tile:del:" + t.id); } else { tileDelArm = t.id; renderList(); }
@@ -4505,8 +4505,8 @@ var GardenHome = (function () {
         add.appendChild(el("div", "kb-h-craft-plus", "＋"));
         const ai = el("div", "kb-h-info");
         ai.appendChild(el("div", "kb-h-name", slot === "wall" ? "Tự vẽ giấy dán tường" : "Tự vẽ sàn"));
-        ai.appendChild(el("div", "kb-h-price", dc.tile.price + " xu · " + tiles.length + "/" + dc.tile.max + " mẫu"));
-        ai.appendChild(btn(poor ? "Còn thiếu " + (dc.tile.price - money) + " xu" : "Mở xưởng", "kb-h-buy",
+        ai.appendChild(el("div", "kb-h-price", kbXu(dc.tile.price) + " xu · " + tiles.length + "/" + dc.tile.max + " mẫu"));
+        ai.appendChild(btn(poor ? "Thiếu " + kbXu(dc.tile.price - money) + " xu" : "Mở xưởng", "kb-h-buy",
           () => { if (typeof GardenCraft !== "undefined" && GardenCraft.openTile) { GardenCraft.openTile(null, slot); } },
           full || poor, full ? "Đã đủ " + dc.tile.max + " mẫu" : ""));
         add.appendChild(ai); list.appendChild(add);
@@ -4532,11 +4532,11 @@ var GardenHome = (function () {
       inf.appendChild(el("div", "kb-h-price", "Tình trạng: " + (w.steps || []).map((x) => x.name).join(" · ") + " (" + w.level + "/" + (w.cap || 4) + ")"));
       if (w.back) { inf.appendChild(el("div", "kb-h-note", "Mừng bạn quay lại! Sửa nhà giảm 50% trong tuần này.")); }
       const row = el("div", "kb-h-btns");
-      row.appendChild(btn(money >= w.cost_all ? "Sửa hết · " + w.cost_all + " xu" : "Còn thiếu " + (w.cost_all - money) + " xu", "kb-h-buy",
+      row.appendChild(btn(money >= w.cost_all ? "Sửa hết · " + kbXu(w.cost_all) + " xu" : "Thiếu " + kbXu(w.cost_all - money) + " xu", "kb-h-buy",
         () => pay("home:repair:all", { title: "Sửa hết chỗ hỏng của nhà?", price: w.cost_all, yes: "Sửa" }), money < w.cost_all));
       if (w.level >= 2) {
         const one = (w.steps || [])[w.level - 1];
-        row.appendChild(btn((one ? one.fix : "Sửa 1 nấc") + " · " + w.cost_one + " xu", "kb-btn-small", () => pay("home:repair:one", { title: (one ? one.fix : "Sửa 1 nấc") + "?", price: w.cost_one, yes: "Sửa" }), money < w.cost_one));
+        row.appendChild(btn((one ? one.fix : "Sửa 1 nấc") + " · " + kbXu(w.cost_one) + " xu", "kb-btn-small", () => pay("home:repair:one", { title: (one ? one.fix : "Sửa 1 nấc") + "?", price: w.cost_one, yes: "Sửa" }), money < w.cost_one));
       }
       inf.appendChild(row);
     }
@@ -4565,13 +4565,14 @@ var GardenHome = (function () {
     const top = el("div", "kb-h-card kb-h-wear-top");
     const ti = el("div", "kb-h-info");
     ti.appendChild(GardenIcons.fill(el("div", "kb-h-name"), "[i:paw] Thú nuôi · " + owned.length + "/" + mc.pets.length));
-    ti.appendChild(el("div", "kb-h-desc", "Cho ăn vài xu mỗi ngày; quên thì bé đi chơi, cho ăn là về. Thân dần: " +
-      (mc.pet_love || []).slice(1).map((x) => x.name + " " + x.need + " ngày").join(" · ") + "."));
+    // 1.30.3: một câu ngắn; các mức thân thiết để ở chú thích rê chuột (mỗi thẻ thú đã ghi mức hiện tại)
+    const petDesc = ti.appendChild(el("div", "kb-h-desc", "Mỗi ngày cho ăn vài xu. Quên thì bé đi chơi, cho ăn là về."));
+    petDesc.title = "Thân dần: " + (mc.pet_love || []).slice(1).map((x) => x.name + " " + x.need + " ngày").join(" · ");
     if (owned.length) {
       const hungry = (v.pets || []).filter((p) => p.state !== "full");
       const cost = hungry.reduce((n, p) => n + p.food, 0);
       const row = el("div", "kb-h-btns");
-      row.appendChild(btn(hungry.length ? "Cho cả nhà ăn · " + cost + " xu" : "Hôm nay đã cho ăn hết ✓", "kb-h-buy",
+      row.appendChild(btn(hungry.length ? "Cho cả nhà ăn · " + kbXu(cost) + " xu" : "Hôm nay đã cho ăn hết ✓", "kb-h-buy",
         () => pay("home:pet:feed:all", { title: "Cho cả nhà ăn (" + hungry.length + " con)?", price: cost, yes: "Cho ăn" }), !hungry.length || money < cost));
       const lab = el("label", "kb-h-auto");
       const cb = document.createElement("input"); cb.type = "checkbox"; cb.checked = !!m.pet_auto;
@@ -4591,10 +4592,10 @@ var GardenHome = (function () {
       if (!p) {
         inf.appendChild(el("div", "kb-h-name", sp.name));
         inf.appendChild(el("div", "kb-h-desc", "✦ " + sp.desc));
-        inf.appendChild(el("div", "kb-h-price", sp.price + " xu · ăn " + sp.food + " xu / ngày" + (sp.room ? " · ở được trong nhà" : "")));
-        inf.appendChild(btn(money >= sp.price ? "Nhận nuôi · " + sp.price + " xu" : "Còn thiếu " + (sp.price - money) + " xu", "kb-h-buy",
+        inf.appendChild(el("div", "kb-h-price", kbXu(sp.price) + " xu · ăn " + kbXu(sp.food) + " xu / ngày" + (sp.room ? " · ở được trong nhà" : "")));
+        inf.appendChild(btn(money >= sp.price ? "Nhận nuôi · " + kbXu(sp.price) + " xu" : "Thiếu " + kbXu(sp.price - money) + " xu", "kb-h-buy",
           () => pay("home:pet:buy:" + sp.id, { title: "Nhận nuôi " + sp.name + "?", price: sp.price, yes: "Nhận nuôi",
-            note: "Mỗi ngày ăn " + sp.food + " xu (cho ăn ở tab Thú nuôi, hoặc bật Tự cho ăn)." }), money < sp.price));
+            note: "Mỗi ngày ăn " + kbXu(sp.food) + " xu (cho ăn ở tab Thú nuôi, hoặc bật Tự cho ăn)." }), money < sp.price));
       } else {
         const nm = el("div", "kb-h-name", p.name + (p.name !== sp.name ? " (" + sp.name + ")" : ""));
         inf.appendChild(nm);
@@ -4602,7 +4603,7 @@ var GardenHome = (function () {
         inf.appendChild(el("div", "kb-h-desc", "♥ " + p.love_name + " · đã cho ăn " + p.love + " ngày" +
           (p.love_next ? " (còn " + (p.love_next - p.love) + " ngày tới mức sau)" : "")));
         const row = el("div", "kb-h-btns");
-        row.appendChild(btn(p.state === "full" ? "Đã ăn hôm nay" : "Cho ăn · " + p.food + " xu", "kb-h-buy",
+        row.appendChild(btn(p.state === "full" ? "Đã ăn hôm nay" : "Cho ăn · " + kbXu(p.food) + " xu", "kb-h-buy",
           () => pay("home:pet:feed:" + p.id, { title: "Cho " + (p.name || "bé") + " ăn?", price: p.food, yes: "Cho ăn" }), p.state === "full" || money < p.food));
         const sel = document.createElement("select"); sel.className = "kb-h-select"; sel.title = "Chỗ ở";
         const scenes = ["yard"].concat(ZONE_IDS.filter((z) => zoneOpen(z)), uzIds());
@@ -4772,7 +4773,7 @@ var GardenHome = (function () {
     intro.appendChild(ii);
     list.appendChild(intro);
     if (owned.length) {
-      sec2(list, "Gieo ở đâu · ưu tiên: tag → loại note → deck (deck con trước rồi tới deck cha)");
+      sec2(list, "Gieo ở đâu", "Trùng nhau thì theo thứ tự: tag → loại note → deck (deck con trước deck cha)");
       const deck = d.deck || {};
       const box1 = el("div", "kb-h-card kb-h-rules");
       const inf = el("div", "kb-h-info");
@@ -4824,7 +4825,7 @@ var GardenHome = (function () {
       inf.appendChild(el("div", "kb-h-desc", "✦ " + x.desc));
       if (own) { inf.appendChild(el("div", "kb-h-own", "Đã có · chọn chỗ gieo ở trên")); }
       else {
-        inf.appendChild(btn(money >= x.price ? "Mua giống · " + x.price + " xu" : "Còn thiếu " + (x.price - money) + " xu", "kb-h-buy",
+        inf.appendChild(btn(money >= x.price ? "Mua giống · " + kbXu(x.price) + " xu" : "Thiếu " + kbXu(x.price - money) + " xu", "kb-h-buy",
           () => pay("home:seed:buy:" + x.id, { title: "Mua giống " + x.name + "?", price: x.price }), money < x.price));
       }
       const frow = el("div", "kb-h-btns"); fixBtn(frow, "giong", x.id, x.name, own); if (frow.childNodes.length) { inf.appendChild(frow); }
@@ -4833,7 +4834,7 @@ var GardenHome = (function () {
     });
     renderMySeeds(list, cat, money);
   }
-  function sec2(list, text) { list.appendChild(el("div", "kb-h-sec", text)); }
+  function sec2(list, text, tip) { const h = list.appendChild(el("div", "kb-h-sec", text)); if (tip) { h.title = tip; } return h; }
   // 1.22.6: nhãn "Deck “…”" dài hơn "Note Từ vựng" nên ô chọn giống của các dòng lệch nhau → mọi nhãn (và ô gõ tag) rộng
   // bằng nhãn dài nhất (tối đa nửa thẻ, tên deck dài thì xuống dòng)
   function alignRules(box) {
@@ -4859,8 +4860,8 @@ var GardenHome = (function () {
       inf.appendChild(el("div", "kb-h-name", g.name));
       inf.appendChild(el("div", "kb-h-desc", "✦ Đã vẽ " + g.drawn + "/5 giai đoạn"));
       const row = el("div", "kb-h-btns");
-      row.appendChild(btn("Sửa · " + m.edit + " xu", "kb-btn-small", () => { if (typeof GardenCraft !== "undefined" && GardenCraft.openSeed) { GardenCraft.openSeed(g); } }, false,
-        "Đổi tên miễn phí, đổi hình " + m.edit + " xu"));
+      row.appendChild(btn("Sửa · " + kbXu(m.edit) + " xu", "kb-btn-small", () => { if (typeof GardenCraft !== "undefined" && GardenCraft.openSeed) { GardenCraft.openSeed(g); } }, false,
+        "Đổi tên miễn phí, đổi hình " + kbXu(m.edit) + " xu"));
       row.appendChild(shareBtn(g.id));
       const armed = seedDelArm === g.id;
       row.appendChild(btn(armed ? "Bấm lần nữa: xoá, cây về cây gốc" : "Xoá giống", "kb-btn-small kb-h-del" + (armed ? " is-armed" : ""), () => {
@@ -4876,8 +4877,8 @@ var GardenHome = (function () {
       const ai = el("div", "kb-h-info");
       ai.appendChild(el("div", "kb-h-name", "Tự vẽ giống cây"));
       ai.appendChild(el("div", "kb-h-desc", "Vẽ cây 16×16 cho từng giai đoạn (tối thiểu " + m.min + "), giai đoạn còn lại tự lấy hình giai đoạn trước."));
-      ai.appendChild(el("div", "kb-h-price", m.price + " xu · sửa hình " + m.edit + " xu · đổi tên miễn phí"));
-      ai.appendChild(btn(money >= m.price ? "Mở xưởng" : "Còn thiếu " + (m.price - money) + " xu", "kb-h-buy",
+      ai.appendChild(el("div", "kb-h-price", kbXu(m.price) + " xu · sửa hình " + kbXu(m.edit) + " xu · đổi tên miễn phí"));
+      ai.appendChild(btn(money >= m.price ? "Mở xưởng" : "Thiếu " + kbXu(m.price - money) + " xu", "kb-h-buy",
         () => { if (typeof GardenCraft !== "undefined" && GardenCraft.openSeed) { GardenCraft.openSeed(null); } }, money < m.price));
       add.appendChild(ai);
       list.appendChild(add);
@@ -4979,9 +4980,9 @@ var GardenHome = (function () {
     const pi = el("div", "kb-h-info");
     pi.appendChild(el("div", "kb-h-name", p.name));
     pi.appendChild(el("div", "kb-h-desc", desc));
-    pi.appendChild(el("div", "kb-h-price", p.price + " xu · trả như tự chế tác"));
+    pi.appendChild(el("div", "kb-h-price", kbXu(p.price) + " xu · trả như tự chế tác"));
     const short = money < p.price;
-    pi.appendChild(btn(full || (short ? "Còn thiếu " + (p.price - money) + " xu" : label + " · " + p.price + " xu"), "kb-h-buy",
+    pi.appendChild(btn(full || (short ? "Thiếu " + kbXu(p.price - money) + " xu" : label + " · " + kbXu(p.price) + " xu"), "kb-h-buy",
       () => pay("share:make:" + peekCode, { title: label + "?", price: p.price, yes: label }), !!full || short));
     pv.appendChild(pi);
     list.appendChild(pv);
@@ -4994,7 +4995,7 @@ var GardenHome = (function () {
     (u.bg || []).forEach((b) => { UZ_BG_NAME[b.id] = b.name; });
     const zs = uzones();
     renderShareBox(list, "zone");
-    sec2(list, "Vùng tự tạo · " + zs.length + "/" + u.max + " · " + u.price + " xu / vùng");
+    sec2(list, "Vùng tự tạo · " + zs.length + "/" + u.max + " · " + kbXu(u.price) + " xu / vùng");
     zs.forEach((z) => {
       const card = el("div", "kb-h-card kb-h-zone");
       card.appendChild(scenePreview(z.id));
@@ -5019,8 +5020,8 @@ var GardenHome = (function () {
       const ai = el("div", "kb-h-info");
       ai.appendChild(el("div", "kb-h-name", "Tạo vùng mới"));
       ai.appendChild(el("div", "kb-h-desc", "Đặt tên, chọn nền, màu đất và đồi, rồi tự vẽ công trình bằng Xưởng."));
-      ai.appendChild(el("div", "kb-h-price", u.price + " xu · sửa tên / nền / màu miễn phí · vẽ lại công trình " + u.edit + " xu"));
-      ai.appendChild(btn(money >= u.price ? "Mở xưởng vùng" : "Còn thiếu " + (u.price - money) + " xu", "kb-h-buy",
+      ai.appendChild(el("div", "kb-h-price", kbXu(u.price) + " xu · sửa tên / nền / màu miễn phí · vẽ lại công trình " + kbXu(u.edit) + " xu"));
+      ai.appendChild(btn(money >= u.price ? "Mở xưởng vùng" : "Thiếu " + kbXu(u.price - money) + " xu", "kb-h-buy",
         () => { if (typeof GardenCraft !== "undefined" && GardenCraft.openZone) { GardenCraft.openZone(null); } }, money < u.price));
       add.appendChild(ai);
       list.appendChild(add);
@@ -5111,7 +5112,7 @@ var GardenHome = (function () {
       row.appendChild(btn(using ? "Đang dùng" : "Dùng ngay", "kb-h-buy", () => H.send("home:theme:use:" + t.id), using));
       if (!using) { row.appendChild(tryBtn()); }
     } else {
-      row.appendChild(btn(money >= t.price ? "Mở khoá · " + t.price + " xu" : "Còn thiếu " + (t.price - money) + " xu", "kb-h-buy",
+      row.appendChild(btn(money >= t.price ? "Mở khoá · " + kbXu(t.price) + " xu" : "Thiếu " + kbXu(t.price - money) + " xu", "kb-h-buy",
         () => pay("home:theme:buy:" + t.id, { title: "Mở khoá giao diện mùa " + t.name + "?", price: t.price, yes: "Mở khoá" }), money < t.price));
       row.appendChild(btn("Đổi " + t.streak + " ngày ôn liền", "kb-btn-small", () => pay("home:theme:streak:" + t.id, { title: "Mở khoá giao diện mùa " + t.name + "?", cost: t.streak + " ngày ôn liền (không mất xu, chuỗi không đứt)", yes: "Đổi" }), avail < t.streak,
         avail < t.streak ? "Cần " + t.streak + " ngày ôn liền để đổi (đang có " + avail + " ngày)" : "Mở miễn phí bằng ngày ôn liền (chuỗi không đứt)"));

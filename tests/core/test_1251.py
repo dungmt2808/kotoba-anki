@@ -391,7 +391,7 @@ try:
     more_core.sub_buy(sub, "thang", D)
     capped = False
 except more_core.MoreError as e:
-    capped = "gần hết" in str(e)
+    capped = "tối đa 60 ngày" in str(e)      # 1.30.3: câu báo nói rõ trần 60 ngày
 ok(capped, "trần 60 ngày phía trước (còn 44 + 30 > 60 → báo, không trừ)")
 s2 = more_core.clean_sub({"until": "2026-11-01", "trial": "2026-10-25"})
 more_core.sub_buy(s2, "tuan", D)
@@ -427,7 +427,7 @@ try:
     poor = ""
 except core.HomeError as e:
     poor = str(e)
-ok("Chưa đủ xu" in poor and st1.load()["coins"] == 50 and st1.load()["more"]["paper_sub"]["until"] == "2026-11-21",
+ok(poor.startswith("Thiếu ") and st1.load()["coins"] == 50 and st1.load()["more"]["paper_sub"]["until"] == "2026-11-21",
    "mua khi thiếu xu: báo lỗi, không đổi gói")
 data = st1.load()
 data["coins"] = 1000

@@ -257,15 +257,15 @@ result = 1`);
   await js('GardenPaper.close(); GardenPaper.open("src"); return 1;'); await sleep(1200);
   let bt = await js('return [...document.querySelectorAll(".kb-ai-plan button")].map((b) => [b.textContent, b.disabled, b.title]);');
   const planTxt = await js('return document.querySelector(".kb-ai-plan").innerText;');
-  ok(bt.length === 2 && !bt[0][1] && bt[1][1] && /Chưa đủ xu/.test(bt[1][2]) && /Còn 7 ngày/.test(planTxt),
-     'còn 7 ngày, 120 xu: Gia hạn tuần bấm được, tháng khoá ("Chưa đủ xu") ' + JSON.stringify(bt) + ' ' + JSON.stringify(planTxt.replace(/\n/g, ' | ')));
+  ok(bt.length === 2 && !bt[0][1] && bt[1][1] && /Thiếu [0-9.]+ xu/.test(bt[1][2]) && /Còn 7 ngày/.test(planTxt),
+     'còn 7 ngày, 120 xu: Gia hạn tuần bấm được, tháng khoá ("Thiếu N xu") ' + JSON.stringify(bt) + ' ' + JSON.stringify(planTxt.replace(/\n/g, ' | ')));
   await py(KB + 'd = kb.STATE.load(); d["coins"] = 5000; d["more"]["paper_sub"]["until"] = (datetime.date.today() + datetime.timedelta(days=40)).isoformat(); kb.STATE.save(d); result = 1');
   await js('GardenPaper.close(); GardenPaper.open("src"); return 1;'); await sleep(1200);
   bt = await js('return [...document.querySelectorAll(".kb-ai-plan button")].map((b) => [b.textContent, b.disabled, b.title]);');
-  ok(!bt[0][1] && bt[1][1] && /gần hết/.test(bt[1][2]), 'còn 41 ngày: tuần được, tháng khoá (quá 60 ngày)');
+  ok(!bt[0][1] && bt[1][1] && /tối đa 60 ngày/.test(bt[1][2]), 'còn 41 ngày: tuần được, tháng khoá (quá 60 ngày)');
   await js('document.querySelectorAll(".kb-ai-plan button")[1].disabled = false; document.querySelectorAll(".kb-ai-plan button")[1].click(); return 1;'); await sleep(900);
   const capped = await py(KB + 'd = kb.STATE.load(); result = [d["coins"], d["more"]["paper_sub"]["until"]]');
-  ok(capped[0] === 5000 && /gần hết/.test(await flash()), 'gửi lệnh mua tháng thẳng (bỏ khoá nút) → Python từ chối, không trừ xu');
+  ok(capped[0] === 5000 && /tối đa 60 ngày/.test(await flash()), 'gửi lệnh mua tháng thẳng (bỏ khoá nút) → Python từ chối, không trừ xu');
 
   console.log('== Báo muốn nhận: Nhật / Anh hoặc chỉ tiếng Việt (1.25.2)');
   await py(KB + 'kb.save_config(gemini_langs=["ja", "vi"]); result = 1');

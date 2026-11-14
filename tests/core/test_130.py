@@ -114,7 +114,7 @@ ok(st.load()["more"]["decor"]["use"]["room"] == {} and st.load()["more"]["decor"
    "về Theo kiểu nhà (\"none\" / trống), đổi qua lại không mất xu")
 ok(st.load()["more"]["decor"]["own"] == ["w_sakura", "f_tatami"], "về kiểu nhà vẫn giữ mẫu đã mua")
 poor = new_state("poor", coins=3430 + 2000 + 100)
-ok("Chưa đủ xu" in err(poor.decor_buy, "w_sakura") and poor.load()["more"]["decor"]["own"] == [], "thiếu xu: không mua")
+ok(err(poor.decor_buy, "w_sakura").startswith("Thiếu ") and poor.load()["more"]["decor"]["own"] == [], "thiếu xu: không mua")
 low = new_state("low", level=4, rooms=False)
 ok("Lắp cửa" in err(low.decor_buy, "w_kem") and "Lắp cửa" in err(low.decor_use, "room", "wall", "none") and "Lắp cửa" in err(low.tile_save, {"kind": "wall", "px": TILE_A}),
    "nhà chưa có cửa: chưa mua / dùng / vẽ được")

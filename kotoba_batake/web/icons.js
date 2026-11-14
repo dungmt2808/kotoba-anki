@@ -1,6 +1,13 @@
 /* ことば畑 – icon pixel nhỏ (1.17.3) thay cho emoji: mỗi icon là lưới 8×8, vẽ thành SVG (2px / điểm ảnh)
    để hợp phong cách pixel của vườn. Dùng: GardenIcons.el("lock") hoặc GardenIcons.fill(node, "[i:lock] Bãi biển").
    Trong HTML tĩnh: <i class="kb-pi kb-pi-lock" aria-hidden="true"></i>. */
+/* 1.30.3: số xu viết một kiểu ở mọi chỗ — nhóm nghìn bằng dấu chấm ("4.860 xu", "1.000.000 xu"); trước 1.30.3 chỗ thì "4860",
+   chỗ (hộp hỏi) thì "4.860". */
+function kbXu(n) {
+  const v = Number(n);
+  if (!isFinite(v)) { return String(n); }
+  return String(Math.round(v)).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
 var GardenIcons = (function () {
   "use strict";
 

@@ -137,11 +137,12 @@ var GardenPaper = (function () {
   // tiếng Nhật của máy); trước đây luôn ghi "▶ để nghe" nên số không có giọng đọc trông như mất nút
   function issueTip() {
     const v = issue;
-    if (!v || !v.bai) { return " ▶ để nghe."; }
-    let t = v.bai.some((b) => (b.audio || []).some(Boolean)) ? " ▶ để nghe."
-      : v.src === "claude" ? " Số này chưa có giọng đọc từng đoạn (cần VOICEVOX)."
-        : " Số này chưa có giọng đọc từng đoạn (Nguồn báo → Giọng đọc: Cả bài).";
-    if (v.has_dich) { t += " Dịch: xem bản dịch."; }
+    // 1.30.3: nối vào câu đầu bằng " · " như các phần khác của dòng gợi ý
+    if (!v || !v.bai) { return " · ▶ để nghe"; }
+    let t = v.bai.some((b) => (b.audio || []).some(Boolean)) ? " · ▶ để nghe"
+      : v.src === "claude" ? " · số này chưa có giọng đọc từng đoạn (cần VOICEVOX)"
+        : " · số này chưa có giọng đọc từng đoạn (Nguồn báo → Giọng đọc: Cả bài)";
+    if (v.has_dich) { t += " · Dịch: xem bản dịch"; }
     return t;
   }
   function defaultInfo() {
@@ -150,12 +151,12 @@ var GardenPaper = (function () {
       setInfo("Truyện dài kỳ và tin làng hôm nay. Trả lời câu hỏi cuối số để nhận xu.");
     } else if (tab === "issue" && pl === "en") {
       setInfo("Bấm từ gạch chân để tra nghĩa (nhận cả dạng biến đổi: went → go). Gạch chấm: từ mới." + issueTip());
-    } else if (tab === "issue") { setInfo("Bấm từ gạch chân để tra nghĩa. Gạch liền: từ đã học. Gạch chấm: từ mới." + issueTip()); }
+    } else if (tab === "issue") { setInfo("Bấm từ gạch chân để tra nghĩa · gạch liền: từ đã học · gạch chấm: từ mới" + issueTip()); }
     else if (tab === "dict") {
       setInfo(dictLang() === "ja" ? "Nghe rồi gõ lại câu (kana, kanji hoặc romaji). Enter để kiểm tra."
         : "Nghe rồi gõ lại câu. Không tính hoa thường, dấu câu; don't = do not. Enter để kiểm tra.");
     }
-    else if (tab === "src") { setInfo("Chọn báo muốn nhận và nguồn báo."); }
+    else if (tab === "src") { setInfo("Chọn báo muốn nhận và ai viết báo."); }
     else { setInfo("Chọn một số báo để đọc."); }
     infoDefault = true;
   }
@@ -314,9 +315,9 @@ var GardenPaper = (function () {
       box.appendChild(el("div", "kb-p-empty-h", "Gói báo đã hết hạn"));
       box.appendChild(el("p", null, "Số cũ vẫn đọc được ở Kệ báo."));
       (sub.plans || []).forEach((pn) => {
-        const b = btn("kb-p-go" + (pn.id === "tuan" ? " kb-ai-main" : ""), "Gia hạn " + pn.name + " · " + pn.price + " xu",
+        const b = btn("kb-p-go" + (pn.id === "tuan" ? " kb-ai-main" : ""), "Gia hạn " + pn.name + " · " + kbXu(pn.price) + " xu",
           () => subAsk(pn, () => { aiFlash = null; H.send("ai:sub:" + JSON.stringify({ buy: pn.id })); setTab("src"); }),
-          (sub.coins || 0) < pn.price ? "Chưa đủ xu (đang có " + (sub.coins || 0) + ")" : "");
+          (sub.coins || 0) < pn.price ? "Thiếu " + kbXu(pn.price - (sub.coins || 0)) + " xu" : "");
         b.disabled = (sub.coins || 0) < pn.price;
         acts.appendChild(b);
       });
@@ -654,9 +655,9 @@ var GardenPaper = (function () {
     const btns = el("span", "kb-ai-chips");
     (sb.plans || []).forEach((pn) => {
       const over = sb.left + pn.days > (sb.ahead_max || 60), poor = (sb.coins || 0) < pn.price;
-      const b = btn(pn.id === "tuan" ? "kb-ai-main" : "", (sb.active ? "Gia hạn " : "Mua ") + pn.name + " · " + pn.price + " xu",
+      const b = btn(pn.id === "tuan" ? "kb-ai-main" : "", (sb.active ? "Gia hạn " : "Mua ") + pn.name + " · " + kbXu(pn.price) + " xu",
         () => subAsk(pn, () => { aiFlash = null; b.disabled = true; H.send("ai:sub:" + JSON.stringify({ buy: pn.id })); }),
-        over ? "Gói còn " + sb.left + " ngày — gần hết rồi hãy gia hạn" : poor ? "Chưa đủ xu (đang có " + (sb.coins || 0) + ")" : "");
+        over ? "Gói còn " + sb.left + " ngày — giữ tối đa " + (sb.ahead_max || 60) + " ngày phía trước" : poor ? "Thiếu " + kbXu(pn.price - (sb.coins || 0)) + " xu" : "");
       b.disabled = over || poor;
       btns.appendChild(b);
     });
@@ -860,7 +861,7 @@ var GardenPaper = (function () {
       mid.appendChild(el("span", "kb-p-row-meta", meta.join(" · ")));
       row.appendChild(mid);
       row.appendChild(el("span", "kb-p-tag" + (x.read ? (x.complete ? " is-done" : "") : " is-new"),
-        x.read ? (x.complete ? "Xong +" + x.coins + " xu" : "Đã đọc") : "Mới"));
+        x.read ? (x.complete ? "Xong +" + kbXu(x.coins) + " xu" : "Đã đọc") : "Mới"));
       if (index.multi && x.src) {      // 1.23: Kệ báo gộp hai nguồn → mỗi số ghi nguồn
         row.appendChild(el("span", "kb-p-tag kb-p-src", x.src === "claude" ? "Claude Code" : "Gemini"));
       }
@@ -964,7 +965,7 @@ var GardenPaper = (function () {
       const pr = el("section", "kb-p-practice");
       const ph = el("div", "kb-p-ph");
       ph.appendChild(el("span", null, "Luyện tập"));
-      ph.appendChild(el("span", "kb-p-reward", "Đúng ngay lần đầu +" + v.reward.q + " xu mỗi câu · làm hết +" + v.reward.bonus + " xu"));
+      ph.appendChild(el("span", "kb-p-reward", "Đúng ngay lần đầu +" + kbXu(v.reward.q) + " xu mỗi câu · làm hết +" + kbXu(v.reward.bonus) + " xu"));
       pr.appendChild(ph);
       v.cau_hoi.forEach((q, i) => pr.appendChild(drawQuestion(q, i, lg)));
       v.chinh_ta.forEach((c, i) => pr.appendChild(drawDictRow(c, i, { d: refOf(v), k: "ct", i: i }, "Chép câu " + (i + 1))));
@@ -1088,7 +1089,7 @@ var GardenPaper = (function () {
     }
     if (res.ok) {
       fb.className = "kb-p-fb is-ok";
-      fb.textContent = "Đúng" + (res.gained ? " +" + res.gained + " xu" : "") + ". " + (res.giai_thich || "");
+      fb.textContent = "Đúng" + (res.gained ? " +" + kbXu(res.gained) + " xu" : "") + ". " + (res.giai_thich || "");
     } else {
       fb.className = "kb-p-fb is-bad";
       fb.textContent = "Chưa đúng. Chọn lại nhé" + (res.first ? " (không tính xu)." : ".");
@@ -1172,7 +1173,7 @@ var GardenPaper = (function () {
       fb.textContent = res.prev ? "Đã chép đúng." : "Đã làm. Chép lại để luyện thêm (không tính xu).";
     } else if (res.ok) {
       fb.className = "kb-p-fb is-ok";
-      fb.textContent = "Đúng rồi" + (res.gained ? " +" + res.gained + " xu" : "") + ".";
+      fb.textContent = "Đúng rồi" + (res.gained ? " +" + kbXu(res.gained) + " xu" : "") + ".";
     } else {
       fb.className = "kb-p-fb is-bad";
       fb.textContent = "Chưa đúng. Câu đúng là:";
@@ -1200,7 +1201,7 @@ var GardenPaper = (function () {
     head.appendChild(el("div", "kb-p-name kb-p-name-s", "書き取り"));
     const meta = el("div", "kb-p-dmeta");
     meta.appendChild(el("div", "kb-p-dcount", "Hôm nay " + v.done + "/" + v.total + " câu" + (v.complete ? " ✓" : "")));
-    meta.appendChild(el("div", "kb-p-reward", "Đúng ngay lần đầu +" + v.reward.each + " xu mỗi câu · làm hết +" + v.reward.bonus + " xu" +
+    meta.appendChild(el("div", "kb-p-reward", "Đúng ngay lần đầu +" + kbXu(v.reward.each) + " xu mỗi câu · làm hết +" + kbXu(v.reward.bonus) + " xu" +
       (v.queue ? " · " + v.queue + " câu đang chờ ôn" : "")));
     head.appendChild(meta);
     st.appendChild(head);
@@ -1243,7 +1244,7 @@ var GardenPaper = (function () {
     if (res.gained) { sfx("coin"); } else if (res.ok) { sfx("good"); } else { sfx("again"); }
     if (res.bonus) {
       if (typeof GardenFX !== "undefined" && GardenFX.say) {
-        GardenFX.say(res.kind === "dict" ? "書き取り完了！ Xong lượt chép +" + res.bonus + " xu" : "Đọc xong số báo! +" + res.bonus + " xu", 2600);
+        GardenFX.say(res.kind === "dict" ? "書き取り完了！ Xong lượt chép +" + kbXu(res.bonus) + " xu" : "Đọc xong số báo! +" + kbXu(res.bonus) + " xu", 2600);
       }
       if (typeof GardenFX !== "undefined" && GardenFX.mood) { GardenFX.mood("star", 1800); }
     }

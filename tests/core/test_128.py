@@ -270,7 +270,7 @@ ok(err(st.buy_at, "tukinh", 1) and err(st.buy_at, "shika", 1) and err(st.buy_at,
    "buy_at không bán quà / món hiếm / đồ theo mùa / id lạ")
 p2, st2 = fresh("w2", coins=50, house=2)
 ok("Lắp cửa" in err(st2.buy_at, "nonla", 120), "nhà chưa có cửa → không mua nội thất")
-ok("Chưa đủ xu" in err(st2.buy_at, "luunuoc", 160) and st2.load()["coins"] == 50, "thiếu xu → từ chối, xu giữ nguyên")
+ok(err(st2.buy_at, "luunuoc", 160).startswith("Thiếu ") and st2.load()["coins"] == 50, "thiếu xu → từ chối, xu giữ nguyên")
 p3, st3 = fresh("w3", coins=3000)
 st3.buy_at("statue", f.disc(1000))
 ok("một cái" in err(st3.buy_at, "statue", 750), "món tối đa 1 cái: không mua lần hai")

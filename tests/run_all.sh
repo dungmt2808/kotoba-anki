@@ -74,6 +74,9 @@ echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
 echo "== core/test_1301.js (1.30.1: khách không đi ngang qua nhà, thú trong nhà đi theo gian)"
 OUT=$(node "$HERE/core/test_1301.js" "$ADDON" 2>&1); RC=$?
 echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
+echo "== core/test_1303.py (1.30.3: bảng màu ấm + độ tương phản, câu chữ đồng bộ, số xu một kiểu, vườn mở qua ngày mới, Esc ở ⚙)"
+OUT=$(python3 "$HERE/core/test_1303.py" "$ADDON" 2>&1); RC=$?
+echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
 echo "== core/test_ngau_nhien.py (1.30: thao tác ngẫu nhiên + bất biến của ví)"
 OUT=$(python3 "$HERE/core/test_ngau_nhien.py" "$ADDON" 2>&1); RC=$?
 echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1

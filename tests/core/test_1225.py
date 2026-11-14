@@ -83,10 +83,10 @@ for name, fn, args in [("xây", st.build, (1,)), ("mua đồ", st.buy, ("fence",
                        ("giao diện mùa", st.unlock_theme, ("tet", "coins")), ("thú", st.pet_buy, ("neko",)),
                        ("giống", st.seed_buy, ("ine",))]:
     e = err(fn, *args)
-    if not (e and "Chưa đủ xu" in e):
+    if not (e and e.startswith("Thiếu ")):
         bad.append(f"{name}: {e!r}")
 after = st.load()
-ok(not bad, "8 lệnh mua khi 0 xu đều báo \"Chưa đủ xu\"" + (": " + "; ".join(bad) if bad else ""))
+ok(not bad, "8 lệnh mua khi 0 xu đều báo \"Thiếu N xu\"" + (": " + "; ".join(bad) if bad else ""))
 ok(after["coins"] == 0 and json.dumps(after, sort_keys=True, default=str) == before, "ví không đổi, xu vẫn 0")
 st = state(79)
 ok(err(st.build, 1) is not None and st.load()["coins"] == 79, "79 xu (thiếu 1 xu) → không xây, còn 79 xu")

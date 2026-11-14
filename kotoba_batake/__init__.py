@@ -22,7 +22,7 @@ from aqt import gui_hooks, mw  # nạp trước để tránh vòng import của 
 
 from anki.scheduler.v3 import CardAnswer, QueuedCards  # noqa: E402
 from aqt.operations.scheduling import answer_card
-from aqt.qt import QAction, QDialog, QKeySequence, Qt, QVBoxLayout, qconnect
+from aqt.qt import QAction, QDialog, QKeySequence, Qt, QTimer, QVBoxLayout, qconnect
 from aqt.sound import av_player, play_clicked_audio
 from aqt.theme import theme_manager
 from aqt.utils import getFile, openLink, restoreGeom, saveGeom, showWarning, tooltip
@@ -2398,7 +2398,29 @@ class GardenDialog(QDialog):
             context=self,
         )
         # Anki xếp hàng lệnh eval cho tới khi trang sẵn sàng, nên gửi luôn dữ liệu.
+        self._day_seen: int | None = None    # 1.30.3: ngày Anki của lần dựng vườn gần nhất
         self.refresh()
+        # 1.30.3: để cửa sổ vườn mở qua giờ sang ngày của Anki (vd. 4:00) → dựng lại một lần: thẻ Hôm nay, nhiệm vụ, chỗ lấp
+        # lánh, Tin làng, màn chào và báo Gemini của ngày mới (trước chỉ đổi khi có lượt ôn / thao tác gọi refresh)
+        self._day_timer = QTimer(self)
+        qconnect(self._day_timer.timeout, self._check_day)
+        self._day_timer.start(60_000)
+
+    def _check_day(self) -> None:
+        if not mw.col or self._day_seen is None or self._busy:
+            return
+        try:      # Anki đang đồng bộ / chạy thao tác có thanh tiến độ: để lần sau (không chạm collection lúc đó)
+            if mw.progress.busy():
+                return
+        except Exception:
+            pass
+        try:
+            day = _today()
+            if day != self._day_seen:
+                self._day_seen = day        # ghi trước: dựng vườn lỗi thì không thử lại (và báo lỗi) mỗi phút
+                self.refresh()
+        except Exception as err:
+            _warn("sang ngày mới", err)
 
     # -- khu vườn ----------------------------------------------------------
 
@@ -2506,6 +2528,10 @@ class GardenDialog(QDialog):
                         parent=self)
             return
         self._js("render", data)
+        try:
+            self._day_seen = _today()
+        except Exception:
+            self._day_seen = None
         if fed:
             self._js("toast", f"[i:paw] Đã cho {', '.join(fed['names'])} ăn · −{fed['cost']} xu")
         if paid:
@@ -4007,6 +4033,7 @@ def open_garden() -> None:
         if _dialog.isMinimized():
             _dialog.setWindowState(_dialog.windowState() & ~Qt.WindowState.WindowMinimized)
         _dialog.show()
+        _dialog._check_day()     # 1.30.3: cửa sổ để mở từ hôm qua → dựng lại theo ngày mới
     _dialog.raise_()
     _dialog.activateWindow()
 

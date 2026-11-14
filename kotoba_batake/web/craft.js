@@ -635,11 +635,11 @@ var GardenCraft = (function () {
     Array.prototype.forEach.call(document.querySelectorAll("#kb-cf-pal [data-c]"), (b) => b.classList.toggle("is-on", b.getAttribute("data-c") === color));
     const price = priceOf(size), save = $("kb-cf-save");
     save.textContent = baseMode ? (baseInfo && baseInfo.suggest ? "Lưu file góp ý" : "Lưu")
-      : tileMode ? (tileDesign ? "Lưu mẫu · " + (price ? price + " xu" : "miễn phí") : "Tạo mẫu · " + price + " xu") : seedMode ? (seedDesign ? "Lưu giống · " + (price ? price + " xu" : "miễn phí") : "Tạo giống · " + price + " xu")
-      : zoneMode ? (zone ? "Lưu vùng · " + (price ? price + " xu" : "miễn phí") : "Tạo vùng · " + price + " xu")
-      : design ? "Lưu sửa · " + (price ? price + " xu" : "miễn phí") : "Chế tác · " + price + " xu";
+      : tileMode ? (tileDesign ? "Lưu mẫu · " + (price ? kbXu(price) + " xu" : "miễn phí") : "Tạo mẫu · " + kbXu(price) + " xu") : seedMode ? (seedDesign ? "Lưu giống · " + (price ? kbXu(price) + " xu" : "miễn phí") : "Tạo giống · " + kbXu(price) + " xu")
+      : zoneMode ? (zone ? "Lưu vùng · " + (price ? kbXu(price) + " xu" : "miễn phí") : "Tạo vùng · " + kbXu(price) + " xu")
+      : design ? "Lưu sửa · " + (price ? kbXu(price) + " xu" : "miễn phí") : "Chế tác · " + kbXu(price) + " xu";
     save.disabled = saving || coins() < price;
-    save.title = coins() < price ? "Còn thiếu " + (price - coins()) + " xu" : "";
+    save.title = coins() < price ? "Thiếu " + kbXu(price - coins()) + " xu" : "";
     $("kb-cf-undo").disabled = !undo.length;
     const rb = $("kb-cf-redo"); if (rb) { rb.disabled = !redo.length; }
     Array.prototype.forEach.call(document.querySelectorAll("#kb-craft [data-brush]"), (b) => b.classList.toggle("is-on", Number(b.getAttribute("data-brush")) === brush));
@@ -852,7 +852,7 @@ var GardenCraft = (function () {
     $("kb-craft").hidden = false;
     buildPalette();
     layout(); draw(); showWhole();
-    tip(z ? "Sửa vùng “" + z.name + "” · đổi tên / nền / màu miễn phí, vẽ lại công trình hoặc cảnh nền " + u.edit + " xu"
+    tip(z ? "Sửa vùng “" + z.name + "” · đổi tên / nền / màu miễn phí, vẽ lại công trình hoặc cảnh nền " + kbXu(u.edit) + " xu"
       : "Vẽ công trình 64×76 (nhà, tháp, cây to…), rồi bấm “Cảnh nền” để vẽ khung cảnh. Trên vạch xanh là trời.");
   }
   // 1.22: giống cây tự vẽ — g = mục trong catalog.myseeds (sửa) hoặc null (tạo mới)
@@ -879,7 +879,7 @@ var GardenCraft = (function () {
     $("kb-craft").hidden = false;
     buildPalette();
     layout(); draw(); showWhole();
-    tip(g ? "Sửa giống “" + g.name + "” · đổi hình " + seedCat().edit + " xu, đổi tên miễn phí"
+    tip(g ? "Sửa giống “" + g.name + "” · đổi hình " + kbXu(seedCat().edit) + " xu, đổi tên miễn phí"
       : "Vẽ từng giai đoạn 16×16 (tối thiểu " + seedCat().min + "), giai đoạn trước hiện mờ để vẽ tiếp · phím 1–5 đổi giai đoạn.");
   }
   // 1.25.5 (admin): mở hình gốc {group, id, name} — các khung lấy từ GardenFix (đang dùng, có thể đã sửa) + hình gốc để so
@@ -945,7 +945,7 @@ var GardenCraft = (function () {
     buildPalette();
     layout(); draw(); showWhole();
     const tc = tileCat(), what = tileKind === "wall" ? "tường" : "sàn";
-    tip(t ? "Sửa mẫu “" + t.name + "” · đổi tên miễn phí, vẽ lại " + tc.edit + " xu"
+    tip(t ? "Sửa mẫu “" + t.name + "” · đổi tên miễn phí, vẽ lại " + kbXu(tc.edit) + " xu"
       : "Vẽ một ô 16×16, ô này lặp lại kín " + what + " · ô để trống thì thấy nền của kiểu nhà.");
   }
   function open(it) {
@@ -977,7 +977,7 @@ var GardenCraft = (function () {
     $("kb-craft").hidden = false;
     buildPalette();
     layout(); draw(); showWhole();
-    tip(design ? "Sửa món “" + design.name + "” · cỡ và loại giữ nguyên · đổi tên / hiệu ứng miễn phí, vẽ lại " + ((cat().craft || {}).edit || 50) + " xu" :
+    tip(design ? "Sửa món “" + design.name + "” · cỡ và loại giữ nguyên · đổi tên / hiệu ứng miễn phí, vẽ lại " + kbXu((cat().craft || {}).edit || 50) + " xu" :
       "Vẽ bằng chuột (chuột phải = tẩy), hoặc bấm “Chọn ảnh…” để biến ảnh thành pixel art.");
   }
   // 1.22.5: trang đang cuộn xuống (lăn chuột trên bảng Nhà, cửa sổ thấp) thì mở Xưởng xong thanh trên của Xưởng (tên, nút

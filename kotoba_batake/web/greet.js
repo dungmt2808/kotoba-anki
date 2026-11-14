@@ -12,7 +12,9 @@
 var GardenGreet = (function () {
   "use strict";
   const $ = (id) => document.getElementById(id);
-  const INK = "#1b1b2f";
+  const INK = "#1b1b2f";        // viền hình pixel (bảng 32 màu)
+  // 1.30.3: màn phủ của chuyển cảnh theo màu mực của giao diện (--kb-ink, nâu cacao)
+  function veilInk() { try { return getComputedStyle(document.documentElement).getPropertyValue("--kb-ink").trim() || INK; } catch (e) { return INK; } }
   const PX = 8;                 // cỡ bậc thang của vòng tròn
   const GREET_MS = 4000;        // tự vào vườn sau chừng này (không tính lúc rê chuột lên màn chào)
   // 1.26.1 (người dùng: "thời gian chuyển cảnh nó đang bị nhanh quá, chậm lại một chút") — chậm hơn 1.26.0 khoảng 1,7 lần
@@ -20,6 +22,12 @@ var GardenGreet = (function () {
   let first = true;             // lần vẽ đầu tiên của trang (= vừa mở vườn)
   let greet = null;             // màn chào đang hiện
   let newsOpen = false;
+  let lastDay = null;           // 1.30.3: ngày Anki của data.greet lần vẽ trước
+  // có bảng nào đang mở / đang hỏi trả xu / hướng dẫn → không chào đè lên
+  function busy() {
+    const open = ["kb-panel", "kb-game", "kb-home", "kb-paper", "kb-cal", "kb-ui", "kb-fields"].some((id) => { const e = $(id); return e && !e.hidden; });
+    return open || (typeof GardenUI !== "undefined" && GardenUI.asking && GardenUI.asking()) || !!document.querySelector(".kb-tour:not([hidden])");
+  }
 
   // ---------------------------------------------------------------- cài đặt
   function glob(k) { return typeof GardenUI !== "undefined" && GardenUI.glob ? GardenUI.glob(k) : "on"; }
@@ -60,7 +68,7 @@ var GardenGreet = (function () {
   // phủ màu mực ngoài vòng tròn (cx, cy, r), viền bậc thang PX
   function iris(c, cx, cy, r) {
     const x = c.getContext("2d"), W = c.width, H = c.height;
-    x.globalAlpha = 1; x.fillStyle = INK; x.fillRect(0, 0, W, H);
+    x.globalAlpha = 1; x.fillStyle = veilInk(); x.fillRect(0, 0, W, H);
     if (r <= 0) { return; }
     for (let y = Math.floor((cy - r) / PX) * PX; y < cy + r; y += PX) {
       const yy = y + PX / 2 - cy;
@@ -79,7 +87,7 @@ var GardenGreet = (function () {
   }
   function fadeIn(ms) {
     const c = veil(), x = c.getContext("2d");
-    x.fillStyle = INK; x.fillRect(0, 0, c.width, c.height);
+    x.fillStyle = veilInk(); x.fillRect(0, 0, c.width, c.height);
     anim(ms, (t) => { c.style.opacity = String(0.6 * (1 - t)); }, veilOff);
   }
 
@@ -403,9 +411,18 @@ var GardenGreet = (function () {
     // garden.js gọi mỗi lần vẽ lại vườn
     render: function (d) {
       drawNews(d);
-      if (!first) { return; }
-      first = false;
       const g = d && d.greet;
+      // ngày Anki của lần vẽ này (thẻ Hôm nay luôn có; màn chào có thể tắt)
+      const day = d && d.today && typeof d.today.day === "number" ? d.today.day : (g ? g.day : null);
+      if (!first) {
+        // 1.30.3: cửa sổ vườn để mở qua ngày mới (Python dựng lại vườn) → chào ngày mới nếu đang ở màn chính, không bảng nào mở
+        if (day !== null && lastDay !== null && day !== lastDay && g &&
+            glob("greet") !== "off" && prefGet("kb-greet-day") !== String(g.day) && !greet && !busy()) { show(g); }
+        if (day !== null) { lastDay = day; }
+        return;
+      }
+      first = false;
+      lastDay = day;
       if (g && glob("greet") !== "off" && prefGet("kb-greet-day") !== String(g.day)) { show(g); return; }
       const m = mode();
       if (m === "full") { irisOpen(T.first, window.innerWidth / 2, window.innerHeight / 2); } else if (m === "fade") { fadeIn(T.fade); }

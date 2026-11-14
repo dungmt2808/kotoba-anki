@@ -254,13 +254,13 @@ var GardenCal = (function () {
     t.appendChild(document.createTextNode(" · quên ôn 1 ngày thì tự dùng 1 vé"));
     row.appendChild(t);
     const full = f.n >= f.max, poor = f.coins < f.price;
-    const b = btn("kb-cal-freeze-buy", full ? "Đã đủ vé" : "Mua · " + f.price + " xu", () => {
+    const b = btn("kb-cal-freeze-buy", full ? "Đã đủ vé" : "Mua · " + kbXu(f.price) + " xu", () => {
       const buy = () => { b.disabled = true; H.send("cal:freeze:" + v.id); };
       if (typeof GardenUI !== "undefined" && GardenUI.ask) {      // 1.30.1: hỏi lại trước khi trả xu
         GardenUI.ask({ title: "Mua 1 vé giữ chuỗi?", price: f.price, note: "Quên ôn 1 ngày thì vé tự dùng, chuỗi ngày ôn không đứt.", then: buy });
       } else { buy(); }
-    }, full ? "Giữ tối đa " + f.max + " vé" : poor ? "Còn thiếu " + (f.price - f.coins) + " xu" :
-      "Mua 1 vé giữ chuỗi (" + f.price + " xu). Vé chỉ giữ số ngày ôn liên tiếp, không đổi lịch ôn.");
+    }, full ? "Giữ tối đa " + f.max + " vé" : poor ? "Thiếu " + kbXu(f.price - f.coins) + " xu" :
+      "Mua 1 vé giữ chuỗi (" + kbXu(f.price) + " xu). Vé chỉ giữ số ngày ôn liên tiếp, không đổi lịch ôn.");
     b.disabled = full || poor;
     row.appendChild(b);
     return row;

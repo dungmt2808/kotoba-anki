@@ -34,6 +34,10 @@
           <select id="kb-sky-hour"><option value="6">Bình minh</option><option value="9">Buổi sáng</option><option value="12.5">Buổi trưa</option><option value="15.5">Buổi chiều</option><option value="18.4">Hoàng hôn</option><option value="22">Ban đêm</option></select></label>
         <label>Thời tiết
           <select id="kb-sky-weather"><option value="auto">Tự đổi (mỗi 3 giờ)</option><option value="sunny">Nắng</option><option value="cloudy">Nhiều mây</option><option value="rain">Mưa</option><option value="storm">Giông</option><option value="snow">Tuyết</option></select></label>
+        <div class="kb-page-row" role="group" aria-label="Nền trang">Nền trang
+          <button type="button" class="kb-btn kb-btn-small kb-page-opt" data-page="paper" aria-pressed="false">Giấy ấm</button>
+          <button type="button" class="kb-btn kb-btn-small kb-page-opt" data-page="sky" aria-pressed="false">Trời xanh</button>
+        </div>
         <div class="kb-sound-note" id="kb-sky-now"></div>
         <div class="kb-set-h">Cài đặt khác</div>
         <button type="button" id="kb-cal-open" class="kb-btn kb-btn-small kb-fields-open" title="Lịch ngày ôn, nhật ký một dòng, luyện viết và cuốn nhật ký (phím L)">Lịch hoa &amp; nhật ký…</button>
@@ -224,7 +228,7 @@
       <div class="kb-g-hud">
         <button type="button" id="kb-p-furi" class="kb-btn kb-btn-small">Ẩn furigana</button>
         <button type="button" id="kb-p-dich" class="kb-btn kb-btn-small" hidden title="Bản dịch tiếng Việt (để kiểm tra mình hiểu đúng)">Hiện bản dịch</button>
-        <div class="kb-g-chip"><span class="kb-g-chip-l">Xu nhận</span><b id="kb-p-coins">0</b></div>
+        <div class="kb-g-chip" title="Xu nhận được từ báo hôm nay"><span class="kb-g-chip-l">Xu</span><b id="kb-p-coins">0</b></div>
       </div>
       <button type="button" id="kb-p-exit" class="kb-btn kb-btn-small">Thoát <span class="kb-key">Esc</span></button>
     </div>
@@ -300,7 +304,7 @@
     <div class="kb-quest-head">今日のミッション · Nhiệm vụ hôm nay <button type="button" id="kb-quest-x" class="kb-pin-x" aria-label="Đóng">✕</button></div>
     <ul id="kb-quest-list" class="kb-quest-list"></ul>
     <div id="kb-quest-chest" class="kb-quest-chest"></div>
-    <div class="kb-quest-note">Nhiệm vụ đổi mỗi ngày (theo giờ qua ngày của Anki). Ôn ở màn ôn của Anki cũng được tính.</div>
+    <div class="kb-quest-note">Nhiệm vụ đổi mỗi ngày. Ôn ở màn ôn của Anki cũng được tính.</div>
   </div>
 
   <div id="kb-news-pop" class="kb-quest-pop kb-news-pop" hidden role="dialog" aria-label="Tin làng">

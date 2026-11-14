@@ -97,7 +97,7 @@ d = st.myseed_save({"id": "g1", "name": "Cà chua bi", "st": [SPR2, SPR, SPR, ""
 ok(d["coins"] == 19450, "đổi hình → 50 xu")
 ok(raises(lambda: st.myseed_save({"id": "g9", "name": "x", "st": ["", SPR, SPR, "", SPR]}), "Không tìm thấy"), "sửa giống không có → lỗi")
 w = st.load(); w["coins"] = 100; st.save(w)
-ok(raises(lambda: st.myseed_save({"name": "x", "st": ["", SPR, SPR, "", SPR]}), "Chưa đủ xu"), "thiếu xu → không tạo")
+ok(raises(lambda: st.myseed_save({"name": "x", "st": ["", SPR, SPR, "", SPR]}), "Thiếu "), "thiếu xu → không tạo")
 ok(sorted(st.load()["more"]["myseeds"]["items"]) == ["g1"] and "g2" not in st.load_px(), "thiếu xu thì không lưu gì")
 w = st.load(); w["coins"] = 20000; st.save(w)
 view = core.home_catalog(st.load(), st.load_px())

@@ -73,7 +73,7 @@ const plantsOf = () => page.eval(W('return Garden._data().plants.map(p => ({ w: 
   ok(menu.kindSel === 1 && menu.kindOpts.length >= 1 && /Từ vựng · 8 từ/.test(menu.kindOpts[0]), 'loại note là drop-down: ' + JSON.stringify(menu.kindOpts));
   ok(menu.modeSel === 4 && menu.speedSel === 1 && menu.speedOpts === 4 && menu.chips === 0, 'kiểu chơi (4 trò) + tốc độ quạ (4 mức) là drop-down, không còn nút nhỏ');
   ok(menu.inside, 'drop-down nằm dưới thẻ (bấm thẻ là vào game, không lẫn với lựa chọn)');
-  ok(menu.cfg === 1 && menu.warn === 0 && !menu.coins && /Xu từ game hôm nay: \d+\/40/.test(menu.note), 'một nút Cấu hình trường, xu game hôm nay ở dòng chú thích');
+  ok(menu.cfg === 1 && menu.warn === 0 && !menu.coins && /xu trò chơi hôm nay \d+\/40/.test(menu.note), 'một nút Cấu hình trường, xu game hôm nay ở dòng chú thích');
   ok(menu.cut === 0, 'mô tả trò chơi hiện đủ chữ (không cắt "…")');
   await page.shot(SHOTS + '/50_tro_choi_1366.png');
   const sel = await page.eval(W(`const s = document.querySelector('select.kb-gmode-sel[data-game="market"]'); const v = Array.from(s.options).map(o => o.value).find(x => x !== s.value);
@@ -203,7 +203,7 @@ result = [s["lang"].get(mid), s["models"].get(mid, {}).get("kind")]`);
   await deck('A::Có câu ví dụ + audio');
   await page.eval(W('document.getElementById("kb-sound").click(); return 1;')); await sleep(300);
   const pop = await page.eval(W('const p = document.getElementById("kb-sound-pop"); return { notes: p.querySelectorAll(".kb-sound-note").length, hv: /Hán Việt/.test(p.textContent), btns: p.querySelectorAll("button").length };'));
-  ok(pop.notes <= 4 && !pop.hv && pop.btns === 8, '⚙ cài đặt: 8 nút (1.20 thêm Lịch hoa & nhật ký, 1.26.1 Hướng dẫn 3 bước, 1.30.1 Góp ý qua email), ≤ 4 dòng chú thích (1.30.1: + email liên hệ), không còn nhắc Hán Việt (' + JSON.stringify(pop) + ')');
+  ok(pop.notes <= 4 && !pop.hv && pop.btns === 10, '⚙ cài đặt: 10 nút (1.20 thêm Lịch hoa & nhật ký, 1.26.1 Hướng dẫn 3 bước, 1.30.1 Góp ý qua email, 1.30.3 Nền trang: Giấy ấm / Trời xanh), ≤ 4 dòng chú thích (1.30.1: + email liên hệ), không còn nhắc Hán Việt (' + JSON.stringify(pop) + ')');
   await page.eval(W('document.getElementById("kb-sound-pop").hidden = true; GardenPaper.open("shelf"); return 1;')); await sleep(600);
   const furi = await page.eval(W('const a = document.getElementById("kb-p-furi").hidden; GardenPaper.open("issue"); return a;')); await sleep(800);
   ok(furi && !(await page.eval(W('return document.getElementById("kb-p-furi").hidden;'))), 'nút Ẩn furigana chỉ hiện ở tab Báo (ẩn ở Kệ báo)');

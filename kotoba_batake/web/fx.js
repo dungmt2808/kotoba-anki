@@ -870,7 +870,7 @@ var GardenFX = (function () {
       if (info.goal_bonus) {
         setTimeout(function () {
           setMood("star", 2400);
-          say("目標達成！ Xong mục tiêu hôm nay +" + info.goal_bonus + " xu", 2600);
+          say("目標達成！ Xong mục tiêu hôm nay +" + kbXu(info.goal_bonus) + " xu", 2600);
           play("harvest");
           var chip0 = $("kb-coins");
           if (chip0) { chip0.classList.remove("kb-bump"); void chip0.offsetWidth; chip0.classList.add("kb-bump"); }
@@ -932,12 +932,12 @@ var GardenFX = (function () {
         if (chip) { chip.classList.remove("kb-bump"); void chip.offsetWidth; chip.classList.add("kb-bump"); }
         if (q.chest) {
           setMood("star", 3000);
-          say("宝箱！ Mở rương: " + (q.chest.name || "xu") + " +" + q.chest.coins + " xu", 3200);
+          say("宝箱！ Mở rương: " + (q.chest.name || "xu") + " +" + kbXu(q.chest.coins) + " xu", 3200);
           play("harvest");
           if (cfg.effects) { confetti(potParts, PW, 50); }
         } else {
           setMood("star", 1800);
-          say("Xong nhiệm vụ: " + q.done[0] + " +" + q.coins + " xu", 2400);
+          say("Xong nhiệm vụ: " + q.done[0] + " +" + kbXu(q.coins) + " xu", 2400);
           play("coin");
         }
         var btn = $("kb-quest");
