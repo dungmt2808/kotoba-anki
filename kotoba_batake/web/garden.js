@@ -239,13 +239,35 @@ var Garden = (function () {
       var lart = plantArt({ v: legendV, stage: st });
       drawSprite(ctx, lart.rows, 0, 0, 2, lart.pal);
       var label = document.createElement("span");
+      label.className = "kb-legend-name";
       label.textContent = names[st];
+      item.title = names[st] + ": " + (counts[st] || 0) + " cây";
       var count = document.createElement("span");
       count.className = "kb-legend-count";
       count.textContent = String(counts[st] || 0);
       item.appendChild(c); item.appendChild(label); item.appendChild(count);
       box.appendChild(item);
     }
+    fitLegendRow();
+  }
+  // 1.30.2: hàng dưới cảnh (nút của cảnh · chú thích ruộng · Hôm nay · chuỗi) vừa một dòng: chật thì chú thích chỉ còn hình + số,
+  // rồi chip StackChan chỉ còn hình; vẫn chật (cửa sổ rất hẹp) thì mới xuống dòng
+  function fitLegendRow() {
+    var row = document.querySelector(".kb-legend-row"), lg = $("kb-legend"), sb = $("kb-scene-bar");
+    if (!row || !lg || !row.offsetParent) { return; }
+    var wrapped = function () {
+      var top = null, out = false;
+      Array.prototype.forEach.call(row.children, function (k) {
+        if (!k.offsetParent || !k.offsetHeight) { return; }
+        var t = k.getBoundingClientRect().top;
+        if (top === null) { top = t; } else if (Math.abs(t - top) > 6) { out = true; }
+      });
+      return out;
+    };
+    lg.classList.remove("is-compact"); if (sb) { sb.classList.remove("is-compact"); }
+    if (!wrapped()) { return; }
+    lg.classList.add("is-compact");
+    if (wrapped() && sb) { sb.classList.add("is-compact"); }
   }
 
   function drawHeader() {
@@ -629,17 +651,18 @@ var Garden = (function () {
     fitToday();
     syncTodayTog();
   }
-  // 1.30.1: thu gọn bảng Hôm nay (người dùng: "có nút thu gọn bảng thông báo, tránh chèn giao diện") — nút ở hàng nút góc
-  // trái dưới dải cảnh (cạnh ◂ cảnh ▸ và chụp ảnh); thu gọn thì nút ghi số lượt hôm nay + chấm đỏ khi có báo mới / quà
+  // 1.30.1: thu gọn bảng Hôm nay (người dùng: "có nút thu gọn bảng thông báo, tránh chèn giao diện"); 1.30.2: nút "Hôm nay ▴"
+  // ở hàng ngay dưới cảnh, phía phải (ngay dưới bảng); thu gọn thì nút ghi "Hôm nay 18/30 ▾" + chấm đỏ khi có báo mới / quà
   // nhiệm vụ / bài sửa chờ xem. Lưu ở ⚙ Giao diện (ui.today, theo máy).
   function todayMini() { return typeof GardenUI !== "undefined" && GardenUI.glob && GardenUI.glob("today") === "mini"; }
   function syncTodayTog() {
     var b = $("kb-today-tog");
     if (!b) { return; }
     var mini = todayMini(), t = data && data.today;
-    var lab = b.querySelector(".kb-today-tog-t");
-    var txt = mini && t ? t.reviews + (t.goal ? "/" + t.goal : "") : "";
+    var lab = b.querySelector(".kb-today-tog-t"), arr = b.querySelector(".kb-today-tog-a");
+    var txt = "Hôm nay" + (mini && t ? " " + t.reviews + (t.goal ? "/" + t.goal : "") : "");
     if (lab && lab.textContent !== txt) { lab.textContent = txt; }
+    if (arr && arr.textContent !== (mini ? "▾" : "▴")) { arr.textContent = mini ? "▾" : "▴"; }
     var has = function (id, cls) { var e = $(id); return !!(e && !e.hidden && e.classList.contains(cls)); };
     var news = has("kb-paper-btn", "kb-paper-new") || has("kb-quest", "kb-quest-all") || has("kb-cal-write", "is-new");
     b.classList.toggle("is-mini", mini);
@@ -1367,7 +1390,8 @@ var Garden = (function () {
     if (tog) {
       tog.addEventListener("mousedown", function (e) { e.preventDefault(); });
       tog.addEventListener("click", function (e) { e.stopPropagation(); toggleTodayMini(); });
-      setInterval(syncTodayTog, 1000);          // báo mới / quà nhiệm vụ đổi lúc khác → chấm đỏ theo kịp
+      setInterval(function () { syncTodayTog(); fitLegendRow(); }, 1000);   // báo mới / quà nhiệm vụ, tên việc của StackChan đổi lúc khác
+      window.addEventListener("resize", fitLegendRow);
       window.addEventListener("kb-ui-change", syncTodayTog);      // đổi ở ⚙ Giao diện
     }
     var hide = $("kb-today-hide");          // nút "–" ngay trên bảng: thu gọn (mở lại bằng nút ở góc dải cảnh)

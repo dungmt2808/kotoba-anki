@@ -175,12 +175,17 @@ result = 1`);
     return Math.max(0, Math.min(a.right, hx1) - Math.max(a.left, hx0));`);
   const ov1 = await overlap();
   ok(ov1 > 50, 'Trong nhà 1366 × 768, bảng mở: che ngôi nhà ' + Math.round(ov1) + ' px (đúng điều người dùng thấy)');
-  ok(await js('const b = document.getElementById("kb-today-tog"), s = document.getElementById("kb-yard-snap"); return !!b && b.offsetParent && Math.abs(b.getBoundingClientRect().top - s.getBoundingClientRect().top) < 3;'),
-    'nút thu gọn nằm cùng hàng với nút chụp ảnh (góc dưới bên trái dải cảnh)');
+  // 1.30.2: mọi nút của dải cảnh nằm ở hàng ngay dưới cảnh, không nút nào đè lên khung cảnh; hàng vừa một dòng
+  const bar = await js(`const cv = document.getElementById("kb-yard").getBoundingClientRect(), ids = ["kb-yard-nav", "kb-yard-snap", "kb-life-chip", "kb-today-tog"];
+    const over = ids.filter((id) => { const e = document.getElementById(id); if (!e || !e.offsetParent) return false; const r = e.getBoundingClientRect(); return r.top < cv.bottom - 1 && r.bottom > cv.top && r.left < cv.right && r.right > cv.left; });
+    const tops = ids.map((id) => document.getElementById(id)).filter((e) => e && e.offsetParent).map((e) => Math.round(e.getBoundingClientRect().top));
+    const t = document.getElementById("kb-today-tog").getBoundingClientRect(), s = document.getElementById("kb-yard-snap").getBoundingClientRect();
+    return { over: over, oneRow: Math.max(...tops) - Math.min(...tops) <= 3, below: s.top >= cv.bottom - 1, right: t.left > s.right };`);
+  ok(!bar.over.length && bar.oneRow && bar.below && bar.right, 'nút đổi cảnh / chụp ảnh / Hôm nay ở hàng ngay dưới dải cảnh, không đè lên cảnh, một hàng (' + JSON.stringify(bar) + ')');
   await page.click('#kb-today-tog'); await sleep(600);
   ok(!(await js('return !!document.getElementById("kb-today").offsetParent;')) && (await overlap()) === 0, 'bấm → bảng thu gọn, không che nhà');
   const lab = await js('return document.querySelector("#kb-today-tog .kb-today-tog-t").textContent;');
-  ok(/^\d+\/\d+$/.test(lab), 'nút ghi số lượt hôm nay: "' + lab + '"');
+  ok(/^Hôm nay \d+\/\d+$/.test(lab), 'nút ghi số lượt hôm nay: "' + lab + '"');
   ok((await py(KB + 'result = kb.mw.addonManager.getConfig("kotoba_batake").get("ui", {}).get("today")')) === 'mini', 'lưu ui.today = mini (theo máy)');
   await shot('04_thu_gon');
   await reopen('', 1366, 768);
@@ -190,6 +195,19 @@ result = 1`);
   await page.click('#kb-today-hide'); await sleep(600);
   ok(!(await js('return !!document.getElementById("kb-today").offsetParent;')), 'nút "–" trên bảng → thu gọn');
   await page.click('#kb-today-tog'); await sleep(500);
+
+  for (const [w, h] of [[1024, 700], [1850, 1100]]) {
+    await py(KB + `kb._dialog.resize(${w}, ${h}); result = 1`); await sleep(900);
+    for (const view of ['yard', 'house']) {
+      await js('GardenHome.showMain("' + view + '"); return 1;'); await sleep(700);
+      const b2 = await js(`const cv = document.getElementById("kb-yard").getBoundingClientRect(), row = document.querySelector(".kb-legend-row").getBoundingClientRect();
+        const over = ["kb-yard-nav", "kb-yard-snap", "kb-life-chip", "kb-today-tog"].filter((id) => { const e = document.getElementById(id); if (!e || !e.offsetParent) return false; const r = e.getBoundingClientRect(); return r.top < cv.bottom - 1 && r.bottom > cv.top; });
+        return { over: over, h: Math.round(row.height), noScroll: document.documentElement.scrollWidth <= innerWidth + 1 };`);
+      ok(!b2.over.length && b2.h <= 40 && b2.noScroll, w + ' px, ' + view + ': không nút nào đè lên cảnh, hàng dưới cảnh một dòng (' + JSON.stringify(b2) + ')');
+      await shot('03b_' + w + '_' + view);
+    }
+  }
+  await py(KB + 'kb._dialog.resize(1366, 768); result = 1'); await sleep(600);
 
   console.log('== 4. liên hệ');
   await page.click('#kb-sound');

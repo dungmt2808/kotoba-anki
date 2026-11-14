@@ -269,20 +269,10 @@
   <div id="kb-yard-wrap" class="kb-yard-wrap" title="Bấm để vào Nhà &amp; Cửa hàng">
     <canvas id="kb-yard" class="kb-yard"></canvas>
     <div class="kb-yard-hint">Nhà &amp; Cửa hàng ▸</div>
-    <div class="kb-yard-bl">
-      <div class="kb-yard-nav" id="kb-yard-nav" hidden>
-        <button type="button" class="kb-yard-arrow" id="kb-yard-prev" title="Cảnh trước (phím ←)" aria-label="Cảnh trước">◂</button>
-        <span class="kb-yard-name" id="kb-yard-name">Sân vườn</span>
-        <button type="button" class="kb-yard-arrow" id="kb-yard-next" title="Cảnh sau (phím →)" aria-label="Cảnh sau">▸</button>
-      </div>
-      <button type="button" class="kb-yard-snap" id="kb-yard-snap" title="Chụp ảnh cảnh này" aria-label="Chụp ảnh vườn"><i class="kb-pi kb-pi-camera" aria-hidden="true"></i></button>
-      <button type="button" class="kb-yard-snap kb-today-tog" id="kb-today-tog" title="Thu gọn bảng Hôm nay" aria-label="Thu gọn bảng Hôm nay" aria-pressed="false"><i class="kb-pi kb-pi-memo" aria-hidden="true"></i><span class="kb-today-tog-t"></span></button>
-      <button type="button" class="kb-yard-snap kb-life-chip" id="kb-life-chip" hidden aria-label="StackChan đang làm gì"><i class="kb-pi kb-pi-stack" aria-hidden="true"></i><span class="kb-life-chip-t"></span></button>
-    </div>
     <div class="kb-yard-side">
       <div id="kb-today" class="kb-today" hidden>
         <div class="kb-today-main" title="">
-          <div class="kb-today-head"><span class="kb-today-text" id="kb-today-text"></span><button type="button" id="kb-weather" class="kb-weather" title="Đổi giờ / thời tiết"><i class="kb-pi kb-pi-sun" aria-hidden="true"></i></button><button type="button" id="kb-today-hide" class="kb-today-hide" title="Thu gọn bảng này (mở lại bằng nút ở góc dưới bên trái cảnh)" aria-label="Thu gọn bảng Hôm nay">–</button></div>
+          <div class="kb-today-head"><span class="kb-today-text" id="kb-today-text"></span><button type="button" id="kb-weather" class="kb-weather" title="Đổi giờ / thời tiết"><i class="kb-pi kb-pi-sun" aria-hidden="true"></i></button><button type="button" id="kb-today-hide" class="kb-today-hide" title="Thu gọn bảng này (mở lại bằng nút Hôm nay ngay dưới cảnh)" aria-label="Thu gọn bảng Hôm nay">–</button></div>
           <div class="kb-today-bar"><div class="kb-today-fill" id="kb-today-fill"></div></div>
         </div>
         <div class="kb-today-list">
@@ -321,9 +311,22 @@
     <ul id="kb-news-soon" class="kb-news-list"></ul>
   </div>
 
+  <!-- 1.30.2: nút của dải cảnh nằm ở hàng ngay dưới cảnh (trước đè lên góc dưới trái cảnh — che nhà / Bếp) -->
   <div class="kb-legend-row">
+    <div class="kb-scene-bar" id="kb-scene-bar">
+      <div class="kb-yard-nav" id="kb-yard-nav" hidden>
+        <button type="button" class="kb-yard-arrow" id="kb-yard-prev" title="Cảnh trước (phím ←)" aria-label="Cảnh trước">◂</button>
+        <span class="kb-yard-name" id="kb-yard-name">Sân vườn</span>
+        <button type="button" class="kb-yard-arrow" id="kb-yard-next" title="Cảnh sau (phím →)" aria-label="Cảnh sau">▸</button>
+      </div>
+      <button type="button" class="kb-yard-snap" id="kb-yard-snap" title="Chụp ảnh cảnh này" aria-label="Chụp ảnh vườn"><i class="kb-pi kb-pi-camera" aria-hidden="true"></i></button>
+      <button type="button" class="kb-yard-snap kb-life-chip" id="kb-life-chip" hidden aria-label="StackChan đang làm gì"><i class="kb-pi kb-pi-stack" aria-hidden="true"></i><span class="kb-life-chip-t"></span></button>
+    </div>
     <div id="kb-legend" class="kb-legend"></div>
-    <div id="kb-joy" class="kb-joy" aria-live="polite"></div>
+    <div class="kb-legend-end">
+      <button type="button" class="kb-yard-snap kb-today-tog" id="kb-today-tog" title="Thu gọn bảng Hôm nay" aria-label="Thu gọn bảng Hôm nay" aria-pressed="false"><i class="kb-pi kb-pi-memo" aria-hidden="true"></i><span class="kb-today-tog-t">Hôm nay</span><span class="kb-today-tog-a" aria-hidden="true">▴</span></button>
+      <div id="kb-joy" class="kb-joy" aria-live="polite"></div>
+    </div>
   </div>
   <div id="kb-field" class="kb-field">
     <canvas id="kb-canvas" role="img" aria-label="Khu vườn từ vựng"></canvas>

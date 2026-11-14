@@ -1,10 +1,20 @@
-# Báo cáo kiểm thử + việc còn lại trước khi phát hành · ことば畑 1.30.1 · 14/11/2026
+# Báo cáo kiểm thử + việc còn lại trước khi phát hành · ことば畑 1.30.1 → 1.30.2 · 14/11/2026
 
 ## Kết luận
 
 **Về mã: sẵn sàng phát hành** — không còn lỗi đã biết làm mất dữ liệu / sai xu / hỏng vườn; mọi bộ test cũ + mới đều đạt trên gói đã đóng (mục 3). **Còn lại là những việc chỉ bạn làm được** (mục 5): xem 1.30.1 trên máy thật khoảng 10–15 phút, quyết hai chuyện nhỏ (Facebook, email công khai), rồi đăng gói.
 
 Môi trường kiểm: Linux (container), **Anki 26.9.4** (Python 3.13, Qt 6.12), chạy không màn hình, điều khiển webview qua DevTools (`tests/anki/cdp.js`), mỗi kịch bản một thư mục Anki mới. Chưa có Windows / macOS.
+
+## 0. Bổ sung 1.30.2 — "giao diện bị che … tìm cách khác dễ nhìn và gọn hơn"
+
+Ở 1.30.1 hàng nút góc dưới trái dải cảnh (◂ cảnh ▸, chụp ảnh, nút thu gọn, chip StackChan) vẫn đè lên nhà khi cửa sổ hẹp và lên Bếp ở cảnh Trong nhà. 1.30.2 đưa **cả hàng xuống ngay dưới dải cảnh** (cùng hàng chú thích ruộng), nút **"Hôm nay ▴"** nằm bên phải hàng đó, ngay dưới bảng Hôm nay; thu gọn thì nút ghi "Hôm nay 18/30 ▾" (đỏ + chấm đỏ khi có báo mới / quà). Khung cảnh không còn nút nào đè. Hàng chật thì chú thích ruộng chỉ còn hình + số; 720 px mới xuống 2 dòng. Sửa kèm: chấm đỏ của nút Hôm nay làm trang có thanh cuộn ngang 4 điểm ảnh.
+
+![1024 px ngoài sân: trước / sau](anh/1302_01_1024_truoc_sau.png)
+
+![Trong nhà 1850 px, bảng Hôm nay đã thu gọn: trước / sau](anh/1302_02_trong_nha_truoc_sau.png)
+
+Kiểm: `test_1301.py`, `test_130.py`, `e2e_1301.js` (không nút nào đè lên cảnh ở 1024 / 1366 / 1850 px × sân / Trong nhà, hàng một dòng), `e2e_130.js` (chip dưới dải cảnh không che StackChan ở 4 cỡ), cùng các kịch bản có nút chụp ảnh / đổi cảnh — kết quả ở mục 3.
 
 ## 1. Bảy việc bạn nêu
 
@@ -13,7 +23,7 @@ Môi trường kiểm: Linux (container), **Anki 26.9.4** (Python 3.13, Qt 6.12)
 | "mấy con thú có chạy ngang hẳn qua nhà luôn" | Thủ phạm ở sân là **khách ghé vườn** đi bộ (mèo hoang, cáo, hươu…): 1/3 lượt đi vào từ mép trái — hiện ra ngay trên mái nhà — và lúc về đi ngang qua nhà ra mép trái. Nay khách đi bộ vào / về bằng **mép phải** của phần cảnh đang thấy (dải cảnh màn chính rộng thì vào từ ngoài mép, không còn hiện ra giữa đồng cỏ). Trong cảnh **Trong nhà**, thú (nhất là Shiba) chạy một mạch xuyên 3 gian và có thể vào cả gian chưa mở (tối) → nay đi dạo **trong gian đang ở**, thỉnh thoảng mới sang gian bên qua cửa, không vào gian tối. | `test_1301.js` (240 lượt khách, 50 phút thú trong nhà), `e2e_1301.js` mục 6 |
 | "báo lỗi, góp ý thêm liên lạc của tớ … email" | Cửa sổ **Báo lỗi** ghi email + nút **Gửi email…** (chép sẵn báo cáo rồi mở chương trình thư); ⚙ có **Góp ý qua email…** + dòng email; lưu file Góp ý hình nhắc gửi qua email; README. Không tự gửi gì lên mạng. | `test_1301.py`, `e2e_1301.js` mục 4 |
 | "thêm xác nhận mua đồ … phòng trường hợp double click" | Mọi nút trả xu mở hộp **"Mua …? · Giá N xu · còn lại M xu" [Thôi] [Mua · N xu]**. 0,45 giây đầu mọi lần bấm bị bỏ qua → bấm đúp chỉ mở hộp. Esc / bấm ra ngoài = Thôi, Enter = đồng ý. Có ở: mua đồ, xây nhà, mở rộng nhà, kiểu nhà, vùng, đồ mặc, biểu cảm, +1 cái, tường / sàn, sửa nhà, cho ăn, nhận nuôi, giống cây, mã chia sẻ, giao diện mùa, vé giữ chuỗi, gói báo, gánh hàng rong, Xưởng (tạo / vẽ lại). Tắt được: ⚙ → Giao diện → "Hỏi trước khi trả xu". | `e2e_1301.js` mục 1, 2, 5 (bấm đúp bằng chuột thật) |
-| "có nút thu gọn bảng thông báo, tránh chèn giao diện. ở dưới chỗ các thanh trong nhà, ảnh chụp" | Nút mới ở **hàng nút góc dưới bên trái dải cảnh** (sau ◂ Trong nhà ▸ và nút chụp ảnh) + nút **"–"** ngay trên bảng Hôm nay. Thu gọn thì bảng ẩn hẳn, nút ghi số lượt (vd. 18/30) và có chấm đỏ khi có báo mới / quà nhiệm vụ. Nhớ theo máy. | `e2e_1301.js` mục 3 (đo: bảng mở che nhà 91 px ở 1366 × 768, thu gọn 0 px) |
+| "có nút thu gọn bảng thông báo, tránh chèn giao diện. ở dưới chỗ các thanh trong nhà, ảnh chụp" | Nút **"Hôm nay ▴"** ở hàng ngay dưới dải cảnh, bên phải — ngay dưới bảng (1.30.1 đặt ở góc dưới trái trong cảnh; 1.30.2 dời cả hàng nút xuống dưới cảnh, mục 0) + nút **"–"** ngay trên bảng Hôm nay. Thu gọn thì bảng ẩn hẳn, nút ghi số lượt (vd. 18/30) và có chấm đỏ khi có báo mới / quà nhiệm vụ. Nhớ theo máy. | `e2e_1301.js` mục 3 (đo: bảng mở che nhà 91 px ở 1366 × 768, thu gọn 0 px) |
 | "sửa cách diễn đạt … (ví dụ 21 ngày có ôn là gì)" | Tin làng: "Học thêm 3 ngày nữa là tròn 100 ngày học", "Hôm nay là ngày học thứ 100!", "Ôn tiếp 2 ngày nữa là tròn 30 ngày liền". Lịch hoa: "Ôn liền · 27 ngày", "Tháng này · **đã ôn 21/30 ngày**", "Liền lâu nhất", "Số ngày đã ôn", "hoa nở rộ: ôn đủ 30 lượt trong ngày". Giao diện mùa: "Đổi 7 ngày ôn liền" (trước ghi "dùng hết chuỗi đang có" — dễ hiểu nhầm là mất chuỗi). Bỏ chữ "add-on" ở Góp ý hình. Đã rà ~1.900 câu chữ trên giao diện + ~130 câu báo lỗi phía Python; phần còn lại đọc ổn. | `test_1301.py`, `test_126.py`, `e2e_120.js`, `e2e_1259.js` |
 | "nhà mặc định, sàn bếp khác sàn phòng khách và phòng ngủ … không thay cho bếp được" | Ô **"Theo kiểu nhà"** giờ vẽ đúng nền của gian đang chọn (trước luôn vẽ sàn phòng chính — nên ở Bếp nó ghi "Đang dùng" mà hình lại là sàn gỗ). Thêm các nền vốn có của gian khác, **miễn phí, dùng cho gian nào cũng được**: Tường Phòng chính / Bếp / Phòng ngủ, Sàn Phòng chính / Bếp; đổi kiểu nhà thì các nền này đổi theo. | `test_1301.py`, `e2e_1301.js` mục 2 (đo điểm ảnh sàn Bếp ở màn chính) |
 | "cải tiến giao diện … hoàn thiện và chỉnh chu nhất" | Nút Mua khi thiếu xu ghi **"Thiếu N xu"** (trước chỉ xám, phải rê chuột mới biết); tên tiếng Nhật trên thẻ không bị cắt giữa từ (フロ / ーリング); ⚙ gom "Báo lỗi… · Góp ý qua email…" một hàng; hộp hỏi cùng kiểu pixel (viền đen 3 px, bóng cứng); soát bố cục mọi màn ở 1366 × 768 và 1024 × 700 (`audit.js`). | ảnh dưới, `audit.js` |
@@ -52,6 +62,7 @@ Không phải lỗi sản phẩm nhưng cần ghi lại cho kịch bản test: p
 | `audit.js` (đo bố cục mọi màn, 1366 × 768 + 1024 × 700) | lần đầu: nút "–" mới lệch cỡ chữ với nút thời tiết cùng hàng → đã sửa; nhật ký lỗi add-on trống |
 | Anki 26.9.4, mã nguồn (trước khi đóng gói) | `e2e_115` 21/21 · `e2e_121` 46/46 · `e2e_114` 34/34 · `e2e_124` 23/23 · `e2e_125` 30/30 · `e2e_130` 76/76 · `audit_full` 183/183 · `audit_edge` 58/58 · `e2e_128` 72/72 · `e2e_fuzz` 6/6 · `e2e_122` 64/64 · `e2e_tour` 12/12 · `e2e_1301` 41/41; `e2e_120` / `e2e_1259` / `e2e_117` trượt đúng 1 mục mỗi bộ **vì đổi chữ cố ý** (chip Lịch hoa, ⚙ thêm nút email) → đã sửa kịch bản |
 | Anki 26.9.4, **gói 1.30.1 đã giải nén** | `e2e_1301` 41/41 · `e2e_130` 76/76 · `e2e_126` 39/39 · `e2e_1261` 41/41 · `e2e_121` 46/46 · `e2e_120` 103/103 · `e2e_1259` 36/36 · `e2e_117` 55/55 · `e2e_115` 21/21 · `e2e_114` 34/34 · `e2e_124` 23/23 · `e2e_tour` 12/12 · `audit_full` 183/183 (mua / dùng mọi thứ qua nút) · `audit_edge` 58/58 (ít xu / bấm đúp / cửa sổ nhỏ) · `e2e_128` 72/72 · `e2e_fuzz` 6/6 (bấm bừa) · `release_sync` **58/58** (hai máy) — **tất cả đạt**; nhật ký lỗi add-on trống, không lỗi JS |
+| Anki 26.9.4, **gói 1.30.2 đã giải nén** | `run_all.sh` 44 bộ **TẤT CẢ OK**; `e2e_1301` 45/45 · `e2e_130` 76/76 · `e2e_122` 64/64 (nút chụp ảnh) · `e2e_126` 39/39 · `e2e_1261` 41/41 · `e2e_121` 46/46 · `e2e_124` 23/23 · `e2e_125` 30/30 · `audit_full` 183/183 · `e2e_tour` 12/12; `audit.js` (đo bố cục mọi màn, 1366 × 768 + 1024 × 700): chỉ 4 cờ cố ý cũ (dấu "…" ở Kệ báo), hàng dưới cảnh không lệch cỡ / kiểu, nhật ký lỗi trống |
 | Kịch bản sửa cho chắc | `release_sync.js` đòi Sổ sinh hoạt đúng 1 việc → trượt khi chạy lúc 10:00–17:30 (StackChan thật tự "Ngồi ghế nghỉ" trên ghế vừa đặt); nay so với số việc Python đã ghi |
 
 ## 4. Danh sách kiểm tra trên máy thật (khoảng 15 phút)
@@ -61,7 +72,7 @@ Làm danh sách 10 phút của 1.30.0 (`docs/kiem_thu/1.30.0/BAO_CAO.md` mục 6
 1. Nhà → Nội thất → Tường & sàn, chọn **Bếp**: ô "Theo kiểu nhà" là gạch Bếp; bấm **Sàn Phòng chính → Dùng cho Bếp** (không mất xu). Sang Phòng chính thử **Sàn Bếp**. Đổi kiểu nhà (nếu đã mua kiểu khác): sàn đổi theo.
 2. Bấm **đúp** thật nhanh vào nút Mua một món rẻ: chỉ hiện hộp hỏi, xu chưa đổi. Bấm Thôi. Bấm Mua lại → Mua: trừ đúng giá, vào chế độ đặt.
 3. ⚙ → Giao diện & chế độ học → Màn chính: thấy "Bảng Hôm nay" và "Hỏi trước khi trả xu". Thử tắt hỏi → mua ngay; bật lại.
-4. Màn chính, cảnh **Trong nhà**: bấm nút bảng ghi chú ở góc dưới bên trái (cạnh nút chụp ảnh) → bảng Hôm nay ẩn, thấy hết Phòng ngủ; nút ghi số lượt. Tắt Anki, mở lại: vẫn thu gọn. Bấm lại để hiện.
+4. Màn chính, cảnh **Trong nhà**: các nút ◂ cảnh ▸ / chụp ảnh nằm ở hàng ngay dưới cảnh, không đè lên nhà. Bấm **Hôm nay ▴** (bên phải hàng đó) → bảng Hôm nay ẩn, thấy hết Phòng ngủ; nút ghi "Hôm nay 18/30 ▾". Tắt Anki, mở lại: vẫn thu gọn. Bấm lại để hiện.
 5. ⚙ → **Góp ý qua email…**: máy có mở chương trình thư (Thunderbird) với địa chỉ của bạn không? Nếu bạn quen Gmail trên web thì máy sẽ chỉ chép địa chỉ — báo mình nếu muốn đổi thành mở trang Gmail. Tools → ことば畑 · Báo lỗi → **Gửi email…** tương tự.
 6. Để vườn mở vài phút ở Sân vườn ban ngày: khách đi bộ (mèo hoang…) đi vào từ bên phải, không đi qua nhà. Nếu có Shiba / mèo ở trong nhà: thú đi dạo trong một gian, thỉnh thoảng mới sang gian bên.
 

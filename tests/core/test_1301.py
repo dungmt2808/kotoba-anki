@@ -130,8 +130,11 @@ ok(c["today"] == "open" and c["buyask"] == "on", "giá trị lạ về mặc đ�
 ok(more_core.ui_preset("calm", {"today": "mini", "buyask": "off"})["today"] == "mini"
    and more_core.ui_preset("full", {"buyask": "off"})["buyask"] == "off", "bấm kiểu có sẵn không đổi hai mục này")
 body = src("web/body.html")
-ok('id="kb-today-tog"' in body and body.index('id="kb-today-tog"') > body.index('id="kb-yard-snap"')
-   and body.index('id="kb-today-tog"') < body.index('class="kb-yard-side"'), "nút thu gọn nằm ở hàng nút góc dải cảnh (cạnh chụp ảnh)")
+rowi = body.index('class="kb-legend-row"')
+ok('id="kb-today-tog"' in body and body.index('id="kb-today-tog"') > rowi and body.index('id="kb-yard-snap"') > rowi
+   and body.index('id="kb-yard-nav"') > rowi and body.index('id="kb-yard-wrap"') < rowi,
+   "1.30.2: nút đổi cảnh, chụp ảnh, chip StackChan, nút Hôm nay ở hàng ngay dưới dải cảnh — không còn nút nào đè lên cảnh")
+ok("kb-yard-bl" not in body and "function fitLegendRow" in src("web/garden.js"), "hàng chật: chú thích ruộng chỉ còn hình + số (fitLegendRow)")
 ok('id="kb-today-hide"' in body, "nút \"–\" trên bảng Hôm nay")
 css = src("web/garden.css")
 ok(".kb-ui-today-mini .kb-yard-side .kb-today { display: none !important; }" in css, "thu gọn: ẩn bảng")
