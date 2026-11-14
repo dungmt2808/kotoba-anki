@@ -116,7 +116,7 @@ result = {"today": today.isoformat(), "yday": (today - datetime.timedelta(days=1
   await py(KB + 'd = st.load(); d["coins"] = 100; d["more"]["freeze"]["n"] = 0; st.save(d); kb._dialog.refresh(); result = 1'); await sleep(900);
   await js('GardenCal.open({}); return 1;'); await waitFor('document.querySelector(".kb-cal-freeze")', 6000);
   const poor = await js('const b = document.querySelector(".kb-cal-freeze button"); return { dis: b.disabled, title: b.title };');
-  ok(poor.dis && /Còn thiếu 50 xu/.test(poor.title), 'ít xu: nút khoá, "' + poor.title + '"');
+  ok(poor.dis && /Thiếu 50 xu/.test(poor.title), 'ít xu: nút khoá, "' + poor.title + '"');
   await closeAll();
 
   console.log('== 2. Sửa hình: khung động + hình dựng từ hình khác');
@@ -218,7 +218,8 @@ result = {"cid": cid, "left": [e["id"] for e in st.load()["home"]["kitchen"]], "
     await py(KB + `kb.save_config(game_daily_coins=${cap}); kb._dialog.refresh(); result = 1`); await sleep(900);
     await js('GardenGames.open(); return 1;'); await sleep(400);
     const note = await js('const n = document.querySelector(".kb-gmenu-note"); return n ? n.textContent : "";');
-    ok(new RegExp('/' + cap + '\\.').test(note), 'F05: trần ' + cap + ' → menu "' + (note.match(/Xu từ game hôm nay: [^.]*\./) || [''])[0] + '"');
+    // 1.30.3: chú thích menu đổi thành "… · xu trò chơi hôm nay 0/40 · không đổi lịch ôn"
+    ok(new RegExp('hôm nay \\d+/' + cap + '(\\D|$)').test(note), 'F05: trần ' + cap + ' → menu "' + (note.match(/xu trò chơi hôm nay [0-9/]+/) || [''])[0] + '"');
     await closeAll();
   }
   // F06: trời cố định → thời tiết trong báo hôm nay

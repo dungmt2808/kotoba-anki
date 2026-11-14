@@ -76,7 +76,7 @@ kb.open_garden(); result = 1`);
   await click(kx[0], kx[1]); await sleep(900);
   ok(await js('return !document.getElementById("kb-home").hidden && document.querySelector("#kb-home .kb-h-tab.is-on").getAttribute("data-tab") === "build";'), 'bấm Bếp chưa mở → Nhà & Cửa hàng ở tab Xây nhà');
   const card = await js('const c = document.querySelectorAll(".kb-h-nha"); return [c.length, document.querySelectorAll(".kb-h-room").length, c[0] ? c[0].textContent : "", c[0] ? c[0].querySelectorAll("canvas.kb-h-house3").length : 0];');
-  ok(card[0] === 1 && card[1] === 1 && /Bếp \+ Phòng ngủ/.test(card[2]) && /2000 xu/.test(card[2]) && card[3] === 1, 'một thẻ "Bếp + Phòng ngủ · 2000 xu" có ảnh nhỏ cả nhà');
+  ok(card[0] === 1 && card[1] === 1 && /Bếp \+ Phòng ngủ/.test(card[2]) && /2.000 xu/.test(card[2]) && card[3] === 1, 'một thẻ "Bếp + Phòng ngủ · 2000 xu" có ảnh nhỏ cả nhà');
   ok(await js('const c = document.querySelector(".kb-h-nha"); return !c.querySelector(".kb-h-desc") && [...document.querySelectorAll("#kb-h-list .kb-h-sec")].some((x) => x.textContent === "Mở rộng nhà");'), 'tiêu đề nhóm "Mở rộng nhà", thẻ không có đoạn giải thích');
   await js('const l = document.getElementById("kb-h-list"), c = document.querySelector(".kb-h-nha"); l.scrollTop = c.offsetTop - l.offsetTop - 8; window.scrollTo(0, 0); return 1;'); await sleep(300);
   await page.shot(SHOTS + '/125_02_the_mo_rong.png');

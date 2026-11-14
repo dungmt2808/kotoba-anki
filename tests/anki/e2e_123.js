@@ -280,7 +280,7 @@ st.save(d); kb._dialog.refresh(); result = 1`); await sleep(1500);
   ok(await js('return !document.getElementById("kb-home").hidden;'), 'bấm vào ngôi nhà ở màn chính → mở Nhà & Cửa hàng như 1.22');
   await js('GardenHome.close(); return 1;'); await sleep(400);
   await js('GardenUI.open(); return 1;'); await sleep(400);
-  ok(await js('return /Màn chính/.test(document.getElementById("kb-ui-stage").textContent) && /Cỡ cảnh/.test(document.getElementById("kb-ui-stage").textContent) && /Luôn về Sân vườn/.test(document.getElementById("kb-ui-stage").textContent);'), '⚙ Giao diện có nhóm Màn chính: Cỡ cảnh, Cảnh hiện');
+  ok(await js('return /Màn chính/.test(document.getElementById("kb-ui-stage").textContent) && /Cỡ cảnh/.test(document.getElementById("kb-ui-stage").textContent) && /Mở vườn ở/.test(document.getElementById("kb-ui-stage").textContent);'), '⚙ Giao diện có nhóm Màn chính: Cỡ cảnh, Mở vườn ở');
   const h0 = await js('return document.getElementById("kb-yard").getBoundingClientRect().height;');
   await js('const r = [...document.querySelectorAll("#kb-ui-stage .kb-ui-opt input")].find(i => i.name === "kb-ui-scene" && i.value === "large"); r.click(); return 1;'); await sleep(900);
   await js('GardenUI.close(); return 1;'); await sleep(600);

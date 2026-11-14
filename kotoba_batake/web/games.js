@@ -1016,9 +1016,9 @@ var GardenGames = (function () {
     const earned = wallet.game_day === day ? (wallet.game_coins || 0) : 0;
     const cap = d.fx && typeof d.fx.game_daily_coins === "number" ? d.fx.game_daily_coins : 40;   // 1.25.9: 0 là 0
     box.appendChild(el("div", "kb-gmenu-note",
-      "Dùng " + (kinds[kind] || 0) + " " + (UNIT[kind] || "từ") + " (" + (GROUPS[kind] || "") + ") của deck “" + ((d.deck && d.deck.name) || "") + "”" +
-      (all.learnedOnly ? ", ưu tiên cây đã học đang khát / héo." : ", có cả note mới.") +
-      " Xu từ game hôm nay: " + earned + "/" + cap + ". Không tính vào lịch ôn."));
+      (kinds[kind] || 0) + " " + (UNIT[kind] || "từ") + " (" + (GROUPS[kind] || "") + ") của deck “" + ((d.deck && d.deck.name) || "") + "”" +
+      (all.learnedOnly ? ", cây khát / héo ra trước" : ", có cả note mới") +
+      " · xu trò chơi hôm nay " + earned + "/" + cap + " · không đổi lịch ôn"));
     st.insertBefore(box, st.firstChild);
     setHud([["Phím", "1–" + DEFS.length + " chọn trò"]]);
   }
@@ -1121,7 +1121,7 @@ var GardenGames = (function () {
     if (res.wallet) { H.setWallet(res.wallet); }
     const save = $("kb-gres-save");
     if (!save) { return; }
-    let t = res.gained > 0 ? "+" + res.gained + " xu" : "Không có xu";
+    let t = res.gained > 0 ? "+" + kbXu(res.gained) + " xu" : "Không có xu";
     if (res.capped) { t += " (đã chạm giới hạn xu từ game hôm nay)"; }
     t += " · " + (res.new_best ? "Kỷ lục mới!" : "Kỷ lục: " + res.best);
     save.textContent = t;
@@ -1130,8 +1130,8 @@ var GardenGames = (function () {
     const q = res.quests;
     if (q && ((q.done && q.done.length) || q.chest)) {
       const box = el("div", "kb-gres-quest");
-      (q.done || []).forEach((txt) => box.appendChild(el("div", null, "✓ Xong nhiệm vụ: " + txt + " (+" + ((q.view && q.view.reward) || 20) + " xu)")));
-      if (q.chest) { box.appendChild(el("div", "kb-gres-chest", "Mở rương quà: " + (q.chest.name || "xu") + " +" + q.chest.coins + " xu!")); }
+      (q.done || []).forEach((txt) => box.appendChild(el("div", null, "✓ Xong nhiệm vụ: " + txt + " (+" + kbXu((q.view && q.view.reward) || 20) + " xu)")));
+      if (q.chest) { box.appendChild(el("div", "kb-gres-chest", "Mở rương quà: " + (q.chest.name || "xu") + " +" + kbXu(q.chest.coins) + " xu!")); }
       save.parentNode.insertBefore(box, save.nextSibling);
     }
     if (q && H.questResult) { H.questResult(q); }

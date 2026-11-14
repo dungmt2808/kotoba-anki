@@ -23,9 +23,9 @@ var GardenUI = (function () {
   ];
   const DEF = { yard: "full", field: "full", sky: "on", weather: "on", pets: "on", mascot: "on", joy: "on" };
   const PRESETS = [
-    ["full", "Đầy đủ", "Như cũ: mọi thứ chuyển động ở mọi màn."],
-    ["focus", "Tập trung khi ôn", "Ôn thẻ thì ẩn sân + ruộng, tắt hạt bay, mưa, linh vật nói; khung thẻ to hết chỗ."],
-    ["calm", "Dịu mắt", "Sân và ruộng đứng yên ở mọi màn, tắt hạt bay và mưa tuyết."]
+    ["full", "Đầy đủ", "Mọi thứ chuyển động."],
+    ["focus", "Tập trung khi ôn", "Khi ôn: ẩn sân và ruộng, tắt hiệu ứng, khung thẻ to."],
+    ["calm", "Dịu mắt", "Sân và ruộng đứng yên, không hạt bay, mưa, tuyết."]
   ];      // 1.23: bỏ "Ôn buổi tối" (bảng ôn Đêm vườn) — người dùng thấy không đẹp
 
   function conf() {
@@ -204,8 +204,8 @@ var GardenUI = (function () {
     // 1.23: nhóm "Màn chính" — cỡ dải cảnh, cảnh hiện khi mở vườn
     st.appendChild(el("div", "kb-ui-h", "Màn chính"));
     g = el("div", "kb-ui-globals");
-    radios("scene", "Cỡ cảnh", [["normal", "Vừa"], ["large", "Lớn (ruộng cây lùi xuống)"]]);
-    radios("start", "Cảnh hiện", [["last", "Cảnh đang chọn"], ["yard", "Luôn về Sân vườn khi mở vườn"]]);
+    radios("scene", "Cỡ cảnh", [["normal", "Vừa"], ["large", "Lớn"]]);
+    radios("start", "Mở vườn ở", [["last", "Cảnh đang xem"], ["yard", "Sân vườn"]]);
     radios("deco", "Dây trang trí", [["on", "Hiện"], ["off", "Ẩn"]]);     // 1.25
     radios("greet", "Chào khi mở vườn", [["on", "Bật"], ["off", "Tắt"]]);     // 1.26
     radios("trans", "Chuyển cảnh", [["on", "Bật"], ["off", "Tắt"]]);
@@ -217,7 +217,6 @@ var GardenUI = (function () {
     radios("theme", "Màu bảng", [["garden", "Vàng vườn"], ["paper", "Trắng giấy"]]);
     radios("card", "Khung thẻ", [["normal", "Vừa"], ["tall", "To hết chỗ còn lại"]]);
     st.appendChild(g);
-    st.appendChild(el("div", "kb-sound-note", "Nút “Ẩn vườn” trên bảng ôn bật / tắt nhanh sân + ruộng khi ôn."));
   }
   function open() {
     if (!G) { return; }
@@ -261,7 +260,7 @@ var GardenUI = (function () {
     card.appendChild(el("div", "kb-ask-d"));
     card.appendChild(el("div", "kb-ask-n"));
     const row = el("div", "kb-ask-btns");
-    const no = el("button", "kb-btn kb-ask-no", "Thôi"); no.type = "button";
+    const no = el("button", "kb-btn kb-ask-no", "Huỷ"); no.type = "button";      // 1.30.3: "Huỷ" như mọi nút huỷ khác (trước "Thôi")
     const yes = el("button", "kb-btn kb-ask-yes", "Mua"); yes.type = "button";
     no.addEventListener("click", (e) => { e.stopPropagation(); askClose(false); });
     yes.addEventListener("click", (e) => { e.stopPropagation(); askClose(true); });
@@ -293,13 +292,13 @@ var GardenUI = (function () {
     if (!askBox.hidden) { return; }                 // đang hỏi món khác: bỏ lần bấm này
     const d = G && G.data(), have = (d && d.wallet && d.wallet.coins) || 0, price = Math.max(0, Number(o.price) || 0);
     askBox.querySelector(".kb-ask-t").textContent = o.title || "Trả xu?";
-    const desc = o.cost ? "Dùng " + o.cost + "." : price ? "Giá " + price.toLocaleString("vi-VN") + " xu · còn lại " +
-      Math.max(0, have - price).toLocaleString("vi-VN") + " xu." : "";
+    const desc = o.cost ? "Dùng " + o.cost + "." : price ? "Giá " + kbXu(price) + " xu · còn lại " +
+      kbXu(Math.max(0, have - price)) + " xu." : "";
     askBox.querySelector(".kb-ask-d").textContent = desc;
     const n = askBox.querySelector(".kb-ask-n");
     n.textContent = o.note || ""; n.hidden = !o.note;
     const yes = askBox.querySelector(".kb-ask-yes");
-    yes.textContent = (o.yes || "Mua") + (price && !o.cost ? " · " + price.toLocaleString("vi-VN") + " xu" : "");
+    yes.textContent = (o.yes || "Mua") + (price && !o.cost ? " · " + kbXu(price) + " xu" : "");
     askThen = o.then; askAt = Date.now();
     askBox.hidden = false;
     yes.classList.add("is-wait");

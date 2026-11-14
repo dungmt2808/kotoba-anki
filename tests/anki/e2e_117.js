@@ -73,7 +73,7 @@ const plantsOf = () => page.eval(W('return Garden._data().plants.map(p => ({ w: 
   ok(menu.kindSel === 1 && menu.kindOpts.length >= 1 && /Từ vựng · 8 từ/.test(menu.kindOpts[0]), 'loại note là drop-down: ' + JSON.stringify(menu.kindOpts));
   ok(menu.modeSel === 4 && menu.speedSel === 1 && menu.speedOpts === 4 && menu.chips === 0, 'kiểu chơi (4 trò) + tốc độ quạ (4 mức) là drop-down, không còn nút nhỏ');
   ok(menu.inside, 'drop-down nằm dưới thẻ (bấm thẻ là vào game, không lẫn với lựa chọn)');
-  ok(menu.cfg === 1 && menu.warn === 0 && !menu.coins && /Xu từ game hôm nay: \d+\/40/.test(menu.note), 'một nút Cấu hình trường, xu game hôm nay ở dòng chú thích');
+  ok(menu.cfg === 1 && menu.warn === 0 && !menu.coins && /xu trò chơi hôm nay \d+\/40/.test(menu.note), 'một nút Cấu hình trường, xu game hôm nay ở dòng chú thích');
   ok(menu.cut === 0, 'mô tả trò chơi hiện đủ chữ (không cắt "…")');
   await page.shot(SHOTS + '/50_tro_choi_1366.png');
   const sel = await page.eval(W(`const s = document.querySelector('select.kb-gmode-sel[data-game="market"]'); const v = Array.from(s.options).map(o => o.value).find(x => x !== s.value);

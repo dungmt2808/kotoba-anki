@@ -472,6 +472,14 @@ CRAFT_PALETTE = {
 PX_KEY = "kotoba_batake_px"     # điểm ảnh của món tự làm (khoá riêng, chỉ ghi khi chế tác)
 
 
+def xu(n: Any) -> str:
+    """1.30.3: số xu viết như trên giao diện — nhóm nghìn bằng dấu chấm (4.860; 1.000.000)."""
+    try:
+        return f"{int(n):,}".replace(",", ".")
+    except (TypeError, ValueError):
+        return str(n)
+
+
 class HomeError(ValueError):
     """Lỗi khi mua / đặt đồ, kèm câu thông báo tiếng Việt cho người dùng."""
 
@@ -3238,7 +3246,7 @@ class GardenState:
             raise HomeError("Món này là quà khi đủ một bộ trong Hộp sưu tầm.")
         self._buy_checks(data, item_id)
         if data["coins"] < item["price"]:
-            raise HomeError(f"Chưa đủ xu: cần {item['price']}, đang có {data['coins']}.")
+            raise HomeError(f"Thiếu {xu(item['price'] - data['coins'])} xu (cần {xu(item['price'])} xu).")
         data["coins"] -= item["price"]
         home["owned"][item_id] = home["owned"].get(item_id, 0) + 1
         self.save(data)
@@ -3306,7 +3314,7 @@ class GardenState:
             raise HomeError(f"Bước “{HOUSE_LEVELS[expect][0]}” đã xây rồi." if 0 < expect < nxt else "Bấm lại nút Xây nhé.")
         price = HOUSE_LEVELS[nxt][1]
         if data["coins"] < price:
-            raise HomeError(f"Chưa đủ xu: cần {price}, đang có {data['coins']}.")
+            raise HomeError(f"Thiếu {xu(price - data['coins'])} xu (cần {xu(price)} xu).")
         data["coins"] -= price
         home["house"] = nxt
         self.save(data)
@@ -3349,7 +3357,7 @@ class GardenState:
 
     def _pay(self, data: dict[str, Any], price: int) -> None:
         if data["coins"] < price:
-            raise HomeError(f"Chưa đủ xu: cần {price}, đang có {data['coins']}.")
+            raise HomeError(f"Thiếu {xu(price - data['coins'])} xu (cần {xu(price)} xu).")
         data["coins"] -= price
 
     def unlock_zone(self, zone_id: str) -> dict[str, Any]:

@@ -4,6 +4,9 @@
    Các phần khác chỉ đọc GardenSky.state(). */
 var GardenSky = (function () {
   "use strict";
+  const PAGE_DAY = "#efe2c6", PAGE_NIGHT = "#2f2a3a";    // 1.30.3: nền trang
+  // độ "ngày" của nền trang theo độ sáng: tối hẳn khi đêm, sáng hẳn từ sáng sớm, chuyển êm lúc bình minh / hoàng hôn
+  function pageDay(light) { const t = Math.max(0, Math.min(1, (light - 0.3) / 0.5)); return t * t * (3 - 2 * t); }
 
   // Màu trời theo giờ: [giờ, màu trên, màu dưới, độ sáng 0–1]
   const KEYS = [
@@ -174,7 +177,9 @@ var GardenSky = (function () {
       ground: mix(shade("#5ed35e", 0.45 + 0.55 * light), "#e8f0f6", W.snow ? 0.75 : 0),
       grass: shade("#45bf4a", 0.45 + 0.55 * light),
       hills: mix(shade("#7ed98a", 0.4 + 0.6 * light), "#f2f6fa", W.snow ? 0.7 : 0),
-      page: mix(shade("#6ec6ff", 0.35 + 0.65 * light), "#9aa6b8", W.grey * 0.6),
+      // 1.30.3: nền trang là màu giấy ấm (ngày kem, đêm tím than), trời chỉ ở trong cảnh — 1.30.2 trở về trước là xanh trời "#6ec6ff"
+      page: mix(mix(mix(PAGE_NIGHT, PAGE_DAY, pageDay(light)), "#e9b48c",
+        phase === "dusk" || phase === "dawn" ? 0.32 : 0), "#b3aca3", W.grey * 0.5),
       mode: cfg.mode, rainbow: rainbow
     };
   }

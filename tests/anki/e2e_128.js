@@ -292,7 +292,7 @@ result = a == b and a[0] == fc.ped_only_of(fc.market_no(datetime.date(2026,11,18
   }
   await refresh(`d = st.load(); d["coins"] = 3; st.save(d)`);
   const poor = goods.find((g) => g.kind === 'item' && !g.lock && g.slot !== (d1 && d1.slot));
-  if (poor) { const rp = await sendCmd('ped:buy:' + poor.slot); ok(!rp.ok && /Chưa đủ xu/.test(rp.msg), 'thiếu xu → "' + rp.msg + '", xu vẫn 3'); }
+  if (poor) { const rp = await sendCmd('ped:buy:' + poor.slot); ok(!rp.ok && /Thiếu [0-9.]+ xu/.test(rp.msg), 'thiếu xu → "' + rp.msg + '", xu vẫn 3'); }
   ok((await coins()) === 3, 'xu không âm');
   // Đặt món vừa mua
   await refresh(`d = st.load(); d["coins"] = 500; st.save(d)`);

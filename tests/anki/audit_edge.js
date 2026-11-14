@@ -117,7 +117,7 @@ async function twiceAt(elExpr, gap = 350) {
   await mouse('mousePressed', x, y, 'left', 1); await mouse('mouseReleased', x, y, 'left', 1);
   return p;
 }
-const PAY = /^(Mua|Mở khoá|Xây|Nhận nuôi|Mua giống|Mở xưởng|Sửa hết|Cho ăn|Cho cả nhà ăn|\+1 cái|Làm món|Tạo vùng|Tạo giống|Còn thiếu|Cạo rêu|Sơn lại|Lợp lại|Chống dột)/;
+const PAY = /^(Mua|Mở khoá|Xây|Nhận nuôi|Mua giống|Mở xưởng|Sửa hết|Cho ăn|Cho cả nhà ăn|\+1 cái|Làm món|Tạo vùng|Tạo giống|Còn thiếu|Thiếu |Cạo rêu|Sơn lại|Lợp lại|Chống dột)/;
 async function payButtons() {
   return js(`const re = ${PAY};
     return Array.from(document.querySelectorAll("#kb-h-list button")).filter((b) => re.test(b.textContent.trim()))
@@ -210,8 +210,8 @@ kb._dialog.refresh(); result = 1`);
     ok(!open.length, '0 xu: không còn nút trả xu nào bấm được' + (open.length ? ' — còn: ' + open.slice(0, 6).join(' | ') : ''));
     // Xưởng: thẻ "Tạo món đồ mới" khi không đủ xu cho cỡ nhỏ nhất
     await openHome('craft');
-    const mk = await btnInfo(/^(Mở xưởng|Còn thiếu)/, 'Tạo món đồ mới');
-    ok(mk && mk.disabled && /thiếu 200 xu/.test(mk.text + mk.title), 'Thẻ "Tạo món đồ mới" khi 0 xu: nút khoá, ghi còn thiếu 200 xu (' + JSON.stringify(mk) + ')');
+    const mk = await btnInfo(/^(Mở xưởng|Còn thiếu|Thiếu)/, 'Tạo món đồ mới');
+    ok(mk && mk.disabled && /thiếu 200 xu/i.test(mk.text + mk.title), 'Thẻ "Tạo món đồ mới" khi 0 xu: nút khoá, ghi còn thiếu 200 xu (' + JSON.stringify(mk) + ')');
     // giao diện cũ / bấm khi danh sách chưa kịp vẽ lại: lệnh mua đi thẳng tới Python
     const before = await py(KB + 'd = st.load(); result = [d["coins"], d["home"]["owned"].get("bench", 0), len(d["more"]["pets"]), d["home"]["house"]]');
     for (const c of ['home:buy:bench', 'home:pet:buy:shiba', 'home:seed:buy:sakura', 'home:theme:buy:sakura', 'home:wear:buy:' + C.wear[0].id,
@@ -222,7 +222,7 @@ kb._dialog.refresh(); result = 1`);
     const after = await py(KB + 'd = st.load(); result = [d["coins"], d["home"]["owned"].get("bench", 0), len(d["more"]["pets"]), d["home"]["house"]]');
     ok(JSON.stringify(before) === JSON.stringify(after) && after[0] === 0, 'Lệnh mua gửi thẳng khi 0 xu: Python từ chối hết, xu vẫn 0 (' + JSON.stringify(after) + ')');
     const t = await tip();
-    ok(/Chưa đủ xu/.test(t), 'Báo "Chưa đủ xu…" ở dòng gợi ý: ' + t.slice(0, 60));
+    ok(/Thiếu [0-9.]+ xu/.test(t), 'Báo "Thiếu N xu…" ở dòng gợi ý: ' + t.slice(0, 60));
     await closeHome();
   });
 
@@ -402,9 +402,9 @@ for i in range(12):
 kb._dialog.refresh(); result = 1`);
     await sleep(1500); await hideToast();
     await openHome('craft', 'yard');
-    const mk = await btnInfo(/^(Mở xưởng|Còn thiếu)/, 'Tạo món đồ mới');
+    const mk = await btnInfo(/^(Mở xưởng|Còn thiếu|Thiếu)/, 'Tạo món đồ mới');
     ok(mk && mk.disabled, '60 món: nút tạo món mới bị khoá (' + (mk && (mk.title || mk.text)) + ')');
-    const sk = await btnInfo(/^(Mở xưởng|Còn thiếu|Đã đủ)/, 'Tự vẽ giống cây');
+    const sk = await btnInfo(/^(Mở xưởng|Còn thiếu|Thiếu|Đã đủ)/, 'Tự vẽ giống cây');
     ok(sk && sk.disabled, '12 giống: nút "Tự vẽ giống cây" ở tab Xưởng bị khoá (' + (sk && (sk.title || sk.text)) + ')');
     const codes = await py(KB + `d = st.load()
 result = [st.share_code(list(d["craft"]["items"])[0])[0], st.share_code(d["more"]["zones"][0]["id"])[0], st.share_code(list(d["more"]["myseeds"]["items"])[0])[0]]`);

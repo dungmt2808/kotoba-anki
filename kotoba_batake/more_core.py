@@ -553,7 +553,7 @@ def sub_buy(sub: dict[str, Any], plan: str, today: datetime.date) -> int:
     p = PAPER_PLANS[plan]
     left = sub_left(sub, today)
     if left + p["days"] > PAPER_AHEAD_MAX:
-        raise MoreError("Gói báo còn %d ngày — gần hết rồi hãy gia hạn tiếp." % left)
+        raise MoreError("Gói báo còn %d ngày — gói chỉ giữ tối đa %d ngày phía trước." % (left, PAPER_AHEAD_MAX))
     start = _iso(sub.get("until")) if left else today - datetime.timedelta(days=1)
     sub["until"] = (start + datetime.timedelta(days=p["days"])).isoformat()
     sub["plan"] = plan

@@ -243,8 +243,8 @@ result = 1`);
   const seedCode = await page.eval(W('return document.querySelector("#kb-h-list .kb-h-share textarea[readonly]").value;'));
   await page.click('#kb-home .kb-h-tab[data-tab="craft"]'); await sleep(300);
   await paste(zoneCode);
-  ok(await waitFor(page, W('const p = document.querySelector("#kb-h-list .kb-h-peek"); return p && /Tạo vùng này · 5000 xu/.test(p.textContent) && /Đồi hoa/.test(p.textContent);'), 5000),
-    'xem trước vùng: nền Đồi hoa, "Tạo vùng này · 5000 xu"');
+  ok(await waitFor(page, W('const p = document.querySelector("#kb-h-list .kb-h-peek"); return p && /Tạo vùng này · 5.000 xu/.test(p.textContent) && /Đồi hoa/.test(p.textContent);'), 5000),
+    'xem trước vùng: nền Đồi hoa, "Tạo vùng này · 5.000 xu"');
   await page.shot(SHOTS + '/_15_dan_ma_vung.png');
   await paste(seedCode);
   ok(await waitFor(page, W('const p = document.querySelector("#kb-h-list .kb-h-peek"); return p && /Tạo giống này · 500 xu/.test(p.textContent) && /vẽ 3\\/5/.test(p.textContent);'), 5000),

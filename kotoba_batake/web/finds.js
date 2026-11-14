@@ -211,7 +211,7 @@ var GardenFinds = (function () {
     } else if (res.new) {
       line.textContent = "Nhặt được! Bộ " + st.name + " " + st.n + " / " + st.total;
     } else {
-      line.textContent = "Có rồi · đổi " + res.coins + " xu · bộ " + st.name + " " + st.n + " / " + st.total;
+      line.textContent = "Có rồi · đổi " + kbXu(res.coins) + " xu · bộ " + st.name + " " + st.n + " / " + st.total;
     }
     const go = c.appendChild(el("button", "kb-btn kb-btn-small kb-find-go", st.done ? "Đặt quà ▸" : "Hộp sưu tầm ▸"));
     go.type = "button";
@@ -278,7 +278,7 @@ var GardenFinds = (function () {
       const nm = t.appendChild(el("div", "kb-ped-name", g.name));
       nm.appendChild(el("span", g.kind === "only" ? "kb-ped-tag is-only" : "kb-ped-tag", g.kind === "only" ? "Chỉ có ở gánh hàng" : "−25%"));
       t.appendChild(el("div", "kb-ped-desc", g.kind === "only" ? (g.desc || "") + " · quay lại sau ~4 tuần" :
-        "Giá thường " + g.price + " → " + g.now + " xu" + (g.desc ? " · " + g.desc : "")));
+        "Giá thường " + g.price + " → " + kbXu(g.now) + " xu" + (g.desc ? " · " + g.desc : "")));
       let b;
       if (g.bought) {
         b = el("button", "kb-btn kb-btn-small kb-ped-buy is-done", g.kind === "seed" ? "Đã mua" : "Đã mua · Đặt");
@@ -287,9 +287,9 @@ var GardenFinds = (function () {
       } else if (g.lock) {
         b = el("button", "kb-btn kb-btn-small kb-ped-buy", g.lock); b.disabled = true;
       } else {
-        b = el("button", "kb-btn kb-btn-small kb-ped-buy", g.now + " xu");
+        b = el("button", "kb-btn kb-btn-small kb-ped-buy", kbXu(g.now) + " xu");
         b.disabled = money < g.now;
-        if (money < g.now) { b.title = "Còn thiếu " + (g.now - money) + " xu"; }
+        if (money < g.now) { b.title = "Thiếu " + kbXu(g.now - money) + " xu"; }
         const buy = () => {
           if (pending && Date.now() - pending < 4000) { return; }
           pending = Date.now(); b.disabled = true;
@@ -351,7 +351,7 @@ var GardenFinds = (function () {
     } else if (res.act === "buy") {
       sfx("coin");
       if (H.toast) {
-        H.toast("[i:peddler] Đã mua " + res.name + " · −" + res.paid + " xu" + (res.kind === "seed" ? " · gieo ở tab Giống cây" : " · bấm để đặt"),
+        H.toast("[i:peddler] Đã mua " + res.name + " · −" + kbXu(res.paid) + " xu" + (res.kind === "seed" ? " · gieo ở tab Giống cây" : " · bấm để đặt"),
           res.kind === "seed" ? null : () => { closePed(); placeItem(res.id); }, 5000);
       }
       if (pedOpen) { renderPed(); }

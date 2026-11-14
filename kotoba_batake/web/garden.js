@@ -113,7 +113,7 @@ var Garden = (function () {
 
   function season() { return typeof GardenSeason !== "undefined" && GardenSeason ? GardenSeason : null; }
 
-  function drawGrass(ctx, ox, oy, seed, s) {
+  function drawGrass(ctx, ox, oy, seed, s, deco) {
     var f = season() ? season().field() : null;   // giao diện theo mùa: cỏ tuyết / cỏ thu, hoa – lá rơi trên cỏ
     px(ctx, ox, oy, TW, TH, f ? f.base : "#5ed35e", s);
     var h = hash(seed);
@@ -122,6 +122,20 @@ var Garden = (function () {
       var gy = oy + ((h >>> (t * 7 + 3)) % 10) + 1;
       px(ctx, gx, gy, 1, 1, f ? f.speck : "#45bf4a", s);
       px(ctx, gx + 1, gy - 1, 1, 1, f ? f.speck : "#45bf4a", s);
+    }
+    // 1.30.3: ô cỏ trống thỉnh thoảng có bông hoa dại / cỏ ba lá (chỉ ô không có cây, chỉ khi không dùng giao diện mùa —
+    // giao diện mùa có hoa / lá rơi riêng ở dưới)
+    if (deco && !f) {
+      var h3 = hash(seed * 13 + 5), r3 = h3 % 100;
+      var fx = ox + 3 + ((h3 >>> 8) % (TW - 6)), fy = oy + 3 + ((h3 >>> 14) % (TH - 7));
+      if (r3 < 9) {
+        var petal = ["#fff7e8", "#ffc7d6", "#fff1a8"][(h3 >>> 20) % 3];
+        px(ctx, fx, fy - 1, 1, 1, petal, s); px(ctx, fx - 1, fy, 1, 1, petal, s); px(ctx, fx + 1, fy, 1, 1, petal, s);
+        px(ctx, fx, fy + 1, 1, 1, petal, s); px(ctx, fx, fy, 1, 1, "#f2b33d", s);
+      } else if (r3 < 15) {
+        px(ctx, fx, fy, 1, 1, "#3aa94c", s); px(ctx, fx + 1, fy, 1, 1, "#3aa94c", s); px(ctx, fx, fy - 1, 1, 1, "#3aa94c", s);
+        px(ctx, fx + 1, fy + 1, 1, 1, "#2e8b3a", s);
+      }
     }
     if (f && f.dots && f.dots.length) {
       var h2 = hash(seed * 7 + 3);
@@ -213,7 +227,7 @@ var Garden = (function () {
     ctx.imageSmoothingEnabled = false;
     // nền cỏ cho cả ruộng (kể cả ô trống)
     for (var e = 0; e < cols * rows; e++) {
-      drawGrass(ctx, (e % cols) * TW, Math.floor(e / cols) * TH, e + 1000, SCALE);
+      drawGrass(ctx, (e % cols) * TW, Math.floor(e / cols) * TH, e + 1000, SCALE, e >= plants.length);
     }
     for (var i = 0; i < plants.length; i++) { drawTile(ctx, plants[i], i); }
     $("kb-hover").hidden = true;
@@ -281,7 +295,7 @@ var Garden = (function () {
       sel.appendChild(o);
     });
     var wallet = data.wallet || { coins: 0 };
-    $("kb-coins").textContent = wallet.coins + " xu";
+    $("kb-coins").textContent = kbXu(wallet.coins) + " xu";
     // 1.18: số trên nút = số cây tưới được ngay (Anki còn thẻ cho ôn), không phải mọi cây trông khát / héo
     var st0 = data.stats || {};
     var thirsty = typeof st0.water_now === "number" ? st0.water_now : (st0.thirsty || 0);
@@ -583,7 +597,7 @@ var Garden = (function () {
       var bar = document.createElement("div"); bar.className = "kb-today-bar";
       var f = document.createElement("div"); f.className = "kb-today-fill"; f.style.width = Math.round(x.progress / x.target * 100) + "%";
       bar.appendChild(f);
-      var n = document.createElement("span"); n.className = "kb-quest-n"; n.textContent = x.progress + "/" + x.target + " · +" + x.reward + " xu";
+      var n = document.createElement("span"); n.className = "kb-quest-n"; n.textContent = x.progress + "/" + x.target + " · +" + kbXu(x.reward) + " xu";
       row.appendChild(bar); row.appendChild(n);
       li.appendChild(t); li.appendChild(row);
       list.appendChild(li);
@@ -593,10 +607,10 @@ var Garden = (function () {
     var icon = null;
     var label = document.createElement("div");
     if (q.chest) {
-      label.textContent = "Đã mở rương hôm nay" + (q.chest_item ? ": nhận " + nameOf(q.chest_item) + " (+" + q.chest_coins + " xu). Đặt nó ở Nhà → Kho đồ." : ".");
+      label.textContent = "Đã mở rương hôm nay" + (q.chest_item ? ": nhận " + nameOf(q.chest_item) + " (+" + kbXu(q.chest_coins) + " xu). Đặt nó ở Nhà → Kho đồ." : ".");
       if (q.chest_item && typeof GardenHome !== "undefined") { icon = GardenHome.icon(q.chest_item, 40); }
     } else {
-      label.textContent = "Xong cả " + q.list.length + " nhiệm vụ: mở rương quà +" + q.chest_coins + " xu" +
+      label.textContent = "Xong cả " + q.list.length + " nhiệm vụ: mở rương quà +" + kbXu(q.chest_coins) + " xu" +
         (q.next_rare ? " và đồ hiếm “" + q.next_rare.name + "”" : "") + ".";
       if (q.next_rare && typeof GardenHome !== "undefined") { icon = GardenHome.icon(q.next_rare.id, 40); }
     }
@@ -643,7 +657,7 @@ var Garden = (function () {
     sk.addEventListener("click", function (e) { e.stopPropagation(); openCal({}); });
     tt.appendChild(sk);
     box.querySelector(".kb-today-main").title = "Số lượt ôn hôm nay (tính cả ôn ở màn ôn của Anki)" +
-      (goal ? (t.claimed ? ". Đã nhận thưởng +" + t.bonus + " xu hôm nay." : ". Đạt " + goal + " lượt được thưởng +" + t.bonus + " xu.") : "") +
+      (goal ? (t.claimed ? ". Đã nhận thưởng +" + kbXu(t.bonus) + " xu hôm nay." : ". Đạt " + goal + " lượt được thưởng +" + kbXu(t.bonus) + " xu.") : "") +
       (t.streak ? " Chuỗi " + t.streak + " ngày ôn liên tiếp." : "") +
       (t.freeze ? " Vé giữ chuỗi: " + t.freeze.n + "/" + t.freeze.max + " (mua ở Lịch hoa)." : "");
     $("kb-today-fill").style.width = (goal ? Math.min(100, Math.round(t.reviews / goal * 100)) : 100) + "%";
@@ -1018,11 +1032,11 @@ var Garden = (function () {
     } else if (!m) {
       el.textContent = "Bắt đầu tính từ bây giờ.";
     } else if (m.total && m.total.reviews > 0) {
-      var t = "Đã bù " + m.total.reviews + " lượt · +" + m.total.coins + " xu.";
+      var t = "Đã bù " + m.total.reviews + " lượt · +" + kbXu(m.total.coins) + " xu.";
       if (m.last && m.last.at) {
         var d = new Date(m.last.at * 1000);
         t += " Lần gần nhất " + two(d.getDate()) + "/" + two(d.getMonth() + 1) + " " + two(d.getHours()) + ":" +
-          two(d.getMinutes()) + ": " + m.last.reviews + " lượt, +" + m.last.coins + " xu.";
+          two(d.getMinutes()) + ": " + m.last.reviews + " lượt, +" + kbXu(m.last.coins) + " xu.";
       }
       el.textContent = t;
     } else {
@@ -1120,6 +1134,14 @@ var Garden = (function () {
     window.addEventListener("resize", fitPop);
     pop.addEventListener("click", function (e) { e.stopPropagation(); });
     document.addEventListener("click", function () { pop.hidden = true; });
+    // 1.30.3: Esc khi bảng ⚙ đang mở chỉ đóng bảng ⚙ (trước đó trang không dùng phím Esc này → Anki đóng cả cửa sổ vườn)
+    // (bắt ở pha capture: bảng ⚙ nằm trên cùng → Esc đóng nó trước, bảng Nhà / Trò chơi… phía dưới vẫn mở)
+    document.addEventListener("keydown", function (e) {
+      if (e.key !== "Escape" || pop.hidden || e.isComposing) { return; }
+      e.preventDefault(); e.stopImmediatePropagation(); window.__kbEscUsed = true;
+      pop.hidden = true;
+      try { btn.focus({ preventScroll: true }); } catch (x) { /* bỏ qua */ }
+    }, true);
     $("kb-sfx-on").addEventListener("change", function (e) {
       if (typeof GardenFX !== "undefined") { GardenFX.setMuted(!e.target.checked); }
       syncSoundUi();
@@ -1482,7 +1504,7 @@ var Garden = (function () {
         setWallet: function (w) {
           if (!data) { return; }
           data.wallet = w;
-          $("kb-coins").textContent = w.coins + " xu";
+          $("kb-coins").textContent = kbXu(w.coins) + " xu";
           var chip = $("kb-coins");
           chip.classList.remove("kb-bump"); void chip.offsetWidth; chip.classList.add("kb-bump");
         }
@@ -1495,7 +1517,7 @@ var Garden = (function () {
         setWallet: function (w) {
           if (!data) { return; }
           data.wallet = w;
-          $("kb-coins").textContent = w.coins + " xu";
+          $("kb-coins").textContent = kbXu(w.coins) + " xu";
         },
         closeReview: function () { closePanel(true); },
         openPaper: function () { openPaper(false); },
@@ -1513,7 +1535,7 @@ var Garden = (function () {
         setWallet: function (w) {
           if (!data || !w) { return; }
           data.wallet = w;
-          $("kb-coins").textContent = w.coins + " xu";
+          $("kb-coins").textContent = kbXu(w.coins) + " xu";
           var chip = $("kb-coins");
           chip.classList.remove("kb-bump"); void chip.offsetWidth; chip.classList.add("kb-bump");
         },
@@ -1615,7 +1637,7 @@ var Garden = (function () {
         if (data.wallet && data.wallet.coins !== v.freeze.coins) {
           data.wallet.coins = v.freeze.coins;
           var chip = $("kb-coins");
-          chip.textContent = v.freeze.coins + " xu";
+          chip.textContent = kbXu(v.freeze.coins) + " xu";
           chip.classList.remove("kb-bump"); void chip.offsetWidth; chip.classList.add("kb-bump");
         }
         if (data.today) { data.today.freeze = v.freeze; }

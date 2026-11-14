@@ -77,7 +77,7 @@ d, st = fresh("open", coins=5000, house=6)
 ok("Xây xong nhà" in err(st.open_rooms) and st.load()["coins"] == 5000 and st.load()["home"]["rooms"] == [],
    "nhà chưa xây xong 7 bước → chưa mở rộng được, không trừ xu")
 data = st.load(); data["home"]["house"] = 7; data["coins"] = 1500; st.save(data)
-ok("Chưa đủ xu" in err(st.open_rooms) and st.load()["home"]["rooms"] == [] and st.load()["coins"] == 1500, "thiếu xu → không mở gian nào")
+ok(err(st.open_rooms).startswith("Thiếu ") and st.load()["home"]["rooms"] == [] and st.load()["coins"] == 1500, "thiếu xu → không mở gian nào")
 data = st.load(); data["coins"] = 5000; st.save(data)
 st.open_rooms()
 data = st.load()
