@@ -44,7 +44,8 @@ var GardenUI = (function () {
     const sub = c && c[m || mode];
     return (sub && sub[k]) || DEF[k];
   }
-  const GLOB_DEF = { card: "normal", theme: "garden", scene: "normal", start: "last", deco: "on", greet: "on", trans: "on" };
+  const GLOB_DEF = { card: "normal", theme: "garden", scene: "normal", start: "last", deco: "on", greet: "on", trans: "on",
+    today: "open", buyask: "on" };
   function glob(k) { const c = conf(); return (c && c[k]) || GLOB_DEF[k] || "garden"; }
 
   // thẻ đang ôn nằm trong iframe: bảng tối thì thêm lớp nightMode (như Anki) + màu nền dịu.
@@ -73,7 +74,7 @@ var GardenUI = (function () {
     const app = $("kb-app");
     if (!app) { return; }
     const cls = ["kb-ui-m-" + mode, "kb-ui-yard-" + get("yard"), "kb-ui-field-" + get("field"),
-      "kb-ui-th-" + glob("theme"), "kb-ui-card-" + glob("card"), "kb-ui-deco-" + glob("deco")];
+      "kb-ui-th-" + glob("theme"), "kb-ui-card-" + glob("card"), "kb-ui-deco-" + glob("deco"), "kb-ui-today-" + glob("today")];
     if (get("sky") === "off") { cls.push("kb-ui-sky-off"); }
     const sig = cls.join(" ");
     syncFrame(glob("theme") === "night");
@@ -208,6 +209,8 @@ var GardenUI = (function () {
     radios("deco", "Dây trang trí", [["on", "Hiện"], ["off", "Ẩn"]]);     // 1.25
     radios("greet", "Chào khi mở vườn", [["on", "Bật"], ["off", "Tắt"]]);     // 1.26
     radios("trans", "Chuyển cảnh", [["on", "Bật"], ["off", "Tắt"]]);
+    radios("today", "Bảng Hôm nay", [["open", "Mở"], ["mini", "Thu gọn"]]);       // 1.30.1
+    radios("buyask", "Hỏi trước khi trả xu", [["on", "Bật"], ["off", "Tắt"]]);
     st.appendChild(g);
     st.appendChild(el("div", "kb-ui-h", "Bảng ôn thẻ"));
     g = el("div", "kb-ui-globals");
@@ -231,7 +234,83 @@ var GardenUI = (function () {
     $("kb-ui").hidden = true;
   }
 
+  // ---- 1.30.1: hỏi lại trước khi trả xu ----
+  // Người dùng: "thêm xác nhận mua đồ nữa, phòng trường hợp double click". Mọi nút trả xu (mua đồ, xây, mở vùng, nuôi thú,
+  // giống, giao diện mùa, chế tác, vé giữ chuỗi, gói báo, gánh hàng…) gọi ask() thay vì gửi lệnh ngay. Hộp hiện giữa cửa sổ;
+  // trong 0,45 giây đầu mọi lần bấm đều bỏ qua (bấm đúp không lọt qua). Esc / bấm ra ngoài = Thôi, Enter = đồng ý (trừ khi
+  // đang chọn nút Thôi bằng Tab). Tắt ở ⚙ Giao diện → "Hỏi trước khi trả xu". Python vẫn là nơi trừ xu (lệnh như cũ).
+  const ASK_GUARD = 450;
+  let askBox = null, askThen = null, askAt = 0, askTimer = 0;
+  function askOff() { const d = G && G.data(); return glob("buyask") === "off" || !!(d && d.ask_off); }
+  // force: phím Esc (cố ý) — còn lại mọi lần bấm trong 0,45 giây đầu đều bỏ qua: lần bấm thứ hai của cú bấm đúp rơi vào hộp
+  // / nền mờ không được mua, cũng không làm hộp vừa mở biến mất
+  function askClose(yes, force) {
+    if (!askBox || askBox.hidden) { return; }
+    if (!force && Date.now() - askAt < ASK_GUARD) { return; }
+    askBox.hidden = true;
+    clearTimeout(askTimer);
+    const fn = askThen; askThen = null;
+    if (yes && fn) { try { fn(); } catch (e) { /* lỗi của lệnh sau khi đồng ý: để trang báo như mọi lỗi khác */ setTimeout(() => { throw e; }); } }
+  }
+  function askBuild() {
+    askBox = el("div", "kb-ask");
+    askBox.id = "kb-ask"; askBox.hidden = true;
+    askBox.setAttribute("role", "dialog"); askBox.setAttribute("aria-modal", "true");
+    const card = el("div", "kb-ask-card");
+    card.appendChild(el("div", "kb-ask-t"));
+    card.appendChild(el("div", "kb-ask-d"));
+    card.appendChild(el("div", "kb-ask-n"));
+    const row = el("div", "kb-ask-btns");
+    const no = el("button", "kb-btn kb-ask-no", "Thôi"); no.type = "button";
+    const yes = el("button", "kb-btn kb-ask-yes", "Mua"); yes.type = "button";
+    no.addEventListener("click", (e) => { e.stopPropagation(); askClose(false); });
+    yes.addEventListener("click", (e) => { e.stopPropagation(); askClose(true); });
+    row.appendChild(no); row.appendChild(yes);
+    card.appendChild(row);
+    card.addEventListener("click", (e) => e.stopPropagation());
+    card.addEventListener("mousedown", (e) => e.stopPropagation());
+    askBox.appendChild(card);
+    askBox.addEventListener("mousedown", (e) => { e.stopPropagation(); e.preventDefault(); });
+    askBox.addEventListener("click", (e) => { e.stopPropagation(); askClose(false); });
+    window.addEventListener("keydown", (e) => {          // window + capture: chạy trước mọi phím tắt khác (Xưởng, Nhà, Esc…)
+      if (!askBox || askBox.hidden) { return; }
+      if (e.key === "Escape") {        // Esc chỉ đóng hộp hỏi: báo Python là trang đã dùng Esc (không đóng cửa sổ vườn)
+        e.preventDefault(); e.stopImmediatePropagation(); window.__kbEscUsed = true; askClose(false, true); return;
+      }
+      if (e.key === "Enter" && !e.isComposing) {
+        e.preventDefault(); e.stopImmediatePropagation();
+        askClose(!(document.activeElement && document.activeElement.classList.contains("kb-ask-no"))); return;
+      }
+      if (e.key !== "Tab") { e.stopImmediatePropagation(); }      // phím tắt vườn (N, Q, T…) không chạy khi đang hỏi
+    }, true);
+    (document.getElementById("kb-app") || document.body).appendChild(askBox);
+  }
+  // o: {title, price (xu; 0 / thiếu = không ghi giá), cost (chữ thay cho giá, vd "chuỗi 7 ngày"), yes (chữ nút), note, then}
+  function ask(o) {
+    if (!o || typeof o.then !== "function") { return; }
+    if (askOff()) { o.then(); return; }
+    if (!askBox) { askBuild(); }
+    if (!askBox.hidden) { return; }                 // đang hỏi món khác: bỏ lần bấm này
+    const d = G && G.data(), have = (d && d.wallet && d.wallet.coins) || 0, price = Math.max(0, Number(o.price) || 0);
+    askBox.querySelector(".kb-ask-t").textContent = o.title || "Trả xu?";
+    const desc = o.cost ? "Dùng " + o.cost + "." : price ? "Giá " + price.toLocaleString("vi-VN") + " xu · còn lại " +
+      Math.max(0, have - price).toLocaleString("vi-VN") + " xu." : "";
+    askBox.querySelector(".kb-ask-d").textContent = desc;
+    const n = askBox.querySelector(".kb-ask-n");
+    n.textContent = o.note || ""; n.hidden = !o.note;
+    const yes = askBox.querySelector(".kb-ask-yes");
+    yes.textContent = (o.yes || "Mua") + (price && !o.cost ? " · " + price.toLocaleString("vi-VN") + " xu" : "");
+    askThen = o.then; askAt = Date.now();
+    askBox.hidden = false;
+    yes.classList.add("is-wait");
+    clearTimeout(askTimer);
+    askTimer = setTimeout(() => { yes.classList.remove("is-wait"); }, ASK_GUARD);
+    try { yes.focus({ preventScroll: true }); } catch (e) { /* bỏ qua */ }
+  }
+
   return {
+    ask: ask,
+    asking: () => !!(askBox && !askBox.hidden),
     init: function (helpers) {
       G = helpers;
       const ex = $("kb-ui-exit");
@@ -253,6 +332,7 @@ var GardenUI = (function () {
     open: open,
     close: close,
     isOpen: () => isOpen,
+    setGlob: function (k, v) { if (GLOB_DEF[k] === undefined) { return; } const n = full(); n[k] = v; save(n); },     // 1.30.1
     saved: function (c) { if (c) { ui = c; const d = G && G.data(); if (d) { d.ui = c; } lastSig = ""; apply(); if (isOpen) { render(); } } },
     refresh: function () { ui = null; lastSig = ""; apply(); },
     _apply: apply

@@ -123,18 +123,19 @@ def _milestones(total_days: int, reviewed_today: bool, streak: int) -> list[dict
     nxt = next((m for m in MILESTONE_DAYS if m > total_days or (m == total_days and reviewed_today)), None)
     if nxt is not None:
         if nxt == total_days and reviewed_today:
-            out.append({"id": "days", "icon": "firework", "text": "Hôm nay tròn %d ngày có ôn!" % nxt, "short": "tròn %d ngày có ôn" % nxt})
+            out.append({"id": "days", "icon": "firework", "text": "Hôm nay là ngày học thứ %d!" % nxt, "short": "ngày học thứ %d" % nxt})
         else:
             left = nxt - total_days
             if left <= NEAR:
-                out.append({"id": "days", "icon": "star", "text": "Còn %d ngày nữa đủ %d ngày có ôn" % (left, nxt),
-                            "short": "còn %d ngày nữa đủ %d ngày có ôn" % (left, nxt)})
+                # 1.30.1: "ngày có ôn" khó hiểu → nói thẳng là tổng số ngày đã học (không cần liền nhau)
+                out.append({"id": "days", "icon": "star", "text": "Học thêm %d ngày nữa là tròn %d ngày học" % (left, nxt),
+                            "short": "thêm %d ngày nữa tròn %d ngày học" % (left, nxt)})
     mark = next((m for m in STREAK_SOON if m > streak), None)        # hôm nay chưa ôn: ôn hôm nay là +1
     if mark is not None and streak > 0:
         left = mark - streak
         if left <= NEAR:
-            out.append({"id": "streak", "icon": "fire", "text": "Còn %d ngày nữa chuỗi %d ngày" % (left, mark),
-                        "short": "còn %d ngày nữa chuỗi %d ngày" % (left, mark)})
+            out.append({"id": "streak", "icon": "fire", "text": "Ôn tiếp %d ngày nữa là tròn %d ngày liền" % (left, mark),
+                        "short": "%d ngày nữa tròn %d ngày liền" % (left, mark)})
     return out
 
 

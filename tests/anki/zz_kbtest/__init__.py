@@ -20,6 +20,7 @@ try:
     if _kb is not None:
         _kb.GREET_TEST_OFF = True
         _kb.TOUR_TEST_OFF = True      # 1.26.1: hướng dẫn 3 bước cho người mới (e2e_1261.js bật lại)
+        _kb.ASK_TEST_OFF = True       # 1.30.1: hộp "Hỏi trước khi trả xu" — kịch bản cũ bấm Mua là mua ngay (e2e_1301.js bật lại)
         _kb.LIFE_TEST_OFF = True      # 1.30: tắt StackChan sinh hoạt (không vẽ, không chip, không ghi sổ) cho kịch bản cũ —
         #                               thông báo "Sinh hoạt mới" chen vào hàng chờ thông báo (e2e_1259 F07), StackChan đứng trúng
         #                               điểm ảnh đang đo (e2e_124); e2e_130 / e2e_fuzz / release_sync / shots_130 / audit.js bật lại

@@ -616,19 +616,25 @@ var GardenNhaArt = (function () {
         }
       }
     }
+    // 1.30.1: nền theo kiểu nhà của gian khác (Sàn Bếp cho phòng chính…) — id khớp decor_core.HOUSE; vẽ bằng chính hàm nền của
+    // kiểu nhà đang dùng (gian nguồn), chỉ lấy phần tường hoặc phần sàn
+    const HOUSE_DECO = { w_hroom: "room", w_hkitchen: "kitchen", w_hbedroom: "bedroom", f_hroom: "room", f_hkitchen: "kitchen" };
     // deco = {wall: id | null, floor: id | null, tiles: {t<n>: [16 hàng]}} — id lạ (bản mới hơn) thì giữ nền theo kiểu nhà
-    function decoPaint(c, x0, x1, deco) {
+    function decoPaint(c, x0, x1, deco, style, W0) {
       if (!deco) { return; }
       const g = c.ctx;
       const clip = (y0, y1, fn) => { g.save(); g.beginPath(); c.rect(x0, y0, x1 - x0, y1 - y0); g.clip(); try { fn(); } finally { g.restore(); } };
+      const house = (id) => WALLS[STYLES.indexOf(style) >= 0 ? style : "classic"](c, x0, x1, HOUSE_DECO[id], W0 || x1);
       if (deco.wall) {
         const t = deco.tiles && deco.tiles[deco.wall];
-        if (DECO[deco.wall] && deco.wall[0] === "w") { clip(WT, WB, () => DECO[deco.wall](c, x0, x1)); }
+        if (HOUSE_DECO[deco.wall] && deco.wall[0] === "w") { clip(WT, WB, () => house(deco.wall)); }
+        else if (DECO[deco.wall] && deco.wall[0] === "w") { clip(WT, WB, () => DECO[deco.wall](c, x0, x1)); }
         else if (t) { clip(WT, WB, () => tilePaint(c, x0, x1, t, WT, WB)); }
       }
       if (deco.floor) {
         const t = deco.tiles && deco.tiles[deco.floor];
-        if (DECO[deco.floor] && deco.floor[0] === "f") { clip(FL, HH, () => DECO[deco.floor](c, x0, x1)); }
+        if (HOUSE_DECO[deco.floor] && deco.floor[0] === "f") { clip(FL, HH, () => house(deco.floor)); }
+        else if (DECO[deco.floor] && deco.floor[0] === "f") { clip(FL, HH, () => DECO[deco.floor](c, x0, x1)); }
         else if (t) { clip(FL, HH, () => tilePaint(c, x0, x1, t, FL, HH)); }
       }
     }
@@ -642,7 +648,7 @@ var GardenNhaArt = (function () {
       c.ctx = ctx;
       c.rect = (x, y, w, h) => ctx.rect(Math.round((ox + x) * S), Math.round((oy + y) * S), Math.round(w * S), Math.round(h * S));
       WALLS[style](c, 0, W, kind, W);
-      decoPaint(c, 0, W, deco);
+      decoPaint(c, 0, W, deco, style, W);
       shade(c, 0, W);
     }
     // ô mẫu cho cửa hàng: vẽ một mảnh w × h của mẫu (slot: wall / floor) vào (ox, oy)
@@ -702,7 +708,7 @@ var GardenNhaArt = (function () {
     };
 
     return { ids: IDS, frameOf: frameOf, emit: emit, pal: pal, bg: bg, post: post, ROOF: ROOF, STYLES: STYLES, dk: dk, lt: lt,
-      DECO_IDS: Object.keys(DECO), swatch: swatch };
+      DECO_IDS: Object.keys(DECO), HOUSE_IDS: Object.keys(HOUSE_DECO), houseKind: (id) => HOUSE_DECO[id] || null, swatch: swatch };
   }
 
   return { install: install };

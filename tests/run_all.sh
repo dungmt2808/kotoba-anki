@@ -68,6 +68,12 @@ echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
 echo "== core/test_130.py"
 OUT=$(python3 "$HERE/core/test_130.py" "$ADDON" ${OLD128:+"$OLD128"} 2>&1); RC=$?
 echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
+echo "== core/test_1301.py (1.30.1: sàn / tường theo kiểu nhà, hỏi trước khi trả xu, thu gọn bảng Hôm nay, liên hệ, câu chữ)"
+OUT=$(python3 "$HERE/core/test_1301.py" "$ADDON" 2>&1); RC=$?
+echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
+echo "== core/test_1301.js (1.30.1: khách không đi ngang qua nhà, thú trong nhà đi theo gian)"
+OUT=$(node "$HERE/core/test_1301.js" "$ADDON" 2>&1); RC=$?
+echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
 echo "== core/test_ngau_nhien.py (1.30: thao tác ngẫu nhiên + bất biến của ví)"
 OUT=$(python3 "$HERE/core/test_ngau_nhien.py" "$ADDON" 2>&1); RC=$?
 echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1

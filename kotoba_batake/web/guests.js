@@ -188,15 +188,21 @@ var GardenGuests = (function () {
     const g = groundPoint(seed, busy); return { x: g.x, y: g.y, base: g.y, pose: "sit" };
   }
 
+  // 1.30.1: khách đi bộ (mèo hoang, cáo, hươu…) vào / về bằng mép phải của phần cảnh đang thấy — trước đây 35 % đi vào
+  // từ mép trái (hiện ra ngay trên mái nhà) và lúc về đi ngang qua nhà / công trình ra mép trái (người dùng: "mấy con thú có
+  // chạy ngang hẳn qua nhà luôn"). Chim bay vẫn bay vào từ hai phía (bay qua mái nhà là bình thường).
+  const edgeR = {};              // cảnh → mép phải đang thấy (toạ độ nghệ thuật; dải cảnh màn chính rộng hơn sân)
+  const walker = (def) => def.kind === "walk" || def.kind === "hop";
+  function rightEdge(scene) { return Math.max(YARD.W, edgeR[scene] || 0); }
   function make(w, scene, spots) {
     const v = gv(), def = v.defs[w.id], seed = w.slot * 3.7 + salt(scene) + w.id.length;
     const home = homeOf(w.id, def, scene, spots, seed, spotFn[scene] ? spotFn[scene]("*") : []);
-    const fromLeft = hash(seed * 5.1) < 0.35 && def.kind !== "perch";
+    const fromLeft = hash(seed * 5.1) < 0.35 && def.kind !== "perch" && !walker(def);
     const a = { id: w.id, def: def, slot: w.slot, scene: scene, home: home, dir: fromLeft ? 1 : -1, act: "enter",
       x: 0, y: home.y, alpha: 1, t: 0, until: 0, frame: "", hop: 0, seen: 0, fx: [], seed: seed, pose: home.pose };
     if (def.kind === "perch" || def.kind === "swarm") { a.x = home.x; a.alpha = 0; }
     else if (def.kind === "fly") { a.x = fromLeft ? -16 : YARD.W + 16; a.y = Math.max(4, home.y - 16); }
-    else { a.x = fromLeft ? GROUND.x0 - 30 : YARD.W + 14; if (scene === "room") { a.x = home.x + 20; } }
+    else { a.x = rightEdge(scene) + 14; if (scene === "room") { a.x = home.x + 20; } }
     if (def.kind === "swarm") {
       a.dots = [];
       for (let i = 0; i < 8; i++) { a.dots.push({ x: home.x + rnd(-18, 18), y: home.y + rnd(-10, 8), vx: 0, vy: 0, ph: rnd(0, 6) }); }
@@ -204,14 +210,14 @@ var GardenGuests = (function () {
     return a;
   }
 
-  function exitX(a) { return a.dir > 0 ? YARD.W + 18 : -22; }
+  function exitX(a) { return walker(a.def) ? rightEdge(a.scene) + 18 : a.dir > 0 ? YARD.W + 18 : -22; }
 
   function step(a, dt, now, want) {
     const def = a.def, h = a.home;
     a.t += dt;
     if (a.act !== "leave" && (!want || want.id !== a.id || want.slot !== a.slot)) {
       a.act = "leave";
-      a.dir = a.x < 128 ? -1 : 1;
+      a.dir = walker(def) || a.x >= 128 ? 1 : -1;
       if (def.kind === "walk" || def.kind === "hop") { a.frame = ""; }
     }
     if (def.kind === "perch" || def.kind === "swarm") {
@@ -368,9 +374,10 @@ var GardenGuests = (function () {
   function place(scene, now, st, opts) {
     const v = gv();
     if (!v) { delete vis[scene]; return []; }
-    const dt = lastAt[scene] ? Math.min(0.25, (now - lastAt[scene]) / 1000) : 0;
+    const dt = lastAt[scene] ? Math.max(0, Math.min(0.25, (now - lastAt[scene]) / 1000)) : 0;      // 1.30.1: đồng hồ lùi (chỉnh giờ máy) không làm khách / thú đi ngược ra xa
     lastAt[scene] = now;
     if (opts && opts.spots) { spotFn[scene] = opts.spots; }
+    if (opts && Number.isFinite(opts.visTo)) { edgeR[scene] = opts.visTo; }
     let a = vis[scene];
     const w = a && a.forced ? { id: a.id, slot: a.slot } : want(scene, now, st);
     if (!a && w) { a = vis[scene] = make(w, scene, opts && opts.spots ? opts.spots(v.defs[w.id].spot || []) : []); }

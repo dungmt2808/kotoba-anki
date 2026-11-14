@@ -46,6 +46,8 @@ var GardenIcons = (function () {
     book: ["........", ".kkkkkk.", "kRrrrrrk", "kRrwwrrk", "kRrrrrrk", "kRrrrrrk", "kRmmmmmk", ".kkkkkk."],
     flower: ["..p.p...", ".ppypp..", "..ppp...", "...G....", ".g.G....", "..gG.g..", "...Gg...", "...G...."],
     search: [".kkkk...", "kwwwwk..", "kwwwwk..", "kwwwwk..", "kwwwwk..", ".kkkkkk.", ".....kkk", "......kk"],
+    // 1.30.1: bảng Hôm nay (nút thu gọn / hiện ở góc dải cảnh)
+    memo: ["kkkkkkkk", "kmmmmmmk", "kmkkkkmk", "kmmmmmmk", "kmkkkmmk", "kmmmmmmk", "kmkkkkmk", "kkkkkkkk"],
     // 1.30: StackChan (màn hình đen, mắt trắng) — chip "StackChan đang làm gì"
     stack: [".kkkkkk.", "kkkkkkkk", "kkwkkwkk", "kkwkkwkk", "kkkkkkkk", "kkkwwkkk", "kssssssk", ".kkkkkk."]
   };

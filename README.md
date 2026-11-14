@@ -252,7 +252,7 @@ Vào ⚙ để tắt hiệu ứng hoặc đổi giao diện từng chế độ (
 
 ## Báo lỗi và góp ý
 
-Vào **Tools → ことば畑 · Báo lỗi**, ghi vài dòng ở mục *Mô tả lỗi*, bấm **Chép**, rồi dán vào một [issue trên GitHub](https://github.com/dungmt2808/kotoba-anki/issues). Báo cáo có nhật ký lỗi và phiên bản Anki. Khoá Gemini và đường dẫn trên máy bạn được tự động che đi, và bạn sửa hay xoá bớt được trước khi gửi. Add-on không tự gửi gì lên mạng.
+Vào **Tools → ことば畑 · Báo lỗi**, ghi vài dòng ở mục *Mô tả lỗi*, bấm **Gửi email…** (báo cáo được chép sẵn, dán vào thư gửi **maitrongdung10@gmail.com**) hoặc **Chép** rồi dán vào một [issue trên GitHub](https://github.com/dungmt2808/kotoba-anki/issues). Góp ý, ý tưởng cũng gửi về email này (⚙ → **Góp ý qua email…**). Báo cáo có nhật ký lỗi và phiên bản Anki. Khoá Gemini và đường dẫn trên máy bạn được tự động che đi, và bạn sửa hay xoá bớt được trước khi gửi. Add-on không tự gửi gì lên mạng.
 
 Thấy hình có sẵn bị lỗi (thiếu một điểm viền, lệch màu…)? Mở **Nhà**, ở thẻ món bạn đã có bấm **Góp ý hình**, vẽ lại (cả khung động như hươu cúi chào, tủ lạnh mở, đài phun nước đóng băng…) rồi **Lưu file góp ý**, đính kèm file đó vào issue. Vườn của bạn không đổi; bản sửa được nhận sẽ có ở bản cập nhật sau cho mọi người.
 

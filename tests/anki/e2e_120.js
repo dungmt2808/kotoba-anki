@@ -123,7 +123,7 @@ result = len(rows)`;
   ok(m.strips === m.n, 'mọi ô có vạch màu giao diện mùa (cả ngày tương lai)');
   ok(m.fl === m.n - m.fut, 'ngày đã qua / hôm nay có cây, ngày tương lai không');
   ok(m.bands.length >= 1 && /Sắp tới:/.test(m.soon || ''), 'dải tên mùa / lễ + dòng "Sắp tới": ' + m.bands.join(', ') + ' | ' + m.soon);
-  ok(m.legend === 5 && /Chuỗi/.test(m.hud) && /Tháng này/.test(m.hud) && m.info === 'Bấm một ngày để xem và viết nhật ký.', 'chú giải 5 mức cây, chip Chuỗi / Tháng này, một dòng hướng dẫn');
+  ok(m.legend === 5 && /Ôn liền/.test(m.hud) && /Tháng này/.test(m.hud) && m.info === 'Bấm một ngày để xem và viết nhật ký.', 'chú giải 5 mức cây, chip Chuỗi / Tháng này, một dòng hướng dẫn');
   await page.shot(SHOTS + '/120_lich_thang.png');
   await page.key('Escape', 'Escape', 27); await sleep(500);
   ok(await page.eval(W('return document.getElementById("kb-cal").hidden;')), 'Esc đóng bảng');
@@ -183,8 +183,8 @@ result = max((d for d in c if c[d]["fruit"] and c[d]["new"]), key=lambda d: c[d]
   await page.eval(W('GardenCal.open({ date: ' + JSON.stringify(rich) + ' }); return 1;'));
   await waitFor(page, W('return GardenCal._state().day && GardenCal._state().day.d === ' + JSON.stringify(rich) + ';'));
   const st1 = await page.eval(W('return document.querySelector(".kb-cal-stats").textContent;'));
-  ok(/\d+ lượt · \d+ thẻ mới/.test(st1) && /Lên Ra quả\d+ từ/.test(st1), 'khung ngày: Ôn N lượt · N thẻ mới, Lên Ra quả (gần đúng): ' + st1.slice(0, 80));
-  ok(await page.eval(W('const k = Array.from(document.querySelectorAll(".kb-cal-k")).find(x => x.textContent === "Lên Ra quả"); return !!k && /Gần đúng/.test(k.title);')), 'ghi rõ "gần đúng" ở chú thích');
+  ok(/\d+ lượt · \d+ thẻ mới/.test(st1) && /Thành cây Ra quả\d+ từ/.test(st1), 'khung ngày: Ôn N lượt · N thẻ mới, Thành cây Ra quả (gần đúng): ' + st1.slice(0, 80));
+  ok(await page.eval(W('const k = Array.from(document.querySelectorAll(".kb-cal-k")).find(x => x.textContent === "Thành cây Ra quả"); return !!k && /Gần đúng/.test(k.title);')), 'ghi rõ "gần đúng" ở chú thích');
   await page.shot(SHOTS + '/121_khung_ngay.png');
   await page.eval(W('GardenCal.close(); GardenCal.open({}); return 1;'));
   await waitFor(page, W('return !!document.querySelector(".kb-cal-write");'));
@@ -322,8 +322,8 @@ result = max((d for d in c if c[d]["fruit"] and c[d]["new"]), key=lambda d: c[d]
   const yr = await page.eval(W(`return { chips: Array.from(document.querySelectorAll(".kb-cal-sum .kb-g-chip-l")).map(x => x.textContent), now: document.querySelectorAll(".kb-cal-mini.is-now").length,
     strip: document.querySelectorAll(".kb-cal-mini-strip i").length >= 12, green: document.querySelectorAll(".kb-cal-mini-grid b[style*='rgb(23, 113, 58)'], .kb-cal-mini-grid b[style*='#17713a']").length,
     hud: document.getElementById("kb-c-hud").textContent, legend: document.querySelectorAll(".kb-cal-ylegend i").length };`));
-  ok(yr.chips.join(',') === 'Ngày ôn,Lượt ôn,Từ ra quả mới,Nhật ký,Hay gặp nhất' && yr.now === 1 && yr.strip, 'chip tổng kết, tháng hiện tại nền vàng, dải màu giao diện mùa: ' + yr.chips.join(','));
-  ok(/Dài nhất/.test(yr.hud) && yr.legend >= 10, 'chip Chuỗi / Dài nhất, chú giải mức + màu các lễ');
+  ok(yr.chips.join(',') === 'Số ngày đã ôn,Số lượt ôn,Từ ra quả mới,Ngày có nhật ký,Hay gặp nhất' && yr.now === 1 && yr.strip, 'chip tổng kết, tháng hiện tại nền vàng, dải màu giao diện mùa: ' + yr.chips.join(','));
+  ok(/Liền lâu nhất/.test(yr.hud) && yr.legend >= 10, 'chip Ôn liền / Liền lâu nhất, chú giải mức + màu các lễ');
   await page.shot(SHOTS + '/126_lich_nam.png');
   const prevM = await py(KB + 'y, m = kb.journal.add_months(kb.cal_today().year, kb.cal_today().month, -1)\nresult = [y, m]');
   if (prevM[0] === Number(T.slice(0, 4))) {

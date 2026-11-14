@@ -186,7 +186,10 @@ result = d.isoformat()`);
     ok(s.tile_px === exp.tile_px && !!s.tile_px, '1.30: điểm ảnh mẫu sàn tự vẽ còn nguyên');
     ok(JSON.stringify(s.life) === JSON.stringify(exp.life) && !!s.life.souji, '1.30: Sổ sinh hoạt còn nguyên: ' + JSON.stringify(s.life));
     const u30 = await js('const d = Garden._data(), dec = (d.wallet.more || {}).decor || {}, t = (d.catalog.tiles || []).find((x) => x.id === "t1"); return {wall: ((dec.use || {}).kitchen || {}).wall, floor: ((dec.use || {}).bedroom || {}).floor, tile: !!(t && t.px), life: d.life ? d.life.seen : null};');
-    ok(u30.wall === 'w_sakura' && u30.floor === 't1' && u30.tile && u30.life === 1, '1.30: trang nhận đủ mẫu tường / sàn để vẽ, sổ Sinh hoạt 1 việc: ' + JSON.stringify(u30));
+    // 1.30.1: số việc trong sổ = số việc Python đã ghi (10:00–17:30 StackChan thật có thể tự "Ngồi ghế nghỉ" trên Ghế gỗ vừa đặt
+    // → 2 việc; trước đây kịch bản đòi đúng 1 nên trượt tuỳ giờ chạy)
+    ok(u30.wall === 'w_sakura' && u30.floor === 't1' && u30.tile && u30.life === Object.keys(s.life).length && u30.life >= 1,
+      '1.30: trang nhận đủ mẫu tường / sàn để vẽ, sổ Sinh hoạt ' + Object.keys(s.life).length + ' việc: ' + JSON.stringify(u30));
     const ui = await js('const d = Garden._data(); return {coins: d.wallet.coins, tour: d.tour, greeting: GardenGreet.isGreeting(), sky: GardenPrefs.get("kb-sky")};');
     ok(ui.coins === exp.coins, 'giao diện hiện ' + ui.coins + ' xu');
     ok(!ui.tour, 'không có hướng dẫn người mới');

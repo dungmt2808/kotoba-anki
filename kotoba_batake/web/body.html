@@ -42,7 +42,11 @@
         <button type="button" id="kb-fields-open" class="kb-btn kb-btn-small kb-fields-open" title="Ngôn ngữ, loại note và trường Từ / Nghĩa / Cách đọc… của từng loại note">Cấu hình trường…</button>
         <button type="button" id="kb-paper-src" class="kb-btn kb-btn-small kb-fields-open" title="Gemini viết báo mỗi sáng bằng từ bạn đang học">Nguồn báo…</button>
         <button type="button" id="kb-app-icon" class="kb-btn kb-btn-small kb-fields-open" title="Bấm biểu tượng ことば畑 ngoài Anki là Anki tự mở và vào thẳng vườn">Tạo biểu tượng trên màn hình nền</button>
-        <button type="button" id="kb-report" class="kb-btn kb-btn-small kb-fields-open" title="Thông tin máy và lỗi gần đây để gửi người làm ことば畑 (không có tên deck hay nội dung thẻ)">Báo lỗi…</button>
+        <div class="kb-contact-row">
+          <button type="button" id="kb-report" class="kb-btn kb-btn-small kb-fields-open" title="Thông tin máy và lỗi gần đây để gửi người làm ことば畑 (không có tên deck hay nội dung thẻ)">Báo lỗi…</button>
+          <button type="button" id="kb-mail" class="kb-btn kb-btn-small kb-fields-open" title="Mở chương trình thư của máy tới maitrongdung10@gmail.com">Góp ý qua email…</button>
+        </div>
+        <div class="kb-sound-note kb-contact">Góp ý, báo lỗi gửi về: <b class="kb-contact-mail">maitrongdung10@gmail.com</b></div>
         <div class="kb-sound-note">Mở nhanh: <b id="kb-app-key">Ctrl+Shift+K</b> hoặc nút ことば畑 trên thanh Anki · F11: toàn màn hình.</div>
         <div class="kb-sound-note" title="Ôn bằng AnkiDroid / AnkiMobile rồi đồng bộ: vườn tự bù +1 xu mỗi lượt nhớ được, tính cả vào nhiệm vụ và mục tiêu hôm nay"><i class="kb-pi kb-pi-phone" aria-hidden="true"></i>Ôn trên điện thoại: <span id="kb-mobile-now"></span></div>
       </div>
@@ -272,12 +276,13 @@
         <button type="button" class="kb-yard-arrow" id="kb-yard-next" title="Cảnh sau (phím →)" aria-label="Cảnh sau">▸</button>
       </div>
       <button type="button" class="kb-yard-snap" id="kb-yard-snap" title="Chụp ảnh cảnh này" aria-label="Chụp ảnh vườn"><i class="kb-pi kb-pi-camera" aria-hidden="true"></i></button>
+      <button type="button" class="kb-yard-snap kb-today-tog" id="kb-today-tog" title="Thu gọn bảng Hôm nay" aria-label="Thu gọn bảng Hôm nay" aria-pressed="false"><i class="kb-pi kb-pi-memo" aria-hidden="true"></i><span class="kb-today-tog-t"></span></button>
       <button type="button" class="kb-yard-snap kb-life-chip" id="kb-life-chip" hidden aria-label="StackChan đang làm gì"><i class="kb-pi kb-pi-stack" aria-hidden="true"></i><span class="kb-life-chip-t"></span></button>
     </div>
     <div class="kb-yard-side">
       <div id="kb-today" class="kb-today" hidden>
         <div class="kb-today-main" title="">
-          <div class="kb-today-head"><span class="kb-today-text" id="kb-today-text"></span><button type="button" id="kb-weather" class="kb-weather" title="Đổi giờ / thời tiết"><i class="kb-pi kb-pi-sun" aria-hidden="true"></i></button></div>
+          <div class="kb-today-head"><span class="kb-today-text" id="kb-today-text"></span><button type="button" id="kb-weather" class="kb-weather" title="Đổi giờ / thời tiết"><i class="kb-pi kb-pi-sun" aria-hidden="true"></i></button><button type="button" id="kb-today-hide" class="kb-today-hide" title="Thu gọn bảng này (mở lại bằng nút ở góc dưới bên trái cảnh)" aria-label="Thu gọn bảng Hôm nay">–</button></div>
           <div class="kb-today-bar"><div class="kb-today-fill" id="kb-today-fill"></div></div>
         </div>
         <div class="kb-today-list">

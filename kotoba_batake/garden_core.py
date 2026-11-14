@@ -3430,7 +3430,7 @@ class GardenState:
             need = season.STREAK_NEED[theme["kind"]]
             avail = season.streak_available(int(streak), int(day), ss["free_day"])
             if avail < need:
-                raise HomeError(f"Cần chuỗi {need} ngày ôn liên tiếp (hiện dùng được {avail} ngày).")
+                raise HomeError(f"Cần {need} ngày ôn liền để đổi (đang có {avail} ngày).")
             ss["free_day"] = int(day)
         else:
             raise HomeError("Cách mở khoá không hợp lệ.")

@@ -1860,7 +1860,7 @@ button { cursor: pointer; }
 
 /* ---- 1.21: Album khách (tab trong Nhà & Cửa hàng) ---- */
 .kb-h-guestcard { grid-column: span 2; align-items: flex-start; }
-.kb-h-guest-ja { margin-left: 6px; font-size: 12px; font-weight: 400; color: #4a4a66; }
+.kb-h-guest-ja { display: inline-block; margin-left: 6px; font-size: 12px; font-weight: 400; color: #4a4a66; white-space: nowrap; }   /* 1.30.1: chữ Nhật không bị cắt giữa từ (フロ|ーリング) */
 .kb-h-guest { width: 66px; height: 66px; background: #e9f7ff; }
 .kb-h-guest-un { background: #ececf2; }
 .kb-h-guestcard:not(.kb-h-using) .kb-h-name { color: #6b6f86; }
@@ -1891,6 +1891,18 @@ button { cursor: pointer; }
 .kb-yard-snap:hover { background: #ffd23f; }
 .kb-yard-snap .kb-pi { margin: 0; }
 .kb-ui-m-main.kb-ui-yard-hide .kb-yard-snap { display: none !important; }
+/* 1.30.1: nút thu gọn / hiện bảng Hôm nay */
+.kb-ui-today-mini .kb-yard-side .kb-today { display: none !important; }
+.kb-today-tog { position: relative; gap: 5px; }
+.kb-today .kb-today-hide { flex: none; margin: 0 -4px 0 0; padding: 0 5px; min-height: 18px; border: 0; box-shadow: none; background: transparent;
+  font: inherit; font-size: 14px; font-weight: 700; line-height: 1.25; color: #4a4a66; cursor: pointer; }
+.kb-today .kb-today-hide:hover { background: #fff2b3; color: #1b1b2f; }
+.kb-today-tog .kb-today-tog-t:empty { display: none; }
+.kb-today-tog.is-mini { background: #fff2b3; }
+.kb-today-tog.is-mini:hover { background: #ffd23f; }
+.kb-today-tog.is-new::after { content: ""; position: absolute; right: -4px; top: -4px; width: 7px; height: 7px; background: #ff4f6d;
+  border: 2px solid #1b1b2f; }
+.kb-ui-m-main.kb-ui-yard-hide.kb-ui-today-mini .kb-yard-side .kb-today { display: flex !important; }
 .kb-snap-pop { position: fixed; z-index: 60; width: 236px; padding: 8px; font-size: 13px; line-height: 1.35; background: #fff8dc;
   border: 3px solid #1b1b2f; box-shadow: 4px 4px 0 #1b1b2f; }
 .kb-snap-pop[hidden] { display: none; }
@@ -2097,3 +2109,26 @@ button { cursor: pointer; }
 /* khung cảnh của bảng Nhà: nền giấy ấm thay cho xanh nhạt */
 .kb-h-view { background-color: var(--kb-paper-warm); }
 .kb-toast:not(.kb-toast-link), .kb-tip { background: var(--kb-paper-warm); }
+
+/* 1.30.1: hỏi lại trước khi trả xu */
+.kb-ask { position: fixed; inset: 0; z-index: 9000; display: flex; align-items: center; justify-content: center;
+  background: rgba(27, 27, 47, 0.38); }
+.kb-ask[hidden] { display: none; }
+.kb-ask-card { min-width: 280px; max-width: min(440px, calc(100vw - 32px)); box-sizing: border-box; padding: 14px 16px 12px;
+  background: var(--kb-paper, #fffcf2); border: 3px solid #1b1b2f; box-shadow: 5px 5px 0 #1b1b2f; animation: kb-panel-in 0.18s steps(3); }
+.kb-ask-t { font-weight: 700; font-size: 15px; line-height: 1.35; overflow-wrap: anywhere; }
+.kb-ask-d { margin-top: 6px; font-size: 13px; color: #4a4a66; }
+.kb-ask-n { margin-top: 4px; font-size: 12px; color: #6b5a3a; }
+.kb-ask-btns { display: flex; justify-content: flex-end; gap: 10px; margin-top: 14px; }
+.kb-ask-btns .kb-btn { min-width: 76px; margin-left: 0; font-size: 14px; padding: 5px 12px; }
+.kb-ask-no { background: var(--kb-paper, #ffffff); }
+.kb-ask-no:hover { background: #fff2b3; }
+.kb-ask-yes { background: #6be08a; }
+.kb-ask-yes:focus-visible, .kb-ask-yes:focus { outline: 2px dashed #1b1b2f; outline-offset: 2px; }
+.kb-ask-yes.is-wait { opacity: 0.55; cursor: default; }
+
+/* 1.30.1: liên hệ ở ⚙ */
+.kb-contact { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; }
+.kb-contact-mail { user-select: text; overflow-wrap: anywhere; }
+.kb-contact-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.kb-contact-row .kb-fields-open { margin-right: 0; }
