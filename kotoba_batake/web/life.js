@@ -18,7 +18,7 @@ var GardenLife = (function () {
   const ROOMS = ["kitchen", "room", "bedroom"];
   const FLOOR = { y0: 52, y1: 87 };                                  // chân đứng được trong phòng
   const GROUND = { x0: 72, x1: 246, y0: 42, y1: 74 };                // … và ngoài trời (bên phải nhà / công trình)
-  const SLOT_MS = 180000, WALK = 15, SEEN_S = 1.5, INVITE_MS = 240000;
+  const SLOT_MS = 180000, WALK = 22, SEEN_S = 1.5, INVITE_MS = 240000;
   const SCENE_NAME = { yard: "Sân vườn", room: "Phòng chính", kitchen: "Bếp", bedroom: "Phòng ngủ", beach: "Bãi biển",
     shrine: "Đền trên núi", festival: "Phố lễ hội", bamboo: "Rừng tre", onsen: "Suối nước nóng", station: "Ga làng quê" };
   // chỗ đứng mặc định của từng cảnh (toạ độ cảnh; trong nhà: toạ độ của gian)
@@ -521,7 +521,7 @@ var GardenLife = (function () {
   // toạ độ cảnh / gian → có bấm trúng StackChan không
   function at(scene, ax, ay) {
     const b = lastBox;
-    if (!b || !actor || Date.now() - b.t > 500) { return false; }
+    if (!b || !actor || (!still() && Date.now() - b.t > 500)) { return false; }      // cảnh Đứng yên chỉ vẽ lại mỗi ~30 giây
     if (b.scene !== scene && !(scene === "house" && isRoom(b.scene))) { return false; }
     const bx = scene === "house" ? b.x + HOUSE_X[b.scene] : b.x;
     return ax >= bx - 2 && ax <= bx + b.w + 2 && ay >= b.y - 2 && ay <= b.y + b.h + 2;

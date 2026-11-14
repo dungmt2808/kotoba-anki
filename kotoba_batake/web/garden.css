@@ -2058,7 +2058,7 @@ button { cursor: pointer; }
 .kb-h-only { color: #9a5310; font-weight: 700; }
 
 /* ---- 1.30: sinh hoạt của StackChan (chip, thẻ, sổ) + Tường & sàn ---- */
-.kb-life-chip { gap: 5px; max-width: 190px; padding: 1px 7px; }
+.kb-life-chip { gap: 5px; max-width: 190px; }
 .kb-life-chip[hidden] { display: none; }
 .kb-life-chip .kb-pi { margin: 0; }
 .kb-life-chip-t { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

@@ -55,8 +55,10 @@ async function reopen(before, w, h) {
   if (!page) { throw new Error('không thấy trang vườn'); }
   await py(KB + `kb._dialog.resize(${w || 1366}, ${h || 860}); result = 1`);
   await waitFor('typeof Garden !== "undefined" && Garden._data && !!Garden._data() && !!Garden._data().life', 8000);
+  await js('GardenLife._force("", "yard"); return 1;');      // nghỉ ngoài sân: các phần không thử sinh hoạt không ghi sổ ngoài ý muốn
   await sleep(500);
 }
+const CLEAR_LIFE = 'mw.col.set_config("kotoba_batake_life", {})\n';
 async function refresh(before) { await py(KB + (before || '') + '\nkb._dialog.refresh(); result = 1'); await sleep(500); }
 const sky = (h, w) => js(`GardenSky.set("mode", "fixed"); GardenSky.set("fixedHour", ${h}); GardenSky.set("weather", "${w || 'sunny'}"); return 1;`);
 const coins = () => py(KB + 'result = st.load()["coins"]');
@@ -126,6 +128,8 @@ const PUT = (list) => list.map(([sc, id, x, y]) => `st.buy("${id}"); st.place("$
   const stopTxt = await js('return [...document.querySelectorAll(\'[data-decor="wall:w_sao"] button\')].map((b) => b.textContent).join("|");');
   ok(/Dừng xem thử/.test(stopTxt), 'nút thành "Dừng xem thử"');
   await py(KB + 'st.open_rooms(); kb._dialog.refresh(); result = 1'); await sleep(600);
+  const c2b = await coins();
+  ok(c2b === c2 - 2000, 'mở rộng nhà (Bếp + Phòng ngủ): −2.000 xu');
   await clickBtn('.kb-h-scene[data-scene="kitchen"]'); await sleep(600);
   const headK = await js('return document.querySelector(".kb-decor-head .kb-h-name").textContent;');
   ok(headK === 'Đang trang trí: Bếp', 'đổi gian bằng nút cảnh → ' + headK);
@@ -135,7 +139,7 @@ const PUT = (list) => list.map(([sc, id, x, y]) => `st.buy("${id}"); st.place("$
   const kWall0 = await panelPx(20, 12);
   await clickBtn('[data-decor="wall:w_sakura"] .kb-h-buy'); await sleep(700);
   let dd = await decor();
-  ok(dd.use.kitchen.wall === 'w_sakura' && dd.use.room.wall === 'w_sakura' && (await coins()) === c2, 'mẫu đã mua dùng thêm cho Bếp: miễn phí');
+  ok(dd.use.kitchen.wall === 'w_sakura' && dd.use.room.wall === 'w_sakura' && (await coins()) === c2b, 'mẫu đã mua dùng thêm cho Bếp: miễn phí');
   ok((await panelPx(20, 12)) !== kWall0, 'tường Bếp đổi');
   await clickBtn('[data-decor="wall:"] .kb-h-buy'); await sleep(700);
   dd = await decor();
@@ -207,21 +211,28 @@ const PUT = (list) => list.map(([sc, id, x, y]) => `st.buy("${id}"); st.place("$
   await shot('04_dai_trong_nha');
 
   console.log('== 6. sinh hoạt theo giờ (không ép)');
-  await refresh(PUT([['bedroom', 'beddo', 1, 2], ['kitchen', 'nagashi', 2, 1], ['kitchen', 'shokutaku', 3, 3], ['room', 'tea', 6, 1], ['room', 'desk', 2, 1], ['room', 'shelf', 0, 1]]));
+  await refresh(CLEAR_LIFE + PUT([['bedroom', 'beddo', 1, 2], ['kitchen', 'nagashi', 2, 1], ['kitchen', 'shokutaku', 3, 3], ['room', 'tea', 6, 1], ['room', 'desk', 2, 1], ['room', 'shelf', 0, 1]]));
   const life0 = await js('const l = Garden._data().life; return [l.total, Object.keys(l.defs).length, l.groups.length, l.seen, Object.keys(l.can).sort().join(",")].join("|");');
   ok(/^(\d+)\|\1\|8\|0\|bedroom,kitchen,room,yard$/.test(life0), 'data.life: ' + life0);
-  await sky(23); await sleep(300);
+  await sky(23); await js('GardenLife._force(null); return 1;'); await sleep(300);
   const night = await js('const c = GardenLife._candidates(); return c.map((x) => x.id + "@" + x.scene).join(",") + " → " + GardenLife._current().id;');
   ok(night === 'neru@bedroom → neru', '23 giờ, có giường: chỉ Ngủ ở Phòng ngủ (' + night + ')');
-  await js('GardenHome.showMain("house"); return 1;'); await sleep(1500);
+  await js('GardenHome.showMain("house"); return 1;');
+  await waitFor('(() => { const a = GardenLife._actor(); return a && a.act === "neru" && a.phase === "do"; })()', 40000);
   const a23 = await js('return JSON.stringify(GardenLife._actor());');
   ok(/"loc":"bedroom"/.test(a23) && /"mode":"bed"/.test(a23) && /"phase":"do"/.test(a23), 'StackChan nằm trên giường: ' + a23.slice(0, 120));
   await shot('05_ngu');
+  await waitFor('(() => { const l = Garden._data().life; return l && l.seen >= 1; })()', 6000);
   await sky(7.5); await sleep(300);
   const morning = await js('return GardenLife._candidates().map((x) => x.id).join(",");');
   ok(/ryouri/.test(morning) && /taberu/.test(morning) && /ocha/.test(morning) && !/neru/.test(morning), '7:30: nấu ăn, ăn cơm, pha trà (' + morning + ')');
   const chip = await js('GardenLife.sync(); const c = document.getElementById("kb-life-chip"); return [c.hidden, c.querySelector(".kb-life-chip-t").textContent].join("|");');
   ok(/^false\|.+/.test(chip), 'chip trên dải cảnh: ' + chip);
+  const nightSeen = await py(KB + 'result = sorted(mw.col.get_config("kotoba_batake_life", {}).get("seen", {}))');
+  ok(nightSeen.join() === 'neru', 'việc tự làm (Ngủ) cũng vào sổ khi đã thấy: ' + nightSeen.join());
+  await js('GardenLife._force("", "yard"); return 1;');
+  await refresh(CLEAR_LIFE);
+  await waitFor('document.getElementById("kb-toast").hidden', 9000);       // thông báo "Sinh hoạt mới: Ngủ" tự tắt
 
   console.log('== 7. thấy ≥ 1,5 giây → ghi sổ');
   await js('GardenLife._force("ocha", "room"); return 1;'); await sleep(400);
@@ -240,7 +251,7 @@ const PUT = (list) => list.map(([sc, id, x, y]) => `st.buy("${id}"); st.place("$
   ok(seenKeys.join() === 'ocha', 'lệnh giả (việc lạ, sai cảnh, giường không ở gian đó, vùng chưa mở, chưa có radio): không ghi (' + seenKeys.join() + ')');
   // đang ôn thẻ: không ghi, không thông báo
   await js('GardenLife._force("hon", "room"); return 1;'); await sleep(200);
-  await js('document.getElementById("kb-water").click(); return 1;');
+  await js('document.getElementById("kb-review").click(); return 1;');
   await waitFor('!document.getElementById("kb-panel").hidden', 6000);
   await js('GardenLife._snap(); return 1;'); await sleep(3200);
   const rvSeen = await py(KB + 'result = sorted(mw.col.get_config("kotoba_batake_life", {}).get("seen", {}))');
@@ -283,7 +294,7 @@ const PUT = (list) => list.map(([sc, id, x, y]) => `st.buy("${id}"); st.place("$
   await sleep(500);
   const poke = await js('const c = document.getElementById("kb-life-card"); return [!!hit0(), c && !c.hidden, GardenHome.isOpen()].join("|"); function hit0() { return GardenLife._box(); }');
   ok(poke === 'true|true|false', 'bấm chuột thật trúng StackChan: mở thẻ, không mở bảng Nhà (' + poke + ')');
-  await js('GardenLife.closeCard(); return 1;');
+  await js('GardenLife.closeCard(); GardenLife._force("", "yard"); return 1;');
 
   console.log('== 9. Album → Sinh hoạt, thẻ cửa hàng, Lịch hoa');
   await js('GardenHome.openLife(); return 1;'); await sleep(700);
@@ -300,10 +311,10 @@ const PUT = (list) => list.map(([sc, id, x, y]) => `st.buy("${id}"); st.place("$
   await js('GardenHome.close(); return 1;');
   const today = await py(KB + 'result = kb.cal_today().isoformat()');
   const calLife = await py(KB + `v = kb.cal_day("${today}"); result = v.get("life")`);
-  ok(Array.isArray(calLife) && calLife.length === 2 && /お茶を入れる \(Pha trà\)/.test(calLife.join()), 'Lịch hoa hôm nay: Sinh hoạt ' + JSON.stringify(calLife));
+  ok(Array.isArray(calLife) && /お茶を入れる \(Pha trà\)/.test(calLife.join()) && /本を読む \(Đọc sách\)/.test(calLife.join()), 'Lịch hoa hôm nay: Sinh hoạt ' + JSON.stringify(calLife));
 
   console.log('== 10. vùng: tắm biển, tắm suối');
-  await refresh('for z in kb.core.ZONE_IDS:\n    st.unlock_zone(z)\n');
+  await refresh('d = st.load(); d["coins"] = 100000; st.save(d)\nfor z in kb.core.ZONE_IDS:\n    st.unlock_zone(z)\n');
   const zcan = await js('const c = Garden._data().life.can; return ["beach", "shrine", "festival", "bamboo", "onsen", "station"].map((z) => (c[z] || []).length).join(",");');
   ok(zcan.split(',').every((n) => Number(n) >= 2), 'vừa mở vùng là có việc (số việc từng vùng: ' + zcan + ')');
   await js('GardenHome.showMain("beach"); GardenLife._force("oyogu", "beach"); return 1;'); await sleep(900);
