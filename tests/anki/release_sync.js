@@ -66,6 +66,7 @@ result = {"coins": w["coins"], "waters": w.get("waters"), "bench": [p for p in y
   if (PHASE === 'a') {
     await py(KB + `kb.GREET_TEST_OFF = False
 kb.TOUR_TEST_OFF = False
+kb.LIFE_TEST_OFF = False
 kb.save_config(show_tooltips=False, sound=False, music=False)
 d = st.load(); d["coins"] = 2000; d["waters"] = 25; st.save(d)
 mw.col.decks.select([x.id for x in mw.col.decks.all_names_and_ids() if x.name == "A::Có câu ví dụ + audio"][0])
@@ -160,7 +161,7 @@ result = d.isoformat()`);
     const exp = JSON.parse(fs.readFileSync(OUT + '/expect.json', 'utf-8'));
     const m2 = PHASE === 'c';
     console.log(m2 ? '== c. máy 2: add-on mới, chỉ có collection (như sau khi đồng bộ AnkiWeb)' : '== b. máy 1: tắt hẳn Anki rồi mở lại');
-    await py(KB + 'kb.GREET_TEST_OFF = False\nkb.TOUR_TEST_OFF = False\nresult = 1');
+    await py(KB + 'kb.GREET_TEST_OFF = False\nkb.TOUR_TEST_OFF = False\nkb.LIFE_TEST_OFF = False\nresult = 1');
     if (m2) {
       const uf = await py(KB + 'result = sorted(x for x in os.listdir(os.path.join(kb.ADDON_DIR, "user_files")) if x not in ("README.txt",))');
       ok(!uf.some((x) => /state|more|journal|paper\.json|nha|season|events/.test(x)), 'máy 2 chưa có file sao lưu nào: ' + JSON.stringify(uf));

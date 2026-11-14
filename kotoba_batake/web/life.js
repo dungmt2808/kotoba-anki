@@ -239,7 +239,7 @@ var GardenLife = (function () {
   function current(now) {
     if (forced) { return forced; }
     const v = data();
-    if (!v) { return null; }
+    if (!v || v.off) { return null; }        // off: add-on test tắt StackChan cho kịch bản cũ (LIFE_TEST_OFF)
     let only = null;
     if (invite && now < invite.until) { only = invite.scene === "house" ? ROOMS.slice() : [invite.scene]; } else { invite = null; }
     const list = candidates(only);

@@ -45,7 +45,8 @@ const pick = (a) => a[Math.floor(rnd() * a.length)];
 const int = (a, b) => a + Math.floor(rnd() * (b - a + 1));
 
 (async () => {
-  await py(KB + `mw.col.set_config("kotoba_batake_life", {})
+  await py(KB + `kb.LIFE_TEST_OFF = False
+mw.col.set_config("kotoba_batake_life", {})
 d = st.load(); d["coins"] = 9000; st.save(d)
 for _ in range(7):
     try:

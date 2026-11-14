@@ -200,6 +200,13 @@ const noProp = propIds.filter((p) => L._build('hold', 0, p).join('') === L._buil
 ok(!noProp.length, 'đồ cầm tay nào cũng có hình (' + propIds.length + ' món)' + (noProp.length ? ' — thiếu: ' + noProp.join(',') : ''));
 ok(L._build('stand', 0, '').length === 16 && L._build('sit', 0, '').length === 14 && L._build('bath', 0, '').length === 13, 'đứng 16 hàng, ngồi 14 hàng, tắm / bơi chỉ có đầu');
 
+// add-on test tắt StackChan cho kịch bản cũ (data.life.off): không chọn việc, không vẽ, sổ vẫn đọc được
+L._force(null);
+data.life.off = true;
+ok(L._current() === null && frame('room').length === 0 && frame('yard').length === 0 && L.where() === null, 'data.life.off: không có StackChan ở cảnh nào, chip không có gì để hiện');
+delete data.life.off;
+ok(L._current() !== null, 'bỏ off: StackChan trở lại');
+
 const pass = results.filter(Boolean).length;
 console.log('\nKẾT QUẢ: ' + (pass === results.length ? 'TẤT CẢ OK (' + pass + ')' : (results.length - pass) + ' LỖI / ' + results.length));
 process.exit(pass === results.length ? 0 : 1);

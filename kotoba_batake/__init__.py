@@ -1664,6 +1664,9 @@ def _daily_stats(col: Any = None) -> dict[str, int]:
 # chặn; kịch bản của màn chào đặt lại False.
 GREET_TEST_OFF = False
 TOUR_TEST_OFF = False       # 1.26.1: add-on test (zz_kbtest) tắt hướng dẫn 3 bước cho kịch bản cũ
+LIFE_TEST_OFF = False       # 1.30: add-on test (zz_kbtest) tắt StackChan sinh hoạt cho kịch bản cũ — không vẽ, không chip, không
+                            # ghi sổ (thông báo "Sinh hoạt mới" chen vào hàng chờ thông báo; StackChan đứng trúng điểm ảnh kịch bản
+                            # đang đo). e2e_130 / e2e_fuzz / release_sync / audit.js bật lại
 _day_total: dict[str, Any] = {"key": None, "v": 0}
 
 
@@ -2460,6 +2463,8 @@ class GardenDialog(QDialog):
                 data["finds"] = None
             try:      # 1.30: sinh hoạt của StackChan + sổ Sinh hoạt
                 data["life"] = life_view(data["wallet"])
+                if LIFE_TEST_OFF:
+                    data["life"]["off"] = True      # kịch bản test cũ: không vẽ StackChan, không hiện chip (sổ vẫn có)
             except Exception as err:
                 _warn("sinh hoạt", err)
                 data["life"] = None
@@ -3521,7 +3526,7 @@ class GardenDialog(QDialog):
         Python xét lại việc đó có làm được ở cảnh đó không (đồ đã đặt, gian / vùng đã mở, tháng) rồi mới ghi sổ; mỗi việc
         ghi một lần mỗi ngày."""
         parts = cmd.split(":")
-        if len(parts) != 3 or parts[0] != "seen" or parts[1] not in life_core.ACTS:
+        if LIFE_TEST_OFF or len(parts) != 3 or parts[0] != "seen" or parts[1] not in life_core.ACTS:
             return
         aid, scene = parts[1], parts[2]
         try:

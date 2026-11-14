@@ -15,7 +15,7 @@
 
 Điểm cần biết trước khi phát hành:
 - Lần kiểm tra này tìm ra **một lỗi có từ các bản trước**: lệnh nội bộ có tham số JSON sai dạng làm Anki bật hộp lỗi (mục 3, lỗi 1). Người dùng bình thường không tự gửi được lệnh như vậy (trang không bao giờ gửi), nhưng đã sửa để chắc.
-- Hai kịch bản cũ **trượt ngẫu nhiên** (không phải lỗi sản phẩm) đã được làm cho chắc (mục 3, lỗi 7–8). Trước đây chúng có thể báo đỏ oan khoảng 1/12 lần chạy hoặc khi chạy test vào ban đêm.
+- Ba kịch bản cũ **trượt ngẫu nhiên** (không phải lỗi sản phẩm) đã được làm cho chắc (mục 3, lỗi 7–9). Trước đây chúng có thể báo đỏ oan khoảng 1/12 lần chạy hoặc khi chạy test vào ban đêm.
 
 Môi trường: Linux (Ubuntu 24.04, container), Anki **26.9.4** (Python 3.13, Qt 6.12) và **23.10.1** (Python 3.9, Qt 6.6), chạy không màn hình, điều khiển webview qua DevTools (`tests/anki/cdp.js`). Mỗi kịch bản một thư mục Anki mới.
 
@@ -26,7 +26,7 @@ Môi trường: Linux (Ubuntu 24.04, container), Anki **26.9.4** (Python 3.13, Q
 | 1. Sinh hoạt trong nhà / ngoài nhà theo đồ + giờ | StackChan sống trong nhà: 67 việc (29 trong nhà — ưu tiên ×3, 11 ngoài sân, 27 ở vùng), mỗi việc một câu tiếng Nhật, Sổ sinh hoạt; thú nuôi tìm món ưa thích | `test_130.py`, `test_life.js`, `e2e_130.js` mục 6–11 |
 | 2. Thiết kế bên trong nhà + việc riêng của vùng | 12 giấy dán tường + 9 sàn cho từng gian, vẽ mẫu riêng 16×16; mỗi vùng 3–6 việc riêng (tắm biển, tắm suối nước nóng, viếng đền, vớt cá vàng, ngồi thiền, đợi tàu…) | `test_130.py`, `e2e_130.js` mục 1–5, 10 |
 | 3. Giao diện ấm cúng, chill | nền kem thay trắng (80 chỗ), vệt nắng, đốm cỏ, ánh đèn vàng buổi tối, bụi nắng ở cửa sổ | `audit.js` (đo bố cục mọi màn), ảnh trước / sau bên dưới |
-| 4. Kiểm tra kỹ + thêm kịch bản + đánh giá | 6 bộ test mới (mục 2), 8 lỗi tìm ra và sửa (mục 3), chạy lại toàn bộ bộ cũ (mục 4) | báo cáo này |
+| 4. Kiểm tra kỹ + thêm kịch bản + đánh giá | 6 bộ test mới (mục 2), 9 lỗi tìm ra và sửa (mục 3), chạy lại toàn bộ bộ cũ (mục 4) | báo cáo này |
 
 ![Trước (1.28.0) và sau (1.30.0): nhà buổi tối — tường / sàn từng gian, ánh đèn ấm, StackChan đang ăn quà vặt cạnh tủ lạnh](anh/truoc_sau_nha_toi.png)
 
@@ -50,8 +50,8 @@ Môi trường: Linux (Ubuntu 24.04, container), Anki **26.9.4** (Python 3.13, Q
 
 | Bộ | Cách kiểm | Kết quả |
 |---|---|---|
-| `core/test_130.py` (offline) | tường / sàn: danh mục, dữ liệu rác, mua / dùng / gian chưa mở, mẫu tự vẽ, **mã 1.28 thật đọc + lưu ví**; sinh hoạt: 67 việc đủ câu Nhật / hình / món cần, `can_do`, sổ, lịch cả ngày; **tham số sai kiểu** ở mọi hàm nhận JSON từ trang | **133/133** |
-| `core/test_life.js` (offline, node) | `life.js` với đồng hồ giả: chọn việc theo giờ / đồ / thời tiết, ưu tiên trong nhà, đi → làm → ghi sổ một lần, không ghi khi không ở màn chính, đồ đổi ô → đi theo, mọi tư thế dựng được | **47/47** |
+| `core/test_130.py` (offline) | tường / sàn: danh mục, dữ liệu rác, mua / dùng / gian chưa mở, mẫu tự vẽ, **mã 1.28 thật đọc + lưu ví**; sinh hoạt: 67 việc đủ câu Nhật / hình / món cần, `can_do`, sổ, lịch cả ngày; **tham số sai kiểu** ở mọi hàm nhận JSON từ trang | **136/136** |
+| `core/test_life.js` (offline, node) | `life.js` với đồng hồ giả: chọn việc theo giờ / đồ / thời tiết, ưu tiên trong nhà, đi → làm → ghi sổ một lần, không ghi khi không ở màn chính, đồ đổi ô → đi theo, mọi tư thế dựng được | **49/49** |
 | `core/test_ngau_nhien.py` (offline) | **12 hạt × 350 thao tác ngẫu nhiên** trên ví thật, sau mỗi thao tác xét bất biến (xu ≥ 0, đặt ≤ có, gian bên mở cả đôi, mẫu đang dùng là mẫu đang có, lưu rồi đọc lại giống hệt) + giá trừ đúng từng xu | **đạt, 0 vi phạm / 4.200 thao tác** |
 | `core/test_ban_cu.py` (offline) | ví 1.30 đầy đủ cho **mã thật** của 1.23, 1.24, 1.25, 1.26.1, 1.28 (lấy từ git) đọc → mua → lưu, rồi 1.30 đọc lại | **đạt: không mất món / gian / mẫu / khoá nào** |
 | `anki/e2e_130.js` | bấm chuột thật trong Anki: Tường & sàn, Xưởng vẽ mẫu, StackChan theo giờ, thẻ, Sổ, vùng, tắt, Đứng yên, cửa sổ nhỏ, đặt / cất đồ → việc đổi ngay, chip ở 4 cỡ cửa sổ | **76/76** (26.9.4) · @E130_2310@ (23.10.1) |
@@ -70,6 +70,7 @@ Môi trường: Linux (Ubuntu 24.04, container), Anki **26.9.4** (Python 3.13, Q
 | 6 | Ở cửa sổ **1366 × 768 / 1280 × 720** cảnh Trong nhà: chip tên việc nằm đè lên góc dưới trái Bếp, **che StackChan đang ăn cơm ở bàn ăn**; tên việc dài bị cắt chữ ("Tắm suối nư…") | 1.30 (lúc làm) | `audit.js` (cờ "cắt chữ"), chụp ở 6 cỡ cửa sổ | chip lên trên hàng nút khi ở cảnh Trong nhà, chỉ còn hình khi vẫn chạm nhà, rộng tối đa 180 px (tên dài nhất 171 px); `e2e_130` kiểm ở 1024 / 1280 / 1366 / 1920 px |
 | 7 | Kịch bản `e2e_121` "đom đóm sáng trên nền tối" trượt ngẫu nhiên (~1/12 lần chạy): chụp một lần, trúng lúc cả đàn đang nhấp nháy dịu | 1.21 (kịch bản) | hồi quy, đo 60 mẫu trên cả 1.28 và 1.30 | kịch bản lấy lúc sáng nhất trong 2,5 giây. Không đổi mã sản phẩm |
 | 8 | Kịch bản `e2e_1258` "đèn trời bay" trượt khi máy chạy test đang là **ban đêm** (so màu chính xác, lớp tối ban đêm làm lệch màu) — bản 1.28 cũng trượt y hệt | 1.25.8 (kịch bản) | hồi quy lúc 0:30 | kịch bản giữ trời 10 giờ trước khi đếm màu. Không đổi mã sản phẩm |
+| 9 | Hai kịch bản cũ trượt 1 lần trên 23.10.1 vì StackChan của 1.30: `e2e_1259` F07 — thông báo "Sinh hoạt mới" (4,5 giây) chen vào hàng chờ đúng lúc kịch bản đo giờ; `e2e_124` — StackChan đứng trúng điểm ảnh kịch bản đang đo độ sáng sàn phòng chính | 1.30 (tương tác với kịch bản cũ) | hồi quy 23.10.1 | add-on test tắt StackChan sinh hoạt cho kịch bản cũ (`LIFE_TEST_OFF`, như đã làm với màn chào / hướng dẫn); kịch bản 1.30 và bộ đo bố cục bật lại. Sản phẩm chạy đúng (thông báo xếp hàng, không mất) |
 
 Ngoài ra chỉnh trong lúc làm: StackChan che TV / đè món khác → đứng cạnh món, tránh ô có đồ; Đền trên núi và Phố lễ hội thêm việc không cần đồ (Rung chuông đền, Ăn ở quầy hàng) để mở vùng là có việc ngay.
 
@@ -94,6 +95,7 @@ Ba kịch bản cũ được cập nhật vì giao diện đổi **có chủ đ�
 | Hai máy cùng ghi Sổ sinh hoạt trước khi đồng bộ | Thấp | bản ghi sau thắng; việc bị mất sẽ ghi lại khi thấy lần nữa (không có xu / thưởng gắn với sổ) |
 | Máy còn bản ≤ 1.28 | Thấp | không thấy tường / sàn mới và sinh hoạt, dữ liệu vẫn giữ (đã test với mã thật 1.23 → 1.28). Bản ≤ 1.13 chưa test |
 | Tốc độ vẽ | Thấp | mỗi khung thêm một nhân vật 24×16 + ≤ 14 hạt; `e2e_1253` (đo tốc độ vẽ cỡ Lớn) @E1253@ |
+| Thông báo "Sinh hoạt mới" (4,5 giây, mỗi việc một lần duy nhất) có thể hơi dày trong vài ngày đầu | Thấp | chỉ hiện ở màn chính, không hiện lúc ôn / chơi / đọc báo; nếu thấy phiền thì bỏ thông báo, giữ sổ (một dòng mã) |
 | Việc theo mùa (hoa anh đào, đào măng, đom đóm, quét lá) chỉ thấy đúng tháng | Thấp (đúng thiết kế) | Sổ ghi gợi ý "Tháng 3–4"; không mất gì khi lỡ |
 
 ## 6. Chưa kiểm — cần máy thật (10 phút)

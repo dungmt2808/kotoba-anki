@@ -84,6 +84,7 @@ kb.save_config(show_tooltips=False, sound=False, music=False, ui={"greet": "off"
 result = 1
 `;
 (async () => {
+  await py(KB + 'kb.LIFE_TEST_OFF = False\nresult = 1');        // add-on test tắt ghi Sổ sinh hoạt cho kịch bản cũ
   await py(SETUP);
   await py(KB + 'kb._dialog.close() if kb._dialog else None\nkb.open_garden()\nresult = 1');
   page = await gardenPage();

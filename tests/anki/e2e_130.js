@@ -82,7 +82,7 @@ kb.save_config(show_tooltips=False, sound=False, music=False, ui={"greet": "off"
 const PUT = (list) => list.map(([sc, id, x, y]) => `st.buy("${id}"); st.place("${sc}", "${id}", ${x}, ${y})`).join('\n') + '\n';
 
 (async () => {
-  await py(KB + SETUP + 'result = 1');
+  await py(KB + 'kb.LIFE_TEST_OFF = False\n' + SETUP + 'result = 1');       // add-on test tắt ghi Sổ sinh hoạt cho kịch bản cũ; ở đây bật lại
   await reopen();
   await sky(10);
 

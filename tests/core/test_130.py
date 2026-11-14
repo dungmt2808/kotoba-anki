@@ -364,6 +364,10 @@ ok('f"{WEB_BASE}/life.js"' in init and init.index("life.js") < init.index('f"{WE
 ok('cmd.startswith("life:")' in init and "life_core.can_do(aid, scene" in init, "life:seen đi qua can_do trước khi ghi sổ")
 ok('parts[0] == "decor" and len(parts) == 3 and parts[1] == "buy"' in init and 'cmd.startswith("tile:")' in init, "lệnh home:decor:* / craft:tile")
 ok('data["life"] = life_view(data["wallet"])' in init, "refresh gửi data.life")
+ok(re.search(r"^LIFE_TEST_OFF = False\b", init, re.M) and "if LIFE_TEST_OFF or len(parts) != 3" in init and 'data["life"]["off"] = True' in init
+   and "if (!v || v.off) { return null; }" in src("web/life.js"), "công tắc LIFE_TEST_OFF của add-on test mặc định tắt (bản phát hành luôn có StackChan, luôn ghi sổ)")
+ok("LIFE_HOME_ACTIONS" in init and 'lv.pop("defs", None)' in init and "GardenLife.rethink" in src("web/garden.js"), "lệnh home:* đổi đồ / cảnh trả kèm life (không defs), trang gọi rethink()")
+ok("function layoutChip" in src("web/life.js") and ".kb-life-chip.is-up" in src("web/garden.css") and ".kb-life-chip.is-mini" in src("web/garden.css"), "chip: is-up / is-mini khi chạm ngôi nhà")
 home_js = src("web/home.js")
 ok("decoOf(\"room\", opts)" in home_js and "decoOf(kind, opts)" in home_js and "if (opts && opts.style) { return null; }" in home_js,
    "ba gian vẽ theo mẫu riêng; ảnh xem thử kiểu nhà khác giữ nền thuần")
