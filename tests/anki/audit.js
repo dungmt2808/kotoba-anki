@@ -169,7 +169,8 @@ kb.JOURNAL.update(t, {"w": {"lang": "ja", "goc": goc, "st": "done", "seen": True
             {"goc": "行きたいです", "sua": "行きたいと思います", "loai": "tự nhiên hơn", "quy_tac": "と思います", "giai_thich": "Nói ý định với người khác nên thêm と思います."}],
     "con_lai": "", "tu_nhien": "", "nhan_xet": "Dùng đúng 予約する và 寒い, nối câu bằng ので tự nhiên. Hai lỗi đầu cùng một quy tắc."}, "u": time.time()})
 result = len(rows)`);
-  await py(KB + 'kb.open_garden(); result = 1'); await sleep(3000);
+  // 1.30: add-on test tắt StackChan sinh hoạt cho kịch bản cũ; bộ đo bố cục cần thấy chip + StackChan nên bật lại
+  await py(KB + 'kb.LIFE_TEST_OFF = False\nkb.open_garden(); result = 1'); await sleep(3000);
   page = await gardenPage();
   if (!page) { console.log('không thấy trang vườn'); process.exit(2); }
   for (const size of [[1366, 768], [1024, 700]]) { await tour(size); }

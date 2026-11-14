@@ -414,18 +414,256 @@ var GardenNhaArt = (function () {
     };
     const STYLES = Object.keys(WALLS);
     const cache = new Map();
-    function paint(ctx, S, ox, oy, kind, W, style) {
+
+    // ---------------------------------------------------------------- 1.30: giấy dán tường + sàn mua riêng / tự vẽ
+    // Mỗi mẫu vẽ đè lên phần tường (y 6–37) hoặc phần sàn (y 40–88) của nền theo kiểu nhà; xà, nẹp chân tường, cột vẫn
+    // theo kiểu nhà để ba gian liền nhau. Id khớp decor_core.py (WALLS / FLOORS).
+    const WT = 6, WB = 37;            // tường: từ dưới xà tới trên nẹp chân tường
+    const mod = (a, n) => ((a % n) + n) % n;
+    const DECO = {
+      // ---- giấy dán tường
+      w_kem: function (c, x0, x1) {
+        speckle(c, x0, x1, WT, WB, "#fbf3e2", "#f1e6cd", "#fffaf0", 71);
+        c(x0, WT, x1 - x0, 1, "#fffaf0"); c(x0, WB - 1, x1 - x0, 1, "#eadfc6");
+      },
+      w_soc: function (c, x0, x1) {
+        c(x0, WT, x1 - x0, WB - WT, "#f1f9f3");
+        for (let x = Math.floor(x0 / 8) * 8; x < x1; x += 8) {
+          const a = Math.max(x0, x), b = Math.min(x1, x + 4);
+          if (b > a) { c(a, WT, b - a, WB - WT, "#d3ecdd"); }
+          if (x >= x0) { c(x, WT, 1, WB - WT, "#b9dcc8"); }
+        }
+      },
+      w_sakura: function (c, x0, x1) {
+        c(x0, WT, x1 - x0, WB - WT, "#ffeef2"); c(x0, WT, x1 - x0, 1, "#fff7f9");
+        for (let y = WT + 3, r = 0; y < WB - 3; y += 7, r++) {
+          for (let x = Math.floor(x0 / 12) * 12 + (r % 2) * 6; x < x1; x += 12) {
+            if (x < x0 || x + 3 >= x1) { continue; }
+            const v = hs(x, y, 81);
+            if (v < 0.22) { c(x + 1, y + 1, 1, 1, "#ffc4d6"); continue; }
+            c(x + 1, y, 1, 1, "#ff9fbf"); c(x, y + 1, 1, 1, "#ffb3cc"); c(x + 2, y + 1, 1, 1, "#ffb3cc"); c(x + 1, y + 2, 1, 1, "#ffc4d6");
+            c(x + 1, y + 1, 1, 1, "#ffe27a");
+          }
+        }
+      },
+      w_seigaiha: function (c, x0, x1) {
+        c(x0, WT, x1 - x0, WB - WT, "#eaf0f8");
+        for (let y = WT, r = 0; y < WB; y += 4, r++) {
+          for (let x = Math.floor(x0 / 8) * 8 - 8 + (r % 2) * 4; x < x1; x += 8) {
+            [[0, 3], [1, 2], [2, 1], [3, 0], [4, 0], [5, 1], [6, 2], [7, 3]].forEach(([dx, dy]) => {
+              const px = x + dx; if (px >= x0 && px < x1 && y + dy < WB) { c(px, y + dy, 1, 1, "#3d5a80"); }
+            });
+            [[2, 3], [3, 2], [4, 2], [5, 3]].forEach(([dx, dy]) => { const px = x + dx; if (px >= x0 && px < x1 && y + dy < WB) { c(px, y + dy, 1, 1, "#9db6d6"); } });
+          }
+        }
+      },
+      w_asanoha: function (c, x0, x1) {
+        c(x0, WT, x1 - x0, WB - WT, "#e3f5f0");
+        for (let y = WT; y < WB; y++) {
+          for (let x = x0; x < x1; x++) {
+            const u = mod(x, 8), v = mod(y - WT, 8);
+            if (u === v || u === 7 - v) { c(x, y, 1, 1, "#2ec4b6"); }
+            else if (u === 0 || v === 0) { c(x, y, 1, 1, "#9adcd2"); }
+            else if (u === 4 && (v === 2 || v === 6)) { c(x, y, 1, 1, "#9adcd2"); }
+          }
+        }
+      },
+      w_caro: function (c, x0, x1) {
+        c(x0, WT, x1 - x0, WB - WT, "#fff5d2");
+        for (let y = WT; y < WB; y += 8) { c(x0, y, x1 - x0, Math.min(4, WB - y), "#ffe3a3"); }
+        for (let x = Math.floor(x0 / 8) * 8; x < x1; x += 8) {
+          const a = Math.max(x0, x), b = Math.min(x1, x + 4);
+          if (b <= a) { continue; }
+          for (let y = WT; y < WB; y += 8) { c(a, y, b - a, Math.min(4, WB - y), "#f5b971"); if (y + 4 < WB) { c(a, y + 4, b - a, Math.min(4, WB - y - 4), "#ffe3a3"); } }
+        }
+      },
+      w_go: function (c, x0, x1) {
+        const T3 = ["#d9a066", "#cf9258", "#e2ae78"];
+        for (let x = Math.floor(x0 / 8) * 8; x < x1; x += 8) {
+          const a = Math.max(x0, x), b = Math.min(x1, x + 8), tone = T3[Math.floor(hs(x, 3, 91) * 3)];
+          if (b <= a) { continue; }
+          c(a, WT, b - a, WB - WT, tone);
+          if (x >= x0) { c(x, WT, 1, WB - WT, "#a8703c"); }
+          if (x + 1 >= x0 && x + 1 < x1) { c(x + 1, WT, 1, WB - WT, lt(tone, 0.18)); }
+          const ky = WT + 4 + Math.floor(hs(x, 5, 92) * (WB - WT - 9));
+          if (hs(x, 7, 93) > 0.45 && x + 5 <= x1 && x + 3 >= x0) { c(x + 3, ky, 2, 3, dk(tone, 0.2)); c(x + 3, ky + 1, 1, 1, dk(tone, 0.4)); }
+        }
+      },
+      w_gach: function (c, x0, x1) {
+        c(x0, WT, x1 - x0, WB - WT, "#ead8c2");
+        for (let y = WT, r = 0; y < WB; y += 4, r++) {
+          for (let x = Math.floor(x0 / 10) * 10 - 10 + (r % 2) * 5; x < x1; x += 10) {
+            const a = Math.max(x0, x), b = Math.min(x1, x + 9), h = Math.min(3, WB - y);
+            if (b <= a || h <= 0) { continue; }
+            const tone = ["#c8553d", "#bf4d37", "#d1634a", "#b8492f"][Math.floor(hs(x, r, 95) * 4)];
+            c(a, y, b - a, h, tone); c(a, y, b - a, 1, lt(tone, 0.14));
+          }
+        }
+      },
+      w_tre: function (c, x0, x1) {
+        c(x0, WT, x1 - x0, WB - WT, "#f5f0da");
+        for (let x = Math.floor(x0 / 10) * 10; x < x1; x += 10) {
+          const sx = x + 3;
+          if (sx < x0 || sx + 3 > x1) { continue; }
+          c(sx, WT, 3, WB - WT, "#7fb069"); c(sx, WT, 1, WB - WT, "#a9d18e"); c(sx + 2, WT, 1, WB - WT, "#5f9150");
+          for (let y = WT + 3 + Math.floor(hs(x, 1, 97) * 6); y < WB; y += 9) { c(sx, y, 3, 1, "#4f7f3a"); }
+          if (hs(x, 2, 98) > 0.5 && sx + 6 <= x1) { const ly = WT + 6 + Math.floor(hs(x, 4, 99) * 14); c(sx + 3, ly, 2, 1, "#5f9150"); c(sx + 4, ly - 1, 2, 1, "#7fb069"); }
+        }
+      },
+      w_may: function (c, x0, x1) {
+        for (let y = WT; y < WB; y++) { c(x0, y, x1 - x0, 1, mixc("#a9d8ff", "#e3f4ff", (y - WT) / (WB - WT))); }
+        for (let x = Math.floor(x0 / 34) * 34; x < x1; x += 34) {
+          const cx = x + 4 + Math.floor(hs(x, 1, 101) * 12), cy = WT + 4 + Math.floor(hs(x, 2, 102) * 14);
+          [[2, 0, 7, 1], [0, 1, 12, 2], [1, 3, 9, 1]].forEach(([dx, dy, w, h]) => {
+            const a = Math.max(x0, cx + dx), b = Math.min(x1, cx + dx + w);
+            if (b > a) { c(a, cy + dy, b - a, h, "#ffffff"); }
+          });
+          const a2 = Math.max(x0, cx + 1), b2 = Math.min(x1, cx + 10);
+          if (b2 > a2) { c(a2, cy + 4, b2 - a2, 1, "#d6ecfb"); }
+        }
+      },
+      w_sao: function (c, x0, x1) {
+        for (let y = WT; y < WB; y++) { c(x0, y, x1 - x0, 1, mixc("#1f2452", "#343f85", (y - WT) / (WB - WT))); }
+        for (let y = WT + 1; y < WB - 1; y++) {
+          for (let x = x0; x < x1; x++) {
+            const v = hs(x, y, 105);
+            if (v > 0.985) { c(x, y, 1, 1, "#fff6c8"); }
+            else if (v < 0.006 && x > x0 && x + 1 < x1) { c(x, y, 1, 1, "#ffffff"); c(x - 1, y, 1, 1, "#aab6f0"); c(x + 1, y, 1, 1, "#aab6f0"); c(x, y - 1, 1, 1, "#aab6f0"); c(x, y + 1, 1, 1, "#aab6f0"); }
+          }
+        }
+      },
+      w_shoji: function (c, x0, x1) {
+        c(x0, WT, x1 - x0, WB - WT, "#fbf7ea");
+        for (let y = WT; y < WB; y++) { for (let x = x0; x < x1; x++) { if (hs(x, y, 107) > 0.975) { c(x, y, 1, 1, "#f1ead6"); } } }
+        for (let x = Math.floor(x0 / 12) * 12; x < x1; x += 12) { if (x >= x0) { c(x, WT, 1, WB - WT, "#8a5a34"); } }
+        for (let y = WT + 9; y < WB; y += 10) { c(x0, y, x1 - x0, 1, "#8a5a34"); }
+        c(x0, WT, x1 - x0, 1, "#6b4226"); c(x0, WB - 1, x1 - x0, 1, "#6b4226");
+      },
+      // ---- sàn
+      f_soi: function (c, x0, x1) { woodFloor(c, x0, x1, { fl: ["#f0d2a0", "#e8c690", "#f5dcb2"], ln: "#c9a36e" }, 6); },
+      f_occho: function (c, x0, x1) { woodFloor(c, x0, x1, { fl: ["#7a4e32", "#6e452b", "#86583a"], ln: "#4a2c1a" }, 6); },
+      f_xuongca: function (c, x0, x1) {
+        for (let y = FL; y < HH; y++) {
+          for (let x = x0; x < x1; x++) {
+            const col = Math.floor(x / 12), u = mod(x, 12), sgn = mod(col, 2) ? 1 : -1, sv = mod(y + sgn * u, 6);
+            const tone = ["#d9a066", "#cf9258", "#e2ae78"][mod(Math.floor((y + sgn * u) / 6) + col, 3)];
+            c(x, y, 1, 1, sv === 0 || u === 0 ? "#a8703c" : (sv === 1 ? lt(tone, 0.14) : tone));
+          }
+        }
+      },
+      f_tatami: function (c, x0, x1) { tatami(c, x0, x1, { mat: "#c9d98a", mat2: "#bccd7c", heri: "#2f4a6a" }); },
+      f_caro: function (c, x0, x1) { checker(c, x0, x1, "#f4f4f6", "#3a3a4a", "#9aa0b5"); },
+      f_gom: function (c, x0, x1) {
+        c(x0, FL, x1 - x0, HH - FL, "#f0d9c0");
+        for (let y = FL, r = 0; y < HH; y += 12, r++) {
+          for (let x = Math.floor(x0 / 12) * 12; x < x1; x += 12) {
+            const a = Math.max(x0, x + 1), b = Math.min(x1, x + 12), h = Math.min(11, HH - y - 1);
+            if (b <= a || h <= 0) { continue; }
+            const tone = ["#d2784f", "#c96d45", "#db8a60"][Math.floor(hs(x, r, 111) * 3)];
+            c(a, y + 1, b - a, h, tone); c(a, y + 1, b - a, 1, lt(tone, 0.16)); c(a, y + h, b - a, 1, dk(tone, 0.14));
+          }
+        }
+      },
+      f_da: function (c, x0, x1) {
+        c(x0, FL, x1 - x0, HH - FL, "#6b7080");
+        for (let y = FL, r = 0; y < HH; y += 8, r++) {
+          let x = Math.floor(x0 / 60) * 60 - 20 + Math.floor(hs(r, 3, 113) * 12);
+          while (x < x1) {
+            const L = 12 + Math.floor(hs(x, r, 114) * 12), a = Math.max(x0, x + 1), b = Math.min(x1, x + L), h = Math.min(7, HH - y - 1);
+            if (b > a && h > 0) {
+              const tone = ["#9aa0ae", "#8a90a0", "#a8aebc", "#9096a6"][Math.floor(hs(x, r, 115) * 4)];
+              c(a, y + 1, b - a, h, tone); c(a, y + 1, b - a, 1, lt(tone, 0.18));
+              if (hs(x, r, 116) > 0.6 && b - a > 6) { c(a + 3, y + 4, 3, 1, dk(tone, 0.12)); }
+            }
+            x += L;
+          }
+        }
+      },
+      f_tham: function (c, x0, x1) {
+        c(x0, FL, x1 - x0, HH - FL, "#d98f8f");
+        for (let y = FL; y < HH; y++) {
+          for (let x = x0; x < x1; x++) {
+            const v = hs(x, y, 117);
+            if (mod(x + y, 2) === 0 && v > 0.55) { c(x, y, 1, 1, "#e3a3a0"); } else if (v < 0.08) { c(x, y, 1, 1, "#c97a7c"); }
+          }
+        }
+        c(x0, FL, x1 - x0, 2, "#b8656c"); c(x0, FL + 2, x1 - x0, 1, "#f2c9b8");
+        for (let x = Math.ceil(x0 / 6) * 6; x < x1; x += 6) { c(x, FL + 4, 2, 2, "#f2c9b8"); c(x + 3, HH - 5, 2, 2, "#f2c9b8"); }
+        c(x0, HH - 2, x1 - x0, 2, "#b8656c");
+      },
+      f_co: function (c, x0, x1) {
+        c(x0, FL, x1 - x0, HH - FL, "#7fcf6a");
+        for (let y = FL + 1; y < HH; y++) {
+          for (let x = x0; x < x1; x++) {
+            const v = hs(x, y, 119);
+            if (v > 0.9) { c(x, y, 1, 2, "#5fb851"); } else if (v < 0.07) { c(x, y, 1, 1, "#a4e58f"); }
+            else if (v > 0.497 && v < 0.5 && x + 1 < x1) { c(x, y, 1, 1, "#ffffff"); c(x + 1, y, 1, 1, "#ffd23f"); }
+          }
+        }
+        c(x0, FL, x1 - x0, 1, "#5fb851");
+      },
+    };
+    // ô 16×16 tự vẽ lặp lại (rows = 16 chuỗi 16 ký tự màu, "." = để nguyên nền theo kiểu nhà)
+    function tilePaint(c, x0, x1, rowsArr, y0, y1) {
+      if (!rowsArr || rowsArr.length !== 16) { return; }
+      for (let y = y0; y < y1; y++) {
+        const row = rowsArr[(y - y0) % 16];
+        let run = null;
+        for (let x = x0; x <= x1; x++) {
+          const ch = x < x1 ? row[mod(x, 16)] : ".";
+          if (run && ch !== run.ch) { c(run.x, y, x - run.x, 1, P[run.ch] || run.ch); run = null; }
+          if (!run && ch !== ".") { run = { x: x, ch: ch }; }
+        }
+      }
+    }
+    // deco = {wall: id | null, floor: id | null, tiles: {t<n>: [16 hàng]}} — id lạ (bản mới hơn) thì giữ nền theo kiểu nhà
+    function decoPaint(c, x0, x1, deco) {
+      if (!deco) { return; }
+      const g = c.ctx;
+      const clip = (y0, y1, fn) => { g.save(); g.beginPath(); c.rect(x0, y0, x1 - x0, y1 - y0); g.clip(); try { fn(); } finally { g.restore(); } };
+      if (deco.wall) {
+        const t = deco.tiles && deco.tiles[deco.wall];
+        if (DECO[deco.wall] && deco.wall[0] === "w") { clip(WT, WB, () => DECO[deco.wall](c, x0, x1)); }
+        else if (t) { clip(WT, WB, () => tilePaint(c, x0, x1, t, WT, WB)); }
+      }
+      if (deco.floor) {
+        const t = deco.tiles && deco.tiles[deco.floor];
+        if (DECO[deco.floor] && deco.floor[0] === "f") { clip(FL, HH, () => DECO[deco.floor](c, x0, x1)); }
+        else if (t) { clip(FL, HH, () => tilePaint(c, x0, x1, t, FL, HH)); }
+      }
+    }
+    function decoKey(deco) {
+      if (!deco || (!deco.wall && !deco.floor)) { return ""; }
+      const one = (id) => (id ? id + (deco.tiles && deco.tiles[id] ? "=" + deco.tiles[id].join("") : "") : "");
+      return one(deco.wall) + "/" + one(deco.floor);
+    }
+    function paint(ctx, S, ox, oy, kind, W, style, deco) {
       const c = (x, y, w, h, col) => box(ctx, ox + x, oy + y, w, h, col, S);
       c.ctx = ctx;
+      c.rect = (x, y, w, h) => ctx.rect(Math.round((ox + x) * S), Math.round((oy + y) * S), Math.round(w * S), Math.round(h * S));
       WALLS[style](c, 0, W, kind, W);
+      decoPaint(c, 0, W, deco);
       shade(c, 0, W);
     }
+    // ô mẫu cho cửa hàng: vẽ một mảnh w × h của mẫu (slot: wall / floor) vào (ox, oy)
+    function swatch(ctx, S, ox, oy, w, h, id, rowsArr) {
+      const wall = rowsArr ? rowsArr.slot === "wall" : id[0] === "w", y0 = wall ? WT : FL;
+      const c = (x, y, ww, hh, col) => box(ctx, ox + x, oy + y - y0, ww, hh, col, S);
+      c.ctx = ctx;
+      c.rect = (x, y, ww, hh) => ctx.rect(Math.round((ox + x) * S), Math.round((oy + y - y0) * S), Math.round(ww * S), Math.round(hh * S));
+      ctx.save(); ctx.beginPath(); ctx.rect(Math.round(ox * S), Math.round(oy * S), Math.round(w * S), Math.round(h * S)); ctx.clip();
+      try {
+        if (rowsArr) { box(ctx, ox, oy, w, h, wall ? "#fbf3e2" : "#e0a466", S); tilePaint(c, 0, w, rowsArr.rows, y0, y0 + h); }
+        else if (DECO[id]) { DECO[id](c, 0, w); }
+      } finally { ctx.restore(); }
+    }
     // nền một gian (kind: room / kitchen / bedroom) theo kiểu nhà; W: bề ngang gian (phòng chính 160, gian bên 144)
-    function bg(ctx, S, ox, oy, kind, W, Hh, FLOOR, style) {
+    // 1.30: deco (tuỳ chọn) = giấy dán tường / sàn riêng của gian này
+    function bg(ctx, S, ox, oy, kind, W, Hh, FLOOR, style, deco) {
       style = STYLES.indexOf(style) >= 0 ? style : "classic";
       const tf = ctx.getTransform ? ctx.getTransform() : null, k = tf ? tf.a : 1, px = S * k;
-      if (!(Number.isInteger(px) && px >= 1 && px <= 16 && tf.b === 0 && tf.c === 0)) { paint(ctx, S, ox, oy, kind, W, style); return; }
-      const key = kind + "|" + style + "|" + W + "|" + px;
+      if (!(Number.isInteger(px) && px >= 1 && px <= 16 && tf.b === 0 && tf.c === 0)) { paint(ctx, S, ox, oy, kind, W, style, deco); return; }
+      const key = kind + "|" + style + "|" + W + "|" + px + "|" + decoKey(deco);
       let cv = cache.get(key);
       if (!cv) {
         if (cache.size > 40) { cache.clear(); }
@@ -433,7 +671,7 @@ var GardenNhaArt = (function () {
         cv.width = W * px; cv.height = HH * px;
         const g = cv.getContext("2d");
         g.imageSmoothingEnabled = false;
-        paint(g, px, 0, 0, kind, W, style);
+        paint(g, px, 0, 0, kind, W, style, deco);
         cache.set(key, cv);
       }
       const sm = ctx.imageSmoothingEnabled;
@@ -463,7 +701,8 @@ var GardenNhaArt = (function () {
       castle: { a: P.m, b: P.n, edge: P.k, board: P.n },
     };
 
-    return { ids: IDS, frameOf: frameOf, emit: emit, pal: pal, bg: bg, post: post, ROOF: ROOF, STYLES: STYLES, dk: dk, lt: lt };
+    return { ids: IDS, frameOf: frameOf, emit: emit, pal: pal, bg: bg, post: post, ROOF: ROOF, STYLES: STYLES, dk: dk, lt: lt,
+      DECO_IDS: Object.keys(DECO), swatch: swatch };
   }
 
   return { install: install };

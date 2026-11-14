@@ -17,7 +17,7 @@ var GardenUI = (function () {
     ["field", "Ruộng cây", [["full", "Chuyển động"], ["still", "Đứng yên"], ["dim", "Mờ, đứng yên"], ["hide", "Ẩn"]]],
     ["sky", "Hạt bay theo mùa (nền trang)", [["on", "Bật"], ["off", "Tắt"]]],
     ["weather", "Mưa / tuyết rơi, chớp", [["on", "Bật"], ["off", "Tắt"]]],
-    ["pets", "Thú nuôi, khách trên sân", [["on", "Bật"], ["off", "Tắt"]]],
+    ["pets", "Thú nuôi, khách, StackChan sinh hoạt", [["on", "Bật"], ["off", "Tắt"]]],
     ["mascot", "Linh vật nói chuyện", [["on", "Bật"], ["off", "Tắt"]]],
     ["joy", "Hiệu ứng thành tích", [["on", "Bật"], ["off", "Tắt"]]]
   ];

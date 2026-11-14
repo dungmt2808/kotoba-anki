@@ -14,6 +14,8 @@ var GardenCraft = (function () {
   let zoneMode = false, zone = null, zoneDraft = null;
   // 1.22 (giống cây tự vẽ): 5 lớp 16×16 "s0".."s4" = Hạt · Mầm · Cây non · Ra hoa · Ra quả
   let seedMode = false, seedDesign = null;
+  // 1.30: mẫu giấy dán tường / sàn tự vẽ — một ô 16×16 lặp lại (tileDesign = mục trong catalog.tiles khi sửa)
+  let tileMode = false, tileDesign = null, tileKind = "wall";
   // 1.25.5 (admin): sửa hình gốc — mỗi khung một lớp (w×h đúng hình gốc), bảng màu của nhóm; baseInfo {group, id, name}
   let baseMode = false, baseInfo = null;
   const STAGE_TIP = ["Hạt nằm trong đất (bỏ trống thì dùng hạt của cây gốc)", "Mầm vừa nhú", "Cây non có lá",
@@ -42,10 +44,12 @@ var GardenCraft = (function () {
   }
   function uzCat() { return (cat().more && cat().more.uzone) || { price: 5000, edit: 50, bg: [], ground: [], hills: [] }; }
   function seedCat() { return cat().myseed || { price: 500, edit: 50, max: 12, min: 3, stages: ["Hạt", "Mầm", "Cây non", "Ra hoa", "Ra quả"] }; }
+  function tileCat() { return (cat().decor && cat().decor.tile) || { price: 250, edit: 50, max: 12 }; }
   function seedCodes() { return [0, 1, 2, 3, 4].map((i) => codeOf("s" + i)); }
   function seedDrawn() { return seedCodes().filter(Boolean).length; }
   function priceOf(n) {
     if (baseMode) { return 0; }
+    if (tileMode) { const t = tileCat(); return tileDesign ? (px.join("") !== designOrig ? t.edit : 0) : t.price; }
     if (seedMode) { const m = seedCat(); return seedDesign ? (seedCodes().some((c, i) => c !== layers["s" + i].orig) ? m.edit : 0) : m.price; }
     if (zoneMode) { const u = uzCat(); return zone ? (codeOf("lm") !== layers.lm.orig || codeOf("env") !== layers.env.orig ? u.edit : 0) : u.price; }
     const c = cat().craft; return c ? (design ? (px.join("") !== designOrig ? c.edit : 0) : c.prices[String(n)]) : 0;
@@ -60,7 +64,7 @@ var GardenCraft = (function () {
     if (zoneMode || seedMode) { return Object.keys(layers).some((l) => l !== layer && layers[l].undo.length); }
     // 1.25.3 (audit BUG-03): đổi cỡ xoá lịch sử hoàn tác → so thẳng hình đang có (món mới: còn ô nào đã tô; sửa món: khác hình gốc)
     const flat = px.join("");
-    return design ? flat !== designOrig : /[^.]/.test(flat);
+    return (design || (tileMode && tileDesign)) ? flat !== designOrig : /[^.]/.test(flat);
   }
   function zoneBg() {         // nền có sẵn của vùng (trời ban ngày) vẽ dưới lưới
     if (!zoneMode || !zoneDraft || !(window.GardenHome && GardenHome.zoneBgCanvas)) { return null; }
@@ -506,10 +510,35 @@ var GardenCraft = (function () {
     const n = has.filter(Boolean).length, need = seedCat().min || 3;
     $("kb-cf-prevnote").textContent = "Đã vẽ " + n + "/5" + (n < need ? " · vẽ tối thiểu " + need : "") + " · hình mờ = lấy từ giai đoạn trước";
   }
+  // 1.30: xem trước mẫu tường / sàn — ô đang vẽ lặp lại trong một góc phòng nhỏ, cạnh chậu cây để so cỡ
+  function drawTilePreview(cv) {
+    const S = 3, W = 72, Hh = 50, FLY = 24;
+    cv.style.width = ""; cv.style.height = "";
+    cv.width = W * S; cv.height = Hh * S;
+    const ctx = cv.getContext("2d"), pal = palette();
+    ctx.imageSmoothingEnabled = false;
+    ctx.fillStyle = "#fbf3e2"; ctx.fillRect(0, 0, W * S, FLY * S);
+    ctx.fillStyle = "#e0a466"; ctx.fillRect(0, FLY * S, W * S, (Hh - FLY) * S);
+    const y0 = tileKind === "wall" ? 3 : FLY, y1 = tileKind === "wall" ? FLY - 3 : Hh;
+    for (let y = y0; y < y1; y++) {
+      for (let x = 0; x < W; x++) {
+        const c = px[((y - y0) % 16) * 16 + (x % 16)];
+        if (c && c !== ".") { ctx.fillStyle = pal[c] || c; ctx.fillRect(x * S, y * S, S, S); }
+      }
+    }
+    ctx.fillStyle = "#6b3b1f"; ctx.fillRect(0, 0, W * S, 3 * S);                      // xà
+    ctx.fillStyle = "#efe0c6"; ctx.fillRect(0, (FLY - 3) * S, W * S, 3 * S);          // nẹp chân tường
+    ctx.fillStyle = "#1b1b2f"; ctx.fillRect(0, (FLY - 1) * S, W * S, S);
+    const ref = window.GardenHome && GardenHome._sprites ? GardenHome._sprites.plant : null;
+    const P = (window.GardenHome && GardenHome._pal) || pal;
+    if (ref) { ref.forEach((row, j) => { for (let i = 0; i < row.length; i++) { const c = row[i]; if (c !== ".") { ctx.fillStyle = P[c] || pal[c] || c; ctx.fillRect((50 + i) * S, (44 - ref.length + j) * S, S, S); } } }); }
+    $("kb-cf-prevnote").textContent = "Xem trước · ô 16×16 lặp lại kín " + (tileKind === "wall" ? "tường" : "sàn") + " · ô trống giữ nền của kiểu nhà";
+  }
   function drawPreview() {
     const cv = $("kb-cf-prev");
     if (!cv) { return; }
     if (seedMode) { drawSeedPreview(cv); return; }
+    if (tileMode) { drawTilePreview(cv); return; }
     if (baseMode) {       // 1.25.5: mọi khung cạnh nhau (×3)
       const ls = Object.keys(layers), S = 3, pad = 4, pal = palette();
       const W = ls.reduce((a, l) => a + layers[l].w + pad, pad), Hh = Math.max.apply(null, ls.map((l) => layers[l].h)) + pad * 2;
@@ -605,7 +634,8 @@ var GardenCraft = (function () {
     Array.prototype.forEach.call(document.querySelectorAll("#kb-craft [data-tool]"), (b) => b.classList.toggle("is-on", b.getAttribute("data-tool") === tool));
     Array.prototype.forEach.call(document.querySelectorAll("#kb-cf-pal [data-c]"), (b) => b.classList.toggle("is-on", b.getAttribute("data-c") === color));
     const price = priceOf(size), save = $("kb-cf-save");
-    save.textContent = baseMode ? (baseInfo && baseInfo.suggest ? "Lưu file góp ý" : "Lưu") : seedMode ? (seedDesign ? "Lưu giống · " + (price ? price + " xu" : "miễn phí") : "Tạo giống · " + price + " xu")
+    save.textContent = baseMode ? (baseInfo && baseInfo.suggest ? "Lưu file góp ý" : "Lưu")
+      : tileMode ? (tileDesign ? "Lưu mẫu · " + (price ? price + " xu" : "miễn phí") : "Tạo mẫu · " + price + " xu") : seedMode ? (seedDesign ? "Lưu giống · " + (price ? price + " xu" : "miễn phí") : "Tạo giống · " + price + " xu")
       : zoneMode ? (zone ? "Lưu vùng · " + (price ? price + " xu" : "miễn phí") : "Tạo vùng · " + price + " xu")
       : design ? "Lưu sửa · " + (price ? price + " xu" : "miễn phí") : "Chế tác · " + price + " xu";
     save.disabled = saving || coins() < price;
@@ -771,9 +801,12 @@ var GardenCraft = (function () {
     const zr = $("kb-cf-zoomrow"); if (zr) { zr.hidden = !on; }
     const cr = $("kb-craft"); if (cr) { cr.classList.toggle("kb-cf-zonemode", on); cr.classList.toggle("kb-cf-seedmode", mode === "seed"); }
     const tl = document.querySelector("#kb-craft .kb-g-title");
-    if (tl) { tl.textContent = on ? "工房 · Vùng tự tạo" : mode === "seed" ? "工房 · Giống cây tự vẽ" : mode === "base" ? "工房 · Hình gốc" : "工房 · Xưởng chế tác"; }
+    if (tl) {
+      tl.textContent = on ? "工房 · Vùng tự tạo" : mode === "seed" ? "工房 · Giống cây tự vẽ" : mode === "base" ? "工房 · Hình gốc"
+        : mode === "tile" ? (tileKind === "wall" ? "工房 · Giấy dán tường" : "工房 · Sàn nhà") : "工房 · Xưởng chế tác";
+    }
     $("kb-cf-name").maxLength = on ? 20 : 24;
-    $("kb-cf-name").placeholder = on ? "Tên vùng" : mode === "seed" ? "Tên giống cây" : "Món tự làm";
+    $("kb-cf-name").placeholder = on ? "Tên vùng" : mode === "seed" ? "Tên giống cây" : mode === "tile" ? "Tên mẫu" : "Món tự làm";
   }
   function setZoneUi(on) { setModeUi(on ? "zone" : "item"); }
   function swatches(boxId, list, key) {
@@ -792,6 +825,7 @@ var GardenCraft = (function () {
     if (!H) { return; }
     const u = uzCat();
     zoneMode = true; zone = z || null; design = null; seedMode = false; seedDesign = null; baseMode = false; baseInfo = null;
+    tileMode = false; tileDesign = null;
     zoneDraft = { name: z ? z.name : "", bg: z ? z.bg : ((u.bg[0] || {}).id || "meadow"),
       ground: z ? z.ground : (u.ground[0] || "#5ed35e"), hills: z ? z.hills : (u.hills[0] || "#7ed98a") };
     const [lw, lh] = layerDims("lm"), [ew, eh] = layerDims("env");
@@ -825,6 +859,7 @@ var GardenCraft = (function () {
   function openSeed(g) {
     if (!H) { return; }
     zoneMode = false; zone = null; zoom = 1; design = null; baseMode = false; baseInfo = null;
+    tileMode = false; tileDesign = null;
     seedMode = true; seedDesign = g || null;
     Object.keys(layers).forEach((k) => { delete layers[k]; });
     for (let i = 0; i < 5; i++) {
@@ -853,6 +888,7 @@ var GardenCraft = (function () {
     const cur = GardenFix.frames(info.group, info.id), org = GardenFix.original(info.group, info.id), names = Object.keys(cur);
     if (!names.length) { return; }
     zoneMode = false; zone = null; zoom = 1; design = null; seedMode = false; seedDesign = null;
+    tileMode = false; tileDesign = null;
     baseMode = true; baseInfo = { group: info.group, id: info.id, name: info.name || info.id, pal: GardenFix.pal(info.group, info.id), suggest: !!info.suggest };
     Object.keys(layers).forEach((k) => { delete layers[k]; });
     const bar = $("kb-cf-frames");
@@ -891,9 +927,31 @@ var GardenCraft = (function () {
     for (let y = 0; y < layers[l].h; y++) { out.push(p.slice(y * w, y * w + w).join("")); }
     return out;
   }
+  // 1.30: mẫu giấy dán tường / sàn tự vẽ — t = mục trong catalog.tiles (sửa) hoặc null (tạo mới, k = "wall" / "floor")
+  function openTile(t, k) {
+    if (!H) { return; }
+    zoneMode = false; zone = null; zoom = 1; seedMode = false; seedDesign = null; baseMode = false; baseInfo = null; design = null;
+    tileMode = true; tileDesign = t || null; tileKind = t ? t.kind : (k === "floor" ? "floor" : "wall");
+    size = 16; gw = gh = 16; kind = "floor";
+    px = decode(t ? t.px : "", 16, 16);
+    designOrig = px.join("");
+    $("kb-cf-name").value = t ? t.name : "";
+    setModeUi("tile");
+    mirror = false; fx = "none";
+    clearInterval(previewTimer); previewTimer = null;
+    img = null; undo = []; redo = []; saving = false; escArmed = false; tool = "pen"; hoverCell = null;
+    isOpen = true;
+    $("kb-craft").hidden = false;
+    buildPalette();
+    layout(); draw(); showWhole();
+    const tc = tileCat(), what = tileKind === "wall" ? "tường" : "sàn";
+    tip(t ? "Sửa mẫu “" + t.name + "” · đổi tên miễn phí, vẽ lại " + tc.edit + " xu"
+      : "Vẽ một ô 16×16, ô này lặp lại kín " + what + " · ô để trống thì thấy nền của kiểu nhà.");
+  }
   function open(it) {
     if (!H) { return; }
     zoneMode = false; zone = null; zoom = 1; seedMode = false; seedDesign = null; baseMode = false; baseInfo = null;
+    tileMode = false; tileDesign = null;
     setZoneUi(false);
     design = it || null;
     if (design) {
@@ -930,7 +988,8 @@ var GardenCraft = (function () {
     else if (r.bottom > window.innerHeight) { window.scrollBy(0, Math.min(r.top - 4, r.bottom - window.innerHeight + 4)); }
   }
   function close() {
-    if (!design && !zoneMode && !seedMode && !baseMode) { lastNew = { size: size, kind: kind }; }
+    if (!design && !zoneMode && !seedMode && !baseMode && !tileMode) { lastNew = { size: size, kind: kind }; }
+    if (tileMode) { tileMode = false; tileDesign = null; setModeUi("item"); }
     if (baseMode) { baseMode = false; baseInfo = null; setModeUi("item"); }
     freeUrl();
     isOpen = false; painting = false; escArmed = false;
@@ -955,6 +1014,14 @@ var GardenCraft = (function () {
       }
       saving = true; syncButtons(); tip("Đang lưu…");
       H.send(Object.keys(frames).length ? "base:save:" + JSON.stringify({ key: key, frames: frames }) : "base:reset:" + key);
+      return;
+    }
+    if (tileMode) {
+      if (!flat.replace(/\./g, "")) { tip("Hình còn trống, vẽ gì đó đã nhé!"); return; }
+      const payload = { name: $("kb-cf-name").value.trim() || "Mẫu của tớ", kind: tileKind, px: encode(flat) };
+      if (tileDesign) { payload.id = tileDesign.id; }
+      saving = true; syncButtons(); tip("Đang lưu…");
+      H.send("craft:tile:" + JSON.stringify(payload));
       return;
     }
     if (seedMode) {
@@ -1076,6 +1143,8 @@ var GardenCraft = (function () {
     open: open,
     openZone: openZone,
     openSeed: openSeed,
+    openTile: openTile,
+    savedTile: function () { const isNew = !tileDesign; saving = false; close(); return isNew; },
     close: close,
     isOpen: () => isOpen,
     image: function (p) { if (isOpen && p && p.url) { loadImage(p.url, p.name); } },
@@ -1091,7 +1160,7 @@ var GardenCraft = (function () {
     // cho test
     _state: () => ({ size: size, kind: kind, fx: fx, tool: tool, color: color, px: px.join(""), undo: undo.length, redo: redo.length, brush: brush, layer: layer, zoom: zoom, env: zoneMode ? codeOf("env") : "", lm: zoneMode ? codeOf("lm") : "", design: design && design.id, cell: cell,
       gw: gw, gh: gh, zone: zoneMode, zoneDraft: zoneDraft, seed: seedMode, seedId: seedDesign && seedDesign.id,
-      st: seedMode ? seedCodes() : null, price: priceOf(size), base: baseMode ? baseInfo && (baseInfo.group + ":" + baseInfo.id) : null, suggest: !!(baseMode && baseInfo && baseInfo.suggest),
+      st: seedMode ? seedCodes() : null, tile: tileMode ? tileKind : "", tileId: tileDesign && tileDesign.id, price: priceOf(size), base: baseMode ? baseInfo && (baseInfo.group + ":" + baseInfo.id) : null, suggest: !!(baseMode && baseInfo && baseInfo.suggest),
       frames: baseMode ? Object.keys(layers) : null }),
     _setLayer: setLayer, _zoom: zoomBy,
     _load: loadImage,

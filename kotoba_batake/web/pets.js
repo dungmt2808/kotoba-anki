@@ -68,9 +68,34 @@ var GardenPets = (function () {
     return a;
   }
 
-  function choose(a, p, now, st, scene) {
+  // 1.30: thú có chỗ ưa thích theo đồ đã đặt — đêm tìm chỗ êm để ngủ (bàn sưởi, nệm, thảm…), ngày ghé chơi cạnh món mình thích
+  const FAV = {
+    neko: { sleep: ["kotatsu", "futon", "dakimakura", "rug", "irori", "beddo"], day: ["aquarium", "kotatsu", "rug", "yasaikago", "irori"] },
+    usagi: { sleep: ["rug", "dakimakura", "futon"], day: ["plant", "yasaikago", "ikebana"] },
+    kame: { sleep: ["rug", "aquarium"], day: ["aquarium", "plant"] },
+    shiba: { sleep: ["bench", "well"], day: ["bench", "well", "mailbox", "swing", "posuto"] },
+    niwatori: { sleep: ["fence", "birdhouse", "scarecrow"], day: ["flowers", "sunflower", "rice", "scarecrow"] },
+    ahiru: { sleep: ["pond", "fountain"], day: ["pond", "fountain", "well", "luunuoc"] }
+  };
+  function favSpot(p, kind, scene, spots) {
+    const ids = (FAV[p.id] || {})[kind];
+    if (!ids || typeof spots !== "function") { return null; }
+    let list = [];
+    try { list = spots(ids) || []; } catch (e) { list = []; }
+    if (!list.length) { return null; }
+    const r = area(scene), sp = list[Math.floor(hash(p.id.charCodeAt(0) + Math.floor(Date.now() / 600000)) * list.length) % list.length];
+    const side = hash(p.id.length + sp.cx) > 0.5 ? 1 : -1;
+    return { x: Math.max(r.x0, Math.min(r.x1, sp.cx + side * (sp.w / 2 + 6))), y: Math.max(r.y0, Math.min(r.y1, sp.bottom + 2)) };
+  }
+  function choose(a, p, now, st, scene, spots) {
     const r = area(scene);
     const night = st && st.tod === "night", wet = st && (st.rain || st.snow) && scene !== "room" && scene !== "house";
+    if (night) {
+      const bed = a.bedAt && now - a.bedAt < 600000 ? null : favSpot(p, "sleep", scene, spots);
+      if (bed && Math.hypot(bed.x - a.x, bed.y - a.y) > 3 && (p.id !== "neko" || Math.random() < 0.8)) {
+        a.tx = bed.x; a.ty = bed.y; a.act = "walk"; a.then = "sleep"; a.bedAt = now; a.until = now + 20000; return;
+      }
+    }
     if (night && p.id !== "neko") { a.act = "sleep"; a.until = now + 8000; return; }
     if (night && Math.random() < 0.7) { a.act = "sleep"; a.until = now + 9000; return; }
     if (p.state === "hungry") {
@@ -78,6 +103,10 @@ var GardenPets = (function () {
     }
     if (wet && p.id !== "ahiru" && p.id !== "kame") {      // trời mưa: chạy vào gần hiên nhà ngồi
       a.tx = rnd(r.x0, r.x0 + 20); a.ty = r.y1 - 2; a.act = "walk"; a.until = now + 9000; return;
+    }
+    if (p.state !== "hungry" && Math.random() < 0.3) {       // ghé chỗ ưa thích rồi ngồi chơi một lúc
+      const fav = favSpot(p, "day", scene, spots);
+      if (fav && Math.hypot(fav.x - a.x, fav.y - a.y) > 6) { a.tx = fav.x; a.ty = fav.y; a.act = "walk"; a.then = "sit"; a.until = now + 20000; return; }
     }
     const lazy = p.id === "kame" || p.id === "neko" ? 0.25 : 0.12;
     if (Math.random() < lazy) { a.act = "sleep"; a.until = now + rnd(5000, 12000); return; }
@@ -88,12 +117,16 @@ var GardenPets = (function () {
     a.act = "walk"; a.until = now + 15000;
   }
 
-  function step(a, p, dt, now, st, scene) {
-    if (now >= a.until) { choose(a, p, now, st, scene); }
+  function step(a, p, dt, now, st, scene, spots) {
+    if (now >= a.until) { a.then = ""; choose(a, p, now, st, scene, spots); }
     if (a.act === "walk") {
       const dx = a.tx - a.x, dy = a.ty - a.y, d = Math.hypot(dx, dy);
       const sp = (SPEED[p.id] || 6) * (p.state === "hungry" ? 0.6 : 1) * ((st && st.rain && p.id === "ahiru") ? 1.6 : 1);
-      if (d < 1) { a.act = "sit"; a.until = now + rnd(1500, 4000); }
+      if (d < 1) {
+        if (a.then === "sleep") { a.act = "sleep"; a.until = now + rnd(9000, 16000); }
+        else { a.act = "sit"; a.until = now + (a.then === "sit" ? rnd(5000, 11000) : rnd(1500, 4000)); }
+        a.then = "";
+      }
       else { const k = Math.min(1, sp * dt / d); a.x += dx * k; a.y += dy * k; if (Math.abs(dx) > 0.3) { a.dir = dx > 0 ? 1 : -1; } }
     }
     if (a.hop > 0) { a.hop = Math.max(0, a.hop - dt * 2.5); }
@@ -150,13 +183,13 @@ var GardenPets = (function () {
     const sc = scene === "house" ? "room" : scene;      // 1.24: thú trong nhà đi khắp ba gian
     return petsOf(data).filter((p) => p.scene === sc && p.state !== "away" && SPR[p.id]);
   }
-  function place(data, scene, now, st) {
+  function place(data, scene, now, st, spots) {
     const out = [];
     const dt = lastAt[scene] ? Math.min(0.25, (now - lastAt[scene]) / 1000) : 0;
     lastAt[scene] = now;
     list(data, scene).forEach((p) => {
       const a = actor(scene, p);
-      step(a, p, dt, now, st, scene);
+      step(a, p, dt, now, st, scene, spots);
       out.push({ p: p, a: a, base: a.y });
     });
     return out.sort((x, y) => x.base - y.base);
@@ -191,7 +224,8 @@ var GardenPets = (function () {
     paint: paint,
     pal: PAL,
     // home.js gọi mỗi khung: trả danh sách đã sắp theo chân đứng; vẽ từng con bằng draw()
-    place: function (data, scene, now, st) { const l = place(data, scene, now, st); lastBoxes[scene] = l; return l; },
+    // spots (1.30, tuỳ chọn): hàm (ids) → chỗ các món đồ ở cảnh, để thú tìm chỗ ưa thích
+    place: function (data, scene, now, st, spots) { const l = place(data, scene, now, st, spots); lastBoxes[scene] = l; return l; },
     draw: drawOne,
     // toạ độ nghệ thuật → id thú dưới chuột
     at: function (scene, ax, ay) {
@@ -202,6 +236,8 @@ var GardenPets = (function () {
       }
       return null;
     },
+    // 1.30: chỗ các thú đang đứng ở cảnh (StackChan lại gần chơi cùng)
+    where: function (scene) { return (lastBoxes[scene] || []).map((e) => ({ id: e.p.id, x: e.a.x, y: e.a.y })); },
     cheer: function (id) {     // vừa cho ăn / bấm vào: nhảy lên + tim
       Object.keys(actors).forEach((k) => {
         if (k.split("|")[1] === id) { const a = actors[k]; a.hop = 1; a.act = "sit"; a.until = Date.now() + 2500; a.fx.push({ k: "heart", t: Date.now() }); }

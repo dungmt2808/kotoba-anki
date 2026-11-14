@@ -36,6 +36,7 @@ from . import event_core
 from . import fields_core
 from . import finds_core as finds
 from . import guest_core as guests
+from . import life_core
 from . import journal_core as journal
 from . import launcher
 from . import garden_core as core
@@ -105,6 +106,15 @@ def _manifest() -> dict[str, Any]:
 
 
 VERSION = str(_manifest().get("human_version") or "?")
+
+
+def _json_obj(raw: str) -> dict[str, Any]:
+    """1.30: tham số JSON của một lệnh cầu nối phải là một đối tượng. Dạng khác (null, số, mảng, chuỗi) coi như JSON hỏng
+    (ValueError) — trước đây `payload.get` ném AttributeError chưa bắt, Anki bật hộp lỗi (kịch bản bấm bừa e2e_fuzz.js)."""
+    v = json.loads(raw)
+    if not isinstance(v, dict):
+        raise ValueError("tham số không phải đối tượng JSON")
+    return v
 
 
 def _warn(where: str, err: Any) -> None:
@@ -1654,6 +1664,9 @@ def _daily_stats(col: Any = None) -> dict[str, int]:
 # chặn; kịch bản của màn chào đặt lại False.
 GREET_TEST_OFF = False
 TOUR_TEST_OFF = False       # 1.26.1: add-on test (zz_kbtest) tắt hướng dẫn 3 bước cho kịch bản cũ
+LIFE_TEST_OFF = False       # 1.30: add-on test (zz_kbtest) tắt StackChan sinh hoạt cho kịch bản cũ — không vẽ, không chip, không
+                            # ghi sổ (thông báo "Sinh hoạt mới" chen vào hàng chờ thông báo; StackChan đứng trúng điểm ảnh kịch bản
+                            # đang đo). e2e_130 / e2e_fuzz / release_sync / audit.js bật lại
 _day_total: dict[str, Any] = {"key": None, "v": 0}
 
 
@@ -1951,6 +1964,11 @@ def cal_day(ds: str) -> dict[str, Any]:
     except Exception as err:
         _warn("nhặt đồ", err)
         v["finds"] = []
+    try:      # 1.30: việc của StackChan thấy lần đầu hôm đó
+        v["life"] = ["%s (%s)" % (x["ja"], x["name"]) for x in life_core.new_between(LIFE.seen(), d, d)]
+    except Exception as err:
+        _warn("sinh hoạt", err)
+        v["life"] = []
     w = e.get("w")
     is_today = d == today
     v["w"] = None
@@ -2169,6 +2187,30 @@ GUESTS = guests.GuestStore(os.path.join(ADDON_DIR, "user_files", "guests.json"),
 EVENTS = finds.EventStore(os.path.join(ADDON_DIR, "user_files", "events.json"), col_getter=lambda: mw.col)
 
 
+# 1.30: sinh hoạt của StackChan (khoá collection kotoba_batake_life)
+LIFE = life_core.LifeStore(os.path.join(ADDON_DIR, "user_files", "life.json"), col_getter=lambda: mw.col)
+
+
+def _life_ctx(wallet: dict[str, Any]) -> tuple[dict[str, Any], list[str], bool]:
+    """(nhà, các cảnh StackChan tới được, có thú nuôi đang ở trong nhà không)."""
+    home = wallet.get("home") or {}
+    scenes = life_core.open_scenes(home, core.ROOM_UNLOCK_LEVEL)
+    pets = ((wallet.get("more_view") or {}).get("pets")) or []
+    pets_home = any(isinstance(p, dict) and p.get("scene") == "room" and p.get("state") != "away" for p in pets)
+    return home, scenes, pets_home
+
+
+# lệnh home:* làm đổi việc StackChan làm được (đồ đã đặt, cảnh đã mở, thú ở nhà)
+LIFE_HOME_ACTIONS = ("place", "move", "take", "zone", "nha", "build", "pet", "uzone")
+
+
+def life_view(wallet: dict[str, Any]) -> dict[str, Any]:
+    """1.30: việc StackChan làm được ở từng cảnh hôm nay + sổ Sinh hoạt (data.life)."""
+    home, scenes, pets_home = _life_ctx(wallet)
+    names = {k: v["name"] for k, v in core.CATALOG.items()}
+    return life_core.view(LIFE.seen(), home, scenes, cal_today(), pets_home, names)
+
+
 def _ped_shop_items() -> list[str]:
     """Món cửa hàng gánh hàng có thể giảm giá: món bán ở cửa hàng (không phải hiếm / theo mùa / quà / món riêng)."""
     return [k for k, v in core.CATALOG.items()
@@ -2349,7 +2391,7 @@ class GardenDialog(QDialog):
             js=[
                 f"{WEB_BASE}/diag.js", f"{WEB_BASE}/prefs.js", f"{WEB_BASE}/fix.js", f"{WEB_BASE}/icons.js", f"{WEB_BASE}/sky.js", f"{WEB_BASE}/season.js", f"{WEB_BASE}/fx.js", f"{WEB_BASE}/music.js",
                 f"{WEB_BASE}/games.js", f"{WEB_BASE}/fields.js", f"{WEB_BASE}/season_art.js", f"{WEB_BASE}/rare_art.js", f"{WEB_BASE}/nha_art.js", f"{WEB_BASE}/pets.js", f"{WEB_BASE}/guests.js",
-                f"{WEB_BASE}/finds_art.js", f"{WEB_BASE}/finds.js", f"{WEB_BASE}/home.js", f"{WEB_BASE}/craft.js", f"{WEB_BASE}/paper.js", f"{WEB_BASE}/seeds.js",
+                f"{WEB_BASE}/finds_art.js", f"{WEB_BASE}/finds.js", f"{WEB_BASE}/life.js", f"{WEB_BASE}/home.js", f"{WEB_BASE}/craft.js", f"{WEB_BASE}/paper.js", f"{WEB_BASE}/seeds.js",
                 f"{WEB_BASE}/joy.js", f"{WEB_BASE}/ui.js", f"{WEB_BASE}/calendar.js", f"{WEB_BASE}/greet.js", f"{WEB_BASE}/tour.js", f"{WEB_BASE}/garden.js",
             ],
             context=self,
@@ -2419,6 +2461,13 @@ class GardenDialog(QDialog):
             except Exception as err:
                 _warn("nhặt đồ / gánh hàng", err)
                 data["finds"] = None
+            try:      # 1.30: sinh hoạt của StackChan + sổ Sinh hoạt
+                data["life"] = life_view(data["wallet"])
+                if LIFE_TEST_OFF:
+                    data["life"]["off"] = True      # kịch bản test cũ: không vẽ StackChan, không hiện chip (sổ vẫn có)
+            except Exception as err:
+                _warn("sinh hoạt", err)
+                data["life"] = None
             self._plants = data["plants"]
             _dict_possible = bool(self._dict_candidates(_voice(cfg)) or self._word_candidates(_voice(cfg)))
             try:
@@ -2677,6 +2726,8 @@ class GardenDialog(QDialog):
             self._on_cal(cmd[len("cal:"):])
         elif cmd.startswith("guest:"):
             self._on_guest(cmd[len("guest:"):])
+        elif cmd.startswith("life:"):
+            self._on_life(cmd[len("life:"):])
         elif cmd.startswith("find:") or cmd.startswith("ped:"):
             self._on_find(cmd)
         elif cmd.startswith("share:"):
@@ -2822,7 +2873,7 @@ class GardenDialog(QDialog):
                 return
             if group == "paper" and action in ("issue", "q", "ct", "play"):
                 # 1.23: Kệ báo gộp hai nguồn → mã số báo "ngày@nguồn" chọn đúng thư mục và đúng ô tiến độ
-                payload0 = json.loads(arg) if action != "issue" else {}
+                payload0 = _json_obj(arg) if action != "issue" else {}
                 ref = arg if action == "issue" else str(payload0.get("d") or "")
                 lib, src, date0 = paper_ref(lang, ref)
                 if action == "issue":
@@ -2831,7 +2882,7 @@ class GardenDialog(QDialog):
                     payload0["d"] = date0
                     arg = json.dumps(payload0)
             if action == "play":
-                self._paper_play(group, json.loads(arg), lib)
+                self._paper_play(group, _json_obj(arg), lib)
                 return
             if group == "paper" and action == "lang":
                 self._paper_lang = arg if arg in PAPER_LANGS else ""
@@ -2869,8 +2920,9 @@ class GardenDialog(QDialog):
             if group == "dict" and action == "open":
                 self._dict_open(st, lib)
                 return
-            payload = json.loads(arg)
-            variants = [v for v in payload.get("v", []) if isinstance(v, str)][:20]
+            payload = _json_obj(arg)
+            raw_v = payload.get("v")
+            variants = [v for v in (raw_v if isinstance(raw_v, list) else []) if isinstance(v, str)][:20]
             voice = _voice()
             if group == "paper" and action == "q" and lib is not None:
                 res = paper.answer_question(lib, st, str(payload.get("d")), int(payload.get("i")), int(payload.get("c")),
@@ -2976,7 +3028,7 @@ class GardenDialog(QDialog):
                 ai_start_all("audio")
         elif action == "decks":                           # 1.19.1: deck lấy từ cho báo (tối đa 5)
             try:
-                p = json.loads(arg or "{}")
+                p = _json_obj(arg or "{}")
                 words.save_src(mw.col, str(p.get("lang")), p.get("decks"), p.get("mode"))
                 base = AI_DIRS.get(str(p.get("lang")), AI_DIR)
                 if os.path.isdir(base):            # lý do "chưa đủ từ" cũ không còn đúng với deck mới chọn
@@ -3193,7 +3245,7 @@ class GardenDialog(QDialog):
         """1.23: "Dịch số này" (Gemini dịch số cũ, một lượt) và "Kỳ này hay / Nhạt" (phản hồi cho truyện)."""
         lang = paper_lang(self)
         try:
-            p = json.loads(arg) if arg.startswith("{") else {"d": arg}
+            p = _json_obj(arg) if arg.startswith("{") else {"d": arg}
         except ValueError:
             return
         lib, src, date = paper_ref(lang, str(p.get("d") or ""))
@@ -3297,10 +3349,10 @@ class GardenDialog(QDialog):
         regrow = False   # đổi giống cây → dựng lại ruộng
         try:
             if parts[0] == "pet" and len(parts) >= 3 and parts[1] == "name":
-                payload = json.loads(cmd.split(":", 2)[2])
+                payload = _json_obj(cmd.split(":", 2)[2])
                 data = STATE.pet_name(str(payload.get("id")), payload.get("name"))
             elif parts[0] == "seed" and len(parts) >= 3 and parts[1] == "rule":
-                payload = json.loads(cmd.split(":", 2)[2])
+                payload = _json_obj(cmd.split(":", 2)[2])
                 data = STATE.seed_rule(str(payload.get("where")), payload.get("key"), payload.get("value"))
                 regrow = True
             elif parts[0] == "seed" and len(parts) == 3 and parts[1] == "buy":
@@ -3319,6 +3371,12 @@ class GardenDialog(QDialog):
                 data = STATE.zone_delete(parts[2])
             elif parts == ["nha", "open"]:          # 1.25: mở rộng nhà một lần (cả Bếp lẫn Phòng ngủ)
                 data = STATE.open_rooms()
+            elif parts[0] == "decor" and len(parts) == 3 and parts[1] == "buy":      # 1.30: giấy dán tường / sàn
+                data = STATE.decor_buy(parts[2])
+            elif parts[0] == "decor" and len(parts) == 5 and parts[1] == "use":
+                data = STATE.decor_use(parts[2], parts[3], parts[4])
+            elif parts[0] == "tile" and len(parts) == 3 and parts[1] == "del":
+                data = STATE.tile_delete(parts[2])
             elif len(parts) == 3 and (parts[0], parts[1]) in two:
                 data = two[(parts[0], parts[1])](parts[2])
                 regrow = parts[0] == "myseed"      # 1.22: xoá giống tự vẽ → cây mang giống đó về cây gốc
@@ -3355,8 +3413,17 @@ class GardenDialog(QDialog):
             return
         out: dict[str, Any] = {"wallet": data, "action": parts[0],
                                "sub": parts[1] if len(parts) > 2 or parts[0] in ("theme", "repair") else ""}
-        if parts[0] in ("craft", "myseed"):
+        if parts[0] in ("craft", "myseed", "tile"):
             out["catalog"] = core.home_catalog(data, STATE.load_px())
+        if parts[0] in LIFE_HOME_ACTIONS:
+            # 1.30: đặt / chuyển / cất đồ, mở vùng / gian, thú đổi chỗ → việc StackChan làm được + gợi ý trong sổ đổi ngay
+            # (trước đó phải mở lại vườn mới thấy). Không gửi lại "defs" (danh mục 67 việc không đổi).
+            try:
+                lv = life_view(data)
+                lv.pop("defs", None)
+                out["life"] = lv
+            except Exception as err:        # phần ngắm cho vui không được làm hỏng lệnh mua / đặt
+                _warn("sinh hoạt sau lệnh nhà", err)
         if regrow:
             self.refresh()
         self._js("home", out)
@@ -3452,6 +3519,32 @@ class GardenDialog(QDialog):
         view["new"] = gid if new else ""
         self._js("guests", view)
 
+    # -- 1.30: sinh hoạt của StackChan ---------------------------------------------------
+
+    def _on_life(self, cmd: str) -> None:
+        """life:seen:<việc>:<cảnh> — JS vừa cho người dùng thấy StackChan làm việc này (≥ 1,5 giây trên cảnh đang xem).
+        Python xét lại việc đó có làm được ở cảnh đó không (đồ đã đặt, gian / vùng đã mở, tháng) rồi mới ghi sổ; mỗi việc
+        ghi một lần mỗi ngày."""
+        parts = cmd.split(":")
+        if LIFE_TEST_OFF or len(parts) != 3 or parts[0] != "seen" or parts[1] not in life_core.ACTS:
+            return
+        aid, scene = parts[1], parts[2]
+        try:
+            wallet = STATE.load()
+            today = cal_today()
+            home, scenes, pets_home = _life_ctx(wallet)
+            if not life_core.can_do(aid, scene, home, scenes, today, pets_home):
+                return
+            _seen, new, wrote = LIFE.mark(aid, scene, today)
+            if not wrote:
+                return
+            view = life_view(wallet)
+        except Exception as err:
+            _warn("sinh hoạt", err)
+            return
+        view["new"] = aid if new else ""
+        self._js("life", view)
+
     # -- 1.22: mã chia sẻ thiết kế --------------------------------------------------
 
     def _on_share(self, cmd: str) -> None:
@@ -3498,7 +3591,7 @@ class GardenDialog(QDialog):
             return
         try:
             if action == "save":
-                p = json.loads(arg)
+                p = _json_obj(arg)
                 store = mau.set_fix(mau.read(MAU_LOCAL), p.get("key"), p.get("frames"))
                 mau.write(MAU_LOCAL, store)
                 self._js("fixes", {"fixes": fixes_merged()["sua"], "saved": p.get("key")})
@@ -3532,7 +3625,7 @@ class GardenDialog(QDialog):
 
     def _suggest_fix(self, arg: str) -> None:
         try:
-            p = json.loads(arg)
+            p = _json_obj(arg)
             data = mau.set_fix({}, p.get("key"), p.get("frames"))
         except (ValueError, AttributeError, mau.MauError) as err:
             self._js("toast", str(err) if isinstance(err, mau.MauError) else "Không lưu được góp ý này.")
@@ -3575,7 +3668,7 @@ class GardenDialog(QDialog):
         """snap:save:{name, url} — JS đã vẽ ảnh (PNG data URL); hỏi chỗ lưu rồi ghi file."""
         import base64
         try:
-            payload = json.loads(raw)
+            payload = _json_obj(raw)
             url = str(payload.get("url") or "")
             prefix = "data:image/png;base64,"
             if not url.startswith(prefix) or len(url) > 24 * 1024 * 1024:
@@ -3774,7 +3867,7 @@ class GardenDialog(QDialog):
             if action == "open":
                 self._js("fieldsData", core.fields_panel(mw.col, self.deck_id, config()))
             elif action == "save":
-                payload = json.loads(arg)
+                payload = _json_obj(arg)
                 mid = str(payload.get("mid", ""))
                 model = mw.col.models.get(int(mid)) if mid.lstrip("-").isdigit() else None
                 if not model:
@@ -3829,6 +3922,19 @@ class GardenDialog(QDialog):
                 return
             self.refresh()           # cây mang giống này đổi hình ngay
             self._js("home", {"wallet": data, "action": "myseed", "sub": "save", "id": data.get("myseed_id"),
+                              "catalog": core.home_catalog(data, STATE.load_px())})
+            return
+        if cmd.startswith("tile:"):   # 1.30: mẫu giấy dán tường / sàn tự vẽ (một ô 16×16 lặp lại)
+            try:
+                data = STATE.tile_save(json.loads(cmd[len("tile:"):]))
+            except core.HomeError as err:
+                self._js("homeError", str(err))
+                return
+            except (ValueError, OSError) as err:
+                _warn("mẫu tường / sàn", err)
+                self._js("homeError", "Không lưu được mẫu này.")
+                return
+            self._js("home", {"wallet": data, "action": "tile", "sub": "save", "id": data.get("tile_id"),
                               "catalog": core.home_catalog(data, STATE.load_px())})
             return
         if not cmd.startswith("save:"):

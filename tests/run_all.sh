@@ -12,6 +12,7 @@
 #   OLD124=<thư mục add-on bản 1.24.0> cho test_125.py (không đặt thì lấy từ git, commit bc66f66).
 #   OLD125=<thư mục add-on bản 1.25.0> cho test_1251.py (không đặt thì lấy từ git, commit 1912fb7).
 #   OLD1261=<thư mục add-on bản 1.26.1> cho test_128.py (không đặt thì lấy từ git, commit 6021c57).
+#   OLD128=<thư mục add-on bản 1.28.0> cho test_130.py (không đặt thì lấy từ git, commit 59e43c5).
 HERE=$(cd "$(dirname "$0")" && pwd)
 ADDON=${1:-$HERE/../kotoba_batake}
 FAIL=0
@@ -64,6 +65,15 @@ echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
 echo "== core/test_128.py"
 OUT=$(python3 "$HERE/core/test_128.py" "$ADDON" ${OLD1261:+"$OLD1261"} 2>&1); RC=$?
 echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
+echo "== core/test_130.py"
+OUT=$(python3 "$HERE/core/test_130.py" "$ADDON" ${OLD128:+"$OLD128"} 2>&1); RC=$?
+echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
+echo "== core/test_ngau_nhien.py (1.30: thao tác ngẫu nhiên + bất biến của ví)"
+OUT=$(python3 "$HERE/core/test_ngau_nhien.py" "$ADDON" 2>&1); RC=$?
+echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
+echo "== core/test_ban_cu.py (1.30: mã thật của 1.23 – 1.28 đọc + lưu vườn 1.30)"
+OUT=$(python3 "$HERE/core/test_ban_cu.py" "$ADDON" 2>&1); RC=$?
+echo "$OUT" | grep -E "✗|KẾT QUẢ|bỏ qua"; [ $RC = 0 ] || FAIL=1
 echo "== audit_20261112/core_audit.py (1.28: lỗi đã sửa → giữ làm kiểm tra hồi quy)"
 OUT=$(python3 "$HERE/audit_20261112/core_audit.py" "$ADDON" --out "${TMPDIR:-/tmp}/kb_core_audit.json" 2>&1); RC=$?
 echo "$OUT" | grep -E "^FAIL|CORE AUDIT"; [ $RC = 0 ] || FAIL=1
@@ -97,6 +107,9 @@ else
 fi
 echo "== core/test_guests.js"
 OUT=$(node "$HERE/core/test_guests.js" "$ADDON" 2>&1); RC=$?
+echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
+echo "== core/test_life.js"
+OUT=$(node "$HERE/core/test_life.js" "$ADDON" 2>&1); RC=$?
 echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
 echo "== core/test_colors.js"
 OUT=$(node "$HERE/core/test_colors.js" "$ADDON" 2>&1); RC=$?

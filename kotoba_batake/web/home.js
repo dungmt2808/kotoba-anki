@@ -2824,17 +2824,26 @@ var GardenHome = (function () {
   // 1.21: cùng lớp với thú nuôi là khách ghé vườn (guests.js) — tắt "Thú nuôi, khách trên sân" thì ẩn cả hai
   function petsFor(sceneName, now, st, opts) {
     if (!isOpen && UIget("pets") === "off") { return []; }
-    let list = typeof GardenPets !== "undefined" ? GardenPets.place(H.data(), sceneName, now, st) : [];
+    let list = typeof GardenPets !== "undefined" ? GardenPets.place(H.data(), sceneName, now, st, (ids) => spotsFor(sceneName, ids)) : [];
     if (typeof GardenGuests !== "undefined" && !(opts && opts.noGuests)) {
       const g = GardenGuests.place(sceneName, now, st, { spots: (ids) => spotsFor(sceneName, ids), seen: !!(opts && opts.seen) });
       if (g.length) { list = list.concat(g).sort((a, b) => a.base - b.base); }
     }
+    const lf = opts && opts.noGuests ? [] : lifeFor(sceneName, now, st, opts);       // 1.30: StackChan sinh hoạt
+    if (lf.length) { list = list.concat(lf).sort((a, b) => a.base - b.base); }
     return list;
+  }
+  // 1.30: StackChan đang sinh hoạt ở cảnh / gian này (life.js) — xếp lớp với đồ theo chân đứng như thú nuôi
+  function lifeFor(sceneName, now, st, opts) {
+    if (typeof GardenLife === "undefined" || (!isOpen && UIget("pets") === "off")) { return []; }
+    if (isOpen && placing) { return []; }               // đang đặt đồ: không che ô
+    return GardenLife.place(sceneName, now, st, { spots: (ids, sc) => spotsFor(sc || sceneName, ids), seen: !!(opts && opts.seen) });
   }
   function drawPetsBefore(ctx, S, ox, oy, list, state, base, now) {
     while (state.i < list.length && (base === null || list[state.i].base <= base)) {
       const e = list[state.i++];
-      if (e.guest) { GardenGuests.draw(ctx, S, ox, oy, e, now); } else { GardenPets.draw(ctx, S, ox, oy, e, now); }
+      if (e.life) { GardenLife.draw(ctx, S, ox, oy, e, now); }
+      else if (e.guest) { GardenGuests.draw(ctx, S, ox, oy, e, now); } else { GardenPets.draw(ctx, S, ox, oy, e, now); }
     }
   }
   // chỗ các món đồ ở cảnh (toạ độ nghệ thuật) để khách đứng / đậu cạnh món mình thích
@@ -2844,6 +2853,17 @@ var GardenHome = (function () {
       const b = itemBox(e, sc);
       return b ? { id: e.id, cx: b.x + b.w / 2, top: b.y, bottom: b.y + b.h, w: b.w, left: b.x, right: b.x + b.w, cell: e.x + "," + e.y } : null;
     }).filter(Boolean);
+  }
+  // 1.30: chỗ các món đồ trong cả nhà (toạ độ cả nhà 3 gian) — thú trong nhà tìm chỗ ưa thích
+  function houseSpots(ids) {
+    const rooms = homeState().rooms || [];
+    let out = [];
+    ["kitchen", "room", "bedroom"].forEach((k) => {
+      if (k !== "room" && rooms.indexOf(k) < 0) { return; }
+      const dx = HOUSE3.X[k];
+      out = out.concat(spotsFor(k, ids).filter((sp) => sp.bottom >= ROOM.FLOOR).map((sp) => Object.assign({}, sp, { cx: sp.cx + dx, left: sp.left + dx, right: sp.right + dx })));
+    });
+    return out;
   }
   function guestsTop(ctx, S, ox, oy, sceneName, now, st, opts) {
     if (typeof GardenGuests === "undefined" || (opts && (opts.noGuests || opts.noPets)) || (!isOpen && UIget("pets") === "off")) { return; }
@@ -2937,6 +2957,27 @@ var GardenHome = (function () {
     const h = homeState();
     return (opts && opts.style) || (h.house >= 7 ? (h.style || "classic") : "classic");
   }
+  // 1.30: giấy dán tường + sàn riêng của từng gian (ví: more.decor.use[gian] = {wall, floor}; trống = theo kiểu nhà).
+  // decoTry: đang xem thử một mẫu trong bảng Nhà (không lưu). opts.style (vẽ thử kiểu nhà khác ở tab Xây nhà): nền thuần.
+  let decoTry = null;
+  let tileSig = "", tileMap = {};
+  function decorState() { return moreData().decor || { own: [], use: {}, mine: { items: {} } }; }
+  function tileRows() {
+    const tiles = (catalog() || {}).tiles || [];
+    const sig = tiles.map((t) => t.id + "=" + t.px).join("|");
+    if (sig !== tileSig) {
+      tileSig = sig; tileMap = {};
+      tiles.forEach((t) => { const flat = t.px ? pxDecode(t.px, 16) : null; if (flat) { tileMap[t.id] = pxRows(flat, 16, false); } });
+    }
+    return tileMap;
+  }
+  function decoOf(kind, opts) {
+    if (opts && opts.style) { return null; }
+    const use = (decorState().use || {})[kind] || {};
+    let wall = use.wall || null, floor = use.floor || null;
+    if (decoTry && isOpen && decoTry.room === kind) { if (decoTry.slot === "wall") { wall = decoTry.id || null; } else { floor = decoTry.id || null; } }
+    return wall || floor ? { wall: wall, floor: floor, tiles: tileRows() } : null;
+  }
   // 1.25: cửa sổ phòng chính (cột 4–5, x 64–96) theo kiểu nhà
   function roomWindow(ctx, S, ox, oy, style, now) {
     const tod = timeOfDay(), sky = skyColors(tod), stR = skyNow(), night = tod === "night";
@@ -2997,6 +3038,16 @@ var GardenHome = (function () {
     ctx.save(); ctx.globalAlpha = 0.12; ctx.fillStyle = "#fff4c0"; ctx.beginPath();
     ctx.moveTo((ox + 67) * S, (oy + 41) * S); ctx.lineTo((ox + 93) * S, (oy + 41) * S);
     ctx.lineTo((ox + 106) * S, (oy + 74) * S); ctx.lineTo((ox + 58) * S, (oy + 74) * S); ctx.closePath(); ctx.fill(); ctx.restore();
+    // 1.30: bụi nắng lơ lửng trong vệt nắng (cảnh Đứng yên / Dịu mắt thì thôi)
+    if (UIget("yard") !== "full" && !isOpen) { return; }
+    const t = Date.now() / 1000;
+    for (let i = 0; i < 6; i++) {
+      const k = (t / (9 + i * 2.3) + i * 0.37) % 1, y = 43 + k * 30, half = 13 + (y - 41) * 0.33;
+      const x = 80 + Math.sin(t / (3 + i) + i * 2.1) * half * 0.8;
+      ctx.globalAlpha = 0.55 * Math.sin(k * Math.PI);
+      box(ctx, ox + x, oy + y, 1, 1, "#fffbe0", S);
+    }
+    ctx.globalAlpha = 1;
   }
   function drawRoom(ctx, S, ox, oy, now, opts) {
     const kind = (opts && opts.kind) || "room";
@@ -3005,7 +3056,7 @@ var GardenHome = (function () {
     const L0 = opts && opts.keepLights ? lights.length : (lights.length = 0);
     const tod = timeOfDay(), stR = skyNow();
     const sty = houseStyle(opts);
-    if (NHA) { NHA.bg(ctx, S, ox, oy, "room", ROOM.W, ROOM.H, ROOM.FLOOR, sty); } else { box(ctx, ox, oy, ROOM.W, ROOM.H, "#f1e2c2", S); }
+    if (NHA) { NHA.bg(ctx, S, ox, oy, "room", ROOM.W, ROOM.H, ROOM.FLOOR, sty, decoOf("room", opts)); } else { box(ctx, ox, oy, ROOM.W, ROOM.H, "#f1e2c2", S); }
     roomWindow(ctx, S, ox, oy, sty, now);
     sunbeam(ctx, S, ox, oy);
     if (opts && opts.grid) {
@@ -3022,7 +3073,7 @@ var GardenHome = (function () {
       .concat(all.filter((e) => (item(e.id) || {}).place === "rug"))
       .concat(all.filter((e) => ["floor", undefined].indexOf((item(e.id) || {}).place) >= 0));
     drawRoomWear(ctx, S, ox, oy, now, stR, opts && opts.wear);
-    const pets = opts && opts.noPets ? [] : petsFor("room", now, stR, opts), pst = { i: 0 };
+    const pets = opts && opts.noPets ? (opts.life ? lifeFor("room", now, stR, opts) : []) : petsFor("room", now, stR, opts), pst = { i: 0 };
     order.forEach((e) => {
       const ghost = placing && placing.index === e.index && placing.scene === "room";
       const pl = (item(e.id) || {}).place;
@@ -3034,12 +3085,20 @@ var GardenHome = (function () {
     roomNight(ctx, S, ox, oy, now, ROOM.W, tod, stR, opts, L0);
     if (opts && opts.overlay) { opts.overlay(ctx, S, ox, oy); }
   }
+  // 1.30: chiều tối trong nhà ngả màu đèn vàng ấm (nhẹ, phủ sau lớp tối)
+  function warmGlow(ctx, S, ox, oy, W, stR) {
+    if (!stR || stR.light >= 0.8) { return; }
+    ctx.globalAlpha = Math.min(0.1, (0.8 - stR.light) * 0.2);
+    box(ctx, ox, oy, W, ROOM.H, "#ff9d3c", S);
+    ctx.globalAlpha = 1;
+  }
   // tối trong phòng; lightDx: dời nguồn sáng của gian này về toạ độ cả nhà (vẽ đêm một lần cho cả 3 gian)
   function roomNight(ctx, S, ox, oy, now, W, tod, stR, opts, L0) {
     if (opts && opts.lightDx) { for (let i = L0; i < lights.length; i++) { lights[i].x += opts.lightDx; } }
     if (opts && opts.noNight) { return; }
     if (stR && typeof GardenSky !== "undefined") {
       drawNight(ctx, S, ox, oy, 0, W, ROOM.H, Object.assign({}, stR, { light: 0.08 + stR.light * 0.8 }));
+      warmGlow(ctx, S, ox, oy, W, stR);
       if (SEA()) { SEA().room(ctx, S, ox, oy, now, W, 1, stR); }
     } else if (tod !== "day") {
       ctx.globalAlpha = 0.12; box(ctx, ox, oy, W, ROOM.H, "#1b1b4f", S); ctx.globalAlpha = 1;
@@ -3049,7 +3108,7 @@ var GardenHome = (function () {
   function drawSideRoom(ctx, S, ox, oy, now, kind, opts) {
     const home = homeState(), tod = timeOfDay(), stR = skyNow(), W = SIDE.W;
     const L0 = opts.keepLights ? lights.length : (lights.length = 0);
-    if (NHA) { NHA.bg(ctx, S, ox, oy, kind, W, ROOM.H, ROOM.FLOOR, houseStyle(opts)); } else { box(ctx, ox, oy, W, ROOM.H, "#e8dcc8", S); }
+    if (NHA) { NHA.bg(ctx, S, ox, oy, kind, W, ROOM.H, ROOM.FLOOR, houseStyle(opts), decoOf(kind, opts)); } else { box(ctx, ox, oy, W, ROOM.H, "#e8dcc8", S); }
     if (opts.grid) {
       ctx.globalAlpha = 0.25;
       for (let gx = 0; gx <= 9; gx++) { box(ctx, ox + gx * T, oy + ROOM.FLOOR, 0.34, 48, P.k, S); box(ctx, ox + gx * T, oy + ROOM.WALL_Y, 0.34, 16, P.k, S); }
@@ -3062,10 +3121,14 @@ var GardenHome = (function () {
     const order = all.filter((e) => (item(e.id) || {}).place === "wall")
       .concat(all.filter((e) => (item(e.id) || {}).place === "rug"))
       .concat(all.filter((e) => ["floor", undefined].indexOf((item(e.id) || {}).place) >= 0));
+    const lf = !opts.noPets || opts.life ? lifeFor(kind, now, stR, opts) : [], pst = { i: 0 };     // 1.30
     order.forEach((e) => {
       const ghost = placing && placing.index === e.index && placing.scene === kind;
+      const pl = (item(e.id) || {}).place;
+      if (pl !== "wall" && pl !== "rug") { drawPetsBefore(ctx, S, ox, oy, lf, pst, ROOM.FLOOR + e.y * T - 1, now); }
       drawItem(ctx, S, ox, oy, e, kind, now, tod, ghost ? 0.3 : undefined);
     });
+    drawPetsBefore(ctx, S, ox, oy, lf, pst, null, now);
     drawParts(ctx, S, ox, oy, kind);
     roomNight(ctx, S, ox, oy, now, W, tod, stR, opts, L0);
     if (opts.overlay) { opts.overlay(ctx, S, ox, oy); }
@@ -3102,7 +3165,8 @@ var GardenHome = (function () {
     ["kitchen", "room", "bedroom"].forEach((k) => {
       const x = HOUSE3.X[k];
       if (isOpen3(k)) {
-        drawRoom(ctx, S, ox + x, oy, now, { kind: k, noPets: true, noNight: true, keepLights: true, lightDx: x, style: opts.style });
+        drawRoom(ctx, S, ox + x, oy, now, { kind: k, noPets: true, noNight: true, keepLights: true, lightDx: x, style: opts.style,
+          life: !!opts.life, seen: !!opts.seen });
       } else { lockedRoom(ctx, S, ox + x, oy, k, opts); }
     });
     [144, 308].forEach((x) => {
@@ -3110,10 +3174,11 @@ var GardenHome = (function () {
       else { box(ctx, ox + x, oy, HOUSE3.POST, ROOM.H, P.B, S); box(ctx, ox + x, oy + 5, HOUSE3.POST, 1, P.k, S); }
     });
     if (!opts.noPets && (isOpen || UIget("pets") !== "off") && typeof GardenPets !== "undefined") {
-      GardenPets.place(H.data(), "house", now, stR).forEach((e) => GardenPets.draw(ctx, S, ox, oy, e, now));
+      GardenPets.place(H.data(), "house", now, stR, houseSpots).forEach((e) => GardenPets.draw(ctx, S, ox, oy, e, now));
     }
     if (stR && typeof GardenSky !== "undefined") {
       drawNight(ctx, S, ox, oy, 0, HOUSE3.W, ROOM.H, Object.assign({}, stR, { light: 0.08 + stR.light * 0.8 }));
+      warmGlow(ctx, S, ox, oy, HOUSE3.W, stR);
       if (SEA()) { ["kitchen", "room", "bedroom"].forEach((k) => { if (isOpen3(k)) { SEA().room(ctx, S, ox + HOUSE3.X[k], oy, now, roomW(k), 1, stR); } }); }
     } else if (tod !== "day") {
       ctx.globalAlpha = 0.12; box(ctx, ox, oy, HOUSE3.W, ROOM.H, "#1b1b4f", S); ctx.globalAlpha = 1;
@@ -3270,12 +3335,19 @@ var GardenHome = (function () {
   // Sân trên màn chính
   // ---------------------------------------------------------------------
   let mainView = null;
+  let mainViewKey = "";        // 1.30: cảnh + tỉ lệ + lề + bề rộng của lần vẽ trước (đổi thì xếp lại chip sinh hoạt)
   // Món đồ ở chỗ bấm trên sân màn chính (để bấm hòm thư thì mở báo)
   function mainPetAt(ev) {
     const cv = $("kb-yard");
     if (!cv || !mainView || typeof GardenPets === "undefined") { return null; }
     const r = cv.getBoundingClientRect();
     return GardenPets.at(mainScene(), (ev.clientX - r.left) / mainView.S - mainView.ox, (ev.clientY - r.top) / mainView.S - (mainView.oy || 0));
+  }
+  function mainLifeAt(ev) {       // 1.30: bấm trúng StackChan đang sinh hoạt
+    const cv = $("kb-yard");
+    if (!cv || !mainView || typeof GardenLife === "undefined") { return false; }
+    const r = cv.getBoundingClientRect();
+    return GardenLife.at(mainScene(), (ev.clientX - r.left) / mainView.S - mainView.ox, (ev.clientY - r.top) / mainView.S - (mainView.oy || 0));
   }
   function mainFindAt(ev) {
     const cv = $("kb-yard");
@@ -3387,11 +3459,14 @@ var GardenHome = (function () {
       const VW = Math.ceil(cw / Sh), VH = Math.ceil(hgt / Sh);
       const hx = Math.floor((cw / Sh - HOUSE3.W) / 2), hy = Math.max(-12, Math.floor(hgt / Sh - ROOM.H));
       mainView = { S: Sh, ox: hx, oy: hy, house: true };
-      drawHouseScene(ctx, Sh, VW, VH, hx, hy, now, {});
+      drawHouseScene(ctx, Sh, VW, VH, hx, hy, now, { life: true, seen: !document.hidden });
     } else {
       mainView = { S: S, ox: ox, oy: pad };
       drawOutdoor(ctx, S, ox, pad, now, mainScene(), { bgFrom: -ox - 1, bgTo: cw / S - ox + 1, seen: !document.hidden, padTop: pad });
     }
+    // 1.30: khung nhìn đổi (đổi cảnh / đổi cỡ cửa sổ) → xếp lại chip sinh hoạt ngay, không chờ nhịp 1 giây của nó
+    const vkey = mainScene() + "|" + mainView.S + "|" + mainView.ox + "|" + cw;
+    if (vkey !== mainViewKey) { mainViewKey = vkey; if (typeof GardenLife !== "undefined" && GardenLife.sync) { GardenLife.sync(); } }
     const sw = now - mainSwitchAt;
     const tmode = typeof GardenGreet !== "undefined" ? GardenGreet.mode() : "fade";
     const swMs = SWITCH_MS[switchKind] || SWITCH_MS.sweep;
@@ -3488,7 +3563,7 @@ var GardenHome = (function () {
   }
   function photoScene(ctx, S, ox, oy, sc, now, wide) {
     if (isOut(sc)) { drawOutdoor(ctx, S, ox, oy, now, sc, wide ? { bgFrom: -ox - 1, bgTo: wide - ox + 1, photo: true } : { photo: true }); }
-    else if (sc === "house") { drawHouse3(ctx, S, ox, oy, now, {}); }        // 1.24: ảnh nguyên nhà
+    else if (sc === "house") { drawHouse3(ctx, S, ox, oy, now, { life: true }); }        // 1.24: ảnh nguyên nhà (1.30: có StackChan)
     else { drawRoom(ctx, S, ox, oy, now, { kind: sc }); }
     lights.length = 0;
   }
@@ -3767,6 +3842,9 @@ var GardenHome = (function () {
     if (placing && placing.scene !== s) { placing = null; }
     selected = null; hidePop(); hover = null;
     defaultTip();
+    // 1.30: đang ở "Tường & sàn" thì danh sách theo gian đang xem
+    if (decoTry) { decoTry = null; }
+    if (isOpen && tab === "room" && roomView === "decor") { renderList(); }
   }
   // Nhiều vùng (6 vùng + vùng tự tạo) thì hàng nút cảnh xuống 2–3 dòng: bớt chiều cao khung xem / danh sách
   // đúng bằng phần thanh trên cao thêm, để bảng Nhà (và Xưởng phủ lên nó) vẫn vừa cửa sổ, trang không phải cuộn.
@@ -3955,6 +4033,24 @@ var GardenHome = (function () {
     if (GardenFix.has(group, id)) { b.title = "Đã sửa"; }
     row.appendChild(b);
   }
+  // 1.30: món đồ / vùng này cho StackChan làm việc gì (data.life.defs) → dòng nhỏ trên thẻ cửa hàng
+  let lifeSig = null, lifeByItem = {}, lifeByZone = {};
+  function lifeIndex() {
+    const lf = H && H.data() && H.data().life, defs = (lf && lf.defs) || null;
+    if (defs === lifeSig) { return; }
+    lifeSig = defs; lifeByItem = {}; lifeByZone = {};
+    Object.keys(defs || {}).forEach((k) => {
+      const d = defs[k];
+      (d.need || []).forEach((i) => { (lifeByItem[i] = lifeByItem[i] || []).push(d.name); });
+      if (!(d.need || []).length && ZONE_IDS.indexOf(d.where) >= 0) { (lifeByZone[d.where] = lifeByZone[d.where] || []).push(d.name); }
+    });
+  }
+  function lifeLine(names) {
+    if (!names || !names.length) { return null; }
+    const row = GardenIcons.fill(el("div", "kb-h-desc kb-h-life"), "[i:stack] " + names.slice(0, 3).join(" · ") + (names.length > 3 ? "…" : ""));
+    row.title = "StackChan: " + names.join(", ") + " (đúng giờ thì tự làm)";
+    return row;
+  }
   function itemCard(list, it, opts) {
     const home = homeState(), money = coins(), cat = catalog();
     const owned = home.owned[it.id] || 0;
@@ -3968,6 +4064,7 @@ var GardenHome = (function () {
     if (it.new && !owned) { nm.appendChild(el("span", "kb-h-newtag", "Mới")); }
     info.appendChild(nm);
     if (it.desc) { info.appendChild(el("div", "kb-h-desc", "✦ " + it.desc)); }
+    if (!opts.inv) { lifeIndex(); const ll = lifeLine(lifeByItem[it.id]); if (ll) { info.appendChild(ll); } }
     if (!opts.inv && !it.custom) {
       const SETN = { yard: "Sân vườn", beach: "Bãi biển", shrine: "Đền trên núi", festival: "Phố lễ hội", bamboo: "Rừng tre", onsen: "Suối nước nóng", station: "Ga làng quê" };
       const label = it.rare ? "Quà rương nhiệm vụ" : it.only === "set" ? "Quà đủ bộ " + (SETN[it.set] || "") + " (Hộp sưu tầm)" :
@@ -4096,6 +4193,7 @@ var GardenHome = (function () {
         if (z.new && !open) { zn.appendChild(el("span", "kb-h-newtag", "Mới")); }
         info.appendChild(zn);
         info.appendChild(el("div", "kb-h-desc", ZONE_NOTE[z.id] || ""));
+        { lifeIndex(); const ll = lifeLine(lifeByZone[z.id]); if (ll) { info.appendChild(ll); } }
         if (open) {
           info.appendChild(btn(scene === z.id ? "Đang ở đây" : "Đến " + z.name, "kb-h-buy", () => setScene(z.id), scene === z.id));
         } else if (isNext) {
@@ -4240,9 +4338,11 @@ var GardenHome = (function () {
       sec("Hộp sưu tầm · gánh hàng rong");
       extra.forEach((it) => itemCard(list, it, {}));
     };
+    if (tab === "room") { roomChips(list); }       // 1.30: Đồ nội thất · Tường & sàn
     if (tab === "room" && home.house < unlock) {
       list.appendChild(el("div", "kb-h-empty", "Xây nhà tới bước “" + cat.levels[unlock].name + "” để mua nội thất."));
     }
+    if (tab === "room" && roomView === "decor") { if (home.house >= unlock) { renderDecor(list, cat, money); } return; }
     if (tab === "inv" && !items.length) { list.appendChild(el("div", "kb-h-empty", "Kho đang trống. Mua đồ ở tab “Trang trí sân” hoặc “Nội thất”.")); }
     if (tab === "inv" && items.length) {
       // có nhiều đồ (hơn 100 món khi mua hết) thì món còn trong kho lên đầu, khỏi phải tìm nút "Đặt" giữa đồ đã đặt
@@ -4265,6 +4365,125 @@ var GardenHome = (function () {
     }
     items.forEach((it) => itemCard(list, it, { inv: tab === "inv" }));
     extraSec();
+  }
+  // ---- 1.30: tab Nội thất → "Tường & sàn": giấy dán tường + sàn cho từng gian ----
+  let roomView = "items";      // items | decor
+  let pendingDecor = null;     // mẫu vừa bấm Mua → mua xong dùng luôn cho gian đang xem
+  let tileDelArm = null;
+  function decoRoom() { return isRoom(scene) && canEnter(scene) ? scene : "room"; }
+  function roomChips(list) {
+    const row = el("div", "kb-h-btns kb-album-chips kb-room-chips");
+    [["items", "Đồ nội thất"], ["decor", "Tường & sàn"]].forEach(([k, label]) => {
+      const b = btn(label, "kb-btn-small kb-album-chip" + (roomView === k ? " is-on" : ""), () => {
+        roomView = k; decoTry = null;
+        if (k === "decor" && !isRoom(scene) && canEnter("room")) { setScene("room"); return; }
+        renderList();
+      });
+      b.setAttribute("data-roomview", k);
+      b.setAttribute("aria-pressed", roomView === k ? "true" : "false");
+      row.appendChild(b);
+    });
+    list.appendChild(row);
+  }
+  function swatchCanvas(id, tile) {
+    const cv = document.createElement("canvas"), sc = 2;
+    cv.width = 34 * sc; cv.height = 34 * sc; cv.className = "kb-h-icon kb-h-swatch";
+    const ctx = cv.getContext("2d"); ctx.imageSmoothingEnabled = false;
+    if (!id) {               // Theo kiểu nhà: một góc phòng của kiểu đang dùng
+      if (NHA) { NHA.bg(ctx, sc, -60, tile === "floor" ? -47 : -5, "room", ROOM.W, ROOM.H, ROOM.FLOOR, houseStyle(null), null); }
+      return cv;
+    }
+    if (NHA && NHA.swatch) {
+      const rowsArr = tile && tileRows()[id] ? { rows: tileRows()[id], slot: tile } : null;
+      if (rowsArr || !tile) { NHA.swatch(ctx, sc, 0, 0, 34, 34, id, rowsArr); }
+    }
+    return cv;
+  }
+  function renderDecor(list, cat, money) {
+    const dc = cat.decor || { walls: [], floors: [], rooms: [], tile: { price: 250, edit: 50, max: 12 } };
+    const dec = decorState(), room = decoRoom(), rname = sceneName(room === "room" ? "room" : room);
+    const roomLabel = room === "room" ? "Phòng chính" : rname;
+    const use = (dec.use || {})[room] || {};
+    const tiles = cat.tiles || [];
+    const head = el("div", "kb-h-card kb-h-wear-top kb-decor-head");
+    const hi = el("div", "kb-h-info");
+    hi.appendChild(el("div", "kb-h-name", "Đang trang trí: " + roomLabel));
+    hi.appendChild(el("div", "kb-h-desc", "Mua một lần, dùng cho gian nào cũng được. Đổi gian bằng nút cảnh phía trên."));
+    head.appendChild(hi);
+    list.appendChild(head);
+    const usedIn = (id) => ["room", "kitchen", "bedroom"].filter((r) => { const u = (dec.use || {})[r] || {}; return u.wall === id || u.floor === id; })
+      .map((r) => (r === "room" ? "Phòng chính" : sceneName(r)));
+    const tryBtn = (slot, id) => {
+      const on = decoTry && decoTry.room === room && decoTry.slot === slot && decoTry.id === id;
+      return btn(on ? "Dừng xem thử" : "Xem thử", "kb-btn-small", () => { decoTry = on ? null : { room: room, slot: slot, id: id }; renderList(); });
+    };
+    [["wall", "Giấy dán tường", dc.walls || []], ["floor", "Sàn", dc.floors || []]].forEach(([slot, title, presets]) => {
+      list.appendChild(el("div", "kb-h-sec", title));
+      const cur = use[slot] || "";
+      {   // Theo kiểu nhà
+        const card = el("div", "kb-h-card kb-decor-card" + (!cur ? " kb-h-using" : ""));
+        card.setAttribute("data-decor", slot + ":");
+        card.appendChild(swatchCanvas("", slot));
+        const inf = el("div", "kb-h-info");
+        inf.appendChild(el("div", "kb-h-name", "Theo kiểu nhà"));
+        inf.appendChild(el("div", "kb-h-price", "Có sẵn"));
+        const row = el("div", "kb-h-btns");
+        row.appendChild(btn(!cur ? "Đang dùng" : "Dùng cho " + roomLabel, "kb-h-buy", () => { decoTry = null; H.send("home:decor:use:" + room + ":" + slot + ":none"); }, !cur));
+        inf.appendChild(row); card.appendChild(inf); list.appendChild(card);
+      }
+      presets.forEach((it) => {
+        const own = (dec.own || []).indexOf(it.id) >= 0, using = cur === it.id, where = usedIn(it.id);
+        const card = el("div", "kb-h-card kb-decor-card" + (using ? " kb-h-using" : ""));
+        card.setAttribute("data-decor", slot + ":" + it.id);
+        card.appendChild(swatchCanvas(it.id, null));
+        const inf = el("div", "kb-h-info");
+        const nm = el("div", "kb-h-name", it.name);
+        if (it.ja) { nm.appendChild(el("span", "kb-h-guest-ja", it.ja)); }
+        inf.appendChild(nm);
+        if (it.desc) { inf.appendChild(el("div", "kb-h-desc", it.desc)); }
+        inf.appendChild(el("div", own ? "kb-h-own" : "kb-h-price", own ? (where.length ? "Đang dùng: " + where.join(", ") : "Đã có") : it.price + " xu"));
+        const row = el("div", "kb-h-btns");
+        if (own) {
+          row.appendChild(btn(using ? "Đang dùng" : "Dùng cho " + roomLabel, "kb-h-buy", () => { decoTry = null; H.send("home:decor:use:" + room + ":" + slot + ":" + it.id); }, using));
+        } else {
+          row.appendChild(btn("Mua", "kb-h-buy", () => { if (pay("home:decor:buy:" + it.id)) { pendingDecor = { room: room, slot: slot, id: it.id }; } },
+            money < it.price, money < it.price ? "Còn thiếu " + (it.price - money) + " xu" : "Mua xong dùng luôn cho " + roomLabel));
+          row.appendChild(tryBtn(slot, it.id));
+        }
+        inf.appendChild(row); card.appendChild(inf); list.appendChild(card);
+      });
+      tiles.filter((t) => t.kind === slot).forEach((t) => {
+        const using = cur === t.id, where = usedIn(t.id);
+        const card = el("div", "kb-h-card kb-decor-card kb-h-craftcard" + (using ? " kb-h-using" : ""));
+        card.setAttribute("data-decor", slot + ":" + t.id);
+        card.appendChild(swatchCanvas(t.id, slot));
+        const inf = el("div", "kb-h-info");
+        inf.appendChild(el("div", "kb-h-name", t.name));
+        inf.appendChild(el("div", "kb-h-own", "Tự vẽ" + (where.length ? " · đang dùng: " + where.join(", ") : "")));
+        const row = el("div", "kb-h-btns");
+        row.appendChild(btn(using ? "Đang dùng" : "Dùng cho " + roomLabel, "kb-h-buy", () => { decoTry = null; H.send("home:decor:use:" + room + ":" + slot + ":" + t.id); }, using));
+        row.appendChild(btn("Sửa · " + dc.tile.edit + " xu", "kb-btn-small", () => { if (typeof GardenCraft !== "undefined" && GardenCraft.openTile) { GardenCraft.openTile(t); } }, false,
+          "Đổi tên miễn phí, vẽ lại " + dc.tile.edit + " xu"));
+        const armed = tileDelArm === t.id;
+        row.appendChild(btn(armed ? "Bấm lần nữa để xoá" : "Xoá mẫu", "kb-btn-small kb-h-del" + (armed ? " is-armed" : ""), () => {
+          if (tileDelArm === t.id) { tileDelArm = null; H.send("home:tile:del:" + t.id); } else { tileDelArm = t.id; renderList(); }
+        }));
+        inf.appendChild(row); card.appendChild(inf); list.appendChild(card);
+      });
+      {   // tự vẽ
+        const full = tiles.length >= dc.tile.max, poor = !full && money < dc.tile.price;
+        const add = el("div", "kb-h-card kb-h-craft-new kb-decor-card");
+        add.setAttribute("data-decor", slot + ":new");
+        add.appendChild(el("div", "kb-h-craft-plus", "＋"));
+        const ai = el("div", "kb-h-info");
+        ai.appendChild(el("div", "kb-h-name", slot === "wall" ? "Tự vẽ giấy dán tường" : "Tự vẽ sàn"));
+        ai.appendChild(el("div", "kb-h-price", dc.tile.price + " xu · " + tiles.length + "/" + dc.tile.max + " mẫu"));
+        ai.appendChild(btn(poor ? "Còn thiếu " + (dc.tile.price - money) + " xu" : "Mở xưởng", "kb-h-buy",
+          () => { if (typeof GardenCraft !== "undefined" && GardenCraft.openTile) { GardenCraft.openTile(null, slot); } },
+          full || poor, full ? "Đã đủ " + dc.tile.max + " mẫu" : ""));
+        add.appendChild(ai); list.appendChild(add);
+      }
+    });
   }
   let pendingPlace = null;
   let pendingSpot = null;
@@ -4411,8 +4630,11 @@ var GardenHome = (function () {
   function albumChips(list) {
     const row = el("div", "kb-h-btns kb-album-chips");
     const g = guestData(), f = H && H.data() && H.data().finds;
-    [["guest", "Khách ghé vườn" + (g ? " · " + g.met + "/" + g.total : "")],
-      ["box", "Hộp sưu tầm" + (f && f.box ? " · " + f.box.found + "/" + f.box.total : "")]].forEach(([k, label]) => {
+    const lf = H && H.data() && H.data().life;
+    const chips = [["guest", "Khách ghé vườn" + (g ? " · " + g.met + "/" + g.total : "")],
+      ["box", "Hộp sưu tầm" + (f && f.box ? " · " + f.box.found + "/" + f.box.total : "")]];
+    if (typeof GardenLife !== "undefined") { chips.push(["life", "Sinh hoạt" + (lf ? " · " + lf.seen + "/" + lf.total : "")]); }   // 1.30
+    chips.forEach(([k, label]) => {
       const b = btn(label, "kb-btn-small kb-album-chip" + (albumView === k ? " is-on" : ""), () => { albumView = k; renderList(); });
       b.setAttribute("data-album", k);
       b.setAttribute("aria-pressed", albumView === k ? "true" : "false");
@@ -4426,6 +4648,7 @@ var GardenHome = (function () {
       GardenFinds.box(list, boxFocus); boxFocus = null;
       return;
     }
+    if (albumView === "life" && typeof GardenLife !== "undefined") { GardenLife.book(list); return; }
     renderGuests(list);
   }
   function renderGuests(list) {
@@ -4921,7 +5144,7 @@ var GardenHome = (function () {
     if (payload.catalog && H.setCatalog) { H.setCatalog(payload.catalog); }
     if (payload.wallet) { H.setWallet(payload.wallet); }
     const a = payload.action, sub = payload.sub;
-    delArm = null; seedDelArm = null; payWait = 0;
+    delArm = null; seedDelArm = null; tileDelArm = null; payWait = 0;
     if (a === "build") {
       const lvl = homeState().house;
       const name = ((catalog() || {}).levels || [])[lvl];
@@ -5016,6 +5239,23 @@ var GardenHome = (function () {
         mood("star", 2200, "新しい種！ Đã có giống mới");
         tab = "seed"; tipMsg = "Giống mới ở cuối tab · chọn chỗ gieo ở mục “Gieo ở đâu”";
       }
+    } else if (a === "decor") {           // 1.30: giấy dán tường / sàn
+      decoTry = null;
+      if (sub === "buy") {
+        sfx("coin"); mood("happy", 1200, "いい感じ！");
+        const pd = pendingDecor; pendingDecor = null;
+        if (pd && (decorState().own || []).indexOf(pd.id) >= 0) { H.send("home:decor:use:" + pd.room + ":" + pd.slot + ":" + pd.id); }
+      } else { sfx("good"); mood("happy", 900, "模様替え！ Đổi không khí ♪"); }
+    } else if (a === "tile") {
+      decoTry = null;
+      if (sub === "save") {
+        sfx("stage");
+        const isNew = typeof GardenCraft !== "undefined" && GardenCraft.savedTile ? GardenCraft.savedTile(payload) : true;
+        mood("star", 2000, isNew ? "できた！ Mẫu mới xong rồi" : "Đã sửa mẫu ♪");
+        tab = "room"; roomView = "decor";
+        const t = ((catalog() || {}).tiles || []).find((x) => x.id === payload.id);
+        if (isNew && t) { H.send("home:decor:use:" + decoRoom() + ":" + t.kind + ":" + t.id); }
+      } else { sfx("flip"); }
     } else if (a === "craft") {
       if (sub === "save") {
         sfx("stage");
@@ -5031,7 +5271,7 @@ var GardenHome = (function () {
   }
 
   function error(msg) {
-    pendingPlace = null; payWait = 0;
+    pendingPlace = null; pendingDecor = null; payWait = 0;
     if (typeof GardenCraft !== "undefined" && GardenCraft.isOpen()) { GardenCraft.error(msg); }
     sfx("again");
     mood("sad", 1200, "あれ？");
@@ -5095,6 +5335,7 @@ var GardenHome = (function () {
       $("kb-yard").addEventListener("click", (ev) => {
         const fh = mainFindAt(ev);
         if (fh) { GardenFinds.hit(fh, mainScene(), ev); return; }       // 1.28: chỗ lấp lánh / gánh hàng rong
+        if (mainLifeAt(ev)) { ev.stopPropagation(); GardenLife.poke(ev); return; }       // 1.30: StackChan đang sinh hoạt
         const pid = mainPetAt(ev);
         if (pid) {
           if (typeof GardenGames !== "undefined") { GardenGames.close(); }
@@ -5132,7 +5373,9 @@ var GardenHome = (function () {
         const hit = mainItemAt(ev), pid = mainPetAt(ev), gid = pid ? null : mainGuestAt(ev);
         const cv = $("kb-yard");
         const pv = pid ? (moreView().pets || []).find((p) => p.id === pid) : null;
-        if (pv) { cv.title = pv.name + " · " + petStateText(pv) + " (bấm để chăm)"; cv.style.cursor = "pointer"; }
+        const lw = !pid && mainLifeAt(ev) ? GardenLife.where() : null;
+        if (lw) { cv.title = "StackChan: " + lw.name + " (bấm để xem)"; cv.style.cursor = "pointer"; }
+        else if (pv) { cv.title = pv.name + " · " + petStateText(pv) + " (bấm để chăm)"; cv.style.cursor = "pointer"; }
         else if (gid) { cv.title = (guestName(gid) || "Khách") + " ghé vườn (bấm để xem Album khách)"; cv.style.cursor = "pointer"; }
         else if (hit && hit.id === "mailbox") { cv.title = "Hòm thư: mở Báo (phím B)"; cv.style.cursor = "pointer"; }
         else if (mainView && mainView.house) {
@@ -5222,6 +5465,8 @@ var GardenHome = (function () {
     openGuests: function (id) { open(mainScene()); guestFocus = id || null; tab = "guest"; albumView = "guest"; renderList(); },
     // 1.28: mở Nhà ở tab Album → Hộp sưu tầm, cuộn tới bộ của cảnh sc
     openBox: function (sc) { open(mainScene() === "house" ? "yard" : mainScene()); tab = "guest"; albumView = "box"; boxFocus = sc || null; renderList(); },
+    // 1.30: mở Nhà ở tab Album → Sinh hoạt
+    openLife: function () { open(mainScene() === "house" ? "room" : mainScene()); tab = "guest"; albumView = "life"; renderList(); },
     showMain: showMain,
     icon: function (id, size) { return SPR[id] ? iconCanvas(SPR[id], size || 40) : null; },
     _state: () => ({ scene: scene, tab: tab, placing: placing, selected: selected, payWait: payWait, peekCode: peekCode }),

@@ -144,13 +144,20 @@ result = 1`);
   await page.shot(SHOTS + '/121_cu_ban_dem.png');
   await force('yard', 'hotaru');
   await sleep(2500);
-  // đếm điểm ảnh vàng-xanh sáng (lõi đom đóm #f6ff9e: xanh lá ≥ đỏ, khác ánh đèn vàng cam) quanh chỗ đom đóm lượn
-  const ff = await page.eval(W(`const cv = document.getElementById("kb-yard"), x = cv.getContext("2d"), a = GardenGuests._vis("yard"), v = GardenHome._mainView(), d = window.devicePixelRatio || 1;
-    const x0 = Math.round((a.home.x - 30 + v.ox) * v.S * d), y0 = Math.max(0, Math.round((a.home.y - 24) * v.S * d)), w = Math.round(60 * v.S * d), h = Math.round(44 * v.S * d);
-    const px = x.getImageData(x0, y0, w, h).data; let lit = 0;
-    for (let i = 0; i < px.length; i += 4) { if (px[i + 1] > 215 && px[i] > 170 && px[i + 2] < 180 && px[i + 1] >= px[i]) lit++; }
-    return { lit: lit, n: a.dots.length };`));
-  ok(ff.lit >= 8, 'đom đóm sáng trên nền tối (' + ff.lit + ' điểm ảnh lõi sáng quanh chỗ lượn)');
+  // đếm điểm ảnh vàng-xanh sáng (lõi đom đóm #f6ff9e: xanh lá ≥ đỏ, khác ánh đèn vàng cam) quanh chỗ đom đóm lượn.
+  // 1.30: đom đóm nhấp nháy (chu kỳ ~2,1 giây, pha ngẫu nhiên) nên một lần chụp có thể trúng lúc cả đàn đang dịu —
+  // lấy lần sáng nhất trong 2,5 giây thay cho một lần chụp (trước đây trượt ngẫu nhiên khoảng 1/12 lần chạy).
+  const ff = { lit: 0, n: 0 };
+  for (let k = 0; k < 14; k++) {
+    const one = await page.eval(W(`const cv = document.getElementById("kb-yard"), x = cv.getContext("2d"), a = GardenGuests._vis("yard"), v = GardenHome._mainView(), d = window.devicePixelRatio || 1;
+      const x0 = Math.round((a.home.x - 30 + v.ox) * v.S * d), y0 = Math.max(0, Math.round((a.home.y - 24) * v.S * d)), w = Math.round(60 * v.S * d), h = Math.round(44 * v.S * d);
+      const px = x.getImageData(x0, y0, w, h).data; let lit = 0;
+      for (let i = 0; i < px.length; i += 4) { if (px[i + 1] > 215 && px[i] > 170 && px[i + 2] < 180 && px[i + 1] >= px[i]) lit++; }
+      return { lit: lit, n: a.dots.length };`));
+    ff.n = one.n; ff.lit = Math.max(ff.lit, one.lit);
+    await sleep(180);
+  }
+  ok(ff.lit >= 8, 'đom đóm sáng trên nền tối (lúc sáng nhất ' + ff.lit + ' điểm ảnh lõi sáng quanh chỗ lượn)');
   await page.shot(SHOTS + '/121_dom_dom.png');
   await page.eval(W('GardenSky.set("fixedHour", 10); GardenGuests._clear(); return 1;'));
 
@@ -166,10 +173,10 @@ result = 1`);
   ok(await page.eval(W('return /Trong nhà/.test(document.querySelector(\'.kb-h-guestcard[data-guest="mejiro"]\').textContent);')), 'thẻ Album ghi "Trong nhà"');
   await page.eval(W('GardenHome.close(); GardenGuests._clear(); return 1;')); await hideToast();
 
-  console.log('== tắt "Thú nuôi, khách trên sân"');
-  ok(await page.eval(W('return /Thú nuôi, khách trên sân/.test(document.body.innerHTML) || (GardenUI && true);')), 'bảng Giao diện có dòng "Thú nuôi, khách trên sân"');
+  console.log('== tắt "Thú nuôi, khách, StackChan sinh hoạt" (trước 1.30: "Thú nuôi, khách trên sân")');
+  ok(await page.eval(W('return /Thú nuôi, khách, StackChan sinh hoạt/.test(document.body.innerHTML) || (GardenUI && true);')), 'bảng Giao diện có dòng "Thú nuôi, khách, StackChan sinh hoạt"');
   await page.eval(W('document.getElementById("kb-ui-open").click(); return 1;')); await sleep(600);
-  ok(await page.eval(W('return Array.from(document.querySelectorAll("#kb-uipanel *, .kb-ui-panel *")).some((e) => e.children.length === 0 && /Thú nuôi, khách trên sân/.test(e.textContent));')),
+  ok(await page.eval(W('return Array.from(document.querySelectorAll("#kb-uipanel *, .kb-ui-panel *")).some((e) => e.children.length === 0 && /Thú nuôi, khách, StackChan sinh hoạt/.test(e.textContent));')),
     'nhãn mới hiện trong bảng Giao diện');
   await page.eval(W('GardenUI.close(); return 1;'));
   await py(KB + 'c = kb.config(); ui = dict(c.get("ui") or {}); m = dict(ui.get("main") or {}); m["pets"] = "off"; ui["main"] = m; kb.save_config(ui=ui); kb._dialog.refresh(); result = 1');

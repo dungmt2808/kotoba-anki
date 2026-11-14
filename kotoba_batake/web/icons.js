@@ -45,7 +45,9 @@ var GardenIcons = (function () {
     // 1.20: Lịch hoa / cuốn nhật ký
     book: ["........", ".kkkkkk.", "kRrrrrrk", "kRrwwrrk", "kRrrrrrk", "kRrrrrrk", "kRmmmmmk", ".kkkkkk."],
     flower: ["..p.p...", ".ppypp..", "..ppp...", "...G....", ".g.G....", "..gG.g..", "...Gg...", "...G...."],
-    search: [".kkkk...", "kwwwwk..", "kwwwwk..", "kwwwwk..", "kwwwwk..", ".kkkkkk.", ".....kkk", "......kk"]
+    search: [".kkkk...", "kwwwwk..", "kwwwwk..", "kwwwwk..", "kwwwwk..", ".kkkkkk.", ".....kkk", "......kk"],
+    // 1.30: StackChan (màn hình đen, mắt trắng) — chip "StackChan đang làm gì"
+    stack: [".kkkkkk.", "kkkkkkkk", "kkwkkwkk", "kkwkkwkk", "kkkkkkkk", "kkkwwkkk", "kssssssk", ".kkkkkk."]
   };
   // 1.20: sticker tâm trạng 9×9 (vẽ tay, không dùng emoji). y = màu mặt của từng sticker.
   const FACES = {

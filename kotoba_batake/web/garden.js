@@ -1440,6 +1440,7 @@ var Garden = (function () {
     }
     if (typeof GardenGuests !== "undefined") { GardenGuests.init({ data: function () { return data; }, send: send }); }
     if (typeof GardenFinds !== "undefined") { GardenFinds.init({ data: function () { return data; }, send: send, toast: toast }); }
+    if (typeof GardenLife !== "undefined") { GardenLife.init({ data: function () { return data; }, send: send }); }      // 1.30
     if (typeof GardenSeeds !== "undefined" && GardenSeeds.source) { GardenSeeds.source(function () { return data && data.catalog; }); }
     if (typeof GardenPaper !== "undefined") {
       GardenPaper.init({
@@ -1518,7 +1519,14 @@ var Garden = (function () {
       if (data && g) { data.game_modes = g.games || {}; data.game_modes_lang = g.lang || {}; }
       if (typeof GardenGames !== "undefined" && GardenGames.modesChanged) { GardenGames.modesChanged(g); }
     },
-    home: function (res) { if (typeof GardenHome !== "undefined") { GardenHome.update(res); } },
+    home: function (res) {
+      // 1.30: đặt / cất đồ, mở vùng… → việc StackChan làm được đổi ngay (Python gửi kèm, không có "defs")
+      if (res && res.life && data && data.life) {
+        Object.keys(res.life).forEach(function (k) { data.life[k] = res.life[k]; });
+        if (typeof GardenLife !== "undefined" && GardenLife.rethink && /^(place|move|take)$/.test(res.action || "")) { GardenLife.rethink(); }
+      }
+      if (typeof GardenHome !== "undefined") { GardenHome.update(res); }
+    },
     finds: function (res) { if (typeof GardenFinds !== "undefined") { GardenFinds.result(res); } },      // 1.28
     uiSaved: function (c) { if (ui()) { ui().saved(c); } },
     homeError: function (msg) { if (typeof GardenHome !== "undefined") { GardenHome.error(msg); } },
@@ -1571,6 +1579,23 @@ var Garden = (function () {
           toast("[i:paw] Khách mới ghé vườn: " + e.name + " · xem Album ▸", function () {
             if (typeof GardenHome !== "undefined" && GardenHome.openGuests) { closeOthersForCal(); if (cal()) { cal().close(); } GardenHome.openGuests(isNew); }
           }, 8000);
+        }
+      }
+    },
+    // 1.30: sổ Sinh hoạt vừa đổi (thấy StackChan làm một việc lần đầu / thêm một ngày)
+    life: function (v) {
+      if (!data || !v) { return; }
+      var isNew = v.new;
+      delete v.new;
+      data.life = v;
+      if (typeof GardenHome !== "undefined") { GardenHome.dataChanged(); }
+      // chỉ báo khi đang ở màn chính: không che nút chấm điểm lúc ôn thẻ, không chen vào trò chơi / báo
+      if (isNew && (!ui() || !ui().mode || ui().mode() === "main")) {
+        var def = (v.defs || {})[isNew];
+        if (def) {
+          toast("[i:book] Sinh hoạt mới: " + def.name + " · " + def.ja + " ▸", function () {
+            if (typeof GardenHome !== "undefined" && GardenHome.openLife) { closeOthersForCal(); if (cal()) { cal().close(); } GardenHome.openLife(); }
+          }, 4500);
         }
       }
     },

@@ -19,6 +19,7 @@ from anki.collection import Collection, SearchNode
 from anki.utils import ids2str, strip_html
 
 try:   # chạy trong Anki (gói add-on)
+    from . import decor_core as decor
     from . import fields_core as fields
     from . import more_core as more
     from . import ngay_core as ngay
@@ -41,6 +42,8 @@ except ImportError:   # nạp riêng file này (test): nạp season_core.py / fi
     text = _load_side("kotoba_text_core", "text_core.py")
     share = _load_side("kotoba_share_core", "share_core.py")
     share.more = more
+    decor = _load_side("kotoba_decor_core", "decor_core.py")
+    decor.more = more
 
 STAGES = ["Hạt giống", "Mầm", "Cây non", "Ra hoa", "Ra quả"]
 STAGE_SEED, STAGE_SPROUT, STAGE_SAPLING, STAGE_FLOWER, STAGE_FRUIT = range(5)
@@ -585,6 +588,9 @@ def home_catalog(data: dict[str, Any] | None = None, px: dict[str, str] | None =
                                       px, CRAFT_PALETTE),
         "myseed": {"price": share.MYSEED_PRICE, "edit": share.MYSEED_EDIT, "max": share.MYSEED_MAX,
                    "min": share.MIN_DRAWN, "stages": list(share.STAGE_NAMES)},
+        # 1.30: giấy dán tường + sàn (mẫu có sẵn, mẫu tự vẽ 16×16)
+        "decor": decor.catalog_view(),
+        "tiles": decor.tiles_view(((data or {}).get("more") or {}).get(decor.DECOR_KEY) or decor.empty(), px, CRAFT_PALETTE),
     }
 
 
@@ -2792,6 +2798,8 @@ class GardenState:
         data["more"] = more.clean_more(more_raw, CRAFT_PALETTE)
         # 1.22: giống cây tự vẽ + luật gieo của chúng (khoá "myseeds", xem share_core)
         data["more"][share.MYSEED_KEY] = share.clean_myseeds(more_raw.get(share.MYSEED_KEY) if isinstance(more_raw, dict) else None)
+        # 1.30: giấy dán tường + sàn từng gian (khoá "decor", xem decor_core)
+        data["more"][decor.DECOR_KEY] = decor.clean(more_raw.get(decor.DECOR_KEY) if isinstance(more_raw, dict) else None)
         try:
             attach_uzones(data, more_raw)
         except (ValueError, AttributeError, TypeError, KeyError):
@@ -3518,15 +3526,18 @@ class GardenState:
         except (TypeError, ValueError):
             size = 0
         kind = payload.get("kind")
-        if size not in CRAFT_PRICES or kind not in CRAFT_KINDS:
+        # 1.30: loại / hiệu ứng / id sai kiểu (mảng, đối tượng) là dữ liệu hỏng, không phải lỗi chương trình (TypeError "unhashable")
+        if size not in CRAFT_PRICES or not isinstance(kind, str) or kind not in CRAFT_KINDS:
             raise HomeError("Cỡ hoặc loại món đồ không hợp lệ.")
+        if payload.get("id") is not None and not isinstance(payload.get("id"), str):
+            raise HomeError("Không tìm thấy món đồ này.")
         flat = px_decode(payload.get("px"), size)
         if flat is None:
             raise HomeError("Hình vẽ bị lỗi, thử vẽ lại nhé.")
         if not flat.strip("."):
             raise HomeError("Hình còn trống, vẽ gì đó đã nhé!")
         name = _clean_name(payload.get("name"))
-        fx = payload.get("fx") if payload.get("fx") in CRAFT_FX else "none"
+        fx = payload.get("fx") if isinstance(payload.get("fx"), str) and payload.get("fx") in CRAFT_FX else "none"
         data = self.load()
         craft, home = data["craft"], data["home"]
         px = self.load_px()
@@ -3809,6 +3820,61 @@ class GardenState:
         self.save(data)
         px = self.load_px()
         if px.pop(gid, None) is not None:
+            self.save_px(px)
+        return data
+
+    # -- 1.30: giấy dán tường + sàn ---------------------------------------------------
+
+    def _decor(self, fn: Any) -> Any:
+        try:
+            return fn()
+        except decor.DecorError as err:
+            raise HomeError(str(err)) from None
+
+    def decor_buy(self, did: str) -> dict[str, Any]:
+        """Mua một mẫu giấy dán tường / sàn có sẵn (mua một lần, dùng cho gian nào cũng được)."""
+        data = self.load()
+        if data["home"]["house"] < ROOM_UNLOCK_LEVEL:
+            raise HomeError("Xây nhà tới bước “Lắp cửa & cửa sổ” rồi mới mua được.")
+        dec = data["more"][decor.DECOR_KEY]
+        price = self._decor(lambda: decor.buy(dec, did))
+        self._pay(data, price)
+        self.save(data)
+        return data
+
+    def decor_use(self, room: str, slot: str, did: Any) -> dict[str, Any]:
+        """Dùng mẫu cho một gian (did trống / "none" = Theo kiểu nhà). Miễn phí."""
+        data = self.load()
+        if data["home"]["house"] < ROOM_UNLOCK_LEVEL:
+            raise HomeError("Xây nhà tới bước “Lắp cửa & cửa sổ” đã nhé.")
+        dec = data["more"][decor.DECOR_KEY]
+        self._decor(lambda: decor.use(dec, room, slot, did, data["home"].get("rooms") or []))
+        self.save(data)
+        return data
+
+    def tile_save(self, payload: Any) -> dict[str, Any]:
+        """Tạo mẫu tường / sàn tự vẽ (250 xu) hoặc sửa (50 xu nếu đổi hình, đổi tên miễn phí). payload: {id?, name, kind, px}."""
+        data = self.load()
+        if data["home"]["house"] < ROOM_UNLOCK_LEVEL:
+            raise HomeError("Xây nhà tới bước “Lắp cửa & cửa sổ” rồi mới vẽ mẫu tường / sàn được.")
+        px = self.load_px()
+        dec = data["more"][decor.DECOR_KEY]
+        cost, tid, code = self._decor(lambda: decor.tile_save(dec, payload, px, CRAFT_PALETTE))
+        self._pay(data, cost)
+        px[tid] = code
+        self.save_px(px)
+        self.save(data)
+        data["tile_id"] = tid
+        return data
+
+    def tile_delete(self, tid: str) -> dict[str, Any]:
+        """Xoá mẫu tự vẽ: gian đang dùng về Theo kiểu nhà. Không hoàn xu."""
+        data = self.load()
+        dec = data["more"][decor.DECOR_KEY]
+        self._decor(lambda: decor.tile_delete(dec, tid))
+        self.save(data)
+        px = self.load_px()
+        if px.pop(tid, None) is not None:
             self.save_px(px)
         return data
 
