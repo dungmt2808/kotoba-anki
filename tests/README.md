@@ -128,7 +128,15 @@ ANKI_PY=~/.venv-anki/bin/python tests/anki/run_ui.sh /tmp/kb_src/kotoba_batake /
 ```
 Cần Node ≥ 22 (có sẵn `fetch` và `WebSocket`). Cổng: `KB_CDP_PORT` (9333), `KB_CTRL_PORT` (9444). `kill_anki.sh` tắt Anki đang chạy từ các script này.
 
-## Kết quả lần chạy gần nhất (bản 1.28.0, 13/11/2026) — sửa 9 lỗi audit 12/11, nhặt đồ theo vùng, gánh hàng rong
+## Kết quả lần chạy gần nhất (bản 1.30.0, 14/11/2026) — StackChan sinh hoạt, tường & sàn, kiểm tra trước phát hành
+- `run_all.sh` (`ANKI_PY` = venv aqt 26.9.4; 42 bộ, có `core/test_130.py` 136/136, `test_life.js` 49/49, `test_ngau_nhien.py`, `test_ban_cu.py`, `core_audit.py` 779/779) **TẤT CẢ OK**, trên thư mục mã nguồn và trên gói đã đóng.
+- Anki 26.9.4, chạy trên **gói đã giải nén**: 30 kịch bản `run_versions.sh` (3 slot song song) đều đạt — `e2e_130` 76/76, `e2e_fuzz` 6/6, `e2e_128` 72/72, `audit_full` 183/183, `audit_edge` 58/58, `audit.js` chỉ 4 cờ cố ý cũ; `e2e_1253` (run_ui.sh, chạy riêng) 39/39; `release_sync` 58/58; `audit_20261112/ui_audit` 49/49, `lifecycle_audit` 10/10, `e2e_128_fix` 26/26.
+- Anki 23.10.1 (cùng gói): `e2e_130` 76/76, `e2e_128` 72/72, `e2e_fuzz` 6/6, `audit_full` 183/183, `e2e_tour`, `e2e_117`, `e2e_121`, `e2e_124`, `e2e_125`, `e2e_1258`, `e2e_1259`, `e2e_126`, `e2e_1261`, `release_sync` 58/58, `ui_audit` 49/49, `lifecycle_audit` 10/10, `e2e_128_fix` 26/26 đều đạt. Bảng đầy đủ + đánh giá phát hành: `docs/kiem_thu/1.30.0/BAO_CAO.md`.
+- **Chạy song song vừa phải**: `ui_audit` (màn chào tự đóng sau ~4 giây) và `e2e_1253` (đo ms / khung) nhạy với tải máy — chạy cùng lúc 4–7 Anki thì có lần trượt (29/30; 12,8 ms), chạy riêng thì đạt. Tối đa 3 slot `run_versions.sh` song song; hai kịch bản này chạy riêng.
+- **Kịch bản cũ không có StackChan**: `zz_kbtest` đặt `kb.LIFE_TEST_OFF = True` (không vẽ, không chip, không ghi sổ). Kịch bản mới cần StackChan thì đặt `kb.LIFE_TEST_OFF = False` **trước** khi mở vườn (như `e2e_130.js`, `e2e_fuzz.js`, `release_sync.js`, `shots_130.js`, `audit.js`).
+- Kịch bản đã làm cho chắc ở 1.30: `e2e_121` (đom đóm: lấy lúc sáng nhất trong 2,5 giây thay cho một lần chụp), `e2e_1258` (đèn trời: giữ trời 10 giờ — trước đây trượt khi chạy test ban đêm).
+
+## Lần chạy trước (bản 1.28.0, 13/11/2026) — sửa 9 lỗi audit 12/11, nhặt đồ theo vùng, gánh hàng rong
 - `run_all.sh` (`ANKI_PY` = venv aqt 26.9.4, có `core/test_128.py` 93/93 + `audit_20261112/core_audit.py` 779/779) **TẤT CẢ OK**, trên thư mục mã nguồn và trên gói đã đóng.
 - Anki 26.9.4: mọi kịch bản `run_versions.sh` (3 slot song song) đạt — `e2e_128` 72/72, `audit_full` 183/183, `audit_edge` 58/58, `audit.js` chỉ 4 cờ cố ý cũ; `e2e_1253` (run_ui.sh) 39/39; `release_sync` 47/47; `audit_20261112/ui_audit` 49/49, `lifecycle_audit` 10/10, `e2e_128_fix` 26/26.
 - Anki 23.10.1: `e2e_128` 70/70, `e2e_1261`, `e2e_126`, `e2e_tour`, `e2e_1259`, `e2e_117`, `e2e_121`, `release_sync` 47/47, `ui_audit` 49/49, `lifecycle_audit` 10/10, `e2e_128_fix` 26/26 đều đạt. Bảng đầy đủ: `docs/kiem_thu/1.28.0/BAO_CAO.md`.

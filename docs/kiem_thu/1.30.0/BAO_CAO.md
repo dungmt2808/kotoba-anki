@@ -6,8 +6,8 @@
 
 | Tiêu chí | Đánh giá | Căn cứ |
 |---|---|---|
-| Lỗi chặn phát hành (mất dữ liệu, sai xu, hỏng vườn, Anki bật hộp lỗi) | **Không còn lỗi nào đã biết** | @OFFLINE@; hồi quy Anki thật ở mục 4; bấm bừa @FUZZN@ lệnh; ngẫu nhiên 4.200 thao tác |
-| Dữ liệu cũ / máy còn bản cũ | **An toàn** | ví 1.30 qua mã thật 1.23 → 1.28 rồi về 1.30 không mất gì; kịch bản hai máy @REL26@ |
+| Lỗi chặn phát hành (mất dữ liệu, sai xu, hỏng vườn, Anki bật hộp lỗi) | **Không còn lỗi nào đã biết** | `run_all.sh` 42 bộ đều đạt; hồi quy Anki thật ở mục 4; bấm bừa 7.040 lệnh (4 hạt); ngẫu nhiên 4.200 thao tác |
+| Dữ liệu cũ / máy còn bản cũ | **An toàn** | ví 1.30 qua mã thật 1.23 → 1.28 rồi về 1.30 không mất gì; kịch bản hai máy 58/58 |
 | Lịch FSRS | **Không đụng** | sinh hoạt, tường / sàn không ghi gì vào thẻ, revlog; không có xu thưởng |
 | Tương thích Anki | **26.9.4 và 23.10.1 đạt** | bảng mục 4 |
 | Tính năng mới đúng ý người dùng | **Chưa biết** | mọi chi tiết thiết kế của 1.30 là Claude chọn, người dùng chưa xem (danh sách ở `PHAT_TRIEN.md` mục 7) |
@@ -46,6 +46,10 @@ Môi trường: Linux (Ubuntu 24.04, container), Anki **26.9.4** (Python 3.13, Q
 |---|---|---|
 | ![Tab Nội thất → Tường & sàn](anh/130_01_tuong_san.png) | ![Mẫu sàn tự vẽ](anh/130_03_mau_tu_ve.png) | ![Dải cảnh ở cửa sổ hẹp](anh/130_11_hep.png) |
 
+| 20:00 đọc sách cạnh kệ sách (ánh đèn ấm buổi tối) | Cửa sổ 1366 × 768: chip nằm trên hàng nút, không che Bếp |
+|---|---|
+| ![StackChan đọc sách buổi tối](anh/130_13_doc_sach_toi.png) | ![Chip tên việc ở cửa sổ 1366 px](anh/130_12_chip_1366.png) |
+
 ## 2. Kịch bản mới (ngoài bộ có sẵn)
 
 | Bộ | Cách kiểm | Kết quả |
@@ -54,9 +58,9 @@ Môi trường: Linux (Ubuntu 24.04, container), Anki **26.9.4** (Python 3.13, Q
 | `core/test_life.js` (offline, node) | `life.js` với đồng hồ giả: chọn việc theo giờ / đồ / thời tiết, ưu tiên trong nhà, đi → làm → ghi sổ một lần, không ghi khi không ở màn chính, đồ đổi ô → đi theo, mọi tư thế dựng được | **49/49** |
 | `core/test_ngau_nhien.py` (offline) | **12 hạt × 350 thao tác ngẫu nhiên** trên ví thật, sau mỗi thao tác xét bất biến (xu ≥ 0, đặt ≤ có, gian bên mở cả đôi, mẫu đang dùng là mẫu đang có, lưu rồi đọc lại giống hệt) + giá trừ đúng từng xu | **đạt, 0 vi phạm / 4.200 thao tác** |
 | `core/test_ban_cu.py` (offline) | ví 1.30 đầy đủ cho **mã thật** của 1.23, 1.24, 1.25, 1.26.1, 1.28 (lấy từ git) đọc → mua → lưu, rồi 1.30 đọc lại | **đạt: không mất món / gian / mẫu / khoá nào** |
-| `anki/e2e_130.js` | bấm chuột thật trong Anki: Tường & sàn, Xưởng vẽ mẫu, StackChan theo giờ, thẻ, Sổ, vùng, tắt, Đứng yên, cửa sổ nhỏ, đặt / cất đồ → việc đổi ngay, chip ở 4 cỡ cửa sổ | **76/76** (26.9.4) · @E130_2310@ (23.10.1) |
+| `anki/e2e_130.js` | bấm chuột thật trong Anki: Tường & sàn, Xưởng vẽ mẫu, StackChan theo giờ, thẻ, Sổ, vùng, tắt, Đứng yên, cửa sổ nhỏ, đặt / cất đồ → việc đổi ngay, chip ở 4 cỡ cửa sổ | **76/76** (26.9.4) · **76/76** (23.10.1) |
 | `anki/e2e_fuzz.js` — **bấm bừa** | ~1.100 lệnh cầu nối ngẫu nhiên mỗi hạt (id lạ, số âm, JSON hỏng / `null` / mảng, chuỗi 1.800 ký tự, thiếu tham số…); sau mỗi 40 lệnh: không lỗi chưa bắt, Anki không bật hộp lỗi, cửa sổ còn mở, ví hợp lệ, xu không tăng bất thường | lần đầu **4/6 — tìm ra lỗi 1**; sau khi sửa **6/6** với hạt 130, 7 (1.120 lệnh), 2026, 99 (2.400 lệnh) trên 26.9.4 và hạt 130 trên 23.10.1 |
-| `anki/release_sync.js` (mở rộng) | máy 1 dùng một ngày (thêm: mở rộng nhà, dán tường Bếp, vẽ mẫu sàn lát Phòng ngủ, ghi Sổ sinh hoạt) → tắt hẳn Anki, mở lại → **máy 2 chỉ có collection** (như sau khi đồng bộ AnkiWeb) | @REL26@ (26.9.4) · @REL2310@ (23.10.1) |
+| `anki/release_sync.js` (mở rộng) | máy 1 dùng một ngày (thêm: mở rộng nhà, dán tường Bếp, vẽ mẫu sàn lát Phòng ngủ, ghi Sổ sinh hoạt) → tắt hẳn Anki, mở lại → **máy 2 chỉ có collection** (như sau khi đồng bộ AnkiWeb) | **58/58** (15 + 21 + 22) trên 26.9.4 · **58/58** trên 23.10.1 |
 
 ## 3. Lỗi tìm ra trong lúc kiểm tra (đều đã sửa)
 
@@ -78,13 +82,35 @@ Ba kịch bản cũ được cập nhật vì giao diện đổi **có chủ đ�
 
 ## 4. Toàn bộ bộ test cũ chạy lại trên 1.30.0
 
-`tests/run_all.sh` (offline, `ANKI_PY` = Anki 26.9.4; gồm `core_audit.py` 779 ca của nhánh audit 12/11): @OFFLINE@.
+`tests/run_all.sh` (offline, `ANKI_PY` = Anki 26.9.4; gồm `core_audit.py` 779/779 ca của nhánh audit 12/11): **42 bộ, TẤT CẢ OK**, trên thư mục mã nguồn và trên gói đã giải nén.
 
-@BANG_26@
+Mọi số dưới đây là của **gói `kotoba_batake.ankiaddon` cuối cùng** (giải nén ra rồi chạy), ba luồng song song.
 
-@DONG_2310@
+| Anki 26.9.4 | Kết quả | Anki 26.9.4 | Kết quả |
+|---|---:|---|---:|
+| `e2e.js` | 24/24 | `e2e_1228.js` | 26/26 |
+| `e2e_tour.js` | 12/12 | `e2e_123.js` | 65/65 |
+| `e2e_114.js` | 34/34 | `e2e_124.js` | 23/23 |
+| `e2e_115.js` | 21/21 | `e2e_125.js` | 30/30 |
+| `e2e_116.js` | 15/15 | `e2e_1251.js` | 48/48 |
+| `e2e_117.js` | 55/55 | `e2e_1253.js` (tắt hẳn / mở lại Anki, đo tốc độ vẽ) | 39/39 |
+| `e2e_118.js` | 29/29 | `e2e_1255.js` | 48/48 |
+| `e2e_119.js` | 55/55 | `e2e_1258.js` | 25/25 |
+| `e2e_120.js` | 103/103 | `e2e_1259.js` | 36/36 |
+| `e2e_121.js` | 46/46 | `e2e_126.js` | 39/39 |
+| `e2e_122.js` | 64/64 | `e2e_1261.js` | 41/41 |
+| `e2e_1223.js` | 49/49 | `e2e_128.js` | 72/72 |
+| `e2e_1226.js` | 40/40 | `e2e_130.js` | 76/76 |
+| `e2e_kit23.js` | 10/10 | `e2e_fuzz.js` (bấm bừa) | 6/6 |
+| `audit_full.js` (mua / dùng mọi thứ qua nút) | 183/183 | `audit_edge.js` (ít xu / bấm vội / cửa sổ nhỏ) | 58/58 |
+| `audit.js` (đo bố cục mọi màn, 1366 × 768 + 1024 × 700, có StackChan + chip) | 4 cờ cố ý cũ (dấu "…" ở Kệ báo), không cờ mới, không lỗi JS / nhật ký lỗi | `release_sync.js` (hai máy) | 58/58 |
+| `audit_20261112/ui_audit.js` | 49/49 | `audit_20261112/lifecycle_audit.js` · `e2e_128_fix.js` | 10/10 · 26/26 |
 
-@GOI@
+**Anki 23.10.1** (cùng gói): `e2e_130` 76/76, `e2e_128` 72/72, `e2e_fuzz` 6/6, `audit_full` 183/183, `e2e_tour` 12/12, `e2e_117` 55/55, `e2e_121` 46/46, `e2e_124` 23/23, `e2e_125` 30/30, `e2e_1258` 25/25, `e2e_1259` 36/36, `e2e_126` 39/39, `e2e_1261` 41/41, `release_sync` 58/58, `ui_audit` 49/49, `lifecycle_audit` 10/10, `e2e_128_fix` 26/26.
+
+Lưu ý khi chạy lại bộ test: hai phép đo **nhạy với tải máy** — `ui_audit` (màn chào tự đóng sau ~4 giây) trượt 1 mục khi chạy cùng lúc 7 Anki, `e2e_1253` (tốc độ vẽ) ra 12,8 ms khi chạy cùng lúc 4 Anki. Chạy riêng thì đạt (49/49; 4,8 ms). Nên chạy tối đa 3 luồng song song, hai kịch bản này chạy riêng.
+
+Gói `kotoba_batake.ankiaddon` (1.30.0, 65 mục) giải nén ra khớp từng file với `kotoba_batake/` (trừ `meta.json` và dữ liệu người dùng).
 
 ## 5. Rủi ro còn lại
 
@@ -94,7 +120,7 @@ Ba kịch bản cũ được cập nhật vì giao diện đổi **có chủ đ�
 | Chưa chạy trên Windows / macOS / DPI 125–150 % | Trung bình | hình StackChan vẽ theo ô pixel nguyên như thú nuôi, khách nên ít khả năng nhoè; cần xem bằng mắt |
 | Hai máy cùng ghi Sổ sinh hoạt trước khi đồng bộ | Thấp | bản ghi sau thắng; việc bị mất sẽ ghi lại khi thấy lần nữa (không có xu / thưởng gắn với sổ) |
 | Máy còn bản ≤ 1.28 | Thấp | không thấy tường / sàn mới và sinh hoạt, dữ liệu vẫn giữ (đã test với mã thật 1.23 → 1.28). Bản ≤ 1.13 chưa test |
-| Tốc độ vẽ | Thấp | mỗi khung thêm một nhân vật 24×16 + ≤ 14 hạt; `e2e_1253` (đo tốc độ vẽ cỡ Lớn) @E1253@ |
+| Tốc độ vẽ | Thấp | mỗi khung thêm một nhân vật 24×16 + ≤ 14 hạt; `e2e_1253` (cỡ Lớn ×5, giông ban đêm): 4,81 ms / khung (ngưỡng 12 ms). Đo riêng khi **bật** StackChan: sân 5,4 ms, Bãi biển 5,0 ms — ngang lúc tắt (5,5 / 5,1 ms) |
 | Thông báo "Sinh hoạt mới" (4,5 giây, mỗi việc một lần duy nhất) có thể hơi dày trong vài ngày đầu | Thấp | chỉ hiện ở màn chính, không hiện lúc ôn / chơi / đọc báo; nếu thấy phiền thì bỏ thông báo, giữ sổ (một dòng mã) |
 | Việc theo mùa (hoa anh đào, đào măng, đom đóm, quét lá) chỉ thấy đúng tháng | Thấp (đúng thiết kế) | Sổ ghi gợi ý "Tháng 3–4"; không mất gì khi lỡ |
 
