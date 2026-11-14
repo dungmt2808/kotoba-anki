@@ -2197,6 +2197,10 @@ def _life_ctx(wallet: dict[str, Any]) -> tuple[dict[str, Any], list[str], bool]:
     return home, scenes, pets_home
 
 
+# lệnh home:* làm đổi việc StackChan làm được (đồ đã đặt, cảnh đã mở, thú ở nhà)
+LIFE_HOME_ACTIONS = ("place", "move", "take", "zone", "nha", "build", "pet", "uzone")
+
+
 def life_view(wallet: dict[str, Any]) -> dict[str, Any]:
     """1.30: việc StackChan làm được ở từng cảnh hôm nay + sổ Sinh hoạt (data.life)."""
     home, scenes, pets_home = _life_ctx(wallet)
@@ -3406,6 +3410,15 @@ class GardenDialog(QDialog):
                                "sub": parts[1] if len(parts) > 2 or parts[0] in ("theme", "repair") else ""}
         if parts[0] in ("craft", "myseed", "tile"):
             out["catalog"] = core.home_catalog(data, STATE.load_px())
+        if parts[0] in LIFE_HOME_ACTIONS:
+            # 1.30: đặt / chuyển / cất đồ, mở vùng / gian, thú đổi chỗ → việc StackChan làm được + gợi ý trong sổ đổi ngay
+            # (trước đó phải mở lại vườn mới thấy). Không gửi lại "defs" (danh mục 67 việc không đổi).
+            try:
+                lv = life_view(data)
+                lv.pop("defs", None)
+                out["life"] = lv
+            except Exception as err:        # phần ngắm cho vui không được làm hỏng lệnh mua / đặt
+                _warn("sinh hoạt sau lệnh nhà", err)
         if regrow:
             self.refresh()
         self._js("home", out)

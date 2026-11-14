@@ -214,6 +214,14 @@ const PUT = (list) => list.map(([sc, id, x, y]) => `st.buy("${id}"); st.place("$
   await refresh(CLEAR_LIFE + PUT([['bedroom', 'beddo', 1, 2], ['kitchen', 'nagashi', 2, 1], ['kitchen', 'shokutaku', 3, 3], ['room', 'tea', 6, 1], ['room', 'desk', 2, 1], ['room', 'shelf', 0, 1]]));
   const life0 = await js('const l = Garden._data().life; return [l.total, Object.keys(l.defs).length, l.groups.length, l.seen, Object.keys(l.can).sort().join(",")].join("|");');
   ok(/^(\d+)\|\1\|8\|0\|bedroom,kitchen,room,yard$/.test(life0), 'data.life: ' + life0);
+  // đặt / cất đồ qua lệnh thật: việc làm được đổi ngay, không chờ mở lại vườn
+  await py(KB + 'st.buy("tv"); kb._dialog.refresh(); result = 1'); await sleep(900);
+  const canTv0 = await js('return (Garden._data().life.can.room || []).indexOf("terebi") >= 0;');
+  await js('pycmd("home:place:room:tv:7:1"); return 1;');
+  ok(!canTv0 && await waitFor('(Garden._data().life.can.room || []).indexOf("terebi") >= 0', 5000), 'vừa đặt TV (home:place) → "Xem TV" vào danh sách việc làm được ngay, còn nguyên danh mục 67 việc: ' + (await js('return Object.keys(Garden._data().life.defs).length;')));
+  const tvIdx = await py(KB + 'result = [i for i, e in enumerate(st.load()["home"]["room"]) if e["id"] == "tv"][0]');
+  await js('pycmd("home:take:room:' + tvIdx + '"); return 1;');
+  ok(await waitFor('(Garden._data().life.can.room || []).indexOf("terebi") < 0', 5000), 'cất TV (home:take) → "Xem TV" rời danh sách ngay');
   await sky(23); await js('GardenLife._force(null); return 1;'); await sleep(300);
   const night = await js('const c = GardenLife._candidates(); return c.map((x) => x.id + "@" + x.scene).join(",") + " → " + GardenLife._current().id;');
   ok(night === 'neru@bedroom → neru', '23 giờ, có giường: chỉ Ngủ ở Phòng ngủ (' + night + ')');

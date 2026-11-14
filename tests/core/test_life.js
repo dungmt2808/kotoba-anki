@@ -106,6 +106,17 @@ sky.hour = 7; L._force('ryouri', 'kitchen');
 for (let i = 0; i < 600 && !(L._actor().phase === 'do' && L._actor().act === 'ryouri'); i++) { frame('kitchen'); frame('room'); frame('bedroom'); }
 const B = L._actor();
 ok(B.phase === 'do' && B.loc === 'kitchen' && B.item === 'nagashi' && B.x < 32 && B.dir === 1, 'đi bộ từ Phòng ngủ sang Bếp, đứng bên trái bếp (chỗ cái nồi), quay mặt vào');
+// 1.30: chuyển bồn rửa sang ô khác (lệnh home:move) → rethink() → StackChan đi tới chỗ mới, không đứng lại cạnh chỗ cũ
+const sinkOld = Object.assign({}, ITEMS.kitchen[0]);
+Object.assign(ITEMS.kitchen[0], { cx: 96, left: 80, right: 112 });
+L.rethink();
+ok(L._actor().phase === 'seek', 'rethink(): tìm lại chỗ đứng của việc đang làm');
+for (let i = 0; i < 600 && L._actor().phase !== 'do'; i++) { frame('kitchen'); }
+const B2 = L._actor();
+ok(B2.phase === 'do' && B2.act === 'ryouri' && Math.abs(B2.x - B.x) > 30 && B2.x >= 60, 'bồn rửa đổi ô → StackChan đi theo (x ' + Math.round(B.x) + ' → ' + Math.round(B2.x) + ')');
+Object.assign(ITEMS.kitchen[0], sinkOld);
+L.rethink(); for (let i = 0; i < 600 && L._actor().phase !== 'do'; i++) { frame('kitchen'); }
+ok(Math.abs(L._actor().x - B.x) < 1, 'chuyển về ô cũ → về đúng chỗ cũ');
 L._force('karenda', 'room');
 for (let i = 0; i < 600 && !(L._actor().phase === 'do' && L._actor().act === 'karenda'); i++) { frame('room'); }
 ok(L._actor().y >= 52 && Math.abs(L._actor().x - (148 + 120)) < 20, 'đồ treo tường: đứng dưới sàn, ngay bên dưới');

@@ -52,6 +52,37 @@ Ngoài sân nhà còn 6 vùng mở bằng xu: **Bãi biển, Đền trên núi, 
 
 ![Sân vườn, 6 vùng và một vùng tự tạo (Tiệm bánh nhỏ)](docs/anh/16b_cac_vung.png)
 
+### StackChan sinh hoạt trong nhà, ngoài sân và ở từng vùng (mới ở 1.30)
+
+StackChan giờ **sống trong ngôi nhà của bạn**. Cứ vài phút bạn ấy làm một việc hợp với **giờ trong vườn** và **đồ bạn đã đặt**:
+
+- **Buổi sáng** tập thể dục, pha trà, nấu cơm, tưới chậu cây, ra hòm thư lấy thư. **Buổi trưa** ăn cơm, rửa bát, ngủ trưa trên thảm. **Buổi chiều** học bài ở bàn học, đọc sách cạnh kệ sách, chơi đàn koto. **Buổi tối** xem TV, sưởi lửa, ngồi bàn sưởi kotatsu, viết nhật ký. **22:30** thì lên giường ngủ tới sáng.
+- Có đồ nào thì có việc đó: đặt bể cá thì bạn ấy cho cá ăn, đặt xích đu thì ra chơi xích đu. Thẻ món đồ ở cửa hàng ghi sẵn món đó mở ra việc gì. Nhà chưa có đồ vẫn có việc để làm (quét nhà, đọc báo, ngắm ngoài cửa sổ, nghe mưa, ngắm sao).
+- **Mỗi vùng có việc riêng**, mua vùng không chỉ để ngắm: **tắm biển**, xây lâu đài cát, câu cá, ngắm hoàng hôn ở Bãi biển; **tắm suối nước nóng**, uống sữa sau khi tắm ở Suối nước nóng; viếng đền, rung chuông ở Đền trên núi; vớt cá vàng, ăn kẹo táo, xem pháo hoa ở Phố lễ hội; ngồi thiền, đào măng, ngắm đom đóm ở Rừng tre; đợi tàu, vẫy tay chào tàu ở Ga làng quê.
+- **Mỗi việc một câu tiếng Nhật.** Bấm vào StackChan để xem câu, cách đọc và nghĩa: お茶を入れる (おちゃをいれる) · pha trà. **Sổ sinh hoạt** (Nhà → Album → Sinh hoạt) ghi lại 67 việc bạn đã thấy; ô chưa thấy có gợi ý cần món gì, giờ nào.
+- Không có xu, không có chuỗi, không phải chăm. Bỏ lỡ hôm nay thì mai việc đó lại có. Muốn vườn yên tĩnh thì tắt ở ⚙ → Giao diện.
+
+| Buổi sáng nấu ăn trong Bếp | Bấm StackChan: câu tiếng Nhật của việc đang làm |
+|---|---|
+| ![07:12, StackChan nấu ăn ở bồn rửa trong Bếp; Bếp dán tường kem, lát gạch ô cờ](docs/anh/130_a_nau_an.png) | ![Thẻ お茶を入れる · おちゃをいれる · pha trà](docs/anh/130_b_the_tieng_nhat.png) |
+
+| Tắm suối nước nóng | Tắm biển |
+|---|---|
+| ![Buổi tối StackChan ngâm mình trong bồn đá ở Suối nước nóng](docs/anh/130_f_tam_suoi.png) | ![Buổi trưa StackChan bơi phao ngoài sóng ở Bãi biển](docs/anh/130_g_tam_bien.png) |
+
+| 23:00 ngủ trên giường | Sổ sinh hoạt |
+|---|---|
+| ![Ban đêm StackChan ngủ trên giường trong Phòng ngủ dán tường Trời sao](docs/anh/130_c_ngu.png) | ![Album → Sinh hoạt: việc đã thấy có câu tiếng Nhật, việc chưa thấy có gợi ý](docs/anh/130_h_so_sinh_hoat.png) |
+
+### Giấy dán tường và sàn cho từng gian (mới ở 1.30)
+
+- Nhà → Nội thất → **Tường & sàn**: 12 mẫu giấy dán tường (vữa kem, cánh anh đào, sóng seigaiha, vách shoji, trời sao…) và 9 mẫu sàn (gỗ xương cá, tatami mới, gạch ô cờ, thảm len…). Mỗi gian chọn riêng; mua một lần dùng được cho mọi gian; rê chuột để xem thử trước khi mua.
+- Muốn mẫu của riêng mình thì **tự vẽ một ô 16×16** trong Xưởng, vườn sẽ lát lặp lại ô đó lên cả bức tường hoặc mặt sàn.
+
+| Chọn tường và sàn cho từng gian | Vẽ mẫu sàn của riêng mình |
+|---|---|
+| ![Tab Nội thất → Tường & sàn: các mẫu giấy dán tường cho Phòng chính](docs/anh/130_d_tuong_san.png) | ![Xưởng: vẽ một ô 16×16, xem trước lát 3×3](docs/anh/130_e_xuong_ve_san.png) |
+
 ### Nhặt đồ theo vùng và gánh hàng rong (mới ở 1.28)
 
 - **Chỗ lấp lánh**: cứ **10 lượt ôn** trong ngày (ôn ở màn ôn thường hay trên điện thoại cũng tính, bấm Lại cũng tính) là một chỗ lấp lánh hiện ra ở sân hoặc một vùng đã mở, tối đa 3 chỗ một ngày. Bấm vào để nhặt: vỏ sò 貝殻, bùa お守り, vé tàu cũ 切符… mỗi món có **chữ Nhật, cách đọc và nghĩa**. Dòng Tin làng cho biết chỗ lấp lánh ở đâu, bấm là tới.
@@ -69,7 +100,7 @@ Ngoài sân nhà còn 6 vùng mở bằng xu: **Bãi biển, Đền trên núi, 
 ### Đồ đạc, tủ đồ, kho đồ
 
 - **160 món đồ**: hơn 100 món ngoài sân và các vùng (cổng torii, ao cá koi, cây anh đào, đài phun nước…), 50 món nội thất cho cả ba gian (kotatsu, bể cá, tủ lạnh, giường…), 18 món hiếm chỉ có trong rương quà nhiệm vụ và 15 món của Hộp sưu tầm / gánh hàng rong.
-- **6 thú nuôi**: gà, vịt, thỏ, rùa, mèo mướp, chó Shiba. Thú có tên, có độ thân, đi lại khắp sân.
+- **6 thú nuôi**: gà, vịt, thỏ, rùa, mèo mướp, chó Shiba. Thú có tên, có độ thân, đi lại khắp sân. Mỗi con có món ưa thích: mèo nằm cạnh bàn sưởi và ngắm bể cá, chó nằm cạnh ghế gỗ, vịt ra ao (1.30).
 - **Tủ đồ**: 17 món cho StackChan (linh vật ở góc trái): mũ rơm, nón lá, kính tròn, khăn quàng, vỏ màu sakura… cùng 7 biểu cảm.
 - **Kho đồ**: mọi món đã có, kể cả quà của giao diện mùa. Đặt ra sân, di chuyển hay cất lại lúc nào cũng được, không mất gì.
 - **Xưởng**: tự vẽ đồ pixel (bút, đổ màu, kẻ thẳng, đối xứng, 3 cỡ 16 / 24 / 32), giống cây riêng và vùng riêng, hoặc chọn một tấm ảnh để chuyển thành pixel. Thiết kế chia sẻ được cho bạn bè bằng một đoạn mã.

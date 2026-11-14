@@ -1519,7 +1519,14 @@ var Garden = (function () {
       if (data && g) { data.game_modes = g.games || {}; data.game_modes_lang = g.lang || {}; }
       if (typeof GardenGames !== "undefined" && GardenGames.modesChanged) { GardenGames.modesChanged(g); }
     },
-    home: function (res) { if (typeof GardenHome !== "undefined") { GardenHome.update(res); } },
+    home: function (res) {
+      // 1.30: đặt / cất đồ, mở vùng… → việc StackChan làm được đổi ngay (Python gửi kèm, không có "defs")
+      if (res && res.life && data && data.life) {
+        Object.keys(res.life).forEach(function (k) { data.life[k] = res.life[k]; });
+        if (typeof GardenLife !== "undefined" && GardenLife.rethink && /^(place|move|take)$/.test(res.action || "")) { GardenLife.rethink(); }
+      }
+      if (typeof GardenHome !== "undefined") { GardenHome.update(res); }
+    },
     finds: function (res) { if (typeof GardenFinds !== "undefined") { GardenFinds.result(res); } },      // 1.28
     uiSaved: function (c) { if (ui()) { ui().saved(c); } },
     homeError: function (msg) { if (typeof GardenHome !== "undefined") { GardenHome.error(msg); } },

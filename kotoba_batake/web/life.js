@@ -682,6 +682,8 @@ var GardenLife = (function () {
     closeCard: closeCard,
     sync: syncChip,
     count: function () { const v = data(); return v ? v.seen : 0; },
+    // đồ vừa được đặt / chuyển / cất: tìm lại chỗ đứng của việc đang làm (món có thể đã sang ô khác)
+    rethink: function () { if (actor && actor.phase !== "new") { actor.phase = "seek"; actor.spec = null; } syncChip(); },
     isOpen: () => !!($("kb-life-card") && !$("kb-life-card").hidden),
     // cho test
     _force: function (id, scene) { forced = id === null ? null : { id: id || "", scene: scene, key: (id || "idle") + "|" + scene + "|f" }; if (actor) { actor.seen = 0; } },

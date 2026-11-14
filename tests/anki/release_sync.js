@@ -56,7 +56,11 @@ result = {"coins": w["coins"], "waters": w.get("waters"), "bench": [p for p in y
           "sky": (kb.config().get("prefs") or {}).get("kb-sky"), "greet_day": (kb.config().get("prefs") or {}).get("kb-greet-day"),
           # 1.28: Hộp sưu tầm (khoá kotoba_batake_events) + món gánh hàng / quà (tầng NHA_KEY)
           "found": sorted(((col.get_config("kotoba_batake_events", {}) or {}).get("found") or {}).keys()),
-          "owned_new": {k: w["home"]["owned"].get(k, 0) for k in kb.core.FIND_ITEMS if w["home"]["owned"].get(k)}}`;
+          "owned_new": {k: w["home"]["owned"].get(k, 0) for k in kb.core.FIND_ITEMS if w["home"]["owned"].get(k)},
+          # 1.30: tường / sàn từng gian (khoá "decor" trong kotoba_batake_more), mẫu tự vẽ (điểm ảnh ở kotoba_batake_px), Sổ sinh hoạt
+          "rooms": list(w["home"].get("rooms") or []), "decor": w["more"].get("decor"),
+          "tile_px": (col.get_config("kotoba_batake_px", {}) or {}).get("t1"),
+          "life": {k: [v.get("d"), v.get("s"), v.get("n")] for k, v in ((col.get_config("kotoba_batake_life", {}) or {}).get("seen") or {}).items()}}`;
 
 (async () => {
   if (PHASE === 'a') {
@@ -121,10 +125,24 @@ w = st.load(); w["home"]["house"] = 7; st.save(w)      # nhà có cửa: món ri
 result = d.isoformat()`);
     await send('ped:buy:x1:' + wed); await sleep(900);
     await py(KB + 'kb.cal_today = kb._real_cal_today\nkb._dialog.refresh()\nresult = 1'); await sleep(1200);
+    // 1.30: mở rộng nhà, mua giấy dán tường cho Bếp, vẽ một mẫu sàn cho Phòng ngủ, StackChan quét nhà (ghi Sổ sinh hoạt)
+    await py(KB + 'w = st.load(); w["coins"] += 3000; st.save(w); kb._dialog.refresh(); result = 1'); await sleep(900);
+    await send('home:nha:open'); await sleep(900);
+    await send('home:decor:buy:w_sakura'); await sleep(700);
+    await send('home:decor:use:kitchen:wall:w_sakura'); await sleep(700);
+    await send('craft:tile:' + JSON.stringify({ name: 'Sọc gỗ', kind: 'floor', px: '8k8y'.repeat(16) })); await sleep(900);
+    await send('home:decor:use:bedroom:floor:t1'); await sleep(700);
+    await send('life:seen:souji:room'); await sleep(700);
     await js('GardenPrefs.set("kb-sky", JSON.stringify({mode: "fixed", fixedHour: 18.4, dayMinutes: 24, weather: "snow"})); return 1;'); await sleep(1500);
     const s = await py(KB + SNAP);
     ok(!!spot && s.found.length === 1, '10 lượt ôn → 1 chỗ lấp lánh (' + spot + ') → nhặt được ' + JSON.stringify(s.found));
     ok(Object.keys(s.owned_new).length === 1, 'gánh hàng (' + wed + '): mua món riêng ' + JSON.stringify(s.owned_new));
+    const dc = s.decor || {};
+    ok(s.rooms.length === 2 && (dc.own || []).indexOf('w_sakura') >= 0 && ((dc.use || {}).kitchen || {}).wall === 'w_sakura',
+      '1.30: mở rộng nhà, Bếp dán giấy tường Hoa anh đào: ' + JSON.stringify(dc.use));
+    ok(!!((dc.mine || {}).items || {}).t1 && ((dc.use || {}).bedroom || {}).floor === 't1' && typeof s.tile_px === 'string' && s.tile_px.length > 0,
+      '1.30: mẫu sàn tự vẽ t1 lát Phòng ngủ, điểm ảnh ở kotoba_batake_px (' + String(s.tile_px).length + ' ký tự)');
+    ok(!!s.life.souji && s.life.souji[1] === 'room' && s.life.souji[2] === 1, '1.30: Sổ sinh hoạt ghi "Quét nhà": ' + JSON.stringify(s.life));
     ok(s.bench.length === 1, 'Ghế gỗ đặt ở sân ' + JSON.stringify(s.bench));
     const aday = await py(KB + 'result = int(mw.col.sched.today)');
     ok(s.pet.neko && s.pet.neko[1] === aday, 'nhận nuôi + cho mèo ăn hôm nay (ngày Anki ' + aday + '): ' + JSON.stringify(s.pet));
@@ -163,6 +181,11 @@ result = d.isoformat()`);
     ok(JSON.stringify(s.keys) === JSON.stringify(exp.keys), 'đủ ' + s.keys.length + ' khoá kotoba_batake_* trong collection');
     ok(JSON.stringify(s.found) === JSON.stringify(exp.found) && s.found.length === 1, 'Hộp sưu tầm còn món đã nhặt: ' + JSON.stringify(s.found));
     ok(JSON.stringify(s.owned_new) === JSON.stringify(exp.owned_new), 'món gánh hàng còn trong kho: ' + JSON.stringify(s.owned_new));
+    ok(JSON.stringify(s.rooms) === JSON.stringify(exp.rooms) && JSON.stringify(s.decor) === JSON.stringify(exp.decor), '1.30: tường / sàn từng gian còn nguyên: ' + JSON.stringify((s.decor || {}).use));
+    ok(s.tile_px === exp.tile_px && !!s.tile_px, '1.30: điểm ảnh mẫu sàn tự vẽ còn nguyên');
+    ok(JSON.stringify(s.life) === JSON.stringify(exp.life) && !!s.life.souji, '1.30: Sổ sinh hoạt còn nguyên: ' + JSON.stringify(s.life));
+    const u30 = await js('const d = Garden._data(), dec = (d.wallet.more || {}).decor || {}, t = (d.catalog.tiles || []).find((x) => x.id === "t1"); return {wall: ((dec.use || {}).kitchen || {}).wall, floor: ((dec.use || {}).bedroom || {}).floor, tile: !!(t && t.px), life: d.life ? d.life.seen : null};');
+    ok(u30.wall === 'w_sakura' && u30.floor === 't1' && u30.tile && u30.life === 1, '1.30: trang nhận đủ mẫu tường / sàn để vẽ, sổ Sinh hoạt 1 việc: ' + JSON.stringify(u30));
     const ui = await js('const d = Garden._data(); return {coins: d.wallet.coins, tour: d.tour, greeting: GardenGreet.isGreeting(), sky: GardenPrefs.get("kb-sky")};');
     ok(ui.coins === exp.coins, 'giao diện hiện ' + ui.coins + ' xu');
     ok(!ui.tour, 'không có hướng dẫn người mới');

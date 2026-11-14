@@ -110,6 +110,7 @@ result = 1
   await sky(20);
   await act('house', 'hon', 'room');
   await shot('130_c2_doc_sach');
+  await sleep(1800);            // để thông báo "Sinh hoạt mới: Đọc sách" kịp hiện rồi shot() ẩn đi (khỏi lọt vào ảnh sau)
   await sky(10);
   await js('GardenLife._force("", "yard"); GardenHome.open("room"); GardenHome.setTab("room"); return 1;'); await sleep(500);
   await js('document.querySelector(\'[data-roomview="decor"]\').click(); return 1;'); await sleep(700);
