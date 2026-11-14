@@ -208,6 +208,34 @@ result = 1`);
   await shot('01_bong_bong_720');
   await size(1366, 768);
 
+  console.log('== 2b. nền trang: Giấy ấm / Trời xanh (người dùng: "màu xanh cũng đẹp luôn nên làm nút chuyển đổi")');
+  const pageBg = () => js('const m = getComputedStyle(document.body).backgroundColor.match(/\\d+/g).map(Number); return m;');
+  await js('document.getElementById("kb-sound").click(); return 1;'); await sleep(400);
+  const opts = await js('return Array.from(document.querySelectorAll(".kb-page-opt")).map((b) => [b.textContent.trim(), b.classList.contains("is-on")]);');
+  ok(JSON.stringify(opts) === '[["Giấy ấm",true],["Trời xanh",false]]', '⚙ có "Nền trang: Giấy ấm / Trời xanh", mặc định Giấy ấm ' + JSON.stringify(opts));
+  await page.click('.kb-page-opt[data-page="sky"]'); await sleep(2600);
+  const bgSky = await pageBg();
+  const on2 = await js('return [document.querySelector(".kb-page-opt[data-page=sky]").classList.contains("is-on"), document.querySelector(".kb-page-opt[data-page=paper]").classList.contains("is-on"), document.getElementById("kb-sound-pop").hidden];');
+  ok(bgSky[2] > bgSky[0] + 60 && on2[0] && !on2[1] && !on2[2], 'bấm "Trời xanh": nền trang xanh trời (rgb ' + bgSky.join(',') + '), nút tô vàng, bảng ⚙ vẫn mở');
+  await sleep(600);
+  const saved = await py(KB + 'result = json.loads(kb.config().get("prefs", {}).get("kb-sky") or "{}").get("page")');
+  ok(saved === 'sky', 'lưu ở config prefs (theo máy): kb-sky.page = ' + saved);
+  await js('document.body.click(); return 1;'); await sleep(300);
+  await contrast('màn chính ban ngày, nền Trời xanh');
+  await js('GardenSky.set("fixedHour", 22); return 1;'); await sleep(2600);
+  await contrast('màn chính ban đêm, nền Trời xanh');
+  await reopen('', 1366, 768); await sleep(2600);
+  const bgRe = await pageBg();
+  ok(bgRe[2] > bgRe[0] + 30, 'đóng / mở lại vườn: vẫn nền Trời xanh (rgb ' + bgRe.join(',') + ')');
+  await shot('02b_nen_troi_xanh_dem');
+  await js('document.getElementById("kb-sound").click(); return 1;'); await sleep(400);
+  await page.click('.kb-page-opt[data-page="paper"]'); await sleep(2600);
+  const bgNight = await pageBg();
+  ok(bgNight[2] > bgNight[0] + 25 && bgNight[0] < 70, 'bấm "Giấy ấm" lúc 22 giờ: nền xanh chàm tối, không xám (rgb ' + bgNight.join(',') + ')');
+  await js('document.body.click(); GardenSky.set("fixedHour", 10); return 1;'); await sleep(2600);
+  const bgDay = await pageBg();
+  ok(bgDay[0] > 220 && bgDay[0] > bgDay[2], 'Giấy ấm ban ngày: kem (rgb ' + bgDay.join(',') + ')');
+
   console.log('== 3. vườn để mở qua ngày mới');
   const hasDay = await py(KB + 'result = hasattr(kb._dialog, "_check_day")');
   if (!hasDay) { ok(false, 'không có GardenDialog._check_day (bản trước 1.30.3: vườn để mở qua ngày mới không tự dựng lại) — bỏ qua mục 3'); }

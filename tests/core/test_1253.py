@@ -171,13 +171,13 @@ out.crowSpeedProto = (c.P.set("kb-crow-speed", "constructor"), null);
 console.log(JSON.stringify(out));
 })();
 """)
-    ok(r and r["sky"] == {"mode": "fixed", "dayMinutes": 60, "fixedHour": 18.4, "weather": "rain"} and r["skyW"] == "rain"
+    ok(r and r["sky"] == {"mode": "fixed", "dayMinutes": 60, "fixedHour": 18.4, "weather": "rain", "page": "paper"} and r["skyW"] == "rain"
        and abs(r["skyH"] - 18.4) < 1e-9, "mở lại Anki: trời / giờ lấy đúng cài đặt đã lưu (Cố định 18:24, Mưa)")
-    ok(r and r["skySent"] == {"mode": "game", "dayMinutes": 60, "fixedHour": 18.4, "weather": "snow"},
+    ok(r and r["skySent"] == {"mode": "game", "dayMinutes": 60, "fixedHour": 18.4, "weather": "snow", "page": "paper"},
        "đổi Thời tiết + Giờ game → một lệnh prefs:set mang kb-sky mới")
-    ok(r and r["skyBad"] == {"mode": "real", "dayMinutes": 24, "fixedHour": 9, "weather": "auto"} and r["skyBadSet"] == 9,
+    ok(r and r["skyBad"] == {"mode": "real", "dayMinutes": 24, "fixedHour": 9, "weather": "auto", "page": "paper"} and r["skyBadSet"] == 9,
        "giá trị lạ (chế độ / giờ 99 / thời tiết lạ / số phút âm, set chữ) → mặc định")
-    ok(r and r["skyJunk"] == {"mode": "real", "dayMinutes": 24, "fixedHour": 9, "weather": "auto"}, "chuỗi không phải JSON → mặc định")
+    ok(r and r["skyJunk"] == {"mode": "real", "dayMinutes": 24, "fixedHour": 9, "weather": "auto", "page": "paper"}, "chuỗi không phải JSON → mặc định")
     ok(r and r["music"] == [False, 0.25], "nhạc nền Tắt + âm lượng 25% đọc lại được")
     ok(r and r["crow"] == [{"kb-crow-mode": "vi"}], "Đuổi quạ: đổi chế độ ghi qua prefs:set")
 

@@ -4,7 +4,11 @@
    Các phần khác chỉ đọc GardenSky.state(). */
 var GardenSky = (function () {
   "use strict";
-  const PAGE_DAY = "#efe2c6", PAGE_NIGHT = "#2f2a3a";    // 1.30.3: nền trang
+  // 1.30.3: nền trang có hai kiểu, chọn ở ⚙ → "Nền trang" (cfg.page):
+  //   "paper" Giấy ấm (mặc định) — ngày kem, chạng vạng tím hồng (+ cam lúc bình minh / hoàng hôn), đêm xanh chàm;
+  //           đi qua màu tím hồng ở giữa để không ra xám đục (người dùng: "nền buổi tối màu xám không đẹp")
+  //   "sky"   Trời xanh — như 1.30.2 trở về trước: xanh trời theo độ sáng
+  const PAGE_DAY = "#efe2c6", PAGE_TWI = "#8a7396", PAGE_NIGHT = "#232a4a";
   // độ "ngày" của nền trang theo độ sáng: tối hẳn khi đêm, sáng hẳn từ sáng sớm, chuyển êm lúc bình minh / hoàng hôn
   function pageDay(light) { const t = Math.max(0, Math.min(1, (light - 0.3) / 0.5)); return t * t * (3 - 2 * t); }
 
@@ -33,7 +37,7 @@ var GardenSky = (function () {
   const PHASE_LABEL = { night: "Ban đêm", dawn: "Bình minh", morning: "Buổi sáng", noon: "Buổi trưa",
     afternoon: "Buổi chiều", dusk: "Hoàng hôn" };
 
-  const DEFAULTS = { mode: "real", dayMinutes: 24, fixedHour: 9, weather: "auto" };
+  const DEFAULTS = { mode: "real", dayMinutes: 24, fixedHour: 9, weather: "auto", page: "paper" };
   let cfg = Object.assign({}, DEFAULTS);
   // 1.25.3: đọc qua GardenPrefs (config của add-on) — localStorage mất khi tắt Anki; giá trị lạ thì về mặc định
   function clean(s) {
@@ -45,6 +49,7 @@ var GardenSky = (function () {
     const fh = Number(s.fixedHour);
     if (s.fixedHour !== null && s.fixedHour !== "" && isFinite(fh) && fh >= 0 && fh < 24) { out.fixedHour = fh; }
     if (s.weather === "auto" || (typeof s.weather === "string" && Object.prototype.hasOwnProperty.call(WEATHER, s.weather))) { out.weather = s.weather; }
+    if (s.page === "paper" || s.page === "sky") { out.page = s.page; }
     return out;
   }
   function loadRaw() {
@@ -57,6 +62,13 @@ var GardenSky = (function () {
   function toHex(a) { return "#" + a.map((v) => Math.max(0, Math.min(255, Math.round(v))).toString(16).padStart(2, "0")).join(""); }
   function mix(c1, c2, t) { const a = hex(c1), b = hex(c2); return toHex(a.map((v, i) => v + (b[i] - v) * t)); }
   function shade(c, k) { return toHex(hex(c).map((v) => v * k)); }
+  function pageColor(light, phase, grey) {
+    if (cfg.page === "sky") { return mix(shade("#6ec6ff", 0.35 + 0.65 * light), "#9aa6b8", grey * 0.6); }
+    const t = pageDay(light);
+    let c = t < 0.5 ? mix(PAGE_NIGHT, PAGE_TWI, t * 2) : mix(PAGE_TWI, PAGE_DAY, (t - 0.5) * 2);
+    if (phase === "dusk" || phase === "dawn") { c = mix(c, "#e9a77e", 0.3); }
+    return mix(c, "#b3aca3", grey * 0.5 * (0.3 + 0.7 * t));      // mưa / mây: xám nhẹ, ban đêm vẫn giữ màu chàm
+  }
 
   // ---- giờ ----
   function hourNow(t) {
@@ -177,9 +189,7 @@ var GardenSky = (function () {
       ground: mix(shade("#5ed35e", 0.45 + 0.55 * light), "#e8f0f6", W.snow ? 0.75 : 0),
       grass: shade("#45bf4a", 0.45 + 0.55 * light),
       hills: mix(shade("#7ed98a", 0.4 + 0.6 * light), "#f2f6fa", W.snow ? 0.7 : 0),
-      // 1.30.3: nền trang là màu giấy ấm (ngày kem, đêm tím than), trời chỉ ở trong cảnh — 1.30.2 trở về trước là xanh trời "#6ec6ff"
-      page: mix(mix(mix(PAGE_NIGHT, PAGE_DAY, pageDay(light)), "#e9b48c",
-        phase === "dusk" || phase === "dawn" ? 0.32 : 0), "#b3aca3", W.grey * 0.5),
+      page: pageColor(light, phase, W.grey), pageMode: cfg.page,
       mode: cfg.mode, rainbow: rainbow
     };
   }

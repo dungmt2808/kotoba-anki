@@ -1067,6 +1067,10 @@ var Garden = (function () {
     $("kb-sky-day").value = String(c.dayMinutes);
     $("kb-sky-hour").value = String(c.fixedHour);
     $("kb-sky-weather").value = c.weather;
+    Array.prototype.forEach.call(document.querySelectorAll(".kb-page-opt"), function (b) {
+      var on = b.getAttribute("data-page") === c.page;
+      b.classList.toggle("is-on", on); b.setAttribute("aria-pressed", on ? "true" : "false");
+    });
     var hh = Math.floor(st.hour), mm = Math.floor((st.hour - hh) * 60);
     $("kb-sky-now").textContent = "Bây giờ trong vườn: " + String(hh).padStart(2, "0") + ":" + String(mm).padStart(2, "0") +
       " · " + st.phaseLabel + " · " + st.weatherLabel;
@@ -1079,6 +1083,10 @@ var Garden = (function () {
     $("kb-sky-day").addEventListener("change", function (e) { GardenSky.set("dayMinutes", Number(e.target.value)); GardenSky.set("mode", "game"); syncSkyUi(); });
     $("kb-sky-hour").addEventListener("change", function (e) { GardenSky.set("fixedHour", Number(e.target.value)); GardenSky.set("mode", "fixed"); syncSkyUi(); });
     $("kb-sky-weather").addEventListener("change", function (e) { GardenSky.set("weather", e.target.value); syncSkyUi(); });
+    // 1.30.3: nền trang Giấy ấm / Trời xanh (người dùng: "màu xanh cũng đẹp luôn nên làm nút chuyển đổi")
+    Array.prototype.forEach.call(document.querySelectorAll(".kb-page-opt"), function (b) {
+      b.addEventListener("click", function () { GardenSky.set("page", b.getAttribute("data-page")); applySkyCss(); syncSkyUi(); });
+    });
     $("kb-weather").addEventListener("click", function (e) { e.stopPropagation(); $("kb-sound").click(); });
     // linh vật nói khi đổi thời tiết / buổi
     var SAY_W = { rain: "雨だ！ Mưa rồi, cây được tưới miễn phí ♪", storm: "雷！ Giông tới, vào nhà ôn bài nhé", snow: "雪だ！ Tuyết rơi kìa",
@@ -1110,6 +1118,7 @@ var Garden = (function () {
     var st = GardenSky.state(), root = document.documentElement.style;
     if (season()) { st = season().themeSky(st); }
     root.setProperty("--kb-page-bg", st.page);
+    document.documentElement.classList.toggle("kb-page-sky", GardenSky.settings().page === "sky");     // 1.30.3
     // dải thừa bên phải ruộng (canvas chia đủ ô) cùng màu cỏ của giao diện mùa đang dùng, không lệch sang xanh mặc định
     var f = season() && season().field ? season().field() : null;
     root.setProperty("--kb-field-bg", f && f.base && GardenSky.mix ? GardenSky.mix(f.base, "#0b0b2a", st.fieldDark || 0) : st.field);

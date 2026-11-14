@@ -124,7 +124,7 @@ Sau khi trả lời có hiện cách đọc, Hán Việt, nghĩa (và cách dùn
 
 ### Mới ở 1.30.3: giao diện ấm hơn, câu chữ đồng bộ
 - **Bảng màu qua biến** ở `:root` của `web/garden.css`: `--kb-ink` (mực nâu cacao, viền / bóng / chữ), `--kb-ink-2/3/4` (chữ phụ / mờ), `--kb-paper`, `--kb-butter`, `--kb-cream`, `--kb-mist` (nền), `--kb-green` / `--kb-peach` / `--kb-lilac` (nút chính, Nhà, Trò chơi), `--kb-water`, `--kb-accent` (ô chọn / thanh kéo). Thêm màu mới thì thêm biến, đừng viết mã màu rời. Hình pixel vẫn dùng bảng 32 màu (`#1b1b2f` là viền hình).
-- **Nền trang màu giấy theo giờ** (`sky.js` `PAGE_DAY` / `PAGE_NIGHT`, hoàng hôn ánh cam); **hoa dại / cỏ ba lá** trên ô cỏ trống (`garden.js` `drawGrass(..., deco)`); bong bóng lời linh vật ở dưới linh vật.
+- **Nền trang: Giấy ấm / Trời xanh** — nút ở ⚙ (mục Trời & giờ), lưu trong `kb-sky` (`GardenSky.settings().page`, theo máy). Giấy ấm: ngày kem, chạng vạng tím hồng, đêm xanh chàm (`sky.js` `PAGE_DAY` / `PAGE_TWI` / `PAGE_NIGHT`, `pageColor`); Trời xanh: xanh trời theo giờ như 1.30.2; **hoa dại / cỏ ba lá** trên ô cỏ trống (`garden.js` `drawGrass(..., deco)`); bong bóng lời linh vật ở dưới linh vật.
 - **Số xu một kiểu viết**: JS `kbXu(n)` (`web/icons.js`, hàm toàn cục) → "4.860"; Python `garden_core.xu(n)`. Ghép số với " xu" luôn qua hai hàm này (`tests/core/test_1303.py` soát).
 - Thiếu xu: "Thiếu N xu" (nút, chú thích, `HomeError`); nút huỷ của hộp hỏi: "Huỷ".
 - **Esc ở bảng ⚙** chỉ đóng bảng ⚙ (trước Anki đóng cả cửa sổ vườn). **Vườn để mở qua ngày mới**: `GardenDialog._check_day` (đồng hồ 60 giây + khi mở lại cửa sổ đang mở) dựng lại vườn một lần; `greet.js` chào ngày mới nếu đang ở màn chính.

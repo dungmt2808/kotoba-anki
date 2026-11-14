@@ -97,7 +97,7 @@ result = 1`;
   await js(`const b = Array.from(document.querySelectorAll("#kb-h-list button")).find(x => /^Mua/.test(x.textContent) && !x.disabled); if (b) b.click(); return !!b;`);
   await sleep(700);
   await shot('06_hoi_mua');
-  await js('const n = Array.from(document.querySelectorAll("button")).find(x => x.textContent.trim() === "Huỷ" && x.offsetParent); if (n) { n.disabled = false; n.click(); } return 1;'); await sleep(600);
+  await js('const n = document.querySelector("#kb-ask .kb-ask-no"); if (n) { n.click(); } return 1;'); await sleep(600);      // theo lớp: bản cũ ghi "Thôi", bản mới "Huỷ"
   await js('document.querySelector("#kb-home .kb-h-tab[data-tab=pet]").click(); return 1;'); await sleep(700);
   await shot('07_nha_thu_nuoi');
   await js('document.getElementById("kb-h-exit").click(); return 1;'); await sleep(900);

@@ -85,14 +85,14 @@ ok(re.search(r'input\[type="radio"\], input\[type="checkbox"\], input\[type="ran
    and not re.search(r"accent-color:\s*#", css), "mọi ô chọn / ô đánh dấu / thanh kéo cùng --kb-accent")
 ok(".kb-say {" in css and re.search(r"\.kb-say \{[^}]*top:\s*64px", css), "bong bóng lời linh vật ở dưới linh vật (không đè tên vườn / chip)")
 
-print("== nền trang theo giờ (sky.js)")
+print("== nền trang theo giờ (sky.js): Giấy ấm (mặc định) / Trời xanh")
 sky = read("sky.js")
-day = re.search(r'PAGE_DAY = "(#[0-9a-f]{6})", PAGE_NIGHT = "(#[0-9a-f]{6})"', sky)
-ok(day is not None, "sky.js có PAGE_DAY / PAGE_NIGHT")
+day = re.search(r'PAGE_DAY = "(#[0-9a-f]{6})", PAGE_TWI = "(#[0-9a-f]{6})", PAGE_NIGHT = "(#[0-9a-f]{6})"', sky)
+ok(day is not None, "sky.js có PAGE_DAY / PAGE_TWI / PAGE_NIGHT")
 if day:
-    d, n = day.groups()
+    d, tw, n = day.groups()
     ok(lum(d) > 0.6 and hex2rgb(d)[0] > hex2rgb(d)[2], "nền trang ban ngày sáng, ấm: " + d)
-    ok(lum(n) < 0.05, "nền trang ban đêm tối: " + n)
+    ok(lum(n) < 0.05 and hex2rgb(n)[2] - hex2rgb(n)[0] >= 25, "nền trang ban đêm tối, xanh chàm (không xám): " + n)
     ok(contrast(tok["kb-ink"], d) >= 7, "viền / bóng mực nổi trên nền trang ban ngày (%.2f)" % contrast(tok["kb-ink"], d))
     ok(contrast(tok["kb-paper"], n) >= 7, "thẻ giấy nổi trên nền trang ban đêm (%.2f)" % contrast(tok["kb-paper"], n))
 js = r"""
@@ -100,22 +100,49 @@ const fs = require('fs'), vm = require('vm');
 const ctx = { console, Date, Math, localStorage: { getItem: () => null, setItem: () => 0 } };
 vm.createContext(ctx);
 vm.runInContext(fs.readFileSync(process.argv[2] + '/web/sky.js', 'utf8') + ';this.S = GardenSky;', ctx);
-const S = ctx.S, out = {};
-for (const h of [3, 6, 9, 12.5, 18.4, 22]) { S.set('mode', 'fixed'); S.set('fixedHour', h); S.set('weather', 'sunny'); out[h] = S.state().page; }
-S.set('weather', 'rain'); S.set('fixedHour', 12.5); out.rain = S.state().page;
+const S = ctx.S, out = { paper: {}, sky: {} };
+out.def = S.settings().page;
+for (const pg of ['paper', 'sky']) {
+  S.set('page', pg);
+  for (let h = 0; h < 24; h += 0.25) { S.set('mode', 'fixed'); S.set('fixedHour', h); S.set('weather', 'sunny'); out[pg][h] = S.state().page; }
+  S.set('weather', 'rain'); S.set('fixedHour', 12.5); out[pg].rain = S.state().page; S.set('fixedHour', 22); out[pg].rain22 = S.state().page;
+  out[pg].mode = S.state().pageMode;
+}
+S.set('page', 'xanh'); out.bad = S.settings().page;
 console.log(JSON.stringify(out));
 """
 with tempfile.NamedTemporaryFile("w", suffix=".js", delete=False) as f:
     f.write(js)
 try:
-    pages = json.loads(subprocess.run(["node", f.name, ADDON], capture_output=True, text=True, timeout=60).stdout)
+    pg = json.loads(subprocess.run(["node", f.name, ADDON], capture_output=True, text=True, timeout=60).stdout)
 except Exception as e:
-    pages = {}
+    pg = {}
     print("    node lỗi:", e)
-ok(pages and lum(pages["12.5"]) > 0.6 and lum(pages["3"]) < 0.06, "trưa sáng (%s), 3 giờ sáng tối (%s)" % (pages.get("12.5"), pages.get("3")))
-ok(pages and hex2rgb(pages["18.4"])[0] - hex2rgb(pages["18.4"])[2] > hex2rgb(pages["12.5"])[0] - hex2rgb(pages["12.5"])[2],
-   "hoàng hôn ấm hơn ban trưa (%s / %s)" % (pages.get("18.4"), pages.get("12.5")))
-ok(pages and contrast(pages["rain"], pages["12.5"]) < 1.9, "trời mưa chỉ xám nhẹ đi (%s)" % pages.get("rain"))
+P, K = pg.get("paper", {}), pg.get("sky", {})
+ok(pg.get("def") == "paper" and pg.get("bad") == "paper" and P.get("mode") == "paper" and K.get("mode") == "sky",
+   "mặc định Giấy ấm; giá trị lạ → Giấy ấm; state().pageMode theo cài đặt")
+ok(P and lum(P["12.5"]) > 0.6 and lum(P["3"]) < 0.06, "Giấy ấm: trưa sáng (%s), 3 giờ sáng tối (%s)" % (P.get("12.5"), P.get("3")))
+ok(P and hex2rgb(P["18.5"])[0] - hex2rgb(P["18.5"])[1] > hex2rgb(P["12.5"])[0] - hex2rgb(P["12.5"])[1] + 10,
+   "Giấy ấm: hoàng hôn ánh hồng cam (đỏ trội hơn lục rõ hơn ban trưa: %s / %s)" % (P.get("18.5"), P.get("12.5")))
+ok(P and contrast(P["rain"], P["12.5"]) < 1.9, "Giấy ấm: trời mưa chỉ xám nhẹ đi (%s)" % P.get("rain"))
+
+
+def sat(c):
+    r, g, b = hex2rgb(c)
+    return (max(r, g, b) - min(r, g, b)) / max(1, max(r, g, b))
+
+
+grey = [(h, c) for h, c in P.items() if h not in ("mode", "rain", "rain22") and sat(c) < 0.12 and 0.04 < lum(c) < 0.5]
+ok(P and not grey, "Giấy ấm: không giờ nào ra màu xám đục (độ bão hoà < 0,12 ở vùng tối / vừa)" + (": " + str(grey[:4]) if grey else ""))
+ok(P and hex2rgb(P["rain22"])[2] > hex2rgb(P["rain22"])[0] + 15, "Giấy ấm: đêm mưa vẫn xanh chàm (%s)" % P.get("rain22"))
+ok(K and all(hex2rgb(c)[2] > hex2rgb(c)[0] + 40 for h, c in K.items() if h != "mode"), "Trời xanh: mọi giờ đều xanh trời (như 1.30.2)")
+ok(K and K["12.5"] == "#6ec5fe" or K.get("12.5", "").startswith("#6e"), "Trời xanh: ban trưa #6ec6ff như cũ (%s)" % K.get("12.5"))
+body = read("body.html")
+ok(re.search(r'class="kb-btn kb-btn-small kb-page-opt" data-page="paper"[^>]*>Giấy ấm<', body) and
+   re.search(r'class="kb-btn kb-btn-small kb-page-opt" data-page="sky"[^>]*>Trời xanh<', body), "⚙: nút \"Nền trang: Giấy ấm / Trời xanh\"")
+gj = read("garden.js")
+ok('GardenSky.set("page", b.getAttribute("data-page"))' in gj and 'b.classList.toggle("is-on", on)' in gj, "garden.js: bấm nút đổi nền, nút đang chọn tô vàng")
+ok(".kb-page-row .kb-page-opt.is-on { background: #ffd23f; }" in css, "nút đang chọn chỉ đổi nền vàng #ffd23f như mọi nút chọn")
 
 print("== câu chữ trên giao diện")
 VI = re.compile(r"[ăâđêôơưáàảãạấầẩẫậắằẳẵặéèẻẽẹếềểễệíìỉĩịóòỏõọốồổỗộớờởỡợúùủũụứừửữựýỳỷỹỵ]", re.I)

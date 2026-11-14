@@ -2178,3 +2178,8 @@ button { cursor: pointer; }
 @media (prefers-reduced-motion: no-preference) {
   .kb-btn, .kb-h-tab, .kb-quest-btn, .kb-gcard, .kb-yard-snap, .kb-h-buy { transition: background-color 0.15s ease; }
 }
+
+/* 1.30.3: ⚙ → Nền trang: Giấy ấm / Trời xanh (nút đang chọn chỉ đổi nền vàng như mọi nút chọn) */
+.kb-page-row { display: flex; align-items: center; gap: 8px; }
+.kb-page-row .kb-page-opt { margin-left: 0; }
+.kb-page-row .kb-page-opt.is-on { background: #ffd23f; }

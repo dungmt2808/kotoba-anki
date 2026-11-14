@@ -7,6 +7,7 @@ Bạn nhờ 4 việc: (1) đọc lại mã, kiểm tra chi tiết tính năng / 
 - **Tìm ra 3 lỗi** (đều đã sửa, mục 3), nặng nhất: **mở bảng ⚙ rồi bấm Esc là đóng luôn cả cửa sổ vườn**, và **để vườn mở qua đêm thì sáng hôm sau thẻ Hôm nay / nhiệm vụ / báo Gemini vẫn đứng ở hôm qua**.
 - **Giao diện ấm hơn** (mục 1): mực nâu cacao thay xanh đen, nút màu dịu, nền trang màu giấy đổi theo giờ (trời chỉ còn ở trong cảnh), hoa dại nhỏ trên cỏ trống. Mọi màu nay nằm ở **một chỗ** (biến đầu `web/garden.css`) — bạn thấy chưa ưng tông nào thì mình đổi một dòng là xong.
 - **Câu chữ** (mục 2): số xu một kiểu viết ("4.860 xu"), thiếu xu luôn "Thiếu N xu", nút huỷ luôn "Huỷ", ~20 câu gợi ý ngắn lại.
+- **Nút chuyển nền trang Giấy ấm / Trời xanh** ở ⚙ (sau khi bạn xem ảnh), đêm của Giấy ấm là xanh chàm, không còn xám.
 - **Test mới** (mục 4): bấm phím bừa, bấm chuột bừa, đổi cỡ cửa sổ liên tục, đo độ tương phản chữ thật, qua ngày mới, Esc ở từng bảng nổi + một bộ soát ~2.000 câu chữ tự động. Bộ cũ vẫn đạt.
 - **Còn chưa làm** (mục 5): 1.27 và 1.29 trong lộ trình, vài đề xuất chờ bạn chọn.
 - **Bảng màu mới là mình chọn, bạn chưa xem** — xem ảnh trước / sau ở mục 1 rồi cho mình biết có ưng không.
@@ -16,7 +17,7 @@ Bạn nhờ 4 việc: (1) đọc lại mã, kiểm tra chi tiết tính năng / 
 | Trước (1.30.2) | Sau (1.30.3) |
 |---|---|
 | Viền / bóng / chữ màu xanh đen `#1b1b2f` | **Mực nâu cacao** `#3a2a22` — vẫn viền 3 px, bóng cứng, không bo góc |
-| Nền trang xanh trời chói `#6ec6ff` | **Nền màu giấy theo giờ**: ngày kem `#efe2c6`, bình minh / hoàng hôn ánh cam, đêm tím than `#2f2a3a`; trời chỉ còn trong cảnh — vườn như một bức tranh đặt trên bàn |
+| Nền trang xanh trời chói `#6ec6ff` | **Hai kiểu, chọn ở ⚙ → Nền trang**: **Giấy ấm** (mặc định) — ngày kem `#efe2c6`, chạng vạng tím hồng, bình minh / hoàng hôn ánh cam, đêm **xanh chàm** `#232a4a`; **Trời xanh** — xanh trời theo giờ như bản cũ |
 | Nền bảng vàng chanh `#fff2b3`, nền trò chơi xanh băng | Vàng bơ `#fcefc9`, giấy kem `#fffaf0`, nền trò chơi xanh lá sương `#eaf3ea` |
 | Nút xanh lá chói / cam / tím đậm | Xanh bạc hà (Tưới ngay, Mua), cam đào (Nhà), tím oải hương (Trò chơi); 4 nút chấm thẻ dịu cùng tông |
 | Ô chọn xanh dương, ô đánh dấu xanh lá, thanh âm lượng hồng | Cùng một màu xanh lá dịu |
@@ -45,6 +46,16 @@ Mọi chữ vẫn đủ tương phản (chuẩn WCAG: chữ thường ≥ 4,5 : 
 ![Cài đặt → Giao diện & chế độ học](anh/1303_09_giao_dien.png)
 
 ![Lịch hoa](anh/1303_10_lich_hoa.png)
+
+### Nút chuyển nền trang (sau khi bạn xem ảnh: "nền buổi tối màu xám không đẹp, màu xanh cũng đẹp luôn nên làm nút chuyển đổi")
+
+- ⚙ → Trời & giờ trong vườn → **Nền trang: Giấy ấm / Trời xanh**. Nhớ theo máy (như giờ / thời tiết), tắt Anki mở lại vẫn giữ.
+- **Giấy ấm** ban đêm nay là **xanh chàm**, lúc chạng vạng đi qua **tím hồng** — không còn xám. (Ảnh ban đêm lần trước còn bị chụp đúng lúc nền đang chuyển màu trong 2 giây nên trông xám hơn thật; nay chụp lại sau khi chuyển xong.)
+- **Trời xanh** giữ đúng màu nền của bản cũ; viền nâu, nút dịu, nền bảng kem vẫn như kiểu Giấy ấm.
+
+![Nút Nền trang ở ⚙](anh/1303_12_nut_nen_trang.png)
+
+![Hai kiểu nền: Giấy ấm (trên) / Trời xanh (dưới) lúc 9 giờ, hoàng hôn, 22 giờ](anh/1303_11_nen_hai_kieu.png)
 
 ## 2. Câu chữ
 
@@ -81,13 +92,13 @@ Chạy kịch bản mới trên **bản cũ 1.30.2**: trượt đúng 3 lỗi tr
 
 | Bộ | Kiểm gì | Kết quả |
 |---|---|---|
-| `tests/anki/e2e_1303.js` (mới, Anki 26.9.4 thật) | **độ tương phản chữ** đo trên chữ thật ở 11 màn (ngày / đêm, ⚙, Nhà 3 tab, hộp hỏi, Trò chơi, Báo, Lịch hoa, Giao diện); bong bóng không đè ở 3 cỡ; **qua ngày mới**; **Esc ở 7 bảng nổi**; **500 phím bừa** (cửa sổ không đóng, không quá một bảng, xu không âm); **300 lần bấm chuột bừa** (mọi lần trừ xu đều qua hộp hỏi); **đổi cỡ cửa sổ 24 lần** 720 × 520 → 2560 × 1440 khi đang mở bảng; cửa sổ rất lớn / rất nhỏ | **41/41** |
-| `tests/core/test_1303.py` (mới, offline) | bảng màu (đủ biến, không còn mã màu rời, tương phản tính từ biến), nền trang theo giờ (chạy `sky.js` thật), soát ~2.000 câu chữ, số xu JS = Python, cơ chế qua ngày, Esc ở ⚙, hoa dại | **46/46** |
+| `tests/anki/e2e_1303.js` (mới, Anki 26.9.4 thật) | **độ tương phản chữ** đo trên chữ thật ở 11 màn (ngày / đêm, ⚙, Nhà 3 tab, hộp hỏi, Trò chơi, Báo, Lịch hoa, Giao diện); bong bóng không đè ở 3 cỡ; **qua ngày mới**; **Esc ở 7 bảng nổi**; **500 phím bừa** (cửa sổ không đóng, không quá một bảng, xu không âm); **300 lần bấm chuột bừa** (mọi lần trừ xu đều qua hộp hỏi); **đổi cỡ cửa sổ 24 lần** 720 × 520 → 2560 × 1440 khi đang mở bảng; cửa sổ rất lớn / rất nhỏ | **49/49** |
+| `tests/core/test_1303.py` (mới, offline) | bảng màu (đủ biến, không còn mã màu rời, tương phản tính từ biến), nền trang hai kiểu (chạy `sky.js` thật, quét 96 mốc giờ: Giấy ấm không lúc nào xám đục, Trời xanh như cũ), soát ~2.000 câu chữ, số xu JS = Python, cơ chế qua ngày, Esc ở ⚙, hoa dại | **54/54** |
 | `tests/run_all.sh` (45 bộ offline, có bộ mới) | | **TẤT CẢ OK** trên mã nguồn và trên gói đã đóng |
 | Kịch bản Anki thật cũ (13 bộ) | e2e_1301 45/45 · e2e_130 76/76 · e2e_122 64/64 · e2e_125 30/30 · e2e_123 65/65 · e2e_1259 36/36 · e2e_128 72/72 · e2e_1251 48/48 · e2e_120 103/103 · e2e_126 39/39 · e2e_117 55/55 · e2e_tour 12/12 · audit_edge 58/58 | **đều đạt** (3 bộ lần đầu trượt vì còn khớp chữ cũ — "Xu từ game", "gần hết", "Còn thiếu" — đã sửa kịch bản) |
 | `audit.js` (đo bố cục mọi màn, 1366 × 768 + 1024 × 700, trên gói) | tràn, cắt chữ, nút lệch cỡ / kiểu trong hàng | chỉ 4 cờ cố ý cũ (dấu "…" ở Kệ báo), như 1.30.2; nhật ký lỗi trống |
 | Báo trên gói | `e2e_kit23` (dòng gợi ý "· ▶ để nghe"), `e2e_119` | 10/10 · 55/55 |
-| Gói `kotoba_batake.ankiaddon` 1.30.3 (giải nén) | `run_all.sh` + `e2e_1303` + `e2e_1301` | **TẤT CẢ OK** · 41/41 · 45/45 |
+| Gói `kotoba_batake.ankiaddon` 1.30.3 (giải nén) | `run_all.sh` + `e2e_1303` + `e2e_1301`; sau khi thêm nút Nền trang: `run_all.sh` + `e2e_1303` + `e2e_1253` (cài đặt trời còn sau khi tắt Anki) + `e2e_117` + `e2e_tour` + `audit.js` | **TẤT CẢ OK** · 41/41 · 45/45; lần 2: TẤT CẢ OK · 49/49 · 39/39 · 55/55 · 12/12 · chỉ 4 cờ cố ý cũ |
 
 Test cũ phải sửa theo chữ mới (không phải lỗi): `test_1225`, `test_122`, `test_125`, `test_128`, `test_130`, `test_1251` ("Thiếu N xu"), `audit_edge`, `e2e_122` / `e2e_125` ("5.000 xu", "2.000 xu"), `e2e_123` ("Mở vườn ở"), `e2e_128`, `e2e_1251`, `e2e_1259`.
 

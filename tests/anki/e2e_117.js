@@ -203,7 +203,7 @@ result = [s["lang"].get(mid), s["models"].get(mid, {}).get("kind")]`);
   await deck('A::Có câu ví dụ + audio');
   await page.eval(W('document.getElementById("kb-sound").click(); return 1;')); await sleep(300);
   const pop = await page.eval(W('const p = document.getElementById("kb-sound-pop"); return { notes: p.querySelectorAll(".kb-sound-note").length, hv: /Hán Việt/.test(p.textContent), btns: p.querySelectorAll("button").length };'));
-  ok(pop.notes <= 4 && !pop.hv && pop.btns === 8, '⚙ cài đặt: 8 nút (1.20 thêm Lịch hoa & nhật ký, 1.26.1 Hướng dẫn 3 bước, 1.30.1 Góp ý qua email), ≤ 4 dòng chú thích (1.30.1: + email liên hệ), không còn nhắc Hán Việt (' + JSON.stringify(pop) + ')');
+  ok(pop.notes <= 4 && !pop.hv && pop.btns === 10, '⚙ cài đặt: 10 nút (1.20 thêm Lịch hoa & nhật ký, 1.26.1 Hướng dẫn 3 bước, 1.30.1 Góp ý qua email, 1.30.3 Nền trang: Giấy ấm / Trời xanh), ≤ 4 dòng chú thích (1.30.1: + email liên hệ), không còn nhắc Hán Việt (' + JSON.stringify(pop) + ')');
   await page.eval(W('document.getElementById("kb-sound-pop").hidden = true; GardenPaper.open("shelf"); return 1;')); await sleep(600);
   const furi = await page.eval(W('const a = document.getElementById("kb-p-furi").hidden; GardenPaper.open("issue"); return a;')); await sleep(800);
   ok(furi && !(await page.eval(W('return document.getElementById("kb-p-furi").hidden;'))), 'nút Ẩn furigana chỉ hiện ở tab Báo (ẩn ở Kệ báo)');
