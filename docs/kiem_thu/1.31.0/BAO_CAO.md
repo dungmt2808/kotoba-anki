@@ -66,7 +66,28 @@ Hòm thư vẫn mở Báo, StackChan vẫn mở thẻ sinh hoạt, chỗ lấp l
 
 ## 4. Kiểm tra
 
-KẾT_QUA_TEST
+**Kịch bản mới, Anki thật** (`tests/anki/e2e_131.js`, bấm chuột / phím thật): **89/89** trên Anki 26.9.4 và **89/89** trên Anki 23.10.1 (bản thấp nhất add-on hỗ trợ).
+
+| Phần | Kiểm tra |
+|---|---|
+| Bấm cảnh | Cỏ trống, ngôi nhà, giữa sân, trời, 3 gian Trong nhà, Bãi biển → **không** mở bảng Nhà; nút "Nhà & Cửa hàng ▸" là nút bấm, hiện khi rê chuột, đủ cao (128 × 25 px), mở đúng cảnh; phím N, nút Nhà vẫn mở; bấm Shiba / Cò trắng → thẻ nhỏ, Esc / bấm ra ngoài đóng thẻ mà cửa sổ vẫn mở, nút trong thẻ → đúng tab và đúng thẻ |
+| Chuỗi | Collection có 40 ngày ôn liền + 5 lượt sáng nay: cách cũ "41 ngày liền", mở hồ sơ lần đầu → **0**, lượt hôm nay vẫn 5, ôn sau khi cài → "1 ngày liền", Lịch hoa tháng + năm, mở hồ sơ lại không đổi mốc, người đã dùng bản cũ → 11 ngày, Giao diện mùa "Đổi 7 ngày ôn liền" theo chuỗi mới |
+| Cài mới hoàn toàn | Xoá mọi dữ liệu ことば畑 (10+ khoá trong collection + file sao lưu), lịch sử ôn còn 41 ngày: chuỗi 0, 0 xu, **không bù xu** cho lượt ôn cũ, có hướng dẫn 3 bước, Tin làng không nhắc chuỗi; ôn thẻ đầu tiên trong vườn (R → Space → 3) → "1 ngày liền", có xu |
+| Đồ tự vẽ | Tủ đồ / Xưởng có lối vào; lưới Mũ 20 × 8 có hình mờ; vẽ bằng chuột thật; xem trước hai StackChan; cửa sổ 1024 × 640 không tràn; hỏi trước 200 xu; mặc luôn; linh vật + StackChan sinh hoạt ngoài sân / trong nhà đội mũ (đếm điểm ảnh trên màn hình); đổi tên miễn phí; vẽ lại 50 xu; Mũ rơm thay mũ tự vẽ, StackChan sinh hoạt đội Mũ rơm; vỏ hai màu 150 xu; xoá; 11 lệnh sai dạng không làm hỏng gì |
+
+**Bộ offline** (`tests/run_all.sh`, 37 bộ): **TẤT CẢ OK** trên mã nguồn và trên gói `.ankiaddon` đã đóng. Mới: `test_131.py` (chuỗi trên collection giả bằng sqlite thật, đồ tự vẽ, mã thật của 1.30.3 lấy từ git đọc + lưu vườn có đồ tự vẽ → không mất gì), `test_131.js` (43 kiểm tra vẽ đồ trong node: 13 bản vẽ nhỏ, thu nhỏ, 8 tư thế). Bộ thao tác ngẫu nhiên (12 hạt × 350 thao tác) thêm vẽ / mặc / xoá đồ tự vẽ; ma trận "máy khác còn bản cũ" thêm 1.30.3.
+
+**Bộ cũ, Anki thật 26.9.4** (33 kịch bản): đều đạt — `e2e` 24/24, `e2e_tour` 12/12, `e2e_114` 34/34, `e2e_116` 15/15, `e2e_117` 55/55, `e2e_118` 29/29, `e2e_119` 55/55, `e2e_120` 103/103, `e2e_121` 47/47, `e2e_122` 64/64, `e2e_1223` 49/49, `e2e_1226` 40/40, `e2e_1228` 26/26, `e2e_123` 66/66, `e2e_124` 26/26, `e2e_1251` 39/39, `e2e_1253` 48/48, `e2e_1255` 25/25, `e2e_1258` 36/36, `e2e_1259` 39/39, `e2e_126` 41/41, `e2e_1261` 41/41, `e2e_128` 72/72, `e2e_130` 76/76, `e2e_1301` 45/45, `e2e_1303` 49/49 (bấm phím / chuột bừa), `e2e_fuzz` 6/6 (bấm bừa ~1.100 lệnh, có lệnh đồ tự vẽ), `e2e_kit23` 10/10, `audit_edge` 58/58, `audit_full` 183/183, RERUN_LINE. Anki 23.10.1: `e2e_tour` 12/12, `e2e_124` 26/26, `e2e_130` 76/76.
+
+Năm kịch bản cũ đổi theo cách bấm mới (trước đó chúng kiểm "bấm sân / gian là mở Nhà"): `e2e_115`, `e2e_121`, `e2e_123`, `e2e_124`, `e2e_125`.
+
+**Lỗi tìm ra khi kiểm tra** (đã sửa): nút "Nhà & Cửa hàng ▸" mới làm bị **dẹt, chữ bị cắt** — thấy qua ảnh chụp của kịch bản mới (một dòng CSS viết sai thứ tự). Nay kịch bản đo chiều cao nút và bộ offline soát thứ tự CSS.
+
+![Xưởng ở cửa sổ 1024 × 640](anh/131_05b_xuong_1024.png)
+
+![Lịch hoa sau khi cài: Ôn liền 1 ngày, hoa của các ngày ôn trước vẫn còn](anh/131_03_lich_hoa_chuoi_moi.png)
+
+![Cài mới hoàn toàn: 0 xu, chưa có chuỗi, hướng dẫn 3 bước](anh/131_12_cai_moi.png)
 
 ## 5. Còn lại / cần bạn xem
 
