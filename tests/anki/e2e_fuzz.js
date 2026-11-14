@@ -173,8 +173,10 @@ out["handled"] = len(errs)
 out["seen"] = len(mw.col.get_config("kotoba_batake_life", {}).get("seen", {}))
 result = out`;
 
+  // Lỗi "nhẹ" (hộp thoại lỗi của Anki bật lên, lệnh ném lỗi chưa bắt) được gom lại rồi chạy tiếp để một lần chạy liệt kê hết;
+  // lỗi "nặng" (Anki không trả lời, cửa sổ vườn đóng, ví sai) thì dừng ngay.
   let sentN = 0, bad = null, maxCoins = start.coins, handled = 0;
-  const log = [];
+  const log = [], soft = new Set(), softCmds = [];
   for (let b = 0; b < BATCHES && !bad; b++) {
     const cmds = [];
     for (let i = 0; i < PER; i++) { cmds.push(pick(GEN)()); }
@@ -188,11 +190,13 @@ result = out`;
     handled = r.handled; maxCoins = Math.max(maxCoins, r.coins || 0);
     if (!r.ok) { bad = 'loạt ' + b + ': ' + r.why; }
     else if (!r.open) { bad = 'loạt ' + b + ': cửa sổ vườn bị đóng'; }
-    else if (r.modal) { bad = 'loạt ' + b + ': hộp thoại bật lên (' + r.modal + ')'; }
-    else if (r.unhandled.length) { bad = 'loạt ' + b + ': lỗi chưa bắt ' + JSON.stringify(r.unhandled); }
-    if (bad) { fs.writeFileSync(path.join(SHOTS, 'fuzz_loat_loi.json'), JSON.stringify(cmds, null, 1)); }
+    const before = soft.size;
+    if (r.modal) { soft.add('hộp thoại bật lên (' + r.modal + ')'); }
+    (r.unhandled || []).forEach((u) => soft.add('lỗi chưa bắt ' + JSON.stringify(u)));
+    if (bad || soft.size > before) { softCmds.push({ loat: b, cmds: cmds }); fs.writeFileSync(path.join(SHOTS, 'fuzz_loat_loi.json'), JSON.stringify(softCmds, null, 1)); }
     if (b % 7 === 6) { console.log('  … ' + sentN + ' lệnh, xu ' + r.coins + ', nhật ký (đã bắt) ' + r.handled + ', sổ sinh hoạt ' + r.seen); }
   }
+  if (!bad && soft.size) { bad = Array.from(soft).join(' · '); }
   fs.writeFileSync(path.join(SHOTS, 'fuzz_lenh.json'), JSON.stringify({ seed: SEED, cmds: log }));
   ok(!bad, sentN + ' lệnh ngẫu nhiên: không lỗi chưa bắt, không hộp thoại, cửa sổ còn mở, ví hợp lệ' + (bad ? ' — ' + bad : ''));
   // xu kiếm được hợp lệ trong lúc bấm bừa: trò chơi ≤ trần ngày, trả lời báo, nhặt trùng — không thể nhiều

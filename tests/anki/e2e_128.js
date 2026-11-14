@@ -189,7 +189,8 @@ result = 1`);
       unknown: cells.filter((c) => !c.classList.contains("is-found"))[0].textContent,
       tab: document.querySelector('#kb-home .kb-h-tab[data-tab="guest"]').textContent};`);
   ok(box.tab === 'Album', 'tab Nhà tên "Album"');
-  ok(box.chips.length === 2 && /Hộp sưu tầm · 6\/42\*/.test(box.chips[1]), 'hai nút: ' + box.chips.join(' | '));
+  // 1.30: thêm nút thứ ba "Sinh hoạt" (Sổ sinh hoạt của StackChan)
+  ok(box.chips.length === 3 && /Hộp sưu tầm · 6\/42\*/.test(box.chips[1]) && /^Sinh hoạt · \d+\/\d+/.test(box.chips[2]), 'ba nút: ' + box.chips.join(' | '));
   ok(box.total === 42 && box.found === 6 && box.sec.length === 7, '7 bộ, 42 ô, 6 đã nhặt');
   ok(/Sân vườn · 6 \/ 6 — đã nhận Tủ kính sưu tầm/.test(box.sec[0]) && /mở vùng để nhặt/.test(box.sec[1]), 'bộ Sân vườn đủ, Bãi biển "mở vùng để nhặt"');
   ok(/\? \?/.test(box.unknown), 'ô chưa nhặt: "? ?" (' + box.unknown + ')');

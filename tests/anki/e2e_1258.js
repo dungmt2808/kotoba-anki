@@ -138,6 +138,9 @@ result = 1`);
   await js('const t = document.getElementById("kb-toast"); if (t) t.hidden = true; return 1;');
   const b0 = await js('return { joy: (Garden._data().joy || {}).quests, badge: document.getElementById("kb-joy").textContent, quest: document.getElementById("kb-quest").textContent };');
   ok(b0.joy === false && !/Xong 3 nhiệm vụ/.test(b0.badge) && /2\/3/.test(b0.quest), 'trước: nhiệm vụ 2/3, chưa có huy hiệu: ' + JSON.stringify(b0));
+  // 1.30: đèn trời vẽ trước lớp tối ban đêm nên màu chỉ đúng #ff9f1c / #ffb347 vào ban ngày — giữ trời 10 giờ, nắng
+  // (trước đây kịch bản trượt nếu máy chạy test đang là ban đêm)
+  await js('GardenSky.set("mode", "fixed"); GardenSky.set("fixedHour", 10); GardenSky.set("weather", "sunny"); return 1;');
   await sleep(1200);
   const lamp0 = await lampPx();
   await js('document.getElementById("kb-games").click(); return 1;'); await sleep(900);

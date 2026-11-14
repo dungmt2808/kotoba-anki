@@ -323,6 +323,41 @@ ok(col.conf[L.LIFE_KEY]["seen"]["neru"]["d"] == "2026-11-13" and os.path.exists(
 col.conf[L.LIFE_KEY] = "hỏng"
 ok(lc.seen() == {} and lc.mark("neru", "bedroom", T)[1], "khoá collection hỏng: coi như sổ trống, ghi lại được")
 
+print("== tham số sai kiểu từ trang (kịch bản bấm bừa e2e_fuzz.js tìm ra: home:seed:rule:null làm Anki bật hộp lỗi)")
+stj = new_state("junk")
+JUNK = [None, 0, -1, 3.5, True, "", "x", "ことば", [], [1], {}, {"a": 1}, "A" * 3000, float("nan"), 10 ** 30, ["a", {}], {"id": []}]
+la = {}
+
+
+def junk(name, fn, *a):
+    try:
+        fn(*a)
+    except (core.HomeError, ValueError, OSError):       # ba loại cầu nối đã bắt → báo nhẹ, không hộp lỗi
+        pass
+    except Exception as e:                              # noqa: BLE001 — chính là thứ cần tìm
+        la.setdefault((name, type(e).__name__), repr(a)[:90])
+
+
+for j in JUNK:
+    for name in ("zone_save", "myseed_save", "tile_save", "craft_save"):
+        junk(name, getattr(stj, name), j)
+    for k in ("name", "kind", "px", "id", "size", "fx", "st", "bg", "ground", "hills", "env", "lm"):
+        base = {"name": "A", "kind": "wall", "px": "128k128.", "size": 16, "fx": "none", "st": ["128k128.", "", "", "", ""],
+                "bg": "meadow", "ground": "#5ed35e", "hills": "#7ed98a"}
+        base[k] = j
+        for name in ("zone_save", "myseed_save", "tile_save", "craft_save"):
+            junk(name + "{" + k + "}", getattr(stj, name), dict(base))
+    for j2 in JUNK:
+        junk("pet_name", stj.pet_name, str(j), j2)
+        junk("decor_use", stj.decor_use, "room", str(j), str(j2))
+        for w in ("deck", "kind", "tag", "x"):
+            junk("seed_rule", stj.seed_rule, w, j, j2)
+ok(not la, "hàm ví nhận JSON từ trang: dữ liệu sai kiểu chỉ ra HomeError / ValueError" + ("" if not la else " — lạ: " + json.dumps({"%s:%s" % k: v for k, v in la.items()}, ensure_ascii=False)[:400]))
+init0 = src("__init__.py")
+ok("def _json_obj(" in init0 and init0.count("_json_obj(") >= 11, "cầu nối đọc tham số JSON qua _json_obj (không phải đối tượng → ValueError đã bắt)")
+weak = re.findall(r"= json\.loads\([^\n]*\)\n[^\n]*\b(?:payload0?|p)\.get\(", init0)
+ok(not weak, "không còn chỗ json.loads rồi .get ngay mà chưa kiểm kiểu" + ("" if not weak else ": " + weak[0][:80]))
+
 print("== nối dây")
 init = src("__init__.py")
 ok('f"{WEB_BASE}/life.js"' in init and init.index("life.js") < init.index('f"{WEB_BASE}/home.js"'), "life.js nạp trước home.js")

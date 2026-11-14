@@ -108,6 +108,15 @@ def _manifest() -> dict[str, Any]:
 VERSION = str(_manifest().get("human_version") or "?")
 
 
+def _json_obj(raw: str) -> dict[str, Any]:
+    """1.30: tham số JSON của một lệnh cầu nối phải là một đối tượng. Dạng khác (null, số, mảng, chuỗi) coi như JSON hỏng
+    (ValueError) — trước đây `payload.get` ném AttributeError chưa bắt, Anki bật hộp lỗi (kịch bản bấm bừa e2e_fuzz.js)."""
+    v = json.loads(raw)
+    if not isinstance(v, dict):
+        raise ValueError("tham số không phải đối tượng JSON")
+    return v
+
+
 def _warn(where: str, err: Any) -> None:
     """Lỗi đã được bắt (không làm hỏng vườn): in ra console như trước và ghi vào nhật ký Báo lỗi."""
     print(f"[kotoba_batake] {where}: {err}")
@@ -2855,7 +2864,7 @@ class GardenDialog(QDialog):
                 return
             if group == "paper" and action in ("issue", "q", "ct", "play"):
                 # 1.23: Kệ báo gộp hai nguồn → mã số báo "ngày@nguồn" chọn đúng thư mục và đúng ô tiến độ
-                payload0 = json.loads(arg) if action != "issue" else {}
+                payload0 = _json_obj(arg) if action != "issue" else {}
                 ref = arg if action == "issue" else str(payload0.get("d") or "")
                 lib, src, date0 = paper_ref(lang, ref)
                 if action == "issue":
@@ -2864,7 +2873,7 @@ class GardenDialog(QDialog):
                     payload0["d"] = date0
                     arg = json.dumps(payload0)
             if action == "play":
-                self._paper_play(group, json.loads(arg), lib)
+                self._paper_play(group, _json_obj(arg), lib)
                 return
             if group == "paper" and action == "lang":
                 self._paper_lang = arg if arg in PAPER_LANGS else ""
@@ -2902,8 +2911,9 @@ class GardenDialog(QDialog):
             if group == "dict" and action == "open":
                 self._dict_open(st, lib)
                 return
-            payload = json.loads(arg)
-            variants = [v for v in payload.get("v", []) if isinstance(v, str)][:20]
+            payload = _json_obj(arg)
+            raw_v = payload.get("v")
+            variants = [v for v in (raw_v if isinstance(raw_v, list) else []) if isinstance(v, str)][:20]
             voice = _voice()
             if group == "paper" and action == "q" and lib is not None:
                 res = paper.answer_question(lib, st, str(payload.get("d")), int(payload.get("i")), int(payload.get("c")),
@@ -3009,7 +3019,7 @@ class GardenDialog(QDialog):
                 ai_start_all("audio")
         elif action == "decks":                           # 1.19.1: deck lấy từ cho báo (tối đa 5)
             try:
-                p = json.loads(arg or "{}")
+                p = _json_obj(arg or "{}")
                 words.save_src(mw.col, str(p.get("lang")), p.get("decks"), p.get("mode"))
                 base = AI_DIRS.get(str(p.get("lang")), AI_DIR)
                 if os.path.isdir(base):            # lý do "chưa đủ từ" cũ không còn đúng với deck mới chọn
@@ -3226,7 +3236,7 @@ class GardenDialog(QDialog):
         """1.23: "Dịch số này" (Gemini dịch số cũ, một lượt) và "Kỳ này hay / Nhạt" (phản hồi cho truyện)."""
         lang = paper_lang(self)
         try:
-            p = json.loads(arg) if arg.startswith("{") else {"d": arg}
+            p = _json_obj(arg) if arg.startswith("{") else {"d": arg}
         except ValueError:
             return
         lib, src, date = paper_ref(lang, str(p.get("d") or ""))
@@ -3330,10 +3340,10 @@ class GardenDialog(QDialog):
         regrow = False   # đổi giống cây → dựng lại ruộng
         try:
             if parts[0] == "pet" and len(parts) >= 3 and parts[1] == "name":
-                payload = json.loads(cmd.split(":", 2)[2])
+                payload = _json_obj(cmd.split(":", 2)[2])
                 data = STATE.pet_name(str(payload.get("id")), payload.get("name"))
             elif parts[0] == "seed" and len(parts) >= 3 and parts[1] == "rule":
-                payload = json.loads(cmd.split(":", 2)[2])
+                payload = _json_obj(cmd.split(":", 2)[2])
                 data = STATE.seed_rule(str(payload.get("where")), payload.get("key"), payload.get("value"))
                 regrow = True
             elif parts[0] == "seed" and len(parts) == 3 and parts[1] == "buy":
@@ -3563,7 +3573,7 @@ class GardenDialog(QDialog):
             return
         try:
             if action == "save":
-                p = json.loads(arg)
+                p = _json_obj(arg)
                 store = mau.set_fix(mau.read(MAU_LOCAL), p.get("key"), p.get("frames"))
                 mau.write(MAU_LOCAL, store)
                 self._js("fixes", {"fixes": fixes_merged()["sua"], "saved": p.get("key")})
@@ -3597,7 +3607,7 @@ class GardenDialog(QDialog):
 
     def _suggest_fix(self, arg: str) -> None:
         try:
-            p = json.loads(arg)
+            p = _json_obj(arg)
             data = mau.set_fix({}, p.get("key"), p.get("frames"))
         except (ValueError, AttributeError, mau.MauError) as err:
             self._js("toast", str(err) if isinstance(err, mau.MauError) else "Không lưu được góp ý này.")
@@ -3640,7 +3650,7 @@ class GardenDialog(QDialog):
         """snap:save:{name, url} — JS đã vẽ ảnh (PNG data URL); hỏi chỗ lưu rồi ghi file."""
         import base64
         try:
-            payload = json.loads(raw)
+            payload = _json_obj(raw)
             url = str(payload.get("url") or "")
             prefix = "data:image/png;base64,"
             if not url.startswith(prefix) or len(url) > 24 * 1024 * 1024:
@@ -3839,7 +3849,7 @@ class GardenDialog(QDialog):
             if action == "open":
                 self._js("fieldsData", core.fields_panel(mw.col, self.deck_id, config()))
             elif action == "save":
-                payload = json.loads(arg)
+                payload = _json_obj(arg)
                 mid = str(payload.get("mid", ""))
                 model = mw.col.models.get(int(mid)) if mid.lstrip("-").isdigit() else None
                 if not model:

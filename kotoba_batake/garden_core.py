@@ -3526,15 +3526,18 @@ class GardenState:
         except (TypeError, ValueError):
             size = 0
         kind = payload.get("kind")
-        if size not in CRAFT_PRICES or kind not in CRAFT_KINDS:
+        # 1.30: loại / hiệu ứng / id sai kiểu (mảng, đối tượng) là dữ liệu hỏng, không phải lỗi chương trình (TypeError "unhashable")
+        if size not in CRAFT_PRICES or not isinstance(kind, str) or kind not in CRAFT_KINDS:
             raise HomeError("Cỡ hoặc loại món đồ không hợp lệ.")
+        if payload.get("id") is not None and not isinstance(payload.get("id"), str):
+            raise HomeError("Không tìm thấy món đồ này.")
         flat = px_decode(payload.get("px"), size)
         if flat is None:
             raise HomeError("Hình vẽ bị lỗi, thử vẽ lại nhé.")
         if not flat.strip("."):
             raise HomeError("Hình còn trống, vẽ gì đó đã nhé!")
         name = _clean_name(payload.get("name"))
-        fx = payload.get("fx") if payload.get("fx") in CRAFT_FX else "none"
+        fx = payload.get("fx") if isinstance(payload.get("fx"), str) and payload.get("fx") in CRAFT_FX else "none"
         data = self.load()
         craft, home = data["craft"], data["home"]
         px = self.load_px()
