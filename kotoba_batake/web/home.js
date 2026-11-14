@@ -3979,6 +3979,21 @@ var GardenHome = (function () {
     lights.length = 0;
     return cv;
   }
+  // 1.31: đang mặc (đồ có sẵn + đồ tự vẽ) và StackChan sinh hoạt nhỏ mặc bộ đó
+  function wornNow() {
+    const L = typeof GardenFX !== "undefined" && GardenFX.lib;
+    return L && L.wearOn ? L.wearOn() : Object.assign({}, ((H.data().wallet || {}).wear || {}).on || {});
+  }
+  function lifeMini(on, sc) {
+    const cv = document.createElement("canvas");
+    cv.width = 24 * sc; cv.height = 23 * sc; cv.className = "kb-h-life-mini";
+    cv.title = "StackChan đang sinh hoạt";
+    if (typeof GardenLife !== "undefined" && GardenLife.preview) {
+      const ctx = cv.getContext("2d"); ctx.imageSmoothingEnabled = false;
+      GardenLife.preview(ctx, sc, 0, 23 - 16, on);
+    }
+    return cv;
+  }
   function mascotCanvas(on, mood, sc) {
     const L = typeof GardenFX !== "undefined" && GardenFX.lib;
     const cv = document.createElement("canvas");
@@ -4022,6 +4037,7 @@ var GardenHome = (function () {
   };
   const WEAR_SLOT_NAME = { head: "Mũ", face: "Mặt", neck: "Cổ", shell: "Vỏ" };
   let delArm = null;   // mẫu đang chờ bấm "Xoá" lần hai
+  let wearDelArm = null;     // 1.31: đồ tự vẽ đang chờ bấm "Xoá" lần hai
 
   // 1.25.5 (admin): nút "Sửa hình" cho hình có sẵn — mở Xưởng ở chế độ hình gốc.
   // 1.25.7: người dùng thường có "Góp ý hình" ở món mình đang có — vẽ thử rồi lưu file gửi người làm add-on, vườn không đổi
@@ -4220,27 +4236,70 @@ var GardenHome = (function () {
 
     if (tab === "wear") {
       const w = (H.data().wallet || {}).wear || { owned: [], on: {}, faces: [], faces_off: [] };
+      const wOn = wornNow();          // 1.31: đang mặc = đồ có sẵn + đồ tự vẽ
+      const mine = (cat.mywears || []), mc = cat.mywear || { price: 200, shell_price: 150, edit: 50, max: 12 };
       const top = el("div", "kb-h-card kb-h-wear-top");
-      top.appendChild(mascotCanvas(w.on, "happy", 4));
+      top.appendChild(mascotCanvas(wOn, "happy", 4));
+      top.appendChild(lifeMini(wOn, 3));
       const ti = el("div", "kb-h-info");
       ti.appendChild(el("div", "kb-h-name", "StackChan của bạn"));
+      ti.appendChild(el("div", "kb-h-desc", "StackChan sinh hoạt trong nhà / ngoài sân mặc cùng bộ đồ."));
       const worn = el("div", "kb-h-btns");
       Object.keys(WEAR_SLOT_NAME).forEach((slot) => {
-        const id = w.on[slot];
+        const id = wOn[slot];
         if (!id) { return; }
-        const it = (cat.wear || []).find((x) => x.id === id);
+        const it = (cat.wear || []).find((x) => x.id === id) || mine.find((x) => x.id === id);
         worn.appendChild(btn("Cởi " + (it ? it.name : id) + " ✕", "kb-btn-small", () => H.send("home:wear:off:" + slot)));
       });
       if (!worn.childNodes.length) { ti.appendChild(el("div", "kb-h-desc", "Chưa mặc gì. Mua đồ bên dưới, mua xong là mặc luôn.")); }
       ti.appendChild(worn);
       top.appendChild(ti);
       list.appendChild(top);
+      // 1.31 (người dùng: "thêm phần thiết kế đồ cho stack-chan"): tự vẽ mũ / đồ đeo mặt / đồ đeo cổ, chọn màu vỏ
+      sec("Tự vẽ");
+      {
+        const full = mine.length >= mc.max;
+        const add = el("div", "kb-h-card kb-h-craft-new kb-h-wear-new");
+        add.appendChild(el("div", "kb-h-craft-plus", "＋"));
+        const ai = el("div", "kb-h-info");
+        ai.appendChild(el("div", "kb-h-name", "Tự vẽ đồ cho StackChan"));
+        ai.appendChild(el("div", "kb-h-price", "Mũ / mặt / cổ " + kbXu(mc.price) + " xu · vỏ " + kbXu(mc.shell_price) + " xu · " + mine.length + "/" + mc.max + " món"));
+        const row = el("div", "kb-h-btns");
+        Object.keys(WEAR_SLOT_NAME).forEach((slot) => {
+          const price = slot === "shell" ? mc.shell_price : mc.price, poor = money < price;
+          const b = btn(WEAR_SLOT_NAME[slot], "kb-btn-small kb-h-buy", () => { if (typeof GardenCraft !== "undefined" && GardenCraft.openWear) { GardenCraft.openWear(null, slot); } },
+            full || poor, full ? "Đã đủ " + mc.max + " món" : poor ? "Thiếu " + kbXu(price - money) + " xu" : "Mở xưởng · " + kbXu(price) + " xu");
+          b.setAttribute("data-wear-new", slot);
+          row.appendChild(b);
+        });
+        ai.appendChild(row);
+        add.appendChild(ai); list.appendChild(add);
+      }
+      mine.forEach((it) => {
+        const on = wOn[it.slot] === it.id;
+        const card = el("div", "kb-h-card kb-h-mywear kb-h-craftcard" + (on ? " kb-h-using" : ""));
+        card.setAttribute("data-mywear", it.id);
+        const preview = Object.assign({}, wOn); preview[it.slot] = it.id;
+        card.appendChild(mascotCanvas(preview, "idle", 2));
+        const inf = el("div", "kb-h-info");
+        inf.appendChild(el("div", "kb-h-name", it.name));
+        inf.appendChild(el("div", on ? "kb-h-own" : "kb-h-price", "Tự vẽ · " + WEAR_SLOT_NAME[it.slot] + (on ? " · đang mặc" : "")));
+        const row = el("div", "kb-h-btns");
+        row.appendChild(on ? btn("Cởi", "kb-btn-small", () => H.send("home:wear:off:" + it.slot)) : btn("Mặc", "kb-h-buy", () => H.send("home:wear:on:" + it.id)));
+        row.appendChild(btn("Sửa", "kb-btn-small", () => { if (typeof GardenCraft !== "undefined" && GardenCraft.openWear) { GardenCraft.openWear(it); } }, false,
+          "Đổi tên miễn phí, " + (it.slot === "shell" ? "đổi màu " : "vẽ lại ") + kbXu(mc.edit) + " xu"));
+        const armed = wearDelArm === it.id;
+        row.appendChild(btn(armed ? "Bấm lần nữa để xoá" : "Xoá", "kb-btn-small kb-h-del" + (armed ? " is-armed" : ""), () => {
+          if (wearDelArm === it.id) { wearDelArm = null; H.send("home:mywear:del:" + it.id); } else { wearDelArm = it.id; renderList(); }
+        }));
+        inf.appendChild(row); card.appendChild(inf); list.appendChild(card);
+      });
       Object.keys(WEAR_SLOT_NAME).forEach((slot) => {
         sec(WEAR_SLOT_NAME[slot]);
         (cat.wear || []).filter((it) => it.slot === slot).forEach((it) => {
-          const own = w.owned.indexOf(it.id) >= 0, on = w.on[slot] === it.id;
+          const own = w.owned.indexOf(it.id) >= 0, on = wOn[slot] === it.id;
           const card = el("div", "kb-h-card" + (on ? " kb-h-using" : ""));
-          const preview = Object.assign({}, w.on); preview[slot] = it.id;
+          const preview = Object.assign({}, wOn); preview[slot] = it.id;
           card.appendChild(mascotCanvas(preview, "idle", 2));
           const inf = el("div", "kb-h-info");
           inf.appendChild(el("div", "kb-h-name", it.name));
@@ -4258,7 +4317,7 @@ var GardenHome = (function () {
       (cat.faces || []).forEach((f) => {
         const own = w.faces.indexOf(f.id) >= 0, off = (w.faces_off || []).indexOf(f.id) >= 0;
         const card = el("div", "kb-h-card" + (own && !off ? " kb-h-using" : ""));
-        card.appendChild(mascotCanvas(w.on, f.id, 2));
+        card.appendChild(mascotCanvas(wOn, f.id, 2));
         const inf = el("div", "kb-h-info");
         inf.appendChild(el("div", "kb-h-name", f.name));
         inf.appendChild(el("div", "kb-h-desc", "Dùng " + f.moods.map((m) => MOOD_TXT[m] || m).join(", ")));
@@ -4302,6 +4361,19 @@ var GardenHome = (function () {
         sfull || spoor, sfull ? "Đã đủ " + (ms.max || 12) + " giống" : ""));
       addS.appendChild(si);
       list.appendChild(addS);
+      {   // 1.31: đồ cho StackChan vẽ ở Tủ đồ (mũ / mặt / cổ / vỏ) — lối vào từ Xưởng
+        const mw = cat.mywear || { price: 200, max: 12 }, nW = (cat.mywears || []).length;
+        const addW = el("div", "kb-h-card kb-h-craft-new");
+        addW.setAttribute("data-craft-wear", "1");
+        addW.appendChild(mascotCanvas(wornNow(), "happy", 2));
+        const wi = el("div", "kb-h-info");
+        wi.appendChild(el("div", "kb-h-name", "Tự vẽ đồ cho StackChan"));
+        wi.appendChild(el("div", "kb-h-desc", "Mũ, đồ đeo mặt, đồ đeo cổ vẽ thẳng lên StackChan; vỏ chọn hai màu. StackChan sinh hoạt cũng mặc."));
+        wi.appendChild(el("div", "kb-h-price", "Từ " + kbXu(mw.shell_price || 150) + " xu · " + nW + "/" + (mw.max || 12) + " món"));
+        wi.appendChild(btn("Tủ đồ ▸", "kb-h-buy", () => { tab = "wear"; renderList(); }));
+        addW.appendChild(wi);
+        list.appendChild(addW);
+      }
       renderPaste(list, cat, money);
       if (mine.length) { sec("Món của bạn (" + mine.length + "/" + cc.max + ")"); }
       const KIND = { ground: "ngoài trời", floor: "sàn trong nhà", wall: "treo tường" };
@@ -4714,6 +4786,58 @@ var GardenHome = (function () {
       if (guestFocus === e.id) { focusCard = card; }
     });
     if (focusCard) { const fc = focusCard; requestAnimationFrame(() => { try { fc.scrollIntoView({ block: "nearest" }); } catch (e) { /* bỏ qua */ } }); guestHi = guestFocus; guestFocus = null; }
+  }
+
+  // ---- 1.31: thẻ nhỏ khi bấm thú nuôi / khách trên cảnh màn chính (trước: mở thẳng bảng Nhà ở tab Thú nuôi / Album) ----
+  function closeSceneCard() { const c = $("kb-scene-card"); if (c && !c.hidden) { c.hidden = true; } }
+  function openFromMain() {      // như nút Nhà ở thanh trên: đóng bảng đang mở rồi mở bảng Nhà ở cảnh đang xem
+    const hb = $("kb-house");
+    if (hb) { hb.click(); } else { H.closeReview(); open(mainScene()); }
+    return isOpen;
+  }
+  function sceneCard(kind, id, ev) {
+    if (typeof GardenLife !== "undefined" && GardenLife.closeCard) { GardenLife.closeCard(); }
+    if (typeof GardenFinds !== "undefined" && GardenFinds.closeCard) { GardenFinds.closeCard(); }
+    let c = $("kb-scene-card");
+    if (!c) {
+      c = el("div", "kb-find-card kb-scene-card"); c.id = "kb-scene-card"; c.setAttribute("role", "status");
+      c.addEventListener("click", (e) => e.stopPropagation());
+      ($("kb-app") || document.body).appendChild(c);
+    }
+    c.textContent = "";
+    c.setAttribute("data-kind", kind); c.setAttribute("data-id", id);
+    const top = c.appendChild(el("div", "kb-find-top"));
+    const t = el("div", "kb-find-txt");
+    let line = "", go = "", act = null;
+    if (kind === "pet") {
+      const pv = (moreView().pets || []).find((p) => p.id === id) || { name: id };
+      top.appendChild(petCanvas(id, pv.state === "away" ? "sleep" : "sit", 3));
+      t.appendChild(el("div", "kb-find-ja", pv.name || id));
+      t.appendChild(el("div", "kb-find-kana", petStateText(pv) || "Đang chơi trong vườn"));
+      line = pv.state === "hungry" ? "Hôm nay chưa ăn" : "";
+      go = pv.state === "hungry" ? "Cho ăn ▸" : "Thú nuôi ▸";
+      act = () => { if (openFromMain()) { petFocus = id; tab = "pet"; renderList(); } };
+    } else {
+      const g = guestData(), e = (g && (g.list || []).find((x) => x.id === id)) || { name: "Khách", ja: "" };
+      top.appendChild(guestCanvas(id, true, 2));
+      const ja = t.appendChild(el("div", "kb-find-ja", e.ja || e.name)); ja.setAttribute("lang", "ja");
+      t.appendChild(el("div", "kb-find-kana", e.name + " ghé vườn"));
+      if (e.met && e.d) { const p = e.d.split("-"); line = "Gặp lần đầu " + p[2] + "/" + p[1] + "/" + p[0] + (e.n > 1 ? " · ghé " + e.n + " ngày" : ""); }
+      go = "Album khách ▸";
+      act = () => { if (openFromMain()) { guestFocus = id; tab = "guest"; albumView = "guest"; renderList(); } };
+    }
+    top.appendChild(t);
+    const x = top.appendChild(el("button", "kb-pin-x", "✕")); x.type = "button"; x.setAttribute("aria-label", "Đóng");
+    x.addEventListener("click", closeSceneCard);
+    if (line) { c.appendChild(el("div", "kb-find-line", line)); }
+    const row = c.appendChild(el("div", "kb-life-btns"));
+    const b = row.appendChild(el("button", "kb-btn kb-btn-small", go)); b.type = "button";
+    b.addEventListener("click", () => { closeSceneCard(); act(); });
+    c.hidden = false;
+    const M = 8, cw = c.offsetWidth, ch = c.offsetHeight;
+    const px = ev && ev.clientX !== undefined ? ev.clientX : innerWidth / 2, py = ev && ev.clientY !== undefined ? ev.clientY : innerHeight / 3;
+    c.style.left = Math.max(M, Math.min(innerWidth - cw - M, px + 12)) + "px";
+    c.style.top = Math.max(M, Math.min(innerHeight - ch - M, py - ch - 10)) + "px";
   }
 
   // ---- 1.14: tab Giống cây ----
@@ -5130,6 +5254,7 @@ var GardenHome = (function () {
   // ---------------------------------------------------------------------
   function open(which) {
     if (!H) { return; }
+    closeSceneCard();
     if (typeof GardenFinds !== "undefined") { GardenFinds.closeCard(); }
     if (typeof GardenFields !== "undefined") { GardenFields.close(); }
     if (typeof GardenUI !== "undefined") { GardenUI.close(); }
@@ -5174,7 +5299,7 @@ var GardenHome = (function () {
     if (payload.catalog && H.setCatalog) { H.setCatalog(payload.catalog); }
     if (payload.wallet) { H.setWallet(payload.wallet); }
     const a = payload.action, sub = payload.sub;
-    delArm = null; seedDelArm = null; tileDelArm = null; payWait = 0;
+    delArm = null; seedDelArm = null; tileDelArm = null; wearDelArm = null; payWait = 0;
     if (a === "build") {
       const lvl = homeState().house;
       const name = ((catalog() || {}).levels || [])[lvl];
@@ -5217,6 +5342,13 @@ var GardenHome = (function () {
     } else if (a === "wear") {
       sfx(sub === "buy" ? "coin" : "flip");
       mood("happy", 1500, sub === "buy" ? "似合う？ Hợp không nè?" : sub === "off" ? "スッキリ！" : "えへへ");
+    } else if (a === "mywear") {          // 1.31: đồ tự vẽ cho StackChan
+      if (sub === "save") {
+        const isNew = typeof GardenCraft !== "undefined" && GardenCraft.savedWear ? GardenCraft.savedWear() : true;
+        sfx(isNew ? "coin" : "flip");
+        mood("happy", 1600, isNew ? "似合う？ Tự may đó nha!" : "えへへ");
+        tab = "wear";
+      } else { sfx("flip"); }
     } else if (a === "face") {
       sfx(sub === "buy" ? "coin" : "flip");
       if (sub === "buy" && typeof GardenFX !== "undefined") {
@@ -5360,57 +5492,56 @@ var GardenHome = (function () {
         });
         $("kb-snap-x").addEventListener("click", closeSnap);
         document.addEventListener("click", () => closeSnap());
+        document.addEventListener("click", () => closeSceneCard());
+        document.addEventListener("keydown", (ev) => {
+          const sc = $("kb-scene-card");
+          if (ev.key === "Escape" && sc && !sc.hidden) { ev.stopImmediatePropagation(); ev.preventDefault(); window.__kbEscUsed = true; closeSceneCard(); }
+        }, true);
         document.addEventListener("keydown", (ev) => { if (ev.key === "Escape" && !spop.hidden) { ev.stopImmediatePropagation(); ev.preventDefault(); closeSnap(); } }, true);
       }
       $("kb-yard").addEventListener("click", (ev) => {
         const fh = mainFindAt(ev);
         if (fh) { GardenFinds.hit(fh, mainScene(), ev); return; }       // 1.28: chỗ lấp lánh / gánh hàng rong
         if (mainLifeAt(ev)) { ev.stopPropagation(); GardenLife.poke(ev); return; }       // 1.30: StackChan đang sinh hoạt
+        // 1.31: bấm thú / khách → nhảy lên + thẻ nhỏ (tên, đang làm gì, nút vào bảng Nhà) thay cho mở thẳng bảng Nhà
         const pid = mainPetAt(ev);
         if (pid) {
-          if (typeof GardenGames !== "undefined") { GardenGames.close(); }
-          if (typeof GardenPaper !== "undefined") { GardenPaper.close(); }
-          if (typeof GardenCal !== "undefined") { GardenCal.close(); }
-          H.closeReview();
-          open(mainScene()); petFocus = pid; tab = "pet"; renderList();
+          ev.stopPropagation();
           if (typeof GardenPets !== "undefined") { GardenPets.cheer(pid); }
+          sceneCard("pet", pid, ev);
           return;
         }
         const gid = mainGuestAt(ev);
-        if (gid) {      // 1.21: bấm khách → mở Album khách ở thẻ của khách đó
-          if (typeof GardenGames !== "undefined") { GardenGames.close(); }
-          if (typeof GardenPaper !== "undefined") { GardenPaper.close(); }
-          if (typeof GardenCal !== "undefined") { GardenCal.close(); }
-          H.closeReview();
+        if (gid) {
+          ev.stopPropagation();
           GardenGuests.react(mainScene());
-          open(mainScene()); guestFocus = gid; tab = "guest"; albumView = "guest"; renderList();
+          sceneCard("guest", gid, ev);
           return;
         }
         const hit = mainItemAt(ev);
         if (hit && hit.id === "mailbox" && H.openPaper) { H.openPaper(); return; }
-        if (typeof GardenGames !== "undefined") { GardenGames.close(); }
-        if (typeof GardenPaper !== "undefined") { GardenPaper.close(); }
-        if (typeof GardenCal !== "undefined") { GardenCal.close(); }
-        H.closeReview();
-        if (mainView && mainView.house) {        // 1.24: bấm vào gian nào thì mở bảng Nhà ở gian đó (gian chưa mở → Xây nhà)
-          const r = $("kb-yard").getBoundingClientRect(), k = houseRoomAt((ev.clientX - r.left) / mainView.S - mainView.ox);
-          if (canEnter(k)) { open(k); } else { open("room"); tab = "build"; renderList(); }
-          return;
-        }
-        open(mainScene());
+        // 1.31 (người dùng: "chỉ vào cửa hàng, nhà khi bấm vào mục 'Nhà & Cửa hàng' thôi … ấn vào đâu có cũng vào thẳng
+        // cửa hàng thì không tiện lắm"): bấm chỗ khác trên cảnh không mở bảng Nhà — chỉ nút "Nhà & Cửa hàng ▸", nút Nhà, phím N
       });
+      const yh = $("kb-yard-home");
+      if (yh) {
+        yh.addEventListener("mousedown", (ev) => ev.preventDefault());
+        yh.addEventListener("click", (ev) => { ev.stopPropagation(); closeSceneCard(); openFromMain(); });
+      }
       $("kb-yard").addEventListener("mousemove", (ev) => {
         const hit = mainItemAt(ev), pid = mainPetAt(ev), gid = pid ? null : mainGuestAt(ev);
         const cv = $("kb-yard");
         const pv = pid ? (moreView().pets || []).find((p) => p.id === pid) : null;
         const lw = !pid && mainLifeAt(ev) ? GardenLife.where() : null;
         if (lw) { cv.title = "StackChan: " + lw.name + " (bấm để xem)"; cv.style.cursor = "pointer"; }
-        else if (pv) { cv.title = pv.name + " · " + petStateText(pv) + " (bấm để chăm)"; cv.style.cursor = "pointer"; }
-        else if (gid) { cv.title = (guestName(gid) || "Khách") + " ghé vườn (bấm để xem Album khách)"; cv.style.cursor = "pointer"; }
+        else if (pv) { cv.title = pv.name + " · " + petStateText(pv); cv.style.cursor = "pointer"; }
+        else if (gid) { cv.title = (guestName(gid) || "Khách") + " ghé vườn"; cv.style.cursor = "pointer"; }
         else if (hit && hit.id === "mailbox") { cv.title = "Hòm thư: mở Báo (phím B)"; cv.style.cursor = "pointer"; }
-        else if (mainView && mainView.house) {
+        else if (mainFindAt(ev)) { cv.removeAttribute("title"); cv.style.cursor = "pointer"; }
+        else if (mainView && mainView.house) {        // 1.31: chỉ chú thích gian chưa mở (bấm gian không mở bảng Nhà nữa)
           const r = cv.getBoundingClientRect(), k = houseRoomAt((ev.clientX - r.left) / mainView.S - mainView.ox);
-          cv.title = canEnter(k) ? sceneName(k) + ": bấm để bày đồ" : sceneName(k) + ": mở rộng nhà ở tab Xây nhà"; cv.style.cursor = "pointer";
+          if (canEnter(k)) { cv.removeAttribute("title"); } else { cv.title = sceneName(k) + ": mở rộng nhà ở tab Xây nhà"; }
+          cv.style.cursor = "";
         }
         else { cv.removeAttribute("title"); cv.style.cursor = ""; }
       });
@@ -5430,6 +5561,8 @@ var GardenHome = (function () {
     open: open,
     close: close,
     isOpen: () => isOpen,
+    closeSceneCard: closeSceneCard,      // 1.31
+    _sceneCard: sceneCard,
     cycleMain: cycleMain,
     // 1.20: bìa cuốn nhật ký — ảnh xem trước của giao diện mùa, và ảnh vườn tự chụp mỗi tuần (cảnh đang xem, ×2)
     themePreview: themePreview,

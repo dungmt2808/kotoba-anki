@@ -16,6 +16,10 @@ var GardenCraft = (function () {
   let seedMode = false, seedDesign = null;
   // 1.30: mẫu giấy dán tường / sàn tự vẽ — một ô 16×16 lặp lại (tileDesign = mục trong catalog.tiles khi sửa)
   let tileMode = false, tileDesign = null, tileKind = "wall";
+  // 1.31: đồ tự vẽ cho StackChan — mũ / mặt / cổ vẽ trên lưới đặt đúng chỗ trên thân hộp; vỏ = chọn 2 màu (shellC)
+  let wearMode = false, wearDesign = null, wearSlot = "head", shellC = ["P", "p"], shellPart = 0, shellOrig = "";
+  let guidePx = null, guideSig = "";
+  const WEAR_TITLE = { head: "Mũ", face: "Đồ đeo mặt", neck: "Đồ đeo cổ", shell: "Vỏ" };
   // 1.25.5 (admin): sửa hình gốc — mỗi khung một lớp (w×h đúng hình gốc), bảng màu của nhóm; baseInfo {group, id, name}
   let baseMode = false, baseInfo = null;
   const STAGE_TIP = ["Hạt nằm trong đất (bỏ trống thì dùng hạt của cây gốc)", "Mầm vừa nhú", "Cây non có lá",
@@ -45,11 +49,18 @@ var GardenCraft = (function () {
   function uzCat() { return (cat().more && cat().more.uzone) || { price: 5000, edit: 50, bg: [], ground: [], hills: [] }; }
   function seedCat() { return cat().myseed || { price: 500, edit: 50, max: 12, min: 3, stages: ["Hạt", "Mầm", "Cây non", "Ra hoa", "Ra quả"] }; }
   function tileCat() { return (cat().decor && cat().decor.tile) || { price: 250, edit: 50, max: 12 }; }
+  function wearCat() {
+    return cat().mywear || { price: 200, shell_price: 150, edit: 50, max: 12,
+      grid: { head: { w: 20, h: 8, dy: -5 }, face: { w: 20, h: 9, dy: 3 }, neck: { w: 20, h: 5, dy: 12 } } };
+  }
+  function wearGrid(slot) { return (wearCat().grid || {})[slot] || { w: 20, h: 8, dy: -5 }; }
+  function wearChanged() { return wearSlot === "shell" ? shellC.join("") !== shellOrig : px.join("") !== designOrig; }
   function seedCodes() { return [0, 1, 2, 3, 4].map((i) => codeOf("s" + i)); }
   function seedDrawn() { return seedCodes().filter(Boolean).length; }
   function priceOf(n) {
     if (baseMode) { return 0; }
     if (tileMode) { const t = tileCat(); return tileDesign ? (px.join("") !== designOrig ? t.edit : 0) : t.price; }
+    if (wearMode) { const w = wearCat(); return wearDesign ? (wearChanged() ? w.edit : 0) : (wearSlot === "shell" ? w.shell_price : w.price); }
     if (seedMode) { const m = seedCat(); return seedDesign ? (seedCodes().some((c, i) => c !== layers["s" + i].orig) ? m.edit : 0) : m.price; }
     if (zoneMode) { const u = uzCat(); return zone ? (codeOf("lm") !== layers.lm.orig || codeOf("env") !== layers.env.orig ? u.edit : 0) : u.price; }
     const c = cat().craft; return c ? (design ? (px.join("") !== designOrig ? c.edit : 0) : c.prices[String(n)]) : 0;
@@ -60,11 +71,12 @@ var GardenCraft = (function () {
   function baseChanged(l) { return layerPx(l).join("") !== layers[l].origFlat; }
   function edited() {
     if (baseMode) { return Object.keys(layers).some((l) => layerPx(l).join("") !== layers[l].fixFlat); }
+    if (wearMode && wearSlot === "shell") { return wearChanged(); }
     if (undo.length > 0) { return true; }
     if (zoneMode || seedMode) { return Object.keys(layers).some((l) => l !== layer && layers[l].undo.length); }
     // 1.25.3 (audit BUG-03): đổi cỡ xoá lịch sử hoàn tác → so thẳng hình đang có (món mới: còn ô nào đã tô; sửa món: khác hình gốc)
     const flat = px.join("");
-    return (design || (tileMode && tileDesign)) ? flat !== designOrig : /[^.]/.test(flat);
+    return (design || (tileMode && tileDesign) || (wearMode && wearDesign)) ? flat !== designOrig : /[^.]/.test(flat);
   }
   function zoneBg() {         // nền có sẵn của vùng (trời ban ngày) vẽ dưới lưới
     if (!zoneMode || !zoneDraft || !(window.GardenHome && GardenHome.zoneBgCanvas)) { return null; }
@@ -409,9 +421,38 @@ var GardenCraft = (function () {
     cv.width = Math.round(cell * gw * dpr); cv.height = Math.round(cell * gh * dpr);
     cv.style.width = cell * gw + "px"; cv.style.height = cell * gh + "px";
   }
+  // 1.31: thân StackChan (đang mặc ở các chỗ khác) ở đúng phần lưới đang vẽ → vẽ mờ dưới ô trống để biết món nằm đâu
+  function wearGuide() {
+    const L = typeof GardenFX !== "undefined" && GardenFX.lib;
+    if (!L || !L.paintFace) { return null; }
+    const g = wearGrid(wearSlot), on = L.wearOn ? L.wearOn() : {};
+    delete on[wearSlot];
+    const sig = wearSlot + "|" + JSON.stringify(on);
+    if (sig === guideSig && guidePx) { return guidePx; }
+    const cv = document.createElement("canvas"); cv.width = g.w; cv.height = g.h;
+    const ctx = cv.getContext("2d");
+    ctx.translate(0, -(1 + g.dy));          // paintFace: đỉnh hộp ở hàng 1 khi đứng yên
+    L.paintFace(ctx, 1, "idle", 1000, 0, on);
+    guidePx = ctx.getImageData(0, 0, g.w, g.h).data; guideSig = sig;
+    return guidePx;
+  }
+  function shellOn() { const pal = palette(); return { hex: [pal[shellC[0]] || "#e8e8f0", pal[shellC[1]] || "#b8b8c8"] }; }
+  function drawShellBig(cv) {        // vỏ: không vẽ điểm ảnh — lưới là StackChan to mặc vỏ đang chọn
+    const ctx = cv.getContext("2d"), dpr = window.devicePixelRatio || 1;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.imageSmoothingEnabled = false;
+    ctx.fillStyle = "#f8fafc"; ctx.fillRect(0, 0, gw * cell, gh * cell);
+    const L = typeof GardenFX !== "undefined" && GardenFX.lib;
+    if (L && L.paintFace) {
+      const on = Object.assign({}, L.wearOn ? L.wearOn() : {}, { shell: shellOn() });
+      ctx.save(); ctx.translate(0, 4 * cell); L.paintFace(ctx, cell, "happy", 1000, 0, on); ctx.restore();
+    }
+    drawPreview(); syncButtons();
+  }
   function draw() {
     const cv = $("kb-cf-grid");
     if (!cv) { return; }
+    if (wearMode && wearSlot === "shell") { drawShellBig(cv); return; }
     const ctx = cv.getContext("2d"), dpr = window.devicePixelRatio || 1, pal = palette();
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     const bgc = zoneBg();
@@ -446,6 +487,19 @@ var GardenCraft = (function () {
       ctx.globalAlpha = 1;
       ctx.setLineDash([4, 3]); ctx.strokeStyle = "rgba(27,27,47,0.6)"; ctx.lineWidth = 1;
       ctx.strokeRect(0.5, 0.5, lw * cell - 1, lh * cell - 1); ctx.setLineDash([]);
+    }
+    if (wearMode) {
+      const gp = wearGuide();
+      if (gp) {
+        ctx.globalAlpha = 0.42;
+        for (let y = 0; y < gh; y++) {
+          for (let x = 0; x < gw; x++) {
+            const i = (y * gw + x) * 4;
+            if (px[y * gw + x] === "." && gp[i + 3] > 0) { ctx.fillStyle = "rgb(" + gp[i] + "," + gp[i + 1] + "," + gp[i + 2] + ")"; ctx.fillRect(x * cell, y * cell, cell, cell); }
+          }
+        }
+        ctx.globalAlpha = 1;
+      }
     }
     if (cell >= 6) {
       ctx.fillStyle = "rgba(27,27,47,0.12)";
@@ -534,11 +588,35 @@ var GardenCraft = (function () {
     if (ref) { ref.forEach((row, j) => { for (let i = 0; i < row.length; i++) { const c = row[i]; if (c !== ".") { ctx.fillStyle = P[c] || pal[c] || c; ctx.fillRect((50 + i) * S, (44 - ref.length + j) * S, S, S); } } }); }
     $("kb-cf-prevnote").textContent = "Xem trước · ô 16×16 lặp lại kín " + (tileKind === "wall" ? "tường" : "sàn") + " · ô trống giữ nền của kiểu nhà";
   }
+  // 1.31: xem trước đồ tự vẽ — linh vật góc trái (to) + StackChan sinh hoạt (nhỏ, hình tự thu nhỏ) cùng mặc món đang vẽ
+  function wearObj() {
+    if (wearSlot === "shell") { return shellOn(); }
+    const g = wearGrid(wearSlot), rows = [];
+    for (let y = 0; y < gh; y++) { rows.push(px.slice(y * gw, y * gw + gw).join("")); }
+    return /[^.]/.test(rows.join("")) ? { rows: rows, dy: g.dy } : null;
+  }
+  function drawWearPreview(cv) {
+    const S = 3, W = 20 + 6 + 24, Hh = 26;
+    cv.style.width = ""; cv.style.height = "";
+    cv.width = W * S; cv.height = Hh * S;
+    const ctx = cv.getContext("2d");
+    ctx.imageSmoothingEnabled = false;
+    ctx.fillStyle = "#e9f3e2"; ctx.fillRect(0, 0, cv.width, cv.height);
+    ctx.fillStyle = "#cfe6c2"; ctx.fillRect(0, (Hh - 3) * S, cv.width, 3 * S);
+    const L = typeof GardenFX !== "undefined" && GardenFX.lib;
+    const on = Object.assign({}, L && L.wearOn ? L.wearOn() : {});
+    const o = wearObj();
+    if (o) { on[wearSlot] = o; } else { delete on[wearSlot]; }
+    if (L && L.paintFace) { ctx.save(); ctx.translate(0, 5 * S); L.paintFace(ctx, S, "idle", 1000, 0, on); ctx.restore(); }
+    if (typeof GardenLife !== "undefined" && GardenLife.preview) { GardenLife.preview(ctx, S, 26, Hh - 3 - 16, on); }
+    $("kb-cf-prevnote").textContent = "Góc trái · StackChan sinh hoạt (tự thu nhỏ)";
+  }
   function drawPreview() {
     const cv = $("kb-cf-prev");
     if (!cv) { return; }
     if (seedMode) { drawSeedPreview(cv); return; }
     if (tileMode) { drawTilePreview(cv); return; }
+    if (wearMode) { drawWearPreview(cv); return; }
     if (baseMode) {       // 1.25.5: mọi khung cạnh nhau (×3)
       const ls = Object.keys(layers), S = 3, pad = 4, pal = palette();
       const W = ls.reduce((a, l) => a + layers[l].w + pad, pad), Hh = Math.max.apply(null, ls.map((l) => layers[l].h)) + pad * 2;
@@ -632,9 +710,16 @@ var GardenCraft = (function () {
   }
   function syncButtons() {
     Array.prototype.forEach.call(document.querySelectorAll("#kb-craft [data-tool]"), (b) => b.classList.toggle("is-on", b.getAttribute("data-tool") === tool));
-    Array.prototype.forEach.call(document.querySelectorAll("#kb-cf-pal [data-c]"), (b) => b.classList.toggle("is-on", b.getAttribute("data-c") === color));
+    const shellPick = wearMode && wearSlot === "shell";
+    Array.prototype.forEach.call(document.querySelectorAll("#kb-cf-pal [data-c]"), (b) => b.classList.toggle("is-on", b.getAttribute("data-c") === (shellPick ? shellC[shellPart] : color)));
+    Array.prototype.forEach.call(document.querySelectorAll("#kb-craft [data-shell]"), (b) => {
+      const k = Number(b.getAttribute("data-shell"));
+      b.classList.toggle("is-on", k === shellPart);
+      const sw = b.querySelector(".kb-cf-shellsw"); if (sw) { sw.style.background = palette()[shellC[k]] || "#888"; }
+    });
     const price = priceOf(size), save = $("kb-cf-save");
     save.textContent = baseMode ? (baseInfo && baseInfo.suggest ? "Lưu file góp ý" : "Lưu")
+      : wearMode ? (wearDesign ? "Lưu · " + (price ? kbXu(price) + " xu" : "miễn phí") : "Tạo · " + kbXu(price) + " xu")
       : tileMode ? (tileDesign ? "Lưu mẫu · " + (price ? kbXu(price) + " xu" : "miễn phí") : "Tạo mẫu · " + kbXu(price) + " xu") : seedMode ? (seedDesign ? "Lưu giống · " + (price ? kbXu(price) + " xu" : "miễn phí") : "Tạo giống · " + kbXu(price) + " xu")
       : zoneMode ? (zone ? "Lưu vùng · " + (price ? kbXu(price) + " xu" : "miễn phí") : "Tạo vùng · " + kbXu(price) + " xu")
       : design ? "Lưu sửa · " + (price ? kbXu(price) + " xu" : "miễn phí") : "Chế tác · " + kbXu(price) + " xu";
@@ -663,7 +748,10 @@ var GardenCraft = (function () {
       b.type = "button"; b.className = "kb-cf-sw"; b.setAttribute("data-c", ch);
       b.style.background = pal[ch]; b.title = pal[ch];
       b.addEventListener("mousedown", (e) => e.preventDefault());
-      b.addEventListener("click", () => { color = ch; if (tool === "erase" || tool === "pick") { tool = "pen"; } draw(); });
+      b.addEventListener("click", () => {
+        if (wearMode && wearSlot === "shell") { shellC[shellPart] = ch; draw(); return; }     // 1.31: màu vỏ
+        color = ch; if (tool === "erase" || tool === "pick") { tool = "pen"; } draw();
+      });
       box.appendChild(b);
     });
   }
@@ -690,6 +778,7 @@ var GardenCraft = (function () {
   }
   function onDown(ev) {
     ev.preventDefault();
+    if (wearMode && wearSlot === "shell") { return; }
     const c = cellOf(ev);
     if (!c) { return; }
     const erase = ev.button === 2;
@@ -797,16 +886,18 @@ var GardenCraft = (function () {
     const zb = $("kb-cf-zone"); if (zb) { zb.hidden = !on; }
     const sb = $("kb-cf-seed"); if (sb) { sb.hidden = mode !== "seed"; }
     const bb = $("kb-cf-base"); if (bb) { bb.hidden = mode !== "base"; }
+    const wb = $("kb-cf-wear"); if (wb) { wb.hidden = !(mode === "wear" && wearSlot === "shell"); }
     $("kb-cf-name").readOnly = mode === "base";
     const zr = $("kb-cf-zoomrow"); if (zr) { zr.hidden = !on; }
-    const cr = $("kb-craft"); if (cr) { cr.classList.toggle("kb-cf-zonemode", on); cr.classList.toggle("kb-cf-seedmode", mode === "seed"); }
+    const cr = $("kb-craft"); if (cr) { cr.classList.toggle("kb-cf-zonemode", on); cr.classList.toggle("kb-cf-seedmode", mode === "seed"); cr.classList.toggle("kb-cf-shellmode", mode === "wear" && wearSlot === "shell"); }
     const tl = document.querySelector("#kb-craft .kb-g-title");
     if (tl) {
       tl.textContent = on ? "工房 · Vùng tự tạo" : mode === "seed" ? "工房 · Giống cây tự vẽ" : mode === "base" ? "工房 · Hình gốc"
-        : mode === "tile" ? (tileKind === "wall" ? "工房 · Giấy dán tường" : "工房 · Sàn nhà") : "工房 · Xưởng chế tác";
+        : mode === "tile" ? (tileKind === "wall" ? "工房 · Giấy dán tường" : "工房 · Sàn nhà")
+        : mode === "wear" ? "工房 · " + WEAR_TITLE[wearSlot] + " cho StackChan" : "工房 · Xưởng chế tác";
     }
     $("kb-cf-name").maxLength = on ? 20 : 24;
-    $("kb-cf-name").placeholder = on ? "Tên vùng" : mode === "seed" ? "Tên giống cây" : mode === "tile" ? "Tên mẫu" : "Món tự làm";
+    $("kb-cf-name").placeholder = on ? "Tên vùng" : mode === "seed" ? "Tên giống cây" : mode === "tile" ? "Tên mẫu" : mode === "wear" ? "Tên món đồ" : "Món tự làm";
   }
   function setZoneUi(on) { setModeUi(on ? "zone" : "item"); }
   function swatches(boxId, list, key) {
@@ -825,7 +916,7 @@ var GardenCraft = (function () {
     if (!H) { return; }
     const u = uzCat();
     zoneMode = true; zone = z || null; design = null; seedMode = false; seedDesign = null; baseMode = false; baseInfo = null;
-    tileMode = false; tileDesign = null;
+    tileMode = false; tileDesign = null; wearMode = false; wearDesign = null;
     zoneDraft = { name: z ? z.name : "", bg: z ? z.bg : ((u.bg[0] || {}).id || "meadow"),
       ground: z ? z.ground : (u.ground[0] || "#5ed35e"), hills: z ? z.hills : (u.hills[0] || "#7ed98a") };
     const [lw, lh] = layerDims("lm"), [ew, eh] = layerDims("env");
@@ -859,7 +950,7 @@ var GardenCraft = (function () {
   function openSeed(g) {
     if (!H) { return; }
     zoneMode = false; zone = null; zoom = 1; design = null; baseMode = false; baseInfo = null;
-    tileMode = false; tileDesign = null;
+    tileMode = false; tileDesign = null; wearMode = false; wearDesign = null;
     seedMode = true; seedDesign = g || null;
     Object.keys(layers).forEach((k) => { delete layers[k]; });
     for (let i = 0; i < 5; i++) {
@@ -888,7 +979,7 @@ var GardenCraft = (function () {
     const cur = GardenFix.frames(info.group, info.id), org = GardenFix.original(info.group, info.id), names = Object.keys(cur);
     if (!names.length) { return; }
     zoneMode = false; zone = null; zoom = 1; design = null; seedMode = false; seedDesign = null;
-    tileMode = false; tileDesign = null;
+    tileMode = false; tileDesign = null; wearMode = false; wearDesign = null;
     baseMode = true; baseInfo = { group: info.group, id: info.id, name: info.name || info.id, pal: GardenFix.pal(info.group, info.id), suggest: !!info.suggest };
     Object.keys(layers).forEach((k) => { delete layers[k]; });
     const bar = $("kb-cf-frames");
@@ -931,6 +1022,7 @@ var GardenCraft = (function () {
   function openTile(t, k) {
     if (!H) { return; }
     zoneMode = false; zone = null; zoom = 1; seedMode = false; seedDesign = null; baseMode = false; baseInfo = null; design = null;
+    wearMode = false; wearDesign = null;
     tileMode = true; tileDesign = t || null; tileKind = t ? t.kind : (k === "floor" ? "floor" : "wall");
     size = 16; gw = gh = 16; kind = "floor";
     px = decode(t ? t.px : "", 16, 16);
@@ -948,10 +1040,42 @@ var GardenCraft = (function () {
     tip(t ? "Sửa mẫu “" + t.name + "” · đổi tên miễn phí, vẽ lại " + kbXu(tc.edit) + " xu"
       : "Vẽ một ô 16×16, ô này lặp lại kín " + what + " · ô để trống thì thấy nền của kiểu nhà.");
   }
+  // 1.31: đồ tự vẽ cho StackChan — w = mục trong catalog.mywears (sửa) hoặc null (tạo mới ở chỗ `slot`)
+  function openWear(w, slot) {
+    if (!H) { return; }
+    zoneMode = false; zone = null; zoom = 1; seedMode = false; seedDesign = null; baseMode = false; baseInfo = null; design = null;
+    tileMode = false; tileDesign = null;
+    wearMode = true; wearDesign = w || null;
+    wearSlot = w ? w.slot : (WEAR_TITLE[slot] ? slot : "head");
+    size = 16; kind = "ground";
+    if (wearSlot === "shell") {
+      gw = 20; gh = 22; px = new Array(gw * gh).fill(".");
+      shellC = w && w.c ? w.c.slice() : ["P", "p"]; shellPart = 0;
+      shellOrig = shellC.join("");            // chưa đổi màu → Esc đóng ngay (món mới vẫn tạo được với màu mặc định)
+    } else {
+      const g = wearGrid(wearSlot);
+      gw = g.w; gh = g.h;
+      px = decode(w ? w.px : "", gw, gh);
+    }
+    designOrig = px.join(""); guideSig = ""; guidePx = null;
+    $("kb-cf-name").value = w ? w.name : "";
+    setModeUi("wear");
+    mirror = false; fx = "none";
+    clearInterval(previewTimer); previewTimer = null;
+    img = null; undo = []; redo = []; saving = false; escArmed = false; tool = "pen"; hoverCell = null;
+    isOpen = true;
+    $("kb-craft").hidden = false;
+    buildPalette();
+    layout(); draw(); showWhole();
+    const wc = wearCat();
+    tip(w ? "Sửa “" + w.name + "” · đổi tên miễn phí, " + (wearSlot === "shell" ? "đổi màu " : "vẽ lại ") + kbXu(wc.edit) + " xu"
+      : wearSlot === "shell" ? "Chọn màu thân rồi màu viền dưới ở bảng màu."
+      : "Vẽ lên phần mờ của StackChan · ô trống để trong suốt · bên phải là hình trên linh vật và trên StackChan sinh hoạt.");
+  }
   function open(it) {
     if (!H) { return; }
     zoneMode = false; zone = null; zoom = 1; seedMode = false; seedDesign = null; baseMode = false; baseInfo = null;
-    tileMode = false; tileDesign = null;
+    tileMode = false; tileDesign = null; wearMode = false; wearDesign = null;
     setZoneUi(false);
     design = it || null;
     if (design) {
@@ -988,8 +1112,9 @@ var GardenCraft = (function () {
     else if (r.bottom > window.innerHeight) { window.scrollBy(0, Math.min(r.top - 4, r.bottom - window.innerHeight + 4)); }
   }
   function close() {
-    if (!design && !zoneMode && !seedMode && !baseMode && !tileMode) { lastNew = { size: size, kind: kind }; }
+    if (!design && !zoneMode && !seedMode && !baseMode && !tileMode && !wearMode) { lastNew = { size: size, kind: kind }; }
     if (tileMode) { tileMode = false; tileDesign = null; setModeUi("item"); }
+    if (wearMode) { wearMode = false; wearDesign = null; setModeUi("item"); }
     if (baseMode) { baseMode = false; baseInfo = null; setModeUi("item"); }
     freeUrl();
     isOpen = false; painting = false; escArmed = false;
@@ -1021,6 +1146,17 @@ var GardenCraft = (function () {
       }
       saving = true; syncButtons(); tip("Đang lưu…");
       H.send(Object.keys(frames).length ? "base:save:" + JSON.stringify({ key: key, frames: frames }) : "base:reset:" + key);
+      return;
+    }
+    if (wearMode) {           // 1.31: đồ tự vẽ cho StackChan
+      const payload = { name: $("kb-cf-name").value.trim() || "Đồ của tớ", slot: wearSlot };
+      if (wearSlot === "shell") { payload.c = shellC.slice(); }
+      else {
+        if (!flat.replace(/\./g, "")) { tip("Hình còn trống, vẽ gì đó đã nhé!"); return; }
+        payload.px = encode(flat);
+      }
+      if (wearDesign) { payload.id = wearDesign.id; }
+      commit("craft:wear:" + JSON.stringify(payload), wearDesign ? "Lưu " + wearDesign.name : "Tạo " + WEAR_TITLE[wearSlot].toLowerCase() + " mới cho StackChan", wearDesign ? "Lưu" : "Tạo");
       return;
     }
     if (tileMode) {
@@ -1078,6 +1214,10 @@ var GardenCraft = (function () {
         b.addEventListener("click", () => { tool = b.getAttribute("data-tool"); draw(); });
       });
       $("kb-cf-undo").addEventListener("click", doUndo);
+      Array.prototype.forEach.call(document.querySelectorAll("#kb-craft [data-shell]"), (b) => {      // 1.31: màu thân / viền của vỏ
+        b.addEventListener("mousedown", (e) => e.preventDefault());
+        b.addEventListener("click", () => { shellPart = Number(b.getAttribute("data-shell")) || 0; draw(); });
+      });
       const rdb = $("kb-cf-redo"); if (rdb) { rdb.addEventListener("click", doRedo); }
       Array.prototype.forEach.call(document.querySelectorAll("#kb-craft [data-layer]"), (b) => {
         b.addEventListener("mousedown", (e) => e.preventDefault());
@@ -1148,6 +1288,8 @@ var GardenCraft = (function () {
     openSeed: openSeed,
     openTile: openTile,
     savedTile: function () { const isNew = !tileDesign; saving = false; close(); return isNew; },
+    openWear: openWear,
+    savedWear: function () { const isNew = !wearDesign; saving = false; close(); return isNew; },
     close: close,
     isOpen: () => isOpen,
     image: function (p) { if (isOpen && p && p.url) { loadImage(p.url, p.name); } },
@@ -1163,7 +1305,8 @@ var GardenCraft = (function () {
     // cho test
     _state: () => ({ size: size, kind: kind, fx: fx, tool: tool, color: color, px: px.join(""), undo: undo.length, redo: redo.length, brush: brush, layer: layer, zoom: zoom, env: zoneMode ? codeOf("env") : "", lm: zoneMode ? codeOf("lm") : "", design: design && design.id, cell: cell,
       gw: gw, gh: gh, zone: zoneMode, zoneDraft: zoneDraft, seed: seedMode, seedId: seedDesign && seedDesign.id,
-      st: seedMode ? seedCodes() : null, tile: tileMode ? tileKind : "", tileId: tileDesign && tileDesign.id, price: priceOf(size), base: baseMode ? baseInfo && (baseInfo.group + ":" + baseInfo.id) : null, suggest: !!(baseMode && baseInfo && baseInfo.suggest),
+      st: seedMode ? seedCodes() : null, tile: tileMode ? tileKind : "", tileId: tileDesign && tileDesign.id,
+      wear: wearMode ? wearSlot : "", wearId: wearDesign && wearDesign.id, shell: shellC.slice(), price: priceOf(size), base: baseMode ? baseInfo && (baseInfo.group + ":" + baseInfo.id) : null, suggest: !!(baseMode && baseInfo && baseInfo.suggest),
       frames: baseMode ? Object.keys(layers) : null }),
     _setLayer: setLayer, _zoom: zoomBy,
     _load: loadImage,

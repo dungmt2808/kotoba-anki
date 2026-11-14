@@ -109,6 +109,17 @@ def check_invariants(st, where):
     for tid in dec["mine"]["items"]:
         if not D.tile_code(px.get(tid), core.CRAFT_PALETTE):
             return "mẫu %s thiếu điểm ảnh" % tid
+    mw_ = d["more"]["mywear"]                       # 1.31: đồ tự vẽ cho StackChan
+    if core.wear.clean(mw_, core.CRAFT_PALETTE) != mw_:
+        return "mywear không ở dạng sạch"
+    if len(mw_["items"]) > core.wear.MAX:
+        return "quá %d đồ tự vẽ" % core.wear.MAX
+    for wid, meta in mw_["items"].items():
+        if meta["slot"] != "shell" and not core.wear.px_code(px.get(wid), meta["slot"], core.CRAFT_PALETTE):
+            return "đồ tự vẽ %s thiếu điểm ảnh" % wid
+    for slot, wid in mw_["on"].items():
+        if d["wear"]["on"].get(slot):
+            return "chỗ %s mặc cùng lúc đồ có sẵn (%s) và đồ tự vẽ (%s)" % (slot, d["wear"]["on"][slot], wid)
     for cid, meta in d["craft"]["items"].items():
         if core.px_decode(px.get(cid), meta["size"]) is None:
             return "món tự làm %s thiếu điểm ảnh" % cid
@@ -223,6 +234,19 @@ def run_seed(seed):
     def a_myseed():
         return st.myseed_save({"name": "Giống", "st": [rnd_px(rng, 16) if rng.random() < 0.8 else "" for _ in range(5)]})
 
+    def a_mywear():           # 1.31: tạo / sửa đồ tự vẽ (cả dữ liệu sai)
+        mine = st.load()["more"]["mywear"]["items"]
+        slot = rng.choice(["head", "face", "neck", "shell", "tail"])
+        p = {"name": rng.choice(["Mũ", "", "<x>" * 20]), "slot": slot}
+        if slot == "shell":
+            p["c"] = rng.choice([["g", "G"], ["y", "o"], ["#", "g"], ["g"]])
+        elif slot in core.wear.GRID:
+            w, h, _dy = core.wear.GRID[slot]
+            p["px"] = rng.choice([more_core.px_encode("".join(rng.choice("r..k") for _ in range(w * h))), "zz", more_core.px_encode("." * w * h)])
+        if mine and rng.random() < 0.4:
+            p["id"] = rng.choice(list(mine) + ["w999"])
+        return st.mywear_save(p)
+
     def a_day():
         st.today_override += rng.choice([1, 1, 1, 2, 9, 20])
         st.touch()
@@ -244,6 +268,8 @@ def run_seed(seed):
         (2, "mua đồ mặc", lambda: st.buy_wear(rng.choice(list(core.WEAR) + ["x"]))),
         (1, "mặc", lambda: st.put_on(rng.choice(list(core.WEAR)))), (1, "cởi", lambda: st.take_off(rng.choice(list(core.WEAR_SLOTS) + ["x"]))),
         (1, "mua biểu cảm", lambda: st.buy_face(rng.choice(list(core.FACES) + ["x"]))),
+        (4, "vẽ đồ StackChan", a_mywear), (2, "mặc đồ tự vẽ", lambda: st.put_on(rng.choice(list(st.load()["more"]["mywear"]["items"]) + ["w999"]))),
+        (1, "xoá đồ tự vẽ", lambda: st.mywear_delete(rng.choice(list(st.load()["more"]["mywear"]["items"]) + ["w999"]))),
         (1, "bật / tắt biểu cảm", lambda: st.toggle_face(rng.choice(list(core.FACES)))),
         (6, "mua tường / sàn", lambda: st.decor_buy(rng.choice(PRESETS + ["w_khongco", "bench"]))), (7, "dùng tường / sàn", a_decor_use),
         (4, "vẽ mẫu", a_tile), (2, "xoá mẫu", lambda: st.tile_delete(rng.choice(list(st.load()["more"][D.DECOR_KEY]["mine"]["items"]) + ["t999"]))),

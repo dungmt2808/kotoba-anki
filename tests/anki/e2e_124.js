@@ -66,10 +66,15 @@ kb.open_garden(); result = 1`);
     return [Math.round(px(0.2)), Math.round(px(0.5)), Math.round(px(0.8))];`);
   ok(dark[0] < 90 && dark[2] < 90 && dark[1] > 110, 'Bếp, Phòng ngủ chưa mở thì tối; phòng chính sáng (độ sáng sàn ' + dark.join(' / ') + ')');
 
-  console.log('== bấm gian chưa mở → tab Xây nhà, Mở rộng nhà');
+  console.log('== bấm gian chưa mở: không mở bảng (1.31), chú thích chỉ tab Xây nhà; nút → tab Xây nhà, Mở rộng nhà');
   const kx = await js('const r = document.getElementById("kb-yard").getBoundingClientRect(); return [r.left + r.width * 0.2, r.top + r.height * 0.6];');
+  await page.send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: kx[0], y: kx[1] }); await sleep(300);
+  ok(/mở rộng nhà ở tab Xây nhà/.test(await js('return document.getElementById("kb-yard").title;')), 'rê chuột lên gian chưa mở: "mở rộng nhà ở tab Xây nhà"');
   await click(kx[0], kx[1]); await sleep(900);
-  ok(await js('return !document.getElementById("kb-home").hidden && document.querySelector("#kb-home .kb-h-tab.is-on").getAttribute("data-tab") === "build";'), 'mở Nhà & Cửa hàng ở tab Xây nhà');
+  ok(await js('return document.getElementById("kb-home").hidden;'), 'bấm gian chưa mở: không mở bảng Nhà (1.31)');
+  await js('document.getElementById("kb-yard-home").click(); return 1;'); await sleep(900);
+  await js('GardenHome.setTab("build"); return 1;'); await sleep(500);
+  ok(await js('return !document.getElementById("kb-home").hidden && document.querySelector("#kb-home .kb-h-tab.is-on").getAttribute("data-tab") === "build";'), 'nút “Nhà & Cửa hàng ▸” → tab Xây nhà');
   ok(await js('return document.querySelectorAll(".kb-h-room").length === 1 && /Bếp \\+ Phòng ngủ/.test(document.querySelector(".kb-h-nha").textContent);'), '1.25: một thẻ "Mở rộng nhà · Bếp + Phòng ngủ"');
   await js('const l = document.getElementById("kb-h-list"), c = document.querySelector(".kb-h-nha"); l.scrollTop = c.offsetTop - l.offsetTop - 8; window.scrollTo(0, 0); return 1;'); await sleep(300);
   await page.shot(SHOTS + '/124_02_xay_nha_mo_rong.png');
@@ -149,10 +154,13 @@ else:
     result = None`);
   ok(ph && ph[0] > 900 && ph[0] / ph[1] > 4, 'ảnh cỡ thường của cả nhà: ' + (ph ? ph.join(' × ') : 'không có file'));
 
-  console.log('== bấm gian đã mở trên màn chính → bảng Nhà ở đúng gian');
+  console.log('== bấm gian đã mở trên màn chính: không mở bảng (1.31); nút mở bảng Nhà, chọn Phòng ngủ ở hàng cảnh');
   const bx = await js('const r = document.getElementById("kb-yard").getBoundingClientRect(); return [r.left + r.width * 0.68, r.top + r.height * 0.6];');
   await click(bx[0], bx[1]); await sleep(900);
-  ok(await js('return !document.getElementById("kb-home").hidden && document.querySelector(".kb-h-scene.is-on").getAttribute("data-scene");') === 'bedroom', 'bấm Phòng ngủ → bảng Nhà mở ở Phòng ngủ');
+  ok(await js('return document.getElementById("kb-home").hidden;'), 'bấm Phòng ngủ trên màn chính: không mở bảng Nhà (1.31)');
+  await js('document.getElementById("kb-yard-home").click(); return 1;'); await sleep(900);
+  await js('const b = [...document.querySelectorAll(".kb-h-scene")].find((x) => x.getAttribute("data-scene") === "bedroom"); if (b) { b.click(); } return 1;'); await sleep(600);
+  ok(await js('return !document.getElementById("kb-home").hidden && document.querySelector(".kb-h-scene.is-on").getAttribute("data-scene");') === 'bedroom', 'nút → bảng Nhà, chọn Phòng ngủ');
 
   console.log('== thanh trên của Nhà ở 1024 px (đủ Trong nhà · Bếp · Phòng ngủ)');
   await py(KB + 'kb._dialog.resize(1024, 700); result = 1'); await sleep(1200);

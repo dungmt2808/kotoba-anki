@@ -26,6 +26,7 @@ try:   # chạy trong Anki (gói add-on)
     from . import season_core as season
     from . import share_core as share
     from . import text_core as text
+    from . import wear_core as wear
 except ImportError:   # nạp riêng file này (test): nạp season_core.py / fields_core.py nằm cạnh
     import importlib.util as _ilu
 
@@ -44,6 +45,8 @@ except ImportError:   # nạp riêng file này (test): nạp season_core.py / fi
     share.more = more
     decor = _load_side("kotoba_decor_core", "decor_core.py")
     decor.more = more
+    wear = _load_side("kotoba_wear_core", "wear_core.py")
+    wear.more = more
 
 STAGES = ["Hạt giống", "Mầm", "Cây non", "Ra hoa", "Ra quả"]
 STAGE_SEED, STAGE_SPROUT, STAGE_SAPLING, STAGE_FLOWER, STAGE_FRUIT = range(5)
@@ -599,6 +602,9 @@ def home_catalog(data: dict[str, Any] | None = None, px: dict[str, str] | None =
         # 1.30: giấy dán tường + sàn (mẫu có sẵn, mẫu tự vẽ 16×16)
         "decor": decor.catalog_view(),
         "tiles": decor.tiles_view(((data or {}).get("more") or {}).get(decor.DECOR_KEY) or decor.empty(), px, CRAFT_PALETTE),
+        # 1.31: đồ tự vẽ cho StackChan (mũ / mặt / cổ / vỏ)
+        "mywear": wear.catalog_view(),
+        "mywears": wear.items_view(((data or {}).get("more") or {}).get(wear.MYWEAR_KEY) or wear.empty(), px, CRAFT_PALETTE),
     }
 
 
@@ -1871,19 +1877,56 @@ def card_due_in(col: Collection, card: Any) -> int | None:
         return None
 
 
-def review_days(col: Collection, back: int = 400) -> tuple[set[int], datetime.date]:
+# ---------------------------------------------------------------------------
+# 1.31: chuỗi ngày ôn chỉ tính từ lúc ことば畑 chạy lần đầu trên collection này
+# ---------------------------------------------------------------------------
+# Người dùng (14/11): "chuỗi người dùng anki có đồng bộ với chuỗi trong kotoba không, nếu có thì phải đổi lại, tất cả khi
+# mới cài add-on thì chuỗi sẽ là 0". Trước 1.31 chuỗi đọc thẳng cả revlog → ai đã ôn Anki 200 ngày liền thì vừa cài đã
+# "200 ngày liền". Nay mốc = lúc add-on chạy lần đầu (khoá collection riêng START_KEY, đồng bộ AnkiWeb, ghi một lần):
+#   - cài mới: mốc = lúc mở hồ sơ đầu tiên sau khi cài → chuỗi 0, lượt ôn đầu tiên sau đó → 1 ngày;
+#   - đã dùng bản cũ: mốc = lúc sổ bù xu điện thoại (1.11+) được lập — lần đầu bản cũ chạy trên collection này; không có
+#     sổ (tắt mobile_coins / bản ≤ 1.10) thì mốc = lúc cập nhật.
+# Chỉ chuỗi (Hôm nay "N ngày liền", Lịch hoa "Ôn liền" / "Liền lâu nhất", Tin làng, Giao diện mùa đổi bằng ngày ôn liền,
+# vé giữ chuỗi, hiệu ứng mốc chuỗi). Số lượt hôm nay, tổng ngày đã học, hoa trên Lịch hoa vẫn theo lịch sử thật của Anki.
+START_KEY = "kotoba_batake_start"
+
+
+def clean_start(raw: Any) -> int | None:
+    """Mốc (mili giây) đọc từ collection; None = chưa có / hỏng."""
+    v = raw.get("ms") if isinstance(raw, dict) else raw
+    if isinstance(v, int) and not isinstance(v, bool) and 0 < v < 10 ** 14:
+        return v
+    return None
+
+
+def review_days(col: Collection, back: int = 400, start_ms: int | None = None) -> tuple[set[int], datetime.date]:
     """Các ngày có ôn trong `back` ngày gần nhất (0 = hôm nay, -1 = hôm qua…) + ngày lịch của ngày Anki hôm nay.
 
     1.28 (audit 12/11 F02): ngày Anki theo lịch địa phương (ngay_core), không chia 86400 giây — ngày đổi giờ mùa hè
-    không còn đẩy lượt ôn sang ngày bên cạnh."""
+    không còn đẩy lượt ôn sang ngày bên cạnh. 1.31: `start_ms` (mốc tính chuỗi) — chỉ lượt ôn từ mốc trở đi."""
     D = ngay.days_of(col)
-    since = D.rel_start(-int(back))
+    since = D.rel_start(-int(back)) * 1000
+    if isinstance(start_ms, int) and start_ms > since:
+        since = start_ms
     rows = col.db.list(
         "select distinct " + D.sql_day() + " from revlog where id >= ? and type < 4",
-        D.mod, since * 1000,
+        D.mod, since,
     )
     days = {r for r in (D.rel_of_iso(x) for x in rows) if r is not None}
     return days, D.today
+
+
+def streak_iso_days(col: Collection, start_ms: int | None, lo: datetime.date, hi: datetime.date) -> set[str]:
+    """1.31: ngày Anki ("yyyy-mm-dd", lo ≤ ngày ≤ hi) có lượt ôn tính vào chuỗi (từ mốc `start_ms`) — cho "Liền lâu nhất"."""
+    D = ngay.days_of(col)
+    a = D.start_of(lo) * 1000
+    b = D.start_of(hi + datetime.timedelta(days=1)) * 1000
+    if isinstance(start_ms, int) and start_ms > a:
+        a = start_ms
+    if a >= b:
+        return set()
+    rows = col.db.list("select distinct " + D.sql_day() + " from revlog where id >= ? and id < ? and type < 4", D.mod, a, b)
+    return {str(x) for x in rows if x}
 
 
 def review_day_total(col: Collection, before_today: bool = False) -> int:
@@ -1896,9 +1939,10 @@ def review_day_total(col: Collection, before_today: bool = False) -> int:
     return int(col.db.scalar(sql, D.mod) or 0)
 
 
-def daily_stats(col: Collection, frozen: Any = ()) -> dict[str, int]:
+def daily_stats(col: Collection, frozen: Any = (), start_ms: int | None = None) -> dict[str, int]:
     """Số lượt ôn hôm nay (theo ngày của Anki) và số ngày ôn liên tiếp. 1.25.9: `frozen` = ngày đã dùng vé giữ chuỗi
-    ("yyyy-mm-dd") — nối chuỗi, không cộng thêm.
+    ("yyyy-mm-dd") — nối chuỗi, không cộng thêm. 1.31: `start_ms` = mốc tính chuỗi (lúc ことば畑 chạy lần đầu) — lượt
+    ôn trước mốc không vào chuỗi (số lượt hôm nay vẫn đếm hết).
 
     1.28 (audit 12/11 F03): chuỗi dài hơn cửa sổ 400 ngày không còn bị chặn ở 401 — chuỗi chạm mép cửa sổ thì đọc
     thêm lịch sử cho tới chỗ đứt đầu tiên."""
@@ -1908,7 +1952,7 @@ def daily_stats(col: Collection, frozen: Any = ()) -> dict[str, int]:
     ) or 0
     back = 400
     while True:
-        days, today = review_days(col, back)
+        days, today = review_days(col, back, start_ms)
         fz = more.frozen_rel(frozen, today)
         streak = more.streak_with(days, fz)
         edge = -back                     # ngày cũ nhất trong cửa sổ: chuỗi còn chạm tới đó thì có thể dài hơn
@@ -2808,6 +2852,9 @@ class GardenState:
         data["more"][share.MYSEED_KEY] = share.clean_myseeds(more_raw.get(share.MYSEED_KEY) if isinstance(more_raw, dict) else None)
         # 1.30: giấy dán tường + sàn từng gian (khoá "decor", xem decor_core)
         data["more"][decor.DECOR_KEY] = decor.clean(more_raw.get(decor.DECOR_KEY) if isinstance(more_raw, dict) else None)
+        # 1.31: đồ tự vẽ cho StackChan (khoá "mywear", xem wear_core)
+        data["more"][wear.MYWEAR_KEY] = wear.clean(more_raw.get(wear.MYWEAR_KEY) if isinstance(more_raw, dict) else None,
+                                                   CRAFT_PALETTE)
         try:
             attach_uzones(data, more_raw)
         except (ValueError, AttributeError, TypeError, KeyError):
@@ -3472,21 +3519,32 @@ class GardenState:
         if wear_id not in WEAR:
             raise HomeError("Không có món đồ mặc này.")
         data = self.load()
-        wear = data["wear"]
-        if wear_id in wear["owned"]:
+        ww = data["wear"]
+        if wear_id in ww["owned"]:
             raise HomeError("Món này đã có rồi.")
         self._pay(data, WEAR[wear_id]["price"])
-        wear["owned"].append(wear_id)
-        wear["on"][WEAR[wear_id]["slot"]] = wear_id     # mua xong mặc luôn
+        ww["owned"].append(wear_id)
+        ww["on"][WEAR[wear_id]["slot"]] = wear_id     # mua xong mặc luôn
+        data["more"][wear.MYWEAR_KEY]["on"].pop(WEAR[wear_id]["slot"], None)     # 1.31: thay món tự vẽ ở chỗ đó
         self.save(data)
         return data
 
     def put_on(self, wear_id: str) -> dict[str, Any]:
         data = self.load()
-        wear = data["wear"]
-        if wear_id not in wear["owned"]:
-            raise HomeError("Chưa có món này.")
-        wear["on"][WEAR[wear_id]["slot"]] = wear_id
+        ww = data["wear"]
+        mine = data["more"][wear.MYWEAR_KEY]
+        if wear.is_mine(wear_id):          # 1.31: món tự vẽ → chỗ đó bỏ món có sẵn
+            try:
+                slot = wear.put_on(mine, wear_id)
+            except wear.WearError as err:
+                raise HomeError(str(err)) from None
+            ww["on"].pop(slot, None)
+        else:
+            if wear_id not in ww["owned"] or wear_id not in WEAR:
+                raise HomeError("Chưa có món này.")
+            slot = WEAR[wear_id]["slot"]
+            ww["on"][slot] = wear_id
+            mine["on"].pop(slot, None)
         self.save(data)
         return data
 
@@ -3495,7 +3553,43 @@ class GardenState:
             raise HomeError("Không có chỗ mặc này.")
         data = self.load()
         data["wear"]["on"].pop(slot, None)
+        data["more"][wear.MYWEAR_KEY]["on"].pop(slot, None)
         self.save(data)
+        return data
+
+    # -- 1.31: đồ tự vẽ cho StackChan ------------------------------------------
+
+    def mywear_save(self, payload: Any) -> dict[str, Any]:
+        """Tạo món tự vẽ (mũ / mặt / cổ 200 xu, vỏ 150 xu — tạo xong mặc luôn) hoặc sửa (50 xu nếu đổi hình / màu,
+        đổi tên miễn phí). payload: {id?, name, slot, px (mũ / mặt / cổ) | c: [màu thân, màu viền] (vỏ)}."""
+        data = self.load()
+        px = self.load_px()
+        mine = data["more"][wear.MYWEAR_KEY]
+        try:
+            cost, wid, code = wear.save(mine, payload, px, CRAFT_PALETTE)
+        except wear.WearError as err:
+            raise HomeError(str(err)) from None
+        self._pay(data, cost)
+        if code is not None:
+            px[wid] = code
+            self.save_px(px)
+        if not (isinstance(payload, dict) and payload.get("id")):      # món mới: mặc luôn
+            slot = wear.put_on(mine, wid)
+            data["wear"]["on"].pop(slot, None)
+        self.save(data)
+        data["mywear_id"] = wid
+        return data
+
+    def mywear_delete(self, wid: str) -> dict[str, Any]:
+        data = self.load()
+        try:
+            wear.delete(data["more"][wear.MYWEAR_KEY], wid)
+        except wear.WearError as err:
+            raise HomeError(str(err)) from None
+        self.save(data)
+        px = self.load_px()
+        if px.pop(wid, None) is not None:
+            self.save_px(px)
         return data
 
     def buy_face(self, face_id: str) -> dict[str, Any]:
@@ -3659,6 +3753,31 @@ class GardenState:
             return list(self.load()["more"]["freeze"]["days"])
         except Exception:
             return []
+
+    def streak_start(self, col: Any = None, now_ms: int | None = None, create: bool = True) -> int | None:
+        """1.31: mốc tính chuỗi ngày ôn (mili giây, START_KEY). Chưa có thì đặt một lần: sổ bù xu điện thoại đã có (bản
+        cũ đã chạy trên collection này) → lúc lập sổ; không thì bây giờ (vừa cài). Không có collection → None (đếm hết)."""
+        col = col if col is not None else self._col()
+        if col is None:
+            return None
+        try:
+            v = clean_start(col.get_config(START_KEY, None))
+        except Exception:
+            return None
+        if v is not None or not create:
+            return v
+        import time
+        now = int(time.time() * 1000) if now_ms is None else int(now_ms)
+        try:
+            m = clean_mobile(col.get_config(MOBILE_KEY, None))
+        except Exception:
+            m = None
+        ms = m["start"] if m and 0 < m["start"] <= now else now
+        try:
+            col.set_config(START_KEY, {"v": 1, "ms": int(ms)})
+        except Exception as err:
+            print(f"[kotoba_batake] mốc chuỗi: {err}")
+        return int(ms)
 
     def freeze_buy(self, today: datetime.date) -> dict[str, Any]:
         """Mua 1 vé giữ chuỗi (today: ngày Anki hôm nay — vé dùng được cho ngày từ hôm nay trở đi)."""

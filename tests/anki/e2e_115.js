@@ -57,7 +57,8 @@ result = 1`);
   ok(await page.eval(W('return /2 bé cần ăn/.test(document.getElementById("kb-care-btn").textContent) && /Sửa nhà/.test(document.getElementById("kb-care-btn").textContent);')), 'dòng thú / nhà: “2 bé cần ăn · Sửa nhà”');
   ok(await page.eval(W('return document.getElementById("kb-thirsty").offsetParent === null;')), 'bỏ ô “cây khát” rời trên thanh trên');
   ok(await page.eval(W('const n = document.getElementById("kb-review-n"); return !n.hidden && n.textContent === "5" && /5 cây đang khát/.test(document.getElementById("kb-review").title);')), 'nút “Tưới ngay” có số 5 (cây khát)');
-  ok(await page.eval(W('const h = document.querySelector(".kb-yard-hint"); const cs = getComputedStyle(h); return cs.opacity === "0" && cs.pointerEvents === "none";')), 'gợi ý “Nhà & Cửa hàng” chỉ hiện khi rê chuột, bấm xuyên xuống sân');
+  // 1.31: nhãn là nút bấm (chỉ nút này mở bảng Nhà; bấm cảnh không mở) — vẫn chỉ hiện khi rê chuột lên cảnh
+  ok(await page.eval(W('const h = document.querySelector(".kb-yard-hint"); const cs = getComputedStyle(h); return h.tagName === "BUTTON" && cs.opacity === "0" && cs.pointerEvents !== "none";')), 'nút “Nhà & Cửa hàng” chỉ hiện khi rê chuột, là nút bấm (1.31)');
   await page.eval(W('document.getElementById("kb-quest").click(); return 1;')); await sleep(400);
   ok(await page.eval(W('const p = document.getElementById("kb-quest-pop").getBoundingClientRect(), c = document.getElementById("kb-today").getBoundingClientRect(); return !document.getElementById("kb-quest-pop").hidden && p.top >= c.bottom - 1;')), 'bảng nhiệm vụ mở dưới thẻ Hôm nay (không che các dòng)');
   await page.eval(W('document.getElementById("kb-quest-x").click(); return 1;'));

@@ -165,6 +165,9 @@
           <button type="button" id="kb-cf-export" class="kb-btn kb-btn-small" title="Mọi bản sửa → file mau_sua.json (chép vào thư mục add-on rồi đóng gói)">Xuất file</button>
           <button type="button" id="kb-cf-import" class="kb-btn kb-btn-small" title="Nhập file mau_sua.json người khác gửi">Nhập file</button>
         </span>
+        <span id="kb-cf-wear" class="kb-cf-zone kb-cf-seedbar" hidden>
+          <span class="kb-cf-field">Màu <span class="kb-cf-seg"><button type="button" class="kb-btn kb-btn-small" data-shell="0" title="Màu thân hộp"><i class="kb-cf-shellsw" aria-hidden="true"></i>Thân</button><button type="button" class="kb-btn kb-btn-small" data-shell="1" title="Màu dải dưới thân hộp"><i class="kb-cf-shellsw" aria-hidden="true"></i>Viền dưới</button></span></span>
+        </span>
         <label class="kb-cf-field">Hiệu ứng <select id="kb-cf-fx"><option value="none">Không</option><option value="sway">Đung đưa</option><option value="bounce">Nhún nhảy</option><option value="float">Bay lơ lửng</option><option value="sparkle">Lấp lánh</option><option value="glow">Phát sáng ban đêm</option><option value="hearts">Tim bay</option><option value="notes">Nốt nhạc</option><option value="bubbles">Bong bóng</option><option value="pulse">Nhấp nháy sáng</option><option value="spin">Xoay tròn</option></select></label>
         <button type="button" id="kb-cf-cancel" class="kb-btn kb-btn-small">Huỷ <span class="kb-key">Esc</span></button>
         <button type="button" id="kb-cf-save" class="kb-btn kb-h-buy">Chế tác</button>
@@ -270,9 +273,9 @@
     <div id="kb-ui-stage" class="kb-g-stage kb-ui-stage"></div>
   </section>
 
-  <div id="kb-yard-wrap" class="kb-yard-wrap" title="Bấm để vào Nhà &amp; Cửa hàng">
+  <div id="kb-yard-wrap" class="kb-yard-wrap">
     <canvas id="kb-yard" class="kb-yard"></canvas>
-    <div class="kb-yard-hint">Nhà &amp; Cửa hàng ▸</div>
+    <button type="button" id="kb-yard-home" class="kb-yard-hint" title="Nhà &amp; Cửa hàng (phím N)">Nhà &amp; Cửa hàng ▸</button>
     <div class="kb-yard-side">
       <div id="kb-today" class="kb-today" hidden>
         <div class="kb-today-main" title="">

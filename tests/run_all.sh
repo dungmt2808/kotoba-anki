@@ -77,6 +77,9 @@ echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
 echo "== core/test_1303.py (1.30.3: bảng màu ấm + độ tương phản, câu chữ đồng bộ, số xu một kiểu, vườn mở qua ngày mới, Esc ở ⚙)"
 OUT=$(python3 "$HERE/core/test_1303.py" "$ADDON" 2>&1); RC=$?
 echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
+echo "== core/test_131.py (1.31: chuỗi từ lúc cài, chỉ nút Nhà & Cửa hàng mở bảng Nhà, đồ tự vẽ cho StackChan + StackChan sinh hoạt mặc đồ)"
+OUT=$(python3 "$HERE/core/test_131.py" "$ADDON" 2>&1); RC=$?
+echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
 echo "== core/test_ngau_nhien.py (1.30: thao tác ngẫu nhiên + bất biến của ví)"
 OUT=$(python3 "$HERE/core/test_ngau_nhien.py" "$ADDON" 2>&1); RC=$?
 echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1

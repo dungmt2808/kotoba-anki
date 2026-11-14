@@ -287,7 +287,8 @@ ok("toastPend" in gjs and "if (toastPend || (toastCur" in gjs, "F07: câu đang 
 ok('_presence["col"] != path' in init and '_presence.update(t=0.0, v={}, col="")' in init, "F08: ngôn ngữ theo collection, xoá khi đóng hồ sơ")
 ok("frozen_now = _freeze_settle()" in init and 'elif name == "freeze":' in init and "STATE.freeze_buy(cal_today())" in init,
    "vé: dùng khi làm mới vườn, mua ở Lịch hoa")
-ok(init.count("_daily_stats()") >= 4 and "core.daily_stats(col, STATE.frozen_days())" in init, "mọi chỗ tính chuỗi có ngày dùng vé")
+# 1.31: _daily_stats đưa thêm mốc tính chuỗi (lúc ことば畑 chạy lần đầu)
+ok(init.count("_daily_stats()") >= 4 and "core.daily_stats(col, STATE.frozen_days(), _streak_start(col))" in init, "mọi chỗ tính chuỗi có ngày dùng vé")
 cjs = src("web", "calendar.js")
 ok("function freezeRow" in cjs and 'H.send("cal:freeze:" + v.id)' in cjs and "kb-cal-fz" in cjs, "Lịch hoa: dòng vé + ô ngày dùng vé")
 for f, names in (("rare_art.js", ("SHIKA_BOW", "KAPPA_BLINK", "KABUTO_SHINE")), ("nha_art.js", ("FRIDGE_OPEN", "BED_UP")),

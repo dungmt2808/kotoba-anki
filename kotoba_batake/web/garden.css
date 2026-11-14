@@ -693,7 +693,6 @@ input[type="radio"], input[type="checkbox"], input[type="range"] { accent-color:
   border: 4px solid var(--kb-ink);
   box-shadow: 5px 5px 0 var(--kb-ink);
   line-height: 0;
-  cursor: pointer;
   overflow: hidden;
 }
 .kb-yard { display: block; image-rendering: pixelated; }
@@ -701,14 +700,16 @@ input[type="radio"], input[type="checkbox"], input[type="range"] { accent-color:
   position: absolute;
   left: 8px;
   top: 8px;
+  font: inherit;            /* trước line-height: "font" đặt lại cả line-height (khung cảnh có line-height 0 → nút dẹt) */
   line-height: 1.3;
   font-size: 13px;
+  color: var(--kb-ink);
   background: var(--kb-paper, #ffffff);
   border: 2px solid var(--kb-ink);
   box-shadow: 2px 2px 0 var(--kb-ink);
   padding: 2px 8px;
+  cursor: pointer;
 }
-.kb-yard-wrap:hover .kb-yard-hint { background: #ffd23f; }
 
 /* ---- Bảng Nhà & Cửa hàng ---- */
 .kb-home { gap: 8px; }
@@ -1554,10 +1555,19 @@ button { cursor: pointer; }
 /* ======================================================================
    1.15: màn chính gọn hơn — một thẻ "Hôm nay" thay cho 6 chip rời trên sân
    ====================================================================== */
-/* gợi ý "Nhà & Cửa hàng" chỉ hiện khi rê chuột lên sân; bấm xuyên xuống sân (mở Nhà) */
-.kb-yard-hint { pointer-events: none; opacity: 0; transition: opacity 0.15s; background: #ffd23f; }
-.kb-yard-wrap:hover .kb-yard-hint { opacity: 1; }
+/* nút "Nhà & Cửa hàng" hiện khi rê chuột lên cảnh. 1.31 (người dùng: "chỉ vào cửa hàng, nhà khi bấm vào mục 'Nhà & Cửa
+   hàng' thôi … ấn vào đâu có cũng vào thẳng cửa hàng thì không tiện lắm"): chỉ bấm đúng nút này mới mở Nhà — bấm chỗ
+   khác trên cảnh không mở nữa (thú / khách / StackChan / hòm thư / chỗ lấp lánh vẫn có việc riêng) */
+.kb-yard-hint { opacity: 0; transition: opacity 0.15s, transform 0.05s; background: #ffd23f; }
+.kb-yard-wrap:hover .kb-yard-hint, .kb-yard-hint:focus-visible { opacity: 1; }
+.kb-yard-hint:hover { background: #ffe066; }
+.kb-yard-hint:active { transform: translate(2px, 2px); box-shadow: none; }
 @media (hover: none) { .kb-yard-hint { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .kb-yard-hint { transition: none; } }
+/* 1.31: thẻ nhỏ khi bấm thú nuôi / khách trên cảnh (thay cho mở thẳng bảng Nhà) */
+.kb-scene-card .kb-find-ja { font-size: 15px; }
+.kb-scene-card .kb-h-pet, .kb-scene-card .kb-h-guest { flex: none; }
+.kb-scene-card .kb-life-btns { margin-top: 6px; }
 /* Hôm nay: tiến độ + thời tiết + các việc (nhiệm vụ, báo, thú / nhà, cấu hình trường) trong cùng một khung */
 .kb-yard-side, .kb-yard-short .kb-yard-side { flex-direction: column; flex-wrap: nowrap; align-items: stretch; gap: 0; max-width: 300px; }
 .kb-yard-side .kb-today { min-width: 220px; max-width: 300px; padding: 0; white-space: normal; cursor: default; }
@@ -2183,3 +2193,10 @@ button { cursor: pointer; }
 .kb-page-row { display: flex; align-items: center; gap: 8px; }
 .kb-page-row .kb-page-opt { margin-left: 0; }
 .kb-page-row .kb-page-opt.is-on { background: #ffd23f; }
+
+/* ---- 1.31: đồ tự vẽ cho StackChan (Xưởng + Tủ đồ) ---- */
+.kb-cf-shellsw { display: inline-block; width: 12px; height: 12px; border: 2px solid var(--kb-ink); margin-right: 4px; vertical-align: -2px; }
+.kb-cf-shellmode .kb-cf-tools, .kb-cf-shellmode .kb-cf-import, .kb-cf-shellmode .kb-cf-side > .kb-sound-note { display: none; }
+.kb-h-mywear .kb-h-mascot { flex: none; }
+.kb-h-wear-new .kb-h-btns { flex-wrap: wrap; }
+.kb-h-life-mini { flex: none; image-rendering: pixelated; }

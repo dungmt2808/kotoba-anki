@@ -36,6 +36,8 @@ Trời còn đổi theo giờ thật (sáng, hoàng hôn, đêm có đèn lồng
 
 Xây nhà từng bước, từ bãi đất trống tới gác mái có đèn lồng, rồi đổi kiểu nhà (nhà mái tranh minka, nhà trà chashitsu, lâu đài mini). Xây xong thì **mở rộng nhà** một lần (2.000 xu) được cả **Bếp** và **Phòng ngủ** hai bên phòng chính, với 12 món đồ riêng như tủ lạnh, nồi cơm, giường, đèn ngủ, dây đèn sao. Ba gian theo kiểu nhà đang dùng (nhà gỗ: giấy dán tường hoa, sàn gỗ; minka: tường đất, chiếu tatami, cửa lùa vẽ sóng; nhà trà: cửa sổ tròn, hốc tokonoma; lâu đài: vách lá vàng vẽ tùng, cửa sổ hình chuông), đổi kiểu nhà là đổi cả ba gian. Ở màn chính bấm ◂ ▸ sang cảnh **Trong nhà** để thấy cả ngôi nhà đứng giữa vườn, mèo đi lại khắp nhà. Trang trí sân, bày nội thất, nuôi thú, mở thêm 6 vùng mới như bãi biển hay đền thần. Thỉnh thoảng có **khách ghé vườn**, như chim sẻ, cáo hay hươu Nara, tuỳ đồ bạn đặt và tuỳ mùa. Khách đã gặp được ghi vào Album khách.
 
+Mở bảng Nhà & Cửa hàng bằng nút **Nhà & Cửa hàng ▸** (hiện khi rê chuột lên vườn), nút **Nhà** trên cùng hoặc phím **N**. Bấm vào thú nuôi hay khách thì hiện một thẻ nhỏ có tên và nút vào xem; bấm chỗ khác trên vườn không mở cửa hàng.
+
 | Sân vườn | Trong nhà |
 |---|---|
 | ![Nhà & Cửa hàng, tab Trang trí sân](docs/anh/03_nha_trang_tri.png) | ![Trong nhà: kotatsu, bể cá, kệ sách, đèn andon, mèo ngủ](docs/anh/16_trong_nha.png) |
@@ -101,9 +103,13 @@ StackChan giờ **sống trong ngôi nhà của bạn**. Cứ vài phút bạn �
 
 - **160 món đồ**: hơn 100 món ngoài sân và các vùng (cổng torii, ao cá koi, cây anh đào, đài phun nước…), 50 món nội thất cho cả ba gian (kotatsu, bể cá, tủ lạnh, giường…), 18 món hiếm chỉ có trong rương quà nhiệm vụ và 15 món của Hộp sưu tầm / gánh hàng rong.
 - **6 thú nuôi**: gà, vịt, thỏ, rùa, mèo mướp, chó Shiba. Thú có tên, có độ thân, đi lại khắp sân. Mỗi con có món ưa thích: mèo nằm cạnh bàn sưởi và ngắm bể cá, chó nằm cạnh ghế gỗ, vịt ra ao (1.30).
-- **Tủ đồ**: 17 món cho StackChan (linh vật ở góc trái): mũ rơm, nón lá, kính tròn, khăn quàng, vỏ màu sakura… cùng 7 biểu cảm.
+- **Tủ đồ**: 17 món cho StackChan (linh vật ở góc trái): mũ rơm, nón lá, kính tròn, khăn quàng, vỏ màu sakura… cùng 7 biểu cảm. Muốn món riêng thì **tự vẽ** mũ, đồ đeo mặt, đồ đeo cổ (vẽ thẳng lên hình StackChan ở Xưởng) hoặc chọn hai màu cho vỏ (1.31). StackChan đang sinh hoạt trong nhà, ngoài sân cũng **mặc đúng bộ đồ đó**.
 - **Kho đồ**: mọi món đã có, kể cả quà của giao diện mùa. Đặt ra sân, di chuyển hay cất lại lúc nào cũng được, không mất gì.
 - **Xưởng**: tự vẽ đồ pixel (bút, đổ màu, kẻ thẳng, đối xứng, 3 cỡ 16 / 24 / 32), giống cây riêng và vùng riêng, hoặc chọn một tấm ảnh để chuyển thành pixel. Thiết kế chia sẻ được cho bạn bè bằng một đoạn mã.
+
+| Tự vẽ mũ cho StackChan ở Xưởng | StackChan trong nhà đội mũ vừa vẽ |
+|---|---|
+| ![Xưởng: vẽ mũ đỏ trên hình mờ của StackChan, bên phải xem trước hai StackChan](docs/anh/131_a_xuong_ve_mu.png) | ![Phòng chính (phóng to): StackChan đội mũ đỏ tự vẽ](docs/anh/131_b_stackchan_mu_tu_ve.png) |
 
 | Tủ đồ | Kho đồ |
 |---|---|
@@ -157,7 +163,7 @@ Mỗi sáng có một số báo tiếng Nhật 畑新聞 (hoặc báo tiếng An
 
 - Mục tiêu 30 lượt ôn mỗi ngày (đổi được), thưởng +15 xu.
 - 3 nhiệm vụ mỗi ngày. Làm đủ cả 3 thì mở rương quà có đồ hiếm.
-- Chuỗi ngày ôn liên tục, có **vé giữ chuỗi** cho hôm lỡ quên.
+- Chuỗi ngày ôn liên tục (tính từ ngày bạn cài ことば畑, bắt đầu từ 0), có **vé giữ chuỗi** cho hôm lỡ quên.
 - Cứ 10 lượt ôn mở một **chỗ lấp lánh** để nhặt đồ; thứ Tư, Chủ nhật có **gánh hàng rong**.
 - Lần mở vườn đầu tiên mỗi ngày, **thú nuôi của bạn chạy ra chào** (ngày lễ có câu chào riêng) và kể vài tin hôm nay. Dòng **Tin làng** trong thẻ Hôm nay báo khách có thể ghé, mốc học sắp chạm, mùa lễ sắp tới. Tắt được ở ⚙.
 - Không có điểm trừ, không mất đồ, không có gì bắt bạn phải chơi: học là chính.
