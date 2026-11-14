@@ -1,0 +1,5240 @@
+{
+  "cases": 112,
+  "passed": 81,
+  "failed": 31,
+  "results": [
+    {
+      "case": "persistence/shell/control/none/no-false-success",
+      "pass": true,
+      "actual": true,
+      "expected": true,
+      "detail": {
+        "fault_injected": false,
+        "raised": "",
+        "durable": true,
+        "reported_coins": 850,
+        "actual_coins": 850,
+        "mywear_ids": [
+          "w1"
+        ],
+        "pixel_ids": [],
+        "actual_pixels": {},
+        "expected_edited_hat": null,
+        "console": ""
+      }
+    },
+    {
+      "case": "persistence/shell/control/none/confirmed-after-reopen",
+      "pass": true,
+      "actual": {
+        "coins": 850,
+        "mywear": {
+          "items": {
+            "w1": {
+              "name": "Fault shell",
+              "slot": "shell",
+              "c": [
+                "g",
+                "G"
+              ]
+            }
+          },
+          "next": 2,
+          "on": {
+            "shell": "w1"
+          }
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {}
+      },
+      "expected": {
+        "coins": 850,
+        "mywear": {
+          "items": {
+            "w1": {
+              "name": "Fault shell",
+              "slot": "shell",
+              "c": [
+                "g",
+                "G"
+              ]
+            }
+          },
+          "next": 2,
+          "on": {
+            "shell": "w1"
+          }
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {}
+      }
+    },
+    {
+      "case": "persistence/shell/kotoba_batake_state/one-shot/no-false-success",
+      "pass": false,
+      "actual": false,
+      "expected": true,
+      "detail": {
+        "fault_injected": true,
+        "raised": "",
+        "durable": false,
+        "reported_coins": 850,
+        "actual_coins": 1000,
+        "mywear_ids": [
+          "w1"
+        ],
+        "pixel_ids": [],
+        "actual_pixels": {},
+        "expected_edited_hat": null,
+        "console": "[kotoba_batake] save kotoba_batake_state to collection: [Errno 28] Synthetic storage full at collection.set_config\n"
+      }
+    },
+    {
+      "case": "persistence/shell/kotoba_batake_state/one-shot/fault-reached",
+      "pass": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "case": "persistence/shell/kotoba_batake_state/one-shot/confirmed-after-reopen",
+      "pass": true,
+      "actual": {
+        "coins": 1000,
+        "mywear": {
+          "items": {
+            "w1": {
+              "name": "Fault shell",
+              "slot": "shell",
+              "c": [
+                "g",
+                "G"
+              ]
+            }
+          },
+          "next": 2,
+          "on": {
+            "shell": "w1"
+          }
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {}
+      },
+      "expected": {
+        "coins": 1000,
+        "mywear": {
+          "items": {
+            "w1": {
+              "name": "Fault shell",
+              "slot": "shell",
+              "c": [
+                "g",
+                "G"
+              ]
+            }
+          },
+          "next": 2,
+          "on": {
+            "shell": "w1"
+          }
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {}
+      }
+    },
+    {
+      "case": "persistence/shell/kotoba_batake_state/persistent/no-false-success",
+      "pass": false,
+      "actual": false,
+      "expected": true,
+      "detail": {
+        "fault_injected": true,
+        "raised": "",
+        "durable": false,
+        "reported_coins": 850,
+        "actual_coins": 1000,
+        "mywear_ids": [
+          "w1"
+        ],
+        "pixel_ids": [],
+        "actual_pixels": {},
+        "expected_edited_hat": null,
+        "console": "[kotoba_batake] save kotoba_batake_state to collection: [Errno 28] Synthetic storage full at collection.set_config\n"
+      }
+    },
+    {
+      "case": "persistence/shell/kotoba_batake_state/persistent/fault-reached",
+      "pass": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "case": "persistence/shell/kotoba_batake_state/persistent/confirmed-after-reopen",
+      "pass": true,
+      "actual": {
+        "coins": 1000,
+        "mywear": {
+          "items": {
+            "w1": {
+              "name": "Fault shell",
+              "slot": "shell",
+              "c": [
+                "g",
+                "G"
+              ]
+            }
+          },
+          "next": 2,
+          "on": {
+            "shell": "w1"
+          }
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {}
+      },
+      "expected": {
+        "coins": 1000,
+        "mywear": {
+          "items": {
+            "w1": {
+              "name": "Fault shell",
+              "slot": "shell",
+              "c": [
+                "g",
+                "G"
+              ]
+            }
+          },
+          "next": 2,
+          "on": {
+            "shell": "w1"
+          }
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {}
+      }
+    },
+    {
+      "case": "persistence/shell/kotoba_batake_more/one-shot/no-false-success",
+      "pass": false,
+      "actual": false,
+      "expected": true,
+      "detail": {
+        "fault_injected": true,
+        "raised": "",
+        "durable": false,
+        "reported_coins": 850,
+        "actual_coins": 850,
+        "mywear_ids": [],
+        "pixel_ids": [],
+        "actual_pixels": {},
+        "expected_edited_hat": null,
+        "console": "[kotoba_batake] save kotoba_batake_more to collection: [Errno 28] Synthetic storage full at collection.set_config\n"
+      }
+    },
+    {
+      "case": "persistence/shell/kotoba_batake_more/one-shot/fault-reached",
+      "pass": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "case": "persistence/shell/kotoba_batake_more/one-shot/confirmed-after-reopen",
+      "pass": true,
+      "actual": {
+        "coins": 850,
+        "mywear": {
+          "items": {},
+          "next": 1,
+          "on": {}
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {}
+      },
+      "expected": {
+        "coins": 850,
+        "mywear": {
+          "items": {},
+          "next": 1,
+          "on": {}
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {}
+      }
+    },
+    {
+      "case": "persistence/shell/kotoba_batake_more/persistent/no-false-success",
+      "pass": false,
+      "actual": false,
+      "expected": true,
+      "detail": {
+        "fault_injected": true,
+        "raised": "",
+        "durable": false,
+        "reported_coins": 850,
+        "actual_coins": 850,
+        "mywear_ids": [],
+        "pixel_ids": [],
+        "actual_pixels": {},
+        "expected_edited_hat": null,
+        "console": "[kotoba_batake] save kotoba_batake_more to collection: [Errno 28] Synthetic storage full at collection.set_config\n"
+      }
+    },
+    {
+      "case": "persistence/shell/kotoba_batake_more/persistent/fault-reached",
+      "pass": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "case": "persistence/shell/kotoba_batake_more/persistent/confirmed-after-reopen",
+      "pass": true,
+      "actual": {
+        "coins": 850,
+        "mywear": {
+          "items": {},
+          "next": 1,
+          "on": {}
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {}
+      },
+      "expected": {
+        "coins": 850,
+        "mywear": {
+          "items": {},
+          "next": 1,
+          "on": {}
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {}
+      }
+    },
+    {
+      "case": "persistence/hat/control/none/no-false-success",
+      "pass": true,
+      "actual": true,
+      "expected": true,
+      "detail": {
+        "fault_injected": false,
+        "raised": "",
+        "durable": true,
+        "reported_coins": 800,
+        "actual_coins": 800,
+        "mywear_ids": [
+          "w1"
+        ],
+        "pixel_ids": [
+          "w1"
+        ],
+        "actual_pixels": {
+          "w1": "160r"
+        },
+        "expected_edited_hat": null,
+        "console": ""
+      }
+    },
+    {
+      "case": "persistence/hat/control/none/confirmed-after-reopen",
+      "pass": true,
+      "actual": {
+        "coins": 800,
+        "mywear": {
+          "items": {
+            "w1": {
+              "name": "Fault hat",
+              "slot": "head"
+            }
+          },
+          "next": 2,
+          "on": {
+            "head": "w1"
+          }
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {
+          "w1": "160r"
+        }
+      },
+      "expected": {
+        "coins": 800,
+        "mywear": {
+          "items": {
+            "w1": {
+              "name": "Fault hat",
+              "slot": "head"
+            }
+          },
+          "next": 2,
+          "on": {
+            "head": "w1"
+          }
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {
+          "w1": "160r"
+        }
+      }
+    },
+    {
+      "case": "persistence/hat/kotoba_batake_state/one-shot/no-false-success",
+      "pass": false,
+      "actual": false,
+      "expected": true,
+      "detail": {
+        "fault_injected": true,
+        "raised": "",
+        "durable": false,
+        "reported_coins": 800,
+        "actual_coins": 1000,
+        "mywear_ids": [
+          "w1"
+        ],
+        "pixel_ids": [
+          "w1"
+        ],
+        "actual_pixels": {
+          "w1": "160r"
+        },
+        "expected_edited_hat": null,
+        "console": "[kotoba_batake] save kotoba_batake_state to collection: [Errno 28] Synthetic storage full at collection.set_config\n"
+      }
+    },
+    {
+      "case": "persistence/hat/kotoba_batake_state/one-shot/fault-reached",
+      "pass": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "case": "persistence/hat/kotoba_batake_state/one-shot/confirmed-after-reopen",
+      "pass": true,
+      "actual": {
+        "coins": 1000,
+        "mywear": {
+          "items": {
+            "w1": {
+              "name": "Fault hat",
+              "slot": "head"
+            }
+          },
+          "next": 2,
+          "on": {
+            "head": "w1"
+          }
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {
+          "w1": "160r"
+        }
+      },
+      "expected": {
+        "coins": 1000,
+        "mywear": {
+          "items": {
+            "w1": {
+              "name": "Fault hat",
+              "slot": "head"
+            }
+          },
+          "next": 2,
+          "on": {
+            "head": "w1"
+          }
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {
+          "w1": "160r"
+        }
+      }
+    },
+    {
+      "case": "persistence/hat/kotoba_batake_state/persistent/no-false-success",
+      "pass": false,
+      "actual": false,
+      "expected": true,
+      "detail": {
+        "fault_injected": true,
+        "raised": "",
+        "durable": false,
+        "reported_coins": 800,
+        "actual_coins": 1000,
+        "mywear_ids": [
+          "w1"
+        ],
+        "pixel_ids": [
+          "w1"
+        ],
+        "actual_pixels": {
+          "w1": "160r"
+        },
+        "expected_edited_hat": null,
+        "console": "[kotoba_batake] save kotoba_batake_state to collection: [Errno 28] Synthetic storage full at collection.set_config\n"
+      }
+    },
+    {
+      "case": "persistence/hat/kotoba_batake_state/persistent/fault-reached",
+      "pass": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "case": "persistence/hat/kotoba_batake_state/persistent/confirmed-after-reopen",
+      "pass": true,
+      "actual": {
+        "coins": 1000,
+        "mywear": {
+          "items": {
+            "w1": {
+              "name": "Fault hat",
+              "slot": "head"
+            }
+          },
+          "next": 2,
+          "on": {
+            "head": "w1"
+          }
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {
+          "w1": "160r"
+        }
+      },
+      "expected": {
+        "coins": 1000,
+        "mywear": {
+          "items": {
+            "w1": {
+              "name": "Fault hat",
+              "slot": "head"
+            }
+          },
+          "next": 2,
+          "on": {
+            "head": "w1"
+          }
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {
+          "w1": "160r"
+        }
+      }
+    },
+    {
+      "case": "persistence/hat/kotoba_batake_more/one-shot/no-false-success",
+      "pass": false,
+      "actual": false,
+      "expected": true,
+      "detail": {
+        "fault_injected": true,
+        "raised": "",
+        "durable": false,
+        "reported_coins": 800,
+        "actual_coins": 800,
+        "mywear_ids": [],
+        "pixel_ids": [
+          "w1"
+        ],
+        "actual_pixels": {
+          "w1": "160r"
+        },
+        "expected_edited_hat": null,
+        "console": "[kotoba_batake] save kotoba_batake_more to collection: [Errno 28] Synthetic storage full at collection.set_config\n"
+      }
+    },
+    {
+      "case": "persistence/hat/kotoba_batake_more/one-shot/fault-reached",
+      "pass": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "case": "persistence/hat/kotoba_batake_more/one-shot/confirmed-after-reopen",
+      "pass": true,
+      "actual": {
+        "coins": 800,
+        "mywear": {
+          "items": {},
+          "next": 1,
+          "on": {}
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {
+          "w1": "160r"
+        }
+      },
+      "expected": {
+        "coins": 800,
+        "mywear": {
+          "items": {},
+          "next": 1,
+          "on": {}
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {
+          "w1": "160r"
+        }
+      }
+    },
+    {
+      "case": "persistence/hat/kotoba_batake_more/persistent/no-false-success",
+      "pass": false,
+      "actual": false,
+      "expected": true,
+      "detail": {
+        "fault_injected": true,
+        "raised": "",
+        "durable": false,
+        "reported_coins": 800,
+        "actual_coins": 800,
+        "mywear_ids": [],
+        "pixel_ids": [
+          "w1"
+        ],
+        "actual_pixels": {
+          "w1": "160r"
+        },
+        "expected_edited_hat": null,
+        "console": "[kotoba_batake] save kotoba_batake_more to collection: [Errno 28] Synthetic storage full at collection.set_config\n"
+      }
+    },
+    {
+      "case": "persistence/hat/kotoba_batake_more/persistent/fault-reached",
+      "pass": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "case": "persistence/hat/kotoba_batake_more/persistent/confirmed-after-reopen",
+      "pass": true,
+      "actual": {
+        "coins": 800,
+        "mywear": {
+          "items": {},
+          "next": 1,
+          "on": {}
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {
+          "w1": "160r"
+        }
+      },
+      "expected": {
+        "coins": 800,
+        "mywear": {
+          "items": {},
+          "next": 1,
+          "on": {}
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {
+          "w1": "160r"
+        }
+      }
+    },
+    {
+      "case": "persistence/hat/kotoba_batake_px/one-shot/no-false-success",
+      "pass": false,
+      "actual": false,
+      "expected": true,
+      "detail": {
+        "fault_injected": true,
+        "raised": "",
+        "durable": false,
+        "reported_coins": 800,
+        "actual_coins": 800,
+        "mywear_ids": [
+          "w1"
+        ],
+        "pixel_ids": [],
+        "actual_pixels": {},
+        "expected_edited_hat": null,
+        "console": "[kotoba_batake] save px: [Errno 28] Synthetic storage full at collection.set_config\n"
+      }
+    },
+    {
+      "case": "persistence/hat/kotoba_batake_px/one-shot/fault-reached",
+      "pass": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "case": "persistence/hat/kotoba_batake_px/one-shot/confirmed-after-reopen",
+      "pass": true,
+      "actual": {
+        "coins": 800,
+        "mywear": {
+          "items": {
+            "w1": {
+              "name": "Fault hat",
+              "slot": "head"
+            }
+          },
+          "next": 2,
+          "on": {
+            "head": "w1"
+          }
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {}
+      },
+      "expected": {
+        "coins": 800,
+        "mywear": {
+          "items": {
+            "w1": {
+              "name": "Fault hat",
+              "slot": "head"
+            }
+          },
+          "next": 2,
+          "on": {
+            "head": "w1"
+          }
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {}
+      }
+    },
+    {
+      "case": "persistence/hat/kotoba_batake_px/persistent/no-false-success",
+      "pass": false,
+      "actual": false,
+      "expected": true,
+      "detail": {
+        "fault_injected": true,
+        "raised": "",
+        "durable": false,
+        "reported_coins": 800,
+        "actual_coins": 800,
+        "mywear_ids": [
+          "w1"
+        ],
+        "pixel_ids": [],
+        "actual_pixels": {},
+        "expected_edited_hat": null,
+        "console": "[kotoba_batake] save px: [Errno 28] Synthetic storage full at collection.set_config\n"
+      }
+    },
+    {
+      "case": "persistence/hat/kotoba_batake_px/persistent/fault-reached",
+      "pass": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "case": "persistence/hat/kotoba_batake_px/persistent/confirmed-after-reopen",
+      "pass": true,
+      "actual": {
+        "coins": 800,
+        "mywear": {
+          "items": {
+            "w1": {
+              "name": "Fault hat",
+              "slot": "head"
+            }
+          },
+          "next": 2,
+          "on": {
+            "head": "w1"
+          }
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {}
+      },
+      "expected": {
+        "coins": 800,
+        "mywear": {
+          "items": {
+            "w1": {
+              "name": "Fault hat",
+              "slot": "head"
+            }
+          },
+          "next": 2,
+          "on": {
+            "head": "w1"
+          }
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {}
+      }
+    },
+    {
+      "case": "persistence/hat-edit/control/none/no-false-success",
+      "pass": true,
+      "actual": true,
+      "expected": true,
+      "detail": {
+        "fault_injected": false,
+        "raised": "",
+        "durable": true,
+        "reported_coins": 750,
+        "actual_coins": 750,
+        "mywear_ids": [
+          "w1"
+        ],
+        "pixel_ids": [
+          "w1"
+        ],
+        "actual_pixels": {
+          "w1": "160g"
+        },
+        "expected_edited_hat": "160g",
+        "console": ""
+      }
+    },
+    {
+      "case": "persistence/hat-edit/control/none/confirmed-after-reopen",
+      "pass": true,
+      "actual": {
+        "coins": 750,
+        "mywear": {
+          "items": {
+            "w1": {
+              "name": "Edited hat",
+              "slot": "head"
+            }
+          },
+          "next": 2,
+          "on": {
+            "head": "w1"
+          }
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {
+          "w1": "160g"
+        }
+      },
+      "expected": {
+        "coins": 750,
+        "mywear": {
+          "items": {
+            "w1": {
+              "name": "Edited hat",
+              "slot": "head"
+            }
+          },
+          "next": 2,
+          "on": {
+            "head": "w1"
+          }
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {
+          "w1": "160g"
+        }
+      }
+    },
+    {
+      "case": "persistence/hat-edit/kotoba_batake_state/one-shot/no-false-success",
+      "pass": false,
+      "actual": false,
+      "expected": true,
+      "detail": {
+        "fault_injected": true,
+        "raised": "",
+        "durable": false,
+        "reported_coins": 750,
+        "actual_coins": 800,
+        "mywear_ids": [
+          "w1"
+        ],
+        "pixel_ids": [
+          "w1"
+        ],
+        "actual_pixels": {
+          "w1": "160g"
+        },
+        "expected_edited_hat": "160g",
+        "console": "[kotoba_batake] save kotoba_batake_state to collection: [Errno 28] Synthetic storage full at collection.set_config\n"
+      }
+    },
+    {
+      "case": "persistence/hat-edit/kotoba_batake_state/one-shot/fault-reached",
+      "pass": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "case": "persistence/hat-edit/kotoba_batake_state/one-shot/confirmed-after-reopen",
+      "pass": true,
+      "actual": {
+        "coins": 800,
+        "mywear": {
+          "items": {
+            "w1": {
+              "name": "Edited hat",
+              "slot": "head"
+            }
+          },
+          "next": 2,
+          "on": {
+            "head": "w1"
+          }
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {
+          "w1": "160g"
+        }
+      },
+      "expected": {
+        "coins": 800,
+        "mywear": {
+          "items": {
+            "w1": {
+              "name": "Edited hat",
+              "slot": "head"
+            }
+          },
+          "next": 2,
+          "on": {
+            "head": "w1"
+          }
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {
+          "w1": "160g"
+        }
+      }
+    },
+    {
+      "case": "persistence/hat-edit/kotoba_batake_state/persistent/no-false-success",
+      "pass": false,
+      "actual": false,
+      "expected": true,
+      "detail": {
+        "fault_injected": true,
+        "raised": "",
+        "durable": false,
+        "reported_coins": 750,
+        "actual_coins": 800,
+        "mywear_ids": [
+          "w1"
+        ],
+        "pixel_ids": [
+          "w1"
+        ],
+        "actual_pixels": {
+          "w1": "160g"
+        },
+        "expected_edited_hat": "160g",
+        "console": "[kotoba_batake] save kotoba_batake_state to collection: [Errno 28] Synthetic storage full at collection.set_config\n"
+      }
+    },
+    {
+      "case": "persistence/hat-edit/kotoba_batake_state/persistent/fault-reached",
+      "pass": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "case": "persistence/hat-edit/kotoba_batake_state/persistent/confirmed-after-reopen",
+      "pass": true,
+      "actual": {
+        "coins": 800,
+        "mywear": {
+          "items": {
+            "w1": {
+              "name": "Edited hat",
+              "slot": "head"
+            }
+          },
+          "next": 2,
+          "on": {
+            "head": "w1"
+          }
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {
+          "w1": "160g"
+        }
+      },
+      "expected": {
+        "coins": 800,
+        "mywear": {
+          "items": {
+            "w1": {
+              "name": "Edited hat",
+              "slot": "head"
+            }
+          },
+          "next": 2,
+          "on": {
+            "head": "w1"
+          }
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {
+          "w1": "160g"
+        }
+      }
+    },
+    {
+      "case": "persistence/hat-edit/kotoba_batake_more/one-shot/no-false-success",
+      "pass": false,
+      "actual": false,
+      "expected": true,
+      "detail": {
+        "fault_injected": true,
+        "raised": "",
+        "durable": false,
+        "reported_coins": 750,
+        "actual_coins": 750,
+        "mywear_ids": [
+          "w1"
+        ],
+        "pixel_ids": [
+          "w1"
+        ],
+        "actual_pixels": {
+          "w1": "160g"
+        },
+        "expected_edited_hat": "160g",
+        "console": "[kotoba_batake] save kotoba_batake_more to collection: [Errno 28] Synthetic storage full at collection.set_config\n"
+      }
+    },
+    {
+      "case": "persistence/hat-edit/kotoba_batake_more/one-shot/fault-reached",
+      "pass": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "case": "persistence/hat-edit/kotoba_batake_more/one-shot/confirmed-after-reopen",
+      "pass": true,
+      "actual": {
+        "coins": 750,
+        "mywear": {
+          "items": {
+            "w1": {
+              "name": "Original hat",
+              "slot": "head"
+            }
+          },
+          "next": 2,
+          "on": {
+            "head": "w1"
+          }
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {
+          "w1": "160g"
+        }
+      },
+      "expected": {
+        "coins": 750,
+        "mywear": {
+          "items": {
+            "w1": {
+              "name": "Original hat",
+              "slot": "head"
+            }
+          },
+          "next": 2,
+          "on": {
+            "head": "w1"
+          }
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {
+          "w1": "160g"
+        }
+      }
+    },
+    {
+      "case": "persistence/hat-edit/kotoba_batake_more/persistent/no-false-success",
+      "pass": false,
+      "actual": false,
+      "expected": true,
+      "detail": {
+        "fault_injected": true,
+        "raised": "",
+        "durable": false,
+        "reported_coins": 750,
+        "actual_coins": 750,
+        "mywear_ids": [
+          "w1"
+        ],
+        "pixel_ids": [
+          "w1"
+        ],
+        "actual_pixels": {
+          "w1": "160g"
+        },
+        "expected_edited_hat": "160g",
+        "console": "[kotoba_batake] save kotoba_batake_more to collection: [Errno 28] Synthetic storage full at collection.set_config\n"
+      }
+    },
+    {
+      "case": "persistence/hat-edit/kotoba_batake_more/persistent/fault-reached",
+      "pass": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "case": "persistence/hat-edit/kotoba_batake_more/persistent/confirmed-after-reopen",
+      "pass": true,
+      "actual": {
+        "coins": 750,
+        "mywear": {
+          "items": {
+            "w1": {
+              "name": "Original hat",
+              "slot": "head"
+            }
+          },
+          "next": 2,
+          "on": {
+            "head": "w1"
+          }
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {
+          "w1": "160g"
+        }
+      },
+      "expected": {
+        "coins": 750,
+        "mywear": {
+          "items": {
+            "w1": {
+              "name": "Original hat",
+              "slot": "head"
+            }
+          },
+          "next": 2,
+          "on": {
+            "head": "w1"
+          }
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {
+          "w1": "160g"
+        }
+      }
+    },
+    {
+      "case": "persistence/hat-edit/kotoba_batake_px/one-shot/no-false-success",
+      "pass": false,
+      "actual": false,
+      "expected": true,
+      "detail": {
+        "fault_injected": true,
+        "raised": "",
+        "durable": false,
+        "reported_coins": 750,
+        "actual_coins": 750,
+        "mywear_ids": [
+          "w1"
+        ],
+        "pixel_ids": [
+          "w1"
+        ],
+        "actual_pixels": {
+          "w1": "160r"
+        },
+        "expected_edited_hat": "160g",
+        "console": "[kotoba_batake] save px: [Errno 28] Synthetic storage full at collection.set_config\n"
+      }
+    },
+    {
+      "case": "persistence/hat-edit/kotoba_batake_px/one-shot/fault-reached",
+      "pass": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "case": "persistence/hat-edit/kotoba_batake_px/one-shot/confirmed-after-reopen",
+      "pass": true,
+      "actual": {
+        "coins": 750,
+        "mywear": {
+          "items": {
+            "w1": {
+              "name": "Edited hat",
+              "slot": "head"
+            }
+          },
+          "next": 2,
+          "on": {
+            "head": "w1"
+          }
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {
+          "w1": "160r"
+        }
+      },
+      "expected": {
+        "coins": 750,
+        "mywear": {
+          "items": {
+            "w1": {
+              "name": "Edited hat",
+              "slot": "head"
+            }
+          },
+          "next": 2,
+          "on": {
+            "head": "w1"
+          }
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {
+          "w1": "160r"
+        }
+      }
+    },
+    {
+      "case": "persistence/hat-edit/kotoba_batake_px/persistent/no-false-success",
+      "pass": false,
+      "actual": false,
+      "expected": true,
+      "detail": {
+        "fault_injected": true,
+        "raised": "",
+        "durable": false,
+        "reported_coins": 750,
+        "actual_coins": 750,
+        "mywear_ids": [
+          "w1"
+        ],
+        "pixel_ids": [
+          "w1"
+        ],
+        "actual_pixels": {
+          "w1": "160r"
+        },
+        "expected_edited_hat": "160g",
+        "console": "[kotoba_batake] save px: [Errno 28] Synthetic storage full at collection.set_config\n"
+      }
+    },
+    {
+      "case": "persistence/hat-edit/kotoba_batake_px/persistent/fault-reached",
+      "pass": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "case": "persistence/hat-edit/kotoba_batake_px/persistent/confirmed-after-reopen",
+      "pass": true,
+      "actual": {
+        "coins": 750,
+        "mywear": {
+          "items": {
+            "w1": {
+              "name": "Edited hat",
+              "slot": "head"
+            }
+          },
+          "next": 2,
+          "on": {
+            "head": "w1"
+          }
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {
+          "w1": "160r"
+        }
+      },
+      "expected": {
+        "coins": 750,
+        "mywear": {
+          "items": {
+            "w1": {
+              "name": "Edited hat",
+              "slot": "head"
+            }
+          },
+          "next": 2,
+          "on": {
+            "head": "w1"
+          }
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {
+          "w1": "160r"
+        }
+      }
+    },
+    {
+      "case": "persistence/floor/control/none/no-false-success",
+      "pass": true,
+      "actual": true,
+      "expected": true,
+      "detail": {
+        "fault_injected": false,
+        "raised": "",
+        "durable": true,
+        "reported_coins": 750,
+        "actual_coins": 750,
+        "mywear_ids": [],
+        "pixel_ids": [
+          "t1"
+        ],
+        "actual_pixels": {
+          "t1": "256g"
+        },
+        "expected_edited_hat": null,
+        "console": ""
+      }
+    },
+    {
+      "case": "persistence/floor/control/none/confirmed-after-reopen",
+      "pass": true,
+      "actual": {
+        "coins": 750,
+        "mywear": {
+          "items": {},
+          "next": 1,
+          "on": {}
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {
+              "t1": {
+                "name": "Fault floor",
+                "kind": "floor"
+              }
+            },
+            "next": 2
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {
+          "t1": "256g"
+        }
+      },
+      "expected": {
+        "coins": 750,
+        "mywear": {
+          "items": {},
+          "next": 1,
+          "on": {}
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {
+              "t1": {
+                "name": "Fault floor",
+                "kind": "floor"
+              }
+            },
+            "next": 2
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {
+          "t1": "256g"
+        }
+      }
+    },
+    {
+      "case": "persistence/floor/kotoba_batake_state/one-shot/no-false-success",
+      "pass": false,
+      "actual": false,
+      "expected": true,
+      "detail": {
+        "fault_injected": true,
+        "raised": "",
+        "durable": false,
+        "reported_coins": 750,
+        "actual_coins": 1000,
+        "mywear_ids": [],
+        "pixel_ids": [
+          "t1"
+        ],
+        "actual_pixels": {
+          "t1": "256g"
+        },
+        "expected_edited_hat": null,
+        "console": "[kotoba_batake] save kotoba_batake_state to collection: [Errno 28] Synthetic storage full at collection.set_config\n"
+      }
+    },
+    {
+      "case": "persistence/floor/kotoba_batake_state/one-shot/fault-reached",
+      "pass": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "case": "persistence/floor/kotoba_batake_state/one-shot/confirmed-after-reopen",
+      "pass": true,
+      "actual": {
+        "coins": 1000,
+        "mywear": {
+          "items": {},
+          "next": 1,
+          "on": {}
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {
+              "t1": {
+                "name": "Fault floor",
+                "kind": "floor"
+              }
+            },
+            "next": 2
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {
+          "t1": "256g"
+        }
+      },
+      "expected": {
+        "coins": 1000,
+        "mywear": {
+          "items": {},
+          "next": 1,
+          "on": {}
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {
+              "t1": {
+                "name": "Fault floor",
+                "kind": "floor"
+              }
+            },
+            "next": 2
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {
+          "t1": "256g"
+        }
+      }
+    },
+    {
+      "case": "persistence/floor/kotoba_batake_state/persistent/no-false-success",
+      "pass": false,
+      "actual": false,
+      "expected": true,
+      "detail": {
+        "fault_injected": true,
+        "raised": "",
+        "durable": false,
+        "reported_coins": 750,
+        "actual_coins": 1000,
+        "mywear_ids": [],
+        "pixel_ids": [
+          "t1"
+        ],
+        "actual_pixels": {
+          "t1": "256g"
+        },
+        "expected_edited_hat": null,
+        "console": "[kotoba_batake] save kotoba_batake_state to collection: [Errno 28] Synthetic storage full at collection.set_config\n"
+      }
+    },
+    {
+      "case": "persistence/floor/kotoba_batake_state/persistent/fault-reached",
+      "pass": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "case": "persistence/floor/kotoba_batake_state/persistent/confirmed-after-reopen",
+      "pass": true,
+      "actual": {
+        "coins": 1000,
+        "mywear": {
+          "items": {},
+          "next": 1,
+          "on": {}
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {
+              "t1": {
+                "name": "Fault floor",
+                "kind": "floor"
+              }
+            },
+            "next": 2
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {
+          "t1": "256g"
+        }
+      },
+      "expected": {
+        "coins": 1000,
+        "mywear": {
+          "items": {},
+          "next": 1,
+          "on": {}
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {
+              "t1": {
+                "name": "Fault floor",
+                "kind": "floor"
+              }
+            },
+            "next": 2
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {
+          "t1": "256g"
+        }
+      }
+    },
+    {
+      "case": "persistence/floor/kotoba_batake_more/one-shot/no-false-success",
+      "pass": false,
+      "actual": false,
+      "expected": true,
+      "detail": {
+        "fault_injected": true,
+        "raised": "",
+        "durable": false,
+        "reported_coins": 750,
+        "actual_coins": 750,
+        "mywear_ids": [],
+        "pixel_ids": [
+          "t1"
+        ],
+        "actual_pixels": {
+          "t1": "256g"
+        },
+        "expected_edited_hat": null,
+        "console": "[kotoba_batake] save kotoba_batake_more to collection: [Errno 28] Synthetic storage full at collection.set_config\n"
+      }
+    },
+    {
+      "case": "persistence/floor/kotoba_batake_more/one-shot/fault-reached",
+      "pass": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "case": "persistence/floor/kotoba_batake_more/one-shot/confirmed-after-reopen",
+      "pass": true,
+      "actual": {
+        "coins": 750,
+        "mywear": {
+          "items": {},
+          "next": 1,
+          "on": {}
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {
+          "t1": "256g"
+        }
+      },
+      "expected": {
+        "coins": 750,
+        "mywear": {
+          "items": {},
+          "next": 1,
+          "on": {}
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {
+          "t1": "256g"
+        }
+      }
+    },
+    {
+      "case": "persistence/floor/kotoba_batake_more/persistent/no-false-success",
+      "pass": false,
+      "actual": false,
+      "expected": true,
+      "detail": {
+        "fault_injected": true,
+        "raised": "",
+        "durable": false,
+        "reported_coins": 750,
+        "actual_coins": 750,
+        "mywear_ids": [],
+        "pixel_ids": [
+          "t1"
+        ],
+        "actual_pixels": {
+          "t1": "256g"
+        },
+        "expected_edited_hat": null,
+        "console": "[kotoba_batake] save kotoba_batake_more to collection: [Errno 28] Synthetic storage full at collection.set_config\n"
+      }
+    },
+    {
+      "case": "persistence/floor/kotoba_batake_more/persistent/fault-reached",
+      "pass": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "case": "persistence/floor/kotoba_batake_more/persistent/confirmed-after-reopen",
+      "pass": true,
+      "actual": {
+        "coins": 750,
+        "mywear": {
+          "items": {},
+          "next": 1,
+          "on": {}
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {
+          "t1": "256g"
+        }
+      },
+      "expected": {
+        "coins": 750,
+        "mywear": {
+          "items": {},
+          "next": 1,
+          "on": {}
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {
+          "t1": "256g"
+        }
+      }
+    },
+    {
+      "case": "persistence/floor/kotoba_batake_px/one-shot/no-false-success",
+      "pass": false,
+      "actual": false,
+      "expected": true,
+      "detail": {
+        "fault_injected": true,
+        "raised": "",
+        "durable": false,
+        "reported_coins": 750,
+        "actual_coins": 750,
+        "mywear_ids": [],
+        "pixel_ids": [],
+        "actual_pixels": {},
+        "expected_edited_hat": null,
+        "console": "[kotoba_batake] save px: [Errno 28] Synthetic storage full at collection.set_config\n"
+      }
+    },
+    {
+      "case": "persistence/floor/kotoba_batake_px/one-shot/fault-reached",
+      "pass": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "case": "persistence/floor/kotoba_batake_px/one-shot/confirmed-after-reopen",
+      "pass": true,
+      "actual": {
+        "coins": 750,
+        "mywear": {
+          "items": {},
+          "next": 1,
+          "on": {}
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {
+              "t1": {
+                "name": "Fault floor",
+                "kind": "floor"
+              }
+            },
+            "next": 2
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {}
+      },
+      "expected": {
+        "coins": 750,
+        "mywear": {
+          "items": {},
+          "next": 1,
+          "on": {}
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {
+              "t1": {
+                "name": "Fault floor",
+                "kind": "floor"
+              }
+            },
+            "next": 2
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {}
+      }
+    },
+    {
+      "case": "persistence/floor/kotoba_batake_px/persistent/no-false-success",
+      "pass": false,
+      "actual": false,
+      "expected": true,
+      "detail": {
+        "fault_injected": true,
+        "raised": "",
+        "durable": false,
+        "reported_coins": 750,
+        "actual_coins": 750,
+        "mywear_ids": [],
+        "pixel_ids": [],
+        "actual_pixels": {},
+        "expected_edited_hat": null,
+        "console": "[kotoba_batake] save px: [Errno 28] Synthetic storage full at collection.set_config\n"
+      }
+    },
+    {
+      "case": "persistence/floor/kotoba_batake_px/persistent/fault-reached",
+      "pass": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "case": "persistence/floor/kotoba_batake_px/persistent/confirmed-after-reopen",
+      "pass": true,
+      "actual": {
+        "coins": 750,
+        "mywear": {
+          "items": {},
+          "next": 1,
+          "on": {}
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {
+              "t1": {
+                "name": "Fault floor",
+                "kind": "floor"
+              }
+            },
+            "next": 2
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {}
+      },
+      "expected": {
+        "coins": 750,
+        "mywear": {
+          "items": {},
+          "next": 1,
+          "on": {}
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {
+              "t1": {
+                "name": "Fault floor",
+                "kind": "floor"
+              }
+            },
+            "next": 2
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {}
+      }
+    },
+    {
+      "case": "persistence/furniture/control/none/no-false-success",
+      "pass": true,
+      "actual": true,
+      "expected": true,
+      "detail": {
+        "fault_injected": false,
+        "raised": "",
+        "durable": true,
+        "reported_coins": 800,
+        "actual_coins": 800,
+        "mywear_ids": [],
+        "pixel_ids": [
+          "c1"
+        ],
+        "actual_pixels": {
+          "c1": "256r"
+        },
+        "expected_edited_hat": null,
+        "console": ""
+      }
+    },
+    {
+      "case": "persistence/furniture/control/none/confirmed-after-reopen",
+      "pass": true,
+      "actual": {
+        "coins": 800,
+        "mywear": {
+          "items": {},
+          "next": 1,
+          "on": {}
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {
+            "c1": {
+              "name": "Fault chair",
+              "size": 16,
+              "kind": "floor",
+              "fx": "none"
+            }
+          },
+          "next": 2
+        },
+        "home": {
+          "house": 7,
+          "owned": {
+            "c1": 1
+          },
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {
+          "c1": "256r"
+        }
+      },
+      "expected": {
+        "coins": 800,
+        "mywear": {
+          "items": {},
+          "next": 1,
+          "on": {}
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {
+            "c1": {
+              "name": "Fault chair",
+              "size": 16,
+              "kind": "floor",
+              "fx": "none"
+            }
+          },
+          "next": 2
+        },
+        "home": {
+          "house": 7,
+          "owned": {
+            "c1": 1
+          },
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {
+          "c1": "256r"
+        }
+      }
+    },
+    {
+      "case": "persistence/furniture/kotoba_batake_state/one-shot/no-false-success",
+      "pass": false,
+      "actual": false,
+      "expected": true,
+      "detail": {
+        "fault_injected": true,
+        "raised": "",
+        "durable": false,
+        "reported_coins": 800,
+        "actual_coins": 1000,
+        "mywear_ids": [],
+        "pixel_ids": [
+          "c1"
+        ],
+        "actual_pixels": {
+          "c1": "256r"
+        },
+        "expected_edited_hat": null,
+        "console": "[kotoba_batake] save kotoba_batake_state to collection: [Errno 28] Synthetic storage full at collection.set_config\n"
+      }
+    },
+    {
+      "case": "persistence/furniture/kotoba_batake_state/one-shot/fault-reached",
+      "pass": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "case": "persistence/furniture/kotoba_batake_state/one-shot/confirmed-after-reopen",
+      "pass": true,
+      "actual": {
+        "coins": 1000,
+        "mywear": {
+          "items": {},
+          "next": 1,
+          "on": {}
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {
+          "c1": "256r"
+        }
+      },
+      "expected": {
+        "coins": 1000,
+        "mywear": {
+          "items": {},
+          "next": 1,
+          "on": {}
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {
+          "c1": "256r"
+        }
+      }
+    },
+    {
+      "case": "persistence/furniture/kotoba_batake_state/persistent/no-false-success",
+      "pass": false,
+      "actual": false,
+      "expected": true,
+      "detail": {
+        "fault_injected": true,
+        "raised": "",
+        "durable": false,
+        "reported_coins": 800,
+        "actual_coins": 1000,
+        "mywear_ids": [],
+        "pixel_ids": [
+          "c1"
+        ],
+        "actual_pixels": {
+          "c1": "256r"
+        },
+        "expected_edited_hat": null,
+        "console": "[kotoba_batake] save kotoba_batake_state to collection: [Errno 28] Synthetic storage full at collection.set_config\n"
+      }
+    },
+    {
+      "case": "persistence/furniture/kotoba_batake_state/persistent/fault-reached",
+      "pass": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "case": "persistence/furniture/kotoba_batake_state/persistent/confirmed-after-reopen",
+      "pass": true,
+      "actual": {
+        "coins": 1000,
+        "mywear": {
+          "items": {},
+          "next": 1,
+          "on": {}
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {
+          "c1": "256r"
+        }
+      },
+      "expected": {
+        "coins": 1000,
+        "mywear": {
+          "items": {},
+          "next": 1,
+          "on": {}
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {
+          "c1": "256r"
+        }
+      }
+    },
+    {
+      "case": "persistence/furniture/kotoba_batake_nha/one-shot/no-false-success",
+      "pass": true,
+      "actual": true,
+      "expected": true,
+      "detail": {
+        "fault_injected": true,
+        "raised": "",
+        "durable": true,
+        "reported_coins": 800,
+        "actual_coins": 800,
+        "mywear_ids": [],
+        "pixel_ids": [
+          "c1"
+        ],
+        "actual_pixels": {
+          "c1": "256r"
+        },
+        "expected_edited_hat": null,
+        "console": "[kotoba_batake] save kotoba_batake_nha to collection: [Errno 28] Synthetic storage full at collection.set_config\n"
+      }
+    },
+    {
+      "case": "persistence/furniture/kotoba_batake_nha/one-shot/fault-reached",
+      "pass": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "case": "persistence/furniture/kotoba_batake_nha/one-shot/confirmed-after-reopen",
+      "pass": true,
+      "actual": {
+        "coins": 800,
+        "mywear": {
+          "items": {},
+          "next": 1,
+          "on": {}
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {
+            "c1": {
+              "name": "Fault chair",
+              "size": 16,
+              "kind": "floor",
+              "fx": "none"
+            }
+          },
+          "next": 2
+        },
+        "home": {
+          "house": 7,
+          "owned": {
+            "c1": 1
+          },
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {
+          "c1": "256r"
+        }
+      },
+      "expected": {
+        "coins": 800,
+        "mywear": {
+          "items": {},
+          "next": 1,
+          "on": {}
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {
+            "c1": {
+              "name": "Fault chair",
+              "size": 16,
+              "kind": "floor",
+              "fx": "none"
+            }
+          },
+          "next": 2
+        },
+        "home": {
+          "house": 7,
+          "owned": {
+            "c1": 1
+          },
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {
+          "c1": "256r"
+        }
+      }
+    },
+    {
+      "case": "persistence/furniture/kotoba_batake_nha/persistent/no-false-success",
+      "pass": true,
+      "actual": true,
+      "expected": true,
+      "detail": {
+        "fault_injected": true,
+        "raised": "",
+        "durable": true,
+        "reported_coins": 800,
+        "actual_coins": 800,
+        "mywear_ids": [],
+        "pixel_ids": [
+          "c1"
+        ],
+        "actual_pixels": {
+          "c1": "256r"
+        },
+        "expected_edited_hat": null,
+        "console": "[kotoba_batake] save kotoba_batake_nha to collection: [Errno 28] Synthetic storage full at collection.set_config\n"
+      }
+    },
+    {
+      "case": "persistence/furniture/kotoba_batake_nha/persistent/fault-reached",
+      "pass": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "case": "persistence/furniture/kotoba_batake_nha/persistent/confirmed-after-reopen",
+      "pass": true,
+      "actual": {
+        "coins": 800,
+        "mywear": {
+          "items": {},
+          "next": 1,
+          "on": {}
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {
+            "c1": {
+              "name": "Fault chair",
+              "size": 16,
+              "kind": "floor",
+              "fx": "none"
+            }
+          },
+          "next": 2
+        },
+        "home": {
+          "house": 7,
+          "owned": {
+            "c1": 1
+          },
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {
+          "c1": "256r"
+        }
+      },
+      "expected": {
+        "coins": 800,
+        "mywear": {
+          "items": {},
+          "next": 1,
+          "on": {}
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {
+            "c1": {
+              "name": "Fault chair",
+              "size": 16,
+              "kind": "floor",
+              "fx": "none"
+            }
+          },
+          "next": 2
+        },
+        "home": {
+          "house": 7,
+          "owned": {
+            "c1": 1
+          },
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {
+          "c1": "256r"
+        }
+      }
+    },
+    {
+      "case": "persistence/furniture/kotoba_batake_px/one-shot/no-false-success",
+      "pass": false,
+      "actual": false,
+      "expected": true,
+      "detail": {
+        "fault_injected": true,
+        "raised": "",
+        "durable": false,
+        "reported_coins": 800,
+        "actual_coins": 800,
+        "mywear_ids": [],
+        "pixel_ids": [],
+        "actual_pixels": {},
+        "expected_edited_hat": null,
+        "console": "[kotoba_batake] save px: [Errno 28] Synthetic storage full at collection.set_config\n"
+      }
+    },
+    {
+      "case": "persistence/furniture/kotoba_batake_px/one-shot/fault-reached",
+      "pass": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "case": "persistence/furniture/kotoba_batake_px/one-shot/confirmed-after-reopen",
+      "pass": true,
+      "actual": {
+        "coins": 800,
+        "mywear": {
+          "items": {},
+          "next": 1,
+          "on": {}
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {
+            "c1": {
+              "name": "Fault chair",
+              "size": 16,
+              "kind": "floor",
+              "fx": "none"
+            }
+          },
+          "next": 2
+        },
+        "home": {
+          "house": 7,
+          "owned": {
+            "c1": 1
+          },
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {}
+      },
+      "expected": {
+        "coins": 800,
+        "mywear": {
+          "items": {},
+          "next": 1,
+          "on": {}
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {
+            "c1": {
+              "name": "Fault chair",
+              "size": 16,
+              "kind": "floor",
+              "fx": "none"
+            }
+          },
+          "next": 2
+        },
+        "home": {
+          "house": 7,
+          "owned": {
+            "c1": 1
+          },
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {}
+      }
+    },
+    {
+      "case": "persistence/furniture/kotoba_batake_px/persistent/no-false-success",
+      "pass": false,
+      "actual": false,
+      "expected": true,
+      "detail": {
+        "fault_injected": true,
+        "raised": "",
+        "durable": false,
+        "reported_coins": 800,
+        "actual_coins": 800,
+        "mywear_ids": [],
+        "pixel_ids": [],
+        "actual_pixels": {},
+        "expected_edited_hat": null,
+        "console": "[kotoba_batake] save px: [Errno 28] Synthetic storage full at collection.set_config\n"
+      }
+    },
+    {
+      "case": "persistence/furniture/kotoba_batake_px/persistent/fault-reached",
+      "pass": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "case": "persistence/furniture/kotoba_batake_px/persistent/confirmed-after-reopen",
+      "pass": true,
+      "actual": {
+        "coins": 800,
+        "mywear": {
+          "items": {},
+          "next": 1,
+          "on": {}
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {
+            "c1": {
+              "name": "Fault chair",
+              "size": 16,
+              "kind": "floor",
+              "fx": "none"
+            }
+          },
+          "next": 2
+        },
+        "home": {
+          "house": 7,
+          "owned": {
+            "c1": 1
+          },
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {}
+      },
+      "expected": {
+        "coins": 800,
+        "mywear": {
+          "items": {},
+          "next": 1,
+          "on": {}
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {
+            "c1": {
+              "name": "Fault chair",
+              "size": 16,
+              "kind": "floor",
+              "fx": "none"
+            }
+          },
+          "next": 2
+        },
+        "home": {
+          "house": 7,
+          "owned": {
+            "c1": 1
+          },
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {}
+      }
+    },
+    {
+      "case": "persistence/subscription/control/none/no-false-success",
+      "pass": true,
+      "actual": true,
+      "expected": true,
+      "detail": {
+        "fault_injected": false,
+        "raised": "",
+        "durable": true,
+        "reported_coins": 900,
+        "actual_coins": 900,
+        "mywear_ids": [],
+        "pixel_ids": [],
+        "actual_pixels": {},
+        "expected_edited_hat": null,
+        "console": ""
+      }
+    },
+    {
+      "case": "persistence/subscription/control/none/confirmed-after-reopen",
+      "pass": true,
+      "actual": {
+        "coins": 900,
+        "mywear": {
+          "items": {},
+          "next": 1,
+          "on": {}
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {}
+      },
+      "expected": {
+        "coins": 900,
+        "mywear": {
+          "items": {},
+          "next": 1,
+          "on": {}
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {}
+      }
+    },
+    {
+      "case": "persistence/subscription/kotoba_batake_state/one-shot/no-false-success",
+      "pass": false,
+      "actual": false,
+      "expected": true,
+      "detail": {
+        "fault_injected": true,
+        "raised": "",
+        "durable": false,
+        "reported_coins": 900,
+        "actual_coins": 1000,
+        "mywear_ids": [],
+        "pixel_ids": [],
+        "actual_pixels": {},
+        "expected_edited_hat": null,
+        "console": "[kotoba_batake] save kotoba_batake_state to collection: [Errno 28] Synthetic storage full at collection.set_config\n"
+      }
+    },
+    {
+      "case": "persistence/subscription/kotoba_batake_state/one-shot/fault-reached",
+      "pass": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "case": "persistence/subscription/kotoba_batake_state/one-shot/confirmed-after-reopen",
+      "pass": true,
+      "actual": {
+        "coins": 1000,
+        "mywear": {
+          "items": {},
+          "next": 1,
+          "on": {}
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {}
+      },
+      "expected": {
+        "coins": 1000,
+        "mywear": {
+          "items": {},
+          "next": 1,
+          "on": {}
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {}
+      }
+    },
+    {
+      "case": "persistence/subscription/kotoba_batake_state/persistent/no-false-success",
+      "pass": false,
+      "actual": false,
+      "expected": true,
+      "detail": {
+        "fault_injected": true,
+        "raised": "",
+        "durable": false,
+        "reported_coins": 900,
+        "actual_coins": 1000,
+        "mywear_ids": [],
+        "pixel_ids": [],
+        "actual_pixels": {},
+        "expected_edited_hat": null,
+        "console": "[kotoba_batake] save kotoba_batake_state to collection: [Errno 28] Synthetic storage full at collection.set_config\n"
+      }
+    },
+    {
+      "case": "persistence/subscription/kotoba_batake_state/persistent/fault-reached",
+      "pass": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "case": "persistence/subscription/kotoba_batake_state/persistent/confirmed-after-reopen",
+      "pass": true,
+      "actual": {
+        "coins": 1000,
+        "mywear": {
+          "items": {},
+          "next": 1,
+          "on": {}
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {}
+      },
+      "expected": {
+        "coins": 1000,
+        "mywear": {
+          "items": {},
+          "next": 1,
+          "on": {}
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {}
+      }
+    },
+    {
+      "case": "persistence/subscription/kotoba_batake_more/one-shot/no-false-success",
+      "pass": false,
+      "actual": false,
+      "expected": true,
+      "detail": {
+        "fault_injected": true,
+        "raised": "",
+        "durable": false,
+        "reported_coins": 900,
+        "actual_coins": 900,
+        "mywear_ids": [],
+        "pixel_ids": [],
+        "actual_pixels": {},
+        "expected_edited_hat": null,
+        "console": "[kotoba_batake] save kotoba_batake_more to collection: [Errno 28] Synthetic storage full at collection.set_config\n"
+      }
+    },
+    {
+      "case": "persistence/subscription/kotoba_batake_more/one-shot/fault-reached",
+      "pass": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "case": "persistence/subscription/kotoba_batake_more/one-shot/confirmed-after-reopen",
+      "pass": true,
+      "actual": {
+        "coins": 900,
+        "mywear": {
+          "items": {},
+          "next": 1,
+          "on": {}
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {}
+      },
+      "expected": {
+        "coins": 900,
+        "mywear": {
+          "items": {},
+          "next": 1,
+          "on": {}
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {}
+      }
+    },
+    {
+      "case": "persistence/subscription/kotoba_batake_more/persistent/no-false-success",
+      "pass": false,
+      "actual": false,
+      "expected": true,
+      "detail": {
+        "fault_injected": true,
+        "raised": "",
+        "durable": false,
+        "reported_coins": 900,
+        "actual_coins": 900,
+        "mywear_ids": [],
+        "pixel_ids": [],
+        "actual_pixels": {},
+        "expected_edited_hat": null,
+        "console": "[kotoba_batake] save kotoba_batake_more to collection: [Errno 28] Synthetic storage full at collection.set_config\n"
+      }
+    },
+    {
+      "case": "persistence/subscription/kotoba_batake_more/persistent/fault-reached",
+      "pass": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "case": "persistence/subscription/kotoba_batake_more/persistent/confirmed-after-reopen",
+      "pass": true,
+      "actual": {
+        "coins": 900,
+        "mywear": {
+          "items": {},
+          "next": 1,
+          "on": {}
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {}
+      },
+      "expected": {
+        "coins": 900,
+        "mywear": {
+          "items": {},
+          "next": 1,
+          "on": {}
+        },
+        "decor": {
+          "own": [],
+          "use": {
+            "room": {},
+            "kitchen": {},
+            "bedroom": {}
+          },
+          "mine": {
+            "items": {},
+            "next": 1
+          }
+        },
+        "craft": {
+          "items": {},
+          "next": 1
+        },
+        "home": {
+          "house": 7,
+          "owned": {},
+          "zones": [],
+          "styles": [],
+          "style": "classic",
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "yard": [],
+          "beach": [],
+          "shrine": [],
+          "festival": [],
+          "bamboo": [],
+          "onsen": [],
+          "station": [],
+          "room": [],
+          "kitchen": [],
+          "bedroom": [],
+          "uzones": []
+        },
+        "pixels": {}
+      }
+    },
+    {
+      "case": "persistence/backup-only-error/collection-remains-authoritative",
+      "pass": true,
+      "actual": [
+        800,
+        true,
+        true
+      ],
+      "expected": [
+        800,
+        true,
+        true
+      ]
+    },
+    {
+      "case": "persistence/sqlite-trigger/backend-error-reached",
+      "pass": true,
+      "actual": true,
+      "expected": true,
+      "detail": {
+        "console": "[kotoba_batake] save kotoba_batake_more to collection: DbError { info: \"SqliteFailure(Error { code: ConstraintViolation, extended_code: 1811 }, Some(\\\"Synthetic SQLITE failure\\\"))\", kind: Other }\n"
+      }
+    },
+    {
+      "case": "persistence/sqlite-trigger/no-false-success",
+      "pass": false,
+      "actual": [
+        850,
+        []
+      ],
+      "expected": [
+        850,
+        [
+          "w1"
+        ]
+      ]
+    },
+    {
+      "case": "persistence/sqlite-trigger/normal-write-works-after-fault-removed",
+      "pass": true,
+      "actual": [
+        700,
+        [
+          "w1"
+        ]
+      ],
+      "expected": [
+        700,
+        [
+          "w1"
+        ]
+      ]
+    }
+  ]
+}

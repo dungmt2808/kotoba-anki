@@ -1,0 +1,5 @@
+FAIL {"case": "mixed-version/head/one-item-per-slot", "passed": false, "actual": ["straw", "w1"], "expected": ["straw", null], "detail": {"new_version": "1.31.0", "old_commit": "36bb57b", "operation": "buy_wear(straw)", "custom_id": "w1"}}
+FAIL {"case": "mixed-version/face/one-item-per-slot", "passed": false, "actual": ["glasses", "w1"], "expected": ["glasses", null], "detail": {"new_version": "1.31.0", "old_commit": "36bb57b", "operation": "buy_wear(glasses)", "custom_id": "w1"}}
+FAIL {"case": "mixed-version/neck/one-item-per-slot", "passed": false, "actual": ["bow", "w1"], "expected": ["bow", null], "detail": {"new_version": "1.31.0", "old_commit": "36bb57b", "operation": "buy_wear(bow)", "custom_id": "w1"}}
+FAIL {"case": "mixed-version/shell/one-item-per-slot", "passed": false, "actual": ["sky", "w1"], "expected": ["sky", null], "detail": {"new_version": "1.31.0", "old_commit": "36bb57b", "operation": "buy_wear(sky)", "custom_id": "w1"}}
+CORE AUDIT 2043/2047; 4 failed

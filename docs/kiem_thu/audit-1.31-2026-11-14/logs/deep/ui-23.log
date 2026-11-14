@@ -1,0 +1,17 @@
+PASS {"case":"key-race/validation-is-pending","pass":true,"actual":[true,1],"expected":[true,1]}
+PASS {"case":"key-race/delete-actually-clears-config","pass":true,"actual":false,"expected":false}
+FAIL {"case":"key-race/late-success-does-not-restore-deleted-key","pass":false,"actual":true,"expected":false}
+PASS {"case":"save-failure/one-storage-error-injected","pass":true,"actual":1,"expected":1}
+FAIL {"case":"save-failure/UI-success-agrees-with-collection","pass":false,"actual":[850,["w1"]],"expected":[850,[]],"detail":{"advertised":{"coins":850,"ids":["w1"]},"stored":{"coins":850,"ids":[],"faults":1}}}
+FAIL {"case":"save-failure/purchase-is-durable-after-refresh","pass":false,"actual":{"coins":850,"ids":[]},"expected":{"coins":850,"ids":["w1"]}}
+PASS {"case":"review-failure/no-review-or-money-recorded","pass":true,"actual":[0,850],"expected":[0,850]}
+PASS {"case":"review-failure/backend-unblocked-and-warning","pass":true,"actual":[false,1],"expected":[false,1]}
+FAIL {"case":"review-failure/clicking-rating-can-retry","pass":false,"actual":0,"expected":1,"detail":{"has_card":false}}
+PASS {"case":"review-failure/stop-start-is-a-working-recovery","pass":true,"actual":1,"expected":1}
+PASS {"case":"writing/late-result-does-not-overwrite-new-draft","pass":true,"actual":{"unchanged":true,"text":"今日は雨です。"},"expected":{"unchanged":true,"text":"今日は雨です。"}}
+PASS {"case":"undo-redo/last-review-awards-goal-and-quest","pass":true,"actual":[10,true,true,true],"expected":[10,true,true,true],"detail":{"coins":1038,"waters":1,"goal":0,"progress":{"new":10,"stage":1,"streak":1,"streak_cur":1},"done":["deep-new"],"reviews":10}}
+PASS {"case":"undo-redo/undo-reverses-entire-reward","pass":true,"actual":{"coins":1000,"waters":0,"goal":null,"progress":{"new":9},"done":[],"reviews":9},"expected":{"coins":1000,"waters":0,"goal":null,"progress":{"new":9},"done":[],"reviews":9}}
+PASS {"case":"undo-redo/redo-remains-available","pass":true,"actual":true,"expected":true}
+PASS {"case":"undo-redo/redo-restores-entire-reward","pass":true,"actual":{"coins":1038,"waters":1,"goal":0,"progress":{"new":10,"stage":1,"streak":1,"streak_cur":1},"done":["deep-new"],"reviews":10},"expected":{"coins":1038,"waters":1,"goal":0,"progress":{"new":10,"stage":1,"streak":1,"streak_cur":1},"done":["deep-new"],"reviews":10}}
+PASS {"case":"diagnostics/no-js-exceptions","pass":true,"actual":[],"expected":[]}
+DEEP UI 12/16; 4 failed

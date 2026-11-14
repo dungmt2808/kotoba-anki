@@ -19,6 +19,13 @@ test trượt được giữ nguyên làm minh chứng và để kiểm lại sa
   mà các bài cũ cần: bù xu và khoá giả; vẫn tắt tự gọi Gemini.
 - `baseline_provider.js`: chỉ dành cho `e2e.js`, `e2e_120.js`, `e2e_123.js`;
   thay danh sách model/không có prefetch TTS, giữ nguyên assertions gốc.
+- `deep_storage_audit.py`: vòng chốt, collection Anki thật; đưa lỗi ghi vào
+  từng điểm lưu, kiểm mua/sửa/đọc/đóng/mở lại và lỗi chỉ ở backup; đối chứng
+  trigger gây lỗi SQLite thật, không thay hàm Python. 112 ca/bản.
+- `deep_ui_audit.js`: vòng chốt, xoá khoá lúc kiểm tra còn chạy; mua đồ khi lưu
+  lỗi; chấm thẻ thất bại và thử lại; kết quả sửa bài cũ; Undo/Redo của đúng lượt
+  đạt mục tiêu ngày và nhiệm vụ. 16 ca/bản. Tiến độ bằng 0 được chuẩn hoá khi
+  đối chiếu Undo, không xem khác biểu diễn tương đương là lỗi sản phẩm.
 
 ```bash
 ANKI_PY=/path/to/python-with-aqt
@@ -32,6 +39,13 @@ bash tests/audit_20261114/run_ui_audit.sh kotoba_batake work/audit/ui \
 KB_CDP_PORT=10941 KB_CTRL_PORT=10942 \
 bash tests/audit_20261114/run_ui_audit.sh kotoba_batake work/audit/lifecycle \
   "$PWD/tests/audit_20261114/lifecycle_audit.js"
+
+# Vòng chốt: test trượt là minh chứng còn lỗi, không phải cài đặt bị hỏng.
+"$ANKI_PY" tests/audit_20261114/deep_storage_audit.py kotoba_batake \
+  --out work/audit/deep-storage.json
+KB_CDP_PORT=11401 KB_CTRL_PORT=11402 \
+bash tests/audit_20261114/run_ui_audit.sh kotoba_batake work/audit/deep-ui \
+  "$PWD/tests/audit_20261114/deep_ui_audit.js"
 
 # Bài cũ: không đổi assertions, chỉ dùng cấu hình fixture phù hợp.
 KB_AUDIT_BASELINE=1 KB_CDP_PORT=11101 KB_CTRL_PORT=11102 \
@@ -61,8 +75,14 @@ Môi trường đã chạy: Anki 26.9.4 / Python 3.13.5 / Qt 6.12.0; Anki 23.10.
 Python 3.12.14 / PyQt 6.6.1 / Qt 6.6.3 / PyQt6-WebEngine 6.6.0. Cài trong venv
 riêng, không hạ phiên bản môi trường đang dùng. Bộ mới có 188 kiểm tra UI mỗi
 phiên bản và 7 kiểm tra vòng đời mỗi phiên bản; tổng cùng bộ core là 2.437.
+Vòng chốt bổ sung 256 ca (112 storage + 16 UI trên mỗi phiên bản). Lỗi I/O được
+mô phỏng tại API set_config, không làm đầy đĩa thật. Kiểm tra khoá dùng Future
+cục bộ; không gọi Google. Lỗi chấm thẻ chạy qua CollectionOp thật, chỉ thay
+hàm thao tác để ném lỗi trước commit; cảnh báo Qt được thu thập thay vì bật
+hộp modal chặn runner.
 
 Log bằng chứng đã che khoá thật nếu có và bỏ khoảng trắng cuối dòng để git
 không báo lỗi định dạng. Các giá trị, assertions, stack lỗi và kết quả được giữ.
 
 Báo cáo và bằng chứng: [BAO_CAO.md](../../docs/kiem_thu/audit-1.31-2026-11-14/BAO_CAO.md).
+Vòng chốt: [CHOT_LAN_CUOI.md](../../docs/kiem_thu/audit-1.31-2026-11-14/CHOT_LAN_CUOI.md).

@@ -1,6 +1,8 @@
 # Rà soát độc lập ことば畑 1.31.0 · 14/11/2026
 
-**Chưa nên phát hành stable.** Đã xác minh **5 nhóm lỗi: 1 P1 và 4 P2**, cùng một rủi ro về phạm vi dữ liệu báo giữa các hồ sơ. Lỗi đáng ưu tiên nhất là phản hồi lưu cũ có thể đóng phiên vẽ mới và làm mất bản nháp. Hộp xác nhận cũng có đường thao tác bàn phím trừ xu khi nút đang được focus nằm ngoài hộp.
+**Cập nhật vòng chốt:** xem [CHOT_LAN_CUOI.md](CHOT_LAN_CUOI.md). Kiểm sâu thêm 256 ca đã xác minh thêm 3 nhóm lỗi; tổng hiện là **8 nhóm: 2 P1, 6 P2**. Kết luận vẫn **chưa phát hành stable**.
+
+**Kết quả vòng đầu bên dưới:** đã xác minh **5 nhóm lỗi: 1 P1 và 4 P2**, cùng một rủi ro về phạm vi dữ liệu báo giữa các hồ sơ. Lỗi đáng ưu tiên nhất là phản hồi lưu cũ có thể đóng phiên vẽ mới và làm mất bản nháp. Hộp xác nhận cũng có đường thao tác bàn phím trừ xu khi nút đang được focus nằm ngoài hộp.
 
 Nhánh audit chỉ thêm **báo cáo, bằng chứng và test tái hiện**. Chưa sửa mã sản phẩm, đổi luật chơi, tăng phiên bản hay đóng lại gói phát hành. Các assertion trượt được giữ để dùng kiểm lại bản sửa.
 

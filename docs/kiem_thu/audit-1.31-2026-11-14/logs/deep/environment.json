@@ -1,0 +1,65 @@
+{
+  "commit": "240c7c333ea2580d0389d2c790995a64ea9b4914",
+  "branch": "audit/release-review-1.31-2026-11-14",
+  "package_sha256": "e642a044a4d2f4d2dad882da34151104dfa323d6dd2d2a635ccd1fc5249ec46c",
+  "package_files": 63,
+  "package_mismatches": [],
+  "source_files_missing_in_package": [],
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "node": "v24.22.1",
+  "manifest": {
+    "package": "kotoba_batake",
+    "name": "ことば畑 · Vườn từ vựng pixel",
+    "conflicts": [],
+    "mod": 1794672630,
+    "human_version": "1.31.0",
+    "min_point_version": 231000,
+    "max_point_version": 260904
+  },
+  "test_environment": {
+    "26.9.4": {
+      "anki": "26.09.4",
+      "python": "3.13.5",
+      "qt": "6.12.0",
+      "pyqt": "6.12.0"
+    },
+    "23.10.1": {
+      "anki": "23.10.1",
+      "python": "3.12.14",
+      "qt": "6.6.3",
+      "pyqt": "6.6.1"
+    }
+  },
+  "audit_round": "final-deep",
+  "audit_previous_commit": "4e00c9df7e555f0a199d37caa11ddc5db5ca4fd5",
+  "executed_utc": "2026-11-14T17:34:41.222585+00:00",
+  "executed_user_timezone": "2026-11-15T00:34:41.222767+07:00",
+  "results": {
+    "storage-26": {
+      "cases": 112,
+      "passed": 81,
+      "failed": 31
+    },
+    "storage-23": {
+      "cases": 112,
+      "passed": 81,
+      "failed": 31
+    },
+    "ui-26": {
+      "cases": 16,
+      "passed": 12,
+      "failed": 4
+    },
+    "ui-23": {
+      "cases": 16,
+      "passed": 12,
+      "failed": 4
+    }
+  },
+  "production_changes": false,
+  "live_gemini_requests": false,
+  "storage_faults": [
+    "set_config OSError at selected keys",
+    "SQLite RAISE(ABORT) triggers in temporary collections"
+  ]
+}

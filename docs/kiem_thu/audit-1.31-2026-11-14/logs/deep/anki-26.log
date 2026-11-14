@@ -1,0 +1,42 @@
+Starting Anki 26.09.4...
+2026-11-14 17:26:06,735:INFO:aqt.mediasrv: Serving on http://127.0.0.1:43165
+[14509:14559:1114/172607.011546:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+
+DevTools listening on ws://127.0.0.1:11431/devtools/browser/d0f9d40c-7224-4d7a-8e87-9985283e1ddf
+[14509:14559:1114/172611.413393:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[14509:14559:1114/172611.413423:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[14509:14559:1114/172611.413429:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[14509:14559:1114/172612.495101:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[14509:14559:1114/172612.495124:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[14509:14559:1114/172612.495129:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[14509:14559:1114/172615.032489:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[14509:14559:1114/172615.032555:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[14509:14559:1114/172615.032595:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[14509:14559:1114/172615.888440:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[14509:14559:1114/172615.888468:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[14509:14559:1114/172615.888476:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[14509:14559:1114/172617.278526:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[14509:14559:1114/172617.278556:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+[14509:14559:1114/172617.278562:ERROR:../../../qtwebengine/src/3rdparty/chromium/dbus/bus.cc:408] Failed to connect to the bus: Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+Qt info: Sandboxing disabled by user.
+Qt warning: QRhiGles2: Failed to create temporary context
+Qt warning: QRhiGles2: Failed to create context
+Qt warning: Failed to create RHI for backend: OpenGL
+Starting main loop...
+Qt debug: Remote debugging server started successfully. Try pointing a Chromium-based browser to http://127.0.0.1:11431
+Qt warning: GPUInfo not initialized on GpuInfoUpdate
+mpv not found, reverting to mplayer
+Qt warning: This plugin does not support propagateSizeHints()
+Qt warning: This plugin does not support raise()
+update check failed: A network error occurred.
+
+Error details: ⁨error sending request for url ()⁩
+Qt warning: This plugin does not support propagateSizeHints()
+Qt warning: This plugin does not support propagateSizeHints()
+Qt warning: This plugin does not support propagateSizeHints()
+Qt warning: This plugin does not support raise()
+JS info /_anki/legacyPageData?id=139644693091568:0 [DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o
+[kotoba_batake] save kotoba_batake_more to collection: [Errno 28] Synthetic disk full while saving MORE_KEY
+Qt warning: This plugin does not support raise()
+Qt warning: This plugin does not support raise()
+2026-11-14 17:26:20,021:WARNING:waitress: unhandled close event

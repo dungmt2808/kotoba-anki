@@ -1,0 +1,23 @@
+Path override failed for key base::DIR_APP_DICTIONARIES and path '/workspace/kotoba-anki/work/release-audit-20261114/anki23-venv/lib/python3.12/site-packages/PyQt6/Qt6/libexec/qtwebengine_dictionaries'
+Path override failed for key base::DIR_APP_DICTIONARIES and path '/workspace/kotoba-anki/work/release-audit-20261114/anki23-venv/lib/python3.12/site-packages/PyQt6/Qt6/libexec/qtwebengine_dictionaries'
+
+DevTools listening on ws://127.0.0.1:11441/devtools/browser/9932dd1c-327f-4793-92f8-eb560347a7a7
+Preparing to run...
+Qt info: Sandboxing disabled by user.
+Qt warning: Path override failed for key base::DIR_APP_DICTIONARIES and path '/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/qtwebengine_dictionaries'
+Starting main loop...
+Qt warning: Remote debugging server started successfully. Try pointing a Chromium-based browser to http://127.0.0.1:11441
+mpv not found, reverting to mplayer
+Qt warning: This plugin does not support propagateSizeHints()
+Qt warning: This plugin does not support raise()
+update check failed: A network error occurred.
+
+Error details: ⁨error sending request for url (): error trying to connect: unsuccessful tunnel⁩
+Qt warning: This plugin does not support propagateSizeHints()
+Qt warning: This plugin does not support propagateSizeHints()
+Qt warning: This plugin does not support raise()
+Qt warning: This plugin does not support propagateSizeHints()
+JS info /_anki/legacyPageData?id=140463757255344:0 [DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o
+[kotoba_batake] save kotoba_batake_more to collection: [Errno 28] Synthetic disk full while saving MORE_KEY
+Qt warning: This plugin does not support raise()
+Qt warning: This plugin does not support raise()
