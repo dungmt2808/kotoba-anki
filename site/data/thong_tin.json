@@ -1,0 +1,156 @@
+{
+ "version": "1.31.3",
+ "contact": "maitrongdung10@gmail.com",
+ "share": {
+  "ver": "KB1",
+  "seed_price": 500,
+  "zone_price": 5000,
+  "stages": [
+   "Hạt",
+   "Mầm",
+   "Cây non",
+   "Ra hoa",
+   "Ra quả"
+  ],
+  "code_max": 200000,
+  "data_max": 160000
+ },
+ "craft": {
+  "palette": {
+   "k": "#1b1b2f",
+   "n": "#2b2b44",
+   "S": "#8a8fa8",
+   "m": "#9aa0b5",
+   "s": "#d4d4e0",
+   "w": "#ffffff",
+   "c": "#fff2b3",
+   "y": "#ffd23f",
+   "i": "#e9b949",
+   "o": "#ff9f1c",
+   "h": "#f5b971",
+   "t": "#e2a46a",
+   "b": "#a0603a",
+   "B": "#6b3b1f",
+   "e": "#ffd7b5",
+   "E": "#d99a6c",
+   "P": "#ffc4d6",
+   "p": "#ff7fa0",
+   "r": "#ff4f6d",
+   "R": "#c21f3a",
+   "v": "#c77dff",
+   "z": "#7b2cbf",
+   "l": "#8fd3ff",
+   "d": "#3d8bff",
+   "u": "#2f5fb0",
+   "U": "#1e3a8a",
+   "a": "#2ec4b6",
+   "A": "#1a7f78",
+   "f": "#b8e05a",
+   "g": "#3ccb5e",
+   "G": "#2e8b3a",
+   "j": "#1f5f2a"
+  },
+  "prices": {
+   "16": 200,
+   "24": 350,
+   "32": 500
+  },
+  "kinds": {
+   "ground": "yard",
+   "floor": "room",
+   "wall": "room"
+  },
+  "fx": [
+   "none",
+   "sway",
+   "bounce",
+   "float",
+   "sparkle",
+   "glow",
+   "hearts",
+   "notes",
+   "bubbles",
+   "pulse",
+   "spin"
+  ]
+ },
+ "uzone": {
+  "max": 6,
+  "price": 5000,
+  "edit": 50,
+  "w": 64,
+  "h": 76,
+  "env_w": 256,
+  "env_h": 76,
+  "bg": [
+   {
+    "id": "meadow",
+    "name": "Đồng cỏ"
+   },
+   {
+    "id": "flower",
+    "name": "Đồi hoa"
+   },
+   {
+    "id": "sand",
+    "name": "Bãi cát"
+   },
+   {
+    "id": "snow",
+    "name": "Đồng tuyết"
+   },
+   {
+    "id": "rock",
+    "name": "Núi đá"
+   },
+   {
+    "id": "lake",
+    "name": "Bờ hồ"
+   },
+   {
+    "id": "town",
+    "name": "Phố lát đá"
+   },
+   {
+    "id": "forest",
+    "name": "Rừng thông"
+   }
+  ],
+  "ground": [
+   "#5ed35e",
+   "#8fd36a",
+   "#3ccb5e",
+   "#b8e05a",
+   "#e9d8a6",
+   "#f2e3b3",
+   "#eaf1f7",
+   "#c9d3dd",
+   "#b0a48c",
+   "#8a8fa8",
+   "#d99a6c",
+   "#c98a52",
+   "#9a7bc4",
+   "#ffc4d6",
+   "#7ec8c0",
+   "#5a6b8a"
+  ],
+  "hills": [
+   "#7ed98a",
+   "#2e8b3a",
+   "#1f5f2a",
+   "#9aa0b5",
+   "#8a8fa8",
+   "#c4d7e8",
+   "#f5b971",
+   "#d99a6c",
+   "#c77dff",
+   "#ff7fa0",
+   "#2ec4b6",
+   "#2f5fb0",
+   "#6b3b1f",
+   "#e9b949",
+   "#ffffff",
+   "#3a3a55"
+  ]
+ }
+}

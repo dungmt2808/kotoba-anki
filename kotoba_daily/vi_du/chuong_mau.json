@@ -1,0 +1,23 @@
+{
+ "_ghi_chu": "File mẫu TỰ SOẠN (không lấy từ sách nào) cho định dạng nguon/<id giáo trình>/<chương>.json — xem prompts/trich_chuong.md.",
+ "giao_trinh": "vi_du",
+ "chuong": 1,
+ "chu_de": "Rủ rê 〜ませんか, mong muốn 〜たい, đề nghị 〜ましょう",
+ "tu_vung": [
+  {"w": "散歩する", "r": "さんぽする", "m": "đi dạo"},
+  {"w": "公園", "r": "こうえん", "m": "công viên"},
+  {"w": "天気", "r": "てんき", "m": "thời tiết"},
+  {"w": "一緒に", "r": "いっしょに", "m": "cùng nhau"},
+  {"w": "お弁当", "r": "おべんとう", "m": "cơm hộp"}
+ ],
+ "ngu_phap": [
+  {"id": "1-1", "mau": "Vませんか", "nghia": "Rủ người nghe cùng làm V (lịch sự, để người nghe dễ từ chối)", "vi_du": "明日、一緒に公園を散歩しませんか。"},
+  {"id": "1-2", "mau": "Vたい", "nghia": "Muốn làm V (mong muốn của người nói)", "vi_du": "天気がいい日は、外でお弁当を食べたいです。"},
+  {"id": "1-3", "mau": "Vましょう", "nghia": "Cùng làm V nhé (đề nghị, hưởng ứng lời rủ)", "vi_du": "いいですね。じゃあ、十時に会いましょう。"}
+ ],
+ "kanji": [
+  {"k": "公", "hv": "CÔNG"},
+  {"k": "園", "hv": "VIÊN"},
+  {"k": "天", "hv": "THIÊN"}
+ ]
+}

@@ -1,0 +1,89 @@
+== 1. Tường & sàn: cửa hàng
+  ✓ tab Nội thất có hai nút: Đồ nội thất* · Tường & sàn
+  ✓ 12 giấy dán tường + 9 sàn (12 + 9)
+  ✓ có "Theo kiểu nhà" và "Tự vẽ" cho cả tường lẫn sàn
+  ✓ Đang trang trí: Phòng chính
+  ✓ ô mẫu Gạch nung có hình (7 màu)
+== 2. mua bằng chuột, dùng luôn, bấm đúp
+  ✓ Mua Cánh anh đào: −300 xu, dùng luôn cho phòng chính
+  ✓ tường phòng chính đổi màu (128,171,136 → 255,238,242)
+  ✓ sàn chưa đổi
+  ✓ thẻ ghi "Đang dùng: Phòng chính"
+  ✓ bấm đúp Mua: chỉ trừ một lần 300 xu
+  ✓ sàn phòng chính đổi
+== 3. xem thử, đổi gian, Theo kiểu nhà
+  ✓ Xem thử Trời sao: cảnh đổi, ví và mẫu đang dùng không đổi
+  ✓ nút thành "Dừng xem thử"
+  ✓ mở rộng nhà (Bếp + Phòng ngủ): −2.000 xu
+  ✓ đổi gian bằng nút cảnh → Đang trang trí: Bếp
+  ✓ đổi gian rồi quay lại: hết xem thử, tường như đã lưu
+  ✓ mẫu đã mua dùng thêm cho Bếp: miễn phí
+  ✓ tường Bếp đổi
+  ✓ Theo kiểu nhà: Bếp về như cũ, phòng chính giữ nguyên
+== 4. Xưởng: mẫu sàn tự vẽ
+  ✓ Xưởng mở chế độ mẫu sàn 16×16: true|floor|16|16|250|工房 · Sàn nhà|Tạo mẫu · 250 xu|true
+  ✓ hình trống: không lưu, không trừ xu
+  ✓ kéo chuột vẽ được 11 ô
+  ✓ Esc lần đầu chỉ nhắc (hình chưa lưu), Xưởng vẫn mở
+  ✓ Tạo mẫu: −250 xu, mẫu t1 "Sàn chéo"
+  ✓ mẫu mới dùng luôn cho gian đang xem (Bếp)
+  ✓ về tab Nội thất → Tường & sàn, có thẻ mẫu tự vẽ
+  ✓ mở sửa: chưa đổi hình thì miễn phí
+  ✓ đổi tên: miễn phí
+  ✓ vẽ thêm một ô → 50 xu
+  ✓ vẽ lại: −50 xu
+  ✓ bấm Xoá lần đầu: hỏi lại
+  ✓ bấm lần hai: xoá mẫu, Bếp về sàn của kiểu nhà
+== 5. lệnh lạ, lưu lại
+  ✓ 11 lệnh sai (mẫu lạ, sai chỗ, chưa có, mua trùng, mẫu hỏng): ví và trang trí không đổi
+  ✓ cửa sổ vườn vẫn mở sau các lệnh sai
+  ✓ đóng / mở lại vườn: tường + sàn phòng chính còn
+  ✓ lưu ở khoá decor của kotoba_batake_more (đồng bộ AnkiWeb)
+  ✓ dải "Trong nhà" ở màn chính cũng dán giấy anh đào (255,238,242)
+== 6. sinh hoạt theo giờ (không ép)
+  ✓ data.life: 67|67|8|0|bedroom,kitchen,room,yard
+  ✓ vừa đặt TV (home:place) → "Xem TV" vào danh sách việc làm được ngay, còn nguyên danh mục 67 việc: 67
+  ✓ cất TV (home:take) → "Xem TV" rời danh sách ngay
+  ✓ 23 giờ, có giường: chỉ Ngủ ở Phòng ngủ (neru@bedroom → neru)
+  ✓ StackChan nằm trên giường: {"loc":"bedroom","x":344,"y":71,"act":"neru","phase":"do","seen":0.068,"dir":1,"mode":"bed","item":"beddo"}
+  ✓ 7:30: nấu ăn, ăn cơm, pha trà (ocha,shinbun,mado,ryouri,taberu)
+  ✓ chip trên dải cảnh: false|Ăn cơm
+  ✓ việc tự làm (Ngủ) cũng vào sổ khi đã thấy: neru
+== 7. thấy ≥ 1,5 giây → ghi sổ
+  ✓ Python ghi kotoba_batake_life.seen.ocha ({"ocha":{"d":"2026-11-14","l":"2026-11-14","n":1,"s":"room"}})
+  ✓ thông báo: Sinh hoạt mới: Pha trà · お茶を入れる ▸
+  ✓ lệnh giả (việc lạ, sai cảnh, giường không ở gian đó, vùng chưa mở, chưa có radio): không ghi (ocha)
+  ✓ đang ôn thẻ 3 giây: không ghi sổ, không thông báo che nút chấm điểm
+  ✓ đóng bảng ôn, về màn chính: việc Đọc sách được ghi
+== 8. chip, thẻ, Esc, Đến xem, Gọi về đây, bấm trúng
+  ✓ thẻ: お茶を入れる|おちゃをいれる · pha trà|StackChan đang trong nhà (Phòng chính): Pha trà
+  ✓ thẻ nằm trong cửa sổ
+  ✓ Esc chỉ đóng thẻ, cửa sổ vườn vẫn mở
+  ✓ sang Sân vườn: chip "ở trong nhà|true"
+  ✓ thẻ khi ở cảnh khác: ✕|Đến xem ▸|Gọi về đây|Sổ sinh hoạt ▸
+  ✓ Đến xem → dải cảnh sang Trong nhà
+  ✓ Gọi về đây: StackChan ra Sân vườn (yard|yard)
+  ✓ bấm chuột thật trúng StackChan: mở thẻ, không mở bảng Nhà (true|true|false)
+== 9. Album → Sinh hoạt, thẻ cửa hàng, Lịch hoa
+  ✓ Album có 3 nút: Khách ghé vườn|Hộp sưu tầm|Sinh hoạt*
+  ✓ sổ: đủ ô, 8 nhóm, ô đã thấy có chữ Nhật, ô chưa thấy có gợi ý (true|8|true|お茶を入れる|22:30–5:30 · cần Giường + chăn đệm / Nệm futon)
+  ✓ sổ không tràn ngang
+  ✓ thẻ Bàn học ghi việc của StackChan: Học bài · Viết nhật ký|StackChan: Học bài, Viết nhật ký (đúng giờ thì tự làm)
+  ✓ Lịch hoa hôm nay: Sinh hoạt ["お茶を入れる (Pha trà)","本を読む (Đọc sách)"]
+== 10. vùng: tắm biển, tắm suối
+  ✓ vừa mở vùng là có việc (số việc từng vùng: 4,2,2,2,2,2)
+  ✓ Bãi biển: bơi ngoài biển
+  ✓ Suối nước nóng chưa có bồn đá: tắm trong nhà tắm
+  ✓ đặt Bồn tắm đá: ngâm ngoài trời
+  ✓ việc ở vùng cũng vào sổ
+== 11. tắt, Đứng yên, cửa sổ nhỏ
+  ✓ tắt Thú nuôi ở ⚙: chip ẩn, StackChan không vẽ (true|0)
+  ✓ cảnh Đứng yên: khung hình không đổi
+  ✓ 720 × 520: chip trong cửa sổ, trang không tràn ngang
+  ✓ 720 × 520: thẻ trong cửa sổ
+  ✓ 1366 × 768, Trong nhà: chip ở hàng dưới dải cảnh, còn tên việc, không che StackChan đang ăn cơm: {"below":true,"name":true,"hit":false,"cut":false,"inside":true}
+  ✓ chip ở 1024 / 1280 / 1366 / 1920 px × 4 việc: dưới dải cảnh (không đè cảnh), không che StackChan, không cắt chữ, trong cửa sổ
+== 12. lỗi
+  ✓ không lỗi JS
+  ✓ nhật ký lỗi add-on trống
+KẾT QUẢ: 76/76

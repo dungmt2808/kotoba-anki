@@ -1,0 +1,99 @@
+{
+ "ngay": "2026-11-04",
+ "so": 1,
+ "rut_gon": false,
+ "may_viet": "Gemini (gemini-3.6-flash)",
+ "ngon_ngu": "en",
+ "bai": [
+  {
+   "loai": "tin_lang",
+   "tieu_de": "{Autumn||autumn} {Walk||walk} Near the {River||river}",
+   "doan": [
+    "{Yesterday||yesterday} {afternoon||afternoon}, the {weather||weather} was cool and bright in Kotoba Village. Mr. Oakley walked near the river because he wanted fresh air. Red and yellow leaves fell from every tree.",
+    "Ben the postman met Mr. Oakley near the old {bridge||bridge}. Ben carried a big {bag||bag} of {letters||letter}. They stopped and {talked||talk} about the {sea||sea} and autumn {flowers||flower}. It was a quiet {week||week} in the {village||village}."
+   ]
+  },
+  {
+   "loai": "truyen",
+   "ky": 1,
+   "ky_truoc": "",
+   "tieu_de": "A New Friend at the Café",
+   "doan": [
+    "Linh arrived in Kotoba Village this week. She got a job at The Kettle Café with Hana. Linh wants to learn English, so she talks to every customer. Yesterday, she served {tea||tea} and hot {water||water} to Mr. Oakley.",
+    "Suddenly, StackChan ran into the {small||small} café. The little robot carried a picture of an {apple||apple}. \"Look at my art!\" shouted StackChan happily. Linh smiled, but then she {dropped||drop} a cup on the {floor||floor}. Hana walked out of the kitchen and looked at Linh."
+   ]
+  },
+  {
+   "loai": "thong_bao",
+   "tieu_de": "Village Notices",
+   "doan": [
+    "◆ The village {bus||bus} will arrive late tomorrow morning because of the {cloud||cloud} and rain. Please wait at the {shop||shop}.",
+    "◆ Join us this {weekend||weekend} for autumn tea near the river garden. Bring your favorite cup and enjoy delicious cake with friends!"
+   ]
+  }
+ ],
+ "cau_hoi": [
+  {
+   "hoi": "Why did Mr. Oakley walk near the river?",
+   "chon": [
+    "Because he wanted fresh air.",
+    "Because he wanted to buy a bus ticket.",
+    "Because he lost his keys."
+   ],
+   "dung": 0,
+   "giai_thich": "Trong bài tin làng có câu: 'Mr. Oakley walked near the river because he wanted fresh air.'"
+  },
+  {
+   "hoi": "What did Linh drop on the floor?",
+   "chon": [
+    "An apple",
+    "A cup",
+    "A letter"
+   ],
+   "dung": 1,
+   "giai_thich": "Trong bài truyện có câu: 'Linh smiled, but then she dropped a cup on the floor.'"
+  },
+  {
+   "hoi": "Where should villagers wait for the bus tomorrow morning?",
+   "chon": [
+    "At the bridge",
+    "Near the river",
+    "At the shop"
+   ],
+   "dung": 2,
+   "giai_thich": "Trong phần thông báo có câu: 'Please wait at the shop.'"
+  }
+ ],
+ "chinh_ta": [
+  {
+   "cau": "Ben {carried||carry} a {big||big} {bag||bag} of {letters||letter}.",
+   "them_dap_an": []
+  },
+  {
+   "cau": "Linh {arrived||arrive} in Kotoba Village this {week||week}.",
+   "them_dap_an": []
+  },
+  {
+   "cau": "Please wait at the {shop||shop}.",
+   "them_dap_an": []
+  }
+ ],
+ "mau_cau": [
+  "cefr:A2-01",
+  "cefr:A2-15",
+  "cefr:A1-02"
+ ],
+ "tu_moi": [
+  {
+   "w": "drop",
+   "r": "/drɒp/",
+   "m": "làm rơi"
+  },
+  {
+   "w": "floor",
+   "r": "/flɔːr/",
+   "m": "sàn nhà"
+  }
+ ],
+ "tom_tat": "Số báo đầu tiên cập nhật không khí mùa thu thanh bình ở làng Kotoba, khởi đầu công việc của Linh tại quán cà phê The Kettle Café và một vài thông báo làng."
+}

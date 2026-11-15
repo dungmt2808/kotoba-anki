@@ -1,0 +1,45 @@
+# Trang web chung (GitHub Pages): đưa thư mục site/ lên https://<chủ repo>.github.io/<tên repo>/
+# Chạy khi site/ trên nhánh chính đổi, khi bấm "Run workflow", hoặc được dang_ma.yml gọi sau khi đăng mã mới.
+# Cần bật một lần: Settings → Pages → Build and deployment → Source: GitHub Actions.
+name: Trang web (GitHub Pages)
+
+on:
+  push:
+    branches: [master, main]
+    paths:
+      - "site/**"
+      - ".github/workflows/trang_web.yml"
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: trang-web-pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      # luôn lấy bản mới nhất của nhánh chính (khi dang_ma.yml gọi, mã vừa đăng nằm ở commit sau sự kiện)
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+      - name: Gom file của trang (bỏ công cụ)
+        run: |
+          mkdir -p _site
+          cp -r site/. _site/
+          rm -rf _site/tools
+          touch _site/.nojekyll
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deploy
+        uses: actions/deploy-pages@v4

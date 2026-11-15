@@ -1,0 +1,125 @@
+== core/test_offline.py
+== giải mã giọng đọc Gemini
+  ✓ WAV + khối C2PA → đúng PCM, bỏ header và C2PA
+  ✓ audio/l16 → giữ nguyên PCM
+  ✓ định dạng lạ (audio/mpeg) → AIError
+== sửa file lồng của 1.12 + tạo bù bản chậm
+  ✓ lần 1 sửa 2 file + tạo 1 bản chậm (3), lần 2 không làm gì (0)
+  ✓ file đã sửa chỉ còn tiếng (1,20 s)
+  ✓ am_thanh.json có bản chậm, bỏ cờ bo_cham
+== bản đọc chậm tại máy (WSOLA)
+  ✓ 2,0 s → 3.15 s (0,75× + 0,25 s lặng mỗi đầu)
+  ✓ giữa bản chậm vẫn có tiếng
+  ✓ kéo giãn 2 s mất 0.31 s
+== chọn model, hạn mức
+  ✓ model đã chạy được đi trước: ['gemini-3-flash-preview', 'gemini-flash-latest', 'gemini-flash-lite-latest', 'gemini-old']
+  ✓ bỏ model hết hạn mức + tên gọi tắt trỏ sang nó
+  ✓ hết chặn rồi thì dùng lại; có Flash-Lite
+  ✓ 429 theo ngày: chờ 3404 s, model thật gemini-3.6-flash
+  ✓ giờ đặt lại hạn mức mặc định: 08:00 UTC (= 15:00 giờ Việt Nam)
+  ✓ MAX_TOKENS vì nghĩ quá nhiều → thông báo đúng lý do
+== tự nối tra từ + kiểm tra (số N4 thật của 1.12)
+  ✓ chỗ tra từ 5 → 20
+  ✓ nối được 働きます → 働く, 勉強します → 勉強(する), 仕事: 今日、仕事、仲間、働く、元気、初めて、勉強、和食、小さい、料理、新しい、旅館
+  ✓ giữ okurigana ngoài ngoặc: {働|はたら|働く}きます
+  ✓ sau khi nối, không có lỗi máy: []
+  ✓ gợi ý chữ Hán khó (挨拶…)
+  ✓ số Flash-Lite: nhắc chưa dùng mẫu câu trọng tâm
+  ✓ số Flash-Lite: nhắc câu chép vắt qua 「」
+  ✓ số thường chỉ 2 bài → lỗi
+  ✓ chữ gửi giọng đọc: từ dễ đọc sai dùng kana
+== máy tự sửa lỗi máy móc (khỏi tốn lượt nhờ Gemini sửa)
+  ✓ 3日 / 2人 / 4日 đọc đặc biệt; 1日 để nguyên (ついたち hay いちにち)
+  ✓ thêm furigana chắc chắn: 願い, 何を, 私, 仕事 (từ trong phạm vi); 食 không chắc thì để Gemini: よろしくお[願|ねが]いします。[何|なに]を食べますか。[私|わたし]は[仕事|しごと]です
+  ✓ 1[日|にち] chỉ là cảnh báo, không chặn số báo
+  ✓ câu chép không có trong bài → máy chọn 2 câu trọn vẹn trong bài: ['村の小さな旅館「ことば屋」に', '昼の料理は和食にしました。']
+  ✓ câu máy chọn không vắt qua 「」 (ngoặc tên riêng đủ cặp thì được)
+== bản đầu JSON hỏng → viết lại từ đầu (không "sửa" một mẩu bài)
+  ✓ bản đầu hỏng → viết lại → lưu được số báo (ok)
+  ✓ lượt 2 dùng lại đúng lời nhắc viết (không phải lời nhắc sửa): ['viet_lai', 'viet', 'soat', 'ket_qua']
+== lượt sửa trả JSON hỏng → giữ bản trước
+  ✓ bản sửa hỏng bị bỏ qua, sửa lần 2 xong → lưu được số (['viet', 'sua', 'sua_hong', 'sua', 'soat', 'ket_qua'])
+== khoá Gemini kiểu mới "AQ." (1.22.2)
+  ✓ dán khoá AQ. có nháy / xuống dòng → làm sạch, giữ dấu chấm
+  ✓ khoá AQ. và khoá AIza cũ đều nhận
+  ✓ khoá có ký tự lạ vẫn bị từ chối, câu báo nhắc cả AQ. và AIza
+  ✓ khoá AQ. hiện dạng che: AQ.A…a5Ue
+  ✓ Báo lỗi che cả khoá AQ. lẫn AIza
+  ✓ 401 ACCESS_TOKEN_TYPE_UNSUPPORTED → hướng dẫn tạo khoá mới
+  ✓ khoá AQ. gửi nguyên vẹn bằng header x-goog-api-key, không nằm trong URL
+
+KẾT QUẢ: OK
+== core/test_more.py
+KẾT QUẢ: TẤT CẢ OK
+== core/test_119.py
+KẾT QUẢ: TẤT CẢ OK
+== core/test_116.py
+KẾT QUẢ: TẤT CẢ OK
+== core/test_1225.py
+KẾT QUẢ: TẤT CẢ OK
+== core/test_1226.py
+KẾT QUẢ: TẤT CẢ OK
+== core/test_123.py
+KẾT QUẢ: TẤT CẢ OK
+== core/test_124.py
+KẾT QUẢ: TẤT CẢ OK
+== core/test_125.py
+KẾT QUẢ: TẤT CẢ OK
+== core/test_1251.py
+KẾT QUẢ: TẤT CẢ OK
+== core/test_1253.py
+KẾT QUẢ: TẤT CẢ OK
+== core/test_1255.py
+KẾT QUẢ: TẤT CẢ OK
+== core/test_1258.py
+KẾT QUẢ: TẤT CẢ OK
+== core/test_1259.py
+KẾT QUẢ: TẤT CẢ OK
+== core/test_126.py
+KẾT QUẢ: TẤT CẢ OK
+== core/test_1261.py
+KẾT QUẢ: TẤT CẢ OK
+== core/test_128.py
+KẾT QUẢ: TẤT CẢ OK
+== core/test_130.py
+KẾT QUẢ: TẤT CẢ OK
+== core/test_1301.py (1.30.1: sàn / tường theo kiểu nhà, hỏi trước khi trả xu, thu gọn bảng Hôm nay, liên hệ, câu chữ)
+KẾT QUẢ: TẤT CẢ OK
+== core/test_1301.js (1.30.1: khách không đi ngang qua nhà, thú trong nhà đi theo gian)
+KẾT QUẢ: TẤT CẢ OK (11)
+== core/test_1303.py (1.30.3: bảng màu ấm + độ tương phản, câu chữ đồng bộ, số xu một kiểu, vườn mở qua ngày mới, Esc ở ⚙)
+KẾT QUẢ: TẤT CẢ OK
+== core/test_131.py (1.31: chuỗi từ lúc cài, chỉ nút Nhà & Cửa hàng mở bảng Nhà, đồ tự vẽ cho StackChan + StackChan sinh hoạt mặc đồ)
+    KẾT QUẢ: TẤT CẢ OK (43)
+KẾT QUẢ: TẤT CẢ OK
+== core/test_ngau_nhien.py (1.30: thao tác ngẫu nhiên + bất biến của ví)
+KẾT QUẢ: TẤT CẢ OK
+== core/test_ban_cu.py (1.30: mã thật của 1.23 – 1.28 đọc + lưu vườn 1.30)
+KẾT QUẢ: TẤT CẢ OK
+== audit_20261112/core_audit.py (1.28: lỗi đã sửa → giữ làm kiểm tra hồi quy)
+CORE AUDIT: 779/779 passed; 0 failed. /tmp/kb_core_audit.json
+== core/test_kit.py (bộ kotoba_daily)
+KẾT QUẢ: TẤT CẢ OK
+== core/test_dict.py
+KẾT QUẢ: OK
+== core/test_117.py
+KẾT QUẢ: TẤT CẢ OK
+== core/test_1191.py
+KẾT QUẢ: OK
+== core/test_120.py
+KẾT QUẢ: OK
+== core/test_121.py
+KẾT QUẢ: OK
+== core/test_122.py
+KẾT QUẢ: OK
+== core/test_118.py
+KẾT QUẢ: TẤT CẢ OK
+== core/test_guests.js
+KẾT QUẢ: 23/23
+== core/test_life.js
+KẾT QUẢ: TẤT CẢ OK (49)
+== core/test_colors.js
+KẾT QUẢ: 5/5
+== core/test_music.js
+KẾT QUẢ: TẤT CẢ OK
+TỔNG: TẤT CẢ OK

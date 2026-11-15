@@ -1,0 +1,60 @@
+== 1. độ tương phản chữ
+  ✓ màn chính ban ngày: 31 chữ, dưới ngưỡng 0
+  ✓ bảng ⚙: 50 chữ, dưới ngưỡng 0
+  ✓ Nhà → build: 58 chữ, dưới ngưỡng 0
+  ✓ Nhà → room: 79 chữ, dưới ngưỡng 0
+  ✓ Nhà → pet: 62 chữ, dưới ngưỡng 0
+  ✓ hộp hỏi trước khi trả xu: 62 chữ, dưới ngưỡng 0
+  ✓ Trò chơi: 18 chữ, dưới ngưỡng 0
+  ✓ Báo: 27 chữ, dưới ngưỡng 0
+  ✓ Lịch hoa: 84 chữ, dưới ngưỡng 0
+  ✓ Giao diện & chế độ học: 52 chữ, dưới ngưỡng 0
+  ✓ màn chính ban đêm: 31 chữ, dưới ngưỡng 0
+== 2. bong bóng lời linh vật
+  ✓ 1366 px: bong bóng không đè lên tên vườn / chip / Deck / xu
+  ✓ 1024 px: bong bóng không đè lên tên vườn / chip / Deck / xu
+  ✓ 720 px: bong bóng không đè lên tên vườn / chip / Deck / xu
+== 2b. nền trang: Giấy ấm / Trời xanh (người dùng: "màu xanh cũng đẹp luôn nên làm nút chuyển đổi")
+  ✓ ⚙ có "Nền trang: Giấy ấm / Trời xanh", mặc định Giấy ấm [["Giấy ấm",true],["Trời xanh",false]]
+  ✓ bấm "Trời xanh": nền trang xanh trời (rgb 108,194,250), nút tô vàng, bảng ⚙ vẫn mở
+  ✓ lưu ở config prefs (theo máy): kb-sky.page = sky
+  ✓ màn chính ban ngày, nền Trời xanh: 31 chữ, dưới ngưỡng 0
+  ✓ màn chính ban đêm, nền Trời xanh: 31 chữ, dưới ngưỡng 0
+  ✓ đóng / mở lại vườn: vẫn nền Trời xanh (rgb 57,103,133)
+  ✓ bấm "Giấy ấm" lúc 22 giờ: nền xanh chàm tối, không xám (rgb 35,42,74)
+  ✓ Giấy ấm ban ngày: kem (rgb 239,226,198)
+== 3. vườn để mở qua ngày mới
+  ✓ ngày chưa đổi: không dựng lại; đồng hồ 60 giây đang chạy
+  ✓ sang ngày mới: dựng lại đúng một lần (gọi lại cùng ngày không dựng nữa)
+  ✓ đổi lại ngày: dựng lại thêm một lần
+  ✓ mở lại cửa sổ vườn đang mở (phím tắt / nút ことば畑) sau khi qua ngày: dựng lại ngay
+  ✓ ngày mới khi đang mở bảng Nhà: không chào đè lên bảng
+  ✓ ngày mới khi đang ở màn chính: màn chào ngày mới hiện
+  ✓ bấm phím → vào vườn
+== 4a. Esc ở từng bảng nổi chỉ đóng bảng đó (1.30.2: Esc ở bảng ⚙ đóng cả cửa sổ vườn)
+  ✓ ⚙: mở → Esc → đóng bảng, cửa sổ vườn vẫn mở
+  ✓ Nhiệm vụ: mở → Esc → đóng bảng, cửa sổ vườn vẫn mở
+  ✓ Tin làng: mở → Esc → đóng bảng, cửa sổ vườn vẫn mở
+  ✓ Tìm deck: mở → Esc → đóng bảng, cửa sổ vườn vẫn mở
+  ✓ Chụp ảnh: mở → Esc → đóng bảng, cửa sổ vườn vẫn mở
+  ✓ StackChan: mở → Esc → đóng bảng, cửa sổ vườn vẫn mở
+  ✓ Thời tiết (thẻ Hôm nay): mở → Esc → đóng bảng, cửa sổ vườn vẫn mở
+  ✓ ⚙ trên bảng Nhà: Esc lần 1 chỉ đóng ⚙, lần 2 đóng Nhà
+== 4. bấm phím bừa
+  ✓ cửa sổ vườn không bị đóng (500 phím, 24 lần Esc khi có bảng mở)
+  ✓ không lúc nào có quá một bảng cùng mở (nhiều nhất 1)
+  ✓ xu không âm (43415 → 43415)
+  ✓ Esc đưa về màn chính, ruộng vẫn vẽ
+== 5. bấm chuột bừa
+  ✓ đã bấm 298 lần (hộp hỏi hiện 0 lần)
+  ✓ không lần trừ xu nào bỏ qua hộp hỏi
+  ✓ xu không âm, cửa sổ vườn còn mở
+== 6. đổi cỡ cửa sổ liên tục
+  ✓ 24 lần đổi cỡ: không tràn ngang, hàng dưới cảnh ≤ 2 dòng, thẻ Hôm nay trong dải cảnh
+== 7. cửa sổ rất lớn / rất nhỏ
+  ✓ 2560 × 1440: không tràn ngang (0)
+  ✓ 720 × 520: không tràn ngang (0)
+== 8. lỗi
+  ✓ không lỗi JS
+  ✓ nhật ký lỗi add-on trống
+KẾT QUẢ: 49/49

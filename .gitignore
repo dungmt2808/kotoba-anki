@@ -1,0 +1,35 @@
+# Bỏ qua tất cả
+/*
+
+# Trừ các mục sau
+!/.gitignore
+!/*.ankiaddon
+!/kotoba_daily/
+!README.md
+!/PHAT_TRIEN.md
+!/CLAUDE.md
+!/KE_HOACH_*.md
+!/docs/
+!/tests/
+!/kotoba_batake/
+!/site/
+!/.github/
+
+# không đưa file sinh ra khi chạy test
+__pycache__/
+*.pyc
+
+# mã nguồn add-on: không đưa dữ liệu người dùng / cấu hình máy
+/kotoba_batake/meta.json
+/kotoba_batake/user_files/*
+!/kotoba_batake/user_files/README.txt
+
+# kotoba_daily (15/11, repo công khai): dữ liệu riêng của người dùng — trích từ giáo trình có bản quyền, báo + giọng đọc,
+# tiến độ học — không đưa lên repo. (Thêm luật không gỡ file đang được theo dõi ở repo cũ; repo mới dựng không có các file này.)
+/kotoba_daily/nguon/*
+!/kotoba_daily/nguon/README.md
+/kotoba_daily/bao/
+/kotoba_daily/pham_vi.json
+/kotoba_daily/tien_do.json
+/kotoba_daily/lich_su.md
+/kotoba_daily/truyen_chung.json

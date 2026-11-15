@@ -1,0 +1,28 @@
+== màn chính gọn
+  ✓ góc sân chỉ còn một khung (thẻ Hôm nay)
+  ✓ thẻ Hôm nay có đủ: nhiệm vụ, báo, thú / nhà, cấu hình trường (kb-quest, kb-paper-btn, kb-news-btn, kb-care-btn, kb-cal-ask, kb-fields-btn)
+  ✓ thời tiết nằm trong thẻ Hôm nay
+  ✓ thời tiết chỉ còn biểu tượng, chữ đầy đủ ở tooltip
+  ✓ dòng thú / nhà: “2 bé cần ăn · Sửa nhà”
+  ✓ bỏ ô “cây khát” rời trên thanh trên
+  ✓ nút “Tưới ngay” có số 5 (cây khát)
+  ✓ nút “Nhà & Cửa hàng” chỉ hiện khi rê chuột, là nút bấm (1.31)
+  ✓ bảng nhiệm vụ mở dưới thẻ Hôm nay (không che các dòng)
+== thú không đè nhà
+  ✓ mô phỏng 12.000 bước: mép trái thú luôn ≥ cột 4 của sân (x ≥ 64, đo được 64.0)
+== Xưởng: kẻ thẳng, chữ nhật, làm lại, cỡ bút
+  ✓ chữ nhật + Shift: tô kín 10×10 = 100 ô (100)
+  ✓ chữ nhật thường: chỉ viền 10×10 = 36 ô (36)
+  ✓ kẻ thẳng + Shift: bám ngang, 21 ô (21)
+  ✓ bút cỡ 3: một chấm = 9 ô (9)
+  ✓ hoàn tác rồi làm lại (Ctrl+Y) về đúng hình
+== cửa sổ nhỏ
+  ✓ 1024×700: thẻ trò chơi không bị cắt chữ
+  ✓ 1024×700: danh sách đồ trong Nhà cao ≥ 180px
+== đỡ tốn CPU
+  ✓ sân + ruộng đứng yên: trang không tính lại style liên tục (1.0 lần/giây)
+  ✓ sân + ruộng đứng yên: dưới 80 ms việc / giây (28 ms)
+  ✓ không có lỗi JS
+  ✓ nhật ký lỗi add-on trống
+
+KẾT QUẢ: 21/21 đạt

@@ -1,0 +1,8 @@
+PASS {"case":"diary/profile-A-backup","pass":true,"actual":{"diary":"Synthetic private diary in profile A","backup":"Synthetic private diary in profile A"},"expected":{"diary":"Synthetic private diary in profile A","backup":"Synthetic private diary in profile A"}}
+PASS {"case":"diary/profile-B-starts-empty","pass":true,"actual":"","expected":""}
+FAIL {"case":"diary/profile-B-does-not-overwrite-A-backup","pass":false,"actual":{"same_file":true,"backup_A_exists":false},"expected":{"same_file":false,"backup_A_exists":true}}
+PASS {"case":"diary/profile-A-collection-still-correct","pass":true,"actual":"Synthetic private diary in profile A","expected":"Synthetic private diary in profile A"}
+PASS {"case":"paper/profile-A-fixture","pass":true,"actual":"SYNTHETIC PROFILE A ONLY","expected":"SYNTHETIC PROFILE A ONLY"}
+PASS {"case":"paper/observed-machine-wide-library","pass":true,"actual":[true,"SYNTHETIC PROFILE A ONLY",false],"expected":[true,"SYNTHETIC PROFILE A ONLY",false],"detail":{"notes":0,"same_library":true,"title":"SYNTHETIC PROFILE A ONLY","started_for_B":false,"tasks":0}}
+PASS {"case":"paper/profile-B-has-no-profile-A-notes","pass":true,"actual":0,"expected":0}
+LIFECYCLE AUDIT 6/7; 1 failed

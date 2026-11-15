@@ -1,0 +1,32 @@
+{
+  "modules": [
+    "core/test_offline.py",
+    "core/test_more.py",
+    "core/test_119.py",
+    "core/test_116.py",
+    "core/test_1225.py",
+    "core/test_1226.py",
+    "core/test_123.py",
+    "core/test_124.py",
+    "core/test_125.py",
+    "core/test_1251.py",
+    "core/test_1253.py",
+    "core/test_1255.py",
+    "core/test_1258.py",
+    "core/test_1259.py",
+    "core/test_126.py",
+    "core/test_1261.py",
+    "core/test_kit.py",
+    "core/test_dict.py",
+    "core/test_117.py",
+    "core/test_1191.py",
+    "core/test_120.py",
+    "core/test_121.py",
+    "core/test_122.py",
+    "core/test_118.py",
+    "core/test_guests.js",
+    "core/test_colors.js",
+    "core/test_music.js"
+  ],
+  "all_ok": true
+}

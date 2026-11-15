@@ -1,0 +1,30 @@
+== 1. Điền vào câu: sang câu mới thì tắt câu cũ
+  ✓ Điền vào câu chạy (deck có câu ví dụ + audio)
+  ✓ trả lời xong → đọc câu ví dụ của "勉強する": STOP | SoundOrVideoTag(filename='kbtest_ex_7.wav')
+  ✓ bấm "Câu tiếp" → tắt câu đang đọc trước khi sang câu 2: ["STOP"]
+  ✓ câu mới chưa đọc gì (không lộ đáp án)
+  ✓ bấm Câu tiếp ngay sau khi trả lời → không đọc câu nào (trước đây đọc luôn câu mới "先生"): ["STOP"]
+  ✓ phím Space (Câu tiếp) cũng tắt câu đang đọc: ["STOP"]
+== 2. Nghe tìm cây, Chợ sáng: sang câu / khách mới thì tắt từ đang đọc
+  ✓ Nghe tìm cây chạy (deck có audio từ)
+  ✓ Nghe tìm cây: Câu tiếp → tắt từ cũ rồi mới đọc từ mới: ["STOP","STOP","SoundOrVideoTag(filename='kbtest_w_4.wav')"]
+  ✓ Chợ sáng chạy, có khách
+  ✓ Chợ sáng: Khách tiếp → tắt từ đang đọc: ["STOP"]
+  ✓ Chợ sáng: Esc về menu giữa chừng → tắt từ đang đọc: ["STOP"]
+== 3. xong nhiệm vụ thứ ba trong trò chơi → huy hiệu + đèn trời hiện ngay
+  ✓ trước: nhiệm vụ 2/3, chưa có huy hiệu: {"joy":false,"badge":"","quest":"Nhiệm vụ 2/3 ▸"}
+  ✓ chơi hết 8 câu → màn kết quả, đã lưu
+  ✓ ngay khi lưu kết quả (chưa đổi deck): nhiệm vụ 3/3, huy hiệu "Xong 3 nhiệm vụ", đèn trời bật: {"joy":true,"badge":"Xong 3 nhiệm vụ","quest":"Nhiệm vụ 3/3 ✓","res":"✓ Xong nhiệm vụ: Chơi 1 trò chơi (+20 xu)Mở rương quà: Cờ cá chép koinobori +30 xu!","banner":false}
+  ✓ đang mở bảng Trò chơi: dải chúc mừng để dành (không nấp sau bảng)
+  ✓ đóng bảng Trò chơi → dải chúc mừng "Xong cả 3 nhiệm vụ hôm nay! Thả đèn trời nào"
+  ✓ đèn trời bay trên trời sân (điểm ảnh cam ở dải trời: 0 → 288)
+  ✓ đổi deck: huy hiệu vẫn còn: {"banner":false,"badge":"Xong 3 nhiệm vụ"}
+== 4. truyện chung: báo Claude Code (kotoba_daily, kỳ 1–8) → hôm nay Gemini viết báo → nối kỳ 9
+  ✓ Gemini (giả) viết xong báo tiếng Việt hôm nay
+  ✓ bộ nhớ truyện chung: kỳ 1–8 của Claude + kỳ 9 Gemini viết hôm nay: [[1,"claude"],[2,"claude"],[3,"claude"],[4,"claude"],[5,"claude"],[6,"claude"],[7,"claude"],[8,"claude"],[9,""]]
+  ✓ Gemini lập mạch nối kỳ 8 (hộp thiếc), số báo hôm nay in kỳ 9
+  ✓ nhật ký viết báo ghi "Nối 8 kỳ của báo Claude Code" (không vào nhật ký lỗi)
+  ✓ kotoba_daily/truyen_chung.json có kỳ 9 cho Claude đọc: [[9,true]]
+  ✓ sáng hôm sau pham_vi.py của Claude: kỳ tiếp theo 10, biết kỳ 9 đã đăng ở add-on: [10,[9],0]
+  ✓ nhật ký lỗi không có lỗi mới
+KẾT QUẢ: 25/25 đạt

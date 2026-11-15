@@ -1,0 +1,322 @@
+[
+  {
+    "script": "e2e.js",
+    "returncode": 0,
+    "seconds": 25.0,
+    "provider_stub": true,
+    "summaries": [
+      "KẾT QUẢ: 24/24 đạt"
+    ],
+    "failed_assertions": []
+  },
+  {
+    "script": "e2e_114.js",
+    "returncode": 0,
+    "seconds": 52.7,
+    "provider_stub": false,
+    "summaries": [
+      "KẾT QUẢ: 34/34 đạt"
+    ],
+    "failed_assertions": []
+  },
+  {
+    "script": "e2e_115.js",
+    "returncode": 0,
+    "seconds": 34.4,
+    "provider_stub": false,
+    "summaries": [
+      "KẾT QUẢ: 21/21 đạt"
+    ],
+    "failed_assertions": []
+  },
+  {
+    "script": "e2e_116.js",
+    "returncode": 0,
+    "seconds": 17.5,
+    "provider_stub": false,
+    "summaries": [
+      "KẾT QUẢ: 15/15 đạt"
+    ],
+    "failed_assertions": []
+  },
+  {
+    "script": "e2e_117.js",
+    "returncode": 0,
+    "seconds": 43.9,
+    "provider_stub": false,
+    "summaries": [
+      "KẾT QUẢ: 55/55 đạt"
+    ],
+    "failed_assertions": []
+  },
+  {
+    "script": "e2e_118.js",
+    "returncode": 0,
+    "seconds": 19.0,
+    "provider_stub": false,
+    "summaries": [
+      "KẾT QUẢ: 29/29 đạt"
+    ],
+    "failed_assertions": []
+  },
+  {
+    "script": "e2e_119.js",
+    "returncode": 2,
+    "seconds": 23.6,
+    "provider_stub": false,
+    "summaries": [],
+    "failed_assertions": [
+      "✗ hòm thư: 2 số tiếng Nhật + 1 số tiếng Anh = {\"enabled\":false,\"unread\":0,\"latest\":null,\"dict_done\":0,\"dict_total\":5,\"lang\":\"ja\",\"source\":\"\",\"ai_busy\":false,\"dict_ok\":true}",
+      "✗ chip “Báo mới 3”",
+      "✗ mở kệ báo (báo tiếng Nhật, không theo deck đang xem) + nút chuyển báo",
+      "✗ nút:  (không còn nhãn “Đọc báo:”)"
+    ]
+  },
+  {
+    "script": "e2e_120.js",
+    "returncode": 0,
+    "seconds": 48.7,
+    "provider_stub": true,
+    "summaries": [
+      "KẾT QUẢ: 103/103"
+    ],
+    "failed_assertions": []
+  },
+  {
+    "script": "e2e_121.js",
+    "returncode": 0,
+    "seconds": 63.8,
+    "provider_stub": false,
+    "summaries": [
+      "KẾT QUẢ: 47/47"
+    ],
+    "failed_assertions": []
+  },
+  {
+    "script": "e2e_122.js",
+    "returncode": 0,
+    "seconds": 42.3,
+    "provider_stub": false,
+    "summaries": [
+      "KẾT QUẢ: 64/64"
+    ],
+    "failed_assertions": []
+  },
+  {
+    "script": "e2e_1223.js",
+    "returncode": 0,
+    "seconds": 37.5,
+    "provider_stub": false,
+    "summaries": [
+      "KẾT QUẢ: 49/49"
+    ],
+    "failed_assertions": []
+  },
+  {
+    "script": "e2e_1226.js",
+    "returncode": 1,
+    "seconds": 51.6,
+    "provider_stub": false,
+    "summaries": [
+      "KẾT QUẢ: 39/40 đạt"
+    ],
+    "failed_assertions": [
+      "✗ lượt lưu xong mà add-on không ghi (vd. điện thoại) thì lần sau vẫn bù đúng 1 lượt (+null xu)"
+    ]
+  },
+  {
+    "script": "e2e_1228.js",
+    "returncode": 1,
+    "seconds": 20.0,
+    "provider_stub": false,
+    "summaries": [],
+    "failed_assertions": [
+      "✗ nguồn báo: gemini",
+      "✗ như \"auto\": có khoá thì Gemini viết (trước 1.22.8: \"\" — chưa có nguồn) [\"\",\"claude\",false]",
+      "✗ kệ báo tiếng Nhật đọc báo Gemini (false số)",
+      "✗ bao_dir chỉ có dấu cách → coi như trống",
+      "✗ hàng Báo tiếng Nhật ghi \"Nguồn: Claude Code (thẻ bên dưới)\"",
+      "✗ thẻ Gemini có nút \"Dùng Gemini cho báo tiếng Nhật\""
+    ]
+  },
+  {
+    "script": "e2e_123.js",
+    "returncode": 0,
+    "seconds": 81.9,
+    "provider_stub": true,
+    "summaries": [
+      "KẾT QUẢ: 66/66 đạt"
+    ],
+    "failed_assertions": []
+  },
+  {
+    "script": "e2e_124.js",
+    "returncode": 0,
+    "seconds": 36.9,
+    "provider_stub": false,
+    "summaries": [
+      "KẾT QUẢ: 26/26 đạt"
+    ],
+    "failed_assertions": []
+  },
+  {
+    "script": "e2e_125.js",
+    "returncode": 0,
+    "seconds": 54.4,
+    "provider_stub": false,
+    "summaries": [
+      "KẾT QUẢ: 31/31 đạt"
+    ],
+    "failed_assertions": []
+  },
+  {
+    "script": "e2e_1251.js",
+    "returncode": 0,
+    "seconds": 95.0,
+    "provider_stub": false,
+    "summaries": [
+      "KẾT QUẢ: 48/48 đạt"
+    ],
+    "failed_assertions": []
+  },
+  {
+    "script": "e2e_1255.js",
+    "returncode": 0,
+    "seconds": 50.6,
+    "provider_stub": false,
+    "summaries": [
+      "KẾT QUẢ: 48/48 đạt"
+    ],
+    "failed_assertions": []
+  },
+  {
+    "script": "e2e_1258.js",
+    "returncode": 0,
+    "seconds": 37.3,
+    "provider_stub": false,
+    "summaries": [
+      "KẾT QUẢ: 25/25 đạt"
+    ],
+    "failed_assertions": []
+  },
+  {
+    "script": "e2e_1259.js",
+    "returncode": 0,
+    "seconds": 43.7,
+    "provider_stub": false,
+    "summaries": [
+      "KẾT QUẢ: 36/36"
+    ],
+    "failed_assertions": []
+  },
+  {
+    "script": "e2e_126.js",
+    "returncode": 0,
+    "seconds": 61.6,
+    "provider_stub": false,
+    "summaries": [
+      "KẾT QUẢ: 39/39"
+    ],
+    "failed_assertions": []
+  },
+  {
+    "script": "e2e_1261.js",
+    "returncode": 0,
+    "seconds": 32.7,
+    "provider_stub": false,
+    "summaries": [
+      "KẾT QUẢ: 41/41"
+    ],
+    "failed_assertions": []
+  },
+  {
+    "script": "e2e_128.js",
+    "returncode": 0,
+    "seconds": 35.7,
+    "provider_stub": false,
+    "summaries": [
+      "KẾT QUẢ: 72/72"
+    ],
+    "failed_assertions": []
+  },
+  {
+    "script": "e2e_128_fix.js",
+    "returncode": 0,
+    "seconds": 15.0,
+    "provider_stub": false,
+    "summaries": [
+      "KẾT QUẢ: 26/26"
+    ],
+    "failed_assertions": []
+  },
+  {
+    "script": "e2e_130.js",
+    "returncode": 0,
+    "seconds": 98.1,
+    "provider_stub": false,
+    "summaries": [
+      "KẾT QUẢ: 76/76"
+    ],
+    "failed_assertions": []
+  },
+  {
+    "script": "e2e_1301.js",
+    "returncode": 2,
+    "seconds": 6.8,
+    "provider_stub": false,
+    "summaries": [],
+    "failed_assertions": []
+  },
+  {
+    "script": "e2e_1303.js",
+    "returncode": 0,
+    "seconds": 198.7,
+    "provider_stub": false,
+    "summaries": [
+      "KẾT QUẢ: 49/49"
+    ],
+    "failed_assertions": []
+  },
+  {
+    "script": "e2e_131.js",
+    "returncode": 1,
+    "seconds": 34.6,
+    "provider_stub": false,
+    "summaries": [
+      "KẾT QUẢ: 41/42 (dừng giữa chừng)"
+    ],
+    "failed_assertions": [
+      "✗ mốc = lúc mở hồ sơ (trước khi lập sổ bù xu)"
+    ]
+  },
+  {
+    "script": "e2e_fuzz.js",
+    "returncode": 0,
+    "seconds": 28.5,
+    "provider_stub": false,
+    "summaries": [
+      "KẾT QUẢ: 5/5"
+    ],
+    "failed_assertions": []
+  },
+  {
+    "script": "e2e_kit23.js",
+    "returncode": 0,
+    "seconds": 17.1,
+    "provider_stub": false,
+    "summaries": [
+      "KẾT QUẢ: 10/10 đạt"
+    ],
+    "failed_assertions": []
+  },
+  {
+    "script": "e2e_tour.js",
+    "returncode": 0,
+    "seconds": 24.0,
+    "provider_stub": false,
+    "summaries": [
+      "KẾT QUẢ: 12/12 đạt"
+    ],
+    "failed_assertions": []
+  }
+]

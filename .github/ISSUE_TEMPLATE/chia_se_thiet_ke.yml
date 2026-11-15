@@ -1,0 +1,35 @@
+name: Chia sẻ thiết kế
+description: Gửi mã thiết kế (món tự làm, vùng tự tạo, giống cây tự vẽ) để đăng lên mục Mã cộng đồng của trang ことば畑
+title: "[Chia sẻ] "
+labels: ["chia-se"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Cảm ơn bạn đã chia sẻ! Lấy mã trong vườn: **Nhà & Cửa hàng** → thiết kế bạn tự vẽ (tab **Xưởng** / **Vùng mới** / **Giống cây**) → bấm **“Mã chia sẻ”** — mã tự chép vào bộ nhớ tạm.
+        Người làm add-on xem rồi đăng lên mục **Mã cộng đồng**. Tên thiết kế lấy từ trong mã.
+  - type: textarea
+    id: ma
+    attributes:
+      label: Mã thiết kế
+      description: Dán nguyên cả đoạn, bắt đầu bằng KB1:
+      placeholder: "KB1:m:16:…"
+    validations:
+      required: true
+  - type: input
+    id: tac_gia
+    attributes:
+      label: Tên hiển thị
+      description: Tên / biệt danh hiện cạnh thiết kế trên trang. Để trống = Ẩn danh.
+  - type: input
+    id: ghi_chu
+    attributes:
+      label: Ghi chú
+      description: Vài chữ về thiết kế (không bắt buộc).
+  - type: checkboxes
+    id: dong_y
+    attributes:
+      label: Đồng ý
+      options:
+        - label: Tớ tự vẽ thiết kế này (hoặc được phép chia sẻ) và đồng ý để nó được đăng công khai cho mọi người chép.
+          required: true

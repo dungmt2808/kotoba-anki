@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ことば畑 · Kho hình &amp; mã thiết kế</title>
+<meta name="description" content="Mọi hình pixel của add-on Anki ことば畑 (Vườn từ vựng) và thiết kế người chơi tự vẽ, chia sẻ bằng mã KB1 — chép mã, dán vào Xưởng là có.">
+<meta property="og:title" content="ことば畑 · Kho hình & mã thiết kế">
+<meta property="og:description" content="Xem mọi hình pixel của vườn và chép mã thiết kế người chơi chia sẻ.">
+<meta name="theme-color" content="#fcefc9">
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=DotGothic16&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip" href="#main">Bỏ qua tới nội dung</a>
+<header class="hero">
+  <div class="hero-in">
+    <canvas id="hero-art" class="px" width="1" height="1" aria-hidden="true"></canvas>
+    <div class="hero-text">
+      <p class="kicker">Add-on Anki · Vườn từ vựng pixel</p>
+      <h1><span class="jp">ことば畑</span> Kho hình &amp; mã thiết kế</h1>
+      <p class="lead">Mọi hình pixel trong vườn, và thiết kế người chơi tự vẽ rồi chia sẻ. Thích món nào thì <b>chép mã</b>, mở <b>Nhà &amp; Cửa hàng → Xưởng</b>, dán vào ô <b>“Dán mã thiết kế”</b> là có.</p>
+    </div>
+  </div>
+  <nav class="tabs" aria-label="Các mục">
+    <a href="#kho" data-tab="kho">Kho hình <span class="n" id="n-kho"></span></a>
+    <a href="#cong-dong" data-tab="cong-dong">Mã cộng đồng <span class="n" id="n-cd"></span></a>
+    <a href="#xem-ma" data-tab="xem-ma">Xem mã</a>
+    <a href="#gui" data-tab="gui">Gửi thiết kế</a>
+    <a href="#bao-loi" data-tab="bao-loi">Báo lỗi</a>
+  </nav>
+</header>
+
+<main id="main">
+  <!-- ============ Kho hình ============ -->
+  <section id="tab-kho" class="tab" hidden>
+    <div class="toolbar">
+      <label class="search"><span class="sr">Tìm hình</span>
+        <input id="kho-q" type="search" placeholder="Tìm: mèo, đèn lồng, 桜, sakura…" autocomplete="off"></label>
+      <div class="chips" id="kho-chips" role="group" aria-label="Lọc theo nhóm"></div>
+    </div>
+    <p class="note" id="kho-note"></p>
+    <div id="kho-list"></div>
+  </section>
+
+  <!-- ============ Mã cộng đồng ============ -->
+  <section id="tab-cong-dong" class="tab" hidden>
+    <div class="intro card">
+      <h2>Mã cộng đồng</h2>
+      <p>Thiết kế người chơi tự vẽ trong Xưởng, đã được duyệt. Bấm <b>Chép mã</b> rồi dán vào ô <b>“Dán mã thiết kế”</b> ở đầu tab <b>Xưởng</b> → <b>Xem trước</b> → <b>Làm món này</b>. Xu trả như tự làm.</p>
+    </div>
+    <div class="toolbar">
+      <label class="search"><span class="sr">Tìm thiết kế</span>
+        <input id="cd-q" type="search" placeholder="Tìm theo tên thiết kế, người vẽ…" autocomplete="off"></label>
+      <div class="chips" id="cd-chips" role="group" aria-label="Lọc theo loại"></div>
+    </div>
+    <div id="cd-list" class="grid"></div>
+  </section>
+
+  <!-- ============ Xem mã ============ -->
+  <section id="tab-xem-ma" class="tab" hidden>
+    <div class="card intro">
+      <h2>Xem mã</h2>
+      <p>Dán một mã <code>KB1:…</code> để xem thiết kế trước khi làm trong vườn (hoặc kiểm tra mã của mình trước khi gửi). Trang chỉ đọc mã ngay trên máy bạn, không gửi đi đâu.</p>
+      <label for="xm-in" class="lbl">Mã thiết kế</label>
+      <textarea id="xm-in" rows="4" spellcheck="false" placeholder="KB1:m:16:…"></textarea>
+      <div class="row">
+        <button type="button" class="btn" id="xm-go">Xem trước</button>
+        <button type="button" class="btn btn-soft" id="xm-paste">Dán từ bộ nhớ tạm</button>
+        <button type="button" class="btn btn-soft" id="xm-clear">Xoá</button>
+      </div>
+      <p class="err" id="xm-err" role="alert" hidden></p>
+    </div>
+    <div id="xm-out"></div>
+  </section>
+
+  <!-- ============ Gửi thiết kế ============ -->
+  <section id="tab-gui" class="tab" hidden>
+    <div class="card intro">
+      <h2>Gửi thiết kế của bạn</h2>
+      <p>Vẽ được món đẹp, vùng đẹp, giống cây đẹp? Gửi mã để mọi người cùng chép. Người làm add-on xem rồi đăng lên mục <a href="#cong-dong">Mã cộng đồng</a>.</p>
+    </div>
+    <ol class="steps">
+      <li class="card">
+        <h3>Lấy mã trong vườn</h3>
+        <p>Mở <b>Nhà &amp; Cửa hàng</b>, tới thiết kế bạn tự vẽ rồi bấm <b>“Mã chia sẻ”</b> — mã tự chép vào bộ nhớ tạm:</p>
+        <ul>
+          <li><b>Món tự làm</b> — tab <b>Xưởng</b>, mục “Món của bạn”.</li>
+          <li><b>Vùng tự tạo</b> — tab <b>Vùng mới</b>.</li>
+          <li><b>Giống cây tự vẽ</b> — tab <b>Giống cây</b>, mục “Giống tự vẽ”.</li>
+        </ul>
+        <p class="muted">Đồ mặc tự vẽ cho StackChan và mẫu tường / sàn tự vẽ chưa có mã chia sẻ.</p>
+      </li>
+      <li class="card">
+        <h3>Xem lại (không bắt buộc)</h3>
+        <p>Dán mã vào mục <a href="#xem-ma">Xem mã</a> để chắc mã đủ, hình đúng.</p>
+      </li>
+      <li class="card">
+        <h3>Gửi đi</h3>
+        <label for="gui-ma" class="lbl">Mã thiết kế</label>
+        <textarea id="gui-ma" rows="3" spellcheck="false" placeholder="KB1:…"></textarea>
+        <label for="gui-ten" class="lbl">Tên hiển thị <span class="muted">(biệt danh cũng được; để trống = Ẩn danh)</span></label>
+        <input id="gui-ten" type="text" maxlength="40" autocomplete="nickname">
+        <label for="gui-note" class="lbl">Ghi chú <span class="muted">(tuỳ chọn)</span></label>
+        <input id="gui-note" type="text" maxlength="200">
+        <div class="row">
+          <a class="btn" id="gui-gh" href="#" target="_blank" rel="noopener">Gửi qua GitHub</a>
+          <a class="btn btn-soft" id="gui-mail" href="#">Gửi qua email</a>
+        </div>
+        <p class="muted" id="gui-hint">GitHub cần tài khoản (miễn phí). Không có thì gửi email — mã được điền sẵn vào thư.</p>
+      </li>
+      <li class="card">
+        <h3>Chờ duyệt</h3>
+        <p>Thiết kế được duyệt sẽ hiện ở mục Mã cộng đồng kèm tên hiển thị của bạn. Mã đăng công khai, ai cũng chép được.</p>
+        <p class="muted">Chỉ gửi thiết kế bạn tự vẽ (hoặc được phép chia sẻ), không dùng nội dung phản cảm.</p>
+      </li>
+    </ol>
+  </section>
+
+  <!-- ============ Báo lỗi ============ -->
+  <section id="tab-bao-loi" class="tab" hidden>
+    <div class="card intro">
+      <h2>Báo lỗi &amp; góp ý</h2>
+      <p>Gặp lỗi, có ý tưởng, hay thấy hình nào chưa đẹp? Gửi cho người làm add-on theo các bước dưới đây. Add-on không tự gửi gì lên mạng — bạn xem và sửa được báo cáo trước khi gửi.</p>
+    </div>
+    <ol class="steps">
+      <li class="card">
+        <h3>Mở cửa sổ Báo lỗi trong Anki</h3>
+        <p>Menu <b>Tools → ことば畑 · Báo lỗi</b>. Ghi vài dòng ở mục <b>“Mô tả lỗi”</b>. Báo cáo có phiên bản add-on / Anki và nhật ký lỗi; khoá Gemini và đường dẫn trên máy được tự che đi.</p>
+        <p class="muted">Vườn không mở được thì menu Tools vẫn có mục này.</p>
+      </li>
+      <li class="card">
+        <h3>Gửi đi</h3>
+        <ul>
+          <li><b>Gửi qua GitHub…</b> — báo cáo được chép sẵn, trang GitHub mở mẫu “Báo lỗi / góp ý”: dán vào ô <b>Báo cáo của add-on</b>, kéo thả ảnh chụp màn hình vào ô Mô tả. Cần tài khoản GitHub (miễn phí).</li>
+          <li><b>Gửi email…</b> — mở chương trình thư, dán báo cáo vào thư rồi gửi.</li>
+        </ul>
+        <p>Không có Anki ở đây? Gửi thẳng từ trang này:</p>
+        <div class="row">
+          <a class="btn" id="bl-gh" href="#" target="_blank" rel="noopener">Báo lỗi qua GitHub</a>
+          <a class="btn btn-soft" id="bl-mail" href="#">Gửi email</a>
+          <a class="btn btn-soft" id="bl-list" href="#" target="_blank" rel="noopener">Xem các lỗi đã báo</a>
+        </div>
+      </li>
+      <li class="card">
+        <h3>Góp ý hình</h3>
+        <p>Thấy hình có sẵn bị lỗi (thiếu một điểm viền, lệch màu…)? Trong vườn mở <b>Nhà</b>, ở món bạn đã có bấm <b>Góp ý hình</b>, vẽ lại rồi <b>Lưu file góp ý</b> — đính kèm file đó vào báo lỗi (chọn loại “Góp ý hình”). Bản sửa được nhận sẽ có ở bản cập nhật sau cho mọi người.</p>
+      </li>
+    </ol>
+  </section>
+</main>
+
+<dialog id="dlg" aria-labelledby="dlg-title">
+  <div class="dlg-in" tabindex="-1">
+    <button type="button" class="x" id="dlg-x" aria-label="Đóng">✕</button>
+    <div class="dlg-view"><div id="dlg-art" class="stage"></div></div>
+    <div class="dlg-info">
+      <p class="tag" id="dlg-tag"></p>
+      <h2 id="dlg-title"></h2>
+      <p class="jp-line" id="dlg-ja"></p>
+      <p id="dlg-desc"></p>
+      <p class="price" id="dlg-price"></p>
+      <div id="dlg-frames" class="chips small"></div>
+      <div id="dlg-extra"></div>
+      <div id="dlg-pal" class="pal" aria-label="Bảng màu"></div>
+      <div class="row" id="dlg-dl"></div>
+    </div>
+  </div>
+</dialog>
+
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+<footer class="foot">
+  <p>Hình xuất thẳng từ mã nguồn add-on <span id="ver"></span>. <a id="repo-link" href="https://github.com/dungmt2808/kotoba-anki" rel="noopener">Mã nguồn trên GitHub</a> · <a id="mail-link" href="#">Liên hệ</a></p>
+</footer>
+<script src="ve.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

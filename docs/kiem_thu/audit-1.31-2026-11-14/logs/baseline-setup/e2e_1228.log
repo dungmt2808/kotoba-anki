@@ -1,0 +1,19 @@
+== bao_dir trống (mặc định của người dùng mới)
+  ✓ không có thẻ Claude Code, vẫn có thẻ Gemini + Giọng đọc (2 thẻ)
+  ✓ tab Nguồn báo không còn chữ "Claude" / "kotoba_daily"
+  ✓ không có nút "Dùng Gemini cho báo tiếng Nhật" (đang dùng Gemini rồi)
+  ✓ nút "Nguồn báo…" không nhắc Claude Code ("Gemini viết báo mỗi sáng bằng từ bạn đang học")
+  ✗ nguồn báo: gemini
+== bao_source "claude" sửa tay, bao_dir trống
+  ✓ thẻ Claude Code vẫn ẩn
+  ✗ như "auto": có khoá thì Gemini viết (trước 1.22.8: "" — chưa có nguồn) ["","claude",false]
+  ✗ kệ báo tiếng Nhật đọc báo Gemini (false số)
+  ✗ bao_dir chỉ có dấu cách → coi như trống
+== bao_dir là thư mục kotoba_daily có thật
+  ✓ thẻ Claude Code hiện, đang dùng (auto + có bao_dir)
+  ✓ thẻ ghi "✓ 1 số" + "Đang dùng"
+  ✗ hàng Báo tiếng Nhật ghi "Nguồn: Claude Code (thẻ bên dưới)"
+  ✗ thẻ Gemini có nút "Dùng Gemini cho báo tiếng Nhật"
+LỖI Error: không thấy .kb-ai-card:not(.kb-ai-claude) .kb-ai-h button
+    at Page.click (/workspace/kotoba-anki/tests/anki/cdp.js:19:21)
+    at async /workspace/kotoba-anki/tests/anki/e2e_1228.js:107:3

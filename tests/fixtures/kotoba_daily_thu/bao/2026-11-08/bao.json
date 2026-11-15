@@ -1,0 +1,94 @@
+{
+ "ngay": "2026-11-08",
+ "so": 8,
+ "rut_gon": false,
+ "bai": [
+  {
+   "loai": "tin_that",
+   "tieu_de": "[明日|あした]は[東京|とうきょう]も[冬|ふゆ]の[寒|さむ]さに",
+   "nguon": "https://tenki.jp/lite/forecaster/t_yoshida/2026/11/08/41249.html",
+   "doan": [
+    "[明日|あした][9日|ここのか]は、[東北|とうほく]から[九州|きゅうしゅう]まで、[多|おお]くの[所|ところ]で{冷|つめ|冷たい}たい[雨|あめ]が[降|ふ]るそうです。",
+    "[東京|とうきょう]の[一番|いちばん][高|たか]い{気温|きおん|気温}は10[度|ど]ぐらいで、[今日|きょう]より8[度|ど]も[低|ひく]くなるそうです。1[月|がつ]の[初|はじ]めのような[寒|さむ]さです。[出|で]かけるときは、[暖|あたた]かい[服|ふく]を{用意|ようい|用意する}しておいたほうがいいでしょう。"
+   ],
+   "dich": [
+    "Nghe nói ngày mai, mùng 9, từ Tohoku đến Kyushu nhiều nơi sẽ có mưa lạnh.",
+    "Nghe nói nhiệt độ cao nhất ở Tokyo chỉ khoảng 10 độ, thấp hơn hôm nay tới 8 độ. Lạnh như đầu tháng 1 vậy. Khi ra ngoài, mọi người nên chuẩn bị sẵn quần áo ấm."
+   ]
+  },
+  {
+   "loai": "tin_lang",
+   "tieu_de": "[雨|あめ]の[前|まえ]に、[冬|ふゆ]の{支度|したく|支度する}",
+   "doan": [
+    "[今日|きょう]はいい[天気|てんき]ですが、[明日|あした]は[冷|つめ]たい[雨|あめ]になるそうです。{村長|そんちょう|村長}は、スタックちゃんに[畑|はたけ]の[仕事|しごと]を{任|まか|任せる}せました。「[雨|あめ]が[降|ふ]るまでに、[野菜|やさい]をとって、[落|お]ちた{葉|は|葉}も[集|あつ]めておいてね。」",
+    "スタックちゃんが[畑|はたけ]で[働|はたら]いている{間|あいだ|間}に、{村長|そんちょう|村長}は[家|いえ]の[中|なか]を[暖|あたた]かくしておきました。スタックちゃんは、[何|なに]をどこに{しまった||しまう}か、[全部|ぜんぶ]メモしておきました。",
+    "{ところで||ところで}、{村長|そんちょう|村長}の{宝|たから|宝くじ}くじは{当|あ|当たる}たったでしょうか。{村長|そんちょう|村長}は、まだ[見|み]るのが{不安|ふあん|不安}だそうです。"
+   ],
+   "dich": [
+    "Hôm nay trời đẹp, nhưng nghe nói ngày mai sẽ có mưa lạnh. Trưởng làng giao việc ngoài vườn cho Stack-chan. \"Trước khi trời mưa, cháu hái rau và gom sẵn cả lá rụng giúp ông nhé.\"",
+    "Trong lúc Stack-chan làm việc ngoài vườn, trưởng làng đã làm ấm sẵn trong nhà. Stack-chan ghi lại hết là đã cất cái gì ở đâu.",
+    "Nhân tiện, tờ vé số của trưởng làng có trúng không nhỉ? Nghe nói trưởng làng vẫn còn hồi hộp, chưa dám xem."
+   ]
+  },
+  {
+   "loai": "truyen",
+   "ky": 8,
+   "ky_truoc": "Bà はな và ông けん gặp lại nhau dưới gốc cây sau 60 năm; chiếc chìa khoá mở được hộp thiếc hai người để dưới hòn đá mùa hè năm ấy, và Lin kêu lên khi thấy thứ bên trong.",
+   "tieu_de": "{缶|かん|缶}の[中|なか]の[手紙|てがみ]",
+   "doan": [
+    "{缶|かん|缶}の[中|なか]には、[小|ちい]さい{袋|ふくろ|袋}と、[子|こ]どもの[字|じ]で[書|か]いた[手紙|てがみ]が[入|はい]っていました。「[何|なに]が[入|はい]っているか、[昨日|きのう]からずっと{気|き|気になる}になっていました！」とリンさんが[言|い]いました。おじいさんは[手紙|てがみ]を[読|よ]んで、[笑|わら]いました。「これは10[歳|さい]の[私|わたし]が[書|か]いたんです。」",
+    "「[大人|おとな]のぼくへ。[料理|りょうり]ができるようになりましたか。はなさんにまた[会|あ]いに[来|き]ましたか。」おばあさんが[言|い]いました。「あの[夏|なつ]、[二人|ふたり]でこの[木|き]の{種|たね|種}をとったわね。けんちゃんが[町|まち]に[帰|かえ]った[後|あと]で、[私|わたし]が[一|ひと]つだけ{植|う|植える}えたの。それが、この[木|き]よ。」",
+    "みんなが[話|はな]している{間|あいだ|間}に、[空|そら]が[暗|くら]くなってきました。「[雨|あめ]が[降|ふ]るまでに、[村|むら]に[帰|かえ]りましょう。」はなさんが[言|い]いました。おばあさんは{袋|ふくろ|袋}をリンさんに{渡|わた|渡す}しました。「この{種|たね|種}を、ことば[畑|はたけ]に[植|う]えてくれる？」{袋|ふくろ|袋}の[底|そこ]には、[種|たね]のほかに、もう[一|ひと]つ[何|なに]かが[入|はい]っていました。"
+   ],
+   "dich": [
+    "Trong hộp thiếc có một chiếc túi nhỏ và một lá thư viết bằng chữ của trẻ con. Lin nói: \"Từ hôm qua đến giờ em cứ thắc mắc mãi không biết bên trong có gì!\" Ông cụ đọc lá thư rồi bật cười. \"Cái này là tôi viết hồi 10 tuổi.\"",
+    "\"Gửi tớ khi đã lớn. Cậu đã biết nấu ăn chưa? Cậu đã quay lại gặp bà Hana chưa?\" Bà cụ nói: \"Mùa hè năm ấy, hai bà cháu mình đã cùng nhặt hạt của cái cây này nhỉ. Sau khi Ken-chan về thị trấn, bà đã gieo đúng một hạt. Đó chính là cái cây này đấy.\"",
+    "Trong lúc mọi người trò chuyện, trời tối dần. \"Mình về làng trước khi trời mưa thôi ạ,\" chị Hana nói. Bà cụ trao chiếc túi cho Lin. \"Cháu gieo những hạt này ở vườn Kotoba giúp bà nhé?\" Dưới đáy túi, ngoài hạt giống ra còn có một thứ gì đó nữa."
+   ]
+  },
+  {
+   "loai": "thong_bao",
+   "tieu_de": "ことば[村|むら]からのお[知|し]らせ",
+   "doan": [
+    "◆ [明日|あした]は[冷|つめ]たい[雨|あめ]です。[傘|かさ]がない{お客様|おきゃくさま|お客様}は、{フロント||フロント}の[傘|かさ]をお[使|つか]いください。",
+    "◆ ことば[屋|や]から：[今夜|こんや]のお[風呂|ふろ]は、9[時|じ]までにお[入|はい]りください。"
+   ],
+   "dich": [
+    "◆ Ngày mai trời mưa lạnh. Quý khách nào không có ô, xin mời dùng ô ở quầy lễ tân.",
+    "◆ Từ quán trọ Kotoba: tối nay, xin quý khách vui lòng tắm trước 9 giờ."
+   ]
+  }
+ ],
+ "cau_hoi": [
+  {
+   "hoi": "[明日|あした]の[東京|とうきょう]の[一番|いちばん][高|たか]い{気温|きおん|気温}は、[何度|なんど]ぐらいですか。",
+   "chon": ["18[度|ど]", "10[度|ど]", "8[度|ど]"],
+   "dung": 1,
+   "giai_thich": "Tin thật, đoạn 2: 東京の一番高い気温は10度ぐらいで、今日より8度も低くなる (cao nhất khoảng 10 độ, thấp hơn hôm nay tới 8 độ)."
+  },
+  {
+   "hoi": "スタックちゃんが[畑|はたけ]で[働|はたら]いている{間|あいだ|間}に、{村長|そんちょう|村長}は[何|なに]をしましたか。",
+   "chon": ["[家|いえ]の[中|なか]を[暖|あたた]かくしておきました", "{宝|たから|宝くじ}くじを[買|か]いに[行|い]きました", "[野菜|やさい]を[全部|ぜんぶ]とりました"],
+   "dung": 0,
+   "giai_thich": "Tin làng, đoạn 2: 村長は家の中を暖かくしておきました (trưởng làng làm ấm sẵn trong nhà). Hái rau là việc của StackChan, còn vé số thì không thấy nói ông đi mua."
+  },
+  {
+   "hoi": "{缶|かん|缶}の[中|なか]には[何|なに]が[入|はい]っていましたか。",
+   "chon": ["[古|ふる]い[鍵|かぎ]と[地図|ちず]", "[写真|しゃしん]とお[金|かね]", "[小|ちい]さい{袋|ふくろ|袋}と[手紙|てがみ]"],
+   "dung": 2,
+   "giai_thich": "Truyện, đoạn 1: 缶の中には、小さい袋と、子どもの字で書いた手紙が入っていました (trong hộp có một túi nhỏ và lá thư viết bằng chữ trẻ con)."
+  }
+ ],
+ "chinh_ta": [
+  {"cau": "[雨|あめ]が[降|ふ]るまでに、[野菜|やさい]をとって、[落|お]ちた{葉|は|葉}も[集|あつ]めておいてね。", "them_dap_an": ["雨が降るまでに、野菜をとって、落ちたはも集めておいてね"]},
+  {"cau": "みんなが[話|はな]している{間|あいだ|間}に、[空|そら]が[暗|くら]くなってきました。", "them_dap_an": []},
+  {"cau": "[今夜|こんや]のお[風呂|ふろ]は、9[時|じ]までにお[入|はい]りください。", "them_dap_an": ["今夜のおふろは、9時までにお入りください"]}
+ ],
+ "mau_cau": ["gungun_n4:30-7", "gungun_n4:30-9", "gungun_n4:30-11", "gungun_n4:29-5"],
+ "tu_moi": [
+  {"w": "村長", "r": "そんちょう", "m": "trưởng làng"},
+  {"w": "葉", "r": "は", "m": "lá cây"},
+  {"w": "種", "r": "たね", "m": "hạt giống"}
+ ],
+ "tom_tat": "Mai 9/11 từ Tohoku đến Kyushu mưa lạnh, Tokyo cao nhất chỉ khoảng 10 độ, lạnh như đầu tháng 1; ở ことば村, StackChan hái rau và gom lá trước cơn mưa, còn trưởng làng chưa dám xem vé số trúng hay không. Truyện kỳ 8: trong hộp thiếc có lá thư ông けん viết năm 10 tuổi và túi hạt giống; cái cây chính là do bà はな gieo, và dưới đáy túi còn một thứ nữa."
+}

@@ -1,0 +1,11 @@
+FAIL {"case":"tour/help-from-games/visible-after-panel-closes","pass":false,"actual":[0,false],"expected":[0,true],"finding":"F08"}
+FAIL {"case":"tour/help-from-calendar/visible-after-panel-closes","pass":false,"actual":[0,false],"expected":[0,true],"finding":"F08"}
+FAIL {"case":"tour/help-from-home/visible-after-panel-closes","pass":false,"actual":[0,false],"expected":[0,true],"finding":"F08"}
+FAIL {"case":"tour/help-from-paper/visible-after-panel-closes","pass":false,"actual":[0,false],"expected":[0,true],"finding":"F08"}
+PASS {"case":"tour/native-escape-keeps-garden-open","pass":true,"actual":true,"expected":true}
+PASS {"case":"tour/native-escape-dismisses-help","pass":true,"actual":-1,"expected":-1}
+PASS {"case":"billing/start-on-A","pass":true,"actual":true,"expected":true}
+PASS {"case":"billing/deferred-before-result","pass":true,"actual":[250,true,1],"expected":[250,true,1]}
+PASS {"case":"billing/B-initial","pass":true,"actual":{"profile":"AuditSecond","coins":600},"expected":{"profile":"AuditSecond","coins":600}}
+FAIL {"case":"billing/A-completion-must-not-charge-B","pass":false,"actual":500,"expected":600,"finding":"F09"}
+LIFECYCLE AUDIT: 5/10 passed; 5 failed

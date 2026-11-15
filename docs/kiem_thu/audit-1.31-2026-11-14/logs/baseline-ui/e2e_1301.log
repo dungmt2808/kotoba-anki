@@ -1,0 +1,53 @@
+== 1. hỏi trước khi trả xu
+  ✓ mặc định bật (kịch bản này tắt ASK_TEST_OFF)
+  ✓ bấm đúp chuột thật vào Mua (Chậu cây): chỉ mở hộp hỏi, chưa trừ xu
+  ✓ hộp ghi tên món, giá và số xu còn lại: Mua Chậu cây?Giá 40 xu · còn lại 4.960 xu.Mua xong đặt luôn vào cảnh.HuỷMua · 40
+  ✓ Thôi → đóng hộp, không trừ xu
+  ✓ bấm đồng ý ngay sau khi hộp hiện (< 0,45 giây): bỏ qua, hộp vẫn mở
+  ✓ Esc: chỉ đóng hộp, bảng Nhà vẫn mở
+  ✓ bấm ra nền mờ = Thôi
+  ✓ Enter → mua, trừ đúng 40 xu
+  ✓ mua xong vào chế độ đặt như trước
+  ✓ bấm nút Mua trong hộp (sau 0,45 giây) → mua
+  ✓ tắt ở ⚙ → config ui.buyask = off
+  ✓ đang tắt: bấm Mua là mua ngay (như bản cũ)
+== 2. tường & sàn theo kiểu nhà
+  ✓ Bếp: Theo kiểu nhà + "Sàn Phòng chính" (không có Sàn Bếp trùng): Theo kiểu nhà · Sàn Phòng chính · Gỗ sồi sáng
+  ✓ ô "Theo kiểu nhà" ở Bếp vẽ sàn Bếp (khác sàn phòng chính) — trước 1.30.1 luôn vẽ sàn phòng chính
+  ✓ Dùng cho Bếp: không hỏi, không trừ xu, Bếp lát sàn phòng chính
+  ✓ thẻ "Sàn Phòng chính" ghi Đang dùng
+  ✓ Phòng chính: có "Sàn Bếp", không có ô trùng
+  ✓ mua giấy dán tường: hỏi trước
+  ✓ đồng ý → −150 xu, dán luôn cho phòng chính
+  ✓ màn chính: sàn Bếp là gỗ sáng (điểm ảnh 214,151,89 · phòng chính 224,164,101)
+== 3. thu gọn bảng Hôm nay
+  ✓ Trong nhà 1366 × 768, bảng mở: che ngôi nhà 91 px (đúng điều người dùng thấy)
+  ✓ nút đổi cảnh / chụp ảnh / Hôm nay ở hàng ngay dưới dải cảnh, không đè lên cảnh, một hàng ({"over":[],"oneRow":true,"below":true,"right":true})
+  ✓ bấm → bảng thu gọn, không che nhà
+  ✓ nút ghi số lượt hôm nay: "Hôm nay 0/30"
+  ✓ lưu ui.today = mini (theo máy)
+  ✓ đóng / mở lại vườn: vẫn thu gọn
+  ✓ bấm lần nữa → bảng hiện lại
+  ✓ nút "–" trên bảng → thu gọn
+  ✓ 1024 px, yard: không nút nào đè lên cảnh, hàng dưới cảnh một dòng ({"over":[],"h":32,"noScroll":true})
+  ✓ 1024 px, house: không nút nào đè lên cảnh, hàng dưới cảnh một dòng ({"over":[],"h":32,"noScroll":true})
+  ✓ 1850 px, yard: không nút nào đè lên cảnh, hàng dưới cảnh một dòng ({"over":[],"h":32,"noScroll":true})
+  ✓ 1850 px, house: không nút nào đè lên cảnh, hàng dưới cảnh một dòng ({"over":[],"h":32,"noScroll":true})
+== 4. liên hệ
+  ✓ ⚙: dòng góp ý / báo lỗi có email + nút Góp ý qua email
+  ✓ không mở được chương trình thư → chép sẵn địa chỉ email
+  ✓ cửa sổ Báo lỗi: email + nút Gửi email… (Gửi email… · Chép · Lưu ra file… · Xoá nhật ký lỗi · Đóng)
+== 5. Lịch hoa, gánh hàng rong, Xưởng cũng hỏi
+  ✓ Lịch hoa → Mua vé giữ chuỗi: hỏi trước
+  ✓ đồng ý → −150 xu
+  ✓ gánh hàng rong: hỏi trước
+  ✓ đồng ý → −200 xu
+  ✓ Xưởng → Chế tác: hỏi trước (sau khi đã kiểm hình)
+  ✓ Esc: chỉ đóng hộp, Xưởng vẫn mở, chưa trừ xu
+  ✓ đồng ý → món mới được làm, trừ xu
+== 6. khách đi bộ không đi ngang qua nhà
+  ✓ mèo hoang vào từ mép phải (x đầu 372, mép thấy 362), không lúc nào đè lên nhà (x nhỏ nhất 145)
+== 7. lỗi
+  ✓ không lỗi JS
+  ✓ nhật ký lỗi add-on trống
+KẾT QUẢ: 45/45

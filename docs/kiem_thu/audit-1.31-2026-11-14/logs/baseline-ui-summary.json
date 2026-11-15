@@ -1,0 +1,460 @@
+{
+  "scripts": 32,
+  "passed_scripts": 32,
+  "assertions_total": 1345,
+  "assertions_passed": 1345,
+  "results": [
+    {
+      "script": "e2e.js",
+      "returncode": 0,
+      "seconds": 25.0,
+      "provider_stub": true,
+      "summaries": [
+        "KẾT QUẢ: 24/24 đạt"
+      ],
+      "failed_assertions": [],
+      "log": "baseline-ui/e2e.log",
+      "assertions_passed": 24,
+      "assertions_total": 24,
+      "ok": true
+    },
+    {
+      "script": "e2e_114.js",
+      "returncode": 0,
+      "seconds": 52.7,
+      "provider_stub": false,
+      "summaries": [
+        "KẾT QUẢ: 34/34 đạt"
+      ],
+      "failed_assertions": [],
+      "log": "baseline-ui/e2e_114.log",
+      "assertions_passed": 34,
+      "assertions_total": 34,
+      "ok": true
+    },
+    {
+      "script": "e2e_115.js",
+      "returncode": 0,
+      "seconds": 34.4,
+      "provider_stub": false,
+      "summaries": [
+        "KẾT QUẢ: 21/21 đạt"
+      ],
+      "failed_assertions": [],
+      "log": "baseline-ui/e2e_115.log",
+      "assertions_passed": 21,
+      "assertions_total": 21,
+      "ok": true
+    },
+    {
+      "script": "e2e_116.js",
+      "returncode": 0,
+      "seconds": 17.5,
+      "provider_stub": false,
+      "summaries": [
+        "KẾT QUẢ: 15/15 đạt"
+      ],
+      "failed_assertions": [],
+      "log": "baseline-ui/e2e_116.log",
+      "assertions_passed": 15,
+      "assertions_total": 15,
+      "ok": true
+    },
+    {
+      "script": "e2e_117.js",
+      "returncode": 0,
+      "seconds": 43.9,
+      "provider_stub": false,
+      "summaries": [
+        "KẾT QUẢ: 55/55 đạt"
+      ],
+      "failed_assertions": [],
+      "log": "baseline-ui/e2e_117.log",
+      "assertions_passed": 55,
+      "assertions_total": 55,
+      "ok": true
+    },
+    {
+      "script": "e2e_118.js",
+      "returncode": 0,
+      "seconds": 19.0,
+      "provider_stub": false,
+      "summaries": [
+        "KẾT QUẢ: 29/29 đạt"
+      ],
+      "failed_assertions": [],
+      "log": "baseline-ui/e2e_118.log",
+      "assertions_passed": 29,
+      "assertions_total": 29,
+      "ok": true
+    },
+    {
+      "version": "26",
+      "script": "e2e_119.js",
+      "returncode": 0,
+      "seconds": 31.3,
+      "summaries": [
+        "KẾT QUẢ: 55/55 đạt"
+      ],
+      "failed_assertions": [],
+      "provider_stub": false,
+      "log": "baseline-ui/e2e_119.log",
+      "assertions_passed": 55,
+      "assertions_total": 55,
+      "ok": true
+    },
+    {
+      "script": "e2e_120.js",
+      "returncode": 0,
+      "seconds": 48.7,
+      "provider_stub": true,
+      "summaries": [
+        "KẾT QUẢ: 103/103"
+      ],
+      "failed_assertions": [],
+      "log": "baseline-ui/e2e_120.log",
+      "assertions_passed": 103,
+      "assertions_total": 103,
+      "ok": true
+    },
+    {
+      "script": "e2e_121.js",
+      "returncode": 0,
+      "seconds": 63.8,
+      "provider_stub": false,
+      "summaries": [
+        "KẾT QUẢ: 47/47"
+      ],
+      "failed_assertions": [],
+      "log": "baseline-ui/e2e_121.log",
+      "assertions_passed": 47,
+      "assertions_total": 47,
+      "ok": true
+    },
+    {
+      "script": "e2e_122.js",
+      "returncode": 0,
+      "seconds": 42.3,
+      "provider_stub": false,
+      "summaries": [
+        "KẾT QUẢ: 64/64"
+      ],
+      "failed_assertions": [],
+      "log": "baseline-ui/e2e_122.log",
+      "assertions_passed": 64,
+      "assertions_total": 64,
+      "ok": true
+    },
+    {
+      "script": "e2e_1223.js",
+      "returncode": 0,
+      "seconds": 37.5,
+      "provider_stub": false,
+      "summaries": [
+        "KẾT QUẢ: 49/49"
+      ],
+      "failed_assertions": [],
+      "log": "baseline-ui/e2e_1223.log",
+      "assertions_passed": 49,
+      "assertions_total": 49,
+      "ok": true
+    },
+    {
+      "version": "26",
+      "script": "e2e_1226.js",
+      "returncode": 0,
+      "seconds": 54.2,
+      "summaries": [
+        "KẾT QUẢ: 40/40 đạt"
+      ],
+      "failed_assertions": [],
+      "provider_stub": false,
+      "log": "baseline-ui/e2e_1226.log",
+      "assertions_passed": 40,
+      "assertions_total": 40,
+      "ok": true
+    },
+    {
+      "version": "26",
+      "script": "e2e_1228.js",
+      "returncode": 0,
+      "seconds": 29.6,
+      "summaries": [
+        "KẾT QUẢ: 26/26 đạt"
+      ],
+      "failed_assertions": [],
+      "provider_stub": false,
+      "log": "baseline-ui/e2e_1228.log",
+      "assertions_passed": 26,
+      "assertions_total": 26,
+      "ok": true
+    },
+    {
+      "script": "e2e_123.js",
+      "returncode": 0,
+      "seconds": 81.9,
+      "provider_stub": true,
+      "summaries": [
+        "KẾT QUẢ: 66/66 đạt"
+      ],
+      "failed_assertions": [],
+      "log": "baseline-ui/e2e_123.log",
+      "assertions_passed": 66,
+      "assertions_total": 66,
+      "ok": true
+    },
+    {
+      "script": "e2e_124.js",
+      "returncode": 0,
+      "seconds": 36.9,
+      "provider_stub": false,
+      "summaries": [
+        "KẾT QUẢ: 26/26 đạt"
+      ],
+      "failed_assertions": [],
+      "log": "baseline-ui/e2e_124.log",
+      "assertions_passed": 26,
+      "assertions_total": 26,
+      "ok": true
+    },
+    {
+      "script": "e2e_125.js",
+      "returncode": 0,
+      "seconds": 54.4,
+      "provider_stub": false,
+      "summaries": [
+        "KẾT QUẢ: 31/31 đạt"
+      ],
+      "failed_assertions": [],
+      "log": "baseline-ui/e2e_125.log",
+      "assertions_passed": 31,
+      "assertions_total": 31,
+      "ok": true
+    },
+    {
+      "script": "e2e_1251.js",
+      "returncode": 0,
+      "seconds": 95.0,
+      "provider_stub": false,
+      "summaries": [
+        "KẾT QUẢ: 48/48 đạt"
+      ],
+      "failed_assertions": [],
+      "log": "baseline-ui/e2e_1251.log",
+      "assertions_passed": 48,
+      "assertions_total": 48,
+      "ok": true
+    },
+    {
+      "script": "e2e_1253.js",
+      "returncode": 0,
+      "summaries": [
+        "KẾT QUẢ: 39/39 đạt"
+      ],
+      "failed_assertions": [],
+      "provider_stub": false,
+      "log": "baseline-ui/e2e_1253.log",
+      "assertions_passed": 39,
+      "assertions_total": 39,
+      "ok": true
+    },
+    {
+      "script": "e2e_1255.js",
+      "returncode": 0,
+      "seconds": 50.6,
+      "provider_stub": false,
+      "summaries": [
+        "KẾT QUẢ: 48/48 đạt"
+      ],
+      "failed_assertions": [],
+      "log": "baseline-ui/e2e_1255.log",
+      "assertions_passed": 48,
+      "assertions_total": 48,
+      "ok": true
+    },
+    {
+      "script": "e2e_1258.js",
+      "returncode": 0,
+      "seconds": 37.3,
+      "provider_stub": false,
+      "summaries": [
+        "KẾT QUẢ: 25/25 đạt"
+      ],
+      "failed_assertions": [],
+      "log": "baseline-ui/e2e_1258.log",
+      "assertions_passed": 25,
+      "assertions_total": 25,
+      "ok": true
+    },
+    {
+      "script": "e2e_1259.js",
+      "returncode": 0,
+      "seconds": 43.7,
+      "provider_stub": false,
+      "summaries": [
+        "KẾT QUẢ: 36/36"
+      ],
+      "failed_assertions": [],
+      "log": "baseline-ui/e2e_1259.log",
+      "assertions_passed": 36,
+      "assertions_total": 36,
+      "ok": true
+    },
+    {
+      "script": "e2e_126.js",
+      "returncode": 0,
+      "seconds": 61.6,
+      "provider_stub": false,
+      "summaries": [
+        "KẾT QUẢ: 39/39"
+      ],
+      "failed_assertions": [],
+      "log": "baseline-ui/e2e_126.log",
+      "assertions_passed": 39,
+      "assertions_total": 39,
+      "ok": true
+    },
+    {
+      "script": "e2e_1261.js",
+      "returncode": 0,
+      "seconds": 32.7,
+      "provider_stub": false,
+      "summaries": [
+        "KẾT QUẢ: 41/41"
+      ],
+      "failed_assertions": [],
+      "log": "baseline-ui/e2e_1261.log",
+      "assertions_passed": 41,
+      "assertions_total": 41,
+      "ok": true
+    },
+    {
+      "script": "e2e_128.js",
+      "returncode": 0,
+      "seconds": 35.7,
+      "provider_stub": false,
+      "summaries": [
+        "KẾT QUẢ: 72/72"
+      ],
+      "failed_assertions": [],
+      "log": "baseline-ui/e2e_128.log",
+      "assertions_passed": 72,
+      "assertions_total": 72,
+      "ok": true
+    },
+    {
+      "script": "e2e_128_fix.js",
+      "returncode": 0,
+      "seconds": 15.0,
+      "provider_stub": false,
+      "summaries": [
+        "KẾT QUẢ: 26/26"
+      ],
+      "failed_assertions": [],
+      "log": "baseline-ui/e2e_128_fix.log",
+      "assertions_passed": 26,
+      "assertions_total": 26,
+      "ok": true
+    },
+    {
+      "script": "e2e_130.js",
+      "returncode": 0,
+      "seconds": 98.1,
+      "provider_stub": false,
+      "summaries": [
+        "KẾT QUẢ: 76/76"
+      ],
+      "failed_assertions": [],
+      "log": "baseline-ui/e2e_130.log",
+      "assertions_passed": 76,
+      "assertions_total": 76,
+      "ok": true
+    },
+    {
+      "version": "26",
+      "script": "e2e_1301.js",
+      "returncode": 0,
+      "seconds": 60.2,
+      "summaries": [
+        "KẾT QUẢ: 45/45"
+      ],
+      "failed_assertions": [],
+      "provider_stub": false,
+      "log": "baseline-ui/e2e_1301.log",
+      "assertions_passed": 45,
+      "assertions_total": 45,
+      "ok": true
+    },
+    {
+      "script": "e2e_1303.js",
+      "returncode": 0,
+      "seconds": 198.7,
+      "provider_stub": false,
+      "summaries": [
+        "KẾT QUẢ: 49/49"
+      ],
+      "failed_assertions": [],
+      "log": "baseline-ui/e2e_1303.log",
+      "assertions_passed": 49,
+      "assertions_total": 49,
+      "ok": true
+    },
+    {
+      "version": "26",
+      "script": "e2e_131.js",
+      "returncode": 0,
+      "seconds": 89.4,
+      "summaries": [
+        "KẾT QUẢ: 89/89 — TẤT CẢ OK"
+      ],
+      "failed_assertions": [],
+      "provider_stub": false,
+      "log": "baseline-ui/e2e_131.log",
+      "assertions_passed": 89,
+      "assertions_total": 89,
+      "ok": true
+    },
+    {
+      "script": "e2e_fuzz.js",
+      "returncode": 0,
+      "seconds": 28.5,
+      "provider_stub": false,
+      "summaries": [
+        "KẾT QUẢ: 5/5"
+      ],
+      "failed_assertions": [],
+      "log": "baseline-ui/e2e_fuzz.log",
+      "assertions_passed": 5,
+      "assertions_total": 5,
+      "ok": true
+    },
+    {
+      "script": "e2e_kit23.js",
+      "returncode": 0,
+      "seconds": 17.1,
+      "provider_stub": false,
+      "summaries": [
+        "KẾT QUẢ: 10/10 đạt"
+      ],
+      "failed_assertions": [],
+      "log": "baseline-ui/e2e_kit23.log",
+      "assertions_passed": 10,
+      "assertions_total": 10,
+      "ok": true
+    },
+    {
+      "script": "e2e_tour.js",
+      "returncode": 0,
+      "seconds": 24.0,
+      "provider_stub": false,
+      "summaries": [
+        "KẾT QUẢ: 12/12 đạt"
+      ],
+      "failed_assertions": [],
+      "log": "baseline-ui/e2e_tour.log",
+      "assertions_passed": 12,
+      "assertions_total": 12,
+      "ok": true
+    }
+  ]
+}

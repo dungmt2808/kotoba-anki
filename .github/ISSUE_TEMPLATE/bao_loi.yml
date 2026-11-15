@@ -1,0 +1,39 @@
+name: Báo lỗi / góp ý
+description: Báo lỗi của add-on ことば畑, góp ý, ý tưởng, hoặc gửi file "Góp ý hình"
+title: "[Báo lỗi] "
+labels: ["bao-loi"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Cảm ơn bạn đã báo! Trong Anki: **Tools → ことば畑 · Báo lỗi → Gửi qua GitHub…** — báo cáo (phiên bản, nhật ký lỗi; khoá Gemini và đường dẫn trên máy đã được che) được chép sẵn, dán vào ô **Báo cáo của add-on** bên dưới.
+        Không có tài khoản GitHub thì gửi email **maitrongdung10@gmail.com** (nút **Gửi email…** trong cùng cửa sổ).
+  - type: dropdown
+    id: loai
+    attributes:
+      label: Loại
+      options:
+        - Lỗi
+        - Góp ý / ý tưởng
+        - Góp ý hình (đính kèm file)
+    validations:
+      required: true
+  - type: textarea
+    id: mo_ta
+    attributes:
+      label: Mô tả
+      description: Chuyện gì xảy ra? Bạn mong nó thế nào?
+    validations:
+      required: true
+  - type: textarea
+    id: cac_buoc
+    attributes:
+      label: Các bước làm lại lỗi
+      description: Bấm gì, ở đâu thì gặp lỗi (nếu là lỗi).
+      placeholder: "1. Mở vườn\n2. Bấm …\n3. …"
+  - type: textarea
+    id: bao_cao
+    attributes:
+      label: Báo cáo của add-on
+      description: Dán báo cáo từ Tools → ことば畑 · Báo lỗi. Ảnh chụp màn hình / file Góp ý hình thì kéo thả vào ô Mô tả.
+      render: text

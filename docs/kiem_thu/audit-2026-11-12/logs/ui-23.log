@@ -1,0 +1,50 @@
+PASS {"case":"diary/0/fix-start","pass":true,"actual":["","wait"],"expected":["","wait"]}
+PASS {"case":"diary/0/fix-completed","pass":true,"actual":"done","expected":"done"}
+FAIL {"case":"diary/0/preserve-visible-text","pass":false,"actual":"Đã lưu.","expected":"Đã lưu. Nhật ký vừa gõ (0 ms).","finding":"F01"}
+FAIL {"case":"diary/0/preserve-after-next-save","pass":false,"actual":"Đã lưu. Ghi tiếp.","expected":"Đã lưu. Nhật ký vừa gõ (0 ms). Ghi tiếp.","finding":"F01"}
+PASS {"case":"diary/300/fix-start","pass":true,"actual":["","wait"],"expected":["","wait"]}
+PASS {"case":"diary/300/fix-completed","pass":true,"actual":"done","expected":"done"}
+FAIL {"case":"diary/300/preserve-visible-text","pass":false,"actual":"Đã lưu.","expected":"Đã lưu. Nhật ký vừa gõ (300 ms).","finding":"F01"}
+FAIL {"case":"diary/300/preserve-after-next-save","pass":false,"actual":"Đã lưu. Ghi tiếp.","expected":"Đã lưu. Nhật ký vừa gõ (300 ms). Ghi tiếp.","finding":"F01"}
+PASS {"case":"diary/1000/fix-start","pass":true,"actual":["","wait"],"expected":["","wait"]}
+PASS {"case":"diary/1000/fix-completed","pass":true,"actual":"done","expected":"done"}
+FAIL {"case":"diary/1000/preserve-visible-text","pass":false,"actual":"Đã lưu.","expected":"Đã lưu. Nhật ký vừa gõ (1000 ms).","finding":"F01"}
+FAIL {"case":"diary/1000/preserve-after-next-save","pass":false,"actual":"Đã lưu. Ghi tiếp.","expected":"Đã lưu. Nhật ký vừa gõ (1000 ms). Ghi tiếp.","finding":"F01"}
+PASS {"case":"diary/1800/fix-start","pass":true,"actual":["","wait"],"expected":["","wait"]}
+PASS {"case":"diary/1800/fix-completed","pass":true,"actual":"done","expected":"done"}
+PASS {"case":"diary/1800/preserve-visible-text","pass":true,"actual":"Đã lưu. Nhật ký vừa gõ (1800 ms).","expected":"Đã lưu. Nhật ký vừa gõ (1800 ms).","finding":"F01"}
+PASS {"case":"diary/1800/preserve-after-next-save","pass":true,"actual":"Đã lưu. Nhật ký vừa gõ (1800 ms). Ghi tiếp.","expected":"Đã lưu. Nhật ký vừa gõ (1800 ms). Ghi tiếp.","finding":"F01"}
+PASS {"case":"history/cache-initial-27","pass":true,"actual":"Còn 3 ngày nữa đủ 30 ngày có ôn","expected":"Còn 3 ngày nữa đủ 30 ngày có ôn"}
+FAIL {"case":"history/cache-invalidate-on-sync","pass":false,"actual":[27,29],"expected":[29,29],"finding":"F07"}
+FAIL {"case":"history/news-updates-on-sync","pass":false,"actual":"Còn 3 ngày nữa đủ 30 ngày có ôn","expected":"Còn 1 ngày nữa đủ 30 ngày có ôn","finding":"F07"}
+PASS {"case":"history/control-after-cache-reset","pass":true,"actual":"Còn 1 ngày nữa đủ 30 ngày có ôn","expected":"Còn 1 ngày nữa đủ 30 ngày có ôn"}
+PASS {"case":"greeting/hour-0/sky","pass":true,"actual":0,"expected":0}
+FAIL {"case":"greeting/hour-0/words","pass":false,"actual":"おはよう！","expected":"こんばんは！","finding":"F04"}
+PASS {"case":"greeting/hour-0.5/sky","pass":true,"actual":0.5,"expected":0.5}
+PASS {"case":"greeting/hour-0.5/words","pass":true,"actual":"こんばんは！","expected":"こんばんは！","finding":"F04"}
+PASS {"case":"greeting/hour-0.99/sky","pass":true,"actual":0.99,"expected":0.99}
+PASS {"case":"greeting/hour-0.99/words","pass":true,"actual":"こんばんは！","expected":"こんばんは！","finding":"F04"}
+PASS {"case":"greeting/hour-1/sky","pass":true,"actual":1,"expected":1}
+PASS {"case":"greeting/hour-1/words","pass":true,"actual":"こんばんは！","expected":"こんばんは！","finding":"F04"}
+PASS {"case":"greeting/hour-3.99/sky","pass":true,"actual":3.99,"expected":3.99}
+PASS {"case":"greeting/hour-3.99/words","pass":true,"actual":"こんばんは！","expected":"こんばんは！","finding":"F04"}
+PASS {"case":"greeting/hour-4/sky","pass":true,"actual":4,"expected":4}
+PASS {"case":"greeting/hour-4/words","pass":true,"actual":"おはよう！","expected":"おはよう！","finding":"F04"}
+PASS {"case":"greeting/hour-10.99/sky","pass":true,"actual":10.99,"expected":10.99}
+PASS {"case":"greeting/hour-10.99/words","pass":true,"actual":"おはよう！","expected":"おはよう！","finding":"F04"}
+PASS {"case":"greeting/hour-11/sky","pass":true,"actual":11,"expected":11}
+PASS {"case":"greeting/hour-11/words","pass":true,"actual":"こんにちは！","expected":"こんにちは！","finding":"F04"}
+PASS {"case":"greeting/hour-17.99/sky","pass":true,"actual":17.99,"expected":17.99}
+PASS {"case":"greeting/hour-17.99/words","pass":true,"actual":"こんにちは！","expected":"こんにちは！","finding":"F04"}
+PASS {"case":"greeting/hour-18/sky","pass":true,"actual":18,"expected":18}
+PASS {"case":"greeting/hour-18/words","pass":true,"actual":"こんばんは！","expected":"こんばんは！","finding":"F04"}
+PASS {"case":"greeting/hour-23.99/sky","pass":true,"actual":23.99,"expected":23.99}
+PASS {"case":"greeting/hour-23.99/words","pass":true,"actual":"こんばんは！","expected":"こんばんは！","finding":"F04"}
+PASS {"case":"news/rich-fixture-button-reachable","pass":true,"actual":true,"expected":true}
+FAIL {"case":"news/rich-popup-fits-1366x860","pass":false,"actual":false,"expected":true,"finding":"F05"}
+FAIL {"case":"news/open-popup-follows-window-resize","pass":false,"actual":false,"expected":true,"finding":"F05"}
+PASS {"case":"news/escape-keeps-garden-open","pass":true,"actual":true,"expected":true}
+PASS {"case":"news/escape-closes-popup","pass":true,"actual":true,"expected":true}
+PASS {"case":"diagnostics/no-js-exceptions","pass":true,"actual":[],"expected":[]}
+PASS {"case":"diagnostics/no-addon-errors","pass":true,"actual":[],"expected":[]}
+UI AUDIT: 38/49 passed; 11 failed

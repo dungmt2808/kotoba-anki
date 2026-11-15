@@ -1,0 +1,25 @@
+{
+  "reviewed_version": "1.26.1",
+  "reviewed_commit": "6021c579b1062f7e6c707a6e55a9d7feb7a8fa00",
+  "initial_commit": "33a80df4454949cb84f61ad26d6c33cf33d76e52",
+  "date_utc": "2026-11-12",
+  "platform": "Linux",
+  "runtimes": [
+    {
+      "anki": "26.9.4",
+      "python": "3.13.5",
+      "qt": "6.12.0"
+    },
+    {
+      "anki": "23.10.1",
+      "python": "3.9.25",
+      "qt": "6.6.0"
+    }
+  ],
+  "addon_zip_sha256": "f9874b96e8caa03d2d7d174aa58549f8804c4b305568a1fe5b7f51aa212bf6b0",
+  "zip_matches_source": true,
+  "ai_provider": "controlled local callbacks; no real Gemini success claimed",
+  "sync": "local collection transfer and real sync-finished hook; no real AnkiWeb sync claimed",
+  "log_formatting": "Trailing line-end whitespace normalized; no test values or outcomes rewritten.",
+  "report_finalized_utc": "2026-11-13"
+}

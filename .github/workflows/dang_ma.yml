@@ -1,0 +1,98 @@
+# Đăng mã thiết kế lên mục "Mã cộng đồng" của trang web.
+# Cách 1 — duyệt issue: người chơi gửi qua mẫu "Chia sẻ thiết kế"; người làm add-on gắn nhãn `duyet` vào issue →
+#   kiểm mã bằng hàm của add-on (site/tools/them_ma.py) → thêm vào site/data/cong_dong.json → trả lời + đóng issue → cập nhật trang.
+#   Mã hỏng: trả lời lý do và gỡ nhãn `duyet` (sửa issue rồi gắn lại là được).
+# Cách 2 — mã nhận qua email / tin nhắn: Actions → "Đăng mã thiết kế" → Run workflow → dán mã + tên người vẽ.
+# Chỉ người có quyền ghi vào repo mới gắn nhãn / chạy tay được. Nội dung issue chỉ đi qua biến môi trường + file sự kiện
+# (không chèn vào lệnh shell).
+name: Đăng mã thiết kế
+
+on:
+  issues:
+    types: [labeled]
+  workflow_dispatch:
+    inputs:
+      ma:
+        description: "Mã thiết kế (KB1:…)"
+        required: true
+      tac_gia:
+        description: "Tên người vẽ (để trống = Ẩn danh)"
+        required: false
+      ghi_chu:
+        description: "Ghi chú (không bắt buộc)"
+        required: false
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: dang-ma-thiet-ke
+  cancel-in-progress: false
+
+jobs:
+  them:
+    if: github.event_name == 'workflow_dispatch' || github.event.label.name == 'duyet'
+    runs-on: ubuntu-latest
+    outputs:
+      ok: ${{ steps.add.outputs.ok }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+      - name: Kiểm mã và thêm vào trang
+        id: add
+        env:
+          MA: ${{ inputs.ma }}
+          TAC_GIA: ${{ inputs.tac_gia }}
+          GHI_CHU: ${{ inputs.ghi_chu }}
+        run: python3 site/tools/them_ma.py github
+      - name: Lưu (commit + push)
+        if: steps.add.outputs.ok == '1'
+        env:
+          MA_ID: ${{ steps.add.outputs.id }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add site/data/cong_dong.json
+          git commit -m "Mã cộng đồng: thêm $MA_ID"
+          for i in 1 2 3 4; do
+            if git push; then exit 0; fi
+            sleep $((i * 5))
+            git pull --rebase
+          done
+          exit 1
+      - name: Trả lời issue
+        if: github.event_name == 'issues' && steps.add.outputs.msg != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          NUM: ${{ github.event.issue.number }}
+          OK: ${{ steps.add.outputs.ok }}
+          MSG: ${{ steps.add.outputs.msg }}
+        run: |
+          printf '%s\n' "$MSG" > _tra_loi.md
+          gh issue comment "$NUM" --body-file _tra_loi.md
+          if [ "$OK" = "1" ]; then
+            gh issue close "$NUM" --reason completed
+          else
+            gh issue edit "$NUM" --remove-label duyet
+          fi
+      - name: Kết quả (chạy tay)
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          OK: ${{ steps.add.outputs.ok }}
+          MSG: ${{ steps.add.outputs.msg }}
+        run: |
+          printf '%s\n' "$MSG" >> "$GITHUB_STEP_SUMMARY"
+          if [ "$OK" != "1" ]; then exit 1; fi
+
+  # commit của github-actions không tự kích hoạt trang_web.yml → gọi thẳng
+  trang:
+    needs: them
+    if: needs.them.outputs.ok == '1'
+    uses: ./.github/workflows/trang_web.yml
+    permissions:
+      contents: read
+      pages: write
+      id-token: write

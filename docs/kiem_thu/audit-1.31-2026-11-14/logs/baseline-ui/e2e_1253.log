@@ -1,0 +1,47 @@
+== 1. cài đặt ⚙ còn sau khi tắt hẳn Anki rồi mở lại
+  ✓ trang có GardenPrefs + cài đặt Python đưa vào <head>
+  ✓ config "prefs" có Trời & giờ: Cố định Hoàng hôn, Mưa {"mode":"fixed","dayMinutes":24,"fixedHour":18.4,"weather":"rain","page":"paper"}
+  ✓ config "prefs" có Nhạc nền Bật (config mặc định của máy test: Tắt), Âm lượng 25%, Đuổi quạ chữ Nhật: {"kb-sky":"{\"mode\":\"fixed\",\"dayMinutes\":24,\"fixedHour\":18.4,\"weather\":\"rain\",\"page\":\"paper\"}","kb-music":"1","kb-music-vol":"0.25","kb-crow-mode":"jp"}
+  ✓ tắt hẳn Anki (kill) rồi mở lại cùng thư mục hồ sơ
+  ✓ localStorage trống sau khi mở lại (đúng như máy người dùng: 1.25.2 mất cài đặt ở đây)
+  ✓ Trời & giờ còn nguyên: {"mode":"fixed","dayMinutes":24,"fixedHour":18.4,"weather":"rain","page":"paper"}
+  ✓ bảng ⚙ hiện đúng: Cố định · Hoàng hôn · Mưa
+  ✓ Nhạc nền Bật, Âm lượng 25%, Đuổi quạ chữ Nhật còn nguyên
+  ✓ chọn Tuyết rồi đóng cửa sổ vườn ngay: vẫn lưu (snow)
+== 2. cỡ cảnh Lớn: trời phía trên mái khớp hai bên, mưa cả phía trên mái
+  ✓ cỡ Lớn ở 1920 × 1080: có khoảng trời phía trên nhà (44 điểm ảnh, ×4)
+  ✓ trời sát mép mái cùng màu với vườn trái / phải ở mọi hàng (36 hàng khớp, 0 lệch )
+  ✓ trời mưa: có hạt mưa phía trên nhà, cả trước mái (2245 điểm ảnh màu mưa; 1.25.2: 0)
+== 3. Undo lượt ôn vẫn Redo được
+  ✓ ôn 1 thẻ: +3 xu, revlog +1
+  ✓ Undo: ví đọc ra đã trả lại xu (10003 → 10000), revlog về như cũ
+  ✓ Edit → Redo vẫn bấm được: "Answer Card" (1.25.2: mất Redo)
+  ✓ vườn làm mới sau Undo: xu vẫn đúng, Redo vẫn còn
+  ✓ Redo: lượt ôn về lại, xu như lúc vừa ôn (10003), không cộng hai lần
+  ✓ Undo rồi ôn thẻ khác: phần trả lại được ghi cùng lần ghi ví (collection 10003 = ví 10003)
+  ✓ lần bù xu điện thoại sau đó không trả lại xu cho lượt đã Undo
+  ✓ Undo rồi đồng bộ: trước đồng bộ ví ghi đúng 10000 xu (collection 10003 → 10000)
+  ✓ Undo rồi đóng hồ sơ: ghi 10000 xu trước khi đóng (collection 10003 → 10000), sổ phần thưởng xoá
+== 4. Xưởng: vẽ → đổi cỡ → Esc
+  ✓ vẽ 8 ô rồi đổi cỡ 24×24: hình còn, lịch sử hoàn tác trống ({"size":24,"ink":8,"undo":0})
+  ✓ Esc lần đầu: Xưởng còn mở, nhắc "Bấm Esc lần nữa để bỏ, không lưu hình này." (1.25.2: đóng luôn, mất hình)
+  ✓ Esc lần hai: đóng
+  ✓ chưa vẽ gì, chỉ đổi cỡ: Esc một lần là đóng (không hỏi thừa)
+== 5. đổi deck nguồn → gợi ý luyện viết tính lại
+  ✓ đổi deck nguồn tiếng Anh → tính lại (1.25.2: vẫn từ cũ); chọn lại như cũ → dùng lại bản đã tính
+== 6. deck chọn ở ô Deck của vườn còn sau khi đóng / mở lại vườn; cài đặt có chữ lạ không làm hỏng trang
+  ✓ chọn deck B rồi đóng vườn: mở lại vẫn là deck B (1.25.2: về deck cũ nếu chưa bấm Tưới ngay)
+  ✓ ô Deck trên thanh trên hiện đúng deck B
+  ✓ cài đặt có "</script>" trong giá trị: trang vẫn chạy, giá trị đọc lại nguyên vẹn (chèn vào <head> an toàn)
+== 7. (1.25.4, người dùng chọn A') cỡ cảnh Lớn: điểm ảnh ×5 thay vì ×7, trời cao hơn; bỏ bụi cây vuông cạnh nhà
+  ✓ cỡ Lớn: điểm ảnh ×5 (1.25.3: ×7)
+  ✓ dải vẫn cao như cũ (530 px), phần thêm là 30 hàng trời phía trên cảnh
+  ✓ trời liền một dải qua mép trên cảnh (21/21 cột; trời không bắt đầu lại ở hàng 30)
+  ✓ trời mưa: có mưa ở phần trời thêm (400 điểm ảnh)
+  ✓ ban đêm: phần trời thêm tối như trời trong cảnh (độ sáng 36 / 35)
+  ✓ bấm vào hòm thư (có độ lệch trời phía trên) vẫn trúng hòm thư: ["mailbox",false]
+  ✓ Trong nhà: không còn bụi cây vuông xanh hai bên nhà (0 điểm đo trúng màu bụi / viền)
+  ✓ cỡ Lớn ×5 lúc giông ban đêm: vẽ sân 6.41 ms / khung
+  ✓ cỡ Vừa không đổi: ×4, không có trời thêm
+  ✓ nhật ký lỗi không có lỗi mới
+KẾT QUẢ: 39/39 đạt

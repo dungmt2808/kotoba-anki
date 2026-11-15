@@ -1,0 +1,81 @@
+== 1. lượt ôn → số chỗ lấp lánh
+  ✓ 0 lượt → 0 chỗ mở (open=0, next=10)
+  ✓ 9 lượt → 0 chỗ mở (open=0, next=10)
+  ✓ 10 lượt → 1 chỗ mở (open=1, next=20)
+  ✓ 29 lượt → 2 chỗ mở (open=2, next=30)
+  ✓ 30 lượt → 3 chỗ mở (open=3, next=null)
+  ✓ 45 lượt → 3 chỗ mở (open=3, next=null)
+  ✓ Tin làng: "Ôn thêm 6 lượt nữa…" (Ôn thêm 6 lượt nữa mở một chỗ lấp lánh | Hôm nay chồn tuyết có thể ghé Sân vườn lúc tuyết rơi)
+  ✓ chưa mở vùng nào → cả 3 chỗ ở Sân vườn
+  ✓ Python chốt cảnh 3 chỗ của ngày vào khoá kotoba_batake_events
+== 2. bấm chỗ lấp lánh trên dải cảnh
+  ✓ dải cảnh vẽ chỗ lấp lánh số 1
+  ✓ chỉ 1 chỗ (12 lượt)
+  ✓ bấm chuột thật vào chỗ lấp lánh
+  ✓ thẻ "Nhặt được!" hiện
+  ✓ thẻ: 小石 · こいし · hòn sỏi · Nhặt được! Bộ Sân vườn 1 / 6
+  ✓ chỗ vừa nhặt biến mất
+  ✓ Python ghi 1 món + chỗ 1 đã nhặt
+  ✓ món mới: không đổi xu
+  ✓ nhặt lại chỗ 1 → từ chối (Chỗ này nhặt rồi.)
+  ✓ chỗ 2 chưa mở (12 lượt) → "Ôn thêm 8 lượt nữa để mở chỗ lấp lánh này."
+  ✓ sai cảnh → từ chối (Chỗ lấp lánh đã đổi chỗ, mở lại vườn nhé.)
+  ✓ chỗ số 7 → từ chối
+  ✓ bấm đúp chỗ 2 → nhặt đúng một lần
+  ✓ lệnh lặp gửi thẳng → vẫn một lần
+== 3. nhiều ngày → đủ bộ Sân vườn, nhặt trùng
+  ✓ đủ 6 món Sân vườn → quà Tủ kính sưu tầm (2026-11-13)
+  ✓ Tủ kính vào Kho đồ (owned = 1)
+  ✓ khoá sự kiện ghi đã tặng quà bộ Sân vườn
+  ✓ nhặt trùng → +3 xu, không quà lần hai
+  ✓ Tủ kính vẫn 1
+== 4. Album → Hộp sưu tầm
+  ✓ tab Nhà tên "Album"
+  ✓ ba nút: Khách ghé vườn · 0/16 | Hộp sưu tầm · 6/42* | Sinh hoạt · 0/67
+  ✓ 7 bộ, 42 ô, 6 đã nhặt
+  ✓ bộ Sân vườn đủ, Bãi biển "mở vùng để nhặt"
+  ✓ ô chưa nhặt: "? ?" (? ?chưa nhặt)
+  ✓ 1024×700: ô Hộp sưu tầm không tràn chữ / ra ngoài danh sách (6 cột)
+  ✓ 720×520: ô Hộp sưu tầm không tràn chữ / ra ngoài danh sách (3 cột)
+  ✓ nút Khách ghé vườn → album khách như cũ
+  ✓ Trang trí sân: nhóm "Hộp sưu tầm · gánh hàng rong", không nút Mua (Quà đủ bộ Đền trên núi (Hộp sưu tầm) | Chỉ có ở gánh hàng rong · 280 xu)
+  ✓ cửa hàng không bán món riêng của gánh hàng (Món này chỉ có ở gánh hàng rong (thứ Tư, Chủ nhật).)
+== 5. mở vùng → chỗ lấp lánh sang vùng còn thiếu; Tin làng dẫn tới
+  ✓ ngày mới: chỗ lấp lánh ưu tiên Bãi biển còn thiếu (beach,yard,beach)
+  ✓ dòng Tin làng trong thẻ Hôm nay: "3 chỗ lấp lánh ở 2 nơi"
+  ✓ bảng Tin làng: dòng chỗ lấp lánh bấm được
+  ✓ bấm → dải cảnh sang Bãi biển
+  ✓ Bãi biển có chỗ lấp lánh
+  ✓ bấm chỗ lấp lánh ở Bãi biển
+  ✓ thẻ: bộ Bãi biển 1 / 6
+  ✓ Esc đóng thẻ, cửa sổ vườn vẫn mở
+== 6. gánh hàng rong
+  ✓ thứ Năm: không có phiên, phiên sau "CN 22/11" (CN 22/11)
+  ✓ mua ngày không có phiên → từ chối (Hôm nay gánh hàng không ghé — phiên sau: CN 22/11.)
+  ✓ Tin làng · Sắp tới: Gánh hàng rong ghé Sân vườn CN 22/11
+  ✓ thứ Tư: gánh hàng ở Sân vườn (chưa có Ga), 5 món
+  ✓ món riêng + 3 món giảm 25 % + 1 giống cây (Ấm sắt tetsubin 200 | Bàn trang điểm 165 | Mèo vẫy tay 165 | Kệ sách 120 | Giống cây: Bonsai thông 1125)
+  ✓ phiên hàng cố định theo ngày (gọi lại ra cùng hàng)
+  ✓ người bán đứng ở Sân vườn
+  ✓ bấm người bán
+  ✓ bảng gánh hàng mở
+  ✓ bảng: 5 hàng, nhãn "Chỉ có ở gánh hàng", nằm trong cửa sổ (Gánh hàng rong · Thứ Tư 18/11✕)
+  ✓ mua món riêng → "Đã mua · Đặt"
+  ✓ trừ đúng 200 xu, Ấm sắt tetsubin vào kho
+  ✓ mua lại cùng phiên → từ chối
+  ✓ món cửa hàng giảm giá: Bàn trang điểm 220 → 165 xu
+  ✓ giống cây Giống cây: Bonsai thông −1125 xu
+  ✓ thiếu xu → "Thiếu 162 xu (cần 165 xu).", xu vẫn 3
+  ✓ xu không âm
+  ✓ Esc đóng bảng gánh hàng, cửa sổ vườn vẫn mở
+  ✓ bấm "Đã mua · Đặt" → Nhà ở chế độ đặt tetsubin (cảnh room)
+  ✓ đã mở Ga làng quê → gánh hàng ghé Ga
+  ✓ người bán đứng ở Ga
+  ✓ 720 × 520: bảng gánh hàng nằm trong cửa sổ (cuộn: -)
+== 7. Lịch hoa, Dịu mắt, hồ sơ khác
+  ✓ Lịch hoa 21/11: "Nhặt được" ["巻き貝 (ốc xoắn)"]
+  ✓ cảnh Đứng yên: khung hình không đổi (lấp lánh không nhấp nháy)
+== 8. lỗi
+  ✓ không lỗi JS
+  ✓ nhật ký lỗi add-on trống
+KẾT QUẢ: 72/72

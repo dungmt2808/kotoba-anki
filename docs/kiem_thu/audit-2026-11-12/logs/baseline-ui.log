@@ -1,0 +1,1718 @@
+== e2e.js
+  ✓ tìm thấy trang khu vườn trong Anki
+  ✓ mở số báo hôm nay: đủ 3 bài
+  ✓ nút ▶ cho từng đoạn: 6
+  ✓ câu chép trong báo có ▶ Nghe + ▶ Chậm: [["▶ Nghe","▶ Chậm"],["▶ Nghe","▶ Chậm"]]
+  ✓ bấm ▶ Chậm phát ct_1_cham.wav: e/user_files/bao_gemini/bao/2026-11-03/audio/ct_1_cham.wav')
+  ✓ số chỗ bấm tra từ trong bài: 20
+  ✓ số 02/11 của 1.12: file lồng đã sửa + tạo bù 2 bản chậm (luồng nền): [10,true]
+  ✓ số 02/11 giờ có ▶ Chậm: [2,2]
+  ✓ deck A: lượt chép có 5 câu
+      ["1. Báo 03/11","2. Báo 03/11","3. Báo 02/11","4. Báo 02/11","5. Ví dụ của コーヒー"]
+  ✓ deck D + giọng máy: 5 từ nghe được
+  ✓ nhãn "giọng máy": ["giọng máy","giọng máy","giọng máy","giọng máy","giọng máy"]
+  ✓ ô gõ ghi "Gõ từ vừa nghe"
+  ✓ bấm ▶ Nghe → giọng máy ja_JP: TTSTag(field_text='コーヒー', lang='ja_JP', voices=[], speed=1.0, other_args=[])
+  ✓ bấm ▶ Chậm → giọng máy tốc độ 0.7
+  ✓ gõ "コーヒー" (kana) → đúng: Đúng rồi +2 xu.
+  – bỏ qua bước Gemini TTS thật (đặt KB_REAL_GEMINI=1 để chạy)
+  ✓ deck kanji: hướng dẫn riêng: Deck chữ Hán / ngữ pháp này không có câu ví dụ để chép. Thêm câu ví dụ vào thẻ, hoặc dán k
+  ✓ deck D không giọng: chỉ cách bật Gemini + cài giọng máy (4 dòng)
+  ✓ deck C: 5 từ có audio của deck (không cần giọng dự phòng)
+  ✓ phát audio của từ trong media: undOrVideoTag(filename='kbtest_w_6.wav')
+  ✓ tab Nguồn báo có thẻ "Giọng đọc cho câu không có audio"
+  ✓ bấm "Giọng máy" → lưu dict_voice = may
+  ✓ cửa sổ 1024×640: không tràn ngang
+  ✓ không có lỗi JS trên trang
+  ✗ nhật ký lỗi của add-on trống: [{"kind":"Python","where":"giọng đọc Gemini cho câu chép","msg":"AIError: Không kết nối được tới Gemini (kiểm tra mạng): Tunnel connection failed: 403 Forbidden","detail":"Traceback (most recent call last):\n  File \"/tmp/kotoba-audit-latest-baseline/addons21/kotoba_batake/__init__.py\", line 645, in done\n    res = fut.result()\n  File \"/usr/lib/python3.13/concurrent/futures/_base.py\", line 449
+
+KẾT QUẢ: 23/24 đạt
+== e2e_tour.js
+  ✓ phím N mở Nhà
+  ✓   Esc đóng Nhà, cửa sổ vườn vẫn mở
+  ✓ phím Q mở Nhiệm vụ
+  ✓   Esc đóng Nhiệm vụ, cửa sổ vườn vẫn mở
+  ✓ phím T mở Trò chơi
+  ✓   Esc đóng Trò chơi, cửa sổ vườn vẫn mở
+  ✓ phím B mở Báo
+  ✓   Esc đóng Báo, cửa sổ vườn vẫn mở
+  ✓ ôn 1 thẻ trong vườn (Space → 3): revlog 0 → 1
+  ✓ Esc khi đang ôn: chỉ đóng bảng ôn
+  ✓ không có lỗi JS
+  ✓ nhật ký lỗi add-on trống
+
+KẾT QUẢ: 12/12 đạt
+== e2e_114.js
+== sửa nhà
+  ✓ thẻ Bảo dưỡng: 22 ngày → 3 nấc (rêu, sơn bong, ngói lệch)
+  ✓ Sửa hết: −315 xu
+  ✓ nhà như mới (nấc 0)
+== thú nuôi
+  ✓ nhận nuôi Mèo mướp: −900 xu
+  ✓ chip góc sân: “🐾 Mèo mướp đói”
+  ✓ cho ăn → no bụng
+  ✓ đặt tên “Mochi”
+  ✓ chuyển mèo ra Bãi biển
+  ✓ pets.js có hình mèo
+== giống cây
+  ✓ mua giống Anh đào
+  ✓ gieo Anh đào cho deck đang xem → mọi cây là anh đào
+== vùng tự tạo
+  ✓ Xưởng mở chế độ vùng: lưới 64×76
+  ✓ tạo vùng “Mũi hải đăng” (bờ hồ + công trình tự vẽ)
+  ✓   −5.000 xu
+  ✓   vào luôn vùng mới
+  ✓ đặt bụi hoa ở vùng tự tạo
+  ✓ nút cảnh “Mũi hải đăng” ở thanh cảnh
+  ✓ màn chính đang hiện vùng tự tạo (nút ◂ ▸ có vùng mới)
+== giao diện tự chỉnh
+  ✓ bảng Giao diện: 7 dòng × 3 chế độ
+  ✓ Esc đóng bảng Giao diện, cửa sổ vườn vẫn mở
+  ✓ chọn “Tập trung khi ôn” → lưu vào config
+  ✓ khi ôn: sân + ruộng ẩn
+  ✓ nút Lật thẻ nằm trong cửa sổ (khung thẻ to)
+  ✓ nút “Hiện vườn” trên bảng ôn: hiện lại sân + ruộng
+  ✓ 1.23: config cũ “Đêm vườn” → bảng ôn Vàng vườn, thẻ không bị phủ tối
+  ✓ 1.23: không còn kiểu “Ôn buổi tối”
+== hiệu ứng thành tích (ôn hết thẻ của deck A bằng Dễ)
+  ✓ hết thẻ cần tưới
+  ✓ Python: joy.done (deck không còn thẻ hôm nay)
+  ✓ đang ôn: chưa hiện dải chúc mừng
+  ✓ đóng bảng ôn → dải “Tưới xong cả vườn hôm nay”
+  ✓ huy hiệu “Xong thẻ hôm nay”
+== cửa sổ nhỏ + lỗi
+  ✓ 1024×640: không tràn ngang (tab Thú nuôi)
+  ✓ không có lỗi JS
+  ✓ nhật ký lỗi add-on trống
+
+KẾT QUẢ: 34/34 đạt
+== e2e_115.js
+== màn chính gọn
+  ✓ góc sân chỉ còn một khung (thẻ Hôm nay)
+  ✓ thẻ Hôm nay có đủ: nhiệm vụ, báo, thú / nhà, cấu hình trường (kb-quest, kb-paper-btn, kb-news-btn, kb-care-btn, kb-cal-ask, kb-fields-btn)
+  ✓ thời tiết nằm trong thẻ Hôm nay
+  ✓ thời tiết chỉ còn biểu tượng, chữ đầy đủ ở tooltip
+  ✓ dòng thú / nhà: “2 bé cần ăn · Sửa nhà”
+  ✓ bỏ ô “cây khát” rời trên thanh trên
+  ✓ nút “Tưới ngay” có số 5 (cây khát)
+  ✓ gợi ý “Nhà & Cửa hàng” chỉ hiện khi rê chuột, bấm xuyên xuống sân
+  ✓ bảng nhiệm vụ mở dưới thẻ Hôm nay (không che các dòng)
+== thú không đè nhà
+  ✓ mô phỏng 12.000 bước: mép trái thú luôn ≥ cột 4 của sân (x ≥ 64, đo được 64.0)
+== Xưởng: kẻ thẳng, chữ nhật, làm lại, cỡ bút
+  ✓ chữ nhật + Shift: tô kín 10×10 = 100 ô (100)
+  ✓ chữ nhật thường: chỉ viền 10×10 = 36 ô (36)
+  ✓ kẻ thẳng + Shift: bám ngang, 21 ô (21)
+  ✓ bút cỡ 3: một chấm = 9 ô (9)
+  ✓ hoàn tác rồi làm lại (Ctrl+Y) về đúng hình
+== cửa sổ nhỏ
+  ✓ 1024×700: thẻ trò chơi không bị cắt chữ
+  ✓ 1024×700: danh sách đồ trong Nhà cao ≥ 180px
+== đỡ tốn CPU
+  ✓ sân + ruộng đứng yên: trang không tính lại style liên tục (0.0 lần/giây)
+  ✓ sân + ruộng đứng yên: dưới 80 ms việc / giây (26 ms)
+  ✓ không có lỗi JS
+  ✓ nhật ký lỗi add-on trống
+
+KẾT QUẢ: 21/21 đạt
+== e2e_116.js
+== 12 món hiếm mới
+  ✓ có hình cho cả 12 món (rare_art.js)
+  ✓ danh mục: 18 món hiếm
+  ✓ tab Trang trí sân: 10 món hiếm ngoài sân (3 cũ + 7 mới) có Hươu Nara, Tháp chùa
+  ✓ chưa có thì khoá (8 món), đã có (tháp chùa, quầy mì) thì không (8)
+  ✓ đủ 6 món cũ → rương kế tiếp tặng “Hươu Nara” (Hươu Nara, shika)
+== vẽ cảnh nền cho vùng tự tạo
+  ✓ hàng trên của Xưởng vùng nằm gọn một dòng
+  ✓ lớp “Cảnh nền”: lưới 256×76
+  ✓ tự phóng to ×2, khung vẽ cuộn ngang được
+  ✓ vẽ được trên lớp cảnh nền
+  ✓ nút + phóng to ×3
+  ✓ về lớp Công trình 64×76, cảnh nền vừa vẽ vẫn còn
+  ✓ tạo vùng −5.000 xu, cảnh nền lưu ở khoá zenv ([35000,["u1"],["u1"]])
+  ✓ màn chính: vùng mới hiện đúng mảng đỏ vừa vẽ ở cảnh nền (rgb 255,79,109)
+  ✓ không có lỗi JS
+  ✓ nhật ký lỗi add-on trống
+
+KẾT QUẢ: 15/15 đạt
+== e2e_117.js
+== bảng Trò chơi kiểu 1.15 + drop-down
+  ✓ lưới 3 cột như 1.15: 5 thẻ to, 3 + 2 (411, 411, 411, 411, 411)
+  ✓ loại note là drop-down: ["Từ vựng · 8 từ"]
+  ✓ kiểu chơi (4 trò) + tốc độ quạ (4 mức) là drop-down, không còn nút nhỏ
+  ✓ drop-down nằm dưới thẻ (bấm thẻ là vào game, không lẫn với lựa chọn)
+  ✓ một nút Cấu hình trường, xu game hôm nay ở dòng chú thích
+  ✓ mô tả trò chơi hiện đủ chữ (không cắt "…")
+  ✓ đổi kiểu chơi ở drop-down: không vào game
+  ✓ kiểu chơi đã lưu vào collection (meaning-word)
+  ✓ tốc độ quạ đổi bằng drop-down
+  ✓ bấm thẻ Chợ sáng: vào game
+  ✓ 1024×700: 3 + 2 thẻ, không tràn ngang, chữ không bị cắt
+== bỏ Hán Việt khỏi từ vựng
+  ✓ vai trò của Từ vựng: word, reading, meaning, example, ex_meaning, audio, ex_audio
+  ✓ loại Chữ Hán vẫn giữ Hán Việt (学 HỌC, 生 SINH, 食 THỰC, 天 THIÊN)
+== furigana: ruby HTML, ngoặc tròn
+  ✓ ruby HTML → chữ + cách đọc: 学生/がくせい 先生/せんせい 食べる/たべる 天気/てんき 図書館/としょかん
+  ✓ câu ví dụ dạng ruby dùng được cho Điền vào câu
+  ✓ ngoặc tròn / 【】 / hai dòng: 学生/がくせい 先生/せんせい 天気/てんき 賛成(する)/ 図書館/としょかん
+== deck tiếng Anh
+  ✓ loại note tự nhận là tiếng Anh
+  ✓ cây: apple /ˈæp.əl/ — quả táo
+  ✓ không có audio thì vẫn nghe được bằng giọng tiếng Anh của máy
+  ✓ Điền vào câu tìm được dạng biến đổi: apple,went,studying,stopped,cities,looked up,children,happier
+  ✓ menu: Tiếng Anh · 8 từ
+  ✓ cả 5 trò chơi được với deck tiếng Anh: listen, market, crow, memory, cloze
+  ✓ Đuổi quạ: Quạ mang nghĩa tiếng Việt bay tới trộm hạt. Gõ đúng chính tả từ tiếng Anh để đuổi.
+  ✓ quạ bay ra
+  ✓ ô gõ: Gõ từ tiếng Anh… (vd. apple, look up)
+  ✓ gõ "HAPPY" (hoa thường không tính) cho biển "vui vẻ" → đuổi được quạ
+  ✓ Điền vào câu (tiếng Anh) chạy
+  ✓ có 4 lựa chọn, đáp án city
+  ✓ từ không có audio → giọng máy en_US: TTSTag(field_text='child', lang='en_US', voices=[], speed=1.0, other_args=[])
+  ✓ từ có audio → phát file của deck
+== chép chính tả tiếng Anh
+  ✓ lượt chép có 5 câu tiếng Anh
+  ✓ deck tiếng Anh: ẩn nút Ẩn furigana, hướng dẫn gõ tiếng Anh: Nghe rồi gõ lại câu. Không tính hoa thường, dấu câu; don't = do not. Enter để kiểm tra.
+  ✓ ô gõ tiếng Anh, không nhắc furigana: Gõ câu vừa nghe (hoa thường, dấu câu không tính)
+  ✓ gõ "the children do not like rain" (chữ thường, không dấu câu) → đúng
+  ✓ câu không có audio → giọng máy en_US
+  ✓ tab Báo (đang xem deck tiếng Anh): báo tiếng Nhật còn số chưa đọc
+  ✓ báo đang đọc không theo deck đang xem
+== Cấu hình trường: Ngôn ngữ
+  ✓ bảng Cấu hình trường có ô Ngôn ngữ
+  ✓ loại note “EN nhồi chung”: tiếng Anh, chỉ chọn Từ vựng / Khác
+  ✓ cảnh báo trường Từ nhồi chung (thay cho dòng gợi ý chung)
+  ✓ vai trò tiếng Anh: Từ (Word) *, Phiên âm (IPA), Nghĩa *, Câu ví dụ (Example), Dịch câu ví dụ, Audio của từ, Audio câu ví dụ
+  ✓ lưu ngôn ngữ đã chọn vào khoá lang (["other","vocab"])
+  ✓ vườn dùng ngôn ngữ vừa lưu: other:true
+== soát lại: gọn hơn
+  ✓ ⚙ cài đặt: 7 nút (1.20 thêm Lịch hoa & nhật ký, 1.26.1 Hướng dẫn 3 bước), ≤ 3 dòng chú thích, không còn nhắc Hán Việt ({"notes":3,"hv":false,"btns":7})
+  ✓ nút Ẩn furigana chỉ hiện ở tab Báo (ẩn ở Kệ báo)
+  ✓ 1.17.3: đổi tab Nhà (Giống cây, Tủ đồ, Xưởng…) khung xem trước vẫn hiện, hàng tab không nhảy
+  ✓ không còn emoji, icon pixel 16px (vd. mầm cây ở “Giống cây cho ruộng”, 4 icon đang hiện)
+  ✓ Nhà: 11 tab (1.21: + Album khách) bằng nhau, khoảng cách đều (113/113/113/113/113/113/113/113/113/113/113 · cách 4)
+  ✓ thanh trên cùng các ô cao bằng nhau (40/40/40/40/40/40/40), đầu bảng Nhà: ô Ví = nút Thoát (31/31/31)
+  ✓ nút Mua thẳng hàng ở đáy thẻ (8,8,8,8,8,8)
+  ✓ bảng Giao diện: phần tự chỉnh gập lại (vẫn đủ 21 ô chọn)
+  ✓ dải chúc mừng có icon pixel, không lộ tên icon: target «Đạt mục tiêu hôm nay! » · rainbow «Tưới xong cả vườn hôm » · firework «Mốc 7 ngày ôn liên tiế» · gift «Xong cả 3 nhiệm vụ hôm»
+  ✓ huy hiệu cạnh ruộng: mỗi cái một icon pixel (Xong thẻ hôm nayĐạt mục tiêuCả vườn trĩu quả9 ngày liềnXong 3 nhiệm vụ)
+  ✓ không có lỗi JS
+  ✓ nhật ký lỗi add-on trống
+
+KẾT QUẢ: 55/55 đạt
+== e2e_118.js
+== thẻ anh em bị hoãn tới mai (ảnh người dùng: "Tưới ngay 1" mà bảng ôn báo hết thẻ)
+  ✓ trước khi ôn: Tưới ngay 1 (cây 猫 khát)
+  ✓ bảng ôn mở với 1 thẻ
+  ✓ ôn 1 thẻ → hết thẻ (thẻ kia bị Anki hoãn)
+  ✓ Anki thật sự hoãn 1 thẻ anh em
+  ✓ số đếm trên bảng ôn về 0 0 0 (trước 1.18 giữ số của thẻ cuối, vd. "0 1 0"): 0 0 0
+  ✓ nút Tưới ngay không còn số (trước 1.18: còn 1)
+  ✓ cây 猫 vẫn héo (nhớ thật) nhưng không khát / không giọt nước, lý do "buried"
+  ✓ màn hết thẻ nói rõ: 1 cây có thẻ được Anki hoãn tới mai. Mai sẽ tưới được.
+  ✓ chú thích nút Tưới ngay: Ôn thẻ ngay trong vườn (phím R) · chưa cây nào khát · 1 cây chưa tưới được lúc này
+  ✓ đóng bảng ôn
+== thẻ héo nhưng Anki hẹn ôn ở ngày sau
+  ✓ cây héo, nút không có số (trước 1.18: 1), ôn sau 20 ngày: {"badge":true,"wilted":true,"thirsty":false,"held":"notdue","due":20}
+  ✓ bấm Tưới ngay → hết thẻ
+  ✓ màn hết thẻ giải thích: 1 cây héo nhưng Anki hẹn ôn ở ngày sau. Bấm vào cây để xem ngày ôn.
+== nhạc theo chủ đề + nút Xem thử
+  ✓ đang dùng Mùa thu → vườn phát bản Mùa thu (trước 1.18: bản vườn thường): autumn
+  ✓ mở Nhà → hộp nhạc của nhà
+  ✓ chủ đề chưa mở có nút Xem thử
+  ✓ Xem thử “Lễ hội mùa hè” → phát nhạc lễ hội: natsumatsuri
+  ✓ dòng gợi ý: Đang xem thử “Lễ hội mùa hè” · ♪ đang phát nhạc · bấm “Dừng xem thử” để trở lại
+  ✓ chủ đề đã mở mà chưa dùng cũng có nút Xem thử
+  ✓ Xem thử Mùa đông → nhạc Mùa đông
+  ✓ bấm lần nữa = Dừng xem thử
+  ✓ thôi xem thử → lại hộp nhạc của nhà
+  ✓ chủ đề đang dùng không có nút Xem thử: Đang dùng
+  ✓ xem thử Tết → nhạc Tết
+  ✓ đóng Nhà → hết xem thử, lại nhạc Mùa thu: autumn
+  ✓ nhạc nền tắt: Xem thử nhắc bật ở ⚙ (không tự bật nhạc)
+  ✓ nhạc tắt thì vẫn im
+== lỗi
+  ✓ không có lỗi JS
+  ✓ nhật ký lỗi add-on trống
+
+KẾT QUẢ: 29/29 đạt
+== e2e_119.js
+== báo muốn nhận: máy đã có báo tiếng Anh (1.19.0) → tick sẵn cả hai
+  ✓ mở hồ sơ lần đầu: ghi gemini_langs = ["ja", "en"] một lần
+== đang xem deck tiếng Anh: hòm thư cộng cả hai báo, mở bảng → báo tiếng Nhật (có số chưa đọc)
+  ✓ hòm thư: 2 số tiếng Nhật + 1 số tiếng Anh = {"enabled":true,"unread":3,"latest":"2026-11-03","dict_done":0,"dict_total":5,"lang":"ja","source":"gemini","ai_busy":false,"dict_ok":true}
+  ✓ chip “Báo mới 3”
+== Kệ báo: chuyển sang báo tiếng Anh
+  ✓ mở kệ báo (báo tiếng Nhật, không theo deck đang xem) + nút chuyển báo
+  ✓ kệ báo tiếng Nhật: 2 số
+  ✓ nút: Báo tiếng Nhật · 2 mới* | Báo tiếng Anh · 1 mới (không còn nhãn “Đọc báo:”)
+  ✓ không còn nút “Theo deck đang xem”
+  ✓ bấm “Báo tiếng Anh” → kệ báo tiếng Anh (1 số)
+  ✓ đang đọc báo tiếng Anh
+  ✓ đầu báo: The Garden Gazette
+  ✓ ngày + số kiểu tiếng Anh: Tuesday, 3 November 2026No. 1
+  ✓ bài + câu hỏi gắn lang="en"
+  ✓ không có nút Ẩn furigana, không có furigana
+  ✓ 24 chỗ bấm tra từ (máy tự nối)
+  ✓ nhãn bài: Tin làng | Truyện dài kỳ · Kỳ 1 | Thông báo
+  ✓ bấm “dropped” → drop /drɒp/ làm rơi (từ mới): {"w":"drop","r":"/drɒp/","m":"làm rơi","note":"Từ mới trong số này","sel":"dropped"}
+  ✓ bấm “letters” → letter (lá thư, đã học ở deck): {"sel":"letters","w":"letter","m":"lá thư","note":"Đã học ở deck đang học · Cây trong vườn: Hạt giống"}
+  ✓ đoạn không có audio → giọng máy en_US: TTSTag(field_text='Yesterday afternoon, the weather was cool and bright in Kotoba Village.
+== luyện tập
+  ✓ câu hỏi “What did Linh drop…” chọn “A cup” → đúng
+  ✓ câu chép tiếng Anh: đếm từ, ô gõ tiếng Anh: {"len":"7 từ","ph":"Gõ câu vừa nghe (hoa thường, dấu câu không tính)","lang":"en","hint":[]}
+  ✓ ▶ Chậm phát bản chậm của báo tiếng Anh: ser_files/bao_gemini_en/bao/2026-11-03/audio/ct_1_cham.wav')
+  ✓ gõ chữ thường, không dấu câu → đúng
+  ✓ gõ sai một từ → chưa đúng, hiện câu đúng
+  ✓ câu đúng hiện bằng chữ thường (không lộ đánh dấu ||): Please wait at the shop.Câu này sẽ quay lại để ôn sau 1 ngày.
+  ✓ đúng ngay lần đầu: +2 (câu hỏi) +2 (câu chép) = +4 xu (ví +4, kể cả nhiệm vụ)
+  ✓ đọc / làm số tiếng Anh 03/11 ghi vào khoá riêng, số tiếng Nhật cùng ngày vẫn chưa đọc: {"en":{"q":{"1":1},"ct":{"0":1,"2":0},"coins":4,"bonus":false},"ja":false,"miss":["shop"],"q":["p:2026-11-03:2"],"col":["kotoba_batake_paper_en"]}
+  ✓ chép sai → ghi từ chép sai (shop) + hàng ôn trong khoá kotoba_batake_paper_en
+  ✓ đọc xong số tiếng Anh: vẫn ở báo tiếng Anh (không tự nhảy), hòm thư còn 2 số tiếng Nhật: {"enabled":true,"unread":2,"latest":"2026-11-03","dict_done":0,"dict_total":5,"lang":"en","source":"gemini","ai_busy":false,"dict_ok":true}
+== chỉ tick tiếng Nhật
+  ✓ hòm thư chỉ tính báo tiếng Nhật, kể cả khi đang xem deck tiếng Anh
+  ✓ kệ báo tiếng Nhật
+  ✓ không có nút chuyển báo (chỉ một báo)
+== deck ngôn ngữ khác (tiếng Hàn): báo vẫn bình thường
+  ✓ chip Báo không đổi khi xem deck tiếng Hàn: {"enabled":true,"unread":2,"latest":"2026-11-03","dict_done":0,"dict_total":5,"lang":"ja","source":"gemini","ai_busy":false,"dict_ok":true}
+  ✓ tab Báo: 畑新聞 (không còn màn “Báo chưa hỗ trợ”)
+  ✓ không có chữ “chưa hỗ trợ”
+== chỉ tick tiếng Anh, xem deck tiếng Nhật
+  ✓ chỉ báo tiếng Anh (đã đọc hết): {"enabled":true,"unread":0,"latest":null,"dict_done":0,"dict_total":5,"lang":"en","source":"gemini","ai_busy":false,"dict_ok":true}
+  ✓ tab Báo: The Garden Gazette dù đang xem deck tiếng Nhật
+== tab Nguồn báo
+  ✓ thẻ Gemini: một khối cho mỗi báo đã tick
+  ✓ Báo muốn nhận (1.25.2: thêm Chỉ tiếng Việt): Tiếng Nhật* | Tiếng Anh* | Chỉ tiếng Việt
+  ✓ khối báo tiếng Nhật: {"h":"Báo tiếng Nhật畑新聞","lv":"N5,N4*,N3,N2,N1","src":"Mọi deck*,Chọn deck,Không dùng deck"}
+  ✓ khối báo tiếng Anh: {"h":"Báo tiếng AnhThe Garden Gazette","lv":"A1,A2*,B1,B2,C1","src":"Mọi deck*,Chọn deck,Không dùng deck"}
+  ✓ không còn chữ “deck đang xem”
+  ✓ chọn B1 → lưu gemini_level_en, báo tiếng Nhật giữ N4: B1,N4
+== chọn deck cho báo tiếng Anh
+  ✓ bấm “Chọn deck” → danh sách deck
+  ✓ chỉ deck có note tiếng Anh, kèm số note:  F8 note |  F::Tiếng Anh Basic8 note |  G8 note |  G::Tiếng Anh đầy đủ8 note
+  ✓ tick một deck
+  ✓ lưu vào khoá collection kotoba_batake_paper_src: {"en":{"decks":[1794502904579],"mode":"deck"}}
+  ✓ deck đã chọn < 10 từ (1.25.1): vẫn viết theo trình độ, 8 từ đã có gửi kèm: [true,8,8]
+  ✓ khối báo tiếng Anh có nút "Không dùng deck" (1.25.1)
+  ✓ tối đa 5 deck: các ô còn lại bị khoá [5,0]
+  ✓ bấm “Mọi deck” → bỏ chọn deck
+== bỏ tick tiếng Anh ở tab Nguồn báo
+  ✓ chỉ còn khối báo tiếng Nhật
+  ✓ lưu gemini_langs = ["ja"]
+  ✓ không tràn ngang
+== lỗi
+  ✓ không có lỗi JS
+  ✓ nhật ký lỗi add-on trống
+
+KẾT QUẢ: 55/55 đạt
+== e2e_120.js
+== mở Lịch hoa (lịch sử ôn giả: 3404 lượt)
+  ✓ thẻ Hôm nay: "· N ngày liền" bấm được, chú thích "Mở Lịch hoa"
+  ✓ bấm chuỗi ngày → mở Lịch hoa tháng này
+  ✓ bấm chuỗi không mở bảng nhiệm vụ
+  ✓ khung ngày mở ở hôm nay
+  ✓ hôm nay = số trong ô đen, đang chọn = nền vàng: 2026-11-12
+  ✓ lưới 7 cột T2 → CN
+  ✓ mọi ô có vạch màu giao diện mùa (cả ngày tương lai)
+  ✓ ngày đã qua / hôm nay có cây, ngày tương lai không
+  ✓ dải tên mùa / lễ + dòng "Sắp tới": Mùa lá đỏ, Giáng sinh | Sắp tới: お正月 1/1 – 15/1/2027 · Tết 16/1 – 21/2/2027 (theo âm lịch)
+  ✓ chú giải 5 mức cây, chip Chuỗi / Tháng này, một dòng hướng dẫn
+  ✓ Esc đóng bảng
+  ✓ Esc chỉ đóng bảng, cửa sổ vườn vẫn mở
+  ✓ phím L mở Lịch hoa
+  ✓ phím L lần nữa đóng
+  ✓ ⚙ có nút "Lịch hoa & nhật ký…"
+  ✓ nút ở ⚙ mở Lịch hoa
+== nhật ký + sticker (lưu ngay, đồng bộ)
+  ✓ 8 sticker hình mặt pixel (không emoji)
+  ✓ ghi rõ "không gửi cho Gemini" · "Đồng bộ qua AnkiWeb"
+  ✓ thẻ Hôm nay có dòng "Hôm nay thế nào?" khi chưa viết
+  ✓ chọn sticker Vui → lưu vào collection
+  ✓ sticker hiện ngay ở góc ô ngày
+  ✓ đã có sticker → dòng "Hôm nay thế nào?" ẩn
+  ✓ bấm lại → bỏ sticker
+  ✓ đếm "N / 200 ký tự"
+  ✓ Enter / rời ô → lưu (không cần bấm Lưu)
+  ✓ khoá collection theo tháng kotoba_batake_journal_<yyyy>_<mm>
+  ✓ nhật ký tối đa 200 ký tự
+  ✓ ngày cũ: viết được nhật ký, luyện viết chỉ cho hôm nay
+  ✓ sửa được ngày cũ (2026-11-01)
+  ✓ ngày tương lai: chỉ xem giao diện mùa, không viết
+  ✓ khung ngày: Ôn N lượt · N thẻ mới, Lên Ra quả (gần đúng): Ôn70 lượt · 14 thẻ mớiLên Ra quả6 từ: study · look up · apple /ˈæp.əl/ - quả táo
+  ✓ ghi rõ "gần đúng" ở chú thích
+== luyện viết: gợi ý, giới hạn, đổi ngôn ngữ
+  ✓ tick cả hai báo → nút Tiếng Nhật / Tiếng Anh: Tiếng Nhật* Tiếng Anh
+  ✓ tiếng Nhật: tối đa 60 ký tự, bộ đếm 0 / 60
+  ✓ "Thử dùng": 2 từ phải ôn hôm nay: 学生, 天気
+  ✓ Đổi gợi ý → bộ khác (gr = 1): 先生, コーヒー
+  ✓ gõ / dán quá 60 ký tự → không nhận thêm, báo "đã cắt bớt"
+  ✓ chọn Tiếng Anh
+  ✓ tiếng Anh: tối đa 30 từ, gợi ý là từ tiếng Anh: look up, shop
+  ✓ nhớ lựa chọn ngôn ngữ lần trước
+  ✓ đoạn 32 từ → lưu 30 từ (cắt ở từ thứ 30)
+  ✓ bản nháp lưu tự động khi gõ (luồng chính, khoá collection)
+== Gemini sửa bài: gửi rồi đóng bảng, xong thì báo (Gemini giả lập)
+  ✓ đang sửa: khung "Gemini đang sửa bài…", ô viết tạm khoá
+LỖI KỊCH BẢN: Error: TypeError: Cannot read properties of null (reading 'textContent')
+    at <anonymous>:1:145
+    at <anonymous>:1:268
+    at Page.eval (/tmp/kotoba-audit-2026-11-12/latest/tests/anki/cdp.js:16:162)
+    at async /tmp/kotoba-audit-2026-11-12/latest/tests/anki/e2e_120.js:228:6
+== e2e_121.js
+== Python: ai được ghé, tần suất, album
+  ✓ album 16 khách, chưa gặp ai
+  ✓ sân: ghế gỗ gọi mèo (×3), bụi hoa gọi chim sẻ (×3), ao gọi cò, đèn đá gọi cú (×3)
+  ✓ hải âu chỉ ở Bãi biển, hươu ở Đền
+  ✓ chuông gió trong nhà gọi vành khuyên
+  ✓ deck chưa có cây Ra quả → khách ghé thỉnh thoảng (0,3)
+  ✓ trang có dữ liệu khách (data.guests)
+== mèo hoang nằm trên ghế gỗ, gặp lần đầu
+  ✓ mèo đi vào rồi ở lại
+  ✓ nằm giữa ghế gỗ
+  ✓ vẽ sau ghế (nằm trên ghế, không bị ghế che)
+  ✓ ghế đang có mèo nằm → không vẽ chim sẻ nhỏ đậu ghế (khỏi đè lên mèo)
+  ✓ thông báo "Khách mới ghé vườn: Mèo hoang · xem Album ▸"
+  ✓ Python ghi album: gặp lần đầu ở Sân vườn
+  ✓ bấm thông báo → Nhà mở tab Album khách
+  ✓ thẻ Mèo hoang được tô viền
+  ✓ tab Album: 16 thẻ, "1/16", dòng tần suất theo cây Ra quả
+  ✓ thẻ đã gặp: tên, tên Nhật, ngày gặp, cảnh, số ngày
+  ✓ thẻ chưa gặp: "???", bóng đen, gợi ý chỗ gặp
+== bấm khách trên sân → Album khách
+  ✓ cò hiện ở ao (hiện dần)
+  ✓ cò đứng ở mép ao
+  ✓ rê chuột: chú thích + con trỏ tay (Cò trắng ghé vườn (bấm để xem Album khách))
+  ✓ bấm cò → Nhà mở Album, tô thẻ Cò trắng
+  ✓ khách được bấm có dấu "!"
+== Python xét lại trước khi ghi album
+  ✓ khách không được ghé (ếch ngoài mùa) → không ghi album
+  ✓ hải âu ở sân (chỉ ghé Bãi biển) → không ghi album
+  ✓ cùng ngày gặp lại không đếm thêm
+== ban đêm: cú trên đèn đá, đom đóm
+  ✓ cú hiện dần
+  ✓ cú đậu trên đỉnh đèn đá, vẽ sau đèn
+  ✓ cú ban đêm ở sân có đèn đá → ghi album
+  ✓ đom đóm sáng trên nền tối (26 điểm ảnh lõi sáng quanh chỗ lượn)
+== trong nhà: vành khuyên ở bậu cửa sổ
+  ✓ vành khuyên hiện ở bậu cửa
+  ✓ trong khung cửa sổ (x 66–94), đứng trên bậu
+  ✓ ghi album: gặp trong nhà
+  ✓ thẻ Album ghi "Trong nhà"
+== tắt "Thú nuôi, khách trên sân"
+  ✓ bảng Giao diện có dòng "Thú nuôi, khách trên sân"
+  ✓ nhãn mới hiện trong bảng Giao diện
+  ✓ tắt thì khách không được vẽ trên sân (null)
+== Lịch hoa: "Khách mới" ở khung ngày, bìa cuốn nhật ký
+  ✓ khung hôm nay có dòng "Khách mới"
+  ✓ liệt kê khách mới hôm nay: Mèo hoang · Cò trắng · Tanuki · Cú · Chim vành khuyên
+  ✓ bìa cuốn nhật ký tháng này: "Khách mới: …"
+  ✓ trang đầu vẫn vừa khung
+== khách tự ghé theo khung giờ (tần suất 1)
+  ✓ khung giờ này có khách → khách tự ghé: suzume
+  ✓ 1366 px: 11 tab của Nhà rộng bằng nhau (113–113)
+== cửa sổ 1024 px
+  ✓ 11 tab của Nhà vẫn một hàng ở 1024 px
+  ✓ Album không tràn ngang, chữ không lọt khỏi thẻ
+  ✓ không lỗi JS
+  ✓ nhật ký lỗi add-on trống
+KẾT QUẢ: 46/46
+== e2e_122.js
+== chuyển ảnh thành pixel: hồng / đỏ giữ màu (không ra nâu)
+  ✓ hoa hồng có bóng + hồng phai + đỏ sẫm → toàn ô hồng / đỏ (515), không ô nâu / be (0)
+  ✓ ảnh pixel art dùng đủ 32 màu của bảng Xưởng → chuyển lại giữ nguyên từng màu
+== giống cây tự vẽ: Xưởng 5 giai đoạn
+  ✓ tab Giống cây có mục "Giống tự vẽ · 0/12"
+  ✓ bấm "Mở xưởng" ở thẻ "Tự vẽ giống cây"
+  ✓ Xưởng mở chế độ giống cây, bắt đầu ở giai đoạn Mầm (16×16)
+  ✓ thanh trên: 5 nút giai đoạn, ẩn Cỡ / Loại / Hiệu ứng, tiêu đề "Giống cây tự vẽ"
+  ✓ nút lưu "Tạo giống · 500 xu"
+  ✓ vẽ được giai đoạn Mầm
+  ✓ phím 3 → giai đoạn Cây non
+  ✓ có giai đoạn trước → nút "Chép giai đoạn trước" bấm được
+  ✓ chép hình Mầm sang Cây non
+  ✓ mới vẽ 2 giai đoạn → nhắc "Vẽ ít nhất 3 giai đoạn"
+  ✓ đã vẽ Mầm, Cây non, Ra quả (Hạt, Ra hoa để tự suy ra)
+  ✓ xem trước ghi "Đã vẽ 3/5"
+  ✓ nút giai đoạn đã vẽ có chấm xanh
+  ✓ thanh trên Xưởng (giống cây) không tràn ngang ở 1366 px
+  ✓ lưu giống → Xưởng đóng
+  ✓ trừ 500 xu (40000 → 39500)
+  ✓ Python lưu tên ở khoá "myseeds", điểm ảnh 5 giai đoạn ở PX_KEY ("g1")
+  ✓ về tab Giống cây, có thẻ "Cà chua bi"
+  ✓ seeds.js: Hạt chưa vẽ → hạt cây gốc, Ra hoa lấy hình Cây non, cây héo có bảng màu khô
+== gieo giống tự vẽ cho deck → cây trên ruộng đổi hình
+  ✓ chọn được "Cà chua bi (tự vẽ)" ở luật gieo theo deck
+  ✓ luật trỏ tới giống tự vẽ lưu ở myseeds (khoá "seeds" của bản cũ không bị đụng)
+  ✓ mọi cây của deck đang xem mang giống "g1" (8/8 cây)
+== sửa giống: đổi tên miễn phí
+  ✓ bấm "Sửa · 50 xu"
+  ✓ mở lại giống g1 ở giai đoạn đã vẽ đầu tiên
+  ✓ chưa đổi hình → "Lưu giống · miễn phí"
+  ✓ đổi tên không mất xu
+== mã chia sẻ: xuất
+  ✓ tab Xưởng có ô "Dán mã thiết kế"
+  ✓ bấm "Mã chia sẻ" ở món "Táo đỏ"
+  ✓ hiện mã "KB1:m:16:…" ở đầu danh sách
+  ✓ danh sách tự cuộn tới hộp mã (bấm ở món cuối danh sách vẫn thấy mã)
+  ✓ mã đã chép vào bộ nhớ tạm
+  ✓ ghi "Đã chép vào bộ nhớ tạm"
+== mã chia sẻ: dán → xem trước → làm
+  ✓ dán chữ thường → "Đây không phải mã thiết kế…"
+  ✓ sửa một chỗ → "mã kiểm tra không khớp"
+  ✓ mã bị xuống dòng / dấu cách vẫn đọc được → xem trước "Táo đỏ", nút "Làm món này · 200 xu"
+  ✓ xem trước có hình + tên
+  ✓ làm món từ mã: trừ 200 xu, thêm mẫu thứ hai
+== mã chia sẻ: vùng + giống cây
+  ✓ vùng tự tạo có nút "Mã chia sẻ"
+  ✓ mã vùng "KB1:z:64x76:…" hiện ở tab Vùng mới
+  ✓ giống tự vẽ có nút "Mã chia sẻ"
+  ✓ mã giống "KB1:g:16:…"
+  ✓ xem trước vùng: nền Đồi hoa, "Tạo vùng này · 5000 xu"
+  ✓ xem trước giống: "vẽ 3/5 giai đoạn", "Tạo giống này · 500 xu"
+  ✓ tạo giống từ mã: trừ 500 xu, có giống g2
+  ✓ xong thì chuyển sang tab Giống cây
+== chụp ảnh vườn
+  ✓ góc dưới trái sân có nút chụp ảnh
+  ✓ nút chụp không đè thẻ Hôm nay / chữ "Nhà & Cửa hàng"
+  ✓ bấm nút → bảng chọn cỡ ảnh (không mở Nhà, không tràn khỏi cửa sổ)
+  ✓ lưu xong có thông báo "Đã lưu ảnh vườn"
+  ✓ cỡ thường: cảnh 512×152 + khung + dải chữ = 534×200 (534,200)
+  ✓ chụp xong bảng chọn tự đóng
+  ✓ hình nền 1920×1080
+  ✓ cỡ lớn ×2: 1068×400
+  ✓ Esc đóng bảng chọn (không đóng / mở bảng khác)
+  ✓ nút "Chụp ảnh" trong Nhà chụp cảnh đang xem (Trong nhà)
+  ✓ ảnh trong nhà 342×224 (342,224)
+  ✓ thanh trên của Nhà có thêm nút "Chụp ảnh" vẫn không tràn ở 1366 px
+== cửa sổ 1024 px
+  ✓ nút chụp không đè thẻ Hôm nay ở 1024 px
+  ✓ thanh trên của Nhà không tràn, nút "Chụp ảnh" không đè "Thoát" ở 1024 px
+  ✓ thanh trên Xưởng (giống cây) không tràn ngang ở 1024 px
+  ✓ nút giai đoạn không đè ô Tên / Huỷ / Tạo giống ở 1024 px
+  ✓ không có lỗi JavaScript
+KẾT QUẢ: 64/64
+== e2e_1223.js
+== dán khoá lần đầu → chờ bấm "Bắt đầu viết"
+  ✓ Thử khoá đúng → "✓ Khoá dùng được · model gemini-thu. Chọn báo muốn nhận, trình độ, deck rồi bấm “Bắt đầu viết”."
+  ✓ thử khoá xong KHÔNG tự viết (vườn đã làm mới)
+  ✓ đã lưu khoá AQ. + cờ chờ bấm Bắt đầu viết
+  ✓ thẻ Gemini có khối "Bước 3 · … Bắt đầu viết"
+  ✓ mỗi báo ghi "Hôm nay: chờ bấm Bắt đầu viết" (không có nút Viết riêng)
+  ✓ vườn làm mới / mở hồ sơ (tự viết) vẫn chờ, không viết
+== Chọn deck: 24 deck, cuộn + tick giữ vị trí, ô tìm deck
+  ✓ mở danh sách deck của báo tiếng Nhật
+  ✓ danh sách có 41 deck, có ô "Tìm deck…"
+  ✓ tick deck gần cuối: danh sách giữ vị trí cuộn (858 → 858, trước đây về 0)
+  ✓ đã lưu 1 deck vào collection
+  ✓ gõ "bai 2" (không dấu) → 11 deck: Bài 20–29, Bài 32
+  ✓ đếm "11 / 41 deck"
+  ✓ tick khi đang lọc: vẽ lại vẫn giữ chữ tìm + bộ lọc ({"q":"bai 2","vis":11})
+  ✓ Esc trong ô tìm: xoá chữ tìm, bảng Báo vẫn mở
+== bấm "Bắt đầu viết"
+  ✓ khối Bắt đầu viết biến mất
+  ✓ bấm "Bắt đầu viết" → bắt đầu viết ([["manual","ja"]])
+  ✓ bỏ cờ chờ: từ giờ tự viết như cũ
+  ✓ sau đó vườn mở lại thì tự viết bình thường
+== 1.22.4: đang có báo tiếng Nhật, tick thêm Tiếng Anh → chờ bấm "Bắt đầu viết"
+  ✓ bỏ tick Tiếng Anh → chỉ còn báo tiếng Nhật
+  ✓ tick thêm Tiếng Anh → KHÔNG tự viết báo tiếng Anh ([])
+  ✓ chỉ báo tiếng Anh chờ (gemini_wait_langs = ["en"])
+  ✓ khối "Vừa bật Báo tiếng Anh · … Bắt đầu viết"
+  ✓ báo tiếng Anh "chờ bấm", báo tiếng Nhật vẫn như cũ
+  ✓ vườn làm mới / tự viết: vẫn không viết báo tiếng Anh
+  ✓ đổi trình độ báo tiếng Anh: vẫn chờ
+  ✓ bấm "Bắt đầu viết" → khối biến mất
+  ✓ bấm "Bắt đầu viết" → viết báo tiếng Anh ([["manual","en"]])
+  ✓ hết chờ
+  ✓ đổi khoá khi đã có khoá: không phải bấm lại Bắt đầu viết
+  ✓ Xoá khoá rồi dán lại → lại chờ bấm Bắt đầu viết
+== tìm deck ở thanh trên (kính lúp, phím /)
+  ✓ 1366 px: nút kính lúp nằm giữa ô Deck và ô xu, không tràn ({"f":[673,701,28],"s":665,"c":720,"w":1366,"hs":false})
+  ✓ 1366 px: bảng tìm deck mở, con trỏ ở ô tìm, 52 deck, tô đậm deck đang xem, nằm trong cửa sổ
+  ✓ 1366 px: mỗi deck một dòng đọc được, không bị ép dẹt (cao 28/28/28/28/28 px)
+  ✓ 1366 px: không tràn ngang / không lọt khung
+  ✓ gõ "chi tu" (không dấu) → ["C::Chỉ từ + audio từ","D::Chỉ từ, không gì cả"]
+  ✓ gõ "bai 3": Bài 30… lên trước, Bài 23 / 13… sau (N4::Bài 30, N4::Bài 31, N4::Bài 32 … N4::Bài 38, N4::Bài 23)
+  ✓ Enter → đổi sang deck "C::Chỉ từ + audio từ", bảng đóng
+  ✓ 1024 px: nút kính lúp nằm giữa ô Deck và ô xu, không tràn ({"f":[416,444,28],"s":408,"c":463,"w":1024,"hs":false})
+  ✓ 1024 px: bảng tìm deck mở, con trỏ ở ô tìm, 52 deck, tô đậm deck đang xem, nằm trong cửa sổ
+  ✓ 1024 px: mỗi deck một dòng đọc được, không bị ép dẹt (cao 28/28/28/28/28 px)
+  ✓ 1024 px: không tràn ngang / không lọt khung
+  ✓ gõ "chi tu" (không dấu) → ["C::Chỉ từ + audio từ","D::Chỉ từ, không gì cả"]
+  ✓ gõ "bai 3": Bài 30… lên trước, Bài 23 / 13… sau (N4::Bài 30, N4::Bài 31, N4::Bài 32 … N4::Bài 38, N4::Bài 23)
+  ✓ Enter → đổi sang deck "C::Chỉ từ + audio từ", bảng đóng
+  ✓ phím / ở màn chính → mở bảng tìm deck
+  ✓ Esc chỉ đóng bảng tìm deck, cửa sổ vườn vẫn mở
+  ✓ bấm ra ngoài → đóng bảng tìm deck
+  ✓ không lỗi JS
+  ✓ nhật ký lỗi add-on trống
+KẾT QUẢ: 49/49
+== e2e_1226.js
+== Ôn trong vườn: chấm rồi bấm Dừng ngay (lượt chấm còn đang lưu)
+  ✓ lật thẻ, hiện 4 nút chấm
+  ✓ bảng ôn vẫn đóng sau khi lượt chấm lưu xong (trước 1.22.6: tự bật lại với thẻ kế tiếp)
+  ✓ Python không giữ thẻ chờ chấm
+  ✓ revlog +1 (0 → 1)
+  ✓ trả xu một lần (ôn +1, lên Mầm +2), không có lượt "bù điện thoại" (xu 0 → 3, bù 0 → 0)
+== Ôn trong vườn: chấm rồi bấm Esc ngay
+  ✓ lật thẻ
+  ✓ Esc: bảng ôn vẫn đóng
+  ✓ Esc chỉ đóng bảng ôn, cửa sổ vườn vẫn mở
+  ✓ trả xu một lần, không bù điện thoại (xu 3 → 6, bù 0 → 0)
+== Ôn trong vườn: chấm rồi đổi deck ngay
+  ✓ lật thẻ (deck A)
+  ✓ đổi deck: bảng ôn không tự bật lại (trước 1.22.6: hiện thẻ của deck A dưới tên deck C)
+  ✓ vườn ở deck C, không có thẻ của deck cũ chờ chấm
+  ✓ lượt chấm ở deck A được lưu, trả xu một lần, không bị "bù điện thoại" cho chính lượt này (xu 6 → 9, bù 0 → 0)
+  ✓ cả 3 lần: không có thông báo "Bù … lượt ôn trên điện thoại"
+== Lượt ôn ở màn ôn Anki đang lưu → lần bù xu điện thoại chờ
+  ✓ lượt đang lưu: mobile_catch_up() không bù
+  ✓ lượt lưu xong mà add-on không ghi (vd. điện thoại) thì lần sau vẫn bù đúng 1 lượt (+1 xu)
+  ✓ lượt lưu hỏng (> 30 giây) không chặn bù xu mãi
+== Anki ở chế độ tối: thẻ trong bảng ôn của vườn
+  ✓ lật thẻ (Anki tối)
+  ✓ thân thẻ có lớp nightMode của Anki
+  ✓ nền tối, chữ sáng như màn ôn Anki (nền rgb(44, 44, 44), chữ rgb(252, 252, 252); trước 1.22.6: nền trắng, chữ #fafafa)
+  ✓ Anki sáng lại: lật thẻ
+  ✓ Anki sáng: thẻ nền sáng như cũ (rgb(255, 255, 255))
+== Config sửa tay sai kiểu
+  ✓ vườn dựng được, không có hộp "không dựng được khu vườn"
+  ✓ số đọc không được → mặc định (daily_goal 30, max_plants 400, music_volume 0.5)
+  ✓ đọc được thì về đúng kiểu (stage_days [3,21,90], effects false, wilt 0.7, daily_bonus 0)
+  ✓ thẻ Hôm nay hiện "…/30 lượt"
+== Thẻ Hôm nay ở 1366 × 768 khi mới cài (nhiệm vụ, báo mới, nhật ký, cấu hình trường)
+  ✓ thẻ có 4 dòng việc
+  ✓ không dòng nào bị cắt / phải cuộn (cao 72/72 px, xếp sát)
+  ✓ mỗi dòng việc vẫn cao ≥ 18 px (cỡ nút tối thiểu của measure.js): 18 px
+  ✓ 1024 × 700: thẻ không vượt đáy sân (216 ≤ 240)
+== Tab Giống cây: ô chọn giống thẳng cột
+  ✓ ô chọn của dòng Deck / Note / tag cùng mép trái (247, 247, 247)
+  ✓ 1024 px: cùng mép trái (254, 254, 254)
+  ✓ 1024 px: không tràn ngang
+== Đổi hồ sơ khi vườn đang mở
+  ✓ không có lỗi JS
+  ✓ nhật ký lỗi add-on trống
+  ✓ đóng hồ sơ → cửa sổ vườn đóng theo (trước 1.22.6: còn mở, collection đã đóng) [true,true,[]]
+  ✓ mở lại hồ sơ
+  ✓ mở lại vườn sau khi đổi hồ sơ: vườn hiện bình thường
+  ✓ nhật ký lỗi add-on vẫn trống
+  ✓ không có lỗi JS
+
+KẾT QUẢ: 40/40 đạt
+== e2e_1228.js
+== bao_dir trống (mặc định của người dùng mới)
+  ✓ không có thẻ Claude Code, vẫn có thẻ Gemini + Giọng đọc (3 thẻ)
+  ✓ tab Nguồn báo không còn chữ "Claude" / "kotoba_daily"
+  ✓ không có nút "Dùng Gemini cho báo tiếng Nhật" (đang dùng Gemini rồi)
+  ✓ nút "Nguồn báo…" không nhắc Claude Code ("Gemini viết báo mỗi sáng bằng từ bạn đang học")
+  ✓ nguồn báo: gemini
+== bao_source "claude" sửa tay, bao_dir trống
+  ✓ thẻ Claude Code vẫn ẩn
+  ✓ như "auto": có khoá thì Gemini viết (trước 1.22.8: "" — chưa có nguồn) ["gemini","claude",false]
+  ✓ kệ báo tiếng Nhật đọc báo Gemini (2 số)
+  ✓ bao_dir chỉ có dấu cách → coi như trống
+== bao_dir là thư mục kotoba_daily có thật
+  ✓ thẻ Claude Code hiện, đang dùng (auto + có bao_dir)
+  ✓ thẻ ghi "✓ 1 số" + "Đang dùng"
+  ✓ hàng Báo tiếng Nhật ghi "Nguồn: Claude Code (thẻ bên dưới)"
+  ✓ thẻ Gemini có nút "Dùng Gemini cho báo tiếng Nhật"
+  ✓ → nguồn gemini ["gemini","gemini",true]
+  ✓ thẻ Claude Code vẫn còn, có nút "Dùng Claude Code" để đổi lại
+  ✓ bấm "Dùng Claude Code" → nguồn claude ["claude","claude",true]
+== bao_dir trỏ tới thư mục không còn
+  ✓ thẻ hiện "✗ không thấy thư mục" (chữ đỏ)
+  ✓ nguồn báo tiếng Nhật: chưa có (đúng ý người dùng chọn Claude Code)
+  ✓ thẻ Gemini có nút "Dùng Gemini cho báo tiếng Nhật" (trước 1.22.8: không có)
+  ✓ bấm → báo tiếng Nhật về Gemini ["gemini","gemini",true]
+== xoá bao_dir
+  ✓ thẻ Claude Code ẩn lại, báo về Gemini
+  ✓ số báo cũ trong thư mục kotoba_daily không bị xoá
+  ✓ không tạo thư mục bao_dir không có thật
+== Không có Gemini, không có bao_dir
+  ✓ chưa có báo: chỉ mời dán khoá Gemini
+  ✓ không có lỗi JS
+  ✓ nhật ký lỗi add-on trống
+
+KẾT QUẢ: 26/26 đạt
+== e2e_123.js
+== mục 3: lên 1.23 khi đang dùng Claude Code
+  ✓ lần đầu chạy 1.23: nguồn đã xác nhận = Claude Code (nguồn đang dùng)
+  ✓ đang dùng Claude Code: Gemini không viết
+== đường 1: bấm "Dùng Gemini cho báo tiếng Nhật"
+  ✓ thẻ Gemini có nút "Dùng Gemini cho báo tiếng Nhật"
+  ✓ nguồn báo tiếng Nhật thành Gemini
+  ✓ KHÔNG tự viết ngay (1.22.8: viết luôn) — lượt viết: 0
+  ✓ báo tiếng Nhật chờ "Bắt đầu viết" (vì vừa chuyển nguồn) [["ja"],["ja"]]
+  ✓ thẻ Gemini hiện khối "Chuyển sang Gemini · … Bắt đầu viết"
+== mục 2: thẻ Gemini chỉ chọn deck
+  ✓ không còn "Giáo trình" / "theo giáo trình", có Mọi deck / Chọn deck
+  ✓ Trình độ N5–N1 chọn được
+  ✓ làm mới vườn / mở hồ sơ (tự viết sau 8 giây): vẫn chờ
+== đường 2: "Đổi khoá" khi đang dùng Claude Code
+  ✓ đổi khoá đúng: nguồn vẫn là Claude Code (1.22.8: tự chuyển sang Gemini)
+  ✓ không viết số nào
+== đường 3: thư mục kotoba_daily tạm không thấy (bao_source "auto")
+  ✓ mất thư mục: nguồn thành Gemini nhưng không tự viết
+  ✓ thư mục có lại → về Claude Code
+== Bắt đầu viết
+  ✓ bấm Bắt đầu viết → Gemini viết
+  ✓ viết đúng một số (1)
+  ✓ nguồn đã xác nhận = Gemini
+  ✓ đã có số hôm nay: không viết thêm
+  ✓ người đã xác nhận Gemini: tự viết như bình thường (hôm sau / mở lại)
+== mục 4: Kệ báo gộp hai nguồn
+  ✓ kệ có số của cả Claude Code và Gemini (2026-11-12@gemini, 2026-11-03@gemini, 2026-11-02@gemini, 2026-11-01@claude)
+  ✓ số Claude Code 01/11 vẫn trong kệ khi đang dùng Gemini (1.22.8: biến mất)
+  ✓ mỗi số ghi nguồn (nhãn Claude Code / Gemini)
+  ✓ mở số Claude Code từ kệ khi đang dùng Gemini
+  ✓ tiến độ số Claude Code ghi đúng chỗ theo nguồn (mặc định claude) ["claude",false,true]
+  ✓ trả lời câu hỏi số Claude Code: xu không giảm (0 → 2)
+== mục 5b: số Gemini cũ thiếu nghĩa
+  ✓ mở số 30/10 từ kệ (viết trước 1.23, phạm vi đã đổi)
+  ✓ từ có trong deck: có nghĩa (tìm trong deck, 1.22.8: trống) — 学生: học sinh
+  ✓ từ không có ở đâu (cả deck lẫn kotoba_daily): vẫn có cách đọc うちゅうせん
+  ✓ nghĩa tìm được ghi bổ sung vào chính số đó: 先生, 学生
+  ✓ bấm 宇宙船: hiện cách đọc + "Chưa có nghĩa trong deck"
+== 5d: bản dịch ẩn sẵn, Dịch số này; 5c: Kỳ này hay / Nhạt
+  ✓ mở số hôm nay từ kệ (có bản dịch)
+  ✓ mỗi đoạn có nút Dịch, bản dịch ẩn sẵn
+  ✓ bấm Dịch: hiện bản dịch đoạn đó
+  ✓ nút "Hiện bản dịch" cạnh "Ẩn furigana"
+  ✓ Hiện bản dịch: cả số hiện bản dịch
+  ✓ dưới truyện có "Kỳ này hay / Nhạt" + ô ghi một dòng
+  ✓ bấm Nhạt (số kiểu cũ, không "truyen_chung") → ghi nhận xét vào truyen.json của báo đó (kỳ sau Gemini đọc) [{"y":"nhat","ghi":"muốn thêm スタックちゃん"}]
+  ✓ nút Nhạt sáng lên sau khi ghi
+  ✓ số cũ chưa có bản dịch
+  ✓ nút "Dịch số này"
+  ✓ Dịch số này → Gemini (giả) dịch, số hiện nút Dịch
+  ✓ bản dịch ghi vào bao.json của số đó
+== KB-01: gõ nhật ký rồi đóng cửa sổ vườn ngay
+  ✓ mở Lịch hoa · hôm nay
+  ✓ nhật ký còn đủ phần vừa gõ: "NHẬT KÝ ĐÃ LƯU DÒNG VỪA VIẾT" (1.22.8: mất " DÒNG VỪA VIẾT")
+  ✓ bản nháp luyện viết còn nguyên: "いい天気です。"
+== KB-03: ôn rồi Undo ba lần
+  ✓ mỗi lượt ôn được cộng xu: 5, 5, 5
+  ✓ Undo: revlog về như cũ (0 → 0)
+  ✓ sau 3 vòng ôn + Undo: xu và số lần tưới về như cũ [2,0,0] → [2,0,0] (1.22.8: +9 xu)
+  ✓ lần bù xu điện thoại sau Undo không trả lại xu cho lượt đã Undo
+== giao diện ôn buổi tối
+  ✓ bảng Giao diện: không còn "Ôn buổi tối" / "Đêm vườn"
+  ✓ config cũ "Ôn buổi tối" → bảng ôn Vàng vườn
+  ✓ chậu cây lúc 22 giờ đủ sáng: độ sáng trung bình 98 (1.22.8 đo được ~45)
+  ✗ nhật ký lỗi add-on trống: giọng đọc Gemini cho câu chép: AIError: Không kết nối được tới Gemini (kiểm tra mạng): Tunnel connection failed: 403 Forbidden
+  ✓ không có lỗi JS
+== Màn chính (1.24: bỏ Ngắm cảnh — vùng dưới chớp xanh, người dùng thấy không cần)
+  ✓ không còn Ngắm cảnh: phím V không mở gì, không còn nút Ngắm
+  ✓ bấm vào ngôi nhà ở màn chính → mở Nhà & Cửa hàng như 1.22
+  ✓ ⚙ Giao diện có nhóm Màn chính: Cỡ cảnh, Cảnh hiện
+  ✓ Cỡ cảnh Lớn: dải cảnh cao hơn (304 → 530 px)
+  ✓ lưu vào config (ui.scene = large)
+  ✗ nhật ký lỗi add-on vẫn trống sau phần Màn chính: giọng đọc Gemini cho câu chép: AIError: Không kết nối được tới Gemini (kiểm tra mạng): Tunnel connection failed: 403 Forbidden
+  ✓ không có lỗi JS
+== KB-02: hồ sơ Anki mới
+  ✓ đã mở hồ sơ mới (0 note)
+  ✓ hồ sơ mới: 0 xu, chưa có nhà (1.22.8: 12.345 xu, nhà cấp 7) — [0,0]
+  ✓ hồ sơ mới: không nhận tiến độ đọc báo của hồ sơ khác
+  ✓ về hồ sơ cũ: ví còn nguyên ["Test",12345,7] (trước: [5000,7])
+
+KẾT QUẢ: 63/65 đạt
+== e2e_124.js
+== màn chính: Trong nhà (cả nhà 3 gian) ở ◂ ▸
+  ✓ phím → từ Sân vườn sang Trong nhà (cả nhà)
+  ✓ tên cảnh: Trong nhà
+  ✓ Bếp, Phòng ngủ chưa mở thì tối; phòng chính sáng (độ sáng sàn 82 / 176 / 66)
+== bấm gian chưa mở → tab Xây nhà, Mở rộng nhà
+  ✓ mở Nhà & Cửa hàng ở tab Xây nhà
+  ✓ 1.25: một thẻ "Mở rộng nhà · Bếp + Phòng ngủ"
+  ✓ bấm đúp "Mở rộng": mở cả Bếp lẫn Phòng ngủ, chỉ trừ 2.000 xu (còn 8000)
+  ✓ nút cảnh: có "Bếp" và "Phòng ngủ"
+== Bếp: mua + đặt tủ lạnh, đặt chậu cây từ Kho
+  ✓ chuyển sang gian Bếp
+  ✓ khung Bếp 9 ô (144 × 88): 288 × 176
+  ✓ tab Nội thất chia nhóm: Phòng chính | Bếp | Phòng ngủ
+  ✓ mua tủ lạnh
+  ✓ mua xong bấm ô (0, 1) của Bếp → đặt tủ lạnh trong Bếp
+  ✓ Kho đồ → Đặt chậu cây khi đang xem Bếp → đặt vào Bếp
+  ✓ đồ treo tường cũ (đồng hồ) treo trên tường Bếp
+== Phòng ngủ + đồ mới, thú nuôi đi khắp nhà
+  ✓ mở Phòng ngủ, bày giường / đèn ngủ / dây đèn sao / tủ áo
+  ✓ màn chính: cả nhà 3 gian
+== ảnh chụp nguyên nhà
+  ✓ hộp chụp ảnh: cảnh "Trong nhà"
+  ✓ ảnh cỡ thường của cả nhà: 934 × 224
+== bấm gian đã mở trên màn chính → bảng Nhà ở đúng gian
+  ✓ bấm Phòng ngủ → bảng Nhà mở ở Phòng ngủ
+== thanh trên của Nhà ở 1024 px (đủ Trong nhà · Bếp · Phòng ngủ)
+   [946,946,true,[777,113,878,144],[888,113,978,144]]
+  ✓ thanh trên không tràn, "Chụp ảnh" không đè "Thoát" (946 / 946)
+== cửa sổ nhỏ (720 × 520)
+  ✓ không tràn ngang, khung Phòng ngủ vừa, danh sách còn 142 px
+  ✓ nhật ký lỗi add-on trống
+  ✓ không có lỗi JS
+KẾT QUẢ: 23/23 đạt
+== e2e_125.js
+== chưa mở rộng (1920 × 1080): nhà giữa dải, vườn hai bên, hai gian bên tối như nhau
+  ✓ màn chính đang ở "Trong nhà"
+  ✓ cả nhà ×3 nằm giữa dải: lề trái 83 / lề phải 83 điểm ảnh, phía trên 13
+  ✓ hai bên là vườn (trời trên / cỏ dưới), không còn nền gỗ tối: [[[148,214,255],[105,203,89]],[[148,214,255],[105,203,89]]]
+  ✓ Bếp / Phòng ngủ tối như nhau, phòng chính sáng (sàn 72 / 169 / 65)
+== tab Xây nhà: một thẻ "Mở rộng nhà", bấm đúp chỉ trừ 2.000 xu
+  ✓ bấm Bếp chưa mở → Nhà & Cửa hàng ở tab Xây nhà
+  ✓ một thẻ "Bếp + Phòng ngủ · 2000 xu" có ảnh nhỏ cả nhà
+  ✓ tiêu đề nhóm "Mở rộng nhà", thẻ không có đoạn giải thích
+  ✓ bấm đúp "Mở rộng": mở cả hai gian, chỉ trừ 2.000 xu (còn 8000)
+  ✓ thẻ đổi thành "Đã mở" + nút Đến Bếp / Đến Phòng ngủ
+  ✓ nút cảnh có cả Bếp và Phòng ngủ: Sân vườn · Trong nhà · Bếp · Phòng ngủ · Bãi biển
+  ✓ tab Xây nhà: 5 ảnh nhỏ nhà 3 gian (thẻ Mở rộng + 4 kiểu nhà)
+  ✓ ảnh nhỏ của 4 kiểu nhà khác nhau (tường Bếp): 247,249,251 | 236,214,168 | 246,241,228 | 233,185,73
+== sau khi mở: hai gian cùng sáng; 4 kiểu nhà × 3 gian đổi theo kiểu
+  ✓ Bếp, Phòng ngủ đã sáng như phòng chính (sàn 196 / 175 / 170)
+  ✓ mỗi điểm đo (tường / sàn của Bếp, phòng chính, Phòng ngủ) đổi theo cả 4 kiểu nhà: 4 4 4 4 4 4
+  ✓ đổi kiểu nhà không mất gian, không trừ thêm xu
+  ✓ bảng Nhà ở Bếp (144 × 88) đổi nền theo kiểu nhà: 247,243,234 → 216,189,138
+== hình nền nguyên nhà (1920 × 1080)
+  ✓ hình nền 1920 × 1080: trời ở hai góc trên, cỏ ở góc dưới (không còn gỗ tối): {"size":[1920,1080],"tl":[101,192,255],"bl":[105,203,89],"tr":[101,192,255],"mid":[227,174,112]}
+== ⚙ → Màn chính → Dây trang trí
+  ✓ có dòng "Dây trang trí: Hiện / Ẩn", mặc định Hiện
+  ✓ lưu cấu hình ui.deco = "off"
+  ✓ Ẩn: dải trên cùng ẩn, không chừa chỗ (padding 14px), giao diện mùa vẫn bật
+  ✓ dây trang trí trong nhà biến mất (dòng điểm ảnh dưới xà đổi: 26321 → 30695)
+  ✓ mở lại vườn: vẫn ẩn
+  ✓ bấm kiểu có sẵn (Dịu mắt → Đầy đủ): kiểu được áp dụng, Dây trang trí vẫn Ẩn [["off","still"],["off","full"]]
+  ✓ bật lại Hiện: dải trên cùng + dây trong nhà trở lại, cấu hình "on"
+== ban đêm
+  ✓ đêm: vườn tối hẳn (174 → 84), trong nhà vẫn sáng hơn vườn (140)
+== cửa sổ 1366 / 1024 / 720 × 520
+  ✓ 1366 px: ×2, nhà giữa (lề 100 / 100), không tràn ngang, hai bên là cỏ [[105,203,89],[105,203,89]]
+  ✓ 1024 px: ×2, nhà giữa (lề 14 / 15), không tràn ngang, hai bên là cỏ [[105,203,89],[105,203,89]]
+  ✓ 720 px: ×1, nhà giữa (lề 105 / 105), không tràn ngang, hai bên là cỏ [[105,203,89],[105,203,89]]
+  ✓ nhật ký lỗi add-on trống
+  ✓ không có lỗi JS
+KẾT QUẢ: 30/30 đạt
+== e2e_1251.js
+== deck kiến thức tiếng Việt, Nguồn báo
+  ✓ loại note "Kiến thức" (tiếng Việt có dấu) → Ngôn ngữ khác (other)
+  ✓ Báo muốn nhận: Tiếng Nhật / Tiếng Anh / Tiếng Việt, tick được cả khi chưa có deck ([["Tiếng Nhật",false,false],["Tiếng Anh",false,false],["Chỉ tiếng Việt",true,false]])
+  ✓ thẻ Gói báo: chưa có gói, tặng 7 ngày, Mua 1 tuần · 100 xu / 1 tháng · 300 xu
+  ✓ khối Báo tiếng Việt: Báo Làng Kotoba, không Trình độ, không lấy thẻ / deck (1.25.2: chỉ truyện + tin làng)
+  ✓ chỉ có báo tiếng Việt: không hàng Giọng đọc, không thẻ giọng cho câu chép
+  ✓ Chủ đề truyện: 8 nút (có Kinh dị nhẹ, Dễ thương), mặc định Ấm áp đời thường
+== chủ đề truyện chọn nhiều
+  ✓ bật Kinh dị nhẹ + Hài, tắt Ấm áp → lưu ["hai","kinh_di"], khoá cũ = chủ đề đầu ([["hai","kinh_di"],"hai"])
+  ✓ chọn hơn một chủ đề: ghi chú "mỗi đợt 6–8 kỳ một chủ đề, lần lượt"
+  ✓ không tắt được chủ đề cuối cùng (còn Kinh dị nhẹ) ["kinh_di"]
+== số đầu tiên: tặng 7 ngày
+  ✓ bấm Viết → Gemini (giả) viết số tiếng Việt; tặng thử 7 ngày, xu giữ 250 ([250,{"until":"2026-11-18","plan":"tuan","auto":true,"trial":"2026-11-12","paid":null}])
+  ✓ lời nhắc bản gốc: chủ đề Kinh dị nhẹ, thời tiết = trời trong vườn ("sáng nắng, chiều nhiều mây"), không thẻ
+  ✓ thời tiết trong báo khớp trời của vườn lúc 9 giờ / 15 giờ (["sunny","cloudy"])
+  ✓ bao.json: ngon_ngu vi, 3 bài, truyện = nguyên văn bản gốc (bao_chung/ban_goc), 2 tin làng chung, không bảng tra / câu chép
+  ✓ thẻ Hôm nay: "Báo mới 1 · Chép 0/5 ▸" (deck có thứ để chép)
+== đọc số tiếng Việt
+  ✓ đầu báo "Báo Làng Kotoba", ngày Thứ Năm, 12/11/2026Số 1, lang="vi"
+  ✓ các mục: Tin làng / Truyện dài kỳ · Kỳ 1 / Cột ngắn
+  ✓ không nút furigana, không ▶ nghe, không Dịch, không câu chép, không chữ gạch chân
+  ✓ dòng cuối: "Báo do … viết tự động."
+  ✓ bấm "Kỳ này hay" → ghi vào truyện chung (bao_chung), kỳ sau mọi báo đọc
+  ✓ trả lời đúng 3 câu: +2 mỗi câu, làm hết +5 (250 → 261)
+== hết hạn + Tự gia hạn → gia hạn tuần (−100)
+  ✓ hết hạn hôm qua + Tự gia hạn + đủ xu → −100 xu, gói tới 2026-11-18
+== tắt Tự gia hạn → không viết, nút Gia hạn
+  ✓ bỏ tick "Tự gia hạn" → lưu auto = false
+  ✓ hết hạn, Tự gia hạn tắt → không gọi Gemini, không trừ xu, báo "Gói báo đã hết hạn — gia hạn ở thẻ Gói báo (tab Nguồn báo)."
+  ✓ thẻ Gói báo "Đã hết hạn"; hàng Hôm nay: "Gói báo hết hạn — gia hạn ở thẻ Gói báo"
+  ✓ tab Báo: "Gói báo đã hết hạn" + nút Gia hạn 1 tuần / 1 tháng (không có nút Chép chính tả ở báo tiếng Việt)
+  ✓ bấm "Gia hạn 1 tuần · 100 xu" → −100 xu, gói tới 2026-11-18, Gemini viết số mới
+== nút mua khoá khi thiếu xu / quá 60 ngày
+  ✓ còn 7 ngày, 120 xu: Gia hạn tuần bấm được, tháng khoá ("Chưa đủ xu") [["Gia hạn 1 tuần · 100 xu",false,""],["Gia hạn 1 tháng · 300 xu",true,"Chưa đủ xu (đang có 120)"]] "Gói báo | Gemini viết số mới khi còn gói · số cũ luôn đọc được | Hiện tại | Còn 7 ngày (tới hết 18/11) | Mua | Gia hạn 1 tuần · 100 xu | Gia hạn 1 tháng · 300 xu | Tự gia hạn khi hết hạn (nếu đủ xu)"
+  ✓ còn 41 ngày: tuần được, tháng khoá (quá 60 ngày)
+  ✓ gửi lệnh mua tháng thẳng (bỏ khoá nút) → Python từ chối, không trừ xu
+== Báo muốn nhận: Nhật / Anh hoặc chỉ tiếng Việt (1.25.2)
+  ✓ cấu hình cũ ["ja","vi"] → chỉ đọc báo tiếng Nhật (Việt không đi cùng Nhật / Anh)
+  ✓ đang chỉ tiếng Việt, tick Tiếng Nhật → bỏ tiếng Việt: ["ja"]
+  ✓ tick Nhật + Anh: ghi chú "hai báo cùng kể một chuyện"
+  ✓ tick "Chỉ tiếng Việt" → bỏ Nhật + Anh: ["vi"]
+== Kệ báo, Không dùng deck, Luyện viết
+  ✓ Kệ báo: nút chuyển Báo tiếng Nhật / Báo tiếng Anh ["Báo tiếng Nhật · 2 mới","Báo tiếng Anh · 1 mới"]
+  ✓ báo tiếng Nhật / tiếng Anh → hàng Giọng đọc hiện lại
+  ✓ tiếng Nhật → Không dùng deck: lưu mode "level", phạm vi không deck (Gemini viết theo trình độ)
+  ✓ nút "Không dùng deck" sáng, vẫn chọn Trình độ
+  ✓ bấm Mọi deck → về "deck"
+  ✓ chỉ báo tiếng Việt, không có deck Nhật / Anh → Lịch hoa không có Luyện viết
+  ✓ có deck tiếng Nhật / tiếng Anh (chưa tick báo) → Luyện viết hiện lại
+== Đuổi quạ cho deck tiếng Hàn (Ngôn ngữ khác)
+  ✓ bảng Trò chơi: Đuổi quạ không còn "chưa hỗ trợ ngôn ngữ này" (カラス追い3. Đuổi quạQuạ mang nghĩa bay tới trộm hạt. Gõ đúng từ (mặt trước của thẻ) )
+  ✓ kiểu chơi: Nghĩa → gõ từ / Từ → gõ nghĩa ["Nghĩa → gõ từ","Từ → gõ nghĩa"]
+  ✓ vào game: ô gõ "Gõ từ…"
+  ✓ gõ đúng từ tiếng Hàn (사과, 학교…) → đuổi được quạ, điểm tăng
+== cửa sổ 1366 / 720 × 520: Nguồn báo có thẻ Gói báo
+  ✓ 1366 px: thẻ Gói báo trong khung, không tràn ngang [23,345,0,-14,[-949,-734]]
+  ✓ 720 px: thẻ Gói báo trong khung, không tràn ngang [23,37,0,-14,[-303,-88]]
+  ✓ nhật ký lỗi add-on trống
+  ✓ không có lỗi JS
+KẾT QUẢ: 48/48 đạt
+== e2e_1253.js
+== 1. cài đặt ⚙ còn sau khi tắt hẳn Anki rồi mở lại
+  ✓ trang có GardenPrefs + cài đặt Python đưa vào <head>
+  ✓ config "prefs" có Trời & giờ: Cố định Hoàng hôn, Mưa {"mode":"fixed","dayMinutes":24,"fixedHour":18.4,"weather":"rain"}
+  ✓ config "prefs" có Nhạc nền Bật (config mặc định của máy test: Tắt), Âm lượng 25%, Đuổi quạ chữ Nhật: {"kb-sky":"{\"mode\":\"fixed\",\"dayMinutes\":24,\"fixedHour\":18.4,\"weather\":\"rain\"}","kb-music":"1","kb-music-vol":"0.25","kb-crow-mode":"jp"}
+  ✓ tắt hẳn Anki (kill) rồi mở lại cùng thư mục hồ sơ
+  ✓ localStorage trống sau khi mở lại (đúng như máy người dùng: 1.25.2 mất cài đặt ở đây)
+  ✓ Trời & giờ còn nguyên: {"mode":"fixed","dayMinutes":24,"fixedHour":18.4,"weather":"rain"}
+  ✓ bảng ⚙ hiện đúng: Cố định · Hoàng hôn · Mưa
+  ✓ Nhạc nền Bật, Âm lượng 25%, Đuổi quạ chữ Nhật còn nguyên
+  ✓ chọn Tuyết rồi đóng cửa sổ vườn ngay: vẫn lưu (snow)
+== 2. cỡ cảnh Lớn: trời phía trên mái khớp hai bên, mưa cả phía trên mái
+  ✓ cỡ Lớn ở 1920 × 1080: có khoảng trời phía trên nhà (44 điểm ảnh, ×4)
+  ✓ trời sát mép mái cùng màu với vườn trái / phải ở mọi hàng (36 hàng khớp, 0 lệch )
+  ✓ trời mưa: có hạt mưa phía trên nhà, cả trước mái (2250 điểm ảnh màu mưa; 1.25.2: 0)
+== 3. Undo lượt ôn vẫn Redo được
+  ✓ ôn 1 thẻ: +3 xu, revlog +1
+  ✓ Undo: ví đọc ra đã trả lại xu (10003 → 10000), revlog về như cũ
+  ✓ Edit → Redo vẫn bấm được: "Answer Card" (1.25.2: mất Redo)
+  ✓ vườn làm mới sau Undo: xu vẫn đúng, Redo vẫn còn
+  ✓ Redo: lượt ôn về lại, xu như lúc vừa ôn (10003), không cộng hai lần
+  ✓ Undo rồi ôn thẻ khác: phần trả lại được ghi cùng lần ghi ví (collection 10003 = ví 10003)
+  ✓ lần bù xu điện thoại sau đó không trả lại xu cho lượt đã Undo
+  ✓ Undo rồi đồng bộ: trước đồng bộ ví ghi đúng 10000 xu (collection 10003 → 10000)
+  ✓ Undo rồi đóng hồ sơ: ghi 10000 xu trước khi đóng (collection 10003 → 10000), sổ phần thưởng xoá
+== 4. Xưởng: vẽ → đổi cỡ → Esc
+  ✓ vẽ 8 ô rồi đổi cỡ 24×24: hình còn, lịch sử hoàn tác trống ({"size":24,"ink":8,"undo":0})
+  ✓ Esc lần đầu: Xưởng còn mở, nhắc "Bấm Esc lần nữa để bỏ, không lưu hình này." (1.25.2: đóng luôn, mất hình)
+  ✓ Esc lần hai: đóng
+  ✓ chưa vẽ gì, chỉ đổi cỡ: Esc một lần là đóng (không hỏi thừa)
+== 5. đổi deck nguồn → gợi ý luyện viết tính lại
+  ✓ đổi deck nguồn tiếng Anh → tính lại (1.25.2: vẫn từ cũ); chọn lại như cũ → dùng lại bản đã tính
+== 6. deck chọn ở ô Deck của vườn còn sau khi đóng / mở lại vườn; cài đặt có chữ lạ không làm hỏng trang
+  ✓ chọn deck B rồi đóng vườn: mở lại vẫn là deck B (1.25.2: về deck cũ nếu chưa bấm Tưới ngay)
+  ✓ ô Deck trên thanh trên hiện đúng deck B
+  ✓ cài đặt có "</script>" trong giá trị: trang vẫn chạy, giá trị đọc lại nguyên vẹn (chèn vào <head> an toàn)
+== 7. (1.25.4, người dùng chọn A') cỡ cảnh Lớn: điểm ảnh ×5 thay vì ×7, trời cao hơn; bỏ bụi cây vuông cạnh nhà
+  ✓ cỡ Lớn: điểm ảnh ×5 (1.25.3: ×7)
+  ✓ dải vẫn cao như cũ (530 px), phần thêm là 30 hàng trời phía trên cảnh
+  ✓ trời liền một dải qua mép trên cảnh (21/21 cột; trời không bắt đầu lại ở hàng 30)
+  ✓ trời mưa: có mưa ở phần trời thêm (424 điểm ảnh)
+  ✓ ban đêm: phần trời thêm tối như trời trong cảnh (độ sáng 36 / 35)
+  ✓ bấm vào hòm thư (có độ lệch trời phía trên) vẫn trúng hòm thư: ["mailbox",false]
+  ✓ Trong nhà: không còn bụi cây vuông xanh hai bên nhà (0 điểm đo trúng màu bụi / viền)
+  ✓ cỡ Lớn ×5 lúc giông ban đêm: vẽ sân 6.35 ms / khung
+  ✓ cỡ Vừa không đổi: ×4, không có trời thêm
+  ✓ nhật ký lỗi không có lỗi mới
+KẾT QUẢ: 39/39 đạt
+== e2e_1255.js
+== chưa bật admin
+  ✓ không có nút "Sửa hình" ở bảng Nhà
+  ✓ lệnh lưu gửi thẳng khi chưa bật admin bị bỏ (không ghi file)
+== bật admin: sửa đèn lồng giấy
+  ✓ thẻ đồ có nút "Sửa hình" (29 nút ở Trang trí sân)
+  ✓ bấm "Sửa hình" ở thẻ Đèn lồng giấy
+  ✓ Xưởng mở đúng hình gốc 10 × 18: ["do:chochin",10,18]
+  ✓ bảng màu = bảng màu của đồ (36 màu)
+  ✓ chữ ngắn: "Hình gốc · Đèn lồng giấy" · nút "Lưu" · một khung thì không có hàng Khung
+  ✓ vẽ một điểm viền ở góc
+  ✓ đã vẽ: Esc lần đầu chỉ nhắc
+  ✓ Lưu → Xưởng đóng, hình đổi ngay: k..kkkk...
+  ✓ ghi vào user_files/mau_sua.json (chỉ khung đã sửa)
+  ✓ thẻ đánh dấu đã sửa (nút tím đậm)
+== mở lại vườn
+  ✓ mở lại: bản sửa vẫn áp (nạp trong <head>)
+== nhiều khung: chong chóng, thú, giống cây, khách
+  ✓ chong chóng: 8 khung, hàng Khung Chính / Khung 1 / Khung 2
+  ✓ phím 3 → khung thứ ba (f2)
+  ✓ khung vừa vẽ có chấm đánh dấu
+  ✓ chỉ lưu khung đã sửa, khung đó đổi trong cảnh
+  ✓ thẻ thú nuôi (Shiba) có nút "Sửa hình"
+  ✓ thú: 4 khung "Đi 1 / Đi 2 / Ngồi / Ngủ", bảng màu của thú
+  ✓ lưu → hình Shiba ngồi đổi
+  ✓ thẻ giống cây (Lúa) có nút "Sửa hình"
+  ✓ giống cây: 5 giai đoạn (Hạt / Mầm / Cây non / Ra hoa / Ra quả)
+  ✓ lưu → Lúa Ra quả đổi (ruộng, lịch hoa dùng hình này)
+  ✓ thẻ khách (Album khách) có nút "Sửa hình"
+  ✓ khách: khach:suzume, 2 khung
+  ✓ chưa vẽ gì: Esc một lần là đóng
+== các loại đồ khác: nội thất, treo tường, theo mùa, món hiếm, gian bếp
+  ✓ Kotatsu (kotatsu): Xưởng 32 × 17, 1 khung → Lưu → hình đổi
+  ✓ Tranh cuộn (kakejiku): Xưởng 13 × 30, 1 khung → Lưu → hình đổi
+  ✓ Cây hồng (kaki): Xưởng 32 × 40, 1 khung → Lưu → hình đổi
+  ✓ Hươu Nara (shika): Xưởng 17 × 23, 2 khung → Lưu → hình đổi
+  ✓ Tủ lạnh (reizouko): Xưởng 15 × 28, 2 khung → Lưu → hình đổi
+  ✓ Xoá hết rồi Lưu → không lưu, nhắc "Khung này đang trống." (món không biến mất)
+== bản sửa hỏng bị bỏ
+  ✓ sai cỡ (đèn đá 5 × 5) / màu lạ (hòm thư "X") → giữ hình gốc, vườn vẫn chạy
+== Xuất file / Nhập file / Về gốc
+  ✓ Xuất file mau_sua.json: ["do:chochin","do:kakejiku","do:kaki","do:kazaguruma","do:kotatsu","do:lantern","do:mailbox","do:reizouko","do:shika","giong:ine","thu:shiba"]
+  ✓ Về gốc: lưới về đúng hình trong bản add-on (chưa lưu)
+  ✓ Lưu sau Về gốc → bỏ bản sửa, đèn lồng như gốc
+  ✓ Nhập file người khác gửi → hình đổi, gộp vào bản sửa của máy
+== người dùng thường: Góp ý hình (vườn không đổi)
+  ✓ bỏ file admin: vườn về hình gốc, bản sửa của máy (ghế gỗ) còn trong file nhưng không áp
+  ✓ config "admin": true không còn tác dụng; món đang có (đèn lồng) có "Góp ý hình", món chưa có (đèn đá) không có nút: {"lamp":"Góp ý hình","stone":"","sua":0}
+  ✓ bấm "Góp ý hình"
+  ✓ Xưởng "Góp ý hình": nút "Lưu file góp ý", không có Xuất / Nhập file: {"suggest":true,"title":"工房 · Góp ý hình","save":"Lưu file góp ý","tip":"Góp ý hình · Đèn lồng giấy","hidden":[true,true],"revert":true}
+  ✓ chưa vẽ gì mà bấm lưu → "Chưa sửa gì."
+  ✓ lưu file góp ý chỉ có hình vừa sửa; không ghi bản sửa của máy
+  ✓ Xưởng đóng, đèn lồng trong vườn vẫn như gốc
+  ✓ máy admin Nhập file góp ý → đèn lồng đổi, vào bản sửa của máy (để Xuất file ra bản mới)
+== file đi kèm gói: người dùng thường nhận
+  ✓ kotoba_batake/mau_sua.json đi kèm gói → hàng rào đổi cho cả người không bật admin
+  ✓ không có file admin: không có nút "Sửa hình"
+  ✓ nhật ký lỗi không có lỗi mới
+KẾT QUẢ: 48/48 đạt
+== e2e_1258.js
+== 1. Điền vào câu: sang câu mới thì tắt câu cũ
+  ✓ Điền vào câu chạy (deck có câu ví dụ + audio)
+  ✓ trả lời xong → đọc câu ví dụ của "学生": STOP | SoundOrVideoTag(filename='kbtest_ex_0.wav')
+  ✓ bấm "Câu tiếp" → tắt câu đang đọc trước khi sang câu 2: ["STOP"]
+  ✓ câu mới chưa đọc gì (không lộ đáp án)
+  ✓ bấm Câu tiếp ngay sau khi trả lời → không đọc câu nào (trước đây đọc luôn câu mới "天気"): ["STOP"]
+  ✓ phím Space (Câu tiếp) cũng tắt câu đang đọc: ["STOP"]
+== 2. Nghe tìm cây, Chợ sáng: sang câu / khách mới thì tắt từ đang đọc
+  ✓ Nghe tìm cây chạy (deck có audio từ)
+  ✓ Nghe tìm cây: Câu tiếp → tắt từ cũ rồi mới đọc từ mới: ["STOP","STOP","SoundOrVideoTag(filename='kbtest_w_5.wav')"]
+  ✓ Chợ sáng chạy, có khách
+  ✓ Chợ sáng: Khách tiếp → tắt từ đang đọc: ["STOP"]
+  ✓ Chợ sáng: Esc về menu giữa chừng → tắt từ đang đọc: ["STOP"]
+== 3. xong nhiệm vụ thứ ba trong trò chơi → huy hiệu + đèn trời hiện ngay
+  ✓ trước: nhiệm vụ 2/3, chưa có huy hiệu: {"joy":false,"badge":"","quest":"Nhiệm vụ 2/3 ▸"}
+  ✓ chơi hết 8 câu → màn kết quả, đã lưu
+  ✓ ngay khi lưu kết quả (chưa đổi deck): nhiệm vụ 3/3, huy hiệu "Xong 3 nhiệm vụ", đèn trời bật: {"joy":true,"badge":"Xong 3 nhiệm vụ","quest":"Nhiệm vụ 3/3 ✓","res":"✓ Xong nhiệm vụ: Chơi 1 trò chơi (+20 xu)Mở rương quà: Cờ cá chép koinobori +30 xu!","banner":false}
+  ✓ đang mở bảng Trò chơi: dải chúc mừng để dành (không nấp sau bảng)
+  ✓ đóng bảng Trò chơi → dải chúc mừng "Xong cả 3 nhiệm vụ hôm nay! Thả đèn trời nào"
+  ✓ đèn trời bay trên trời sân (điểm ảnh cam ở dải trời: 0 → 297)
+  ✓ đổi deck: huy hiệu vẫn còn: {"banner":false,"badge":"Xong 3 nhiệm vụ"}
+== 4. truyện chung: báo Claude Code (kotoba_daily, kỳ 1–8) → hôm nay Gemini viết báo → nối kỳ 9
+  ✓ Gemini (giả) viết xong báo tiếng Việt hôm nay
+  ✓ bộ nhớ truyện chung: kỳ 1–8 của Claude + kỳ 9 Gemini viết hôm nay: [[1,"claude"],[2,"claude"],[3,"claude"],[4,"claude"],[5,"claude"],[6,"claude"],[7,"claude"],[8,"claude"],[9,""]]
+  ✓ Gemini lập mạch nối kỳ 8 (hộp thiếc), số báo hôm nay in kỳ 9
+  ✓ nhật ký viết báo ghi "Nối 8 kỳ của báo Claude Code" (không vào nhật ký lỗi)
+  ✓ kotoba_daily/truyen_chung.json có kỳ 9 cho Claude đọc: [[9,true]]
+  ✓ sáng hôm sau pham_vi.py của Claude: kỳ tiếp theo 10, biết kỳ 9 đã đăng ở add-on: [10,[9],0]
+  ✓ nhật ký lỗi không có lỗi mới
+KẾT QUẢ: 25/25 đạt
+== e2e_1259.js
+== 1. Vé giữ chuỗi
+  ✓ chưa dùng vé: chuỗi đứt (0 ngày) vì hôm qua chưa ôn
+  ✓ mở vườn → thông báo: "Hôm qua chưa ôn — đã dùng 1 vé giữ chuỗi, chuỗi 3 ngày vẫn còn."
+  ✓ thẻ Hôm nay: "· 3 ngày liền", chú thích có số vé
+  ✓ ghi ngày dùng vé: 2026-11-11
+  ✓ làm mới lần nữa: không dùng thêm vé
+  ✓ Lịch hoa: "Vé giữ chuỗi 0/2 · quên ôn 1 ngày thì tự…" + nút "Mua · 150 xu"
+  ✓ ô hôm qua có bông tuyết, chú thích "Chưa ôn · dùng vé giữ chuỗi · Mùa lá đỏ"
+  ✓ thanh dưới: Chuỗi3 ngàyTháng này3 ngày ôn
+  ✓ mua 1 vé: −150 xu (thanh trên 850 xu), ngày mua = hôm nay
+  ✓ mua vé thứ hai: "Đã đủ vé" (khoá), 700 xu
+  ✓ Lịch năm: Chuỗi3 ngàyDài nhất3 ngày
+  ✓ ít xu: nút khoá, "Còn thiếu 50 xu"
+== 2. Sửa hình: khung động + hình dựng từ hình khác
+  ✓ shika: khung ["Chính","Cúi chào"]
+  ✓ kappa: khung ["Chính","Chớp mắt"]
+  ✓ kabuto: khung ["Chính","Loé sáng"]
+  ✓ reizouko: khung ["Chính","Mở cửa"]
+  ✓ beddo: khung ["Chính","Chăn phồng"]
+  ✓ fountain: khung ["Chính","Đóng băng"]
+  ✓ rice: khung ["Chính","Mùa thu"]
+  ✓ Nhà → thẻ Hươu → nút Sửa hình mở Xưởng (tab yard)
+  ✓ lưu khung "Cúi chào": chỉ ghi khung đó (cui), cảnh dùng ngay: r.....…
+  ✓ mở lại vườn: bản sửa khung động vẫn áp
+  ✓ Góp ý hình (người dùng thường): ["Chính","Đóng băng"]
+== 3. Lỗi của nhánh audit 11/11
+  ✓ F01: cất món tự làm ở Bếp → không còn ở gian (collection: 0 chỗ đặt)
+  ✓ F02: bài tiếng Anh 30 từ (629 ký tự) đóng / mở lại còn nguyên (629)
+  ✓ F04: Esc lúc đang chọn chữ (bộ gõ của Chromium + sự kiện isComposing) → Lịch hoa và cửa sổ vườn vẫn mở
+  ✓ F04: Esc thường (đã chốt chữ) vẫn đóng Lịch hoa
+  ✓ F05: trần 0 → menu "Xu từ game hôm nay: 0/0."
+  ✓ F05: trần 40 → menu "Xu từ game hôm nay: 0/40."
+  ✓ F06: trời snow → báo "cả ngày tuyết"
+  ✓ F06: trời rain → báo "cả ngày mưa"
+  ✓ F06: trời auto → báo "sáng nắng, chiều nhiều mây"
+  ✓ F07: câu chen vào lúc chuyển không làm mất câu đang chờ (B rồi C)
+  ✓ F03: đổi cài đặt rồi đóng vườn ngay (0 ms) → vẫn lưu
+  ✓ F08: đóng hồ sơ / collection khác → đọc lại ngôn ngữ ([{"ja":true,"en":false},{"ja":false,"en":false},{"ja":false,"en":false}])
+  ✓ không lỗi JS
+
+KẾT QUẢ: 36/36
+== e2e_126.js
+== 1. lần mở đầu ngày: thú chào
+  ✓ màn chào hiện khi mở vườn lần đầu trong ngày
+  ✓ mèo Mít chào: ["neko","おはよう！","Mít · Chào buổi sáng!"]
+  ✓ tin hôm nay trên màn chào: ["Báo mới đã tới","Hôm nay chồn tuyết có thể ghé Sân vườn lúc tuyết rơi"]
+  ✓ ghi "đã chào hôm nay" (kb-greet-day = ngày Anki 0)
+  ✓ bong bóng nằm gọn trong cửa sổ 1366 × 860
+  ✓ tự vào vườn sau ~4 giây
+  ✓ màn chào gỡ khỏi trang sau vòng tròn
+  ✓ lớp vòng tròn tắt sau khi mở xong
+== 2. lần mở sau cùng ngày: không chào, chỉ vòng tròn mở
+  ✓ không chào lần thứ hai trong ngày
+  ✓ vòng tròn mở ~0,4 giây rồi tắt
+  ✓ lớp hiệu ứng không nhận chuột (không chặn bấm)
+== 3. rê chuột dừng đếm, bấm / phím để vào
+  ✓ rê chuột lên màn chào: không tự vào sau 5 giây
+  ✓ rời chuột: đếm tiếp rồi vào vườn
+  ✓ bấm vào màn chào → vào vườn ngay
+  ✓ phím N: chỉ vào vườn, không mở bảng Nhà
+  ✓ Esc: vào vườn, cửa sổ vườn không đóng
+== 4. ai chào
+  ✓ thú đi chơi → StackChan báo nhẹ: Mít đi chơi rồi — cho ăn là về nhé.
+  ✓ chưa nuôi thú → StackChan: Chào buổi sáng!
+  ✓ buổi tối: こんばんは！
+== 5. vé giữ chuỗi, ngày lễ
+  ✓ vừa dùng vé giữ chuỗi: Mít · Hôm qua bận hả? Chuỗi vẫn còn nè! / Đã dùng 1 vé giữ chuỗi · chuỗi 3 ngày
+  ✓ ngày lễ: メリークリスマス！ / Mít · Giáng sinh vui vẻ!
+== 6. Tin làng
+  ✓ dòng trong thẻ Hôm nay: "Tin làng: đã dùng vé giữ chuỗi ▸"
+  ✓ bảng Tin làng: Tin làng · Thứ Năm 12/11 · 3 tin hôm nay, 1 sắp tới
+  ✓ có tin vé giữ chuỗi: ["Đã dùng 1 vé giữ chuỗi · chuỗi 3 ngày","Báo mới đã tới","Hôm nay chồn tuyết có thể ghé Sân vườn lúc tuyết rơi"]
+  ✓ Esc đóng bảng Tin làng (cửa sổ vẫn mở)
+  ✓ mở Nhiệm vụ thì bảng Tin làng đóng
+== 7. chuyển cảnh
+  ✓ ▸ (house): ["curtain"] · nút ["◂","▸"]
+  ✓ ◂ (beach): ["sweep"]
+  ✓ vào / ra Trong nhà: rèm
+  ✓ mở bảng Nhà: bật nhẹ (lớp kb-panel-in)
+  ✓ hết hiệu ứng thì gỡ lớp kb-panel-in
+== 8. ⚙ Chào khi mở vườn / Chuyển cảnh, Dịu mắt
+  ✓ ⚙ có 2 dòng mới: ["Cỡ cảnh","Cảnh hiện","Dây trang trí","Chào khi mở vườn","Chuyển cảnh","Màu bảng","Khung thẻ"]
+  ✓ lưu ui.greet / ui.trans = off
+  ✓ tắt cả hai: không chào, không vòng tròn
+  ✓ tắt chuyển cảnh: đổi cảnh ◂ ▸ không có dải lá
+  ✓ Dịu mắt: giữ Chào / Chuyển cảnh, chuyển cảnh chỉ mờ dần (["on","on"])
+== 9. cửa sổ nhỏ 720 × 520
+  ✓ bong bóng vừa cửa sổ 720 × 520: [138,70,583,253,720,520]
+  ✓ không lỗi JS
+  ✓ nhật ký lỗi add-on trống
+
+KẾT QUẢ: 39/39
+== e2e_1261.js
+== 1. người mới: màn chào trước, rồi hướng dẫn bước 1
+  ✓ Python: hồ sơ mới (0 xu, chưa tưới)
+  ✓ màn chào hiện trước
+  ✓ đang chào: chưa có hướng dẫn
+  ✓ hết màn chào → hướng dẫn hiện
+  ✓ bước 1/3: Chọn deck bạn đang học. Mỗi thẻ trong deck là một cây trong ruộng.
+  ✓ khung vàng bao ô Deck: [381,15,726,75]
+  ✓ bong bóng nằm gọn trong cửa sổ
+  ✓ lớp mờ không chặn bấm
+== 2. đổi deck → bước 2; Tưới ngay → ẩn khi ôn → bước 3
+  ✓ đổi deck → bước 2 tự hiện
+  ✓ khung bao nút Tưới ngay
+  ✓ bấm thẳng Tưới ngay (lớp mờ không chặn) → bảng ôn mở
+  ✓ đang ôn: hướng dẫn ẩn
+  ✓ trả lời một thẻ: +3 xu
+  ✓ đóng bảng ôn → bước 3
+  ✓ bước 3: chú giải giai đoạn cây
+  ✓ bong bóng bước 3 ở phía trên (không che cây vừa lớn)
+  ✓ bước cuối: nút Xong, không còn Bỏ qua
+  ✓ Xong → nhớ kb-tour-done (config prefs, còn sau khi tắt Anki)
+  ✓ mở lại vườn: không hiện nữa
+== 3. Esc = Bỏ qua (không đóng cửa sổ), ⚙ mở lại
+  ✓ ⚙ có nút Hướng dẫn 3 bước
+  ✓ ⚙ → Hướng dẫn 3 bước: bước 1, bảng ⚙ đóng
+  ✓ Esc: tắt hướng dẫn, cửa sổ vườn vẫn mở
+  ✓ Bỏ qua: tắt
+== 4. người đang dùng (có xu / lượt tưới): không thấy hướng dẫn
+  ✓ có 120 xu, 40 lượt tưới → data.tour = false, không hướng dẫn
+== 5. cửa sổ nhỏ 720 × 520
+  ✓ hướng dẫn hiện ở 720 × 520
+  ✓ bước 1: bong bóng gọn trong 720 × 520 [69,79,389,211]
+  ✓ bước 2: bong bóng gọn trong 720 × 520 [392,79,712,211]
+  ✓ bước 3: bong bóng gọn trong 720 × 520 [103,83,423,234]
+== 6. chuyển cảnh chậm hơn; kb-pop / kb-panel-in
+  ✓ đổi cảnh ◂ ▸: hiệu ứng curtain kéo dài ~711 ms (1.26.0: ~350 ms)
+  ✓ bong bóng linh vật: kiểu nảy kb-pop 0,28 s như trước 1.26 (["kb-pop","0.28s"])
+  ✓ mở bảng Nhà: bật nhẹ kb-panel-in ([true,"kb-panel-in"])
+  ✓ hết hiệu ứng thì gỡ lớp
+== 7. gói báo: Gemini lỗi → không trừ xu; viết xong → −100 xu
+  ✓ gói hết hạn + Tự gia hạn + đủ xu → vẫn cho Gemini viết
+  ✓ Gemini lỗi (hết hạn mức mọi model) → không có báo, KHÔNG trừ xu ([250,"2026-11-11",false,"Hết hạn mức miễn phí của Gemini (gemini-flash-lite-latest), thử lại ngày mai."])
+  ✓ tab Nguồn báo ghi lỗi: Hết hạn mức miễn phí của Gemini (gemini-flash-lite-latest), thử lại ngày mai.
+  ✓ thử lại
+  ✓ Gemini viết xong → gia hạn 1 tuần −100 xu ([150,"2026-11-18",true], lỗi: )
+  ✓ model 404 chỉ thử một lần trong cả số báo: ["gemini-3.6-flash","gemini-flash-lite-latest","gemini-flash-lite-latest","gemini-flash-lite-latest","gemini-flash-lite-latest","gemini-flash-lite-latest"]
+  ✓ nhật ký không bảo "Xoá gemini_model trong Config" (người dùng không đặt model)
+  ✓ không có lỗi JS: []
+  ✓ nhật ký lỗi trống: []
+
+KẾT QUẢ: 41/41
+== e2e_kit23.js
+== số Claude Code (kotoba_daily 2.3) có bản dịch
+  ✓ mỗi đoạn (10 đoạn) có nút Dịch
+  ✓ bản dịch ẩn sẵn
+  ✓ nút đầu bảng là "Hiện bản dịch" (không phải "Dịch số này" của Gemini): Hiện bản dịch
+  ✓ bấm Dịch ở đoạn đầu truyện: hiện đúng bản dịch đoạn đó
+  ✓ số không có giọng đọc: gợi ý nói rõ chưa có giọng đọc (không còn ghi "▶ để nghe"): Bấm từ gạch chân để tra nghĩa. Gạch liền: từ đã học. Gạch chấm: từ mới. Số này chưa có giọng đọc từng đoạn (cần VOICEVOX). Dịch: xem bản dịch.
+  ✓ Hiện bản dịch: cả số
+== số có giọng đọc VOICEVOX (bao/2026-11-01 của repo) + bản dịch: nút ▶ vẫn còn cạnh nút Dịch
+  ✓ Kệ báo có số hôm nay (12/11)
+  ✓ số có giọng đọc: gợi ý "▶ để nghe": Bấm từ gạch chân để tra nghĩa. Gạch liền: từ đã học. Gạch chấm: từ mới. ▶ để nghe. Dịch: xem bản dịch.
+  ✓ mỗi đoạn có cả ▶ lẫn Dịch (đoạn / có ▶ / có Dịch: 8 / 8 / 8)
+  ✓ bấm ▶ đoạn đầu truyện → phát đúng file VOICEVOX: [["file","/tmp/kb_kit23_9644/bao/2026-11-12/audio/bai_3_1.wav",1]]
+KẾT QUẢ: 10/10 đạt
+== audit_edge.js
+== 0 xu: mọi nút trả xu đều khoá, lệnh mua gửi thẳng bị Python từ chối
+  · 1366_01_0xu_build (0 xu)
+  · 1366_01_0xu_pet (0 xu)
+  · 1366_01_0xu_season (0 xu)
+  · 1366_01_0xu_craft (0 xu)
+  ✓ 0 xu: không còn nút trả xu nào bấm được
+  ✓ Thẻ "Tạo món đồ mới" khi 0 xu: nút khoá, ghi còn thiếu 200 xu ({"text":"Còn thiếu 200 xu","disabled":true,"title":"Món nhỏ nhất (16×16) 200 xu"})
+  ✓ Lệnh mua gửi thẳng khi 0 xu: Python từ chối hết, xu vẫn 0 ([0,0,1,7])
+  ✓ Báo "Chưa đủ xu…" ở dòng gợi ý: Chưa đủ xu: cần 3000, đang có 0.
+== Vừa đủ xu (xu = giá): mua được, xu về 0
+  ✓ Vừa đủ xu → Xây "Đổ móng" · còn 0 xu
+  ✓ Vừa đủ xu → Mua "Hàng rào gỗ" 15 xu · còn 0 xu
+  ✓ Vừa đủ xu → Mở vùng "Bãi biển" 2000 xu · còn 0 xu
+  ✓ Vừa đủ xu → Nhận nuôi "Gà mái" 500 xu · còn 0 xu
+  ✓ Vừa đủ xu → Mua giống "Lúa" 600 xu · còn 0 xu
+  ✓ Vừa đủ xu → Mở giao diện "Tết Nguyên Đán" 1000 xu · còn 0 xu
+  ✓ Vừa đủ xu → Mua đồ mặc "Mầm lá trên đầu" 80 xu · còn 0 xu
+  ✓ Vừa đủ xu → Mua biểu cảm "Phụng phịu" 60 xu · còn 0 xu
+  ✓ Vừa đủ xu → Chế tác món 16×16 · 200 xu · còn 0 xu
+  ✓ Vừa đủ xu → +1 cái · 100 xu · còn 0 xu
+  ✓ Vừa đủ xu → Sửa nhà 1 nấc · 105 xu · còn 0 xu
+  ✓ Vừa đủ xu → Mua kiểu nhà "Nhà mái tranh minka" 1500 xu · còn 0 xu
+  · 1366_02_vua_du_xu (mua bằng đúng số xu đang có)
+== Bấm đúp / bấm lại liền tay vào nút trả xu: chỉ trả một lần
+  ✓ Bấm "Xây" hai lần riêng (cách 0,35 giây): xây 2 bước, trả 400 xu (= 150 + 250)
+  ✓ Bấm đúp "Xây": được 1 lần, trả 80 xu (giá 80)
+  ✓ Bấm đúp "Mua" Hàng rào gỗ: được 1 lần, trả 15 xu (giá 15)
+  ✓ Bấm đúp "+1 cái": được 1 lần, trả 100 xu (giá 100)
+  ✓ Bấm đúp "Làm món này" (mã chia sẻ): được 1 lần, trả 200 xu (giá 200)
+  ✓ Bấm đúp "Mở khoá" vùng: được 1 lần, trả 2000 xu (giá 2000)
+  ✓ Bấm đúp "Sửa 1 nấc": được 1 lần, trả 105 xu (giá 105)
+  ✓ Bấm đúp "Chế tác": được 1 lần, trả 200 xu (giá 200)
+  ✓ Bấm đúp "Nhận nuôi": được 1 lần, trả 600 xu (giá 600)
+  · 1366_03_bam_dup (sau khi bấm đúp các nút trả xu)
+== Chạm giới hạn: 60 món, 6 vùng tự tạo, 12 giống tự vẽ, 12 luật tag, món chỉ một cái
+  ✓ 60 món: nút tạo món mới bị khoá (Đã đủ 60 mẫu)
+  ✓ 12 giống: nút "Tự vẽ giống cây" ở tab Xưởng bị khoá (Đã đủ 12 giống)
+  · 1366_04_gioi_han_dan_ma_vung (6 vùng tự tạo rồi, dán mã vùng)
+  ✓ Dán mã khi đã đủ (món / vùng / giống): nút làm bị khoá, ghi lý do — Xưởng đã đủ 60 mẫu | Đã có 6 vùng tự tạo | Đã có 12 giống tự vẽ
+  ✓ Gửi thẳng lệnh làm từ mã khi đã đủ: không làm thêm, không trừ xu ([60,6,12])
+  ✓ 6 vùng tự tạo: không còn thẻ "Tạo vùng mới"
+  · 1366_04_gioi_han_vung (6 vùng tự tạo)
+  ✓ Luật tag thứ 13: báo "Tối đa 12 luật theo tag.", vẫn 12 luật (12)
+  · 1366_04_gioi_han_12_tag (12 luật tag)
+  ✓ Món chỉ một cái "Tượng StackChan vàng" đã mua: nút "Đã có" bị khoá
+  ✓ Sân kín chỗ (36 ô) mà mua thêm: "“Sân vườn” hết chỗ cho “Hàng rào gỗ” · món đã vào Kho đồ: cất bớt đồ h…"
+  · 1366_04_san_kin_cho (mua thêm khi sân kín chỗ)
+== Xoá khi đang dùng: món đang đặt, vùng đang hiện ở màn chính, giống đang gieo
+  ✓ Món đang đặt ngoài sân: nút "Xoá mẫu" khoá, chú thích "Cất hết món này vào kho trước"
+  ✓ Gửi thẳng lệnh xoá món đang đặt: Python từ chối, món còn nguyên
+  · 1366_05_vung_tu_tao_man_chinh (màn chính đang ở vùng tự tạo, có ghế + mèo)
+  ✓ Xoá vùng đang hiện: màn chính về sân nhà ("Sân vườn · 1/2"), mèo về sân, ghế về kho ([0,"yard",1,0])
+  · 1366_05_sau_xoa_vung (màn chính sau khi xoá vùng)
+  ✓ Xoá giống đang gieo: 8 cây → 0 cây mang giống, luật deck bị bỏ
+== Mã chia sẻ: dán sai, quá dài, đổi chữ sau khi xem trước
+  ✓ Dán "" → "Dán mã chia sẻ vào ô trước đã."
+  ✓ Dán "xin chào" → "Đây không phải mã thiết kế (mã đúng bắt đầu bằng “KB1:”)."
+  ✓ Dán "KB2:m:16:abc:def:00000000" → "Mã này của bản ことば畑 mới hơn — cập nhật rồi dán lại nhé."
+  ✓ Dán KB1:m:16:VMOhbw:eN… (67 ký tự) → "Mã bị thiếu hoặc sai một chỗ (mã kiểm tra không khớp) — chép"
+  ✓ Dán KB1:AAAAAAAAAAAAAA… (450004 ký tự) → "Mã dài quá, không phải mã thiết kế của vườn."
+  ✓ Dán mã bị xuống dòng + dấu cách → xem trước được
+  · 1366_06_ma_chia_se_loi (mã sai một ký tự)
+  · 1366_06_doi_ma_sau_xem_truoc (xem trước mã món rồi dán đè mã vùng)
+  ✓ Xem trước "Làm món này · 200 xu", đổi chữ sang mã vùng rồi bấm "không còn nút": trả 0 xu, vùng 0→0, món 1→1 (không được trả 5.000 xu cho vùng chưa xem)
+== Deck lạ: deck trống, deck bị xoá khi vườn mở, tên rất dài, deck lọc
+  · 1366_07_deck_trong (deck Default trống)
+  ✓ Deck trống: 0 cây, vườn vẫn mở
+  ✓ Deck trống → Tưới ngay: màn "hết thẻ" hiện ("Hết thẻ cần tưới trong deck này. Vườn đã no nước, hẹn gặp lại!")
+  · 1366_07_deck_trong_tuoi_ngay
+  · 1366_07_ten_deck_dai (tên deck 120 ký tự)
+  ✓ Tên deck rất dài: thanh trên không tràn ngang
+  ✓ Deck đang xem bị xoá khi vườn mở → làm mới không lỗi, vườn đổi sang "Default" (0 cây)
+  · 1366_07_deck_bi_xoa (deck đang xem vừa bị xoá)
+  ✓ Deck lọc: vườn có 8 cây
+  ✓ Deck lọc → Tưới ngay: có thẻ để ôn
+== Xu rất nhiều, thú nuôi: tự cho ăn khi thiếu xu, tên có thẻ HTML / quá dài
+  · 1366_08_xu_rat_nhieu (123.456.789 xu)
+  ✓ Xu rất nhiều: thanh trên "123456789 xu", Nhà "123456789 xu"
+  · 1366_08_xu_rat_nhieu_nha
+  ✓ Đặt tên thú có thẻ HTML + dài: lưu "img src=x o" (≤ 12 ký tự, không chạy thẻ)
+  ✓ Tự cho ăn khi chỉ có 3 xu (cần 7): không cho ăn, không trừ xu, xu không âm ([3,[false,false]])
+  ✓ Thẻ Hôm nay nhắc thú đói: "2 bé đói · thiếu xu ▸"
+  · 1366_08_thu_doi_thieu_xu (tự cho ăn bật nhưng thiếu xu)
+== Cửa sổ 720 × 520: màn chính, Nhà, Xưởng, Trò chơi, Báo, Lịch hoa
+  · 720x520_09_vuon (cửa sổ thật 720×520)
+  · 720x520_09_nha_build
+  · 720x520_09_nha_yard
+  · 720x520_09_nha_zone
+  · 720x520_09_nha_pet
+  · 720x520_09_nha_seed
+  · 720x520_09_nha_season
+  · 720x520_09_nha_craft
+  · 720x520_09_nha_inv
+  · 720x520_09_xuong
+  · 720x520_09_tro_choi
+  · 720x520_09_bao
+  · 720x520_09_lich_hoa
+  · 720x520_09_on_the
+  ✓ 720 × 520 (trang 720×520): không tràn ngang / ra ngoài khung / lỗi JS
+== Cửa sổ 1093 × 560: màn chính, Nhà, Xưởng, Trò chơi, Báo, Lịch hoa
+  · 1093x560_09_vuon (cửa sổ thật 1093×560)
+  · 1093x560_09_nha_build
+  · 1093x560_09_nha_yard
+  · 1093x560_09_nha_zone
+  · 1093x560_09_nha_pet
+  · 1093x560_09_nha_seed
+  · 1093x560_09_nha_season
+  · 1093x560_09_nha_craft
+  · 1093x560_09_nha_inv
+  · 1093x560_09_xuong
+  · 1093x560_09_tro_choi
+  · 1093x560_09_bao
+  · 1093x560_09_lich_hoa
+  · 1093x560_09_on_the
+  ✓ 1093 × 560 (trang 1093×560): không tràn ngang / ra ngoài khung / lỗi JS
+== Cửa sổ 1920 × 1080: màn chính, Nhà, Xưởng, Trò chơi, Báo, Lịch hoa
+  · 1920x1080_09_vuon (cửa sổ thật 1920×1080)
+  · 1920x1080_09_nha_build
+  · 1920x1080_09_nha_yard
+  · 1920x1080_09_nha_zone
+  · 1920x1080_09_nha_pet
+  · 1920x1080_09_nha_seed
+  · 1920x1080_09_nha_season
+  · 1920x1080_09_nha_craft
+  · 1920x1080_09_nha_inv
+  · 1920x1080_09_xuong
+  · 1920x1080_09_tro_choi
+  · 1920x1080_09_bao
+  · 1920x1080_09_lich_hoa
+  · 1920x1080_09_on_the
+  ✓ 1920 × 1080 (trang 1920×1080): không tràn ngang / ra ngoài khung / lỗi JS
+  ✓ Nhật ký lỗi add-on trống
+
+KẾT QUẢ: 58/58 đạt
+== audit_full.js
+  · 1366_00_vuon_moi (vườn mới, 1.000.000 xu)
+== Kiếm xu: lượt ôn trên điện thoại, ôn trong vườn, mục tiêu ngày, nhiệm vụ, rương đồ hiếm
+  ✓ Bù 27 lượt ôn ngoài add-on: +27 xu (gồm thưởng nhiệm vụ nếu xong) · thông báo "Bù 27 lượt ôn trên điện thoại: +27 xu"
+  · 1366_00b_bu_xu_dien_thoai
+  · 1366_00c_on_the_dap_an
+  ✓ Ôn 3 thẻ trong vườn → đủ 30 lượt, nhận thưởng mục tiêu ngày
+  ✓ Xong 3 nhiệm vụ → mở rương, nhận 1 món hiếm (0 → 1)
+  ✓ Xu ôn thẻ + nhiệm vụ + rương + mục tiêu: +114 xu
+  · 1366_00d_ruong_nhiem_vu
+  · 1366_00e_bang_nhiem_vu_ruong
+== Xây nhà 7 bước + 3 kiểu nhà
+  · 1366_01_xay_nha_dau
+  ✓ Xây "Đổ móng" · trừ 80 / 80 xu
+  ✓ Xây "Dựng khung gỗ" · trừ 150 / 150 xu
+  ✓ Xây "Xây tường" · trừ 250 / 250 xu
+  ✓ Xây "Lợp mái" · trừ 400 / 400 xu
+  ✓ Xây "Lắp cửa & cửa sổ" · trừ 550 / 550 xu
+  ✓ Xây "Ống khói & bồn hoa" · trừ 800 / 800 xu
+  ✓ Xây "Gác mái & đèn lồng" · trừ 1200 / 1200 xu
+  · 1366_01_xay_nha_xong (nhà xây xong + 3 kiểu nhà)
+  ✓ Mua kiểu "Nhà mái tranh minka" 1500 xu
+  ✓ Dùng kiểu "Nhà mái tranh minka"
+  · 1366_01_kieu_minka
+  ✓ Mua kiểu "Nhà trà chashitsu" 2000 xu
+  ✓ Dùng kiểu "Nhà trà chashitsu"
+  · 1366_01_kieu_teahouse
+  ✓ Mua kiểu "Lâu đài mini" 3000 xu
+  ✓ Dùng kiểu "Lâu đài mini"
+  · 1366_01_kieu_castle
+  ✓ Quay lại nhà gỗ mái đỏ (miễn phí)
+== Sửa nhà (nhà cũ 4 nấc)
+  · 1366_02_nha_cu_mua (nhà cũ 4 nấc khi mưa (mái dột))
+  · 1366_02_tab_sua_nha
+  ✓ Sửa 1 nấc "Chống dột · 105 xu" trừ đúng giá
+  ✓ Sửa hết "Sửa hết · 315 xu" trừ đúng giá
+  ✓ Sửa xong: "Nhà như mới"
+== Trang trí sân (mọi món, đặt ra sân)
+  · 1366_03_tab_trang_tri_san (mua hết, “Đã có”)
+== Mở rộng nhà (1.25: một lần mở cả Bếp lẫn Phòng ngủ)
+  ✓ Mở rộng nhà: Bếp + Phòng ngủ 2000 xu
+  · 1366_03b_mo_rong_nha (hai gian đã mở)
+== Nội thất (mọi món, đặt trong phòng)
+  · 1366_04_tab_noi_that_phong_day
+== 6 vùng + đồ của từng vùng
+  ✓ Mở vùng "Bãi biển" 2000 xu
+  ✓ Mở vùng "Đền trên núi" 3000 xu
+  ✓ Mở vùng "Phố lễ hội" 4000 xu
+  ✓ Mở vùng "Rừng tre" 5000 xu
+  ✓ Mở vùng "Suối nước nóng" 6000 xu
+  ✓ Mở vùng "Ga làng quê" 7000 xu
+  · 1366_05_tab_vung_moi_mo_het
+  mua đồ thường: 87 món, đặt 87, vào kho 0
+  ✓ mọi lần bấm Mua trừ đúng giá, có đồ, đặt được
+== Thú nuôi
+  · 1366_06_tab_thu_nuoi_chua_co
+  ✓ Nhận nuôi "Gà mái" 500 xu
+  ✓ Nhận nuôi "Vịt con" 600 xu
+  ✓ Nhận nuôi "Thỏ trắng" 700 xu
+  ✓ Nhận nuôi "Rùa" 800 xu
+  ✓ Nhận nuôi "Mèo mướp" 900 xu
+  ✓ Nhận nuôi "Chó Shiba" 1200 xu
+  ✓ Đặt tên thú "Thỏ trắng" → Mochi
+  ✓ Mochi chuyển vào trong nhà
+  · 1366_06_tab_thu_nuoi_doi (cả nhà đói / đi chơi)
+  ✓ Cho cả nhà ăn: "Cho cả nhà ăn · 14 xu"
+  ✓ Sau khi cho ăn: "Hôm nay đã cho ăn hết ✓"
+  ✓ Bật "Tự cho ăn mỗi ngày"
+  · 1366_06_tab_thu_nuoi_du (6 thú, đã cho ăn)
+== Giống cây (mua 8 giống + luật gieo)
+  ✓ Mua giống "Lúa" 600 xu
+  ✓ Mua giống "Củ cải daikon" 600 xu
+  ✓ Mua giống "Hướng dương" 800 xu
+  ✓ Mua giống "Bí ngô" 800 xu
+  ✓ Mua giống "Tre" 900 xu
+  ✓ Mua giống "Anh đào" 1200 xu
+  ✓ Mua giống "Phong lá đỏ" 1200 xu
+  ✓ Mua giống "Bonsai thông" 1500 xu
+  · 1366_07_tab_giong_cay_du
+  ✓ Gieo "Lúa" cho deck đang xem
+  · 1366_07_ruong_ine
+  ✓ Gieo "Củ cải daikon" cho deck đang xem
+  · 1366_07_ruong_daikon
+  ✓ Gieo "Hướng dương" cho deck đang xem
+  · 1366_07_ruong_himawari
+  ✓ Gieo "Bí ngô" cho deck đang xem
+  · 1366_07_ruong_kabocha
+  ✓ Gieo "Tre" cho deck đang xem
+  · 1366_07_ruong_take
+  ✓ Gieo "Anh đào" cho deck đang xem
+  · 1366_07_ruong_sakura
+  ✓ Gieo "Phong lá đỏ" cho deck đang xem
+  · 1366_07_ruong_momiji
+  ✓ Gieo "Bonsai thông" cho deck đang xem
+  · 1366_07_ruong_bonsai
+  ✓ Gieo "Trộn" cho deck đang xem
+  · 1366_07_ruong_mix
+  ✓ Luật loại note Từ vựng → Hướng dương
+  ✓ Thêm luật tag N5 → Anh đào
+  · 1366_07_tab_giong_cay_luat (luật deck / loại note / tag)
+  ✓ Bỏ luật tag
+== Giao diện mùa (đổi chuỗi, mua hết, xem thử, dùng từng giao diện)
+  · 1366_08_tab_giao_dien_mua_dau
+  ✓ Mở "Tết Nguyên Đán" bằng chuỗi ngày ôn (Đổi chuỗi 10 ngày)
+  ✓ Mở giao diện "Giáng sinh" 1000 xu
+  ✓ Mở giao diện "Năm mới Nhật Bản" 1000 xu
+  ✓ Mở giao diện "Trung thu · Ngắm trăng" 1000 xu
+  ✓ Mở giao diện "Halloween" 1000 xu
+  ✓ Mở giao diện "Mùa lá đỏ" 1000 xu
+  ✓ Mở giao diện "Lễ Thất Tịch" 1000 xu
+  ✓ Mở giao diện "Lễ hội mùa hè" 1000 xu
+  ✓ Mở giao diện "Mùa mưa cẩm tú cầu" 1000 xu
+  ✓ Mở giao diện "Mùa hoa anh đào" 1000 xu
+  ✓ Mở giao diện "Mùa xuân" 1000 xu
+  ✓ Mở giao diện "Mùa hè" 1000 xu
+  ✓ Mở giao diện "Mùa thu" 1000 xu
+  ✓ Mở giao diện "Mùa đông" 1000 xu
+  đồ giao diện mùa: đặt 40, để kho 0
+  ✓ Xem thử "Tết Nguyên Đán"
+  · 1366_08_xem_thu (đang xem thử)
+  · 1366_08_gd_tet_san
+  · 1366_08_gd_noel_san
+  · 1366_08_gd_shogatsu_san
+  · 1366_08_gd_tsukimi_san
+  · 1366_08_gd_halloween_san
+  · 1366_08_gd_momiji_san
+  · 1366_08_gd_tanabata_san
+  · 1366_08_gd_natsumatsuri_san
+  · 1366_08_gd_tsuyu_san
+  · 1366_08_gd_hanami_san
+  · 1366_08_gd_spring_san
+  · 1366_08_gd_summer_san
+  · 1366_08_gd_autumn_san
+  · 1366_08_gd_winter_san
+  ✓ Dùng ngay đủ 14 giao diện
+  ✓ Giao diện mùa: Tắt
+  ✓ Giao diện mùa: Tự động
+  ✓ Mở hết giao diện mùa: không còn nhắc cách mở khoá
+  · 1366_08_tab_giao_dien_mua_mo_het
+== Tủ đồ StackChan + biểu cảm
+  ✓ Mua đồ mặc "Mầm lá trên đầu" 80 xu
+  ✓ Mua đồ mặc "Khăn hachimaki" 80 xu
+  ✓ Mua đồ mặc "Tai mèo" 100 xu
+  ✓ Mua đồ mặc "Mũ rơm" 120 xu
+  ✓ Mua đồ mặc "Mũ Noel" 120 xu
+  ✓ Mua đồ mặc "Nón lá" 150 xu
+  ✓ Mua đồ mặc "Mũ tốt nghiệp" 200 xu
+  ✓ Mua đồ mặc "Vương miện" 300 xu
+  ✓ Mua đồ mặc "Băng cá nhân" 60 xu
+  ✓ Mua đồ mặc "Kính tròn" 100 xu
+  ✓ Mua đồ mặc "Nơ bướm" 90 xu
+  ✓ Mua đồ mặc "Khăn quàng đỏ" 100 xu
+  ✓ Mua đồ mặc "Vòng chuông" 120 xu
+  ✓ Mua đồ mặc "Vỏ xanh trời" 200 xu
+  ✓ Mua đồ mặc "Vỏ xanh matcha" 200 xu
+  ✓ Mua đồ mặc "Vỏ hồng sakura" 200 xu
+  ✓ Mua đồ mặc "Vỏ vàng kim" 300 xu
+  ✓ Mua biểu cảm "Phụng phịu" 60 xu
+  ✓ Mua biểu cảm "Nháy mắt" 80 xu
+  ✓ Mua biểu cảm "Khóc nhè" 80 xu
+  ✓ Mua biểu cảm "Ngạc nhiên" 100 xu
+  ✓ Mua biểu cảm "Mắt lấp lánh" 100 xu
+  ✓ Mua biểu cảm "Mắt tim" 120 xu
+  ✓ Mua biểu cảm "Kính ngầu" 150 xu
+  ✓ Mặc lại "Mầm lá trên đầu"
+  · 1366_09_tu_do_mac_du
+  ✓ Cởi: Cởi Mầm lá trên đầu ✕
+  ✓ Tắt một biểu cảm
+  · 1366_09_san_stackchan_mac_do
+== Xưởng: vẽ bằng chuột, mọi công cụ, 3 cỡ / 3 loại
+  · 1366_10_tab_xuong_trong
+  ✓ Mở Xưởng từ thẻ "Tạo món đồ mới"
+  ✓ Đổi cỡ 24×24
+  ✓ Bút: kéo chuột vẽ 7 ô
+  ✓ Chữ nhật: 39 ô
+  ✓ Đổ màu trong khung: 87 ô
+  ✓ Kẻ thẳng
+  ✓ Đối xứng: vẽ bên trái, bên phải tự vẽ theo
+  ✓ Cỡ bút 2 + tẩy
+  ✓ Chuột phải tẩy + Hoàn tác / Làm lại
+  ✓ Lật ngang / lật dọc / viền đen / mũi tên dịch hình
+  ✓ Hút màu
+  · 1366_10_xuong_dang_ve (đã dùng mọi công cụ)
+  ✓ Chế tác 24×24 (Chế tác · 350 xu) trừ 350 xu
+  ✓ Món vừa làm tự vào chế độ đặt và đặt được ra sân
+  ✓ Chọn ảnh… → ảnh chuyển thành pixel 32×32
+  ✓ Ảnh hoa hồng: 409 ô hồng / đỏ, 0 ô nâu
+  · 1366_10_xuong_chuyen_anh (đã tắt Xoá nền / Viền đen / Gọn màu)
+  ✓ Chế tác 32×32 treo tường 500 xu
+  ✓ Tranh treo tường: đặt lên tường, tường kín thì vào kho (đã đặt)
+  ✓ Shift + chữ nhật: tô kín 100 ô
+  ✓ Chế tác 16×16 sàn 200 xu
+  ✓ Gối tím đặt dưới sàn phòng
+  · 1366_10_tab_xuong_3_mon (3 món tự làm)
+  ✓ Sửa món (vẽ lại hình) 50 xu
+  ✓ Sửa món chỉ đổi tên + hiệu ứng: miễn phí (nút "Lưu sửa · miễn phí")
+  ✓ +1 cái (+1 cái · 100 xu)
+  ✓ Món đang đặt: nút "Xoá mẫu" khoá (Cất hết món này vào kho trước)
+== Kho đồ: Đặt / Di chuyển / Cất vào kho
+  · 1366_11_kho_do
+  · 1366_11_bang_mon_da_dat (bấm một món trên sân)
+  ✓ Cất vào kho
+  ✓ Kho đồ → Đặt lại
+  ✓ Di chuyển món ({"id":"mailbox","x":6,"y":0} → {"id":"mailbox","x":13,"y":2})
+== Đồ hiếm (18 món) đặt từ Kho đồ
+  ✓ Đặt đồ hiếm: 18 món ra cảnh, 0 món còn trong kho (hết chỗ)
+  ✓ Kho đồ: món còn trong kho lên đầu ("Trong kho · chưa đặt (1)")
+  · 1366_11_kho_do_co_do_hiem
+== Vùng tự tạo (công trình + cảnh nền) + mã chia sẻ
+  ✓ Mở xưởng vùng
+  ✓ Vẽ công trình 64×76
+  ✓ Vẽ cảnh nền 256×76
+  ! 1366_12_xuong_vung (lớp Cảnh nền) — nút nhỏ 8
+  ✓ Tạo vùng 5000 xu
+  · 1366_12_tab_vung_tu_tao
+  ✓ Mã chia sẻ vùng: 167 ký tự
+  ✓ Mã vùng đã chép vào bộ nhớ tạm
+  ✓ Xem trước vùng từ mã
+  · 1366_12_dan_ma_vung
+  ✓ Tạo vùng từ mã (Tạo vùng này · 5000 xu)
+  · 1366_12_vung_tu_ma_san
+  ✓ Đổi tên vùng miễn phí (nút: "Lưu vùng · miễn phí")
+== Giống cây tự vẽ + mã chia sẻ
+  ✓ Mở Xưởng giống cây từ tab Giống cây
+  ✓ Vẽ 3 giai đoạn (phím 2, 3, 5)
+  · 1366_13_xuong_giong_dau
+  ✓ Tạo giống 500 xu
+  ✓ Gieo "Dâu tây (tự vẽ)" cho deck đang xem
+  · 1366_13_ruong_dau_tay
+  ✓ Mã giống cây 117 ký tự
+  · 1366_13_ma_giong
+  ✓ Dán mã bị xuống dòng / thừa dấu cách vẫn xem trước được
+  ✓ Tạo giống từ mã (Tạo giống này · 500 xu)
+  ✓ Mã sai một chỗ → "Mã bị thiếu hoặc sai một chỗ (mã kiểm tra không khớp) — chép lại cả đoạn nhé."
+  · 1366_13_ma_sai
+  ✓ Sửa giống chưa đổi hình: nút "Lưu giống · miễn phí"
+  ✓ Bấm "Xoá giống" lần 1: hỏi lại
+  ✓ Bấm lần 2: xoá giống
+== Mã chia sẻ món + dán làm món
+  ✓ Mã món 24×24: 193 ký tự
+  · 1366_14_dan_ma_mon
+  ✓ Làm món từ mã (Làm món này · 350 xu)
+  ✓ Món từ mã vào chế độ đặt
+== Cảnh ngoài trời đầy đồ: từng vùng, ngày / đêm / mưa / tuyết + tốc độ vẽ
+  · 1366_15_canh_yard_ngay
+  ✓ Vẽ một khung "yard" đầy đồ: 8.1 ms
+  · 1366_15_canh_beach_ngay
+  ✓ Vẽ một khung "beach" đầy đồ: 5.1 ms
+  · 1366_15_canh_shrine_ngay
+  ✓ Vẽ một khung "shrine" đầy đồ: 4.7 ms
+  · 1366_15_canh_festival_ngay
+  ✓ Vẽ một khung "festival" đầy đồ: 2.9 ms
+  · 1366_15_canh_bamboo_ngay
+  ✓ Vẽ một khung "bamboo" đầy đồ: 4.2 ms
+  · 1366_15_canh_onsen_ngay
+  ✓ Vẽ một khung "onsen" đầy đồ: 4.1 ms
+  · 1366_15_canh_station_ngay
+  ✓ Vẽ một khung "station" đầy đồ: 4.5 ms
+  · 1366_15_canh_u1_ngay
+  ✓ Vẽ một khung "u1" đầy đồ: 1.8 ms
+  · 1366_15_canh_u2_ngay
+  ✓ Vẽ một khung "u2" đầy đồ: 1.9 ms
+  · 1366_15_san_dem (đèn, đom đóm)
+  · 1366_15_san_mua
+  · 1366_15_san_tuyet
+  · 1366_15_trong_nha_day (phòng đầy nội thất + đồ hiếm + mèo)
+== Chụp ảnh vườn (3 cỡ)
+  · 1366_16_bang_chup_anh
+  ✓ Ảnh vườn cỡ s: [534,200]
+  ✓ Ảnh vườn cỡ l: [1068,400]
+  ✓ Ảnh vườn cỡ wall: [1920,1080]
+== Các tab Nhà khi đã có hết (1366 và 1024 px)
+  · 1366_20_vuon_day_do
+  ✓ 1366 px: thẻ Hôm nay không cắt chuỗi ngày ("Hôm nay 30/30 lượt ✓15 ngày liền", chuỗi xuống dòng 137/137)
+  ✓ 1366 px: phần thừa bên phải ruộng cùng màu cỏ giao diện mùa (#86c450 / #86c450)
+  · 1366_21_nha_build
+  · 1366_21_nha_build_cuoi
+  · 1366_21_nha_yard
+  · 1366_21_nha_yard_cuoi
+  · 1366_21_nha_room
+  · 1366_21_nha_room_cuoi
+  · 1366_21_nha_zone
+  · 1366_21_nha_zone_cuoi
+  · 1366_21_nha_pet
+  · 1366_21_nha_pet_cuoi
+  · 1366_21_nha_guest
+  · 1366_21_nha_guest_cuoi
+  · 1366_21_nha_seed
+  · 1366_21_nha_seed_cuoi
+  · 1366_21_nha_season
+  · 1366_21_nha_season_cuoi
+  · 1366_21_nha_wear
+  · 1366_21_nha_wear_cuoi
+  · 1366_21_nha_craft
+  · 1366_21_nha_craft_cuoi
+  · 1366_21_nha_inv
+  · 1366_21_nha_inv_cuoi
+  ✓ 1366 px: bảng Nhà nằm gọn trong cửa sổ (đáy 721 / 768 px, danh sách cao 227 px)
+  ✓ 1366 px: dòng gợi ý dưới cảnh không đè lên cảnh / không lọt khỏi khung (cảnh tới 377, gợi ý 381–400, khung tới 433)
+  ✓ 1366 px: Xưởng vừa cửa sổ, lưới vẽ không lọt xuống dưới (lưới tới 672 / 768 px)
+  · 1366_22_xuong_moi
+  · 1366_22_xuong_giong
+  ! 1366_22_xuong_vung — nút nhỏ 8
+  · 1024_20_vuon_day_do
+  ✓ 1024 px: thẻ Hôm nay không cắt chuỗi ngày ("Hôm nay 30/30 lượt ✓15 ngày liền", chuỗi xuống dòng 137/137)
+  ✓ 1024 px: phần thừa bên phải ruộng cùng màu cỏ giao diện mùa (#86c450 / #86c450)
+  · 1024_21_nha_build
+  · 1024_21_nha_build_cuoi
+  · 1024_21_nha_yard
+  · 1024_21_nha_yard_cuoi
+  · 1024_21_nha_room
+  · 1024_21_nha_room_cuoi
+  · 1024_21_nha_zone
+  · 1024_21_nha_zone_cuoi
+  · 1024_21_nha_pet
+  · 1024_21_nha_pet_cuoi
+  · 1024_21_nha_guest
+  · 1024_21_nha_guest_cuoi
+  · 1024_21_nha_seed
+  · 1024_21_nha_seed_cuoi
+  · 1024_21_nha_season
+  · 1024_21_nha_season_cuoi
+  · 1024_21_nha_wear
+  · 1024_21_nha_wear_cuoi
+  · 1024_21_nha_craft
+  · 1024_21_nha_craft_cuoi
+  · 1024_21_nha_inv
+  · 1024_21_nha_inv_cuoi
+  ✓ 1024 px: bảng Nhà nằm gọn trong cửa sổ (đáy 694 / 700 px, danh sách cao 179 px)
+  ✓ 1024 px: dòng gợi ý dưới cảnh không đè lên cảnh / không lọt khỏi khung (cảnh tới 425, gợi ý 429–448, khung tới 454)
+  ✓ 1024 px: Xưởng vừa cửa sổ, lưới vẽ không lọt xuống dưới (lưới tới 647 / 700 px)
+  · 1024_22_xuong_moi
+  · 1024_22_xuong_giong
+  ! 1024_22_xuong_vung — nút nhỏ 8
+  ✓ nhật ký lỗi add-on trống
+
+ảnh có cờ đo: 0/131
+xu còn lại: 902307 (đã tiêu 97693)
+KẾT QUẢ: 181/181
+== audit.js
+== 1366x768
+  · 1366x768_01_vuon — 13 nút
+  · 1366x768_02_caidat — 23 nút
+  · 1366x768_03_nhiemvu — 14 nút
+  · 1366x768_04_on_the — 10 nút
+  · 1366x768_05_on_dapan — 13 nút
+  · 1366x768_06_trochoi — 21 nút
+  · 1366x768_07_market — 13 nút
+  · 1366x768_07_crow — 9 nút
+  · 1366x768_07_memory — 25 nút
+  · 1366x768_07_cloze — 15 nút
+  · 1366x768_07_listen — 16 nút
+  · 1366x768_08_nha_build — 24 nút
+  · 1366x768_08_nha_yard — 30 nút
+  · 1366x768_08_nha_room — 29 nút
+  · 1366x768_08_nha_zone — 24 nút
+  · 1366x768_08_nha_pet — 29 nút
+  · 1366x768_08_nha_guest — 23 nút
+  · 1366x768_08_nha_seed — 27 nút
+  · 1366x768_08_nha_season — 28 nút
+  · 1366x768_08_nha_wear — 29 nút
+  · 1366x768_08_nha_craft — 25 nút
+  · 1366x768_08_nha_inv — 25 nút
+  · 1366x768_09_bao_issue — 18 nút
+  · 1366x768_09_bao_dict — 28 nút
+  ! 1366x768_09_bao_shelf — 17 nút — cắt 1
+  · 1366x768_09_bao_src — 26 nút
+  · 1366x768_10_cauhinh — 24 nút
+  ! 1366x768_12_ke_bao_hai_bao — 17 nút — cắt 1
+  · 1366x768_12_bao_tieng_anh — 14 nút
+  · 1366x768_12_nguon_bao — 26 nút
+  · 1366x768_12_nguon_bao_chon_deck — 26 nút
+  · 1366x768_12_nguon_bao_chua_khoa — 19 nút
+  · 1366x768_12_cauhinh_tieng_anh — 24 nút
+  · 1366x768_12_trochoi_tieng_anh — 20 nút
+  · 1366x768_11_giaodien — 20 nút
+  · 1366x768_13_lich_thang — 22 nút
+  · 1366x768_13_lich_thang_cuoi — 22 nút
+  · 1366x768_13_lich_nam — 14 nút
+  · 1366x768_13_cuon_nhat_ky — 22 nút
+  · 1366x768_14_khach_tren_san — 13 nút
+  · 1366x768_14_album_khach — 24 nút
+  · 1366x768_15_xuong_giong_cay — 81 nút
+  · 1366x768_15_ma_chia_se — 26 nút
+  · 1366x768_15_dan_ma — 21 nút
+  · 1366x768_15_chup_anh — 17 nút
+== 1024x700
+  · 1024x700_01_vuon — 13 nút
+  · 1024x700_02_caidat — 23 nút
+  · 1024x700_03_nhiemvu — 14 nút
+  · 1024x700_04_on_the — 10 nút
+  · 1024x700_05_on_dapan — 13 nút
+  · 1024x700_06_trochoi — 21 nút
+  · 1024x700_07_market — 13 nút
+  · 1024x700_07_crow — 9 nút
+  · 1024x700_07_memory — 25 nút
+  · 1024x700_07_cloze — 15 nút
+  · 1024x700_07_listen — 16 nút
+  · 1024x700_08_nha_build — 24 nút
+  · 1024x700_08_nha_yard — 27 nút
+  · 1024x700_08_nha_room — 27 nút
+  · 1024x700_08_nha_zone — 24 nút
+  · 1024x700_08_nha_pet — 27 nút
+  · 1024x700_08_nha_guest — 24 nút
+  · 1024x700_08_nha_seed — 27 nút
+  · 1024x700_08_nha_season — 25 nút
+  · 1024x700_08_nha_wear — 27 nút
+  · 1024x700_08_nha_craft — 26 nút
+  · 1024x700_08_nha_inv — 25 nút
+  · 1024x700_09_bao_issue — 16 nút
+  · 1024x700_09_bao_dict — 27 nút
+  ! 1024x700_09_bao_shelf — 17 nút — cắt 1
+  · 1024x700_09_bao_src — 25 nút
+  · 1024x700_10_cauhinh — 24 nút
+  ! 1024x700_12_ke_bao_hai_bao — 17 nút — cắt 1
+  · 1024x700_12_bao_tieng_anh — 13 nút
+  · 1024x700_12_nguon_bao — 25 nút
+  · 1024x700_12_nguon_bao_chon_deck — 25 nút
+  · 1024x700_12_nguon_bao_chua_khoa — 19 nút
+  · 1024x700_12_cauhinh_tieng_anh — 24 nút
+  · 1024x700_12_trochoi_tieng_anh — 20 nút
+  · 1024x700_11_giaodien — 14 nút
+  · 1024x700_13_lich_thang — 14 nút
+  · 1024x700_13_lich_thang_cuoi — 21 nút
+  · 1024x700_13_lich_nam — 14 nút
+  · 1024x700_13_cuon_nhat_ky — 22 nút
+  · 1024x700_14_khach_tren_san — 13 nút
+  · 1024x700_14_album_khach — 24 nút
+  · 1024x700_15_xuong_giong_cay — 81 nút
+  · 1024x700_15_ma_chia_se — 26 nút
+  · 1024x700_15_dan_ma — 21 nút
+  · 1024x700_15_chup_anh — 17 nút
+
+nhật ký lỗi add-on: trống
+Ảnh chụp: /tmp/kotoba-audit-2026-11-12/latest-baseline-ui

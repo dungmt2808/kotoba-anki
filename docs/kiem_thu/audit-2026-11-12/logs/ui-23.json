@@ -1,0 +1,388 @@
+{
+  "metadata": {
+    "anki": "23.10.1",
+    "profile": "/tmp/kotoba-audit-ui-oBEmsg/Test/collection.anki2"
+  },
+  "cases": 49,
+  "passed": 38,
+  "failed": 11,
+  "results": [
+    {
+      "case": "diary/0/fix-start",
+      "pass": true,
+      "actual": [
+        "",
+        "wait"
+      ],
+      "expected": [
+        "",
+        "wait"
+      ]
+    },
+    {
+      "case": "diary/0/fix-completed",
+      "pass": true,
+      "actual": "done",
+      "expected": "done"
+    },
+    {
+      "case": "diary/0/preserve-visible-text",
+      "pass": false,
+      "actual": "Đã lưu.",
+      "expected": "Đã lưu. Nhật ký vừa gõ (0 ms).",
+      "finding": "F01"
+    },
+    {
+      "case": "diary/0/preserve-after-next-save",
+      "pass": false,
+      "actual": "Đã lưu. Ghi tiếp.",
+      "expected": "Đã lưu. Nhật ký vừa gõ (0 ms). Ghi tiếp.",
+      "finding": "F01"
+    },
+    {
+      "case": "diary/300/fix-start",
+      "pass": true,
+      "actual": [
+        "",
+        "wait"
+      ],
+      "expected": [
+        "",
+        "wait"
+      ]
+    },
+    {
+      "case": "diary/300/fix-completed",
+      "pass": true,
+      "actual": "done",
+      "expected": "done"
+    },
+    {
+      "case": "diary/300/preserve-visible-text",
+      "pass": false,
+      "actual": "Đã lưu.",
+      "expected": "Đã lưu. Nhật ký vừa gõ (300 ms).",
+      "finding": "F01"
+    },
+    {
+      "case": "diary/300/preserve-after-next-save",
+      "pass": false,
+      "actual": "Đã lưu. Ghi tiếp.",
+      "expected": "Đã lưu. Nhật ký vừa gõ (300 ms). Ghi tiếp.",
+      "finding": "F01"
+    },
+    {
+      "case": "diary/1000/fix-start",
+      "pass": true,
+      "actual": [
+        "",
+        "wait"
+      ],
+      "expected": [
+        "",
+        "wait"
+      ]
+    },
+    {
+      "case": "diary/1000/fix-completed",
+      "pass": true,
+      "actual": "done",
+      "expected": "done"
+    },
+    {
+      "case": "diary/1000/preserve-visible-text",
+      "pass": false,
+      "actual": "Đã lưu.",
+      "expected": "Đã lưu. Nhật ký vừa gõ (1000 ms).",
+      "finding": "F01"
+    },
+    {
+      "case": "diary/1000/preserve-after-next-save",
+      "pass": false,
+      "actual": "Đã lưu. Ghi tiếp.",
+      "expected": "Đã lưu. Nhật ký vừa gõ (1000 ms). Ghi tiếp.",
+      "finding": "F01"
+    },
+    {
+      "case": "diary/1800/fix-start",
+      "pass": true,
+      "actual": [
+        "",
+        "wait"
+      ],
+      "expected": [
+        "",
+        "wait"
+      ]
+    },
+    {
+      "case": "diary/1800/fix-completed",
+      "pass": true,
+      "actual": "done",
+      "expected": "done"
+    },
+    {
+      "case": "diary/1800/preserve-visible-text",
+      "pass": true,
+      "actual": "Đã lưu. Nhật ký vừa gõ (1800 ms).",
+      "expected": "Đã lưu. Nhật ký vừa gõ (1800 ms).",
+      "finding": "F01"
+    },
+    {
+      "case": "diary/1800/preserve-after-next-save",
+      "pass": true,
+      "actual": "Đã lưu. Nhật ký vừa gõ (1800 ms). Ghi tiếp.",
+      "expected": "Đã lưu. Nhật ký vừa gõ (1800 ms). Ghi tiếp.",
+      "finding": "F01"
+    },
+    {
+      "case": "history/cache-initial-27",
+      "pass": true,
+      "actual": "Còn 3 ngày nữa đủ 30 ngày có ôn",
+      "expected": "Còn 3 ngày nữa đủ 30 ngày có ôn"
+    },
+    {
+      "case": "history/cache-invalidate-on-sync",
+      "pass": false,
+      "actual": [
+        27,
+        29
+      ],
+      "expected": [
+        29,
+        29
+      ],
+      "finding": "F07"
+    },
+    {
+      "case": "history/news-updates-on-sync",
+      "pass": false,
+      "actual": "Còn 3 ngày nữa đủ 30 ngày có ôn",
+      "expected": "Còn 1 ngày nữa đủ 30 ngày có ôn",
+      "finding": "F07"
+    },
+    {
+      "case": "history/control-after-cache-reset",
+      "pass": true,
+      "actual": "Còn 1 ngày nữa đủ 30 ngày có ôn",
+      "expected": "Còn 1 ngày nữa đủ 30 ngày có ôn"
+    },
+    {
+      "case": "greeting/hour-0/sky",
+      "pass": true,
+      "actual": 0,
+      "expected": 0
+    },
+    {
+      "case": "greeting/hour-0/words",
+      "pass": false,
+      "actual": "おはよう！",
+      "expected": "こんばんは！",
+      "finding": "F04"
+    },
+    {
+      "case": "greeting/hour-0.5/sky",
+      "pass": true,
+      "actual": 0.5,
+      "expected": 0.5
+    },
+    {
+      "case": "greeting/hour-0.5/words",
+      "pass": true,
+      "actual": "こんばんは！",
+      "expected": "こんばんは！",
+      "finding": "F04"
+    },
+    {
+      "case": "greeting/hour-0.99/sky",
+      "pass": true,
+      "actual": 0.99,
+      "expected": 0.99
+    },
+    {
+      "case": "greeting/hour-0.99/words",
+      "pass": true,
+      "actual": "こんばんは！",
+      "expected": "こんばんは！",
+      "finding": "F04"
+    },
+    {
+      "case": "greeting/hour-1/sky",
+      "pass": true,
+      "actual": 1,
+      "expected": 1
+    },
+    {
+      "case": "greeting/hour-1/words",
+      "pass": true,
+      "actual": "こんばんは！",
+      "expected": "こんばんは！",
+      "finding": "F04"
+    },
+    {
+      "case": "greeting/hour-3.99/sky",
+      "pass": true,
+      "actual": 3.99,
+      "expected": 3.99
+    },
+    {
+      "case": "greeting/hour-3.99/words",
+      "pass": true,
+      "actual": "こんばんは！",
+      "expected": "こんばんは！",
+      "finding": "F04"
+    },
+    {
+      "case": "greeting/hour-4/sky",
+      "pass": true,
+      "actual": 4,
+      "expected": 4
+    },
+    {
+      "case": "greeting/hour-4/words",
+      "pass": true,
+      "actual": "おはよう！",
+      "expected": "おはよう！",
+      "finding": "F04"
+    },
+    {
+      "case": "greeting/hour-10.99/sky",
+      "pass": true,
+      "actual": 10.99,
+      "expected": 10.99
+    },
+    {
+      "case": "greeting/hour-10.99/words",
+      "pass": true,
+      "actual": "おはよう！",
+      "expected": "おはよう！",
+      "finding": "F04"
+    },
+    {
+      "case": "greeting/hour-11/sky",
+      "pass": true,
+      "actual": 11,
+      "expected": 11
+    },
+    {
+      "case": "greeting/hour-11/words",
+      "pass": true,
+      "actual": "こんにちは！",
+      "expected": "こんにちは！",
+      "finding": "F04"
+    },
+    {
+      "case": "greeting/hour-17.99/sky",
+      "pass": true,
+      "actual": 17.99,
+      "expected": 17.99
+    },
+    {
+      "case": "greeting/hour-17.99/words",
+      "pass": true,
+      "actual": "こんにちは！",
+      "expected": "こんにちは！",
+      "finding": "F04"
+    },
+    {
+      "case": "greeting/hour-18/sky",
+      "pass": true,
+      "actual": 18,
+      "expected": 18
+    },
+    {
+      "case": "greeting/hour-18/words",
+      "pass": true,
+      "actual": "こんばんは！",
+      "expected": "こんばんは！",
+      "finding": "F04"
+    },
+    {
+      "case": "greeting/hour-23.99/sky",
+      "pass": true,
+      "actual": 23.99,
+      "expected": 23.99
+    },
+    {
+      "case": "greeting/hour-23.99/words",
+      "pass": true,
+      "actual": "こんばんは！",
+      "expected": "こんばんは！",
+      "finding": "F04"
+    },
+    {
+      "case": "news/rich-fixture-button-reachable",
+      "pass": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "case": "news/rich-popup-fits-1366x860",
+      "pass": false,
+      "actual": false,
+      "expected": true,
+      "finding": "F05",
+      "detail": {
+        "viewport": [
+          1366,
+          860
+        ],
+        "rect": [
+          914,
+          295.515625,
+          1324,
+          969.515625
+        ],
+        "within": false,
+        "overflow": "visible",
+        "pageHeight": 970
+      }
+    },
+    {
+      "case": "news/open-popup-follows-window-resize",
+      "pass": false,
+      "actual": false,
+      "expected": true,
+      "finding": "F05",
+      "detail": {
+        "viewport": [
+          720,
+          520
+        ],
+        "rect": [
+          914,
+          295.515625,
+          1324,
+          969.515625
+        ],
+        "within": false,
+        "overflow": "visible",
+        "pageHeight": 970
+      }
+    },
+    {
+      "case": "news/escape-keeps-garden-open",
+      "pass": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "case": "news/escape-closes-popup",
+      "pass": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "case": "diagnostics/no-js-exceptions",
+      "pass": true,
+      "actual": [],
+      "expected": []
+    },
+    {
+      "case": "diagnostics/no-addon-errors",
+      "pass": true,
+      "actual": [],
+      "expected": []
+    }
+  ]
+}

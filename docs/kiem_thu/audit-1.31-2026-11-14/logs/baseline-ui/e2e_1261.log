@@ -1,0 +1,50 @@
+== 1. người mới: màn chào trước, rồi hướng dẫn bước 1
+  ✓ Python: hồ sơ mới (0 xu, chưa tưới)
+  ✓ màn chào hiện trước
+  ✓ đang chào: chưa có hướng dẫn
+  ✓ hết màn chào → hướng dẫn hiện
+  ✓ bước 1/3: Chọn deck bạn đang học. Mỗi từ (note) trong deck là một cây trong ruộng.
+  ✓ khung vàng bao ô Deck: [381,15,726,75]
+  ✓ bong bóng nằm gọn trong cửa sổ
+  ✓ lớp mờ không chặn bấm
+== 2. đổi deck → bước 2; Tưới ngay → ẩn khi ôn → bước 3
+  ✓ đổi deck → bước 2 tự hiện
+  ✓ khung bao nút Tưới ngay
+  ✓ bấm thẳng Tưới ngay (lớp mờ không chặn) → bảng ôn mở
+  ✓ đang ôn: hướng dẫn ẩn
+  ✓ trả lời một thẻ: +3 xu
+  ✓ đóng bảng ôn → bước 3
+  ✓ bước 3: chú giải giai đoạn cây
+  ✓ bong bóng bước 3 ở phía trên (không che cây vừa lớn)
+  ✓ bước cuối: nút Xong, không còn Bỏ qua
+  ✓ Xong → nhớ kb-tour-done (config prefs, còn sau khi tắt Anki)
+  ✓ mở lại vườn: không hiện nữa
+== 3. Esc = Bỏ qua (không đóng cửa sổ), ⚙ mở lại
+  ✓ ⚙ có nút Hướng dẫn 3 bước
+  ✓ ⚙ → Hướng dẫn 3 bước: bước 1, bảng ⚙ đóng
+  ✓ Esc: tắt hướng dẫn, cửa sổ vườn vẫn mở
+  ✓ Bỏ qua: tắt
+== 4. người đang dùng (có xu / lượt tưới): không thấy hướng dẫn
+  ✓ có 120 xu, 40 lượt tưới → data.tour = false, không hướng dẫn
+== 5. cửa sổ nhỏ 720 × 520
+  ✓ hướng dẫn hiện ở 720 × 520
+  ✓ bước 1: bong bóng gọn trong 720 × 520 [69,79,389,211]
+  ✓ bước 2: bong bóng gọn trong 720 × 520 [392,79,712,211]
+  ✓ bước 3: bong bóng gọn trong 720 × 520 [151,83,471,234]
+== 6. chuyển cảnh chậm hơn; kb-pop / kb-panel-in
+  ✓ đổi cảnh ◂ ▸: hiệu ứng curtain kéo dài ~676 ms (1.26.0: ~350 ms)
+  ✓ bong bóng linh vật: kiểu nảy kb-pop 0,28 s như trước 1.26 (["kb-pop","0.28s"])
+  ✓ mở bảng Nhà: bật nhẹ kb-panel-in ([true,"kb-panel-in"])
+  ✓ hết hiệu ứng thì gỡ lớp
+== 7. gói báo: Gemini lỗi → không trừ xu; viết xong → −100 xu
+  ✓ gói hết hạn + Tự gia hạn + đủ xu → vẫn cho Gemini viết
+  ✓ Gemini lỗi (hết hạn mức mọi model) → không có báo, KHÔNG trừ xu ([250,"2026-11-13",false,"Hết hạn mức miễn phí của Gemini (gemini-flash-lite-latest), thử lại ngày mai."])
+  ✓ tab Nguồn báo ghi lỗi: Hết hạn mức miễn phí của Gemini (gemini-flash-lite-latest), thử lại ngày mai.
+  ✓ thử lại
+  ✓ Gemini viết xong → gia hạn 1 tuần −100 xu ([150,"2026-11-20",true], lỗi: )
+  ✓ model 404 chỉ thử một lần trong cả số báo: ["gemini-3.6-flash","gemini-flash-lite-latest","gemini-flash-lite-latest","gemini-flash-lite-latest","gemini-flash-lite-latest","gemini-flash-lite-latest"]
+  ✓ nhật ký không bảo "Xoá gemini_model trong Config" (người dùng không đặt model)
+  ✓ không có lỗi JS: []
+  ✓ nhật ký lỗi trống: []
+
+KẾT QUẢ: 41/41

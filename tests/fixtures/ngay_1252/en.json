@@ -1,0 +1,300 @@
+{
+ "ngay": "2026-11-09",
+ "so": 1,
+ "rut_gon": false,
+ "may_viet": "Gemini (gemini-3-flash-preview)",
+ "ngon_ngu": "en",
+ "bai": [
+  {
+   "loai": "tin_lang",
+   "tieu_de": "{Beautiful||beautiful} {Autumn||autumn} {Sun||sun} in Kotoba",
+   "doan": [
+    "{Today||today} is a beautiful autumn day in Kotoba Village. The sun is shining and the {weather||weather} is great. Visitors should {walk||walk} around Kotoba Garden to see the red {leaves||leaf}. You can {take||take} many beautiful {pictures||picture} there. {But||but} you should wear {warm||warm} clothes in the {evening||evening}. The {temperature||temperature} will {go||go} down quickly tonight.",
+    "Mayor Soncho is very {busy||busy} today. He is {visiting||visit} many {small||small} inns in the {village||village}. He wants to prepare for the autumn {festival||festival}. He also {tells||tell} people to check the {lamps||lamp} in their {gardens||garden}. He wants the village to look beautiful at night."
+   ],
+   "dich": [
+    "Hôm nay là một ngày mùa thu đẹp trời ở làng Kotoba. Mặt trời đang tỏa sáng và thời tiết thật tuyệt vời. Du khách nên đi dạo quanh vườn Kotoba để ngắm lá đỏ. Bạn có thể chụp nhiều bức ảnh đẹp ở đó. Nhưng bạn nên mặc quần áo ấm vào buổi tối. Nhiệt độ sẽ giảm nhanh vào đêm nay.",
+    "Trưởng làng Soncho hôm nay rất bận rộn. Ông ấy đang đi thăm nhiều quán trọ nhỏ trong làng. Ông ấy muốn chuẩn bị cho lễ hội mùa thu. Ông ấy cũng bảo mọi người kiểm tra đèn trong vườn của họ. Ông ấy muốn ngôi làng trông thật đẹp vào ban đêm."
+   ]
+  },
+  {
+   "loai": "truyen",
+   "tieu_de": "The Story at Sunrise",
+   "doan": [
+    "\"Grandma Hana, the wooden shoes really turned last night!\" Lin said. She held her notebook tightly. The sun came in, but Lin felt cold. The mayor walked in and sat down. \"Fifty years ago, a woman in white looked for her lost hairpin by the old well every night,\" he said.",
+    "Lin was scared, but she tried to write it down. The mayor kept talking about many details from fifty years ago. Grandma Hana gave him a cup of hot tea. She looked at the old well in the garden and stayed quiet.",
+    "StackChan walked to the corner of the house. Its screen flashed and showed a pixel picture. \"I drew the {ghost||ghost}! It is square with red eyes!\" StackChan said. Lin looked at the picture. She stopped because she saw a strange white mark at the ghost's feet."
+   ],
+   "dich": [
+    "\"Bà Hana ơi, tối qua đôi guốc gỗ tự xoay hướng thật mà!\" Lin nói. Cô ôm chặt cuốn sổ của mình. Nắng chiếu vào, nhưng Lin vẫn thấy lạnh. Ông trưởng làng bước vào và ngồi xuống. \"Năm mươi năm trước, đêm nào cũng có một người phụ nữ mặc áo trắng đi tìm chiếc trâm cài tóc bị mất bên giếng cổ,\" ông nói.",
+    "Lin rất sợ hãi, nhưng cô vẫn cố ghi chép lại. Ông trưởng làng tiếp tục kể về nhiều chi tiết từ năm mươi năm trước. Bà Hana đưa cho ông một tách trà nóng. Bà nhìn ra chiếc giếng cổ trong vườn và giữ im lặng.",
+    "Stack-chan đi về phía góc nhà. Màn hình của nó chớp nháy và hiện lên một bức tranh điểm ảnh. \"Tớ vẽ xong bóng ma rồi! Nó hình vuông và có mắt màu đỏ!\" Stack-chan nói. Lin nhìn vào bức tranh. Cô khựng lại vì thấy một vệt màu trắng kỳ lạ dưới chân bóng ma."
+   ],
+   "ky": 2,
+   "ky_truoc": "Lin bắt đầu ca trực đêm đầu tiên tại quán trọ Kotobaya và vô tình dùng nhầm ngữ pháp trước khi tự sửa lại. Ngay sau đó, cô hoảng sợ khi thấy đôi guốc gỗ tự đổi hướng và tiếng động lạ phát ra từ giếng cổ."
+  },
+  {
+   "loai": "cot",
+   "tieu_de": "StackChan's Sunny Day",
+   "doan": [
+    "Today is a sunny day! I used 256 pixels to draw Mayor Soncho and a ghost. The Mayor said many long words. My memory was almost full! I like the ghost because it never {scolds||scold} me. Tonight, I will go to the old well. I want to play a game with the ghost!"
+   ],
+   "dich": [
+    "Hôm nay là một ngày nắng! Tớ đã dùng 256 điểm ảnh để vẽ Trưởng làng Soncho và một bóng ma. Ông Trưởng làng đã nói rất nhiều từ dài. Bộ nhớ của tớ suýt thì đầy! Tớ thích bóng ma vì nó không bao giờ mắng tớ. Đêm nay, tớ sẽ ra giếng cổ. Tớ muốn chơi một trò chơi với bóng ma!"
+   ]
+  }
+ ],
+ "cau_hoi": [
+  {
+   "hoi": "Why should visitors wear warm clothes tonight?",
+   "chon": [
+    "The sun is too hot",
+    "The temperature will go down",
+    "There is a lot of rain"
+   ],
+   "dung": 1,
+   "giai_thich": "Bài tin làng có câu: The temperature will go down quickly tonight."
+  },
+  {
+   "hoi": "What did StackChan draw today?",
+   "chon": [
+    "A red bird and a cat",
+    "A new bridge and a tree",
+    "The Mayor and a ghost"
+   ],
+   "dung": 2,
+   "giai_thich": "Bài StackChan's Corner có câu: I used 256 pixels to draw Mayor Soncho and a ghost."
+  },
+  {
+   "hoi": "In the story, what did Lin see in the picture?",
+   "chon": [
+    "A white mark at the ghost's feet",
+    "A gold key in the box",
+    "A small dog next to the well"
+   ],
+   "dung": 0,
+   "giai_thich": "Đoạn cuối của truyện có câu: She stopped because she saw a strange white mark at the ghost's feet."
+  }
+ ],
+ "chinh_ta": [
+  {
+   "cau": "The {sun||sun} is shining and the {weather||weather} is great.",
+   "them_dap_an": []
+  },
+  {
+   "cau": "Grandma Hana {gave||give} him a {cup||cup} of {hot||hot} {tea||tea}.",
+   "them_dap_an": []
+  },
+  {
+   "cau": "I like the {ghost||ghost} {because||because} it {never||never} {scolds||scold} me.",
+   "them_dap_an": []
+  }
+ ],
+ "mau_cau": [
+  "cefr:A2-04",
+  "cefr:A2-09",
+  "cefr:A2-14"
+ ],
+ "tu_moi": [
+  {
+   "w": "temperature",
+   "r": "/ˈtem.prə.tʃər/",
+   "m": "nhiệt độ"
+  },
+  {
+   "w": "ghost",
+   "r": "/ɡəʊst/",
+   "m": "bóng ma"
+  },
+  {
+   "w": "scold",
+   "r": "/skəʊld/",
+   "m": "mắng"
+  }
+ ],
+ "tom_tat": "Số báo đầu tiên về ngày nắng đẹp ở làng Kotoba, kế hoạch bận rộn của ông trưởng làng và những hình vẽ pixel mới của StackChan.",
+ "tra_tu": {
+  "beautiful": [
+   "beautiful",
+   "/ˈbjuː.tɪ.fəl/",
+   "đẹp",
+   "deck"
+  ],
+  "autumn": [
+   "autumn",
+   "/ˈɔː.təm/",
+   "mùa thu",
+   "deck"
+  ],
+  "sun": [
+   "sun",
+   "/sʌn/",
+   "mặt trời",
+   "deck"
+  ],
+  "today": [
+   "today",
+   "/təˈdeɪ/",
+   "hôm nay",
+   "deck"
+  ],
+  "weather": [
+   "weather",
+   "/ˈweð.ər/",
+   "thời tiết",
+   "deck"
+  ],
+  "walk": [
+   "walk",
+   "/wɔːk/",
+   "đi bộ",
+   "deck"
+  ],
+  "leaf": [
+   "leaf",
+   "/liːf/",
+   "chiếc lá",
+   "deck"
+  ],
+  "take": [
+   "take",
+   "/teɪk/",
+   "cầm, lấy, mang đi",
+   "deck"
+  ],
+  "picture": [
+   "picture",
+   "/ˈpɪk.tʃər/",
+   "bức tranh, bức ảnh",
+   "deck"
+  ],
+  "but": [
+   "but",
+   "/bʌt/",
+   "nhưng",
+   "deck"
+  ],
+  "warm": [
+   "warm",
+   "/wɔːm/",
+   "ấm áp",
+   "deck"
+  ],
+  "evening": [
+   "evening",
+   "/ˈiːv.nɪŋ/",
+   "buổi tối",
+   "deck"
+  ],
+  "go": [
+   "go",
+   "/ɡəʊ/",
+   "đi",
+   "deck"
+  ],
+  "busy": [
+   "busy",
+   "/ˈbɪz.i/",
+   "bận",
+   "deck"
+  ],
+  "visit": [
+   "visit",
+   "/ˈvɪz.ɪt/",
+   "thăm",
+   "deck"
+  ],
+  "small": [
+   "small",
+   "/smɔːl/",
+   "nhỏ",
+   "deck"
+  ],
+  "village": [
+   "village",
+   "/ˈvɪl.ɪdʒ/",
+   "làng",
+   "deck"
+  ],
+  "festival": [
+   "festival",
+   "/ˈfes.tɪ.vəl/",
+   "lễ hội",
+   "deck"
+  ],
+  "tell": [
+   "tell",
+   "/tel/",
+   "kể, bảo",
+   "deck"
+  ],
+  "lamp": [
+   "lamp",
+   "/læmp/",
+   "cái đèn",
+   "deck"
+  ],
+  "garden": [
+   "garden",
+   "/ˈɡɑː.dən/",
+   "khu vườn",
+   "deck"
+  ],
+  "give": [
+   "give",
+   "/ɡɪv/",
+   "đưa, tặng",
+   "deck"
+  ],
+  "cup": [
+   "cup",
+   "/kʌp/",
+   "cái cốc, tách",
+   "deck"
+  ],
+  "hot": [
+   "hot",
+   "/hɒt/",
+   "nóng",
+   "deck"
+  ],
+  "tea": [
+   "tea",
+   "/tiː/",
+   "trà",
+   "deck"
+  ],
+  "because": [
+   "because",
+   "/bɪˈkɒz/",
+   "bởi vì",
+   "deck"
+  ],
+  "never": [
+   "never",
+   "/ˈnev.ər/",
+   "không bao giờ",
+   "deck"
+  ]
+ },
+ "tra_mau": {
+  "cefr:A2-04": [
+   "will (decisions, predictions, offers)",
+   "sẽ",
+   "CEFR A2"
+  ],
+  "cefr:A2-09": [
+   "should / shouldn't",
+   "nên / không nên",
+   "CEFR A2"
+  ],
+  "cefr:A2-14": [
+   "verb + to-infinitive: want to / decide to",
+   "động từ + to V",
+   "CEFR A2"
+  ]
+ },
+ "tra_sach": {
+  "deck": "deck đang học"
+ }
+}

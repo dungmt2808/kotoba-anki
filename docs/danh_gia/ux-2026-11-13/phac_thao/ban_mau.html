@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="vi">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ことば畑 · Bản mẫu bố cục</title>
+<link rel="stylesheet" href="ban_mau.css">
+<body>
+  <div class="proposal">PHÁC THẢO GIAO DIỆN · 13/11/2026 <span>Dữ liệu minh họa · chưa áp dụng vào sản phẩm</span></div>
+  <main class="app">
+    <header class="toolbar">
+      <a class="brand" href="?screen=garden"><i class="mascot" aria-hidden="true"></i><strong>ことば畑</strong></a>
+      <label class="deck">Deck <select aria-label="Deck minh họa"><option>Tiếng Nhật · N4</option></select><kbd>/</kbd></label>
+      <span class="wallet">Ví <b>1.280 xu</b></span>
+      <button class="settings" data-demo="Âm thanh · Trời & giờ · Giao diện · Cấu hình trường · Hướng dẫn" aria-label="Cài đặt">Cài đặt</button>
+      <button class="primary" data-demo="Trong sản phẩm, nút này mở màn ôn bằng lịch của Anki.">Tưới ngay <kbd>R</kbd></button>
+    </header>
+    <nav class="main-nav" aria-label="Màn hình bản mẫu">
+      <a data-screen="garden" href="?screen=garden">Vườn</a>
+      <a data-screen="reading" href="?screen=reading">Báo <span class="badge">1 mới</span></a>
+      <a data-screen="journal" href="?screen=journal">Nhật ký</a>
+      <a data-screen="shop" href="?screen=shop">Nhà & Cửa hàng</a>
+      <button data-demo="Giữ năm trò chơi hiện có. Trò chơi là lựa chọn thêm sau buổi ôn.">Trò chơi</button>
+    </nav>
+
+    <section id="garden" class="screen" hidden>
+      <div class="garden-layout">
+        <div class="garden-main">
+          <div class="scene panel" role="img" aria-label="Cảnh vườn pixel hiện có, dùng làm minh họa"><span class="scene-label">Sân vườn <button data-demo="Chuyển cảnh như sản phẩm hiện tại.">Đổi cảnh</button></span></div>
+          <div class="field panel">
+            <header><b>Ruộng từ vựng</b><button data-demo="Bản mẫu đề xuất lọc nhanh theo trạng thái cây.">Tất cả <span aria-hidden="true">▾</span></button></header>
+            <div class="plants" role="img" aria-label="Các cây pixel từ giao diện đang có"></div>
+            <div class="legend"><span>Hạt giống <b>10</b></span><span>Mầm <b>19</b></span><span>Cây non <b>31</b></span><span>Ra hoa <b>30</b></span><span>Ra quả <b>16</b></span></div>
+          </div>
+        </div>
+        <aside class="today panel">
+          <header class="section-head"><h1>Hôm nay</h1><span class="tag">Mùa lá đỏ</span></header>
+          <div class="daily-count"><b>18</b><span>/ 30 lượt</span></div>
+          <div class="progress" role="progressbar" aria-label="Mục tiêu tự chọn hôm nay" aria-valuenow="18" aria-valuemin="0" aria-valuemax="30"><i></i></div>
+          <p class="muted">Mục tiêu tự chọn</p>
+          <div class="next-action"><b>Ôn đúng lịch Anki</b><p>Chấm theo mức nhớ thật của cậu.</p></div>
+          <button class="wide" data-demo="Nhiệm vụ học đề xuất: ôn 10 thẻ đến lượt; mọi mức chấm đều được tính.">Nhiệm vụ <span>1/2 ▸</span></button>
+          <div class="subtle-rule"></div>
+          <p class="eyebrow">KHI MUỐN ĐỔI NHỊP</p>
+          <a class="row-link" href="?screen=reading">Đọc báo <span class="badge">1 mới</span></a>
+          <a class="row-link" href="?screen=journal">Viết nhật ký <span>▸</span></a>
+          <button class="row-link" id="news-open">Tin làng <span>2 tin ▸</span></button>
+          <a class="quiet-link" href="?screen=journal">Lịch hoa · 9 ngày ôn tháng này</a>
+        </aside>
+      </div>
+    </section>
+
+    <section id="shop" class="screen panel shop" hidden>
+      <header class="screen-title"><div><p class="eyebrow">おうち</p><h1>Nhà & Cửa hàng</h1></div><div class="segmented"><button class="selected">Sân vườn</button><button data-demo="Giữ bếp và phòng ngủ cùng một lần mở rộng như hiện tại.">Trong nhà</button></div><button data-demo="Ảnh vườn được lưu như tính năng Chụp ảnh hiện có.">Chụp ảnh</button></header>
+      <div class="shop-layout">
+        <nav class="catalog" aria-label="Danh mục cửa hàng">
+          <h2>Danh mục</h2>
+          <button data-demo="Xây nhà · Mở rộng">Ngôi nhà</button>
+          <button class="selected">Trang trí</button>
+          <div class="subnav"><button class="sub-active">Sân vườn</button><button data-demo="Lọc nội thất theo phòng, không thay đổi quyền sở hữu.">Nội thất</button></div>
+          <button data-demo="Vùng mới · Giao diện mùa">Thế giới</button>
+          <button data-demo="Thú nuôi · Album khách">Bạn trong vườn</button>
+          <button data-demo="Giống cây · Tủ đồ">Cây & Linh vật</button>
+          <button data-demo="Giữ đầy đủ xưởng và quyền Góp ý hình / Sửa hình hiện tại.">Xưởng</button>
+          <button data-demo="Tìm kiếm toàn bộ đồ sở hữu; lọc theo đang đặt và còn trong kho.">Kho đồ</button>
+        </nav>
+        <div class="products">
+          <div class="product-tools"><input type="search" id="item-search" placeholder="Tìm trong Trang trí…" aria-label="Tìm món đồ minh họa"><select id="item-filter" aria-label="Lọc món đồ"><option value="all">Tất cả</option><option value="owned">Đã sở hữu</option><option value="affordable">Đủ xu mua</option></select></div>
+          <p class="muted result-count">6 món minh họa · Sân vườn</p>
+          <div class="product-grid" id="product-grid"></div>
+        </div>
+        <aside class="item-detail">
+          <div class="preview-scene" role="img" aria-label="Cảnh vườn để xem thử món đồ"><span>Xem thử trên sân</span></div>
+          <div class="detail-copy"><p class="eyebrow">ĐANG CHỌN</p><h2 id="item-name">Đèn lồng giấy</h2><p id="item-description">Sáng đèn ban đêm.</p><p class="ownership" id="item-owned">Chưa sở hữu</p><div class="item-cost"><b id="item-price">70 xu</b><span id="item-after">Sau mua: 1.210 xu</span></div><button class="wide" data-demo="Xem thử chỉ thay bản xem trước; không trừ xu hay sửa vườn thật.">Xem thử</button><button class="primary wide" id="item-buy" data-demo="Đề xuất: mua thành công rồi vào chế độ đặt. Đóng chế độ đặt thì món vẫn ở kho.">Mua & đặt</button><p class="muted">Đặt sau cũng được; đồ vẫn ở kho.</p></div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="journal" class="screen panel journal" hidden>
+      <header class="screen-title"><div><p class="eyebrow">花暦</p><h1>Lịch hoa & Nhật ký</h1></div><div class="segmented"><button class="selected">Tháng</button><button data-demo="Giữ lịch năm hiện có.">Năm</button><button data-demo="Giữ cuốn nhật ký và xuất PDF hiện có.">Cuốn nhật ký</button></div><button id="today-pick">Hôm nay</button></header>
+      <div class="journal-layout">
+        <div class="calendar-side"><div class="month-heading"><button data-demo="Bản mẫu chỉ minh họa tháng 11/2026." aria-label="Tháng trước">‹</button><h2>Tháng 11 · 2026</h2><button data-demo="Bản mẫu chỉ minh họa tháng 11/2026." aria-label="Tháng sau">›</button></div><div class="weekdays"><span>T2</span><span>T3</span><span>T4</span><span>T5</span><span>T6</span><span>T7</span><span>CN</span></div><div class="calendar-grid" id="calendar-grid"></div><div class="month-foot"><b>9 ngày ôn</b><span>tháng này</span></div><details><summary>Mùa và ngày lễ</summary><p>Mùa lá đỏ · 1/11–10/12. Giữ lịch mùa hiện có, đưa chú giải vào phần thu gọn.</p></details></div>
+        <div class="day-editor">
+          <header class="day-heading"><div><p class="eyebrow">NGÀY ĐANG CHỌN</p><h2 id="selected-date">Thứ Sáu, 13/11/2026</h2></div><span class="tag">18 lượt ôn</span></header>
+          <div class="segmented editor-tabs" role="tablist" aria-label="Nội dung ngày"><button role="tab" id="diary-tab" aria-selected="true" class="selected">Nhật ký</button><button role="tab" id="writing-tab" aria-selected="false">Luyện viết <span class="badge">Đang sửa</span></button></div>
+          <div id="diary-pane" role="tabpanel" aria-labelledby="diary-tab">
+            <div class="editor-subtitle"><b>Hôm nay cậu thế nào?</b><span class="private">Không gửi Gemini</span></div>
+            <div class="moods" aria-label="Tâm trạng minh họa"><button aria-label="Vui" class="selected"><i class="face happy"></i></button><button aria-label="Bình thường"><i class="face neutral"></i></button><button aria-label="Mệt"><i class="face tired"></i></button><span>Vui</span></div>
+            <label class="sr-only" for="diary-text">Nhật ký minh họa</label><textarea id="diary-text" maxlength="200">Hôm nay đi làm về muộn nhưng vẫn ôn được một chút. Cuối cùng cũng nhớ cách dùng 予約する. Cảm giác mình đang tiến bộ.</textarea>
+            <div class="save-row"><span id="save-state" role="status">Đã lưu bản mẫu trên máy</span><span id="diary-count"></span></div>
+            <p class="muted">Trong sản phẩm: nhật ký nằm trong hồ sơ và đồng bộ qua AnkiWeb.</p>
+            <div class="background-job" id="writing-status"><i class="job-square" aria-hidden="true"></i><div><b>Bài luyện viết đang được sửa</b><p>Cậu vẫn có thể viết nhật ký hoặc rời màn này.</p></div><button id="demo-complete">Giả lập xong</button></div>
+          </div>
+          <div id="writing-pane" role="tabpanel" aria-labelledby="writing-tab" hidden><p class="muted">Tiếng Nhật · tối đa 60 ký tự · sửa một lần mỗi ngày</p><p class="writing-example" lang="ja">今日は友だちとカフェを予約しました。寒いですが、楽しかったです。</p><p id="correction-status" role="status">Đang sửa… Kết quả sẽ hiện ở đây.</p><div id="correction-result" hidden><h3>Câu đã sửa</h3><p lang="ja" class="writing-example">今日は友だちと行くカフェの席を予約しました。寒かったですが、楽しかったです。</p><h3>Nhận xét minh họa</h3><p>寒かったです dùng quá khứ để thống nhất với lời kể.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="reading" class="screen panel reading" hidden>
+      <header class="screen-title"><div><p class="eyebrow">新聞</p><h1>Báo & Chép chính tả</h1></div><div class="segmented"><button class="selected">Báo</button><button data-demo="Giữ kệ báo, thêm Tiếp tục đọc và lọc Chưa đọc.">Kệ báo</button><button data-demo="Giữ Chép chính tả, chỉ yêu cầu tạo giọng khi thực sự cần.">Chép chính tả</button><button data-demo="Nguồn báo đề xuất: khóa → ngôn ngữ và trình độ → deck → xem cấu hình → Bắt đầu viết. Báo lấy nguồn riêng, không theo deck trên thanh đầu.">Nguồn báo</button></div></header>
+      <div class="reader-tools"><span>Báo tiếng Nhật · <b>N4</b> · 13/11/2026</span><span class="source-caption">Nguồn: 2 deck đã chọn</span><div><button id="ruby-toggle">Ẩn furigana</button><button id="translation-toggle">Bản dịch</button><button data-demo="Cài đặt: cỡ chữ 18 / 20 / 22, giãn dòng, kiểu gạch từ.">Cỡ chữ</button></div></div>
+      <div class="reader-layout">
+        <article class="article" lang="ja"><p class="eyebrow">畑新聞 · TRUYỆN KỲ 13</p><h2>ことば村の小さな約束</h2><p class="article-intro" lang="vi">Một lời hẹn nhỏ trong làng Kotoba</p><p>ハナさんは、<ruby>窓<rt>まど</rt></ruby>の<ruby>外<rt>そと</rt></ruby>を<ruby>見<rt>み</rt></ruby>ました。<ruby>庭<rt>にわ</rt></ruby>の<ruby>木<rt>き</rt></ruby>が、<ruby>少<rt>すこ</rt></ruby>しずつ<ruby>赤<rt>あか</rt></ruby>くなっています。</p><p>「<ruby>明日<rt>あした</rt></ruby>、みんなでお<ruby>茶<rt>ちゃ</rt></ruby>を<ruby>飲<rt>の</rt></ruby>みませんか」と、リンさんが<ruby>言<rt>い</rt></ruby>いました。ハナさんは、<button class="inline-word" id="word-lookup"><ruby>予約<rt>よやく</rt></ruby>する</button>ために<ruby>電話<rt>でんわ</rt></ruby>をかけました。</p><p>「<ruby>窓<rt>まど</rt></ruby>のそばの<ruby>席<rt>せき</rt></ruby>を、<ruby>三<rt>さん</rt></ruby><ruby>人分<rt>にんぶん</rt></ruby>お<ruby>願<rt>ねが</rt></ruby>いします。」<ruby>小<rt>ちい</rt></ruby>さな<ruby>約束<rt>やくそく</rt></ruby>が、<ruby>明日<rt>あした</rt></ruby>の<ruby>楽<rt>たの</rt></ruby>しみになりました。</p><div id="translation" lang="vi" hidden>Chị Hana nhìn ra ngoài cửa sổ. Cây trong vườn đang dần chuyển đỏ. Rin rủ mọi người ngày mai uống trà. Hana gọi điện đặt ba chỗ cạnh cửa sổ.</div><div class="article-actions"><button data-demo="Nghe đoạn được chọn. Hiện lỗi tại đây nếu chưa có giọng đọc.">Nghe đoạn</button><button data-demo="Giữ câu hỏi đọc hiểu; câu trả lời và xu không đổi lịch Anki.">Câu hỏi đọc hiểu ▸</button></div></article>
+        <aside class="reader-side"><div class="reading-progress"><p class="eyebrow">ĐANG ĐỌC</p><b>Truyện kỳ 13</b><p class="muted">Tin làng · Truyện · Câu hỏi</p><button data-demo="Đề xuất nhớ số báo và vị trí đọc, không thêm chuỗi đọc.">Tiếp tục từ vị trí này</button></div><div class="word-detail" id="word-detail"><p class="eyebrow">TỪ ĐANG CHỌN</p><h2 lang="ja">予約する</h2><p lang="ja">よやくする</p><p><b>Đặt trước, đặt chỗ</b></p><div class="subtle-rule"></div><p class="muted">Trong đoạn: gọi điện đặt chỗ ở quán.</p><button data-demo="Dùng giọng đọc sẵn có của từ hoặc nhà cung cấp đã chọn.">Nghe từ</button><p class="muted">Tra nghĩa là tính năng đã có. Bản mẫu chỉ đổi cách trình bày.</p></div></aside>
+      </div>
+    </section>
+    <footer class="prototype-foot">Bản mẫu bố cục · Cảnh và đồ pixel lấy từ giao diện hiện có · Các thao tác Anki/Gemini được minh họa</footer>
+  </main>
+  <dialog id="news-dialog"><header><h2>Tin làng</h2><button id="news-close" aria-label="Đóng Tin làng">Đóng</button></header><div class="news-scroll"><p class="eyebrow">HÔM NAY</p><p>Mùa lá đỏ trong vườn</p><p>Một người bạn ghé thăm</p><p class="eyebrow">SẮP TỚI</p><p>Mùa mới và lịch làng được xem tại đây.</p><p class="muted">Bản mẫu đề xuất cuộn trong bảng, giới hạn theo cửa sổ và đóng bằng Esc.</p></div></dialog>
+  <div class="toast" role="status" hidden></div>
+  <script src="ban_mau.js"></script>
+</body>
+</html>

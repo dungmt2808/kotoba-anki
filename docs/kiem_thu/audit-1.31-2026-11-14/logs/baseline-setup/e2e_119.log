@@ -1,0 +1,13 @@
+== báo muốn nhận: máy đã có báo tiếng Anh (1.19.0) → tick sẵn cả hai
+  ✓ mở hồ sơ lần đầu: ghi gemini_langs = ["ja", "en"] một lần
+== đang xem deck tiếng Anh: hòm thư cộng cả hai báo, mở bảng → báo tiếng Nhật (có số chưa đọc)
+  ✗ hòm thư: 2 số tiếng Nhật + 1 số tiếng Anh = {"enabled":false,"unread":0,"latest":null,"dict_done":0,"dict_total":5,"lang":"ja","source":"","ai_busy":false,"dict_ok":true}
+  ✗ chip “Báo mới 3”
+== Kệ báo: chuyển sang báo tiếng Anh
+  ✗ mở kệ báo (báo tiếng Nhật, không theo deck đang xem) + nút chuyển báo
+  ✓ kệ báo tiếng Nhật: 2 số
+  ✗ nút:  (không còn nhãn “Đọc báo:”)
+  ✓ không còn nút “Theo deck đang xem”
+LỖI KỊCH BẢN: TypeError: Cannot read properties of undefined (reading 'click')
+    at <anonymous>:1:65
+    at <anonymous>:1:87

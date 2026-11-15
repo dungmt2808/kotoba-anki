@@ -1,0 +1,47 @@
+== a. máy 1: một ngày dùng bình thường
+  ✓ lần mở đầu hôm nay: màn chào
+  ✓ người đang dùng: không có hướng dẫn người mới
+  ✓ ôn 4 thẻ bằng nút: +12 xu
+  ✓ Ghế gỗ đặt ở sân [["bench",4,2]]
+  ✓ nhận nuôi + cho mèo ăn hôm nay (ngày Anki 0): {"neko":["Mèo mướp",0]}
+  ✓ sticker + nhật ký hôm nay
+  ✓ mua 1 vé giữ chuỗi
+  ✓ gói báo tới 2026-11-18
+  ✓ trạng thái đọc báo 2026-11-03 lưu trong collection
+  ✓ trời cố định Tuyết lưu ở config prefs (riêng máy)
+KẾT QUẢ a: 10/10
+== b. máy 1: tắt hẳn Anki rồi mở lại
+  ✓ xu: 774 (kỳ vọng 774)
+  ✓ số lượt tưới: 29
+  ✓ Ghế gỗ đúng chỗ: [["bench",4,2]]
+  ✓ thú nuôi: {"neko":["Mèo mướp",0]}
+  ✓ sticker + nhật ký: vui · Hôm nay ôn 4 thẻ, mua ghế gỗ cho mèo.
+  ✓ vé giữ chuỗi: 1
+  ✓ gói báo tới 2026-11-18
+  ✓ trạng thái đọc báo: ["2026-11-03"]
+  ✓ đủ 9 khoá kotoba_batake_* trong collection
+  ✓ giao diện hiện 774 xu
+  ✓ không có hướng dẫn người mới
+  ✓ trời cố định Tuyết còn sau khi tắt Anki
+  ✓ đã chào hôm nay (trước khi tắt Anki): không chào lại
+  ✓ nhật ký lỗi trống: []
+  ✓ không lỗi JS: []
+KẾT QUẢ b: 15/15
+== c. máy 2: add-on mới, chỉ có collection (như sau khi đồng bộ AnkiWeb)
+  ✓ máy 2 chưa có file sao lưu nào: []
+  ✓ xu: 774 (kỳ vọng 774)
+  ✓ số lượt tưới: 29
+  ✓ Ghế gỗ đúng chỗ: [["bench",4,2]]
+  ✓ thú nuôi: {"neko":["Mèo mướp",0]}
+  ✓ sticker + nhật ký: vui · Hôm nay ôn 4 thẻ, mua ghế gỗ cho mèo.
+  ✓ vé giữ chuỗi: 1
+  ✓ gói báo tới 2026-11-18
+  ✓ trạng thái đọc báo: ["2026-11-03"]
+  ✓ đủ 9 khoá kotoba_batake_* trong collection
+  ✓ giao diện hiện 774 xu
+  ✓ không có hướng dẫn người mới
+  ✓ cài đặt riêng máy (trời Tuyết) không đi theo sang máy 2 — đúng thiết kế
+  ✓ máy 2 mở vườn lần đầu hôm nay: có màn chào
+  ✓ nhật ký lỗi trống: []
+  ✓ không lỗi JS: []
+KẾT QUẢ c: 16/16
