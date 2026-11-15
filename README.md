@@ -263,6 +263,21 @@ Deck **tiếng Anh** có đủ vườn, trò chơi, chép chính tả và báo t
 **Lời nhắc (prompt) gửi Gemini là gì?**
 Xem nguyên văn ở [docs/LOI_NHAC_GEMINI.md](docs/LOI_NHAC_GEMINI.md).
 
+**Báo có đọc thành tiếng không? Windows, macOS, Linux cần cài gì?**
+Báo tiếng Nhật / tiếng Anh có hai nguồn giọng đọc. Báo tiếng Việt chỉ để đọc, không có giọng.
+
+- **Giọng Gemini** (mọi máy): tạo bằng chính khoá Gemini của bạn. Mặc định chỉ đọc **câu chép chính tả**. Muốn nghe **từng đoạn** thì vào báo (phím **B**) → tab **Nguồn báo** → **Giọng đọc: Cả bài**. Bản miễn phí khoảng 10 lượt tạo giọng / ngày; hết lượt thì dùng giọng của máy.
+- **Giọng của máy** (Windows, macOS): đọc những đoạn chưa có giọng Gemini. Cần cài giọng tiếng Nhật một lần (giọng tiếng Anh thường có sẵn), rồi mở lại Anki:
+  - Windows: **Cài đặt → Thời gian & ngôn ngữ → Giọng nói → Thêm giọng nói → Tiếng Nhật**.
+  - macOS: **Cài đặt hệ thống → Trợ năng → Nội dung đọc → Giọng hệ thống → Quản lý giọng nói → Tiếng Nhật**.
+- **Linux**: Anki không có giọng của máy, nên chỉ nghe được giọng Gemini và audio có sẵn trong deck. Anki cần **mpv** để phát âm thanh (cũng là âm thanh của thẻ):
+
+  ```bash
+  sudo apt install mpv
+  ```
+
+Nút **Chậm** đọc chậm được mọi giọng; riêng audio có sẵn trong deck thì cần Anki đang dùng mpv.
+
 **Giao diện có tiếng Anh không?**
 Hiện chỉ có tiếng Việt (kèm chữ Nhật trang trí).
 
