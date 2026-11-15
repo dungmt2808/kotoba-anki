@@ -275,6 +275,12 @@ Vào **Tools → ことば畑 · Báo lỗi**, ghi vài dòng ở mục *Mô t�
 
 Thấy hình có sẵn bị lỗi (thiếu một điểm viền, lệch màu…)? Mở **Nhà**, ở thẻ món bạn đã có bấm **Góp ý hình**, vẽ lại (cả khung động như hươu cúi chào, tủ lạnh mở, đài phun nước đóng băng…) rồi **Lưu file góp ý**, đính kèm file đó vào issue. Vườn của bạn không đổi; bản sửa được nhận sẽ có ở bản cập nhật sau cho mọi người.
 
+## Giấy phép
+
+ことば畑 © 2026 dungmt2808. Mã nguồn, hình pixel và nhạc của add-on và trang web phát hành theo **GNU AGPL-3.0** (hoặc bản mới hơn — cùng giấy phép với Anki), toàn văn ở [`LICENSE`](LICENSE).
+Bạn được dùng, sửa và chia sẻ lại; bản sửa đăng ra (kể cả chạy như một dịch vụ trên mạng) phải kèm mã nguồn theo cùng giấy phép và giữ ghi chú bản quyền.
+Thiết kế ở mục [Mã cộng đồng](https://dungmt2808.github.io/kotoba-anki/#cong-dong) thuộc về người vẽ, được đăng để mọi người chép vào vườn.
+
 ## Cho người phát triển
 
 - Tài liệu phát triển (kiến trúc, dữ liệu, luật chơi, quyết định đã chốt, lịch sử phiên bản): [`PHAT_TRIEN.md`](PHAT_TRIEN.md).

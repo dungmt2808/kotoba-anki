@@ -66,5 +66,17 @@ if os.path.isfile(app):
 else:
     print("  – bỏ qua (không có site/ cạnh thư mục add-on)")
 
+print("== giấy phép (AGPL-3.0, chọn 15/11)")
+lic_pkg = os.path.join(ADDON, "LICENSE.txt")
+ok(os.path.isfile(lic_pkg) and "GNU AFFERO GENERAL PUBLIC LICENSE" in open(lic_pkg, encoding="utf-8").read()
+   and "Version 3, 19 November 2007" in open(lic_pkg, encoding="utf-8").read(), "gói add-on kèm LICENSE.txt (AGPL-3.0)")
+root_lic = os.path.join(ROOT, "LICENSE")
+if os.path.isfile(root_lic) and os.path.abspath(os.path.join(ADDON, "..")) == ROOT:
+    ok(open(root_lic, "rb").read() == open(lic_pkg, "rb").read(), "LICENSE ở gốc repo = kotoba_batake/LICENSE.txt")
+    pkg = os.path.join(ROOT, "kotoba_batake.ankiaddon")
+    if os.path.isfile(pkg):
+        import zipfile
+        ok(zipfile.ZipFile(pkg).read("LICENSE.txt") == open(lic_pkg, "rb").read(), "file .ankiaddon có LICENSE.txt")
+
 print(f"KẾT QUẢ: {sum(results)}/{len(results)}" + (" — TẤT CẢ OK" if all(results) else " — CÓ LỖI"))
 sys.exit(0 if all(results) else 1)
