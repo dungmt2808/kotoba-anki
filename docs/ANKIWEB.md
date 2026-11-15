@@ -64,6 +64,7 @@ Không dán khoá Gemini thì add-on không gửi gì lên mạng. Khoá chỉ l
 
 **Kho hình & mã thiết kế**: [dungmt2808.github.io/kotoba-anki](https://dungmt2808.github.io/kotoba-anki/) — mọi hình pixel của vườn và thiết kế người chơi chia sẻ.
 **Hướng dẫn đầy đủ, ảnh, video**: [github.com/dungmt2808/kotoba-anki](https://github.com/dungmt2808/kotoba-anki)
+**Giấy phép**: GNU AGPL-3.0 — mã nguồn mở trên GitHub.
 **Gặp lỗi?** Tools → ことば畑 · Báo lỗi → **Gửi qua GitHub…** hoặc **Gửi email…**. Vui lòng báo lỗi ở đó thay vì chấm điểm thấp — mình sẽ sửa sớm.
 ````
 
