@@ -33,6 +33,15 @@ Repo mới **không kèm** dữ liệu riêng của bộ `kotoba_daily`: `nguon/
 7. **Kiểm**: trang <https://dungmt2808.github.io/kotoba-anki/> mở được; ảnh trong README hiện; mở
    `https://github.com/dungmt2808/kotoba-anki/commits/master` thấy đúng **một** commit.
 
+## Repo cũ `kotoba-anki-cu` (riêng tư) dùng làm gì
+
+- **Kho lưu trữ**: toàn bộ lịch sử phát triển trước 15/11 (mọi commit, PR #1 – #31, báo cáo kiểm thử) — tra lại thay đổi cũ,
+  lấy lại bản add-on cũ bất kỳ (`git archive <commit> kotoba_batake`). Repo riêng tư miễn phí, **không nên xoá**.
+- **Dữ liệu riêng của bộ `kotoba_daily`** (giáo trình trích, báo + giọng đọc, tiến độ) vẫn nằm ở đó và trong thư mục trên máy.
+- **Không phát triển tiếp ở đó**: mọi thay đổi add-on / trang web làm ở repo mới. Muốn tránh nhầm thì Settings → General →
+  **Archive this repository** (chỉ đọc, gỡ archive lại được).
+- **Không bao giờ** đẩy nhánh / commit của repo cũ sang repo mới (lịch sử cũ còn file PDF giáo trình).
+
 ## Sau đó
 
 - Phiên Claude Code sau làm việc với repo mới (cùng tên nên không phải đổi gì). Lịch sử cũ ở `kotoba-anki-cu` (riêng tư).
