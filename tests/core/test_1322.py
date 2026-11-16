@@ -1,4 +1,4 @@
-"""1.32.2 — pinyin trên từng chữ (deck tiếng Trung) [+ phần Sửa thẻ khi ôn thêm sau khi người dùng duyệt ảnh phác].
+"""1.32.2 — pinyin trên từng chữ (deck tiếng Trung) + nút ✎ Sửa / phím E sửa thẻ ngay lúc ôn.
 
 1. zh_core đối chiếu với từ điển pinyin độc lập (pypinyin, đóng băng ở tests/fixtures/pinyin_1322_ref.json — 2.000 từ):
    đổi số → dấu đúng từng từ; ghép chữ / âm tiết đúng với pinyin có dấu cách, có dấu nháy, viết liền, ghi số (cách / liền).
@@ -10,6 +10,10 @@
 5. (ANKI_PY) collection Anki thật: note tiếng Trung ghi pinyin đủ kiểu → `build_garden` trả `reading` có dấu + `ruby`; deck
    tiếng Nhật / tiếng Anh: chữ / cách đọc / nghĩa / Hán Việt giống hệt mã 1.31.5 thật (không đổi gì), `ruby` = None.
 6. Không đổi phần lưu trữ: không khoá collection / config mới (chỉ là cách hiện).
+7. Nút ✎ Sửa / phím E (soát mã; chạy thật ở anki/e2e_1322.js): lệnh cầu nối `rv:edit` chỉ chạy khi có thẻ và không bận;
+   phím E không chạy khi đang gõ / có Ctrl / Alt / ⌘; nút không lấy focus; nút ẩn khi không có thẻ; cửa sổ sửa đăng ký với bộ
+   quản lý cửa sổ của Anki (closeWithCallback, reopen), không ghi gì vào collection / config; mọi khoá collection mà mã dùng
+   giống hệt 1.31.5.
 
 Chạy: python test_1322.py ADDON   (python có gói anki — ANKI_PY — cho phần 5)
 """
@@ -145,6 +149,55 @@ old_cfg = None
 with tarfile.open(fileobj=io.BytesIO(ma_cu.archive(ROOT, "d5efb47")), mode="r:*") as tf:
     old_cfg = json.load(tf.extractfile("kotoba_batake/config.json"))
 ok(set(cfg) == set(old_cfg), "config.json không thêm / bớt mục so với 1.31.5")
+
+print("== 7. nút ✎ Sửa / phím E (soát mã)")
+init = open(os.path.join(ADDON, "__init__.py"), encoding="utf-8").read()
+ew = open(os.path.join(ADDON, "edit_win.py"), encoding="utf-8").read()
+body = open(os.path.join(ADDON, "web", "body.html"), encoding="utf-8").read()
+ok('elif cmd == "rv:edit":' in init and "self._edit_card()" in init, "lệnh cầu nối rv:edit → _edit_card")
+m = re.search(r"def _edit_card\(self\) -> None:\n(.*?)\n    def ", init, re.S)
+ok(bool(m) and "if card is None or self._busy:" in m.group(1) and "return" in m.group(1), "_edit_card: không có thẻ / đang lưu lượt chấm → bỏ qua")
+ok(bool(m) and "edit_win.open_card(card, _edit_closed)" in m.group(1), "_edit_card mở cửa sổ cho đúng thẻ đang ôn")
+m2 = re.search(r"def _note_changed\(self, saved: bool\) -> None:\n(.*?)\n    def ", init, re.S)
+ok(bool(m2) and "_card_changed(card)" in m2.group(1) and m2.group(1).index("_card_changed(card)") < m2.group(1).index("card.load()"),
+   "dựng lại thẻ: thẻ bị chấm / đổi lịch ở chỗ khác → sang thẻ kế tiếp (kiểm trước khi nạp lại thẻ)")
+ok(bool(m2) and "answer_card" not in m2.group(1) and "_record_answer" not in m2.group(1) and "coins" not in m2.group(1),
+   "dựng lại thẻ không chấm thẻ, không cộng / trừ xu")
+ok('"select n.mod, n.flds, n.tags, n.mid from notes n where n.id = ?"' in init, "nhận ra note vừa sửa bằng nội dung note (không chỉ notes.mod theo giây)")
+key = re.search(r"  function key\(e\) \{(.*?)\n  \}\n", gjs, re.S).group(1)
+ok('if (tag === "SELECT" || tag === "INPUT" || tag === "TEXTAREA") { return; }' in key, "phím tắt bảng ôn không chạy khi đang gõ (ô đáp án, ô tìm…)")
+ok('(k === "e" || k === "E") && !e.ctrlKey && !e.metaKey && !e.altKey' in key and "editCard();" in key, "phím E (không Ctrl / Alt / ⌘) → editCard")
+ed_js = re.search(r"function editCard\(\) \{(.*?)\n  \}", gjs, re.S).group(1)
+ok("!card || waiting || flipping || undoing" in ed_js and 'send("rv:edit")' in ed_js, "editCard: không gửi khi đang chấm / lật / hoàn tác")
+ok('$("kb-rv-edit").addEventListener("mousedown", function (e) { e.preventDefault(); });' in gjs, "nút ✎ Sửa không lấy focus (Space / 1–4 vẫn chạy sau khi bấm)")
+ok(gjs.count("setEdit(false);") >= 2 and "setEdit(true);" in gjs, "nút ẩn ở màn Hết thẻ / khi đóng bảng ôn, hiện khi có thẻ")
+ok('id="kb-rv-edit"' in body and 'title="Sửa thẻ này (E)"' in body and body.index('id="kb-rv-edit"') < body.index('id="kb-show"'),
+   "nút ✎ Sửa đứng trước nút Lật thẻ / nút chấm (góc dưới bên trái)")
+ok("register_dialog(NAME, EditCardWindow)" in ew and "def closeWithCallback" in ew and "def reopen" in ew, "cửa sổ Sửa thẻ đăng ký với bộ quản lý cửa sổ của Anki")
+ok("set_config" not in ew and "user_files" not in ew and "STATE" not in ew, "edit_win không ghi gì vào collection / config / file")
+ok('aqt.dialogs.open("Browser", mw, search=(f"nid:{int(card.nid)}",))' in ew, "không dựng được trình sửa → Trình duyệt thẻ ở đúng note")
+
+
+def coll_keys(src_by_name):
+    out = set()
+    for txt in src_by_name.values():
+        out |= set(re.findall(r'"(kotoba_batake_[a-z0-9_]+)"', txt))
+    return out
+
+
+new_src = {f: open(os.path.join(ADDON, f), encoding="utf-8").read() for f in os.listdir(ADDON) if f.endswith(".py")}
+old_src = {}
+with tarfile.open(fileobj=io.BytesIO(ma_cu.archive(ROOT, "d5efb47")), mode="r:*") as tf:
+    for mem in tf.getmembers():
+        if mem.isfile() and mem.name.count("/") == 1 and mem.name.endswith(".py"):
+            old_src[mem.name.split("/", 1)[1]] = tf.extractfile(mem).read().decode("utf-8")
+# "kotoba_batake_edit" (1.32.2) là tên vị trí / cỡ cửa sổ Sửa thẻ cho saveGeom / restoreGeom của Anki: lưu trong hồ sơ Anki trên
+# máy (prefs21.db, như cửa sổ vườn), không phải khoá collection, không đồng bộ
+ok(re.search(r'^GEOM = "kotoba_batake_edit"$', ew, re.M) is not None and ew.count('"kotoba_batake_edit"') == 1
+   and "restoreGeom(self, GEOM)" in ew and "saveGeom(self, GEOM)" in ew, "kotoba_batake_edit chỉ là tên vị trí cửa sổ (saveGeom, hồ sơ trên máy)")
+new_src["edit_win.py"] = new_src["edit_win.py"].replace('"kotoba_batake_edit"', "")
+nk, okk = coll_keys(new_src), coll_keys(old_src)
+ok(nk == okk, "khoá kotoba_batake_* trong mã giống hệt 1.31.5 (%d khoá)%s" % (len(nk), (" — khác: %s" % sorted(nk ^ okk)) if nk != okk else ""))
 
 print("== 5. collection Anki thật")
 try:

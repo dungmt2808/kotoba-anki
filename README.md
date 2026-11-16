@@ -207,7 +207,7 @@ Lần đầu mở vườn có **hướng dẫn 3 bước** ngay trên màn hình
 4. Bấm **Nhà** để xây bước đầu tiên của ngôi nhà.
 5. (Tuỳ chọn) Bấm **B** để mở báo, sang tab **Nguồn báo** và dán khoá Gemini.
 
-Phím tắt trong vườn: **R** Tưới ngay · **N** Nhà · **T** Trò chơi · **B** Báo · **L** Lịch hoa · **Q** Nhiệm vụ · **/** tìm deck · **Esc** đóng bảng đang mở. Khi ôn thẻ: **Space** lật thẻ · **1–4** chấm · **Ctrl+Z** hoàn tác lượt chấm vừa rồi (trả lại cả xu của lượt đó). Nhạc, hiệu ứng và giao diện từng chế độ (ví dụ ẩn sân khi ôn) chỉnh ở nút ⚙.
+Phím tắt trong vườn: **R** Tưới ngay · **N** Nhà · **T** Trò chơi · **B** Báo · **L** Lịch hoa · **Q** Nhiệm vụ · **/** tìm deck · **Esc** đóng bảng đang mở. Khi ôn thẻ: **Space** lật thẻ · **1–4** chấm · **Ctrl+Z** hoàn tác lượt chấm vừa rồi (trả lại cả xu của lượt đó) · **E** (hoặc nút ✎ Sửa ở góc dưới bên trái) sửa thẻ đang ôn bằng cửa sổ sửa của Anki. Nhạc, hiệu ứng và giao diện từng chế độ (ví dụ ẩn sân khi ôn) chỉnh ở nút ⚙.
 
 ## Báo mỗi sáng bằng Gemini (miễn phí)
 
