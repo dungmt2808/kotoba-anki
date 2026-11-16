@@ -32,6 +32,19 @@ PAPER_KEY = "kotoba_batake_paper"
 PAPER_KEY_EN = "kotoba_batake_paper_en"   # 1.19: báo tiếng Anh (số đã đọc / câu đã làm theo ngày, tách khỏi báo tiếng Nhật)
 PAPER_KEY_VI = "kotoba_batake_paper_vi"   # 1.25.1: báo tiếng Việt (Báo Làng Kotoba)
 PAPER_KEY_ZH = "kotoba_batake_paper_zh"   # 1.33: báo tiếng Trung
+PAPER_LANGS = ("ja", "en", "zh", "ko", "vi")     # báo của add-on (1.33: thêm tiếng Trung / tiếng Hàn)
+LEARN_LANGS = ("ja", "en", "zh", "ko")            # báo học tiếng (tối đa 2 cùng lúc); tiếng Việt đi một mình
+
+
+def clean_paper_langs(raw: Any) -> list[str]:
+    """Báo muốn nhận (config gemini_langs) → danh sách hợp lệ: tối đa 2 báo trong Nhật / Anh / Trung / Hàn (giữ 2 báo có
+    trước trong danh sách), HOẶC chỉ tiếng Việt; có cả Việt lẫn báo học tiếng → bỏ Việt (1.25.2, 1.33)."""
+    if not isinstance(raw, list):
+        return []
+    learn = [x for x in dict.fromkeys(raw) if isinstance(x, str) and x in LEARN_LANGS][:2]
+    if learn:
+        return [x for x in LEARN_LANGS if x in learn]
+    return ["vi"] if "vi" in raw else []
 PAPER_KEY_KO = "kotoba_batake_paper_ko"   # 1.33: báo tiếng Hàn
 ISSUE_LANGS = ("ja", "en", "vi", "zh", "ko")     # 1.33: báo tiếng Trung / tiếng Hàn
 DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")

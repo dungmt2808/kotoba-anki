@@ -165,6 +165,9 @@ echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
 echo "== core/test_1322.py (1.32.2: pinyin trên từng chữ — đối chiếu 2.000 từ pypinyin, không bao giờ ghép sai; deck Nhật / Anh không đổi)"
 OUT=$("${ANKI_PY:-python3}" -W ignore "$HERE/core/test_1322.py" "$ADDON" 2>&1); RC=$?
 echo "$OUT" | grep -E "✗|KẾT QUẢ|bỏ qua"; [ $RC = 0 ] || FAIL=1
+echo "== core/test_133.py (1.33: báo tiếng Trung / tiếng Hàn — tối đa 2 báo, soát pinyin từng chữ, tiểu từ / đuôi tiếng Hàn, cả quy trình với Gemini giả, lời nhắc tiếng Anh không đổi, hợp đồng dữ liệu)"
+OUT=$("${ANKI_PY:-python3}" -W ignore "$HERE/core/test_133.py" "$ADDON" 2>&1); RC=$?
+echo "$OUT" | grep -E "✗|KẾT QUẢ|Traceback"; [ $RC = 0 ] || FAIL=1
 # trang web chung (site/, GitHub Pages): đăng mã, dữ liệu trang khớp add-on (đổi hình mà quên `node site/tools/xuat_hinh.js` là báo)
 echo "== trang/test_trang.py (trang web: đăng / gỡ mã, biểu mẫu issue, GitHub Actions, dữ liệu khớp add-on)"
 OUT=$(python3 "$HERE/trang/test_trang.py" "$ADDON" 2>&1); RC=$?

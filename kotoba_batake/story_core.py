@@ -1424,6 +1424,7 @@ def retell(job: Any, master: dict[str, Any]) -> dict[str, Any] | None:
     trả lại). Trả về bản truyện như `run` (để lượt viết số chép nguyên văn + furigana) hoặc None."""
     lang = getattr(job, "lang", "") or ("en" if job.en else "ja")
     level = job.scope.get("trinh_do", "A2" if lang == "en" else "N4")
+    tname = LANG_VI.get(lang, "tiếng Nhật")
     ky = int(master.get("ky") or 1)
     cached = load_draft(job.base, job.date, ky)
     if cached and cached.get("_ke_lai"):

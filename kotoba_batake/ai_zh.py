@@ -413,7 +413,11 @@ def autofix(raw: Any, scope: dict[str, Any], opts: dict[str, Any]) -> tuple[Any,
     cap = [0]
     body = {id(b): True for b in raw.get("bai", []) if isinstance(b, dict)}
     body.update({id(b["doan"]): True for b in raw.get("bai", []) if isinstance(b, dict) and isinstance(b.get("doan"), list)})
-    for holder, key in _strings(raw):          # câu chép có thể vừa được chọn lại → đọc lại vị trí
+    places = _strings(raw)                     # câu chép có thể vừa được chọn lại → đọc lại vị trí
+    # đoạn văn nối trước tiêu đề (từ của deck gạch chân ở chỗ người học đọc kỹ), như báo tiếng Hàn / tiếng Anh
+    places = [x for x in places if not (isinstance(x[0], dict) and x[1] == "tieu_de")] + \
+        [x for x in places if isinstance(x[0], dict) and x[1] == "tieu_de"]
+    for holder, key in places:
         v = holder[key] if isinstance(holder, list) else holder.get(key)
         if not isinstance(v, str):
             continue

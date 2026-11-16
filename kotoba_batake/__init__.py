@@ -476,12 +476,7 @@ def clean_langs(raw: Any) -> list[str]:
     """1.25.2: tối đa 2 báo — tiếng Nhật và / hoặc tiếng Anh, HOẶC chỉ tiếng Việt (báo Nhật / Anh đã có bản dịch tiếng Việt,
     ba báo cùng kể một chuyện thì thừa). Có cả Việt lẫn Nhật / Anh → bỏ Việt.
     1.33 (người dùng chốt 17/11): tối đa 2 báo trong Nhật / Anh / Trung / Hàn; tiếng Việt vẫn đi một mình."""
-    out = [x for x in PAPER_LANGS if isinstance(raw, list) and x in raw]
-    learn = [x for x in out if x != "vi"]
-    if learn:
-        keep = [x for x in raw if x in learn][:2] if isinstance(raw, list) else learn[:2]     # giữ 2 báo tick trước
-        return [x for x in LEARN_LANGS if x in keep]
-    return out
+    return paper.clean_paper_langs(raw)
 
 
 def _old_waiting(cfg: dict[str, Any]) -> list[str]:
