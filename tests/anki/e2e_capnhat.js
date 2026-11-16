@@ -94,6 +94,24 @@ tryit("mũ rơm", lambda: st.buy_wear("straw"))
 tryit("nhật ký", lambda: kb.JOURNAL.update(kb.cal_today(), {"t": "nhật ký viết bằng 1.31.3, trước khi cập nhật"}))
 import datetime
 tryit("sổ sinh hoạt", lambda: kb.LIFE.mark("hon", "room", datetime.date.today()))
+def zh_deck():
+    # 1.32: deck tiếng Trung đã cấu hình bằng bản cũ (bản cũ chỉ có "Ngôn ngữ khác") + chế độ Đuổi quạ của nhóm đó
+    col = mw.col
+    mm = col.models
+    m = mm.new("Chinese HSK (cũ)")
+    for f in ("Hanzi", "Pinyin", "Nghĩa"):
+        mm.add_field(m, mm.new_field(f))
+    t = mm.new_template("T1"); t["qfmt"] = "{{Hanzi}}"; t["afmt"] = "{{FrontSide}}<hr id=answer>{{Nghĩa}}"
+    mm.add_template(m, t); mm.add(m); m = mm.by_name("Chinese HSK (cũ)")
+    did = col.decks.id("ZH::Cũ")
+    for w, p, me in (("你好", "nǐ hǎo", "xin chào"), ("谢谢", "xièxie", "cảm ơn"), ("学生", "xuésheng", "học sinh"), ("老师", "lǎoshī", "giáo viên")):
+        n = col.new_note(m); n["Hanzi"], n["Pinyin"], n["Nghĩa"] = w, p, me; col.add_note(n, did)
+    lang = "other" if "zh" not in kb.fields_core.LANGS else "zh"
+    conf, err = kb.fields_core.validate_save({"kind": "vocab", "f": {"word": "Hanzi", "reading": "Pinyin", "meaning": "Nghĩa"}},
+                                             ["Hanzi", "Pinyin", "Nghĩa"], lang)
+    kb.FIELDS.set_model(str(m["id"]), conf, lang)
+    kb.FIELDS.set_game("crow", "xx", "answer")
+tryit("deck tiếng Trung + Cấu hình trường", zh_deck)
 kb._dialog.refresh()
 result = done`);
   ok(did.every((x) => !/LỖI/.test(x)), 'bản cũ làm được: ' + did.join(', '));
@@ -157,6 +175,14 @@ async function sau() {
   await sleep(600);
   const c2 = await py(KB + 'result = [st.load()["coins"], mw.col.db.scalar("select count() from revlog")]');
   ok(c1[1] === c0[1] + 1 && c2[1] === c0[1] && c2[0] === c0[0], 'tính năng mới trên dữ liệu cũ: ôn 1 thẻ (+' + (c1[0] - c0[0]) + ' xu) → Ctrl+Z → xu / lượt ôn về như trước');
+  if (await py(KB + 'result = "zh" in kb.fields_core.LANGS and mw.col.decks.id_for_name("ZH::Cũ") is not None')) {
+    // 1.32: deck tiếng Trung bản cũ lưu là "Ngôn ngữ khác" → bản mới nhận lại là tiếng Trung, không đổi dữ liệu đã lưu
+    await py(KB + 'kb._dialog._dispatch("deck:%d" % mw.col.decks.id_for_name("ZH::Cũ"))\nresult = 1'); await sleep(1500);
+    const zl = await js('return { langs: Garden._data().plants.map((p) => p.lang), cur: GardenLang.cur() };');
+    ok(zl.langs.length === 4 && zl.langs.every((l) => l === 'zh') && zl.cur === 'zh', 'deck tiếng Trung cấu hình ở bản cũ ("Ngôn ngữ khác") → bản mới nhận là tiếng Trung, vườn tự sang tiếng Trung');
+    const raw2 = await py(KB + 'result = mw.col.get_config("kotoba_batake_fields", None)');
+    ok(JSON.stringify(raw2) === JSON.stringify(want.cfg.kotoba_batake_fields), 'Cấu hình trường trong collection không bị đổi khi chỉ mở vườn');
+  }
   const errs = await py(KB + 'result = [e.get("where") for e in kb.ERRORS.entries() if e.get("ver") == kb.VERSION]');
   ok(!errs.length, 'nhật ký Báo lỗi không có lỗi của bản mới' + (errs.length ? ': ' + errs.join(', ') : ''));
 }

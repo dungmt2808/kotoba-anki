@@ -3786,7 +3786,7 @@ var GardenHome = (function () {
       const ax = (ev.clientX - r.left) / view.S;
       if (ax < 64 && isUz(scene)) {
         const z = uzone(scene);
-        mood("happy", 1200, "ようこそ！ " + (z ? z.name : "")); sfx("boop");
+        mood("happy", 1200, "ようこそ！ " + keep(z ? z.name : "")); sfx("boop");
         return;
       }
       if (ax < 64 && scene !== "yard") {
@@ -3924,6 +3924,7 @@ var GardenHome = (function () {
 
   function sfx(n) { if (typeof GardenFX !== "undefined" && GardenFX.sound) { GardenFX.sound(n); } }
   // 1.32: tên theo Ngôn ngữ trong vườn (span nhỏ cạnh tên tiếng Việt) — "" khi Chỉ tiếng Việt
+  function keep(s) { return "\u2068" + String(s === undefined || s === null ? "" : s) + "\u2069"; }   // chữ người dùng: không dịch
   function glabel(kind, id, ja) { return typeof GardenLang !== "undefined" ? GardenLang.label(kind, id, ja, "") : (ja || ""); }
   function gattr(kind) { const L = typeof GardenLang !== "undefined" ? GardenLang : null, l = L ? L.cur() : "ja"; return l === "zh" ? "zh-CN" : l === "ko" ? "ko" : l === "en" ? "en" : "ja"; }
   function mood(m, ms, text) {
@@ -5318,7 +5319,7 @@ var GardenHome = (function () {
       const lvl = homeState().house;
       const name = ((catalog() || {}).levels || [])[lvl];
       sfx("stage");
-      mood("star", 1800, "やった！ " + (name ? name.name : ""));
+      mood("star", 1800, "やった！ " + keep(name ? name.name : ""));
       if (lvl >= ((catalog() || {}).room_unlock || 5) && before < ((catalog() || {}).room_unlock || 5)) {
         setTip("Nhà đã có cửa! Bấm vào ngôi nhà hoặc tab “Trong nhà” để vào trong.");
       }
@@ -5339,7 +5340,7 @@ var GardenHome = (function () {
       const zs = (homeState().zones || []);
       const z = zs.length > zonesBefore ? zs[zs.length - 1] : null;
       sfx("stage");
-      mood("star", 2400, "新しい場所！ Đã mở " + (z ? sceneName(z) : "vùng mới"));
+      mood("star", 2400, "新しい場所！ Đã mở " + keep(z ? sceneName(z) : "vùng mới"));
       if (z) { setScene(z); }
     } else if (a === "theme") {
       const got = (seasonState().unlocked || []).filter((x) => themesBefore.indexOf(x) < 0)[0];
@@ -5347,7 +5348,7 @@ var GardenHome = (function () {
       if (got) {
         const t = ((catalog() || {}).themes || []).find((x) => x.id === got);
         sfx("stage");
-        mood("star", 2600, "新しい季節！ Đã mở " + (t ? t.name : "giao diện mới"));
+        mood("star", 2600, "新しい季節！ Đã mở " + keep(t ? t.name : "giao diện mới"));
         tipMsg = "Đã mở “" + (t ? t.name : got) + "” và nhận " + (t ? t.items.length : 0) + " món đồ trong kho · bấm “Đặt” để bày ra vườn";
       } else { sfx("flip"); }
     } else if (a === "style") {
@@ -5374,7 +5375,7 @@ var GardenHome = (function () {
     } else if (a === "pet") {
       if (sub === "buy") {
         sfx("stage"); const v = moreView().pets || [], np = v[v.length - 1];
-        mood("star", 2200, "よろしくね！ Chào " + (np ? np.name : "bé mới"));
+        mood("star", 2200, "よろしくね！ Chào " + keep(np ? np.name : "bé mới"));
         if (typeof GardenPets !== "undefined") { (v || []).forEach((p) => GardenPets.cheer(p.id)); }
       } else if (sub === "feed") {
         sfx("coin"); mood("happy", 1400, "おいしい！");

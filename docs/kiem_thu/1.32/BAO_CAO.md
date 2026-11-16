@@ -1,4 +1,4 @@
-# Báo cáo 1.32.0 — Ngôn ngữ trong vườn + deck tiếng Trung / tiếng Hàn (17/11/2026)
+# Báo cáo 1.32.0 / 1.32.1 — Ngôn ngữ trong vườn + deck tiếng Trung / tiếng Hàn (17/11/2026)
 
 Người dùng: "làm 1 lần cho 3 tiếng Trung, Hàn, Anh luôn đi. sau đó kiểm tra lại thật kỹ nha. thêm các bộ test nữa. phác
 thảo trước đi" → ảnh phác `docs/ke_hoach_1_32/` → "oke, triển khai nhé. Tiếng trong vườn -> Ngôn ngữ trong vườn … khi làm
@@ -49,3 +49,38 @@ tiếng Hàn), `132_e2e_03_chi_tieng_viet.png`, `132_e2e_04_cau_hinh_trung.png`,
 1. ⚙ → Ngôn ngữ trong vườn → lần lượt từng mục; bấm StackChan, mở Nhà → Album.
 2. Deck tiếng Trung / tiếng Hàn (nếu có): Cấu hình trường tự nhận; Trò chơi → Đuổi quạ.
 3. Windows có giọng đọc tiếng Trung / Hàn thì Nghe tìm cây đọc được khi deck không có audio.
+
+## 6. Kiểm tra lần cuối → 1.32.1
+
+Người dùng: "kiểm tra lại logic, giao diện, tính năng, lần cuối nhé. test kỹ hơn, tạo kịch bản test ngoài các test đã có
+sẵn, có làm mất dữ liệu không".
+
+### Lỗi tìm được và đã sửa
+
+| # | Lỗi | Sửa |
+|---|---|---|
+| 1 | **Deck tiếng Trung / Hàn đã cấu hình ở bản cũ kẹt ở "Ngôn ngữ khác"**: bản ≤ 1.31 chỉ có lựa chọn đó, và vườn nhắc cấu hình loại note chưa cấu hình → hầu hết người có deck tiếng Trung đã lưu "other" | `"other"` lưu từ bản cũ + deck đoán ra tiếng Trung / Hàn → dùng tiếng Trung / Hàn (`fields_core.effective_lang`); chọn "Ngôn ngữ khác" ở 1.32 thì ghi `lang2[mid] = "other"` để giữ đúng lựa chọn (bản cũ giữ nguyên khoá này) |
+| 2 | **Chữ của người dùng bị "dịch" nhầm**: câu "lên giai đoạn" có từ vựng của cây — từ すごい (N5) thành "Amazing"; tên vùng / món / thú tự đặt trùng câu tiếng Nhật cũng vậy | phần chữ của người dùng bọc dấu cô lập U+2068…U+2069 (`kbKeep` / `keep`), `glang.js` không đổi phần đó |
+| 3 | **Tên tường / sàn tràn khỏi thẻ** khi hiện tiếng Anh / Trung dài (hemp-leaf pattern, 木板墙 mùbǎn qiáng) | CSS: tên không phải tiếng Nhật được xuống dòng |
+| 4 | Bong bóng StackChan có thể hiện rỗng (câu chỉ có phần tiếng Nhật mà bản tiếng Việt để trống) | bong bóng rỗng thì không hiện |
+
+### Kịch bản test mới (ngoài các test có sẵn)
+
+| Bộ | Kết quả |
+|---|---|
+| `core/test_132b.py` — mã thật 1.31.3 (đã phát hành), 1.31.5 và 1.32 thay nhau lưu Cấu hình trường trên cùng một kho, **3.000 thao tác × 6 hạt ngẫu nhiên**; dữ liệu hỏng (8 kiểu); deck tiếng Trung cấu hình ở bản cũ; chữ người dùng; glang.js 20.000 chuỗi ngẫu nhiên | **28 / 28** (cả 6 hạt) — không mất loại note, ngôn ngữ, Hán Việt, chế độ trò chơi, khoá lạ của bản sau |
+| `anki/e2e_132b.js` (Anki thật) — đổi ngôn ngữ 40 lần xen mở mọi bảng rồi đóng mở lại vườn: **61 mục dữ liệu (collection + user_files) không đổi một byte**; Album đầy đủ (67 + 42 + 16 + 15 + 28 ô) ở 5 ngôn ngữ × 2 cỡ cửa sổ: không chữ tràn ô, không kana; không lỗi JS; đổi ngôn ngữ giữa lúc chơi Đuổi quạ; deck cấu hình ở bản cũ; Lịch hoa; màn chào Giáng sinh; deck cha nhiều ngôn ngữ | **20 / 20** |
+| `anki/run_capnhat.sh` 1.31.3 → 1.32.1 — thêm: bản cũ có deck tiếng Trung đã lưu Cấu hình trường + chế độ Đuổi quạ | **19 / 19** — deck nhận lại là tiếng Trung, Cấu hình trường trong collection không đổi |
+| `anki/e2e_132.js` | **39 / 39** |
+
+Hai lần "đỏ" trong lúc viết test là kỳ vọng của test chưa đúng, không phải lỗi add-on: (a) máy cũ cấu hình lại loại
+Chữ Hán thành Từ vựng → cấu hình cũ (gồm Hán Việt) được thay — đúng ý người dùng ở máy cũ; (b) máy cũ đổi deck tiếng Hàn
+sang Tiếng Anh rồi về "Ngôn ngữ khác" → 1.32 hiểu là tiếng Hàn (ở bản cũ "Ngôn ngữ khác" là lựa chọn duy nhất cho tiếng Hàn).
+
+### Bộ đầy đủ + kịch bản cũ
+
+- `tests/run_all.sh` (có `test_132`, `test_132b`): **TẤT CẢ OK**.
+- Kịch bản Anki thật cũ: `e2e_117` 53 / 55, `e2e_130` 75 / 76 — 3 kiểm tra bố cục (độ rộng tab Nhà 110 / 128, chiều cao ô Ví /
+  nút Thoát, chip sinh hoạt "Uống sữa sau khi tắm" bị "…") **trượt y hệt trên mã 1.31.5 gốc** ở máy test này: máy test không
+  có phông DotGothic16 / Noto CJK nên chữ rộng hơn (đã ghi ở báo cáo 1.31.4). Không do 1.32; chip bị cắt vẫn hiện đủ tên khi
+  rê chuột.

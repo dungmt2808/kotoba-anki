@@ -2211,3 +2211,6 @@ button { cursor: pointer; }
 .kb-py { font-size: 0.8em; opacity: 0.75; font-weight: normal; }
 .kb-glang-row select { max-width: 100%; }
 ruby.kb-ruby rt { font-size: 0.45em; color: var(--kb-ink-2); font-weight: normal; }
+/* 1.32: tên tiếng Anh / Trung / Hàn dài (hemp-leaf pattern, 木板墙 mùbǎn qiáng) được xuống dòng trong thẻ, không tràn
+   (tiếng Nhật vẫn giữ nguyên một khối như 1.30.1) */
+.kb-h-guest-ja:not([lang="ja"]) { white-space: normal; max-width: 100%; overflow-wrap: anywhere; vertical-align: top; }

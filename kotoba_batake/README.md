@@ -123,6 +123,11 @@ Sau khi trả lời có hiện cách đọc, Hán Việt, nghĩa (và cách dùn
 - **Hiệu ứng thành tích** (`web/joy.js`, Python tính `data.joy` = `more_core.joy_view`): **xong hết thẻ hôm nay** trong deck đang xem (`deck_due_tree` = 0 và hôm nay đã ôn ≥ 1 lượt) → cầu vồng trên ruộng và trên trời sân, giọt sương lấp lánh; **đạt mục tiêu ngày**; **cả vườn xanh tốt / ra hoa / trĩu quả** (≥ 5 cây, không cây nào héo, mọi cây từ Cây non / Ra hoa / Ra quả) → lá lấp lánh / cánh hoa anh đào bay / đốm sáng vàng bay lên; **mốc chuỗi ngày** (7, 14, 21, 30, 50, 75, 100, 150, 200, 250, 300, 365, 500, 730, 1000) → pháo hoa trên trời sân; **xong 3 nhiệm vụ** → đèn trời bay lên. Huy hiệu cạnh chú thích ruộng; dải chúc mừng + linh vật chúc mỗi thành tích **một lần mỗi ngày** (nhớ ở `localStorage kb-joy-<ngày>-<loại>`), đang ôn thẻ thì để dành tới khi đóng bảng ôn.
 - **Lưu trữ**: khoá collection mới `kotoba_batake_more` (`more_core.MORE_KEY`) — mục 4. Bản ≤ 1.13 ở máy khác không đọc khoá này nên không xoá được gì.
 
+### Mới ở 1.32.1: kiểm tra lần cuối
+- Deck tiếng Trung / tiếng Hàn đã cấu hình ở bản cũ (lưu "Ngôn ngữ khác" — bản cũ chưa có lựa chọn khác) được nhận lại là tiếng Trung / Hàn (`fields_core.effective_lang`); chọn "Ngôn ngữ khác" ở 1.32 thì giữ (`lang2[mid] = "other"`).
+- Từ vựng / tên tự đặt trong câu StackChan không bị dịch nhầm (dấu cô lập U+2068…U+2069).
+- Tên tường / sàn dài không tràn thẻ; bong bóng rỗng không hiện.
+
 ### Mới ở 1.32.0: Ngôn ngữ trong vườn, deck tiếng Trung / tiếng Hàn
 - **⚙ → Ngôn ngữ trong vườn**: Tự theo deck (mặc định) · Tiếng Nhật · Tiếng Anh · Tiếng Trung · Tiếng Hàn · Chỉ tiếng Việt. Đổi theo: câu StackChan nói, sinh hoạt (thẻ khi bấm StackChan, Sổ sinh hoạt), đồ nhặt (Hộp sưu tầm), Album khách, tường / sàn, tên giao diện mùa, chữ trang trí ở tiêu đề bảng (おうち → Home / 我的家 / 우리 집). Tiếng Trung kèm pinyin, tiếng Hàn kèm phiên âm. Tự theo deck = ngôn ngữ của phần lớn cây trong vườn. Lưu ở cài đặt riêng máy (config `prefs`, khoá `kb-glang`), không ghi collection.
 - Trò chơi theo ngôn ngữ của deck đang chơi (tên trò, câu khách ở Chợ sáng, góc thẻ Lật cặp).

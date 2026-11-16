@@ -21,6 +21,9 @@ chơi của tiếng Anh / ngôn ngữ khác ở `games_lang` ({"en": {trò: ch�
 `lang[mid] = "other"` (bản cũ chạy như "Ngôn ngữ khác") + `lang2[mid] = "zh" | "ko"`; vai trò chỉ tiếng Trung / Hàn mới
 có (Hán Việt của loại Từ vựng) ở `f2[mid]`; chế độ trò chơi của zh / ko ở `games_lang2`. Ba khoá mới nằm ở cấp trên cùng
 nên bản cũ giữ nguyên khi ghi đè (`keep_foreign`). Bản cũ đổi `lang[mid]` sang khác "other" thì lựa chọn đó thắng.
+Bản ≤ 1.31 chỉ cho chọn "Ngôn ngữ khác" cho deck tiếng Trung / Hàn → `lang[mid] = "other"` lưu từ bản cũ không có nghĩa là
+người dùng muốn "Ngôn ngữ khác": 1.32 vẫn đoán (deck đoán ra zh / ko thì dùng zh / ko — `effective_lang`). Chọn "Ngôn ngữ
+khác" ở 1.32 thì ghi thêm `lang2[mid] = "other"` (giữ đúng lựa chọn đó; trong add-on là danh sách `fixed`).
 """
 
 from __future__ import annotations
@@ -229,7 +232,7 @@ def clean_model(raw: Any, lang: str | None = None) -> dict[str, Any] | None:
 def clean_store(raw: Any) -> dict[str, Any]:
     """Dạng dùng trong add-on: lang gộp cả zh / ko (từ lang2), f của model gộp vai trò thêm (từ f2), games_lang gộp
     games_lang2. Ghi ra thì tách lại bằng to_raw()."""
-    out: dict[str, Any] = {"models": {}, "games": {}, "lang": {}, "games_lang": {}}
+    out: dict[str, Any] = {"models": {}, "games": {}, "lang": {}, "games_lang": {}, "fixed": []}
     if not isinstance(raw, dict):
         return out
     langs = raw.get("lang")
@@ -240,8 +243,17 @@ def clean_store(raw: Any) -> dict[str, Any]:
     langs2 = raw.get("lang2")          # 1.32: zh / ko — chỉ khi bản cũ chưa đổi lang[mid] sang ngôn ngữ khác
     if isinstance(langs2, dict):
         for mid, lang in list(langs2.items())[:MAX_MODELS]:
-            if isinstance(mid, str) and _MID_RE.match(mid) and lang in NEW_LANGS and out["lang"].get(mid, "other") == "other":
+            if not (isinstance(mid, str) and _MID_RE.match(mid)) or out["lang"].get(mid, "other") != "other":
+                continue
+            if lang in NEW_LANGS:
                 out["lang"][mid] = lang
+            elif lang == "other" and out["lang"].get(mid) == "other":
+                out["fixed"].append(mid)        # "Ngôn ngữ khác" chọn ở 1.32+: không đoán lại
+    fixed = raw.get("fixed")             # dạng trong add-on (to_raw / set_model gọi lại clean_store)
+    if isinstance(fixed, list):
+        for mid in fixed[:MAX_MODELS]:
+            if isinstance(mid, str) and out["lang"].get(mid) == "other" and mid not in out["fixed"]:
+                out["fixed"].append(mid)
     for key in ("games_lang", "games_lang2"):
         gl = raw.get(key)
         if not isinstance(gl, dict):
@@ -291,6 +303,8 @@ def to_raw(store: dict[str, Any]) -> dict[str, Any]:
             out["lang2"][mid] = lang
         else:
             out["lang"][mid] = lang
+            if lang == "other" and mid in st["fixed"]:
+                out["lang2"][mid] = "other"
     for mid, conf in st["models"].items():
         base = set(role_ids(conf["kind"]))
         old = {r: n for r, n in conf["f"].items() if r in base}
@@ -377,6 +391,18 @@ _ZH_ONLY = re.compile("[们这说么吗呢吧你她谁对还让进过时东车�
                       "贵节绍张处办帮备错别诉试结离讲"
                       "們說麼嗎妳對讓學國會來讀賣腦關發實應經濟樣點邊氣雞廣歲聽從兩覺綠]")
 _JA_HINT = ("japanese", "nihongo", "日本語", "tiếng nhật", "tieng nhat", "jlpt", "furigana", "kana", "kanji", "漢字")
+
+
+def effective_lang(store: dict[str, Any] | None, mid: str, guessed: str | None) -> str | None:
+    """1.32: ngôn ngữ dùng cho loại note: người dùng đã chọn; riêng "other" lưu từ bản ≤ 1.31 (bản cũ chưa có tiếng Trung /
+    Hàn) mà deck đoán ra zh / ko thì dùng zh / ko. None = chưa chọn (dùng ngôn ngữ đoán được)."""
+    st = store or {}
+    chosen = (st.get("lang") or {}).get(mid)
+    if chosen not in LANGS:
+        return None
+    if chosen == "other" and mid not in (st.get("fixed") or ()) and guessed in NEW_LANGS:
+        return guessed
+    return chosen
 
 
 def guess_lang(name: str, keys: list[str], words: list[str]) -> str:
@@ -485,6 +511,8 @@ class FieldStore:
         store["models"][str(mid)] = conf
         if lang in LANGS:
             store["lang"][str(mid)] = lang
+            fixed = [m for m in store.get("fixed") or [] if m != str(mid)]
+            store["fixed"] = fixed + ([str(mid)] if lang == "other" else [])
         self.save(store)
         return self.load()
 

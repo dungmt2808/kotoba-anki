@@ -1717,10 +1717,13 @@ def _sample_words(col: Any, mid: str, idx: int, limit: int = 30) -> list[str]:
 def model_lang(col: Any, mid: str | None, keys: list[str], word_field: str | None, name: str,
                cfg: dict[str, Any], fallback: list[str] | None = None) -> str:
     """Ngôn ngữ của loại note: người dùng đã chọn (khoá lang) → đoán từ ≤ 30 note mẫu (nhớ tạm theo mid)."""
-    chosen = ((cfg.get("_fields") or {}).get("lang") or {}).get(mid or "")
-    if chosen in fields.LANGS:
+    st = cfg.get("_fields") or {}
+    chosen = (st.get("lang") or {}).get(mid or "")
+    if chosen in fields.LANGS and chosen != "other":
         return chosen
-    return guess_model_lang(col, mid, keys, word_field, name, fallback)
+    guessed = guess_model_lang(col, mid, keys, word_field, name, fallback)
+    # 1.32: "other" lưu từ bản ≤ 1.31 + deck đoán ra tiếng Trung / tiếng Hàn → tiếng Trung / tiếng Hàn
+    return fields.effective_lang(st, mid or "", guessed) or guessed
 
 
 def guess_model_lang(col: Any, mid: str | None, keys: list[str], word_field: str | None, name: str,
@@ -2187,7 +2190,7 @@ def fields_panel(col: Collection, deck_id: int, cfg: dict[str, Any] | None = Non
         conf = (store.get("models") or {}).get(mid)
         problem = fields.conf_problem(conf, keys)
         guess = guess_config(col, model, notes, cfg)
-        lang = (store.get("lang") or {}).get(mid) or guess["lang"]
+        lang = fields.effective_lang(store, mid, guess["lang"]) or guess["lang"]
         wf = (conf or {}).get("f", {}).get("word") if conf else guess["f"].get("word")
         words = [text.plain_text(n[wf]) for n in notes] if wf in keys else []
         models.append({

@@ -61,6 +61,11 @@ var GardenLang = (function () {
     const s = String(text === undefined || text === null ? "" : text), out = [];
     let buf = "", i = 0;
     while (i < s.length) {
+      if (s[i] === "\u2068") {          // chữ của người dùng (từ vựng, tên tự đặt): giữ nguyên, không tìm câu để đổi
+        const j = s.indexOf("\u2069", i);
+        const end = j < 0 ? s.length : j + 1;
+        buf += s.slice(i, end); i = end; continue;
+      }
       let hit = null;
       if (/[぀-ヿ㐀-鿿]/.test(s[i])) {
         for (let k = 0; k < keys.length; k++) { if (s.startsWith(keys[k], i)) { hit = keys[k]; break; } }
