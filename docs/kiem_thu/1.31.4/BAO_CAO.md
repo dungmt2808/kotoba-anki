@@ -16,6 +16,8 @@ Bản đầu tiên sau khi phát hành công khai 1.31.3 (tối 15/11). Người
 
 ![Màn Hết thẻ vẫn hoàn tác được thẻ cuối](1314_03_het_the_hoan_tac.png)
 
+![Sau khi cài đè 1.31.4 lên 1.31.3: vườn còn nguyên](1314_04_sau_khi_cap_nhat.png)
+
 Chi tiết Claude chọn (người dùng chưa xem): nút chỉ hiện khi có lượt để hoàn tác; câu báo nằm trong bảng ôn dưới tên giai đoạn của chậu (bản đầu dùng thông báo nổi — đè lên nút Lật thẻ nên đã đổi); không có Redo trong vườn (Redo vẫn ở Edit của cửa sổ chính); Ctrl+Z chỉ có tác dụng khi bảng ôn đang mở.
 
 ## 2. Dữ liệu khi cập nhật (yêu cầu của người dùng)
@@ -34,10 +36,11 @@ Chi tiết Claude chọn (người dùng chưa xem): nút chỉ hiện khi có l
 |---|---|
 | `core/test_1314.py` (mới, `ANKI_PY`) | 38 / 38 (không có gói anki: 26 / 26) |
 | `core/test_ban_cu.py` (+ 1.31.3) | tất cả OK (7 bản cũ) |
-| `tests/run_all.sh` (`ANKI_PY` = aqt 26.9.4) | KQ_RUNALL |
-| `anki/e2e_1314.js` (mới, Anki 26.9.4 thật) | KQ_1314 |
-| `anki/run_capnhat.sh` + `e2e_capnhat.js` (mới, 1.31.3 → 1.31.4) | KQ_CAPNHAT |
-| Kịch bản cũ có ôn thẻ / Undo (Anki 26.9.4): `e2e.js`, `e2e_117.js`, `e2e_118.js`, `e2e_1253.js`, `e2e_1226.js`, `e2e_123.js` | KQ_CU |
+| `tests/run_all.sh` (`ANKI_PY` = aqt 26.9.4) | **55 bộ, tất cả OK** (có `dong_bo/test_dong_bo.py` — máy chủ đồng bộ thật, `audit_20261114` 2.047 + 172 ca); lần đầu trượt 1 kiểm tra của trang web (hình ghi "xuất từ 1.31.3") → chạy `node site/tools/xuat_hinh.js` (chỉ đổi số bản) → `trang/test_trang.py` 35 / 35 |
+| `anki/e2e_1314.js` (mới, Anki 26.9.4 thật) | **44 / 44** trên gói đã đóng (9 kịch bản, cả phím Ctrl+Z thật qua Qt hoàn tác đúng một lượt, không có thông báo nổi đè nút Lật thẻ) |
+| `anki/run_capnhat.sh` + `e2e_capnhat.js` (mới, 1.31.3 → 1.31.4) | **17 / 17** trên gói đã đóng (5 trước + 12 sau khi cập nhật) |
+| Kịch bản cũ có ôn thẻ / Undo (Anki 26.9.4): `e2e.js`, `e2e_117.js`, `e2e_118.js`, `e2e_1253.js`, `e2e_1226.js`, `e2e_123.js` | `e2e.js` 24 / 24 · `e2e_118` 29 / 29 · `e2e_1253` (Undo / Redo ở cửa sổ chính) 39 / 39 · `e2e_1226` 40 / 40 · `e2e_123` 66 / 66 · `e2e_117` 53 / 55 — 2 kiểm tra bố cục (độ rộng tab Nhà 110 / 128, chiều cao ô Ví / nút Thoát) **trượt y hệt trên mã 1.31.3 gốc** ở máy test này → có từ trước, không do 1.31.4 (font của máy test; chưa sửa) |
+| `core/test_1314.py` phần collection trên **Anki 23.10.1** (bản thấp nhất add-on hỗ trợ) | 38 / 38; thẻ vừa hoàn tác cũng lên đầu hàng đợi |
 
 ## 4. Nên thử trên máy thật (5 phút)
 
