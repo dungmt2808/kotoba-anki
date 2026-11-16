@@ -2225,3 +2225,13 @@ ruby.kb-ruby rt { font-size: 0.45em; color: var(--kb-ink-2); font-weight: normal
 /* 1.32: tên tiếng Anh / Trung / Hàn dài (hemp-leaf pattern, 木板墙 mùbǎn qiáng) được xuống dòng trong thẻ, không tràn
    (tiếng Nhật vẫn giữ nguyên một khối như 1.30.1) */
 .kb-h-guest-ja:not([lang="ja"]) { white-space: normal; max-width: 100%; overflow-wrap: anywhere; vertical-align: top; }
+
+/* 1.33: báo tiếng Trung / tiếng Hàn — dòng gợi ý thêm báo thứ hai, pinyin trên chữ (nhỏ, không đẩy chữ giãn ra),
+   chép chính tả tô từng chữ / cụm đúng – chưa đúng */
+.kb-ai-suggest { flex-basis: 100%; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin-top: 6px;
+  padding: 6px 10px; border: 2px dashed var(--kb-ink); background: #fff6d6; font-size: 14px; }
+#kb-paper .kb-p-art[lang="zh"] ruby rt, #kb-paper .kb-p-ans[lang="zh"] ruby rt { font-size: 0.48em; letter-spacing: 0; }
+.kb-p-ans-g { font-size: 22px; line-height: 1.6; }
+.kb-p-g-ok, .kb-p-g-bad { padding: 0 2px; margin: 0 1px; border-radius: 3px; }
+.kb-p-g-ok { background: #d8f2dc; }
+.kb-p-g-bad { background: #ffd6d3; }

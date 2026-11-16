@@ -469,18 +469,26 @@ var GardenPaper = (function () {
     const on = v.langs_on || [];
     // 1.25.1: thêm báo tiếng Việt; chưa có deck của tiếng đó vẫn tick được (Gemini viết theo trình độ).
     // 1.25.2 "Một làng, một truyện": Nhật và / hoặc Anh, HOẶC chỉ tiếng Việt (báo Nhật / Anh đã có bản dịch tiếng Việt)
-    [["ja", "Tiếng Nhật"], ["en", "Tiếng Anh"], ["vi", "Chỉ tiếng Việt"]].forEach((x) => {
+    // 1.33 (người dùng chốt 17/11): tối đa 2 báo trong Nhật / Anh / Trung / Hàn; đủ 2 thì các ô còn lại mờ đi
+    const learnOn = on.filter((l) => LEARN.indexOf(l) >= 0);
+    [["ja", "Tiếng Nhật"], ["en", "Tiếng Anh"], ["zh", "Tiếng Trung"], ["ko", "Tiếng Hàn"], ["vi", "Chỉ tiếng Việt"]].forEach((x) => {
       const lab = el("label", "kb-ai-tick" + (x[0] === "vi" ? " kb-ai-tick-vi" : ""));
       const cb = el("input");
       cb.type = "checkbox";
       cb.checked = on.indexOf(x[0]) >= 0;
       const none = !((v.decks || {})[x[0]] || []).length;
-      if (x[0] === "vi") { lab.title = "Cho người không học tiếng Nhật / tiếng Anh: truyện + tin làng bằng tiếng Việt (thay cho hai báo kia)"; }
+      const full = x[0] !== "vi" && !cb.checked && learnOn.length >= 2;
+      if (full) { cb.disabled = true; lab.classList.add("is-off"); lab.title = "Tối đa 2 báo: bỏ tick một báo trước"; }
+      else if (x[0] === "vi") { lab.title = "Cho người không học ngoại ngữ: truyện + tin làng bằng tiếng Việt (thay cho các báo kia)"; }
       else if (none) { lab.title = "Chưa có deck " + LANG_NAME[x[0]] + ": báo viết theo trình độ"; }
       cb.addEventListener("change", () => {
         let next;
         if (x[0] === "vi") { next = cb.checked ? ["vi"] : []; }
-        else { next = ["ja", "en"].filter((l) => (l === x[0] ? cb.checked : on.indexOf(l) >= 0)); }
+        else {
+          next = learnOn.filter((l) => l !== x[0]);
+          if (cb.checked) { next.push(x[0]); }
+          if (next.length > 2) { cb.checked = false; return; }
+        }
         aiSet({ langs: next });
       });
       lab.appendChild(cb);
@@ -489,7 +497,16 @@ var GardenPaper = (function () {
     });
     if (!on.length) { val.appendChild(el("span", "kb-ai-hint", "chưa chọn báo nào")); }
     else if (on.length > 1) { val.appendChild(el("span", "kb-ai-hint", "hai báo cùng kể một chuyện")); }
+    else { val.appendChild(el("span", "kb-ai-hint", "tối đa 2 báo")); }
     r.appendChild(val);
+    // 1.33: "Bạn cũng học tiếng X — thêm báo tiếng X?" (Python chọn ngôn ngữ ôn nhiều nhất 30 ngày qua)
+    if (v.suggest && LANG_NAME[v.suggest]) {
+      const tip = el("div", "kb-ai-suggest");
+      tip.appendChild(el("span", null, "Bạn cũng học " + LANG_NAME[v.suggest] + " — thêm báo " + LANG_NAME[v.suggest] + "?"));
+      tip.appendChild(btn("kb-btn-small", "Thêm báo " + LANG_NAME[v.suggest], () => aiSet({ langs: learnOn.concat([v.suggest]) })));
+      tip.appendChild(btn("kb-btn-small", "Không", () => aiSet({ suggest_off: v.suggest })));
+      r.appendChild(tip);
+    }
     return r;
   }
   // nút "Đọc ngay" ở tab Nguồn báo: chuyển sang báo của ngôn ngữ đó
