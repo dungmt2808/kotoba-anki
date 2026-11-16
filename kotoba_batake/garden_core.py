@@ -27,6 +27,7 @@ try:   # chạy trong Anki (gói add-on)
     from . import text_core as text
     from . import wear_core as wear
     from . import backup_core as backup
+    from . import zh_core as zh
 except ImportError:   # nạp riêng file này (test): nạp season_core.py / fields_core.py nằm cạnh
     import importlib.util as _ilu
 
@@ -48,6 +49,7 @@ except ImportError:   # nạp riêng file này (test): nạp season_core.py / fi
     wear = _load_side("kotoba_wear_core", "wear_core.py")
     wear.more = more
     backup = _load_side("kotoba_backup_core", "backup_core.py")
+    zh = _load_side("kotoba_zh_core", "zh_core.py")
 
 STAGES = ["Hạt giống", "Mầm", "Cây non", "Ra hoa", "Ra quả"]
 STAGE_SEED, STAGE_SPROUT, STAGE_SAPLING, STAGE_FLOWER, STAGE_FRUIT = range(5)
@@ -1772,8 +1774,9 @@ def _zh_kanji_kind(note: Any, roles: dict[str, Any], name: str, keys: list[str])
         any(h in (name or "").lower() for h in ("kanji", "hán tự", "han tu", "chữ hán", "chu han", "汉字", "漢字", "hanzi"))
 
 
-def note_details(note: Any, cfg: dict[str, Any], roles: dict[str, Any] | None = None) -> dict[str, str]:
-    """Từ, cách đọc (tiếng Anh: phiên âm IPA), nghĩa, âm Hán Việt (chỉ chữ Hán) và cách dùng (ngữ pháp) của note."""
+def note_details(note: Any, cfg: dict[str, Any], roles: dict[str, Any] | None = None) -> dict[str, Any]:
+    """Từ, cách đọc (tiếng Anh: phiên âm IPA), nghĩa, âm Hán Việt (chỉ chữ Hán) và cách dùng (ngữ pháp) của note.
+    1.32.2: tiếng Trung thêm `ruby` — mỗi chữ Hán với âm tiết pinyin của nó (None nếu không ghép được)."""
     roles = roles or note_roles(note, cfg)
     kind = roles.get("kind") or ""
     lang = roles.get("lang") or "ja"
@@ -1788,8 +1791,19 @@ def note_details(note: Any, cfg: dict[str, Any], roles: dict[str, Any] | None = 
     grammar = kind == "grammar"
     if lang != "ja":
         word, ipa = text.en_split_ipa(text.plain_text(raw_word)) if lang == "en" else (text.plain_text(raw_word), "")
+        reading = text.plain_text(get("reading"))
+        ruby = None
+        if lang == "zh":
+            # 1.32.2: pinyin ghi số → dấu thanh; trường Từ kiểu Anki 中[zhōng]文[wén] → chữ + pinyin trong ngoặc
+            br = zh.bracket_pairs(text.tokens(word)) if "[" in word else None
+            if br is not None:
+                word, b_reading, ruby = br
+                reading = reading or b_reading
+            shown = zh.display(word, reading)
+            reading = shown["reading"]
+            ruby = ruby or shown["ruby"]
         word = _cut(word, 60) or "?"
-        reading = _cut(text.plain_text(get("reading")), 60) or ipa
+        reading = _cut(reading, 60) or ipa
         if reading == word:
             reading = ""
         # 1.32: tiếng Trung / tiếng Hàn có thể có trường Hán Việt (do người dùng chọn, hoặc tên trường "Hán Việt")
@@ -1797,7 +1811,7 @@ def note_details(note: Any, cfg: dict[str, Any], roles: dict[str, Any] | None = 
         if hanviet and hanviet == _clean(get("meaning")):
             hanviet = ""
         return {"word": word, "reading": reading, "meaning": _clean(get("meaning")), "hanviet": hanviet,
-                "usage": _clean(get("usage"), 120)}
+                "usage": _clean(get("usage"), 120), "ruby": ruby}
     word, bracket_reading = plain_word(raw_word)
     word = _cut(word, 60 if grammar else 40) or "?"
     reading = _cut(text.reading_field(get("reading")), 60) or bracket_reading
@@ -2330,6 +2344,7 @@ def build_garden(col: Collection, deck_id: int, cfg: dict[str, Any] | None = Non
                 "reading": reading,
                 "meaning": meaning,
                 "hanviet": det["hanviet"],
+                "ruby": det.get("ruby"),         # 1.32.2: pinyin trên từng chữ (deck tiếng Trung)
                 "audio": has_audio or (voiced and word != "?"),
                 "lang": lang,
                 "usage": det["usage"],

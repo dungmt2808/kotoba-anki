@@ -6,6 +6,18 @@ anki sẽ có nút chỉnh sửa bên góc dưới bên trái". Người dùng: 
 
 Phiên sau làm cùng: **pinyin trên từng chữ** (`PINYIN_TREN_CHU.md`). Báo tiếng Trung / tiếng Hàn: Claude đề xuất để bản riêng (xem PHAT_TRIEN.md mục 10.0c).
 
+## Ảnh phác (chờ người dùng duyệt)
+
+Vẽ đè lên bảng ôn / thẻ cây thật của 1.32.1 (`tests/anki/mock_1322.js` + `mock_1322_ghep.py`); cửa sổ sửa là **cửa sổ sửa
+note thật của Anki 26.9** (`aqt.editor.Editor` dựng cho thẻ đang ôn, chụp bằng `QWidget.grab()`). **Chi tiết Claude chọn.**
+
+| Ảnh | Nội dung |
+|---|---|
+| `1322_01_nut_sua.png` | Nút **✎ Sửa** (chữ nhỏ "E") ở góc dưới bên trái, cao bằng nút Lật thẻ / nút chấm, hiện ở mặt trước và mặt sau; nút Lật thẻ / 4 nút chấm ngắn lại một chút |
+| `1322_02_cua_so_sua.png` | Bấm ✎ Sửa / E → cửa sổ "Sửa thẻ · ことば畑" (cửa sổ sửa note của Anki: Fields…, Cards…, định dạng, Tags), đóng (Close / Ctrl+Enter) là lưu |
+| `1322_03_da_luu.png` | Lưu xong: thẻ đang ôn hiện chữ mới ở đúng mặt đang xem, dòng "Đã lưu thẻ." dưới chậu; không tính lượt ôn, không đổi xu |
+| `1322_04_pinyin_tren_chu.png` | Cây tiếng Trung: pinyin dòng dưới (1.32.1) → nằm trên từng chữ; deck ghi số (`ni3 hao3`) → dấu thanh |
+
 ## Làm gì
 
 1. **Nút "✎ Sửa"** ở góc dưới bên trái bảng ôn (Tưới ngay), hiện ở cả mặt trước và mặt sau; **phím E** như Anki (trong vườn
