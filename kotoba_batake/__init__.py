@@ -21,6 +21,7 @@ from typing import Any
 from aqt import gui_hooks, mw  # nạp trước để tránh vòng import của anki.scheduler
 
 from anki.scheduler.v3 import CardAnswer, QueuedCards  # noqa: E402
+from aqt.operations import CollectionOp
 from aqt.operations.scheduling import answer_card
 from aqt.qt import QAction, QDialog, QKeySequence, Qt, QTimer, QVBoxLayout, qconnect
 from aqt.sound import av_player, play_clicked_audio
@@ -707,6 +708,8 @@ def _quest_after(kind: str, **kw: Any) -> dict[str, Any] | None:
 # trả lại xu; trước đây ôn rồi Undo lặp lại cùng thẻ thì mỗi vòng lại được cộng xu.
 _ledger: list[dict[str, Any]] = []
 LEDGER_MAX = 60
+UNDO_MAX = 30          # 1.31.4: số lượt chấm của bảng ôn trong vườn hoàn tác được bằng Ctrl+Z (Anki giữ ~30 bước Undo)
+_undo_quiet = False    # 1.31.4: vườn đang tự hoàn tác (Ctrl+Z) — móc state_did_undo không hiện thông báo / làm mới lần nữa
 
 
 def _quest_snapshot() -> tuple[list[str], bool, int | None]:
@@ -822,6 +825,8 @@ def _on_undo(*_args: Any) -> None:
         delta = check_undo()
     except Exception as err:
         _warn("hoàn tác lượt ôn", err)
+        return
+    if _undo_quiet:        # 1.31.4: Ctrl+Z trong bảng ôn của vườn — vườn tự làm mới và báo trong bảng
         return
     if delta and _dialog is not None:
         try:
@@ -2518,6 +2523,7 @@ class GardenDialog(QDialog):
         self._shown_card: Any = None    # thẻ đang hiện (để phát lại âm thanh)
         self._busy = False
         self._review_gen = 0            # 1.22.6: tăng mỗi lần dừng ôn / đổi deck — lượt chấm lưu xong sau đó không mở lại bảng ôn
+        self._undo_stack: list[dict[str, int]] = []   # 1.31.4: các lượt chấm trong bảng ôn của vườn (Ctrl+Z), mới nhất cuối
         self._plants: list[dict[str, Any]] | None = None   # cây của deck đang xem (cho chép chính tả)
         self._paper_lang = ""         # 1.19.1: báo đang đọc, chọn ở Kệ báo ("" = báo có số chưa đọc, tiếng Nhật trước)
 
@@ -2765,7 +2771,8 @@ class GardenDialog(QDialog):
         if not queued.cards:
             self._shown_card = None
             # 1.18: gửi kèm số đếm (trước đây bảng ôn giữ số của thẻ cuối, vd. "0 1 0" dù đã hết thẻ)
-            self._js("reviewDone", {"counts": [queued.new_count, queued.learning_count, queued.review_count]})
+            self._js("reviewDone", {"counts": [queued.new_count, queued.learning_count, queued.review_count],
+                                    "undo": self._undo_target() is not None})
             return
 
         top = queued.cards[0]
@@ -2797,6 +2804,7 @@ class GardenDialog(QDialog):
             "labels": list(mw.col.sched.describe_next_states(top.states)),
             "counts": [queued.new_count, queued.learning_count, queued.review_count],
             "queue": idx,
+            "undo": self._undo_target() is not None,     # 1.31.4: nút Hoàn tác / Ctrl+Z
         }
         self._js("showCard", payload)
         if card.autoplay():
@@ -2853,6 +2861,10 @@ class GardenDialog(QDialog):
                 _warn("record", err)
             finally:
                 answer_finished(card.id)
+            rev1 = _last_rev(card.id)
+            if rev1 > rev0:               # 1.31.4: lượt chấm đã vào revlog → hoàn tác được bằng Ctrl+Z / nút Hoàn tác
+                self._undo_stack.append({"cid": int(card.id), "rev": rev1})
+                del self._undo_stack[:-UNDO_MAX]
             if _dialog is not self:      # 1.22.6: vườn đã đóng trong lúc lưu (xu vẫn đã cộng)
                 return
             self.refresh()
@@ -2882,6 +2894,83 @@ class GardenDialog(QDialog):
             showWarning(f"ことば畑: không lưu được câu trả lời. Bấm chấm lại để thử lần nữa.\n\n{err!r}", parent=self)
 
         answer_card(parent=self, answer=answer).success(after).failure(failed).run_in_background()
+
+    # 1.31.4: Ctrl+Z / nút Hoàn tác trong bảng ôn (người dùng góp ý sau khi phát hành). Chỉ hoàn tác lượt chấm của chính
+    # bảng ôn này, và chỉ khi bước Undo kế tiếp của Anki đúng là lượt đó: sau lượt chấm mà có thao tác khác (sửa note ở
+    # Trình duyệt thẻ, chấm thẻ ở cửa sổ ôn của Anki, đổi deck…) thì Ctrl+Z ở đây không hoàn tác nhầm thao tác kia.
+    # Xu / mục tiêu ngày / nhiệm vụ / chuỗi tưới trả lại qua sổ phần thưởng `_ledger` như Undo ở cửa sổ chính (1.23, 1.25.3).
+    def _undo_target(self) -> dict[str, int] | None:
+        try:
+            if not self._undo_stack or not _col_ready():
+                return None
+            return core.review_undo_target(mw.col, self._undo_stack)
+        except Exception as err:
+            _warn("hoàn tác (kiểm tra)", err)
+            return None
+
+    def _undo_review(self) -> None:
+        if self._busy:
+            return
+        e = self._undo_target()
+        if e is None:
+            self._js("reviewUndo", {"ok": False, "undo": False})
+            self._js("rvNote", "Không có lượt chấm nào để hoàn tác.")
+            return
+        self._busy = True
+        self._card = None
+        gen = self._review_gen
+        av_player.stop_and_clear_queue()
+        try:
+            c0 = int(STATE.load().get("coins") or 0)
+        except Exception:
+            c0 = None
+
+        def done(out: Any) -> None:
+            global _undo_quiet
+            self._busy = False
+            _undo_quiet = True
+            try:
+                gui_hooks.state_did_undo(out)     # như Undo của Anki: add-on khác (và sổ phần thưởng) biết có Undo
+            except Exception as err:
+                _warn("hoàn tác (móc)", err)
+            finally:
+                _undo_quiet = False
+            try:
+                check_undo()                      # móc ở trên đã gọi; gọi lại không đổi gì (lượt đã đánh dấu chờ)
+            except Exception as err:
+                _warn("hoàn tác lượt ôn", err)
+            if self._undo_stack and self._undo_stack[-1] is e:
+                self._undo_stack.pop()
+            back = 0
+            try:
+                if c0 is not None:
+                    back = max(0, c0 - int(STATE.load().get("coins") or 0))
+            except Exception:
+                back = 0
+            if _dialog is not self:
+                return
+            self.refresh()
+            self._js("rvNote", "Đã hoàn tác lượt chấm vừa rồi" + (" · −%s xu" % core.xu(back) if back else "") + ".")
+            if gen == self._review_gen:
+                self._next_card()         # Anki đưa thẻ vừa hoàn tác lên đầu hàng đợi → hiện lại mặt trước
+            else:
+                self._js("reviewUndo", {"ok": True, "undo": self._undo_target() is not None})
+
+        def failed(err: Exception) -> None:
+            self._busy = False
+            if _dialog is not self:
+                return
+            if type(err).__name__ != "UndoEmpty":
+                _warn("hoàn tác lượt chấm", err)
+                self._js("rvNote", "Chưa hoàn tác được lượt chấm này.")
+            else:
+                self._js("rvNote", "Không có lượt chấm nào để hoàn tác.")
+            if gen == self._review_gen:
+                self._next_card()
+            else:
+                self._js("reviewUndo", {"ok": False, "undo": self._undo_target() is not None})
+
+        CollectionOp(parent=self, op=lambda col: col.undo()).success(done).failure(failed).run_in_background()
 
     def _stop_review(self) -> None:
         av_player.stop_and_clear_queue()
@@ -2935,6 +3024,8 @@ class GardenDialog(QDialog):
                 self._answer(int(cmd.rsplit(":", 1)[1]))
             except ValueError:
                 pass
+        elif cmd == "rv:undo":           # 1.31.4: Ctrl+Z / nút Hoàn tác trong bảng ôn
+            self._undo_review()
         elif cmd == "rv:stop":
             self._stop_review()
         elif cmd.startswith("game:"):

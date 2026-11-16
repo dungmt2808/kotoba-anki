@@ -2661,6 +2661,29 @@ def record_desktop(data: dict[str, Any], day: int | None, ease: int, before: str
     c["new"] += 1 if before == "new" else 0
 
 
+def review_undo_target(col: Any, stack: list[dict[str, int]]) -> dict[str, int] | None:
+    """1.31.4: lượt chấm (cuối `stack` = [{"cid", "rev"}…] của bảng ôn trong vườn) mà Ctrl+Z hoàn tác được, hoặc None.
+
+    Chỉ khi bước Undo kế tiếp của Anki đúng là lượt đó: tên bước là "Answer Card" (theo ngôn ngữ của Anki) và dòng revlog
+    mới nhất của cả collection là của lượt đó. Sau lượt chấm mà có thao tác khác (sửa note, chấm thẻ ở cửa sổ ôn của Anki,
+    đổi deck…) thì không hoàn tác — Undo của Anki lúc đó là thao tác kia. Ghi xu (cấu hình không có bước Undo) không tính.
+    Lượt đã bị hoàn tác ở chỗ khác (dòng revlog mất) được bỏ khỏi `stack`."""
+    while stack:
+        e = stack[-1]
+        if col.db.scalar("select count() from revlog where id = ? and cid = ?", int(e["rev"]), int(e["cid"])):
+            break
+        stack.pop()
+    if not stack:
+        return None
+    e = stack[-1]
+    label = col.undo_status().undo
+    if not label or label != col.tr.actions_answer_card():
+        return None
+    if int(col.db.scalar("select max(id) from revlog") or 0) != int(e["rev"]):
+        return None
+    return e
+
+
 def undo_reward(data: dict[str, Any], entry: dict[str, Any]) -> int:
     """1.23 (KB-03): Undo lượt ôn (Edit → Undo của Anki) thì trả lại phần thưởng add-on đã cộng cho lượt đó — trước
     đây ôn rồi Undo lặp lại cùng một thẻ thì mỗi vòng lại được +1 xu, +xu lên giai đoạn, cộng tiến độ nhiệm vụ.

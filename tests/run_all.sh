@@ -150,6 +150,9 @@ for f in "$ADDON"/web/*.js; do node --check "$f" || FAIL=1; done
 echo "== core/test_1313.py (1.31.3: Xưởng mở trang web chung — chỉ mục có tên; Báo lỗi → Gửi qua GitHub)"
 OUT=$(python3 "$HERE/core/test_1313.py" "$ADDON" 2>&1); RC=$?
 echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
+echo "== core/test_1314.py (1.31.4: hợp đồng dữ liệu với bản đã phát hành 1.31.3, deck tiếng Trung không còn nhận là tiếng Nhật, Ctrl+Z trong bảng ôn)"
+OUT=$("${ANKI_PY:-python3}" -W ignore "$HERE/core/test_1314.py" "$ADDON" 2>&1); RC=$?
+echo "$OUT" | grep -E "✗|KẾT QUẢ|bỏ qua"; [ $RC = 0 ] || FAIL=1
 # trang web chung (site/, GitHub Pages): đăng mã, dữ liệu trang khớp add-on (đổi hình mà quên `node site/tools/xuat_hinh.js` là báo)
 echo "== trang/test_trang.py (trang web: đăng / gỡ mã, biểu mẫu issue, GitHub Actions, dữ liệu khớp add-on)"
 OUT=$(python3 "$HERE/trang/test_trang.py" "$ADDON" 2>&1); RC=$?

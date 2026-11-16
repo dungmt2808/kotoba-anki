@@ -275,6 +275,14 @@ _LATIN_ACCENT = re.compile(r"[\u00c0-\u00ff\u0100-\u024f\u1e00-\u1eff]")
 _ZH_HINT = ("pinyin", "hanzi", "chinese", "mandarin", "中文", "汉语", "漢語", "拼音", "tiếng trung", "tieng trung")
 _KO_HINT = ("korean", "hangul", "한국어", "tiếng hàn")
 _EN_HINT = ("english", "ipa", "phonetic", "tiếng anh", "tieng anh", "toeic", "ielts", "oxford")
+# 1.31.4: chữ Hán chỉ có ở tiếng Trung — giản thể rồi phồn thể — mà tiếng Nhật hiện đại không dùng (tiếng Nhật viết 這 / 説 /
+# 時 thay cho 这 / 说 / 时; chữ hai bên viết giống nhau như 学, 国, 写 không có ở đây). Trước đây deck tiếng Trung để loại note tên
+# chung ("Basic", trường Front / Back) bị đoán là deck chữ Hán tiếng Nhật vì không có kana. Chỉ gồm chữ hay gặp ở HSK 1–3.
+_ZH_ONLY = re.compile("[们这说么吗呢吧你她谁对还让进过时东车门问间见长书买卖话语认识习题练读汉欢饭馆钱银铁飞谢请爱电脑视开"
+                      "关头发现实动应该经济务员业样种难边气热鱼鸡马鸟爸妈怎桌师兴钟块岁觉听给级红绿页两从乐场运远词课网"
+                      "贵节绍张处办帮备错别诉试结离讲"
+                      "們說麼嗎妳對讓學國會來讀賣腦關發實應經濟樣點邊氣雞廣歲聽從兩覺綠]")
+_JA_HINT = ("japanese", "nihongo", "日本語", "tiếng nhật", "tieng nhat", "jlpt", "furigana", "kana", "kanji", "漢字")
 
 
 def guess_lang(name: str, keys: list[str], words: list[str]) -> str:
@@ -299,6 +307,11 @@ def guess_lang(name: str, keys: list[str], words: list[str]) -> str:
     if hangul * 2 >= n:
         return "other"
     if cjk * 2 >= n:
+        # 1.31.4: chỉ chữ Hán, không kana mà có chữ chỉ tiếng Trung mới dùng (≥ 10 % số từ, ít nhất 2 từ) → tiếng Trung
+        # ("Ngôn ngữ khác"); tên loại note / trường có dấu hiệu tiếng Nhật thì vẫn là tiếng Nhật
+        zh = sum(1 for w in sample if _ZH_ONLY.search(w))
+        if not kana and zh >= min(2, n) and zh * 10 >= n and not any(h in hints for h in _JA_HINT):
+            return "other"
         return "ja"                        # chỉ chữ Hán, không kana: deck kanji (giữ cách cũ)
     if latin * 2 >= n:
         if accent * 10 >= n * 3 and not any(h in hints for h in _EN_HINT):

@@ -1489,7 +1489,10 @@ button { cursor: pointer; }
 /* màu bảng ôn */
 .kb-ui-th-paper #kb-panel { background: #fbfaf4; }
 /* 1.23: bỏ màu bảng "Đêm vườn" (1.16) — người dùng thấy không đẹp; cấu hình cũ "theme": "night" về "Vàng vườn" */
-.kb-rv-garden { background: var(--kb-paper, #ffffff); }
+.kb-rv-garden, .kb-rv-undo { background: var(--kb-paper, #ffffff); }
+.kb-rv-undo { white-space: nowrap; }
+/* 1.31.4: câu báo của Ctrl+Z nằm trong bảng ôn (dưới tên giai đoạn), không đè lên nút Lật thẻ như thông báo nổi */
+.kb-rv-note { font-size: 13px; color: var(--kb-ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .kb-rv-garden[aria-pressed="true"] { background: #c8f7d2; }
 
 /* bảng Giao diện */

@@ -760,6 +760,10 @@ var Garden = (function () {
   var showingAnswer = false;
   var waiting = false;      // đã chấm, đang chờ thẻ kế tiếp
   var flipping = false;     // đã bấm lật, đang chờ Python gửi mặt sau
+  var canUndo = false;      // 1.31.4: Python báo lượt chấm vừa rồi của bảng ôn hoàn tác được (Ctrl+Z / nút Hoàn tác)
+  var undoing = false;      // 1.31.4: đã gửi lệnh hoàn tác, đang chờ Python
+  var undoTimer = null;
+  var noteTimer = null;
   var frameReady = false;   // iframe thẻ đã dựng xong khung chưa
   var queued = null;        // mặt thẻ chờ iframe sẵn sàng
 
@@ -881,12 +885,44 @@ var Garden = (function () {
     }
   }
 
+  // 1.31.4: nút Hoàn tác chỉ hiện khi Python báo có lượt chấm hoàn tác được
+  function setUndo(flag) {
+    canUndo = !!flag;
+    undoing = false;
+    if (undoTimer) { clearTimeout(undoTimer); undoTimer = null; }
+    var b = $("kb-rv-undo");
+    if (b) { b.hidden = !canUndo; }
+  }
+
+  // 1.31.4: câu báo ngắn trong bảng ôn (dưới tên giai đoạn của chậu), tự ẩn sau 4 giây
+  function rvNote(msg) {
+    var n = $("kb-rv-note");
+    if (!n) { return; }
+    if (noteTimer) { clearTimeout(noteTimer); noteTimer = null; }
+    n.textContent = msg || "";
+    n.hidden = !msg;
+    if (msg) { noteTimer = setTimeout(function () { n.hidden = true; noteTimer = null; }, 4000); }
+  }
+
+  function undoRate() {
+    if ($("kb-panel").hidden || undoing || waiting || flipping) { return; }
+    if (!canUndo) { rvNote("Không có lượt chấm nào để hoàn tác."); return; }
+    undoing = true;
+    if (undoTimer) { clearTimeout(undoTimer); }
+    undoTimer = setTimeout(function () { undoing = false; undoTimer = null; }, 8000);   // Python không trả lời → bấm lại được
+    send("rv:undo");
+  }
+
+  // Python không hoàn tác được (hoặc bảng ôn đã dừng trong lúc hoàn tác)
+  function reviewUndo(p) { setUndo(p && p.undo); }
+
   function showCard(c) {
     if ($("kb-panel").hidden) { fx("startReview"); }
     card = c;
     showingAnswer = false;
     waiting = false;
     flipping = false;
+    setUndo(c.undo);
     $("kb-panel").hidden = false;
     $("kb-card-wrap").hidden = false;
     $("kb-done").hidden = true;
@@ -957,6 +993,7 @@ var Garden = (function () {
     showingAnswer = false;
     waiting = false;
     flipping = false;
+    setUndo(info && info.undo);        // 1.31.4: thẻ cuối chấm nhầm vẫn hoàn tác được ở màn "Hết thẻ"
     $("kb-panel").hidden = false;
     $("kb-card-wrap").hidden = true;
     $("kb-done").hidden = false;
@@ -981,6 +1018,8 @@ var Garden = (function () {
     showingAnswer = false;
     waiting = false;
     flipping = false;
+    setUndo(false);
+    rvNote("");
     $("kb-panel").hidden = true;
     $("kb-card").srcdoc = "";
     frameReady = false;
@@ -995,6 +1034,12 @@ var Garden = (function () {
     var tag = (e.target && e.target.tagName) || "";
     if (tag === "SELECT" || tag === "INPUT" || tag === "TEXTAREA") { return; }
     var k = e.key;
+    // 1.31.4: Ctrl+Z (⌘Z trên macOS) hoàn tác lượt chấm vừa rồi; e.code cho bàn phím không phải chữ Latin
+    if ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && (k === "z" || k === "Z" || e.code === "KeyZ")) {
+      e.preventDefault();
+      undoRate();
+      return;
+    }
     if (k === " " || k === "Enter") {
       e.preventDefault();
       if (!card) { return; }
@@ -1396,6 +1441,9 @@ var Garden = (function () {
     setInterval(syncMusic, 400);
     $("kb-show").addEventListener("click", flip);
     $("kb-stop").addEventListener("click", function () { closePanel(true); });
+    // 1.31.4: không lấy focus khỏi thẻ (phím Space / 1–4 vẫn chạy sau khi bấm)
+    $("kb-rv-undo").addEventListener("mousedown", function (e) { e.preventDefault(); });
+    $("kb-rv-undo").addEventListener("click", undoRate);
     $("kb-close-done").addEventListener("click", function () { closePanel(true); });
     var rates = document.querySelectorAll(".kb-rate");
     for (var r = 0; r < rates.length; r++) {
@@ -1586,6 +1634,8 @@ var Garden = (function () {
     render: render,
     showCard: showCard,
     reviewRetry: reviewRetry,      // 1.31.1 (F08)
+    reviewUndo: reviewUndo,        // 1.31.4: Ctrl+Z trong bảng ôn
+    rvNote: rvNote,
     showAnswer: showAnswer,
     celebrate: function (info) {
       fx("celebrate", info);
