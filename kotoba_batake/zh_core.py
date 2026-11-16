@@ -174,7 +174,7 @@ def ruby_pairs(word: str, reading: str) -> list[list[str]] | None:
     return [[c, s] for c, s in zip(chars, syl)]
 
 
-def bracket_pairs(raw: str, tokens: list[tuple[str, str | None]]) -> tuple[str, str, list[list[str]] | None] | None:
+def bracket_pairs(tokens: list[tuple[str, str | None]]) -> tuple[str, str, list[list[str]] | None] | None:
     """Trường Từ ghi kiểu Anki 中[zhōng]文[wén] (text_core.tokens) → (chữ, pinyin cả từ, cặp chữ / âm tiết | None).
     Không có chỗ nào ghi pinyin trong ngoặc → None."""
     if not any(r for _w, r in tokens):
