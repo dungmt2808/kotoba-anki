@@ -170,7 +170,12 @@ ANKI_PY=~/.venv-anki/bin/python tests/anki/run_ui.sh /tmp/kb_src/kotoba_batake /
 ```
 Cần Node ≥ 22 (có sẵn `fetch` và `WebSocket`). Cổng: `KB_CDP_PORT` (9333), `KB_CTRL_PORT` (9444). `kill_anki.sh` tắt Anki đang chạy từ các script này.
 
-## Kết quả lần chạy gần nhất (bản 1.31.4, 16/11/2026) — Ctrl+Z trong bảng ôn, deck tiếng Trung, cập nhật không mất dữ liệu
+## Kết quả lần chạy gần nhất (bản 1.31.5, 16/11/2026) — Gemini 4 Hydrogen, chia việc theo hạn mức, Sổ tay làng
+- `run_all.sh` (`ANKI_PY` = venv aqt 26.9.4; **56 bộ**, có `core/test_1315.py` 29/29) **TẤT CẢ OK** sau khi chạy lại `node site/tools/xuat_hinh.js`.
+- Anki 26.9.4 thật: `run_capnhat.sh` 1.31.3 (`e64eb22`) → 1.31.5 **17/17** (trên gói), `e2e_1251` 48/48, `e2e_123` 66/66, `e2e_1314` 53/53.
+- Gemini thật (khoá người dùng, 7 / 20 lượt Hydrogen): một ngày bản gốc 4 lượt / 37 giây qua Hydrogen + 1 lượt lập mạch thử lại sau khi sửa lời dặn `su_that_moi` — `docs/kiem_thu/1.31.5/BAO_CAO.md` mục 3.
+
+## Kết quả lần chạy trước (bản 1.31.4, 16/11/2026) — Ctrl+Z trong bảng ôn, deck tiếng Trung, cập nhật không mất dữ liệu
 - `run_all.sh` (`ANKI_PY` = venv aqt 26.9.4; **55 bộ**, có `core/test_1314.py` 39/39, `core/test_ban_cu.py` + 1.31.3, `dong_bo/test_dong_bo.py`) **TẤT CẢ OK** sau khi chạy lại `node site/tools/xuat_hinh.js` (lên bản thì trang web ghi số bản mới). `core/test_1314.py` phần collection cũng đạt trên **anki 23.10.1**.
 - Anki 26.9.4 thật: `e2e_1314` **53/53**, `run_capnhat.sh` 1.31.3 (`e64eb22`) → 1.31.4 **17/17**, `e2e.js` 24/24, `e2e_118` 29/29, `e2e_1253` 39/39, `e2e_1226` 40/40, `e2e_123` 66/66, `e2e_117` 53/55 — 2 kiểm tra bố cục trượt **y hệt trên mã 1.31.3 gốc** ở máy test này (độ rộng tab Nhà 110 / 128, ô Ví / nút Thoát 31 / 28 / 27): có từ trước, không do 1.31.4.
 - `core/test_118.py` chạy trong 1 giờ trước mốc sang ngày của Anki (vd. 03:00–04:00) từng trượt 2 kiểm tra "cây 'later'" (cả mã 1.31.3 gốc) — 1.31.4 cho bài test bỏ qua 2 kiểm tra đó trong khoảng giờ ấy.

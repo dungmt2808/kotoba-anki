@@ -48,10 +48,10 @@ Thoại có ngoặc kép, StackChan ở "góc đọc thư" của đợt trước
 
 | Bộ | Kết quả |
 |---|---|
-| `core/test_1315.py` (mới, Gemini giả) | KQ_1315 |
-| `tests/run_all.sh` (`ANKI_PY` = aqt 26.9.4) | KQ_RUNALL |
-| `anki/run_capnhat.sh` 1.31.3 (đã phát hành) → 1.31.5 | KQ_CAPNHAT |
-| Kịch bản Anki thật có báo (Gemini giả): `e2e_1251`, `e2e_123`; Ctrl+Z `e2e_1314` | KQ_E2E |
+| `core/test_1315.py` (mới, Gemini giả) | **29 / 29** (1 năm: 765 lượt = mã 1.31.3; lùi Hydrogen → Flash → Lite; giọng đọc 21 giây; bản cũ chen giữa không mất sổ tay) |
+| `tests/run_all.sh` (`ANKI_PY` = aqt 26.9.4) | **56 bộ, tất cả OK** (có `dong_bo/test_dong_bo.py` — máy chủ đồng bộ thật); lần đầu trượt 1 kiểm tra trang web (hình ghi "xuất từ 1.31.4") → `node site/tools/xuat_hinh.js` (chỉ đổi số bản) → `trang/test_trang.py` 35 / 35 |
+| `anki/run_capnhat.sh` 1.31.3 (đã phát hành) → 1.31.5 | **17 / 17** trên gói đã đóng: mọi khoá collection, mọi file `user_files/`, cấu hình add-on giữ nguyên |
+| Kịch bản Anki thật có báo (Gemini giả): `e2e_1251`, `e2e_123`; Ctrl+Z `e2e_1314` | `e2e_1251` 48 / 48 · `e2e_123` 66 / 66 · `e2e_1314` 53 / 53 |
 
 ## 5. Dữ liệu khi cập nhật
 
