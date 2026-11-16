@@ -21,6 +21,7 @@ from typing import Any
 from aqt import gui_hooks, mw  # nạp trước để tránh vòng import của anki.scheduler
 
 from anki.scheduler.v3 import CardAnswer, QueuedCards  # noqa: E402
+from anki.utils import ids2str  # noqa: E402  (1.33: báo mặc định)
 from aqt.operations import CollectionOp
 from aqt.operations.scheduling import answer_card
 from aqt.qt import QAction, QDialog, QKeySequence, Qt, QTimer, QVBoxLayout, qconnect
@@ -32,6 +33,8 @@ from aqt.webview import AnkiWebView
 from . import ai_core as ai
 from . import ai_en
 from . import ai_vi
+from . import ai_zh      # 1.33: báo tiếng Trung
+from . import ai_ko      # 1.33: báo tiếng Hàn
 from . import backup_core
 from . import diag
 from . import edit_win      # 1.32.2: nút ✎ Sửa / phím E trong bảng ôn
@@ -72,14 +75,22 @@ PAPER_EN = paper.PaperState(os.path.join(ADDON_DIR, "user_files", "paper_en.json
 AI_DIR_VI = os.path.join(ADDON_DIR, "user_files", ai_vi.FOLDER)
 PAPER_VI = paper.PaperState(os.path.join(ADDON_DIR, "user_files", "paper_vi.json"), col_getter=lambda: mw.col,
                             key=paper.PAPER_KEY_VI)
-AI_DIRS = {"ja": AI_DIR, "en": AI_DIR_EN, "vi": AI_DIR_VI}
+# 1.33: báo tiếng Trung / tiếng Hàn (chỉ Gemini viết): thư mục + trạng thái đọc / chép riêng, như báo tiếng Anh
+AI_DIR_ZH = os.path.join(ADDON_DIR, "user_files", ai_zh.FOLDER)
+PAPER_ZH = paper.PaperState(os.path.join(ADDON_DIR, "user_files", "paper_zh.json"), col_getter=lambda: mw.col,
+                            key=paper.PAPER_KEY_ZH)
+AI_DIR_KO = os.path.join(ADDON_DIR, "user_files", ai_ko.FOLDER)
+PAPER_KO = paper.PaperState(os.path.join(ADDON_DIR, "user_files", "paper_ko.json"), col_getter=lambda: mw.col,
+                            key=paper.PAPER_KEY_KO)
+AI_DIRS = {"ja": AI_DIR, "en": AI_DIR_EN, "vi": AI_DIR_VI, "zh": AI_DIR_ZH, "ko": AI_DIR_KO}
 # 1.25.2 "Một làng, một truyện": bộ nhớ truyện chung + bản gốc mỗi ngày (truyện + tin làng, tiếng Việt) cho mọi báo Gemini
 AI_DIR_SHARED = os.path.join(ADDON_DIR, "user_files", ai.SHARED_FOLDER)
-AI_MODS = {"en": ai_en, "vi": ai_vi}
+AI_MODS = {"en": ai_en, "vi": ai_vi, "zh": ai_zh, "ko": ai_ko}
 # 1.23: tiến độ đọc của nguồn báo tiếng Nhật thứ hai (Kệ báo gộp số Claude Code + Gemini), khoá collection riêng
 BOOK = paper.PaperState(os.path.join(ADDON_DIR, "user_files", "paper_nguon.json"), col_getter=lambda: mw.col,
                         key=paper.PAPER_KEY_SRC, clean=paper.clean_book)
-LANG_NAME = {"ja": "tiếng Nhật", "en": "tiếng Anh", "vi": "tiếng Việt", "other": "ngôn ngữ khác"}
+LANG_NAME = {"ja": "tiếng Nhật", "en": "tiếng Anh", "vi": "tiếng Việt", "zh": "tiếng Trung", "ko": "tiếng Hàn",
+             "other": "ngôn ngữ khác"}
 _ai: dict[str, Any] = {"running": False, "testing": False, "msg": "", "lang": "ja", "why": "",
                        "key_gen": 0}    # 1.31.1 (F07): tăng mỗi lần xoá khoá — kết quả thử khoá cũ không lưu lại khoá
 _libraries: dict[str, paper.Library] = {}
@@ -202,7 +213,7 @@ def _library(lang: str = "ja") -> paper.Library | None:
     ngôn ngữ khác → chưa có báo."""
     global _wav_checked
     cfg = config()
-    if lang in ("en", "vi"):
+    if lang in ("en", "vi", "zh", "ko"):
         if not ai.clean_key(cfg.get("gemini_key")):
             return None
         # chưa có thư mục thì Library coi như chưa có số nào (thư mục chỉ tạo khi Gemini viết số đầu tiên)
@@ -340,7 +351,8 @@ def paper_ref(lang: str, ref: str) -> tuple[paper.Library | None, str, str]:
     return (_library("ja") if src == cur else _source_lib(src)), src, date
 
 
-PAPER_LANGS = ("ja", "en", "vi")     # 1.25.1: thêm báo tiếng Việt
+PAPER_LANGS = ("ja", "en", "zh", "ko", "vi")     # 1.25.1: thêm báo tiếng Việt; 1.33: tiếng Trung / tiếng Hàn
+LEARN_LANGS = ("ja", "en", "zh", "ko")             # báo học tiếng (tối đa 2); tiếng Việt đi một mình
 
 
 def _en_has_issues() -> bool:
@@ -352,19 +364,124 @@ def _en_has_issues() -> bool:
 
 def wanted_langs(cfg: dict[str, Any] | None = None) -> list[str]:
     """1.19.1: báo người dùng muốn nhận (ô tick ở tab Nguồn báo). Chưa chọn lần nào: tiếng Nhật, và tiếng Anh nếu
-    máy đã có số báo tiếng Anh của bản 1.19.0 (để báo tiếng Anh không tự dưng biến mất)."""
+    máy đã có số báo tiếng Anh của bản 1.19.0 (để báo tiếng Anh không tự dưng biến mất).
+
+    1.33 (người dùng chốt 17/11): người CHƯA TỪNG chọn báo và báo chưa từng chạy trên máy này (chưa có khoá Gemini, chưa
+    có số báo nào, không dùng kotoba_daily) → mặc định 1 báo theo deck (`_auto_langs`). Từ 1.19.1 add-on tự ghi
+    gemini_langs lúc mở hồ sơ nên không biết ai đã tự chọn: người đã có khoá / có báo giữ nguyên lựa chọn đang lưu; từ bản
+    này tick ở "Báo muốn nhận" thì ghi thêm gemini_langs_chosen. Dán khoá lần đầu → lưu mặc định lúc đó (không tự đổi theo
+    deck nữa)."""
     cfg = cfg if cfg is not None else config()
     raw = cfg.get("gemini_langs")
+    if isinstance(raw, list) and (cfg.get("gemini_langs_chosen") or _papers_started(cfg)):
+        return clean_langs(raw)
+    try:
+        auto = _auto_langs()
+    except Exception as err:
+        _warn("báo mặc định", err)
+        auto = None
+    if auto:
+        return auto
     if isinstance(raw, list):
         return clean_langs(raw)
     return ["ja"] + (["en"] if _en_has_issues() else [])
 
 
+_started_cache: dict[str, Any] = {"t": 0.0, "k": None, "v": False}
+
+
+def _papers_started(cfg: dict[str, Any]) -> bool:
+    """1.33: báo đã từng chạy trên máy này: có khoá Gemini, dùng kotoba_daily, hoặc đã có số báo nào (đọc lại ≤ 30 giây)."""
+    if ai.clean_key(cfg.get("gemini_key")) or cfg.get("bao_dir"):
+        return True
+    k = "|".join(AI_DIRS.values())
+    if _started_cache["k"] == k and time.time() - _started_cache["t"] < 30:
+        return bool(_started_cache["v"])
+    v = False
+    for base in AI_DIRS.values():
+        try:
+            if os.path.isdir(os.path.join(base, "bao")) and any(
+                    os.path.isfile(os.path.join(base, "bao", d, "bao.json")) for d in os.listdir(os.path.join(base, "bao"))):
+                v = True
+                break
+        except OSError:
+            continue
+    _started_cache.update(t=time.time(), k=k, v=v)
+    return v
+
+
+_auto_cache: dict[str, Any] = {"t": 0.0, "k": None, "v": None, "rank": []}
+
+
+def _lang_rank() -> list[str]:
+    """1.33: ngôn ngữ học (Nhật / Anh / Trung / Hàn) có deck trong tài khoản, xếp theo số lượt ôn 30 ngày qua (chưa ôn gì
+    thì theo số thẻ). Dùng cho báo mặc định và dòng gợi ý thêm báo thứ hai."""
+    _auto_langs()
+    return list(_auto_cache.get("rank") or [])
+
+
+def _auto_langs() -> list[str] | None:
+    """1.33: báo mặc định cho người chưa từng chọn báo: ngôn ngữ của deck đang chọn → không phải deck ngôn ngữ thì ngôn
+    ngữ ôn nhiều nhất 30 ngày qua (chưa ôn thì nhiều thẻ nhất) → không có deck ngôn ngữ nào thì báo tiếng Việt.
+    None khi chưa có collection. Đọc lại tối đa mỗi 60 giây (hoặc khi đổi deck / hồ sơ)."""
+    if not _col_ready():
+        return None
+    col = mw.col
+    deck = _dialog.deck_id if _dialog is not None else col.decks.get_current_id()
+    k = (str(getattr(col, "path", "") or ""), int(deck or 0))
+    if _auto_cache["k"] == k and time.time() - _auto_cache["t"] < 60 and _auto_cache["v"]:
+        return list(_auto_cache["v"])
+    infos = words.model_infos(col, core.merged_config(config()))
+    lang_of = {int(m): i["lang"] for m, i in infos.items() if i.get("lang") in LEARN_LANGS}
+    learn_mids = list(lang_of)
+    out: list[str] = []
+    rank: list[str] = []
+    if learn_mids:
+        try:
+            dids = [int(x) for x in col.decks.deck_and_child_ids(int(deck))] if deck else []
+        except Exception:
+            dids = []
+        if dids:
+            rows = col.db.all("select n.mid, count(distinct n.id) from cards c join notes n on n.id = c.nid "
+                              "where c.did in %s or c.odid in %s group by n.mid" % (ids2str(dids), ids2str(dids)))
+            per: dict[str, int] = {}
+            total = 0
+            for mid, n in rows:
+                total += int(n)
+                if int(mid) in lang_of:
+                    per[lang_of[int(mid)]] = per.get(lang_of[int(mid)], 0) + int(n)
+            if per:
+                best = max(per, key=lambda x: per[x])
+                if per[best] * 2 >= total:              # deck đang chọn là deck ngôn ngữ (phần lớn note là tiếng đó)
+                    out = [best]
+        since = int((time.time() - 30 * 86400) * 1000)
+        rev: dict[str, int] = {}
+        for mid, n in col.db.all("select n.mid, count() from revlog r join cards c on c.id = r.cid join notes n on n.id = c.nid "
+                                 "where r.id > ? and n.mid in %s group by n.mid" % ids2str(learn_mids), since):
+            rev[lang_of[int(mid)]] = rev.get(lang_of[int(mid)], 0) + int(n)
+        cards: dict[str, int] = {}
+        for mid, n in col.db.all("select n.mid, count() from cards c join notes n on n.id = c.nid where n.mid in %s "
+                                 "group by n.mid" % ids2str(learn_mids)):
+            cards[lang_of[int(mid)]] = cards.get(lang_of[int(mid)], 0) + int(n)
+        rank = sorted(cards, key=lambda x: (-rev.get(x, 0), -cards[x], LEARN_LANGS.index(x)))
+        if not out and rank:
+            out = [rank[0]]
+    if not out:
+        out = ["vi"]
+    _auto_cache.update(t=time.time(), k=k, v=out, rank=rank)
+    return list(out)
+
+
 def clean_langs(raw: Any) -> list[str]:
     """1.25.2: tối đa 2 báo — tiếng Nhật và / hoặc tiếng Anh, HOẶC chỉ tiếng Việt (báo Nhật / Anh đã có bản dịch tiếng Việt,
-    ba báo cùng kể một chuyện thì thừa). Có cả Việt lẫn Nhật / Anh → bỏ Việt."""
+    ba báo cùng kể một chuyện thì thừa). Có cả Việt lẫn Nhật / Anh → bỏ Việt.
+    1.33 (người dùng chốt 17/11): tối đa 2 báo trong Nhật / Anh / Trung / Hàn; tiếng Việt vẫn đi một mình."""
     out = [x for x in PAPER_LANGS if isinstance(raw, list) and x in raw]
-    return [x for x in out if x != "vi"] if len(out) > 1 else out
+    learn = [x for x in out if x != "vi"]
+    if learn:
+        keep = [x for x in raw if x in learn][:2] if isinstance(raw, list) else learn[:2]     # giữ 2 báo tick trước
+        return [x for x in LEARN_LANGS if x in keep]
+    return out
 
 
 def _old_waiting(cfg: dict[str, Any]) -> list[str]:
@@ -448,7 +565,7 @@ def paper_lang(dialog: Any = None) -> str:
 
 
 def _paper_state(lang: str) -> paper.PaperState:
-    return PAPER_EN if lang == "en" else PAPER_VI if lang == "vi" else PAPER
+    return {"en": PAPER_EN, "vi": PAPER_VI, "zh": PAPER_ZH, "ko": PAPER_KO}.get(lang, PAPER)
 
 
 def paper_langs() -> list[dict[str, Any]]:
@@ -486,7 +603,7 @@ def paper_summary(dialog: Any = None, **extra: Any) -> dict[str, Any]:
     # 1.25.1: có gì để chép chính tả không (câu báo Nhật / Anh, câu / từ có audio của deck) — chỉ đọc báo tiếng Việt
     # thì thẻ Hôm nay không ghi "Chép 0/5"
     try:
-        s["dict_ok"] = bool(_dict_possible or s.get("dict_done") or any(x in wanted_langs() for x in ("ja", "en")))
+        s["dict_ok"] = bool(_dict_possible or s.get("dict_done") or any(x in wanted_langs() for x in LEARN_LANGS))
     except Exception:
         s["dict_ok"] = True
     s.update(extra)
@@ -532,7 +649,7 @@ def _avail() -> tuple[int, int, tuple[str, ...]]:
         if any(_unread(lang) for lang in wanted_langs()):     # 1.19.1: mọi báo đã tick
             extra.append("paper")
         # 1.25.1: chỉ báo tiếng Việt (không chép) thì nhiệm vụ chép chính tả theo deck đang xem
-        if _dict_possible or (_library() is not None and any(x in wanted_langs() for x in ("ja", "en"))):
+        if _dict_possible or (_library() is not None and any(x in wanted_langs() for x in LEARN_LANGS)):
             extra.append("dict")
     except Exception as err:
         _warn("avail", err)
@@ -604,13 +721,14 @@ def _voice(cfg: dict[str, Any] | None = None) -> paper.Voice:
     if o["dict_voice"] == "tat":
         return paper.Voice(mpv=mpv)
     tts, tts_en = ja_tts_available(), en_tts_available()
+    xx = {x: xx_tts_available(x) for x in ("zh", "ko")}         # 1.33: câu chép báo tiếng Trung / tiếng Hàn
     if o["dict_voice"] == "may":
-        return paper.Voice(tts=tts, mpv=mpv, tts_en=tts_en)
+        return paper.Voice(tts=tts, mpv=mpv, tts_en=tts_en, tts_xx=xx)
     has_key = bool(ai.clean_key(cfg.get("gemini_key")))
     st = ai.load_status(AI_DIR) if os.path.isdir(AI_DIR) else {}
     voice_name = o["voice"]
     return paper.Voice(cached=lambda speech: ai.cached_voice(AI_DIR, speech, voice_name), tts=tts,
-                       gen=has_key and st.get("voice_fail_day") != ai_today(), mpv=mpv, tts_en=tts_en)
+                       gen=has_key and st.get("voice_fail_day") != ai_today(), mpv=mpv, tts_en=tts_en, tts_xx=xx)
 
 
 def _play(target: tuple[str, Any, float]) -> None:
@@ -1144,8 +1262,10 @@ def _ai_opts(cfg: dict[str, Any]) -> dict[str, Any]:
     tts = cfg.get("gemini_tts_model") if isinstance(cfg.get("gemini_tts_model"), str) else ""
     level_en = cfg.get("gemini_level_en") if cfg.get("gemini_level_en") in ai_en.LEVELS else ai_en.DEFAULT_LEVEL
     voice_en = cfg.get("gemini_voice_en") if cfg.get("gemini_voice_en") in ai.VOICES else voice
+    level_zh = cfg.get("gemini_level_zh") if cfg.get("gemini_level_zh") in ai_zh.LEVELS else ai_zh.DEFAULT_LEVEL     # 1.33
+    level_ko = cfg.get("gemini_level_ko") if cfg.get("gemini_level_ko") in ai_ko.LEVELS else ai_ko.DEFAULT_LEVEL
     return {"level": level, "audio": audio, "voice": voice, "model": model.strip()[:80],
-            "level_en": level_en, "voice_en": voice_en,
+            "level_en": level_en, "voice_en": voice_en, "level_zh": level_zh, "level_ko": level_ko,
             "tts_model": tts.strip()[:80], "auto": bool(cfg.get("gemini_auto", True)),
             "scope": "deck",      # 1.23: báo Gemini chỉ lấy từ deck (gemini_scope "auto" cũ = "deck")
             "story": cfg.get("gemini_story") if cfg.get("gemini_story") in story_core.MODES else "hay",
@@ -1178,8 +1298,8 @@ def _lang_view(lang: str, o: dict[str, Any], date: str) -> dict[str, Any]:
                  "audio_left": 0 if lang == "vi" else len(ai.audio_todo(base, date, o["audio"]))}
     focus = st.get("focus") if st.get("focus_day") == date and isinstance(st.get("focus"), list) else None
     return {
-        "lang": lang, "name": LANG_NAME[lang], "level": o["level_en"] if en else "" if lang == "vi" else o["level"],
-        "levels": list(ai_en.LEVELS if en else ai_vi.LEVELS if lang == "vi" else ai.LEVELS), "today": today,
+        "lang": lang, "name": LANG_NAME[lang], "level": "" if lang == "vi" else _level_of(o, lang),
+        "levels": list(AI_MODS[lang].LEVELS if lang in AI_MODS else ai.LEVELS), "today": today,
         "error": st.get("error", "") if st.get("day") == date else "",
         "audio_error": st.get("audio_error", "") if st.get("day") == date else "",
         "thieu": st.get("thieu", "") if st.get("thieu_day") == date else "",
@@ -1190,6 +1310,11 @@ def _lang_view(lang: str, o: dict[str, Any], date: str) -> dict[str, Any]:
         "running": bool(_ai["running"]) and _ai.get("lang", "ja") == lang,
         "model": st.get("model", ""), "tts": bool(st.get("tts")),
     }
+
+
+def _level_of(o: dict[str, Any], lang: str) -> str:
+    """Trình độ của báo `lang` (ô Trình độ ở tab Nguồn báo)."""
+    return o.get("level_" + lang) if lang in ("en", "zh", "ko") else o["level"]
 
 
 def ai_view(extra: dict[str, Any] | None = None, lang: str | None = None) -> dict[str, Any]:
@@ -1237,6 +1362,17 @@ def ai_view(extra: dict[str, Any] | None = None, lang: str | None = None) -> dic
         "dict_voice": {"mode": o["dict_voice"], "tts": ja_tts_available(), "key": bool(key),
                        "error": "", "running": bool(_voice_job["running"])},
     }
+    # 1.33: dòng gợi ý "Bạn cũng học tiếng X — thêm báo tiếng X?" (đang nhận 1 báo học tiếng, tài khoản còn deck của
+    # ngôn ngữ học khác, chưa bấm "Không" cho ngôn ngữ đó). Ngôn ngữ ôn nhiều nhất 30 ngày qua trước.
+    on = view["langs_on"]
+    off = cfg.get("gemini_suggest_off") if isinstance(cfg.get("gemini_suggest_off"), list) else []
+    view["suggest"] = ""
+    if len(on) == 1 and on[0] != "vi":
+        try:
+            view["suggest"] = next((x for x in _lang_rank() if x not in on and x not in off and decks.get(x)), "")
+        except Exception as err:
+            _warn("gợi ý báo thứ hai", err)
+    view["learn_langs"] = list(LEARN_LANGS)
     st = ai.load_status(AI_DIR) if os.path.isdir(AI_DIR) else {}
     if st.get("voice_fail_day") == date:
         view["dict_voice"]["error"] = st.get("voice_error", "")
@@ -1261,7 +1397,7 @@ def _shared_exhausted(*bases: str) -> dict[str, float]:
             out[k] = max(out.get(k, 0), float(v))
     except Exception:
         pass
-    for b in bases or (AI_DIR, AI_DIR_EN, AI_DIR_VI):
+    for b in bases or (AI_DIR, AI_DIR_EN, AI_DIR_VI, AI_DIR_ZH, AI_DIR_KO):
         st = ai.load_status(b) if os.path.isdir(b) else {}
         for k, v in (st.get("exhausted") or {}).items() if isinstance(st.get("exhausted"), dict) else []:
             if isinstance(k, str) and isinstance(v, (int, float)):
@@ -1294,10 +1430,13 @@ def ai_test_key(key: str) -> None:
                 # 1.31.1 (audit 14/11 F07): người dùng đã bấm "Xoá khoá" trong lúc thử → không lưu lại khoá vừa xoá
                 _ai_push({"flash": "Đã xoá khoá trong lúc thử nên khoá không được lưu.", "ok": False})
                 return
+            freeze: dict[str, Any] = {}
+            if first and not config().get("gemini_langs_chosen") and not _papers_started(config()):
+                freeze = {"gemini_langs": wanted_langs()}      # 1.33: báo mặc định lúc bắt đầu dùng báo — giữ từ đây
             if first and config().get("bao_source") == src0:
-                save_config(gemini_key=key, bao_source="gemini", gemini_wait_start=True)
+                save_config(gemini_key=key, bao_source="gemini", gemini_wait_start=True, **freeze)
             elif first:          # 1.31.1: đã đổi nguồn báo trong lúc thử → giữ nguồn người dùng vừa chọn
-                save_config(gemini_key=key, gemini_wait_start=True)
+                save_config(gemini_key=key, gemini_wait_start=True, **freeze)
             else:
                 save_config(gemini_key=key)      # 1.23: "Đổi khoá" không đổi nguồn báo (trước: tự chọn Gemini)
             st = ai.load_status(ai.ensure_dir(AI_DIR))
@@ -1332,6 +1471,10 @@ def _loi_sai(lang: str) -> list[str]:
     if lang == "en":
         miss += paper.progress_payload(PAPER.load(), None, [], today)["loi_sai"]
         miss = [w for w in miss if re.search(r"[A-Za-z]", w)]
+    elif lang == "zh":       # 1.33: chữ Hán, không kana
+        miss = [w for w in miss if re.search(r"[\u4e00-\u9fff]", w) and not re.search(r"[\u3040-\u30ff]", w)]
+    elif lang == "ko":
+        miss = [w for w in miss if re.search(r"[\uac00-\ud7a3]", w)]
     else:
         miss = [w for w in miss if ai.JP_CHAR_RE.search(w)]
     return list(dict.fromkeys(miss))[:12]
@@ -1343,7 +1486,7 @@ def _ai_scope(cfg: dict[str, Any], o: dict[str, Any], lang: str) -> dict[str, An
     vẫn theo giáo trình); trình độ luôn theo ô Trình độ."""
     en = lang == "en"
     src = words.load_src(mw.col)
-    level = o["level_en"] if en else o["level"]
+    level = _level_of(o, lang)
     if lang == "vi":          # 1.25.2: báo tiếng Việt chỉ truyện + tin làng, không lấy thẻ
         return ai_vi.scope()
     mod = AI_MODS.get(lang)
@@ -1527,7 +1670,7 @@ def ai_start(reason: str, dialog: Any = None, lang: str = "ja") -> bool:
                 # 1.25.2: truyện chung + thời tiết khớp với trời trong vườn
                 "story_base": AI_DIR_SHARED, "thoi_tiet": _village_weather(date)}
         try:
-            src0 = ai.migrate_story(AI_DIR_SHARED, [AI_DIR, AI_DIR_EN, AI_DIR_VI])
+            src0 = ai.migrate_story(AI_DIR_SHARED, [AI_DIR, AI_DIR_EN, AI_DIR_VI, AI_DIR_ZH, AI_DIR_KO])
             if src0:
                 _warn("truyện chung", "chép bộ nhớ truyện từ " + os.path.basename(src0))
         except OSError as err:
@@ -1543,7 +1686,7 @@ def ai_start(reason: str, dialog: Any = None, lang: str = "ja") -> bool:
     st["last_try"] = time.time()
     ai.save_status(base, st)
     client = ai.Gemini(key, exhausted=_shared_exhausted())
-    voice = o["voice_en"] if en else o["voice"]
+    voice = o["voice_en"] if lang in ("en", "zh", "ko") else o["voice"]
     claude_story = _claude_story_dir(cfg)
 
     def progress(msg: str) -> None:
@@ -1693,7 +1836,7 @@ def _ai_done(fut: Any, base: str, date: str, client: Any = None, owner: str | No
     if client is not None:
         st["exhausted"] = client.exhausted_state()
     ai.save_status(base, st)
-    lname = {AI_DIR_EN: " tiếng Anh", AI_DIR_VI: " tiếng Việt"}.get(base, "")
+    lname = {AI_DIR_EN: " tiếng Anh", AI_DIR_VI: " tiếng Việt", AI_DIR_ZH: " tiếng Trung", AI_DIR_KO: " tiếng Hàn"}.get(base, "")
     if res.get("ok") and not res.get("audio_only"):
         msg = "Báo%s mới: số %s đã về hòm thư." % (lname, res.get("so", ""))
     elif res.get("ok") and au.get("made"):
@@ -2244,7 +2387,7 @@ def fix_start(ds: str, auto: bool = False) -> str:
     ex = dict(_shared_exhausted())
     client = ai.Gemini(key, exhausted=ex)
     models: list[str] = []
-    for base in (AI_DIR, AI_DIR_EN, AI_DIR_VI):
+    for base in (AI_DIR, AI_DIR_EN, AI_DIR_VI, AI_DIR_ZH, AI_DIR_KO):
         st = ai.load_status(base) if os.path.isdir(base) else {}
         for n in st.get("models") or [] if isinstance(st.get("models"), list) else []:
             if isinstance(n, str) and n not in models:
@@ -3355,8 +3498,8 @@ class GardenDialog(QDialog):
             if group == "paper" and action == "issue":
                 if lib is None:
                     raise paper.PaperError(
-                        "Báo tiếng %s do Gemini viết: dán khoá Gemini ở tab Nguồn báo." % ("Anh" if lang == "en" else "Việt")
-                        if lang in ("en", "vi") else
+                        "Báo %s do Gemini viết: dán khoá Gemini ở tab Nguồn báo." % LANG_NAME.get(lang, lang)
+                        if lang in ("en", "vi", "zh", "ko") else
                         "Chưa chọn nguồn báo: mở tab Nguồn báo để dán khoá Gemini hoặc chọn thư mục kotoba_daily.")
                 voice = _voice()
                 view = self._issue_view(lib, st, arg, voice, src, lang)
@@ -3451,6 +3594,7 @@ class GardenDialog(QDialog):
                 cfg0 = config()
                 before = wanted_langs(cfg0)
                 changes["gemini_langs"] = clean_langs(p["langs"])
+                changes["gemini_langs_chosen"] = True            # 1.33: người dùng đã tự chọn báo
                 if ai.clean_key(cfg0.get("gemini_key")) and not cfg0.get("gemini_wait_start"):
                     # 1.22.4: báo vừa tick thêm chờ chọn trình độ / deck rồi bấm "Bắt đầu viết", không viết ngay
                     old_w = cfg0.get("gemini_wait_langs") if isinstance(cfg0.get("gemini_wait_langs"), list) else []
@@ -3460,6 +3604,14 @@ class GardenDialog(QDialog):
                 changes["gemini_level"] = p["level"]
             if p.get("level") in ai_en.LEVELS:          # 1.19: trình độ của báo tiếng Anh (A1–C1)
                 changes["gemini_level_en"] = p["level"]
+            if p.get("level") in ai_zh.LEVELS:          # 1.33: báo tiếng Trung (HSK 1–6) / tiếng Hàn (TOPIK 1–6)
+                changes["gemini_level_zh"] = p["level"]
+            if p.get("level") in ai_ko.LEVELS:
+                changes["gemini_level_ko"] = p["level"]
+            if isinstance(p.get("suggest_off"), str) and p["suggest_off"] in LEARN_LANGS:     # 1.33: "Không" ở dòng gợi ý
+                cur_off = config().get("gemini_suggest_off")
+                cur_off = [x for x in cur_off if x in LEARN_LANGS] if isinstance(cur_off, list) else []
+                changes["gemini_suggest_off"] = list(dict.fromkeys(cur_off + [p["suggest_off"]]))
             if p.get("audio") in ai.AUDIO_MODES:
                 changes["gemini_audio"] = p["audio"]
             if p.get("voice") in ai.VOICES:              # 1.19.1: một giọng chung cho cả hai báo
@@ -3778,15 +3930,18 @@ class GardenDialog(QDialog):
             i, j = int(payload.get("i", 0)), int(payload.get("j", 0))
             iss = lib.try_issue(date)
             en = bool(iss and iss["lang"] == "en")
+            il = iss["lang"] if iss else "ja"
+            machine = voice.tts_en if en else voice.tts_xx.get(il) if il in ("zh", "ko") else voice.tts   # 1.33
             if kind == "bai":
                 au = lib.audio(date)
                 rel = au["bai"][i][j] if i < len(au["bai"]) and j < len(au["bai"][i]) else None
                 path = lib.audio_path(date, rel)
                 if path:
                     target = ("file", path, 1.0)
-                elif (voice.tts_en if en else voice.tts) and iss and i < len(iss["bai"]) and j < len(iss["bai"][i]["doan"]):
-                    # 1.13: giọng của máy (1.19: báo tiếng Anh → giọng tiếng Anh)
-                    target = ("tts_en" if en else "tts", paper.speech_text(iss["bai"][i]["doan"][j]), 1.0)
+                elif machine and iss and i < len(iss["bai"]) and j < len(iss["bai"][i]["doan"]):
+                    # 1.13: giọng của máy (1.19: báo tiếng Anh → giọng tiếng Anh; 1.33: tiếng Trung / tiếng Hàn)
+                    target = ("tts_en" if en else "tts_" + il if il in ("zh", "ko") else "tts",
+                              paper.speech_text(iss["bai"][i]["doan"][j], il), 1.0)
             elif kind == "ct" and iss and i < len(iss["chinh_ta"]):
                 cv = paper.ct_voice(lib, date, i, iss["chinh_ta"][i]["cau"], voice, iss["lang"])
                 if cv["audio"]:

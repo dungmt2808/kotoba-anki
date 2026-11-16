@@ -31,6 +31,8 @@ text = core.text      # 1.17: chuẩn hoá chữ (furigana, tiếng Anh) — tex
 PAPER_KEY = "kotoba_batake_paper"
 PAPER_KEY_EN = "kotoba_batake_paper_en"   # 1.19: báo tiếng Anh (số đã đọc / câu đã làm theo ngày, tách khỏi báo tiếng Nhật)
 PAPER_KEY_VI = "kotoba_batake_paper_vi"   # 1.25.1: báo tiếng Việt (Báo Làng Kotoba)
+PAPER_KEY_ZH = "kotoba_batake_paper_zh"   # 1.33: báo tiếng Trung
+PAPER_KEY_KO = "kotoba_batake_paper_ko"   # 1.33: báo tiếng Hàn
 ISSUE_LANGS = ("ja", "en", "vi", "zh", "ko")     # 1.33: báo tiếng Trung / tiếng Hàn
 DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 AUDIO_RE = re.compile(r"^audio/[A-Za-z0-9_.-]{1,80}\.(?:wav|mp3|ogg|m4a)$")
@@ -850,7 +852,8 @@ def issue_view(lib: Library, st: dict[str, Any], date: str, voice: Voice | None 
     fallback = False
     lang = iss["lang"]
     # 1.25.1: báo tiếng Việt không có giọng đọc (tiếng mẹ đẻ, không nghe / chép)
-    machine = voice.tts_en if lang == "en" else (False if lang == "vi" else voice.tts)
+    machine = voice.tts_en if lang == "en" else (False if lang == "vi" else voice.tts_xx.get(lang, False)
+                                                  if lang in ("zh", "ko") else voice.tts)      # 1.33
     for i, b in enumerate(iss["bai"]):
         a = dict(b)
         files = audio["bai"][i] if i < len(audio["bai"]) else []
@@ -872,7 +875,7 @@ def issue_view(lib: Library, st: dict[str, Any], date: str, voice: Voice | None 
     dict_items = []
     for i, c in enumerate(iss["chinh_ta"]):
         cv = ct_voice(lib, date, i, c["cau"], voice, lang)
-        fallback = fallback or cv["how"] in ("cache", "tts", "tts_en")
+        fallback = fallback or cv["how"] in ("cache", "tts", "tts_en", "tts_zh", "tts_ko")
         n, unit = dict_len(c["cau"], lang)
         item = {"audio": cv["audio"], "slow": cv["slow"], "pending": cv["pending"], "len": n, "unit": unit,
                 "lang": lang, "kana_ok": lang == "ja"}
@@ -883,7 +886,7 @@ def issue_view(lib: Library, st: dict[str, Any], date: str, voice: Voice | None 
         "date": date, "so": iss["so"], "rut_gon": iss["rut_gon"], "bai": arts, "cau_hoi": questions,
         "chinh_ta": dict_items, "mau": mau, "tu": tu, "credit": audio["credit"], "may_viet": iss["may_viet"],
         "voice_note": "Câu chưa có giọng đọc dùng giọng dự phòng (Gemini hoặc giọng %s của máy)."
-        % ("tiếng Anh" if lang == "en" else "tiếng Nhật") if fallback and lang != "vi" else "",
+        % {"en": "tiếng Anh", "zh": "tiếng Trung", "ko": "tiếng Hàn"}.get(lang, "tiếng Nhật") if fallback and lang != "vi" else "",
         "lang": lang,
         "coins": r["coins"], "complete": r["bonus"],
         "reward": {"q": Q_COINS, "ct": CT_COINS, "bonus": ISSUE_BONUS},
@@ -1042,8 +1045,12 @@ def answer_issue_dictation(lib: Library, st: dict[str, Any], date: str, i: int,
         _queue_wrong(st, sid, today)
         _remember_miss(st, keys(c["cau"]), today)
     bonus = _check_issue_done(lib, st, iss, date, voice) if first else 0
-    return {"kind": "ct", "date": date, "i": i, "ok": ok, "cau": c["cau"], "first": first,
-            "gained": gained + bonus, "bonus": bonus, "complete": r["bonus"], "lang": iss["lang"]}
+    out = {"kind": "ct", "date": date, "i": i, "ok": ok, "cau": c["cau"], "first": first,
+           "gained": gained + bonus, "bonus": bonus, "complete": r["bonus"], "lang": iss["lang"]}
+    if iss["lang"] in ("zh", "ko"):       # 1.33: tô từng chữ (tiếng Trung) / từng cụm (tiếng Hàn) đúng – sai
+        typed = next((v for v in variants if isinstance(v, str) and v.strip()), "")
+        out["grade"] = grade_answer(c["cau"], typed, iss["lang"])
+    return out
 
 
 # ---------------------------------------------------------------------------
@@ -1339,7 +1346,7 @@ def play_target(how: str | None, data: Any, slow: bool, lib: Library | None = No
         if slow and data[1]:
             return ("file", data[1], 1.0)
         return ("file", data[0], SLOW_SPEED if slow else 1.0)
-    if how in ("tts", "tts_en") and isinstance(data, str) and data:
+    if how in ("tts", "tts_en", "tts_zh", "tts_ko") and isinstance(data, str) and data:
         return (how, data, 0.7 if slow else 1.0)
     return None
 
