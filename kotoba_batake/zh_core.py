@@ -208,3 +208,131 @@ def display(word: str, reading: str) -> dict[str, Any]:
     """Cho note_details: pinyin đã đổi số → dấu + cặp chữ / âm tiết (nếu ghép được)."""
     r = unicodedata.normalize("NFC", tone_marks(reading or "")) if reading else ""
     return {"reading": r, "ruby": ruby_pairs(word, r) if r else None}
+
+
+# ---------------------------------------------------------------------------
+# 1.33 — báo tiếng Trung: soát pinyin Gemini ghi cho từng chữ bằng bảng cách đọc (zh_data.READINGS_RAW, sinh từ pypinyin)
+# ---------------------------------------------------------------------------
+
+_READINGS: dict[str, set[str]] | None = None
+FREE_TONE = {"一", "不"}       # 一 / 不 đổi thanh theo chữ sau (yī → yí / yì, bù → bú): nhận mọi thanh
+
+
+def readings(ch: str) -> set[str]:
+    """Cách đọc của một chữ Hán: {"hao3", "hao4"} (âm tiết không thanh, ü viết v, + số thanh 1–5). Chữ ngoài bảng → set()."""
+    global _READINGS
+    if _READINGS is None:
+        try:
+            from .zh_data import READINGS_RAW
+        except ImportError:
+            try:
+                from zh_data import READINGS_RAW  # type: ignore[no-redef]
+            except ImportError:
+                import importlib.util as _ilu2
+                _sp = _ilu2.spec_from_file_location("kotoba_zh_data2", os.path.join(os.path.dirname(os.path.abspath(__file__)), "zh_data.py"))
+                _md = _ilu2.module_from_spec(_sp)
+                _sp.loader.exec_module(_md)  # type: ignore[union-attr]
+                READINGS_RAW = _md.READINGS_RAW
+        table: dict[str, set[str]] = {}
+        for line in READINGS_RAW.splitlines():
+            if "\t" not in line:
+                continue
+            rd, chars = line.split("\t", 1)
+            vals = set(rd.split())
+            for c in chars:
+                table[c] = vals
+        _READINGS = table
+    return _READINGS.get(ch, set())
+
+
+def known(ch: str) -> bool:
+    return bool(readings(ch))
+
+
+def numbered(syl: str) -> tuple[str, int] | None:
+    """Âm tiết (có dấu hoặc ghi số) → (chữ cái không thanh, ü = v; thanh 1–5). Không phải âm tiết hợp lệ → None."""
+    s = (syl or "").strip()
+    m = re.fullmatch(r"([A-Za-züÜ:]+)([0-5])", s)
+    tone = 5
+    if m:
+        s, tone = m.group(1).replace("u:", "v").replace("U:", "v"), int(m.group(2)) or 5
+    else:
+        t = _tones(s)
+        if t > 1:
+            return None
+        for ch in unicodedata.normalize("NFD", s):
+            if ch in TONE_OF:
+                tone = int(TONE_OF[ch])
+    b = _base(s)
+    if not b or (b not in SYLLABLES and not (b == "r")):
+        return None
+    return b, tone
+
+
+def syllable_ok(ch: str, syl: str) -> bool:
+    """Âm tiết `syl` có phải cách đọc của chữ `ch` không (thanh nhẹ nhận cho mọi chữ; 一 / 不 nhận mọi thanh;
+    儿 sau âm tiết khác đọc r)."""
+    n = numbered(syl)
+    rd = readings(ch)
+    if n is None or not rd:
+        return False
+    base, tone = n
+    if ch == "儿" and base == "r":
+        return True
+    bases = {r[:-1] for r in rd}
+    if base not in bases:
+        return False
+    return tone == 5 or ch in FREE_TONE or (base + str(tone)) in rd
+
+
+def word_problem(word: str, reading: str) -> str:
+    """Soát một chỗ [chữ|pinyin] của báo: "" nếu đúng, không thì câu lỗi ngắn (tiếng Việt) để gửi lại Gemini sửa."""
+    chars = [c for c in word if is_han(c)]
+    if not chars:
+        return ""
+    unknown = [c for c in chars if not known(c)]
+    if unknown:
+        return "chữ %s ít dùng (ngoài bộ chữ giản thể / phồn thể thường dùng)" % "".join(unknown)
+    raw = _NUM_SYL.sub(lambda m: m.group(0) + " ", (reading or "").strip())
+    sy = [p for p in _SEP.split(raw.strip()) if p]
+    if len(sy) != len(chars):
+        return "%s có %d chữ nhưng pinyin \"%s\" có %d âm tiết" % (word, len(chars), reading, len(sy))
+    bad = [(c, s) for c, s in zip(chars, sy) if not syllable_ok(c, s)]
+    if bad:
+        return "pinyin sai: " + ", ".join("%s đọc là %s chứ không phải \"%s\"" % (
+            c, "/".join(sorted(tone_marks(r) if r[-1] != "5" else r[:-1] for r in readings(c))), s) for c, s in bad[:3])
+    return ""
+
+
+def fill_reading(word: str) -> str | None:
+    """Chữ Hán không có pinyin trong bài: chữ chỉ có một cách đọc thì máy tự điền (ghi có dấu), không thì None."""
+    out = []
+    for c in word:
+        if not is_han(c):
+            return None
+        rd = readings(c)
+        if len(rd) != 1:
+            return None
+        r = next(iter(rd))
+        out.append(tone_marks(r) if r[-1] != "5" else r[:-1])
+    return " ".join(out) if out else None
+
+
+def is_simplified_text(words: list[str]) -> bool:
+    """Deck viết chữ giản thể hay phồn thể: phần lớn chữ Hán mã hoá được GB2312 → giản thể."""
+    gb = big5 = 0
+    for w in words:
+        for c in w:
+            if not is_han(c):
+                continue
+            try:
+                c.encode("gb2312")
+                gb += 1
+            except UnicodeEncodeError:
+                pass
+            try:
+                c.encode("big5")
+                big5 += 1
+            except UnicodeEncodeError:
+                pass
+    return gb >= big5
