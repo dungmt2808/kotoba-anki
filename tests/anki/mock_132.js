@@ -1,5 +1,5 @@
 // Ảnh phác 1.32 (16/11) — "Tiếng trong vườn" (Nhật / Anh / Trung / Hàn / chỉ tiếng Việt) + deck tiếng Trung / tiếng Hàn
-// bước 1. Chưa phải mã thật: vẽ đè lên vườn thật của add-on 1.31.5 (chữ lấy từ bản nháp docs/ke_hoach_1_32/tieng_nhap.py).
+// bước 1. Chưa phải mã thật: vẽ đè lên vườn thật của add-on 1.31.5 (chữ lấy từ kotoba_batake/lang_core.py).
 // Chạy (ANKI_PY = venv aqt):
 //   B=/tmp/kb_mock132; ./setup_demo.sh $B ../../kotoba_batake && $ANKI_PY demo_zhko.py $B/Test/collection.anki2
 //   (./run_anki.sh $B 9333 $B.log &) ; node mock_132.js OUT [bước…] ; python3 mock_132_ghep.py OUT ; ./kill_anki.sh

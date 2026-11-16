@@ -137,6 +137,12 @@ var GardenGreet = (function () {
     const byHour = h >= 4 && h < 11 ? ["おはよう！", "Chào buổi sáng!"] : h >= 11 && h < 18 ? ["こんにちは！", "Xin chào!"] : ["こんばんは！", "Chào buổi tối!"];
     let hi = byHour[0], vi = byHour[1];
     if (g.fest) { hi = g.fest.hi; vi = g.fest.vi; }
+    // 1.32: Chỉ tiếng Việt → câu tiếng Việt lên dòng lớn, dòng dưới bỏ câu chào trùng
+    if (typeof GardenLang !== "undefined" && GardenLang.cur() === "vi") {
+      if (g.who === "stack") { return [vi, g.away ? g.away + " đi chơi rồi — cho ăn là về nhé." : g.reviews > 0 ? "Hôm nay ôn " + g.reviews + " lượt rồi đó." : ""]; }
+      if (g.freeze && !g.fest) { return [vi, g.name + " · Hôm qua bận hả? Chuỗi vẫn còn nè!"]; }
+      return [vi, g.name];
+    }
     if (g.who === "stack") {
       if (g.away) { return [hi, g.away + " đi chơi rồi — cho ăn là về nhé."]; }
       return [hi, vi + (g.reviews > 0 ? " Hôm nay ôn " + g.reviews + " lượt rồi đó." : "")];
@@ -153,7 +159,10 @@ var GardenGreet = (function () {
     const bub = el("div", "kb-greet-bubble");
     const [hi, vi] = hello(g, st);
     const hiEl = el("div", "kb-greet-hi", hi); hiEl.setAttribute("lang", "ja"); bub.appendChild(hiEl);
-    bub.appendChild(el("div", "kb-greet-vi", vi));
+    if (typeof GardenLang !== "undefined" && GardenLang.cur() !== "ja") {        // 1.32
+      if (GardenLang.cur() === "vi") { hiEl.setAttribute("lang", "vi"); } else { GardenLang.fill(hiEl, hi); if (GardenLang.cur() === "en") { hiEl.setAttribute("lang", "en"); } }
+    }
+    if (vi) { bub.appendChild(el("div", "kb-greet-vi", vi)); }
     const lines = (g.news || []).slice(0, 3);
     if (g.who === "stack" && g.away && lines.length < 3) { lines.push("[i:paw] Nhà → Thú nuôi → Cho ăn"); }
     if (lines.length) { const n = el("div", "kb-greet-news"); lines.forEach((t) => n.appendChild(fill(el("div"), t))); bub.appendChild(n); }

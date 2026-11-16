@@ -1,14 +1,22 @@
-"""ことば畑 1.32 — BẢN NHÁP chữ cho ảnh phác (chưa nằm trong add-on; khi làm sẽ chuyển vào kotoba_batake/tieng_core.py) — "Tiếng trong vườn": chữ của StackChan, sinh hoạt, đồ nhặt, khách, tường / sàn,
-mùa theo tiếng người dùng chọn (Nhật / Anh / Trung / Hàn / chỉ tiếng Việt). Thuần Python, không import anki / aqt.
+"""ことば畑 1.32 — "Ngôn ngữ trong vườn": chữ của StackChan, sinh hoạt, đồ nhặt, khách, tường / sàn, mùa, tiêu đề bảng và
+trò chơi theo ngôn ngữ chọn ở ⚙ (Tự theo deck / Nhật / Anh / Trung / Hàn / Chỉ tiếng Việt). Thuần Python, không import
+anki / aqt. Python chỉ giữ bảng chữ và gửi một lần cho trang (`bundle()`); trang (web/glang.js) chọn ngôn ngữ và đổi chữ.
+
+Lựa chọn lưu ở cài đặt riêng máy (config "prefs", khoá "kb-glang") — không ghi gì vào collection. Sổ sinh hoạt / Hộp sưu
+tầm / Album khách vẫn lưu theo mã → đổi ngôn ngữ qua lại không mất gì.
 
 Mỗi mục: (tiếng Anh, chữ Trung giản thể, pinyin có dấu thanh, chữ Hàn, phiên âm Hàn theo Romaja quốc ngữ). Tiếng Nhật +
 tiếng Việt giữ ở bảng gốc (life_core.ACTS, finds_core.FINDS, guest_core.GUESTS, decor_core, season_core). Câu tiếng Trung /
-tiếng Hàn do Claude soạn — cần người giỏi tiếng đó đọc lại trước khi phát hành.
+tiếng Hàn do Claude soạn; core/test_132.py soát pinyin bằng từ điển pinyin độc lập, chữ giản thể, phiên âm Hàn bằng bộ
+chuyển Hangul → Romaja viết riêng trong test.
 """
 from __future__ import annotations
 
 LANGS = ("ja", "en", "zh", "ko", "vi")
-LANG_NAMES = {"ja": "Tiếng Nhật", "en": "Tiếng Anh", "zh": "Tiếng Trung", "ko": "Tiếng Hàn", "vi": "Chỉ tiếng Việt"}
+CHOICES = ("auto",) + LANGS
+LANG_NAMES = {"auto": "Tự theo deck", "ja": "Tiếng Nhật", "en": "Tiếng Anh", "zh": "Tiếng Trung", "ko": "Tiếng Hàn",
+              "vi": "Chỉ tiếng Việt"}
+PREF_KEY = "kb-glang"
 
 # Sinh hoạt của StackChan (khoá = id việc trong life_core.ACTS)
 ACTS: dict[str, tuple[str, str, str, str, str]] = {
@@ -29,7 +37,7 @@ ACTS: dict[str, tuple[str, str, str, str, str]] = {
     "shinbun": ("read the newspaper", "看报纸", "kàn bàozhǐ", "신문을 읽다", "sinmuneul ikda"),
     "terebi": ("watch TV", "看电视", "kàn diànshì", "텔레비전을 보다", "tellebijeoneul boda"),
     "rajio": ("listen to the radio", "听收音机", "tīng shōuyīnjī", "라디오를 듣다", "radioreul deutda"),
-    "gakki": ("play an instrument", "弹乐器", "tán yuèqì", "악기를 연주하다", "akgireul yeonjuhada"),
+    "gakki": ("play an instrument", "演奏乐器", "yǎnzòu yuèqì", "악기를 연주하다", "akgireul yeonjuhada"),
     "esa": ("feed the fish", "喂鱼", "wèi yú", "물고기에게 먹이를 주다", "mulgogiege meogireul juda"),
     "hi": ("warm up by the fire", "烤火", "kǎo huǒ", "불을 쬐다", "bureul jjoeda"),
     "kotatsu": ("sit at the kotatsu", "钻进被炉", "zuānjìn bèilú", "코타츠에 들어가다", "kotacheue deureogada"),
@@ -112,7 +120,7 @@ FINDS: dict[str, tuple[str, str, str, str, str]] = {
     "takenoko2": ("bamboo shoot", "竹笋", "zhúsǔn", "죽순", "juksun"),
     "tentoumushi": ("ladybug", "瓢虫", "piáochóng", "무당벌레", "mudangbeolle"),
     "taketonbo": ("bamboo-copter", "竹蜻蜓", "zhúqīngtíng", "대나무 잠자리", "daenamu jamjari"),
-    "sasabune": ("bamboo-leaf boat", "竹叶船", "zhúyèchuán", "댓잎 배", "daennip bae"),
+    "sasabune": ("bamboo-leaf boat", "竹叶船", "zhúyèchuán", "대나무 잎 배", "daenamu ip bae"),
     "kokedama": ("moss ball", "苔藓球", "táixiǎnqiú", "이끼 공", "ikki gong"),
     "nukegara": ("cicada shell", "蝉蜕", "chántuì", "매미 허물", "maemi heomul"),
     "onsentamago": ("hot-spring egg", "温泉蛋", "wēnquándàn", "온천 달걀", "oncheon dalgyal"),
@@ -123,7 +131,7 @@ FINDS: dict[str, tuple[str, str, str, str, str]] = {
     "yuzu": ("yuzu", "柚子", "yòuzi", "유자", "yuja"),
     "kippu": ("old train ticket", "车票", "chēpiào", "기차표", "gichapyo"),
     "kitte": ("stamp", "邮票", "yóupiào", "우표", "upyo"),
-    "ehagaki": ("picture postcard", "明信片", "míngxìnpiàn", "그림엽서", "geurimyeopseo"),
+    "ehagaki": ("picture postcard", "明信片", "míngxìnpiàn", "엽서", "yeopseo"),
     "kagi": ("key", "钥匙", "yàoshi", "열쇠", "yeolsoe"),
     "botan": ("button", "纽扣", "niǔkòu", "단추", "danchu"),
     "ekistamp": ("station stamp", "车站印章", "chēzhàn yìnzhāng", "역 스탬프", "yeok seutaempeu"),
@@ -155,7 +163,7 @@ DECOR: dict[str, tuple[str, str, str, str, str]] = {
     "w_soc": ("stripes", "条纹", "tiáowén", "줄무늬", "julmunui"),
     "w_sakura": ("cherry blossoms", "樱花", "yīnghuā", "벚꽃", "beotkkot"),
     "w_seigaiha": ("wave pattern", "青海波", "qīnghǎibō", "물결무늬", "mulgyeolmunui"),
-    "w_asanoha": ("hemp-leaf pattern", "麻叶纹", "máyèwén", "삼잎 무늬", "samip munui"),
+    "w_asanoha": ("hemp-leaf pattern", "麻叶纹", "máyèwén", "삼베 무늬", "sambe munui"),
     "w_caro": ("check pattern", "格子", "gézi", "체크무늬", "chekeumunui"),
     "w_go": ("wood panels", "木板墙", "mùbǎn qiáng", "나무 벽", "namu byeok"),
     "w_gach": ("brick", "砖墙", "zhuānqiáng", "벽돌", "byeokdol"),
@@ -207,8 +215,8 @@ SAY: dict[str, tuple[str, str, str, str, str]] = {
     "えへへ": ("Hehe", "嘿嘿", "hēihēi", "헤헤", "Hì hì"),
     "おつかれさま！": ("Great work today!", "辛苦了！", "xīnkǔ le", "수고했어!", "Vất vả rồi!"),
     "目標達成！": ("Goal reached!", "目标达成！", "mùbiāo dáchéng", "목표 달성!", ""),
-    "やった！": ("Yay!", "太好了！", "tài hǎo le", "해냈다!", ""),
-    "わあ！": ("Wow!", "哇！", "wa", "와!", ""),
+    "やった！": ("Yay!", "太好了！", "tài hǎo le", "해냈다!", "Tuyệt!"),
+    "わあ！": ("Wow!", "哇！", "wa", "와!", "Oa!"),
     "宝箱！": ("Treasure chest!", "宝箱！", "bǎoxiāng", "보물상자!", ""),
     "ようこそ！": ("Welcome!", "欢迎！", "huānyíng", "어서 와!", "Chào mừng!"),
     "海の家へようこそ！": ("Welcome to the beach!", "欢迎来海边！", "huānyíng lái hǎibiān", "바닷가에 어서 와!", ""),
@@ -239,11 +247,11 @@ SAY: dict[str, tuple[str, str, str, str, str]] = {
     "雪だ！": ("It's snowing!", "下雪了！", "xià xuě le", "눈이 온다!", ""),
     "晴れ！": ("Sunny!", "晴天！", "qíngtiān", "맑다!", ""),
     "くもり…": ("Cloudy…", "阴天…", "yīntiān", "흐리다…", ""),
-    "おはよう！": ("Good morning!", "早上好！", "zǎoshang hǎo", "좋은 아침!", ""),
+    "おはよう！": ("Good morning!", "早上好！", "zǎoshang hǎo", "좋은 아침!", "Chào buổi sáng!"),
     "お昼だ！": ("Lunchtime!", "中午了！", "zhōngwǔ le", "점심이다!", ""),
     "夕焼け、きれい！": ("What a sunset!", "晚霞真美！", "wǎnxiá zhēn měi", "노을 예쁘다!", "Hoàng hôn đẹp quá!"),
     "こんばんは～": ("Good evening~", "晚上好～", "wǎnshang hǎo", "좋은 저녁~", ""),
-    "こんばんは！": ("Good evening!", "晚上好！", "wǎnshang hǎo", "좋은 저녁!", ""),
+    "こんばんは！": ("Good evening!", "晚上好！", "wǎnshang hǎo", "좋은 저녁!", "Chào buổi tối!"),
     "星がきれい！": ("Lovely stars!", "星星真美！", "xīngxing zhēn měi", "별이 예쁘다!", ""),
     "春が来た！": ("Spring is here!", "春天来了！", "chūntiān lái le", "봄이 왔다!", ""),
     "夏だ！": ("It's summer!", "夏天到了！", "xiàtiān dào le", "여름이다!", ""),
@@ -257,14 +265,33 @@ SAY: dict[str, tuple[str, str, str, str, str]] = {
     "トリック・オア・トリート！": ("Trick or treat!", "不给糖就捣蛋！", "bù gěi táng jiù dǎodàn", "과자 안 주면 장난칠 거야!", ""),
     "紅葉がきれい！": ("Lovely autumn leaves!", "红叶真美！", "hóngyè zhēn měi", "단풍이 예쁘다!", ""),
     "メリークリスマス！": ("Merry Christmas!", "圣诞快乐！", "Shèngdàn kuàilè", "메리 크리스마스!", ""),
-    "あけましておめでとう！": ("Happy New Year!", "新年快乐！", "xīnnián kuàilè", "새해 복 많이 받아!", ""),
+    "あけましておめでとう！": ("Happy New Year!", "新年快乐！", "xīnnián kuàilè", "새해 복 많이 받아!", "Chúc mừng năm mới!"),
     "ハッピーハロウィン！": ("Happy Halloween!", "万圣节快乐！", "Wànshèngjié kuàilè", "해피 핼러윈!", ""),
     "お月見しよう！": ("Let's view the moon!", "一起赏月吧！", "yìqǐ shǎng yuè ba", "같이 달구경하자!", ""),
     "七夕だね！": ("It's Tanabata!", "七夕到了！", "Qīxī dào le", "칠석이네!", ""),
+    "ひとやすみ": ("Take a break", "休息一下", "xiūxi yíxià", "잠깐 쉬자", "Nghỉ một lát"),
     "今行くよ！": ("Coming!", "马上来！", "mǎshàng lái", "지금 갈게!", ""),
     "お疲れさま": ("Great job", "辛苦了", "xīnkǔ le", "수고했어", ""),
     "すごい": ("Amazing", "真厉害", "zhēn lìhai", "대단해", ""),
     "おめでとう": ("Congrats!", "恭喜！", "gōngxǐ", "축하해!", ""),
+    # trò chơi (theo ngôn ngữ của deck đang chơi)
+    "やったね！": ("You did it!", "做到了！", "zuò dào le", "해냈어!", "Làm được rồi!"),
+    "よくできました！": ("Well done!", "做得很好！", "zuò de hěn hǎo", "참 잘했어요!", "Giỏi lắm!"),
+    "もう少し！": ("Almost there!", "差一点！", "chà yìdiǎn", "조금만 더!", "Chút nữa thôi!"),
+    "時間切れ！": ("Time's up!", "时间到！", "shíjiān dào", "시간 끝!", "Hết giờ!"),
+    "ありがとう！": ("Thank you!", "谢谢！", "xièxie", "고마워!", "Cảm ơn nha!"),
+    "またね！": ("See you!", "再见！", "zàijiàn", "또 봐!", "Hẹn gặp lại!"),
+    "遅すぎた…": ("Too slow…", "太慢了…", "tài màn le", "너무 늦었어…", "Chậm mất rồi…"),
+    "えっ、違うよ…": ("Huh, that's not it…", "咦，不对哦…", "yí, bú duì o", "어, 그게 아니야…", "Ơ, không phải…"),
+    "もういいです…": ("Never mind…", "算了吧…", "suàn le ba", "됐어요…", "Thôi khỏi…"),
+    "完売！": ("Sold out!", "卖光了！", "mài guāng le", "완판!", ""),
+    "閉店！": ("Closing time!", "关门了！", "guān mén le", "가게 문 닫아요!", ""),
+    "守れた！": ("Garden saved!", "守住了！", "shǒu zhù le", "지켜냈다!", ""),
+    "全部取られた…": ("They took it all…", "全被抢走了…", "quán bèi qiǎng zǒu le", "다 뺏겼어…", ""),
+    "取られた！": ("Stolen!", "被抢走了！", "bèi qiǎng zǒu le", "뺏겼다!", "Mất rồi!"),
+    "完璧！": ("Perfect!", "完美！", "wánměi", "완벽해!", ""),
+    "クリア！": ("Cleared!", "过关！", "guòguān", "클리어!", ""),
+    "書き取り完了！": ("Dictation done!", "听写完成！", "tīngxiě wánchéng", "받아쓰기 끝!", ""),
 }
 
 # Tiêu đề bảng (chữ trang trí trước tên tiếng Việt)
@@ -276,4 +303,53 @@ TITLES: dict[str, tuple[str, str, str, str, str]] = {
     "項目設定": ("Field setup", "字段设置", "zìduàn shèzhì", "필드 설정", "pildeu seoljeong"),
     "見た目": ("Appearance", "外观", "wàiguān", "화면", "hwamyeon"),
     "今日のミッション": ("Today's missions", "今日任务", "jīnrì rènwu", "오늘의 미션", "oneurui misyeon"),
+    "ミニゲーム": ("Mini games", "小游戏", "xiǎo yóuxì", "미니게임", "minigeim"),
 }
+
+# Chữ tiếng Việt đi kèm câu tiếng Nhật mà chỉ đúng với người học tiếng Nhật (thi JLPT): đổi theo ngôn ngữ
+VI_SUB: dict[str, dict[str, str]] = {
+    "Cầu thi JLPT đỗ nè": {"en": "Cầu thi tiếng Anh đỗ nè", "zh": "Cầu thi HSK đỗ nè", "ko": "Cầu thi TOPIK đỗ nè",
+                           "vi": "Cầu thi đỗ nè"},
+}
+
+# Tên 5 trò chơi (games.js, trường jp) theo ngôn ngữ của deck đang chơi
+GAMES: dict[str, dict[str, str]] = {
+    "listen": {"ja": "聞いて探そう", "en": "Listen & Find", "zh": "听音找词", "ko": "듣고 찾기"},
+    "market": {"ja": "朝市", "en": "Morning Market", "zh": "早市", "ko": "아침 시장"},
+    "crow": {"ja": "カラス追い", "en": "Shoo the Crows", "zh": "赶乌鸦", "ko": "까마귀 쫓기"},
+    "memory": {"ja": "神経衰弱", "en": "Memory", "zh": "翻牌配对", "ko": "짝 맞추기"},
+    "cloze": {"ja": "穴埋め", "en": "Fill the Gap", "zh": "填空", "ko": "빈칸 채우기"},
+}
+# Khách ở Chợ sáng hỏi mua (%s = chữ trên biển cây)
+ASK: dict[str, list[str]] = {
+    "ja": ["「%s」ください！", "「%s」はありますか？", "「%s」をひとつ！"],
+    "en": ["“%s”, please!", "Do you have “%s”?", "One “%s”, please!"],
+    "zh": ["请给我「%s」！", "有「%s」吗？", "来一个「%s」！"],
+    "ko": ["“%s” 주세요!", "“%s” 있어요?", "“%s” 하나 주세요!"],
+    "vi": ["Cho mình “%s”!", "Có “%s” không?", "Một “%s” nhé!"],
+}
+# Góc thẻ Lật cặp: chữ / nghĩa / cách đọc / Hán Việt (ja còn 文 = mẫu ngữ pháp, 語 = từ vựng)
+TAGS: dict[str, dict[str, str]] = {
+    "ja": {"kanji": "字", "grammar": "文", "word": "語", "meaning": "意", "reading": "読", "hanviet": "漢"},
+    "en": {"kanji": "W", "grammar": "G", "word": "W", "meaning": "M", "reading": "R", "hanviet": "HV"},
+    "zh": {"kanji": "字", "grammar": "文", "word": "词", "meaning": "意", "reading": "音", "hanviet": "汉"},
+    "ko": {"kanji": "字", "grammar": "문", "word": "단", "meaning": "뜻", "reading": "음", "hanviet": "한"},
+    "vi": {"kanji": "C", "grammar": "NP", "word": "T", "meaning": "N", "reading": "Đ", "hanviet": "HV"},
+}
+
+
+def bundle() -> dict:
+    """Bảng chữ gửi cho trang một lần (glang.js). Mục ACTS / FINDS… giữ dạng mảng [en, zh, pinyin, ko, romaja]."""
+    return {"choices": list(CHOICES), "names": LANG_NAMES, "pref": PREF_KEY,
+            "acts": {k: list(v) for k, v in ACTS.items()}, "finds": {k: list(v) for k, v in FINDS.items()},
+            "guests": {k: list(v) for k, v in GUESTS.items()}, "decor": {k: list(v) for k, v in DECOR.items()},
+            "seasons": {k: list(v) for k, v in SEASONS.items()}, "say": {k: list(v) for k, v in SAY.items()},
+            "titles": {k: list(v) for k, v in TITLES.items()}, "sub": VI_SUB, "games": GAMES, "ask": ASK, "tags": TAGS}
+
+
+def item(table: dict, key: str, lang: str) -> tuple[str, str]:
+    """(chữ, cách đọc) của một mục theo ngôn ngữ; ("", "") nếu không có / "vi" / "ja" (dùng bảng gốc)."""
+    row = table.get(key)
+    if not row or lang not in ("en", "zh", "ko"):
+        return "", ""
+    return (row[0], "") if lang == "en" else (row[1], row[2]) if lang == "zh" else (row[3], row[4])

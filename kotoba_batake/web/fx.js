@@ -243,11 +243,11 @@ var GardenFX = (function () {
   function pick(list) { return list[Math.floor(Math.random() * list.length)]; }
 
   var sayTimer = null;
-  function say(text, ms) {
+  function say(text, ms, lang) {
     var b = $("kb-say");
     if (!b) { return; }
     if (typeof GardenUI !== "undefined" && GardenUI.allow && !GardenUI.allow("mascot")) { return; }   // 1.14: tắt linh vật nói
-    b.textContent = text;
+    if (typeof GardenLang !== "undefined") { GardenLang.fill(b, text, lang); } else { b.textContent = text; }     // 1.32
     b.hidden = false;
     b.classList.remove("kb-pop");
     void b.offsetWidth;
@@ -840,7 +840,7 @@ var GardenFX = (function () {
     },
     mood: function (m, ms) { setMood(m, ms); },
     _mood: function () { return mascot.mood; },   // cho test
-    say: function (text, ms) { say(text, ms); },
+    say: function (text, ms, lang) { say(text, ms, lang); },
     effectsOn: function () { return cfg.effects && !reduced; },
     soundAllowed: function () { return cfg.sound; },
     muted: function () { return muted; },

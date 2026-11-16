@@ -3923,6 +3923,9 @@ var GardenHome = (function () {
   }
 
   function sfx(n) { if (typeof GardenFX !== "undefined" && GardenFX.sound) { GardenFX.sound(n); } }
+  // 1.32: tên theo Ngôn ngữ trong vườn (span nhỏ cạnh tên tiếng Việt) — "" khi Chỉ tiếng Việt
+  function glabel(kind, id, ja) { return typeof GardenLang !== "undefined" ? GardenLang.label(kind, id, ja, "") : (ja || ""); }
+  function gattr(kind) { const L = typeof GardenLang !== "undefined" ? GardenLang : null, l = L ? L.cur() : "ja"; return l === "zh" ? "zh-CN" : l === "ko" ? "ko" : l === "en" ? "en" : "ja"; }
   function mood(m, ms, text) {
     if (typeof GardenFX === "undefined") { return; }
     GardenFX.mood(m, ms); if (text) { GardenFX.say(text, ms); }
@@ -4539,7 +4542,8 @@ var GardenHome = (function () {
         card.appendChild(swatchCanvas(it.id, null));
         const inf = el("div", "kb-h-info");
         const nm = el("div", "kb-h-name", it.name);
-        if (it.ja) { nm.appendChild(el("span", "kb-h-guest-ja", it.ja)); }
+        const dj = glabel("decor", it.id, it.ja);
+        if (dj) { nm.appendChild(el("span", "kb-h-guest-ja", dj)).setAttribute("lang", gattr()); }
         inf.appendChild(nm);
         if (it.desc) { inf.appendChild(el("div", "kb-h-desc", it.desc)); }
         inf.appendChild(el("div", own ? "kb-h-own" : "kb-h-price", own ? (where.length ? "Đang dùng: " + where.join(", ") : "Đã có") : kbXu(it.price) + " xu"));
@@ -4772,7 +4776,8 @@ var GardenHome = (function () {
       card.appendChild(guestCanvas(e.id, e.met, 3));
       const inf = el("div", "kb-h-info");
       const nm = el("div", "kb-h-name", e.met ? e.name : "???");
-      if (e.met) { nm.appendChild(el("span", "kb-h-guest-ja", e.ja)); }
+      const gj = e.met ? glabel("guests", e.id, e.ja) : "";
+      if (gj) { nm.appendChild(el("span", "kb-h-guest-ja", gj)).setAttribute("lang", gattr()); }
       if (e.rare) { nm.appendChild(el("span", "kb-h-guest-rare", "Hiếm")); }
       inf.appendChild(nm);
       if (e.met) {
@@ -4822,7 +4827,8 @@ var GardenHome = (function () {
     } else {
       const g = guestData(), e = (g && (g.list || []).find((x) => x.id === id)) || { name: "Khách", ja: "" };
       top.appendChild(guestCanvas(id, true, 2));
-      const ja = t.appendChild(el("div", "kb-find-ja", e.ja || e.name)); ja.setAttribute("lang", "ja");
+      const gj = glabel("guests", id, e.ja);
+      const ja = t.appendChild(el("div", "kb-find-ja", gj || e.name)); ja.setAttribute("lang", gj ? gattr() : "vi");
       t.appendChild(el("div", "kb-find-kana", e.name + " ghé vườn"));
       if (e.met && e.d) { const p = e.d.split("-"); line = "Gặp lần đầu " + p[2] + "/" + p[1] + "/" + p[0] + (e.n > 1 ? " · ghé " + e.n + " ngày" : ""); }
       go = "Album khách ▸";
@@ -5186,7 +5192,7 @@ var GardenHome = (function () {
     const curT = themes.find((t) => t.id === curId);
     top.appendChild(curT && SPR[curT.icon] ? iconCanvas(SPR[curT.icon], 68) : el("div", "kb-h-craft-plus", "✦"));
     const ti = el("div", "kb-h-info");
-    ti.appendChild(el("div", "kb-h-name", ss.mode === "off" ? "Giao diện mùa: Tắt" : curT ? "Đang dùng: " + curT.name + " · " + curT.jp : "Chưa dùng giao diện nào"));
+    ti.appendChild(el("div", "kb-h-name", ss.mode === "off" ? "Giao diện mùa: Tắt" : curT ? "Đang dùng: " + curT.name + (glabel("seasons", curT.id, curT.jp) ? " · " + glabel("seasons", curT.id, curT.jp) : "") : "Chưa dùng giao diện nào"));
     if (MODE_TEXT[ss.mode] !== "") { ti.appendChild(el("div", "kb-h-desc", MODE_TEXT[ss.mode] || MODE_TEXT.auto)); }
     const row = el("div", "kb-h-btns");
     // 1.19.1: hai nút Bật (tự động) / Tắt, nút đang chọn chỉ đổi nền
@@ -5217,7 +5223,7 @@ var GardenHome = (function () {
       (pv === t.id ? " kb-h-previewing" : ""));
     card.appendChild(themePreview(t.id));
     const info = el("div", "kb-h-info");
-    const nm = GardenIcons.fill(el("div", "kb-h-name"), (open ? "" : "[i:lock] ") + t.name + " · " + t.jp);
+    const nm = GardenIcons.fill(el("div", "kb-h-name"), (open ? "" : "[i:lock] ") + t.name + (glabel("seasons", t.id, t.jp) ? " · " + glabel("seasons", t.id, t.jp) : ""));
     if (t.now) { nm.appendChild(el("span", "kb-h-newtag kb-h-nowtag", "Đang diễn ra")); }
     info.appendChild(nm);
     info.appendChild(el("div", "kb-h-when", (t.lunar ? "Theo âm lịch · " : "") + t.start + " – " + t.end +

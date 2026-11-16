@@ -1645,24 +1645,35 @@ EN_WORD_NAMES = ["word", "vocabulary", "vocab", "english", "term", "expression",
 EN_READING_NAMES = ["ipa", "phonetic", "phonetics", "pronunciation", "phiên âm", "phien am", "transcription"]
 EN_MEANING_NAMES = ["meaning", "nghĩa", "nghia", "ý nghĩa", "vietnamese", "tiếng việt", "definition", "translation",
                     "dịch", "back", "mặt sau"]
+# 1.32: tên trường hay gặp ở deck tiếng Trung / tiếng Hàn
+ZH_WORD_NAMES = ["hanzi", "chinese", "simplified", "traditional", "汉字", "漢字", "中文", "简体", "簡體", "chữ hán",
+                 "tiếng trung", "word", "từ vựng", "từ", "front"]
+ZH_READING_NAMES = ["pinyin", "拼音", "pīnyīn", "phiên âm", "phien am", "pronunciation", "reading"]
+KO_WORD_NAMES = ["korean", "hangul", "한국어", "단어", "한글", "tiếng hàn", "word", "từ vựng", "từ", "front"]
+KO_READING_NAMES = ["romaja", "romanization", "romanisation", "로마자", "발음", "phiên âm", "phien am", "pronunciation",
+                    "reading"]
 
 
 def guess_roles_lang(keys: list[str], cfg: dict[str, Any], lang: str) -> dict[str, Any]:
     """1.17: đoán trường cho loại note tiếng Anh / ngôn ngữ khác (tên trường kiểu English, IPA, Vietnamese…)."""
     keys = list(keys)
     taken: set[str] = set()
-    word = _find_field(keys, "", EN_WORD_NAMES, taken) or (keys[0] if keys else None)
+    word_names = ZH_WORD_NAMES if lang == "zh" else KO_WORD_NAMES if lang == "ko" else EN_WORD_NAMES
+    word = _find_field(keys, "", word_names, taken) or (keys[0] if keys else None)
     taken.add(word or "")
     ex = example_fields(keys, cfg)
     au = audio_field_name(keys, cfg)
     taken |= {x for x in (ex["example"], ex["audio"], ex["meaning"], au) if x}
-    reading = _find_field(keys, "", EN_READING_NAMES, taken)
+    hanviet = _find_field(keys, "", HANVIET_NAMES, taken) if lang in ("zh", "ko") else None     # 1.32
+    taken.add(hanviet or "")
+    reading_names = ZH_READING_NAMES if lang == "zh" else KO_READING_NAMES if lang == "ko" else EN_READING_NAMES
+    reading = _find_field(keys, "", reading_names, taken)
     taken.add(reading or "")
     meaning = _find_field(keys, "", EN_MEANING_NAMES, taken)
     if meaning is None:
         rest = [k for k in keys if k not in taken]
         meaning = rest[0] if rest else None
-    return {"word": word, "reading": reading, "meaning": meaning, "hanviet": None, "kun": None, "reading_extra": [],
+    return {"word": word, "reading": reading, "meaning": meaning, "hanviet": hanviet, "kun": None, "reading_extra": [],
             "audio": au, "example": ex["example"], "ex_audio": ex["audio"], "ex_meaning": ex["meaning"],
             "pos": None, "usage": None, "kind": None, "configured": False}
 
@@ -1740,10 +1751,22 @@ def note_roles(note: Any, cfg: dict[str, Any]) -> dict[str, Any]:
                       [text.plain_text(note[wf])] if wf else [])
     if lang != "ja" and not conf:
         roles = guess_roles_lang(keys, cfg, lang)
+        if lang == "zh" and roles.get("hanviet") and _zh_kanji_kind(note, roles, name, keys):
+            roles["kind"] = "kanji"
     roles["lang"] = lang
-    if lang != "ja" and roles.get("kind") in ("kanji", "grammar"):
+    if lang != "ja" and roles.get("kind") in ("kanji", "grammar") and roles.get("kind") not in fields.LANG_KINDS.get(lang, ()):
         roles["kind"] = "vocab"
     return roles
+
+
+def _zh_kanji_kind(note: Any, roles: dict[str, Any], name: str, keys: list[str]) -> bool:
+    """1.32: deck tiếng Trung mỗi note một chữ Hán + có trường Hán Việt → loại Chữ Hán (như deck kanji tiếng Nhật)."""
+    try:
+        word = text.plain_text(note[roles["word"]]) if roles.get("word") else ""
+    except Exception:
+        return False
+    return bool(_ONE_KANJI.match(word)) and fields.guess_kind(name, keys, [word]) in ("kanji", "vocab") and \
+        any(h in (name or "").lower() for h in ("kanji", "hán tự", "han tu", "chữ hán", "chu han", "汉字", "漢字", "hanzi"))
 
 
 def note_details(note: Any, cfg: dict[str, Any], roles: dict[str, Any] | None = None) -> dict[str, str]:
@@ -1766,7 +1789,11 @@ def note_details(note: Any, cfg: dict[str, Any], roles: dict[str, Any] | None = 
         reading = _cut(text.plain_text(get("reading")), 60) or ipa
         if reading == word:
             reading = ""
-        return {"word": word, "reading": reading, "meaning": _clean(get("meaning")), "hanviet": "",
+        # 1.32: tiếng Trung / tiếng Hàn có thể có trường Hán Việt (do người dùng chọn, hoặc tên trường "Hán Việt")
+        hanviet = _clean(get("hanviet"), 30) if lang in ("zh", "ko") else ""
+        if hanviet and hanviet == _clean(get("meaning")):
+            hanviet = ""
+        return {"word": word, "reading": reading, "meaning": _clean(get("meaning")), "hanviet": hanviet,
                 "usage": _clean(get("usage"), 120)}
     word, bracket_reading = plain_word(raw_word)
     word = _cut(word, 60 if grammar else 40) or "?"
@@ -2115,8 +2142,11 @@ def guess_config(col: Collection, model: Any, sample_notes: list[Any], cfg: dict
     lang = guess_model_lang(col, str(model["id"]), keys, wf, model["name"], raw_words)
     if lang != "ja":
         roles = guess_roles_lang(keys, cfg, lang)
-        f = {r: roles[r] for r in fields.role_ids("vocab") if roles.get(r)}
-        return {"kind": "vocab", "f": f, "lang": lang}
+        kind = "vocab"
+        if lang == "zh" and roles.get("hanviet") and sample_notes and all(_zh_kanji_kind(n, roles, model["name"], keys) for n in sample_notes):
+            kind = "kanji"
+        f = {r: roles[r] for r in fields.role_ids(kind, lang) if roles.get(r)}
+        return {"kind": kind, "f": f, "lang": lang}
     roles["lang"] = "ja"
     words = [note_details(n, cfg, roles)["word"] for n in sample_notes]
     kind = fields.guess_kind(model["name"], keys, words)

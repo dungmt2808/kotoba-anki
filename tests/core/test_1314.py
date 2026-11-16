@@ -135,13 +135,16 @@ HSK1 = ["爱", "八", "爸爸", "杯子", "北京", "本", "不客气", "不", "
         "太", "天气", "听", "同学", "喂", "我", "我们", "五", "喜欢", "下", "下午", "下雨", "先生", "现在", "想", "小", "小姐",
         "些", "写", "星期", "学生", "学习", "学校", "一", "衣服", "医生", "医院", "椅子", "有", "月", "在", "再见", "怎么",
         "怎么样", "这", "中国", "中午", "住", "桌子", "字", "昨天", "坐", "做"]
+# 1.32: deck tiếng Trung / tiếng Hàn có ngôn ngữ riêng ("zh" / "ko" — lưu cho bản cũ là "other")
+ZH = "zh" if "zh" in getattr(F, "LANGS", ()) else "other"
+KO = "ko" if "ko" in getattr(F, "LANGS", ()) else "other"
 TRAD = ["你好", "謝謝", "學生", "老師", "我們", "這個", "對不起", "說話", "電腦", "喜歡", "時間", "東西", "朋友", "國家", "來"]
-ok(F.guess_lang("Basic", ["Front", "Back"], HSK1[:30]) == "other", "HSK 1 (30 từ đầu, theo vần — ít chữ giản thể nhất) → Ngôn ngữ khác")
-ok(all(F.guess_lang("Basic", ["Front", "Back"], HSK1[i:i + 30]) == "other" for i in range(0, len(HSK1) - 29, 10)),
+ok(F.guess_lang("Basic", ["Front", "Back"], HSK1[:30]) == ZH, "HSK 1 (30 từ đầu, theo vần — ít chữ giản thể nhất) → Ngôn ngữ khác")
+ok(all(F.guess_lang("Basic", ["Front", "Back"], HSK1[i:i + 30]) == ZH for i in range(0, len(HSK1) - 29, 10)),
    "mọi đoạn 30 từ liên tiếp của HSK 1 (%d từ) → Ngôn ngữ khác" % len(HSK1))
-ok(F.guess_lang("Basic", ["Front", "Back"], TRAD) == "other", "phồn thể (Đài Loan) → Ngôn ngữ khác")
-ok(F.guess_lang("Basic", ["Front", "Back"], ["你好"]) == "other", "deck mới có 1 từ 你好 → Ngôn ngữ khác")
-ok(F.guess_lang("Từ vựng", ["Từ", "Nghĩa"], ["你好", "谢谢", "朋友"]) == "other", "loại note tên tiếng Việt, trường tiếng Việt")
+ok(F.guess_lang("Basic", ["Front", "Back"], TRAD) == ZH, "phồn thể (Đài Loan) → Ngôn ngữ khác")
+ok(F.guess_lang("Basic", ["Front", "Back"], ["你好"]) == ZH, "deck mới có 1 từ 你好 → Ngôn ngữ khác")
+ok(F.guess_lang("Từ vựng", ["Từ", "Nghĩa"], ["你好", "谢谢", "朋友"]) == ZH, "loại note tên tiếng Việt, trường tiếng Việt")
 ok(F.guess_lang("Japanese Kanji", ["Kanji", "Meaning"], ["你", "们", "学"]) == "ja", "tên loại note ghi tiếng Nhật → vẫn tiếng Nhật")
 ok(F.guess_lang("Basic", ["Front", "Back"], ["你好", "食べる", "飲む", "勉強する"]) == "ja", "có kana ở ≥ 20 % số từ → tiếng Nhật như cũ")
 
@@ -175,6 +178,7 @@ if OLD:
             "print(json.dumps([F.guess_lang(*s) for s in json.loads(sys.stdin.read())]))")
     r = subprocess.run([sys.executable, "-c", code, OLD], input=json.dumps(samples), capture_output=True, text=True)
     old = json.loads(r.stdout) if r.returncode == 0 else None
+    new = [("other" if x in ("zh", "ko") else x) for x in new]      # 1.32: bản cũ lưu / hiểu zh, ko là "other"
     ok(old == new, "%d mẫu không phải tiếng Trung: mã 1.31.3 thật cho đúng kết quả như 1.31.4%s"
        % (len(samples), "" if old == new else " — khác: " + str([(s[2][:3], a, b) for s, a, b in zip(samples, old or [], new) if a != b][:4])))
     r = subprocess.run([sys.executable, "-c", code, OLD], input=json.dumps([["Basic", ["Front", "Back"], HSK1[:30]]]),
@@ -185,6 +189,10 @@ kana = re.compile(r"[ぁ-ゖァ-ヺ]")
 lines = hits = 0
 for p in glob.glob(os.path.join(ROOT, "**", "*"), recursive=True):
     if "/.git/" in p or not os.path.isfile(p) or not p.endswith((".json", ".md", ".py", ".js", ".txt", ".html")) or p.endswith("test_1314.py"):
+        continue
+    # 1.32: bảng chữ tiếng Trung / tiếng Hàn (Ngôn ngữ trong vườn) và test / ảnh phác của nó có chữ Trung cạnh chữ Nhật
+    if p.endswith(("lang_core.py", "test_132.py", "test_132.js", "e2e_132.js", "mock_132_steps.js", "tieng_nhap.py",
+                   "LOI_NHAC_GEMINI.md", "demo_zhko.py")) or "/ke_hoach_1_32/" in p or "/kiem_thu/1.32" in p or "/fixtures/chu_132" in p:
         continue
     try:
         text = read(p).decode("utf-8")

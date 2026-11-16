@@ -38,6 +38,7 @@ from . import event_core
 from . import fields_core
 from . import finds_core as finds
 from . import guest_core as guests
+from . import lang_core
 from . import life_core
 from . import journal_core as journal
 from . import launcher
@@ -87,6 +88,8 @@ _dich_job: dict[str, Any] = {"running": False, "ref": ""}       # 1.23: "Dịch 
 _voice_job: dict[str, Any] = {"running": False, "tried": set()}   # đang nhờ Gemini tạo giọng đọc / chữ đã thử
 _ja_tts: bool | None = None      # máy có giọng tiếng Nhật của hệ điều hành (Anki TTS) — kiểm một lần
 _en_tts: bool | None = None      # 1.17: máy có giọng tiếng Anh của hệ điều hành
+_xx_tts: dict[str, bool] = {}    # 1.32: giọng tiếng Trung / tiếng Hàn của máy (zh / ko)
+TTS_LANG = {"en": "en_US", "zh": "zh_CN", "ko": "ko_KR"}
 _mpv_slow = False                # vừa phát chậm bằng mpv → trả tốc độ về 1 khi phát xong
 _wav_checked = False             # đã sửa file giọng đọc lồng của 1.12 chưa (một lần mỗi lần mở Anki)
 
@@ -145,7 +148,7 @@ def config() -> dict[str, Any]:
     except Exception as err:
         _warn("fields", err)
         cfg["_fields"] = fields_core.clean_store(None)
-    cfg["_tts"] = {"en": en_tts_available()}     # 1.17: cây tiếng Anh không có audio thì đọc bằng giọng máy
+    cfg["_tts"] = {"en": en_tts_available(), "zh": xx_tts_available("zh"), "ko": xx_tts_available("ko")}     # 1.17 / 1.32
     return cfg
 
 
@@ -577,6 +580,13 @@ def en_tts_available() -> bool:
     return bool(_en_tts)
 
 
+def xx_tts_available(lang: str) -> bool:
+    """1.32: máy có giọng đọc tiếng Trung (zh) / tiếng Hàn (ko) của hệ điều hành không."""
+    if lang not in _xx_tts:
+        _xx_tts[lang] = _tts_has(lang)
+    return bool(_xx_tts[lang])
+
+
 def _mpv() -> Any:
     try:
         from aqt import sound as snd
@@ -606,9 +616,9 @@ def _play(target: tuple[str, Any, float]) -> None:
     """Phát: ('file', đường dẫn tuyệt đối), ('media', tên file media của collection) hoặc ('tts', chữ) + tốc độ."""
     global _mpv_slow
     kind, what, speed = target
-    if kind in ("tts", "tts_en"):
+    if kind in ("tts", "tts_en", "tts_zh", "tts_ko"):
         from anki.sound import TTSTag
-        lang = "en_US" if kind == "tts_en" else "ja_JP"
+        lang = {"tts_en": "en_US", "tts_zh": "zh_CN", "tts_ko": "ko_KR"}.get(kind, "ja_JP")
         av_player.play_tags([TTSTag(field_text=what, lang=lang, voices=[], speed=speed, other_args=[])])
         return
     mgr = _mpv()
@@ -2092,12 +2102,16 @@ def cal_day(ds: str) -> dict[str, Any]:
         _warn("khách ghé vườn", err)
         v["guests"] = []
     try:      # 1.28: món nhặt được lần đầu hôm đó
-        v["finds"] = ["%s (%s)" % (x["ja"], x["vi"]) for x in finds.new_between(EVENTS.load(), d, d)]
+        new_f = finds.new_between(EVENTS.load(), d, d)
+        v["finds"] = ["%s (%s)" % (x["ja"], x["vi"]) for x in new_f]
+        v["finds_i"] = [[x["id"], x["ja"], finds.FINDS[x["id"]]["kana"], x["vi"]] for x in new_f]      # 1.32: trang đổi theo Ngôn ngữ trong vườn
     except Exception as err:
         _warn("nhặt đồ", err)
         v["finds"] = []
     try:      # 1.30: việc của StackChan thấy lần đầu hôm đó
-        v["life"] = ["%s (%s)" % (x["ja"], x["name"]) for x in life_core.new_between(LIFE.seen(), d, d)]
+        new_l = life_core.new_between(LIFE.seen(), d, d)
+        v["life"] = ["%s (%s)" % (x["ja"], x["name"]) for x in new_l]
+        v["life_i"] = [[x["id"], x["ja"], life_core.ACTS[x["id"]]["kana"], x["name"]] for x in new_l]
     except Exception as err:
         _warn("sinh hoạt", err)
         v["life"] = []
@@ -2557,7 +2571,7 @@ class GardenDialog(QDialog):
             default_css=False,
             css=[f"{WEB_BASE}/garden.css"],
             js=[
-                f"{WEB_BASE}/diag.js", f"{WEB_BASE}/prefs.js", f"{WEB_BASE}/fix.js", f"{WEB_BASE}/icons.js", f"{WEB_BASE}/sky.js", f"{WEB_BASE}/season.js", f"{WEB_BASE}/fx.js", f"{WEB_BASE}/music.js",
+                f"{WEB_BASE}/diag.js", f"{WEB_BASE}/prefs.js", f"{WEB_BASE}/fix.js", f"{WEB_BASE}/icons.js", f"{WEB_BASE}/glang.js", f"{WEB_BASE}/sky.js", f"{WEB_BASE}/season.js", f"{WEB_BASE}/fx.js", f"{WEB_BASE}/music.js",
                 f"{WEB_BASE}/games.js", f"{WEB_BASE}/fields.js", f"{WEB_BASE}/season_art.js", f"{WEB_BASE}/rare_art.js", f"{WEB_BASE}/nha_art.js", f"{WEB_BASE}/pets.js", f"{WEB_BASE}/guests.js",
                 f"{WEB_BASE}/finds_art.js", f"{WEB_BASE}/finds.js", f"{WEB_BASE}/life.js", f"{WEB_BASE}/home.js", f"{WEB_BASE}/craft.js", f"{WEB_BASE}/paper.js", f"{WEB_BASE}/seeds.js",
                 f"{WEB_BASE}/joy.js", f"{WEB_BASE}/ui.js", f"{WEB_BASE}/calendar.js", f"{WEB_BASE}/greet.js", f"{WEB_BASE}/tour.js", f"{WEB_BASE}/garden.js",
@@ -2618,6 +2632,7 @@ class GardenDialog(QDialog):
             except Exception as err:
                 _warn("giống cây", err)
             data["ui"] = more_core.clean_ui(cfg.get("ui"))
+            data["gl"] = lang_core.bundle()      # 1.32: Ngôn ngữ trong vườn (bảng chữ cho glang.js)
             data["admin"] = admin_on()       # 1.25.5: "Sửa hình" (admin) · 1.25.7: người dùng thường "Góp ý hình"
             data["fx"] = {
                 "effects": bool(cfg["effects"]),
@@ -3119,9 +3134,10 @@ class GardenDialog(QDialog):
                 roles = core.note_roles(note, cfg)
                 fname = (core.example_audio if example else core.note_audio)(note, cfg, roles)
                 speech = ""
-                if not fname and roles.get("lang") == "en" and en_tts_available():
-                    # 1.17: từ / câu tiếng Anh không có audio → giọng tiếng Anh của máy
-                    speech = (core._clean_example(note[roles["example"]], "en") if example and roles.get("example")
+                tl = roles.get("lang")
+                if not fname and ((tl == "en" and en_tts_available()) or (tl in ("zh", "ko") and xx_tts_available(tl))):
+                    # 1.17: từ / câu tiếng Anh không có audio → giọng tiếng Anh của máy · 1.32: tiếng Trung / tiếng Hàn
+                    speech = (core._clean_example(note[roles["example"]], tl) if example and roles.get("example")
                               else core.note_details(note, cfg, roles)["word"])
             except Exception as err:
                 _warn("example audio" if example else "game audio", err)
@@ -3130,7 +3146,7 @@ class GardenDialog(QDialog):
             if fname:
                 av_player.play_file(fname)
             elif speech and speech != "?":
-                _play(("tts_en", speech, 1.0))
+                _play(("tts_" + (tl if tl in ("zh", "ko") else "en"), speech, 1.0))
         elif cmd.startswith("reward:"):
             try:
                 parts = cmd.split(":")

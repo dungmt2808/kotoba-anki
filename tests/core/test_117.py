@@ -79,13 +79,16 @@ ok(paper.matches("The children don't like rain.", [], ["the children do not like
 ok(not paper.matches("The children don't like rain.", [], ["the child do not like rain"], False, "en"), "sai một từ → sai")
 
 print("== đoán ngôn ngữ")
+# 1.32: tiếng Trung / tiếng Hàn có ngôn ngữ riêng (trước: "Ngôn ngữ khác")
+ZH = "zh" if "zh" in fields.LANGS else "other"
+KO = "ko" if "ko" in fields.LANGS else "other"
 for name, keys, words, want in [
         ("Basic", ["Front", "Back"], ["apple", "run", "look up"], "en"),
         ("Basic", ["Front", "Back"], ["食べる", "日本", "水"], "ja"),
         ("Kanji", ["Kanji"], ["水", "火", "力"], "ja"),
-        ("Basic", ["Front", "Back"], ["안녕", "사랑"], "other"),
+        ("Basic", ["Front", "Back"], ["안녕", "사랑"], KO),
         ("Basic", ["Front", "Back"], ["cái bàn", "con mèo", "đẹp"], "other"),
-        ("Chinese", ["Hanzi", "Pinyin"], ["水", "火"], "other"),
+        ("Chinese", ["Hanzi", "Pinyin"], ["水", "火"], ZH),
         ("EN", ["Front"], ["apple /ˈæp.əl/ - quả táo", "go /ɡoʊ/ - đi"], "en"),
         ("x", ["Front"], [], "ja")]:
     ok(fields.guess_lang(name, keys, words) == want, "%s %s → %s" % (name, words[:2], want))
@@ -117,7 +120,7 @@ ok(all(p["cloze"] for p in g["plants"]), "Điền vào câu: mọi câu tiếng 
 g = garden("F::Tiếng Anh Basic")
 ok(g["note_types"][0]["lang"] == "en" and g["plants"][0]["meaning"] == "quả táo", "Basic Front/Back tiếng Anh tự nhận")
 g = garden("J::Tiếng Hàn")
-ok(g["note_types"][0]["lang"] == "other" and g["plants"][0]["word"] == "사과", "tiếng Hàn → ngôn ngữ khác")
+ok(g["note_types"][0]["lang"] == KO and g["plants"][0]["word"] == "사과", "tiếng Hàn → " + KO)
 g = garden("K::Nhật ruby HTML")
 ok([p["word"] for p in g["plants"]] == ["学生", "先生", "食べる", "天気", "図書館"], "ruby HTML: chữ sạch")
 ok([p["reading"] for p in g["plants"]] == ["がくせい", "せんせい", "たべる", "てんき", "としょかん"], "ruby HTML: cách đọc")

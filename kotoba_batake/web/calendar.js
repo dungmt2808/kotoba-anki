@@ -386,8 +386,14 @@ var GardenCal = (function () {
       }
       if (v.paper) { row("Báo", v.paper); }
       if (v.guests && v.guests.length) { row("Khách mới", v.guests.join(" · "), "Khách ghé vườn lần đầu hôm này (Album khách ở Nhà)."); }
-      if (v.finds && v.finds.length) { row("Nhặt được", v.finds.join(" · "), "Món nhặt lần đầu ở chỗ lấp lánh hôm này (Hộp sưu tầm ở Nhà → Album)."); }
-      if (v.life && v.life.length) { row("Sinh hoạt", v.life.join(" · "), "Việc của StackChan thấy lần đầu hôm này (Nhà → Album → Sinh hoạt)."); }
+      // 1.32: tên theo Ngôn ngữ trong vườn (Python gửi kèm mã: finds_i / life_i = [mã, chữ Nhật, kana, tiếng Việt])
+      const named = (kind, list, old) => (list && typeof GardenLang !== "undefined") ? list.map((x) => {
+        const t = GardenLang.label(kind, x[0], x[1], "");
+        return t ? t + " (" + x[3] + ")" : x[3];
+      }) : old;
+      const fl = named("finds", v.finds_i, v.finds), ll = named("acts", v.life_i, v.life);
+      if (fl && fl.length) { row("Nhặt được", fl.join(" · "), "Món nhặt lần đầu ở chỗ lấp lánh hôm này (Hộp sưu tầm ở Nhà → Album)."); }
+      if (ll && ll.length) { row("Sinh hoạt", ll.join(" · "), "Việc của StackChan thấy lần đầu hôm này (Nhà → Album → Sinh hoạt)."); }
     }
     c1.appendChild(stats);
     R.appendChild(c1);

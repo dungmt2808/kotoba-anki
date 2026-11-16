@@ -156,6 +156,9 @@ echo "$OUT" | grep -E "✗|KẾT QUẢ|bỏ qua"; [ $RC = 0 ] || FAIL=1
 echo "== core/test_1315.py (1.31.5: Gemini 4 Hydrogen + chia việc theo model, giọng đọc ≤ 3 / phút, Sổ tay làng 1 năm không thêm lượt gọi)"
 OUT=$("${ANKI_PY:-python3}" -W ignore "$HERE/core/test_1315.py" "$ADDON" 2>&1); RC=$?
 echo "$OUT" | grep -E "✗|KẾT QUẢ|bỏ qua"; [ $RC = 0 ] || FAIL=1
+echo "== core/test_132.py (1.32: Ngôn ngữ trong vườn — soát chữ Anh / Trung / Hàn bằng công cụ độc lập; deck tiếng Trung / Hàn, lưu cho bản cũ)"
+OUT=$("${ANKI_PY:-python3}" -W ignore "$HERE/core/test_132.py" "$ADDON" 2>&1); RC=$?
+echo "$OUT" | grep -E "✗|KẾT QUẢ|JS:"; [ $RC = 0 ] || FAIL=1
 # trang web chung (site/, GitHub Pages): đăng mã, dữ liệu trang khớp add-on (đổi hình mà quên `node site/tools/xuat_hinh.js` là báo)
 echo "== trang/test_trang.py (trang web: đăng / gỡ mã, biểu mẫu issue, GitHub Actions, dữ liệu khớp add-on)"
 OUT=$(python3 "$HERE/trang/test_trang.py" "$ADDON" 2>&1); RC=$?

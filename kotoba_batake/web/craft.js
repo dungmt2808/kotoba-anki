@@ -4,6 +4,7 @@
 var GardenCraft = (function () {
   "use strict";
 
+
   const $ = (id) => document.getElementById(id);
   let H = null;
   let isOpen = false;
@@ -899,9 +900,10 @@ var GardenCraft = (function () {
     const cr = $("kb-craft"); if (cr) { cr.classList.toggle("kb-cf-zonemode", on); cr.classList.toggle("kb-cf-seedmode", mode === "seed"); cr.classList.toggle("kb-cf-shellmode", mode === "wear" && wearSlot === "shell"); }
     const tl = document.querySelector("#kb-craft .kb-g-title");
     if (tl) {
-      tl.textContent = on ? "工房 · Vùng tự tạo" : mode === "seed" ? "工房 · Giống cây tự vẽ" : mode === "base" ? "工房 · Hình gốc"
+      tl.textContent = (on ? "工房 · Vùng tự tạo" : mode === "seed" ? "工房 · Giống cây tự vẽ" : mode === "base" ? "工房 · Hình gốc"
         : mode === "tile" ? (tileKind === "wall" ? "工房 · Giấy dán tường" : "工房 · Sàn nhà")
-        : mode === "wear" ? "工房 · " + WEAR_TITLE[wearSlot] + " cho StackChan" : "工房 · Xưởng chế tác";
+        : mode === "wear" ? "工房 · " + WEAR_TITLE[wearSlot] + " cho StackChan" : "工房 · Xưởng chế tác");
+      if (typeof GardenLang !== "undefined") { GardenLang.applyTitles(tl.parentNode); }      // 1.32
     }
     $("kb-cf-name").maxLength = on ? 20 : 24;
     $("kb-cf-name").placeholder = on ? "Tên vùng" : mode === "seed" ? "Tên giống cây" : mode === "tile" ? "Tên mẫu" : mode === "wear" ? "Tên món đồ" : "Món tự làm";
@@ -1010,7 +1012,7 @@ var GardenCraft = (function () {
     $("kb-cf-name").value = baseInfo.name;
     setModeUi("base");
     ["kb-cf-export", "kb-cf-import"].forEach((bid) => { const b = $(bid); if (b) { b.hidden = baseInfo.suggest; } });
-    const tl = document.querySelector("#kb-craft .kb-g-title"); if (tl && baseInfo.suggest) { tl.textContent = "工房 · Góp ý hình"; }
+    const tl = document.querySelector("#kb-craft .kb-g-title"); if (tl && baseInfo.suggest) { tl.textContent = "工房 · Góp ý hình"; if (typeof GardenLang !== "undefined") { GardenLang.applyTitles(tl.parentNode); } }
     mirror = false; fx = "none";
     clearInterval(previewTimer); previewTimer = null;
     img = null; saving = false; escArmed = false; tool = "pen"; hoverCell = null; session++;

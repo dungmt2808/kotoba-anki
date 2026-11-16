@@ -699,14 +699,17 @@ var GardenLife = (function () {
     const top = c.appendChild(el("div", "kb-find-top"));
     top.appendChild(icon(w.id, 3, true));
     const t = top.appendChild(el("div", "kb-find-txt"));
-    if (w.def) {
-      const ja = t.appendChild(el("div", "kb-find-ja", w.def.ja)); ja.setAttribute("lang", "ja");
-      const kv = t.appendChild(el("div", "kb-find-kana"));
-      kv.appendChild(el("span", null, w.def.kana)).setAttribute("lang", "ja");
-      kv.appendChild(document.createTextNode(" · " + w.def.vi));
+    // 1.32: câu theo Ngôn ngữ trong vườn (Chỉ tiếng Việt → tên việc)
+    const L = typeof GardenLang !== "undefined" ? GardenLang : null;
+    const d0 = w.def || { ja: "ひとやすみ", kana: "ひとやすみ", vi: "nghỉ một lát" };
+    const it = L ? L.item("acts", w.def ? w.id : "_idle", d0.ja, d0.kana) : { t: d0.ja, r: d0.kana, lang: "ja", rlang: "ja" };
+    if (!it) {
+      t.appendChild(el("div", "kb-find-ja", w.def ? w.name : "Nghỉ một lát"));
     } else {
-      const ja = t.appendChild(el("div", "kb-find-ja", "ひとやすみ")); ja.setAttribute("lang", "ja");
-      t.appendChild(el("div", "kb-find-kana", "nghỉ một lát"));
+      const ja = t.appendChild(el("div", "kb-find-ja", it.t)); ja.setAttribute("lang", it.lang);
+      const kv = t.appendChild(el("div", "kb-find-kana"));
+      if (it.r) { kv.appendChild(el("span", null, it.r)).setAttribute("lang", it.rlang); kv.appendChild(document.createTextNode(" · ")); }
+      kv.appendChild(document.createTextNode(d0.vi));
     }
     const x = top.appendChild(el("button", "kb-pin-x", "✕")); x.type = "button"; x.setAttribute("aria-label", "Đóng");
     x.addEventListener("click", closeCard);
@@ -747,7 +750,8 @@ var GardenLife = (function () {
     const ti = top.appendChild(el("div", "kb-h-info"));
     if (!v) { ti.appendChild(el("div", "kb-h-name", "Sinh hoạt")); return; }
     GardenIcons.fill(ti.appendChild(el("div", "kb-h-name")), "[i:book] Sinh hoạt · " + v.seen + "/" + v.total);
-    ti.appendChild(el("div", "kb-h-desc", "StackChan tự làm việc theo giờ trong vườn, đồ đã đặt và vùng đã mở. Thấy việc nào thì việc đó vào sổ, kèm một câu tiếng Nhật."));
+    const lname = { ja: "tiếng Nhật", en: "tiếng Anh", zh: "tiếng Trung", ko: "tiếng Hàn" }[typeof GardenLang !== "undefined" ? GardenLang.cur() : "ja"];
+    ti.appendChild(el("div", "kb-h-desc", "StackChan tự làm việc theo giờ trong vườn, đồ đã đặt và vùng đã mở. Thấy việc nào thì việc đó vào sổ" + (lname ? ", kèm một câu " + lname + "." : ".")));
     const w = where();
     if (w) { ti.appendChild(el("div", "kb-h-own", "Bây giờ: " + w.name + " · " + (isRoom(w.scene) ? "trong nhà" : sceneName(w.scene)))); }
     (v.groups || []).forEach((g) => {
@@ -762,10 +766,13 @@ var GardenLife = (function () {
         c.appendChild(icon(it.id, 2, it.seen));
         c.appendChild(el("div", "kb-life-name", it.name));
         if (it.seen) {
-          const ja = c.appendChild(el("div", "kb-box-ja", it.ja)); ja.setAttribute("lang", "ja");
-          const kn = c.appendChild(el("div", "kb-box-kana", it.kana)); kn.setAttribute("lang", "ja");
+          const tr = typeof GardenLang !== "undefined" ? GardenLang.item("acts", it.id, it.ja, it.kana) : { t: it.ja, r: it.kana, lang: "ja", rlang: "ja" };
+          if (tr) {
+            const ja = c.appendChild(el("div", "kb-box-ja", tr.t)); ja.setAttribute("lang", tr.lang);
+            if (tr.r) { const kn = c.appendChild(el("div", "kb-box-kana", tr.r)); kn.setAttribute("lang", tr.rlang); }
+          }
           const p = it.d.split("-");
-          c.title = it.ja + " (" + it.kana + ") · " + it.vi + " · thấy lần đầu " + p[2] + "/" + p[1] + "/" + p[0] + (it.n > 1 ? " · " + it.n + " ngày" : "") + (it.hint ? " · " + it.hint : "");
+          c.title = (tr ? tr.t + (tr.r ? " (" + tr.r + ")" : "") + " · " : "") + it.vi + " · thấy lần đầu " + p[2] + "/" + p[1] + "/" + p[0] + (it.n > 1 ? " · " + it.n + " ngày" : "") + (it.hint ? " · " + it.hint : "");
         } else {
           c.appendChild(el("div", "kb-box-vi kb-life-hint", it.hint || "lúc nào cũng có"));
           c.title = "Chưa thấy · " + (it.hint || "");

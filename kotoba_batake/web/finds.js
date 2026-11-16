@@ -198,10 +198,16 @@ var GardenFinds = (function () {
     const top = c.appendChild(el("div", "kb-find-top"));
     top.appendChild(icon(it.id, 4, true));
     const t = top.appendChild(el("div", "kb-find-txt"));
-    const ja = t.appendChild(el("div", "kb-find-ja", it.ja)); ja.setAttribute("lang", "ja");
-    const kv = t.appendChild(el("div", "kb-find-kana"));
-    kv.appendChild(el("span", null, it.kana)).setAttribute("lang", "ja");
-    kv.appendChild(document.createTextNode(" · " + it.vi));
+    // 1.32: tên theo Ngôn ngữ trong vườn (Chỉ tiếng Việt → tên tiếng Việt)
+    const tr = typeof GardenLang !== "undefined" ? GardenLang.item("finds", it.id, it.ja, it.kana) : { t: it.ja, r: it.kana, lang: "ja", rlang: "ja" };
+    if (!tr) {
+      t.appendChild(el("div", "kb-find-ja", it.vi.charAt(0).toUpperCase() + it.vi.slice(1)));
+    } else {
+      const ja = t.appendChild(el("div", "kb-find-ja", tr.t)); ja.setAttribute("lang", tr.lang);
+      const kv = t.appendChild(el("div", "kb-find-kana"));
+      if (tr.r) { kv.appendChild(el("span", null, tr.r)).setAttribute("lang", tr.rlang); kv.appendChild(document.createTextNode(" · ")); }
+      kv.appendChild(document.createTextNode(it.vi));
+    }
     const x = top.appendChild(el("button", "kb-pin-x", "✕")); x.type = "button"; x.setAttribute("aria-label", "Đóng");
     x.addEventListener("click", closeCard);
     const st = res.set || {};
@@ -386,11 +392,14 @@ var GardenFinds = (function () {
         c.setAttribute("data-find", it.id);
         c.appendChild(icon(it.id, 3, it.found));
         if (it.found) {
-          const ja = c.appendChild(el("div", "kb-box-ja", it.ja)); ja.setAttribute("lang", "ja");
-          const kn = c.appendChild(el("div", "kb-box-kana", it.kana)); kn.setAttribute("lang", "ja");
+          const tr = typeof GardenLang !== "undefined" ? GardenLang.item("finds", it.id, it.ja, it.kana) : { t: it.ja, r: it.kana, lang: "ja", rlang: "ja" };
+          if (tr) {
+            const ja = c.appendChild(el("div", "kb-box-ja", tr.t)); ja.setAttribute("lang", tr.lang);
+            if (tr.r) { const kn = c.appendChild(el("div", "kb-box-kana", tr.r)); kn.setAttribute("lang", tr.rlang); }
+          }
           c.appendChild(el("div", "kb-box-vi", it.vi));
           const p = it.d.split("-");
-          c.title = it.ja + " (" + it.kana + ") · " + it.vi + " · nhặt lần đầu " + p[2] + "/" + p[1] + "/" + p[0] + (it.n > 1 ? " · " + it.n + " lần" : "");
+          c.title = (tr ? tr.t + (tr.r ? " (" + tr.r + ")" : "") + " · " : "") + it.vi + " · nhặt lần đầu " + p[2] + "/" + p[1] + "/" + p[0] + (it.n > 1 ? " · " + it.n + " lần" : "");
         } else {
           c.appendChild(el("div", "kb-box-ja", "? ?"));
           c.appendChild(el("div", "kb-box-vi", it.season ? it.season + (it.now ? "" : " · chưa tới mùa") : "chưa nhặt"));

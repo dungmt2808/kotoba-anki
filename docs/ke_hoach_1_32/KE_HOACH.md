@@ -1,8 +1,10 @@
-# Kế hoạch 1.32 — "Tiếng trong vườn" + deck tiếng Trung / tiếng Hàn (ảnh phác 16/11, chờ duyệt)
+# Kế hoạch 1.32 — "Ngôn ngữ trong vườn" + deck tiếng Trung / tiếng Hàn (ảnh phác 16/11)
+
+> **Đã duyệt và làm ở 1.32.0** (người dùng đổi tên thành "Ngôn ngữ trong vườn", bỏ câu giải thích dưới ô chọn). Không làm: pinyin nằm trên từng chữ (ảnh 09) — phiên chat bị chặn mỗi lần làm phần này; cây tiếng Trung hiện pinyin của deck ở dòng dưới chữ. Chữ 3 tiếng ở `kotoba_batake/lang_core.py`. Kết quả: `docs/kiem_thu/1.32/BAO_CAO.md`.
 
 Người dùng (16/11): "làm 1 lần cho 3 tiếng Trung, Hàn, Anh luôn đi. sau đó kiểm tra lại thật kỹ nha. thêm các bộ test nữa.
 phác thảo trước đi". Ảnh vẽ đè lên vườn thật của 1.31.5 (`tests/anki/mock_132.js`), **chưa phải mã thật**. Chữ tiếng
-Anh / Trung / Hàn: bản nháp `tieng_nhap.py` (Claude soạn — câu tiếng Trung / Hàn nên nhờ người giỏi tiếng đó đọc lại).
+Anh / Trung / Hàn: bản nháp `kotoba_batake/lang_core.py` (Claude soạn — câu tiếng Trung / Hàn nên nhờ người giỏi tiếng đó đọc lại).
 
 ## A. Tiếng trong vườn
 

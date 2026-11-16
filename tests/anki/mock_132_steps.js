@@ -4,8 +4,8 @@ let T = null;
 async function tables(c) {
   if (!T) {
     T = await c.py(`import sys, importlib
-sys.path.insert(0, ${JSON.stringify(REPO + '/docs/ke_hoach_1_32')})
-import tieng_nhap as tieng_core
+sys.path.insert(0, ${JSON.stringify(REPO + '/kotoba_batake')})
+import lang_core as tieng_core
 importlib.reload(tieng_core)
 result = {k: getattr(tieng_core, k) for k in ("ACTS", "FINDS", "GUESTS", "DECOR", "SEASONS", "SAY", "TITLES")}`);
   }

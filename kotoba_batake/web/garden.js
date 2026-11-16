@@ -1276,6 +1276,7 @@ var Garden = (function () {
 
   function render(d) {
     data = d;
+    if (typeof GardenLang !== "undefined") { GardenLang.setData(d); }      // 1.32: Ngôn ngữ trong vườn
     if (ui()) { ui().refresh(); }
     if (season()) { season().refresh(); }
     drawHeader();
@@ -1287,6 +1288,7 @@ var Garden = (function () {
     drawPaperChip();
     drawFieldsChip();
     drawJournal();
+    if (typeof GardenLang !== "undefined") { GardenLang.applyTitles(document); GardenLang.syncSelect(); }
     fitTodayList();
     maybePhoto();
     if (pinned) {
@@ -1619,6 +1621,14 @@ var Garden = (function () {
     if (typeof GardenJoy !== "undefined") {
       GardenJoy.init({ data: function () { return data; }, toast: toast, cols: function () { return cols; }, TW: TW, TH: TH,
         get SCALE() { return SCALE; } });
+    }
+    if (typeof GardenLang !== "undefined") {     // 1.32: đổi Ngôn ngữ trong vườn ở ⚙ → vẽ lại chữ đang hiện
+      GardenLang.onChange(function () {
+        if (typeof GardenHome !== "undefined" && GardenHome.dataChanged) { GardenHome.dataChanged(); }
+        if (typeof GardenLife !== "undefined" && GardenLife.closeCard) { GardenLife.closeCard(); }
+        if (typeof GardenFinds !== "undefined" && GardenFinds.closeCard) { GardenFinds.closeCard(); }
+        if (typeof GardenFX !== "undefined" && GardenFX.say) { GardenFX.say("こんにちは！", 1800); }
+      });
     }
     send("ready");
   }

@@ -2203,3 +2203,11 @@ button { cursor: pointer; }
 .kb-h-mywear .kb-h-mascot { flex: none; }
 .kb-h-wear-new .kb-h-btns { flex-wrap: wrap; }
 .kb-h-life-mini { flex: none; image-rendering: pixelated; }
+
+/* 1.32: Ngôn ngữ trong vườn / deck tiếng Trung, tiếng Hàn — phông có chữ giản thể / Hangul (DotGothic16, Noto CJK JP
+   không đủ hoặc vẽ chữ Hán kiểu Nhật). Pinyin nhỏ sau câu tiếng Trung của StackChan. */
+:lang(zh) { font-family: "Noto Sans CJK SC", "Noto Sans SC", "Microsoft YaHei", "PingFang SC", "Source Han Sans SC", "WenQuanYi Zen Hei", sans-serif !important; }
+:lang(ko) { font-family: "Noto Sans CJK KR", "Noto Sans KR", "Malgun Gothic", "Apple SD Gothic Neo", "Source Han Sans KR", "WenQuanYi Zen Hei", sans-serif !important; }
+.kb-py { font-size: 0.8em; opacity: 0.75; font-weight: normal; }
+.kb-glang-row select { max-width: 100%; }
+ruby.kb-ruby rt { font-size: 0.45em; color: var(--kb-ink-2); font-weight: normal; }
