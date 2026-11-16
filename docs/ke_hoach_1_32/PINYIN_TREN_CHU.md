@@ -1,5 +1,7 @@
 # Ý tưởng để làm sau: pinyin nằm trên từng chữ (deck tiếng Trung)
 
+> **Đã làm (1.32.2, phiên sau 17/11)** theo ảnh phác 1.32 người dùng đã duyệt (`132_09`) — ảnh mới trên giao diện hiện tại: `1322_04_pinyin_tren_chu.png`. `kotoba_batake/zh_core.py` (+ `zh_data.py` sinh bằng `tests/tools/sinh_zh_data.py`), `garden_core.note_details` trả `ruby`, `garden.js` `wordInto` (thẻ cây + ô gợi ý). Theo nguyên tắc "thà không hiện còn hơn hiện sai": chia được nhiều kiểu / thiếu dấu nháy bắt buộc (xian = 西安) → giữ dòng dưới chữ; pinyin ghi số dùng con số làm chỗ ngắt. Test `tests/core/test_1322.py` (2.000 từ đối chiếu pypinyin đóng băng ở `tests/fixtures/pinyin_1322_ref.json`, 0 ghép sai). Chưa làm mục 3 (tuỳ chọn: biển quạ, Lật cặp, kết quả trò chơi). Phiên này không bị chặn.
+
 Ghi 17/11 theo lời người dùng: "ghi lại ý tưởng phần này đi, để làm với session sau thử". Phần này đã có trong ảnh phác
 1.32 (`132_09_cay_trung_han.png`) nhưng **không làm ở 1.32.0**: phiên chat bị chặn ("Message flagged") mỗi lần bắt đầu
 làm (3 lần liền) — người dùng: "cứ làm đến pinyin là sẽ bị dừng".
