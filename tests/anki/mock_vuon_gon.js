@@ -18,6 +18,9 @@ var MV = window.MV || (function () {
     '.mv-path{background:repeating-linear-gradient(90deg,#c9a46a 0 10px,#bf9a60 10px 20px);border-top:2px solid #a07a48;border-bottom:2px solid #a07a48}' +
     '.mv-tag{background:var(--kb-paper,#fffaf0);border:2px solid var(--kb-ink,#4a3426);border-radius:4px;padding:1px 8px;font:bold 13px sans-serif;color:var(--kb-ink,#4a3426);white-space:nowrap}' +
     '.mv-tag.is-drop{background:#e3f1ff}' +
+    '.mv-sign{background:#c98f55;border:2px solid #6b4226;color:#fff7e6;border-radius:3px;padding:0 7px;font:bold 12px sans-serif;white-space:nowrap;box-shadow:0 2px 0 #6b4226}' +
+    '.mv-sign.is-drop{background:#7fb6e6;color:#16324a;border-color:#2c5f8a;box-shadow:0 2px 0 #2c5f8a}' +
+    '.mv-post{background:#6b4226;width:4px}' +
     '.mv-dim{background:rgba(94,211,94,.72)}' +
     '.mv-hl{outline:3px solid #e0544e !important;outline-offset:2px;border-radius:4px}' +
     '.mv-orch{position:relative;display:flex;align-items:center;gap:10px;padding:6px 10px;margin:0 0 6px;background:#fff7e0;border:2px solid var(--kb-ink,#4a3426);border-radius:6px;font:13px sans-serif;color:var(--kb-ink,#4a3426)}' +
@@ -49,6 +52,32 @@ var MV = window.MV || (function () {
   const PH = () => ({ ph: true, nid: 1, stage: 0, word: "" });
   function pad(arr, cols) { while (arr.length % cols) { arr.push(PH()); } }
   // luống: [[nhãn, cây…], …] → mỗi luống bắt đầu hàng mới, lối đi + nhãn ở mép trên luống
+  // kiểu ngăn luống: path (dải đất — người dùng thấy không đẹp), sign (chỉ biển gỗ), stones (đá lát cách quãng), flowers (viền hoa)
+  let STYLE = "path";
+  function sepCanvas(g, rowsY, style) {
+    const cv = document.createElement("canvas"), f = $("kb-canvas").getBoundingClientRect(), s = Garden._layout().scale;
+    cv.className = "mv-x"; cv.width = Math.round(f.width); cv.height = Math.round(f.height);
+    Object.assign(cv.style, { left: f.left + "px", top: f.top + "px", width: f.width + "px", height: f.height + "px" });
+    const x = cv.getContext("2d");
+    const px = (c, a, b, w, h) => { x.fillStyle = c; x.fillRect(a, b, w * s, h * s); };
+    rowsY.forEach((yy) => {
+      const y = yy - f.top;
+      if (style === "stones") {
+        for (let a = 130 + 20, k = 0; a < f.width - 20; a += 64 + (k % 3) * 10, k++) {
+          const w = 6 + (k % 2), yo = y + (k % 2) * s;
+          px("#7d776f", a, yo + s, w, 2); px("#a8a29a", a + s, yo, w - 2, 2); px("#c9c3ba", a + 2 * s, yo, 2, 1);
+        }
+      } else if (style === "flowers") {
+        const cols = ["#ff8fb0", "#ffd84a", "#ffffff", "#c9a0ff"];
+        for (let a = 130 + 10, k = 0; a < f.width - 16; a += 30 + (k % 4) * 6, k++) {
+          const c = cols[k % cols.length], yo = y + 2 * s + ((k * 7) % 3 - 1) * s;
+          px("#3b9c3b", a + s, yo + 2 * s, 1, 1);
+          px(c, a + s, yo - s, 1, 1); px(c, a, yo, 1, 1); px(c, a + 2 * s, yo, 1, 1); px(c, a + s, yo + s, 1, 1); px("#ffb300", a + s, yo, 1, 1);
+        }
+      }
+    });
+    document.body.appendChild(cv);
+  }
   function beds(groups, opts) {
     opts = opts || {};
     init();
@@ -56,16 +85,27 @@ var MV = window.MV || (function () {
     for (let i = 0; i < (opts.lead || 0) * cols; i++) { arr.push(PH()); }        // hàng chừa trống ở đầu ruộng
     groups.forEach(([label, list, cls]) => { if (!list.length) { return; } starts.push([arr.length / cols, label, cls]); list.forEach((p) => arr.push(p)); pad(arr, cols); });
     const g = draw(arr);
+    const style = opts.style || STYLE;
+    if (style === "stones" || style === "flowers") { sepCanvas(g, starts.slice(1).map(([row]) => g.y + row * g.ch), style); }
     starts.forEach(([row, label, cls], k) => {
       const y = g.y + row * g.ch;
-      if (k > 0) { const p = document.createElement("div"); p.className = "mv-x mv-path"; Object.assign(p.style, { left: g.x + "px", top: (y - 5) + "px", width: g.w + "px", height: "10px" }); document.body.appendChild(p); }
-      const t = document.createElement("div"); t.className = "mv-x mv-tag" + (cls ? " " + cls : ""); t.textContent = label;
-      Object.assign(t.style, { left: (g.x + 8) + "px", top: (y - 11) + "px" }); document.body.appendChild(t);
+      if (style === "path") {
+        if (k > 0) { const p = document.createElement("div"); p.className = "mv-x mv-path"; Object.assign(p.style, { left: g.x + "px", top: (y - 5) + "px", width: g.w + "px", height: "10px" }); document.body.appendChild(p); }
+        const t = document.createElement("div"); t.className = "mv-x mv-tag" + (cls ? " " + cls : ""); t.textContent = label;
+        Object.assign(t.style, { left: (g.x + 8) + "px", top: (y - 11) + "px" }); document.body.appendChild(t);
+        return;
+      }
+      // biển gỗ nhỏ cắm ở đầu luống (cột gỗ + tấm biển), không có dải đất
+      const post = document.createElement("div"); post.className = "mv-x mv-post"; Object.assign(post.style, { left: (g.x + 26) + "px", top: (y + 2) + "px", height: "12px" });
+      document.body.appendChild(post);
+      const t = document.createElement("div"); t.className = "mv-x mv-sign" + (cls ? " " + cls : ""); t.textContent = label;
+      Object.assign(t.style, { left: (g.x + 8) + "px", top: (y - 10) + "px" }); document.body.appendChild(t);
     });
     return arr.length;
   }
   const byStage = (list) => [4, 3, 2, 1, 0].map((s) => list.filter((p) => p.stage === s));
   return {
+    setStyle: function (s) { STYLE = s; },
     init: init, clear: clear, draw: draw, beds: beds, geo: geo, S: S,
     current: function () { init(); document.querySelectorAll(".mv-orch").forEach((e) => e.remove()); draw(S.orig.slice()); },
     stageBeds: function (thirstyFirst, noDrops) {
@@ -143,6 +183,13 @@ async function gardenPage() {
     fs.writeFileSync(path.join(OUT, name + '.png'), Buffer.from(res.data, 'base64'));
     console.log('  ảnh', name);
   };
+  if (process.argv[3] === 'kieu') {          // 17/11: người dùng thấy dải đất dài không đẹp → thử kiểu ngăn luống khác
+    for (const [st, name] of [['sign', 'vg_01b_bien_go'], ['stones', 'vg_01c_da_lat'], ['flowers', 'vg_01d_vien_hoa']]) {
+      await js('MV.setStyle(' + JSON.stringify(st) + '); MV.stageBeds(false); return 1;'); await shot(name);
+    }
+    await js('MV.setStyle("sign"); MV.clear(); MV.current(); return 1;');
+    process.exit(0);
+  }
   await js('MV.current(); return 1;'); await shot('vg_00_hien_tai');
   await js('MV.stageBeds(false); return 1;'); await shot('vg_01_luong_giai_doan');
   await js('MV.stageBeds(true, true); return 1;'); await shot('vg_02_can_tuoi_len_dau');
