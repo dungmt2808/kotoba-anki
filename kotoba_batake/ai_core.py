@@ -2551,9 +2551,10 @@ def export_story_for_claude(shared: str, claude_dir: str | None) -> bool:
     return True
 
 
-def tts_text(markup: str) -> str:
-    """Chữ gửi cho giọng đọc: giữ chữ Hán (để đúng ngữ điệu) trừ số đếm / từ nhiều cách đọc thì dùng kana."""
-    return paper.speech_text(markup)
+def tts_text(markup: str, lang: str = "ja") -> str:
+    """Chữ gửi cho giọng đọc: giữ chữ Hán (để đúng ngữ điệu) trừ số đếm / từ nhiều cách đọc thì dùng kana.
+    1.33: báo tiếng Trung / tiếng Hàn đọc chữ (không đọc pinyin / phiên âm)."""
+    return paper.speech_text(markup, lang)
 
 
 def _wav(path: str, pcm: bytes, rate: int) -> float:
@@ -2586,7 +2587,23 @@ def _vi_module() -> Any:
     return ai_vi
 
 
-LANG_LABEL = {"ja": "", "en": " (tiếng Anh)", "vi": " (tiếng Việt)"}
+def _lang_module(lang: str) -> Any:
+    """1.33: phần riêng của báo theo ngôn ngữ (ai_en / ai_vi / ai_zh / ai_ko); tiếng Nhật → None."""
+    if lang == "en":
+        return _en_module()
+    if lang == "vi":
+        return _vi_module()
+    if lang in ("zh", "ko"):
+        import importlib
+        try:
+            return importlib.import_module("." + ("ai_zh" if lang == "zh" else "ai_ko"), __package__)
+        except (ImportError, TypeError):
+            return importlib.import_module("ai_zh" if lang == "zh" else "ai_ko")
+    return None
+
+
+LANG_LABEL = {"ja": "", "en": " (tiếng Anh)", "vi": " (tiếng Việt)", "zh": " (tiếng Trung)", "ko": " (tiếng Hàn)"}
+FOREIGN = ("en", "vi", "zh", "ko")     # báo có phần riêng (mô-đun ai_xx); tiếng Nhật dùng phần chung của file này
 
 
 class Job:
@@ -2608,8 +2625,8 @@ class Job:
         self.models: list[str] = []
         self.model = ""
         self.model_role: dict[str, str] = {}     # 1.31.5: model chạy được gần nhất của từng vai
-        self.lang = scope.get("lang") if scope.get("lang") in ("en", "vi") else "ja"
-        self.en = _en_module() if self.lang == "en" else _vi_module() if self.lang == "vi" else None
+        self.lang = scope.get("lang") if scope.get("lang") in FOREIGN else "ja"
+        self.en = _lang_module(self.lang)
         self.story: dict[str, Any] | None = None     # 1.23: kỳ truyện đã viết + biên tập (quy trình mới)
         # 1.25.2 "Một làng, một truyện": bộ nhớ truyện chung (thư mục bao_chung) + bản gốc hôm nay (truyện + tin làng)
         self.story_base = str(self.opts.get("story_base") or base)
@@ -2816,7 +2833,10 @@ class Job:
             self.opts.setdefault("ky", ky)
         day = datetime.date.fromisoformat(self.date)
         en = self.en
-        system = en.system_prompt(level) if en else system_prompt(level)
+        if self.lang == "zh":          # 1.33: chữ giản thể / phồn thể theo deck
+            system = en.system_prompt(level, not self.scope.get("phon_the"))
+        else:
+            system = en.system_prompt(level) if en else system_prompt(level)
         result: dict[str, Any] = {"ok": False, "date": self.date, "so": self.opts["so"], "lang": self.lang}
         try:
             if self.master and self.opts.get("ky") and self.master.get("truyen"):
@@ -3210,7 +3230,7 @@ def make_audio(client: Gemini, base: str, date: str, mode: str, voice: str, mode
                 out["made"] += 1
                 _write_json(meta_path, meta)
             continue
-        speech = tts_text(text)
+        speech = tts_text(text, raw.get("ngon_ngu") if raw.get("ngon_ngu") in ("en", "vi", "zh", "ko") else "ja")
         if not speech:
             continue
         done_api += 1

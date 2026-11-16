@@ -31,7 +31,7 @@ text = core.text      # 1.17: chuẩn hoá chữ (furigana, tiếng Anh) — tex
 PAPER_KEY = "kotoba_batake_paper"
 PAPER_KEY_EN = "kotoba_batake_paper_en"   # 1.19: báo tiếng Anh (số đã đọc / câu đã làm theo ngày, tách khỏi báo tiếng Nhật)
 PAPER_KEY_VI = "kotoba_batake_paper_vi"   # 1.25.1: báo tiếng Việt (Báo Làng Kotoba)
-ISSUE_LANGS = ("ja", "en", "vi")
+ISSUE_LANGS = ("ja", "en", "vi", "zh", "ko")     # 1.33: báo tiếng Trung / tiếng Hàn
 DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 AUDIO_RE = re.compile(r"^audio/[A-Za-z0-9_.-]{1,80}\.(?:wav|mp3|ogg|m4a)$")
 MAX_JSON = 1_000_000
@@ -116,9 +116,11 @@ RISKY_READ = {"今日", "明日", "昨日", "一日", "一人", "二人", "何",
               "一月", "人気", "市場", "日", "月", "上", "下", "生"}
 
 
-def speech_text(markup: str) -> str:
+def speech_text(markup: str, lang: str = "ja") -> str:
     """Chữ gửi cho giọng đọc (Gemini TTS hoặc giọng của máy): giữ chữ Hán để đúng ngữ điệu,
-    trừ số đếm / từ nhiều cách đọc thì dùng kana."""
+    trừ số đếm / từ nhiều cách đọc thì dùng kana. 1.33: tiếng Trung / tiếng Hàn / khác → đọc chữ (không đọc pinyin)."""
+    if lang != "ja":
+        return surface(markup or "").replace("◆", "").strip()
     out = []
     for t in tokenize(markup or ""):
         if t[0] == "plain":
@@ -142,18 +144,19 @@ class Voice:
     """
 
     def __init__(self, cached: Callable[[str], Any] | None = None, tts: bool = False,
-                 gen: bool = False, mpv: bool = False, tts_en: bool = False) -> None:
+                 gen: bool = False, mpv: bool = False, tts_en: bool = False, tts_xx: dict[str, bool] | None = None) -> None:
         self.cached = cached or (lambda speech: None)
         self.tts = tts            # giọng tiếng Nhật của máy
         self.tts_en = tts_en      # 1.17: giọng tiếng Anh của máy
+        self.tts_xx = dict(tts_xx or {})     # 1.33: giọng tiếng Trung / tiếng Hàn của máy {"zh": True, "ko": False}
         self.gen = gen
         self.mpv = mpv
 
     def how(self, markup: str, lang: str = "ja") -> tuple[str | None, bool, Any]:
         """(cách phát, có bản chậm, dữ liệu) cho một câu không có file audio. Ngôn ngữ khác: chỉ audio của deck."""
-        if lang not in ("ja", "en"):
+        if lang not in ("ja", "en", "zh", "ko"):
             return None, False, None
-        speech = speech_text(markup)
+        speech = speech_text(markup, lang)
         if not speech:
             return None, False, None
         try:
@@ -166,17 +169,21 @@ class Voice:
             return "tts", True, speech
         if lang == "en" and self.tts_en:
             return "tts_en", True, speech
+        if lang in ("zh", "ko") and self.tts_xx.get(lang):
+            return "tts_" + lang, True, speech
         if self.gen:
             return "gen", False, speech
         return None, False, None
 
     def wants(self, how: str | None) -> bool:
         """Có nên nhờ Gemini tạo giọng đọc cho câu đang phát bằng cách `how` không."""
-        return bool(self.gen and how in ("tts", "tts_en", "gen"))
+        return bool(self.gen and how in ("tts", "tts_en", "tts_zh", "tts_ko", "gen"))
 
     def any(self, lang: str = "ja") -> bool:
         if lang == "en":
             return bool(self.tts_en or self.gen)
+        if lang in ("zh", "ko"):
+            return bool(self.tts_xx.get(lang) or self.gen)
         if lang != "ja":
             return False
         return bool(self.tts or self.gen)
@@ -721,12 +728,37 @@ def _accepted(markup: str, extra: list[str], kana_ok: bool = True) -> set[str]:
 def matches(markup: str, extra: list[str], variants: list[str], kana_ok: bool = True, lang: str = "ja") -> bool:
     """Câu gõ lại có khớp không. Tiếng Nhật: so kana / chữ (bỏ dấu câu). 1.17 tiếng Anh: so từng từ (chữ thường,
     bỏ dấu câu, don't = do not); ngôn ngữ khác: bỏ dấu câu, chữ thường."""
+    if lang in ("zh", "ko"):        # 1.33: tiếng Trung so chữ (bỏ dấu câu / dấu cách), tiếng Hàn so theo cụm
+        return any(isinstance(v, str) and grade_answer(x, v, lang)["ok"] for x in [markup] + list(extra or []) for v in variants)
     if lang != "ja":
         norm = text.en_words if lang == "en" else text.latin_words
         ok_set = [norm(surface(x)) for x in [markup] + list(extra or [])]   # 1.19: câu báo tiếng Anh có {chữ||từ gốc}
         return any(isinstance(v, str) and norm(v) in ok_set and norm(v) for v in variants)
     ok = _accepted(markup, extra, kana_ok)
     return any(norm_answer(v) in ok for v in variants if isinstance(v, str))
+
+
+_ZH_KEEP = re.compile(r"[\u3400-\u9fff\uf900-\ufaff0-9A-Za-z]")
+
+
+def _ko() -> Any:
+    try:
+        from . import ko_core
+    except ImportError:
+        import ko_core  # type: ignore[no-redef]
+    return ko_core
+
+
+def grade_answer(markup: str, typed: str, lang: str) -> dict[str, Any]:
+    """1.33: chấm câu chép tiếng Trung (theo từng chữ, bỏ dấu câu / dấu cách) / tiếng Hàn (theo cụm). Trả
+    {"ok", "right", "total", "marks": [[chữ / cụm, đúng?], …], "spacing"} để trang tô từng chỗ."""
+    if lang == "ko":
+        return _ko().grade(surface(markup), typed or "")
+    want = _ZH_KEEP.findall(surface(markup))
+    got = _ZH_KEEP.findall(typed or "")
+    marks = [[c, i < len(got) and got[i] == c] for i, c in enumerate(want)]
+    ok = bool(want) and want == got
+    return {"ok": ok, "right": sum(1 for _c, g in marks if g), "total": len(want), "marks": marks, "spacing": False}
 
 
 def _texts(issue: dict[str, Any]) -> list[str]:
@@ -764,9 +796,14 @@ def ct_voice(lib: Library, date: str, i: int, cau: str, voice: Voice | None = No
 
 
 def dict_len(markup: str, lang: str = "ja") -> tuple[int, str]:
-    """Độ dài câu chép để hiện cho người học: tiếng Nhật đếm ký tự, tiếng Anh / chữ Latin đếm từ (1.19)."""
+    """Độ dài câu chép để hiện cho người học: tiếng Nhật đếm ký tự, tiếng Anh / chữ Latin đếm từ (1.19).
+    1.33: tiếng Trung đếm chữ, tiếng Hàn đếm cụm."""
     if lang == "ja":
         return len(norm_answer(surface(markup))), "ký tự"
+    if lang == "zh":
+        return len(_ZH_KEEP.findall(surface(markup))), "chữ"
+    if lang == "ko":
+        return len(_ko().cum(surface(markup))), "cụm"
     return len((text.en_words if lang == "en" else text.latin_words)(surface(markup))), "từ"
 
 

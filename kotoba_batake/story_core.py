@@ -932,6 +932,14 @@ def ko_text_problems(p: str) -> list[str]:
     return out
 
 
+def _ai_zh() -> Any:
+    try:
+        from . import ai_zh
+    except ImportError:
+        import ai_zh  # type: ignore[no-redef]
+    return ai_zh
+
+
 def _zh() -> Any:
     try:
         from . import zh_core
@@ -957,7 +965,17 @@ def check_story(st: Any, lang: str, level: str, bad_kanji: Any = None) -> tuple[
         warns.append("Thoại chưa đặt trong ngoặc kép \"…\" (1.31.5).")
     for j, p in enumerate(list(doan) + [title if isinstance(title, str) else ""]):
         where = "doan[%d]" % j if j < len(doan) else "tieu_de"
-        if MARK_RE.search(p):
+        if lang == "zh":                # 1.33: truyện tiếng Trung có pinyin [chữ|pinyin] → soát pinyin, các bước sau xem chữ
+            zh_mod = _ai_zh()
+            cs, probs = zh_mod.chars(p)
+            errs += [where + ": " + x for x in probs[:3]]
+            miss = zh_mod.missing(cs)
+            if miss and not probs:
+                errs.append(where + ": chữ thiếu pinyin: " + "".join(dict.fromkeys(miss))[:10])
+            if "{" in p or "}" in p:
+                errs.append(where + ": không dùng { }")
+            p = zh_mod.surface(p)
+        elif MARK_RE.search(p):
             errs.append(where + ": không dùng [ ] { } | (chữ trơn, chưa furigana)")
         if lang == "vi":       # 1.25.1: truyện tiếng Việt (chữ của thẻ — tiếng Hàn, chữ Hán… — được giữ nguyên)
             if len(p) >= 30 and not VI_MARK.search(p):
@@ -999,7 +1017,7 @@ def check_story(st: Any, lang: str, level: str, bad_kanji: Any = None) -> tuple[
     for w in tm:
         if not isinstance(w, dict) or not _str(w.get("w"), 40) or not _str(w.get("m"), 120):
             warns.append("tu_moi: bỏ mục thiếu w / m")
-        elif lang != "en" and paper.KANJI_RE.search(w["w"]) and not KANA_RE.match(_str(w.get("r"), 60)):
+        elif lang == "ja" and paper.KANJI_RE.search(w["w"]) and not KANA_RE.match(_str(w.get("r"), 60)):
             warns.append('tu_moi "%s": bỏ (cách đọc r không phải kana)' % w["w"])
         elif not VI_RE.search(w["m"]) or CJK_RE.search(w["m"]):
             warns.append('tu_moi "%s": bỏ (nghĩa m không phải tiếng Việt)' % w["w"])
@@ -1384,8 +1402,10 @@ def retell_prompt(lang: str, scope: dict[str, Any], master: dict[str, Any], prob
         parts.append("BẢN TRƯỚC BỊ MÁY KIỂM TRA TRẢ LẠI (tránh các lỗi này):\n- " + "\n- ".join(problems[:12]))
     parts.append("BẢN GỐC:\n" + json.dumps({"tieu_de": master.get("tieu_de"), "doan": master.get("doan")}, ensure_ascii=False))
     body = {"en": "tiếng Anh (chữ trơn, không đánh dấu)",
-            "zh": "tiếng Trung %s (chỉ chữ Hán + dấu câu Trung Quốc, KHÔNG pinyin, không chữ Latin trừ tên StackChan, "
-                  "không [ ] { } |)" % ("phồn thể" if scope.get("phon_the") else "giản thể"),
+            "zh": "tiếng Trung %s (chữ Hán + dấu câu Trung Quốc ，。！？“”, không chữ Latin trừ tên StackChan). MỌI chữ Hán "
+                  "viết kèm pinyin ghi số theo TỪ, dạng [chữ|pinyin]: [学生|xue2 sheng5][在|zai4][看书|kan4 shu1]。 — mỗi "
+                  "chữ một âm tiết, 5 = thanh nhẹ, ü viết v, đúng cách đọc theo văn cảnh; 一 / 不 ghi thanh theo chữ sau; "
+                  "không dùng { }" % ("phồn thể" if scope.get("phon_the") else "giản thể"),
             "ko": "tiếng Hàn (chỉ Hangul, KHÔNG Hán tự, không phiên âm Latin, không [ ] { } |)"}.get(
         lang, "tiếng Nhật (chữ Hán + kana, KHÔNG furigana, KHÔNG romaji, không [ ] { } |)")
     title = {"en": "tiếng Anh, 3–8 từ", "zh": "tiếng Trung, ngắn", "ko": "tiếng Hàn, ngắn"}.get(lang, "tiếng Nhật, ngắn")
