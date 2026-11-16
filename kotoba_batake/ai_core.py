@@ -86,9 +86,10 @@ class AIError(Exception):
     """Lỗi hiện được cho người dùng (câu tiếng Việt). kind: key/quota/net/busy/model/bad/blocked/format."""
 
     def __init__(self, msg: str, kind: str = "other", retry_after: float | None = None, daily: bool = False,
-                 quota_model: str = "") -> None:
+                 quota_model: str = "", slow: bool = False) -> None:
         super().__init__(msg)
         self.kind = kind
+        self.slow = slow                  # 1.31.5: model trả lời quá lâu (hết thời gian chờ) — không thử lại cùng model
         self.retry_after = retry_after
         self.daily = daily
         self.quota_model = quota_model    # model thật bị hết hạn mức (tên gọi tắt như gemini-3.5-flash trỏ sang model khác)
@@ -206,6 +207,7 @@ class Gemini:
         self.key = clean_key(key)
         self.base = (base or API_BASE).rstrip("/")
         self.sleep = sleep
+        self.slow: set[str] = set()   # 1.31.5: model đã quá thời gian chờ trong lần chạy này → thử sau cùng
         self.calls = 0
         self.tokens = 0
         self.no_schema: set[str] = set()     # model không nhận responseSchema
@@ -255,7 +257,9 @@ class Gemini:
         except (urllib.error.URLError, socket.timeout, ConnectionError, ssl.SSLError, OSError) as e:
             reason = getattr(e, "reason", e)
             if isinstance(reason, (socket.timeout, TimeoutError)) or "timed out" in str(reason):
-                raise AIError("Gemini trả lời quá lâu (hết %d giây). Thử lại sau." % int(timeout), "busy") from None
+                if model:
+                    self.slow.add(model)
+                raise AIError("Gemini trả lời quá lâu (hết %d giây). Thử lại sau." % int(timeout), "busy", slow=True) from None
             raise AIError("Không kết nối được tới Gemini (kiểm tra mạng): %s" % str(reason)[:120], "net") from None
         try:
             return json.loads(raw.decode("utf-8"))
@@ -272,7 +276,9 @@ class Gemini:
                 if e.kind == "quota" and not e.daily and e.retry_after is not None and e.retry_after <= 65 and not last:
                     self.sleep(e.retry_after + 1)
                     continue
-                if e.kind == "busy" and not last:
+                # 1.31.5 (thử thật 16/11: 3.8 Flash quá 240 giây nhiều lần liền): model chậm quá hạn thì không thử lại cùng
+                # model (mỗi lần mất tới 4 phút và có thể vẫn tính vào hạn mức) — báo ngay để Job chuyển model sau
+                if e.kind == "busy" and not last and not e.slow:
                     self.sleep(4 * (attempt + 1))
                     continue
                 raise
@@ -2683,6 +2689,8 @@ class Job:
                 raise AIError("Không thấy model Gemini nào viết được chữ.", "model")
         # 1.13: model đã chạy được (Thử khoá / số trước) trước; bỏ model hết hạn mức hôm nay; cả Flash-Lite
         names = role_order(self.models, role, self.c, [self.model_role.get(role), self.opts.get("prefer")])
+        slow = getattr(self.c, "slow", set())      # 1.31.5: model vừa quá thời gian chờ → các bước sau thử nó sau cùng
+        names = [n for n in names if n not in slow] + [n for n in names if n in slow]
         if not names:
             raise AIError("Mọi model Gemini của khoá này đã hết hạn mức miễn phí hôm nay, thử lại ngày mai.", "quota",
                           daily=True)
@@ -2708,6 +2716,8 @@ class Job:
                     return {"_hong": text[:20000]}
             except AIError as e:
                 last = e
+                if getattr(e, "slow", False) and isinstance(getattr(self.c, "slow", None), set):
+                    self.c.slow.add(name)       # 1.31.5: các bước sau của lần chạy này thử model này sau cùng
                 if e.kind != "model":
                     real = e
                 if e.kind == "model" and not self.opts.get("model"):

@@ -126,6 +126,7 @@ Sau khi trả lời có hiện cách đọc, Hán Việt, nghĩa (và cách dùn
 ### Mới ở 1.31.5: Gemini 4 Hydrogen, chia việc theo hạn mức, giọng đọc ≤ 3 / phút, Sổ tay làng
 - **Chọn model theo vai** (`ai_core.role_order`, `model_class`, `ROLE_CLASSES`, `CLASS_CAP`): sáng tác (lập mạch, nhà văn, biên tập, viết lại, kể lại, viết / soát số báo Nhật / Anh) Hydrogen → Flash → Flash-Lite → Pro; kiểm (Gemini sửa, số báo tiếng Việt, thử khoá) Flash-Lite → Hydrogen → Flash → Pro. `text_models` nhận `gemini-4-hydrogen`. Hạn mức miễn phí 16/11: Hydrogen 20, 3.8 Flash 20, 3.5 Flash Lite 500 lượt / ngày.
 - **Giọng đọc** cách nhau ≥ 21 giây (`TTS_GAP`, `_tts_pace`; gói miễn phí 3 lượt / phút, 10 / ngày).
+- **Model chậm quá hạn → chuyển model ngay**: lỗi hết thời gian chờ có dấu `AIError.slow` — không thử lại cùng model (trước: tới 3 lần × 4 phút), model đó xuống cuối danh sách cho các bước còn lại (`Gemini.slow`).
 - **Sổ tay làng** (`story_core`: `so_tay.json`, `truyen_tom_tat.json` ở thư mục truyện chung): đợt đã viết, nhân vật phụ, điều đã thành sự thật (Gemini trả kèm lượt lập mạch), tóm tắt mọi kỳ; lập đợt mới đọc cả sổ tay, nhà văn đọc phần gọn + "đã N ngày trôi qua" + "ngày này năm trước". Không thêm lượt gọi (1 năm Gemini giả: 765 lượt = 1.31.3). Thoại của bản gốc trong ngoặc kép.
 
 ### Mới ở 1.31.4: Ctrl+Z trong bảng ôn, nhận đúng deck tiếng Trung (bản đầu tiên sau khi phát hành công khai)

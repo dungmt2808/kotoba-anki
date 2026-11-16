@@ -44,11 +44,29 @@ Thoại có ngoặc kép, StackChan ở "góc đọc thư" của đợt trước
 
 **Lỗi thấy khi thử thật, đã sửa**: lần đầu Gemini ghi vào sổ tay "Bác đưa thư **đã** nghỉ hưu…" — lấy từ đợt mới đang lập, không phải chuyện đã xảy ra. Sửa: khuôn bắt viết "điều đã thành sự thật" **trước** mạch mới, lời dặn chỉ lấy từ các kỳ đã đăng, ở thì quá khứ, không chắc thì để trống; đợt đầu tiên không ghi. Thử lại (1 lượt): "Căn phòng số 0 sau bức tường giả đã trở thành góc đọc thư của quán." · "Quán vẫn còn một lá thư cũ chưa có người nhận." — đúng.
 
+### Gemini thật 10 ngày liền (khoá test, 16/11)
+
+`tests/gemini/run_so_tay.py`, nghỉ 4 ngày sau ngày thứ 6. Toàn văn truyện: [truyen_that_10_ngay.md](truyen_that_10_ngay.md).
+
+| Ngày | Kỳ | Truyện | Model |
+|---|---|---|---|
+| 01/11 | 1 | Lin nhặt được chiếc hộp gỗ khắc chìa khoá gãy dưới gốc phong; vị khách áo khoác dạ nhìn nó rất lâu | Hydrogen ×3 (lập đợt, viết, biên tập) |
+| 02/11 | 2 | Lin nói nhầm khi làm thủ tục cho vị khách; StackChan vẽ tranh pixel có bóng người dưới gốc phong | Hydrogen ×3 (có viết lại) |
+| 03/11 | 3 | Ông trưởng làng kể lan man, vừa nhắc tới "người bạn cũ của chị Hana" thì phải đi nấu cơm | Hydrogen ×3 (có viết lại) |
+| 04/11 | 4 | Vị khách dò hỏi lối ra sau vườn; chị Hana điềm tĩnh lạ thường | Hydrogen ×2 |
+| 05/11 | 5 | StackChan tìm thấy chìa khoá trong kho củi; trong hộp có thư phai mực + nửa tấm ảnh chàng trai trẻ | Hydrogen hết lượt giữa chừng → **3.8 Flash** |
+| 06/11, 11–13/11 | — | 3.8 Flash quá 240 giây / mất kết nối → không có bản gốc | 3.8 Flash |
+| 14/11 | 6 | Nhờ StackChan, Lin nhận ra vị khách chính là chàng trai trong ảnh 50 năm trước | 3.8 Flash (453 giây) |
+
+Truyện liền mạch qua cả 6 kỳ và 9 ngày, kỳ nào cũng có ngoặc kép. Chưa tới lần kết đợt (đợt đầu ≥ 6 kỳ) nên phần ghi đợt + sự thật của sổ tay đã thử ở lần chạy 1 ngày bên trên.
+
+**Lỗi thấy được, đã sửa**: model quá thời gian chờ thì add-on thử lại **cùng model** tới 3 lần (tới 12 phút, có thể vẫn tính vào hạn mức) và ở bước sau lại thử nó đầu tiên. Nay: quá thời gian → chuyển ngay sang model sau; model đó bị đẩy xuống cuối cho các bước còn lại của lần viết (`AIError.slow`, `Gemini.slow`).
+
 ## 4. Kết quả test
 
 | Bộ | Kết quả |
 |---|---|
-| `core/test_1315.py` (mới, Gemini giả) | **29 / 29** (1 năm: 765 lượt = mã 1.31.3; lùi Hydrogen → Flash → Lite; giọng đọc 21 giây; bản cũ chen giữa không mất sổ tay) |
+| `core/test_1315.py` (mới, Gemini giả) | **32 / 32** (1 năm: 765 lượt = mã 1.31.3; lùi Hydrogen → Flash → Lite; model chậm → chuyển ngay; giọng đọc 21 giây; bản cũ chen giữa không mất sổ tay) |
 | `tests/run_all.sh` (`ANKI_PY` = aqt 26.9.4) | **56 bộ, tất cả OK** (có `dong_bo/test_dong_bo.py` — máy chủ đồng bộ thật); lần đầu trượt 1 kiểm tra trang web (hình ghi "xuất từ 1.31.4") → `node site/tools/xuat_hinh.js` (chỉ đổi số bản) → `trang/test_trang.py` 35 / 35 |
 | `anki/run_capnhat.sh` 1.31.3 (đã phát hành) → 1.31.5 | **17 / 17** trên gói đã đóng: mọi khoá collection, mọi file `user_files/`, cấu hình add-on giữ nguyên |
 | Kịch bản Anki thật có báo (Gemini giả): `e2e_1251`, `e2e_123`; Ctrl+Z `e2e_1314` | `e2e_1251` 48 / 48 · `e2e_123` 66 / 66 · `e2e_1314` 53 / 53 |

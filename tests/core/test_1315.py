@@ -158,6 +158,57 @@ ok(m3 and m3["ky"] == 3 and {m for m in asked if m not in NO_FREE} == {"gemini-f
    "Hydrogen + mọi bản Flash hết lượt → Flash-Lite, truyện vẫn ra; model bị từ chối chỉ thử 1 lần (%d yêu cầu, %d bị "
    "từ chối)" % (len(asked), len([m for m in asked if m in NO_FREE])))
 
+print("== 2b. model trả lời quá lâu → chuyển model ngay (thử thật 16/11: 3.8 Flash quá 240 giây nhiều lần)")
+import socket as _socket
+import urllib.request as _ur
+_orig_open = _ur.urlopen
+_ur.urlopen = lambda *a, **k: (_ for _ in ()).throw(_socket.timeout("timed out"))
+try:
+    try:
+        ai.Gemini("x" * 39, sleep=lambda s: None)._request("POST", "/models/gemini-3.8-flash:generateContent", {}, timeout=240)
+        ok(False, "quá thời gian phải báo lỗi")
+    except ai.AIError as e:
+        ok(e.kind == "busy" and e.slow, "hết thời gian chờ → lỗi \"bận\" có dấu chậm (%s, slow=%s)" % (e.kind, e.slow))
+finally:
+    _ur.urlopen = _orig_open
+cnt = {"slow": 0, "busy": 0}
+cl = ai.Gemini("x" * 39, sleep=lambda s: None)
+
+
+def _raise(kind_slow):
+    def f():
+        cnt["slow" if kind_slow else "busy"] += 1
+        raise ai.AIError("x", "busy", slow=kind_slow)
+    return f
+
+
+for flag in (True, False):
+    try:
+        cl._with_retry(_raise(flag))
+    except ai.AIError:
+        pass
+ok(cnt == {"slow": 1, "busy": 3}, "model chậm: gọi 1 lần rồi thôi (không thử lại cùng model); 503 bận: vẫn thử lại 3 lần như cũ %s" % cnt)
+f = Fake()
+_g0 = Fake.generate
+
+
+def _slow_flash(self, model, *a, **k):
+    if model == "gemini-4-hydrogen":
+        self.asked.append(("cham", model))
+        raise ai.AIError("Gemini trả lời quá lâu", "busy", slow=True)
+    return _g0(self, model, *a, **k)
+
+
+Fake.generate = _slow_flash
+try:
+    m4 = day(f, tempfile.mkdtemp(prefix="kb1315s_"), "2026-11-19")
+finally:
+    Fake.generate = _g0
+ok(m4 and [m for k, m in f.asked if k != "cham"] and all(m == "gemini-flash-latest" for k, m in f.asked if k != "cham")
+   and [k for k, _m in f.asked].count("cham") == 1,
+   "Hydrogen quá hạn một lần → chuyển ngay sang Flash, các bước sau không chờ Hydrogen nữa, truyện vẫn ra (%s)" % [
+       (k, m.replace("gemini-", "")) for k, m in f.asked])
+
 print("== 3. giọng đọc cách nhau ≥ %d giây" % ai.TTS_GAP)
 waits: list[float] = []
 
