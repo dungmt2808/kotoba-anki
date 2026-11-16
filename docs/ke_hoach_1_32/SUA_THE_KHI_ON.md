@@ -2,7 +2,9 @@
 
 Góp ý của một người dùng (17/11, người dùng chuyển lời): "thêm phần chỉnh sửa thẻ ngay lúc học thẻ luôn … thường học thẻ
 anki sẽ có nút chỉnh sửa bên góc dưới bên trái". Người dùng: "tớ nghĩ tớ sẽ làm ở session sau". Claude đề xuất làm thẳng
-(nút nhỏ giống Anki) rồi gửi ảnh chụp, không cần ảnh phác — **người dùng chưa trả lời có cần ảnh phác không, hỏi lại**.
+(nút nhỏ giống Anki) rồi gửi ảnh chụp, không cần ảnh phác — người dùng trả lời **"có"**: **làm ảnh phác cho người dùng duyệt trước** (vẽ đè lên bảng ôn thật như `tests/anki/mock_132.js`).
+
+Phiên sau làm cùng: **pinyin trên từng chữ** (`PINYIN_TREN_CHU.md`). Báo tiếng Trung / tiếng Hàn: Claude đề xuất để bản riêng (xem PHAT_TRIEN.md mục 10.0c).
 
 ## Làm gì
 
