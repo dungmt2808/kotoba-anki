@@ -1282,7 +1282,6 @@ def _claude_pham_vi(cfg: dict[str, Any]) -> str | None:
 
 def _lang_view(lang: str, o: dict[str, Any], date: str) -> dict[str, Any]:
     """Một hàng của thẻ Gemini (báo tiếng Nhật / tiếng Anh / tiếng Việt): trình độ, số hôm nay, lỗi, phạm vi, nhật ký."""
-    en = lang == "en"
     base = AI_DIRS[lang]
     st = ai.load_status(base) if os.path.isdir(base) else {}
     today: dict[str, Any] | None = None
@@ -1479,7 +1478,6 @@ def _ai_scope(cfg: dict[str, Any], o: dict[str, Any], lang: str) -> dict[str, An
     """1.19.1: phạm vi của báo `lang` — 100 từ lấy từ các deck đã chọn (không chọn thì mọi deck), không theo deck
     đang xem. 1.23: báo Gemini **chỉ** lấy từ deck (bỏ "Giáo trình" / pham_vi.json của kotoba_daily — báo Claude Code
     vẫn theo giáo trình); trình độ luôn theo ô Trình độ."""
-    en = lang == "en"
     src = words.load_src(mw.col)
     level = _level_of(o, lang)
     if lang == "vi":          # 1.25.2: báo tiếng Việt chỉ truyện + tin làng, không lấy thẻ
@@ -1600,7 +1598,6 @@ def ai_start(reason: str, dialog: Any = None, lang: str = "ja") -> bool:
     if _ai["running"] or _ai["testing"] or not mw.col:
         return False
     cfg = config()
-    en = lang == "en"
     if lang not in PAPER_LANGS:
         return False
     if lang == "ja" and paper_source(cfg) != "gemini":
@@ -3772,9 +3769,11 @@ class GardenDialog(QDialog):
             return ["Deck chữ Hán / ngữ pháp này không có câu ví dụ để chép. Thêm câu ví dụ vào thẻ, hoặc dán khoá Gemini "
                     "ở tab Nguồn báo để chép câu trong báo."]
         out.append("Cần có tiếng để nghe:")
-        ja = sum(1 for p in plants if (p.get("lang") or "ja") == "ja")
-        en = sum(1 for p in plants if p.get("lang") == "en")
-        lang = "ja" if ja * 2 >= len(plants) else ("en" if en * 2 >= len(plants) else "other")
+        n_lang: dict[str, int] = {}
+        for p in plants:
+            n_lang[p.get("lang") or "ja"] = n_lang.get(p.get("lang") or "ja", 0) + 1
+        # 1.33: deck tiếng Trung / tiếng Hàn có giọng Gemini + giọng zh_CN / ko_KR của máy như tiếng Anh (trước: "other")
+        lang = next((x for x in ("ja", "en", "zh", "ko") if n_lang.get(x, 0) * 2 >= len(plants)), "other")
         if lang == "other":     # 1.17: ngôn ngữ khác chỉ nghe được bằng audio của thẻ
             out.append("• Ngôn ngữ này chỉ chép được khi thẻ có audio (chọn đúng trường ở [i:gear] Cấu hình trường).")
             return out
@@ -3790,6 +3789,9 @@ class GardenDialog(QDialog):
             out.append("• Hoặc cài giọng tiếng Nhật cho máy (Windows / macOS), cách cài ở tab Nguồn báo.")
         elif lang == "en" and not voice.tts_en:
             out.append("• Hoặc dùng giọng tiếng Anh của máy (Windows / macOS có sẵn).")
+        elif lang in ("zh", "ko") and not voice.tts_xx.get(lang):
+            out.append("• Hoặc cài giọng %s cho máy (Windows: Cài đặt → Thời gian & ngôn ngữ → Giọng nói)."
+                       % ("tiếng Trung" if lang == "zh" else "tiếng Hàn"))
         out.append("• Hoặc thêm audio vào thẻ.")
         return out
 

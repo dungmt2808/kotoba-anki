@@ -16,6 +16,8 @@ mặc định 1 báo theo deck). Không cần mạng, không cần pypinyin (d�
 7. Lời nhắc: báo tiếng Anh giống hệt từng chữ mã 1.31.5 thật; tiếng Trung / Hàn không sót chỗ trống @…@, không sót chữ
    "tiếng Anh" / IPA.
 8. Hợp đồng dữ liệu: khoá collection mới chỉ kotoba_batake_paper_zh / _ko; config.json chỉ thêm gemini_level_zh / _ko.
+9. Sửa sau khi soát: chấm chép theo dãy chung dài nhất; bản gốc lấy từ kỳ báo khác tự viết mang đúng ngôn ngữ; báo
+   tiếng Nhật vẫn soát cách đọc từ mới toàn kana.
 
 Chạy: python test_133.py ADDON
 """
@@ -340,6 +342,26 @@ with tarfile.open(fileobj=io.BytesIO(ma_cu.archive(ROOT, "d5efb47")), mode="r:*"
     old_cfg = json.load(tf.extractfile("kotoba_batake/config.json"))
 ok(sorted(set(cfg) - set(old_cfg)) == ["gemini_level_ko", "gemini_level_zh"] and not set(old_cfg) - set(cfg),
    "config.json chỉ thêm gemini_level_zh / gemini_level_ko")
+
+print("== 9. sửa sau khi soát (16/11)")
+# chấm chép: thiếu / thừa một chữ / cụm không làm cả phần sau thành sai (so theo dãy chung dài nhất)
+g = paper.grade_answer("[今天|jin1 tian1][天气|tian1 qi4]很好。", "今天气很好", "zh")
+ok([m[1] for m in g["marks"]] == [True, False, True, True, True, True] and g["right"] == 5 and not g["ok"],
+   "zh: thiếu một chữ ở đầu → chỉ chữ đó sai (5/6), phần sau vẫn đúng")
+g = paper.grade_answer("今天天气很好", "今天天气真很好", "zh")
+ok(all(m[1] for m in g["marks"]) and not g["ok"], "zh: thừa một chữ → mọi chữ của câu đúng vẫn xanh, cả câu chưa đúng")
+g = K.grade("다음 주에 가을 축제가 있어요.", "다음 가을 축제가 있어요")
+ok([m[1] for m in g["marks"]] == [True, False, True, True, True] and g["right"] == 4, "ko: thiếu một cụm → chỉ cụm đó sai (4/5)")
+g = K.grade("다음 주에 가을 축제가 있어요.", "다음주에 가을 축제가 있어요")
+ok(g["ok"] and g["spacing"], "ko: chỉ khác chỗ cách → đúng, kèm nhắc cách chữ")
+# kỳ truyện do báo khác tự viết (bản gốc hỏng) → bản gốc mang đúng ngôn ngữ (trước: chữ Hán → "ja", Hangul / Anh → "vi")
+for text, want in (("林拿着本子，很紧张地说。", "zh"), ("린은 수첩을 들고 말했어요.", "ko"), ("リンはノートを持って言った。", "ja"),
+                   ("Lin cầm cuốn sổ.", "vi"), ("Lin holds the notebook.", "en")):
+    m = S.clean_master(S.master_from_episode({"ky": 4, "nguyen_van": [text]}, "2026-11-16"))
+    ok(m and m["truyen"]["lang"] == want, "kỳ truyện %s → bản gốc %s" % (text[:12], want))
+# báo tiếng Nhật: cách đọc từ mới vẫn phải toàn kana (biến KANA_RE không bị đè)
+ok(S.KANA_RE.match("かいてき") and not S.KANA_RE.match("かい的") and not S.KANA_RE.match("快適"),
+   "báo tiếng Nhật: soát cách đọc từ mới toàn kana như 1.32")
 
 print("KẾT QUẢ: %d/%d" % (sum(results), len(results)))
 sys.exit(0 if all(results) else 1)

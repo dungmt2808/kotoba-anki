@@ -186,13 +186,14 @@ if OLD:
     ok(r.returncode == 0 and json.loads(r.stdout) == ["ja"], "(đối chứng) mã 1.31.3 đoán deck HSK 1 là tiếng Nhật — lỗi đã sửa")
 
 kana = re.compile(r"[ぁ-ゖァ-ヺ]")
+hangul = re.compile(r"[\uac00-\ud7af]")
 lines = hits = 0
 for p in glob.glob(os.path.join(ROOT, "**", "*"), recursive=True):
     if "/.git/" in p or not os.path.isfile(p) or not p.endswith((".json", ".md", ".py", ".js", ".txt", ".html")) or p.endswith("test_1314.py"):
         continue
     # 1.32: bảng chữ tiếng Trung / tiếng Hàn (Ngôn ngữ trong vườn) và test / ảnh phác của nó có chữ Trung cạnh chữ Nhật
     if p.endswith(("lang_core.py", "test_132.py", "test_132.js", "e2e_132.js", "mock_132_steps.js", "tieng_nhap.py",
-                   "LOI_NHAC_GEMINI.md", "demo_zhko.py")) or "/ke_hoach_1_32/" in p or "/kiem_thu/1.32" in p or "/fixtures/chu_132" in p:
+                   "LOI_NHAC_GEMINI.md", "demo_zhko.py", "test_133.py", "ai_zh.py", "tao_bao_133.py", "e2e_133.js")) or "/ke_hoach_1_32/" in p or "/kiem_thu/1.32" in p or "/fixtures/chu_132" in p:
         continue
     try:
         text = read(p).decode("utf-8")
@@ -200,6 +201,8 @@ for p in glob.glob(os.path.join(ROOT, "**", "*"), recursive=True):
         continue
     for line in text.splitlines():
         if kana.search(line):
+            if hangul.search(line):      # 1.33: bảng nhiều thứ tiếng (tên nhân vật, tên mục báo Nhật / Trung / Hàn)
+                continue
             lines += 1
             hits += 1 if F._ZH_ONLY.search(line) else 0
 ok(lines > 3000 and hits == 0, "chữ \"chỉ tiếng Trung\" không có trong %d dòng chữ Nhật nào của repo (gặp %d)" % (lines, hits))

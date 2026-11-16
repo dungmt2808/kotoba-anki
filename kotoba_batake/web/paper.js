@@ -174,10 +174,17 @@ var GardenPaper = (function () {
       setInfo("Truyện dài kỳ và tin làng hôm nay. Trả lời câu hỏi cuối số để nhận xu.");
     } else if (tab === "issue" && pl === "en") {
       setInfo("Bấm từ gạch chân để tra nghĩa (nhận cả dạng biến đổi: went → go). Gạch chấm: từ mới." + issueTip());
+    } else if (tab === "issue" && pl === "zh") {          // 1.33
+      setInfo("Bấm từ gạch chân để tra nghĩa, pinyin, âm Hán Việt · gạch liền: từ đã học · gạch chấm: từ mới" + issueTip());
+    } else if (tab === "issue" && pl === "ko") {
+      setInfo("Bấm từ gạch chân để tra nghĩa (nhận cả từ có tiểu từ / đuôi: 학교에 → 학교) · gạch chấm: từ mới" + issueTip());
     } else if (tab === "issue") { setInfo("Bấm từ gạch chân để tra nghĩa · gạch liền: từ đã học · gạch chấm: từ mới" + issueTip()); }
     else if (tab === "dict") {
-      setInfo(dictLang() === "ja" ? "Nghe rồi gõ lại câu (kana, kanji hoặc romaji). Enter để kiểm tra."
-        : "Nghe rồi gõ lại câu. Không tính hoa thường, dấu câu; don't = do not. Enter để kiểm tra.");
+      const dl = dictLang();
+      setInfo(dl === "ja" ? "Nghe rồi gõ lại câu (kana, kanji hoặc romaji). Enter để kiểm tra."
+        : dl === "zh" ? "Nghe rồi gõ lại câu bằng chữ Hán (bộ gõ pinyin). Không tính dấu câu, dấu cách. Enter để kiểm tra."
+          : dl === "ko" ? "Nghe rồi gõ lại câu bằng chữ Hàn. Không tính dấu câu; sai chỗ cách chữ vẫn tính đúng. Enter để kiểm tra."
+            : "Nghe rồi gõ lại câu. Không tính hoa thường, dấu câu; don't = do not. Enter để kiểm tra.");
     }
     else if (tab === "src") { setInfo("Chọn báo muốn nhận và ai viết báo."); }
     else { setInfo("Chọn một số báo để đọc."); }
@@ -640,7 +647,7 @@ var GardenPaper = (function () {
     if (!vi) {            // 1.25.2: báo tiếng Việt chỉ truyện + tin làng, không lấy thẻ
       aiRow(rows, "Lấy từ", sourcePicker(v, lang));
       if (L.thieu && ((v.modes || {})[lang] || "deck") !== "level") { aiRow(rows, "", L.thieu, null, "kb-ai-sub-row"); }
-    } else { aiRow(rows, "Nội dung", "truyện dài kỳ + tin làng (cùng chuyện với báo Nhật / Anh)"); }
+    } else { aiRow(rows, "Nội dung", "truyện dài kỳ + tin làng (cùng chuyện với các báo ngoại ngữ)"); }
     if (picked.length && !deckOpen[lang]) {
       const names = ((v.decks || {})[lang] || []).filter((d) => picked.indexOf(d.id) >= 0).map((d) => d.name);
       aiRow(rows, "", names.join(", "), [btn("", "Đổi", () => { deckOpen[lang] = true; drawSource(); })], "kb-ai-sub-row");

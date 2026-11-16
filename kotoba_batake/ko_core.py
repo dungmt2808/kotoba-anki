@@ -5,6 +5,7 @@ Thuần Python (không import anki / aqt) để test offline. Chỉ nối tra t�
 """
 from __future__ import annotations
 
+import difflib
 import re
 import unicodedata
 from typing import Any
@@ -201,14 +202,23 @@ def cum(s: str) -> list[str]:
     return [x for x in PUNCT_RE.sub(" ", norm(s)).split() if x]
 
 
+def matched(want: list[str], got: list[str]) -> list[bool]:
+    """Chỗ nào của câu đúng có trong câu gõ — so theo dãy chung dài nhất (thiếu / thừa một cụm không làm cả phần sau
+    thành sai như khi so từng vị trí)."""
+    hit = [False] * len(want)
+    for blk in difflib.SequenceMatcher(None, want, got, autojunk=False).get_matching_blocks():
+        for k in range(blk.size):
+            hit[blk.a + k] = True
+    return hit
+
+
 def grade(answer: str, typed: str) -> dict[str, Any]:
     """So câu gõ với câu đúng theo cụm. ok: đúng cả câu (bỏ qua dấu câu; khác chỗ cách nhưng đúng chữ cũng tính đúng,
     kèm `spacing`). marks: [(cụm đúng, True / False)] để tô."""
     a, t = cum(answer), cum(typed)
     joined_ok = "".join(a) == "".join(t) and bool(a)
-    marks = []
-    for i, x in enumerate(a):
-        marks.append([x, joined_ok or (i < len(t) and t[i] == x)])
+    hit = matched(a, t)
+    marks = [[x, joined_ok or hit[i]] for i, x in enumerate(a)]
     ok = bool(a) and a == t
     return {"ok": ok or joined_ok, "spacing": joined_ok and not ok, "right": sum(1 for _x, g in marks if g),
             "total": len(a), "marks": marks}

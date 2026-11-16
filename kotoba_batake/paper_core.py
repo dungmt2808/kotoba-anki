@@ -771,7 +771,8 @@ def grade_answer(markup: str, typed: str, lang: str) -> dict[str, Any]:
         return _ko().grade(surface(markup), typed or "")
     want = _ZH_KEEP.findall(surface(markup))
     got = _ZH_KEEP.findall(typed or "")
-    marks = [[c, i < len(got) and got[i] == c] for i, c in enumerate(want)]
+    hit = _ko().matched(want, got)
+    marks = [[c, hit[i]] for i, c in enumerate(want)]
     ok = bool(want) and want == got
     return {"ok": ok, "right": sum(1 for _c, g in marks if g), "total": len(want), "marks": marks, "spacing": False}
 

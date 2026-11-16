@@ -11,7 +11,6 @@ File này không import aqt (test được bằng python thường).
 """
 from __future__ import annotations
 
-import copy
 import datetime
 import json
 import re

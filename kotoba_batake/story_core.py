@@ -810,7 +810,7 @@ LEN_VI = (60, 140)        # 1.25.1: chữ tiếng Việt mỗi đoạn (tiếng 
 LEN_ZH = {"HSK1": (35, 90), "HSK2": (45, 110), "HSK3": (55, 140), "HSK4": (65, 170), "HSK5": (75, 200), "HSK6": (85, 230)}
 LEN_KO = {"TOPIK1": (12, 32), "TOPIK2": (15, 40), "TOPIK3": (20, 50), "TOPIK4": (24, 60), "TOPIK5": (28, 70), "TOPIK6": (32, 80)}
 HANGUL_RE = re.compile(r"[\uac00-\ud7af\u1100-\u11ff\u3130-\u318f]")
-KANA_RE = re.compile(r"[\u3040-\u30ff]")
+KANA_ANY_RE = re.compile(r"[\u3040-\u30ff]")      # 1.33: có kana ở đâu đó (KANA_RE ở trên: toàn kana)
 HAN_ANY_RE = re.compile(r"[\u3400-\u9fff\uf900-\ufaff]")
 
 
@@ -887,7 +887,7 @@ def zh_text_problems(p: str, simplified: Any = True) -> list[str]:
     bộ chữ thường dùng (bảng cách đọc), giản thể lẫn phồn thể (`simplified`: True = giản thể, False = phồn thể)."""
     out: list[str] = []
     zh = _zh()
-    if KANA_RE.search(p):
+    if KANA_ANY_RE.search(p):
         out.append("có kana (chữ Nhật) trong bài tiếng Trung")
     if HANGUL_RE.search(p):
         out.append("có chữ Hàn trong bài tiếng Trung")
@@ -922,7 +922,7 @@ def ko_text_problems(p: str) -> list[str]:
         out.append("không có chữ Hàn")
     if HAN_ANY_RE.search(p):
         out.append("có Hán tự (漢字) — viết bằng Hangul")
-    if KANA_RE.search(p):
+    if KANA_ANY_RE.search(p):
         out.append("có kana (chữ Nhật)")
     if VI_ONLY_RE.search(p):
         out.append("có chữ tiếng Việt")
@@ -1123,7 +1123,6 @@ def run(job: Any, ky: int, tone: str, season: str) -> dict[str, Any] | None:
     1.25.1: `tone` là danh sách chủ đề đã chọn (hoặc một chủ đề kiểu 1.23); mỗi đợt một chủ đề, xoay vòng."""
     lang = getattr(job, "lang", "") or ("en" if job.en else "ja")
     level = job.scope.get("trinh_do", "A2" if lang == "en" else "N4")
-    tname = LANG_VI.get(lang, "tiếng Nhật")
     tones = norm_tones(tone)
     story = load_story(job.base)
     arc = load_arc(job.base)
@@ -1292,7 +1291,7 @@ def clean_master(raw: Any) -> dict[str, Any] | None:
                                "bo_ngo": _strs(nho.get("bo_ngo"), 8, 200), "da_giai": _strs(nho.get("da_giai"), 8, 200)},
                        "diem": {k: v for k, v in (t.get("diem") or {}).items() if k in CRIT and isinstance(v, int)}
                        if isinstance(t.get("diem"), dict) else {},
-                       "lang": t.get("lang") if t.get("lang") in ("vi", "ja", "en") else "vi"},
+                       "lang": t.get("lang") if t.get("lang") in ("vi", "ja", "en", "zh", "ko") else "vi"},
             "tin": clean_news(raw.get("tin")), "muc3": clean_muc3(raw.get("muc3")),
             "thoi_tiet": _str(raw.get("thoi_tiet"), 160), "giong": raw.get("giong") if raw.get("giong") in TONES else ""}
 
@@ -1320,13 +1319,25 @@ def recent_news(base: str, date: str, days: int = 3) -> list[str]:
     return out
 
 
+def text_lang(text: str) -> str:
+    """Ngôn ngữ của một kỳ truyện. 1.33: trước đây chữ Hán / Hangul nào cũng là "ja", chữ Latinh nào cũng là "vi" — kỳ
+    do báo Trung / Hàn / Anh tự viết (bản gốc hỏng) bị báo tiếng Việt in thẳng ra như tiếng Việt."""
+    if KANA_ANY_RE.search(text):
+        return "ja"
+    if HANGUL_RE.search(text):
+        return "ko"
+    if HAN_ANY_RE.search(text):
+        return "zh"
+    return "en" if LATIN_RE.search(text) and not VI_MARK.search(text) else "vi"
+
+
 def master_from_episode(e: dict[str, Any], date: str) -> dict[str, Any]:
     """Kỳ hôm nay đã có trong bộ nhớ (báo khác viết theo cách cũ khi chưa có bản gốc) → làm bản gốc từ kỳ đó."""
     return {"ngay": date, "ky": e["ky"], "truyen": {"tieu_de": e.get("tieu_de", ""), "doan": list(e.get("nguyen_van") or []),
                                                      "ky_truoc": "", "nho": {"tom_tat": e.get("tom_tat", ""),
                                                                              "bo_ngo": e.get("bo_ngo", [])},
-                                                     "diem": e.get("diem") or {}, "lang": "ja" if CJK_RE.search(
-                                                         "".join(e.get("nguyen_van") or [])) else "vi"},
+                                                     "diem": e.get("diem") or {},
+                                                     "lang": text_lang("".join(e.get("nguyen_van") or []))},
             "tin": [], "muc3": None, "thoi_tiet": "", "giong": ""}
 
 
