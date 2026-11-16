@@ -188,8 +188,8 @@ RULES_VI = """CÁCH VIẾT MỘT KỲ HAY (bắt buộc):
    học hay lời khuyên.
 6. Không liệt kê, không lặp lại tình huống của các kỳ trước.
 7. Nối tiếp kỳ trước: KHÔNG mâu thuẫn với chuyện đã xảy ra, giải quyết hoặc đẩy tiếp một chỗ bỏ ngỏ.
-8. Thoại thể hiện tính cách, ghi rõ ai nói. Tiếng Việt tự nhiên, đúng chính tả, có dấu; chữ trơn (không [ ] { } |,
-   không markdown).
+8. Thoại đặt trong ngoặc kép "…", thể hiện tính cách, ghi rõ ai nói. Tiếng Việt tự nhiên, đúng chính tả, có dấu; chữ
+   trơn (không [ ] { } |, không markdown).
 9. Chuyện sẽ được kể lại bằng tiếng Nhật / tiếng Anh cho người mới học: tránh chơi chữ chỉ có trong tiếng Việt, thành
    ngữ khó dịch; câu thoại ngắn, rõ."""
 
@@ -197,9 +197,12 @@ _S = {"type": "STRING"}
 _SL = {"type": "ARRAY", "items": _S}
 ARC_SCHEMA: dict[str, Any] = {
     "type": "OBJECT",
-    "properties": {"ten": _S, "muc_tieu": _S, "bi_an": _S, "nhan_vat_phu": _S, "buoc": _SL, "ket": _S},
+    "properties": {"ten": _S, "muc_tieu": _S, "bi_an": _S, "nhan_vat_phu": _S, "buoc": _SL, "ket": _S,
+                   "su_that_moi": _SL},      # 1.31.5: điều đã thành sự thật sau các kỳ vừa qua → Sổ tay làng
     "required": ["ten", "muc_tieu", "bi_an", "nhan_vat_phu", "buoc", "ket"],
-    "propertyOrdering": ["ten", "muc_tieu", "bi_an", "nhan_vat_phu", "buoc", "ket"],
+    # su_that_moi viết TRƯỚC mạch mới (thử thật 16/11: viết sau thì Gemini lẫn điều của đợt mới — "bác đưa thư đã nghỉ hưu"
+    # trong khi đợt mới mới là chuyện bác sắp nghỉ hưu)
+    "propertyOrdering": ["su_that_moi", "ten", "muc_tieu", "bi_an", "nhan_vat_phu", "buoc", "ket"],
 }
 _NEWS = {"type": "OBJECT", "properties": {"tieu_de": _S, "noi_dung": _S}, "required": ["tieu_de", "noi_dung"],
          "propertyOrdering": ["tieu_de", "noi_dung"]}
@@ -350,6 +353,7 @@ def save_episode(base: str, date: str, ky: int, story: dict[str, Any], plain_tit
         item["ky_claude"] = old.get("ky_claude")
     keep.append(item)
     _write(os.path.join(base, STORY_FILE), keep[-60:])
+    remember_summary(base, item)          # 1.31.5: Sổ tay làng giữ tóm tắt mọi kỳ (truyen.json chỉ giữ 60 kỳ)
 
 
 def set_feedback(base: str, ky: int, y: str, note: str = "") -> bool:
@@ -390,6 +394,192 @@ def open_threads(story: list[dict[str, Any]], arc: dict[str, Any] | None) -> lis
 
 
 # ---------------------------------------------------------------------------
+# 1.31.5: Sổ tay làng — trí nhớ dài hạn của truyện, KHÔNG thêm lượt gọi Gemini
+# ---------------------------------------------------------------------------
+# Người dùng 16/11: "báo đã viết được 1 tháng, 3 tháng, 1 năm thì diễn biến câu chuyện thế nào, có được liền mạch không …
+# quan trọng là làm sao lượt gọi gemini vẫn dư". Trước đây lập đợt mới chỉ thấy tóm tắt 8 kỳ gần nhất và truyen.json chỉ
+# giữ 60 kỳ (tests/tools/mo_phong_truyen.py) → sau vài tháng nhân vật phụ cũ không bao giờ quay lại, ý đợt dễ lặp.
+#   so_tay.json        {"v": 1, "dot": [đợt đã viết: dot, ten, giong, tu_ky, den_ky, ket, nhan_vat_phu, bi_an],
+#                       "nhan_vat": [{ten, ky}], "su_that": [câu]} — máy tự ghi khi hết một đợt; "su_that" do Gemini trả
+#                       kèm trong chính lượt lập đợt mới (khuôn ARC_SCHEMA thêm su_that_moi)
+#   truyen_tom_tat.json [{ky, ngay, tom_tat, tieu_de}] — tóm tắt MỌI kỳ (truyen.json vẫn cắt 60 kỳ như cũ để bản cũ đọc)
+# Chỉ ở máy này (thư mục truyện chung, như truyen.json). Bản ≤ 1.31.4 không biết hai file này → không đụng tới.
+NOTE_FILE = "so_tay.json"
+SUM_FILE = "truyen_tom_tat.json"
+NOTE_ARCS = 200            # số đợt nhớ (≈ 4 năm)
+NOTE_FACTS = 24            # số điều "đã thành sự thật" (giữ điều mới nhất)
+NOTE_CHARS = 40            # số nhân vật phụ nhớ
+SUM_MAX = 3000             # số kỳ giữ tóm tắt (≈ 8 năm)
+NOTE_RECENT = 24           # đợt gần đây ghi đủ một dòng trong lời nhắc lập mạch; đợt cũ hơn chỉ ghi tên
+
+
+def _int(v: Any) -> int | None:
+    return v if isinstance(v, int) and not isinstance(v, bool) else None
+
+
+def load_notebook(base: str) -> dict[str, Any]:
+    raw = _read(os.path.join(base, NOTE_FILE), None)
+    raw = raw if isinstance(raw, dict) else {}
+    out: dict[str, Any] = {k: v for k, v in raw.items() if k not in ("v", "dot", "nhan_vat", "su_that")}   # khoá của bản sau
+    out.update(v=1, dot=[], nhan_vat=[], su_that=[])
+    for a in raw.get("dot") if isinstance(raw.get("dot"), list) else []:
+        if not isinstance(a, dict) or _int(a.get("tu_ky")) is None or _int(a.get("den_ky")) is None:
+            continue
+        out["dot"].append({"dot": _int(a.get("dot")) or 0, "ten": _str(a.get("ten"), 120),
+                           "giong": a.get("giong") if a.get("giong") in TONES else "", "tu_ky": a["tu_ky"],
+                           "den_ky": a["den_ky"], "ket": _str(a.get("ket"), 300),
+                           "nhan_vat_phu": _str(a.get("nhan_vat_phu"), 200), "bi_an": _str(a.get("bi_an"), 300)})
+    out["dot"] = out["dot"][-NOTE_ARCS:]
+    for c in raw.get("nhan_vat") if isinstance(raw.get("nhan_vat"), list) else []:
+        if isinstance(c, dict) and _str(c.get("ten"), 120) and _int(c.get("ky")) is not None:
+            out["nhan_vat"].append({"ten": _str(c.get("ten"), 120), "ky": c["ky"]})
+    out["nhan_vat"] = out["nhan_vat"][-NOTE_CHARS:]
+    out["su_that"] = _strs(raw.get("su_that"), NOTE_FACTS * 2, 200)[-NOTE_FACTS:]
+    return out
+
+
+def save_notebook(base: str, nb: dict[str, Any]) -> None:
+    _write(os.path.join(base, NOTE_FILE), nb)
+
+
+def _sum_item(e: Any) -> dict[str, Any] | None:
+    if not isinstance(e, dict) or _int(e.get("ky")) is None:
+        return None
+    return {"ky": e["ky"], "ngay": _str(e.get("ngay"), 10), "tom_tat": _str(e.get("tom_tat"), 400),
+            "tieu_de": _str(e.get("tieu_de"), 120)}
+
+
+def load_summaries(base: str) -> list[dict[str, Any]]:
+    """Tóm tắt mọi kỳ: truyen_tom_tat.json + truyen.json (kỳ chép từ Claude Code, kỳ bản cũ viết cũng có)."""
+    by: dict[int, dict[str, Any]] = {}
+    raw = _read(os.path.join(base, SUM_FILE), [])
+    for e in raw if isinstance(raw, list) else []:
+        it = _sum_item(e)
+        if it:
+            by[it["ky"]] = it
+    for e in load_story(base):
+        it = _sum_item(e)
+        if it and (it["tom_tat"] or it["ky"] not in by):
+            by[it["ky"]] = it
+    return [by[k] for k in sorted(by)][-SUM_MAX:]
+
+
+def remember_summary(base: str, e: dict[str, Any]) -> None:
+    it = _sum_item(e)
+    if not it:
+        return
+    raw = _read(os.path.join(base, SUM_FILE), [])
+    rows = [x for x in (raw if isinstance(raw, list) else []) if isinstance(x, dict) and x.get("ky") != it["ky"]]
+    rows.append(it)
+    rows.sort(key=lambda x: x["ky"] if _int(x.get("ky")) is not None else -1)
+    _write(os.path.join(base, SUM_FILE), rows[-SUM_MAX:])
+
+
+def _note_chars(nb: dict[str, Any], eps: list[dict[str, Any]]) -> None:
+    known = {c["ten"].casefold()[:40] for c in nb["nhan_vat"]}
+    for e in eps:
+        for name in e.get("nhan_vat_moi") or []:
+            key = name.casefold()[:40]
+            if name and key not in known:
+                known.add(key)
+                nb["nhan_vat"].append({"ten": name[:120], "ky": e["ky"]})
+    nb["nhan_vat"] = nb["nhan_vat"][-NOTE_CHARS:]
+
+
+def note_arc_done(base: str, arc: dict[str, Any] | None, den_ky: int, story: list[dict[str, Any]]) -> bool:
+    """Đợt `arc` đã xong ở kỳ `den_ky` (máy ghi, không gọi Gemini). Ghi một lần cho mỗi đợt."""
+    if not arc or den_ky < arc["tu_ky"]:
+        return False
+    nb = load_notebook(base)
+    if any(a["tu_ky"] == arc["tu_ky"] and a["dot"] == arc.get("dot", 0) for a in nb["dot"]):
+        return False
+    nb["dot"].append({"dot": arc.get("dot", 0), "ten": arc.get("ten", ""), "giong": arc.get("giong", ""),
+                      "tu_ky": arc["tu_ky"], "den_ky": den_ky, "ket": arc.get("ket", ""),
+                      "nhan_vat_phu": arc.get("nhan_vat_phu", ""), "bi_an": arc.get("bi_an", "")})
+    nb["dot"] = nb["dot"][-NOTE_ARCS:]
+    _note_chars(nb, [e for e in story if arc["tu_ky"] <= e["ky"] <= den_ky])
+    save_notebook(base, nb)
+    return True
+
+
+def note_facts(base: str, facts: Any) -> int:
+    """Thêm điều "đã thành sự thật" (Gemini trả kèm lượt lập mạch). Trả số điều mới."""
+    new = [f for f in _strs(facts, 3, 200) if f]
+    if not new:
+        return 0
+    nb = load_notebook(base)
+    known = {f.casefold() for f in nb["su_that"]}
+    add = [f for f in new if f.casefold() not in known]
+    if add:
+        nb["su_that"] = (nb["su_that"] + add)[-NOTE_FACTS:]
+        save_notebook(base, nb)
+    return len(add)
+
+
+def backfill_notebook(base: str, story: list[dict[str, Any]]) -> None:
+    """Lần đầu chạy 1.31.5 trên bộ nhớ cũ: lấy nhân vật phụ + tóm tắt từ truyen.json (≤ 60 kỳ còn lại)."""
+    if not os.path.isfile(os.path.join(base, SUM_FILE)) and story:
+        _write(os.path.join(base, SUM_FILE), [it for it in (_sum_item(e) for e in story) if it])
+    if not os.path.isfile(os.path.join(base, NOTE_FILE)) and story:
+        nb = load_notebook(base)
+        _note_chars(nb, story)
+        save_notebook(base, nb)
+
+
+def notebook_for_arc(base: str) -> str:
+    """Phần sổ tay cho lời nhắc lập mạch (mỗi tuần một lần): các đợt đã viết, nhân vật phụ, điều đã thành sự thật."""
+    nb = load_notebook(base)
+    lines: list[str] = []
+    arcs = nb["dot"]
+    old, recent = arcs[:-NOTE_RECENT], arcs[-NOTE_RECENT:]
+    if old:
+        lines.append("Các đợt cũ hơn: " + _str("; ".join(a["ten"] for a in old if a["ten"]), 700))
+    if recent:
+        lines.append("Các đợt đã viết:\n" + "\n".join(
+            "- Đợt %d «%s» (kỳ %d–%d%s): %s%s" % (
+                a["dot"], a["ten"], a["tu_ky"], a["den_ky"], ", " + TONE_NAME[a["giong"]] if a["giong"] in TONE_NAME else "",
+                _str(a["ket"], 160) or "—", " · nhân vật phụ: " + _str(a["nhan_vat_phu"], 90) if a["nhan_vat_phu"] else "")
+            for a in recent))
+    if nb["nhan_vat"]:
+        lines.append("Nhân vật phụ đã gặp: " + "; ".join("%s (kỳ %d)" % (c["ten"], c["ky"]) for c in nb["nhan_vat"][-20:]))
+    if nb["su_that"]:
+        lines.append("Điều đã thành sự thật:\n- " + "\n- ".join(nb["su_that"]))
+    return "\n".join(lines)
+
+
+def _days(a: str, b: str) -> int | None:
+    import datetime as _dt
+    try:
+        return (_dt.date.fromisoformat(b[:10]) - _dt.date.fromisoformat(a[:10])).days
+    except (ValueError, TypeError):
+        return None
+
+
+def notebook_for_writer(base: str, date: str, story: list[dict[str, Any]], ky: int, lang: str) -> str:
+    """Phần sổ tay gọn cho nhà văn mỗi ngày (~vài trăm chữ): điều đã thành sự thật, thời gian đã trôi từ kỳ trước,
+    (bản gốc tiếng Việt) ngày này năm trước để tin làng có thể nhắc."""
+    nb = load_notebook(base)
+    out: list[str] = []
+    if nb["su_that"]:
+        out.append("SỔ TAY LÀNG — điều đã thành sự thật (giữ cho khớp, không cần nhắc hết):\n- " + "\n- ".join(nb["su_that"][-8:]))
+    prev = [e for e in story if e["ky"] < ky and e.get("ngay")]
+    if prev and date:
+        gap = _days(prev[-1]["ngay"], date)
+        if gap is not None and gap >= 3:
+            out.append("THỜI GIAN: kỳ trước (kỳ %d) đăng ngày %s — trong làng đã %d ngày trôi qua. Nối tiếp chuyện, nhưng nếu "
+                       "hợp thì cho thấy thời gian đã trôi (mùa, thời tiết, việc trong quán đã khác)." % (
+                           prev[-1]["ky"], prev[-1]["ngay"], gap))
+    if lang == "vi" and date:
+        for e in reversed(load_summaries(base)):
+            gap = _days(e["ngay"], date) if e.get("ngay") else None
+            if gap is not None and 364 <= gap <= 366 and e.get("tom_tat"):
+                out.append("NGÀY NÀY NĂM TRƯỚC (kỳ %d, %s): %s — tin làng có thể nhắc nhẹ (\"Ngày này năm ngoái…\"), "
+                           "không bắt buộc." % (e["ky"], e["ngay"], e["tom_tat"]))
+                break
+    return "\n\n".join(out)
+
+
+# ---------------------------------------------------------------------------
 # Lời nhắc
 # ---------------------------------------------------------------------------
 
@@ -426,23 +616,31 @@ def _first_ep(lang: str) -> str:
             "vi": "Lin đến làng Kotoba và bắt đầu làm ở Quán Kotoba."}.get(lang, "リンさん bắt đầu làm ở ことば屋.")
 
 
-def arc_prompt(lang: str, tone: str, story: list[dict[str, Any]], ky: int, season: str, tones: Any = None) -> str:
+def arc_prompt(lang: str, tone: str, story: list[dict[str, Any]], ky: int, season: str, tones: Any = None,
+               notebook: str = "") -> str:
     prev = "\n".join("- Kỳ %d: %s" % (e["ky"], e["tom_tat"]) for e in story[-8:] if e.get("tom_tat")) or "(chưa có kỳ nào)"
     bible = _bible(lang)
     return "\n\n".join([
-        bible, "CHỦ ĐỀ CỦA ĐỢT NÀY: " + tone_text(tones or [tone], tone),
+        bible, "CHỦ ĐỀ CỦA ĐỢT NÀY: " + tone_text(tones or [tone], tone)] + ([
+        "SỔ TAY LÀNG (chuyện từ trước tới nay — KHÔNG lặp lại ý / bí ẩn của các đợt cũ; có thể cho một nhân vật phụ cũ "
+        "quay lại khi hợp; giữ đúng các điều đã thành sự thật):\n" + notebook] if notebook else []) + [
         "CÁC KỲ ĐÃ ĐĂNG:\n" + prev,
         "HÔM NAY: %s. Đợt mới bắt đầu từ kỳ %d." % (season, ky),
         "Lập MẠCH TRUYỆN cho một đợt %d–%d kỳ (mỗi kỳ đăng một ngày): ten = tên đợt (tiếng Việt); muc_tieu = điều nhân vật "
         "chính muốn đạt trong đợt; bi_an = câu hỏi / bí ẩn kéo suốt đợt; nhan_vat_phu = nhân vật phụ của đợt (một người / con "
         "vật, kèm điều họ muốn); buoc = mỗi phần tử là MỘT kỳ (tiếng Việt, 1–2 câu: chuyện gì xảy ra, trở ngại, móc câu); "
         "ket = đợt kết thúc thế nào (giải được bí ẩn, có thay đổi nhỏ ở nhân vật, để lại một sợi chỉ cho đợt sau). "
-        "Nối tiếp các kỳ đã đăng, không lặp lại chuyện cũ. Hợp mùa hiện tại." % ARC_LEN,
+        "Nối tiếp các kỳ đã đăng, không lặp lại chuyện cũ. Hợp mùa hiện tại." % ARC_LEN + (
+            " su_that_moi (viết TRƯỚC khi lập mạch mới) = 0–3 điều ĐÃ XẢY RA trong CÁC KỲ ĐÃ ĐĂNG ở trên và đáng nhớ lâu dài "
+            "(quan hệ giữa nhân vật, thay đổi ở quán / làng, điều Lin học được) — mỗi điều một câu ngắn ở thì quá khứ; CHỈ "
+            "lấy từ các kỳ đã đăng, KHÔNG lấy gì của đợt mới đang lập, không bịa thêm, không lặp điều đã có trong sổ tay; "
+            "không chắc thì để trống." if story else " su_that_moi để trống (chưa có kỳ nào)."),
         "Trả về đúng một object JSON theo khuôn."])
 
 
 def writer_prompt(lang: str, scope: dict[str, Any], ky: int, tone: str, arc: dict[str, Any] | None,
-                  story: list[dict[str, Any]], season: str, problems: list[str] | None = None, tones: Any = None) -> str:
+                  story: list[dict[str, Any]], season: str, problems: list[str] | None = None, tones: Any = None,
+                  notebook: str = "") -> str:
     level = scope.get("trinh_do", "A2" if lang == "en" else "N4")
     prev = [e for e in story if e["ky"] < ky]
     last = prev[-1] if prev else None
@@ -465,6 +663,8 @@ def writer_prompt(lang: str, scope: dict[str, Any], ky: int, tone: str, arc: dic
     th = open_threads(story, arc)
     if th:
         parts.append("CHỖ BỎ NGỎ CÒN MỞ (giải quyết hoặc đẩy tiếp 1 chỗ):\n- " + "\n- ".join(th))
+    if notebook:          # 1.31.5: Sổ tay làng (phần gọn: sự thật, thời gian đã trôi, ngày này năm trước)
+        parts.append(notebook)
     fb = [e for e in prev[-4:] if e.get("phan_hoi")]
     if fb:
         parts.append("NGƯỜI ĐỌC NHẬN XÉT (lắng nghe):\n" + "\n".join(
@@ -679,6 +879,8 @@ def check_story(st: Any, lang: str, level: str, bad_kanji: Any = None) -> tuple[
     if not isinstance(doan, list) or not 2 <= len(doan) <= 4 or not all(isinstance(p, str) and p.strip() for p in doan):
         return errs + ["doan: cần 3 đoạn"], warns
     lo, hi = story_length(lang, level)
+    if lang == "vi" and not re.search(r'["“”]', "".join(doan)):
+        warns.append("Thoại chưa đặt trong ngoặc kép \"…\" (1.31.5).")
     for j, p in enumerate(list(doan) + [title if isinstance(title, str) else ""]):
         where = "doan[%d]" % j if j < len(doan) else "tieu_de"
         if MARK_RE.search(p):
@@ -827,6 +1029,10 @@ def run(job: Any, ky: int, tone: str, season: str) -> dict[str, Any] | None:
     tones = norm_tones(tone)
     story = load_story(job.base)
     arc = load_arc(job.base)
+    try:                  # 1.31.5: Sổ tay làng — lần đầu thì lấp từ bộ nhớ cũ (không gọi Gemini)
+        backfill_notebook(job.base, story)
+    except (OSError, ValueError, TypeError) as e:
+        job._note("so_tay_loi", ly_do=str(e)[:160])
     cached = load_draft(job.base, job.date, ky)
     if cached:            # lần thử trước hôm nay đã có kỳ truyện duyệt xong (lượt viết số hỏng) → dùng lại
         job._note("truyen_dung_lai", ky=ky)
@@ -855,9 +1061,16 @@ def run(job: Any, ky: int, tone: str, season: str) -> dict[str, Any] | None:
     # 0. mạch của đợt (1.25.1: đợt mới khi hết đợt, hoặc chủ đề của đợt không còn trong danh sách đã chọn)
     tone = arc["giong"] if arc and arc.get("giong") in tones and arc_step(arc, ky) is not None else next_tone(tones, arc)
     if arc_step(arc, ky) is None or (arc and arc.get("giong") != tone):
+        notebook = ""
+        try:              # 1.31.5: đợt cũ xong → ghi vào Sổ tay làng; lời nhắc lập mạch đọc cả sổ tay
+            if arc and note_arc_done(job.base, arc, ky - 1, story):
+                job._note("so_tay_dot", ten=arc.get("ten", ""), den_ky=ky - 1)
+            notebook = notebook_for_arc(job.base)
+        except (OSError, ValueError, TypeError) as e:
+            job._note("so_tay_loi", ly_do=str(e)[:160])
         job.progress("Gemini đang lập mạch truyện…")
         try:
-            raw = gen(system, arc_prompt(lang, tone, story, ky, season, tones), ARC_SCHEMA, 0.9, thinking="low")
+            raw = gen(system, arc_prompt(lang, tone, story, ky, season, tones, notebook), ARC_SCHEMA, 0.9, thinking="low")
             buoc = _strs(raw.get("buoc") if isinstance(raw, dict) else None, ARC_LEN[1], 300)
             if len(buoc) >= 3:
                 arc = {"ten": _str(raw.get("ten"), 120), "muc_tieu": _str(raw.get("muc_tieu"), 300),
@@ -866,6 +1079,12 @@ def run(job: Any, ky: int, tone: str, season: str) -> dict[str, Any] | None:
                        "dot": (arc or {}).get("dot", 0) + 1}
                 _write(os.path.join(job.base, ARC_FILE), arc)
                 job._note("mach_truyen", ten=arc["ten"], so_ky=len(buoc))
+                try:      # 1.31.5: điều đã thành sự thật — trả kèm lượt lập mạch, không thêm lượt gọi
+                    n_fact = note_facts(job.base, raw.get("su_that_moi")) if story else 0   # chưa có kỳ nào: không có gì đã xảy ra
+                    if n_fact:
+                        job._note("so_tay_su_that", so=n_fact)
+                except (OSError, ValueError, TypeError) as e:
+                    job._note("so_tay_loi", ly_do=str(e)[:160])
             else:
                 job._note("mach_truyen_hong")
                 arc = None
@@ -877,7 +1096,12 @@ def run(job: Any, ky: int, tone: str, season: str) -> dict[str, Any] | None:
     # 1. nhà văn (1.25.2: bản gốc tiếng Việt viết cả tin làng hôm nay + mục thứ ba trong cùng lượt gọi)
     schema = MASTER_SCHEMA if lang == "vi" else STORY_SCHEMA
     job.progress("Gemini đang viết kỳ %d của truyện…" % ky)
-    prompt = writer_prompt(lang, job.scope, ky, tone, arc, story, season, tones=tones)
+    try:                  # 1.31.5: phần gọn của Sổ tay làng cho nhà văn
+        nbw = notebook_for_writer(job.base, getattr(job, "date", "") or "", story, ky, lang)
+    except (OSError, ValueError, TypeError) as e:
+        job._note("so_tay_loi", ly_do=str(e)[:160])
+        nbw = ""
+    prompt = writer_prompt(lang, job.scope, ky, tone, arc, story, season, tones=tones, notebook=nbw)
     best: dict[str, Any] | None = None
     problems: list[str] = []
     for attempt in range(2):
@@ -885,7 +1109,7 @@ def run(job: Any, ky: int, tone: str, season: str) -> dict[str, Any] | None:
             break
         try:
             draft = gen(system, prompt if not problems else writer_prompt(lang, job.scope, ky, tone, arc, story,
-                                                                               season, problems, tones),
+                                                                               season, problems, tones, nbw),
                              schema, 0.9, thinking="low")
         except Exception as e:      # noqa: BLE001
             if getattr(e, "kind", "") == "key":

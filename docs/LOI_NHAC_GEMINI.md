@@ -36,7 +36,7 @@ CÁC KỲ ĐÃ ĐĂNG:
 
 HÔM NAY: Chủ Nhật, ngày 8/11/2026, mùa thu. Đợt mới bắt đầu từ kỳ 12.
 
-Lập MẠCH TRUYỆN cho một đợt 6–8 kỳ (mỗi kỳ đăng một ngày): ten = tên đợt (tiếng Việt); muc_tieu = điều nhân vật chính muốn đạt trong đợt; bi_an = câu hỏi / bí ẩn kéo suốt đợt; nhan_vat_phu = nhân vật phụ của đợt (một người / con vật, kèm điều họ muốn); buoc = mỗi phần tử là MỘT kỳ (tiếng Việt, 1–2 câu: chuyện gì xảy ra, trở ngại, móc câu); ket = đợt kết thúc thế nào (giải được bí ẩn, có thay đổi nhỏ ở nhân vật, để lại một sợi chỉ cho đợt sau). Nối tiếp các kỳ đã đăng, không lặp lại chuyện cũ. Hợp mùa hiện tại.
+Lập MẠCH TRUYỆN cho một đợt 6–8 kỳ (mỗi kỳ đăng một ngày): ten = tên đợt (tiếng Việt); muc_tieu = điều nhân vật chính muốn đạt trong đợt; bi_an = câu hỏi / bí ẩn kéo suốt đợt; nhan_vat_phu = nhân vật phụ của đợt (một người / con vật, kèm điều họ muốn); buoc = mỗi phần tử là MỘT kỳ (tiếng Việt, 1–2 câu: chuyện gì xảy ra, trở ngại, móc câu); ket = đợt kết thúc thế nào (giải được bí ẩn, có thay đổi nhỏ ở nhân vật, để lại một sợi chỉ cho đợt sau). Nối tiếp các kỳ đã đăng, không lặp lại chuyện cũ. Hợp mùa hiện tại. su_that_moi (viết TRƯỚC khi lập mạch mới) = 0–3 điều ĐÃ XẢY RA trong CÁC KỲ ĐÃ ĐĂNG ở trên và đáng nhớ lâu dài (quan hệ giữa nhân vật, thay đổi ở quán / làng, điều Lin học được) — mỗi điều một câu ngắn ở thì quá khứ; CHỈ lấy từ các kỳ đã đăng, KHÔNG lấy gì của đợt mới đang lập, không bịa thêm, không lặp điều đã có trong sổ tay; không chắc thì để trống.
 
 Trả về đúng một object JSON theo khuôn.
 ```
@@ -101,8 +101,8 @@ CÁCH VIẾT MỘT KỲ HAY (bắt buộc):
    học hay lời khuyên.
 6. Không liệt kê, không lặp lại tình huống của các kỳ trước.
 7. Nối tiếp kỳ trước: KHÔNG mâu thuẫn với chuyện đã xảy ra, giải quyết hoặc đẩy tiếp một chỗ bỏ ngỏ.
-8. Thoại thể hiện tính cách, ghi rõ ai nói. Tiếng Việt tự nhiên, đúng chính tả, có dấu; chữ trơn (không [ ] { } |,
-   không markdown).
+8. Thoại đặt trong ngoặc kép "…", thể hiện tính cách, ghi rõ ai nói. Tiếng Việt tự nhiên, đúng chính tả, có dấu; chữ
+   trơn (không [ ] { } |, không markdown).
 9. Chuyện sẽ được kể lại bằng tiếng Nhật / tiếng Anh cho người mới học: tránh chơi chữ chỉ có trong tiếng Việt, thành
    ngữ khó dịch; câu thoại ngắn, rõ.
 10. Độ dài: 3 đoạn, mỗi đoạn 60–140 chữ (truyện là một bài trong số báo).

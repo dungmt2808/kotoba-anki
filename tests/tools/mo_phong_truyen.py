@@ -1,6 +1,6 @@
 """Mô phỏng trí nhớ truyện dài kỳ 365 kỳ bằng mã thật của story_core (16/11, người dùng hỏi: báo viết 1 tháng, 3 tháng,
 1 năm thì câu chuyện có liền mạch không). Gemini giả: mỗi đợt một nhân vật phụ NV<đợt>, mỗi đợt kết bằng sợi chỉ SC<đợt>.
-In ra: lúc lập đợt mới Gemini thấy những kỳ / nhân vật / sợi chỉ nào; sau kỳ 30 / 90 / 365 truyen.json còn giữ gì và nhà
+In ra: lúc lập đợt mới Gemini thấy những kỳ / nhân vật / sợi chỉ nào (1.31.5: cả Sổ tay làng); sau kỳ 30 / 90 / 365 truyen.json còn giữ gì và nhà
 văn viết kỳ kế tiếp thấy gì. Không gọi mạng.
 Chạy: ${ANKI_PY} tests/tools/mo_phong_truyen.py [THƯ_MỤC_ADD_ON]   (cần gói anki vì story_core nạp paper_core → garden_core)
 """
@@ -13,6 +13,9 @@ arc = None
 CHAR = {}          # nhân vật phụ của từng đợt
 for ky in range(1, 366):
     if S.arc_step(arc, ky) is None:            # hết đợt → lập đợt mới (như run())
+        if arc and hasattr(S, "note_arc_done"):    # 1.31.5: Sổ tay làng (máy ghi khi hết đợt)
+            S.note_arc_done(base, arc, ky - 1, S.load_story(base))
+            S.note_facts(base, ["sự thật của đợt %d" % arc["dot"]])
         dot = (arc or {}).get("dot", 0) + 1
         CHAR[dot] = "NV%d" % dot
         arc = {"ten": "Đợt %d" % dot, "muc_tieu": "m", "bi_an": "b", "nhan_vat_phu": CHAR[dot],
@@ -22,7 +25,8 @@ for ky in range(1, 366):
         # lời nhắc lập mạch của đợt này
         if dot in (5, 14, 53):
             story = S.load_story(base)
-            p = S.arc_prompt("vi", "am", story, ky, "mùa", ["am"])
+            p = S.arc_prompt("vi", "am", story, ky, "mùa", ["am"], S.notebook_for_arc(base)) if hasattr(S, "notebook_for_arc") \
+                else S.arc_prompt("vi", "am", story, ky, "mùa", ["am"])
             seen = sorted(set(int(x) for x in re.findall(r"Kỳ (\d+):", p)))
             nv = sorted(set(re.findall(r"NV\d+", p)), key=lambda x: int(x[2:]))
             sc = sorted(set(re.findall(r"SC\d+", p)), key=lambda x: int(x[2:]))

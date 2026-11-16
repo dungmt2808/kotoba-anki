@@ -43,6 +43,7 @@ import shutil
 import socket
 import ssl
 import sys
+import threading
 import time
 import urllib.error
 import urllib.parse
@@ -69,6 +70,11 @@ MAX_MODELS = 8             # 1.13: số model viết chữ thử tối đa mỗi
 TEXT_TIMEOUT = 240
 MISSING_SKIP = 3 * 86400    # 1.26.1: model Google còn liệt kê nhưng gọi thì 404 → bỏ qua 3 ngày
 TTS_TIMEOUT = 120
+# 1.31.5: hạn mức miễn phí giọng đọc (AI Studio của người dùng 16/11: Gemini 3.8 Flash TTS 3 lượt / phút, 10 / ngày; đã thấy
+# vượt mức phút 5/3 khi tạo liền 8 câu). Mọi lượt giọng đọc (mọi Job / luồng nền) cách nhau ít nhất TTS_GAP giây.
+TTS_GAP = 21.0
+_TTS_LOCK = threading.Lock()
+_TTS_LAST = [0.0]
 MAX_OUT_TOKENS = 65536     # trần token trả về (tính cả token "suy nghĩ" của Gemini 2.5 / 3.x)
 THINK_BUDGET = {"low": 2048, "medium": 8192, "high": 24576}   # Gemini 2.5 (thinkingBudget)
 VOICE_DIR = "giong"        # 1.13: giọng Gemini cho câu không có audio (câu ví dụ của deck, câu báo thiếu audio)
@@ -338,11 +344,21 @@ class Gemini:
         except (TypeError, ValueError):
             pass
 
+    def _tts_pace(self) -> None:
+        """1.31.5: chờ cho đủ TTS_GAP giây kể từ lượt giọng đọc trước (chạy ở luồng nền; giữ khoá khi chờ để hai việc
+        nền cùng tạo giọng đọc cũng đi lần lượt)."""
+        with _TTS_LOCK:
+            wait = TTS_GAP - (time.time() - _TTS_LAST[0])
+            if _TTS_LAST[0] and wait > 0:
+                self.sleep(wait)
+            _TTS_LAST[0] = time.time()
+
     def speak(self, model: str, text: str, voice: str) -> tuple[bytes, int]:
         """Giọng đọc → (PCM 16-bit mono, tần số). Model TTS 3.8 trả file WAV (có khối C2PA ở cuối), model cũ
         trả PCM thô "audio/l16; rate=24000": cả hai đều bóc ra đúng mẫu âm thanh (1.12 ghi nhầm cả header)."""
         if self.is_exhausted(model):
             raise self._exhausted_error(model)
+        self._tts_pace()
         body = {"contents": [{"role": "user", "parts": [{"text": text}]}],
                 "generationConfig": {"responseModalities": ["AUDIO"],
                                      "speechConfig": {"voiceConfig": {"prebuiltVoiceConfig": {"voiceName": voice}}}}}
@@ -453,8 +469,40 @@ def order_models(names: list[str], client: "Gemini | None" = None, prefer: Any =
     return out[:limit]
 
 
+# 1.31.5: chia việc theo hạn mức miễn phí (AI Studio của người dùng 16/11: Gemini 4 Hydrogen 20 lượt / ngày, Gemini 3.8 Flash
+# 20, Gemini 3.5 Flash Lite 500). Việc sáng tác (lập mạch, viết truyện, biên tập, viết lại, kể lại, viết số báo, soát)
+# dùng model viết hay; việc kiểm / sửa / dịch / thử khoá / báo tiếng Việt dùng Flash-Lite trước. "Model chạy được lần
+# trước" chỉ được ưu tiên trong cùng nhóm, không phá thứ tự của vai.
+ROLE_CLASSES = {"viet": ("h", "f", "l", "p"), "kiem": ("l", "h", "f", "p")}
+CLASS_CAP = 3
+
+
+def model_class(name: str) -> str:
+    """Nhóm của model: h = Gemini 4 Hydrogen, l = Flash-Lite, f = Flash, p = Pro / khác."""
+    n = (name or "").lower()
+    return "h" if "hydrogen" in n else "l" if "lite" in n else "f" if "flash" in n else "p"
+
+
+def role_order(names: list[str], role: str, client: "Gemini | None" = None, prefer: Any = None,
+               limit: int = MAX_MODELS) -> list[str]:
+    """Thứ tự thử cho một vai ("viet" / "kiem"): theo nhóm của vai, trong nhóm thì như order_models (model chạy được
+    lần trước lên đầu, bỏ model đã hết hạn mức hôm nay)."""
+    base = order_models(names, client, prefer, limit=max(limit, len(names)))
+    rank = {c: i for i, c in enumerate(ROLE_CLASSES.get(role, ROLE_CLASSES["viet"]))}
+    ranked = sorted(base, key=lambda n: rank.get(model_class(n), len(rank)))
+    # mỗi nhóm tối đa CLASS_CAP model ở lượt đầu: danh sách `limit` model luôn còn chỗ cho nhóm sau (vd. Flash-Lite để lùi
+    # về khi Hydrogen + Flash hết lượt — 16/11 các bản Flash cũ không còn hạn mức miễn phí); thừa chỗ thì thêm phần còn lại
+    first, rest, seen = [], [], {}
+    for n in ranked:
+        c = model_class(n)
+        seen[c] = seen.get(c, 0) + 1
+        (first if seen[c] <= CLASS_CAP else rest).append(n)
+    return (first + rest)[:limit]
+
+
 def text_models(models: list[dict[str, Any]]) -> list[str]:
-    """Model viết chữ, thứ tự thử: Flash mới nhất → Flash cũ hơn → Flash-Lite (hạn mức miễn phí rộng hơn) → Pro."""
+    """Model viết chữ, thứ tự thử: (1.31.5) Gemini 4 Hydrogen → Flash mới nhất → Flash cũ hơn → Flash-Lite (hạn mức miễn
+    phí rộng hơn) → Pro. Gemini 4 Argon / Carbon (đắt, không có trong gói miễn phí 16/11) không dùng."""
     rows = []
     for m in models:
         n = _short(m.get("name", ""))
@@ -465,9 +513,10 @@ def text_models(models: list[dict[str, Any]]) -> list[str]:
         lite = "lite" in n
         flash = "flash" in n
         pro = "pro" in n
-        if not (flash or pro):
+        hydrogen = "hydrogen" in n           # 1.31.5: gemini-4-hydrogen (12/11/2026) — tên không có flash / pro
+        if not (flash or pro or hydrogen):
             continue
-        group = 0 if (flash and not lite) else 1 if lite else 2
+        group = -1 if hydrogen else 0 if (flash and not lite) else 1 if lite else 2
         latest = n.endswith("-latest")
         unstable = bool(re.search(r"preview|exp|\d{2}-\d{2}$", n))
         rows.append((group, 0 if latest else 1, -_version(n), 1 if unstable else 0, n))
@@ -497,7 +546,7 @@ def test_key(client: Gemini, prefer: Any = None) -> dict[str, Any]:
     if not texts:
         raise AIError("Khoá đúng nhưng không thấy model Gemini nào viết được chữ.", "model")
     last: AIError | None = None
-    order = order_models(texts, client, prefer)
+    order = role_order(texts, "kiem", client, prefer)       # 1.31.5: thử khoá bằng Flash-Lite (500 lượt / ngày)
     for name in order:
         try:
             out = client.generate(name, "Trả lời bằng JSON.", 'Trả về đúng {"ok": true}.',
@@ -2552,6 +2601,7 @@ class Job:
         self.log: list[dict[str, Any]] = []
         self.models: list[str] = []
         self.model = ""
+        self.model_role: dict[str, str] = {}     # 1.31.5: model chạy được gần nhất của từng vai
         self.lang = scope.get("lang") if scope.get("lang") in ("en", "vi") else "ja"
         self.en = _en_module() if self.lang == "en" else _vi_module() if self.lang == "vi" else None
         self.story: dict[str, Any] | None = None     # 1.23: kỳ truyện đã viết + biên tập (quy trình mới)
@@ -2624,7 +2674,7 @@ class Job:
         item = {"buoc": step, **kw}
         self.log.append(item)
 
-    def _models(self) -> list[str]:
+    def _models(self, role: str = "viet") -> list[str]:
         if self.opts.get("model"):
             return [self.opts["model"]]
         if not self.models:
@@ -2632,20 +2682,26 @@ class Job:
             if not self.models:
                 raise AIError("Không thấy model Gemini nào viết được chữ.", "model")
         # 1.13: model đã chạy được (Thử khoá / số trước) trước; bỏ model hết hạn mức hôm nay; cả Flash-Lite
-        names = order_models(self.models, self.c, [self.model, self.opts.get("prefer")])
+        names = role_order(self.models, role, self.c, [self.model_role.get(role), self.opts.get("prefer")])
         if not names:
             raise AIError("Mọi model Gemini của khoá này đã hết hạn mức miễn phí hôm nay, thử lại ngày mai.", "quota",
                           daily=True)
         return names
 
+    def _issue_role(self) -> str:
+        """1.31.5: viết / soát số báo tiếng Nhật, tiếng Anh cần model viết hay; báo tiếng Việt (bài tin làng + câu hỏi từ
+        bản gốc đã viết sẵn) dùng Flash-Lite trước để dành lượt cho truyện."""
+        return "kiem" if self.lang == "vi" else "viet"
+
     def _gen(self, system: str, prompt: str, schema: dict[str, Any], temperature: float,
-             thinking: str | None = None) -> Any:
+             thinking: str | None = None, role: str = "viet") -> Any:
         last: AIError | None = None
         real: AIError | None = None       # 1.26.1: lỗi cuối không phải "model không còn" (lý do thật khi mọi model hỏng)
-        for name in self._models():
+        for name in self._models(role):
             try:
                 text = self.c.generate(name, system, prompt, schema, temperature, thinking=thinking)
                 self.model = name
+                self.model_role[role] = name
                 try:
                     return parse_json(text)
                 except AIError:
@@ -2712,7 +2768,7 @@ class Job:
             else:
                 prompt = repair_prompt(raw, rep.errors)
             try:
-                fixed = self._gen(system, prompt, ISSUE_SCHEMA, 0.2, thinking="low")
+                fixed = self._gen(system, prompt, ISSUE_SCHEMA, 0.2, thinking="low", role="kiem")   # 1.31.5: sửa → Lite trước
             except AIError as e:
                 if e.kind == "key":
                     raise
@@ -2795,13 +2851,13 @@ class Job:
                     self._note("truyen_viet_chung")
             self.progress("Gemini đang viết số %d%s…" % (self.opts["so"], LANG_LABEL[self.lang]))
             prompt = (en.write_prompt if en else write_prompt)(self.scope, self.opts, story, history, day)
-            first = self._gen(system, prompt, ISSUE_SCHEMA, 0.8)
+            first = self._gen(system, prompt, ISSUE_SCHEMA, 0.8, role=self._issue_role())
             if isinstance(first, dict) and "_hong" in first:
                 # 1.13: JSON hỏng thường là bài bị cắt giữa chừng — "sửa" một mẩu bài chỉ ra một mẩu bài
                 # (thử thật: 3.6-flash, hỏng cả số). Viết lại từ đầu một lần rồi mới sửa.
                 self._note("viet_lai", model=self.model, ly_do="JSON hỏng (%d ký tự)" % len(first["_hong"]))
                 self.progress("Bài bị hỏng, Gemini viết lại số %d…" % self.opts["so"])
-                again = self._gen(system, prompt, ISSUE_SCHEMA, 0.7)
+                again = self._gen(system, prompt, ISSUE_SCHEMA, 0.7, role=self._issue_role())
                 if not (isinstance(again, dict) and "_hong" in again):
                     first = again
             raw, rep = self._clean(first)
@@ -2814,7 +2870,7 @@ class Job:
             rep2: Report | None = None
             try:
                 rp = (en.review_prompt if en else review_prompt)(raw, self.scope, rep.warnings)
-                res = self._gen(system, rp, REVIEW_SCHEMA, 0.1, thinking="medium")
+                res = self._gen(system, rp, REVIEW_SCHEMA, 0.1, thinking="medium", role=self._issue_role())
                 issues = res.get("van_de") if isinstance(res, dict) else None
                 cand = res.get("bao") if isinstance(res, dict) else None
                 self._note("soat", van_de=[i for i in issues if isinstance(i, dict)][:30] if isinstance(issues, list) else [])
