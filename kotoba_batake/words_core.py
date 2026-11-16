@@ -35,7 +35,7 @@ fields = core.fields
 backup = core.backup
 
 SRC_KEY = "kotoba_batake_paper_src"   # {"ja": {"decks": [id…], "mode": "deck"|"level"}, "en": …, "vi": …}
-LANGS = ("ja", "en", "vi")             # 1.25.1: "vi" = báo tiếng Việt (thẻ bất kỳ, không theo ngôn ngữ của loại note)
+LANGS = ("ja", "en", "vi", "zh", "ko")     # 1.25.1: "vi" = báo tiếng Việt (thẻ bất kỳ); 1.33: báo tiếng Trung / tiếng Hàn
 MODES = ("deck", "level")              # 1.25.1: "level" = Không dùng deck (Gemini viết theo trình độ)
 MAX_DECKS = 5
 LIMIT = 100            # số note gửi Gemini mỗi số báo (tổng, không phải mỗi deck)
@@ -217,7 +217,7 @@ def lang_mids(infos: dict[str, dict[str, Any]], lang: str, chosen: bool = False)
     """Loại note dùng cho báo `lang`. 1.25.1 báo tiếng Việt: "Mọi deck" = loại note không phải tiếng Nhật / tiếng Anh
     (deck kiến thức, tiếng Hàn…); "Chọn deck" = mọi loại note trong deck đã chọn (vd. thuật ngữ y khoa tiếng Anh)."""
     if lang == "vi":
-        return [m for m, i in infos.items() if chosen or i["lang"] not in ("ja", "en")]
+        return [m for m, i in infos.items() if chosen or i["lang"] not in ("ja", "en", "zh", "ko")]
     return [m for m, i in infos.items() if i["lang"] == lang]
 
 
@@ -356,6 +356,7 @@ def pick(col: Any, cfg: dict[str, Any], lang: str, deck_ids: list[int] | None, s
                     continue
                 cache[int(nid)] = {"nid": int(nid), "word": det["word"], "reading": det["reading"],
                                    "meaning": det["meaning"], "kind": info["kind"],
+                                   "hanviet": det.get("hanviet") or "",          # 1.33: tra từ báo Trung / Hàn
                                    "due": int(nid) in due_n, "learned": int(nid) in learned_n}
             for n in part:
                 cache.setdefault(n, None)
