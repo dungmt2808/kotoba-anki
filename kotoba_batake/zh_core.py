@@ -23,7 +23,7 @@ except ImportError:   # test: nạp file nằm cạnh
         SYLLABLES = _mod.SYLLABLES
 
 # thanh 1–4 → dấu kết hợp (macron, sắc, móc ngược, huyền); 5 / 0 = thanh nhẹ, không dấu
-MARK = {"1": "̄", "2": "́", "3": "̌", "4": "̀"}
+MARK = {"1": "\u0304", "2": "\u0301", "3": "\u030c", "4": "\u0300"}
 TONE_OF = {v: k for k, v in MARK.items()}
 UMLAUT = "̈"
 VOWELS = "aeiouü"
@@ -79,7 +79,7 @@ def tone_marks(text: str) -> str:
 
 
 def _split_part(part: str, n: int, strict: bool) -> list[list[str]]:
-    """Mọi cách chia một đoạn viết liền thành đúng n âm tiết hợp lệ (tối đa vài cách, âm tiết dài thử trước).
+    """Các cách chia một đoạn viết liền thành đúng n âm tiết hợp lệ (tối đa 4 cách, âm tiết dài thử trước).
     strict: âm tiết bắt đầu bằng a / e / o không đứng giữa đoạn (quy tắc dấu nháy của pinyin: "fang'an")."""
     found: list[list[str]] = []
 
@@ -114,41 +114,43 @@ def split_syllables(reading: str, n: int) -> list[str] | None:
     """Pinyin của một từ → đúng n âm tiết (đã đổi số → dấu), hoặc None nếu không chia được chắc chắn."""
     if n <= 0:
         return None
-    r = unicodedata.normalize("NFC", tone_marks((reading or "").strip()))
+    # pinyin ghi số: con số là chỗ hết âm tiết ("zang4ao2" = zang4 + ao2) → ngắt ở đó trước khi đổi sang dấu
+    raw = _NUM_SYL.sub(lambda m: m.group(0) + " " if _mark_one(m.group(1), m.group(2)) is not None else m.group(0),
+                       (reading or "").strip())
+    r = unicodedata.normalize("NFC", tone_marks(raw))
     parts = [p.strip(_PUNCT) for p in _SEP.split(r)]
     parts = [p for p in parts if p]
     if not parts or any(not _base(p) for p in parts):
         return None
     if len(parts) == n and all(_base(p) in SYLLABLES for p in parts):
         return parts
-    # chia từng đoạn viết liền sao cho tổng đúng n: thử quy tắc dấu nháy trước, không được thì bỏ quy tắc
-    for strict in (True, False):
-        best = _combine(parts, n, strict)
-        if best is not None:
-            return best
-    return None
+    # chia từng đoạn viết liền sao cho tổng đúng n, theo chính tả pinyin: âm tiết bắt đầu bằng a / e / o giữa từ luôn có
+    # dấu nháy đứng trước (không có thì không tách ra âm tiết đó — "xuesheng" không thành xu + e + sheng). Deck không dùng
+    # dấu nháy nào thì có thể đã bỏ dấu nháy: nếu bỏ quy tắc mà chia được kiểu khác (fangan = fan + gan hay fang + an) →
+    # không đoán, giữ một dòng dưới chữ. Thà không hiện còn hơn hiện sai.
+    exact = _combine(parts, n, strict=True)
+    if exact is None or re.search(r"['\u2019\u2018]", r):
+        return exact
+    return exact if _combine(parts, n, strict=False) == exact else None
 
 
 def _combine(parts: list[str], n: int, strict: bool) -> list[str] | None:
-    def go(i: int, left: int) -> list[str] | None:
+    sols: list[list[str]] = []
+
+    def go(i: int, left: int, acc: list[str]) -> None:
+        if len(sols) > 1:
+            return
         if i == len(parts):
-            return [] if left == 0 else None
+            if left == 0 and acc not in sols:
+                sols.append(list(acc))
+            return
         rest = len(parts) - i - 1
         for k in range(1, left - rest + 1):
-            ways = _split_part(parts[i], k, strict)
-            if len(ways) > 1 and not _same(ways):
-                continue        # chia được nhiều kiểu khác nhau → không đoán
-            for w in ways[:1]:
-                tail = go(i + 1, left - k)
-                if tail is not None:
-                    return w + tail
-        return None
+            for w in _split_part(parts[i], k, strict):
+                go(i + 1, left - k, acc + w)
 
-    return go(0, n)
-
-
-def _same(ways: list[list[str]]) -> bool:
-    return all(w == ways[0] for w in ways)
+    go(0, n, [])
+    return sols[0] if len(sols) == 1 else None
 
 
 def is_han(ch: str) -> bool:
