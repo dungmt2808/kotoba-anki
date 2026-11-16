@@ -168,12 +168,18 @@ Lời thoại để trong ngoặc kép "…", ghi rõ ai nói."""
 # tên chung của các bản (tiếng Việt / tiếng Nhật / tiếng Anh) — bản kể lại dùng đúng bảng này
 # 1.26.1: "chị Hana" (bản 1.25.2 ghi "bà Hana" — trùng với bà của chị Hana trong truyện của báo Claude Code, và là gốc của
 # "Grandma Hana" ở báo tiếng Anh)
-NAMES = (("Lin", "リンさん", "Lin"), ("chị Hana (chủ quán, khoảng 30 tuổi)", "はなさん（女将さん; không gọi おばあさん）",
-          "Hana (not \"Grandma\")"), ("StackChan", "スタックちゃん", "StackChan"),
-         ("ông trưởng làng (không có tên riêng)", "村長さん", "the mayor"),
-         ("Quán Kotoba (quán trọ)", "ことば屋（旅館）", "the Kotoba Inn"),
-         ("làng Kotoba", "ことば村", "Kotoba Village"), ("vườn Kotoba", "ことば畑", "Kotoba Farm"),
-         ("bác đưa thư", "郵便屋さん", "the postman"), ("con mèo hoang trắng", "白いのらねこ", "the white stray cat"))
+NAMES = (("Lin", "リンさん", "Lin", "林", "린"),
+         ("chị Hana (chủ quán, khoảng 30 tuổi)", "はなさん（女将さん; không gọi おばあさん）", "Hana (not \"Grandma\")",
+          "哈娜（旅店老板娘，三十岁左右）", "하나 씨 (여관 주인, 30대)"),
+         ("StackChan", "スタックちゃん", "StackChan", "StackChan", "스택짱"),
+         ("ông trưởng làng (không có tên riêng)", "村長さん", "the mayor", "村长", "촌장님"),
+         ("Quán Kotoba (quán trọ)", "ことば屋（旅館）", "the Kotoba Inn", "言叶旅店", "코토바 여관"),
+         ("làng Kotoba", "ことば村", "Kotoba Village", "言叶村", "코토바 마을"),
+         ("vườn Kotoba", "ことば畑", "Kotoba Farm", "言叶菜园", "코토바 텃밭"),
+         ("bác đưa thư", "郵便屋さん", "the postman", "邮递员", "우체부 아저씨"),
+         ("con mèo hoang trắng", "白いのらねこ", "the white stray cat", "白色的流浪猫", "하얀 길고양이"))
+NAME_COL = {"ja": 1, "en": 2, "zh": 3, "ko": 4}       # 1.33: cột tên theo ngôn ngữ báo
+LANG_VI = {"ja": "tiếng Nhật", "en": "tiếng Anh", "zh": "tiếng Trung", "ko": "tiếng Hàn", "vi": "tiếng Việt"}
 
 SAMPLE_VI = """"Chị Hana ơi, khách phòng số ba muốn ăn sáng bằng... một tấm bản đồ!" Lin chạy vào bếp, tay vẫn cầm cuốn sổ nhỏ. Chị Hana đặt ấm trà xuống. "Bản đồ à?" StackChan lập tức chui vào tủ, lôi ra một chiếc đĩa. "Tớ có đĩa. Bản đồ thì chưa nấu bao giờ."
 Ông khách già trải lên bàn một tấm bản đồ cũ, mép giấy đã ngả vàng. Ở góc dưới có một vòng tròn đỏ, ngay chỗ khu vườn Kotoba bây giờ. "Ngày xưa, ở đây có một cái giếng," ông nói khẽ. "Tôi đã hứa sẽ quay lại."
@@ -593,7 +599,7 @@ def _vocab(scope: dict[str, Any], lang: str, limit: int) -> str:
             words.append(r[0])
         if len(words) >= limit:
             break
-    return (", " if lang == "en" else "、").join(words)
+    return (", " if lang in ("en", "ko") else "、").join(words)
 
 
 def _grammar(scope: dict[str, Any], n: int = 6) -> str:
@@ -800,11 +806,21 @@ NOTE_RE = re.compile(r"\s*[(（][^()（）]{0,80}?(?:dùng|dạng|nghĩa là|ghi
 LEN_JA = {"N5": (40, 110), "N4": (60, 150), "N3": (80, 190), "N2": (90, 220), "N1": (90, 240)}
 LEN_EN = {"A1": (18, 55), "A2": (25, 70), "B1": (35, 90), "B2": (45, 110), "C1": (50, 130)}
 LEN_VI = (60, 140)        # 1.25.1: chữ tiếng Việt mỗi đoạn (tiếng mẹ đẻ: dài hơn một chút)
+# 1.33: tiếng Trung đếm chữ Hán mỗi đoạn, tiếng Hàn đếm cụm (어절, cách nhau dấu cách)
+LEN_ZH = {"HSK1": (35, 90), "HSK2": (45, 110), "HSK3": (55, 140), "HSK4": (65, 170), "HSK5": (75, 200), "HSK6": (85, 230)}
+LEN_KO = {"TOPIK1": (12, 32), "TOPIK2": (15, 40), "TOPIK3": (20, 50), "TOPIK4": (24, 60), "TOPIK5": (28, 70), "TOPIK6": (32, 80)}
+HANGUL_RE = re.compile(r"[\uac00-\ud7af\u1100-\u11ff\u3130-\u318f]")
+KANA_RE = re.compile(r"[\u3040-\u30ff]")
+HAN_ANY_RE = re.compile(r"[\u3400-\u9fff\uf900-\ufaff]")
 
 
 def story_length(lang: str, level: str) -> tuple[int, int]:
     if lang == "vi":
         return LEN_VI
+    if lang == "zh":
+        return LEN_ZH.get(level, (45, 110))
+    if lang == "ko":
+        return LEN_KO.get(level, (15, 40))
     return (LEN_EN.get(level, (25, 70)) if lang == "en" else LEN_JA.get(level, (60, 150)))
 
 
@@ -866,6 +882,64 @@ def clean_translation(dich: Any, n: int) -> list[str] | None:
     return out
 
 
+def zh_text_problems(p: str, simplified: Any = True) -> list[str]:
+    """1.33: lỗi chữ của một đoạn tiếng Trung (chữ trơn): kana / Hangul / chữ Việt / Latin ngoài tên StackChan, chữ Hán ngoài
+    bộ chữ thường dùng (bảng cách đọc), giản thể lẫn phồn thể (`simplified`: True = giản thể, False = phồn thể)."""
+    out: list[str] = []
+    zh = _zh()
+    if KANA_RE.search(p):
+        out.append("có kana (chữ Nhật) trong bài tiếng Trung")
+    if HANGUL_RE.search(p):
+        out.append("có chữ Hàn trong bài tiếng Trung")
+    if VI_ONLY_RE.search(p):
+        out.append("có chữ tiếng Việt trong bài tiếng Trung")
+    latin = [w for w in re.findall(r"[A-Za-z]+", p) if w.lower() not in ("stackchan",)]
+    if latin:
+        out.append("có chữ Latin / pinyin trong bài (%s) — chỉ viết chữ Hán" % " ".join(latin[:4]))
+    chars = [c for c in p if zh.is_han(c)]
+    rare = sorted({c for c in chars if not zh.known(c)})
+    if rare:
+        out.append("chữ Hán ít dùng: " + "".join(rare[:8]))
+    if simplified is not None and chars:
+        enc = "gb2312" if simplified else "big5"
+        bad = []
+        for c in chars:
+            try:
+                c.encode(enc)
+            except UnicodeEncodeError:
+                if c not in bad:
+                    bad.append(c)
+        if bad:
+            out.append("chữ %s (phải viết chữ %s): %s" % ("phồn thể" if simplified else "giản thể",
+                                                         "giản thể" if simplified else "phồn thể", "".join(bad[:8])))
+    return out
+
+
+def ko_text_problems(p: str) -> list[str]:
+    """1.33: lỗi chữ của một đoạn tiếng Hàn: phải có Hangul; không Hán tự, kana, chữ Việt, Latin."""
+    out: list[str] = []
+    if not HANGUL_RE.search(p):
+        out.append("không có chữ Hàn")
+    if HAN_ANY_RE.search(p):
+        out.append("có Hán tự (漢字) — viết bằng Hangul")
+    if KANA_RE.search(p):
+        out.append("có kana (chữ Nhật)")
+    if VI_ONLY_RE.search(p):
+        out.append("có chữ tiếng Việt")
+    latin = re.findall(r"[A-Za-z]+", p)
+    if latin:
+        out.append("có chữ Latin (%s) — viết bằng Hangul (StackChan → 스택짱)" % " ".join(latin[:4]))
+    return out
+
+
+def _zh() -> Any:
+    try:
+        from . import zh_core
+    except ImportError:
+        import zh_core  # type: ignore[no-redef]
+    return zh_core
+
+
 def check_story(st: Any, lang: str, level: str, bad_kanji: Any = None) -> tuple[list[str], list[str]]:
     """Kiểm tra bản truyện (chữ trơn) của nhà văn. Trả (lỗi, cảnh báo). Có lỗi thì không dùng bản này."""
     errs: list[str] = []
@@ -893,6 +967,10 @@ def check_story(st: Any, lang: str, level: str, bad_kanji: Any = None) -> tuple[
                 errs.append(where + ": có chữ Nhật / Trung / Hàn trong bài tiếng Anh")
             if VI_ONLY_RE.search(p):        # 1.25.2: chỉ chữ riêng của tiếng Việt (café, résumé vẫn được)
                 errs.append(where + ": có chữ tiếng Việt trong bài tiếng Anh")
+        elif lang == "zh":              # 1.33: chữ Hán giản thể / phồn thể (theo deck), StackChan viết Latin
+            errs += [where + ": " + e for e in zh_text_problems(p, bad_kanji)]
+        elif lang == "ko":              # 1.33: Hangul, không Hán tự / kana / chữ Việt
+            errs += [where + ": " + e for e in ko_text_problems(p)]
         else:
             if LATIN_RE.search(p):
                 errs.append(where + ": có chữ Latin / romaji trong bài tiếng Nhật")
@@ -904,7 +982,8 @@ def check_story(st: Any, lang: str, level: str, bad_kanji: Any = None) -> tuple[
         if j >= len(doan):
             continue
         n = len(re.findall(r"[A-Za-z]+(?:['’][A-Za-z]+)*", p)) if lang == "en" else \
-            len([w for w in p.split() if re.search(r"\w", w)]) if lang == "vi" else len(re.sub(r"\s", "", p))
+            len([w for w in p.split() if re.search(r"\w", w)]) if lang in ("vi", "ko") else \
+            len(HAN_ANY_RE.findall(p)) if lang == "zh" else len(re.sub(r"\s", "", p))
         if n < lo * 0.7:
             errs.append(where + ": ngắn quá (%d, cần %d–%d)" % (n, lo, hi))
         elif n > hi * 1.35:
@@ -1026,6 +1105,7 @@ def run(job: Any, ky: int, tone: str, season: str) -> dict[str, Any] | None:
     1.25.1: `tone` là danh sách chủ đề đã chọn (hoặc một chủ đề kiểu 1.23); mỗi đợt một chủ đề, xoay vòng."""
     lang = getattr(job, "lang", "") or ("en" if job.en else "ja")
     level = job.scope.get("trinh_do", "A2" if lang == "en" else "N4")
+    tname = LANG_VI.get(lang, "tiếng Nhật")
     tones = norm_tones(tone)
     story = load_story(job.base)
     arc = load_arc(job.base)
@@ -1278,37 +1358,44 @@ def village_weather(day: Any, theme: str | None = None) -> str:
 def retell_prompt(lang: str, scope: dict[str, Any], master: dict[str, Any], problems: list[str] | None = None) -> str:
     level = scope.get("trinh_do", "A2" if lang == "en" else "N4")
     lo, hi = story_length(lang, level)
-    col = 2 if lang == "en" else 1
+    col = NAME_COL.get(lang, 1)
     names = "\n".join("- %s → %s" % (n[0], n[col]) for n in NAMES)
+    unit = {"en": "từ tiếng Anh", "zh": "chữ Hán", "ko": "cụm (어절)"}.get(lang, "ký tự tiếng Nhật")
+    slip = {"en": "tiếng Anh", "zh": "tiếng Trung (vd. nhầm lượng từ, nhầm 了)", "ko": "tiếng Hàn (vd. nhầm kính ngữ, nhầm tiểu từ)"}
+    tname = LANG_VI.get(lang, "tiếng Nhật")
+    if lang == "zh":
+        tname += " %s" % ("phồn thể" if scope.get("phon_the") else "giản thể")
     parts = [
         "KỂ LẠI kỳ %d của truyện dài kỳ dưới đây bằng %s trình độ %s cho người Việt đang học. Đây là cùng một câu chuyện in "
         "trong báo làng bằng nhiều thứ tiếng: GIỮ ĐÚNG sự việc, nhân vật, lời thoại chính, chi tiết bất ngờ và móc câu cuối; "
-        "không thêm chuyện mới, không bỏ móc câu." % (master.get("ky") or 1, "tiếng Anh" if lang == "en" else "tiếng Nhật",
-                                                       level),
+        "không thêm chuyện mới, không bỏ móc câu." % (master.get("ky") or 1, tname, level),
         "Viết lại cho hợp trình độ: câu ngắn, tự nhiên như sách đọc cho người học; được rút gọn chi tiết phụ. Chỗ nhân vật "
-        "nói nhầm (lời chào, cách nói lịch sự) thì cho nhầm theo kiểu của %s." % ("tiếng Anh" if lang == "en" else
-                                                                             "tiếng Nhật (vd. nhầm kính ngữ)"),
+        "nói nhầm (lời chào, cách nói lịch sự) thì cho nhầm theo kiểu của %s." % slip.get(lang, "tiếng Nhật (vd. nhầm kính ngữ)"),
         "TÊN GỌI (dùng đúng):\n" + names,
-        "Độ dài: đúng %d đoạn như bản gốc, mỗi đoạn %d–%d %s." % (
-            len(master.get("doan") or []) or 3, lo, hi, "từ tiếng Anh" if lang == "en" else "ký tự tiếng Nhật"),
+        "Độ dài: đúng %d đoạn như bản gốc, mỗi đoạn %d–%d %s." % (len(master.get("doan") or []) or 3, lo, hi, unit),
     ]
     vocab = _vocab(scope, lang, 300)
     if vocab:
         parts.append("TỪ NGƯỜI HỌC ĐÃ HỌC (trình độ %s) — dùng khi hợp, ĐỪNG ép câu:\n%s" % (level, vocab))
     gram = _grammar(scope, 3)
-    if gram and lang != "en":
+    if gram and lang in ("ja", "zh", "ko"):
         parts.append("MẪU NGỮ PHÁP ĐANG HỌC (dùng 1–2 mẫu trong lời thoại nếu tự nhiên):\n" + gram)
     if problems:
         parts.append("BẢN TRƯỚC BỊ MÁY KIỂM TRA TRẢ LẠI (tránh các lỗi này):\n- " + "\n- ".join(problems[:12]))
     parts.append("BẢN GỐC:\n" + json.dumps({"tieu_de": master.get("tieu_de"), "doan": master.get("doan")}, ensure_ascii=False))
+    body = {"en": "tiếng Anh (chữ trơn, không đánh dấu)",
+            "zh": "tiếng Trung %s (chỉ chữ Hán + dấu câu Trung Quốc, KHÔNG pinyin, không chữ Latin trừ tên StackChan, "
+                  "không [ ] { } |)" % ("phồn thể" if scope.get("phon_the") else "giản thể"),
+            "ko": "tiếng Hàn (chỉ Hangul, KHÔNG Hán tự, không phiên âm Latin, không [ ] { } |)"}.get(
+        lang, "tiếng Nhật (chữ Hán + kana, KHÔNG furigana, KHÔNG romaji, không [ ] { } |)")
+    title = {"en": "tiếng Anh, 3–8 từ", "zh": "tiếng Trung, ngắn", "ko": "tiếng Hàn, ngắn"}.get(lang, "tiếng Nhật, ngắn")
+    reading = {"en": "phiên âm IPA /…/", "zh": "pinyin ghi số, vd. hai4 pa4", "ko": "phiên âm romaja"}.get(
+        lang, "cách đọc bằng HIRAGANA")
     parts.append(
         "Trả về đúng một object JSON theo khuôn: tieu_de (%s), doan = các đoạn %s, dich = bản dịch tiếng Việt TỰ NHIÊN của "
         "từng đoạn bạn vừa viết (cùng số phần tử, không có chữ %s; tên riêng viết Latin: Lin, Hana, Stack-chan, quán Kotoba, "
         "làng Kotoba; không ghi chú trong ngoặc), tu_moi (≤ 2 từ khó ngoài danh sách: w, r = %s, m = nghĩa tiếng Việt)." % (
-            "tiếng Anh, 3–8 từ" if lang == "en" else "tiếng Nhật, ngắn",
-            "tiếng Anh (chữ trơn, không đánh dấu)" if lang == "en" else
-            "tiếng Nhật (chữ Hán + kana, KHÔNG furigana, KHÔNG romaji, không [ ] { } |)",
-            "Anh / Nhật" if lang == "en" else "Nhật", "phiên âm IPA /…/" if lang == "en" else "cách đọc bằng HIRAGANA"))
+            title, body, {"en": "Anh", "zh": "Trung", "ko": "Hàn"}.get(lang, "Nhật"), reading))
     return "\n\n".join(parts)
 
 
@@ -1325,10 +1412,10 @@ def retell(job: Any, master: dict[str, Any]) -> dict[str, Any] | None:
     t = master.get("truyen") or {}
     src = {"ky": ky, "tieu_de": t.get("tieu_de"), "doan": t.get("doan")}
     system = ("Bạn là người kể chuyện viết sách đọc %s cho người Việt học trình độ %s: giữ trọn câu chuyện, câu chữ dễ, "
-              "tự nhiên." % ("tiếng Anh" if lang == "en" else "tiếng Nhật", level))
+              "tự nhiên." % (tname, level))
     problems: list[str] = []
     for attempt in range(2):
-        job.progress("Gemini đang kể lại kỳ %d bằng %s…" % (ky, "tiếng Anh" if lang == "en" else "tiếng Nhật"))
+        job.progress("Gemini đang kể lại kỳ %d bằng %s…" % (ky, tname))
         try:
             st = job._gen(system, retell_prompt(lang, job.scope, src, problems), RETELL_SCHEMA, 0.5, thinking="low")
         except Exception as e:      # noqa: BLE001
@@ -1338,7 +1425,8 @@ def retell(job: Any, master: dict[str, Any]) -> dict[str, Any] | None:
             return None
         if isinstance(st, dict):
             st["nho"] = dict(t.get("nho") or {})
-        errs, warns = check_story(st, lang, level, job.check_kanji if lang == "ja" else None)
+        errs, warns = check_story(st, lang, level, job.check_kanji if lang == "ja" else
+                                  (not job.scope.get("phon_the")) if lang == "zh" else None)
         job._note("ke_lai", lan=attempt + 1, loi=errs[:12], canh_bao=warns[:6])
         if not errs:
             st["dich"] = clean_translation(st.get("dich"), len(st["doan"]))

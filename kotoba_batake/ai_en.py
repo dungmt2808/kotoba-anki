@@ -1004,12 +1004,16 @@ def _vocab_lines(scope: dict[str, Any], limit: int = 1500) -> str:
 
 
 def write_prompt(scope: dict[str, Any], opts: dict[str, Any], story: list[dict[str, Any]],
-                 history: list[dict[str, Any]], date: datetime.date) -> str:
-    level = scope.get("trinh_do") if scope.get("trinh_do") in LEVELS else DEFAULT_LEVEL
+                 history: list[dict[str, Any]], date: datetime.date, prof: dict[str, Any] | None = None) -> str:
+    """Lời nhắc viết một số báo. 1.33: `prof` = phần riêng của ngôn ngữ báo (tiếng Hàn / tiếng Trung dùng chung khung
+    này); không có thì tiếng Anh (EN_PROF — y như trước 1.33, test so từng chữ)."""
+    P = prof or EN_PROF
+    LENGTH_, DICT_ = P["length"], P["dict_words"]
+    level = scope.get("trinh_do") if scope.get("trinh_do") in P["levels"] else P["default_level"]
     short = bool(opts.get("short"))
     ky = int(opts.get("ky") or 1)
     third = "thong_bao" if date.day % 2 == 0 else "cot"
-    dlo, dhi = DICT_WORDS[level]
+    dlo, dhi = DICT_[level]
     parts = ["HÔM NAY: %s. Số báo %d.%s" % (season_text(date), int(opts.get("so") or 1),
                                            (" Thời tiết ở làng: %s." % opts["thoi_tiet"]) if opts.get("thoi_tiet") else "")]
     if short:
@@ -1022,43 +1026,38 @@ def write_prompt(scope: dict[str, Any], opts: dict[str, Any], story: list[dict[s
         sp = opts.get("story_plain")
         parts.append(
             "CẤU TRÚC: bai gồm đúng 2 bài theo thứ tự (KHÔNG viết truyện dài kỳ%s):\n"
-            "1. loai \"tin_lang\": tin trong làng Kotoba Village và khu vườn Kotoba Farm, 2–3 đoạn%s.\n"
+            "1. loai \"tin_lang\": tin trong làng @VILLAGE@, 2–3 đoạn%s.\n"
             "2. loai \"%s\": %s\n"
-            "Tiêu đề viết kiểu tiêu đề báo tiếng Anh, ngắn (3–8 từ).\n"
-            "cau_hoi: 2–3 câu trắc nghiệm TIẾNG ANH về nội dung %s, mỗi câu đúng 3 lựa chọn tiếng Anh ngắn, CHỈ MỘT đáp "
+            "@TITLE@\n"
+            "cau_hoi: 2–3 câu trắc nghiệm @QLANG@ về nội dung %s, mỗi câu đúng 3 lựa chọn @CLANG@ ngắn, CHỈ MỘT đáp "
             "án đúng, \"dung\" là vị trí đáp án đúng tính từ 0 (đổi vị trí giữa các câu), \"giai_thich\" tiếng Việt chỉ "
             "ra câu nào trong bài cho biết đáp án.\n"
-            "chinh_ta: 2–3 câu CHÉP NGUYÊN VĂN từ %s (một câu trọn vẹn, %d–%d từ, chép đúng cả dấu câu), nên chứa từ "
-            "trong danh sách từ vựng, KHÔNG có tên riêng và không phải lời thoại trong ngoặc kép; \"them_dap_an\": thường "
+            "chinh_ta: 2–3 câu CHÉP NGUYÊN VĂN từ %s (một câu trọn vẹn, %d–%d @DUNIT@, chép đúng cả dấu câu), nên chứa từ "
+            "trong danh sách từ vựng, @NONAMES_SHORT@; \"them_dap_an\": thường "
             "để rỗng.%s" % (
                 ": máy tự chèn truyện đã viết sẵn làm bài giữa" if sp else "",
                 " (đừng kể lại truyện)" if sp else "",
-                third, "Notices — 2–3 mục thông báo của làng, mỗi mục là một đoạn bắt đầu bằng \"◆ \", tiêu đề "
-                "\"Village Notices\"." if third == "thong_bao" else
-                "cột ngắn của một nhân vật (1–2 đoạn), tiêu đề kiểu \"StackChan's Corner\".",
+                third, "@NOTICES@" if third == "thong_bao" else "@COLUMN@",
                 "CẢ SỐ (nên có 1 câu về truyện)" if sp else "bài", "bài hoặc truyện" if sp else "bài", dlo, dhi,
-                ("\nĐỘ DÀI: hai bài này tổng khoảng %d–%d từ (truyện không tính).\nTRUYỆN ĐÃ VIẾT SẴN (kỳ %d, để đặt câu hỏi / câu "
-                 "chép):\n%s" % (int(LENGTH[level][0] * 0.4), int(LENGTH[level][1] * 0.75), ky,
+                ("\nĐỘ DÀI: hai bài này tổng khoảng %d–%d @LUNIT@ (truyện không tính).\nTRUYỆN ĐÃ VIẾT SẴN (kỳ %d, để đặt câu hỏi / câu "
+                 "chép):\n%s" % (int(LENGTH_[level][0] * 0.4), int(LENGTH_[level][1] * 0.75), ky,
                                  json.dumps({"tieu_de": sp["tieu_de"], "doan": sp["doan"]}, ensure_ascii=False))) if sp else ""))
     else:
         parts.append(
             "CẤU TRÚC: bai gồm đúng 3 bài theo thứ tự:\n"
-            "1. loai \"tin_lang\": tin trong làng Kotoba Village và khu vườn Kotoba Farm, dùng nhân vật của truyện, 2–3 đoạn.\n"
+            "1. loai \"tin_lang\": tin trong làng @VILLAGE@, dùng nhân vật của truyện, 2–3 đoạn.\n"
             "2. loai \"truyen\": kỳ %d của truyện dài kỳ, \"ky\": %d, 2–3 đoạn, kết hơi bỏ ngỏ; \"ky_truoc\": %s.\n"
             "3. loai \"%s\": %s\n"
-            "Tiêu đề viết kiểu tiêu đề báo tiếng Anh, ngắn (3–8 từ).\n"
-            "cau_hoi: 2–3 câu trắc nghiệm TIẾNG ANH về nội dung bài, mỗi câu đúng 3 lựa chọn tiếng Anh ngắn, CHỈ MỘT đáp "
+            "@TITLE@\n"
+            "cau_hoi: 2–3 câu trắc nghiệm @QLANG@ về nội dung bài, mỗi câu đúng 3 lựa chọn @CLANG@ ngắn, CHỈ MỘT đáp "
             "án đúng, \"dung\" là vị trí đáp án đúng tính từ 0 (đổi vị trí giữa các câu), \"giai_thich\" tiếng Việt chỉ "
             "ra câu nào trong bài cho biết đáp án.\n"
-            "chinh_ta: 2–3 câu CHÉP NGUYÊN VĂN từ bài (một câu trọn vẹn, %d–%d từ, chép đúng cả dấu câu), nên chứa từ "
-            "trong danh sách từ vựng, KHÔNG có tên riêng (tên người, tên làng, tên quán: nghe khó đoán cách viết) và không "
-            "phải lời thoại trong ngoặc kép; \"them_dap_an\": cách viết khác của cả câu vẫn đúng (OK / okay…), thường để rỗng.\n"
+            "chinh_ta: 2–3 câu CHÉP NGUYÊN VĂN từ bài (một câu trọn vẹn, %d–%d @DUNIT@, chép đúng cả dấu câu), nên chứa từ "
+            "trong danh sách từ vựng, @NONAMES@; \"them_dap_an\": @ALT@.\n"
             "tom_tat_truyen: 1 câu tiếng Việt tóm tắt kỳ %d (để kỳ sau viết tiếp)." % (
                 ky, ky, "\"\" (kỳ 1)" if ky == 1 else "1 câu tiếng Việt tóm tắt kỳ %d" % (ky - 1),
-                third, "Notices — 2–3 mục thông báo của làng, mỗi mục là một đoạn bắt đầu bằng \"◆ \", tiêu đề "
-                "\"Village Notices\"." if third == "thong_bao" else
-                "cột ngắn của một nhân vật (1–2 đoạn), tiêu đề kiểu \"StackChan's Corner\".", dlo, dhi, ky))
-    for extra in (ai.master_news(opts, "tiếng Anh"), ai.story_goc_text(opts, "tiếng Anh")):    # 1.25.2: tin / truyện chung
+                third, "@NOTICES@" if third == "thong_bao" else "@COLUMN@", dlo, dhi, ky))
+    for extra in (ai.master_news(opts, P["lang_name"]), ai.story_goc_text(opts, P["lang_name"])):    # 1.25.2: tin / truyện chung
         if extra:
             parts.append(extra)
     if not short:
@@ -1068,23 +1067,21 @@ def write_prompt(scope: dict[str, Any], opts: dict[str, Any], story: list[dict[s
         "mau_cau: 2–4 id lấy đúng từ DANH SÁCH NGỮ PHÁP (cột đầu), là các mẫu được nhấn mạnh; mỗi mẫu xuất hiện ít nhất "
         "2 lần. Phần lớn là mẫu TRỌNG TÂM (đúng trình độ %s), thêm 1 mẫu thấp hơn để ôn.\n"
         "Dùng 10–20 từ khác nhau trong DANH SÁCH TỪ VỰNG ĐÃ HỌC (ưu tiên từ trọng tâm, từ sắp quên). tu_moi tối đa %d từ "
-        "ngoài danh sách thật sự cần (w = từ tiếng Anh như viết trong bài ở dạng gốc, r = phiên âm IPA dạng /.../, "
-        "m = nghĩa tiếng Việt). tom_tat: 1–2 câu tiếng Việt tóm tắt số báo." % (level, int(opts.get("max_new", 3))))
+        "ngoài danh sách thật sự cần @TUMOI@. tom_tat: 1–2 câu tiếng Việt tóm tắt số báo." % (P["level_name"](level), int(opts.get("max_new", 3))))
     if scope.get("khong_deck"):         # 1.25.1: không dùng deck — viết theo trình độ, Gemini tự chọn từ đáng học
         few = int(scope.get("it_tu") or 0)
         parts.append(
             ("NGƯỜI HỌC MỚI CÓ %d TỪ ĐÃ HỌC (danh sách bên dưới — dùng nếu hợp): còn lại viết" % few if few else
              "NGƯỜI HỌC CHƯA CÓ DECK (không có danh sách từ đã học): viết") +
             " bằng từ thông dụng đúng trình độ %s. Chọn 8–%d "
-            "từ đáng học trong số (đúng trình độ, hợp chủ đề), khai báo trong tu_moi (w = từ ở dạng gốc, r = phiên âm IPA "
-            "/…/, m = nghĩa tiếng Việt); máy tự gạch chân." % (level, int(opts.get("max_new", ai.NO_DECK_NEW))))
+            "từ đáng học trong số (đúng trình độ, hợp chủ đề), khai báo trong tu_moi @TUMOI2@; máy tự gạch chân." % (P["level_name"](level), int(opts.get("max_new", ai.NO_DECK_NEW))))
     tt = scope.get("trong_tam", {}).get("tu", [])
     if tt and scope.get("kho"):
         parts.append(
-            "TỪ TRỌNG TÂM (người học phải ôn hôm nay): " + ", ".join(tt[:ai.FOCUS_WORDS]) + "\n"
+            "TỪ TRỌNG TÂM (người học phải ôn hôm nay): " + P.get("sep", ", ").join(tt[:ai.FOCUS_WORDS]) + "\n"
             "Dùng được bao nhiêu thì dùng, tối thiểu khoảng 8 từ; từ nào không hợp thì bỏ, ĐỪNG ép câu. "
             "Nhìn danh sách rồi chọn chủ đề của số báo sao cho nhiều từ hợp nhau. Gợi ý: số đếm / giờ / ngày / giá / "
-            "số lượng → Village Notices hoặc tin làng; động từ / tính từ / cảm xúc → truyện; nơi chốn / sự kiện / "
+            "số lượng → @NOTICE_NAME@ hoặc tin làng; động từ / tính từ / cảm xúc → truyện; nơi chốn / sự kiện / "
             "thời tiết → tin làng.")
     elif tt:
         parts.append("TỪ TRỌNG TÂM (mới học / sắp quên, nên dùng vài từ): " + ", ".join(tt[:30]))
@@ -1096,7 +1093,7 @@ def write_prompt(scope: dict[str, Any], opts: dict[str, Any], story: list[dict[s
                      "; ".join("%s: %s — %s" % (h.get("ngay"), ", ".join(h.get("mau", [])), h.get("tom_tat", "")[:80])
                                for h in recent))
     if not short and not opts.get("no_story") and not opts.get("story_plain"):
-        parts.append("TRUYỆN:\n" + STORY_SETUP)
+        parts.append("TRUYỆN:\n" + P["story_setup"])
         if opts.get("tones") or opts.get("tone") in ai.story_core.TONES:      # 1.25.1: chọn nhiều chủ đề
             parts.append("CHỦ ĐỀ TRUYỆN: " + ai.story_core.tone_text(opts.get("tones") or opts.get("tone")))
         if story:
@@ -1105,15 +1102,42 @@ def write_prompt(scope: dict[str, Any], opts: dict[str, Any], story: list[dict[s
             if story[-1].get("nguyen_van"):     # 1.23: nguyên văn kỳ trước
                 parts.append("NGUYÊN VĂN KỲ TRƯỚC (viết tiếp, không mâu thuẫn):\n" + "\n".join(story[-1]["nguyen_van"]))
         else:
-            parts.append("ĐÃ XẢY RA: (chưa có kỳ nào, đây là kỳ 1: Lin đến Kotoba Village và bắt đầu làm ở the Kotoba Inn)")
+            parts.append("ĐÃ XẢY RA: @FIRST@")
     parts.append("DANH SÁCH NGỮ PHÁP (id|mẫu|nghĩa) — chỉ dùng ngữ pháp này và đơn giản hơn:\n" + ai._grammar_lines(scope))
     if scope.get("kho") or scope.get("tu_vung"):
-        parts.append("DANH SÁCH TỪ VỰNG ĐÃ HỌC (từ /phiên âm/ = nghĩa):\n" + _vocab_lines(scope))
-    parts.append(
-        "VÍ DỤ ĐỊNH DẠNG (chỉ xem hình thức, không chép nội dung):\n"
-        '{"loai":"tin_lang","tieu_de":"StackChan Paints the Old Bridge","doan":["Yesterday afternoon, StackChan '
-        'carried a small box of paints to the old bridge. \\"I want to make it happy,\\" he said."]}')
-    return "\n\n".join(parts)
+        parts.append("DANH SÁCH TỪ VỰNG ĐÃ HỌC " + P["vocab_head"] + ":\n" + P["vocab_lines"](scope))
+    parts.append("VÍ DỤ ĐỊNH DẠNG (chỉ xem hình thức, không chép nội dung):\n" + P["example"])
+    for extra in P.get("extra", ()):          # 1.33: phần riêng (tiếng Trung: pinyin cho từng từ)
+        parts.append(extra(scope, opts))
+    out = "\n\n".join(parts)
+    for k, v in P["fill"].items():          # chỗ trống @…@ của chuỗi tiếng Anh gốc
+        out = out.replace(k, v)
+    return out
+
+# 1.33: phần riêng của từng ngôn ngữ trong lời nhắc viết số báo (ai_ko / ai_zh tạo hồ sơ của mình)
+EN_PROF: dict[str, Any] = {
+    "levels": LEVELS, "default_level": DEFAULT_LEVEL, "length": LENGTH, "dict_words": DICT_WORDS,
+    "lang_name": "tiếng Anh", "level_name": lambda lv: lv, "story_setup": STORY_SETUP,
+    "vocab_head": "(từ /phiên âm/ = nghĩa)", "vocab_lines": lambda scope: _vocab_lines(scope),
+    "example": '{"loai":"tin_lang","tieu_de":"StackChan Paints the Old Bridge","doan":["Yesterday afternoon, StackChan '
+               'carried a small box of paints to the old bridge. \\"I want to make it happy,\\" he said."]}',
+    "fill": {
+        "@TITLE@": "Tiêu đề viết kiểu tiêu đề báo tiếng Anh, ngắn (3–8 từ).", "@QLANG@": "TIẾNG ANH", "@CLANG@": "tiếng Anh",
+        "@NONAMES@": "KHÔNG có tên riêng (tên người, tên làng, tên quán: nghe khó đoán cách viết) và không phải lời thoại "
+                     "trong ngoặc kép",
+        "@NONAMES_SHORT@": "KHÔNG có tên riêng và không phải lời thoại trong ngoặc kép",
+        "@ALT@": "cách viết khác của cả câu vẫn đúng (OK / okay…), thường để rỗng",
+        "@VILLAGE@": "Kotoba Village và khu vườn Kotoba Farm",
+        "@TUMOI@": "(w = từ tiếng Anh như viết trong bài ở dạng gốc, r = phiên âm IPA dạng /.../, m = nghĩa tiếng Việt)",
+        "@TUMOI2@": "(w = từ ở dạng gốc, r = phiên âm IPA /…/, m = nghĩa tiếng Việt)",
+        "@NOTICE_NAME@": "Village Notices",
+        "@FIRST@": "(chưa có kỳ nào, đây là kỳ 1: Lin đến Kotoba Village và bắt đầu làm ở the Kotoba Inn)",
+        "@DUNIT@": "từ", "@LUNIT@": "từ",
+        "@NOTICES@": "Notices — 2–3 mục thông báo của làng, mỗi mục là một đoạn bắt đầu bằng \"◆ \", tiêu đề "
+                     "\"Village Notices\".",
+        "@COLUMN@": "cột ngắn của một nhân vật (1–2 đoạn), tiêu đề kiểu \"StackChan's Corner\".",
+    },
+}
 
 
 def repair_prompt(raw: Any, errors: list[str], scope: dict[str, Any]) -> str:
