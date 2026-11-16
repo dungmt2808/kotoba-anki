@@ -61,7 +61,13 @@ try:
 except Exception as e:      # chạy trên gói đã giải nén ngoài repo, không có git / bản lưu
     print("  (bỏ qua phần so với 1.31.3: %s)" % str(e)[:100])
 
-if OLD:
+VER = json.loads(read(os.path.join(ADDON, "manifest.json")).decode("utf-8")).get("human_version")
+if OLD and VER != "1.31.4":      # bản sau đổi thêm file: hợp đồng là của riêng 1.31.4 — bản sau viết hợp đồng của mình
+    print("  (bỏ qua: add-on là bản %s — phần này chỉ so 1.31.4 với 1.31.3)" % VER)
+    OLD_CONTRACT = False
+else:
+    OLD_CONTRACT = bool(OLD)
+if OLD_CONTRACT:
     def files(base: str) -> set[str]:
         out = set()
         for p in glob.glob(os.path.join(base, "**", "*"), recursive=True):
@@ -199,8 +205,10 @@ ok(re.search(r'<button[^>]*id="kb-rv-undo"[^>]*title="[^"]*Ctrl\+Z[^"]*"[^>]*hid
    "body.html: nút #kb-rv-undo ẩn sẵn, chú thích có Ctrl+Z")
 ok('send("rv:undo")' in gjs and re.search(r'e\.ctrlKey \|\| e\.metaKey\) && !e\.shiftKey && !e\.altKey && \(k === "z"', gjs) is not None,
    "garden.js: Ctrl+Z / ⌘Z (không Shift / Alt) → rv:undo")
-key_fn = gjs[gjs.index("function key(e)"):gjs.index("function key(e)") + 900]
+key_fn = gjs[gjs.index("function key(e)"):gjs.index("function key(e)") + 1400]
 ok(key_fn.index('tag === "INPUT"') < key_fn.index("undoRate()"), "ô gõ đáp án (INPUT / TEXTAREA / SELECT) giữ Ctrl+Z của ô")
+ok('(e.code === "KeyZ" && !latin)' in key_fn,
+   "phím vật lý KeyZ chỉ khi phím ra chữ không phải Latin (AZERTY: Ctrl+W, QWERTZ: Ctrl+Y không hoàn tác nhầm)")
 ok(gjs.count("setUndo(") >= 5 and "reviewUndo: reviewUndo" in gjs, "trang cập nhật nút ở showCard / reviewDone / closePanel / reviewUndo")
 ok('elif cmd == "rv:undo":' in ini and "def _undo_review(self)" in ini, "__init__.py: lệnh rv:undo")
 ok(re.search(r"if _undo_quiet:\s+# 1\.31\.4[^\n]*\n\s+return", ini) is not None and "gui_hooks.state_did_undo(out)" in ini,

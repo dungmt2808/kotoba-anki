@@ -9,6 +9,9 @@
 //   7. Ctrl+Z trong ô gõ đáp án là hoàn tác chữ của ô, không hoàn tác lượt chấm
 //   8. phím Ctrl+Z thật qua Qt (QTest, đi qua cả hệ phím tắt của Anki): hoàn tác đúng MỘT lượt, không thêm Undo của cửa sổ chính
 //   9. bấm nút Hoàn tác bằng chuột: như Ctrl+Z, phím Space vẫn lật thẻ sau đó (nút không giữ focus)
+//  10. bàn phím AZERTY (Ctrl+W) / QWERTZ (Ctrl+Y) ở phím vật lý KeyZ: không hoàn tác; QWERTZ Ctrl+Z, bàn phím Nga: có
+//  11. Ctrl+Z lần nữa khi lượt trước chưa xong: chỉ một lượt; bấm lại sau khi xong: thêm một lượt   12. Ctrl+Z đúng lúc lượt chấm đang lưu: không kẹt, sau đó hoàn tác đúng
+//  13. đóng vườn ngay khi đang hoàn tác: lượt vẫn hoàn tác, xu vẫn trả lại, mở lại hiện đúng
 // Chạy: KB_SCRIPTS=e2e_1314.js run_ui.sh ADDON SHOTS (cần ANKI_PY)
 const fs = require('fs');
 const { pages, Page, sleep } = require('./cdp');
@@ -285,6 +288,69 @@ result = 1`);
   ok(b1.rev === b0.rev - 1 && (await panel()).front, 'bấm "↶ Hoàn tác": lượt vừa chấm được hoàn tác, thẻ hiện mặt trước');
   await page.key(' ', 'Space', 32); await sleep(800);
   ok((await panel()).back, 'phím Space vẫn lật thẻ ngay sau đó (nút không giữ focus)');
+
+  console.log('== 10. kiểu bàn phím khác');
+  const keyEv = async (key, code, vk) => {
+    for (const type of ['rawKeyDown', 'keyUp']) {
+      await page.send('Input.dispatchKeyEvent', { type, key, code, windowsVirtualKeyCode: vk, nativeVirtualKeyCode: vk, modifiers: 2 });
+    }
+  };
+  await hideToast();
+  await rate(3);
+  const k0 = await now();
+  await keyEv('w', 'KeyZ', 87); await sleep(700);        // AZERTY: Ctrl+W nằm ở chỗ phím Z của QWERTY
+  await keyEv('y', 'KeyZ', 89); await sleep(700);        // QWERTZ (Đức): Ctrl+Y
+  const k1 = await now();
+  ok(k1.rev === k0.rev && k1.coins === k0.coins, 'AZERTY Ctrl+W / QWERTZ Ctrl+Y (phím vật lý KeyZ): không hoàn tác');
+  await keyEv('z', 'KeyY', 90); await afterUndo(k1.rev);  // QWERTZ: chữ Z nằm ở phím vật lý KeyY
+  const k2 = await now();
+  ok(k2.rev === k1.rev - 1, 'QWERTZ Ctrl+Z (phím vật lý KeyY, ra chữ z): hoàn tác');
+  await rate(3);
+  const k3 = await now();
+  await keyEv('я', 'KeyZ', 90); await afterUndo(k3.rev);  // bàn phím Nga: phím Z ra chữ я
+  const k4 = await now();
+  ok(k4.rev === k3.rev - 1, 'bàn phím Nga Ctrl+я (phím vật lý KeyZ): hoàn tác');
+
+  console.log('== 11. bấm Ctrl+Z lần nữa khi lượt trước còn đang hoàn tác');
+  await rate(3); await rate(3); await rate(3);
+  const d0 = await now();
+  // hai phím trong cùng một nhịp của trang: phím thứ hai tới lúc lượt đầu chắc chắn chưa xong
+  await js('for (let i = 0; i < 2; i++) { document.dispatchEvent(new KeyboardEvent("keydown", { key: "z", code: "KeyZ", ctrlKey: true, bubbles: true, cancelable: true })); } return 1;');
+  await afterUndo(d0.rev); await sleep(1500);
+  const d1 = await now();
+  ok(d1.rev === d0.rev - 1 && d1.stack === d0.stack - 1, 'phím thứ hai tới khi lượt đầu chưa xong: chỉ hoàn tác một lượt (' + d0.rev + ' → ' + d1.rev + ')');
+  // bấm lại sau khi lượt trước đã xong: hoàn tác tiếp một lượt (như Edit → Undo của Anki)
+  await ctrlZ(); await afterUndo(d1.rev);
+  const d2 = await now();
+  ok(d2.rev === d1.rev - 1, 'bấm lại sau khi xong: hoàn tác tiếp lượt trước nữa (' + d1.rev + ' → ' + d2.rev + '), như Edit → Undo của Anki');
+
+  console.log('== 12. Ctrl+Z ngay lúc lượt chấm đang lưu');
+  const w0 = await now();
+  await js('document.getElementById("kb-show").click(); return 1;');
+  await waitFor('return !document.getElementById("kb-ratings").hidden;');
+  await js('document.querySelector(".kb-rate-3").click(); return 1;');
+  await ctrlZ();                                         // cùng lúc với lượt chấm đang lưu
+  await waitPy(KB + 'result = mw.col.db.scalar("select count() from revlog") > ' + w0.rev + ' and not d._busy');
+  await waitFor('const g = (id) => document.getElementById(id); return (!g("kb-show").hidden || !g("kb-done").hidden);');
+  await sleep(1200);
+  const w1 = await now();
+  ok(w1.rev === w0.rev + 1 && w1.coins > w0.coins && (await panel()).front, 'lượt chấm vẫn lưu, sang thẻ kế tiếp, không kẹt (revlog ' + w1.rev + ')');
+  await ctrlZ(); await afterUndo(w1.rev);
+  const w2 = await now();
+  ok(w2.rev === w0.rev && w2.coins === w0.coins, 'Ctrl+Z sau đó hoàn tác đúng lượt ấy (xu ' + w2.coins + ' = ' + w0.coins + ')');
+
+  console.log('== 13. đóng vườn ngay khi đang hoàn tác');
+  await rate(3);
+  const c0 = await now();
+  await ctrlZ();
+  await py(KB + 'd.close(); result = 1');
+  await sleep(2500);
+  const c1 = await py(KB + 'result = {"coins": st.load()["coins"], "rev": mw.col.db.scalar("select count() from revlog"), "dlg": kb._dialog is not None}');
+  ok(c1.rev === c0.rev - 1 && c1.coins < c0.coins, 'đóng vườn giữa chừng: lượt vẫn hoàn tác, xu vẫn trả lại (' + c0.coins + ' → ' + c1.coins + ')');
+  await py(KB + 'kb.open_garden(); result = 1'); await sleep(2500);
+  page = await gardenPage();
+  const shown = await js('return (document.getElementById("kb-coins") || {}).textContent || "";');
+  ok(shown.replace(/\D/g, '') === String(c1.coins), 'mở lại vườn: hiện đúng ' + shown);
 
   const errs = await py(KB + 'result = [e for e in kb.ERRORS.entries() if "hoàn tác" in json.dumps(e, ensure_ascii=False)]');
   ok(!errs || !errs.length, 'nhật ký Báo lỗi không có lỗi hoàn tác');

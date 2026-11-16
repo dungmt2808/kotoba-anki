@@ -1034,8 +1034,10 @@ var Garden = (function () {
     var tag = (e.target && e.target.tagName) || "";
     if (tag === "SELECT" || tag === "INPUT" || tag === "TEXTAREA") { return; }
     var k = e.key;
-    // 1.31.4: Ctrl+Z (⌘Z trên macOS) hoàn tác lượt chấm vừa rồi; e.code cho bàn phím không phải chữ Latin
-    if ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && (k === "z" || k === "Z" || e.code === "KeyZ")) {
+    // 1.31.4: Ctrl+Z (⌘Z trên macOS) hoàn tác lượt chấm vừa rồi. Phím vật lý KeyZ chỉ dùng khi phím ra chữ không phải
+    // Latin (bàn phím Nga…): trên AZERTY phím đó là W, trên QWERTZ là Y — Ctrl+W / Ctrl+Y không được hoàn tác nhầm
+    var latin = typeof k === "string" && /^[a-z]$/i.test(k);
+    if ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && (k === "z" || k === "Z" || (e.code === "KeyZ" && !latin))) {
       e.preventDefault();
       undoRate();
       return;
