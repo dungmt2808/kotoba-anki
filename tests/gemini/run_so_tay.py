@@ -59,8 +59,9 @@ for n in range(a.days):
             m["ky"], t["tieu_de"], date, arc.get("ten", ""), "\n\n".join(t["doan"]),
             "Tin làng: " + " · ".join(x.get("tieu_de", "") for x in m.get("tin") or [])))
     days.append(row)
-    print(json.dumps({k: v for k, v in row.items() if k != "luot"}, ensure_ascii=False), "| lượt:",
+    print(json.dumps({k: v for k, v in row.items() if k not in ("luot", "tom_tat", "diem")}, ensure_ascii=False), "| lượt:",
           [(k, mo.replace("gemini-", ""), r) for k, mo, r in row["luot"]], flush=True)
+    d += datetime.timedelta(days=1)
 nb = S.load_notebook(sh)
 md.append("## Sổ tay làng sau %d ngày\n\n```json\n%s\n```\n" % (a.days, json.dumps(nb, ensure_ascii=False, indent=1)))
 open(os.path.join(a.out, "truyen.md"), "w", encoding="utf-8").write("\n".join(md))
