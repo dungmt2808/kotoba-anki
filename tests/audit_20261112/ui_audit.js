@@ -116,7 +116,7 @@ result = True
 `);
   await waitFor('Garden._data().news.today.some(x => x.id === "days")');
   const initial = await page.eval('Garden._data().news.today.find(x => x.id === "days").text');
-  check('history/cache-initial-27', initial, 'Còn 3 ngày nữa đủ 30 ngày có ôn');
+  check('history/cache-initial-27', initial, 'Học thêm 3 ngày nữa là tròn 30 ngày học');
   const cached = await py(`
 col = mw.col
 start = int(col.sched.day_cutoff) - 86400
@@ -129,14 +129,14 @@ result = {"cached":kb._day_total["v"], "actual":kb.core.review_day_total(col, be
   await sleep(150);
   check('history/cache-invalidate-on-sync', [cached.cached, cached.actual], [29, 29], 'F07');
   const after = await page.eval('Garden._data().news.today.find(x => x.id === "days").text');
-  check('history/news-updates-on-sync', after, 'Còn 1 ngày nữa đủ 30 ngày có ôn', 'F07');
+  check('history/news-updates-on-sync', after, 'Học thêm 1 ngày nữa là tròn 30 ngày học', 'F07');
   await page.click('#kb-news-btn');
   await shot('F07_stale_news_after_sync');
   await page.eval('GardenGreet.closeNews()');
   await py('kb._day_total.update(key=None, v=0)\nkb._dialog.refresh()\nresult = True');
-  await waitFor('Garden._data().news.today.find(x => x.id === "days").text.includes("Còn 1")');
+  await waitFor('Garden._data().news.today.find(x => x.id === "days").text.includes("Học thêm 1")');
   check('history/control-after-cache-reset', await page.eval('Garden._data().news.today.find(x => x.id === "days").text'),
-    'Còn 1 ngày nữa đủ 30 ngày có ôn');
+    'Học thêm 1 ngày nữa là tròn 30 ngày học');
 }
 
 async function greetingHours() {

@@ -1,4 +1,4 @@
-# Kế hoạch 1.32.2 — sửa thẻ ngay lúc ôn trong vườn (chưa làm)
+# Kế hoạch 1.32.2 — sửa thẻ ngay lúc ôn trong vườn (**đã làm ở 1.32.2** — PHAT_TRIEN.md mục 2.6z11, báo cáo `docs/kiem_thu/1.32.2/BAO_CAO.md`)
 
 Góp ý của một người dùng (17/11, người dùng chuyển lời): "thêm phần chỉnh sửa thẻ ngay lúc học thẻ luôn … thường học thẻ
 anki sẽ có nút chỉnh sửa bên góc dưới bên trái". Người dùng: "tớ nghĩ tớ sẽ làm ở session sau". Claude đề xuất làm thẳng
@@ -6,7 +6,7 @@ anki sẽ có nút chỉnh sửa bên góc dưới bên trái". Người dùng: 
 
 Phiên sau làm cùng: **pinyin trên từng chữ** (`PINYIN_TREN_CHU.md`). Báo tiếng Trung / tiếng Hàn: Claude đề xuất để bản riêng (xem PHAT_TRIEN.md mục 10.0c).
 
-## Ảnh phác (chờ người dùng duyệt)
+## Ảnh phác (người dùng duyệt: "tớ thấy giao diện ổn rồi")
 
 Vẽ đè lên bảng ôn / thẻ cây thật của 1.32.1 (`tests/anki/mock_1322.js` + `mock_1322_ghep.py`); cửa sổ sửa là **cửa sổ sửa
 note thật của Anki 26.9** (`aqt.editor.Editor` dựng cho thẻ đang ôn, chụp bằng `QWidget.grab()`). **Chi tiết Claude chọn.**
