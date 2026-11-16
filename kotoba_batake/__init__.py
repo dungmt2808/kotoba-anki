@@ -34,6 +34,7 @@ from . import ai_en
 from . import ai_vi
 from . import backup_core
 from . import diag
+from . import edit_win      # 1.32.2: nút ✎ Sửa / phím E trong bảng ôn
 from . import event_core
 from . import fields_core
 from . import finds_core as finds
@@ -847,8 +848,17 @@ def _on_undo(*_args: Any) -> None:
         tooltip("ことば畑: đã hoàn tác lượt ôn, trả lại %d xu." % -delta, period=2500)
 
 
-def _on_op(*_args: Any) -> None:
-    """operation_did_execute: có lượt đang chờ thì xem đã Redo chưa / Redo còn dùng được không (ghi khi hết Redo)."""
+def _on_op(*args: Any) -> None:
+    """operation_did_execute: có lượt đang chờ thì xem đã Redo chưa / Redo còn dùng được không (ghi khi hết Redo).
+    1.32.2: chữ của note đổi (lần lưu cuối của cửa sổ Sửa thẻ, Trình duyệt thẻ, Undo) mà vườn đang ôn note đó → dựng lại
+    thẻ. Lúc cửa sổ Sửa thẻ còn mở thì đợi nó đóng (không dựng lại sau mỗi chữ gõ)."""
+    changes = args[0] if args else None
+    if (getattr(changes, "note_text", False) or getattr(changes, "notetype", False)) and _dialog is not None and _dialog._card is not None \
+            and not edit_win.is_open(int(_dialog._card.nid)):
+        try:
+            _dialog._note_changed(saved=False)
+        except Exception as err:
+            _warn("sau khi sửa thẻ", err)
     if not _undo_waiting():
         return
     try:
@@ -2507,6 +2517,38 @@ def _col_ready() -> bool:
     return col is not None and getattr(col, "db", None) is not None
 
 
+def _note_mod(nid: int) -> str | None:
+    """1.32.2: dấu của note — chữ các trường + tag + lúc sửa note / kiểu note (None nếu note không còn). Không chỉ dùng
+    notes.mod: nó tính theo giây, hai lần sửa trong cùng một giây (Undo rồi sửa ngay) sẽ không nhận ra."""
+    try:
+        row = mw.col.db.first("select n.mod, n.flds, n.tags, n.mid from notes n where n.id = ?", int(nid))
+        if not row:
+            return None
+        try:
+            mt = mw.col.db.scalar("select mtime_secs from notetypes where id = ?", int(row[3]))
+        except Exception:
+            mt = None
+        return json.dumps([row[0], row[1], row[2], mt], ensure_ascii=False)
+    except Exception:
+        return None
+
+
+def _edit_closed(nid: int) -> None:
+    """1.32.2: cửa sổ Sửa thẻ đã lưu xong và đóng (hoặc chuyển sang note khác). Vườn đang mở và đang ôn đúng note đó → dựng
+    lại thẻ. Lần lưu cuối của trình sửa có thể xong sau lúc này → móc operation_did_execute (_on_op) bắt lại."""
+    d = _dialog
+    if d is None:
+        return
+    try:
+        if d._card is not None and int(d._card.nid) == int(nid):
+            d._edit_wait = True
+            d._note_changed(saved=True)
+        elif not d._busy and _col_ready():
+            d.refresh()            # thẻ đã chấm xong trong lúc sửa: chỉ cập nhật chữ / nghĩa của cây
+    except Exception as err:
+        _warn("sau khi sửa thẻ", err)
+
+
 def _card_changed(card: Any) -> bool:
     """1.31.2: thẻ đang hiện trong bảng ôn đã bị đổi / xoá ở chỗ khác từ lúc lấy ra (chấm ở cửa sổ ôn của Anki, lượt ôn
     của điện thoại vừa đồng bộ về, sửa lịch / xoá ở Trình duyệt thẻ)."""
@@ -2538,6 +2580,10 @@ class GardenDialog(QDialog):
         self._busy = False
         self._review_gen = 0            # 1.22.6: tăng mỗi lần dừng ôn / đổi deck — lượt chấm lưu xong sau đó không mở lại bảng ôn
         self._undo_stack: list[dict[str, int]] = []   # 1.31.4: các lượt chấm trong bảng ôn của vườn (Ctrl+Z), mới nhất cuối
+        self._side = "q"                # 1.32.2: mặt đang hiện của thẻ đang ôn ("q" / "a") — dựng lại sau khi sửa note
+        self._typed = ""                # 1.32.2: chữ đã gõ ở ô đáp án lúc lật thẻ (dựng lại mặt sau đúng như lúc lật)
+        self._note_mod: str | None = None   # 1.32.2: dấu của note đang ôn lúc hiện thẻ (biết note vừa được sửa)
+        self._edit_wait = False         # 1.32.2: cửa sổ Sửa thẻ vừa đóng, lần lưu cuối có thể về sau → vẫn báo "Đã lưu thẻ."
         self._plants: list[dict[str, Any]] | None = None   # cây của deck đang xem (cho chép chính tả)
         self._paper_lang = ""         # 1.19.1: báo đang đọc, chọn ở Kệ báo ("" = báo có số chưa đọc, tiếng Nhật trước)
 
@@ -2796,6 +2842,7 @@ class GardenDialog(QDialog):
         self._card = card
         self._shown_card = card
         self._states = top.states
+        self._side, self._typed, self._note_mod, self._edit_wait = "q", "", _note_mod(card.nid), False
         self._old_stage = _stage(card.nid, _deck_name(self.deck_id))
         question, self._type_info = core.type_question(
             mw.col, card, mw.prepare_card_text_for_display(card.question())
@@ -2837,6 +2884,7 @@ class GardenDialog(QDialog):
         except Exception as err:
             showWarning(f"ことば畑: không hiện được mặt sau.\n\n{err!r}", parent=self)
             return
+        self._side, self._typed = "a", typed
         self._js("showAnswer", {"cid": card.id, "answer": answer})
         if card.autoplay():
             av_player.stop_and_clear_queue()
@@ -2987,6 +3035,66 @@ class GardenDialog(QDialog):
 
         CollectionOp(parent=self, op=lambda col: col.undo()).success(done).failure(failed).run_in_background()
 
+    # 1.32.2: nút ✎ Sửa / phím E (góp ý của người dùng: "thường học thẻ anki sẽ có nút chỉnh sửa bên góc dưới bên trái").
+    # Mở cửa sổ sửa note của Anki cho note của thẻ đang ôn (edit_win). Lượt ôn đang dở giữ nguyên: không bỏ qua thẻ, không
+    # cộng / trừ xu, không thêm revlog; lưu xong (đóng cửa sổ) thì thẻ hiện lại nội dung mới ở đúng mặt đang xem.
+    def _edit_card(self) -> None:
+        card = self._card
+        if card is None or self._busy:
+            return
+        try:
+            how = edit_win.open_card(card, _edit_closed)
+        except Exception as err:
+            _warn("mở cửa sổ sửa thẻ", err)
+            self._js("rvNote", "Chưa mở được cửa sổ sửa thẻ.")
+            return
+        if how == "browser":
+            self._js("rvNote", "Đã mở Trình duyệt thẻ ở thẻ này.")
+
+    def _note_changed(self, saved: bool) -> None:
+        """Note của thẻ đang ôn vừa đổi (đóng cửa sổ Sửa thẻ, sửa ở Trình duyệt thẻ, Undo ở cửa sổ chính) → dựng lại mặt
+        đang xem + cây trong vườn. saved: do cửa sổ Sửa thẻ của vườn (báo "Đã lưu thẻ.")."""
+        card = self._card
+        if card is None or self._busy or not _col_ready():
+            return
+        mod = _note_mod(card.nid)
+        if mod is None:                    # note đã bị xoá
+            self._js("toast", "Thẻ này vừa bị xoá — sang thẻ kế tiếp.")
+            self.refresh()
+            self._next_card()
+            return
+        if mod == self._note_mod:
+            return
+        saved = saved or self._edit_wait
+        self._edit_wait = False
+        if _card_changed(card):            # thẻ cũng vừa được chấm / đổi lịch ở chỗ khác: như 1.31.2
+            self._js("toast", "Thẻ này vừa được ôn hoặc sửa ở chỗ khác — sang thẻ kế tiếp.")
+            self.refresh()
+            self._next_card()
+            return
+        self._note_mod = mod
+        try:
+            card.load()                    # nạp lại note / bản dựng (mod của thẻ không đổi → vẫn nhận ra chấm ở chỗ khác)
+            question, self._type_info = core.type_question(
+                mw.col, card, mw.prepare_card_text_for_display(card.question()))
+            question = _card_will_show(question, card, "reviewQuestion")
+            payload: dict[str, Any] = {
+                "cid": card.id, "nid": card.nid, "question": question,
+                "css": f"<style>{card.render_output().css}</style>",
+                "bodyclass": theme_manager.body_classes_for_card_ord(card.ord),
+                "undo": self._undo_target() is not None,
+                "note": "Đã lưu thẻ." if saved else "Thẻ vừa được sửa.",
+            }
+            if self._side == "a":
+                answer = core.type_answer(
+                    mw.col, mw.prepare_card_text_for_display(card.answer()), self._type_info, self._typed)
+                payload["answer"] = _card_will_show(answer, card, "reviewAnswer")
+        except Exception as err:
+            _warn("dựng lại thẻ sau khi sửa", err)
+            return
+        self.refresh()                     # cây trong vườn: chữ / nghĩa mới
+        self._js("cardEdited", payload)
+
     def _stop_review(self) -> None:
         av_player.stop_and_clear_queue()
         self._card = None
@@ -3041,6 +3149,8 @@ class GardenDialog(QDialog):
                 pass
         elif cmd == "rv:undo":           # 1.31.4: Ctrl+Z / nút Hoàn tác trong bảng ôn
             self._undo_review()
+        elif cmd == "rv:edit":           # 1.32.2: nút ✎ Sửa / phím E — sửa note của thẻ đang ôn
+            self._edit_card()
         elif cmd == "rv:stop":
             self._stop_review()
         elif cmd.startswith("game:"):
