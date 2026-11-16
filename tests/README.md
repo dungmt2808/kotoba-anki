@@ -169,6 +169,7 @@ Cần Node ≥ 22 (có sẵn `fetch` và `WebSocket`). Cổng: `KB_CDP_PORT` (93
 ## Kết quả lần chạy gần nhất (bản 1.31.4, 16/11/2026) — Ctrl+Z trong bảng ôn, deck tiếng Trung, cập nhật không mất dữ liệu
 - `run_all.sh` (`ANKI_PY` = venv aqt 26.9.4; **55 bộ**, có `core/test_1314.py` 39/39, `core/test_ban_cu.py` + 1.31.3, `dong_bo/test_dong_bo.py`) **TẤT CẢ OK** sau khi chạy lại `node site/tools/xuat_hinh.js` (lên bản thì trang web ghi số bản mới). `core/test_1314.py` phần collection cũng đạt trên **anki 23.10.1**.
 - Anki 26.9.4 thật: `e2e_1314` **53/53**, `run_capnhat.sh` 1.31.3 (`e64eb22`) → 1.31.4 **17/17**, `e2e.js` 24/24, `e2e_118` 29/29, `e2e_1253` 39/39, `e2e_1226` 40/40, `e2e_123` 66/66, `e2e_117` 53/55 — 2 kiểm tra bố cục trượt **y hệt trên mã 1.31.3 gốc** ở máy test này (độ rộng tab Nhà 110 / 128, ô Ví / nút Thoát 31 / 28 / 27): có từ trước, không do 1.31.4.
+- `core/test_118.py` chạy trong 1 giờ trước mốc sang ngày của Anki (vd. 03:00–04:00) từng trượt 2 kiểm tra "cây 'later'" (cả mã 1.31.3 gốc) — 1.31.4 cho bài test bỏ qua 2 kiểm tra đó trong khoảng giờ ấy.
 
 ## Kết quả lần chạy gần nhất (bản 1.31.2, 15/11/2026) — kiểm tra lần cuối trước phát hành: giữ dữ liệu vườn khi đồng bộ
 - `run_all.sh` (`ANKI_PY` = venv aqt 26.9.4; **51 bộ**, có `core/test_1312.py` 115/115 và `dong_bo/test_dong_bo.py` 74/74 — máy chủ đồng bộ thật của Anki) **TẤT CẢ OK**, trên thư mục mã nguồn và trên gói đã đóng (giải nén). `test_1312.py` 115/115 và `test_dong_bo.py` 74/74 cũng đạt trên Anki 23.10.1 (Python 3.9).

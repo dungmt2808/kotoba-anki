@@ -1091,6 +1091,7 @@ ANKI_PY=~/.venv-anki/bin/python tests/anki/run_capnhat.sh /tmp/cu.ankiaddon koto
 ## 9. Hạn chế đã biết / chưa kiểm tra trên máy thật
 
 - (16/11, 1.31.4) `tests/anki/e2e_117.js` trượt 2 kiểm tra bố cục ở máy test mới (aqt 26.9.4: độ rộng tab Nhà 110 / 128, chiều cao ô Ví / nút Thoát 31 / 28 / 27) — **trượt y hệt trên mã 1.31.3 gốc**, có từ trước (nhiều khả năng do font của máy test). Chưa sửa; xem trên máy thật nếu tab Nhà trông lệch.
+- (16/11, 1.31.4) `tests/core/test_118.py` trượt 2 kiểm tra "cây 'later'" khi chạy trong 1 giờ trước mốc sang ngày của Anki (thẻ học lại sau 1 giờ rơi sang ngày mai, Anki chuyển sang queue 3) — có từ trước (mã 1.31.3 gốc trượt y hệt); nay bài test bỏ qua 2 kiểm tra đó trong khoảng giờ ấy.
 - (16/11, 1.31.4) Ctrl+Z trong vườn chỉ có khi bảng ôn đang mở, không có Redo trong vườn (Redo ở Edit của cửa sổ chính). Chưa thử trên macOS (⌘Z) / Windows với bộ gõ tiếng Việt.
 - (15/11, 1.31.3) **Thứ Tư / Chủ nhật: khách hoặc thú đứng trước người gánh hàng rong** — rê chuột hiện tên khách / thú nhưng bấm thì mở gánh hàng (cú bấm xét gánh hàng trước). Chưa sửa, chờ người dùng chọn (mục 2.6z6).
 

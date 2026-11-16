@@ -55,6 +55,8 @@ Chi tiết Claude chọn (người dùng chưa xem): nút chỉ hiện khi có l
 | Anki 23.10 (bản thấp nhất add-on hỗ trợ) | cùng cách hoàn tác (`CollectionOp`, móc `state_did_undo`, tên bước "Answer Card"); cú pháp chạy được trên Python 3.9 |
 | Phần "hợp đồng dữ liệu" của test sẽ trượt ở mọi bản sau (vì bản sau sửa thêm file) | chỉ chạy khi add-on là 1.31.4; bản sau viết hợp đồng của mình (PHAT_TRIEN.md mục 7) |
 | `docs/ANKIWEB.md` còn ghi bản 1.31.3 | đã sửa thành 1.31.4 |
+| Chạy lại toàn bộ test lúc 03:13 (UTC): `core/test_118.py` trượt 2 kiểm tra "cây chờ tới lượt" | mã 1.31.3 gốc trượt y hệt: thẻ "học lại sau 1 giờ" rơi sau mốc sang ngày của Anki (04:00) nên thành ngày mai — chỗ yếu có sẵn của **bài test**, không phải add-on. Bài test nay bỏ qua 2 kiểm tra đó trong khoảng giờ ấy |
+| Chạy lại trên gói cuối | `run_all.sh` 55 bộ OK (trừ ca giờ ở trên, đã sửa bài test), `e2e_1314` 53 / 53, `run_capnhat.sh` 17 / 17 |
 
 Người đang dùng deck tiếng Trung mà chưa bấm Lưu ở Cấu hình trường: sau khi cập nhật, deck đó thành "Ngôn ngữ khác" → trò chơi của deck đó về chế độ mặc định của nhóm này (chế độ đã chọn cho nhóm tiếng Nhật vẫn lưu nguyên, không mất).
 
