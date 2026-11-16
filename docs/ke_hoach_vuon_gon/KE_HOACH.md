@@ -18,3 +18,14 @@ nước "khát" rải khắp ruộng.
 
 Chỉ đổi cách hiển thị (không đổi dữ liệu); chọn ở ⚙ (vd. "Sắp ruộng: Như cũ / Theo giai đoạn / Cần tưới lên đầu").
 Ghi chú: luống thêm lối đi + chỗ trống cuối luống → ruộng dài thêm khoảng 2–4 hàng.
+
+## Kiểu ngăn luống (17/11)
+
+Người dùng xem `vg_01`: "mình thấy không đẹp á. cái dải dài này có vẻ làm vườn không đẹp" (dải đất kẻ ngang cả ruộng giữa
+các luống) → vẽ lại 3 kiểu không có dải đất (`node mock_vuon_gon.js OUT kieu`):
+
+| Ảnh | Kiểu |
+|---|---|
+| `vg_01b_bien_go.png` | chỉ biển gỗ nhỏ cắm ở đầu luống; luống mới bắt đầu hàng mới (khoảng cỏ cuối luống trước tự làm chỗ ngăn) |
+| `vg_01c_da_lat.png` | biển gỗ + vài viên đá lát cách quãng trên cỏ |
+| `vg_01d_vien_hoa.png` | biển gỗ + viền hoa dại nhỏ trên cỏ |

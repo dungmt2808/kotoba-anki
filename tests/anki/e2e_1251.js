@@ -319,15 +319,16 @@ result = 1`);
   const crowCard = await js('const c = [...document.querySelectorAll(".kb-g-card, .kb-g-pick, [data-game]")].find((x) => /Đuổi quạ/.test(x.textContent)); return c ? [c.textContent, !!c.querySelector("button:disabled"), c.className] : null;');
   ok(crowCard && !/chưa hỗ trợ/.test(crowCard[0]), 'bảng Trò chơi: Đuổi quạ không còn "chưa hỗ trợ ngôn ngữ này" (' + (crowCard ? crowCard[0].slice(0, 80) : 'không thấy') + ')');
   const modes = await js('const sel = [...document.querySelectorAll("select")].find((s) => [...s.options].some((o) => /gõ nghĩa/.test(o.textContent))); return sel ? [...sel.options].map((o) => o.textContent) : [];');
-  ok(modes.indexOf('Nghĩa → gõ từ') >= 0 && modes.indexOf('Từ → gõ nghĩa') >= 0, 'kiểu chơi: Nghĩa → gõ từ / Từ → gõ nghĩa ' + JSON.stringify(modes));
+  // 1.32: deck tiếng Hàn có chế độ riêng "Nghĩa → gõ chữ Hàn" (trước: "Nghĩa → gõ từ" của nhóm Ngôn ngữ khác)
+  ok(modes.some((m) => /^Nghĩa → gõ (từ|chữ Hàn)$/.test(m)) && modes.indexOf('Từ → gõ nghĩa') >= 0, 'kiểu chơi: Nghĩa → gõ chữ Hàn / Từ → gõ nghĩa ' + JSON.stringify(modes));
   await shot('08_tro_choi_han');
-  await js('const sel = [...document.querySelectorAll("select")].find((s) => [...s.options].some((o) => /gõ nghĩa/.test(o.textContent))); sel.value = [...sel.options].find((o) => /Nghĩa → gõ từ/.test(o.textContent)).value; sel.dispatchEvent(new Event("change", { bubbles: true })); return 1;');
+  await js('const sel = [...document.querySelectorAll("select")].find((s) => [...s.options].some((o) => /gõ nghĩa/.test(o.textContent))); sel.value = [...sel.options].find((o) => /Nghĩa → gõ (từ|chữ Hàn)/.test(o.textContent)).value; sel.dispatchEvent(new Event("change", { bubbles: true })); return 1;');
   await sleep(600);
   await js('const c = [...document.querySelectorAll(".kb-g-card, .kb-g-pick, [data-game]")].find((x) => /Đuổi quạ/.test(x.textContent)); (c.querySelector("button:not(:disabled)") || c).click(); return 1;');
   await waitFor('document.querySelector(".kb-gc-input")', 6000);
   await sleep(2500);
   const ph = await js('return document.querySelector(".kb-gc-input").placeholder;');
-  ok(/Gõ từ/.test(ph), 'vào game: ô gõ "' + ph + '"');
+  ok(/Gõ từ|Gõ chữ Hàn/.test(ph), 'vào game: ô gõ "' + ph + '"');
   // gõ đáp án của con quạ đang bay (từ tiếng Hàn tương ứng nghĩa trên biển)
   const KO = { 'quả táo': '사과', 'trường học': '학교', 'nước': '물', 'sách': '책', 'bạn': '친구' };
   let scared = false;
