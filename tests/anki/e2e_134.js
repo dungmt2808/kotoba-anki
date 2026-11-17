@@ -228,6 +228,8 @@ kb.open_garden(); result = 1`;
   ok((await revs()) === rv && (await js('return document.getElementById("kb-card").contentDocument.getElementById("tx").value;')) === '2',
     'đang gõ trong ô chữ của thẻ: phím 2 là chữ, không chấm');
   await clickIn('#r2'); await sleep(200);
+  await key('1', 'Digit1', 49, { modifiers: 2 }); await sleep(800);
+  ok((await revs()) === rv, 'Ctrl+1 (Anki: gắn cờ) không chấm thẻ (1.33.3: chấm Lại)');
   await key('End', 'Numpad1', 35); await sleep(1300);
   ok((await revs()) === rv + 1 && (await lastEase()) === 1, 'bàn phím số NumLock tắt (End ở vị trí số 1) → chấm Lại');
 

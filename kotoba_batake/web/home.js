@@ -3886,8 +3886,8 @@ var GardenHome = (function () {
     if (p.bad.length) { setTip("Không mua thêm được: " + p.bad.join(", ") + " — cất bớt khỏi bản thử nhé."); sfx("again"); return; }
     const note = (p.names.length ? "Mua: " + p.names.join(" · ") + ". " : "") + "Món đang đặt ở " + sceneName(scene) +
       " mà bản thử không dùng → Kho đồ.";
-    pay("home:draft:use:" + JSON.stringify({ scene: scene, slot: d.cur, draft: d.slots[d.cur] }),
-      { title: "Dùng bản thử " + (d.cur + 1) + " cho " + sceneName(scene) + "?", price: p.cost, note: note, yes: p.n ? "Mua " + p.n + " món & dùng" : "Dùng bản này" },
+    const useArg = JSON.stringify({ scene: scene, slot: d.cur, draft: d.slots[d.cur] });
+    pay("home:draft:use:" + useArg, { title: "Dùng bản thử " + (d.cur + 1) + " cho " + sceneName(scene) + "?", price: p.cost, note: note, yes: p.n ? "Mua " + p.n + " món & dùng" : "Dùng bản này" },
       () => { draftPending++; draftSentAt = Date.now(); });        // Python trả homeDrafts sau khi dùng
   }
   // thanh dưới cảnh khi đang thử (thay dòng gợi ý): tên cảnh · tóm tắt / chữ hướng dẫn · Bản 1 2 3 · Dùng bản này · Thoát thử
@@ -5663,7 +5663,7 @@ var GardenHome = (function () {
     } else if (a === "draft") {           // 1.34: đã bày cảnh thật như bản thử
       trying = false;
       sfx("stage");
-      mood("star", 2200, "できた！ " + keep(sceneName(payload.scene || scene)));
+      mood("star", 2200, "できた！ Đã bày " + keep(sceneName(payload.scene || scene)));
       tipMsg = "Đã bày " + sceneName(payload.scene || scene) + " như bản thử" + (payload.bought ? " · mua " + payload.bought + " món, " + kbXu(payload.cost || 0) + " xu" : "") + ".";
     } else if (a === "zone") {
       const zs = (homeState().zones || []);

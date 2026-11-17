@@ -41,6 +41,7 @@ lỗi ghi ở từng khoá dữ liệu vườn (không đổi gì), bản thử 
 2. Xu đổi trong lúc đang thử (vd. vừa bù xu điện thoại) mà nút vẫn ghi "Thiếu … xu" (kịch bản Anki thật bắt được).
 3. Một lần lưu bản thử bị bỏ vì Anki đang đồng bộ → "Dùng bản này" có thể dùng bản cũ hơn bản đang thấy → nay gửi kèm bản
    đang thấy (Python lưu rồi vẫn tự xét lại mọi thứ).
+4. **Ctrl+1…4** (Anki dùng để gắn cờ thẻ) từng chấm thẻ trong vườn như phím 1…4 → nay chỉ phím số trơn mới chấm.
 
 ## 3. Dữ liệu (đã phát hành nên phải giữ dữ liệu cũ)
 
@@ -51,7 +52,17 @@ lỗi ghi ở từng khoá dữ liệu vườn (không đổi gì), bản thử 
 
 ## 4. Kết quả test
 
-<!-- KẾT QUẢ -->
+| Bộ | Kết quả |
+|---|---|
+| `core/test_134.py` (mới, collection Anki thật) — bản thử rác ngẫu nhiên 3.000, dùng bản thử mọi đường lỗi, lỗi ghi từng khoá, **600 bản thử ngẫu nhiên có đối chứng**, mã 1.31.3 thật mở cùng collection, cây deck | **78/78** |
+| `anki/e2e_134.js` (mới, Anki thật, chuột / phím thật) | **85/85** trên Anki 26.9.4 và **85/85** trên Anki 23.10.1 |
+| Bộ test offline `run_all.sh` (65 bộ) trên gói đã đóng | **TẤT CẢ OK** (4 bộ cũ sửa theo cách viết mã mới) |
+| 43 kịch bản Anki thật cũ + mới (Anki 26.9.4) | 1.795 / 1.795 (2 ca trượt khi chạy 3 Anki song song, chạy lại riêng thì đạt) |
+| Bộ audit cũ (UI 191 + 18 + 7, Xưởng 42, báo 26) | đạt hết |
+| Đồng bộ thật (máy chủ đồng bộ của Anki chạy ở máy, `e2e_1312`) | **47/47** |
+| **Cài đè** bản đã phát hành 1.31.3 → 1.34.0 trong Anki thật (xu, đồ, nhật ký, cài đặt, mọi khoá dữ liệu) | **19/19** |
+| Anki 23.10.1 (bản thấp nhất hỗ trợ): `e2e_1322`, `e2e_1314` | 40/40, 53/53 |
+
 
 ## 5. Cần bạn xem trên máy thật
 

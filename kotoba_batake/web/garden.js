@@ -1164,8 +1164,9 @@ var Garden = (function () {
       }
       return;
     }
-    var mine = k === " " || k === "Enter" || (k >= "1" && k <= "4" && k.length === 1) || k === "F5" || k === "Escape" ||
-      (plain && (k === "e" || k === "E" || k === "r" || k === "R" || k === "f" || k === "F"));
+    // 1.34: Ctrl / Alt / ⌘ + số là phím khác (Anki: Ctrl+1…4 gắn cờ) — trước đây vẫn chấm thẻ
+    var mine = k === "F5" || k === "Escape" || (plain && (k === " " || k === "Enter" || (k >= "1" && k <= "4" && k.length === 1) ||
+      k === "e" || k === "E" || k === "r" || k === "R" || k === "f" || k === "F"));
     if (!mine) { return; }
     e.preventDefault();
     // 1.34: giữ phím (phím lặp) chỉ tính một lần — trước đây giữ Space ~0,4 giây là lật rồi chấm "Được" liền mấy thẻ

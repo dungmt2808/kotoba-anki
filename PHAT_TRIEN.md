@@ -448,10 +448,11 @@ khai đi, xong nhớ test kỹ nha". Báo cáo: `docs/kiem_thu/1.34.0/BAO_CAO.md
   đang thử thì tính lại. Esc lần 1 thoát thử, đóng Nhà giữ bản thử.
 - Lỗi tìm ra khi test: bản thử có số vô cực (`Infinity` trong file) làm làm sạch ném lỗi (thử ngẫu nhiên bắt được) → bỏ; thanh
   thử không tính lại khi xu đổi lúc đang thử (e2e bắt được) → `dataChanged` vẽ lại.
-- Test: `core/test_134.py` (77: làm sạch + 3.000 bản thử rác, dùng bản thử đủ đường lỗi, lỗi ghi từng khoá, đọc lỗi kéo dài, **600
+- Test: `core/test_134.py` (78: làm sạch + 3.000 bản thử rác, dùng bản thử đủ đường lỗi, lỗi ghi từng khoá, đọc lỗi kéo dài, **600
   bản thử ngẫu nhiên có đối chứng**, lưu theo hồ sơ, mã 1.31.3 thật mở cùng collection, cây deck = `deck_due_tree`, `ui.zoom`,
-  soát mã), `anki/e2e_134.js` (80: chuột / phím thật), `anki/probe_1334.js` (dò lỗi bản cũ); sửa `e2e_1223` / `e2e_1261` /
-  `e2e_1303` theo ô deck mới.
+  soát mã), `anki/e2e_134.js` (85: chuột / phím thật; đạt cả Anki 23.10.1), `anki/probe_1334.js` (dò lỗi bản cũ); sửa `e2e_1223` /
+  `e2e_1261` / `e2e_1303` theo ô deck mới, `test_1301` / `test_1314` / `test_1322` / `test_1332` theo cách viết mã mới. Kết quả: `tests/README.md`.
+- Tìm thêm khi rà: **Ctrl+1…4** (Anki: gắn cờ) từng chấm thẻ trong vườn → nay chỉ phím số trơn mới chấm.
 
 ### 2.6z15 Bản 1.33.3 — sửa lỗi audit 17/11 + chữ không lẫn ngôn ngữ (17/11)
 Người dùng: "kiểm tra lại giúp tớ code mới xem phần ngôn ngữ đang có bị lẫn ngôn ngữ khác vào chưa (chợ sáng, sinh hoạt câu

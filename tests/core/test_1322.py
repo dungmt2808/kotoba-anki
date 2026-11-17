@@ -166,8 +166,10 @@ ok(bool(m2) and "answer_card" not in m2.group(1) and "_record_answer" not in m2.
    "dựng lại thẻ không chấm thẻ, không cộng / trừ xu")
 ok('"select n.mod, n.flds, n.tags, n.mid from notes n where n.id = ?"' in init, "nhận ra note vừa sửa bằng nội dung note (không chỉ notes.mod theo giây)")
 key = re.search(r"  function key\(e\) \{(.*?)\n  \}\n", gjs, re.S).group(1)
-ok('if (tag === "SELECT" || tag === "INPUT" || tag === "TEXTAREA") { return; }' in key, "phím tắt bảng ôn không chạy khi đang gõ (ô đáp án, ô tìm…)")
-ok('(k === "e" || k === "E") && !e.ctrlKey && !e.metaKey && !e.altKey' in key and "editCard();" in key, "phím E (không Ctrl / Alt / ⌘) → editCard")
+# 1.34: "đang gõ" chỉ còn ô chữ / textarea / select / chỗ sửa được (radio, nút trong thẻ không chặn phím) — test_134.py
+ok("if (typingIn(e.target)) { return; }" in key and 'if (tag === "TEXTAREA" || tag === "SELECT") { return true; }' in gjs and "TEXT_INPUT.test(t.type" in gjs,
+   "phím tắt bảng ôn không chạy khi đang gõ (ô đáp án, ô tìm…)")
+ok("var plain = !e.ctrlKey && !e.metaKey && !e.altKey;" in key and 'k === "e" || k === "E"' in key and "editCard();" in key, "phím E (không Ctrl / Alt / ⌘) → editCard")
 ed_js = re.search(r"function editCard\(\) \{(.*?)\n  \}", gjs, re.S).group(1)
 ok("!card || waiting || flipping || undoing" in ed_js and 'send("rv:edit")' in ed_js, "editCard: không gửi khi đang chấm / lật / hoàn tác")
 ok('$("kb-rv-edit").addEventListener("mousedown", function (e) { e.preventDefault(); });' in gjs, "nút ✎ Sửa không lấy focus (Space / 1–4 vẫn chạy sau khi bấm)")
