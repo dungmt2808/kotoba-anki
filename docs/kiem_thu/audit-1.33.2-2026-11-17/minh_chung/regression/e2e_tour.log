@@ -1,0 +1,14 @@
+  ✓ phím N mở Nhà
+  ✓   Esc đóng Nhà, cửa sổ vườn vẫn mở
+  ✓ phím Q mở Nhiệm vụ
+  ✓   Esc đóng Nhiệm vụ, cửa sổ vườn vẫn mở
+  ✓ phím T mở Trò chơi
+  ✓   Esc đóng Trò chơi, cửa sổ vườn vẫn mở
+  ✓ phím B mở Báo
+  ✓   Esc đóng Báo, cửa sổ vườn vẫn mở
+  ✓ ôn 1 thẻ trong vườn (Space → 3): revlog 0 → 1
+  ✓ Esc khi đang ôn: chỉ đóng bảng ôn
+  ✓ không có lỗi JS
+  ✓ nhật ký lỗi add-on trống
+
+KẾT QUẢ: 12/12 đạt

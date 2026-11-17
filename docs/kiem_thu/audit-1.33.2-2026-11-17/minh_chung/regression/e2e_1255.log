@@ -1,0 +1,58 @@
+== chưa bật admin
+  ✓ không có nút "Sửa hình" ở bảng Nhà
+  ✓ lệnh lưu gửi thẳng khi chưa bật admin bị bỏ (không ghi file)
+== bật admin: sửa đèn lồng giấy
+  ✓ thẻ đồ có nút "Sửa hình" (38 nút ở Trang trí sân)
+  ✓ bấm "Sửa hình" ở thẻ Đèn lồng giấy
+  ✓ Xưởng mở đúng hình gốc 10 × 18: ["do:chochin",10,18]
+  ✓ bảng màu = bảng màu của đồ (40 màu)
+  ✓ chữ ngắn: "Hình gốc · Đèn lồng giấy" · nút "Lưu" · một khung thì không có hàng Khung
+  ✓ vẽ một điểm viền ở góc
+  ✓ đã vẽ: Esc lần đầu chỉ nhắc
+  ✓ Lưu → Xưởng đóng, hình đổi ngay: k..kkkk...
+  ✓ ghi vào user_files/mau_sua.json (chỉ khung đã sửa)
+  ✓ thẻ đánh dấu đã sửa (nút tím đậm)
+== mở lại vườn
+  ✓ mở lại: bản sửa vẫn áp (nạp trong <head>)
+== nhiều khung: chong chóng, thú, giống cây, khách
+  ✓ chong chóng: 8 khung, hàng Khung Chính / Khung 1 / Khung 2
+  ✓ phím 3 → khung thứ ba (f2)
+  ✓ khung vừa vẽ có chấm đánh dấu
+  ✓ chỉ lưu khung đã sửa, khung đó đổi trong cảnh
+  ✓ thẻ thú nuôi (Shiba) có nút "Sửa hình"
+  ✓ thú: 4 khung "Đi 1 / Đi 2 / Ngồi / Ngủ", bảng màu của thú
+  ✓ lưu → hình Shiba ngồi đổi
+  ✓ thẻ giống cây (Lúa) có nút "Sửa hình"
+  ✓ giống cây: 5 giai đoạn (Hạt / Mầm / Cây non / Ra hoa / Ra quả)
+  ✓ lưu → Lúa Ra quả đổi (ruộng, lịch hoa dùng hình này)
+  ✓ thẻ khách (Album khách) có nút "Sửa hình"
+  ✓ khách: khach:suzume, 2 khung
+  ✓ chưa vẽ gì: Esc một lần là đóng
+== các loại đồ khác: nội thất, treo tường, theo mùa, món hiếm, gian bếp
+  ✓ Kotatsu (kotatsu): Xưởng 32 × 17, 1 khung → Lưu → hình đổi
+  ✓ Tranh cuộn (kakejiku): Xưởng 13 × 30, 1 khung → Lưu → hình đổi
+  ✓ Cây hồng (kaki): Xưởng 32 × 40, 1 khung → Lưu → hình đổi
+  ✓ Hươu Nara (shika): Xưởng 17 × 23, 2 khung → Lưu → hình đổi
+  ✓ Tủ lạnh (reizouko): Xưởng 15 × 28, 2 khung → Lưu → hình đổi
+  ✓ Xoá hết rồi Lưu → không lưu, nhắc "Khung này đang trống." (món không biến mất)
+== bản sửa hỏng bị bỏ
+  ✓ sai cỡ (đèn đá 5 × 5) / màu lạ (hòm thư "X") → giữ hình gốc, vườn vẫn chạy
+== Xuất file / Nhập file / Về gốc
+  ✓ Xuất file mau_sua.json: ["do:chochin","do:kakejiku","do:kaki","do:kazaguruma","do:kotatsu","do:lantern","do:mailbox","do:reizouko","do:shika","giong:ine","thu:shiba"]
+  ✓ Về gốc: lưới về đúng hình trong bản add-on (chưa lưu)
+  ✓ Lưu sau Về gốc → bỏ bản sửa, đèn lồng như gốc
+  ✓ Nhập file người khác gửi → hình đổi, gộp vào bản sửa của máy
+== người dùng thường: Góp ý hình (vườn không đổi)
+  ✓ bỏ file admin: vườn về hình gốc, bản sửa của máy (ghế gỗ) còn trong file nhưng không áp
+  ✓ config "admin": true không còn tác dụng; món đang có (đèn lồng) có "Góp ý hình", món chưa có (đèn đá) không có nút: {"lamp":"Góp ý hình","stone":"","sua":0}
+  ✓ bấm "Góp ý hình"
+  ✓ Xưởng "Góp ý hình": nút "Lưu file góp ý", không có Xuất / Nhập file: {"suggest":true,"title":"工房 · Góp ý hình","save":"Lưu file góp ý","tip":"Góp ý hình · Đèn lồng giấy","hidden":[true,true],"revert":true}
+  ✓ chưa vẽ gì mà bấm lưu → "Chưa sửa gì."
+  ✓ lưu file góp ý chỉ có hình vừa sửa; không ghi bản sửa của máy
+  ✓ Xưởng đóng, đèn lồng trong vườn vẫn như gốc
+  ✓ máy admin Nhập file góp ý → đèn lồng đổi, vào bản sửa của máy (để Xuất file ra bản mới)
+== file đi kèm gói: người dùng thường nhận
+  ✓ kotoba_batake/mau_sua.json đi kèm gói → hàng rào đổi cho cả người không bật admin
+  ✓ không có file admin: không có nút "Sửa hình"
+  ✓ nhật ký lỗi không có lỗi mới
+KẾT QUẢ: 48/48 đạt

@@ -1,0 +1,68 @@
+== 1. chưa chấm thẻ nào
+  ✓ Tưới ngay: bảng ôn mở, thẻ đầu tiên hiện mặt trước
+  ✓ nút Hoàn tác ẩn khi chưa chấm thẻ nào
+  ✓ Ctrl+Z: báo "Không có lượt chấm nào để hoàn tác."
+  ✓ không đụng gì: revlog / xu / bước Undo của Anki (Select Deck) / thẻ đang hiện như cũ
+== 2. chấm Được → Ctrl+Z → chấm lại
+  ✓ chấm Được: revlog +1, +3 xu, sang thẻ kế tiếp
+  ✓ nút "↶ Hoàn tác" hiện (sổ của bảng ôn: 1 lượt)
+  ✓ Ctrl+Z: thẻ vừa chấm hiện lại mặt trước, revlog về như cũ (0)
+  ✓ xu về đúng số trước khi chấm: 3 → 0 (trước: 0)
+  ✓ báo trong bảng ôn (dưới tên giai đoạn): "Đã hoàn tác lượt chấm vừa rồi · −3 xu."
+  ✓ không có thông báo nổi đè lên nút Lật thẻ
+  ✓ không còn lượt để hoàn tác → nút ẩn
+  ✓ Anki vẫn giữ Redo của lượt vừa hoàn tác (Edit → Redo ở cửa sổ chính): "Answer Card"
+  ✓ chấm lại đúng thẻ đó: xu cộng một lần (3 = 3)
+  ✓ phần trả lại ghi vào collection cùng lần ghi ví (collection 3 = ví 3)
+== 3. chấm 3 thẻ → Ctrl+Z 3 lần
+  ✓ chấm Lại / Được / Dễ: revlog +3, sổ bảng ôn 4 lượt
+  ✓ từng thẻ quay lại theo thứ tự ngược (true, true, true)
+  ✓ sau mỗi lần: revlog và xu đúng bằng lúc trước lượt đó (cuối: 3 = 3 xu)
+  ✓ còn lượt chấm ở mục 2 (chấm lại) → nút vẫn hiện
+  ✓ Ctrl+Z lần 4: về đúng lúc đầu mục 2 (xu 0, revlog 0)
+  ✓ lần 5: không còn gì, revlog giữ nguyên
+== 4. thao tác khác xen giữa: Ctrl+Z ở vườn không hoàn tác nhầm
+  ✓ sau lượt chấm có bước Undo khác của Anki: "Update Note"
+  ✓ (nút vẫn hiện vì trang chưa biết — Python kiểm lại lúc bấm)
+  ✓ Ctrl+Z ở vườn KHÔNG hoàn tác chỗ sửa note (chữ sửa còn, revlog / xu giữ nguyên)
+  ✓ báo "Không có lượt chấm nào để hoàn tác.", nút ẩn
+  ✓ lượt chấm ở chỗ khác sau lượt của vườn: Ctrl+Z ở vườn không hoàn tác (revlog 3 giữ nguyên)
+  ✓ đổi deck rồi về lại, Tưới ngay
+  ✓ Ctrl+Z sau khi đổi deck không hoàn tác gì (Undo kế tiếp của Anki: "Select Deck")
+== 5. thẻ cuối → Hết thẻ → Ctrl+Z
+  ✓ deck 1 thẻ: bảng ôn mở
+  ✓ chấm xong thẻ cuối: màn "Hết thẻ" có nút Hoàn tác
+  ✓ Ctrl+Z: thẻ cuối trở lại, xu / revlog về như trước
+== 6. thưởng mục tiêu ngày
+  ✓ deck D: bảng ôn mở
+  ✓ hôm nay đã có 9 lượt ôn
+  ✓ lượt này đủ mục tiêu ngày: +38 xu (thưởng 15)
+  ✓ Ctrl+Z: trả lại cả thưởng mục tiêu (63 → 25)
+  ✓ chấm lại: có lại thưởng đúng một lần (63), collection khớp ví
+== 7. Ctrl+Z trong ô gõ đáp án
+  ✓ deck có ô gõ đáp án
+  ✓ ô gõ đáp án có focus
+  ✓ không hoàn tác lượt chấm nào (revlog 10, thẻ giữ nguyên)
+  ✓ Ctrl+Z hoàn tác chữ trong ô như mọi ô gõ ("nui" → "")
+== 8. Ctrl+Z thật qua Qt: hoàn tác đúng một lượt
+  ✓ về deck D
+  ✓ phím Ctrl+Z gõ vào cửa sổ vườn: revlog −1 (12 → 11), không phải −2
+== 9. bấm nút Hoàn tác bằng chuột
+  ✓ bấm "↶ Hoàn tác": lượt vừa chấm được hoàn tác, thẻ hiện mặt trước
+  ✓ phím Space vẫn lật thẻ ngay sau đó (nút không giữ focus)
+== 10. kiểu bàn phím khác
+  ✓ AZERTY Ctrl+W / QWERTZ Ctrl+Y (phím vật lý KeyZ): không hoàn tác
+  ✓ QWERTZ Ctrl+Z (phím vật lý KeyY, ra chữ z): hoàn tác
+  ✓ bàn phím Nga Ctrl+я (phím vật lý KeyZ): hoàn tác
+== 11. bấm Ctrl+Z lần nữa khi lượt trước còn đang hoàn tác
+  ✓ phím thứ hai tới khi lượt đầu chưa xong: chỉ hoàn tác một lượt (14 → 13)
+  ✓ bấm lại sau khi xong: hoàn tác tiếp lượt trước nữa (13 → 12), như Edit → Undo của Anki
+== 12. Ctrl+Z ngay lúc lượt chấm đang lưu
+  ✓ lượt chấm vẫn lưu, sang thẻ kế tiếp, không kẹt (revlog 13)
+  ✓ Ctrl+Z sau đó hoàn tác đúng lượt ấy (xu 87 = 87)
+== 13. đóng vườn ngay khi đang hoàn tác
+  ✓ đóng vườn giữa chừng: lượt vẫn hoàn tác, xu vẫn trả lại (88 → 87)
+  ✓ mở lại vườn: hiện đúng 87 xu
+  ✓ nhật ký Báo lỗi không có lỗi hoàn tác
+
+53/53 kiểm tra đạt

@@ -491,6 +491,30 @@ var Garden = (function () {
 
   // ---- 1.9: Cấu hình trường theo loại note ----
   var fieldsWarned = {};
+  // 1.33.3 (audit 17/11 F01): Anki báo lỗi khi đọc dữ liệu vườn (hoặc dữ liệu mới hơn còn chờ trả lại sau đồng bộ) → vườn
+  // tạm chỉ xem. Trước: không báo gì, ví hiện 0 xu / đồ trống như mất hết.
+  function drawDamaged() {
+    var w = data && data.wallet, bad = !!(w && w._damaged && w._damaged.length);
+    var b = $("kb-damaged");
+    if (!bad) { if (b) { b.hidden = true; } return; }
+    if (!b) {
+      var field = $("kb-field");
+      if (!field || !field.parentNode) { return; }
+      b = document.createElement("div"); b.id = "kb-damaged"; b.className = "kb-damaged"; b.setAttribute("role", "alert");
+      field.parentNode.insertBefore(b, field);
+    }
+    var TXT = {
+      pending: "Dữ liệu vườn mới hơn của máy này chưa trả lại xong sau lần đồng bộ trước nên vườn tạm chỉ xem. " +
+        "Đóng vườn rồi mở lại, hoặc đồng bộ lại nhé — bản chụp vẫn còn nguyên.",
+      read: "Anki đang báo lỗi khi đọc dữ liệu vườn nên vườn tạm chỉ xem, chưa lưu gì. Xu / đồ đang hiện có thể chưa đúng — " +
+        "dữ liệu thật vẫn còn nguyên. Đóng vườn rồi mở lại sau ít phút nhé.",
+      broken: "Một phần dữ liệu vườn đọc chưa được nên vườn tạm chỉ xem, chưa lưu gì (để không ghi đè phần đó). " +
+        "Mở ⚙ → Báo lỗi để gửi thông tin nhé."
+    };
+    GardenIcons.fill(b, "[i:warn] " + (TXT[w._damaged_kind] || TXT.broken));
+    b.hidden = false;
+  }
+
   function drawFieldsChip() {
     var b = $("kb-fields-btn");
     if (!b) { return; }
@@ -1335,6 +1359,7 @@ var Garden = (function () {
     drawQuests();
     drawPaperChip();
     drawFieldsChip();
+    drawDamaged();
     drawJournal();
     if (typeof GardenLang !== "undefined") { GardenLang.applyTitles(document); GardenLang.syncSelect(); }
     fitTodayList();
@@ -1675,6 +1700,8 @@ var Garden = (function () {
     if (typeof GardenLang !== "undefined") {     // 1.32: đổi Ngôn ngữ trong vườn ở ⚙ → vẽ lại chữ đang hiện
       GardenLang.onChange(function () {
         if (typeof GardenHome !== "undefined" && GardenHome.dataChanged) { GardenHome.dataChanged(); }
+        // 1.33.3: menu Trò chơi đang mở → vẽ lại (Chỉ tiếng Việt / bỏ Chỉ tiếng Việt đổi tên trò + tiêu đề)
+        if (typeof GardenGames !== "undefined" && GardenGames.dataChanged) { GardenGames.dataChanged(); }
         if (typeof GardenLife !== "undefined" && GardenLife.closeCard) { GardenLife.closeCard(); }
         if (typeof GardenFinds !== "undefined" && GardenFinds.closeCard) { GardenFinds.closeCard(); }
         if (typeof GardenFX !== "undefined" && GardenFX.say) { GardenFX.say("こんにちは！", 1800); }

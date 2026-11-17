@@ -367,12 +367,15 @@ class EventStore:
         except Exception:
             return None
 
-    def raw(self) -> dict[str, Any]:
+    def raw(self, strict: bool = True) -> dict[str, Any]:
         col = self._col()
         if col is not None:
             try:
-                raw = col.get_config(EVENT_KEY, None)
-            except Exception:
+                raw = backup.read_config(col, EVENT_KEY)
+            except backup.ReadFailed:
+                # 1.33.3 (audit 17/11 F01): đọc lỗi không phải "trống" — đọc để ghi thì dừng (không ghi sổ trống đè sổ thật)
+                if strict:
+                    raise
                 raw = None
             return dict(raw) if isinstance(raw, dict) else {}
         try:
@@ -383,10 +386,33 @@ class EventStore:
         return dict(raw) if isinstance(raw, dict) else {}
 
     def load(self) -> dict[str, Any]:
-        return clean(self.raw())
+        """1.33.3 (audit 17/11 F01): đọc lỗi → sổ trống có dấu `_damaged` (vẫn vẽ được vườn); `save()` từ chối ghi sổ đó."""
+        try:
+            return clean(self.raw())
+        except backup.ReadFailed:
+            out = clean(None)
+            out["_damaged"] = True
+            return out
+
+    def write(self, data: dict[str, Any]) -> tuple[str, str, dict[str, Any], bool]:
+        """1.33.3 (audit 17/11 F02 / F07): phần ghi của sổ để GardenState.save(extra=…) ghi cùng lần với ví: (khoá, file
+        sao lưu, dữ liệu, file ghi chủ = False)."""
+        return (EVENT_KEY, self.path, self.payload(data), False)
 
     def save(self, data: dict[str, Any]) -> None:
-        raw = self.raw()                       # giữ khoá lạ của bản sau
+        raw = self.payload(data)
+        col = self._col()
+        if col is not None:
+            backup.put_config(col, EVENT_KEY, raw)
+        try:     # 1.31.1 (audit 14/11 F03): file sao lưu trong thư mục của hồ sơ (hồ sơ khác không ghi đè)
+            backup.write_backup(self.path, raw, self._col())
+        except OSError:
+            pass
+
+    def payload(self, data: dict[str, Any]) -> dict[str, Any]:
+        if data.get("_damaged"):
+            raise backup.ReadFailed(EVENT_KEY)        # 1.33.3: sổ đọc lỗi (đang trống tạm) — không ghi đè sổ thật
+        raw = self.raw()                       # giữ khoá lạ của bản sau (đọc lỗi → ReadFailed, không ghi)
         found_raw = raw.get("found") if isinstance(raw.get("found"), dict) else {}
         found = {}
         for fid, e in data["found"].items():
@@ -396,10 +422,4 @@ class EventStore:
             if fid not in FINDS:
                 found[fid] = e
         raw.update(v=1, found=found, days=data["days"], sets=data["sets"], ped=data["ped"])
-        col = self._col()
-        if col is not None:
-            backup.put_config(col, EVENT_KEY, raw)
-        try:     # 1.31.1 (audit 14/11 F03): file sao lưu trong thư mục của hồ sơ (hồ sơ khác không ghi đè)
-            backup.write_backup(self.path, raw, self._col())
-        except OSError:
-            pass
+        return raw

@@ -1,0 +1,51 @@
+== Ôn trong vườn: chấm rồi bấm Dừng ngay (lượt chấm còn đang lưu)
+  ✓ lật thẻ, hiện 4 nút chấm
+  ✓ bảng ôn vẫn đóng sau khi lượt chấm lưu xong (trước 1.22.6: tự bật lại với thẻ kế tiếp)
+  ✓ Python không giữ thẻ chờ chấm
+  ✓ revlog +1 (0 → 1)
+  ✓ trả xu một lần (ôn +1, lên Mầm +2), không có lượt "bù điện thoại" (xu 0 → 3, bù 0 → 0)
+== Ôn trong vườn: chấm rồi bấm Esc ngay
+  ✓ lật thẻ
+  ✓ Esc: bảng ôn vẫn đóng
+  ✓ Esc chỉ đóng bảng ôn, cửa sổ vườn vẫn mở
+  ✓ trả xu một lần, không bù điện thoại (xu 3 → 6, bù 0 → 0)
+== Ôn trong vườn: chấm rồi đổi deck ngay
+  ✓ lật thẻ (deck A)
+  ✓ đổi deck: bảng ôn không tự bật lại (trước 1.22.6: hiện thẻ của deck A dưới tên deck C)
+  ✓ vườn ở deck C, không có thẻ của deck cũ chờ chấm
+  ✓ lượt chấm ở deck A được lưu, trả xu một lần, không bị "bù điện thoại" cho chính lượt này (xu 6 → 9, bù 0 → 0)
+  ✓ cả 3 lần: không có thông báo "Bù … lượt ôn trên điện thoại"
+== Lượt ôn ở màn ôn Anki đang lưu → lần bù xu điện thoại chờ
+  ✓ lượt đang lưu: mobile_catch_up() không bù
+  ✓ lượt lưu xong mà add-on không ghi (vd. điện thoại) thì lần sau vẫn bù đúng 1 lượt (+1 xu)
+  ✓ lượt lưu hỏng (> 30 giây) không chặn bù xu mãi
+== Anki ở chế độ tối: thẻ trong bảng ôn của vườn
+  ✓ lật thẻ (Anki tối)
+  ✓ thân thẻ có lớp nightMode của Anki
+  ✓ nền tối, chữ sáng như màn ôn Anki (nền rgb(44, 44, 44), chữ rgb(252, 252, 252); trước 1.22.6: nền trắng, chữ #fafafa)
+  ✓ Anki sáng lại: lật thẻ
+  ✓ Anki sáng: thẻ nền sáng như cũ (rgb(255, 255, 255))
+== Config sửa tay sai kiểu
+  ✓ vườn dựng được, không có hộp "không dựng được khu vườn"
+  ✓ số đọc không được → mặc định (daily_goal 30, max_plants 400, music_volume 0.5)
+  ✓ đọc được thì về đúng kiểu (stage_days [3,21,90], effects false, wilt 0.7, daily_bonus 0)
+  ✓ thẻ Hôm nay hiện "…/30 lượt"
+== Thẻ Hôm nay ở 1366 × 768 khi mới cài (nhiệm vụ, báo mới, nhật ký, cấu hình trường)
+  ✓ thẻ có 4 dòng việc
+  ✓ không dòng nào bị cắt / phải cuộn (cao 72/72 px, xếp sát)
+  ✓ mỗi dòng việc vẫn cao ≥ 18 px (cỡ nút tối thiểu của measure.js): 18 px
+  ✓ 1024 × 700: thẻ không vượt đáy sân (228 ≤ 240)
+== Tab Giống cây: ô chọn giống thẳng cột
+  ✓ ô chọn của dòng Deck / Note / tag cùng mép trái (254, 254, 254)
+  ✓ 1024 px: cùng mép trái (254, 254, 254)
+  ✓ 1024 px: không tràn ngang
+== Đổi hồ sơ khi vườn đang mở
+  ✓ không có lỗi JS
+  ✓ nhật ký lỗi add-on trống
+  ✓ đóng hồ sơ → cửa sổ vườn đóng theo (trước 1.22.6: còn mở, collection đã đóng) [true,true,[]]
+  ✓ mở lại hồ sơ
+  ✓ mở lại vườn sau khi đổi hồ sơ: vườn hiện bình thường
+  ✓ nhật ký lỗi add-on vẫn trống
+  ✓ không có lỗi JS
+
+KẾT QUẢ: 40/40 đạt

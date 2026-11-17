@@ -1013,12 +1013,14 @@ var GardenGames = (function () {
   function showMenu() {
     screen = "menu";
     const st = clearStage();
+    const kinds = kindsIn(), kind = curKind();
+    // 1.33.3: tiêu đề theo ngôn ngữ của deck đang chọn như tên trò bên dưới (trước: theo Ngôn ngữ trong vườn → 小游戏 trên
+    // bảng trò chơi tiếng Nhật); garden.js vẽ lại tiêu đề khi đổi ngôn ngữ cũng giữ ngôn ngữ này (data-kb-lang)
     $("kb-g-title").textContent = "ミニゲーム · Trò chơi ôn từ";
-    if (GLx()) { GLx().applyTitles($("kb-g-title").parentNode); }
+    if (GLx()) { $("kb-g-title").dataset.kbLang = glFor(kind); GLx().applyTitles($("kb-g-title").parentNode); }
     const d = H.data() || {};
     const wallet = d.wallet || {};
     const best = wallet.best || {};
-    const kinds = kindsIn(), kind = curKind();
     const box = el("div", "kb-gmenu");
     // hàng trên: chọn nhóm note để ôn (drop-down) · một nút Cấu hình trường (đỏ khi có loại note chưa cấu hình)
     const head = el("div", "kb-gmenu-kinds");
@@ -1586,7 +1588,10 @@ var GardenGames = (function () {
         mood(combo >= 5 ? "star" : "happy", 800, combo === 5 || combo === 10 ? "Combo ×" + combo + "！" : null);
         cust.mood = "happy";
         cust.state = "thanks";
-        bubble.textContent = gline(["ありがとう！", "Cảm ơn nha!", "またね！"][rnd(3)]);
+        // 1.33.3: khách nói tiếng của deck thì cảm ơn cũng tiếng đó (trước: "Cảm ơn nha!" lẫn vào khi khách hỏi tiếng Nhật / Anh…)
+        const thanks = ["ありがとう！", "Cảm ơn nha!", "またね！"];
+        const f = fxApi();
+        bubble.textContent = gline(f && f.pickSay ? f.pickSay(thanks, gameLang) : thanks[rnd(3)]);
         const me = cust;
         later(g, () => leave(me, "happy"), 900);
       } else {

@@ -345,12 +345,15 @@ class LifeStore:
         except Exception:
             return None
 
-    def _raw(self) -> dict[str, Any]:
+    def _raw(self, strict: bool = True) -> dict[str, Any]:
         col = self._col()
         if col is not None:
             try:
-                raw = col.get_config(LIFE_KEY, None)
-            except Exception:
+                raw = backup.read_config(col, LIFE_KEY)
+            except backup.ReadFailed:
+                # 1.33.3 (audit 17/11 F01): đọc lỗi không phải "trống" — đọc để ghi thì dừng (không ghi sổ trống đè sổ thật)
+                if strict:
+                    raise
                 raw = None
             return dict(raw) if isinstance(raw, dict) else {}
         try:
@@ -361,7 +364,7 @@ class LifeStore:
         return dict(raw) if isinstance(raw, dict) else {}
 
     def seen(self) -> dict[str, dict[str, Any]]:
-        return clean_seen(self._raw())
+        return clean_seen(self._raw(strict=False))
 
     def mark(self, aid: str, scene: str, today: _dt.date) -> tuple[dict[str, dict[str, Any]], bool, bool]:
         """Ghi một lần thấy. Trả (sổ, lần đầu?, có ghi?). Mỗi việc chỉ ghi một lần mỗi ngày (đếm số ngày đã thấy)."""

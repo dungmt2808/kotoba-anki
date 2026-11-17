@@ -1,0 +1,442 @@
+{
+  "scenarios": 39,
+  "green_scenarios": 36,
+  "assertions_passed": 1633,
+  "assertions_total": 1637,
+  "results": [
+    {
+      "script": "e2e.js",
+      "exit_code": 0,
+      "passed": true,
+      "failed_assertions": [],
+      "summary": [
+        "KẾT QUẢ: 24/24 đạt"
+      ],
+      "assertions_passed": 24,
+      "assertions_total": 24
+    },
+    {
+      "script": "e2e_114.js",
+      "exit_code": 0,
+      "passed": true,
+      "failed_assertions": [],
+      "summary": [
+        "KẾT QUẢ: 34/34 đạt"
+      ],
+      "assertions_passed": 34,
+      "assertions_total": 34
+    },
+    {
+      "script": "e2e_115.js",
+      "exit_code": 0,
+      "passed": true,
+      "failed_assertions": [],
+      "summary": [
+        "KẾT QUẢ: 21/21 đạt"
+      ],
+      "assertions_passed": 21,
+      "assertions_total": 21
+    },
+    {
+      "script": "e2e_116.js",
+      "exit_code": 0,
+      "passed": true,
+      "failed_assertions": [],
+      "summary": [
+        "KẾT QUẢ: 15/15 đạt"
+      ],
+      "assertions_passed": 15,
+      "assertions_total": 15
+    },
+    {
+      "script": "e2e_117.js",
+      "exit_code": 0,
+      "passed": true,
+      "failed_assertions": [],
+      "summary": [
+        "KẾT QUẢ: 55/55 đạt"
+      ],
+      "assertions_passed": 55,
+      "assertions_total": 55
+    },
+    {
+      "script": "e2e_118.js",
+      "exit_code": 0,
+      "passed": true,
+      "failed_assertions": [],
+      "summary": [
+        "KẾT QUẢ: 29/29 đạt"
+      ],
+      "assertions_passed": 29,
+      "assertions_total": 29
+    },
+    {
+      "script": "e2e_119.js",
+      "exit_code": 0,
+      "passed": true,
+      "failed_assertions": [],
+      "summary": [
+        "KẾT QUẢ: 55/55 đạt"
+      ],
+      "assertions_passed": 55,
+      "assertions_total": 55
+    },
+    {
+      "script": "e2e_120.js",
+      "exit_code": 0,
+      "passed": true,
+      "failed_assertions": [],
+      "summary": [
+        "KẾT QUẢ: 103/103"
+      ],
+      "assertions_passed": 103,
+      "assertions_total": 103
+    },
+    {
+      "script": "e2e_121.js",
+      "exit_code": 0,
+      "passed": true,
+      "failed_assertions": [],
+      "summary": [
+        "KẾT QUẢ: 47/47"
+      ],
+      "assertions_passed": 47,
+      "assertions_total": 47
+    },
+    {
+      "script": "e2e_122.js",
+      "exit_code": 0,
+      "passed": true,
+      "failed_assertions": [],
+      "summary": [
+        "KẾT QUẢ: 64/64"
+      ],
+      "assertions_passed": 64,
+      "assertions_total": 64
+    },
+    {
+      "script": "e2e_1223.js",
+      "exit_code": 1,
+      "passed": false,
+      "failed_assertions": [
+        "  ✗ thử khoá xong KHÔNG tự viết (vườn đã làm mới)",
+        "  ✗ vườn làm mới / mở hồ sơ (tự viết) vẫn chờ, không viết"
+      ],
+      "summary": [
+        "KẾT QUẢ: 47/49"
+      ],
+      "assertions_passed": 47,
+      "assertions_total": 49
+    },
+    {
+      "script": "e2e_1226.js",
+      "exit_code": 0,
+      "passed": true,
+      "failed_assertions": [],
+      "summary": [
+        "KẾT QUẢ: 40/40 đạt"
+      ],
+      "assertions_passed": 40,
+      "assertions_total": 40
+    },
+    {
+      "script": "e2e_1228.js",
+      "exit_code": 0,
+      "passed": true,
+      "failed_assertions": [],
+      "summary": [
+        "KẾT QUẢ: 26/26 đạt"
+      ],
+      "assertions_passed": 26,
+      "assertions_total": 26
+    },
+    {
+      "script": "e2e_123.js",
+      "exit_code": 0,
+      "passed": true,
+      "failed_assertions": [],
+      "summary": [
+        "KẾT QUẢ: 66/66 đạt"
+      ],
+      "assertions_passed": 66,
+      "assertions_total": 66
+    },
+    {
+      "script": "e2e_124.js",
+      "exit_code": 0,
+      "passed": true,
+      "failed_assertions": [],
+      "summary": [
+        "KẾT QUẢ: 26/26 đạt"
+      ],
+      "assertions_passed": 26,
+      "assertions_total": 26
+    },
+    {
+      "script": "e2e_125.js",
+      "exit_code": 0,
+      "passed": true,
+      "failed_assertions": [],
+      "summary": [
+        "KẾT QUẢ: 31/31 đạt"
+      ],
+      "assertions_passed": 31,
+      "assertions_total": 31
+    },
+    {
+      "script": "e2e_1251.js",
+      "exit_code": 0,
+      "passed": true,
+      "failed_assertions": [],
+      "summary": [
+        "KẾT QUẢ: 49/49 đạt"
+      ],
+      "assertions_passed": 49,
+      "assertions_total": 49
+    },
+    {
+      "script": "e2e_1255.js",
+      "exit_code": 0,
+      "passed": true,
+      "failed_assertions": [],
+      "summary": [
+        "KẾT QUẢ: 48/48 đạt"
+      ],
+      "assertions_passed": 48,
+      "assertions_total": 48
+    },
+    {
+      "script": "e2e_1258.js",
+      "exit_code": 0,
+      "passed": true,
+      "failed_assertions": [],
+      "summary": [
+        "KẾT QUẢ: 25/25 đạt"
+      ],
+      "assertions_passed": 25,
+      "assertions_total": 25
+    },
+    {
+      "script": "e2e_1259.js",
+      "exit_code": 0,
+      "passed": true,
+      "failed_assertions": [],
+      "summary": [
+        "KẾT QUẢ: 36/36"
+      ],
+      "assertions_passed": 36,
+      "assertions_total": 36
+    },
+    {
+      "script": "e2e_126.js",
+      "exit_code": 0,
+      "passed": true,
+      "failed_assertions": [],
+      "summary": [
+        "KẾT QUẢ: 39/39"
+      ],
+      "assertions_passed": 39,
+      "assertions_total": 39
+    },
+    {
+      "script": "e2e_1261.js",
+      "exit_code": 0,
+      "passed": true,
+      "failed_assertions": [],
+      "summary": [
+        "KẾT QUẢ: 41/41"
+      ],
+      "assertions_passed": 41,
+      "assertions_total": 41
+    },
+    {
+      "script": "e2e_128.js",
+      "exit_code": 0,
+      "passed": true,
+      "failed_assertions": [],
+      "summary": [
+        "KẾT QUẢ: 72/72"
+      ],
+      "assertions_passed": 72,
+      "assertions_total": 72
+    },
+    {
+      "script": "e2e_128_fix.js",
+      "exit_code": 0,
+      "passed": true,
+      "failed_assertions": [],
+      "summary": [
+        "KẾT QUẢ: 26/26"
+      ],
+      "assertions_passed": 26,
+      "assertions_total": 26
+    },
+    {
+      "script": "e2e_130.js",
+      "exit_code": 0,
+      "passed": true,
+      "failed_assertions": [],
+      "summary": [
+        "KẾT QUẢ: 76/76"
+      ],
+      "assertions_passed": 76,
+      "assertions_total": 76
+    },
+    {
+      "script": "e2e_1301.js",
+      "exit_code": 0,
+      "passed": true,
+      "failed_assertions": [],
+      "summary": [
+        "KẾT QUẢ: 45/45"
+      ],
+      "assertions_passed": 45,
+      "assertions_total": 45
+    },
+    {
+      "script": "e2e_1303.js",
+      "exit_code": 0,
+      "passed": true,
+      "failed_assertions": [],
+      "summary": [
+        "KẾT QUẢ: 49/49"
+      ],
+      "assertions_passed": 49,
+      "assertions_total": 49
+    },
+    {
+      "script": "e2e_131.js",
+      "exit_code": 0,
+      "passed": true,
+      "failed_assertions": [],
+      "summary": [
+        "KẾT QUẢ: 89/89 — TẤT CẢ OK"
+      ],
+      "assertions_passed": 89,
+      "assertions_total": 89
+    },
+    {
+      "script": "e2e_1311.js",
+      "exit_code": 0,
+      "passed": true,
+      "failed_assertions": [],
+      "summary": [
+        "KẾT QUẢ: 42/42 — TẤT CẢ OK"
+      ],
+      "assertions_passed": 42,
+      "assertions_total": 42
+    },
+    {
+      "script": "e2e_1313.js",
+      "exit_code": 0,
+      "passed": true,
+      "failed_assertions": [],
+      "summary": [
+        "KẾT QUẢ: 16/16"
+      ],
+      "assertions_passed": 16,
+      "assertions_total": 16
+    },
+    {
+      "script": "e2e_1314.js",
+      "exit_code": 0,
+      "passed": true,
+      "failed_assertions": [],
+      "summary": [],
+      "assertions_passed": 53,
+      "assertions_total": 53
+    },
+    {
+      "script": "e2e_132.js",
+      "exit_code": 0,
+      "passed": true,
+      "failed_assertions": [],
+      "summary": [
+        "KẾT QUẢ: 39/39"
+      ],
+      "assertions_passed": 39,
+      "assertions_total": 39
+    },
+    {
+      "script": "e2e_1322.js",
+      "exit_code": 1,
+      "passed": false,
+      "failed_assertions": [
+        "  ✗ Edit → Undo ở cửa sổ chính trả lại chữ cũ: thẻ đang ôn dựng lại, báo \"Thẻ vừa được sửa.\" [false,\"Đã lưu thẻ.\",true,\"edit_wait trước Undo: true\"]"
+      ],
+      "summary": [
+        "KẾT QUẢ: 39/40"
+      ],
+      "assertions_passed": 39,
+      "assertions_total": 40
+    },
+    {
+      "script": "e2e_132b.js",
+      "exit_code": 1,
+      "passed": false,
+      "failed_assertions": [
+        "  ✗ đổi ngôn ngữ 40 lần xen mở / đóng mọi bảng, đóng mở lại vườn: 61 mục dữ liệu không đổi một byte — đổi: col:kotoba_batake_guests, file:ho_so/c379eac0e7524541/guests.json"
+      ],
+      "summary": [
+        "KẾT QUẢ: 19/20"
+      ],
+      "assertions_passed": 19,
+      "assertions_total": 20
+    },
+    {
+      "script": "e2e_133.js",
+      "exit_code": 0,
+      "passed": true,
+      "failed_assertions": [],
+      "summary": [
+        "KẾT QUẢ: 77/77 — TẤT CẢ OK"
+      ],
+      "assertions_passed": 77,
+      "assertions_total": 77
+    },
+    {
+      "script": "e2e_1331.js",
+      "exit_code": 0,
+      "passed": true,
+      "failed_assertions": [],
+      "summary": [
+        "KẾT QUẢ: 43/43 — TẤT CẢ OK"
+      ],
+      "assertions_passed": 43,
+      "assertions_total": 43
+    },
+    {
+      "script": "e2e_fuzz.js",
+      "exit_code": 0,
+      "passed": true,
+      "failed_assertions": [],
+      "summary": [
+        "KẾT QUẢ: 5/5"
+      ],
+      "assertions_passed": 5,
+      "assertions_total": 5
+    },
+    {
+      "script": "e2e_kit23.js",
+      "exit_code": 0,
+      "passed": true,
+      "failed_assertions": [],
+      "summary": [
+        "KẾT QUẢ: 10/10 đạt"
+      ],
+      "assertions_passed": 10,
+      "assertions_total": 10
+    },
+    {
+      "script": "e2e_tour.js",
+      "exit_code": 0,
+      "passed": true,
+      "failed_assertions": [],
+      "summary": [
+        "KẾT QUẢ: 12/12 đạt"
+      ],
+      "assertions_passed": 12,
+      "assertions_total": 12
+    }
+  ]
+}

@@ -146,12 +146,14 @@ var GardenLang = (function () {
   }
   function applyTitles(root) {
     if (!root || !root.querySelectorAll) { return; }
-    const lang = cur();
+    const lang0 = cur();
     root.querySelectorAll(".kb-g-title, .kb-quest-head").forEach((e) => {
       const n = e.firstChild;
       if (!n || n.nodeType !== 3) { return; }
       // chữ đang hiện khác chữ lần trước đặt → mã vừa đặt tiêu đề mới (gốc tiếng Nhật)
       if (e.dataset.kbShown === undefined || n.nodeValue !== e.dataset.kbShown) { e.dataset.kbOrig = n.nodeValue; }
+      // 1.33.3: bảng có ngôn ngữ riêng (Trò chơi: theo deck đang chơi) ghi ở data-kb-lang
+      const own = e.dataset.kbLang, lang = own && (LANGS.indexOf(own) >= 0) ? own : lang0;
       const shown = title(e.dataset.kbOrig, lang);
       e.dataset.kbShown = shown;
       if (n.nodeValue !== shown) { n.nodeValue = shown; }

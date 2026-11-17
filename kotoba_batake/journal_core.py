@@ -461,7 +461,7 @@ class JournalStore:
         col = self._col()
         if col is not None:
             try:
-                raw = col.get_config(month_key(y, m), None)
+                raw = backup.read_config(col, month_key(y, m))     # 1.33.3: đọc lại khi lỗi; dữ liệu chờ trả lại (F06)
             except Exception:
                 if strict:
                     raise

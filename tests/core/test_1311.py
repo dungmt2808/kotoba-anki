@@ -475,7 +475,8 @@ ok("rev0 = _last_rev(card.id)" in init and 'self._js("reviewRetry"' in init and 
    "F08: chấm lỗi (chưa vào revlog) → trả thẻ, chấm lại được")
 ok('"store_error": True' in init and 'r.get("ok") or not r.get("store_error")' in init,
    "nhật ký: lưu lỗi → báo trong bảng + giữ chữ để lưu nốt khi đóng (không bật hộp lỗi của Anki)")
-ok("except core.HomeError as err:\n            self._js(\"paperError\", str(err))\n            return" in init,
+# 1.33.3 (audit 17/11 F02): + lỗi đọc / ghi của lớp lưu (StoreFailed); sổ + xu ghi cùng một lần (test_1333)
+ok("except (core.HomeError, backup_core.StoreFailed) as err:\n            self._js(\"paperError\", str(err))\n            return" in init,
    "báo: lưu câu trả lời lỗi → báo lỗi, không cộng xu")
 ok(re.search(r"def finished\(fpath: str, success: bool\)[\s\S]{0,500}os\.remove\(tmp\)", init) is not None,
    "xuất PDF cuốn nhật ký lớn: file tạm (cả cuốn nhật ký) được xoá khi xong")

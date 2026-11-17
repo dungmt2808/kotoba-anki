@@ -1,0 +1,43 @@
+== sửa nhà
+  ✓ thẻ Bảo dưỡng: 22 ngày → 3 nấc (rêu, sơn bong, ngói lệch)
+  ✓ Sửa hết: −315 xu
+  ✓ nhà như mới (nấc 0)
+== thú nuôi
+  ✓ nhận nuôi Mèo mướp: −900 xu
+  ✓ chip góc sân: “🐾 Mèo mướp đói”
+  ✓ cho ăn → no bụng
+  ✓ đặt tên “Mochi”
+  ✓ chuyển mèo ra Bãi biển
+  ✓ pets.js có hình mèo
+== giống cây
+  ✓ mua giống Anh đào
+  ✓ gieo Anh đào cho deck đang xem → mọi cây là anh đào
+== vùng tự tạo
+  ✓ Xưởng mở chế độ vùng: lưới 64×76
+  ✓ tạo vùng “Mũi hải đăng” (bờ hồ + công trình tự vẽ)
+  ✓   −5.000 xu
+  ✓   vào luôn vùng mới
+  ✓ đặt bụi hoa ở vùng tự tạo
+  ✓ nút cảnh “Mũi hải đăng” ở thanh cảnh
+  ✓ màn chính đang hiện vùng tự tạo (nút ◂ ▸ có vùng mới)
+== giao diện tự chỉnh
+  ✓ bảng Giao diện: 7 dòng × 3 chế độ
+  ✓ Esc đóng bảng Giao diện, cửa sổ vườn vẫn mở
+  ✓ chọn “Tập trung khi ôn” → lưu vào config
+  ✓ khi ôn: sân + ruộng ẩn
+  ✓ nút Lật thẻ nằm trong cửa sổ (khung thẻ to)
+  ✓ nút “Hiện vườn” trên bảng ôn: hiện lại sân + ruộng
+  ✓ 1.23: config cũ “Đêm vườn” → bảng ôn Vàng vườn, thẻ không bị phủ tối
+  ✓ 1.23: không còn kiểu “Ôn buổi tối”
+== hiệu ứng thành tích (ôn hết thẻ của deck A bằng Dễ)
+  ✓ hết thẻ cần tưới
+  ✓ Python: joy.done (deck không còn thẻ hôm nay)
+  ✓ đang ôn: chưa hiện dải chúc mừng
+  ✓ đóng bảng ôn → dải “Tưới xong cả vườn hôm nay”
+  ✓ huy hiệu “Xong thẻ hôm nay”
+== cửa sổ nhỏ + lỗi
+  ✓ 1024×640: không tràn ngang (tab Thú nuôi)
+  ✓ không có lỗi JS
+  ✓ nhật ký lỗi add-on trống
+
+KẾT QUẢ: 34/34 đạt

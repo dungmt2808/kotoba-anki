@@ -703,18 +703,30 @@ class PaperState:
         col = self._col()
         if col is not None:
             try:
-                stored = col.get_config(self.key, None)
-            except Exception:
-                stored = None
+                stored = core.backup.read_config(col, self.key)
+            except core.backup.ReadFailed:
+                # 1.33.3 (audit 17/11 F01): đọc lỗi → sổ trống có dấu `_damaged` (không lấy file sao lưu cũ của máy:
+                # tiến độ mới đồng bộ về sẽ bị ghi lùi); `save()` từ chối ghi sổ đó
+                out = self.clean(None)
+                out["_damaged"] = True
+                return out
         if not isinstance(stored, dict):
             # 1.23 (KB-02): collection chưa có khoá này → chỉ dùng file sao lưu của đúng hồ sơ đang mở
             # 1.31.1: file trong thư mục của hồ sơ trước, file chung cũ sau
             stored = core.read_backup(self.path, col)
         return self.clean(stored)
 
+    def write(self, st: dict[str, Any]) -> tuple[str, str, dict[str, Any]]:
+        """1.33.3 (audit 17/11 F02): phần ghi của sổ để GardenState.save(extra=…) ghi cùng lần với xu thưởng."""
+        if st.get("_damaged"):
+            raise core.StoreError(core.backup.READ_FAILED)
+        return (self.key, self.path, st)
+
     def save(self, st: dict[str, Any]) -> None:
         """1.31.1 (audit 14/11 F06): ghi collection lỗi → StoreError (trước: chỉ in ra, giao diện vẫn coi như đã lưu).
         File sao lưu nằm trong thư mục của hồ sơ (F03)."""
+        if st.get("_damaged"):
+            raise core.StoreError(core.backup.READ_FAILED)
         col = self._col()
         if col is not None:
             core.commit_config(col, [(self.key, st)])

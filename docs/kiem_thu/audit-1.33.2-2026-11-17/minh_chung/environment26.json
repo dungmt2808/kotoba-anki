@@ -1,0 +1,9 @@
+{
+  "python": "3.12.14",
+  "anki": "26.09.4",
+  "qt": "6.12.0",
+  "pyqt": "6.12.0",
+  "os": "Linux",
+  "node": "v24.22.1",
+  "timezone": "Asia/Ho_Chi_Minh"
+}

@@ -1380,7 +1380,7 @@ var GardenPaper = (function () {
     if (res.gained) { sfx("coin"); } else if (res.ok) { sfx("good"); } else { sfx("again"); }
     if (res.bonus) {
       if (typeof GardenFX !== "undefined" && GardenFX.say) {
-        GardenFX.say(res.kind === "dict" ? "書き取り完了！ Xong lượt chép +" + kbXu(res.bonus) + " xu" : "Đọc xong số báo! +" + kbXu(res.bonus) + " xu", 2600);
+        GardenFX.say(res.kind === "dict" ? "書き取り完了！ Xong lượt chép +" + kbXu(res.bonus) + " xu" : "できた！ Đọc xong số báo! +" + kbXu(res.bonus) + " xu", 2600);     // 1.33.3: như "Xong nhiệm vụ"
       }
       if (typeof GardenFX !== "undefined" && GardenFX.mood) { GardenFX.mood("star", 1800); }
     }

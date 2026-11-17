@@ -606,7 +606,9 @@ ans = method("_answer")
 ok("_card_changed(card)" in ans and ans.index("_card_changed(card)") < ans.index("build_answer") and ans.count("_card_changed(card)") >= 2,
    "chấm thẻ: thẻ đã đổi ở chỗ khác → bỏ qua, lấy thẻ kế tiếp (trước khi chấm và khi lưu lỗi)")
 ok(ans.index("build_answer") < ans.index("self._busy = True"), "build_answer chạy trước khi đặt `_busy` (lỗi ở đó không làm kẹt bảng ôn)")
-ok("select mod from cards where id = ?" in body("_card_changed"), "_card_changed so `mod` của thẻ trong collection")
+# 1.33.3 (audit 17/11 F05): so dấu lịch ôn đủ cột + revlog lúc thẻ hiện ra (không chỉ `mod` theo giây) — test_1333
+ok("_card_sig(card.id)" in body("_card_changed") and "select mod, type, queue, due" in body("_card_sig"),
+   "_card_changed so dấu lịch ôn của thẻ trong collection (mod + cột lịch ôn + revlog)")
 nc_ = method("_next_card")
 ok("get_current_id() != self.deck_id" in nc_ and nc_.index("decks.select(self.deck_id)") < nc_.index("get_queued_cards"),
    "lấy thẻ: chọn lại deck của vườn nếu deck hiện tại của Anki đã đổi")

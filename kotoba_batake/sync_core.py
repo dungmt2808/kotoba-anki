@@ -158,7 +158,8 @@ def restore(col: Any, before: dict[str, Any], after: dict[str, Any]) -> list[str
     cur = after.get("keys") or {}
     writes = [(k, v) for k, v in sorted(before["keys"].items()) if k != REV_KEY and cur.get(k) != v]
     floor = max([r["t"] for r in (before.get("rev"), after.get("rev")) if r] or [0])
-    done = backup.commit_config(col, writes, floor=floor)
+    with backup.restoring():
+        done = backup.commit_config(col, writes, floor=floor)
     if not done:                  # nội dung đã giống (chỉ dấu khác) → vẫn đóng dấu mới
         backup.touch_rev(col, floor)
     return done
@@ -185,7 +186,7 @@ def read_record(user_dir: str, col: Any) -> dict[str, Any] | None:
         return None
     keys = {k: v for k, v in raw["keys"].items() if isinstance(k, str) and k.startswith(PREFIX)}
     return {"crt": raw["crt"] if _is_int(raw.get("crt")) else 0, "scm": raw["scm"] if _is_int(raw.get("scm")) else 0,
-            "keys": keys, "h": digest(keys), "rev": clean_rev(keys.get(REV_KEY))}
+            "keys": keys, "h": digest(keys), "rev": clean_rev(keys.get(REV_KEY)), "pending": raw.get("pending") is True}
 
 
 def _write(path: str, payload: dict[str, Any]) -> None:
@@ -201,12 +202,16 @@ def write_record(user_dir: str, col: Any, state: dict[str, Any]) -> None:
     sơ (collection giả trong test) → không ghi. Lỗi ghi file chỉ in ra (không chặn đồng bộ)."""
     if not backup.profile_key(col) or not state.get("h"):
         return
+    pending = state.get("pending") is True
     try:
         old = read_record(user_dir, col)
-        if old and old["h"] == state["h"] and old["rev"] == state["rev"] and old["crt"] == state.get("crt", 0):
+        if (old and old["h"] == state["h"] and old["rev"] == state["rev"] and old["crt"] == state.get("crt", 0)
+                and old.get("pending") == pending):
             return
-        _write(record_path(user_dir, col), {"v": 1, "crt": state.get("crt", 0), "scm": state.get("scm", 0),
-                                            "at": int(time.time()), "keys": state["keys"]})
+        payload = {"v": 1, "crt": state.get("crt", 0), "scm": state.get("scm", 0), "at": int(time.time()), "keys": state["keys"]}
+        if pending:
+            payload["pending"] = True
+        _write(record_path(user_dir, col), payload)
     except OSError as err:
         print(f"[kotoba_batake] bản chụp đồng bộ: {err}")
 
@@ -224,10 +229,51 @@ def _save_lost(user_dir: str, col: Any, after: dict[str, Any], why: str) -> None
 # Ba điểm nối với Anki (__init__.py): trước đồng bộ, sau đồng bộ, lúc mở hồ sơ
 # ---------------------------------------------------------------------------
 
+def _pending(user_dir: str, col: Any) -> dict[str, Any] | None:
+    """Bản chụp đang chờ trả lại (lần trả lại trước bị lỗi ghi) của hồ sơ đang mở, hoặc None."""
+    rec = read_record(user_dir, col)
+    return rec if rec is not None and rec.get("pending") else None
+
+
+def _hold(user_dir: str, col: Any, mine: dict[str, Any]) -> None:
+    """1.33.3 (audit 17/11 F06): trả lại lỗi → giữ bản chụp tốt kèm dấu "đang chờ" (file) + móc `backup.PENDING`: lần đọc /
+    ghi dữ liệu vườn kế tiếp, lần đồng bộ sau, lần mở hồ sơ sau đều trả lại bản này trước. Trước đây đồng bộ lại chụp đè
+    bản cũ vừa mang về lên file, còn cộng xu / viết nhật ký đóng dấu mới lên bản cũ → không còn tự phục hồi được."""
+    write_record(user_dir, col, dict(mine, pending=True))
+    backup.PENDING = lambda c, _d=user_dir: settle(c, _d)
+
+
+def settle(col: Any, user_dir: str) -> bool:
+    """Trả lại bản chụp đang chờ của hồ sơ đang mở (nếu có). True = vừa trả lại; trả lại lỗi → backup.StoreFailed (vẫn
+    chờ); không còn gì chờ (đã xong / hồ sơ khác / collection khác / collection đã mới hơn) → False, gỡ móc."""
+    rec = _pending(user_dir, col)
+    if rec is None:
+        backup.PENDING = None
+        return False
+    cur = state_of(col)
+    if _other_collection(rec, cur):
+        backup.PENDING = None
+        return False
+    out = _apply(col, user_dir, rec, cur)
+    if out["action"] == FAILED:
+        raise backup.StoreFailed(out["why"])
+    backup.PENDING = None
+    return out["action"] == RESTORE
+
+
 def before_sync(col: Any, user_dir: str) -> dict[str, Any] | None:
     """Trước đồng bộ: chụp dữ liệu vườn (không ghi gì vào collection), ghi bản chụp ra file, trả về bản chụp để đưa cho
-    `after_sync`. Lỗi → None (lần đồng bộ này không được bảo vệ; không bao giờ chặn đồng bộ)."""
+    `after_sync`. Lỗi → None (lần đồng bộ này không được bảo vệ; không bao giờ chặn đồng bộ).
+    1.33.3 (F06): còn bản chụp chờ trả lại → dùng bản đó (không chụp bản cũ đang nằm trong collection đè lên)."""
     try:
+        rec = _pending(user_dir, col)
+        if rec is not None:
+            try:
+                other = _other_collection(rec, state_of(col))
+            except Exception:
+                other = False
+            if not other:
+                return rec
         state = state_of(col)
         write_record(user_dir, col, state)
         return state
@@ -246,9 +292,12 @@ def _apply(col: Any, user_dir: str, mine: dict[str, Any] | None, cur: dict[str, 
             out["keys"] = restore(col, mine, cur)
         except backup.StoreFailed as err:
             out.update(action=FAILED, why=str(err))
+            _hold(user_dir, col, mine)
             return out
         cur = state_of(col)
     write_record(user_dir, col, cur)
+    if backup.PENDING is not None and _pending(user_dir, col) is None:
+        backup.PENDING = None
     return out
 
 
@@ -256,6 +305,10 @@ def after_sync(col: Any, user_dir: str, before: dict[str, Any] | None) -> dict[s
     """Sau đồng bộ: bản mang về cũ hơn bản chụp → trả lại bản chụp. Trả về {"action": keep | restore | failed, "why",
     "keys": các khoá đã ghi lại}. Lỗi ghi khi trả lại → "failed" (bản chụp vẫn còn trong file, lần mở hồ sơ sau thử lại)."""
     try:
+        if before is None:
+            # 1.33.3 (F06): không chụp được trước đồng bộ → so với bản chụp gần nhất của máy (file) thay vì "chưa có gì"
+            # (trước: ghi bản vừa mang về đè lên bản chụp tốt đó)
+            before = read_record(user_dir, col)
         return _apply(col, user_dir, before, state_of(col))
     except Exception as err:
         print(f"[kotoba_batake] sau đồng bộ: {type(err).__name__}: {err}")
