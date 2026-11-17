@@ -215,6 +215,8 @@ result = 1`);
   const strip = (t) => { let s = t.replace(/⁨[^⁩]*⁩/g, ' ').replace(/ことば畑/g, ' '); wl.forEach((w) => { s = s.split(w).join(' '); }); return s; };
   const KANA = /[぀-ヿ]/, HAN = /[㐀-鿿]/, HANGUL = /[가-힣ᄀ-ᇿ㄰-㆏]/;
   const VIW = /[ăâđêôơưáàảãạấầẩẫậắằẳẵặéèẻẽẹếềểễệíìỉĩịóòỏõọốồổỗộớờởỡợúùủũụứừửữựýỳỷỹỵ]/i;
+  // 1.35: chữ chỉ tiếng Việt có (tiếng Pháp / Đức cũng dùng à â é è ê ô ù û ü…: "Génial !", "À bientôt !" không phải tiếng Việt)
+  const VI_ONLY = /[ăđơưáảãạấầẩẫậắằẳẵặẻẽẹếềểễệíìỉĩịóòỏõọốồổỗộớờởỡợúủũụứừửữựýỳỷỹỵ]/i;
   const bad = {};
   const add = (k, x) => { (bad[k] = bad[k] || []).push('[' + x.want + ' · vườn ' + x.pref + ' · deck ' + x.deck + ' · ' + x.step + '] ' + x.r + ': ' + JSON.stringify(x.t.slice(0, 70))); };
   rec.forEach((x) => {
@@ -232,9 +234,11 @@ result = 1`);
       const tokens = s.split(/[\s!?.,…“”"'「」！？。、]+/).filter((w) => w);
       const foreign = x.want === 'zh' ? /[㐀-鿿]/.test(x.t) : x.want === 'ko' ? /[가-힣]/.test(x.t)
         : x.want === 'ja' ? /[぀-ヿ㐀-鿿]/.test(x.t)
-        // tiếng Đức / Pháp: từ có ä ö ü ß œ ç, hoặc từ Latin không có dấu tiếng Việt (é è à… dùng chung nên không tính)
-        : tokens.some((w) => (/[A-Za-z]{2,}/.test(w) && !VIW.test(w) && !/^(Combo|xu|nha|nhé|ok)$/i.test(w)) || /[äöüßœçÄÖÜ]/.test(w));
-      const hasViet = tokens.some((w) => VIW.test(w));
+        // tiếng Đức / Pháp: từ Latin không có chữ riêng của tiếng Việt (é è à ô… dùng chung nên không tính là tiếng Việt)
+        : (x.want === 'de' || x.want === 'fr')
+          ? tokens.some((w) => /[A-Za-zÀ-ÿœß]{2,}/.test(w) && !VI_ONLY.test(w) && !/^(Combo|xu|nha|nhé|ok)$/i.test(w))
+          : tokens.some((w) => /[A-Za-z]{2,}/.test(w) && !VIW.test(w) && !/^(Combo|xu|nha|nhé|ok)$/i.test(w));
+      const hasViet = tokens.some((w) => ((x.want === 'de' || x.want === 'fr') ? VI_ONLY : VIW).test(w));
       if (!foreign && hasViet) { add('viOnly', x); }
     }
   });

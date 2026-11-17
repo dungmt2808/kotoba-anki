@@ -172,7 +172,7 @@ result = [a1, a2, c0 - c1]`);
   ok(calls.filter((c) => c[0] === 'zh').length === 3 && calls.filter((c) => c[0] === 'ko').length === 3 && !calls.some((c) => c[1] === 'mang'), 'mỗi báo đúng 3 lượt gọi (không lượt thừa vì đổi giữa chừng)');
   await openSrc();
   const ui2 = await js('return { ticks: [...document.querySelectorAll(".kb-ai-want .kb-ai-tick input")].filter((i) => i.disabled).length, hint: !!document.querySelector(".kb-ai-busyhint") };');
-  ok(ui2.ticks === 2 && !ui2.hint, 'mở khoá: chỉ còn 2 ô mờ (Nhật, Anh) vì đã đủ 2 báo, không còn dòng "đang viết"');
+  ok(ui2.ticks === 4 && !ui2.hint, 'mở khoá: chỉ còn 4 ô mờ (Nhật, Anh; 1.35: + Đức, Pháp) vì đã đủ 2 báo, không còn dòng "đang viết"');
   ok(await tick('Tiếng Hàn') === 'ok', 'bỏ tick Tiếng Hàn'); await sleep(900);
   ok(await tick('Tiếng Anh') === 'ok', 'tick Tiếng Anh'); await sleep(1200);
   const later = await py(KB + 'result = [kb.ai_later(), kb.config().get("gemini_wait_langs"), kb.ai_waiting(), kb.config().get("paper_confirmed", {}).get("en")]');

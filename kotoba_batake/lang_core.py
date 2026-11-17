@@ -327,7 +327,7 @@ ASK: dict[str, list[str]] = {
     "zh": ["请给我「%s」！", "有「%s」吗？", "来一个「%s」！"],
     "ko": ["“%s” 주세요!", "“%s” 있어요?", "“%s” 하나 주세요!"],
     "de": ["„%s“, bitte!", "Haben Sie „%s“?", "Einmal „%s“, bitte!"],
-    "fr": ["« %s », s'il vous plaît !", "Vous avez « %s » ?", "Un « %s », s'il vous plaît !"],
+    "fr": ["« %s », s'il vous plaît !", "Vous avez « %s » ?", "Je voudrais « %s », s'il vous plaît !"],   # không "Un": từ có thể là động từ / giống cái
     "vi": ["Cho mình “%s”!", "Có “%s” không?", "Một “%s” nhé!"],
 }
 # Góc thẻ Lật cặp: chữ / nghĩa / cách đọc / Hán Việt (ja còn 文 = mẫu ngữ pháp, 語 = từ vựng)
