@@ -540,6 +540,42 @@ def ai_waiting(cfg: dict[str, Any] | None = None) -> list[str]:
     return [x for x in langs if x in wait or (_lang_source(cfg, x) == "gemini" and conf.get(x) != "gemini")]
 
 
+# 1.33.2 (người dùng: "đang viết báo thì không được chọn đổi ngôn ngữ báo. viết xong rồi thì được chọn, nhưng số đó để ngày
+# mai"). Trước: bỏ tick báo đang viết → Gemini vẫn viết xong (tốn lượt, gói báo vẫn tính) mà báo đó không còn hiện; tick
+# báo mới → chờ "Bắt đầu viết" (bấm là viết thêm một số ngay trong ngày).
+BUSY_MSG = "Gemini đang viết báo — xong mới đổi được."
+
+
+def ai_busy() -> bool:
+    """Gemini đang viết báo / tạo giọng đọc cho báo (cả hàng chờ của "Bắt đầu viết")."""
+    return bool(_ai["running"] or _ai.get("queue"))
+
+
+def ai_later(cfg: dict[str, Any] | None = None) -> dict[str, str]:
+    """Báo vừa tick thêm sau khi hôm nay đã viết xong số khác → viết từ ngày ghi ở đây (config `gemini_later`
+    {ngôn ngữ: ngày}). Mục đã tới ngày thì bỏ."""
+    cfg = cfg if cfg is not None else config()
+    raw = cfg.get("gemini_later")
+    today = ai_today()
+    if not isinstance(raw, dict):
+        return {}
+    return {k: v for k, v in raw.items() if k in PAPER_LANGS and isinstance(v, str)
+            and re.fullmatch(r"\d{4}-\d{2}-\d{2}", v) and v > today}
+
+
+def _wrote_today(langs: list[str]) -> bool:
+    """Hôm nay Gemini đã viết xong số của một trong các báo `langs` chưa."""
+    date = ai_today()
+    for x in langs:
+        base = AI_DIRS.get(x)
+        try:
+            if base and os.path.isdir(base) and ai.has_issue(base, date):
+                return True
+        except Exception:
+            continue
+    return False
+
+
 def _unread(lang: str) -> list[str]:
     try:
         return paper.unread_dates(_library(lang), paper_states(lang)[1])
@@ -1306,6 +1342,7 @@ def _lang_view(lang: str, o: dict[str, Any], date: str) -> dict[str, Any]:
         "issues": len(paper.Library(base, lang).issues()) if os.path.isdir(base) else 0,
         "running": bool(_ai["running"]) and _ai.get("lang", "ja") == lang,
         "model": st.get("model", ""), "tts": bool(st.get("tts")),
+        "later": "" if today else ai_later().get(lang, ""),      # 1.33.2: báo vừa thêm sau khi đã viết xong → từ mai
     }
 
 
@@ -1345,8 +1382,10 @@ def ai_view(extra: dict[str, Any] | None = None, lang: str | None = None) -> dic
             "tones": [[k, story_core.TONE_NAME[k]] for k in story_core.TONES], "tones_on": o["tones"],
             "has_tts": any(v["tts"] for v in langs.values()),
             "running": bool(_ai["running"]), "run_lang": _ai.get("lang", "ja"), "testing": bool(_ai["testing"]),
+            "busy": ai_busy(),        # 1.33.2: đang viết báo → khoá các lựa chọn của báo (xem BUSY_MSG)
+            "queue": [x for x in (_ai.get("queue") or []) if x in PAPER_LANGS],      # báo chờ viết sau báo đang viết
             "msg": _ai["msg"], "langs": langs, "first": bool(key) and bool(cfg.get("gemini_wait_start")),
-            "waiting": [x for x in ai_waiting(cfg) if not langs[x]["today"]] if key else [],
+            "waiting": [x for x in ai_waiting(cfg) if not langs[x]["today"] and not langs[x]["later"]] if key else [],
             # 1.23: báo chờ vì nguồn vừa thành Gemini (bấm "Dùng Gemini", mất thư mục kotoba_daily), không phải vừa tick
             "switched": [x for x in ai_waiting(cfg) if x not in _old_waiting(cfg)] if key else [],
         },
@@ -1610,6 +1649,9 @@ def ai_start(reason: str, dialog: Any = None, lang: str = "ja") -> bool:
         return False
     if reason == "auto" and lang in ai_waiting(cfg):
         return False                     # 1.23: chờ "Bắt đầu viết" (một quy tắc chung, xem ai_waiting)
+    if lang in ai_later(cfg):            # 1.33.2: báo vừa thêm sau khi hôm nay đã viết xong → từ mai
+        _ai["why"] = "Báo %s bắt đầu từ mai." % LANG_NAME.get(lang, lang)
+        return False
     o = _ai_opts(cfg)
     date = ai_today()
     try:
@@ -3600,10 +3642,18 @@ class GardenDialog(QDialog):
 
     # -- 1.12: nguồn báo (Gemini / Claude Code) ------------------------------
 
+    # 1.33.2: lệnh đổi báo bị khoá khi Gemini đang viết (ai_busy) — `set` chỉ khoá các mục đổi số đang viết
+    AI_LOCKED_SET = ("langs", "level", "story", "tone", "tones", "audio", "voice", "source")
+    AI_LOCKED = ("decks", "forget", "dir", "start")
+
     def _on_ai(self, cmd: str) -> None:
         action, _, arg = cmd.partition(":")
         flash: dict[str, Any] = {}
         refresh = False
+        busy = ai_busy()
+        if busy and (action in self.AI_LOCKED or (action == "key" and ai.clean_key(config().get("gemini_key")))):
+            self._js("aiStatus", ai_view({"flash": BUSY_MSG, "ok": False}))
+            return
         if action == "key":
             try:
                 key = ai.clean_key((json.loads(arg or "{}") or {}).get("key"))
@@ -3620,6 +3670,9 @@ class GardenDialog(QDialog):
             except ValueError:
                 p = {}
             p = p if isinstance(p, dict) else {}
+            if busy and any(k in p for k in self.AI_LOCKED_SET):
+                p = {k: v for k, v in p.items() if k not in self.AI_LOCKED_SET}
+                flash = {"flash": BUSY_MSG, "ok": False}
             changes: dict[str, Any] = {}
             if isinstance(p.get("langs"), list):         # 1.19.1: ô tick "Báo muốn nhận"
                 cfg0 = config()
@@ -3627,9 +3680,23 @@ class GardenDialog(QDialog):
                 changes["gemini_langs"] = clean_langs(p["langs"])
                 changes["gemini_langs_chosen"] = True            # 1.33: người dùng đã tự chọn báo
                 if ai.clean_key(cfg0.get("gemini_key")) and not cfg0.get("gemini_wait_start"):
-                    # 1.22.4: báo vừa tick thêm chờ chọn trình độ / deck rồi bấm "Bắt đầu viết", không viết ngay
+                    new = changes["gemini_langs"]
+                    later = {k: v for k, v in ai_later(cfg0).items() if k in new}
+                    # 1.33.2: hôm nay đã viết xong số của báo khác → báo vừa thêm viết từ mai (tự viết như mọi báo,
+                    # không chờ "Bắt đầu viết" — còn cả hôm nay để chọn trình độ / deck)
+                    if _wrote_today(before):
+                        today = ai_today()
+                        tomorrow = (datetime.date.fromisoformat(today) + datetime.timedelta(days=1)).isoformat()
+                        conf = confirmed_sources(cfg0)
+                        for x in new:
+                            if x not in before and _lang_source(cfg0, x) == "gemini" and not ai.has_issue(AI_DIRS[x], today):
+                                later[x] = tomorrow
+                                conf[x] = "gemini"
+                        changes["paper_confirmed"] = conf
+                    changes["gemini_later"] = later
+                    # 1.22.4: báo vừa tick thêm (hôm nay chưa viết số nào) chờ chọn trình độ / deck rồi bấm "Bắt đầu viết"
                     old_w = cfg0.get("gemini_wait_langs") if isinstance(cfg0.get("gemini_wait_langs"), list) else []
-                    changes["gemini_wait_langs"] = [x for x in changes["gemini_langs"] if x in old_w or x not in before]
+                    changes["gemini_wait_langs"] = [x for x in new if (x in old_w or x not in before) and x not in later]
                 refresh = True
             if p.get("level") in ai.LEVELS:
                 changes["gemini_level"] = p["level"]
@@ -3714,7 +3781,7 @@ class GardenDialog(QDialog):
                                                      "Gemini đang bận, thử lại sau." if _ai["running"] else
                                                      "Chưa viết được: kiểm tra khoá và nguồn báo."), "ok": False}
             elif action == "audio" and not ai_start("audio", self, lang):
-                flash = {"flash": "Không còn giọng đọc nào cần tạo.", "ok": True}
+                flash = {"flash": BUSY_MSG, "ok": False} if busy else {"flash": "Không còn giọng đọc nào cần tạo.", "ok": True}
         elif action == "sub":                             # 1.25.1: gói báo — mua / gia hạn, Tự gia hạn
             try:
                 p = json.loads(arg or "{}")
