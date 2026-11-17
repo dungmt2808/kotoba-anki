@@ -156,6 +156,35 @@ result = 1`);
   const coinsShown = await js('return (document.querySelector("#kb-coins, .kb-coins") || {}).textContent || "";');
   ok(/2\.000/.test(coinsShown), 'ví trên trang: ' + coinsShown);
   await shot('1333_03_da_tra_lai');
+  console.log('== 4. F05: thẻ được chấm ở chỗ khác, cards.mod trùng giây (đặt lại mod cho chắc, không phụ thuộc tốc độ máy)');
+  const race = await py(KB + `import time
+col = mw.col
+did = col.decks.id("E1333::Cùng giây")
+m = col.models.by_name("Basic") or col.models.all()[0]
+for t in ("Cùng giây A", "Cùng giây B"):
+    n = col.new_note(m); n.fields[0] = t; n.fields[1] = "x"; col.add_note(n, did)
+kb._t_warn = []
+kb._t_sw = kb.showWarning
+kb.showWarning = lambda text, **kw: kb._t_warn.append(str(text))
+d = kb._dialog; d.deck_id = did; d.refresh(); d._dispatch("rv:start")
+cached = d._card
+top = col.sched.get_queued_cards(fetch_limit=1).cards[0]
+card = col.get_card(top.card.id); card.start_timer()
+col.sched.answer_card(col.sched.build_answer(card=card, states=top.states, rating=3))     # chấm ở chỗ khác
+col.db.execute("update cards set mod = ? where id = ?", int(cached.mod), card.id)        # cùng giây với lúc hiện ra
+kb._t_cid = card.id
+cur = col.get_card(card.id)
+result = {"same_mod": cur.mod == cached.mod, "reps": [cached.reps, cur.reps], "changed": kb._card_changed(cached),
+          "rev": col.db.scalar("select count() from revlog where cid = ?", card.id)}`);
+  await js('document.getElementById("kb-show") && !document.getElementById("kb-show").hidden && document.getElementById("kb-show").click(); return 1;');
+  await sleep(400);
+  await py(KB + 'kb._dialog._dispatch("rv:show:")\nkb._dialog._dispatch("rv:ans:3")\nresult = 1');
+  for (let i = 0; i < 60 && await py(KB + 'result = kb._dialog._busy'); i++) { await sleep(100); }
+  const after = await py(KB + `d = kb._dialog
+result = {"warn": kb._t_warn, "same": bool(d._card and d._card.id == kb._t_cid), "rev": mw.col.db.scalar("select count() from revlog where cid = ?", kb._t_cid)}
+kb.showWarning = kb._t_sw`);
+  ok(race.same_mod && race.reps[0] !== race.reps[1] && race.changed, 'cùng cards.mod nhưng lịch ôn đã khác → vườn nhận ra thẻ đã đổi ' + JSON.stringify(race));
+  ok(!after.warn.length && !after.same && after.rev === race.rev, 'chấm trong vườn: không hộp lỗi, không chấm lần hai, sang thẻ kế tiếp ' + JSON.stringify(after));
   ok(!page.errors.length, 'không lỗi JS' + (page.errors.length ? ' — ' + page.errors.slice(0, 3).join(' | ') : ''));
   console.log(`\nKẾT QUẢ: ${pass}/${total}`);
   process.exit(pass === total ? 0 : 1);

@@ -43,7 +43,7 @@ sửa — **ra đúng như báo cáo audit**: lỗi đọc 6/21, phục hồi 37
 | F07 (P2) | Gánh hàng rong: trừ xu xong, ghi "đã mua" lỗi → báo lỗi, mua lại **bị trừ lần hai** | xu + món + "đã mua" ghi cùng một lần | vòng 2 **20/20** |
 | F03 (P2) | Bỏ tick báo đã viết rồi tick báo khác → viết được **ngay hôm nay** (trái luật "báo mới từ mai") | xét **mọi** báo đã viết xong hôm nay | 9 ca "từ mai" đạt |
 | F04 (P2) | Xoá khoá Gemini → **không đọc được báo cũ** Anh / Trung / Hàn / Việt dù còn trên máy | báo đã có trên máy đọc được không cần khoá (khoá chỉ để viết số mới) | 4 ca đạt |
-| F05 (P2) | Thẻ được chấm ở chỗ khác **trong cùng giây** → vườn không nhận ra, báo lỗi chấm lại mãi | so đủ các cột lịch ôn + revlog lúc thẻ hiện ra (không chỉ "lần sửa" tính theo giây) | ôn cùng giây: các ca sản phẩm đạt² |
+| F05 (P2) | Thẻ được chấm ở chỗ khác **trong cùng giây** → vườn không nhận ra, báo lỗi chấm lại mãi | so đủ các cột lịch ôn + revlog lúc thẻ hiện ra (không chỉ "lần sửa" tính theo giây) | ôn cùng giây: các ca sản phẩm đạt²; `e2e_1333` ca trùng giây đạt |
 | P3 | Đóng cửa sổ Sửa thẻ rồi Undo ở cửa sổ chính → báo "Đã lưu thẻ." thay vì "Thẻ vừa được sửa." | lần lưu của cửa sổ Sửa đã tới trước lúc đóng → hết chờ | `e2e_1322` 40/40 |
 
 ¹ Hai ca **đối chứng** của audit được viết cho cách lưu cũ, nay đổi nghĩa (không phải lỗi):
@@ -52,8 +52,9 @@ sửa — **ra đúng như báo cáo audit**: lỗi đọc 6/21, phục hồi 37
 - *Hộp sưu tầm: "đã nhặt" phải còn khi ghi quà lỗi* — nay "đã nhặt" và quà lưu cùng một lần, lỗi thì không đổi gì, chỗ lấp
   lánh vẫn còn để nhặt lại; ca chính "thử lại không mất quà" vẫn đạt.
 
-² Ca đối chứng "hai trạng thái trong cùng giây" cần máy rảnh để chấm thẻ đúng trong một giây; khi chạy chung với việc khác
-nó không tạo được tình huống (ghi rõ trong kết quả là `same_second: false`). Các ca sản phẩm đều đạt.
+² Ca đối chứng "hai trạng thái trong cùng giây" phải làm mới vườn rồi chấm thẻ trong chưa tới một giây; ở máy test này
+làm mới mất hơn một giây nên không tạo được tình huống (kết quả ghi `same_second: false`, 4 lần chạy). Các ca sản phẩm đều
+đạt; `e2e_1333` phần 4 tạo đúng tình huống bằng cách đặt `cards.mod` trùng giây.
 
 ### Giao diện khi vườn tạm chỉ xem (trước: không báo gì, ví hiện 0 xu như mất hết)
 
@@ -78,12 +79,19 @@ nó không tạo được tình huống (ghi rõ trong kết quả là `same_sec
 |---|---|---|
 | `core/test_1333.py` (Anki 26.9.4 + 23.10.1) | đọc lỗi **kéo dài** ở từng kho × từng thao tác: không ghi, collection + file sao lưu không đổi một byte; trả lại sau đồng bộ lỗi 6 đường; lưu chung một lần × lỗi ở từng khoá; **tiến trình con dừng giữa hai lần ghi** (4 điểm × 3 lượt ôn); **mã thật 1.31.3** chạy xen; soát mã | **83 / 83** cả hai bản Anki |
 | ↳ thử ngẫu nhiên có đối chứng | vườn A bị lỗi đọc / ghi ngẫu nhiên, vườn B không lỗi chỉ làm lại thao tác A làm được — sau mỗi bước hai vườn phải khớp từng byte (3 hạt × 260 thao tác, 13 loại thao tác) | khớp; **trên mã 1.33.2 trượt ngay** (đọc lỗi một lần khi lưu đồ tự vẽ → mất các món tự vẽ khác) |
-| `anki/e2e_1333.js` | giao diện khi đọc lỗi / còn chờ trả lại / đọc lỗi thoáng qua | **16 / 16** |
+| `anki/e2e_1333.js` | giao diện khi đọc lỗi / còn chờ trả lại / đọc lỗi thoáng qua; thẻ chấm ở chỗ khác trùng giây | **18 / 18** |
 | `anki/e2e_1333_ngonngu.js` | quét chữ lẫn ngôn ngữ (mục 1) | **5 / 5** |
 
 ## 5. Bộ test có sẵn + bộ của audit
 
-KẾT_QUẢ_HỒI_QUY
+| Bộ | Kết quả |
+|---|---|
+| `tests/run_all.sh` (aqt 26.9.4, **64 bộ**, có `test_1333` + `audit_20261117/recovery_round2.py`) | **TẤT CẢ OK** (lần đầu đỏ 3 bộ soát đúng nguyên văn đoạn mã vừa sửa: `test_1311`, `test_1312`, `test_1332` → cập nhật kỳ vọng; trang web chung cần `node site/tools/xuat_hinh.js` cho số bản mới) |
+| Bộ của audit, Anki 26.9.4 **và** 23.10.1 | lỗi đọc 20/21 (ca đối chứng nhật ký, mục 2 ¹) · phục hồi **45/45** · giao diện 52/53 (ca đối chứng Hộp sưu tầm ¹) · vòng 2 **20/20** · ôn cùng giây 6/7 (ca đối chứng thời gian ²) |
+| `e2e_1333.js` (thêm ca F05 không phụ thuộc tốc độ máy: đặt `cards.mod` trùng giây) | **18 / 18**; trên mã 1.33.2: mất mèo + ví / file sao lưu bị ghi đè ngay ở phần 1 |
+| Kịch bản Anki thật cũ có liên quan | `e2e_1322` **40/40** (trước 39/40) · `e2e_128` 72/72 · `e2e_133` 77/77 · `e2e_1332` 36/36 · `e2e_132` 39/39 · `e2e_132b` 20/20 · `e2e_1314` 53/53 · `e2e_1331` 43/43 · `e2e_1311` 42/42 · `e2e_fuzz` 6/6 · `e2e_131` 89/89 · `e2e_130` 75/76 (chip sinh hoạt bị cắt chữ — trượt y hệt trên mã gốc vì máy test thiếu phông, đã ghi ở báo cáo 1.31.4 / 1.32) |
+| Đồng bộ bằng máy chủ đồng bộ thật của Anki (`e2e_1312`) | **47 / 47** (audit đo 46/47) |
+| `run_capnhat.sh` 1.31.3 (đã phát hành) → 1.33.3, cài đè trong Anki thật | **19 / 19** — mọi khoá collection, mọi file `user_files/`, cấu hình add-on giữ nguyên |
 
 ## 6. Lưu trữ
 
