@@ -1,0 +1,477 @@
+{
+  "tested_commit": "9ef5272f6af34c78168d2b8851259add29bf2561",
+  "cases": 20,
+  "passed": 16,
+  "results": [
+    {
+      "case": "merchant/control-event-write-fault-reached",
+      "passed": true,
+      "actual": 1,
+      "expected": 1,
+      "detail": {
+        "slot": "d1",
+        "id": "kyodai",
+        "price": 165,
+        "date": "2026-11-18"
+      }
+    },
+    {
+      "case": "merchant/failed-purchase-is-atomic",
+      "passed": false,
+      "actual": [
+        49835,
+        1,
+        false
+      ],
+      "expected": [
+        50000,
+        0,
+        false
+      ],
+      "detail": {
+        "coins": 49835,
+        "owned": 1,
+        "bought": false,
+        "hits": 1,
+        "messages": [
+          {
+            "ok": false,
+            "msg": "Không làm được (OSError).",
+            "act": null,
+            "paid": null,
+            "id": null
+          }
+        ]
+      }
+    },
+    {
+      "case": "merchant/UI-balance-agrees-with-storage",
+      "passed": false,
+      "actual": 50000,
+      "expected": 49835,
+      "detail": {
+        "coins": 49835,
+        "owned": 1,
+        "bought": false,
+        "hits": 1,
+        "messages": [
+          {
+            "ok": false,
+            "msg": "Không làm được (OSError).",
+            "act": null,
+            "paid": null,
+            "id": null
+          }
+        ]
+      }
+    },
+    {
+      "case": "merchant/retry-pays-for-one-purchase",
+      "passed": false,
+      "actual": [
+        49670,
+        2
+      ],
+      "expected": [
+        49835,
+        1
+      ],
+      "detail": {
+        "first": {
+          "coins": 49835,
+          "owned": 1,
+          "bought": false,
+          "hits": 1,
+          "messages": [
+            {
+              "ok": false,
+              "msg": "Không làm được (OSError).",
+              "act": null,
+              "paid": null,
+              "id": null
+            }
+          ]
+        },
+        "retry": {
+          "coins": 49670,
+          "owned": 2,
+          "messages": [
+            {
+              "ok": false,
+              "msg": "Không làm được (OSError).",
+              "act": null,
+              "paid": null,
+              "id": null
+            },
+            {
+              "ok": true,
+              "msg": null,
+              "act": "buy",
+              "paid": 165,
+              "id": "kyodai"
+            }
+          ]
+        },
+        "stock": {
+          "slot": "d1",
+          "id": "kyodai",
+          "price": 165,
+          "date": "2026-11-18"
+        }
+      }
+    },
+    {
+      "case": "merchant/control-later-duplicate-is-blocked",
+      "passed": true,
+      "actual": 49670,
+      "expected": 49670
+    },
+    {
+      "case": "sync-retry/control-restore-fault-reached",
+      "passed": true,
+      "actual": 1,
+      "expected": 1,
+      "detail": {
+        "hits": 1,
+        "coins": 1000,
+        "checkpoint_coins": 2000
+      }
+    },
+    {
+      "case": "sync-retry/control-checkpoint-still-good-after-failure",
+      "passed": true,
+      "actual": 2000,
+      "expected": 2000,
+      "detail": {
+        "hits": 1,
+        "coins": 1000,
+        "checkpoint_coins": 2000
+      }
+    },
+    {
+      "case": "sync-retry/new-data-survives-retry",
+      "passed": false,
+      "actual": [
+        1000,
+        [],
+        "Nhật ký trước khi mua mèo"
+      ],
+      "expected": [
+        2000,
+        [
+          "neko"
+        ],
+        "Nhật ký mới phải còn sau retry"
+      ],
+      "detail": {
+        "coins": 1000,
+        "pets": [],
+        "diary": "Nhật ký trước khi mua mèo",
+        "checkpoint_coins": 1000
+      }
+    },
+    {
+      "case": "large-collection/control-created-10000-notes",
+      "passed": true,
+      "actual": 10000,
+      "expected": 10000,
+      "detail": {
+        "added": 10000,
+        "insert_ms": 451,
+        "reviews": 0
+      }
+    },
+    {
+      "case": "large-collection/1366x768/zoom-1/limit-400/all-notes-counted",
+      "passed": true,
+      "actual": 10000,
+      "expected": 10000,
+      "detail": {
+        "notes": 10000,
+        "plants": 400,
+        "canvas": [
+          1296,
+          1020
+        ],
+        "alpha": 255,
+        "png": true,
+        "error": "",
+        "viewport": [
+          1366,
+          768
+        ]
+      }
+    },
+    {
+      "case": "large-collection/1366x768/zoom-1/limit-400/canvas-renders-entire-height",
+      "passed": true,
+      "actual": [
+        255,
+        true,
+        ""
+      ],
+      "expected": [
+        255,
+        true,
+        ""
+      ],
+      "detail": {
+        "notes": 10000,
+        "plants": 400,
+        "canvas": [
+          1296,
+          1020
+        ],
+        "alpha": 255,
+        "png": true,
+        "error": "",
+        "viewport": [
+          1366,
+          768
+        ]
+      }
+    },
+    {
+      "case": "large-collection/720x520/zoom-1/limit-5000/all-notes-counted",
+      "passed": true,
+      "actual": 10000,
+      "expected": 10000,
+      "detail": {
+        "notes": 10000,
+        "plants": 5000,
+        "canvas": [
+          648,
+          25020
+        ],
+        "alpha": 255,
+        "png": true,
+        "error": "",
+        "viewport": [
+          720,
+          520
+        ]
+      }
+    },
+    {
+      "case": "large-collection/720x520/zoom-1/limit-5000/canvas-renders-entire-height",
+      "passed": true,
+      "actual": [
+        255,
+        true,
+        ""
+      ],
+      "expected": [
+        255,
+        true,
+        ""
+      ],
+      "detail": {
+        "notes": 10000,
+        "plants": 5000,
+        "canvas": [
+          648,
+          25020
+        ],
+        "alpha": 255,
+        "png": true,
+        "error": "",
+        "viewport": [
+          720,
+          520
+        ]
+      }
+    },
+    {
+      "case": "large-collection/720x520/zoom-1.5/limit-5000/all-notes-counted",
+      "passed": true,
+      "actual": 10000,
+      "expected": 10000,
+      "detail": {
+        "notes": 10000,
+        "plants": 5000,
+        "canvas": [
+          378,
+          42900
+        ],
+        "alpha": 255,
+        "png": true,
+        "error": "",
+        "viewport": [
+          480,
+          347
+        ]
+      }
+    },
+    {
+      "case": "large-collection/720x520/zoom-1.5/limit-5000/canvas-renders-entire-height",
+      "passed": true,
+      "actual": [
+        255,
+        true,
+        ""
+      ],
+      "expected": [
+        255,
+        true,
+        ""
+      ],
+      "detail": {
+        "notes": 10000,
+        "plants": 5000,
+        "canvas": [
+          378,
+          42900
+        ],
+        "alpha": 255,
+        "png": true,
+        "error": "",
+        "viewport": [
+          480,
+          347
+        ]
+      }
+    },
+    {
+      "case": "large-collection/1920x1080/zoom-1/limit-5000/all-notes-counted",
+      "passed": true,
+      "actual": 10000,
+      "expected": 10000,
+      "detail": {
+        "notes": 10000,
+        "plants": 5000,
+        "canvas": [
+          1836,
+          8880
+        ],
+        "alpha": 255,
+        "png": true,
+        "error": "",
+        "viewport": [
+          1920,
+          1080
+        ]
+      }
+    },
+    {
+      "case": "large-collection/1920x1080/zoom-1/limit-5000/canvas-renders-entire-height",
+      "passed": true,
+      "actual": [
+        255,
+        true,
+        ""
+      ],
+      "expected": [
+        255,
+        true,
+        ""
+      ],
+      "detail": {
+        "notes": 10000,
+        "plants": 5000,
+        "canvas": [
+          1836,
+          8880
+        ],
+        "alpha": 255,
+        "png": true,
+        "error": "",
+        "viewport": [
+          1920,
+          1080
+        ]
+      }
+    },
+    {
+      "case": "large-collection/viewing-keeps-revlog",
+      "passed": true,
+      "actual": 0,
+      "expected": 0
+    },
+    {
+      "case": "control/no-provider-network",
+      "passed": true,
+      "actual": [],
+      "expected": []
+    },
+    {
+      "case": "control/no-js-exceptions",
+      "passed": true,
+      "actual": [],
+      "expected": []
+    }
+  ],
+  "metrics": [
+    {
+      "id": "large-collection/1366x768/zoom-1/limit-400",
+      "backend_ms": 104,
+      "refresh_to_assertion_ms": 559,
+      "notes": 10000,
+      "plants": 400,
+      "canvas": [
+        1296,
+        1020
+      ],
+      "alpha": 255,
+      "png": true,
+      "error": "",
+      "viewport": [
+        1366,
+        768
+      ]
+    },
+    {
+      "id": "large-collection/720x520/zoom-1/limit-5000",
+      "backend_ms": 326,
+      "refresh_to_assertion_ms": 2358,
+      "notes": 10000,
+      "plants": 5000,
+      "canvas": [
+        648,
+        25020
+      ],
+      "alpha": 255,
+      "png": true,
+      "error": "",
+      "viewport": [
+        720,
+        520
+      ]
+    },
+    {
+      "id": "large-collection/720x520/zoom-1.5/limit-5000",
+      "backend_ms": 216,
+      "refresh_to_assertion_ms": 1474,
+      "notes": 10000,
+      "plants": 5000,
+      "canvas": [
+        378,
+        42900
+      ],
+      "alpha": 255,
+      "png": true,
+      "error": "",
+      "viewport": [
+        480,
+        347
+      ]
+    },
+    {
+      "id": "large-collection/1920x1080/zoom-1/limit-5000",
+      "backend_ms": 234,
+      "refresh_to_assertion_ms": 1389,
+      "notes": 10000,
+      "plants": 5000,
+      "canvas": [
+        1836,
+        8880
+      ],
+      "alpha": 255,
+      "png": true,
+      "error": "",
+      "viewport": [
+        1920,
+        1080
+      ]
+    }
+  ]
+}

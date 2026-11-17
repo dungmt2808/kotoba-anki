@@ -1,6 +1,8 @@
 # Kiểm tra độc lập 1.33.2 · 17/11/2026
 
-**Kết luận: chưa nên phát hành rộng bản 1.33.2 này.** Đã xác nhận 5 lỗi chính, gồm **1 lỗi P1 có thể ghi đè dữ liệu vườn** và 4 lỗi P2. Bộ test hiện có xanh không loại trừ các lỗi này. Ưu tiên một bản vá, kiểm lại các ca đỏ bên dưới rồi mới tiếp tục thêm tính năng.
+**Kết luận sau hai vòng: chưa nên phát hành rộng bản 1.33.2 này.** Đã xác nhận **7 lỗi chính**, gồm **2 lỗi P1 về mất dữ liệu/khôi phục** và 5 lỗi P2. Bộ test hiện có xanh không loại trừ các lỗi này. Ưu tiên một bản vá, kiểm lại các ca đỏ bên dưới rồi mới tiếp tục thêm tính năng.
+
+**Vòng kiểm tra sâu bổ sung:** [BO_SUNG_VONG_2.md](BO_SUNG_VONG_2.md) — thêm **65 assertion mỗi bản Anki**, có dừng tiến trình thật giữa lúc lưu và collection **10.000 note**. Tổng hai vòng: **146 assertion riêng trên mỗi bản**, **292 lượt kiểm tra** trên Anki 26.09.4 và 23.10.1. Các assertion trượt lặp cùng các nguyên nhân; không đếm chúng thành các lỗi độc lập.
 
 | ID | Mức | Vấn đề | Điều kiện |
 |---|---|---|---|
@@ -9,6 +11,8 @@
 | F03 | P2 | Bỏ tick rồi đổi báo làm mất quy tắc “từ mai” | Thao tác checkbox bình thường sau khi đã có báo hôm nay |
 | F04 | P2 | Xóa khóa Gemini khiến báo cũ Anh/Trung/Hàn/Việt không đọc được | Thao tác Xóa khóa bình thường; file báo vẫn tồn tại |
 | F05 | P2 | Thẻ đổi trong cùng giây không được nhận ra; chấm lại lỗi lặp | Hai trạng thái thẻ khác nhau có cùng `cards.mod` |
+| F06 | **P1 — chặn release** | Bản chụp mới bị ghi đè sau một lỗi khôi phục đồng bộ, không còn tự phục hồi | Bấm đồng bộ lại hoặc sửa vườn sau lỗi; [vòng 2](BO_SUNG_VONG_2.md#f06--p1--lỗi-khôi-phục-đồng-bộ-có-thể-làm-mất-bản-chụp-tốt) |
+| F07 | P2 | Báo mua thất bại dù đã trừ xu; thử lại mua và trả tiền lần hai | Lỗi ghi sổ phiên sau khi ví đã lưu; [vòng 2](BO_SUNG_VONG_2.md#f07--p2--thử-lại-mua-ở-gánh-hàng-sau-lỗi-lưu-bị-trừ-xu-hai-lần) |
 
 P1 cần sửa trước phát hành. P2 nên sửa trong cùng đợt vì ảnh hưởng phần thưởng, quyền đọc nội dung đã có và luồng ôn chính. Các phát hiện chưa được sửa trong nhánh audit.
 
@@ -22,7 +26,7 @@ P1 cần sửa trước phát hành. P2 nên sửa trong cùng đợt vì ảnh 
 - Lỗi I/O được đưa vào API `get_config`/`set_config`; không làm đầy hay phá ổ đĩa thật. Đây là chứng minh hành vi **khi có lỗi**, chưa phải phép đo tần suất lỗi I/O ngoài thực tế.
 - Các ca mới không gọi Gemini thật. Thử lịch viết báo chỉ giữ lại tác vụ nền để đếm việc được tạo; không giả kết quả của logic chọn báo, đọc/lưu hoặc trả thưởng. Ca F05 dùng scheduler Anki thật; chỉ thu câu cảnh báo thay cho mở modal để runner tiếp tục được.
 
-## 2. Kết quả kiểm thử
+## 2. Kết quả kiểm thử vòng 1
 
 | Bộ kiểm tra | Kết quả lần chạy này | Minh chứng |
 |---|---|---|
@@ -91,6 +95,8 @@ Ma trận core cũng tái hiện mất đồ ở EXT/SEASON/NHA, thú và đồ 
 
 **Cần sửa:** ghi tiến độ và ví trong cùng lần commit có rollback, hoặc lưu một khoản thưởng chờ có ID ổn định rồi đối soát sau khi thử lại/mở hồ sơ. Phải bảo đảm vừa không mất thưởng, vừa không trả hai lần. Bao gồm tiến độ nhiệm vụ liên quan trong kịch bản thử lại.
 
+**Bổ sung vòng 2:** còn tái hiện được mất xu ôn khi tiến trình dừng sau khi ghi sổ bù xu nhưng trước khi ghi ví. Revlog thật vẫn có 1 lượt, sổ đã đánh dấu trả, nhưng mở lại và bù xu vẫn chỉ có 1.000 thay vì 1.001 xu. Đây là một biểu hiện khác của giao dịch nhiều kho, được trình bày trong [báo cáo vòng 2](BO_SUNG_VONG_2.md#f02-mở-rộng--dừng-tiến-trình-giữa-sổ-bù-xu-và-ví).
+
 ### F03 · P2 · Bỏ tick báo đã viết rồi chọn báo khác cho viết ngay hôm nay
 
 **Vị trí:** [nhánh `ai:set:langs`](../../../kotoba_batake/__init__.py#L3693). `_wrote_today(before)` chỉ xét các báo đang được chọn ngay trước thao tác; `later` cũng bị lọc theo lựa chọn mới.
@@ -151,10 +157,10 @@ Chấm từ vườn: backend trả `InvalidInput()`. Add-on trả lại đúng c
 
 ## 5. Điều kiện release và đề xuất tiếp theo
 
-1. **Sửa F01 trước**, bảo toàn cả collection và bản sao lưu khi một kho đọc lỗi. Giữ nguyên dữ liệu người dùng đã có.
-2. Sửa F02–F05; chạy lại **81 assertion mới trên cả hai bản Anki**, rồi bộ hồi quy và cập nhật đè. Thử cả retry, khởi động lại và đồng bộ sau lỗi.
+1. **Sửa F01 và F06 trước**, bảo toàn cả collection và bản sao lưu khi đọc hoặc khôi phục lỗi. Không cho thao tác tiếp theo đóng dấu mới lên một bản đang chờ khôi phục.
+2. Sửa F02–F05 và F07; chạy lại **146 assertion mới trên cả hai bản Anki**, rồi bộ hồi quy và cập nhật đè. Thử cả retry, dừng tiến trình, khởi động lại và đồng bộ sau lỗi.
 3. Làm ổn định các test hẹn giờ/khách/thông báo đã nêu; CI phải thu assertion trượt, không chỉ tin exit code. Một số script cũ có thể exit 0 dù in dấu trượt.
-4. Trước phát hành rộng, làm một lượt trên máy người dùng: bộ gõ, cửa sổ sửa note, âm thanh, đóng/mở Anki, AnkiWeb + điện thoại thật. Đợt này kiểm Linux và máy chủ đồng bộ cục bộ; chưa xác minh Windows/macOS, loa/giọng máy thực, API Gemini thật hay chất lượng ngôn ngữ với người bản ngữ. Chưa đo hiệu năng trên collection hàng chục nghìn note.
+4. Trước phát hành rộng, làm một lượt trên máy người dùng: bộ gõ, cửa sổ sửa note, âm thanh, đóng/mở Anki, AnkiWeb + điện thoại thật. Đợt này kiểm Linux và máy chủ đồng bộ cục bộ; chưa xác minh Windows/macOS, loa/giọng máy thực, API Gemini thật hay chất lượng ngôn ngữ với người bản ngữ. Vòng 2 đã kiểm collection 10.000 note, vẽ 400/5.000 cây, resize/zoom và xuất PNG; chưa phải benchmark FPS/chạy lâu trên máy người dùng.
 
 **Tính năng nên ưu tiên sau bản vá:**
 
