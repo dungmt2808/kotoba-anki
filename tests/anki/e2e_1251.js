@@ -131,8 +131,9 @@ result = len(nids)`);
   await waitFor('document.querySelector(".kb-ai-plan")');
   await sleep(500);
   const want = await js('return [...document.querySelectorAll(".kb-ai-want label")].map((l) => [l.textContent.trim(), l.querySelector("input").checked, l.querySelector("input").disabled]);');
-  ok(want.length === 3 && want[2][0] === 'Chỉ tiếng Việt' && want[2][1] && !want[0][2] && !want[1][2],
-     'Báo muốn nhận: Tiếng Nhật / Tiếng Anh / Tiếng Việt, tick được cả khi chưa có deck (' + JSON.stringify(want) + ')');
+  // 1.33: thêm Tiếng Trung / Tiếng Hàn (5 ô)
+  ok(want.length === 5 && want[4][0] === 'Chỉ tiếng Việt' && want[4][1] && want.slice(0, 4).every((x) => !x[2]),
+     'Báo muốn nhận: Nhật / Anh / Trung / Hàn / Chỉ tiếng Việt, tick được cả khi chưa có deck (' + JSON.stringify(want) + ')');
   let txt = await srcText();
   ok(/Gói báo/.test(txt) && /Số báo đầu tiên được tặng 7 ngày/.test(txt) && /Mua 1 tuần · 100 xu/.test(txt) && /Mua 1 tháng · 300 xu/.test(txt),
      'thẻ Gói báo: chưa có gói, tặng 7 ngày, Mua 1 tuần · 100 xu / 1 tháng · 300 xu');

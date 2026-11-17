@@ -75,6 +75,8 @@ Chạy đúng luồng add-on: bản gốc tiếng Việt chung → mỗi báo k�
 
 Nội dung: hai báo kể cùng một kỳ truyện (Lin mang hộp gỗ ra vườn, trưởng làng nhận ra chiếc hộp của người bạn cũ, móc câu "설마 이 상자를 보낸 사람이..."); tiếng Trung có biến điệu 一 (yí gè), thanh nhẹ (早上 zǎo shang); tiếng Hàn dùng kính ngữ với trưởng làng (오셨어요, 앉으셨어요); câu hỏi có đáp án trong bài, câu chép là câu trọn vẹn trong bài.
 
+Ảnh (số báo Gemini thật mở trong Anki thật): `133_that_trung_1711.png`, `133_that_trung_truyen.png` (bấm 笑 → xiào · cười · TIẾU · cây trong vườn), `133_that_han_truyen.png` (낙엽 từ mới; 마시러 → 마시다, 오셨어요 → 오다 được gạch chân). Ảnh kịch bản: `133_nguon_bao_hai_bao.png`, `133_chep_trung.png`, `133_chep_han.png`.
+
 ## 6. Hạn chế đã biết
 
 - Máy chỉ biết một âm tiết là **một cách đọc hợp lệ** của chữ, không biết có đúng văn cảnh không (地 dì / de, 得 dé / de / děi, 行 xíng / háng…) — dựa vào Gemini soát. **Nên nhờ người giỏi tiếng Trung / tiếng Hàn đọc vài số báo thật.**
