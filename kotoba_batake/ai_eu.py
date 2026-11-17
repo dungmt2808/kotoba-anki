@@ -446,7 +446,15 @@ def _fix_dictation(lang: str, raw: dict[str, Any], scope: dict[str, Any], opts: 
 
 
 def plain_issue(raw: Any) -> Any:
-    return ai_en.plain_issue(raw)
+    """Bản không có dấu tra từ để gửi Gemini sửa / soát — cả câu hỏi / lựa chọn (máy nối tra từ ở đó nữa)."""
+    out = ai_en.plain_issue(raw)
+    for q in out.get("cau_hoi", []) if isinstance(out, dict) and isinstance(out.get("cau_hoi"), list) else []:
+        if isinstance(q, dict):
+            if isinstance(q.get("hoi"), str):
+                q["hoi"] = paper.surface(q["hoi"])
+            if isinstance(q.get("chon"), list):
+                q["chon"] = [paper.surface(o) if isinstance(o, str) else o for o in q["chon"]]
+    return out
 
 
 # ---------------------------------------------------------------------------

@@ -199,7 +199,8 @@ with tarfile.open(fileobj=io.BytesIO(ma_cu.archive(ROOT, "d5efb47")), mode="r:*"
 ok(re.search(r'^GEOM = "kotoba_batake_edit"$', ew, re.M) is not None and ew.count('"kotoba_batake_edit"') == 1
    and "restoreGeom(self, GEOM)" in ew and "saveGeom(self, GEOM)" in ew, "kotoba_batake_edit chỉ là tên vị trí cửa sổ (saveGeom, hồ sơ trên máy)")
 new_src["edit_win.py"] = new_src["edit_win.py"].replace('"kotoba_batake_edit"', "")
-nk, okk = coll_keys(new_src) - {"kotoba_batake_paper_zh", "kotoba_batake_paper_ko"}, coll_keys(old_src)   # 1.33: báo zh / ko
+nk, okk = coll_keys(new_src) - {"kotoba_batake_paper_zh", "kotoba_batake_paper_ko", "kotoba_batake_paper_de",
+                                "kotoba_batake_paper_fr"}, coll_keys(old_src)   # 1.33: báo zh / ko; 1.35: báo de / fr
 ok(nk == okk, "khoá kotoba_batake_* trong mã giống hệt 1.31.5 (%d khoá)%s" % (len(nk), (" — khác: %s" % sorted(nk ^ okk)) if nk != okk else ""))
 
 print("== 5. collection Anki thật")

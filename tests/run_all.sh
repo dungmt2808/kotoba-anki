@@ -191,6 +191,9 @@ fi
 echo "== core/test_132c.py (1.34.1 kiểm tra thêm: Đuổi quạ so đáp án với deck / bộ gõ thật, đoán ngôn ngữ ~30 kiểu deck ngoài đời, Python 3.9 nếu có PY39)"
 OUT=$("${ANKI_PY:-python3}" -W ignore "$HERE/core/test_132c.py" "$ADDON" 2>&1); RC=$?
 echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
+echo "== core/test_135.py (1.35: tiếng Đức / tiếng Pháp — lưu lang3 với mã 1.31.3 / 1.34.1 thay nhau lưu, nhận từ trong câu, báo Der Wortgarten / Le Jardin des Mots với Gemini giả, lời nhắc, bảng EU soát hunspell, Đuổi quạ / glang / ngày báo trong node)"
+OUT=$("${ANKI_PY:-python3}" -W ignore "$HERE/core/test_135.py" "$ADDON" 2>&1); RC=$?
+echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
 # trang web chung (site/, GitHub Pages): đăng mã, dữ liệu trang khớp add-on (đổi hình mà quên `node site/tools/xuat_hinh.js` là báo)
 echo "== trang/test_trang.py (trang web: đăng / gỡ mã, biểu mẫu issue, GitHub Actions, dữ liệu khớp add-on)"
 OUT=$(python3 "$HERE/trang/test_trang.py" "$ADDON" 2>&1); RC=$?

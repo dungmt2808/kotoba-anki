@@ -202,7 +202,8 @@ for what, needle in (("Đổi khoá", '"Đổi khoá"'), ("Giọng đọc", "aiS
                      ("Truyện", "aiSet({ story: x })"), ("Chủ đề truyện", "aiSet({ tones: next })"), ("Tự viết", "aiSet({ auto: cb.checked })"),
                      ("Xoá khoá", 'H.send("ai:forget")'), ("giọng cho câu không có audio", "voiceBox(v)")):
     ok(needle in mb, '"Tuỳ chọn thêm" có ' + what)
-ok("aiSet({ dict_voice: x })" in pj and 'aiSet({ level: x })' in pj and 'H.send("ai:decks:"' in pj, "Trình độ / Lấy từ / giọng câu chép vẫn lưu như cũ")
+ok("aiSet({ dict_voice: x })" in pj and ('aiSet({ level: x })' in pj or 'aiSet({ level: x, lang: lang })' in pj)   # 1.35: kèm lang (de / fr cùng A1–C1 với en)
+   and 'H.send("ai:decks:"' in pj, "Trình độ / Lấy từ / giọng câu chép vẫn lưu như cũ")
 ok(len(re.findall(r'aiRow\([^;]*chips\(\[\["', pj)) == 0, "không còn hàng nút chọn-một nào trong tab Nguồn báo (chỉ Chủ đề truyện chọn nhiều)")
 css = src("web/garden.css")
 ok(".kb-ai-sel {" in css and ".kb-ai-opts-box > summary::before" in css and ".kb-ai-plan-b {" in css, "CSS cho ô thả xuống / khối thu gọn")
@@ -218,6 +219,7 @@ KEYS_1330 = ["kotoba_batake_edit", "kotoba_batake_events", "kotoba_batake_ext", 
 keys = set()
 for f in glob.glob(os.path.join(ADDON, "*.py")):
     keys |= set(re.findall(r'"(kotoba_batake_[a-z0-9_]+)"', open(f, encoding="utf-8").read()))
+keys -= {"kotoba_batake_paper_de", "kotoba_batake_paper_fr"}     # 1.35: báo tiếng Đức / tiếng Pháp — khoá mới, test_135.py soát
 ok(sorted(keys) == KEYS_1330, "khoá collection trong mã = 1.33.0" + ("" if sorted(keys) == KEYS_1330 else ": " + str(sorted(set(keys) ^ set(KEYS_1330)))))
 cfg = json.load(open(os.path.join(ADDON, "config.json"), encoding="utf-8"))
 CFG_KEYS_1330 = 39

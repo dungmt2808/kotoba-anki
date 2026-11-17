@@ -2141,7 +2141,7 @@ def translate_issue(client: Gemini, issue: dict[str, Any], lang: str = "ja", pre
     prompt = ("Dịch số báo %s dưới đây sang tiếng Việt cho người Việt đang học: dịch tự nhiên, đúng ý, tên riêng viết "
               "Latin (Lin, Hana, Stack-chan, quán Kotoba, làng Kotoba), không thêm ghi chú hay giải thích trong ngoặc, không để chữ %s trong bản dịch. Mỗi bài trả về \"dich\" là "
               "danh sách bản dịch của TỪNG đoạn, đúng thứ tự và đúng số đoạn (không dịch tiêu đề).\n\nSỐ BÁO:\n%s" % (
-                  "tiếng Anh" if lang == "en" else "tiếng Nhật", "Anh" if lang == "en" else "Nhật / Hán",
+                  *TRANSLATE_FROM.get(lang, ("tiếng Nhật", "Nhật / Hán")),
                   json.dumps({"bai": arts}, ensure_ascii=False)))
     last: AIError | None = None
     for name in names[:MAX_MODELS]:
@@ -2551,6 +2551,11 @@ def export_story_for_claude(shared: str, claude_dir: str | None) -> bool:
     return True
 
 
+# 1.35: tên ngôn ngữ cho lời nhắc dịch số cũ (trước: mọi báo không phải tiếng Anh đều ghi "tiếng Nhật")
+TRANSLATE_FROM = {"en": ("tiếng Anh", "Anh"), "zh": ("tiếng Trung", "Trung"), "ko": ("tiếng Hàn", "Hàn"),
+                  "de": ("tiếng Đức", "Đức"), "fr": ("tiếng Pháp", "Pháp")}
+
+
 def tts_text(markup: str, lang: str = "ja") -> str:
     """Chữ gửi cho giọng đọc: giữ chữ Hán (để đúng ngữ điệu) trừ số đếm / từ nhiều cách đọc thì dùng kana.
     1.33: báo tiếng Trung / tiếng Hàn đọc chữ (không đọc pinyin / phiên âm)."""
@@ -2593,17 +2598,18 @@ def _lang_module(lang: str) -> Any:
         return _en_module()
     if lang == "vi":
         return _vi_module()
-    if lang in ("zh", "ko"):
+    if lang in ("zh", "ko", "de", "fr"):          # 1.33: Trung / Hàn; 1.35: Đức / Pháp
         import importlib
         try:
-            return importlib.import_module("." + ("ai_zh" if lang == "zh" else "ai_ko"), __package__)
+            return importlib.import_module(".ai_" + lang, __package__)
         except (ImportError, TypeError):
-            return importlib.import_module("ai_zh" if lang == "zh" else "ai_ko")
+            return importlib.import_module("ai_" + lang)
     return None
 
 
-LANG_LABEL = {"ja": "", "en": " (tiếng Anh)", "vi": " (tiếng Việt)", "zh": " (tiếng Trung)", "ko": " (tiếng Hàn)"}
-FOREIGN = ("en", "vi", "zh", "ko")     # báo có phần riêng (mô-đun ai_xx); tiếng Nhật dùng phần chung của file này
+LANG_LABEL = {"ja": "", "en": " (tiếng Anh)", "vi": " (tiếng Việt)", "zh": " (tiếng Trung)", "ko": " (tiếng Hàn)",
+              "de": " (tiếng Đức)", "fr": " (tiếng Pháp)"}
+FOREIGN = ("en", "vi", "zh", "ko", "de", "fr")     # báo có phần riêng (mô-đun ai_xx); tiếng Nhật dùng phần chung của file này
 
 
 class Job:
@@ -3230,7 +3236,7 @@ def make_audio(client: Gemini, base: str, date: str, mode: str, voice: str, mode
                 out["made"] += 1
                 _write_json(meta_path, meta)
             continue
-        speech = tts_text(text, raw.get("ngon_ngu") if raw.get("ngon_ngu") in ("en", "vi", "zh", "ko") else "ja")
+        speech = tts_text(text, raw.get("ngon_ngu") if raw.get("ngon_ngu") in ("en", "vi", "zh", "ko", "de", "fr") else "ja")
         if not speech:
             continue
         done_api += 1

@@ -344,6 +344,7 @@ with tarfile.open(fileobj=io.BytesIO(ma_cu.archive(ROOT, "d5efb47")), mode="r:*"
         if m.isfile() and m.name.count("/") == 1 and m.name.endswith(".py"):
             old_keys |= set(re.findall(r'"(kotoba_batake_[a-z0-9_]+)"', tf.extractfile(m).read().decode("utf-8")))
 diff = sorted(new_keys - old_keys - {"kotoba_batake_edit"})       # kotoba_batake_edit: vị trí cửa sổ (1.32.2, hồ sơ máy)
+diff = [k for k in diff if k not in ("kotoba_batake_paper_de", "kotoba_batake_paper_fr")]   # 1.35: báo de / fr (test_135.py)
 ok(diff == ["kotoba_batake_paper_ko", "kotoba_batake_paper_zh"] and not (old_keys - new_keys),
    "khoá collection mới chỉ kotoba_batake_paper_zh / _ko, không bỏ khoá nào: %s" % diff)
 cfg = json.load(open(os.path.join(ADDON, "config.json"), encoding="utf-8"))

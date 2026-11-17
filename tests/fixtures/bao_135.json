@@ -1,0 +1,177 @@
+{
+ "cong_cu": "Claude soạn tay 17/11 (1.35) theo cùng cốt truyện với bao_133.json; câu ngắn trình độ A2.",
+ "de": {
+  "story": {
+   "tieu_de": "Eine seltsame Geschichte am Morgen",
+   "doan": [
+    "„Hana, gestern Nacht haben sich die Holzschuhe wirklich allein bewegt!“, sagte Lin und hielt ihr Notizbuch in der Hand. Da kam der Bürgermeister in das Gasthaus. Er setzte sich langsam hin und sagte: „Vor fünfzig Jahren stand eine Frau in einem weißen Kleid am alten Brunnen. Das Geräusch der Holzschuhe ist ihr Geräusch.“",
+    "Lin hatte Angst, und ihre Hände zitterten. Sie wollte die Geschichte in ihr Notizbuch schreiben, aber sie schrieb zu langsam. Hana sagte nichts. Sie gab dem Bürgermeister einen warmen Tee und sah lange aus dem Fenster zum Brunnen.",
+    "Da lief StackChan in das Gasthaus. „Ich habe ein Gespenst gemalt! Es ist eckig und hat rote Augen!“ Alle lachten. Aber Lin sah das Bild an und lachte plötzlich nicht mehr. Das Gespenst auf dem Bild trug Holzschuhe."
+   ],
+   "dich": [
+    "\"Chị Hana ơi, tối qua guốc gỗ tự chuyển động thật đấy!\" Lin cầm cuốn sổ và nói. Lúc đó trưởng làng bước vào quán. Ông chậm rãi ngồi xuống và nói: \"Năm mươi năm trước, cạnh giếng cổ có một người phụ nữ mặc áo trắng. Tiếng guốc gỗ là tiếng của cô ấy.\"",
+    "Lin sợ đến mức tay cứ run mãi. Lin muốn ghi câu chuyện vào sổ nhưng viết quá chậm. Chị Hana không nói gì. Chị rót trà ấm mời trưởng làng rồi nhìn rất lâu ra giếng cổ ngoài cửa sổ.",
+    "Lúc đó StackChan chạy vào quán. \"Tớ vẽ ma rồi! Nó hình vuông, có mắt đỏ!\" Mọi người đều cười. Nhưng Lin nhìn bức tranh thì bỗng thôi cười. Con ma trong tranh đang đi guốc gỗ."
+   ],
+   "tu_moi": [
+    {
+     "w": "der Holzschuh",
+     "r": "",
+     "m": "guốc gỗ"
+    }
+   ]
+  },
+  "issue": {
+   "bai": [
+    {
+     "loai": "tin_lang",
+     "tieu_de": "Ein klarer Herbsttag",
+     "doan": [
+      "Heute war das Wetter den ganzen Tag klar. Die Blätter im Dorf sind sehr schön, und die Leute haben viele Fotos gemacht.",
+      "Nächste Woche gibt es ein Herbstfest. Der Bürgermeister ist heute in das Gasthaus gegangen und hat das Fest vorbereitet."
+     ],
+     "dich": [
+      "Hôm nay trời quang cả ngày. Lá trong làng rất đẹp nên mọi người chụp nhiều ảnh.",
+      "Tuần sau có lễ hội mùa thu. Hôm nay trưởng làng đã đến quán trọ để chuẩn bị lễ hội."
+     ]
+    },
+    {
+     "loai": "cot",
+     "tieu_de": "StackChans Ecke",
+     "doan": [
+      "Ich habe heute eine Katze gemalt. Die Katze ist sehr süß. Morgen male ich eine Blume."
+     ],
+     "dich": [
+      "Hôm nay tớ vẽ một con mèo. Con mèo rất dễ thương. Ngày mai tớ sẽ vẽ một bông hoa."
+     ]
+    }
+   ],
+   "cau_hoi": [
+    {
+     "hoi": "Wohin ist der Bürgermeister heute gegangen?",
+     "chon": [
+      "in das Gasthaus",
+      "in die Schule",
+      "in das Krankenhaus"
+     ],
+     "dung": 0,
+     "giai_thich": "Tin làng: hôm nay trưởng làng đã đến quán trọ."
+    },
+    {
+     "hoi": "Was malt StackChan morgen?",
+     "chon": [
+      "eine Katze",
+      "eine Blume",
+      "einen Brunnen"
+     ],
+     "dung": 1,
+     "giai_thich": "Góc StackChan: ngày mai sẽ vẽ một bông hoa."
+    }
+   ],
+   "chinh_ta": [
+    {
+     "cau": "Nächste Woche gibt es ein Herbstfest.",
+     "them_dap_an": []
+    },
+    {
+     "cau": "Die Katze ist sehr süß.",
+     "them_dap_an": []
+    }
+   ],
+   "mau_cau": [
+    "de2-01",
+    "de1-05"
+   ],
+   "tu_moi": [],
+   "tom_tat": "Số báo về ngày thu trong trẻo, lễ hội của làng và bức tranh của StackChan.",
+   "tom_tat_truyen": "Lin sợ hãi khi nghe trưởng làng kể chuyện ma ở giếng cổ."
+  }
+ },
+ "fr": {
+  "story": {
+   "tieu_de": "Une drôle d'histoire au matin",
+   "doan": [
+    "« Hana, hier soir, les sabots ont vraiment bougé tout seuls ! » dit Lin, son carnet à la main. À ce moment, le maire est entré dans l'auberge. Il s'est assis lentement et a dit : « Il y a cinquante ans, une femme en robe blanche se tenait près du vieux puits. Ce bruit de sabots, c'est le sien. »",
+    "Lin avait peur et ses mains tremblaient. Elle voulait écrire l'histoire dans son carnet, mais elle écrivait trop lentement. Hana n'a rien dit. Elle a servi un thé chaud au maire et a regardé longtemps le puits par la fenêtre.",
+    "Alors StackChan est entré en courant. « J'ai dessiné un fantôme ! Il est carré et il a des yeux rouges ! » Tout le monde a ri. Mais Lin a regardé le dessin et, soudain, elle n'a plus ri. Le fantôme du dessin portait des sabots."
+   ],
+   "dich": [
+    "\"Chị Hana ơi, tối qua guốc gỗ tự chuyển động thật đấy!\" Lin cầm cuốn sổ và nói. Lúc đó trưởng làng bước vào quán. Ông chậm rãi ngồi xuống và nói: \"Năm mươi năm trước, cạnh giếng cổ có một người phụ nữ mặc áo trắng. Tiếng guốc gỗ là tiếng của cô ấy.\"",
+    "Lin sợ đến mức tay cứ run mãi. Lin muốn ghi câu chuyện vào sổ nhưng viết quá chậm. Chị Hana không nói gì. Chị rót trà ấm mời trưởng làng rồi nhìn rất lâu ra giếng cổ ngoài cửa sổ.",
+    "Lúc đó StackChan chạy vào quán. \"Tớ vẽ ma rồi! Nó hình vuông, có mắt đỏ!\" Mọi người đều cười. Nhưng Lin nhìn bức tranh thì bỗng thôi cười. Con ma trong tranh đang đi guốc gỗ."
+   ],
+   "tu_moi": [
+    {
+     "w": "le sabot",
+     "r": "",
+     "m": "guốc gỗ"
+    }
+   ]
+  },
+  "issue": {
+   "bai": [
+    {
+     "loai": "tin_lang",
+     "tieu_de": "Une belle journée d'automne",
+     "doan": [
+      "Aujourd'hui, il a fait beau toute la journée. Les feuilles du village sont très belles, et les gens ont pris beaucoup de photos.",
+      "La semaine prochaine, il y a une fête d'automne. Aujourd'hui, le maire est allé à l'auberge pour préparer la fête."
+     ],
+     "dich": [
+      "Hôm nay trời quang cả ngày. Lá trong làng rất đẹp nên mọi người chụp nhiều ảnh.",
+      "Tuần sau có lễ hội mùa thu. Hôm nay trưởng làng đã đến quán trọ để chuẩn bị lễ hội."
+     ]
+    },
+    {
+     "loai": "cot",
+     "tieu_de": "Le coin de StackChan",
+     "doan": [
+      "Aujourd'hui, j'ai dessiné un chat. Le chat est très mignon. Demain, je vais dessiner une fleur."
+     ],
+     "dich": [
+      "Hôm nay tớ vẽ một con mèo. Con mèo rất dễ thương. Ngày mai tớ sẽ vẽ một bông hoa."
+     ]
+    }
+   ],
+   "cau_hoi": [
+    {
+     "hoi": "Où est allé le maire aujourd'hui ?",
+     "chon": [
+      "à l'auberge",
+      "à l'école",
+      "à l'hôpital"
+     ],
+     "dung": 0,
+     "giai_thich": "Tin làng: hôm nay trưởng làng đã đến quán trọ."
+    },
+    {
+     "hoi": "Qu'est-ce que StackChan va dessiner demain ?",
+     "chon": [
+      "un chat",
+      "une fleur",
+      "un puits"
+     ],
+     "dung": 1,
+     "giai_thich": "Góc StackChan: ngày mai sẽ vẽ một bông hoa."
+    }
+   ],
+   "chinh_ta": [
+    {
+     "cau": "La semaine prochaine, il y a une fête d'automne.",
+     "them_dap_an": []
+    },
+    {
+     "cau": "Le chat est très mignon.",
+     "them_dap_an": []
+    }
+   ],
+   "mau_cau": [
+    "fr2-01",
+    "fr1-05"
+   ],
+   "tu_moi": [],
+   "tom_tat": "Số báo về ngày thu đẹp trời, lễ hội của làng và bức tranh của StackChan.",
+   "tom_tat_truyen": "Lin sợ hãi khi nghe trưởng làng kể chuyện ma ở giếng cổ."
+  }
+ }
+}

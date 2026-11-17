@@ -60,6 +60,9 @@ def alternatives(word: str, lang: str) -> list[str]:
         base = strip_article(" ".join(core.split()), lang)
         if base:
             add(base)
+            refl = re.match(r"(?i)^(?:sich\s+|se\s+|s'|s’)(.+)$", base)    # sich freuen → freuen · s'asseoir → asseoir
+            if refl and ((lang == "de") == base.lower().startswith("sich")):
+                add(refl.group(1))
     return out
 
 
@@ -123,7 +126,12 @@ FR_IRREGULAR = (
     "commencer commence commençons commencé commençait|acheter achète achètes achetons achetez achètent acheté|"
     "appeler appelle appelles appelons appelez appellent appelé|jeter jette jetons jetez jettent jeté|"
     "préférer préfère préfères préférons préférez préfèrent préféré|payer paie paye payons payez paient payé|"
-    "envoyer envoie envoyons envoyez envoient envoyé enverra|essayer essaie essaye essayons essayez essaient essayé"
+    "envoyer envoie envoyons envoyez envoient envoyé enverra|essayer essaie essaye essayons essayez essaient essayé|"
+    # tính từ / danh từ bất quy tắc
+    "beau beaux bel belle belles|nouveau nouveaux nouvel nouvelle nouvelles|vieux vieil vieille vieilles|"
+    "blanc blanche blanches|long longue longues|gentil gentille gentilles|doux douce douces|faux fausse fausses|"
+    "frais fraîche fraîches|sec sèche sèches|cher chère chères|premier première premières|"
+    "dernier dernière dernières|fou folle folles|œil yeux|ciel cieux|travail travaux"
 )
 
 
@@ -165,7 +173,8 @@ def _de_forms(w: str) -> list[str]:
         return out
     if low.endswith(("en", "ern", "eln")) and len(low) > 3:     # động từ
         stem = w[:-2] if low.endswith("en") else w[:-1]
-        sep = re.match(r"^(ab|an|auf|aus|bei|ein|mit|nach|vor|weg|zu|zurück|fern|los|vorbei)(.+)$", low)
+        sep = re.match(r"^(ab|an|auf|aus|bei|ein|mit|nach|vor|weg|zu|zurück|fern|los|vorbei|hin|her|heim|fest|teil|"
+                       r"zusammen|weiter|hinaus|heraus|herein|hinein)(.+)$", low)
         for suf in ("e", "st", "t", "et", "est", "en", "te", "test", "ten", "tet", "end", "ende", "enden"):
             out.append(stem + suf)
         if sep and len(sep.group(2)) > 3:              # anrufen → angerufen, anzurufen
@@ -183,7 +192,9 @@ def _de_forms(w: str) -> list[str]:
     return out
 
 
-def _fr_forms(w: str) -> list[str]:
+def _fr_forms(w: str, noun: bool = False) -> list[str]:
+    """noun: từ của deck có mạo từ (le port, la porte) → danh từ, chỉ thêm số nhiều (không thêm giống cái -e: le port ≠
+    porte)."""
     out = [w]
     low = w.lower()
     if low in _FR_IRR:
@@ -203,7 +214,11 @@ def _fr_forms(w: str) -> list[str]:
     elif low.endswith("re") and len(low) > 3:        # nhóm 3 (vendre)
         st = w[:-2]
         out += [st + x for x in ("s", "", "ons", "ez", "ent", "u", "ue", "us", "ues", "ait", "aient", "rai", "ra")]
-    else:                                            # danh từ / tính từ
+    elif noun:                                       # danh từ: số nhiều
+        out += [w + "s", w + "x"]
+        if low.endswith("al"):
+            out.append(w[:-2] + "aux")
+    else:                                            # tính từ (hoặc danh từ không ghi mạo từ)
         out += [w + "s", w + "e", w + "es", w + "x"]
         if low.endswith("al"):
             out.append(w[:-2] + "aux")
@@ -224,6 +239,11 @@ def forms(word: str, lang: str) -> list[str]:
     """Mọi dạng để tìm từ / cụm từ của deck trong câu (dài trước). Cụm từ: biến đổi chữ đầu (động từ) và chữ cuối."""
     out: list[str] = []
     fx = _de_forms if lang == "de" else _fr_forms
+    if lang == "fr":
+        alts0 = alternatives(word, lang)
+        # có mạo từ → danh từ; ghi "(e)" / "(ne)" (ami(e), chien(ne)) → vẫn nhận giống cái
+        noun = bool(alts0) and strip_article(alts0[0], lang) != alts0[0] and not re.search(r"\((?:e|ne|se|ve|le)\)", nfc(word))
+        fx = (lambda x: _fr_forms(x, noun))      # noqa: E731
     for alt in alternatives(word, lang):
         parts = alt.split()
         if not parts:

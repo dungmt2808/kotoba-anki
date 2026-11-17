@@ -35,6 +35,8 @@ from . import ai_en
 from . import ai_vi
 from . import ai_zh      # 1.33: báo tiếng Trung
 from . import ai_ko      # 1.33: báo tiếng Hàn
+from . import ai_de      # 1.35: báo tiếng Đức
+from . import ai_fr      # 1.35: báo tiếng Pháp
 from . import backup_core
 from . import diag
 from . import draft_core     # 1.34: Trang trí thử
@@ -83,10 +85,17 @@ PAPER_ZH = paper.PaperState(os.path.join(ADDON_DIR, "user_files", "paper_zh.json
 AI_DIR_KO = os.path.join(ADDON_DIR, "user_files", ai_ko.FOLDER)
 PAPER_KO = paper.PaperState(os.path.join(ADDON_DIR, "user_files", "paper_ko.json"), col_getter=lambda: mw.col,
                             key=paper.PAPER_KEY_KO)
-AI_DIRS = {"ja": AI_DIR, "en": AI_DIR_EN, "vi": AI_DIR_VI, "zh": AI_DIR_ZH, "ko": AI_DIR_KO}
+# 1.35: báo tiếng Đức / tiếng Pháp — như báo tiếng Trung / tiếng Hàn (khoá collection mới kotoba_batake_paper_de / _fr)
+AI_DIR_DE = os.path.join(ADDON_DIR, "user_files", ai_de.FOLDER)
+PAPER_DE = paper.PaperState(os.path.join(ADDON_DIR, "user_files", "paper_de.json"), col_getter=lambda: mw.col,
+                            key=paper.PAPER_KEY_DE)
+AI_DIR_FR = os.path.join(ADDON_DIR, "user_files", ai_fr.FOLDER)
+PAPER_FR = paper.PaperState(os.path.join(ADDON_DIR, "user_files", "paper_fr.json"), col_getter=lambda: mw.col,
+                            key=paper.PAPER_KEY_FR)
+AI_DIRS = {"ja": AI_DIR, "en": AI_DIR_EN, "vi": AI_DIR_VI, "zh": AI_DIR_ZH, "ko": AI_DIR_KO, "de": AI_DIR_DE, "fr": AI_DIR_FR}
 # 1.25.2 "Một làng, một truyện": bộ nhớ truyện chung + bản gốc mỗi ngày (truyện + tin làng, tiếng Việt) cho mọi báo Gemini
 AI_DIR_SHARED = os.path.join(ADDON_DIR, "user_files", ai.SHARED_FOLDER)
-AI_MODS = {"en": ai_en, "vi": ai_vi, "zh": ai_zh, "ko": ai_ko}
+AI_MODS = {"en": ai_en, "vi": ai_vi, "zh": ai_zh, "ko": ai_ko, "de": ai_de, "fr": ai_fr}
 # 1.23: tiến độ đọc của nguồn báo tiếng Nhật thứ hai (Kệ báo gộp số Claude Code + Gemini), khoá collection riêng
 BOOK = paper.PaperState(os.path.join(ADDON_DIR, "user_files", "paper_nguon.json"), col_getter=lambda: mw.col,
                         key=paper.PAPER_KEY_SRC, clean=paper.clean_book)
@@ -216,7 +225,7 @@ def _library(lang: str = "ja") -> paper.Library | None:
     ngôn ngữ khác → chưa có báo."""
     global _wav_checked
     cfg = config()
-    if lang in ("en", "vi", "zh", "ko"):
+    if lang in ("en", "vi", "zh", "ko", "de", "fr"):
         # chưa có thư mục thì Library coi như chưa có số nào (thư mục chỉ tạo khi Gemini viết số đầu tiên)
         base = AI_DIRS[lang]
         if not ai.clean_key(cfg.get("gemini_key")):
@@ -366,8 +375,8 @@ def paper_ref(lang: str, ref: str) -> tuple[paper.Library | None, str, str]:
     return (_library("ja") if src == cur else _source_lib(src)), src, date
 
 
-PAPER_LANGS = ("ja", "en", "zh", "ko", "vi")     # 1.25.1: thêm báo tiếng Việt; 1.33: tiếng Trung / tiếng Hàn
-LEARN_LANGS = ("ja", "en", "zh", "ko")             # báo học tiếng (tối đa 2); tiếng Việt đi một mình
+PAPER_LANGS = paper.PAPER_LANGS      # 1.25.1: + tiếng Việt; 1.33: + Trung / Hàn; 1.35: + Đức / Pháp
+LEARN_LANGS = paper.LEARN_LANGS      # báo học tiếng (tối đa 2); tiếng Việt đi một mình
 
 
 def _en_has_issues() -> bool:
@@ -617,7 +626,7 @@ def paper_lang(dialog: Any = None) -> str:
 
 
 def _paper_state(lang: str) -> paper.PaperState:
-    return {"en": PAPER_EN, "vi": PAPER_VI, "zh": PAPER_ZH, "ko": PAPER_KO}.get(lang, PAPER)
+    return {"en": PAPER_EN, "vi": PAPER_VI, "zh": PAPER_ZH, "ko": PAPER_KO, "de": PAPER_DE, "fr": PAPER_FR}.get(lang, PAPER)
 
 
 def paper_langs() -> list[dict[str, Any]]:
@@ -1316,8 +1325,12 @@ def _ai_opts(cfg: dict[str, Any]) -> dict[str, Any]:
     voice_en = cfg.get("gemini_voice_en") if cfg.get("gemini_voice_en") in ai.VOICES else voice
     level_zh = cfg.get("gemini_level_zh") if cfg.get("gemini_level_zh") in ai_zh.LEVELS else ai_zh.DEFAULT_LEVEL     # 1.33
     level_ko = cfg.get("gemini_level_ko") if cfg.get("gemini_level_ko") in ai_ko.LEVELS else ai_ko.DEFAULT_LEVEL
+    # 1.35: không thêm vào config.json (mặc định ở đây, ghi khi người dùng chọn trình độ)
+    level_de = cfg.get("gemini_level_de") if cfg.get("gemini_level_de") in ai_de.LEVELS else ai_de.DEFAULT_LEVEL
+    level_fr = cfg.get("gemini_level_fr") if cfg.get("gemini_level_fr") in ai_fr.LEVELS else ai_fr.DEFAULT_LEVEL
     return {"level": level, "audio": audio, "voice": voice, "model": model.strip()[:80],
             "level_en": level_en, "voice_en": voice_en, "level_zh": level_zh, "level_ko": level_ko,
+            "level_de": level_de, "level_fr": level_fr,
             "tts_model": tts.strip()[:80], "auto": bool(cfg.get("gemini_auto", True)),
             "scope": "deck",      # 1.23: báo Gemini chỉ lấy từ deck (gemini_scope "auto" cũ = "deck")
             "story": cfg.get("gemini_story") if cfg.get("gemini_story") in story_core.MODES else "hay",
@@ -1366,7 +1379,7 @@ def _lang_view(lang: str, o: dict[str, Any], date: str) -> dict[str, Any]:
 
 def _level_of(o: dict[str, Any], lang: str) -> str:
     """Trình độ của báo `lang` (ô Trình độ ở tab Nguồn báo)."""
-    return o.get("level_" + lang) if lang in ("en", "zh", "ko") else o["level"]
+    return o.get("level_" + lang) if lang in ("en", "zh", "ko", "de", "fr") else o["level"]
 
 
 def ai_view(extra: dict[str, Any] | None = None, lang: str | None = None) -> dict[str, Any]:
@@ -1452,7 +1465,7 @@ def _shared_exhausted(*bases: str) -> dict[str, float]:
             out[k] = max(out.get(k, 0), float(v))
     except Exception:
         pass
-    for b in bases or (AI_DIR, AI_DIR_EN, AI_DIR_VI, AI_DIR_ZH, AI_DIR_KO):
+    for b in bases or (AI_DIR, AI_DIR_EN, AI_DIR_VI, AI_DIR_ZH, AI_DIR_KO, AI_DIR_DE, AI_DIR_FR):
         st = ai.load_status(b) if os.path.isdir(b) else {}
         for k, v in (st.get("exhausted") or {}).items() if isinstance(st.get("exhausted"), dict) else []:
             if isinstance(k, str) and isinstance(v, (int, float)):
@@ -1530,6 +1543,8 @@ def _loi_sai(lang: str) -> list[str]:
         miss = [w for w in miss if re.search(r"[\u4e00-\u9fff]", w) and not re.search(r"[\u3040-\u30ff]", w)]
     elif lang == "ko":
         miss = [w for w in miss if re.search(r"[\uac00-\ud7a3]", w)]
+    elif lang in ("de", "fr"):          # 1.35: chữ Latin của lượt chép báo đó
+        miss = [w for w in miss if re.search(r"[A-Za-zÀ-ÿ]", w) and not ai.JP_CHAR_RE.search(w)]
     else:
         miss = [w for w in miss if ai.JP_CHAR_RE.search(w)]
     return list(dict.fromkeys(miss))[:12]
@@ -1726,7 +1741,7 @@ def ai_start(reason: str, dialog: Any = None, lang: str = "ja") -> bool:
                 # 1.25.2: truyện chung + thời tiết khớp với trời trong vườn
                 "story_base": AI_DIR_SHARED, "thoi_tiet": _village_weather(date)}
         try:
-            src0 = ai.migrate_story(AI_DIR_SHARED, [AI_DIR, AI_DIR_EN, AI_DIR_VI, AI_DIR_ZH, AI_DIR_KO])
+            src0 = ai.migrate_story(AI_DIR_SHARED, [AI_DIR, AI_DIR_EN, AI_DIR_VI, AI_DIR_ZH, AI_DIR_KO, AI_DIR_DE, AI_DIR_FR])
             if src0:
                 _warn("truyện chung", "chép bộ nhớ truyện từ " + os.path.basename(src0))
         except OSError as err:
@@ -1742,7 +1757,7 @@ def ai_start(reason: str, dialog: Any = None, lang: str = "ja") -> bool:
     st["last_try"] = time.time()
     ai.save_status(base, st)
     client = ai.Gemini(key, exhausted=_shared_exhausted())
-    voice = o["voice_en"] if lang in ("en", "zh", "ko") else o["voice"]
+    voice = o["voice_en"] if lang in ("en", "zh", "ko", "de", "fr") else o["voice"]
     claude_story = _claude_story_dir(cfg)
 
     def progress(msg: str) -> None:
@@ -1904,7 +1919,8 @@ def _ai_done(fut: Any, base: str, date: str, client: Any = None, owner: str | No
     if client is not None:
         st["exhausted"] = client.exhausted_state()
     ai.save_status(base, st)
-    lname = {AI_DIR_EN: " tiếng Anh", AI_DIR_VI: " tiếng Việt", AI_DIR_ZH: " tiếng Trung", AI_DIR_KO: " tiếng Hàn"}.get(base, "")
+    lname = {AI_DIR_EN: " tiếng Anh", AI_DIR_VI: " tiếng Việt", AI_DIR_ZH: " tiếng Trung", AI_DIR_KO: " tiếng Hàn",
+             AI_DIR_DE: " tiếng Đức", AI_DIR_FR: " tiếng Pháp"}.get(base, "")
     if res.get("ok") and not res.get("audio_only"):
         msg = "Báo%s mới: số %s đã về hòm thư." % (lname, res.get("so", ""))
     elif res.get("ok") and au.get("made"):
@@ -2465,7 +2481,7 @@ def fix_start(ds: str, auto: bool = False) -> str:
     ex = dict(_shared_exhausted())
     client = ai.Gemini(key, exhausted=ex)
     models: list[str] = []
-    for base in (AI_DIR, AI_DIR_EN, AI_DIR_VI, AI_DIR_ZH, AI_DIR_KO):
+    for base in (AI_DIR, AI_DIR_EN, AI_DIR_VI, AI_DIR_ZH, AI_DIR_KO, AI_DIR_DE, AI_DIR_FR):
         st = ai.load_status(base) if os.path.isdir(base) else {}
         for n in st.get("models") or [] if isinstance(st.get("models"), list) else []:
             if isinstance(n, str) and n not in models:
@@ -3672,7 +3688,7 @@ class GardenDialog(QDialog):
                 if lib is None:
                     raise paper.PaperError(
                         "Báo %s do Gemini viết: dán khoá Gemini ở tab Nguồn báo." % LANG_NAME.get(lang, lang)
-                        if lang in ("en", "vi", "zh", "ko") else
+                        if lang in ("en", "vi", "zh", "ko", "de", "fr") else
                         "Chưa chọn nguồn báo: mở tab Nguồn báo để dán khoá Gemini hoặc chọn thư mục kotoba_daily.")
                 voice = _voice()
                 view = self._issue_view(lib, st, arg, voice, src, lang)
@@ -3811,8 +3827,12 @@ class GardenDialog(QDialog):
                 refresh = True
             if p.get("level") in ai.LEVELS:
                 changes["gemini_level"] = p["level"]
-            if p.get("level") in ai_en.LEVELS:          # 1.19: trình độ của báo tiếng Anh (A1–C1)
+            # 1.35: báo tiếng Đức / tiếng Pháp cũng A1–C1 → trang gửi kèm "lang" để không đổi nhầm trình độ báo tiếng Anh
+            lv_lang = p.get("lang") if p.get("lang") in PAPER_LANGS else None
+            if p.get("level") in ai_en.LEVELS and lv_lang in (None, "en"):          # 1.19: báo tiếng Anh (A1–C1)
                 changes["gemini_level_en"] = p["level"]
+            if lv_lang in ("de", "fr") and p.get("level") in AI_MODS[lv_lang].LEVELS:
+                changes["gemini_level_" + lv_lang] = p["level"]
             if p.get("level") in ai_zh.LEVELS:          # 1.33: báo tiếng Trung (HSK 1–6) / tiếng Hàn (TOPIK 1–6)
                 changes["gemini_level_zh"] = p["level"]
             if p.get("level") in ai_ko.LEVELS:
