@@ -212,6 +212,12 @@ result = 1`);
   ok(!(await cfg('gemini_langs_chosen')), 'chưa ghi "đã tự chọn" (người dùng chưa tick gì)');
   await deck('KO::TOPIK 2');
   ok(JSON.stringify(await wanted()) === '["zh"]', 'có khoá rồi: đổi sang deck tiếng Hàn → báo vẫn là tiếng Trung (không tự đổi theo deck)');
+  const legacy = await py(KB + fresh + `c = dict(mw.addonManager.getConfig(kb.__name__)); saved = c.get("gemini_langs")
+c.pop("gemini_langs", None); mw.addonManager.writeConfig(kb.__name__, c)
+r = kb.wanted_langs()
+c["gemini_langs"] = saved; mw.addonManager.writeConfig(kb.__name__, c)
+result = r`);
+  ok(JSON.stringify(legacy) === '["ja"]', 'đã dùng báo nhưng config chưa có lựa chọn (máy từ bản ≤ 1.19.0) → như 1.19.1: tiếng Nhật, không theo deck (' + JSON.stringify(legacy) + ')');
   await deck('ZH::HSK 2');
   await openSrc();
 

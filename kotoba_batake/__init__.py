@@ -373,8 +373,11 @@ def wanted_langs(cfg: dict[str, Any] | None = None) -> list[str]:
     deck nữa)."""
     cfg = cfg if cfg is not None else config()
     raw = cfg.get("gemini_langs")
-    if isinstance(raw, list) and (cfg.get("gemini_langs_chosen") or _papers_started(cfg)):
-        return clean_langs(raw)
+    if cfg.get("gemini_langs_chosen") or _papers_started(cfg):
+        if isinstance(raw, list):
+            return clean_langs(raw)
+        # đã dùng báo nhưng chưa có lựa chọn lưu (máy từ bản ≤ 1.19.0): như 1.19.1, không theo deck (e2e_120 tìm ra)
+        return ["ja"] + (["en"] if _en_has_issues() else [])
     try:
         auto = _auto_langs()
     except Exception as err:

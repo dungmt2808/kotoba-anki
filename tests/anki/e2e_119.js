@@ -157,7 +157,8 @@ result = {"en": en["read"].get("2026-11-03"), "ja": "2026-11-03" in ja["read"], 
   await page.eval(W('GardenPaper.open("src"); return 1;'));
   ok(await waitFor(page, 'document.querySelectorAll(".kb-ai-lang").length === 2'), 'thẻ Gemini: một khối cho mỗi báo đã tick');
   const want = await page.eval(W('return Array.from(document.querySelectorAll(".kb-ai-want .kb-ai-tick")).map(l => l.textContent.trim() + (l.querySelector("input").checked ? "*" : ""));'));
-  ok(want.join('|') === 'Tiếng Nhật*|Tiếng Anh*|Chỉ tiếng Việt', 'Báo muốn nhận (1.25.2: thêm Chỉ tiếng Việt): ' + want.join(' | '));
+  ok(want.join('|') === 'Tiếng Nhật*|Tiếng Anh*|Tiếng Trung|Tiếng Hàn|Chỉ tiếng Việt',
+    'Báo muốn nhận (1.25.2: thêm Chỉ tiếng Việt; 1.33: thêm Tiếng Trung / Tiếng Hàn): ' + want.join(' | '));
   const blocks = await page.eval(W(`return Array.from(document.querySelectorAll(".kb-ai-lang")).map(b => {
     const rows = Array.from(b.querySelectorAll(".kb-ai-row"));
     const get = (k) => rows.find(r => r.querySelector(".kb-ai-k").textContent === k);

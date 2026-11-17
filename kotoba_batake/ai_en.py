@@ -973,6 +973,17 @@ RULES = """QUY TẮC (máy sẽ kiểm tra, sai là phải viết lại):
 - Tên riêng viết đúng như phần nhân vật. Dấu câu, ngoặc kép như tiếng Anh thông thường."""
 
 
+VI_WEEKDAY = ("Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy", "Chủ Nhật")
+
+
+def season_text_vi(date: datetime.date) -> str:
+    """1.33 (báo Trung / Hàn): như season_text nhưng thứ bằng tiếng Việt — lời nhắc tiếng Việt, báo không phải tiếng Anh
+    (trước: "HÔM NAY: Sunday, …"; strftime còn theo locale của máy)."""
+    m = date.month
+    s = "xuân" if m in (3, 4, 5) else "hạ" if m in (6, 7, 8) else "thu" if m in (9, 10, 11) else "đông"
+    return "%s, ngày %d/%d/%d, mùa %s" % (VI_WEEKDAY[date.weekday()], date.day, date.month, date.year, s)
+
+
 def season_text(date: datetime.date) -> str:
     m = date.month
     s = "xuân" if m in (3, 4, 5) else "hạ" if m in (6, 7, 8) else "thu" if m in (9, 10, 11) else "đông"
@@ -1014,7 +1025,7 @@ def write_prompt(scope: dict[str, Any], opts: dict[str, Any], story: list[dict[s
     ky = int(opts.get("ky") or 1)
     third = "thong_bao" if date.day % 2 == 0 else "cot"
     dlo, dhi = DICT_[level]
-    parts = ["HÔM NAY: %s. Số báo %d.%s" % (season_text(date), int(opts.get("so") or 1),
+    parts = ["HÔM NAY: %s. Số báo %d.%s" % (P.get("season", season_text)(date), int(opts.get("so") or 1),
                                            (" Thời tiết ở làng: %s." % opts["thoi_tiet"]) if opts.get("thoi_tiet") else "")]
     if short:
         parts.append(

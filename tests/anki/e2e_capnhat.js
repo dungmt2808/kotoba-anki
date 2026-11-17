@@ -155,7 +155,17 @@ async function sau() {
   const diffF = Object.keys(want.files).filter((f) => f in got.files && got.files[f] !== want.files[f]);
   ok(!gone.length, 'mọi file trong user_files/ còn nguyên (' + Object.keys(want.files).length + ' file)' + (gone.length ? ' — MẤT: ' + gone.join(', ') : ''));
   ok(!diffF.length, 'nội dung file không đổi' + (diffF.length ? ' — đổi: ' + diffF.join(', ') : ''));
-  ok(JSON.stringify(got.addon) === JSON.stringify(want.addon), 'cấu hình add-on (⚙, khoá Gemini, mục tiêu ngày…) giữ nguyên');
+  // 1.33: bản mới có thể thêm mục mặc định ở config.json (gemini_level_zh / _ko) — mục cũ phải giữ nguyên giá trị, mục
+  // thêm chỉ được là mục mặc định của gói mới với đúng giá trị mặc định
+  const defs = await py(`import json, os
+result = json.load(open(os.path.join(mw.addonManager.addonsFolder("kotoba_batake"), "config.json"), encoding="utf-8"))`);
+  const ga = got.addon || {}, wa = want.addon || {};
+  const cfgChanged = Object.keys(wa).filter((k) => JSON.stringify(ga[k]) !== JSON.stringify(wa[k]));
+  const extra = Object.keys(ga).filter((k) => !(k in wa));
+  const badExtra = extra.filter((k) => !(k in defs) || JSON.stringify(defs[k]) !== JSON.stringify(ga[k]));
+  ok(!cfgChanged.length && !badExtra.length, 'cấu hình add-on (⚙, khoá Gemini, mục tiêu ngày…) giữ nguyên' +
+    (extra.length ? ' (thêm mục mặc định mới: ' + extra.join(', ') + ')' : '') +
+    (cfgChanged.length ? " — ĐỔI: " + cfgChanged.join(', ') : '') + (badExtra.length ? ' — THÊM LẠ: ' + badExtra.join(', ') : ''));
   ok(got.coins === want.coins && got.revlog === want.revlog && JSON.stringify(got.owned) === JSON.stringify(want.owned) &&
     JSON.stringify(got.yard) === JSON.stringify(want.yard), 'xu ' + got.coins + ', đồ đã mua, đồ trên sân, lượt ôn y như trước');
   ok(got.diary === want.diary && JSON.stringify(got.life) === JSON.stringify(want.life), 'nhật ký "' + got.diary + '" và sổ sinh hoạt còn nguyên');

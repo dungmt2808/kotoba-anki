@@ -1,5 +1,7 @@
 # Kế hoạch báo tiếng Trung / tiếng Hàn (bản riêng sau 1.32.2, số bản dự kiến 1.33) — ảnh phác, chờ người dùng duyệt
 
+> **Đã làm ở 1.33.0** (người dùng duyệt ảnh phác: "tớ thấy giao diện ổn rồi. làm tiếp, sau khi làm thì test thiệt kỹ nha"; "Báo Vườn Rau" đổi thành 词田晨报 / 말밭 신문 — chờ người dùng chọn tên). Chi tiết: PHAT_TRIEN.md mục 2.6z12, báo cáo `docs/kiem_thu/1.33/BAO_CAO.md`.
+
 Người dùng (phiên sau 17/11): "Báo tiếng Trung / tiếng Hàn: bản riêng sau đó, theo quyết định trên, cũng có ảnh phác trước".
 Quyết định đã chốt 17/11 (PHAT_TRIEN.md mục 7 + 10.0c): **tối đa 2 báo** trong Nhật / Anh / Trung / Hàn (tiếng Việt vẫn đi
 một mình); **mặc định 1 báo** theo deck đang chọn → deck ngôn ngữ trong tài khoản (≥ 2 ngôn ngữ: ôn nhiều nhất 30 ngày, chưa

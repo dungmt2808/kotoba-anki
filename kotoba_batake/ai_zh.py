@@ -802,6 +802,7 @@ def _zh_extra(scope: dict[str, Any], opts: dict[str, Any]) -> str:
 
 
 ZH_PROF: dict[str, Any] = {
+    "season": ai_en.season_text_vi,
     "levels": LEVELS, "default_level": DEFAULT_LEVEL, "length": LENGTH, "dict_words": DICT_WORDS,
     "lang_name": "tiếng Trung", "level_name": lambda lv: lv.replace("HSK", "HSK "), "story_setup": STORY_SETUP,
     "vocab_head": "(từ pinyin = nghĩa)", "vocab_lines": lambda scope: _vocab_lines(scope), "sep": "、",

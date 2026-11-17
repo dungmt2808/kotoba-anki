@@ -16,6 +16,8 @@ mặc định 1 báo theo deck). Không cần mạng, không cần pypinyin (d�
 7. Lời nhắc: báo tiếng Anh giống hệt từng chữ mã 1.31.5 thật; tiếng Trung / Hàn không sót chỗ trống @…@, không sót chữ
    "tiếng Anh" / IPA.
 8. Hợp đồng dữ liệu: khoá collection mới chỉ kotoba_batake_paper_zh / _ko; config.json chỉ thêm gemini_level_zh / _ko.
+10. 4 số báo Gemini thật (tests/fixtures/bao_133_that.json): mọi chữ Hán có âm tiết đúng bảng, chữ Hàn sạch, đủ chỗ tra từ,
+   câu hỏi / câu chép hợp lệ, trình đọc báo mở được, bảng tra từ có Hán Việt.
 9. Sửa sau khi soát: chấm chép theo dãy chung dài nhất; bản gốc lấy từ kỳ báo khác tự viết mang đúng ngôn ngữ; báo
    tiếng Nhật vẫn soát cách đọc từ mới toàn kana.
 
@@ -377,6 +379,45 @@ for lang, cau in (("zh", "[今|jīn][天|tiān]很好。"), ("ko", "오늘 날�
     ok(h[0] == "tts_" + lang and paper.VOICE_LABEL.get(h[0]) == "giọng máy", "%s: câu chép phát bằng giọng máy %s" % (lang, h[0]))
 src_pc = open(os.path.join(ADDON, "paper_core.py"), encoding="utf-8").read()
 ok(src_pc.count('"tts_en", "tts_zh", "tts_ko")') >= 4, "mọi chỗ coi giọng máy là có tiếng đều có tts_zh / tts_ko")
+
+print("== 10. 4 số báo Gemini thật (17–18/11, tests/fixtures/bao_133_that.json)")
+REAL = json.load(open(os.path.join(ROOT, "tests", "fixtures", "bao_133_that.json"), encoding="utf-8"))["so"]
+for ref, iss in sorted(REAL.items()):
+    lang = ref.split("/")[0]
+    texts = [x for b in iss["bai"] for x in [b["tieu_de"]] + b["doan"]] + [q["hoi"] for q in iss["cau_hoi"]] + \
+        [c for q in iss["cau_hoi"] for c in q["chon"]] + [c["cau"] for c in iss["chinh_ta"]]
+    if lang == "zh":
+        han = bad = 0
+        for t in texts:
+            cs, probs = ai_zh.chars(t)
+            bad += len(probs)
+            for c, syl in cs:
+                if Z.is_han(c):
+                    han += 1
+                    bad += 0 if syl and Z.syllable_ok(c, syl) else 1
+        ok(han > 300 and bad == 0, "%s: %d chữ Hán, mỗi chữ một âm tiết là cách đọc của chữ đó (lỗi %d)" % (ref, han, bad))
+    else:
+        probs = [e for t in texts for e in S.ko_text_problems(paper.surface(t))]
+        ok(not probs, "%s: chữ Hàn sạch (không Hán tự / kana / Latin lạ) %s" % (ref, probs[:2]))
+    nlinks = sum(len([t for t in paper.tokenize(x) if t[0] == "word"]) for x in texts)
+    ok(nlinks >= 8, "%s: %d chỗ gạch chân tra từ" % (ref, nlinks))
+    ok(all(0 <= q["dung"] < len(q["chon"]) == 3 for q in iss["cau_hoi"]) and 2 <= len(iss["cau_hoi"]) <= 4,
+       "%s: %d câu hỏi, mỗi câu 3 lựa chọn, đáp án đúng chỗ" % (ref, len(iss["cau_hoi"])))
+    body = "".join(paper.surface(x) for b in iss["bai"] for x in b["doan"])
+    cts = [paper.surface(c["cau"]) for c in iss["chinh_ta"]]
+    ok(cts and all(c in body for c in cts) and all(paper.grade_answer(c["cau"], paper.surface(c["cau"]), lang)["ok"]
+                                                    for c in iss["chinh_ta"]),
+       "%s: câu chép chép nguyên văn trong bài, gõ đúng → đúng" % ref)
+    tmp = tempfile.mkdtemp(prefix="kb133r_")
+    os.makedirs(os.path.join(tmp, "bao", iss["ngay"]))
+    json.dump(iss, open(os.path.join(tmp, "bao", iss["ngay"], "bao.json"), "w", encoding="utf-8"), ensure_ascii=False)
+    lib = paper.Library(tmp, lang)
+    view = paper.issue_view(lib, paper.empty_state() if hasattr(paper, "empty_state") else {}, iss["ngay"], paper.Voice(tts_xx={lang: True}))
+    ok(view["lang"] == lang and len(view["bai"]) == 3 and all(c["audio"] for c in view["chinh_ta"]) and
+       sum(1 for w in view["tu"].values() if w.get("m")) >= 8,
+       "%s: trình đọc báo mở được — 3 bài, câu chép có giọng máy, %d từ tra được nghĩa" % (ref, len(view["tu"])))
+hv = [v for v in REAL["zh/2026-11-17"]["tra_tu"].values() if isinstance(v, list) and re.search(r" · [A-ZÀ-Ỹ]{2,}", " ".join(map(str, v)))]
+ok(len(hv) >= 5, "báo tiếng Trung thật: bảng tra từ có âm Hán Việt (%d từ, vd. %s)" % (len(hv), hv[:1]))
 
 print("KẾT QUẢ: %d/%d" % (sum(results), len(results)))
 sys.exit(0 if all(results) else 1)

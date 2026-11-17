@@ -17,7 +17,9 @@ except ImportError:
     sys.path.insert(0, os.path.join(HERE, "..", "stubs"))
 import ai_core as ai
 import ai_en
+import ai_ko
 import ai_vi
+import ai_zh
 import story_core as story
 
 DAY = datetime.date(2026, 11, 8)
@@ -34,6 +36,15 @@ en_pick = {"kho": [{"word": w, "reading": r, "meaning": m, "due": i < 4} for i, 
     ("receipt", "/rɪˈsiːt/", "hoá đơn"), ("crowded", "/ˈkraʊ.dɪd/", "đông đúc"), ("umbrella", "/ʌmˈbrel.ə/", "cái ô")])],
     "all": [], "decks": ["English A2"]}
 en = ai_en.scope_from_pick(en_pick, "A2")
+zh_pick = {"kho": [{"word": w, "reading": r, "meaning": m, "hanviet": hv, "due": i < 4} for i, (w, r, m, hv) in enumerate([
+    ("天气", "tiānqì", "thời tiết", "THIÊN KHÍ"), ("旅店", "lǚdiàn", "quán trọ", "LỮ ĐIẾM"), ("准备", "zhǔnbèi", "chuẩn bị", "CHUẨN BỊ"),
+    ("害怕", "hàipà", "sợ", "HẠI PHẠ"), ("漂亮", "piàoliang", "đẹp", "PHIÊU LƯỢNG"), ("朋友", "péngyou", "bạn bè", "BẰNG HỮU")])],
+    "all": [], "decks": ["HSK 2"]}
+zh = ai_zh.scope_from_pick(zh_pick, "HSK2")
+ko_pick = {"kho": [{"word": w, "reading": r, "meaning": m, "due": i < 4} for i, (w, r, m) in enumerate([
+    ("날씨", "nalssi", "thời tiết"), ("여관", "yeogwan", "quán trọ"), ("준비하다", "junbihada", "chuẩn bị"),
+    ("무섭다", "museopda", "sợ"), ("예쁘다", "yeppeuda", "đẹp"), ("친구", "chingu", "bạn bè")])], "all": [], "decks": ["TOPIK 2"]}
+ko = ai_ko.scope_from_pick(ko_pick, "TOPIK2")
 vi = ai_vi.scope()
 nd = ai.scope_from_pick({"kho": [], "all": [], "grammar": [], "decks": []}, "N3")
 nd["khong_deck"] = True
@@ -51,12 +62,12 @@ EP = [{"ky": 11, "ngay": "2026-11-07", "tom_tat": "（tóm tắt kỳ 11）", "n
        "bo_ngo": ["（chỗ bỏ ngỏ）"], "phan_hoi": {"y": "hay", "ghi": "（dòng nhận xét của người đọc）"}}]
 
 parts = ["# Lời nhắc (prompt) gửi Gemini khi viết báo — nguyên văn", "",
-         "Xuất bằng `tests/tools/dump_prompts.py` từ mã 1.25.2 (ngày mẫu 08/11/2026, chủ đề truyện: Kinh dị nhẹ + Hài, thời "
+         "Xuất bằng `tests/tools/dump_prompts.py` (mã 1.33; ngày mẫu 08/11/2026, chủ đề truyện: Kinh dị nhẹ + Hài, thời "
          "tiết của vườn hôm đó: %s). Danh sách từ ở đây rút gọn còn vài từ; mỗi số thật gửi khoảng 100 từ." % WEATHER, "",
          "**Một làng, một truyện (1.25.2):** mỗi ngày Gemini viết **một bản gốc tiếng Việt** cho cả làng — kỳ truyện dài kỳ + "
          "2–3 tin làng + mục thứ ba (thông báo / cột của một nhân vật). Thứ tự gọi: **0. lập mạch** (khoảng mỗi tuần) → "
          "**1. nhà văn** (bản gốc) → **2. biên tập** chấm 7 tiêu chí → (điểm < 4: **viết lại** một lần). Rồi mỗi báo: "
-         "**3. kể lại** truyện bằng tiếng Nhật / tiếng Anh theo trình độ (báo tiếng Việt in thẳng bản gốc) → **4. viết cả "
+         "**3. kể lại** truyện bằng tiếng Nhật / Anh / Trung / Hàn theo trình độ (báo tiếng Việt in thẳng bản gốc) → **4. viết cả "
          "số** (chép truyện + furigana, tin làng kể lại từ tin bản gốc, câu hỏi, câu chép) → máy kiểm tra → **sửa** (≤ 2 lần) "
          "→ **5. soát lần 2**. Gemini trả JSON theo khuôn cố định của từng bước. Báo thứ hai trong ngày không viết lại bản gốc.",
          "", "Bản gốc thấy được: nguyên văn kỳ trước, tóm tắt các kỳ trong đợt, mạch đợt, chỗ bỏ ngỏ, nhận xét Hay / Nhạt của "
@@ -81,11 +92,13 @@ block("2. Biên tập — lời nhắc (system: \"Bạn là biên tập viên tr
 
 for title, lang, scope, mod, level in (("Báo tiếng Nhật (畑新聞, N4)", "ja", ja, ai, "N4"),
                                        ("Báo tiếng Anh (The Garden Gazette, A2)", "en", en, ai_en, "A2"),
+                                       ("Báo tiếng Trung (%s, HSK 2, giản thể) — 1.33" % ai_zh.MASTHEAD, "zh", zh, ai_zh, "HSK2"),
+                                       ("Báo tiếng Hàn (%s, TOPIK 2) — 1.33" % ai_ko.MASTHEAD, "ko", ko, ai_ko, "TOPIK2"),
                                        ("Báo tiếng Việt (Báo Làng Kotoba — chỉ khi không học Nhật / Anh)", "vi", vi, ai_vi, "")):
     parts.extend(["## " + title, ""])
     if lang != "vi":
         block("3. Kể lại truyện — lời nhắc", story.retell_prompt(lang, scope, {"ky": 12, **MASTER["truyen"]}))
-    block("4. Viết cả số — system", mod.system_prompt(level))
+    block("4. Viết cả số — system", mod.system_prompt(level, True) if lang == "zh" else mod.system_prompt(level))
     opts = {"so": 30, "ky": 12, "story_plain": PLAIN, "max_new": 3, "tones": TONES, "thoi_tiet": WEATHER,
             "tin_goc": MASTER["tin"], "muc3_goc": MASTER["muc3"]}
     block("4. Viết cả số — lời nhắc", mod.write_prompt(scope, opts, EP, [], DAY))

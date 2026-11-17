@@ -609,6 +609,7 @@ def _vocab_lines(scope: dict[str, Any], limit: int = 1500) -> str:
 
 
 KO_PROF: dict[str, Any] = {
+    "season": ai_en.season_text_vi,
     "levels": LEVELS, "default_level": DEFAULT_LEVEL, "length": LENGTH, "dict_words": DICT_WORDS,
     "lang_name": "tiếng Hàn", "level_name": lambda lv: lv.replace("TOPIK", "TOPIK "), "story_setup": STORY_SETUP,
     "vocab_head": "(từ = nghĩa)", "vocab_lines": lambda scope: _vocab_lines(scope),
