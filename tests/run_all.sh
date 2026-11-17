@@ -174,6 +174,17 @@ echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
 echo "== core/test_1332.py (1.33.2: đang viết báo thì khoá lựa chọn của báo, báo thêm sau khi viết xong thì từ mai, đang đồng bộ thì báo một câu, câu chữ gọn, ⚙ thu gọn)"
 OUT=$(python3 "$HERE/core/test_1332.py" "$ADDON" 2>&1); RC=$?
 echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
+if "${ANKI_PY:-python3}" -c "import anki.collection" 2>/dev/null; then
+  echo "== core/test_1333.py (1.33.3: lỗi audit 17/11 — đọc lỗi kéo dài ở từng kho, trả lại sau đồng bộ lỗi, lưu chung một lần, Anki tắt giữa sổ bù xu và ví, mã 1.31.3 thật xen kẽ, thử ngẫu nhiên có đối chứng, chữ không lẫn ngôn ngữ)"
+  OUT=$("${ANKI_PY:-python3}" -W ignore "$HERE/core/test_1333.py" "$ADDON" 2>&1); RC=$?
+  echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
+  # 1.33.3: lỗi của nhánh audit/release-review-1.33.2-2026-11-17 đã sửa → giữ bộ phục hồi của audit làm kiểm tra hồi quy
+  echo "== audit_20261117/recovery_round2.py (trả lại sau đồng bộ lỗi × 3 khoá × 3 cách tiếp tục, dừng tiến trình giữa hai lần ghi)"
+  OUT=$("${ANKI_PY:-python3}" "$HERE/audit_20261117/recovery_round2.py" "$ADDON" --out "${TMPDIR:-/tmp}/kb_recovery_1117.json" 2>&1); RC=$?
+  echo "$OUT" | grep -E "^FAIL|ROUND2"; [ $RC = 0 ] || FAIL=1
+else
+  echo "– bỏ qua core/test_1333.py, audit_20261117/recovery_round2.py (cần gói anki: ANKI_PY)"
+fi
 # trang web chung (site/, GitHub Pages): đăng mã, dữ liệu trang khớp add-on (đổi hình mà quên `node site/tools/xuat_hinh.js` là báo)
 echo "== trang/test_trang.py (trang web: đăng / gỡ mã, biểu mẫu issue, GitHub Actions, dữ liệu khớp add-on)"
 OUT=$(python3 "$HERE/trang/test_trang.py" "$ADDON" 2>&1); RC=$?

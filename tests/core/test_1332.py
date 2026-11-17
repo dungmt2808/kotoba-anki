@@ -67,7 +67,8 @@ print("== 2. Báo vừa thêm sau khi đã viết xong → từ mai")
 ok("def ai_later(" in init and "def _wrote_today(" in init, "ai_later / _wrote_today")
 st = re.search(r"def ai_start\(reason: str.*?\n(.*?)\n    o = _ai_opts\(cfg\)", init, re.S).group(1)
 ok("if lang in ai_later(cfg):" in st and '"Báo %s bắt đầu từ mai."' in st, "ai_start từ chối báo \"từ mai\" (mọi lý do: tự viết, Viết, Bắt đầu viết)")
-ok("if _wrote_today(before):" in on_ai and "later[x] = tomorrow" in on_ai and 'conf[x] = "gemini"' in on_ai,
+# 1.33.3 (audit 17/11 F03): xét mọi báo đã viết xong hôm nay, không chỉ các báo đang tick (test_1333, ui_audit "tomorrow/")
+ok("if _wrote_today(list(AI_DIRS)):" in on_ai and "later[x] = tomorrow" in on_ai and 'conf[x] = "gemini"' in on_ai,
    "tick báo mới khi hôm nay đã viết xong báo khác → từ mai + xác nhận nguồn (mai tự viết)")
 ok('changes["gemini_wait_langs"] = [x for x in new if (x in old_w or x not in before) and x not in later]' in on_ai,
    "hôm nay chưa viết gì → báo mới chờ \"Bắt đầu viết\" như 1.22.4; báo \"từ mai\" không chờ")

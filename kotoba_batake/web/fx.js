@@ -992,7 +992,8 @@ var GardenFX = (function () {
           if (cfg.effects) { confetti(potParts, PW, 50); }
         } else {
           setMood("star", 1800);
-          say("Xong nhiệm vụ: " + q.done[0] + " +" + kbXu(q.coins) + " xu", 2400);
+          // 1.33.3: có câu theo Ngôn ngữ trong vườn trước phần tiếng Việt (trước: câu chỉ có tiếng Việt ở mọi ngôn ngữ)
+          say("できた！ Xong nhiệm vụ: " + q.done[0] + " +" + kbXu(q.coins) + " xu", 2400);
           play("coin");
         }
         var btn = $("kb-quest");

@@ -448,7 +448,9 @@ ok("if not ai.clean_key(cfg.get(\"gemini_key\")):" in lib and "lib.issues()" in 
    "F04: chưa có / đã xoá khoá Gemini mà máy còn số báo → vẫn đọc được")
 ok("card._kb_sig = _card_sig(card.id)" in src and "reps, lapses, left" in src and "_last_rev(cid)" in src[src.index("def _card_sig"):src.index("def _card_changed")],
    "F05: dấu thẻ lúc hiện ra gồm cột lịch ôn + revlog (không chỉ cards.mod theo giây)")
-ok("d._edit_wait = time.time()" in src and "EDIT_SAVE_WINDOW" in src, "P3: 'Đã lưu thẻ.' chỉ trong vài giây sau khi đóng cửa sổ Sửa thẻ")
+ok("d._edit_wait = time.time()" in src and "EDIT_SAVE_WINDOW" in src and "self._note_seen_at = time.time()" in src
+   and "if saved and time.time() - getattr(self, \"_note_seen_at\", 0.0) < EDIT_SAVE_WINDOW:" in src,
+   "P3: 'Đã lưu thẻ.' chỉ khi lần lưu của cửa sổ Sửa thẻ còn đang tới (đã tới trước lúc đóng → hết chờ)")
 fx = open(os.path.join(ADDON, "web", "fx.js"), encoding="utf-8").read()
 ok(fx.count("say(pick(SAY.") == 0 and fx.count("pickSay(") >= 5, "StackChan: mọi chỗ bốc câu qua pickSay (đúng ngôn ngữ)")
 games = open(os.path.join(ADDON, "web", "games.js"), encoding="utf-8").read()
@@ -469,6 +471,13 @@ for l in ("ja", "en", "zh", "ko"):
     vi_only = [t for t in got.get(l, []) if not JP.search(t) and VI.search(t)]
     ok(got.get(l) and not vi_only, f"StackChan ở chế độ {l}: {len(got.get(l, []))} câu, không câu nào chỉ có tiếng Việt {vi_only[:3]}")
 ok(any(VI.search(t) and not JP.search(t) for t in got.get("vi", [])), "Chỉ tiếng Việt: vẫn có các câu tiếng Việt riêng")
+lits = []
+for fn in sorted(os.listdir(os.path.join(ADDON, "web"))):
+    if fn.endswith(".js"):
+        for m_ in re.finditer(r'(?:GardenFX\.say|[^.\w]say|mood)\((?:"[a-z]+", \d+, )?(?:[^"(]*\? )?"([^"]+)"', open(os.path.join(ADDON, "web", fn), encoding="utf-8").read()):
+            lits.append((fn, m_.group(1)))
+vi_only = [(f, t) for f, t in lits if not JP.search(t) and VI.search(t)]
+ok(len(lits) > 15 and not vi_only, "%d câu StackChan viết sẵn trong mã trang: câu nào cũng có phần theo Ngôn ngữ trong vườn %s" % (len(lits), vi_only[:3]))
 gl = open(os.path.join(ADDON, "web", "glang.js"), encoding="utf-8").read()
 ok("const own = e.dataset.kbLang" in gl, "glang.applyTitles: bảng có ngôn ngữ riêng (data-kb-lang) giữ ngôn ngữ đó khi đổi Ngôn ngữ trong vườn")
 

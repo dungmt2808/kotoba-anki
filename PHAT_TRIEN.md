@@ -8,6 +8,8 @@ Cập nhật: 2026-11-17. Add-on **1.33.2** (1.33.2: **đang viết báo thì kh
 
 ## 0. Đọc nhanh (cho phiên chat mới)
 
+> 17/11 (sau 1.33.2): **1.33.3** — người dùng: "kiểm tra lại giúp tớ code mới xem phần ngôn ngữ đang có bị lẫn ngôn ngữ khác vào chưa (chợ sáng, sinh hoạt câu nói stack-chan). kiểm chứng và sửa một số lỗi được tìm ra ở nhánh audit-1.33.2-2026-11-17. tìm thêm … ưu tiên các lỗi làm mất dữ liệu, UI" → gộp nhánh audit (test + minh chứng ở `tests/audit_20261117/`, `docs/kiem_thu/audit-1.33.2-2026-11-17/`), tái hiện đủ 7 lỗi rồi sửa, quét chữ trong Anki thật, thêm test — mục 2.6z15, báo cáo `docs/kiem_thu/1.33.3/BAO_CAO.md`.
+
 > 17/11: người dùng thấy vườn nhiều cây "hơi rối mắt" → ảnh phác 4 cách xếp ruộng + 3 kiểu ngăn luống (`docs/ke_hoach_vuon_gon/`); **chọn kiểu 01b (biển gỗ nhỏ, không dải đất), chưa làm** — mục 10.0d.
 
 > 17/11 (sau 1.33.1): người dùng: "ví dụ hành động gemini đang viết báo đi. xong người dùng lại bỏ 1 tick ngôn ngữ để chọn ngôn ngữ khác thì lúc đó sẽ xử lý sao … hay là để 1 hành động song song đó chạy xong mơi thao tác. ví dụ đang viết báo thì không được chọn đổi ngôn ngữ báo. viết xong rồi thì được chọn, nhưng số đó để ngày mai. rà lại những chỗ diễn đạt dài dòng … chỗ nào nhiều nút hoặc nhiều thao tác quá cũng rút gọn bớt giống bên báo nhé" → **1.33.2** (mục 2.6z14; quyết định ở mục 7). Bảng Nhà 11 tab: Claude làm ảnh phác gộp 6 nhóm nhưng đề xuất giữ nguyên — **chờ người dùng chọn** (`docs/kiem_thu/1.33.2/BAO_CAO.md` mục 4).
@@ -406,6 +408,41 @@ Giờ thật / giờ game / cố định, 6 buổi trong ngày, thời tiết đ
 - **Tên gọi** (thử thật 09/11: Gemini đặt tên "Soncho" — phiên âm 村長 — cho ông trưởng làng, gọi quán là "Kotobaya", rồi báo Anh in "Mayor Soncho", "Grandma Hana"): lời nhắc dặn ông trưởng làng không có tên riêng, quán là "Quán Kotoba"; bảng tên của bước kể lại ghi Hana khoảng 30 tuổi (không "Grandma" / おばあさん); `story_core.fix_names_vi` đưa "Soncho" / "Kotobaya" về đúng tên trong bản gốc (truyện, tóm tắt, tin, mục thứ ba) trước khi lưu và kể lại; `clean_episode` sửa luôn phần tiếng Việt của bộ nhớ cũ (tóm tắt "quán trọ Kotobaya" của kỳ trước chính là chỗ Gemini học theo).
 - **Nhận xét Hay / Nhạt** (`ai.feedback_bases`): số viết từ truyện chung mang `"truyen_chung": true` trong `bao.json` → nhận xét vào `bao_chung/truyen.json`; số cũ (trước 1.25.2) → thư mục của báo đó, và cả `bao_chung` nếu kỳ ấy đã được chép sang (cùng kỳ, ngày, tóm tắt). Không bao giờ tạo `bao_chung` từ một nhận xét — trước đây bấm Nhạt ở số cũ trước lần viết đầu của 1.25.2 tạo `truyen.json` chung chỉ có một dòng, `migrate_story` thấy đã có nên không chép truyện cũ sang → truyện bắt đầu lại (tìm thấy khi chạy lại `e2e_123`).
 - Test: `core/test_1251.py` (viết lại: bản gốc + 3 báo cùng ngày với Gemini giả, thời tiết khớp `sky.js` 80 khung, nối kỳ / nối tin hôm sau, dự phòng khi bận / kể lại hỏng, chép bộ nhớ), `anki/e2e_1251.js` (48 kiểm tra), Gemini thật một ngày (bản gốc → Nhật N4 + Anh A2 + Việt) — `docs/kiem_thu/1.25.2/BAO_CAO.md`.
+
+### 2.6z15 Bản 1.33.3 — sửa lỗi audit 17/11 + chữ không lẫn ngôn ngữ (17/11)
+Người dùng: "kiểm tra lại giúp tớ code mới xem phần ngôn ngữ đang có bị lẫn ngôn ngữ khác vào chưa (chợ sáng, sinh hoạt câu
+nói stack-chan). kiểm chứng và sửa một số lỗi được tìm ra ở nhánh audit-1.33.2-2026-11-17. tìm thêm xem còn lỗi nào nữa
+không, tạo thêm các kịch bản và test ngoài các test đã có sẵn, ưu tiên các lỗi làm mất dữ liệu, UI". Báo cáo:
+`docs/kiem_thu/1.33.3/BAO_CAO.md`. **Cách sửa Claude chọn, người dùng chưa xem.**
+- **Ngôn ngữ** (quét trong Anki thật 4 deck × 6 chế độ, `anki/e2e_1333_ngonngu.js`): StackChan **chỉ bốc câu có bản dịch** khi
+  chọn Nhật / Anh / Trung / Hàn (`fx.js` `pickSay`; "Chỉ tiếng Việt" vẫn đủ câu tiếng Việt) — trước: 7 câu chỉ có tiếng Việt
+  ("Tưới cây thôi!"…) bật ra ở mọi chế độ, **kể cả Tiếng Nhật (đổi hành vi từ các bản trước)**; khách Chợ sáng cảm ơn theo
+  tiếng của deck (bỏ "Cảm ơn nha!" lẫn vào); "Xong nhiệm vụ" / "Đọc xong số báo" thêm できた！; **tiêu đề bảng Trò chơi
+  theo deck** như tên trò (`data-kb-lang`, `glang.applyTitles`) — trước theo Ngôn ngữ trong vườn (小游戏 trên bảng trò chơi
+  tiếng Nhật); đổi ngôn ngữ khi menu trò chơi đang mở → vẽ lại. Khách hỏi theo nghĩa / Hán Việt vẫn hỏi bằng tiếng Việt (đúng
+  cách chơi). Sinh hoạt / Sổ sinh hoạt không lẫn.
+- **F01 đọc lỗi** (`backup.read_config`: đọc lại một lần, vẫn lỗi → `ReadFailed`): mọi kho (ví 6 khoá + điểm ảnh, khách,
+  sinh hoạt, Hộp sưu tầm, báo, Cấu hình trường, deck nguồn báo, nhật ký) không còn coi đọc lỗi là "chưa có" / lấy file sao
+  lưu cũ; vẽ vườn vẫn được (`_damaged` + `_damaged_msg` / `_damaged_kind`), mọi thao tác từ chối với câu đúng lý do
+  (`_guard_damaged` bọc mọi phương thức của GardenState — trước báo "Thiếu 1.000 xu", "chưa có thú"); **dòng cảnh báo
+  `#kb-damaged`** trên ruộng ("vườn tạm chỉ xem… dữ liệu thật vẫn còn nguyên"; thay thông báo nổi "Mở Báo lỗi").
+- **F06 trả lại sau đồng bộ lỗi**: bản chụp tốt giữ kèm `"pending": true` trong `dong_bo.json` + móc `backup.PENDING`; lần
+  đọc (`read_config`) / ghi (`commit_config`, `put_config`) / đồng bộ (`before_sync` dùng bản chờ) / mở hồ sơ kế tiếp trả lại
+  trước; vẫn lỗi → chặn thao tác (`RESTORE_PENDING`); đang đồng bộ thì để after_sync làm; tự khôi phục bản sao lưu của Anki
+  thì bỏ chờ; `after_sync(before=None)` so với bản chụp trong file. Đóng hồ sơ → gỡ móc (file còn).
+- **F02 / F07 lưu chung một lần** (`GardenState.save(extra=…)`, `EventStore.write`, `PaperState.write`): đã nhặt + xu / quà,
+  phiên gánh hàng + món + xu, câu báo + xu thưởng — lỗi ghi ở bất kỳ khoá nào → không đổi gì. Sổ của kho khác ghi **sau** ví:
+  Anki tắt đột ngột giữa hai lần ghi thì lệch về phía người dùng (đã có xu, sổ chưa ghi → làm lại được), không mất xu.
+- **Sổ bù xu khi Anki tắt đột ngột** (F02 mở rộng): sổ có `n` (số lần lưu) + `prev` (bản trước), ví có `{"mob": {"n"}}`; đọc
+  thấy sổ đi trước ví một lần lưu → dùng `prev` (lượt đó được bù đúng một lần). Sổ không đổi thì không ghi lại.
+- **F03**: báo vừa tick thêm xét mọi báo đã viết xong hôm nay (`_wrote_today(list(AI_DIRS))`). **F04**: chưa có / đã xoá
+  khoá Gemini mà máy còn số báo → vẫn đọc (`_library`). **F05**: dấu thẻ lúc hiện ra = cột lịch ôn + revlog (`_card_sig`,
+  `card._kb_sig`). **P3**: "Đã lưu thẻ." chỉ khi lần lưu của cửa sổ Sửa thẻ còn đang tới (`EDIT_SAVE_WINDOW`, `_note_seen_at`).
+- **Tìm thêm**: mốc chuỗi ngày không đặt "bây giờ" khi sổ bù xu đọc lỗi; dấu phiên bản không đoán khi đọc lỗi.
+- Test: `core/test_1333.py` (đọc lỗi kéo dài ở từng kho, F06 6 đường, lưu chung một lần, tiến trình con dừng giữa sổ và ví,
+  mã 1.31.3 thật xen kẽ, **thử ngẫu nhiên có đối chứng** vườn A lỗi / vườn B không lỗi — trên mã 1.33.2 bắt được mất đồ tự
+  vẽ khi đọc lỗi một lần), `anki/e2e_1333.js`, `anki/e2e_1333_ngonngu.js`; `run_all.sh` thêm `test_1333` +
+  `audit_20261117/recovery_round2.py`. Hai ca đối chứng của audit đổi nghĩa (báo cáo mục 3).
 
 ### 2.6z14 Bản 1.33.2 — việc chạy song song, câu chữ gọn, ⚙ thu gọn (17/11)
 Người dùng: xem mục 0. Báo cáo + ảnh: `docs/kiem_thu/1.33.2/BAO_CAO.md`.
@@ -971,7 +1008,7 @@ Audio báo phát bằng `aqt.sound.av_player.play_file(đường_dẫn_tuyệt_�
 | `kotoba_batake_paper_en` (1.19) | như trên nhưng cho **báo tiếng Anh** (`read`, `queue`, `miss`; `dict` không dùng — lượt chép hằng ngày ở khoá cũ). Khoá riêng vì báo Nhật / Anh cùng ngày có cùng id `p:<ngày>:<i>` | `user_files/paper_en.json` |
 | `kotoba_batake_ext` (1.7) | phần mới mà bản ≤ 1.6.1 không hiểu: `owned` đồ mới, `zones` vùng mới, `places` {cảnh: [đồ mới hoặc đồ ở vùng mới]}, `craft_fx` {cid: {fx, was}} | `user_files/ext.json` |
 | `kotoba_batake_fields` (1.9) | `models`: {id loại note: {kind vocab/kanji/grammar/other, `f` {vai trò: tên trường}, name}}, `games`: {trò: {loại: chế độ}}; 1.17: `lang`: {id loại note: ja/en/other}, `games_lang`: {en/other: {trò: chế độ}} (cấp trên cùng để bản ≤ 1.16 giữ nguyên) | không (id loại note gắn với collection; chỉ ghi `user_files/fields.json` khi chạy không có collection) |
-| `kotoba_batake_mobile` (1.11) | sổ bù xu: `start` (mốc, ms = id revlog), `days` {ngày Anki: {all, ok, rev, new, paid (1.25.9: xu đã bù trong ngày, cho trần 1.000)}} = số lượt add-on **đã trả** (C), `goals` ngày đã nhận thưởng mục tiêu, `total`, `last`. Bù = R (đếm từ revlog, id > start, 14 ngày) − C, rồi C = max(C, R). Máy tính cộng C ngay khi trả xu (`record_desktop`) | `user_files/mobile.json` (chỉ sao lưu, có collection thì không đọc) |
+| `kotoba_batake_mobile` (1.11) | sổ bù xu: `start` (mốc, ms = id revlog), `days` {ngày Anki: {all, ok, rev, new, paid (1.25.9: xu đã bù trong ngày, cho trần 1.000)}} = số lượt add-on **đã trả** (C), `goals` ngày đã nhận thưởng mục tiêu, `total`, `last`; 1.33.3: `n` (số lần lưu sổ) + `prev` (sổ trước lần lưu đó), ví `kotoba_batake_state` thêm `mob: {"n"}` — sổ đi trước ví một lần lưu (Anki tắt giữa hai lần ghi) → dùng `prev`; bản cũ bỏ hai khoá phụ này. Bù = R (đếm từ revlog, id > start, 14 ngày) − C, rồi C = max(C, R). Máy tính cộng C ngay khi trả xu (`record_desktop`) | `user_files/mobile.json` (chỉ sao lưu, có collection thì không đọc) |
 | `kotoba_batake_start` (1.31) | mốc tính chuỗi ngày ôn `{"v": 1, "ms": mili giây}` — lúc ことば畑 chạy lần đầu trên collection (cài mới: lúc mở hồ sơ; người dùng cũ: `kotoba_batake_mobile.start`). Ghi một lần, chỉ đọc lại; bản ≤ 1.30.3 không đụng | không |
 | `kotoba_batake_rev` (1.31.2) | dấu phiên bản dữ liệu vườn `{"v": 1, "t": mili giây, "d": mã của lần chạy đã ghi}` — `backup_core.touch_rev` ghi lại sau mỗi lần ghi một khoá `kotoba_batake_*`; `sync_core` so dấu sau đồng bộ. Bản ≤ 1.31.1 không đụng (và không cập nhật dấu khi ghi) | không (bản chụp mọi khoá ở `user_files/ho_so/<mã>/dong_bo.json`) |
 | `kotoba_batake_more` (1.14) | 1.25.1: `paper_sub` {until, plan tuan/thang, auto, trial, paid} = gói báo; `repair` {day, seen, back}, `pets` {id: {name, scene, fed, love, got}}, `pet_auto`, `seeds` {owned, deck, kind, tag}, `zones` [{id u<n>, name, bg, ground, hills, lm}], `znext`, `places` {u<n>: [đồ đặt ở vùng tự tạo]}, `zenv` (1.16: cảnh nền), 1.25.9: `freeze` {n vé, days ngày đã dùng vé, since ngày mua}, `myseeds` (1.22: `{items: {g<n>: {name}}, next, rules: {deck, kind, tag}}` — giống tự vẽ + luật trỏ tới chúng, ở tầng trên cùng để bản cũ giữ hộ), `mywear` (1.31: `{items: {w<n>: {name, slot head/face/neck/shell, c: [màu thân, màu viền] (vỏ)}}, next, on: {chỗ: w<n>}}` — đồ tự vẽ cho StackChan, cũng ở tầng trên cùng). Tách trước tiên khi lưu (`split_more`), gắn lại sau cùng khi đọc (`attach_uzones`: vượt số đã có thì về kho); giữ khoá lạ của bản sau | `user_files/more.json` |
@@ -1061,6 +1098,11 @@ Add-on chỉ **ghi hai file** trong `bao_dir`: `tien_do.json` và (1.25.8) `truy
 ---
 
 ## 7. Quyết định đã chốt (đừng đảo ngược khi chưa hỏi người dùng)
+
+- **1.33.3 (Claude chọn, người dùng chưa xem)**: (1) StackChan nói **đúng ngôn ngữ đang chọn** — ở Tiếng Nhật / Anh / Trung /
+  Hàn không bốc câu chỉ có tiếng Việt (trước đây chế độ Tiếng Nhật xen câu tiếng Việt); muốn giữ câu tiếng Việt xen ở Tiếng
+  Nhật thì sửa `pickSay` trong `web/fx.js`. (2) **Đọc lỗi ≠ chưa có**: kho đọc lỗi thì vườn tạm chỉ xem, không ghi. (3) Lưu
+  nhiều kho: lỗi ghi → không đổi gì; Anki tắt đột ngột giữa hai lần ghi → lệch về phía người dùng, không mất xu / đồ.
 
 - **1.33.2 việc chạy song song (người dùng chốt 17/11: "đang viết báo thì không được chọn đổi ngôn ngữ báo. viết xong rồi thì được chọn, nhưng số đó để ngày mai")**: việc đang chạy chạy cho xong; thứ làm đổi việc đó **khoá tới khi xong** + một câu nói vì sao; thứ không đụng tới vẫn làm được. Báo: đang viết → khoá báo / trình độ / deck / truyện / giọng đọc / khoá Gemini / nguồn; viết xong hôm nay rồi tick báo mới → **từ mai** (Claude chọn thêm: hôm nay chưa viết số nào thì vẫn "Bắt đầu viết" như cũ; Xoá khoá cũng chờ viết xong; mua gói báo không khoá). Đang đồng bộ → báo một câu thay vì im lặng. ⚙: thứ ít dùng vào dòng thu gọn (Claude chọn).
 - **1.33.1 (kiểm tra lần cuối; Claude chọn, người dùng chưa xem)**: File → Import .colpkg **là khôi phục bản sao lưu** — giữ dữ liệu vườn vừa nhập như "Mở bản sao lưu" (1.31.2), không trả vườn cũ về; bản nhập chưa có vườn (sao lưu từ trước khi cài) thì lần mở hồ sơ sau vẫn trả lại vườn của máy (không mất vườn). Tab Nguồn báo: hằng ngày chỉ thấy Báo muốn nhận + từng báo (Hôm nay · Trình độ · Lấy từ); chọn-một là ô thả xuống (Chủ đề truyện chọn nhiều vẫn là nút); Gói báo một dòng thu gọn (hết hạn mở sẵn); thứ ít đổi trong "Tuỳ chọn thêm" thu gọn. Muốn trở lại kiểu nút: `pick(` → `chips(` ở `web/paper.js`.
@@ -1346,6 +1388,7 @@ Kế hoạch + cách làm: **`KE_HOACH_VUON_3D.md`**. Phạm vi người dùng c
 ---
 
 ## 11. Lịch sử phiên bản
+- **1.33.3**: sửa 7 lỗi + 1 lỗi nhỏ của nhánh `audit/release-review-1.33.2-2026-11-17` (đọc lỗi không còn ghi đè dữ liệu thật, trả lại sau đồng bộ lỗi không mất bản chụp, lưu chung một lần cho thưởng / gánh hàng, sổ bù xu khi Anki tắt đột ngột, báo "từ mai", đọc báo cũ không cần khoá, thẻ chấm ở chỗ khác cùng giây, nhãn sau Undo), dòng cảnh báo khi vườn tạm chỉ xem, chữ không lẫn ngôn ngữ (StackChan, Chợ sáng, tiêu đề Trò chơi) — mục 2.6z15.
 - **1.33.2**: đang viết báo thì khoá các lựa chọn của báo ("Gemini đang viết báo — xong mới đổi được."), viết xong mà thêm báo thì từ mai, bấm lúc Anki đang đồng bộ thì báo một câu + bảng ôn không kẹt, 41 câu chữ rút gọn, ⚙ gom "Báo lỗi · góp ý · khác"; không đổi phần lưu trữ — mục 2.6z14.
 - **1.33.1**: kiểm tra lần cuối — File → Import .colpkg khi đang dùng vườn không còn trừ xu khỏi ví vừa khôi phục, không trả vườn cũ đè bản vừa khôi phục, bảng ôn đang mở không bật hộp lỗi (móc `collection_did_load`); tab Nguồn báo gọn hơn (ô thả xuống, Gói báo một dòng, "Tuỳ chọn thêm" thu gọn; 2 báo: 49 → 15 chỗ bấm); không đổi phần lưu trữ — mục 2.6z13.
 - **1.33.0**: báo tiếng Trung 词田晨报 (HSK 1–6, pinyin từng chữ máy soát với bảng cách đọc, tra từ có Hán Việt) / tiếng Hàn 말밭 신문 (TOPIK 1–6, tra từ nhận tiểu từ / đuôi); tối đa 2 báo, mặc định 1 báo theo deck cho người chưa từng dùng báo; chép chấm từng chữ / cụm; "Bắt đầu viết" viết mọi báo đã chọn; khoá collection mới `kotoba_batake_paper_zh` / `_ko` — mục 2.6z12.

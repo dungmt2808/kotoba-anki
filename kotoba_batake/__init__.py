@@ -3308,9 +3308,15 @@ class GardenDialog(QDialog):
             self._next_card()
             return
         if mod == self._note_mod:
+            # 1.33.3 (audit P3): cửa sổ Sửa thẻ đóng mà nội dung đã đúng như đang hiện — lần lưu của nó đã tới TRƯỚC lúc đóng
+            # (vừa dựng lại thẻ xong) thì không còn gì để chờ; trước đây `_edit_wait` kẹt True → lát sau Undo ở cửa sổ chính
+            # vẫn báo "Đã lưu thẻ." thay vì "Thẻ vừa được sửa."
+            if saved and time.time() - getattr(self, "_note_seen_at", 0.0) < EDIT_SAVE_WINDOW:
+                self._edit_wait = False
             return
         saved = saved or bool(self._edit_wait and time.time() - float(self._edit_wait) < EDIT_SAVE_WINDOW)
         self._edit_wait = False
+        self._note_seen_at = time.time()
         if _card_changed(card):            # thẻ cũng vừa được chấm / đổi lịch ở chỗ khác: như 1.31.2
             self._js("toast", "Thẻ này vừa được ôn hoặc sửa ở chỗ khác — sang thẻ kế tiếp.")
             self.refresh()
