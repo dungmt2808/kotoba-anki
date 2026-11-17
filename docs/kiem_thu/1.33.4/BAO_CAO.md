@@ -52,4 +52,6 @@ Ghi ở `PHAT_TRIEN.md` mục 10.0c. Tóm tắt:
 ## 4. Gộp master 1.34.0 → 1.34.1
 
 Người dùng: "gộp với master đi ạ". Master đã có 1.34.0 (bảng ôn theo góp ý, ô chọn deck dạng cây, Trang trí thử — phiên
-khác) → gộp vào nhánh, phần sửa thành 1.34.1, chạy lại trên gói 1.34.1: RESULT_1341
+khác) → gộp vào nhánh, phần sửa thành 1.34.1, chạy lại trên gói 1.34.1: `run_all.sh` **66 bộ TẤT CẢ OK** (có `test_134` của 1.34.0); Anki 26.9.4: `e2e_132c` 23/23, `e2e_134` 85/85,
+`e2e_132b` 20/20, `e2e_133` 77/77, `e2e_1251` 49/49, `e2e_117` 55/55; cập nhật đè 1.31.3 → 1.34.1 **19/19**; hạ bản
+1.34.1 → 1.31.3 → 1.34.1 **23/23**.
