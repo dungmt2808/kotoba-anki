@@ -108,7 +108,7 @@ result = 1`);
 
   console.log('== 1. mặc định: Tự theo deck');
   const sel = await js(`const s = document.getElementById("kb-glang"); return s ? { v: s.value, opts: Array.from(s.options).map((o) => o.value + "=" + o.textContent) } : null;`);
-  ok(sel && sel.v === 'auto' && sel.opts.length === 6, '⚙ có ô Ngôn ngữ trong vườn, 6 mục, đang Tự theo deck: ' + (sel ? sel.opts.join(' | ') : ''));
+  ok(sel && sel.v === 'auto' && sel.opts.length === 8, '⚙ có ô Ngôn ngữ trong vườn, 8 mục (1.35: + Tiếng Đức / Tiếng Pháp), đang Tự theo deck: ' + (sel ? sel.opts.join(' | ') : ''));
   ok(await js('return GardenLang.cur();') === 'ja' && /đang: Tiếng Nhật/.test(sel.opts[0]), 'deck tiếng Nhật → tiếng Nhật như các bản trước');
   await js('GardenFX.say("いいね！", 60000); return 1;');
   ok(await js('return document.getElementById("kb-say").textContent;') === 'いいね！', 'StackChan nói tiếng Nhật như cũ');
