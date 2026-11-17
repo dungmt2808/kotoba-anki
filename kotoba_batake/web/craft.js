@@ -953,7 +953,7 @@ var GardenCraft = (function () {
     buildPalette();
     layout(); draw(); showWhole();
     tip(z ? "Sửa vùng “" + z.name + "” · đổi tên / nền / màu miễn phí, vẽ lại công trình hoặc cảnh nền " + kbXu(u.edit) + " xu"
-      : "Vẽ công trình 64×76 (nhà, tháp, cây to…), rồi bấm “Cảnh nền” để vẽ khung cảnh. Trên vạch xanh là trời.");
+      : "Vẽ công trình 64×76, rồi bấm “Cảnh nền” để vẽ khung cảnh. Trên vạch xanh là trời.");
   }
   // 1.22: giống cây tự vẽ — g = mục trong catalog.myseeds (sửa) hoặc null (tạo mới)
   function openSeed(g) {
@@ -1079,7 +1079,7 @@ var GardenCraft = (function () {
     const wc = wearCat();
     tip(w ? "Sửa “" + w.name + "” · đổi tên miễn phí, " + (wearSlot === "shell" ? "đổi màu " : "vẽ lại ") + kbXu(wc.edit) + " xu"
       : wearSlot === "shell" ? "Chọn màu thân rồi màu viền dưới ở bảng màu."
-      : "Vẽ lên phần mờ của StackChan · ô trống để trong suốt · bên phải là hình trên linh vật và trên StackChan sinh hoạt.");
+      : "Vẽ lên phần mờ của StackChan · bên phải là hình xem trước.");
   }
   function open(it) {
     if (!H) { return; }

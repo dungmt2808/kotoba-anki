@@ -180,7 +180,7 @@ var GardenPaper = (function () {
     if (!v || !v.bai) { return " · ▶ để nghe"; }
     let t = v.bai.some((b) => (b.audio || []).some(Boolean)) ? " · ▶ để nghe"
       : v.src === "claude" ? " · số này chưa có giọng đọc từng đoạn (cần VOICEVOX)"
-        : " · số này chưa có giọng đọc từng đoạn (Nguồn báo → Giọng đọc: Cả bài)";
+        : " · số này chưa có giọng đọc từng đoạn";
     if (v.has_dich) { t += " · Dịch: xem bản dịch"; }
     return t;
   }
@@ -189,18 +189,18 @@ var GardenPaper = (function () {
     if (tab === "issue" && pl === "vi") {
       setInfo("Truyện dài kỳ và tin làng hôm nay. Trả lời câu hỏi cuối số để nhận xu.");
     } else if (tab === "issue" && pl === "en") {
-      setInfo("Bấm từ gạch chân để tra nghĩa (nhận cả dạng biến đổi: went → go). Gạch chấm: từ mới." + issueTip());
+      setInfo("Bấm từ gạch chân để tra nghĩa · gạch chấm: từ mới" + issueTip());
     } else if (tab === "issue" && pl === "zh") {          // 1.33
-      setInfo("Bấm từ gạch chân để tra nghĩa, pinyin, âm Hán Việt · gạch liền: từ đã học · gạch chấm: từ mới" + issueTip());
+      setInfo("Bấm từ gạch chân để tra nghĩa · gạch chấm: từ mới" + issueTip());
     } else if (tab === "issue" && pl === "ko") {
-      setInfo("Bấm từ gạch chân để tra nghĩa (nhận cả từ có tiểu từ / đuôi: 학교에 → 학교) · gạch chấm: từ mới" + issueTip());
-    } else if (tab === "issue") { setInfo("Bấm từ gạch chân để tra nghĩa · gạch liền: từ đã học · gạch chấm: từ mới" + issueTip()); }
+      setInfo("Bấm từ gạch chân để tra nghĩa · gạch chấm: từ mới" + issueTip());
+    } else if (tab === "issue") { setInfo("Bấm từ gạch chân để tra nghĩa · gạch chấm: từ mới" + issueTip()); }
     else if (tab === "dict") {
       const dl = dictLang();
-      setInfo(dl === "ja" ? "Nghe rồi gõ lại câu (kana, kanji hoặc romaji). Enter để kiểm tra."
-        : dl === "zh" ? "Nghe rồi gõ lại câu bằng chữ Hán (bộ gõ pinyin). Không tính dấu câu, dấu cách. Enter để kiểm tra."
-          : dl === "ko" ? "Nghe rồi gõ lại câu bằng chữ Hàn. Không tính dấu câu; sai chỗ cách chữ vẫn tính đúng. Enter để kiểm tra."
-            : "Nghe rồi gõ lại câu. Không tính hoa thường, dấu câu; don't = do not. Enter để kiểm tra.");
+      setInfo(dl === "ja" ? "Nghe rồi gõ lại câu (kana, kanji hoặc romaji) · Enter để kiểm tra."
+        : dl === "zh" ? "Nghe rồi gõ lại bằng chữ Hán · Enter để kiểm tra."
+          : dl === "ko" ? "Nghe rồi gõ lại bằng chữ Hàn · Enter để kiểm tra."
+            : "Nghe rồi gõ lại câu · Enter để kiểm tra.");
     }
     else if (tab === "src") { setInfo("Chọn báo muốn nhận và ai viết báo."); }
     else { setInfo("Chọn một số báo để đọc."); }
@@ -713,7 +713,7 @@ var GardenPaper = (function () {
     const t = el("div", "kb-ai-start-t");
     if (g.first) {
       t.appendChild(el("b", null, "Bước 3 · "));
-      t.appendChild(document.createTextNode(langs.length ? "Chọn báo muốn nhận, trình độ và deck lấy từ ở trên, rồi bấm Bắt đầu viết." :
+      t.appendChild(document.createTextNode(langs.length ? "Chọn báo, trình độ, deck ở trên rồi bấm Bắt đầu viết." :
         "Tick ít nhất một báo ở “Báo muốn nhận” trước đã."));
     } else {
       // 1.23: nguồn vừa thành Gemini (bấm "Dùng Gemini", thư mục kotoba_daily không thấy) cũng chờ, không tự viết
@@ -721,7 +721,7 @@ var GardenPaper = (function () {
       t.appendChild(el("b", null, (sw ? "Chuyển sang Gemini: " : "Vừa bật ") + names.join(", ") + " · "));
       // 1.25.2: báo tiếng Việt không có trình độ / deck
       t.appendChild(document.createTextNode(wait.every((x) => x === "vi") ? "Bấm Bắt đầu viết." :
-        "Chọn trình độ và deck lấy từ ở trên, rồi bấm Bắt đầu viết."));
+        "Chọn trình độ, deck ở trên rồi bấm Bắt đầu viết."));
     }
     box.appendChild(t);
     const busy = !!g.running;
@@ -797,8 +797,8 @@ var GardenPaper = (function () {
   function privacyNote() {
     const note = el("details", "kb-ai-note kb-ai-more");
     note.appendChild(el("summary", null, "Khoá lưu trên máy này, không đồng bộ."));
-    note.appendChild(el("div", null, "Gemini nhận danh sách từ bạn đang học, nội dung báo, câu cần giọng đọc và dòng nhận xét truyện bạn gõ. Bản miễn phí: Google có thể dùng dữ liệu này để cải thiện sản phẩm."));
-    note.appendChild(el("div", null, "Mỗi số: Gemini viết truyện → biên tập chấm → viết cả số → máy kiểm tra → Gemini sửa → soát lần 2. Còn lỗi thì không đưa vào hòm thư. Hết lượt miễn phí thì hôm sau viết tiếp."));
+    note.appendChild(el("div", null, "Gemini nhận từ bạn đang học, nội dung báo và nhận xét truyện bạn gõ. Bản miễn phí: Google có thể dùng dữ liệu này."));
+    note.appendChild(el("div", null, "Máy kiểm tra từng số, còn lỗi thì không đưa vào hòm thư. Hết lượt miễn phí thì mai viết tiếp."));
     return note;
   }
   // 1.33.1: "Tuỳ chọn thêm" — thứ ít khi đổi (khoá, giọng đọc, truyện, Tự viết, giọng cho câu không có audio, Xoá khoá)

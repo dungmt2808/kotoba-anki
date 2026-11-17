@@ -1485,6 +1485,10 @@ button { cursor: pointer; }
 .kb-ai-plan-b { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; margin: 6px 0 0 98px; }
 .kb-ai-dv-h { font-weight: 600; }
 @media (max-width: 720px) { .kb-ai-plan-b { margin-left: 0; } }
+/* 1.33.2: ⚙ — "Báo lỗi · góp ý · khác" thu gọn (tạo biểu tượng, báo lỗi, email, phím tắt, ôn trên điện thoại) */
+.kb-set-more { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+.kb-set-more > summary { cursor: pointer; font-weight: 700; font-size: 14px; border-bottom: 2px dashed var(--kb-line); padding-bottom: 2px; margin-top: 2px; align-self: stretch; }
+.kb-set-more[open] > summary { margin-bottom: 4px; }
 
 /* 1.13: giọng dự phòng cho câu chép không có audio */
 .kb-p-tag.kb-p-voice { background: #e6ecff; font-size: 11px; }

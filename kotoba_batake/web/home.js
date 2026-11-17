@@ -4374,7 +4374,7 @@ var GardenHome = (function () {
         addW.appendChild(mascotCanvas(wornNow(), "happy", 2));
         const wi = el("div", "kb-h-info");
         wi.appendChild(el("div", "kb-h-name", "Tự vẽ đồ cho StackChan"));
-        wi.appendChild(el("div", "kb-h-desc", "Mũ, đồ đeo mặt, đồ đeo cổ vẽ thẳng lên StackChan; vỏ chọn hai màu. StackChan sinh hoạt cũng mặc."));
+        wi.appendChild(el("div", "kb-h-desc", "Vẽ mũ, đồ đeo mặt / cổ thẳng lên StackChan; vỏ chọn hai màu."));
         wi.appendChild(el("div", "kb-h-price", "Từ " + kbXu(mw.shell_price || 150) + " xu · " + nW + "/" + (mw.max || 12) + " món"));
         wi.appendChild(btn("Tủ đồ ▸", "kb-h-buy", () => { tab = "wear"; renderList(); }));
         addW.appendChild(wi);
@@ -4620,7 +4620,7 @@ var GardenHome = (function () {
       inf.appendChild(row);
     }
     inf.appendChild(el("div", "kb-h-desc", "Nhà cũ dần 1 nấc mỗi " + (((catalog() || {}).more || {}).wear_days || 7) +
-      " ngày: rêu bám → sơn bong → ngói lệch → mái dột khi mưa. Không bao giờ sập hay mất đồ."));
+      " ngày: rêu bám → sơn bong → ngói lệch → mái dột. Không sập, không mất đồ."));
     card.appendChild(inf);
     list.appendChild(card);
   }
@@ -4766,7 +4766,7 @@ var GardenHome = (function () {
     const ti = el("div", "kb-h-info");
     if (!g) { ti.appendChild(el("div", "kb-h-name", "Album khách")); top.appendChild(ti); list.appendChild(top); return; }
     ti.appendChild(GardenIcons.fill(el("div", "kb-h-name"), "[i:book] Album khách · " + g.met + "/" + g.total));
-    ti.appendChild(el("div", "kb-h-desc", "Khách ghé tuỳ đồ đã đặt, vùng, mùa, giờ và thời tiết. Không phải cho ăn, vắng nhà không mất gì."));
+    ti.appendChild(el("div", "kb-h-desc", "Khách ghé tuỳ đồ đã đặt, vùng, mùa, giờ và thời tiết."));
     ti.appendChild(el("div", "kb-h-own", "Vườn đang xem có " + g.fruit + " cây Ra quả: khách ghé " + g.rate_label + "."));
     top.appendChild(ti);
     list.appendChild(top);
@@ -5061,7 +5061,7 @@ var GardenHome = (function () {
     const card = el("div", "kb-h-card kb-h-share kb-h-paste");
     const inf = el("div", "kb-h-info");
     inf.appendChild(el("div", "kb-h-name", "Dán mã thiết kế"));
-    inf.appendChild(el("div", "kb-h-desc", "Mã món đồ, vùng hoặc giống cây người khác chia sẻ (bắt đầu bằng KB1:). Xem trước rồi mới trả xu."));
+    inf.appendChild(el("div", "kb-h-desc", "Dán mã KB1:… người khác chia sẻ · xem trước rồi mới trả xu."));
     const ta = document.createElement("textarea");
     ta.className = "kb-h-sharecode"; ta.rows = 2; ta.spellcheck = false; ta.placeholder = "KB1:…"; ta.value = pasteText;
     ta.addEventListener("input", () => {

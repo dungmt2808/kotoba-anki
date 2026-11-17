@@ -139,7 +139,8 @@ result = [len(res), all(res)]`);
   await page.eval('GardenPaper.open("dict")');
   await waitFor(page, 'document.querySelector(".kb-p-empty") !== null');
   const hintD = await page.eval('Array.from(document.querySelectorAll(".kb-p-empty .kb-p-hint")).map(x => x.textContent)');
-  ok(hintD.some(h => /Windows/.test(h)) && hintD.some(h => /Tự động/.test(h)), 'deck D không giọng: chỉ cách bật Gemini + cài giọng máy (' + hintD.length + ' dòng)');
+  ok(hintD.some(h => /cài giọng tiếng Nhật/.test(h)) && hintD.some(h => /Tự động/.test(h)),     // 1.33.2: câu ngắn hơn (bỏ "Windows / macOS")
+     'deck D không giọng: chỉ cách bật Gemini + cài giọng máy (' + hintD.length + ' dòng)');
   await page.shot(SHOTS + '/08_chep_deckD_trong.png');
   // ---- deck C (từ + audio từ) ----
   await deck('C::Chỉ từ + audio từ', 'kb.save_config(dict_voice="tat")');

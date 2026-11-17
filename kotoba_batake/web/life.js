@@ -751,7 +751,7 @@ var GardenLife = (function () {
     if (!v) { ti.appendChild(el("div", "kb-h-name", "Sinh hoạt")); return; }
     GardenIcons.fill(ti.appendChild(el("div", "kb-h-name")), "[i:book] Sinh hoạt · " + v.seen + "/" + v.total);
     const lname = { ja: "tiếng Nhật", en: "tiếng Anh", zh: "tiếng Trung", ko: "tiếng Hàn" }[typeof GardenLang !== "undefined" ? GardenLang.cur() : "ja"];
-    ti.appendChild(el("div", "kb-h-desc", "StackChan tự làm việc theo giờ trong vườn, đồ đã đặt và vùng đã mở. Thấy việc nào thì việc đó vào sổ" + (lname ? ", kèm một câu " + lname + "." : ".")));
+    ti.appendChild(el("div", "kb-h-desc", "StackChan làm việc theo giờ, đồ và vùng. Thấy việc nào thì ghi vào sổ" + (lname ? ", kèm một câu " + lname + "." : ".")));
     const w = where();
     if (w) { ti.appendChild(el("div", "kb-h-own", "Bây giờ: " + w.name + " · " + (isRoom(w.scene) ? "trong nhà" : sceneName(w.scene)))); }
     (v.groups || []).forEach((g) => {

@@ -332,7 +332,7 @@ result = date`);
   ok(hid.cls && (hid.vis === 'hidden' || hid.disp === 'none' || hid.opa === '0') && hid.btn === 'Hiện pinyin', 'bấm → pinyin ẩn, nút thành "Hiện pinyin"');
   await js('document.getElementById("kb-p-furi").click(); return 1;'); await sleep(300);
   ok(await js('return !document.getElementById("kb-paper").classList.contains("kb-p-nofuri");'), 'bấm lại → pinyin hiện');
-  ok(/pinyin, âm Hán Việt/.test(await js('return document.getElementById("kb-p-info").textContent;')), 'dòng gợi ý: "Bấm từ gạch chân để tra nghĩa, pinyin, âm Hán Việt"');
+  ok(/Bấm từ gạch chân để tra nghĩa/.test(await js('return document.getElementById("kb-p-info").textContent;')), 'dòng gợi ý: "Bấm từ gạch chân để tra nghĩa" (1.33.2: rút gọn)');
   const words = await js('return [...new Set([...document.querySelectorAll("#kb-p-stage .kb-p-w")].map((x) => x.getAttribute("data-k")))];');
   ok(words.length >= 5 && words.indexOf('天气') >= 0 && words.indexOf('害怕') >= 0, 'từ của deck được gạch chân: ' + words.slice(0, 10).join(' '));
   await js('[...document.querySelectorAll("#kb-p-stage .kb-p-w")].find((x) => x.getAttribute("data-k") === "害怕").click(); return 1;'); await sleep(400);

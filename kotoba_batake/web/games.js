@@ -423,28 +423,28 @@ var GardenGames = (function () {
     crow: {
       vocab: [{ id: "vi", label: "Nghĩa → gõ từ Nhật", show: "meaning", type: "both", alt: [["meaning"]] },
         { id: "jp", label: "Chữ → gõ cách đọc", show: "word", type: "reading", alt: [["reading"]],
-          desc: "Quạ mang chữ Nhật bay tới trộm hạt. Gõ cách đọc (romaji hoặc kana) để đuổi." }],
+          desc: "Quạ mang chữ Nhật bay tới. Gõ cách đọc (romaji hoặc kana) để đuổi." }],
       kanji: [{ id: "word", label: "Kanji → gõ âm On/Kun", show: "word", type: "reading", alt: [["reading"]],
-        desc: "Quạ mang chữ Hán bay tới trộm hạt. Gõ âm On hoặc Kun (romaji hoặc kana) để đuổi." },
+        desc: "Quạ mang chữ Hán bay tới. Gõ âm On hoặc Kun để đuổi." },
       { id: "hanviet", label: "Hán Việt → gõ âm / chữ", show: "hanviet", type: "both", alt: [["hanviet"]],
-        desc: "Quạ mang âm Hán Việt bay tới. Gõ âm On / Kun (romaji, kana) hoặc chính chữ Hán (IME) để đuổi." }],
+        desc: "Quạ mang âm Hán Việt bay tới. Gõ âm On / Kun hoặc chữ Hán để đuổi." }],
       grammar: [],
       en: [{ id: "spell", label: "Nghĩa → gõ từ tiếng Anh", show: "meaning", type: "spell", alt: [["meaning"]],
-        desc: "Quạ mang nghĩa tiếng Việt bay tới trộm hạt. Gõ đúng chính tả từ tiếng Anh để đuổi." }],
+        desc: "Quạ mang nghĩa bay tới. Gõ đúng từ tiếng Anh để đuổi." }],
       // 1.25.1: ngôn ngữ khác / deck kiến thức — gõ đúng chữ (chỉ thẻ có chữ cần gõ ngắn, ≤ 24 ký tự)
       xx: [{ id: "spell", label: "Nghĩa → gõ từ", show: "meaning", type: "spell", alt: [["meaning"]],
-        desc: "Quạ mang nghĩa bay tới trộm hạt. Gõ đúng từ (mặt trước của thẻ) để đuổi. Không tính hoa thường, dấu câu." },
+        desc: "Quạ mang nghĩa bay tới. Gõ đúng từ để đuổi." },
       { id: "answer", label: "Từ → gõ nghĩa", show: "word", type: "spell_m", alt: [["meaning"]],
-        desc: "Quạ mang mặt trước của thẻ bay tới. Gõ đúng mặt sau (câu trả lời ngắn) để đuổi. Không tính hoa thường, dấu câu." }],
+        desc: "Quạ mang mặt trước của thẻ bay tới. Gõ đúng mặt sau để đuổi." }],
       // 1.32: tiếng Trung — gõ pinyin (số thanh, dấu thanh hoặc không dấu) / gõ chữ bằng bộ gõ / gõ nghĩa
       zh: [{ id: "pinyin", label: "Nghĩa → gõ pinyin", show: "meaning", type: "pinyin", alt: [["meaning", "reading"]],
-        desc: "Quạ mang nghĩa bay tới trộm hạt. Gõ pinyin để đuổi: xia4yu3, xiayu hay xià yǔ đều được." },
+        desc: "Quạ mang nghĩa bay tới. Gõ pinyin để đuổi (xiayu, xia4yu3 đều được)." },
       { id: "spell", label: "Nghĩa → gõ chữ Hán", show: "meaning", type: "spell", alt: [["meaning"]],
-        desc: "Quạ mang nghĩa bay tới trộm hạt. Gõ đúng chữ Hán (bằng bộ gõ tiếng Trung) để đuổi." },
+        desc: "Quạ mang nghĩa bay tới. Gõ chữ Hán để đuổi." },
       { id: "answer", label: "Chữ → gõ nghĩa", show: "word", type: "spell_m", alt: [["meaning"]],
         desc: "Quạ mang chữ Hán bay tới. Gõ đúng nghĩa tiếng Việt để đuổi." }],
       ko: [{ id: "spell", label: "Nghĩa → gõ chữ Hàn", show: "meaning", type: "spell", alt: [["meaning"]],
-        desc: "Quạ mang nghĩa bay tới trộm hạt. Gõ đúng từ tiếng Hàn (bằng bộ gõ Hangul) để đuổi." },
+        desc: "Quạ mang nghĩa bay tới. Gõ từ tiếng Hàn để đuổi." },
       { id: "answer", label: "Từ → gõ nghĩa", show: "word", type: "spell_m", alt: [["meaning"]],
         desc: "Quạ mang từ tiếng Hàn bay tới. Gõ đúng nghĩa tiếng Việt để đuổi." }]
     },
@@ -474,11 +474,11 @@ var GardenGames = (function () {
     cloze: {
       vocab: [{ id: "word", label: "Điền từ vào câu ví dụ", alt: [["cloze"]] }],
       kanji: [{ id: "word", label: "Điền chữ vào ví dụ", alt: [["cloze"]],
-        desc: "Từ / câu ví dụ của bạn bị che một chữ Hán. Chọn chữ đúng để điền." }],
+        desc: "Câu ví dụ bị che một chữ Hán. Chọn chữ đúng để điền." }],
       grammar: [{ id: "word", label: "Điền mẫu vào câu ví dụ", alt: [["cloze"]],
-        desc: "Câu ví dụ bị che mẫu ngữ pháp. Chọn mẫu đúng để điền, rồi nghe cả câu." }],
+        desc: "Câu ví dụ bị che mẫu ngữ pháp. Chọn mẫu đúng để điền." }],
       en: [{ id: "word", label: "Điền từ vào câu ví dụ", alt: [["cloze"]],
-        desc: "Câu ví dụ tiếng Anh bị che một từ (nhận cả dạng went, studying, cities…). Chọn từ đúng để điền." }],
+        desc: "Câu ví dụ bị che một từ. Chọn từ đúng để điền." }],
       xx: [{ id: "word", label: "Điền từ vào câu ví dụ", alt: [["cloze"]] }],
       zh: [{ id: "word", label: "Điền từ vào câu ví dụ", alt: [["cloze"]] }],
       ko: [{ id: "word", label: "Điền từ vào câu ví dụ", alt: [["cloze"]] }]
@@ -898,11 +898,11 @@ var GardenGames = (function () {
     { id: "market", jp: "朝市", vi: "Chợ sáng", min: 4,
       desc: "Khách hỏi mua theo nghĩa hoặc theo chữ, bán đúng trong 75 giây." },
     { id: "crow", jp: "カラス追い", vi: "Đuổi quạ", min: 3,
-      desc: "Quạ mang nghĩa tiếng Việt bay tới trộm hạt. Gõ từ tiếng Nhật (romaji, kana hoặc kanji) để đuổi." },
+      desc: "Quạ mang nghĩa bay tới. Gõ từ tiếng Nhật (romaji, kana hoặc kanji) để đuổi." },
     { id: "memory", jp: "神経衰弱", vi: "Lật cặp", min: 4,
       desc: "Lật thẻ tìm cặp: chữ ↔ nghĩa hoặc cách đọc." },
     { id: "cloze", jp: "穴埋め", vi: "Điền vào câu", min: 4,
-      desc: "Câu ví dụ của bạn bị che một từ. Chọn từ đúng để điền, rồi nghe cả câu." }
+      desc: "Câu ví dụ bị che một từ. Chọn từ đúng để điền." }
   ];
   const BUILDERS = {};
 

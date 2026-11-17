@@ -3890,8 +3890,8 @@ class GardenDialog(QDialog):
         has_ex = any(p.get("has_ex") or p.get("cloze") for p in plants)
         vocab = any(p.get("kind", "vocab") == "vocab" for p in plants)
         if not has_ex and not vocab:
-            return ["Deck chữ Hán / ngữ pháp này không có câu ví dụ để chép. Thêm câu ví dụ vào thẻ, hoặc dán khoá Gemini "
-                    "ở tab Nguồn báo để chép câu trong báo."]
+            return ["Deck này không có câu ví dụ để chép. Thêm câu ví dụ vào thẻ, hoặc dán khoá Gemini ở tab Nguồn báo "
+                    "để chép câu trong báo."]
         out.append("Cần có tiếng để nghe:")
         n_lang: dict[str, int] = {}
         for p in plants:
@@ -3905,12 +3905,12 @@ class GardenDialog(QDialog):
         if not ai.clean_key(cfg.get("gemini_key")):
             out.append("• Dán khoá Gemini (miễn phí) ở tab Nguồn báo để có giọng đọc.")
         elif _ai_opts(cfg)["dict_voice"] != "auto":
-            out.append("• Bật “Giọng đọc cho câu không có audio: Tự động” ở tab Nguồn báo.")
+            out.append("• Bật “Giọng cho câu không có audio: Tự động” (Nguồn báo → Tuỳ chọn thêm).")
         elif st.get("voice_fail_day") == ai_today():
-            out.append("• Hôm nay Gemini chưa tạo được giọng đọc (%s). Hạn mức đặt lại lúc 15 giờ (giờ Việt Nam)."
+            out.append("• Hôm nay Gemini chưa tạo được giọng đọc (%s). Sau 15 giờ thử lại."
                        % (st.get("voice_error") or "hết hạn mức"))
         if lang == "ja" and not voice.tts:
-            out.append("• Hoặc cài giọng tiếng Nhật cho máy (Windows / macOS), cách cài ở tab Nguồn báo.")
+            out.append("• Hoặc cài giọng tiếng Nhật cho máy (cách cài: Nguồn báo → Tuỳ chọn thêm).")
         elif lang == "en" and not voice.tts_en:
             out.append("• Hoặc dùng giọng tiếng Anh của máy (Windows / macOS có sẵn).")
         elif lang in ("zh", "ko") and not voice.tts_xx.get(lang):
