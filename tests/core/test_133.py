@@ -154,8 +154,15 @@ ok(all(paper.keys(c["cau"]) or True for c in fixed["chinh_ta"]) and "{" in fixed
    "câu hỏi / lựa chọn cũng tra được từ của deck")
 pl = ai_zh.plain_issue(fixed)
 plj = json.dumps(pl, ensure_ascii=False)
-ok(re.search(r"\{[^{}\[\]|]*\|[^{}\[\]|]*\|", plj) is None and "[今天|jīn tiān]" in plj and "[很|hěn]" in plj,
-   "bản gửi Gemini sửa / soát: bỏ chỗ tra từ của máy, giữ [chữ|pinyin]")
+ok(re.search(r"\{[^{}\[\]|]*\|[^{}\[\]|]*\|", plj) is None and "[今天|jin1 tian1]" in plj and "[很|hen3]" in plj
+   and not re.search(r"\[[^|\]]+\|[^\]]*[āáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ]", plj),
+   "bản gửi Gemini sửa / soát: bỏ chỗ tra từ của máy, pinyin ghi số như lời dặn (Gemini thật 17/11: người soát tưởng "
+   "dấu thanh là sai quy tắc)")
+# từ mới luôn được nối dù đã hết LINK_MAX chỗ (Gemini thật 17/11: báo tiếng Hàn tốn 3 lượt sửa vô ích)
+links = ai_zh.find_links("今天天气很好" * 3 + "木屐", ["今天", "天气", "很好", "木屐"], set(), [ai_zh.LINK_MAX], must={"木屐"})
+ok([w for _a, _b, w in links] == ["木屐"], "zh: hết chỗ nối → vẫn nối từ mới (木屐), không nối thêm từ của deck")
+kl = ai_ko._link_one("오늘 날씨가 좋아요. 나막신이 있어요.", ["오늘", "날씨", "나막신"], set(), [ai_ko.LINK_MAX], must={"나막신"})
+ok(kl == "오늘 날씨가 좋아요. {나막신||나막신}이 있어요.", "ko: hết chỗ nối → vẫn nối từ mới: " + kl)
 
 
 def zh_err(mutate) -> list[str]:

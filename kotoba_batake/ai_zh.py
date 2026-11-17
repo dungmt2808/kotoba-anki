@@ -258,8 +258,12 @@ def serialize(cs: list[tuple[str, str | None]], links: list[tuple[int, int, str]
     return "".join(out)
 
 
-def find_links(text: str, words_: list[str], used: set[str], cap: list[int], first_only: bool = True) -> list[tuple[int, int, str]]:
-    """Từ của deck trong chuỗi chữ (dò từ dài nhất trước, không chồng nhau)."""
+def find_links(text: str, words_: list[str], used: set[str], cap: list[int], first_only: bool = True,
+               must: set[str] | None = None) -> list[tuple[int, int, str]]:
+    """Từ của deck trong chuỗi chữ (dò từ dài nhất trước, không chồng nhau). `must` (từ mới của số): luôn nối, không
+    tính giới hạn LINK_MAX — 1.33 (Gemini thật 17/11): hết chỗ nối trước bài có từ mới thì máy kiểm lại tưởng từ mới
+    "không có trong bài" và gửi Gemini sửa vô ích."""
+    must = must or set()
     ordered = sorted({w for w in words_ if w}, key=len, reverse=True)
     taken = [False] * len(text)
     found: list[tuple[int, int, str]] = []
@@ -272,8 +276,8 @@ def find_links(text: str, words_: list[str], used: set[str], cap: list[int], fir
             if i < 0:
                 break
             if not any(taken[i:i + len(w)]):
-                if cap[0] >= LINK_MAX:
-                    return sorted(found)
+                if cap[0] >= LINK_MAX and w not in must:
+                    break
                 found.append((i, i + len(w), w))
                 for j in range(i, i + len(w)):
                     taken[j] = True
@@ -430,7 +434,8 @@ def autofix(raw: Any, scope: dict[str, Any], opts: dict[str, Any]) -> tuple[Any,
             continue
         text = "".join(c for c, _s in cs)
         is_body = id(holder) in body           # bài: mỗi từ gạch chân một lần; câu hỏi / câu chép: mọi chỗ
-        links = find_links(text, words_, used if is_body else set(), cap if is_body else [0], first_only=is_body)
+        links = find_links(text, words_, used if is_body else set(), cap if is_body else [0], first_only=is_body,
+                           must={w["w"] for w in tm3})
         s = serialize(cs, links)
         if isinstance(holder, list):
             holder[key] = s
@@ -483,8 +488,19 @@ def _fix_dictation(raw: dict[str, Any], scope: dict[str, Any], opts: dict[str, A
     raw["chinh_ta"] = keep[:4]
 
 
+def _num_reading(r: str) -> str:
+    """Pinyin có dấu → ghi số như lời dặn ("jīn tiān" → "jin1 tian1"); âm tiết máy không đọc được thì giữ nguyên."""
+    out = []
+    for syl in r.split():
+        n = zh.numbered(syl)
+        out.append("%s%d" % n if n else syl)
+    return " ".join(out)
+
+
 def plain_issue(raw: Any) -> Any:
-    """Bản gửi cho Gemini sửa / soát: giữ pinyin theo từ ([chữ|pinyin]) nhưng bỏ chỗ tra từ của máy ({…} → […])."""
+    """Bản gửi cho Gemini sửa / soát: pinyin [chữ|pinyin] nhưng bỏ chỗ tra từ của máy ({…} → […]).
+    1.33 (Gemini thật 17/11): máy đã đổi pinyin sang dấu thanh → người soát tưởng sai quy tắc "ghi số" và sửa cả bài;
+    gửi lại dạng ghi số."""
     if not isinstance(raw, dict):
         return raw
     out = copy.deepcopy(raw)
@@ -492,7 +508,7 @@ def plain_issue(raw: Any) -> Any:
     def plain(v: Any) -> Any:
         if not isinstance(v, str):
             return v
-        return "".join("[%s|%s]" % (t[1], t[2]) if t[0] in ("ruby", "word") and t[2] else t[1]
+        return "".join("[%s|%s]" % (t[1], _num_reading(t[2])) if t[0] in ("ruby", "word") and t[2] else t[1]
                        for t in paper.tokenize(v))
     for holder, key in _strings(out):
         if isinstance(holder, list):
@@ -851,7 +867,9 @@ def review_prompt(raw: Any, scope: dict[str, Any], warnings: list[str]) -> str:
         "Ghi mỗi chỗ đã sửa vào van_de (cho = vị trí như bai[1].doan[0], loi = lỗi gì bằng tiếng Việt, sua = câu mới). "
         "Không có lỗi thì van_de rỗng. \"bao\" là toàn bộ số báo sau khi sửa (không có lỗi thì trả nguyên), giữ dạng "
         "[chữ|pinyin]. Giữ nguyên các id mau_cau, số kỳ truyện. Bài truyện (loai truyen) đã qua biên tập: chỉ sửa lỗi thật "
-        "sự, không viết lại. \"dich\" (bản dịch tiếng Việt) giữ nguyên, chỉ sửa câu dịch của đoạn bạn vừa sửa.\n\n%s\n\n%s"
+        "sự, không viết lại. \"dich\" (bản dịch tiếng Việt) giữ nguyên, chỉ sửa câu dịch của đoạn bạn vừa sửa.\n"
+        "Trong SỐ BÁO, máy đã tách pinyin theo từng chữ ([今|jin1][天|tian1]): đó là đúng, đừng ghép lại hay báo lỗi chỗ "
+        "này; câu bạn sửa thì ghi theo từ hoặc theo chữ đều được.\n\n%s\n\n%s"
         "DANH SÁCH NGỮ PHÁP:\n%s\n\nDANH SÁCH TỪ VỰNG ĐÃ HỌC (từ pinyin = nghĩa):\n%s\n\nSỐ BÁO:\n%s" % (
             lv, lv, lv, rules(not scope.get("phon_the")),
             ("GỢI Ý CỦA MÁY KIỂM TRA (xem và sửa nếu đúng là lỗi):\n- " + "\n- ".join(warnings[:20]) + "\n\n") if warnings else "",

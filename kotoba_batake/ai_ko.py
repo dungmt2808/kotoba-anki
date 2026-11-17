@@ -201,14 +201,17 @@ def _deck_words(scope: dict[str, Any], extra: list[str] | None = None) -> list[s
     return out + [w for w in extra or [] if w]
 
 
-def _link_one(s: str, words_: list[str], used: set[str], cap: list[int], first_only: bool = True) -> str:
-    """Nối tra từ trong một chuỗi chữ trơn: mỗi từ gốc một chỗ (lần đầu xuất hiện trong cả số), tối đa LINK_MAX."""
+def _link_one(s: str, words_: list[str], used: set[str], cap: list[int], first_only: bool = True,
+              must: set[str] | None = None) -> str:
+    """Nối tra từ trong một chuỗi chữ trơn: mỗi từ gốc một chỗ (lần đầu xuất hiện trong cả số), tối đa LINK_MAX.
+    `must` (từ mới của số) luôn nối — 1.33 (Gemini thật 17/11): hết chỗ trước bài có từ mới thì máy kiểm lại tưởng từ
+    mới "không có trong bài", gửi Gemini sửa 3 lượt vô ích."""
     spans = []
     for a, b, w in ko.find_links(s, words_):
         if first_only and w in used:
             continue
-        if cap[0] >= LINK_MAX:
-            break
+        if cap[0] >= LINK_MAX and w not in (must or ()):
+            continue
         used.add(w)
         cap[0] += 1
         spans.append((a, b, w))
@@ -301,7 +304,7 @@ def autofix(raw: Any, scope: dict[str, Any], opts: dict[str, Any]) -> tuple[Any,
     order = sorted(range(len(plain)), key=lambda i: i in titles)       # tiêu đề nối sau cùng (bài trước)
     linked = list(plain)
     for i in order:
-        linked[i] = _link_one(plain[i], words_, used, cap)
+        linked[i] = _link_one(plain[i], words_, used, cap, must={w["w"] for w in tm3})
     for (bi, slot), s in zip(where, linked):
         if slot == "tieu_de":
             bai[bi]["tieu_de"] = s
