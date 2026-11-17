@@ -54,10 +54,10 @@ Gemini thật:
 | Bộ | Kết quả |
 |---|---|
 | `core/test_133.py` (2 báo, 2.000 từ đối chiếu pinyin, tiếng Hàn nhận / không nhận nhầm, cả quy trình với Gemini giả = đúng 3 lượt mỗi báo, lời nhắc tiếng Anh giống hệt 1.31.5, hợp đồng dữ liệu, các chỗ sửa, 4 số báo Gemini thật) | **96 / 96** |
-| `anki/e2e_133.js` — Anki 26.9.4 thật, Gemini giả chạy đúng đường đi của add-on (không gọi mạng) | **@E2E@** |
+| `anki/e2e_133.js` — Anki 26.9.4 thật, Gemini giả chạy đúng đường đi của add-on (không gọi mạng) | **77 / 77** trên Anki 26.9.4 và **77 / 77** trên Anki 23.10.1 (bản cũ nhất add-on hỗ trợ) |
 | `anki/run_capnhat.sh` cài đè **1.31.3 (đã phát hành) → 1.33.0** | **19 / 19** (không mất khoá / file / xu / nhật ký; chỉ thêm 2 mục mặc định mới của config) |
-| Kịch bản Anki thật (mọi kịch bản cũ + `e2e_133`, mỗi kịch bản một hồ sơ mới) | **@UI@** |
-| `tests/run_all.sh` (offline, Anki 26.9.4) | **@ALL@** |
+| Kịch bản Anki thật (mọi kịch bản cũ + `e2e_133`, mỗi kịch bản một hồ sơ mới) | **46 kịch bản, 2.148 / 2.148 kiểm tra** (7 kịch bản chạy lại riêng: 3 kịch bản cũ chờ 3 ô Báo muốn nhận nay 5 ô — `e2e_119`, `e2e_1251`, và `e2e_120` tìm ra lỗi 3.8; 4 kịch bản dừng vì cổng chưa nhả / Anki không mở khi chạy 3 Anki song song — `e2e_1255`, `audit_full`, `e2e_115`, `e2e_fuzz` — đều đạt khi chạy riêng) |
+| `tests/run_all.sh` (offline, Anki 26.9.4) | **60 bộ, tất cả đạt** (`test_1314` chạy lại sau khi bỏ báo cáo 1.33 khỏi phép soát chữ Trung cạnh chữ Nhật — báo cáo bàn về tên báo nên có cả hai) |
 | Gemini thật (khoá test) 2 ngày × 2 báo | xem mục 5 |
 
 ## 5. Gemini thật (khoá tài khoản test, 17/11)
