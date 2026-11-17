@@ -214,7 +214,8 @@ mw.addonManager.writeConfig(kb.__name__, c); result = 1`);
   const visCount = () => js(`const root = document.querySelector(".kb-ai"); const vis = (e) => { const r = e.getBoundingClientRect(); if (!r.width || !r.height) return false; let p = e.parentElement; while (p) { if (p.tagName === "DETAILS" && !p.open && !p.querySelector(":scope > summary").contains(e)) return false; p = p.parentElement; } return true; };
     return [...root.querySelectorAll("button, input, select, summary")].filter(vis).length;`);
   const n2 = await visCount();
-  ok(n2 > 0 && n2 <= 16, `hai báo (Nhật + Anh), đang dùng: ${n2} chỗ bấm đang hiện (1.33.0: 49)`);
+  // 1.35: thêm 2 ô Báo muốn nhận (Tiếng Đức / Tiếng Pháp) → 1.33.1: 15, 1.35: 17
+  ok(n2 > 0 && n2 <= 18, `hai báo (Nhật + Anh), đang dùng: ${n2} chỗ bấm đang hiện (1.33.0: 49; 1.33.1: 15 + 2 ô Đức / Pháp từ 1.35)`);
   const st7 = await js(`return { more: !!document.querySelector("details.kb-ai-opts-box:not([open])"), plan: !!document.querySelector(".kb-ai-plan:not([open])"),
     sel: [...document.querySelectorAll(".kb-ai-lang select.kb-ai-sel")].map((s) => s.getAttribute("aria-label")),
     chipsInLang: document.querySelectorAll(".kb-ai-lang .kb-ai-chip").length };`);

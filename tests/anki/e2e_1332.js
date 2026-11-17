@@ -117,7 +117,7 @@ result = date`);
       truyen: byLabel("Truyện dài kỳ").map((s) => s.disabled), tones: q(".kb-ai-tones .kb-ai-chip").every((b) => b.disabled),
       tuViet: (more.querySelector(".kb-ai-auto input") || {}).disabled, dict: byLabel("Giọng cho câu không có audio").map((s) => s.disabled),
       start: (document.querySelector(".kb-ai-startbtn") || {}).disabled };`);
-  ok(ui.ticks.length === 5 && ui.ticks.every(Boolean) && /Gemini đang viết báo — xong mới đổi được/.test(ui.hint), 'Báo muốn nhận: 5 ô đều khoá + dòng "Gemini đang viết báo — xong mới đổi được."');
+  ok(ui.ticks.length === 7 && ui.ticks.every(Boolean) && /Gemini đang viết báo — xong mới đổi được/.test(ui.hint), 'Báo muốn nhận: 7 ô (1.35: + Đức / Pháp) đều khoá + dòng "Gemini đang viết báo — xong mới đổi được."');
   ok(ui.lv.length === 4 && ui.lv.every(Boolean), 'Trình độ + Lấy từ của hai báo khoá');
   ok(ui.doiKhoa.length === 1 && ui.doiKhoa[0] && ui.xoa === true, 'Đổi khoá + Xoá khoá khoá');
   ok(ui.truyen[0] === true && ui.tones, 'Truyện + Chủ đề truyện khoá');

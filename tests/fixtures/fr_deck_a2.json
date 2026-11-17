@@ -1,0 +1,24 @@
+{
+ "cong_cu": "1.35: deck tiếng Pháp A2 mẫu cho tests/gemini/run_job.py --lang fr (Claude soạn; từ, phiên âm rỗng, nghĩa tiếng Việt)",
+ "tu_vung": [
+  ["le temps", "", "thời tiết; thời gian"], ["la pluie", "", "mưa"], ["le soleil", "", "mặt trời"], ["le vent", "", "gió"],
+  ["la neige", "", "tuyết"], ["chaud", "", "nóng, ấm"], ["froid", "", "lạnh"], ["l'automne (m)", "", "mùa thu"],
+  ["la feuille", "", "chiếc lá"], ["l'arbre (m)", "", "cái cây"], ["la fleur", "", "bông hoa"], ["le jardin", "", "khu vườn"],
+  ["le village", "", "ngôi làng"], ["l'auberge (f)", "", "quán trọ"], ["le maire", "", "trưởng làng, thị trưởng"],
+  ["la lettre", "", "lá thư"], ["le puits", "", "cái giếng"], ["le pont", "", "cây cầu"], ["le marché", "", "chợ"],
+  ["la fête", "", "lễ hội"], ["le chat", "", "con mèo"], ["l'oiseau (m)", "", "con chim"], ["le poisson", "", "con cá"],
+  ["le pain", "", "bánh mì"], ["le thé", "", "trà"], ["la soupe", "", "món súp"], ["la pomme", "", "quả táo"],
+  ["la fenêtre", "", "cửa sổ"], ["la porte", "", "cái cửa"], ["la table", "", "cái bàn"], ["la lampe", "", "cái đèn"],
+  ["le bruit", "", "tiếng động"], ["la peur", "", "nỗi sợ"], ["l'histoire (f)", "", "câu chuyện"], ["le secret", "", "bí mật"],
+  ["la nuit", "", "đêm"], ["le matin", "", "buổi sáng"], ["le soir", "", "buổi tối"], ["demain", "", "ngày mai"],
+  ["hier", "", "hôm qua"], ["aujourd'hui", "", "hôm nay"], ["toujours", "", "luôn luôn"], ["parfois", "", "đôi khi"],
+  ["soudain", "", "đột nhiên"], ["doucement", "", "nhẹ nhàng, khẽ"], ["fort", "", "to, mạnh"], ["beau", "", "đẹp"],
+  ["fatigué", "", "mệt"], ["heureux", "", "hạnh phúc"], ["triste", "", "buồn"], ["curieux", "", "tò mò"],
+  ["aller", "", "đi"], ["venir", "", "đến"], ["voir", "", "nhìn, thấy"], ["entendre", "", "nghe"], ["trouver", "", "tìm thấy"],
+  ["chercher", "", "tìm kiếm"], ["aider", "", "giúp đỡ"], ["rire", "", "cười"], ["écrire", "", "viết"], ["lire", "", "đọc"],
+  ["cuisiner", "", "nấu ăn"], ["attendre", "", "chờ đợi"], ["préparer", "", "chuẩn bị"], ["se lever", "", "thức dậy"],
+  ["acheter", "", "mua"], ["appeler", "", "gọi"], ["oublier", "", "quên"], ["raconter", "", "kể"],
+  ["demander", "", "hỏi"], ["répondre", "", "trả lời"], ["apporter", "", "mang đến"], ["ouvrir", "", "mở"],
+  ["l'ami (m)", "", "bạn bè"], ["la voisine", "", "chị hàng xóm"], ["l'enfant (m)", "", "đứa trẻ"], ["la voix", "", "giọng nói"]
+ ]
+}

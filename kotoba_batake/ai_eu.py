@@ -814,6 +814,6 @@ def review_prompt(lang: str, raw: Any, scope: dict[str, Any], warnings: list[str
         "Giữ nguyên các id mau_cau, số kỳ truyện. Bài truyện (loai truyen) đã qua biên tập: chỉ sửa lỗi thật sự, không viết "
         "lại. \"dich\" (bản dịch tiếng Việt) giữ nguyên, chỉ sửa câu dịch của đoạn bạn vừa sửa.\n\n%s\n\n%s"
         "DANH SÁCH NGỮ PHÁP:\n%s\n\nDANH SÁCH TỪ VỰNG ĐÃ HỌC (từ = nghĩa):\n%s\n\nSỐ BÁO:\n%s" % (
-            i["short"], i["name"], i["name"], level, i["name"].capitalize(), gram, level, level, i["inn"], rules(lang),
+            i["short"], i["name"], i["name"], level, i["name"][:1].upper() + i["name"][1:], gram, level, level, i["inn"], rules(lang),
             ("GỢI Ý CỦA MÁY KIỂM TRA (xem và sửa nếu đúng là lỗi):\n- " + "\n- ".join(warnings[:20]) + "\n\n") if warnings else "",
             ai._grammar_lines(scope), _vocab_lines(scope, 600), json.dumps(plain_issue(raw), ensure_ascii=False)))

@@ -242,10 +242,21 @@ var GardenPaper = (function () {
     Object.keys(n).forEach((l) => { if (n[l] > k) { k = n[l]; best = l; } });      // 1.33: zh / ko
     return best === "other" ? "en" : best;
   }
+  // 1.35: từ của deck tiếng Đức / Pháp ghi kèm số nhiều / giống ("das Blatt, ¨-er", "l'œil (m)") — ô tra từ dùng dạng gọn
+  // (ai_eu.deck_word) → so cả dạng gọn để tìm cây
+  function euKey(s) {
+    return String(s || "").normalize("NFC").replace(/\[[^\]]*\]|\/[^/\s][^/]*\//g, " ").split(/[;/|]|,(?!\s*[¨̈]?\s*-)/)[0]
+      .replace(/,\s*[¨̈]?\s*-\S*/g, " ").replace(/\([^)]*\)/g, " ").replace(/’/g, "'").replace(/\s+/g, " ").trim().toLowerCase();
+  }
   function plantOf(word) {
     const d = H && H.data();
     const plants = (d && d.plants) || [];
     for (let i = 0; i < plants.length; i++) { if (plants[i].word === word) { return plants[i]; } }
+    const lg = issue && issue.lang;
+    if (lg === "de" || lg === "fr") {
+      const k = euKey(word);
+      for (let i = 0; i < plants.length; i++) { if (plants[i].lang === lg && k && euKey(plants[i].word) === k) { return plants[i]; } }
+    }
     return null;
   }
   function showWord(k) {

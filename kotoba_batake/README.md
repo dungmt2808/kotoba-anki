@@ -124,6 +124,18 @@ Sau khi trả lời có hiện cách đọc, Hán Việt, nghĩa (và cách dùn
 - **Hiệu ứng thành tích** (`web/joy.js`, Python tính `data.joy` = `more_core.joy_view`): **xong hết thẻ hôm nay** trong deck đang xem (`deck_due_tree` = 0 và hôm nay đã ôn ≥ 1 lượt) → cầu vồng trên ruộng và trên trời sân, giọt sương lấp lánh; **đạt mục tiêu ngày**; **cả vườn xanh tốt / ra hoa / trĩu quả** (≥ 5 cây, không cây nào héo, mọi cây từ Cây non / Ra hoa / Ra quả) → lá lấp lánh / cánh hoa anh đào bay / đốm sáng vàng bay lên; **mốc chuỗi ngày** (7, 14, 21, 30, 50, 75, 100, 150, 200, 250, 300, 365, 500, 730, 1000) → pháo hoa trên trời sân; **xong 3 nhiệm vụ** → đèn trời bay lên. Huy hiệu cạnh chú thích ruộng; dải chúc mừng + linh vật chúc mỗi thành tích **một lần mỗi ngày** (nhớ ở `localStorage kb-joy-<ngày>-<loại>`), đang ôn thẻ thì để dành tới khi đóng bảng ôn.
 - **Lưu trữ**: khoá collection mới `kotoba_batake_more` (`more_core.MORE_KEY`) — mục 4. Bản ≤ 1.13 ở máy khác không đọc khoá này nên không xoá được gì.
 
+### Mới ở 1.35.0: tiếng Đức và tiếng Pháp
+- **Deck tiếng Đức / tiếng Pháp**: ngôn ngữ riêng trong Cấu hình trường (tự nhận deck có der / die / das, ä ö ü ß hoặc le / la /
+  l', é è ç); lưu ở khoá mới `lang3` / `games_lang3` của `kotoba_batake_fields` (bản cũ đọc là "Ngôn ngữ khác", không mất
+  gì khi máy khác còn bản cũ). Trò chơi có nhóm de / fr; Đuổi quạ không cần gõ mạo từ, gõ không dấu cũng được (ä = ae,
+  ß = ss, é = e, œ = oe); giọng máy `de_DE` / `fr_FR` (`eu_core.py`).
+- **Ngôn ngữ trong vườn**: ⚙ thêm Tiếng Đức / Tiếng Pháp — StackChan, sinh hoạt, đồ nhặt, khách, tường / sàn, mùa, tên bảng,
+  trò chơi (`lang_core.EU`, `web/glang.js`).
+- **Báo**: Der Wortgarten (tiếng Đức) / Le Jardin des Mots (tiếng Pháp), trình độ A1–C1 (`gemini_level_de` / `_fr`), cùng
+  truyện "Một làng, một truyện", tối đa 2 báo trong Nhật / Anh / Trung / Hàn / Đức / Pháp; tra từ nhận dạng chia / số nhiều
+  (Blätter → das Blatt, yeux → l'œil); chép chính tả gõ không dấu vẫn đúng (`ai_eu.py`, `ai_de.py`, `ai_fr.py`). Khoá
+  collection mới `kotoba_batake_paper_de` / `_fr`; số báo ở `user_files/bao_gemini_de` / `_fr`.
+
 ### Mới ở 1.34.1: kiểm tra thêm — so đáp án với bộ gõ / deck thật, đoán ngôn ngữ deck
 - Đuổi quạ so đáp án: gõ tiếng Việt kiểu tổ hợp / Hangul tách nét / chữ toàn khổ (NFKC), tiếng Trung / Hàn không tính dấu
   cách, pinyin nhiều cách đọc ghi bằng `，、；（）`, không chấm lúc bộ gõ đang ghép chữ (`games.js`).

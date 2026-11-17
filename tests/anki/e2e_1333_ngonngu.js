@@ -53,8 +53,16 @@ const ZH = [['你好', 'nǐ hǎo', 'xin chào', 'NHĨ HẢO'], ['谢谢', 'xièx
   ['喝茶', 'hē chá', 'uống trà', 'HÁT TRÀ'], ['看书', 'kàn shū', 'đọc sách', 'KHÁN THƯ']];
 const KO = [['안녕하세요', 'annyeonghaseyo', 'xin chào'], ['감사합니다', 'gamsahamnida', 'cảm ơn'], ['학생', 'haksaeng', 'học sinh'],
   ['친구', 'chingu', 'bạn bè'], ['고양이', 'goyangi', 'con mèo'], ['날씨', 'nalssi', 'thời tiết']];
-const DECKS = [['ja', 'B::Có câu ví dụ, không audio'], ['en', 'M::Tiếng Anh A2'], ['zh', 'ZZ::Trung'], ['ko', 'ZZ::Hàn']];
-const PREFS = ['auto', 'ja', 'en', 'zh', 'ko', 'vi'];
+// 1.35: KB_NN=eu (e2e_135_ngonngu.js) — deck Nhật / Đức / Pháp × Ngôn ngữ trong vườn Tự theo deck / Nhật / Đức / Pháp / Việt
+const EU_SET = process.env.KB_NN === 'eu';
+const DE = [['der Hund, -e', 'con chó'], ['die Katze', 'con mèo'], ['das Haus, ¨-er', 'ngôi nhà'], ['gehen', 'đi'], ['schön', 'đẹp'],
+  ['die Straße', 'con đường'], ['lernen', 'học'], ['das Mädchen', 'cô bé']];
+const FR = [['le chien', 'con chó'], ['le chat', 'con mèo'], ["l'école (f)", 'trường học'], ['aller', 'đi'], ['beau', 'đẹp'],
+  ['la rue', 'con đường'], ['apprendre', 'học'], ['le garçon', 'cậu bé']];
+const DECKS = EU_SET ? [['ja', 'B::Có câu ví dụ, không audio'], ['de', 'ZZ::Đức'], ['fr', 'ZZ::Pháp']]
+  : [['ja', 'B::Có câu ví dụ, không audio'], ['en', 'M::Tiếng Anh A2'], ['zh', 'ZZ::Trung'], ['ko', 'ZZ::Hàn']];
+const PREFS = EU_SET ? ['auto', 'ja', 'de', 'fr', 'vi'] : ['auto', 'ja', 'en', 'zh', 'ko', 'vi'];
+const SECOND = EU_SET ? 'de' : 'en';          // ngôn ngữ thứ hai để chơi Chợ sáng / Lật cặp với deck tiếng Nhật
 
 // ghi chữ: chỗ hiện (vùng) + chữ + ngôn ngữ phải có lúc đó
 const OBSERVE = `
@@ -106,6 +114,13 @@ for w, p, m, hv in ${JSON.stringify(ZH)}:
     n = col.new_note(zh); n["Hanzi"], n["Pinyin"], n["Nghĩa"], n["Hán Việt"] = w, p, m, hv; col.add_note(n, dz)
 for w, r, m in ${JSON.stringify(KO)}:
     n = col.new_note(ko); n["Korean"], n["Romaja"], n["Nghĩa"] = w, r, m; col.add_note(n, dk)
+de = model("Deutsch Wortschatz", ["Wort", "Bedeutung", "Beispiel"])
+fr = model("Vocabulaire français", ["Mot", "Sens", "Exemple"])
+dd, df = col.decks.id("ZZ::Đức"), col.decks.id("ZZ::Pháp")
+for w, m in ${JSON.stringify(DE)}:
+    n = col.new_note(de); n["Wort"], n["Bedeutung"] = w, m; col.add_note(n, dd)
+for w, m in ${JSON.stringify(FR)}:
+    n = col.new_note(fr); n["Mot"], n["Sens"] = w, m; col.add_note(n, df)
 today = col.sched.today
 for i, cid in enumerate(col.find_cards('deck:"ZZ::*"')):
     col.db.execute("update cards set type=2, queue=2, ivl=?, due=?, factor=2500, reps=3 where id=?", 5 + i, today + 3, cid)
@@ -164,7 +179,7 @@ result = 1`);
       await js('document.getElementById("kb-games").click(); return 1;'); await sleep(700);
       await ctx(pref, dl, 'Chợ sáng');
       // chữ của trò chơi theo deck (không theo Ngôn ngữ trong vườn, trừ Chỉ tiếng Việt): chơi Chợ sáng ở 2 chế độ mỗi deck
-      const playMarket = pref === 'vi' || pref === (dl === 'ja' ? 'en' : 'ja');
+      const playMarket = pref === 'vi' || pref === (dl === 'ja' ? SECOND : 'ja');
       const can = playMarket && await js('const b = document.querySelector(\'.kb-gcard[data-game="market"]\'); if (!b || b.disabled) return false; b.click(); return true;');
       if (can) {
         for (let c = 0; c < 7; c++) {
@@ -181,7 +196,7 @@ result = 1`);
         }
       }
       await js('GardenGames.close(); return 1;'); await sleep(250);
-      if (pref === 'en' || pref === 'vi' || pref === 'auto') {
+      if (pref === SECOND || pref === 'vi' || pref === 'auto') {
         await js('document.getElementById("kb-games").click(); return 1;'); await sleep(600);
         await ctx(pref, dl, 'Lật cặp');
         await js('const b = document.querySelector(\'.kb-gcard[data-game="memory"]\'); if (b && !b.disabled) b.click(); return 1;'); await sleep(1200);
@@ -204,7 +219,7 @@ result = 1`);
   const add = (k, x) => { (bad[k] = bad[k] || []).push('[' + x.want + ' · vườn ' + x.pref + ' · deck ' + x.deck + ' · ' + x.step + '] ' + x.r + ': ' + JSON.stringify(x.t.slice(0, 70))); };
   rec.forEach((x) => {
     const s = strip(x.t);
-    const leak = x.want === 'en' ? KANA.test(s) || HAN.test(s) || HANGUL.test(s)
+    const leak = (x.want === 'en' || x.want === 'de' || x.want === 'fr') ? KANA.test(s) || HAN.test(s) || HANGUL.test(s)
       : x.want === 'zh' ? KANA.test(s) || HANGUL.test(s)
         : x.want === 'ko' ? KANA.test(s) || HAN.test(s)
           : x.want === 'vi' ? KANA.test(s) || HAN.test(s) || HANGUL.test(s)
@@ -217,7 +232,8 @@ result = 1`);
       const tokens = s.split(/[\s!?.,…“”"'「」！？。、]+/).filter((w) => w);
       const foreign = x.want === 'zh' ? /[㐀-鿿]/.test(x.t) : x.want === 'ko' ? /[가-힣]/.test(x.t)
         : x.want === 'ja' ? /[぀-ヿ㐀-鿿]/.test(x.t)
-        : tokens.some((w) => /[A-Za-z]{2,}/.test(w) && !VIW.test(w) && !/^(Combo|xu|nha|nhé|ok)$/i.test(w));
+        // tiếng Đức / Pháp: từ có ä ö ü ß œ ç, hoặc từ Latin không có dấu tiếng Việt (é è à… dùng chung nên không tính)
+        : tokens.some((w) => (/[A-Za-z]{2,}/.test(w) && !VIW.test(w) && !/^(Combo|xu|nha|nhé|ok)$/i.test(w)) || /[äöüßœçÄÖÜ]/.test(w));
       const hasViet = tokens.some((w) => VIW.test(w));
       if (!foreign && hasViet) { add('viOnly', x); }
     }
@@ -232,15 +248,20 @@ result = 1`);
     ok(!l.length, msg + (l.length ? ' — ' + l.length + ' chỗ:\n      ' + Array.from(new Set(l)).slice(0, 30).join('\n      ') : ''));
   }
   // tiêu đề bảng trò chơi = ngôn ngữ của deck (không theo vườn), cả sau khi đổi Ngôn ngữ trong vườn lúc bảng đang mở
-  await deck('ZZ::Hàn'); await setLang('zh'); await sleep(300);
+  await deck(EU_SET ? 'ZZ::Đức' : 'ZZ::Hàn'); await setLang(EU_SET ? 'fr' : 'zh'); await sleep(300);
   await js('document.getElementById("kb-games").click(); return 1;'); await sleep(700);
   const t1 = await js('return document.getElementById("kb-g-title").textContent;');
-  await setLang('en'); await sleep(500);
+  await setLang(EU_SET ? 'ja' : 'en'); await sleep(500);
   const t2 = await js('return document.getElementById("kb-g-title").textContent;');
   await setLang('vi'); await sleep(500);
   const t3 = await js('return document.getElementById("kb-g-title").textContent;');
   await js('GardenGames.close(); return 1;');
-  ok(/^미니게임 · /.test(t1) && /^미니게임 · /.test(t2) && t3 === 'Trò chơi ôn từ', 'bảng trò chơi deck tiếng Hàn: tiêu đề tiếng Hàn dù vườn tiếng Trung / Anh; Chỉ tiếng Việt → tiếng Việt: ' + [t1, t2, t3].join(' | '));
+  if (EU_SET) {
+    ok(/^Minispiele · /.test(t1) && /^Minispiele · /.test(t2) && t3 === 'Trò chơi ôn từ',
+      'bảng trò chơi deck tiếng Đức: tiêu đề tiếng Đức dù vườn tiếng Pháp / Nhật; Chỉ tiếng Việt → tiếng Việt: ' + [t1, t2, t3].join(' | '));
+  } else {
+    ok(/^미니게임 · /.test(t1) && /^미니게임 · /.test(t2) && t3 === 'Trò chơi ôn từ', 'bảng trò chơi deck tiếng Hàn: tiêu đề tiếng Hàn dù vườn tiếng Trung / Anh; Chỉ tiếng Việt → tiếng Việt: ' + [t1, t2, t3].join(' | '));
+  }
   ok(!page.errors.length, 'không lỗi JS' + (page.errors.length ? ' — ' + page.errors.slice(0, 3).join(' | ') : ''));
   console.log(`\nKẾT QUẢ: ${pass}/${total}`);
   process.exit(pass === total ? 0 : 1);

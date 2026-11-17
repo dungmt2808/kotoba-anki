@@ -188,8 +188,8 @@ finally:
   await deck('ZH::HSK 2');
   ok(await openSrc(), 'mở tab Nguồn báo');
   let w = await wantState();
-  ok(w && w.ticks.length === 5 && w.ticks.map((t) => t.t).join('|') === 'Tiếng Nhật|Tiếng Anh|Tiếng Trung|Tiếng Hàn|Chỉ tiếng Việt',
-    '5 ô: ' + (w ? w.ticks.map((t) => t.t).join(' · ') : ''));
+  ok(w && w.ticks.length === 7 && w.ticks.map((t) => t.t).join('|') === 'Tiếng Nhật|Tiếng Anh|Tiếng Trung|Tiếng Hàn|Tiếng Đức|Tiếng Pháp|Chỉ tiếng Việt',
+    '7 ô (1.35: + Đức / Pháp): ' + (w ? w.ticks.map((t) => t.t).join(' · ') : ''));
   ok(w && w.ticks.filter((t) => t.on).map((t) => t.t).join() === 'Tiếng Trung' && /tối đa 2 báo/.test(w.hint), 'deck tiếng Trung → tick sẵn Tiếng Trung, dòng nhỏ "tối đa 2 báo"');
   ok(w && /Bạn cũng học tiếng Hàn — thêm báo tiếng Hàn\?/.test(w.sug) && /Thêm báo tiếng Hàn/.test(w.sug) && /Không/.test(w.sug),
     'gợi ý ngôn ngữ ôn nhiều nhất còn lại: ' + (w && w.sug));
@@ -233,8 +233,8 @@ result = r`);
   ok(JSON.stringify(await cfg('gemini_langs')) === '["zh","ko"]' && await cfg('gemini_langs_chosen') === true, 'tick Tiếng Hàn → 2 báo [zh, ko], ghi "đã tự chọn"');
   w = await wantState();
   const offs = w ? w.ticks.filter((t) => t.dis).map((t) => t.t) : [];
-  ok(offs.join() === 'Tiếng Nhật,Tiếng Anh' && w.ticks.filter((t) => t.off).length === 2 && /Tối đa 2 báo/.test(w.ticks[0].title),
-    'đủ 2 báo → Tiếng Nhật / Tiếng Anh mờ, "Tối đa 2 báo: bỏ tick một báo trước"');
+  ok(offs.join() === 'Tiếng Nhật,Tiếng Anh,Tiếng Đức,Tiếng Pháp' && w.ticks.filter((t) => t.off).length === 4 && /Tối đa 2 báo/.test(w.ticks[0].title),
+    'đủ 2 báo → Tiếng Nhật / Tiếng Anh (1.35: + Đức / Pháp) mờ, "Tối đa 2 báo: bỏ tick một báo trước"');
   ok(w && !w.sug && /hai báo cùng kể một chuyện/.test(w.hint), 'đủ 2 báo → không còn dòng gợi ý; "hai báo cùng kể một chuyện"');
   await js('const l = [...document.querySelectorAll(".kb-ai-want .kb-ai-tick")].find((x) => x.textContent.trim() === "Tiếng Nhật"); l.click(); l.querySelector("input").click(); return 1;');
   await sleep(800);

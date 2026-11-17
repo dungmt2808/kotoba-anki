@@ -147,9 +147,9 @@ Hết tháng, nhật ký tự đóng thành **một cuốn** trên kệ sách: �
 
 ### Báo mỗi sáng và chép chính tả
 
-Mỗi sáng có một số báo tiếng Nhật 畑新聞 (hoặc báo tiếng Anh *The Garden Gazette*, báo tiếng Trung 词田晨报, báo tiếng Hàn 말밭 신문 — nhận tối đa 2 báo) viết bằng từ trong các deck bạn chọn — chưa có deck thì viết theo trình độ. **Một làng, một truyện**: mỗi ngày làng có một kỳ truyện và vài tin làng chung; các báo kể lại cùng câu chuyện theo trình độ của bạn, thời tiết trong báo đúng như trời trong vườn hôm đó. Báo có furigana, bấm vào từ để tra nghĩa, có giọng đọc, câu hỏi đọc hiểu và **truyện dài kỳ** (Gemini lập mạch truyện, viết, rồi một "biên tập viên" chấm điểm và bắt viết lại nếu nhạt). Mỗi đoạn có **bản dịch tiếng Việt ẩn sẵn**: kẹt câu nào thì bấm **Dịch** để kiểm tra mình hiểu đúng chưa. Dưới truyện có nút **Kỳ này hay / Nhạt** để Gemini viết kỳ sau hợp ý bạn; **chủ đề truyện** chọn được nhiều (ấm áp, hài, dễ thương, kinh dị nhẹ, bí ẩn, phiêu lưu, lãng mạn nhẹ, kỳ ảo). Truyện có **Sổ tay làng**: nhớ các đợt truyện, nhân vật phụ và những điều đã xảy ra từ số đầu tiên, nên chuyện cũ không bị lặp và nhân vật cũ có thể quay lại; nghỉ vài ngày thì truyện biết thời gian đã trôi. Báo do **Gemini** viết bằng khoá miễn phí của chính bạn (xem [cách lấy khoá](#báo-mỗi-sáng-bằng-gemini-miễn-phí)); mỗi số mới cần **gói báo mua bằng xu** (1 tuần 100 xu, 1 tháng 300 xu, 7 ngày đầu miễn phí).
+Mỗi sáng có một số báo tiếng Nhật 畑新聞 (hoặc báo tiếng Anh *The Garden Gazette*, báo tiếng Trung 词田晨报, báo tiếng Hàn 말밭 신문, báo tiếng Đức *Der Wortgarten*, báo tiếng Pháp *Le Jardin des Mots* — nhận tối đa 2 báo) viết bằng từ trong các deck bạn chọn — chưa có deck thì viết theo trình độ. **Một làng, một truyện**: mỗi ngày làng có một kỳ truyện và vài tin làng chung; các báo kể lại cùng câu chuyện theo trình độ của bạn, thời tiết trong báo đúng như trời trong vườn hôm đó. Báo có furigana, bấm vào từ để tra nghĩa, có giọng đọc, câu hỏi đọc hiểu và **truyện dài kỳ** (Gemini lập mạch truyện, viết, rồi một "biên tập viên" chấm điểm và bắt viết lại nếu nhạt). Mỗi đoạn có **bản dịch tiếng Việt ẩn sẵn**: kẹt câu nào thì bấm **Dịch** để kiểm tra mình hiểu đúng chưa. Dưới truyện có nút **Kỳ này hay / Nhạt** để Gemini viết kỳ sau hợp ý bạn; **chủ đề truyện** chọn được nhiều (ấm áp, hài, dễ thương, kinh dị nhẹ, bí ẩn, phiêu lưu, lãng mạn nhẹ, kỳ ảo). Truyện có **Sổ tay làng**: nhớ các đợt truyện, nhân vật phụ và những điều đã xảy ra từ số đầu tiên, nên chuyện cũ không bị lặp và nhân vật cũ có thể quay lại; nghỉ vài ngày thì truyện biết thời gian đã trôi. Báo do **Gemini** viết bằng khoá miễn phí của chính bạn (xem [cách lấy khoá](#báo-mỗi-sáng-bằng-gemini-miễn-phí)); mỗi số mới cần **gói báo mua bằng xu** (1 tuần 100 xu, 1 tháng 300 xu, 7 ngày đầu miễn phí).
 
-**Báo tiếng Trung** (HSK 1–6) có pinyin trên từng chữ (ẩn được), bấm từ để tra nghĩa kèm âm Hán Việt, chép chính tả chấm từng chữ. **Báo tiếng Hàn** (TOPIK 1–6): bấm từ để tra, nhận cả từ có tiểu từ / đuôi (학교에 → 학교), chép chính tả chấm theo cụm.
+**Báo tiếng Trung** (HSK 1–6) có pinyin trên từng chữ (ẩn được), bấm từ để tra nghĩa kèm âm Hán Việt, chép chính tả chấm từng chữ. **Báo tiếng Hàn** (TOPIK 1–6): bấm từ để tra, nhận cả từ có tiểu từ / đuôi (학교에 → 학교), chép chính tả chấm theo cụm. **Báo tiếng Đức / tiếng Pháp** (A1–C1): bấm từ để tra, nhận cả từ đã chia / số nhiều (Blätter → das Blatt, yeux → l'œil); chép chính tả gõ không dấu cũng được (ä = ae, ß = ss, é = e).
 
 **Báo tiếng Việt** *Báo Làng Kotoba* (cho người không học tiếng Nhật / tiếng Anh, chọn "Chỉ tiếng Việt"): cùng truyện dài kỳ và tin làng ấy bằng tiếng Việt, có câu hỏi đọc hiểu để nhận xu; không có giọng đọc, chép chính tả.
 
@@ -262,16 +262,16 @@ Không. Điện thoại chỉ giữ hộ một bản dữ liệu vườn cũ, v�
 Mọi thứ lưu trong collection nên đồng bộ qua AnkiWeb sang máy khác (máy đó cũng cần cài add-on). Gỡ add-on không ảnh hưởng tới thẻ hay lịch ôn. Máy này còn giữ một bản sao lưu cho từng hồ sơ Anki trong thư mục `user_files/ho_so/` của add-on. Nếu Anki báo lỗi khi lưu (ổ đĩa đầy…), vườn báo "Anki báo lỗi khi lưu nên chưa đổi gì": xu không bị trừ, bản vẽ ở Xưởng và chữ nhật ký vẫn còn để lưu lại.
 
 **Deck của tôi không phải tiếng Nhật?**
-Deck **tiếng Anh**, **tiếng Trung**, **tiếng Hàn** có đủ vườn, trò chơi, chép chính tả và báo của tiếng đó. Ngôn ngữ khác và deck kiến thức (lịch sử, y khoa…) có vườn, các trò chơi chung (cả Đuổi quạ: gõ đúng từ / câu trả lời ngắn) và **báo tiếng Việt** (truyện dài kỳ + tin làng).
+Deck **tiếng Anh**, **tiếng Trung**, **tiếng Hàn**, **tiếng Đức**, **tiếng Pháp** có đủ vườn, trò chơi, chép chính tả và báo của tiếng đó; ⚙ → **Ngôn ngữ trong vườn** cho StackChan, khách, đồ vật nói tiếng bạn đang học. Ngôn ngữ khác và deck kiến thức (lịch sử, y khoa…) có vườn, các trò chơi chung (cả Đuổi quạ: gõ đúng từ / câu trả lời ngắn) và **báo tiếng Việt** (truyện dài kỳ + tin làng).
 
 **Lời nhắc (prompt) gửi Gemini là gì?**
 Xem nguyên văn ở [docs/LOI_NHAC_GEMINI.md](docs/LOI_NHAC_GEMINI.md).
 
 **Báo có đọc thành tiếng không? Windows, macOS, Linux cần cài gì?**
-Báo tiếng Nhật / Anh / Trung / Hàn có hai nguồn giọng đọc. Báo tiếng Việt chỉ để đọc, không có giọng.
+Báo tiếng Nhật / Anh / Trung / Hàn / Đức / Pháp có hai nguồn giọng đọc. Báo tiếng Việt chỉ để đọc, không có giọng.
 
 - **Giọng Gemini** (mọi máy): tạo bằng chính khoá Gemini của bạn. Mặc định chỉ đọc **câu chép chính tả**. Muốn nghe **từng đoạn** thì vào báo (phím **B**) → tab **Nguồn báo** → **Giọng đọc: Cả bài**. Bản miễn phí khoảng 10 lượt tạo giọng / ngày; hết lượt thì dùng giọng của máy.
-- **Giọng của máy** (Windows, macOS): đọc những đoạn chưa có giọng Gemini. Cần cài giọng tiếng Nhật (hoặc tiếng Trung / tiếng Hàn) một lần (giọng tiếng Anh thường có sẵn), rồi mở lại Anki:
+- **Giọng của máy** (Windows, macOS): đọc những đoạn chưa có giọng Gemini. Cần cài giọng tiếng Nhật (hoặc tiếng Trung / tiếng Hàn / tiếng Đức / tiếng Pháp) một lần (giọng tiếng Anh thường có sẵn), rồi mở lại Anki:
   - Windows: **Cài đặt → Thời gian & ngôn ngữ → Giọng nói → Thêm giọng nói → Tiếng Nhật**.
   - macOS: **Cài đặt hệ thống → Trợ năng → Nội dung đọc → Giọng hệ thống → Quản lý giọng nói → Tiếng Nhật**.
 - **Linux**: Anki không có giọng của máy, nên chỉ nghe được giọng Gemini và audio có sẵn trong deck. Anki cần **mpv** để phát âm thanh (cũng là âm thanh của thẻ):

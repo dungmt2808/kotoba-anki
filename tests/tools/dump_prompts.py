@@ -16,7 +16,9 @@ try:
 except ImportError:
     sys.path.insert(0, os.path.join(HERE, "..", "stubs"))
 import ai_core as ai
+import ai_de
 import ai_en
+import ai_fr
 import ai_ko
 import ai_vi
 import ai_zh
@@ -45,6 +47,14 @@ ko_pick = {"kho": [{"word": w, "reading": r, "meaning": m, "due": i < 4} for i, 
     ("날씨", "nalssi", "thời tiết"), ("여관", "yeogwan", "quán trọ"), ("준비하다", "junbihada", "chuẩn bị"),
     ("무섭다", "museopda", "sợ"), ("예쁘다", "yeppeuda", "đẹp"), ("친구", "chingu", "bạn bè")])], "all": [], "decks": ["TOPIK 2"]}
 ko = ai_ko.scope_from_pick(ko_pick, "TOPIK2")
+de_pick = {"kho": [{"word": w, "reading": "", "meaning": m, "due": i < 4} for i, (w, m) in enumerate([
+    ("das Wetter", "thời tiết"), ("das Gasthaus, ¨-er", "quán trọ"), ("vorbereiten", "chuẩn bị"), ("die Angst", "nỗi sợ"),
+    ("schön", "đẹp"), ("der Freund, -e", "bạn bè")])], "all": [], "decks": ["Deutsch A2"]}
+de = ai_de.scope_from_pick(de_pick, "A2")
+fr_pick = {"kho": [{"word": w, "reading": "", "meaning": m, "due": i < 4} for i, (w, m) in enumerate([
+    ("le temps", "thời tiết"), ("l'auberge (f)", "quán trọ"), ("préparer", "chuẩn bị"), ("la peur", "nỗi sợ"),
+    ("beau", "đẹp"), ("l'ami (m)", "bạn bè")])], "all": [], "decks": ["Français A2"]}
+fr = ai_fr.scope_from_pick(fr_pick, "A2")
 vi = ai_vi.scope()
 nd = ai.scope_from_pick({"kho": [], "all": [], "grammar": [], "decks": []}, "N3")
 nd["khong_deck"] = True
@@ -62,12 +72,12 @@ EP = [{"ky": 11, "ngay": "2026-11-07", "tom_tat": "（tóm tắt kỳ 11）", "n
        "bo_ngo": ["（chỗ bỏ ngỏ）"], "phan_hoi": {"y": "hay", "ghi": "（dòng nhận xét của người đọc）"}}]
 
 parts = ["# Lời nhắc (prompt) gửi Gemini khi viết báo — nguyên văn", "",
-         "Xuất bằng `tests/tools/dump_prompts.py` (mã 1.33; ngày mẫu 08/11/2026, chủ đề truyện: Kinh dị nhẹ + Hài, thời "
+         "Xuất bằng `tests/tools/dump_prompts.py` (mã 1.35; ngày mẫu 08/11/2026, chủ đề truyện: Kinh dị nhẹ + Hài, thời "
          "tiết của vườn hôm đó: %s). Danh sách từ ở đây rút gọn còn vài từ; mỗi số thật gửi khoảng 100 từ." % WEATHER, "",
          "**Một làng, một truyện (1.25.2):** mỗi ngày Gemini viết **một bản gốc tiếng Việt** cho cả làng — kỳ truyện dài kỳ + "
          "2–3 tin làng + mục thứ ba (thông báo / cột của một nhân vật). Thứ tự gọi: **0. lập mạch** (khoảng mỗi tuần) → "
          "**1. nhà văn** (bản gốc) → **2. biên tập** chấm 7 tiêu chí → (điểm < 4: **viết lại** một lần). Rồi mỗi báo: "
-         "**3. kể lại** truyện bằng tiếng Nhật / Anh / Trung / Hàn theo trình độ (báo tiếng Việt in thẳng bản gốc) → **4. viết cả "
+         "**3. kể lại** truyện bằng tiếng Nhật / Anh / Trung / Hàn / Đức / Pháp theo trình độ (báo tiếng Việt in thẳng bản gốc) → **4. viết cả "
          "số** (chép truyện + furigana, tin làng kể lại từ tin bản gốc, câu hỏi, câu chép) → máy kiểm tra → **sửa** (≤ 2 lần) "
          "→ **5. soát lần 2**. Gemini trả JSON theo khuôn cố định của từng bước. Báo thứ hai trong ngày không viết lại bản gốc.",
          "", "Bản gốc thấy được: nguyên văn kỳ trước, tóm tắt các kỳ trong đợt, mạch đợt, chỗ bỏ ngỏ, nhận xét Hay / Nhạt của "
@@ -94,6 +104,8 @@ for title, lang, scope, mod, level in (("Báo tiếng Nhật (畑新聞, N4)", "
                                        ("Báo tiếng Anh (The Garden Gazette, A2)", "en", en, ai_en, "A2"),
                                        ("Báo tiếng Trung (%s, HSK 2, giản thể) — 1.33" % ai_zh.MASTHEAD, "zh", zh, ai_zh, "HSK2"),
                                        ("Báo tiếng Hàn (%s, TOPIK 2) — 1.33" % ai_ko.MASTHEAD, "ko", ko, ai_ko, "TOPIK2"),
+                                       ("Báo tiếng Đức (%s, A2) — 1.35" % ai_de.MASTHEAD, "de", de, ai_de, "A2"),
+                                       ("Báo tiếng Pháp (%s, A2) — 1.35" % ai_fr.MASTHEAD, "fr", fr, ai_fr, "A2"),
                                        ("Báo tiếng Việt (Báo Làng Kotoba — chỉ khi không học Nhật / Anh)", "vi", vi, ai_vi, "")):
     parts.extend(["## " + title, ""])
     if lang != "vi":
