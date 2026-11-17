@@ -1465,6 +1465,26 @@ button { cursor: pointer; }
 .kb-ai-more summary { cursor: pointer; }
 .kb-ai-more[open] summary { margin-bottom: 2px; }
 @media (max-width: 720px) { .kb-ai-decks { margin-left: 0; } }
+/* 1.33.1 (người dùng: "bên set up báo hơi nhiều nút"): ô thả xuống thay hàng nút chọn một; Gói báo một dòng thu gọn;
+   tuỳ chọn ít khi đổi gom vào khối "Tuỳ chọn thêm" */
+.kb-ai-sel { font: inherit; font-size: 14px; border: 3px solid var(--kb-ink); border-radius: 0; background: var(--kb-paper, #ffffff);
+  color: var(--kb-ink); padding: 2px 6px; min-width: 128px; max-width: 100%; box-shadow: 2px 2px 0 var(--kb-ink); cursor: pointer; }
+.kb-ai-sel:focus-visible { outline: 2px solid #1f5fbf; outline-offset: 1px; }
+.kb-ai-opts-box > summary, .kb-ai-plan > summary { list-style: none; }
+.kb-ai-opts-box > summary::-webkit-details-marker, .kb-ai-plan > summary::-webkit-details-marker { display: none; }
+.kb-ai-opts-box > summary::before { content: "▸"; font-family: "DotGothic16", monospace; font-size: 18px; align-self: center; }
+.kb-ai-opts-box[open] > summary::before { content: "▾"; }
+.kb-ai-opts-box .kb-ai-name { font-size: 18px; }
+.kb-ai-opts-box:not([open]) { gap: 0; }
+.kb-ai-plan > summary { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; }
+.kb-ai-plan-go { font-family: "DotGothic16", "Noto Sans Mono CJK JP", monospace; font-size: 13px; border: 2px solid var(--kb-ink);
+  background: var(--kb-butter); padding: 0 8px; white-space: nowrap; }
+.kb-ai-plan-go::after { content: " ▸"; }
+.kb-ai-plan[open] .kb-ai-plan-go::after { content: " ▾"; }
+.kb-ai-plan.is-warn > summary .kb-ai-v { color: #8a5a00; }
+.kb-ai-plan-b { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; margin: 6px 0 0 98px; }
+.kb-ai-dv-h { font-weight: 600; }
+@media (max-width: 720px) { .kb-ai-plan-b { margin-left: 0; } }
 
 /* 1.13: giọng dự phòng cho câu chép không có audio */
 .kb-p-tag.kb-p-voice { background: #e6ecff; font-size: 11px; }

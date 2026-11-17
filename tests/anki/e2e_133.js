@@ -249,16 +249,16 @@ result = r`);
   ok(JSON.stringify(await cfg('gemini_langs')) === '["zh"]', 'tick Tiếng Trung → bỏ tiếng Việt, còn [zh]');
   await tick('Tiếng Hàn');
   ok(JSON.stringify(await cfg('gemini_langs')) === '["zh","ko"]', 'tick lại Tiếng Hàn → [zh, ko]');
-  const lv = await js(`const out = {}; document.querySelectorAll(".kb-ai-lang").forEach((b) => { const h = b.querySelector(".kb-ai-lang-h"); out[h.querySelector("b").textContent] = { mast: h.querySelector(".kb-ai-hint").textContent, chips: [...b.querySelectorAll(".kb-ai-chip")].map((c) => c.textContent + (c.classList.contains("is-on") ? "*" : "")) }; }); return out;`);
+  const lv = await js(`const out = {}; document.querySelectorAll(".kb-ai-lang").forEach((b) => { const h = b.querySelector(".kb-ai-lang-h"); out[h.querySelector("b").textContent] = { mast: h.querySelector(".kb-ai-hint").textContent, chips: [...b.querySelectorAll("select.kb-ai-sel option")].map((c) => c.textContent + (c.selected ? "*" : "")) }; }); return out;`);   // 1.33.1: ô thả xuống
   const zhB = Object.keys(lv).find((k) => k === 'Báo tiếng Trung'), koB = Object.keys(lv).find((k) => k === 'Báo tiếng Hàn');
   ok(zhB && lv[zhB].mast === '词田晨报' && lv[zhB].chips.slice(0, 6).join(',') === 'HSK 1,HSK 2*,HSK 3,HSK 4,HSK 5,HSK 6', 'khối báo tiếng Trung: 词田晨报, HSK 1–6 (đang HSK 2)');
   ok(koB && lv[koB].mast === '말밭 신문' && lv[koB].chips.slice(0, 6).join(',') === 'TOPIK 1,TOPIK 2*,TOPIK 3,TOPIK 4,TOPIK 5,TOPIK 6', 'khối báo tiếng Hàn: 말밭 신문, TOPIK 1–6 (đang TOPIK 2)');
-  await js('[...document.querySelectorAll(".kb-ai-chip")].find((c) => c.textContent === "HSK 3").click(); return 1;'); await sleep(900);
-  await js('[...document.querySelectorAll(".kb-ai-chip")].find((c) => c.textContent === "TOPIK 3").click(); return 1;'); await sleep(900);
+  await js('const s = [...document.querySelectorAll("select.kb-ai-sel")].find((x) => [...x.options].some((o) => o.textContent === "HSK 3")); s.value = [...s.options].find((o) => o.textContent === "HSK 3").value; s.dispatchEvent(new Event("change")); return 1;'); await sleep(900);
+  await js('const s = [...document.querySelectorAll("select.kb-ai-sel")].find((x) => [...x.options].some((o) => o.textContent === "TOPIK 3")); s.value = [...s.options].find((o) => o.textContent === "TOPIK 3").value; s.dispatchEvent(new Event("change")); return 1;'); await sleep(900);
   ok(await cfg('gemini_level_zh') === 'HSK3' && await cfg('gemini_level_ko') === 'TOPIK3' && await cfg('gemini_level') === 'N4',
-    'chip HSK 3 / TOPIK 3 → gemini_level_zh / _ko, trình độ báo Nhật không đổi');
-  await js('[...document.querySelectorAll(".kb-ai-chip")].find((c) => c.textContent === "HSK 2").click(); return 1;'); await sleep(700);
-  await js('[...document.querySelectorAll(".kb-ai-chip")].find((c) => c.textContent === "TOPIK 2").click(); return 1;'); await sleep(700);
+    'chọn HSK 3 / TOPIK 3 → gemini_level_zh / _ko, trình độ báo Nhật không đổi');
+  await js('const s = [...document.querySelectorAll("select.kb-ai-sel")].find((x) => [...x.options].some((o) => o.textContent === "HSK 2")); s.value = [...s.options].find((o) => o.textContent === "HSK 2").value; s.dispatchEvent(new Event("change")); return 1;'); await sleep(700);
+  await js('const s = [...document.querySelectorAll("select.kb-ai-sel")].find((x) => [...x.options].some((o) => o.textContent === "TOPIK 2")); s.value = [...s.options].find((o) => o.textContent === "TOPIK 2").value; s.dispatchEvent(new Event("change")); return 1;'); await sleep(700);
 
   console.log('== 4. "Bắt đầu viết" với Gemini giả (không gọi mạng)');
   await py(KB + `S = kb.story_core

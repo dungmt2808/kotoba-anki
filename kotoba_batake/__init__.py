@@ -1644,7 +1644,7 @@ def ai_start(reason: str, dialog: Any = None, lang: str = "ja") -> bool:
         # 1.26.1: ở đây chỉ xem; tặng thử / trừ xu khi số báo đã viết xong (_ai_done)
         sub, price = paper_sub_ensure(date, commit=False)
         if sub == "expired":
-            _ai["why"] = "Gói báo đã hết hạn — gia hạn ở thẻ Gói báo (tab Nguồn báo)."
+            _ai["why"] = "Gói báo đã hết hạn — gia hạn ở dòng Gói báo (tab Nguồn báo)."
             st.update(sub_off=date)
             ai.save_status(base, st)
             return False
@@ -3260,6 +3260,20 @@ class GardenDialog(QDialog):
         self._card = None
         self._shown_card = None
         self._review_gen += 1
+
+    def collection_replaced(self) -> None:
+        """1.33.1: collection vừa bị thay (File → Import .colpkg) khi vườn đang mở: thẻ đang ôn là của collection cũ →
+        lấy thẻ kế tiếp của collection mới (bảng ôn vẫn mở); deck đang xem không còn → deck hiện tại của Anki; dựng lại."""
+        reviewing = self._card is not None
+        self._busy = False
+        try:
+            if not self.deck_id or not mw.col.decks.get(self.deck_id, default=False):
+                self.deck_id = mw.col.decks.get_current_id()
+        except Exception as err:
+            _warn("deck sau khi nhập collection", err)
+        self.refresh()
+        if reviewing:
+            self._next_card()
 
     # -- cầu nối JS -> Python -------------------------------------------------
 
@@ -5098,6 +5112,7 @@ def _setup_menu() -> None:
 
 
 _open_pending = False        # 1.31.2: việc ghi vào collection lúc mở hồ sơ còn chờ lần tự đồng bộ lúc mở xong
+_profile_open = False        # 1.33.1: hồ sơ đang mở (profile_did_open → profile_will_close)
 
 
 def _open_tasks() -> None:
@@ -5137,9 +5152,10 @@ def _will_auto_sync() -> bool:
 
 
 def _on_profile_open() -> None:
-    global _open_pending, _sync_before, _sync_running
+    global _open_pending, _sync_before, _sync_running, _profile_open
     _sync_before = None
     _sync_running = False
+    _profile_open = True
     # 1.31.2: collection đang giữ bản dữ liệu vườn cũ hơn bản chụp gần nhất của máy này (đồng bộ chạy lúc add-on bị tắt,
     # Anki tắt giữa lúc đồng bộ) → trả lại; vừa khôi phục bản sao lưu của Anki thì giữ bản vừa khôi phục
     try:
@@ -5169,7 +5185,8 @@ def _on_profile_close() -> None:
     """1.22.6: đổi hồ sơ / đóng hồ sơ khi vườn đang mở → đóng vườn theo (trước đây cửa sổ vườn còn mở mà collection đã
     đóng: bấm gì cũng lỗi, mở hồ sơ khác thì vườn vẫn trỏ vào deck của hồ sơ cũ; Anki ghi "Window should have been
     closed")."""
-    global _report_dialog
+    global _report_dialog, _profile_open
+    _profile_open = False
     try:                                  # 1.25.3: lượt Undo còn chờ → ghi trước khi đóng (Redo cũng hết khi đóng)
         _flush_undo(force=True)
     except Exception as err:
@@ -5191,6 +5208,37 @@ def _on_profile_close() -> None:
         except Exception:
             pass
         _report_dialog = None
+
+
+def _on_collection_load(*_args: Any) -> None:
+    """1.33.1: File → Import một file .colpkg thay cả collection mà KHÔNG đóng / mở hồ sơ — Anki chỉ đóng collection rồi
+    gọi collection_did_load (lúc mở hồ sơ, móc này chạy trước profile_did_open nên `_profile_open` còn False → bỏ qua).
+    Nhiều người khôi phục bản sao lưu theo cách này (hoặc chuyển collection từ máy khác sang). Trước bản này:
+      - lần mở hồ sơ sau, lớp giữ dữ liệu khi đồng bộ (1.31.2) thấy bản chụp của máy mới hơn bản vừa nhập → "trả lại"
+        vườn cũ đè lên bản người dùng vừa khôi phục (thẻ là bản sao lưu, vườn thì không);
+      - sổ phần thưởng lượt ôn (Undo) còn các lượt của collection cũ: lượt không có trong bản vừa nhập bị coi là đã Undo
+        → trừ xu (+ nhiệm vụ / chuỗi) khỏi ví vừa khôi phục ở lần vườn làm mới kế tiếp (tái hiện trong Anki thật).
+    Nay làm như "Mở bản sao lưu" của Anki (1.31.2: theo ý người dùng — giữ bản vừa nhập, đóng dấu mới), bỏ mọi bộ nhớ
+    tạm của collection cũ và dựng lại vườn đang mở. Lượt Undo còn chờ ghi không ghi sang collection mới."""
+    if not _profile_open:
+        return
+    _ledger.clear()
+    _answering.clear()
+    _day_total.update(key=None, v=0)
+    _words_cache.clear()
+    _presence.update(t=0.0, v={}, col="")
+    _auto_cache.update(t=0.0, k=None, v=None)
+    _started_cache.update(t=0.0, k=None)
+    try:
+        if _col_ready() and _sync_guard_on():
+            _sync_guard_note(sync_core.on_open(mw.col, USER_DIR, True), "nhập collection")
+    except Exception as err:
+        _warn("giữ dữ liệu vườn (nhập collection)", err)
+    if _dialog is not None:
+        try:
+            _dialog.collection_replaced()
+        except Exception as err:
+            _warn("dựng lại vườn (nhập collection)", err)
 
 
 def _on_sync_finished() -> None:
@@ -5229,6 +5277,8 @@ for _name, _fn in (("top_toolbar_did_init_links", _toolbar_links), ("webview_wil
         _hook.append(_fn)
 gui_hooks.profile_did_open.append(_on_profile_open)
 gui_hooks.profile_will_close.append(_on_profile_close)
+if hasattr(gui_hooks, "collection_did_load"):     # 1.33.1: File → Import .colpkg (thay collection, không mở lại hồ sơ)
+    gui_hooks.collection_did_load.append(_on_collection_load)
 gui_hooks.av_player_did_end_playing.append(_reset_speed)
 gui_hooks.sync_did_finish.append(_on_sync_finished)
 gui_hooks.reviewer_will_answer_card.append(_will_answer)

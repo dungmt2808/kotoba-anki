@@ -153,7 +153,9 @@ result = {"en": en["read"].get("2026-11-03"), "ja": "2026-11-03" in ja["read"], 
   await page.eval(W('GardenPaper.close(); return 1;'));
   await langs(['ja', 'en']);
 
-  console.log('== tab Nguồn báo');
+  // 1.33.1: chọn một mục của ô thả xuống (hàng có nhãn k) như người dùng: đổi giá trị + sự kiện change
+const SEL = 'const sel = (box, k, v) => { const r = Array.from(box.querySelectorAll(".kb-ai-row")).find(x => (x.querySelector(".kb-ai-k") || {}).textContent === k); const s = r.querySelector("select.kb-ai-sel"); s.value = v; s.dispatchEvent(new Event("change")); };';
+console.log('== tab Nguồn báo');
   await page.eval(W('GardenPaper.open("src"); return 1;'));
   ok(await waitFor(page, 'document.querySelectorAll(".kb-ai-lang").length === 2'), 'thẻ Gemini: một khối cho mỗi báo đã tick');
   const want = await page.eval(W('return Array.from(document.querySelectorAll(".kb-ai-want .kb-ai-tick")).map(l => l.textContent.trim() + (l.querySelector("input").checked ? "*" : ""));'));
@@ -162,18 +164,19 @@ result = {"en": en["read"].get("2026-11-03"), "ja": "2026-11-03" in ja["read"], 
   const blocks = await page.eval(W(`return Array.from(document.querySelectorAll(".kb-ai-lang")).map(b => {
     const rows = Array.from(b.querySelectorAll(".kb-ai-row"));
     const get = (k) => rows.find(r => r.querySelector(".kb-ai-k").textContent === k);
-    return { h: b.querySelector(".kb-ai-lang-h").textContent, lv: Array.from(get("Trình độ").querySelectorAll(".kb-ai-chip")).map(x => x.textContent + (x.classList.contains("is-on") ? "*" : "")).join(","),
-      src: Array.from(get("Lấy từ").querySelectorAll(".kb-ai-chip")).map(x => x.textContent + (x.classList.contains("is-on") ? "*" : "")).join(",") }; });`));
+    // 1.33.1: Trình độ / Lấy từ là ô thả xuống (trước: hàng nút)
+    const opt = (r) => Array.from(r.querySelectorAll("select.kb-ai-sel option")).map(x => x.textContent + (x.selected ? "*" : "")).join(",");
+    return { h: b.querySelector(".kb-ai-lang-h").textContent, lv: opt(get("Trình độ")), src: opt(get("Lấy từ")) }; });`));
   ok(/Báo tiếng Nhật/.test(blocks[0].h) && blocks[0].lv === 'N5,N4*,N3,N2,N1', 'khối báo tiếng Nhật: ' + JSON.stringify(blocks[0]));
-  ok(/Báo tiếng Anh/.test(blocks[1].h) && blocks[1].lv === 'A1,A2*,B1,B2,C1' && /^Mọi deck\*,Chọn deck,Không dùng deck$/.test(blocks[1].src), 'khối báo tiếng Anh: ' + JSON.stringify(blocks[1]));
+  ok(/Báo tiếng Anh/.test(blocks[1].h) && blocks[1].lv === 'A1,A2*,B1,B2,C1' && /^Mọi deck\*,Chọn deck…,Không dùng deck$/.test(blocks[1].src), 'khối báo tiếng Anh: ' + JSON.stringify(blocks[1]));
   ok(!/deck đang xem/i.test(await page.eval(W('return document.querySelector(".kb-ai").textContent;'))), 'không còn chữ “deck đang xem”');
   await page.shot(SHOTS + '/62_nguon_bao.png');
-  await page.eval(W('Array.from(document.querySelectorAll(".kb-ai-lang")[1].querySelectorAll(".kb-ai-chip")).find(b => b.textContent === "B1").click(); return 1;')); await sleep(800);
+  await page.eval(W(SEL + 'sel(document.querySelectorAll(".kb-ai-lang")[1], "Trình độ", "B1"); return 1;')); await sleep(800);
   const cfg = await py(KB + 'c = kb.config(); result = [c.get("gemini_level_en"), c.get("gemini_level")]');
   ok(cfg[0] === 'B1' && cfg[1] === 'N4', 'chọn B1 → lưu gemini_level_en, báo tiếng Nhật giữ N4: ' + cfg.join());
 
   console.log('== chọn deck cho báo tiếng Anh');
-  await page.eval(W('Array.from(document.querySelectorAll(".kb-ai-lang")[1].querySelectorAll(".kb-ai-chip")).find(b => b.textContent === "Chọn deck").click(); return 1;'));
+  await page.eval(W(SEL + 'sel(document.querySelectorAll(".kb-ai-lang")[1], "Lấy từ", "pick"); return 1;'));
   ok(await waitFor(page, 'document.querySelector(".kb-ai-decks")'), 'bấm “Chọn deck” → danh sách deck');
   const dl = await page.eval(W('return Array.from(document.querySelectorAll(".kb-ai-deck")).map(l => l.textContent);'));
   ok(dl.some(x => /^ M::Tiếng Anh A2/.test(x) && /40 note/.test(x)) && !dl.some(x => /Tiếng Hàn|Có câu ví dụ/.test(x)),
@@ -187,7 +190,7 @@ result = {"en": en["read"].get("2026-11-03"), "ja": "2026-11-03" in ja["read"], 
   const why = await py(KB + 'sc = kb._ai_scope(kb.config(), kb._ai_opts(kb.config()), "en")\nresult = [sc.get("khong_deck"), sc.get("it_tu"), len(sc.get("kho") or [])]');
   ok(why[0] === true && why[1] === 8 && why[2] === 8, 'deck đã chọn < 10 từ (1.25.1): vẫn viết theo trình độ, 8 từ đã có gửi kèm: ' + JSON.stringify(why));
   await page.eval(W('GardenPaper.close(); GardenPaper.open("src"); return 1;'));
-  ok(await waitFor(page, '/Không dùng deck/.test((document.querySelectorAll(".kb-ai-lang")[1] || {}).textContent || "")'), 'khối báo tiếng Anh có nút "Không dùng deck" (1.25.1)');
+  ok(await waitFor(page, '/Không dùng deck/.test((document.querySelectorAll(".kb-ai-lang")[1] || {}).textContent || "")'), 'khối báo tiếng Anh có mục "Không dùng deck" (1.25.1)');
   for (let i = 0; i < 6; i++) {
     await page.eval(W('const b = Array.from(document.querySelectorAll(".kb-ai-deck input")).find(i => !i.checked && !i.disabled); if (b) b.click(); return 1;'));
     await sleep(700);
@@ -199,7 +202,7 @@ result = {"en": en["read"].get("2026-11-03"), "ja": "2026-11-03" in ja["read"], 
   const lim = await page.eval(W('const i = Array.from(document.querySelectorAll(".kb-ai-deck input")); return [i.filter(x => x.checked).length, i.filter(x => !x.checked && !x.disabled).length];'));
   ok(lim[0] === 5 && lim[1] === 0, 'tối đa 5 deck: các ô còn lại bị khoá ' + JSON.stringify(lim));
   await page.shot(SHOTS + '/64_chon_deck.png');
-  await page.eval(W('Array.from(document.querySelectorAll(".kb-ai-lang")[1].querySelectorAll(".kb-ai-chip")).find(b => b.textContent === "Mọi deck").click(); return 1;')); await sleep(800);
+  await page.eval(W(SEL + 'sel(document.querySelectorAll(".kb-ai-lang")[1], "Lấy từ", "all"); return 1;')); await sleep(800);
   ok((await py(KB + 'result = mw.col.get_config("kotoba_batake_paper_src")["en"]["decks"]')).length === 0, 'bấm “Mọi deck” → bỏ chọn deck');
 
   console.log('== bỏ tick tiếng Anh ở tab Nguồn báo');
