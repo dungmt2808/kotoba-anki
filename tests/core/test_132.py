@@ -70,7 +70,7 @@ ok(all(len(r) == 5 and all(isinstance(x, str) and x == x.strip() for x in r) for
    "mỗi mục đủ 5 ô (Anh, Trung, pinyin, Hàn, phiên âm), không khoảng trắng thừa")
 ok(all(r[0] and r[1] and r[2] and r[3] and r[4] for t in TABLES.values() for r in t.values()), "không ô nào trống")
 ok(all(len(r) == 5 and r[0] and r[1] and r[2] and r[3] for r in L.SAY.values()), "%d câu StackChan nói: đủ Anh / Trung / pinyin / Hàn" % len(L.SAY))
-ok(all(set(g) == {"ja", "en", "zh", "ko"} and all(g.values()) for g in L.GAMES.values()) and set(L.GAMES) == {"listen", "market", "crow", "memory", "cloze"},
+ok(all(set(g) >= {"ja", "en", "zh", "ko"} and all(g.values()) for g in L.GAMES.values()) and set(L.GAMES) == {"listen", "market", "crow", "memory", "cloze"},
    "tên 5 trò chơi đủ 4 tiếng")
 ok(all(len(v) == 3 and all(x.count("%s") == 1 for x in v) for v in L.ASK.values()) and set(L.ASK) == set(L.LANGS),
    "khách ở Chợ sáng: 3 câu mỗi tiếng, mỗi câu một chỗ %s")

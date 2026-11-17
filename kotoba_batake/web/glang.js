@@ -7,8 +7,10 @@
 var GardenLang = (function () {
   "use strict";
 
-  const LANGS = ["ja", "en", "zh", "ko", "vi"];
-  const ATTR = { ja: "ja", en: "en", zh: "zh-CN", ko: "ko", vi: "vi" };
+  const LANGS = ["ja", "en", "zh", "ko", "de", "fr", "vi"];
+  const ATTR = { ja: "ja", en: "en", zh: "zh-CN", ko: "ko", de: "de", fr: "fr", vi: "vi" };
+  const EU = { de: 1, fr: 1 };       // 1.35: tiếng Đức / tiếng Pháp — bảng riêng B.eu[lang][bảng][khoá]
+  function eu(lang, kind, key) { const t = B && B.eu && B.eu[lang] && B.eu[lang][kind]; return t ? t[key] || "" : ""; }
   const PREF = "kb-glang";
   let B = null;                  // bảng chữ (data.gl)
   let plants = [];
@@ -31,20 +33,20 @@ var GardenLang = (function () {
   function plantLang(p) {
     const l = p && p.lang;
     if (!l || l === "ja") { return "ja"; }
-    return l === "en" || l === "zh" || l === "ko" ? l : "";
+    return l === "en" || l === "zh" || l === "ko" || EU[l] ? l : "";
   }
   function auto() {
-    const n = { ja: 0, en: 0, zh: 0, ko: 0 };
+    const n = { ja: 0, en: 0, zh: 0, ko: 0, de: 0, fr: 0 };
     plants.forEach((p) => { const l = plantLang(p); if (l) { n[l] += 1; } });
     let best = "ja";
-    ["en", "zh", "ko"].forEach((l) => { if (n[l] > n[best]) { best = l; } });
+    ["en", "zh", "ko", "de", "fr"].forEach((l) => { if (n[l] > n[best]) { best = l; } });
     return best;
   }
   function cur() { const p = pref(); return p === "auto" ? auto() : p; }
   // trò chơi: ngôn ngữ của deck (nhóm trò chơi), "Chỉ tiếng Việt" thì tiếng Việt; deck ngôn ngữ khác thì theo vườn
   function forDeck(lang) {
     if (pref() === "vi") { return "vi"; }
-    return lang === "ja" || lang === "en" || lang === "zh" || lang === "ko" ? lang : cur();
+    return lang === "ja" || lang === "en" || lang === "zh" || lang === "ko" || EU[lang] ? lang : cur();
   }
   function setPref(v) {
     const P = prefs();
@@ -70,7 +72,7 @@ var GardenLang = (function () {
       if (/[぀-ヿ㐀-鿿]/.test(s[i])) {
         for (let k = 0; k < keys.length; k++) { if (s.startsWith(keys[k], i)) { hit = keys[k]; break; } }
       }
-      if (hit) { if (buf) { out.push([buf]); buf = ""; } out.push([hit, B.say[hit]]); i += hit.length; } else { buf += s[i]; i++; }
+      if (hit) { if (buf) { out.push([buf]); buf = ""; } out.push([hit, B.say[hit], hit]); i += hit.length; } else { buf += s[i]; i++; }
     }
     if (buf) { out.push([buf]); }
     return out;
@@ -81,11 +83,14 @@ var GardenLang = (function () {
     return s;
   }
   function tidy(s) { return s.replace(/\s{2,}/g, " ").replace(/^\s+|\s+$/g, ""); }
-  function rep(row, lang) { return lang === "en" ? row[0] : lang === "zh" ? row[1] : lang === "ko" ? row[3] : row[4]; }
+  function rep(row, lang, key) {
+    if (EU[lang]) { return eu(lang, "say", key) || row[0]; }      // 1.35: chưa có bản Đức / Pháp thì dùng tiếng Anh
+    return lang === "en" ? row[0] : lang === "zh" ? row[1] : lang === "ko" ? row[3] : row[4];
+  }
   function line(text, lang) {
     lang = lang || cur();
     if (lang === "ja" || !B) { return text; }
-    const s = parts(text).map((p) => (p[1] ? rep(p[1], lang) : p[0])).join("");
+    const s = parts(text).map((p) => (p[1] ? rep(p[1], lang, p[2]) : p[0])).join("");
     return tidy(subVi(s, lang));
   }
   // như line() nhưng gắn vào node: tiếng Trung có pinyin nhỏ sau chữ (span.kb-py)
@@ -98,7 +103,7 @@ var GardenLang = (function () {
     const flush = () => { if (acc) { node.appendChild(document.createTextNode(acc)); acc = ""; } };
     ps.forEach((p, i) => {
       if (!p[1]) { acc += p[0]; return; }
-      const t = rep(p[1], lang);
+      const t = rep(p[1], lang, p[2]);
       if (lang === "zh" && p[1][2]) {
         acc += t; flush();
         const py = document.createElement("span"); py.className = "kb-py"; py.setAttribute("lang", "zh-Latn"); py.textContent = " " + p[1][2];
@@ -112,7 +117,7 @@ var GardenLang = (function () {
     const first = node.firstChild, last = node.lastChild;
     if (first && first.nodeType === 3) { first.nodeValue = first.nodeValue.replace(/^\s+/, ""); }
     if (last && last.nodeType === 3) { last.nodeValue = last.nodeValue.replace(/\s+$/, ""); }
-    if (lang === "zh" || lang === "ko") { node.setAttribute("lang", ATTR[lang]); } else { node.removeAttribute("lang"); }
+    if (lang === "zh" || lang === "ko" || EU[lang]) { node.setAttribute("lang", ATTR[lang]); } else { node.removeAttribute("lang"); }
     return node;
   }
 
@@ -122,6 +127,7 @@ var GardenLang = (function () {
     if (lang === "vi") { return null; }
     const row = B && B[kind] && B[kind][id];
     if (lang === "ja") { return { t: ja || "", r: kana && kana !== ja ? kana : "", lang: "ja", rlang: "ja" }; }
+    if (EU[lang]) { const t = eu(lang, kind, id); return t ? { t: t, r: "", lang: lang, rlang: lang } : null; }     // 1.35
     if (!row) { return null; }          // mục chưa có bản dịch (bản sau thêm): chỉ hiện tên tiếng Việt
     if (lang === "en") { return { t: row[0], r: "", lang: "en", rlang: "en" }; }
     if (lang === "zh") { return { t: row[1], r: row[2], lang: "zh-CN", rlang: "zh-Latn" }; }
@@ -141,7 +147,7 @@ var GardenLang = (function () {
     if (!m || lang === "ja" || !B) { return text; }
     const row = B.titles && B.titles[m[1]];
     if (!row) { return text; }
-    const head = lang === "en" ? row[0] : lang === "zh" ? row[1] : lang === "ko" ? row[3] : "";
+    const head = EU[lang] ? eu(lang, "titles", m[1]) || row[0] : lang === "en" ? row[0] : lang === "zh" ? row[1] : lang === "ko" ? row[3] : "";
     return head ? head + " · " + m[2] : m[2];
   }
   function applyTitles(root) {

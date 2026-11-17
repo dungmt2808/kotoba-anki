@@ -4205,7 +4205,7 @@ var GardenHome = (function () {
   // 1.32: tên theo Ngôn ngữ trong vườn (span nhỏ cạnh tên tiếng Việt) — "" khi Chỉ tiếng Việt
   function keep(s) { return "\u2068" + String(s === undefined || s === null ? "" : s) + "\u2069"; }   // chữ người dùng: không dịch
   function glabel(kind, id, ja) { return typeof GardenLang !== "undefined" ? GardenLang.label(kind, id, ja, "") : (ja || ""); }
-  function gattr(kind) { const L = typeof GardenLang !== "undefined" ? GardenLang : null, l = L ? L.cur() : "ja"; return l === "zh" ? "zh-CN" : l === "ko" ? "ko" : l === "en" ? "en" : "ja"; }
+  function gattr(kind) { const L = typeof GardenLang !== "undefined" ? GardenLang : null, l = L ? L.cur() : "ja"; return l === "zh" ? "zh-CN" : l === "ko" ? "ko" : l === "en" || l === "de" || l === "fr" ? l : "ja"; }
   function mood(m, ms, text) {
     if (typeof GardenFX === "undefined") { return; }
     GardenFX.mood(m, ms); if (text) { GardenFX.say(text, ms); }
