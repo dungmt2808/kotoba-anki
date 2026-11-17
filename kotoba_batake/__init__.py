@@ -3002,8 +3002,8 @@ class GardenDialog(QDialog):
         except Exception:
             self._day_seen = None
         if data["wallet"].get("_damaged"):      # 1.31.2: có khoá đọc hỏng → vườn tạm chỉ xem (STATE.save từ chối ghi)
+            # 1.33.3: dòng cảnh báo cố định trên ruộng (garden.js drawDamaged, câu theo lý do) thay cho thông báo nổi
             _damage_warn(data["wallet"]["_damaged"])
-            self._js("toast", "Dữ liệu vườn đọc chưa trọn — tạm thời chưa lưu thay đổi mới. Mở Báo lỗi để gửi thông tin nhé.")
         if fed:
             self._js("toast", f"[i:paw] Đã cho {', '.join(fed['names'])} ăn · −{fed['cost']} xu")
         if paid:
@@ -5329,6 +5329,7 @@ def _on_profile_close() -> None:
         _warn("hoàn tác lượt ôn (đóng hồ sơ)", err)
     _ledger.clear()                       # 1.23: sổ phần thưởng (Undo) chỉ cho collection đang mở
     _answering.clear()                    # 1.31.2: lượt ôn "đang lưu" cũng vậy
+    backup_core.PENDING = None            # 1.33.3: dữ liệu chờ trả lại (F06) của hồ sơ này còn trong file — lần mở sau trả lại
     _day_total.update(key=None, v=0)      # 1.28: tổng ngày có ôn của hồ sơ này không sang hồ sơ khác
     _words_cache.clear()                  # 1.25.3: gợi ý luyện viết của hồ sơ này không sang hồ sơ khác
     _presence.update(t=0.0, v={}, col="")  # 1.25.9: ngôn ngữ có trong collection cũng vậy

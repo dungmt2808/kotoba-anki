@@ -230,7 +230,11 @@ def touch_rev(col: Any, floor: int = 0, now_ms: int | None = None) -> dict[str, 
     try:
         prev = clean_rev(col.get_config(REV_KEY, None))
     except Exception:
-        prev = None
+        try:                      # 1.33.3: đọc lại một lần; vẫn lỗi thì không đóng dấu (dấu đoán có thể NHỎ hơn dấu đang có —
+            prev = clean_rev(col.get_config(REV_KEY, None))      # đồng hồ máy khác chạy nhanh — làm bản mới trông như bản cũ)
+        except Exception as err:
+            print(f"[kotoba_batake] dấu phiên bản (đọc): {type(err).__name__}: {err}")
+            return None
     now = int(time.time() * 1000) if now_ms is None else int(now_ms)
     rev = {"v": 1, "t": max(now, (prev["t"] + 1) if prev else 0, int(floor) + 1), "d": DEVICE}
     try:
@@ -293,7 +297,10 @@ def commit_config(col: Any, writes: list[tuple[str, Any]], floor: int = 0) -> li
             try:
                 prev = col.get_config(key, None)
             except Exception:
-                prev = _UNREAD
+                try:              # 1.33.3: đọc lại một lần (không đọc được giá trị cũ thì lỗi sau đó không trả về được)
+                    prev = col.get_config(key, None)
+                except Exception:
+                    prev = _UNREAD
             if prev is not _UNREAD and prev == payload:
                 continue
             old[key] = prev

@@ -2259,3 +2259,8 @@ ruby.kb-ruby rt { font-size: 0.45em; color: var(--kb-ink-2); font-weight: normal
 .kb-p-g-ok, .kb-p-g-bad { padding: 0 2px; margin: 0 1px; border-radius: 3px; }
 .kb-p-g-ok { background: #d8f2dc; }
 .kb-p-g-bad { background: #ffd6d3; }
+
+/* 1.33.3: Anki đọc lỗi dữ liệu vườn → vườn tạm chỉ xem (garden.js drawDamaged) */
+.kb-damaged { margin: 4px 0 6px; padding: 6px 10px; border: 2px solid #e9a800; border-radius: 6px; background: #fff0e0;
+  color: var(--kb-ink, #3b2a20); font-size: 13px; line-height: 1.4; }
+.kb-damaged[hidden] { display: none; }

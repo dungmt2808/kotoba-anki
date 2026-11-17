@@ -153,7 +153,7 @@ js_.update(DAY - dt.timedelta(days=1), {"t": "Hôm qua phải còn."})
 
 W = [core.CONFIG_KEY, core.EXT_KEY, core.SEASON_KEY, core.MORE_KEY, core.NHA_KEY, core.MOBILE_KEY]
 OPS = [("cộng xu", lambda: st.add_coins(1)), ("mua + đặt ghế", lambda: (st.buy("bench"), st.place("yard", "bench", 9, 1))),
-       ("thú nuôi", lambda: st.pet_buy("inu")), ("đồ tự vẽ", lambda: st.mywear_save({"name": "Vỏ", "slot": "shell", "c": ["r", "k"]}))]
+       ("thú nuôi", lambda: st.pet_buy("ahiru")), ("đồ tự vẽ", lambda: st.mywear_save({"name": "Vỏ", "slot": "shell", "c": ["r", "k"]}))]
 for key in W + [core.PX_KEY]:
     for name, op in OPS:
         if key == core.PX_KEY and name != "đồ tự vẽ":
@@ -471,6 +471,119 @@ for l in ("ja", "en", "zh", "ko"):
 ok(any(VI.search(t) and not JP.search(t) for t in got.get("vi", [])), "Chỉ tiếng Việt: vẫn có các câu tiếng Việt riêng")
 gl = open(os.path.join(ADDON, "web", "glang.js"), encoding="utf-8").read()
 ok("const own = e.dataset.kbLang" in gl, "glang.applyTitles: bảng có ngôn ngữ riêng (data-kb-lang) giữ ngôn ngữ đó khi đổi Ngôn ngữ trong vườn")
+
+# ---------------------------------------------------------------------------
+print("== 6. thử ngẫu nhiên có đối chứng: vườn A bị lỗi đọc / ghi ngẫu nhiên, vườn B không lỗi chỉ làm lại thao tác A làm được")
+import random  # noqa: E402
+
+SEEDS = [int(x) for x in os.environ.get("KB_SEED", "1333,7,42").split(",")]
+N_OPS = int(os.environ.get("KB_OPS", "260"))
+STATE_KEYS = [core.CONFIG_KEY, core.EXT_KEY, core.SEASON_KEY, core.MORE_KEY, core.NHA_KEY, core.MOBILE_KEY, core.PX_KEY,
+              finds.EVENT_KEY, guests.GUEST_KEY, life.LIFE_KEY, paper.PAPER_KEY_EN, journal.month_key(DAY.year, DAY.month)]
+
+
+def garden_pair(tag):
+    out = []
+    for side in ("A", "B"):
+        col, uf = new_col("fz_%s_%s" % (tag, side))
+        st = core.GardenState(os.path.join(uf, "state.json"), lambda c=col: c)
+        st.today_override = 500
+        d = st.load(); d["coins"] = 60000; d["mobile"] = core.new_mobile(1_000_000_000_000); st.save(d)
+        st.build(); st.build()
+        out.append({"col": col, "uf": uf, "st": st,
+                    "es": finds.EventStore(os.path.join(uf, "events.json"), lambda c=col: c),
+                    "gs": guests.GuestStore(os.path.join(uf, "guests.json"), lambda c=col: c),
+                    "ls": life.LifeStore(os.path.join(uf, "life.json"), lambda c=col: c),
+                    "ps": paper.PaperState(os.path.join(uf, "paper_en.json"), lambda c=col: c, paper.PAPER_KEY_EN),
+                    "js": journal.JournalStore(os.path.join(uf, "journal"), lambda c=col: c)})
+    return out
+
+
+def fz_ops(g, r, i):
+    st, es = g["st"], g["es"]
+    shop = [k for k, v in core.CATALOG.items() if not v.get("rare") and v.get("only") is None and not v.get("season")
+            and 0 < v.get("price", 0) <= 400][:12]
+    fid = finds.BY_SCENE["yard"][r % len(finds.BY_SCENE["yard"])]
+    ds = (DAY - dt.timedelta(days=r % 9)).isoformat()
+
+    def pick():
+        e = es.load(); e["found"][fid] = {"d": ds, "n": (e["found"].get(fid) or {}).get("n", 0) + 1}
+        st.find_reward(2, None, extra=[es.write(e)])
+
+    def ped():
+        e = es.load(); e["ped"][ds] = sorted(set(e["ped"].get(ds) or []) | {"d%d" % (r % 4)})
+        st.buy_at(shop[r % len(shop)], 50 + r % 90, extra=[es.write(e)])
+
+    def paper_q():
+        s2 = g["ps"].load(); s2.setdefault("q", {})["k%d" % (r % 20)] = 1
+        st.add_coins(1 + r % 3, extra=[g["ps"].write(s2)])
+
+    def answer():
+        st.record_answer(1 + r % 4, r % 5, (r + 1) % 5, day=500, before="review" if r % 2 else "new")
+
+    def wear():
+        st.mywear_save({"name": "Mũ %d" % r, "slot": "head", "px": "160" + "rgbk"[r % 4]})
+
+    def place():           # đặt một món đang có trong kho (mua là thao tác riêng)
+        own = [k for k, n in st.load()["home"]["owned"].items() if n and k in shop]
+        if not own:
+            raise core.HomeError("kho trống")
+        st.place("yard", own[r % len(own)], 1 + r % 14, r % 3)
+
+    ops = [("cộng xu", lambda: st.add_coins(1 + r % 5)), ("mua", lambda: st.buy(shop[r % len(shop)])), ("đặt", place), ("nhặt", pick), ("gánh hàng", ped),
+           ("câu báo", paper_q), ("lượt ôn", answer), ("đồ tự vẽ", wear), ("thú", lambda: st.pet_buy(["neko", "ahiru", "usagi", "kame"][r % 4])),
+           ("khách", lambda: g["gs"].met(guests.ORDER[r % len(guests.ORDER)], "yard", DAY - dt.timedelta(days=r % 30))),
+           ("sinh hoạt", lambda: g["ls"].mark(life.ORDER[r % len(life.ORDER)], "yard", DAY - dt.timedelta(days=r % 30))),
+           ("nhật ký", lambda: g["js"].update(DAY - dt.timedelta(days=r % 15), {"t": "dòng %d" % r})),
+           ("vùng", lambda: st.unlock_zone(core.ZONE_IDS[r % len(core.ZONE_IDS)]))]
+    return ops[i % len(ops)]
+
+
+def snap(col):
+    return {k: v for k, v in kb_keys(col).items() if k in STATE_KEYS or k.startswith("kotoba_batake_journal")}
+
+
+for seed in SEEDS:
+    rnd = random.Random(seed)
+    A, B = garden_pair(str(seed))
+    bad, faults, refused, done_ok = [], 0, 0, 0
+    for step in range(N_OPS):
+        i, r = rnd.randrange(13), rnd.randrange(10 ** 6)
+        mode = rnd.choice(["none", "none", "read1", "readN", "write1"])
+        key = rnd.choice(STATE_KEYS)
+        name, opA = fz_ops(A, r, i)
+        before = snap(A["col"])
+        ctx = unreadable(A["col"], {key}, 1) if mode == "read1" else unreadable(A["col"], {key}) if mode == "readN" \
+            else unwritable(A["col"], {key}) if mode == "write1" else contextmanager(lambda: (yield []))()
+        err = None
+        with ctx as hits:
+            try:
+                opA()
+            except Exception as e:  # noqa: BLE001
+                err = e
+        faults += bool(hits)
+        if err is not None:
+            refused += 1
+            if snap(A["col"]) != before:
+                bad.append("bước %d %s (%s %s): báo lỗi %s mà dữ liệu đã đổi" % (step, name, mode, key, type(err).__name__))
+            continue
+        done_ok += 1
+        _n, opB = fz_ops(B, r, i)
+        try:
+            opB()
+        except Exception as e:  # noqa: BLE001
+            bad.append("bước %d %s: A làm được (%s %s) mà B không lỗi lại báo %s" % (step, name, mode, key, type(e).__name__))
+            continue
+        sa, sb = snap(A["col"]), snap(B["col"])
+        if sa != sb:
+            diff = sorted(k for k in set(sa) | set(sb) if sa.get(k) != sb.get(k))
+            bad.append("bước %d %s (%s %s): A khác B ở %s" % (step, name, mode, key, diff))
+            break
+    ok(not bad and faults > N_OPS // 8 and done_ok > N_OPS // 3,
+       "hạt %d: %d thao tác, %d lần gặp lỗi đọc / ghi, %d thao tác từ chối không đổi gì, %d thao tác làm được khớp đối chứng%s"
+       % (seed, N_OPS, faults, refused, done_ok, "" if not bad else " — " + " | ".join(bad[:3])))
+    for g in (A, B):
+        g["col"].close()
 
 print("\nKẾT QUẢ: %d/%d" % (sum(RESULTS), len(RESULTS)))
 sys.exit(0 if all(RESULTS) else 1)

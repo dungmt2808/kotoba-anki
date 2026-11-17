@@ -2990,6 +2990,9 @@ class GardenState:
             data["_damaged"] = sorted(set(damaged))
             if unread:
                 data["_damaged_msg"] = unread[0]
+            # 1.33.3: lý do cho dòng cảnh báo của vườn: còn chờ trả lại sau đồng bộ / Anki đọc lỗi / dữ liệu hỏng
+            data["_damaged_kind"] = ("pending" if any(m == backup.RESTORE_PENDING for m in unread)
+                                     else "read" if unread else "broken")
         self._dmg = data.get("_damaged_msg") or (LOAD_DAMAGED if damaged else "")
         data["more_view"] = self._more_view(data)
         if self.on_load is not None:
@@ -3166,7 +3169,7 @@ class GardenState:
             _canon_order(data["home"])
         mobile = data.get("mobile")
         full = data
-        data = {k: v for k, v in full.items() if k not in ("_mseq", "_mob0", "_mobraw", "_damaged_msg")}
+        data = {k: v for k, v in full.items() if k not in ("_mseq", "_mob0", "_mobraw", "_damaged_msg", "_damaged_kind")}
         mob_seq = None
         if isinstance(mobile, dict):
             mobile, mob_seq = self._mobile_out(full, mobile)
@@ -3905,9 +3908,11 @@ class GardenState:
         import time
         now = int(time.time() * 1000) if now_ms is None else int(now_ms)
         try:
-            m = clean_mobile(col.get_config(MOBILE_KEY, None))
-        except Exception:
-            m = None
+            m = clean_mobile(backup.read_config(col, MOBILE_KEY))
+        except backup.ReadFailed:
+            # 1.33.3: sổ bù xu đọc lỗi → không đặt mốc lúc này (đặt "bây giờ" là cắt chuỗi ngày của người dùng cũ, và mốc này
+            # còn là "dòng" dữ liệu của lớp giữ dữ liệu khi đồng bộ) — lần sau đặt lại
+            return None
         ms = m["start"] if m and 0 < m["start"] <= now else now
         try:
             backup.put_config(col, START_KEY, {"v": 1, "ms": int(ms)})
