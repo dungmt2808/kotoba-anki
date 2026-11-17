@@ -271,7 +271,7 @@ var GardenGames = (function () {
     return out;
   }
   // 1.17: tiếng Anh — so khớp chữ gõ vào (chữ thường, nháy cong = thẳng, gạch nối = dấu cách)
-  // 1.33.4 (kiểm tra lần cuối): NFKC trước khi so — bộ gõ tiếng Việt kiểu "Unicode tổ hợp" / bàn phím Vietnamese cũ của
+  // 1.34.1 (kiểm tra lần cuối): NFKC trước khi so — bộ gõ tiếng Việt kiểu "Unicode tổ hợp" / bàn phím Vietnamese cũ của
   // Windows gõ "quả" = q u a + dấu hỏi rời (trước: dấu rời bị thay bằng dấu cách → "qua ta o", không bao giờ đúng), Hangul
   // tách nét (NFD), chữ Latin toàn khổ của bộ gõ Nhật (ａｐｐｌｅ); giữ dấu ghép không gộp được (\p{M}: Hindi, Thái…)
   function enNorm(s) {
@@ -327,7 +327,7 @@ var GardenGames = (function () {
     return { l: l, t: t };
   }
   function pyTyped(raw) { const k = pyKey(raw); return k.t ? k.l + "|" + k.t : k.l; }
-  // 1.33.4: deck hay ghi nhiều cách đọc bằng dấu câu Trung (hǎo，hào · hǎo、hào · hǎo；hào) hoặc trong ngoặc
+  // 1.34.1: deck hay ghi nhiều cách đọc bằng dấu câu Trung (hǎo，hào · hǎo、hào · hǎo；hào) hoặc trong ngoặc
   // (hǎo（hào） · nǐ hǎo (lịch sự: nín hǎo)) — trước chỉ tách , ; / | nên chữ cái dính liền "haohao", gõ "hao" không đúng
   function pyAnswers(reading) {
     const out = [];
@@ -1766,7 +1766,7 @@ var GardenGames = (function () {
     let lives = LIVES, score = 0, combo = 0, spawned = 0, scared = 0, spawnIn = 0.6, over = false;
     const crows = [];
     const xx = pool.group === "xx" || pool.group === "zh" || pool.group === "ko";   // 1.25.1 / 1.32: đáp án là đúng chữ của thẻ
-    const cjk = cm.type === "spell" && (pool.group === "zh" || pool.group === "ko");   // 1.33.4: gõ chữ Trung / Hàn — bỏ dấu cách
+    const cjk = cm.type === "spell" && (pool.group === "zh" || pool.group === "ko");   // 1.34.1: gõ chữ Trung / Hàn — bỏ dấu cách
     const answersOf = (p) => py ? (p._py || (p._py = pyAnswers(p.reading)))
       : cm.type === "spell_m" ? (p._sm || (p._sm = spellAnswers(p.meaning)))
       : spell && xx ? (p._sw || (p._sw = cjk ? noSpace(spellAnswers(p.word)) : spellAnswers(p.word)))
@@ -1888,7 +1888,7 @@ var GardenGames = (function () {
       hud();
       return true;
     }
-    // 1.33.4: đang ghép chữ bằng bộ gõ (Hàn / Trung / Nhật) thì chưa chấm — xoá ô giữa lúc bộ gõ còn giữ chữ cuối dễ để
+    // 1.34.1: đang ghép chữ bằng bộ gõ (Hàn / Trung / Nhật) thì chưa chấm — xoá ô giữa lúc bộ gõ còn giữ chữ cuối dễ để
     // lại chữ thừa ở từ sau; chấm khi chữ đã vào ô (compositionend) hoặc Enter
     input.addEventListener("input", (e) => { if (!e.isComposing) { check(false); } });
     input.addEventListener("compositionend", () => check(false));

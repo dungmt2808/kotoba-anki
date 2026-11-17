@@ -80,7 +80,7 @@ result = 1`);
   await sleep(400);
   const t1 = await tour(), b1 = await frameBox();
   ok(t1.step === 0 && /Chọn deck/.test(t1.text), 'bước 1/3: ' + t1.text);
-  ok(b1 && await inside(b1, 'document.getElementById("kb-deck")'), 'khung vàng bao ô Deck: ' + JSON.stringify(b1 && b1.f));
+  ok(b1 && await inside(b1, 'document.querySelector(".kb-deck")'), 'khung vàng bao ô Deck: ' + JSON.stringify(b1 && b1.f));
   ok(b1 && b1.b[0] >= 0 && b1.b[2] <= b1.w && b1.b[3] <= b1.h, 'bong bóng nằm gọn trong cửa sổ');
   ok(await js('return getComputedStyle(document.getElementById("kb-tour-frame")).pointerEvents === "none";'), 'lớp mờ không chặn bấm');
   await page.shot(SHOTS + '/1261_01_buoc1.png');

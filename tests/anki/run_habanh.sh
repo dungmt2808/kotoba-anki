@@ -1,5 +1,5 @@
 #!/bin/bash
-# run_habanh.sh GÓI_MỚI GÓI_CŨ [SHOTS] — 1.33.4: hạ bản rồi lên lại trong Anki thật (xem e2e_habanh.js).
+# run_habanh.sh GÓI_MỚI GÓI_CŨ [SHOTS] — 1.34.1: hạ bản rồi lên lại trong Anki thật (xem e2e_habanh.js).
 #   vd. git show e64eb22:kotoba_batake.ankiaddon > /tmp/cu.ankiaddon   (1.31.3 đã phát hành)
 #       ANKI_PY=~/.venv-anki/bin/python tests/anki/run_habanh.sh kotoba_batake.ankiaddon /tmp/cu.ankiaddon /tmp/kb_habanh
 HERE=$(cd "$(dirname "$0")" && pwd)

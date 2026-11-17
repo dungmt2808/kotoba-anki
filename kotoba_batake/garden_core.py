@@ -28,6 +28,7 @@ try:   # chạy trong Anki (gói add-on)
     from . import wear_core as wear
     from . import backup_core as backup
     from . import zh_core as zh
+    from . import draft_core as draft
 except ImportError:   # nạp riêng file này (test): nạp season_core.py / fields_core.py nằm cạnh
     import importlib.util as _ilu
 
@@ -48,6 +49,7 @@ except ImportError:   # nạp riêng file này (test): nạp season_core.py / fi
     decor.more = more
     wear = _load_side("kotoba_wear_core", "wear_core.py")
     wear.more = more
+    draft = _load_side("kotoba_draft_core", "draft_core.py")
     # 1.33.3: backup_core giữ trạng thái chung (cổng đồng bộ, dữ liệu chờ trả lại sau đồng bộ — F06) → cùng một module với
     # `import backup_core` của sync_core / guest_core… khi chạy test từ thư mục add-on (trước: hai bản riêng)
     import sys as _sys
@@ -1122,6 +1124,86 @@ def check_spot(home: dict[str, Any], scene: str, item_id: str, x: int, y: int, i
             raise HomeError("Ô này đã có đồ rồi.")
 
 
+def draft_plan(data: dict[str, Any], scene: str, slot: Any) -> dict[str, Any]:
+    """1.34: "Dùng bản này" của Trang trí thử — xét bản thử `slot` (draft_core.clean_slot) cho cảnh `scene` trên ví `data`:
+    mọi món đặt đúng luật (check_spot từng món theo thứ tự, như đặt lần lượt), món nào thiếu thì mua thêm bao nhiêu (món
+    đang đặt ở cảnh KHÁC giữ nguyên — không lấy sang), tường / sàn đổi gì, tổng xu. Lỗi → HomeError (câu cho người dùng).
+    Không đổi `data`. Trả {"items", "buy": {id: n}, "cost", "decor_buy": [id], "decor_use": {chỗ: id}, "same": bool}."""
+    home = data["home"]
+    cat = full_catalog(data)
+    s = draft.clean_slot(slot)
+    if s is None:
+        raise HomeError("Bản thử hỏng, chưa dùng được.")
+    if scene not in scene_names(home):
+        raise HomeError("Cảnh này chưa mở." if scene in SIDE_IDS or more.is_uzone(scene) else "Không có cảnh này.")
+    if scene in ZONE_IDS and scene not in home["zones"]:
+        raise HomeError("Chưa mở khoá vùng này.")
+    if is_room(scene) and home["house"] < ROOM_UNLOCK_LEVEL:
+        raise HomeError("Cần xây tới bước “Lắp cửa & cửa sổ” mới vào nhà được.")
+    tmp = dict(home)
+    tmp[scene] = []
+    need: dict[str, int] = {}
+    for e in s["items"]:
+        info = cat.get(e["id"])
+        if info is None:
+            raise HomeError("Bản thử có món không còn nữa (món tự làm đã xoá?) — cất món đó rồi thử lại.")
+        try:
+            check_spot(tmp, scene, e["id"], e["x"], e["y"], cat=cat)
+        except HomeError as err:
+            raise HomeError(f"“{info['name']}”: {err}") from None
+        tmp[scene].append({"id": e["id"], "x": e["x"], "y": e["y"]})
+        need[e["id"]] = need.get(e["id"], 0) + 1
+    buy: dict[str, int] = {}
+    cost = 0
+    for iid, n in need.items():
+        info = cat[iid]
+        elsewhere = sum(1 for sc in scene_names(home) if sc != scene for e in home.get(sc, []) if e["id"] == iid)
+        have = home["owned"].get(iid, 0) - elsewhere
+        short = n - max(0, have)
+        if short <= 0:
+            continue
+        nm = info["name"]
+        if info.get("custom"):
+            raise HomeError(f"Món tự làm “{nm}” chỉ còn {max(0, have)} cái — làm thêm ở Xưởng (+1 cái) nhé.")
+        if info.get("rare") or info.get("only"):
+            raise HomeError(f"“{nm}” không bán ở cửa hàng — bản thử dùng nhiều hơn số đang có.")
+        if info.get("zone") and info["zone"] not in home["zones"]:
+            raise HomeError(f"“{nm}”: mở khoá vùng của món này trước đã.")
+        if info.get("season") and info["season"] not in data["season"]["unlocked"]:
+            raise HomeError(f"“{nm}”: mở khoá giao diện mùa của món này trước đã.")
+        if info["scene"] == "room" and home["house"] < ROOM_UNLOCK_LEVEL:
+            raise HomeError("Xây nhà tới bước “Lắp cửa & cửa sổ” rồi mới mua nội thất được.")
+        mx = info.get("max", 99)
+        if home["owned"].get(iid, 0) + short > mx:
+            raise HomeError(f"“{nm}” chỉ có tối đa {mx} cái — bản thử cần thêm {short} cái.")
+        buy[iid] = short
+        cost += int(info["price"]) * short
+    decor_buy: list[str] = []
+    decor_use: dict[str, str] = {}
+    want = s.get("decor") or {}
+    if want and scene in decor.ROOMS:
+        dec = data["more"][decor.DECOR_KEY]
+        cur = dec["use"].get(scene, {})
+        for slot_name in decor.SLOTS:
+            if slot_name not in want:
+                continue
+            did = want[slot_name]
+            if did == decor.house_id(scene, slot_name):
+                did = ""
+            if did == cur.get(slot_name, ""):
+                continue
+            if did and not decor.usable(dec, did, slot_name):
+                if did in decor.PRESETS and decor.PRESETS[did]["slot"] == slot_name:
+                    decor_buy.append(did)
+                    cost += int(decor.PRESETS[did]["price"])
+                else:
+                    raise HomeError(("Giấy dán tường" if slot_name == "wall" else "Sàn") + " của bản thử không còn nữa — chọn mẫu khác nhé.")
+            decor_use[slot_name] = did
+    same = (not buy and not decor_use and
+            sorted((e["id"], e["x"], e["y"]) for e in s["items"]) == sorted((e["id"], e["x"], e["y"]) for e in home.get(scene, [])))
+    return {"items": tmp[scene], "buy": buy, "cost": cost, "decor_buy": decor_buy, "decor_use": decor_use, "same": same}
+
+
 def placed_count(home: dict[str, Any], item_id: str) -> int:
     return sum(1 for scene in scene_names(home) for e in home.get(scene, []) if e["id"] == item_id)
 
@@ -2025,6 +2107,30 @@ def daily_stats(col: Collection, frozen: Any = (), start_ms: int | None = None) 
 def deck_search(col: Collection, deck_name: str) -> str:
     base = col.build_search_string(SearchNode(deck=deck_name))
     return f"{base} -is:suspended"
+
+
+DECK_TREE_MAX = 3000      # 1.34: ô chọn deck dạng cây — giới hạn số dòng gửi sang trang
+
+
+def deck_tree(col: Any) -> list[dict[str, Any]]:
+    """1.34: cây deck như màn Decks của Anki (`deck_due_tree`): mỗi deck một dòng theo thứ tự cây, cấp, có deck con không,
+    số thẻ Mới / Học / Ôn hôm nay, đang thu gọn ở Anki không, deck lọc. Deck "Default" trống Anki tự bỏ. Chỉ đọc."""
+    out: list[dict[str, Any]] = []
+
+    def walk(node: Any, depth: int, path: str) -> None:
+        for c in node.children:
+            if len(out) >= DECK_TREE_MAX:
+                return
+            name = str(c.name)
+            full = f"{path}::{name}" if path else name
+            out.append({"id": int(c.deck_id), "name": name, "full": full, "depth": depth, "kids": len(c.children) > 0,
+                        "n": [max(0, int(c.new_count)), max(0, int(c.learn_count)), max(0, int(c.review_count))],
+                        "col": bool(c.collapsed), "dyn": bool(getattr(c, "filtered", False))})
+            if depth < 60:
+                walk(c, depth + 1, full)
+
+    walk(col.sched.deck_due_tree(), 0, "")
+    return out
 
 
 def queue_counts(col: Collection, deck_id: int) -> tuple[int, int, int] | None:
@@ -3544,6 +3650,46 @@ class GardenState:
         home[scene].pop(index)
         self.save(data)
         return data
+
+    # -- 1.34: Trang trí thử ---------------------------------------------------
+
+    def _draft_path(self) -> str:
+        return os.path.join(os.path.dirname(self.path), draft.FILE_NAME)
+
+    def draft_load(self) -> dict[str, Any]:
+        """Bản thử của hồ sơ đang mở (file theo hồ sơ trên máy; không có / hỏng → trống)."""
+        return draft.clean(read_backup(self._draft_path(), self._col()))
+
+    def draft_store(self, store: dict[str, Any]) -> dict[str, Any]:
+        """Ghi bản thử (OSError → HomeError). Chỉ là bản nháp trên máy: không đụng ví / collection."""
+        out = draft.clean(store)
+        col = self._col()
+        try:
+            write_backup(self._draft_path(), backup_payload(out, col), col)
+        except OSError:
+            raise HomeError("Chưa lưu được bản thử (lỗi ghi file trên máy).") from None
+        return out
+
+    def draft_apply(self, scene: str, slot: Any) -> tuple[dict[str, Any], dict[str, Any]]:
+        """"Dùng bản này": mua món còn thiếu + mẫu tường / sàn chưa có, bày cảnh đúng như bản thử (món đang đặt mà bản thử
+        không dùng → Kho đồ), tất cả trong MỘT lần lưu — lỗi giữa chừng thì không trừ xu, không đổi gì. Trả (ví, kế hoạch)."""
+        data = self.load()
+        plan = draft_plan(data, scene, slot)
+        if plan["same"]:
+            raise HomeError("Bản thử giống hệt cảnh bây giờ rồi.")
+        self._pay(data, plan["cost"])
+        home = data["home"]
+        for iid, n in plan["buy"].items():
+            home["owned"][iid] = home["owned"].get(iid, 0) + n
+        home[scene] = [dict(e) for e in plan["items"]]
+        if plan["decor_use"]:
+            dec = data["more"][decor.DECOR_KEY]
+            for did in plan["decor_buy"]:
+                self._decor(lambda: decor.buy(dec, did))
+            for slot_name, did in plan["decor_use"].items():
+                self._decor(lambda: decor.use(dec, scene, slot_name, did, home.get("rooms") or []))
+        self.save(data)
+        return data, plan
 
     # -- vùng mới, kiểu nhà ----------------------------------------------------
 

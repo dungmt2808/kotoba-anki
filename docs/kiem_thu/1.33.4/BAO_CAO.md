@@ -1,11 +1,11 @@
-# Báo cáo 1.33.4 — kiểm tra thêm: so đáp án với bộ gõ / deck thật, đoán ngôn ngữ deck (17/11/2026 tối)
+# Báo cáo 1.33.4 → phát hành ở 1.34.1 — kiểm tra thêm: so đáp án với bộ gõ / deck thật, đoán ngôn ngữ deck (17/11/2026 tối)
 
 Người dùng: "test kỹ giúp tớ addon này và tính năng vừa hiện thực. test thêm nhiều kịch bản, những bộ test ngoài bộ test
 có sẵn. test kỹ giúp tớ nhé. đây gần như là lần release cuối cùng rồi. và nếu thêm tiếng Đức hoặc reset báo lại từ đầu thì
 có làm nhiều không. vì bản trước release có người nhờ tớ thêm tiếng Đức".
 
 **Cách làm**: phiên này bắt đầu ở 1.32.1 (lúc đó là bản mới nhất của nhánh); trong lúc test, phiên khác đẩy 1.32.2 → 1.33.3
-lên cùng nhánh. Đã gộp, chạy bộ test mới trên mã 1.33.3: **mọi lỗi tìm được vẫn còn** → sửa ở **1.33.4**. Chi tiết lỗi, kịch
+lên cùng nhánh (và 1.34.0 lên master). Đã gộp, chạy bộ test mới trên mã 1.33.3: **mọi lỗi tìm được vẫn còn** → sửa ở **1.33.4**, gộp master 1.34.0 thành **1.34.1** (mục 4). Chi tiết lỗi, kịch
 bản và kết quả trên 1.32.1: `docs/kiem_thu/1.32/BAO_CAO.md` mục 7. Mục này là kết quả chạy lại trên 1.33.4.
 
 ## 1. Lỗi đã sửa (tóm tắt — đủ ở `docs/kiem_thu/1.32/BAO_CAO.md` mục 7)
@@ -48,3 +48,8 @@ Ghi ở `PHAT_TRIEN.md` mục 10.0c. Tóm tắt:
 | Ngôn ngữ trong vườn tiếng Đức | ~½ phiên | ~270 câu / tên; cần người biết tiếng Đức đọc lại |
 | Báo tiếng Đức | ~1–2 phiên + chạy Gemini thật nhiều ngày | khung nhiều báo của 1.33 dùng lại được; khó ở nối tra từ (chia động từ, cách, động từ tách, danh từ ghép) |
 | "Reset báo": nút bắt đầu truyện mới | ~½ phiên | cất bộ nhớ truyện vào thư mục sao lưu, số báo cũ vẫn đọc được, không mất xu / tiến độ; thêm tiếng Đức **không** cần reset |
+
+## 4. Gộp master 1.34.0 → 1.34.1
+
+Người dùng: "gộp với master đi ạ". Master đã có 1.34.0 (bảng ôn theo góp ý, ô chọn deck dạng cây, Trang trí thử — phiên
+khác) → gộp vào nhánh, phần sửa thành 1.34.1, chạy lại trên gói 1.34.1: RESULT_1341

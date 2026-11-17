@@ -92,7 +92,8 @@ print("== 4. Đang đồng bộ: báo một câu, bảng ôn không kẹt")
 br = init[init.index("    def _on_bridge(self, cmd: str) -> Any:"):init.index("    def _dispatch(self, cmd: str) -> Any:")]
 ok('SYNC_MSG = "Anki đang đồng bộ — xong rồi bấm lại nhé."' in init and 'self._js("toast", SYNC_MSG)' in br, "câu báo khi đồng bộ")
 ok("time.time() - self._sync_note > 3" in br and "not cmd.startswith(self.AUTO_CMDS)" in br, "≤ 1 lần / 3 giây, lệnh tự động không báo")
-ok('AUTO_CMDS = ("ready", "refresh", "life:", "guest:", "ai:status", "paper:index", "game:exaudio")' in init, "danh sách lệnh tự động")
+ok('AUTO_CMDS = ("ready", "refresh", "life:", "guest:", "ai:status", "paper:index", "game:exaudio", "deck:tree")' in init,
+   "danh sách lệnh tự động (1.34: + deck:tree — số thẻ của cây deck, chỉ đọc)")
 ok('if cmd.startswith("rv:ans:") and self._card is not None:\n                self._js("reviewRetry", {"cid": self._card.id})' in br, "chấm thẻ lúc đồng bộ → trả lượt (reviewRetry)")
 
 print("== 5. Câu chữ gọn + ⚙ thu gọn")

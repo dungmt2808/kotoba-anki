@@ -217,7 +217,8 @@ ok(re.search(r'<button[^>]*id="kb-rv-undo"[^>]*title="[^"]*Ctrl\+Z[^"]*"[^>]*hid
 ok('send("rv:undo")' in gjs and re.search(r'e\.ctrlKey \|\| e\.metaKey\) && !e\.shiftKey && !e\.altKey && \(k === "z"', gjs) is not None,
    "garden.js: Ctrl+Z / ⌘Z (không Shift / Alt) → rv:undo")
 key_fn = gjs[gjs.index("function key(e)"):gjs.index("function key(e)") + 1400]
-ok(key_fn.index('tag === "INPUT"') < key_fn.index("undoRate()"), "ô gõ đáp án (INPUT / TEXTAREA / SELECT) giữ Ctrl+Z của ô")
+# 1.34: "đang gõ" = ô chữ / ô gõ đáp án / textarea / select / chỗ sửa được (typingIn) — vẫn xét trước Ctrl+Z
+ok(key_fn.index("typingIn(e.target)") < key_fn.index("undoRate()"), "ô gõ đáp án (INPUT / TEXTAREA / SELECT) giữ Ctrl+Z của ô")
 ok('(e.code === "KeyZ" && !latin)' in key_fn,
    "phím vật lý KeyZ chỉ khi phím ra chữ không phải Latin (AZERTY: Ctrl+W, QWERTZ: Ctrl+Y không hoàn tác nhầm)")
 ok(gjs.count("setUndo(") >= 5 and "reviewUndo: reviewUndo" in gjs, "trang cập nhật nút ở showCard / reviewDone / closePanel / reviewUndo")

@@ -179,13 +179,16 @@ if "${ANKI_PY:-python3}" -c "import anki.collection" 2>/dev/null; then
   OUT=$("${ANKI_PY:-python3}" -W ignore "$HERE/core/test_1333.py" "$ADDON" 2>&1); RC=$?
   echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
   # 1.33.3: lỗi của nhánh audit/release-review-1.33.2-2026-11-17 đã sửa → giữ bộ phục hồi của audit làm kiểm tra hồi quy
+  echo "== core/test_134.py (1.34: Trang trí thử — làm sạch bản thử, dùng bản thử mua + bày một lần, lỗi ghi từng khoá, 600 bản ngẫu nhiên có đối chứng, lưu theo hồ sơ, mã 1.31.3 mở cùng collection; cây deck = deck_due_tree; Phóng to; soát mã bảng ôn)"
+  OUT=$("${ANKI_PY:-python3}" -W ignore "$HERE/core/test_134.py" "$ADDON" 2>&1); RC=$?
+  echo "$OUT" | grep -E "✗|KẾT QUẢ|Traceback"; [ $RC = 0 ] || FAIL=1
   echo "== audit_20261117/recovery_round2.py (trả lại sau đồng bộ lỗi × 3 khoá × 3 cách tiếp tục, dừng tiến trình giữa hai lần ghi)"
   OUT=$("${ANKI_PY:-python3}" "$HERE/audit_20261117/recovery_round2.py" "$ADDON" --out "${TMPDIR:-/tmp}/kb_recovery_1117.json" 2>&1); RC=$?
   echo "$OUT" | grep -E "^FAIL|ROUND2"; [ $RC = 0 ] || FAIL=1
 else
-  echo "– bỏ qua core/test_1333.py, audit_20261117/recovery_round2.py (cần gói anki: ANKI_PY)"
+  echo "– bỏ qua core/test_1333.py, core/test_134.py, audit_20261117/recovery_round2.py (cần gói anki: ANKI_PY)"
 fi
-echo "== core/test_132c.py (1.33.4 kiểm tra thêm: Đuổi quạ so đáp án với deck / bộ gõ thật, đoán ngôn ngữ ~30 kiểu deck ngoài đời, Python 3.9 nếu có PY39)"
+echo "== core/test_132c.py (1.34.1 kiểm tra thêm: Đuổi quạ so đáp án với deck / bộ gõ thật, đoán ngôn ngữ ~30 kiểu deck ngoài đời, Python 3.9 nếu có PY39)"
 OUT=$("${ANKI_PY:-python3}" -W ignore "$HERE/core/test_132c.py" "$ADDON" 2>&1); RC=$?
 echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
 # trang web chung (site/, GitHub Pages): đăng mã, dữ liệu trang khớp add-on (đổi hình mà quên `node site/tools/xuat_hinh.js` là báo)

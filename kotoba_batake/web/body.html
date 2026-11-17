@@ -8,14 +8,17 @@
     </div>
     <div class="kb-title">ことば畑</div>
     <button type="button" id="kb-theme-chip" class="kb-chip kb-theme-chip" hidden></button>
-    <label class="kb-deck">Deck
-      <select id="kb-deck" aria-label="Chọn deck"></select>
-      <button type="button" id="kb-deck-find" class="kb-deck-find" title="Tìm deck theo tên (phím /)" aria-label="Tìm deck" aria-haspopup="true"><i class="kb-pi kb-pi-search" aria-hidden="true"></i></button>
-    </label>
-    <div id="kb-deck-pop" class="kb-deck-pop" hidden role="dialog" aria-label="Tìm deck">
-      <input type="text" id="kb-deck-q" class="kb-deck-q" placeholder="Tìm deck… (vd. n4, tieng anh)" autocomplete="off" spellcheck="false" aria-label="Tên deck cần tìm">
+    <!-- 1.34 (góp ý: "chỗ chọn deck gọn hơn … dropdown giống anki"): một nút gọn + cây deck như màn Decks của Anki.
+         Ô thả xuống cũ còn (ẩn) để đổi deck: chọn ở cây = đặt giá trị ô này + sự kiện change như trước. -->
+    <div class="kb-deck">Deck
+      <select id="kb-deck" aria-label="Chọn deck" hidden></select>
+      <button type="button" id="kb-deck-btn" class="kb-deck-btn" aria-haspopup="true" aria-expanded="false"><span class="kb-deck-path"></span><b class="kb-deck-leaf"></b><span class="kb-deck-car" aria-hidden="true">▾</span></button>
+    </div>
+    <div id="kb-deck-pop" class="kb-deck-pop" hidden role="dialog" aria-label="Chọn deck">
+      <input type="text" id="kb-deck-q" class="kb-deck-q" placeholder="Tìm deck… (vd. n4 bai 17)" autocomplete="off" spellcheck="false" aria-label="Tên deck cần tìm">
+      <div class="kb-deck-head" aria-hidden="true"><span class="kb-deck-name">Deck</span><span class="kb-deck-n">Mới</span><span class="kb-deck-n">Học</span><span class="kb-deck-n">Ôn</span></div>
       <div id="kb-deck-list" class="kb-deck-list" role="listbox"></div>
-      <div id="kb-deck-foot" class="kb-deck-foot">↑ ↓ chọn · Enter mở · Esc đóng</div>
+      <div id="kb-deck-foot" class="kb-deck-foot">↑ ↓ chọn · ← → đóng / mở nhánh · Enter mở · Esc đóng</div>
     </div>
     <div class="kb-chip" id="kb-coins" title="Xu">0 xu</div>
     <div class="kb-chip" id="kb-thirsty" title="Cây đang khát" hidden>0 cây khát</div>
@@ -80,7 +83,10 @@
         <span class="kb-count kb-count-rev" id="kb-c2">0</span>
       </div>
       <button type="button" id="kb-rv-undo" class="kb-btn kb-btn-small kb-rv-undo" title="Hoàn tác lượt chấm vừa rồi (Ctrl+Z)" hidden>↶ Hoàn tác</button>
+      <!-- 1.34: Nghe lại (R / F5 như Anki) chỉ hiện khi mặt đang xem có âm thanh; Phóng to (F): chỉ còn thẻ + nút chấm -->
+      <button type="button" id="kb-rv-replay" class="kb-btn kb-btn-small kb-rv-replay" title="Nghe lại âm thanh của thẻ (R)" hidden><i class="kb-pi kb-pi-speaker" aria-hidden="true"></i>Nghe lại <span class="kb-key">R</span></button>
       <button type="button" id="kb-rv-garden" class="kb-btn kb-btn-small kb-rv-garden" title="Ẩn / hiện sân và ruộng khi ôn thẻ (đổi kỹ hơn ở ⚙ → Giao diện)">Ẩn vườn</button>
+      <button type="button" id="kb-rv-zoom" class="kb-btn kb-btn-small kb-rv-zoom" title="Chỉ còn thẻ và nút chấm (F)">Phóng to <span class="kb-key">F</span></button>
       <button type="button" id="kb-stop" class="kb-btn kb-btn-small">Dừng</button>
     </div>
     <div id="kb-card-wrap" class="kb-card-wrap">
@@ -97,10 +103,10 @@
       <div class="kb-actions-main">
       <button type="button" id="kb-show" class="kb-btn kb-btn-wide">Lật thẻ <span class="kb-key">Space</span></button>
       <div id="kb-ratings" class="kb-ratings" hidden>
-        <button type="button" class="kb-btn kb-rate kb-rate-1" data-ease="1"><span class="kb-rate-name">Lại</span><span class="kb-rate-ivl" id="kb-l1"></span></button>
-        <button type="button" class="kb-btn kb-rate kb-rate-2" data-ease="2"><span class="kb-rate-name">Khó</span><span class="kb-rate-ivl" id="kb-l2"></span></button>
-        <button type="button" class="kb-btn kb-rate kb-rate-3" data-ease="3"><span class="kb-rate-name">Được</span><span class="kb-rate-ivl" id="kb-l3"></span></button>
-        <button type="button" class="kb-btn kb-rate kb-rate-4" data-ease="4"><span class="kb-rate-name">Dễ</span><span class="kb-rate-ivl" id="kb-l4"></span></button>
+        <button type="button" class="kb-btn kb-rate kb-rate-1" data-ease="1" title="Phím 1"><span class="kb-rate-key" aria-hidden="true">1</span><span class="kb-rate-name">Lại</span><span class="kb-rate-ivl" id="kb-l1"></span></button>
+        <button type="button" class="kb-btn kb-rate kb-rate-2" data-ease="2" title="Phím 2"><span class="kb-rate-key" aria-hidden="true">2</span><span class="kb-rate-name">Khó</span><span class="kb-rate-ivl" id="kb-l2"></span></button>
+        <button type="button" class="kb-btn kb-rate kb-rate-3" data-ease="3" title="Phím 3"><span class="kb-rate-key" aria-hidden="true">3</span><span class="kb-rate-name">Được</span><span class="kb-rate-ivl" id="kb-l3"></span></button>
+        <button type="button" class="kb-btn kb-rate kb-rate-4" data-ease="4" title="Phím 4"><span class="kb-rate-key" aria-hidden="true">4</span><span class="kb-rate-name">Dễ</span><span class="kb-rate-ivl" id="kb-l4"></span></button>
       </div>
       <button type="button" id="kb-close-done" class="kb-btn kb-btn-wide" hidden>Đóng</button>
       </div>
@@ -121,6 +127,7 @@
       <div class="kb-g-title">おうち · Nhà &amp; Cửa hàng</div>
       <div class="kb-h-scenes"></div>
       <div class="kb-g-hud"><div class="kb-g-chip"><span class="kb-g-chip-l">Ví</span><b id="kb-h-coins">0 xu</b></div></div>
+      <button type="button" id="kb-h-try" class="kb-btn kb-btn-small kb-h-try" aria-pressed="false" title="Bày thử đồ, kể cả đồ chưa mua — vườn thật không đổi tới khi bấm “Dùng bản này”">Trang trí thử</button>
       <button type="button" id="kb-h-snap" class="kb-btn kb-btn-small" title="Chụp ảnh cảnh đang xem"><i class="kb-pi kb-pi-camera" aria-hidden="true"></i>Chụp ảnh</button>
       <button type="button" id="kb-h-exit" class="kb-btn kb-btn-small">Thoát <span class="kb-key">Esc</span></button>
     </div>

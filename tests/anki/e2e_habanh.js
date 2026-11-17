@@ -1,4 +1,4 @@
-// 1.33.4 (kiểm tra lần cuối, 17/11): HẠ BẢN rồi LÊN LẠI trong Anki thật — chạy bằng run_habanh.sh GÓI_MỚI GÓI_CŨ SHOTS.
+// 1.34.1 (kiểm tra lần cuối, 17/11): HẠ BẢN rồi LÊN LẠI trong Anki thật — chạy bằng run_habanh.sh GÓI_MỚI GÓI_CŨ SHOTS.
 // Giống người dùng có máy thứ hai còn bản cũ (cùng collection qua AnkiWeb), hoặc lỡ cài lại gói cũ:
 //   p1 (bản mới 1.32.x): deck tiếng Trung + Hán Việt, Cấu hình trường lưu là Tiếng Trung, Đuổi quạ pinyin, Ngôn ngữ trong
 //      vườn = Tiếng Trung, mua đồ, nhật ký → chụp dữ liệu → cài đè GÓI_CŨ → đóng Anki

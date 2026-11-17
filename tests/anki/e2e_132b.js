@@ -123,7 +123,7 @@ for i, fid in enumerate(kb.finds.FINDS):
 kb.EVENTS.save(ev)
 for i, gid in enumerate(kb.guests.GUESTS):
     kb.GUESTS.met(gid, "yard", t0 - datetime.timedelta(days=1 + i % 20))
-    # 1.33.4: khách ghé thật lúc chạy test (khung 4 phút theo giờ) được ghi "gặp hôm nay" — ghi sẵn để bước "chỉ xem thì
+    # 1.34.1: khách ghé thật lúc chạy test (khung 4 phút theo giờ) được ghi "gặp hôm nay" — ghi sẵn để bước "chỉ xem thì
     # dữ liệu không đổi" không phụ thuộc giờ chạy (một lần mỗi ngày: lần ghé sau không ghi thêm)
     kb.GUESTS.met(gid, "yard", t0)
 kb.save_config(show_tooltips=False, sound=False, music=False)
