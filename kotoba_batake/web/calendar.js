@@ -386,8 +386,14 @@ var GardenCal = (function () {
       }
       if (v.paper) { row("Báo", v.paper); }
       if (v.guests && v.guests.length) { row("Khách mới", v.guests.join(" · "), "Khách ghé vườn lần đầu hôm này (Album khách ở Nhà)."); }
-      if (v.finds && v.finds.length) { row("Nhặt được", v.finds.join(" · "), "Món nhặt lần đầu ở chỗ lấp lánh hôm này (Hộp sưu tầm ở Nhà → Album)."); }
-      if (v.life && v.life.length) { row("Sinh hoạt", v.life.join(" · "), "Việc của StackChan thấy lần đầu hôm này (Nhà → Album → Sinh hoạt)."); }
+      // 1.32: tên theo Ngôn ngữ trong vườn (Python gửi kèm mã: finds_i / life_i = [mã, chữ Nhật, kana, tiếng Việt])
+      const named = (kind, list, old) => (list && typeof GardenLang !== "undefined") ? list.map((x) => {
+        const t = GardenLang.label(kind, x[0], x[1], "");
+        return t ? t + " (" + x[3] + ")" : x[3];
+      }) : old;
+      const fl = named("finds", v.finds_i, v.finds), ll = named("acts", v.life_i, v.life);
+      if (fl && fl.length) { row("Nhặt được", fl.join(" · "), "Món nhặt lần đầu ở chỗ lấp lánh hôm này (Hộp sưu tầm ở Nhà → Album)."); }
+      if (ll && ll.length) { row("Sinh hoạt", ll.join(" · "), "Việc của StackChan thấy lần đầu hôm này (Nhà → Album → Sinh hoạt)."); }
     }
     c1.appendChild(stats);
     R.appendChild(c1);
@@ -571,7 +577,7 @@ var GardenCal = (function () {
       hg.appendChild(GardenIcons.el("hourglass"));
       hg.appendChild(el("b", null, "Gemini đang sửa bài…"));
       box.appendChild(hg);
-      box.appendChild(el("div", "kb-cal-why", "Thường mất 10–60 giây. Có thể đóng bảng hoặc làm việc khác — xong sẽ có thông báo."));
+      box.appendChild(el("div", "kb-cal-why", "Thường 10–60 giây · đóng bảng được, xong sẽ báo."));
       c.appendChild(box);
     } else if (w.st === "queue") {
       const box = el("div", "kb-cal-wait kb-cal-queue");
@@ -603,14 +609,14 @@ var GardenCal = (function () {
     if (w.st === "wait") {
       const b = btn("", "Đang sửa…"); b.disabled = true; acts.appendChild(b);
       acts.appendChild(btn("", "Đóng bảng", close));
-      acts.appendChild(el("span", "kb-cal-lock", "Bài đã gửi, tạm khoá để khỏi lệch với bản sửa"));
+      acts.appendChild(el("span", "kb-cal-lock", "Bài đã gửi, chờ Gemini sửa"));
     } else if (w.st === "done") {
       if (w.today) {
         const b = btn("", "Đã sửa hôm nay"); b.disabled = true; acts.appendChild(b);
         acts.appendChild(el("span", "kb-cal-lock", "Gemini sửa 1 lần mỗi ngày · mai viết bài mới"));
       }
     } else if (w.st === "queue") {
-      acts.appendChild(el("span", "kb-cal-lock", "Bài đã gửi, không tính lượt khi Gemini chưa sửa"));
+      acts.appendChild(el("span", "kb-cal-lock", "Bài đã gửi · chưa sửa thì không tính lượt"));
     } else if (!w.today) {
       acts.appendChild(el("span", "kb-cal-lock", w.goc ? "Bài chưa gửi sửa · luyện viết chỉ cho hôm nay" : ""));
     } else if (!w.key) {

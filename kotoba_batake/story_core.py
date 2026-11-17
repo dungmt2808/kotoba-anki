@@ -168,12 +168,18 @@ Lời thoại để trong ngoặc kép "…", ghi rõ ai nói."""
 # tên chung của các bản (tiếng Việt / tiếng Nhật / tiếng Anh) — bản kể lại dùng đúng bảng này
 # 1.26.1: "chị Hana" (bản 1.25.2 ghi "bà Hana" — trùng với bà của chị Hana trong truyện của báo Claude Code, và là gốc của
 # "Grandma Hana" ở báo tiếng Anh)
-NAMES = (("Lin", "リンさん", "Lin"), ("chị Hana (chủ quán, khoảng 30 tuổi)", "はなさん（女将さん; không gọi おばあさん）",
-          "Hana (not \"Grandma\")"), ("StackChan", "スタックちゃん", "StackChan"),
-         ("ông trưởng làng (không có tên riêng)", "村長さん", "the mayor"),
-         ("Quán Kotoba (quán trọ)", "ことば屋（旅館）", "the Kotoba Inn"),
-         ("làng Kotoba", "ことば村", "Kotoba Village"), ("vườn Kotoba", "ことば畑", "Kotoba Farm"),
-         ("bác đưa thư", "郵便屋さん", "the postman"), ("con mèo hoang trắng", "白いのらねこ", "the white stray cat"))
+NAMES = (("Lin", "リンさん", "Lin", "林", "린"),
+         ("chị Hana (chủ quán, khoảng 30 tuổi)", "はなさん（女将さん; không gọi おばあさん）", "Hana (not \"Grandma\")",
+          "哈娜（旅店老板娘，三十岁左右）", "하나 씨 (여관 주인, 30대)"),
+         ("StackChan", "スタックちゃん", "StackChan", "StackChan", "스택짱"),
+         ("ông trưởng làng (không có tên riêng)", "村長さん", "the mayor", "村长", "촌장님"),
+         ("Quán Kotoba (quán trọ)", "ことば屋（旅館）", "the Kotoba Inn", "言叶旅店", "코토바 여관"),
+         ("làng Kotoba", "ことば村", "Kotoba Village", "言叶村", "코토바 마을"),
+         ("vườn Kotoba", "ことば畑", "Kotoba Farm", "言叶菜园", "코토바 텃밭"),
+         ("bác đưa thư", "郵便屋さん", "the postman", "邮递员", "우체부 아저씨"),
+         ("con mèo hoang trắng", "白いのらねこ", "the white stray cat", "白色的流浪猫", "하얀 길고양이"))
+NAME_COL = {"ja": 1, "en": 2, "zh": 3, "ko": 4}       # 1.33: cột tên theo ngôn ngữ báo
+LANG_VI = {"ja": "tiếng Nhật", "en": "tiếng Anh", "zh": "tiếng Trung", "ko": "tiếng Hàn", "vi": "tiếng Việt"}
 
 SAMPLE_VI = """"Chị Hana ơi, khách phòng số ba muốn ăn sáng bằng... một tấm bản đồ!" Lin chạy vào bếp, tay vẫn cầm cuốn sổ nhỏ. Chị Hana đặt ấm trà xuống. "Bản đồ à?" StackChan lập tức chui vào tủ, lôi ra một chiếc đĩa. "Tớ có đĩa. Bản đồ thì chưa nấu bao giờ."
 Ông khách già trải lên bàn một tấm bản đồ cũ, mép giấy đã ngả vàng. Ở góc dưới có một vòng tròn đỏ, ngay chỗ khu vườn Kotoba bây giờ. "Ngày xưa, ở đây có một cái giếng," ông nói khẽ. "Tôi đã hứa sẽ quay lại."
@@ -188,8 +194,8 @@ RULES_VI = """CÁCH VIẾT MỘT KỲ HAY (bắt buộc):
    học hay lời khuyên.
 6. Không liệt kê, không lặp lại tình huống của các kỳ trước.
 7. Nối tiếp kỳ trước: KHÔNG mâu thuẫn với chuyện đã xảy ra, giải quyết hoặc đẩy tiếp một chỗ bỏ ngỏ.
-8. Thoại thể hiện tính cách, ghi rõ ai nói. Tiếng Việt tự nhiên, đúng chính tả, có dấu; chữ trơn (không [ ] { } |,
-   không markdown).
+8. Thoại đặt trong ngoặc kép "…", thể hiện tính cách, ghi rõ ai nói. Tiếng Việt tự nhiên, đúng chính tả, có dấu; chữ
+   trơn (không [ ] { } |, không markdown).
 9. Chuyện sẽ được kể lại bằng tiếng Nhật / tiếng Anh cho người mới học: tránh chơi chữ chỉ có trong tiếng Việt, thành
    ngữ khó dịch; câu thoại ngắn, rõ."""
 
@@ -197,9 +203,12 @@ _S = {"type": "STRING"}
 _SL = {"type": "ARRAY", "items": _S}
 ARC_SCHEMA: dict[str, Any] = {
     "type": "OBJECT",
-    "properties": {"ten": _S, "muc_tieu": _S, "bi_an": _S, "nhan_vat_phu": _S, "buoc": _SL, "ket": _S},
+    "properties": {"ten": _S, "muc_tieu": _S, "bi_an": _S, "nhan_vat_phu": _S, "buoc": _SL, "ket": _S,
+                   "su_that_moi": _SL},      # 1.31.5: điều đã thành sự thật sau các kỳ vừa qua → Sổ tay làng
     "required": ["ten", "muc_tieu", "bi_an", "nhan_vat_phu", "buoc", "ket"],
-    "propertyOrdering": ["ten", "muc_tieu", "bi_an", "nhan_vat_phu", "buoc", "ket"],
+    # su_that_moi viết TRƯỚC mạch mới (thử thật 16/11: viết sau thì Gemini lẫn điều của đợt mới — "bác đưa thư đã nghỉ hưu"
+    # trong khi đợt mới mới là chuyện bác sắp nghỉ hưu)
+    "propertyOrdering": ["su_that_moi", "ten", "muc_tieu", "bi_an", "nhan_vat_phu", "buoc", "ket"],
 }
 _NEWS = {"type": "OBJECT", "properties": {"tieu_de": _S, "noi_dung": _S}, "required": ["tieu_de", "noi_dung"],
          "propertyOrdering": ["tieu_de", "noi_dung"]}
@@ -350,6 +359,7 @@ def save_episode(base: str, date: str, ky: int, story: dict[str, Any], plain_tit
         item["ky_claude"] = old.get("ky_claude")
     keep.append(item)
     _write(os.path.join(base, STORY_FILE), keep[-60:])
+    remember_summary(base, item)          # 1.31.5: Sổ tay làng giữ tóm tắt mọi kỳ (truyen.json chỉ giữ 60 kỳ)
 
 
 def set_feedback(base: str, ky: int, y: str, note: str = "") -> bool:
@@ -390,6 +400,192 @@ def open_threads(story: list[dict[str, Any]], arc: dict[str, Any] | None) -> lis
 
 
 # ---------------------------------------------------------------------------
+# 1.31.5: Sổ tay làng — trí nhớ dài hạn của truyện, KHÔNG thêm lượt gọi Gemini
+# ---------------------------------------------------------------------------
+# Người dùng 16/11: "báo đã viết được 1 tháng, 3 tháng, 1 năm thì diễn biến câu chuyện thế nào, có được liền mạch không …
+# quan trọng là làm sao lượt gọi gemini vẫn dư". Trước đây lập đợt mới chỉ thấy tóm tắt 8 kỳ gần nhất và truyen.json chỉ
+# giữ 60 kỳ (tests/tools/mo_phong_truyen.py) → sau vài tháng nhân vật phụ cũ không bao giờ quay lại, ý đợt dễ lặp.
+#   so_tay.json        {"v": 1, "dot": [đợt đã viết: dot, ten, giong, tu_ky, den_ky, ket, nhan_vat_phu, bi_an],
+#                       "nhan_vat": [{ten, ky}], "su_that": [câu]} — máy tự ghi khi hết một đợt; "su_that" do Gemini trả
+#                       kèm trong chính lượt lập đợt mới (khuôn ARC_SCHEMA thêm su_that_moi)
+#   truyen_tom_tat.json [{ky, ngay, tom_tat, tieu_de}] — tóm tắt MỌI kỳ (truyen.json vẫn cắt 60 kỳ như cũ để bản cũ đọc)
+# Chỉ ở máy này (thư mục truyện chung, như truyen.json). Bản ≤ 1.31.4 không biết hai file này → không đụng tới.
+NOTE_FILE = "so_tay.json"
+SUM_FILE = "truyen_tom_tat.json"
+NOTE_ARCS = 200            # số đợt nhớ (≈ 4 năm)
+NOTE_FACTS = 24            # số điều "đã thành sự thật" (giữ điều mới nhất)
+NOTE_CHARS = 40            # số nhân vật phụ nhớ
+SUM_MAX = 3000             # số kỳ giữ tóm tắt (≈ 8 năm)
+NOTE_RECENT = 24           # đợt gần đây ghi đủ một dòng trong lời nhắc lập mạch; đợt cũ hơn chỉ ghi tên
+
+
+def _int(v: Any) -> int | None:
+    return v if isinstance(v, int) and not isinstance(v, bool) else None
+
+
+def load_notebook(base: str) -> dict[str, Any]:
+    raw = _read(os.path.join(base, NOTE_FILE), None)
+    raw = raw if isinstance(raw, dict) else {}
+    out: dict[str, Any] = {k: v for k, v in raw.items() if k not in ("v", "dot", "nhan_vat", "su_that")}   # khoá của bản sau
+    out.update(v=1, dot=[], nhan_vat=[], su_that=[])
+    for a in raw.get("dot") if isinstance(raw.get("dot"), list) else []:
+        if not isinstance(a, dict) or _int(a.get("tu_ky")) is None or _int(a.get("den_ky")) is None:
+            continue
+        out["dot"].append({"dot": _int(a.get("dot")) or 0, "ten": _str(a.get("ten"), 120),
+                           "giong": a.get("giong") if a.get("giong") in TONES else "", "tu_ky": a["tu_ky"],
+                           "den_ky": a["den_ky"], "ket": _str(a.get("ket"), 300),
+                           "nhan_vat_phu": _str(a.get("nhan_vat_phu"), 200), "bi_an": _str(a.get("bi_an"), 300)})
+    out["dot"] = out["dot"][-NOTE_ARCS:]
+    for c in raw.get("nhan_vat") if isinstance(raw.get("nhan_vat"), list) else []:
+        if isinstance(c, dict) and _str(c.get("ten"), 120) and _int(c.get("ky")) is not None:
+            out["nhan_vat"].append({"ten": _str(c.get("ten"), 120), "ky": c["ky"]})
+    out["nhan_vat"] = out["nhan_vat"][-NOTE_CHARS:]
+    out["su_that"] = _strs(raw.get("su_that"), NOTE_FACTS * 2, 200)[-NOTE_FACTS:]
+    return out
+
+
+def save_notebook(base: str, nb: dict[str, Any]) -> None:
+    _write(os.path.join(base, NOTE_FILE), nb)
+
+
+def _sum_item(e: Any) -> dict[str, Any] | None:
+    if not isinstance(e, dict) or _int(e.get("ky")) is None:
+        return None
+    return {"ky": e["ky"], "ngay": _str(e.get("ngay"), 10), "tom_tat": _str(e.get("tom_tat"), 400),
+            "tieu_de": _str(e.get("tieu_de"), 120)}
+
+
+def load_summaries(base: str) -> list[dict[str, Any]]:
+    """Tóm tắt mọi kỳ: truyen_tom_tat.json + truyen.json (kỳ chép từ Claude Code, kỳ bản cũ viết cũng có)."""
+    by: dict[int, dict[str, Any]] = {}
+    raw = _read(os.path.join(base, SUM_FILE), [])
+    for e in raw if isinstance(raw, list) else []:
+        it = _sum_item(e)
+        if it:
+            by[it["ky"]] = it
+    for e in load_story(base):
+        it = _sum_item(e)
+        if it and (it["tom_tat"] or it["ky"] not in by):
+            by[it["ky"]] = it
+    return [by[k] for k in sorted(by)][-SUM_MAX:]
+
+
+def remember_summary(base: str, e: dict[str, Any]) -> None:
+    it = _sum_item(e)
+    if not it:
+        return
+    raw = _read(os.path.join(base, SUM_FILE), [])
+    rows = [x for x in (raw if isinstance(raw, list) else []) if isinstance(x, dict) and x.get("ky") != it["ky"]]
+    rows.append(it)
+    rows.sort(key=lambda x: x["ky"] if _int(x.get("ky")) is not None else -1)
+    _write(os.path.join(base, SUM_FILE), rows[-SUM_MAX:])
+
+
+def _note_chars(nb: dict[str, Any], eps: list[dict[str, Any]]) -> None:
+    known = {c["ten"].casefold()[:40] for c in nb["nhan_vat"]}
+    for e in eps:
+        for name in e.get("nhan_vat_moi") or []:
+            key = name.casefold()[:40]
+            if name and key not in known:
+                known.add(key)
+                nb["nhan_vat"].append({"ten": name[:120], "ky": e["ky"]})
+    nb["nhan_vat"] = nb["nhan_vat"][-NOTE_CHARS:]
+
+
+def note_arc_done(base: str, arc: dict[str, Any] | None, den_ky: int, story: list[dict[str, Any]]) -> bool:
+    """Đợt `arc` đã xong ở kỳ `den_ky` (máy ghi, không gọi Gemini). Ghi một lần cho mỗi đợt."""
+    if not arc or den_ky < arc["tu_ky"]:
+        return False
+    nb = load_notebook(base)
+    if any(a["tu_ky"] == arc["tu_ky"] and a["dot"] == arc.get("dot", 0) for a in nb["dot"]):
+        return False
+    nb["dot"].append({"dot": arc.get("dot", 0), "ten": arc.get("ten", ""), "giong": arc.get("giong", ""),
+                      "tu_ky": arc["tu_ky"], "den_ky": den_ky, "ket": arc.get("ket", ""),
+                      "nhan_vat_phu": arc.get("nhan_vat_phu", ""), "bi_an": arc.get("bi_an", "")})
+    nb["dot"] = nb["dot"][-NOTE_ARCS:]
+    _note_chars(nb, [e for e in story if arc["tu_ky"] <= e["ky"] <= den_ky])
+    save_notebook(base, nb)
+    return True
+
+
+def note_facts(base: str, facts: Any) -> int:
+    """Thêm điều "đã thành sự thật" (Gemini trả kèm lượt lập mạch). Trả số điều mới."""
+    new = [f for f in _strs(facts, 3, 200) if f]
+    if not new:
+        return 0
+    nb = load_notebook(base)
+    known = {f.casefold() for f in nb["su_that"]}
+    add = [f for f in new if f.casefold() not in known]
+    if add:
+        nb["su_that"] = (nb["su_that"] + add)[-NOTE_FACTS:]
+        save_notebook(base, nb)
+    return len(add)
+
+
+def backfill_notebook(base: str, story: list[dict[str, Any]]) -> None:
+    """Lần đầu chạy 1.31.5 trên bộ nhớ cũ: lấy nhân vật phụ + tóm tắt từ truyen.json (≤ 60 kỳ còn lại)."""
+    if not os.path.isfile(os.path.join(base, SUM_FILE)) and story:
+        _write(os.path.join(base, SUM_FILE), [it for it in (_sum_item(e) for e in story) if it])
+    if not os.path.isfile(os.path.join(base, NOTE_FILE)) and story:
+        nb = load_notebook(base)
+        _note_chars(nb, story)
+        save_notebook(base, nb)
+
+
+def notebook_for_arc(base: str) -> str:
+    """Phần sổ tay cho lời nhắc lập mạch (mỗi tuần một lần): các đợt đã viết, nhân vật phụ, điều đã thành sự thật."""
+    nb = load_notebook(base)
+    lines: list[str] = []
+    arcs = nb["dot"]
+    old, recent = arcs[:-NOTE_RECENT], arcs[-NOTE_RECENT:]
+    if old:
+        lines.append("Các đợt cũ hơn: " + _str("; ".join(a["ten"] for a in old if a["ten"]), 700))
+    if recent:
+        lines.append("Các đợt đã viết:\n" + "\n".join(
+            "- Đợt %d «%s» (kỳ %d–%d%s): %s%s" % (
+                a["dot"], a["ten"], a["tu_ky"], a["den_ky"], ", " + TONE_NAME[a["giong"]] if a["giong"] in TONE_NAME else "",
+                _str(a["ket"], 160) or "—", " · nhân vật phụ: " + _str(a["nhan_vat_phu"], 90) if a["nhan_vat_phu"] else "")
+            for a in recent))
+    if nb["nhan_vat"]:
+        lines.append("Nhân vật phụ đã gặp: " + "; ".join("%s (kỳ %d)" % (c["ten"], c["ky"]) for c in nb["nhan_vat"][-20:]))
+    if nb["su_that"]:
+        lines.append("Điều đã thành sự thật:\n- " + "\n- ".join(nb["su_that"]))
+    return "\n".join(lines)
+
+
+def _days(a: str, b: str) -> int | None:
+    import datetime as _dt
+    try:
+        return (_dt.date.fromisoformat(b[:10]) - _dt.date.fromisoformat(a[:10])).days
+    except (ValueError, TypeError):
+        return None
+
+
+def notebook_for_writer(base: str, date: str, story: list[dict[str, Any]], ky: int, lang: str) -> str:
+    """Phần sổ tay gọn cho nhà văn mỗi ngày (~vài trăm chữ): điều đã thành sự thật, thời gian đã trôi từ kỳ trước,
+    (bản gốc tiếng Việt) ngày này năm trước để tin làng có thể nhắc."""
+    nb = load_notebook(base)
+    out: list[str] = []
+    if nb["su_that"]:
+        out.append("SỔ TAY LÀNG — điều đã thành sự thật (giữ cho khớp, không cần nhắc hết):\n- " + "\n- ".join(nb["su_that"][-8:]))
+    prev = [e for e in story if e["ky"] < ky and e.get("ngay")]
+    if prev and date:
+        gap = _days(prev[-1]["ngay"], date)
+        if gap is not None and gap >= 3:
+            out.append("THỜI GIAN: kỳ trước (kỳ %d) đăng ngày %s — trong làng đã %d ngày trôi qua. Nối tiếp chuyện, nhưng nếu "
+                       "hợp thì cho thấy thời gian đã trôi (mùa, thời tiết, việc trong quán đã khác)." % (
+                           prev[-1]["ky"], prev[-1]["ngay"], gap))
+    if lang == "vi" and date:
+        for e in reversed(load_summaries(base)):
+            gap = _days(e["ngay"], date) if e.get("ngay") else None
+            if gap is not None and 364 <= gap <= 366 and e.get("tom_tat"):
+                out.append("NGÀY NÀY NĂM TRƯỚC (kỳ %d, %s): %s — tin làng có thể nhắc nhẹ (\"Ngày này năm ngoái…\"), "
+                           "không bắt buộc." % (e["ky"], e["ngay"], e["tom_tat"]))
+                break
+    return "\n\n".join(out)
+
+
+# ---------------------------------------------------------------------------
 # Lời nhắc
 # ---------------------------------------------------------------------------
 
@@ -403,7 +599,7 @@ def _vocab(scope: dict[str, Any], lang: str, limit: int) -> str:
             words.append(r[0])
         if len(words) >= limit:
             break
-    return (", " if lang == "en" else "、").join(words)
+    return (", " if lang in ("en", "ko") else "、").join(words)
 
 
 def _grammar(scope: dict[str, Any], n: int = 6) -> str:
@@ -426,23 +622,31 @@ def _first_ep(lang: str) -> str:
             "vi": "Lin đến làng Kotoba và bắt đầu làm ở Quán Kotoba."}.get(lang, "リンさん bắt đầu làm ở ことば屋.")
 
 
-def arc_prompt(lang: str, tone: str, story: list[dict[str, Any]], ky: int, season: str, tones: Any = None) -> str:
+def arc_prompt(lang: str, tone: str, story: list[dict[str, Any]], ky: int, season: str, tones: Any = None,
+               notebook: str = "") -> str:
     prev = "\n".join("- Kỳ %d: %s" % (e["ky"], e["tom_tat"]) for e in story[-8:] if e.get("tom_tat")) or "(chưa có kỳ nào)"
     bible = _bible(lang)
     return "\n\n".join([
-        bible, "CHỦ ĐỀ CỦA ĐỢT NÀY: " + tone_text(tones or [tone], tone),
+        bible, "CHỦ ĐỀ CỦA ĐỢT NÀY: " + tone_text(tones or [tone], tone)] + ([
+        "SỔ TAY LÀNG (chuyện từ trước tới nay — KHÔNG lặp lại ý / bí ẩn của các đợt cũ; có thể cho một nhân vật phụ cũ "
+        "quay lại khi hợp; giữ đúng các điều đã thành sự thật):\n" + notebook] if notebook else []) + [
         "CÁC KỲ ĐÃ ĐĂNG:\n" + prev,
         "HÔM NAY: %s. Đợt mới bắt đầu từ kỳ %d." % (season, ky),
         "Lập MẠCH TRUYỆN cho một đợt %d–%d kỳ (mỗi kỳ đăng một ngày): ten = tên đợt (tiếng Việt); muc_tieu = điều nhân vật "
         "chính muốn đạt trong đợt; bi_an = câu hỏi / bí ẩn kéo suốt đợt; nhan_vat_phu = nhân vật phụ của đợt (một người / con "
         "vật, kèm điều họ muốn); buoc = mỗi phần tử là MỘT kỳ (tiếng Việt, 1–2 câu: chuyện gì xảy ra, trở ngại, móc câu); "
         "ket = đợt kết thúc thế nào (giải được bí ẩn, có thay đổi nhỏ ở nhân vật, để lại một sợi chỉ cho đợt sau). "
-        "Nối tiếp các kỳ đã đăng, không lặp lại chuyện cũ. Hợp mùa hiện tại." % ARC_LEN,
+        "Nối tiếp các kỳ đã đăng, không lặp lại chuyện cũ. Hợp mùa hiện tại." % ARC_LEN + (
+            " su_that_moi (viết TRƯỚC khi lập mạch mới) = 0–3 điều ĐÃ XẢY RA trong CÁC KỲ ĐÃ ĐĂNG ở trên và đáng nhớ lâu dài "
+            "(quan hệ giữa nhân vật, thay đổi ở quán / làng, điều Lin học được) — mỗi điều một câu ngắn ở thì quá khứ; CHỈ "
+            "lấy từ các kỳ đã đăng, KHÔNG lấy gì của đợt mới đang lập, không bịa thêm, không lặp điều đã có trong sổ tay; "
+            "không chắc thì để trống." if story else " su_that_moi để trống (chưa có kỳ nào)."),
         "Trả về đúng một object JSON theo khuôn."])
 
 
 def writer_prompt(lang: str, scope: dict[str, Any], ky: int, tone: str, arc: dict[str, Any] | None,
-                  story: list[dict[str, Any]], season: str, problems: list[str] | None = None, tones: Any = None) -> str:
+                  story: list[dict[str, Any]], season: str, problems: list[str] | None = None, tones: Any = None,
+                  notebook: str = "") -> str:
     level = scope.get("trinh_do", "A2" if lang == "en" else "N4")
     prev = [e for e in story if e["ky"] < ky]
     last = prev[-1] if prev else None
@@ -465,6 +669,8 @@ def writer_prompt(lang: str, scope: dict[str, Any], ky: int, tone: str, arc: dic
     th = open_threads(story, arc)
     if th:
         parts.append("CHỖ BỎ NGỎ CÒN MỞ (giải quyết hoặc đẩy tiếp 1 chỗ):\n- " + "\n- ".join(th))
+    if notebook:          # 1.31.5: Sổ tay làng (phần gọn: sự thật, thời gian đã trôi, ngày này năm trước)
+        parts.append(notebook)
     fb = [e for e in prev[-4:] if e.get("phan_hoi")]
     if fb:
         parts.append("NGƯỜI ĐỌC NHẬN XÉT (lắng nghe):\n" + "\n".join(
@@ -600,11 +806,21 @@ NOTE_RE = re.compile(r"\s*[(（][^()（）]{0,80}?(?:dùng|dạng|nghĩa là|ghi
 LEN_JA = {"N5": (40, 110), "N4": (60, 150), "N3": (80, 190), "N2": (90, 220), "N1": (90, 240)}
 LEN_EN = {"A1": (18, 55), "A2": (25, 70), "B1": (35, 90), "B2": (45, 110), "C1": (50, 130)}
 LEN_VI = (60, 140)        # 1.25.1: chữ tiếng Việt mỗi đoạn (tiếng mẹ đẻ: dài hơn một chút)
+# 1.33: tiếng Trung đếm chữ Hán mỗi đoạn, tiếng Hàn đếm cụm (어절, cách nhau dấu cách)
+LEN_ZH = {"HSK1": (35, 90), "HSK2": (45, 110), "HSK3": (55, 140), "HSK4": (65, 170), "HSK5": (75, 200), "HSK6": (85, 230)}
+LEN_KO = {"TOPIK1": (12, 32), "TOPIK2": (15, 40), "TOPIK3": (20, 50), "TOPIK4": (24, 60), "TOPIK5": (28, 70), "TOPIK6": (32, 80)}
+HANGUL_RE = re.compile(r"[\uac00-\ud7af\u1100-\u11ff\u3130-\u318f]")
+KANA_ANY_RE = re.compile(r"[\u3040-\u30ff]")      # 1.33: có kana ở đâu đó (KANA_RE ở trên: toàn kana)
+HAN_ANY_RE = re.compile(r"[\u3400-\u9fff\uf900-\ufaff]")
 
 
 def story_length(lang: str, level: str) -> tuple[int, int]:
     if lang == "vi":
         return LEN_VI
+    if lang == "zh":
+        return LEN_ZH.get(level, (45, 110))
+    if lang == "ko":
+        return LEN_KO.get(level, (15, 40))
     return (LEN_EN.get(level, (25, 70)) if lang == "en" else LEN_JA.get(level, (60, 150)))
 
 
@@ -666,6 +882,72 @@ def clean_translation(dich: Any, n: int) -> list[str] | None:
     return out
 
 
+def zh_text_problems(p: str, simplified: Any = True) -> list[str]:
+    """1.33: lỗi chữ của một đoạn tiếng Trung (chữ trơn): kana / Hangul / chữ Việt / Latin ngoài tên StackChan, chữ Hán ngoài
+    bộ chữ thường dùng (bảng cách đọc), giản thể lẫn phồn thể (`simplified`: True = giản thể, False = phồn thể)."""
+    out: list[str] = []
+    zh = _zh()
+    if KANA_ANY_RE.search(p):
+        out.append("có kana (chữ Nhật) trong bài tiếng Trung")
+    if HANGUL_RE.search(p):
+        out.append("có chữ Hàn trong bài tiếng Trung")
+    if VI_ONLY_RE.search(p):
+        out.append("có chữ tiếng Việt trong bài tiếng Trung")
+    latin = [w for w in re.findall(r"[A-Za-z]+", p) if w.lower() not in ("stackchan",)]
+    if latin:
+        out.append("có chữ Latin / pinyin trong bài (%s) — chỉ viết chữ Hán" % " ".join(latin[:4]))
+    chars = [c for c in p if zh.is_han(c)]
+    rare = sorted({c for c in chars if not zh.known(c)})
+    if rare:
+        out.append("chữ Hán ít dùng: " + "".join(rare[:8]))
+    if simplified is not None and chars:
+        enc = "gb2312" if simplified else "big5"
+        bad = []
+        for c in chars:
+            try:
+                c.encode(enc)
+            except UnicodeEncodeError:
+                if c not in bad:
+                    bad.append(c)
+        if bad:
+            out.append("chữ %s (phải viết chữ %s): %s" % ("phồn thể" if simplified else "giản thể",
+                                                         "giản thể" if simplified else "phồn thể", "".join(bad[:8])))
+    return out
+
+
+def ko_text_problems(p: str) -> list[str]:
+    """1.33: lỗi chữ của một đoạn tiếng Hàn: phải có Hangul; không Hán tự, kana, chữ Việt, Latin."""
+    out: list[str] = []
+    if not HANGUL_RE.search(p):
+        out.append("không có chữ Hàn")
+    if HAN_ANY_RE.search(p):
+        out.append("có Hán tự (漢字) — viết bằng Hangul")
+    if KANA_ANY_RE.search(p):
+        out.append("có kana (chữ Nhật)")
+    if VI_ONLY_RE.search(p):
+        out.append("có chữ tiếng Việt")
+    latin = re.findall(r"[A-Za-z]+", p)
+    if latin:
+        out.append("có chữ Latin (%s) — viết bằng Hangul (StackChan → 스택짱)" % " ".join(latin[:4]))
+    return out
+
+
+def _ai_zh() -> Any:
+    try:
+        from . import ai_zh
+    except ImportError:
+        import ai_zh  # type: ignore[no-redef]
+    return ai_zh
+
+
+def _zh() -> Any:
+    try:
+        from . import zh_core
+    except ImportError:
+        import zh_core  # type: ignore[no-redef]
+    return zh_core
+
+
 def check_story(st: Any, lang: str, level: str, bad_kanji: Any = None) -> tuple[list[str], list[str]]:
     """Kiểm tra bản truyện (chữ trơn) của nhà văn. Trả (lỗi, cảnh báo). Có lỗi thì không dùng bản này."""
     errs: list[str] = []
@@ -679,9 +961,21 @@ def check_story(st: Any, lang: str, level: str, bad_kanji: Any = None) -> tuple[
     if not isinstance(doan, list) or not 2 <= len(doan) <= 4 or not all(isinstance(p, str) and p.strip() for p in doan):
         return errs + ["doan: cần 3 đoạn"], warns
     lo, hi = story_length(lang, level)
+    if lang == "vi" and not re.search(r'["“”]', "".join(doan)):
+        warns.append("Thoại chưa đặt trong ngoặc kép \"…\" (1.31.5).")
     for j, p in enumerate(list(doan) + [title if isinstance(title, str) else ""]):
         where = "doan[%d]" % j if j < len(doan) else "tieu_de"
-        if MARK_RE.search(p):
+        if lang == "zh":                # 1.33: truyện tiếng Trung có pinyin [chữ|pinyin] → soát pinyin, các bước sau xem chữ
+            zh_mod = _ai_zh()
+            cs, probs = zh_mod.chars(p)
+            errs += [where + ": " + x for x in probs[:3]]
+            miss = zh_mod.missing(cs)
+            if miss and not probs:
+                errs.append(where + ": chữ thiếu pinyin: " + "".join(dict.fromkeys(miss))[:10])
+            if "{" in p or "}" in p:
+                errs.append(where + ": không dùng { }")
+            p = zh_mod.surface(p)
+        elif MARK_RE.search(p):
             errs.append(where + ": không dùng [ ] { } | (chữ trơn, chưa furigana)")
         if lang == "vi":       # 1.25.1: truyện tiếng Việt (chữ của thẻ — tiếng Hàn, chữ Hán… — được giữ nguyên)
             if len(p) >= 30 and not VI_MARK.search(p):
@@ -691,6 +985,10 @@ def check_story(st: Any, lang: str, level: str, bad_kanji: Any = None) -> tuple[
                 errs.append(where + ": có chữ Nhật / Trung / Hàn trong bài tiếng Anh")
             if VI_ONLY_RE.search(p):        # 1.25.2: chỉ chữ riêng của tiếng Việt (café, résumé vẫn được)
                 errs.append(where + ": có chữ tiếng Việt trong bài tiếng Anh")
+        elif lang == "zh":              # 1.33: chữ Hán giản thể / phồn thể (theo deck), StackChan viết Latin
+            errs += [where + ": " + e for e in zh_text_problems(p, bad_kanji)]
+        elif lang == "ko":              # 1.33: Hangul, không Hán tự / kana / chữ Việt
+            errs += [where + ": " + e for e in ko_text_problems(p)]
         else:
             if LATIN_RE.search(p):
                 errs.append(where + ": có chữ Latin / romaji trong bài tiếng Nhật")
@@ -702,7 +1000,8 @@ def check_story(st: Any, lang: str, level: str, bad_kanji: Any = None) -> tuple[
         if j >= len(doan):
             continue
         n = len(re.findall(r"[A-Za-z]+(?:['’][A-Za-z]+)*", p)) if lang == "en" else \
-            len([w for w in p.split() if re.search(r"\w", w)]) if lang == "vi" else len(re.sub(r"\s", "", p))
+            len([w for w in p.split() if re.search(r"\w", w)]) if lang in ("vi", "ko") else \
+            len(HAN_ANY_RE.findall(p)) if lang == "zh" else len(re.sub(r"\s", "", p))
         if n < lo * 0.7:
             errs.append(where + ": ngắn quá (%d, cần %d–%d)" % (n, lo, hi))
         elif n > hi * 1.35:
@@ -718,7 +1017,7 @@ def check_story(st: Any, lang: str, level: str, bad_kanji: Any = None) -> tuple[
     for w in tm:
         if not isinstance(w, dict) or not _str(w.get("w"), 40) or not _str(w.get("m"), 120):
             warns.append("tu_moi: bỏ mục thiếu w / m")
-        elif lang != "en" and paper.KANJI_RE.search(w["w"]) and not KANA_RE.match(_str(w.get("r"), 60)):
+        elif lang == "ja" and paper.KANJI_RE.search(w["w"]) and not KANA_RE.match(_str(w.get("r"), 60)):
             warns.append('tu_moi "%s": bỏ (cách đọc r không phải kana)' % w["w"])
         elif not VI_RE.search(w["m"]) or CJK_RE.search(w["m"]):
             warns.append('tu_moi "%s": bỏ (nghĩa m không phải tiếng Việt)' % w["w"])
@@ -827,6 +1126,10 @@ def run(job: Any, ky: int, tone: str, season: str) -> dict[str, Any] | None:
     tones = norm_tones(tone)
     story = load_story(job.base)
     arc = load_arc(job.base)
+    try:                  # 1.31.5: Sổ tay làng — lần đầu thì lấp từ bộ nhớ cũ (không gọi Gemini)
+        backfill_notebook(job.base, story)
+    except (OSError, ValueError, TypeError) as e:
+        job._note("so_tay_loi", ly_do=str(e)[:160])
     cached = load_draft(job.base, job.date, ky)
     if cached:            # lần thử trước hôm nay đã có kỳ truyện duyệt xong (lượt viết số hỏng) → dùng lại
         job._note("truyen_dung_lai", ky=ky)
@@ -855,9 +1158,16 @@ def run(job: Any, ky: int, tone: str, season: str) -> dict[str, Any] | None:
     # 0. mạch của đợt (1.25.1: đợt mới khi hết đợt, hoặc chủ đề của đợt không còn trong danh sách đã chọn)
     tone = arc["giong"] if arc and arc.get("giong") in tones and arc_step(arc, ky) is not None else next_tone(tones, arc)
     if arc_step(arc, ky) is None or (arc and arc.get("giong") != tone):
+        notebook = ""
+        try:              # 1.31.5: đợt cũ xong → ghi vào Sổ tay làng; lời nhắc lập mạch đọc cả sổ tay
+            if arc and note_arc_done(job.base, arc, ky - 1, story):
+                job._note("so_tay_dot", ten=arc.get("ten", ""), den_ky=ky - 1)
+            notebook = notebook_for_arc(job.base)
+        except (OSError, ValueError, TypeError) as e:
+            job._note("so_tay_loi", ly_do=str(e)[:160])
         job.progress("Gemini đang lập mạch truyện…")
         try:
-            raw = gen(system, arc_prompt(lang, tone, story, ky, season, tones), ARC_SCHEMA, 0.9, thinking="low")
+            raw = gen(system, arc_prompt(lang, tone, story, ky, season, tones, notebook), ARC_SCHEMA, 0.9, thinking="low")
             buoc = _strs(raw.get("buoc") if isinstance(raw, dict) else None, ARC_LEN[1], 300)
             if len(buoc) >= 3:
                 arc = {"ten": _str(raw.get("ten"), 120), "muc_tieu": _str(raw.get("muc_tieu"), 300),
@@ -866,6 +1176,12 @@ def run(job: Any, ky: int, tone: str, season: str) -> dict[str, Any] | None:
                        "dot": (arc or {}).get("dot", 0) + 1}
                 _write(os.path.join(job.base, ARC_FILE), arc)
                 job._note("mach_truyen", ten=arc["ten"], so_ky=len(buoc))
+                try:      # 1.31.5: điều đã thành sự thật — trả kèm lượt lập mạch, không thêm lượt gọi
+                    n_fact = note_facts(job.base, raw.get("su_that_moi")) if story else 0   # chưa có kỳ nào: không có gì đã xảy ra
+                    if n_fact:
+                        job._note("so_tay_su_that", so=n_fact)
+                except (OSError, ValueError, TypeError) as e:
+                    job._note("so_tay_loi", ly_do=str(e)[:160])
             else:
                 job._note("mach_truyen_hong")
                 arc = None
@@ -877,7 +1193,12 @@ def run(job: Any, ky: int, tone: str, season: str) -> dict[str, Any] | None:
     # 1. nhà văn (1.25.2: bản gốc tiếng Việt viết cả tin làng hôm nay + mục thứ ba trong cùng lượt gọi)
     schema = MASTER_SCHEMA if lang == "vi" else STORY_SCHEMA
     job.progress("Gemini đang viết kỳ %d của truyện…" % ky)
-    prompt = writer_prompt(lang, job.scope, ky, tone, arc, story, season, tones=tones)
+    try:                  # 1.31.5: phần gọn của Sổ tay làng cho nhà văn
+        nbw = notebook_for_writer(job.base, getattr(job, "date", "") or "", story, ky, lang)
+    except (OSError, ValueError, TypeError) as e:
+        job._note("so_tay_loi", ly_do=str(e)[:160])
+        nbw = ""
+    prompt = writer_prompt(lang, job.scope, ky, tone, arc, story, season, tones=tones, notebook=nbw)
     best: dict[str, Any] | None = None
     problems: list[str] = []
     for attempt in range(2):
@@ -885,7 +1206,7 @@ def run(job: Any, ky: int, tone: str, season: str) -> dict[str, Any] | None:
             break
         try:
             draft = gen(system, prompt if not problems else writer_prompt(lang, job.scope, ky, tone, arc, story,
-                                                                               season, problems, tones),
+                                                                               season, problems, tones, nbw),
                              schema, 0.9, thinking="low")
         except Exception as e:      # noqa: BLE001
             if getattr(e, "kind", "") == "key":
@@ -970,7 +1291,7 @@ def clean_master(raw: Any) -> dict[str, Any] | None:
                                "bo_ngo": _strs(nho.get("bo_ngo"), 8, 200), "da_giai": _strs(nho.get("da_giai"), 8, 200)},
                        "diem": {k: v for k, v in (t.get("diem") or {}).items() if k in CRIT and isinstance(v, int)}
                        if isinstance(t.get("diem"), dict) else {},
-                       "lang": t.get("lang") if t.get("lang") in ("vi", "ja", "en") else "vi"},
+                       "lang": t.get("lang") if t.get("lang") in ("vi", "ja", "en", "zh", "ko") else "vi"},
             "tin": clean_news(raw.get("tin")), "muc3": clean_muc3(raw.get("muc3")),
             "thoi_tiet": _str(raw.get("thoi_tiet"), 160), "giong": raw.get("giong") if raw.get("giong") in TONES else ""}
 
@@ -998,13 +1319,25 @@ def recent_news(base: str, date: str, days: int = 3) -> list[str]:
     return out
 
 
+def text_lang(text: str) -> str:
+    """Ngôn ngữ của một kỳ truyện. 1.33: trước đây chữ Hán / Hangul nào cũng là "ja", chữ Latinh nào cũng là "vi" — kỳ
+    do báo Trung / Hàn / Anh tự viết (bản gốc hỏng) bị báo tiếng Việt in thẳng ra như tiếng Việt."""
+    if KANA_ANY_RE.search(text):
+        return "ja"
+    if HANGUL_RE.search(text):
+        return "ko"
+    if HAN_ANY_RE.search(text):
+        return "zh"
+    return "en" if LATIN_RE.search(text) and not VI_MARK.search(text) else "vi"
+
+
 def master_from_episode(e: dict[str, Any], date: str) -> dict[str, Any]:
     """Kỳ hôm nay đã có trong bộ nhớ (báo khác viết theo cách cũ khi chưa có bản gốc) → làm bản gốc từ kỳ đó."""
     return {"ngay": date, "ky": e["ky"], "truyen": {"tieu_de": e.get("tieu_de", ""), "doan": list(e.get("nguyen_van") or []),
                                                      "ky_truoc": "", "nho": {"tom_tat": e.get("tom_tat", ""),
                                                                              "bo_ngo": e.get("bo_ngo", [])},
-                                                     "diem": e.get("diem") or {}, "lang": "ja" if CJK_RE.search(
-                                                         "".join(e.get("nguyen_van") or [])) else "vi"},
+                                                     "diem": e.get("diem") or {},
+                                                     "lang": text_lang("".join(e.get("nguyen_van") or []))},
             "tin": [], "muc3": None, "thoi_tiet": "", "giong": ""}
 
 
@@ -1054,37 +1387,46 @@ def village_weather(day: Any, theme: str | None = None) -> str:
 def retell_prompt(lang: str, scope: dict[str, Any], master: dict[str, Any], problems: list[str] | None = None) -> str:
     level = scope.get("trinh_do", "A2" if lang == "en" else "N4")
     lo, hi = story_length(lang, level)
-    col = 2 if lang == "en" else 1
+    col = NAME_COL.get(lang, 1)
     names = "\n".join("- %s → %s" % (n[0], n[col]) for n in NAMES)
+    unit = {"en": "từ tiếng Anh", "zh": "chữ Hán", "ko": "cụm (어절)"}.get(lang, "ký tự tiếng Nhật")
+    slip = {"en": "tiếng Anh", "zh": "tiếng Trung (vd. nhầm lượng từ, nhầm 了)", "ko": "tiếng Hàn (vd. nhầm kính ngữ, nhầm tiểu từ)"}
+    tname = LANG_VI.get(lang, "tiếng Nhật")
+    if lang == "zh":
+        tname += " %s" % ("phồn thể" if scope.get("phon_the") else "giản thể")
     parts = [
         "KỂ LẠI kỳ %d của truyện dài kỳ dưới đây bằng %s trình độ %s cho người Việt đang học. Đây là cùng một câu chuyện in "
         "trong báo làng bằng nhiều thứ tiếng: GIỮ ĐÚNG sự việc, nhân vật, lời thoại chính, chi tiết bất ngờ và móc câu cuối; "
-        "không thêm chuyện mới, không bỏ móc câu." % (master.get("ky") or 1, "tiếng Anh" if lang == "en" else "tiếng Nhật",
-                                                       level),
+        "không thêm chuyện mới, không bỏ móc câu." % (master.get("ky") or 1, tname, level),
         "Viết lại cho hợp trình độ: câu ngắn, tự nhiên như sách đọc cho người học; được rút gọn chi tiết phụ. Chỗ nhân vật "
-        "nói nhầm (lời chào, cách nói lịch sự) thì cho nhầm theo kiểu của %s." % ("tiếng Anh" if lang == "en" else
-                                                                             "tiếng Nhật (vd. nhầm kính ngữ)"),
+        "nói nhầm (lời chào, cách nói lịch sự) thì cho nhầm theo kiểu của %s." % slip.get(lang, "tiếng Nhật (vd. nhầm kính ngữ)"),
         "TÊN GỌI (dùng đúng):\n" + names,
-        "Độ dài: đúng %d đoạn như bản gốc, mỗi đoạn %d–%d %s." % (
-            len(master.get("doan") or []) or 3, lo, hi, "từ tiếng Anh" if lang == "en" else "ký tự tiếng Nhật"),
+        "Độ dài: đúng %d đoạn như bản gốc, mỗi đoạn %d–%d %s." % (len(master.get("doan") or []) or 3, lo, hi, unit),
     ]
     vocab = _vocab(scope, lang, 300)
     if vocab:
         parts.append("TỪ NGƯỜI HỌC ĐÃ HỌC (trình độ %s) — dùng khi hợp, ĐỪNG ép câu:\n%s" % (level, vocab))
     gram = _grammar(scope, 3)
-    if gram and lang != "en":
+    if gram and lang in ("ja", "zh", "ko"):
         parts.append("MẪU NGỮ PHÁP ĐANG HỌC (dùng 1–2 mẫu trong lời thoại nếu tự nhiên):\n" + gram)
     if problems:
         parts.append("BẢN TRƯỚC BỊ MÁY KIỂM TRA TRẢ LẠI (tránh các lỗi này):\n- " + "\n- ".join(problems[:12]))
     parts.append("BẢN GỐC:\n" + json.dumps({"tieu_de": master.get("tieu_de"), "doan": master.get("doan")}, ensure_ascii=False))
+    body = {"en": "tiếng Anh (chữ trơn, không đánh dấu)",
+            "zh": "tiếng Trung %s (chữ Hán + dấu câu Trung Quốc ，。！？“”, không chữ Latin trừ tên StackChan). MỌI chữ Hán "
+                  "viết kèm pinyin ghi số theo TỪ, dạng [chữ|pinyin]: [学生|xue2 sheng5][在|zai4][看书|kan4 shu1]。 — mỗi "
+                  "chữ một âm tiết, 5 = thanh nhẹ, ü viết v, đúng cách đọc theo văn cảnh; 一 / 不 ghi thanh theo chữ sau; "
+                  "không dùng { }" % ("phồn thể" if scope.get("phon_the") else "giản thể"),
+            "ko": "tiếng Hàn (chỉ Hangul, KHÔNG Hán tự, không phiên âm Latin, không [ ] { } |)"}.get(
+        lang, "tiếng Nhật (chữ Hán + kana, KHÔNG furigana, KHÔNG romaji, không [ ] { } |)")
+    title = {"en": "tiếng Anh, 3–8 từ", "zh": "tiếng Trung, ngắn", "ko": "tiếng Hàn, ngắn"}.get(lang, "tiếng Nhật, ngắn")
+    reading = {"en": "phiên âm IPA /…/", "zh": "pinyin ghi số, vd. hai4 pa4", "ko": "phiên âm romaja"}.get(
+        lang, "cách đọc bằng HIRAGANA")
     parts.append(
         "Trả về đúng một object JSON theo khuôn: tieu_de (%s), doan = các đoạn %s, dich = bản dịch tiếng Việt TỰ NHIÊN của "
         "từng đoạn bạn vừa viết (cùng số phần tử, không có chữ %s; tên riêng viết Latin: Lin, Hana, Stack-chan, quán Kotoba, "
         "làng Kotoba; không ghi chú trong ngoặc), tu_moi (≤ 2 từ khó ngoài danh sách: w, r = %s, m = nghĩa tiếng Việt)." % (
-            "tiếng Anh, 3–8 từ" if lang == "en" else "tiếng Nhật, ngắn",
-            "tiếng Anh (chữ trơn, không đánh dấu)" if lang == "en" else
-            "tiếng Nhật (chữ Hán + kana, KHÔNG furigana, KHÔNG romaji, không [ ] { } |)",
-            "Anh / Nhật" if lang == "en" else "Nhật", "phiên âm IPA /…/" if lang == "en" else "cách đọc bằng HIRAGANA"))
+            title, body, {"en": "Anh", "zh": "Trung", "ko": "Hàn"}.get(lang, "Nhật"), reading))
     return "\n\n".join(parts)
 
 
@@ -1093,6 +1435,7 @@ def retell(job: Any, master: dict[str, Any]) -> dict[str, Any] | None:
     trả lại). Trả về bản truyện như `run` (để lượt viết số chép nguyên văn + furigana) hoặc None."""
     lang = getattr(job, "lang", "") or ("en" if job.en else "ja")
     level = job.scope.get("trinh_do", "A2" if lang == "en" else "N4")
+    tname = LANG_VI.get(lang, "tiếng Nhật")
     ky = int(master.get("ky") or 1)
     cached = load_draft(job.base, job.date, ky)
     if cached and cached.get("_ke_lai"):
@@ -1101,10 +1444,10 @@ def retell(job: Any, master: dict[str, Any]) -> dict[str, Any] | None:
     t = master.get("truyen") or {}
     src = {"ky": ky, "tieu_de": t.get("tieu_de"), "doan": t.get("doan")}
     system = ("Bạn là người kể chuyện viết sách đọc %s cho người Việt học trình độ %s: giữ trọn câu chuyện, câu chữ dễ, "
-              "tự nhiên." % ("tiếng Anh" if lang == "en" else "tiếng Nhật", level))
+              "tự nhiên." % (tname, level))
     problems: list[str] = []
     for attempt in range(2):
-        job.progress("Gemini đang kể lại kỳ %d bằng %s…" % (ky, "tiếng Anh" if lang == "en" else "tiếng Nhật"))
+        job.progress("Gemini đang kể lại kỳ %d bằng %s…" % (ky, tname))
         try:
             st = job._gen(system, retell_prompt(lang, job.scope, src, problems), RETELL_SCHEMA, 0.5, thinking="low")
         except Exception as e:      # noqa: BLE001
@@ -1114,7 +1457,8 @@ def retell(job: Any, master: dict[str, Any]) -> dict[str, Any] | None:
             return None
         if isinstance(st, dict):
             st["nho"] = dict(t.get("nho") or {})
-        errs, warns = check_story(st, lang, level, job.check_kanji if lang == "ja" else None)
+        errs, warns = check_story(st, lang, level, job.check_kanji if lang == "ja" else
+                                  (not job.scope.get("phon_the")) if lang == "zh" else None)
         job._note("ke_lai", lan=attempt + 1, loi=errs[:12], canh_bao=warns[:6])
         if not errs:
             st["dich"] = clean_translation(st.get("dich"), len(st["doan"]))

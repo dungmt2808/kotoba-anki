@@ -150,6 +150,30 @@ for f in "$ADDON"/web/*.js; do node --check "$f" || FAIL=1; done
 echo "== core/test_1313.py (1.31.3: Xưởng mở trang web chung — chỉ mục có tên; Báo lỗi → Gửi qua GitHub)"
 OUT=$(python3 "$HERE/core/test_1313.py" "$ADDON" 2>&1); RC=$?
 echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
+echo "== core/test_1314.py (1.31.4: hợp đồng dữ liệu với bản đã phát hành 1.31.3, deck tiếng Trung không còn nhận là tiếng Nhật, Ctrl+Z trong bảng ôn)"
+OUT=$("${ANKI_PY:-python3}" -W ignore "$HERE/core/test_1314.py" "$ADDON" 2>&1); RC=$?
+echo "$OUT" | grep -E "✗|KẾT QUẢ|bỏ qua"; [ $RC = 0 ] || FAIL=1
+echo "== core/test_1315.py (1.31.5: Gemini 4 Hydrogen + chia việc theo model, giọng đọc ≤ 3 / phút, Sổ tay làng 1 năm không thêm lượt gọi)"
+OUT=$("${ANKI_PY:-python3}" -W ignore "$HERE/core/test_1315.py" "$ADDON" 2>&1); RC=$?
+echo "$OUT" | grep -E "✗|KẾT QUẢ|bỏ qua"; [ $RC = 0 ] || FAIL=1
+echo "== core/test_132.py (1.32: Ngôn ngữ trong vườn — soát chữ Anh / Trung / Hàn bằng công cụ độc lập; deck tiếng Trung / Hàn, lưu cho bản cũ)"
+OUT=$("${ANKI_PY:-python3}" -W ignore "$HERE/core/test_132.py" "$ADDON" 2>&1); RC=$?
+echo "$OUT" | grep -E "✗|KẾT QUẢ|JS:"; [ $RC = 0 ] || FAIL=1
+echo "== core/test_132b.py (1.32: kiểm tra lần cuối — 3 bản (1.31.3, 1.31.5, 1.32) thay nhau lưu Cấu hình trường 3.000 lần, dữ liệu hỏng, deck tiếng Trung cấu hình ở bản cũ, chữ người dùng không bị dịch)"
+OUT=$("${ANKI_PY:-python3}" -W ignore "$HERE/core/test_132b.py" "$ADDON" 2>&1); RC=$?
+echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
+echo "== core/test_1322.py (1.32.2: pinyin trên từng chữ — đối chiếu 2.000 từ pypinyin, không bao giờ ghép sai; deck Nhật / Anh không đổi)"
+OUT=$("${ANKI_PY:-python3}" -W ignore "$HERE/core/test_1322.py" "$ADDON" 2>&1); RC=$?
+echo "$OUT" | grep -E "✗|KẾT QUẢ|bỏ qua"; [ $RC = 0 ] || FAIL=1
+echo "== core/test_133.py (1.33: báo tiếng Trung / tiếng Hàn — tối đa 2 báo, soát pinyin từng chữ, tiểu từ / đuôi tiếng Hàn, cả quy trình với Gemini giả, lời nhắc tiếng Anh không đổi, hợp đồng dữ liệu)"
+OUT=$("${ANKI_PY:-python3}" -W ignore "$HERE/core/test_133.py" "$ADDON" 2>&1); RC=$?
+echo "$OUT" | grep -E "✗|KẾT QUẢ|Traceback"; [ $RC = 0 ] || FAIL=1
+echo "== core/test_1331.py (1.33.1: File → Import .colpkg giữ bản vừa khôi phục + không trừ xu, tab Nguồn báo gọn hơn, hợp đồng dữ liệu = 1.33.0)"
+OUT=$(python3 "$HERE/core/test_1331.py" "$ADDON" 2>&1); RC=$?
+echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
+echo "== core/test_1332.py (1.33.2: đang viết báo thì khoá lựa chọn của báo, báo thêm sau khi viết xong thì từ mai, đang đồng bộ thì báo một câu, câu chữ gọn, ⚙ thu gọn)"
+OUT=$(python3 "$HERE/core/test_1332.py" "$ADDON" 2>&1); RC=$?
+echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
 # trang web chung (site/, GitHub Pages): đăng mã, dữ liệu trang khớp add-on (đổi hình mà quên `node site/tools/xuat_hinh.js` là báo)
 echo "== trang/test_trang.py (trang web: đăng / gỡ mã, biểu mẫu issue, GitHub Actions, dữ liệu khớp add-on)"
 OUT=$(python3 "$HERE/trang/test_trang.py" "$ADDON" 2>&1); RC=$?

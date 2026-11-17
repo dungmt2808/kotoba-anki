@@ -4,6 +4,7 @@
 var GardenCraft = (function () {
   "use strict";
 
+
   const $ = (id) => document.getElementById(id);
   let H = null;
   let isOpen = false;
@@ -899,9 +900,10 @@ var GardenCraft = (function () {
     const cr = $("kb-craft"); if (cr) { cr.classList.toggle("kb-cf-zonemode", on); cr.classList.toggle("kb-cf-seedmode", mode === "seed"); cr.classList.toggle("kb-cf-shellmode", mode === "wear" && wearSlot === "shell"); }
     const tl = document.querySelector("#kb-craft .kb-g-title");
     if (tl) {
-      tl.textContent = on ? "工房 · Vùng tự tạo" : mode === "seed" ? "工房 · Giống cây tự vẽ" : mode === "base" ? "工房 · Hình gốc"
+      tl.textContent = (on ? "工房 · Vùng tự tạo" : mode === "seed" ? "工房 · Giống cây tự vẽ" : mode === "base" ? "工房 · Hình gốc"
         : mode === "tile" ? (tileKind === "wall" ? "工房 · Giấy dán tường" : "工房 · Sàn nhà")
-        : mode === "wear" ? "工房 · " + WEAR_TITLE[wearSlot] + " cho StackChan" : "工房 · Xưởng chế tác";
+        : mode === "wear" ? "工房 · " + WEAR_TITLE[wearSlot] + " cho StackChan" : "工房 · Xưởng chế tác");
+      if (typeof GardenLang !== "undefined") { GardenLang.applyTitles(tl.parentNode); }      // 1.32
     }
     $("kb-cf-name").maxLength = on ? 20 : 24;
     $("kb-cf-name").placeholder = on ? "Tên vùng" : mode === "seed" ? "Tên giống cây" : mode === "tile" ? "Tên mẫu" : mode === "wear" ? "Tên món đồ" : "Món tự làm";
@@ -951,7 +953,7 @@ var GardenCraft = (function () {
     buildPalette();
     layout(); draw(); showWhole();
     tip(z ? "Sửa vùng “" + z.name + "” · đổi tên / nền / màu miễn phí, vẽ lại công trình hoặc cảnh nền " + kbXu(u.edit) + " xu"
-      : "Vẽ công trình 64×76 (nhà, tháp, cây to…), rồi bấm “Cảnh nền” để vẽ khung cảnh. Trên vạch xanh là trời.");
+      : "Vẽ công trình 64×76, rồi bấm “Cảnh nền” để vẽ khung cảnh. Trên vạch xanh là trời.");
   }
   // 1.22: giống cây tự vẽ — g = mục trong catalog.myseeds (sửa) hoặc null (tạo mới)
   function openSeed(g) {
@@ -1010,7 +1012,7 @@ var GardenCraft = (function () {
     $("kb-cf-name").value = baseInfo.name;
     setModeUi("base");
     ["kb-cf-export", "kb-cf-import"].forEach((bid) => { const b = $(bid); if (b) { b.hidden = baseInfo.suggest; } });
-    const tl = document.querySelector("#kb-craft .kb-g-title"); if (tl && baseInfo.suggest) { tl.textContent = "工房 · Góp ý hình"; }
+    const tl = document.querySelector("#kb-craft .kb-g-title"); if (tl && baseInfo.suggest) { tl.textContent = "工房 · Góp ý hình"; if (typeof GardenLang !== "undefined") { GardenLang.applyTitles(tl.parentNode); } }
     mirror = false; fx = "none";
     clearInterval(previewTimer); previewTimer = null;
     img = null; saving = false; escArmed = false; tool = "pen"; hoverCell = null; session++;
@@ -1077,7 +1079,7 @@ var GardenCraft = (function () {
     const wc = wearCat();
     tip(w ? "Sửa “" + w.name + "” · đổi tên miễn phí, " + (wearSlot === "shell" ? "đổi màu " : "vẽ lại ") + kbXu(wc.edit) + " xu"
       : wearSlot === "shell" ? "Chọn màu thân rồi màu viền dưới ở bảng màu."
-      : "Vẽ lên phần mờ của StackChan · ô trống để trong suốt · bên phải là hình trên linh vật và trên StackChan sinh hoạt.");
+      : "Vẽ lên phần mờ của StackChan · bên phải là hình xem trước.");
   }
   function open(it) {
     if (!H) { return; }

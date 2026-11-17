@@ -94,7 +94,8 @@ async function tour(size) {
   await js('const b = document.querySelectorAll(".kb-p-langs .kb-ai-chip")[1]; if (b) b.click()'); await sleep(1200);
   await js('const r = document.querySelector(".kb-p-row"); if (r) r.click()'); await sleep(1500); await shot(S + '_12_bao_tieng_anh');
   await js('document.querySelector(".kb-p-tab[data-ptab=src]").click()'); await sleep(1200); await shot(S + '_12_nguon_bao');
-  await js('const b = Array.from(document.querySelectorAll(".kb-ai-lang")).pop(); const c = b && Array.from(b.querySelectorAll(".kb-ai-chip")).find((x) => x.textContent === "Chọn deck"); if (c) c.click()');
+  // 1.33.1: Lấy từ là ô thả xuống
+  await js('const b = Array.from(document.querySelectorAll(".kb-ai-lang")).pop(); const c = b && Array.from(b.querySelectorAll("select.kb-ai-sel")).find((x) => /Lấy từ/.test(x.getAttribute("aria-label"))); if (c) { c.value = "pick"; c.dispatchEvent(new Event("change")); }');
   await sleep(800); await shot(S + '_12_nguon_bao_chon_deck');
   await closeAll();
   await py(KB + 'kb._key_saved = kb.config().get("gemini_key"); kb.save_config(gemini_key=""); result = 1');

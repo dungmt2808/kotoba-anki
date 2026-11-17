@@ -1,8 +1,8 @@
 # Lời nhắc (prompt) gửi Gemini khi viết báo — nguyên văn
 
-Xuất bằng `tests/tools/dump_prompts.py` từ mã 1.25.2 (ngày mẫu 08/11/2026, chủ đề truyện: Kinh dị nhẹ + Hài, thời tiết của vườn hôm đó: cả ngày nhiều mây). Danh sách từ ở đây rút gọn còn vài từ; mỗi số thật gửi khoảng 100 từ.
+Xuất bằng `tests/tools/dump_prompts.py` (mã 1.33; ngày mẫu 08/11/2026, chủ đề truyện: Kinh dị nhẹ + Hài, thời tiết của vườn hôm đó: cả ngày nhiều mây). Danh sách từ ở đây rút gọn còn vài từ; mỗi số thật gửi khoảng 100 từ.
 
-**Một làng, một truyện (1.25.2):** mỗi ngày Gemini viết **một bản gốc tiếng Việt** cho cả làng — kỳ truyện dài kỳ + 2–3 tin làng + mục thứ ba (thông báo / cột của một nhân vật). Thứ tự gọi: **0. lập mạch** (khoảng mỗi tuần) → **1. nhà văn** (bản gốc) → **2. biên tập** chấm 7 tiêu chí → (điểm < 4: **viết lại** một lần). Rồi mỗi báo: **3. kể lại** truyện bằng tiếng Nhật / tiếng Anh theo trình độ (báo tiếng Việt in thẳng bản gốc) → **4. viết cả số** (chép truyện + furigana, tin làng kể lại từ tin bản gốc, câu hỏi, câu chép) → máy kiểm tra → **sửa** (≤ 2 lần) → **5. soát lần 2**. Gemini trả JSON theo khuôn cố định của từng bước. Báo thứ hai trong ngày không viết lại bản gốc.
+**Một làng, một truyện (1.25.2):** mỗi ngày Gemini viết **một bản gốc tiếng Việt** cho cả làng — kỳ truyện dài kỳ + 2–3 tin làng + mục thứ ba (thông báo / cột của một nhân vật). Thứ tự gọi: **0. lập mạch** (khoảng mỗi tuần) → **1. nhà văn** (bản gốc) → **2. biên tập** chấm 7 tiêu chí → (điểm < 4: **viết lại** một lần). Rồi mỗi báo: **3. kể lại** truyện bằng tiếng Nhật / Anh / Trung / Hàn theo trình độ (báo tiếng Việt in thẳng bản gốc) → **4. viết cả số** (chép truyện + furigana, tin làng kể lại từ tin bản gốc, câu hỏi, câu chép) → máy kiểm tra → **sửa** (≤ 2 lần) → **5. soát lần 2**. Gemini trả JSON theo khuôn cố định của từng bước. Báo thứ hai trong ngày không viết lại bản gốc.
 
 Bản gốc thấy được: nguyên văn kỳ trước, tóm tắt các kỳ trong đợt, mạch đợt, chỗ bỏ ngỏ, nhận xét Hay / Nhạt của người đọc, ngày + mùa, thời tiết của vườn, tin làng mấy số trước (để tin nối tin).
 
@@ -36,7 +36,7 @@ CÁC KỲ ĐÃ ĐĂNG:
 
 HÔM NAY: Chủ Nhật, ngày 8/11/2026, mùa thu. Đợt mới bắt đầu từ kỳ 12.
 
-Lập MẠCH TRUYỆN cho một đợt 6–8 kỳ (mỗi kỳ đăng một ngày): ten = tên đợt (tiếng Việt); muc_tieu = điều nhân vật chính muốn đạt trong đợt; bi_an = câu hỏi / bí ẩn kéo suốt đợt; nhan_vat_phu = nhân vật phụ của đợt (một người / con vật, kèm điều họ muốn); buoc = mỗi phần tử là MỘT kỳ (tiếng Việt, 1–2 câu: chuyện gì xảy ra, trở ngại, móc câu); ket = đợt kết thúc thế nào (giải được bí ẩn, có thay đổi nhỏ ở nhân vật, để lại một sợi chỉ cho đợt sau). Nối tiếp các kỳ đã đăng, không lặp lại chuyện cũ. Hợp mùa hiện tại.
+Lập MẠCH TRUYỆN cho một đợt 6–8 kỳ (mỗi kỳ đăng một ngày): ten = tên đợt (tiếng Việt); muc_tieu = điều nhân vật chính muốn đạt trong đợt; bi_an = câu hỏi / bí ẩn kéo suốt đợt; nhan_vat_phu = nhân vật phụ của đợt (một người / con vật, kèm điều họ muốn); buoc = mỗi phần tử là MỘT kỳ (tiếng Việt, 1–2 câu: chuyện gì xảy ra, trở ngại, móc câu); ket = đợt kết thúc thế nào (giải được bí ẩn, có thay đổi nhỏ ở nhân vật, để lại một sợi chỉ cho đợt sau). Nối tiếp các kỳ đã đăng, không lặp lại chuyện cũ. Hợp mùa hiện tại. su_that_moi (viết TRƯỚC khi lập mạch mới) = 0–3 điều ĐÃ XẢY RA trong CÁC KỲ ĐÃ ĐĂNG ở trên và đáng nhớ lâu dài (quan hệ giữa nhân vật, thay đổi ở quán / làng, điều Lin học được) — mỗi điều một câu ngắn ở thì quá khứ; CHỈ lấy từ các kỳ đã đăng, KHÔNG lấy gì của đợt mới đang lập, không bịa thêm, không lặp điều đã có trong sổ tay; không chắc thì để trống.
 
 Trả về đúng một object JSON theo khuôn.
 ```
@@ -101,8 +101,8 @@ CÁCH VIẾT MỘT KỲ HAY (bắt buộc):
    học hay lời khuyên.
 6. Không liệt kê, không lặp lại tình huống của các kỳ trước.
 7. Nối tiếp kỳ trước: KHÔNG mâu thuẫn với chuyện đã xảy ra, giải quyết hoặc đẩy tiếp một chỗ bỏ ngỏ.
-8. Thoại thể hiện tính cách, ghi rõ ai nói. Tiếng Việt tự nhiên, đúng chính tả, có dấu; chữ trơn (không [ ] { } |,
-   không markdown).
+8. Thoại đặt trong ngoặc kép "…", thể hiện tính cách, ghi rõ ai nói. Tiếng Việt tự nhiên, đúng chính tả, có dấu; chữ
+   trơn (không [ ] { } |, không markdown).
 9. Chuyện sẽ được kể lại bằng tiếng Nhật / tiếng Anh cho người mới học: tránh chơi chữ chỉ có trong tiếng Việt, thành
    ngữ khó dịch; câu thoại ngắn, rõ.
 10. Độ dài: 3 đoạn, mỗi đoạn 60–140 chữ (truyện là một bài trong số báo).
@@ -512,7 +512,7 @@ borrow, lighthouse, whisper, receipt, crowded, umbrella
 BẢN GỐC:
 {"tieu_de": "（truyện bản gốc tiếng Việt）", "doan": ["（đoạn 1）", "（đoạn 2）", "（đoạn 3）"]}
 
-Trả về đúng một object JSON theo khuôn: tieu_de (tiếng Anh, 3–8 từ), doan = các đoạn tiếng Anh (chữ trơn, không đánh dấu), dich = bản dịch tiếng Việt TỰ NHIÊN của từng đoạn bạn vừa viết (cùng số phần tử, không có chữ Anh / Nhật; tên riêng viết Latin: Lin, Hana, Stack-chan, quán Kotoba, làng Kotoba; không ghi chú trong ngoặc), tu_moi (≤ 2 từ khó ngoài danh sách: w, r = phiên âm IPA /…/, m = nghĩa tiếng Việt).
+Trả về đúng một object JSON theo khuôn: tieu_de (tiếng Anh, 3–8 từ), doan = các đoạn tiếng Anh (chữ trơn, không đánh dấu), dich = bản dịch tiếng Việt TỰ NHIÊN của từng đoạn bạn vừa viết (cùng số phần tử, không có chữ Anh; tên riêng viết Latin: Lin, Hana, Stack-chan, quán Kotoba, làng Kotoba; không ghi chú trong ngoặc), tu_moi (≤ 2 từ khó ngoài danh sách: w, r = phiên âm IPA /…/, m = nghĩa tiếng Việt).
 ```
 
 ### 4. Viết cả số — system
@@ -685,6 +685,374 @@ whisper /ˈwɪs.pər/ = thì thầm
 receipt /rɪˈsiːt/ = hoá đơn
 umbrella /ʌmˈbrel.ə/ = cái ô
 crowded /ˈkraʊ.dɪd/ = đông đúc
+
+SỐ BÁO:
+{"bai": [{"loai": "tin_lang", "tieu_de": "…", "doan": ["…"]}]}
+```
+
+## Báo tiếng Trung (词田晨报, HSK 2, giản thể) — 1.33
+
+### 3. Kể lại truyện — lời nhắc
+
+```text
+KỂ LẠI kỳ 12 của truyện dài kỳ dưới đây bằng tiếng Trung giản thể trình độ HSK2 cho người Việt đang học. Đây là cùng một câu chuyện in trong báo làng bằng nhiều thứ tiếng: GIỮ ĐÚNG sự việc, nhân vật, lời thoại chính, chi tiết bất ngờ và móc câu cuối; không thêm chuyện mới, không bỏ móc câu.
+
+Viết lại cho hợp trình độ: câu ngắn, tự nhiên như sách đọc cho người học; được rút gọn chi tiết phụ. Chỗ nhân vật nói nhầm (lời chào, cách nói lịch sự) thì cho nhầm theo kiểu của tiếng Trung (vd. nhầm lượng từ, nhầm 了).
+
+TÊN GỌI (dùng đúng):
+- Lin → 林
+- chị Hana (chủ quán, khoảng 30 tuổi) → 哈娜（旅店老板娘，三十岁左右）
+- StackChan → StackChan
+- ông trưởng làng (không có tên riêng) → 村长
+- Quán Kotoba (quán trọ) → 言叶旅店
+- làng Kotoba → 言叶村
+- vườn Kotoba → 言叶菜园
+- bác đưa thư → 邮递员
+- con mèo hoang trắng → 白色的流浪猫
+
+Độ dài: đúng 3 đoạn như bản gốc, mỗi đoạn 45–110 chữ Hán.
+
+TỪ NGƯỜI HỌC ĐÃ HỌC (trình độ HSK2) — dùng khi hợp, ĐỪNG ép câu:
+天气、旅店、准备、害怕、漂亮、朋友
+
+MẪU NGỮ PHÁP ĐANG HỌC (dùng 1–2 mẫu trong lời thoại nếu tự nhiên):
+- V + 过: đã từng …
+- V + 着: (trạng thái) đang …
+- 正在 + V + 呢: đang …
+
+BẢN GỐC:
+{"tieu_de": "（truyện bản gốc tiếng Việt）", "doan": ["（đoạn 1）", "（đoạn 2）", "（đoạn 3）"]}
+
+Trả về đúng một object JSON theo khuôn: tieu_de (tiếng Trung, ngắn), doan = các đoạn tiếng Trung giản thể (chữ Hán + dấu câu Trung Quốc ，。！？“”, không chữ Latin trừ tên StackChan). MỌI chữ Hán viết kèm pinyin ghi số theo TỪ, dạng [chữ|pinyin]: [学生|xue2 sheng5][在|zai4][看书|kan4 shu1]。 — mỗi chữ một âm tiết, 5 = thanh nhẹ, ü viết v, đúng cách đọc theo văn cảnh; 一 / 不 ghi thanh theo chữ sau; không dùng { }, dich = bản dịch tiếng Việt TỰ NHIÊN của từng đoạn bạn vừa viết (cùng số phần tử, không có chữ Trung; tên riêng viết Latin: Lin, Hana, Stack-chan, quán Kotoba, làng Kotoba; không ghi chú trong ngoặc), tu_moi (≤ 2 từ khó ngoài danh sách: w, r = pinyin ghi số, vd. hai4 pa4, m = nghĩa tiếng Việt).
+```
+
+### 4. Viết cả số — system
+
+```text
+Bạn là người Trung Quốc bản xứ, viết báo làng "词田晨报" (bản tiếng Trung của 畑新聞) cho người Việt Nam đang học tiếng Trung trình độ HSK 2.
+Viết tiếng Trung tự nhiên, đúng ngữ pháp: câu ngắn và rõ (trung bình khoảng 11 chữ một câu), ấm áp, hơi hài hước; không dịch từng chữ từ tiếng Việt.
+Chỉ dùng ngữ pháp tới trình độ HSK 2 (danh sách được cho, hoặc đơn giản hơn). Dùng THẬT NHIỀU từ trong danh sách từ vựng đã học, còn lại là từ rất cơ bản; từ khó ngoài danh sách chỉ khi thật cần, khai báo trong tu_moi.
+Nội dung hoàn toàn mới, không chép đoạn văn của sách giáo khoa nào.
+Độ dài phần bài của cả số báo: 220–450 chữ Hán.
+
+QUY TẮC (máy sẽ kiểm tra, sai là phải viết lại):
+- Bài, tiêu đề, câu hỏi, lựa chọn, câu chép chính tả viết HOÀN TOÀN bằng tiếng Trung chữ GIẢN THỂ: không kana, không chữ Hàn / Việt, không chữ Latin (trừ tên StackChan), dấu câu Trung Quốc ，。！？“”.
+- MỌI chữ Hán viết kèm pinyin theo TỪ, dạng [chữ|pinyin ghi số]: [学生|xue2 sheng5][在|zai4][看书|kan4 shu1]。 Mỗi chữ một âm tiết, cách nhau dấu cách; số 1–4 là thanh, 5 là thanh nhẹ; ü viết v (女 = nv3). Dấu câu, chữ số và StackChan để ngoài ngoặc. Ghi đúng cách đọc theo văn cảnh (长大 = zhang3 da4, 很长 = hen3 chang2); 一 / 不 ghi thanh theo chữ sau (一个 = yi2 ge4, 不是 = bu2 shi4).
+- KHÔNG dùng { } và không markdown (* _ #): máy tự gạch chân từ đã học để người đọc bấm tra.
+- Dùng từ trong DANH SÁCH TỪ VỰNG ĐÃ HỌC đúng nghĩa đã ghi.
+- Phần tiếng Việt (giai_thich, tom_tat, ky_truoc, tom_tat_truyen, nghĩa m trong tu_moi) viết tiếng Việt CÓ DẤU, không kèm chữ Hán.
+
+Trả về đúng MỘT object JSON theo khuôn, không viết gì thêm.
+```
+
+### 4. Viết cả số — lời nhắc
+
+```text
+HÔM NAY: Chủ Nhật, ngày 8/11/2026, mùa thu. Số báo 30. Thời tiết ở làng: cả ngày nhiều mây.
+
+CẤU TRÚC: bai gồm đúng 2 bài theo thứ tự (KHÔNG viết truyện dài kỳ: máy tự chèn truyện đã viết sẵn làm bài giữa):
+1. loai "tin_lang": tin trong làng 言叶村 và khu vườn 言叶菜园, 2–3 đoạn (đừng kể lại truyện).
+2. loai "thong_bao": 村里通知 — 2–3 mục thông báo của làng, mỗi mục là một đoạn bắt đầu bằng "◆ ", tiêu đề "村里通知".
+Tiêu đề viết kiểu tiêu đề báo tiếng Trung, ngắn.
+cau_hoi: 2–3 câu trắc nghiệm TIẾNG TRUNG về nội dung CẢ SỐ (nên có 1 câu về truyện), mỗi câu đúng 3 lựa chọn tiếng Trung ngắn, CHỈ MỘT đáp án đúng, "dung" là vị trí đáp án đúng tính từ 0 (đổi vị trí giữa các câu), "giai_thich" tiếng Việt chỉ ra câu nào trong bài cho biết đáp án.
+chinh_ta: 2–3 câu CHÉP NGUYÊN VĂN từ bài hoặc truyện (một câu trọn vẹn, 5–12 chữ Hán, chép đúng cả dấu câu), nên chứa từ trong danh sách từ vựng, không phải lời thoại trong ngoặc kép; "them_dap_an": thường để rỗng.
+ĐỘ DÀI: hai bài này tổng khoảng 88–337 chữ Hán (truyện không tính).
+TRUYỆN ĐÃ VIẾT SẴN (kỳ 12, để đặt câu hỏi / câu chép):
+{"tieu_de": "（truyện đã kể lại bằng tiếng của báo）", "doan": ["（đoạn 1）", "（đoạn 2）", "（đoạn 3）"]}
+
+TIN HÔM NAY CỦA LÀNG (bản gốc tiếng Việt — báo làng in bằng nhiều thứ tiếng, mọi bản đăng cùng tin):
+- （tin 1）: （nội dung tin 1）
+- （tin 2）: （nội dung tin 2）
+→ Bài tin_lang KỂ LẠI đúng các tin này bằng tiếng Trung đúng trình độ (được rút gọn, gộp, chọn 2–3 tin); KHÔNG bịa tin khác.
+MỤC THỨ BA (bản gốc): （thông báo của làng） — ◆ （mục 1） / ◆ （mục 2）
+→ Bài thứ 3 kể lại mục này bằng tiếng Trung (giữ ý, giữ dạng ◆ nếu có).
+
+dich: mỗi bài thêm "dich" = bản dịch tiếng Việt TỰ NHIÊN (có dấu) của từng đoạn (cùng số phần tử với doan; không ghi chú trong ngoặc). Người học bấm "Dịch" mới thấy.
+
+mau_cau: 2–4 id lấy đúng từ DANH SÁCH NGỮ PHÁP (cột đầu), là các mẫu được nhấn mạnh; mỗi mẫu xuất hiện ít nhất 2 lần. Phần lớn là mẫu TRỌNG TÂM (đúng trình độ HSK 2), thêm 1 mẫu thấp hơn để ôn.
+Dùng 10–20 từ khác nhau trong DANH SÁCH TỪ VỰNG ĐÃ HỌC (ưu tiên từ trọng tâm, từ sắp quên). tu_moi tối đa 3 từ ngoài danh sách thật sự cần (w = từ tiếng Trung chỉ gồm chữ Hán, r = pinyin ghi số, m = nghĩa tiếng Việt). tom_tat: 1–2 câu tiếng Việt tóm tắt số báo.
+
+TỪ TRỌNG TÂM (người học phải ôn hôm nay): 天气、旅店、准备、害怕
+Dùng được bao nhiêu thì dùng, tối thiểu khoảng 8 từ; từ nào không hợp thì bỏ, ĐỪNG ép câu. Nhìn danh sách rồi chọn chủ đề của số báo sao cho nhiều từ hợp nhau. Gợi ý: số đếm / giờ / ngày / giá / số lượng → 村里通知 hoặc tin làng; động từ / tính từ / cảm xúc → truyện; nơi chốn / sự kiện / thời tiết → tin làng.
+
+DANH SÁCH NGỮ PHÁP (id|mẫu|nghĩa) — chỉ dùng ngữ pháp này và đơn giản hơn:
+zh1-01|A 是 B|A là B
+zh1-02|有 / 没有|có / không có
+zh1-03|……吗？|câu hỏi có / không
+zh1-04|……呢？|còn … thì sao?
+zh1-05|N 的 N|của (sở hữu)
+zh1-06|很 + tính từ|rất …
+zh1-07|不 / 没 + V|không / chưa (phủ định)
+zh1-08|在 + nơi chốn|ở …
+zh1-09|想 + V|muốn …
+zh1-10|会 + V|biết / sẽ …
+zh1-11|V + 了|đã … (hoàn thành)
+zh1-12|几 / 多少|mấy / bao nhiêu
+zh2-01|V + 过|đã từng … (TRỌNG TÂM)
+zh2-02|V + 着|(trạng thái) đang … (TRỌNG TÂM)
+zh2-03|正在 + V + 呢|đang … (TRỌNG TÂM)
+zh2-04|要 / 快要 + V + 了|sắp … rồi (TRỌNG TÂM)
+zh2-05|A 比 B + tính từ|A … hơn B (TRỌNG TÂM)
+zh2-06|因为……，所以……|vì … nên … (TRỌNG TÂM)
+zh2-07|虽然……，但是……|tuy … nhưng … (TRỌNG TÂM)
+zh2-08|可以 + V|có thể … (TRỌNG TÂM)
+zh2-09|V + 得 + bổ ngữ|… (làm) thế nào (说得很好) (TRỌNG TÂM)
+zh2-10|一边……一边……|vừa … vừa … (TRỌNG TÂM)
+zh2-11|就|ngay / thì (TRỌNG TÂM)
+zh2-12|还|còn, vẫn (TRỌNG TÂM)
+
+DANH SÁCH TỪ VỰNG ĐÃ HỌC (từ pinyin = nghĩa):
+天气 tiān qì = thời tiết · THIÊN KHÍ
+旅店 lǚ diàn = quán trọ · LỮ ĐIẾM
+准备 zhǔn bèi = chuẩn bị
+害怕 hài pà = sợ · HẠI PHẠ
+朋友 péng you = bạn bè · BẰNG HỮU
+漂亮 piào liang = đẹp · PHIÊU LƯỢNG
+
+VÍ DỤ ĐỊNH DẠNG (chỉ xem hình thức, không chép nội dung):
+{"loai":"tin_lang","tieu_de":"[今天|jin1 tian1]StackChan[去|qu4][画|hua4][画|hua4]","doan":["[下午|xia4 wu3]，StackChan[带|dai4][着|zhe5][一|yi4][盒|he2][颜料|yan2 liao4][去|qu4][了|le5][老|lao3][桥|qiao2]。“[我|wo3][想|xiang3][让|rang4][它|ta1][开心|kai1 xin1]！”[他|ta1][说|shuo1]。"]}
+
+PINYIN: mọi chữ Hán ở tiêu đề, bài, câu hỏi, lựa chọn và câu chép đều viết dạng [chữ|pinyin ghi số] theo từ (xem QUY TẮC). Truyện đã viết sẵn ở trên đã có pinyin; câu hỏi / câu chép lấy từ truyện thì chép cả pinyin.
+```
+
+### 5. Soát lần 2 — lời nhắc (cuối lời nhắc là cả số báo JSON)
+
+```text
+Bạn là biên tập viên người Trung Quốc, soát lại số báo tiếng Trung dưới đây dành cho người Việt học tiếng Trung trình độ HSK 2 trước khi in.
+Kiểm tra kỹ từng câu:
+1. Tiếng Trung có tự nhiên và đúng ngữ pháp không (lượng từ, 了 / 过 / 着, trật tự từ, bổ ngữ).
+2. PINYIN: mỗi chữ đúng cách đọc theo văn cảnh (chữ nhiều cách đọc, thanh nhẹ, 一 / 不 đổi thanh), mỗi chữ một âm tiết.
+3. Ngữ pháp và độ dài câu có vượt trình độ HSK 2 không → viết lại đơn giản, tách câu dài.
+4. Từ khó hơn trình độ HSK 2 (không có trong danh sách từ vựng, không phải từ rất cơ bản) → đổi từ dễ hơn, hoặc khai báo trong tu_moi (kèm pinyin và nghĩa tiếng Việt).
+5. GIỮ các từ trong danh sách từ vựng đã học (đừng đổi sang từ đồng nghĩa): đó là từ người học đang ôn.
+6. Mỗi câu hỏi có đúng MỘT đáp án đúng, đáp án đó có trong bài, "dung" chỉ đúng vị trí; giai_thich đúng.
+7. Câu chép chính tả có chép nguyên văn một câu trong bài không.
+8. Tiêu đề, tom_tat, ky_truoc, giai_thich (tiếng Việt có dấu) viết đúng nghĩa với bài.
+9. Lời thoại: rõ ai nói câu nào; nhân vật nhất quán (哈娜 là chủ 言叶旅店, 林 là nhân viên mới).
+10. Số báo thường phải đủ 3 bài: tin_lang, truyen, rồi thong_bao hoặc cot.
+Ghi mỗi chỗ đã sửa vào van_de (cho = vị trí như bai[1].doan[0], loi = lỗi gì bằng tiếng Việt, sua = câu mới). Không có lỗi thì van_de rỗng. "bao" là toàn bộ số báo sau khi sửa (không có lỗi thì trả nguyên), giữ dạng [chữ|pinyin]. Giữ nguyên các id mau_cau, số kỳ truyện. Bài truyện (loai truyen) đã qua biên tập: chỉ sửa lỗi thật sự, không viết lại. "dich" (bản dịch tiếng Việt) giữ nguyên, chỉ sửa câu dịch của đoạn bạn vừa sửa.
+Trong SỐ BÁO, máy đã tách pinyin theo từng chữ ([今|jin1][天|tian1]): đó là đúng, đừng ghép lại hay báo lỗi chỗ này; câu bạn sửa thì ghi theo từ hoặc theo chữ đều được.
+
+QUY TẮC (máy sẽ kiểm tra, sai là phải viết lại):
+- Bài, tiêu đề, câu hỏi, lựa chọn, câu chép chính tả viết HOÀN TOÀN bằng tiếng Trung chữ GIẢN THỂ: không kana, không chữ Hàn / Việt, không chữ Latin (trừ tên StackChan), dấu câu Trung Quốc ，。！？“”.
+- MỌI chữ Hán viết kèm pinyin theo TỪ, dạng [chữ|pinyin ghi số]: [学生|xue2 sheng5][在|zai4][看书|kan4 shu1]。 Mỗi chữ một âm tiết, cách nhau dấu cách; số 1–4 là thanh, 5 là thanh nhẹ; ü viết v (女 = nv3). Dấu câu, chữ số và StackChan để ngoài ngoặc. Ghi đúng cách đọc theo văn cảnh (长大 = zhang3 da4, 很长 = hen3 chang2); 一 / 不 ghi thanh theo chữ sau (一个 = yi2 ge4, 不是 = bu2 shi4).
+- KHÔNG dùng { } và không markdown (* _ #): máy tự gạch chân từ đã học để người đọc bấm tra.
+- Dùng từ trong DANH SÁCH TỪ VỰNG ĐÃ HỌC đúng nghĩa đã ghi.
+- Phần tiếng Việt (giai_thich, tom_tat, ky_truoc, tom_tat_truyen, nghĩa m trong tu_moi) viết tiếng Việt CÓ DẤU, không kèm chữ Hán.
+
+DANH SÁCH NGỮ PHÁP:
+zh1-01|A 是 B|A là B
+zh1-02|有 / 没有|có / không có
+zh1-03|……吗？|câu hỏi có / không
+zh1-04|……呢？|còn … thì sao?
+zh1-05|N 的 N|của (sở hữu)
+zh1-06|很 + tính từ|rất …
+zh1-07|不 / 没 + V|không / chưa (phủ định)
+zh1-08|在 + nơi chốn|ở …
+zh1-09|想 + V|muốn …
+zh1-10|会 + V|biết / sẽ …
+zh1-11|V + 了|đã … (hoàn thành)
+zh1-12|几 / 多少|mấy / bao nhiêu
+zh2-01|V + 过|đã từng … (TRỌNG TÂM)
+zh2-02|V + 着|(trạng thái) đang … (TRỌNG TÂM)
+zh2-03|正在 + V + 呢|đang … (TRỌNG TÂM)
+zh2-04|要 / 快要 + V + 了|sắp … rồi (TRỌNG TÂM)
+zh2-05|A 比 B + tính từ|A … hơn B (TRỌNG TÂM)
+zh2-06|因为……，所以……|vì … nên … (TRỌNG TÂM)
+zh2-07|虽然……，但是……|tuy … nhưng … (TRỌNG TÂM)
+zh2-08|可以 + V|có thể … (TRỌNG TÂM)
+zh2-09|V + 得 + bổ ngữ|… (làm) thế nào (说得很好) (TRỌNG TÂM)
+zh2-10|一边……一边……|vừa … vừa … (TRỌNG TÂM)
+zh2-11|就|ngay / thì (TRỌNG TÂM)
+zh2-12|还|còn, vẫn (TRỌNG TÂM)
+
+DANH SÁCH TỪ VỰNG ĐÃ HỌC (từ pinyin = nghĩa):
+天气 tiān qì = thời tiết · THIÊN KHÍ
+旅店 lǚ diàn = quán trọ · LỮ ĐIẾM
+准备 zhǔn bèi = chuẩn bị
+害怕 hài pà = sợ · HẠI PHẠ
+朋友 péng you = bạn bè · BẰNG HỮU
+漂亮 piào liang = đẹp · PHIÊU LƯỢNG
+
+SỐ BÁO:
+{"bai": [{"loai": "tin_lang", "tieu_de": "…", "doan": ["…"]}]}
+```
+
+## Báo tiếng Hàn (말밭 신문, TOPIK 2) — 1.33
+
+### 3. Kể lại truyện — lời nhắc
+
+```text
+KỂ LẠI kỳ 12 của truyện dài kỳ dưới đây bằng tiếng Hàn trình độ TOPIK2 cho người Việt đang học. Đây là cùng một câu chuyện in trong báo làng bằng nhiều thứ tiếng: GIỮ ĐÚNG sự việc, nhân vật, lời thoại chính, chi tiết bất ngờ và móc câu cuối; không thêm chuyện mới, không bỏ móc câu.
+
+Viết lại cho hợp trình độ: câu ngắn, tự nhiên như sách đọc cho người học; được rút gọn chi tiết phụ. Chỗ nhân vật nói nhầm (lời chào, cách nói lịch sự) thì cho nhầm theo kiểu của tiếng Hàn (vd. nhầm kính ngữ, nhầm tiểu từ).
+
+TÊN GỌI (dùng đúng):
+- Lin → 린
+- chị Hana (chủ quán, khoảng 30 tuổi) → 하나 씨 (여관 주인, 30대)
+- StackChan → 스택짱
+- ông trưởng làng (không có tên riêng) → 촌장님
+- Quán Kotoba (quán trọ) → 코토바 여관
+- làng Kotoba → 코토바 마을
+- vườn Kotoba → 코토바 텃밭
+- bác đưa thư → 우체부 아저씨
+- con mèo hoang trắng → 하얀 길고양이
+
+Độ dài: đúng 3 đoạn như bản gốc, mỗi đoạn 15–40 cụm (어절).
+
+TỪ NGƯỜI HỌC ĐÃ HỌC (trình độ TOPIK2) — dùng khi hợp, ĐỪNG ép câu:
+날씨, 여관, 준비하다, 무섭다, 예쁘다, 친구
+
+MẪU NGỮ PHÁP ĐANG HỌC (dùng 1–2 mẫu trong lời thoại nếu tự nhiên):
+- V-(으)ㄹ 거예요: sẽ
+- V-(으)세요: hãy… (lịch sự)
+- V/A-지만: nhưng
+
+BẢN GỐC:
+{"tieu_de": "（truyện bản gốc tiếng Việt）", "doan": ["（đoạn 1）", "（đoạn 2）", "（đoạn 3）"]}
+
+Trả về đúng một object JSON theo khuôn: tieu_de (tiếng Hàn, ngắn), doan = các đoạn tiếng Hàn (chỉ Hangul, KHÔNG Hán tự, không phiên âm Latin, không [ ] { } |), dich = bản dịch tiếng Việt TỰ NHIÊN của từng đoạn bạn vừa viết (cùng số phần tử, không có chữ Hàn; tên riêng viết Latin: Lin, Hana, Stack-chan, quán Kotoba, làng Kotoba; không ghi chú trong ngoặc), tu_moi (≤ 2 từ khó ngoài danh sách: w, r = phiên âm romaja, m = nghĩa tiếng Việt).
+```
+
+### 4. Viết cả số — system
+
+```text
+Bạn là người Hàn bản xứ, viết báo làng "말밭 신문" (bản tiếng Hàn của 畑新聞) cho người Việt Nam đang học tiếng Hàn trình độ TOPIK 2.
+Viết tiếng Hàn tự nhiên, đúng ngữ pháp và cách chữ: câu ngắn và rõ (trung bình khoảng 6 cụm 어절 một câu), ấm áp, hơi hài hước; không dịch từng chữ từ tiếng Việt.
+Chỉ dùng ngữ pháp tới trình độ TOPIK 2 (danh sách được cho, hoặc đơn giản hơn). Dùng THẬT NHIỀU từ trong danh sách từ vựng đã học, còn lại là từ rất cơ bản; từ khó ngoài danh sách chỉ khi thật cần, khai báo trong tu_moi.
+Nội dung hoàn toàn mới, không chép đoạn văn của sách giáo khoa nào.
+Độ dài phần bài của cả số báo: 130–280 cụm (어절).
+
+QUY TẮC (máy sẽ kiểm tra, sai là phải viết lại):
+- Bài, tiêu đề, câu hỏi, lựa chọn, câu chép chính tả viết HOÀN TOÀN bằng tiếng Hàn (Hangul): không Hán tự (漢字), không
+  chữ Nhật / Việt / Latin, không phiên âm. StackChan viết 스택짱.
+- Chữ trơn, KHÔNG đánh dấu gì: không [ ] { } |, không markdown (* _ #). Máy tự gạch chân từ đã học để người đọc bấm tra.
+- Dùng từ trong DANH SÁCH TỪ VỰNG ĐÃ HỌC đúng nghĩa đã ghi; được thêm tiểu từ và chia đuôi bình thường (축제가, 무서워서).
+- Văn kể dùng đuôi -아요 / -어요 hoặc -습니다 thống nhất trong một bài; viết cách chữ (띄어쓰기) chuẩn.
+- Phần tiếng Việt (giai_thich, tom_tat, ky_truoc, tom_tat_truyen, nghĩa m trong tu_moi) viết tiếng Việt CÓ DẤU.
+
+Trả về đúng MỘT object JSON theo khuôn, không viết gì thêm.
+```
+
+### 4. Viết cả số — lời nhắc
+
+```text
+HÔM NAY: Chủ Nhật, ngày 8/11/2026, mùa thu. Số báo 30. Thời tiết ở làng: cả ngày nhiều mây.
+
+CẤU TRÚC: bai gồm đúng 2 bài theo thứ tự (KHÔNG viết truyện dài kỳ: máy tự chèn truyện đã viết sẵn làm bài giữa):
+1. loai "tin_lang": tin trong làng 코토바 마을 và khu vườn 코토바 텃밭, 2–3 đoạn (đừng kể lại truyện).
+2. loai "thong_bao": 마을 소식 — 2–3 mục thông báo của làng, mỗi mục là một đoạn bắt đầu bằng "◆ ", tiêu đề "마을 소식".
+Tiêu đề viết kiểu tiêu đề báo tiếng Hàn, ngắn.
+cau_hoi: 2–3 câu trắc nghiệm TIẾNG HÀN về nội dung CẢ SỐ (nên có 1 câu về truyện), mỗi câu đúng 3 lựa chọn tiếng Hàn ngắn, CHỈ MỘT đáp án đúng, "dung" là vị trí đáp án đúng tính từ 0 (đổi vị trí giữa các câu), "giai_thich" tiếng Việt chỉ ra câu nào trong bài cho biết đáp án.
+chinh_ta: 2–3 câu CHÉP NGUYÊN VĂN từ bài hoặc truyện (một câu trọn vẹn, 3–7 cụm 어절, chép đúng cả dấu câu), nên chứa từ trong danh sách từ vựng, không phải lời thoại trong ngoặc kép; "them_dap_an": thường để rỗng.
+ĐỘ DÀI: hai bài này tổng khoảng 52–210 cụm 어절 (truyện không tính).
+TRUYỆN ĐÃ VIẾT SẴN (kỳ 12, để đặt câu hỏi / câu chép):
+{"tieu_de": "（truyện đã kể lại bằng tiếng của báo）", "doan": ["（đoạn 1）", "（đoạn 2）", "（đoạn 3）"]}
+
+TIN HÔM NAY CỦA LÀNG (bản gốc tiếng Việt — báo làng in bằng nhiều thứ tiếng, mọi bản đăng cùng tin):
+- （tin 1）: （nội dung tin 1）
+- （tin 2）: （nội dung tin 2）
+→ Bài tin_lang KỂ LẠI đúng các tin này bằng tiếng Hàn đúng trình độ (được rút gọn, gộp, chọn 2–3 tin); KHÔNG bịa tin khác.
+MỤC THỨ BA (bản gốc): （thông báo của làng） — ◆ （mục 1） / ◆ （mục 2）
+→ Bài thứ 3 kể lại mục này bằng tiếng Hàn (giữ ý, giữ dạng ◆ nếu có).
+
+dich: mỗi bài thêm "dich" = bản dịch tiếng Việt TỰ NHIÊN (có dấu) của từng đoạn (cùng số phần tử với doan; không ghi chú trong ngoặc). Người học bấm "Dịch" mới thấy.
+
+mau_cau: 2–4 id lấy đúng từ DANH SÁCH NGỮ PHÁP (cột đầu), là các mẫu được nhấn mạnh; mỗi mẫu xuất hiện ít nhất 2 lần. Phần lớn là mẫu TRỌNG TÂM (đúng trình độ TOPIK 2), thêm 1 mẫu thấp hơn để ôn.
+Dùng 10–20 từ khác nhau trong DANH SÁCH TỪ VỰNG ĐÃ HỌC (ưu tiên từ trọng tâm, từ sắp quên). tu_moi tối đa 3 từ ngoài danh sách thật sự cần (w = từ tiếng Hàn ở dạng từ điển — danh từ, hoặc động / tính từ đuôi 다; r = phiên âm romaja; m = nghĩa tiếng Việt). tom_tat: 1–2 câu tiếng Việt tóm tắt số báo.
+
+TỪ TRỌNG TÂM (người học phải ôn hôm nay): 날씨, 여관, 준비하다, 무섭다
+Dùng được bao nhiêu thì dùng, tối thiểu khoảng 8 từ; từ nào không hợp thì bỏ, ĐỪNG ép câu. Nhìn danh sách rồi chọn chủ đề của số báo sao cho nhiều từ hợp nhau. Gợi ý: số đếm / giờ / ngày / giá / số lượng → 마을 소식 hoặc tin làng; động từ / tính từ / cảm xúc → truyện; nơi chốn / sự kiện / thời tiết → tin làng.
+
+DANH SÁCH NGỮ PHÁP (id|mẫu|nghĩa) — chỉ dùng ngữ pháp này và đơn giản hơn:
+ko1-01|N이에요 / 예요|là N
+ko1-02|N은 / 는|chủ đề (còn N thì…)
+ko1-03|N이 / 가 있어요 / 없어요|có / không có N
+ko1-04|V/A-아요 / 어요|đuôi thân mật lịch sự (hiện tại)
+ko1-05|V/A-았어요 / 었어요|đã (quá khứ)
+ko1-06|N에 가다 / 오다|đi / đến N
+ko1-07|N에서 V|làm V ở N
+ko1-08|V-고 싶다|muốn V
+ko1-09|안 V/A|không (phủ định)
+ko1-10|N을 / 를|tân ngữ
+ko1-11|V/A-고|và, rồi
+ko2-01|V-(으)ㄹ 거예요|sẽ (TRỌNG TÂM)
+ko2-02|V-(으)세요|hãy… (lịch sự) (TRỌNG TÂM)
+ko2-03|V/A-지만|nhưng (TRỌNG TÂM)
+ko2-04|V/A-아서 / 어서|vì… nên; rồi (nối hành động) (TRỌNG TÂM)
+ko2-05|V-(으)ㄹ 수 있다 / 없다|có thể / không thể (TRỌNG TÂM)
+ko2-06|V-고 있다|đang (TRỌNG TÂM)
+ko2-07|V/A-(으)면|nếu (TRỌNG TÂM)
+ko2-08|V-(으)러 가다|đi để làm V (TRỌNG TÂM)
+ko2-09|N보다|hơn N (so sánh) (TRỌNG TÂM)
+ko2-10|V-아 / 어 주다|làm giúp (TRỌNG TÂM)
+
+DANH SÁCH TỪ VỰNG ĐÃ HỌC (từ = nghĩa):
+날씨 = thời tiết
+여관 = quán trọ
+준비하다 = chuẩn bị
+무섭다 = sợ
+친구 = bạn bè
+예쁘다 = đẹp
+
+VÍ DỤ ĐỊNH DẠNG (chỉ xem hình thức, không chép nội dung):
+{"loai":"tin_lang","tieu_de":"스택짱, 오래된 다리를 칠하다","doan":["어제 오후에 스택짱은 작은 물감 상자를 들고 오래된 다리에 갔어요. \"다리를 행복하게 해 주고 싶어요!\" 스택짱이 말했어요."]}
+```
+
+### 5. Soát lần 2 — lời nhắc (cuối lời nhắc là cả số báo JSON)
+
+```text
+Bạn là biên tập viên người Hàn, soát lại số báo tiếng Hàn dưới đây dành cho người Việt học tiếng Hàn trình độ TOPIK 2 trước khi in.
+Kiểm tra kỹ từng câu:
+1. Tiếng Hàn có tự nhiên và đúng ngữ pháp không (tiểu từ 이/가, 은/는, 을/를, đuôi câu, kính ngữ, cách chữ 띄어쓰기).
+2. Ngữ pháp và độ dài câu có vượt trình độ TOPIK 2 không → viết lại đơn giản, tách câu dài.
+3. Từ khó hơn trình độ TOPIK 2 (không có trong danh sách từ vựng, không phải từ rất cơ bản) → đổi từ dễ hơn, hoặc khai báo trong tu_moi (kèm nghĩa tiếng Việt).
+4. GIỮ các từ trong danh sách từ vựng đã học (đừng đổi sang từ đồng nghĩa): đó là từ người học đang ôn.
+5. Mỗi câu hỏi có đúng MỘT đáp án đúng, đáp án đó có trong bài, "dung" chỉ đúng vị trí; giai_thich đúng.
+6. Câu chép chính tả có chép nguyên văn một câu trong bài không.
+7. Tiêu đề, tom_tat, ky_truoc, giai_thich (tiếng Việt có dấu) viết đúng nghĩa với bài.
+8. Lời thoại: rõ ai nói câu nào; nhân vật nhất quán (하나 씨 là chủ 코토바 여관, 린 là nhân viên mới).
+9. Số báo thường phải đủ 3 bài: tin_lang, truyen, rồi thong_bao hoặc cot.
+Ghi mỗi chỗ đã sửa vào van_de (cho = vị trí như bai[1].doan[0], loi = lỗi gì bằng tiếng Việt, sua = câu mới). Không có lỗi thì van_de rỗng. "bao" là toàn bộ số báo sau khi sửa (không có lỗi thì trả nguyên). Giữ nguyên các id mau_cau, số kỳ truyện. Bài truyện (loai truyen) đã qua biên tập: chỉ sửa lỗi thật sự, không viết lại. "dich" (bản dịch tiếng Việt) giữ nguyên, chỉ sửa câu dịch của đoạn bạn vừa sửa.
+
+QUY TẮC (máy sẽ kiểm tra, sai là phải viết lại):
+- Bài, tiêu đề, câu hỏi, lựa chọn, câu chép chính tả viết HOÀN TOÀN bằng tiếng Hàn (Hangul): không Hán tự (漢字), không
+  chữ Nhật / Việt / Latin, không phiên âm. StackChan viết 스택짱.
+- Chữ trơn, KHÔNG đánh dấu gì: không [ ] { } |, không markdown (* _ #). Máy tự gạch chân từ đã học để người đọc bấm tra.
+- Dùng từ trong DANH SÁCH TỪ VỰNG ĐÃ HỌC đúng nghĩa đã ghi; được thêm tiểu từ và chia đuôi bình thường (축제가, 무서워서).
+- Văn kể dùng đuôi -아요 / -어요 hoặc -습니다 thống nhất trong một bài; viết cách chữ (띄어쓰기) chuẩn.
+- Phần tiếng Việt (giai_thich, tom_tat, ky_truoc, tom_tat_truyen, nghĩa m trong tu_moi) viết tiếng Việt CÓ DẤU.
+
+DANH SÁCH NGỮ PHÁP:
+ko1-01|N이에요 / 예요|là N
+ko1-02|N은 / 는|chủ đề (còn N thì…)
+ko1-03|N이 / 가 있어요 / 없어요|có / không có N
+ko1-04|V/A-아요 / 어요|đuôi thân mật lịch sự (hiện tại)
+ko1-05|V/A-았어요 / 었어요|đã (quá khứ)
+ko1-06|N에 가다 / 오다|đi / đến N
+ko1-07|N에서 V|làm V ở N
+ko1-08|V-고 싶다|muốn V
+ko1-09|안 V/A|không (phủ định)
+ko1-10|N을 / 를|tân ngữ
+ko1-11|V/A-고|và, rồi
+ko2-01|V-(으)ㄹ 거예요|sẽ (TRỌNG TÂM)
+ko2-02|V-(으)세요|hãy… (lịch sự) (TRỌNG TÂM)
+ko2-03|V/A-지만|nhưng (TRỌNG TÂM)
+ko2-04|V/A-아서 / 어서|vì… nên; rồi (nối hành động) (TRỌNG TÂM)
+ko2-05|V-(으)ㄹ 수 있다 / 없다|có thể / không thể (TRỌNG TÂM)
+ko2-06|V-고 있다|đang (TRỌNG TÂM)
+ko2-07|V/A-(으)면|nếu (TRỌNG TÂM)
+ko2-08|V-(으)러 가다|đi để làm V (TRỌNG TÂM)
+ko2-09|N보다|hơn N (so sánh) (TRỌNG TÂM)
+ko2-10|V-아 / 어 주다|làm giúp (TRỌNG TÂM)
+
+DANH SÁCH TỪ VỰNG ĐÃ HỌC (từ = nghĩa):
+날씨 = thời tiết
+여관 = quán trọ
+준비하다 = chuẩn bị
+무섭다 = sợ
+친구 = bạn bè
+예쁘다 = đẹp
 
 SỐ BÁO:
 {"bai": [{"loai": "tin_lang", "tieu_de": "…", "doan": ["…"]}]}

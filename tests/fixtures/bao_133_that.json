@@ -1,0 +1,1133 @@
+{
+"nguon": "Gemini thật (khoá tài khoản test), tests/gemini/run_job.py --lang zh|ko --master, deck mẫu tests/fixtures/zh_deck_hsk2.json / ko_deck_topik2.json, 17–18/11/2026",
+"so": {
+"zh/2026-11-17": {
+"ngay": "2026-11-17",
+"so": 1,
+"rut_gon": false,
+"may_viet": "Gemini (gemini-4-hydrogen)",
+"ngon_ngu": "zh",
+"truyen_chung": true,
+"bai": [
+{
+"loai": "tin_lang",
+"tieu_de": "[十|shí][一|yī][月|yuè][天|tiān][气|qì][和|hé][周|zhōu][末|mò][集|jí][市|shì]",
+"doan": [
+"{今天|jīn tiān|今天}{早上|zǎo shang|早上}，[言|yán][叶|yè][村|cūn]{天气|tiān qì|天气}[很|hěn][好|hǎo]。[有|yǒu][一|yì][点|diǎn][太|tài][阳|yáng]，[大|dà]{家|jiā|家}{觉得|jué de|觉得}[很|hěn][舒|shū][服|fu]。[大|dà][家|jiā][可|kě][以|yǐ][晒|shài]{茶|chá|茶}，[也|yě][可|kě][以|yǐ][打|dǎ][扫|sǎo][言|yán][叶|yè][菜|cài][园|yuán]。[虽|suī][然|rán][早|zǎo][上|shang][很|hěn][暖|nuǎn][和|huo]，[但|dàn][是|shì][下|xià][午|wǔ][会|huì][多|duō][云|yún]。[下|xià][午|wǔ][的|de][天|tiān][气|qì][比|bǐ][早|zǎo][上|shang][冷|lěng]。[出|chū]{门|mén|门}[的|de]{时候|shí hou|时候}，[大|dà][家|jiā][要|yào][多|duō][穿|chuān]{衣服|yī fu|衣服}。",
+"[这|zhè][个|gè][星|xīng][期|qī][六|liù]，{村子|cūn zi|村子}[里|lǐ][有|yǒu][秋|qiū][天|tiān][的|de]{集市|jí shì|集市}。[集|jí][市|shì][在|zài][小|xiǎo][广|guǎng][场|chǎng]，[不|bù]{远|yuǎn|远}。[今|jīn][年|nián][的|de][小|xiǎo][店|diàn][比|bǐ][去|qù][年|nián][多|duō]。[大|dà][家|jiā][可|kě][以|yǐ]{买|mǎi|买}[热|rè][茶|chá][和|hé][烤|kǎo]{栗子|lì zi|栗子}。{孩子|hái zi|孩子}[和|hé]{朋友|péng you|朋友}[都|dōu][很|hěn]{高兴|gāo xìng|高兴}。"
+],
+"dich": [
+"Sáng nay, thời tiết ở làng Kotoba rất đẹp. Có chút nắng nhẹ, mọi người cảm thấy rất dễ chịu. Mọi người có thể phơi trà, cũng có thể dọn dẹp vườn rau Kotoba. Tuy buổi sáng ấm áp nhưng buổi chiều trời sẽ nhiều mây. Thời tiết buổi chiều lạnh hơn buổi sáng. Lúc ra ngoài, mọi người nhớ mặc thêm quần áo nhé.",
+"Thứ Bảy tuần này, trong làng có chợ phiên mùa thu. Chợ phiên họp ở quảng trường nhỏ, không xa lắm. Năm nay có nhiều gian hàng hơn năm ngoái. Mọi người có thể mua trà nóng và hạt dẻ nướng. Trẻ con và bạn bè ai cũng rất vui."
+]
+},
+{
+"loai": "truyen",
+"tieu_de": "[门|mén][前|qián][的|de][小|xiǎo][木|mù][盒|hé]",
+"doan": [
+"[十|shí][一|yī][月|yuè][的|de][一|yí][个|gè][早|zǎo][上|shang]，[林|lín][第|dì][一|yī][次|cì][一|yí][个|gè][人|rén][打|dǎ][开|kāi][言|yán][叶|yè][旅|lǚ][店|diàn][的|de][门|mén]。[她|tā][看|kàn][见|jiàn][邮|yóu][递|dì][员|yuán][站|zhàn][在|zài][门|mén][外|wài]，[手|shǒu][里|lǐ][拿|ná][着|zhe][一|yí][个|gè][小|xiǎo][木|mù][盒|hé]。[林|lín][高|gāo][兴|xìng][地|de][说|shuō]：“[邮|yóu][递|dì][员|yuán][叔|shū][叔|shu]，{晚上|wǎn shang|晚上}[好|hǎo]！”[邮|yóu][递|dì][员|yuán]{笑|xiào|笑}[了|le][笑|xiào]。[林|lín][脸|liǎn][红|hóng][了|le]，{快|kuài|快}[说|shuō]：“[啊|ā]，[不|bú][对|duì]，[早|zǎo][上|shang][好|hǎo]！”[她|tā][拿|ná][出|chū][小|xiǎo][本|běn][子|zi]，[一|yī][边|biān][写|xiě][一|yī][边|biān][说|shuō]：“[我|wǒ][要|yào][记|jì][住|zhù]！”",
+"[邮|yóu][递|dì][员|yuán][笑|xiào][着|zhe][把|bǎ][木|mù][盒|hé][放|fàng][在|zài][门|mén][前|qián][的|de][桌|zhuō][子|zi][上|shàng]。[盒|hé][子|zi][上|shàng][没|méi][有|yǒu][写|xiě][名|míng][字|zi]，[只|zhǐ][写|xiě][着|zhe]：“[给|gěi][秋|qiū][天|tiān][钥|yào][匙|shi][的|de][人|rén]。”[林|lín][仔|zǐ][细|xì][看|kàn][着|zhe][这|zhè][些|xiē][字|zì]，[不|bù]{知道|zhī dào|知道}[是|shì][谁|shuí][寄|jì][来|lái][的|de]。[这|zhè][时|shí][候|hòu]，[哈|hā][娜|nà][从|cóng][厨|chú][房|fáng][走|zǒu][出|chū][来|lái]，[手|shǒu][里|lǐ][正|zhèng][拿|ná][着|zhe][擦|cā][茶|chá][壶|hú][的|de][布|bù][呢|ne]。",
+"[哈|hā][娜|nà][看|kàn][见|jiàn][盒|hé][子|zi][上|shàng][的|de][字|zì]，[突|tū][然|rán][不|bù][笑|xiào][了|le]。[她|tā][轻|qīng][轻|qīng][摸|mō][了|le][摸|mō][木|mù][盒|hé]，[看|kàn][着|zhe]{外面|wài miàn|外面}[的|de][太|tài][阳|yáng]，[叹|tàn][了|le][一|yì][口|kǒu][气|qì]。“[林|lín]，[你|nǐ][帮|bāng][我|wǒ][把|bǎ][这|zhè][个|gè][盒|hé][子|zi][放|fàng][进|jìn]{房间|fáng jiān|房间}[里|lǐ][吧|ba]。”[哈|hā][娜|nà][小|xiǎo][声|shēng][地|de][说|shuō]，[和|hé][平|píng][时|shí][不|bù][一|yí][样|yàng]。[林|lín][点|diǎn][点|diǎn][头|tóu]，[抱|bào][起|qǐ][盒|hé][子|zi]。[她|tā][刚|gāng][转|zhuǎn][身|shēn]，[突|tū][然|rán][听|tīng][见|jiàn][盒|hé][子|zi][里|lǐ][面|miàn][发|fā][出|chū][很|hěn][轻|qīng][的|de][声|shēng][音|yīn]。"
+],
+"dich": [
+"Một buổi sáng tháng Mười Một, Lin lần đầu tiên tự mở cửa quán Kotoba một mình. Cô thấy bác đưa thư đang đứng ngoài cổng, tay cầm một chiếc hộp gỗ nhỏ. Lin vui vẻ nói: \"Chú đưa thư ơi, chúc chú buổi tối tốt lành!\" Bác đưa thư mỉm cười. Lin đỏ mặt, vội nói: \"À, không đúng, chúc chú buổi sáng tốt lành!\" Cô lấy cuốn sổ nhỏ ra, vừa viết vừa lẩm bẩm: \"Mình phải ghi nhớ mới được!\"",
+"Bác đưa thư mỉm cười đặt chiếc hộp gỗ lên chiếc bàn trước cửa. Trên hộp không ghi tên người nhận, chỉ viết: \"Gửi người giữ chìa khóa mùa thu.\" Lin chăm chú nhìn những dòng chữ này, không biết là ai gửi tới. Đúng lúc đó, chị Hana từ trong bếp bước ra, tay đang cầm chiếc khăn lau ấm trà.",
+"Vừa nhìn thấy chữ trên hộp, chị Hana bỗng ngừng cười. Chị khẽ chạm vào chiếc hộp gỗ, nhìn ánh nắng bên ngoài rồi thở dài một tiếng. \"Lin, em giúp chị cất chiếc hộp này vào phòng nhé.\" Chị Hana nói nhỏ, giọng khác hẳn mọi ngày. Lin gật đầu, ôm chiếc hộp lên. Cô vừa quay người đi, bỗng nghe thấy bên trong hộp phát ra một tiếng động rất khẽ."
+],
+"ky": 1
+},
+{
+"loai": "cot",
+"tieu_de": "StackChan[的|de][小|xiǎo][角|jiǎo][落|luò]",
+"doan": [
+"[今|jīn][天|tiān][早|zǎo][上|shang]，[我|wǒ][去|qù][菜|cài][园|yuán][数|shǔ][叶|yè][子|zi]。[有|yǒu][七|qī][片|piàn][黄|huáng][叶|yè][子|zi][掉|diào][在|zài][我|wǒ][头|tóu][上|shang]。[叶|yè][子|zi][的|de][颜|yán][色|sè][很|hěn][漂|piào][亮|liang]。[我|wǒ][画|huà][了|le][七|qī][片|piàn][叶|yè][子|zi]，[都|dōu][是|shì][橙|chéng][色|sè][的|de]{像素画|xiàng sù huà|像素画}。",
+"[我|wǒ][看|kàn][见|jiàn][林|lín][站|zhàn][在|zài][旅|lǚ][店|diàn][门|mén][旁|páng][边|biān]。[她|tā][正|zhèng][在|zài][和|hé][邮|yóu][递|dì][员|yuán][说|shuō][话|huà][呢|ne]。[邮|yóu][递|dì][员|yuán][手|shǒu][里|lǐ][拿|ná][着|zhe][一|yí][个|gè][长|cháng][方|fāng][形|xíng][的|de][盒|hé][子|zi]。[我|wǒ][想|xiǎng][里|lǐ][面|miàn][可|kě][能|néng][是|shì][饼|bǐng][干|gān]。[虽|suī][然|rán][像|xiàng][饼|bǐng][干|gān]，[但|dàn][是|shì][它|tā][比|bǐ][一|yì][般|bān][的|de][饼|bǐng][干|gān][大|dà][一|yì][点|diǎn]。"
+],
+"dich": [
+"Sáng nay, tớ ra vườn rau đếm lá. Có bảy chiếc lá vàng rơi xuống đầu tớ. Màu sắc của lá rất đẹp. Tớ đã vẽ lại bảy chiếc lá bằng những bức tranh điểm ảnh màu cam.",
+"Tớ thấy Lin đứng cạnh cửa quán trọ. Cô ấy đang nói chuyện với bác đưa thư. Bác đưa thư cầm trên tay một chiếc hộp hình chữ nhật. Tớ đoán bên trong có thể là bánh quy. Tuy trông giống bánh quy nhưng nó to hơn bánh quy bình thường một chút."
+]
+}
+],
+"cau_hoi": [
+{
+"hoi": "[星|xīng][期|qī][六|liù][的|de]{集市|jí shì|集市}[在|zài][哪|nǎ][里|lǐ]？",
+"chon": [
+"[旅|lǚ][店|diàn]{门|mén|门}[前|qián]",
+"[小|xiǎo][广|guǎng][场|chǎng]",
+"[言|yán][叶|yè][菜|cài][园|yuán]"
+],
+"dung": 1,
+"giai_thich": "Trong đoạn hai của bài tin làng có câu cho biết chợ phiên nằm ở quảng trường nhỏ, không xa."
+},
+{
+"hoi": "StackChan[画|huà][了|le][什|shén][么|me]{颜色|yán sè|颜色}[的|de]{像素画|xiàng sù huà|像素画}？",
+"chon": [
+"{白色|bái sè|白色}",
+"{红色|hóng sè|红色}",
+"[橙|chéng][色|sè]"
+],
+"dung": 2,
+"giai_thich": "Trong đoạn một mục góc của StackChan có câu nói rằng cậu ấy đã vẽ bảy chiếc lá thành tranh điểm ảnh màu cam."
+},
+{
+"hoi": "[哈|hā][娜|nà][让|ràng][林|lín][把|bǎ][木|mù][盒|hé][放|fàng][进|jìn][哪|nǎ][里|lǐ]？",
+"chon": [
+"{房间|fáng jiān|房间}[里|lǐ]",
+"[厨|chú][房|fáng][里|lǐ]",
+"{门|mén|门}[外|wài]"
+],
+"dung": 0,
+"giai_thich": "Trong đoạn ba của truyện, Ha-na nói với Lin hãy giúp cô ấy đặt chiếc hộp này vào trong phòng."
+}
+],
+"chinh_ta": [
+{
+"cau": "[下|xià][午|wǔ][的|de]{天气|tiān qì|天气}[比|bǐ]{早上|zǎo shang|早上}[冷|lěng]。",
+"them_dap_an": []
+},
+{
+"cau": "[叶|yè][子|zi][的|de]{颜色|yán sè|颜色}[很|hěn]{漂亮|piào liang|漂亮}。",
+"them_dap_an": []
+},
+{
+"cau": "[邮|yóu][递|dì][员|yuán]{笑|xiào|笑}[了|le]{笑|xiào|笑}。",
+"them_dap_an": []
+}
+],
+"mau_cau": [
+"zh2-05",
+"zh2-07",
+"zh2-08",
+"zh1-06"
+],
+"tu_moi": [
+{
+"w": "集市",
+"r": "jí shì",
+"m": "chợ phiên"
+},
+{
+"w": "栗子",
+"r": "lì zi",
+"m": "hạt dẻ"
+},
+{
+"w": "像素画",
+"r": "xiàng sù huà",
+"m": "tranh điểm ảnh"
+}
+],
+"tom_tat": "Số báo đầu tiên của làng Kotoba đưa tin về thời tiết giữa tháng Mười Một và chợ phiên mùa thu cuối tuần này. Ngoài ra còn có câu chuyện nhỏ về chiếc hộp gỗ bí ẩn trước cửa quán trọ và góc chia sẻ của StackChan.",
+"tra_tu": {
+"今天": [
+"今天",
+"jīn tiān",
+"hôm nay · KIM THIÊN",
+"deck"
+],
+"早上": [
+"早上",
+"zǎo shàng",
+"buổi sáng · TẢO THƯỢNG",
+"deck"
+],
+"天气": [
+"天气",
+"tiān qì",
+"thời tiết · THIÊN KHÍ",
+"deck"
+],
+"家": [
+"家",
+"jiā",
+"nhà · GIA",
+"deck"
+],
+"觉得": [
+"觉得",
+"jué de",
+"cảm thấy · GIÁC ĐẮC",
+"deck"
+],
+"茶": [
+"茶",
+"chá",
+"trà",
+"deck"
+],
+"门": [
+"门",
+"mén",
+"cửa · MÔN",
+"deck"
+],
+"时候": [
+"时候",
+"shí hòu",
+"lúc, khi · THỜI HẬU",
+"deck"
+],
+"衣服": [
+"衣服",
+"yī fú",
+"quần áo · Y PHỤC",
+"deck"
+],
+"村子": [
+"村子",
+"cūn zi",
+"ngôi làng · THÔN TỬ",
+"deck"
+],
+"远": [
+"远",
+"yuǎn",
+"xa · VIỄN",
+"deck"
+],
+"买": [
+"买",
+"mǎi",
+"mua · MÃI",
+"deck"
+],
+"孩子": [
+"孩子",
+"hái zi",
+"đứa trẻ · HÀI TỬ",
+"deck"
+],
+"朋友": [
+"朋友",
+"péng yǒu",
+"bạn bè · BẰNG HỮU",
+"deck"
+],
+"高兴": [
+"高兴",
+"gāo xìng",
+"vui · CAO HỨNG",
+"deck"
+],
+"晚上": [
+"晚上",
+"wǎn shàng",
+"buổi tối · VÃN THƯỢNG",
+"deck"
+],
+"笑": [
+"笑",
+"xiào",
+"cười · TIẾU",
+"deck"
+],
+"快": [
+"快",
+"kuài",
+"nhanh · KHOÁI",
+"deck"
+],
+"知道": [
+"知道",
+"zhī dào",
+"biết · TRI ĐẠO",
+"deck"
+],
+"外面": [
+"外面",
+"wài miàn",
+"bên ngoài · NGOẠI DIỆN",
+"deck"
+],
+"房间": [
+"房间",
+"fáng jiān",
+"căn phòng · PHÒNG GIAN",
+"deck"
+],
+"颜色": [
+"颜色",
+"yán sè",
+"màu sắc · NHAN SẮC",
+"deck"
+],
+"白色": [
+"白色",
+"bái sè",
+"màu trắng · BẠCH SẮC",
+"deck"
+],
+"红色": [
+"红色",
+"hóng sè",
+"màu đỏ · HỒNG SẮC",
+"deck"
+],
+"漂亮": [
+"漂亮",
+"piào liàng",
+"đẹp · PHIÊU LƯỢNG",
+"deck"
+]
+},
+"tra_mau": {
+"zh2-05": [
+"A 比 B + tính từ",
+"A … hơn B",
+"HSK 2"
+],
+"zh2-07": [
+"虽然……，但是……",
+"tuy … nhưng …",
+"HSK 2"
+],
+"zh2-08": [
+"可以 + V",
+"có thể …",
+"HSK 2"
+],
+"zh1-06": [
+"很 + tính từ",
+"rất …",
+"HSK 1"
+]
+},
+"tra_sach": {
+"deck": "Mẫu HSK2"
+}
+},
+"zh/2026-11-18": {
+"ngay": "2026-11-18",
+"so": 2,
+"rut_gon": false,
+"may_viet": "Gemini (gemini-4-hydrogen)",
+"ngon_ngu": "zh",
+"truyen_chung": true,
+"bai": [
+{
+"loai": "tin_lang",
+"tieu_de": "[言|yán][叶|yè][村|cūn][准|zhǔn][备|bèi][集|jí][市|shì]",
+"doan": [
+"{今天|jīn tiān|今天}{早上|zǎo shang|早上}，{村子|cūn zi|村子}[里|lǐ][很|hěn][忙|máng]。[因|yīn][为|wèi][星|xīng][期|qī][六|liù][的|de]{集市|jí shì|集市}{快|kuài|快}[要|yào][开|kāi][始|shǐ][了|le]，[所|suǒ][以|yǐ][很|hěn][多|duō][人|rén][很|hěn][早|zǎo][就|jiù]{起床|qǐ chuáng|起床}[了|le]。[大|dà]{家|jiā|家}[在|zài][小|xiǎo]{广场|guǎng chǎng|广场}{工作|gōng zuò|工作}。[他|tā][们|men][还|hái][搭|dā][好|hǎo][了|le][木|mù][头|tou][架|jià][子|zi]。[今|jīn][年|nián][卖|mài][香|xiāng][料|liào][和|hé][烤|kǎo][栗|lì][子|zi][的|de]{摊位|tān wèi|摊位}[在|zài][大|dà]{门|mén|门}{旁边|páng biān|旁边}。[那|nà][里|lǐ][离|lí]{路|lù|路}[很|hěn]{近|jìn|近}。",
+"[早|zǎo][上|shang][有|yǒu][一|yì][点|diǎn][太|tài][阳|yang]。{天气|tiān qì|天气}[很|hěn][好|hǎo]。[但|dàn][是|shì][下|xià][午|wǔ][天|tiān][上|shàng][会|huì][有|yǒu][很|hěn][多|duō][云|yún]。[风|fēng][也|yě][有|yǒu][点|diǎn][冷|lěng]。[大|dà][家|jiā][去|qù]{外面|wài miàn|外面}[工|gōng][作|zuò][的|de]{时候|shí hou|时候}，[要|yào][多|duō][穿|chuān]{衣服|yī fu|衣服}。[在|zài][言|yán][叶|yè][菜|cài][园|yuán][玩|wán]，[也|yě][要|yào][多|duō][穿|chuān]。{休息|xiū xi|休息}[的|de][时|shí][候|hou][还|hái][能|néng]{喝|hē|喝}[热|rè]{茶|chá|茶}。"
+],
+"dich": [
+"Sáng nay, trong làng rất bận rộn. Vì chợ phiên thứ Bảy sắp bắt đầu rồi nên nhiều người đã dậy rất sớm. Mọi người làm việc ở quảng trường nhỏ. Họ còn dựng xong cả khung gỗ. Năm nay, các gian hàng bán gia vị và hạt dẻ nướng nằm ở bên cạnh cổng lớn. Chỗ đó rất gần đường.",
+"Buổi sáng có chút nắng nhẹ. Thời tiết rất đẹp. Nhưng buổi chiều trên trời sẽ có nhiều mây. Gió cũng hơi lạnh. Lúc mọi người ra ngoài làm việc, nhớ mặc thêm quần áo. Khi vui chơi ở vườn Kotoba cũng phải mặc thêm. Khi nghỉ ngơi còn có thể uống trà nóng."
+]
+},
+{
+"loai": "truyen",
+"tieu_de": "[落|luò][叶|yè][和|hé][以|yǐ][前|qián][的|de][事|shì]",
+"doan": [
+"[林|lín][拿|ná][着|zhe][木|mù][头|tou][盒|hé][子|zi]，[心|xīn][里|li][很|hěn][好|hào][奇|qí]。[她|tā][跑|pǎo][到|dào][言|yán][叶|yè][菜|cài][园|yuán]，[问|wèn]：“StackChan，[你|nǐ][见|jiàn][过|guò][这|zhè][样|yàng][的|de][字|zì][吗|ma]？”[小|xiǎo][机|jī][器|qì][人|rén][点|diǎn][点|diǎn][头|tóu]：“[我|wǒ][正|zhèng][在|zài][拍|pāi][照|zhào][呢|ne]！”[说|shuō][完|wán]，[它|tā][拍|pāi][了|le][很|hěn][多|duō][掉|diào][在|zài][草|cǎo][地|dì][上|shàng][的|de][黄|huáng][叶|yè]。[林|lín]{笑|xiào|笑}[了|le]，[拿|ná][出|chū][小|xiǎo][本|běn][子|zi][说|shuō]：“[我|wǒ][也|yě][记|jì][下|xià][来|lái]！”",
+"[这|zhè][时|shí][候|hou]，[村|cūn][长|zhǎng][来|lái][喝|hē][茶|chá]。[他|tā][看|kàn][见|jiàn][林|lín][手|shǒu][里|li][的|de][盒|hé][子|zi]，{眼睛|yǎn jing|眼睛}[一|yí][亮|liàng]：“[哎|āi][呀|yā]，[这|zhè][个|ge][盒|hé][子|zi][很|hěn][像|xiàng][我|wǒ][以|yǐ][前|qián][的|de][老|lǎo][朋|péng][友|you][的|de]。”[林|lín][还|hái][没|méi][问|wèn]，[村|cūn][长|zhǎng][就|jiù][坐|zuò][下|xià]，[讲|jiǎng][起|qǐ][老|lǎo][朋|péng][友|you]{喜欢|xǐ huan|喜欢}[喝|hē][茶|chá][的|de][事|shì]，[还|hái][讲|jiǎng][到|dào][那|nà][个|ge][坏|huài][了|le][的|de][旧|jiù][茶|chá][壶|hú]。",
+"[林|lín][认|rèn][真|zhēn][地|de][听|tīng][着|zhe]，[一|yì][直|zhí][点|diǎn][点|diǎn][头|tóu]。[突|tū][然|rán]，[天|tiān][上|shàng][有|yǒu][很|hěn][多|duō][云|yún]，[风|fēng][吹|chuī][过|guò][来|lái][有|yǒu][点|diǎn][冷|lěng]。[村|cūn][长|zhǎng][停|tíng][下|xià][来|lái]，[低|dī][头|tóu][仔|zǐ][细|xì][看|kàn][盒|hé][子|zi][下|xià][面|miàn][的|de][一|yí][个|ge][小|xiǎo][印|yìn][章|zhāng]。[他|tā][皱|zhòu][着|zhe][眉|méi]，[小|xiǎo][声|shēng][说|shuō]：“[等|děng][一|yí][下|xià]，[难|nán][道|dào][寄|jì][这|zhè][个|ge][盒|hé][子|zi][的|de][人|rén][是|shì]……”"
+],
+"dich": [
+"Lin cầm chiếc hộp gỗ, trong lòng rất tò mò. Cô chạy ra vườn Kotoba, hỏi: \"Stack-chan ơi, cậu đã từng thấy nét chữ như thế này chưa?\" Chú robot nhỏ gật đầu: \"Tớ đang chụp ảnh đây!\" Nói xong, nó chụp rất nhiều chiếc lá vàng rơi trên thảm cỏ. Lin bật cười, lấy cuốn sổ nhỏ ra nói: \"Em cũng ghi lại đây!\"",
+"Đúng lúc đó, ông trưởng làng đến uống trà. Ông nhìn thấy chiếc hộp trên tay Lin, mắt sáng lên: \"Ồ, cái hộp này rất giống của người bạn cũ của tôi ngày xưa.\" Lin còn chưa kịp hỏi, ông trưởng làng đã ngồi xuống, kể về chuyện người bạn cũ thích uống trà, rồi kể đến cái ấm trà cũ bị hỏng.",
+"Lin chăm chú lắng nghe, liên tục gật đầu. Đột nhiên, trên trời có rất nhiều mây, gió thổi qua hơi lạnh. Ông trưởng làng dừng lại, cúi đầu nhìn kỹ một con dấu nhỏ ở phía dưới chiếc hộp. Ông nhíu mày, khẽ nói: \"Khoan đã, chẳng lẽ người gửi chiếc hộp này là...\""
+],
+"ky": 2,
+"ky_truoc": "Sáng sớm tháng Mười Một, Lin lần đầu tự mở cửa Quán Kotoba và nhận một chiếc hộp gỗ không rõ người nhận từ bác đưa thư. Chị Hana nhìn thấy dòng chữ mực nâu trên hộp liền khựng lại và bảo Lin cất tạm vào kho."
+},
+{
+"loai": "thong_bao",
+"tieu_de": "[村|cūn][里|lǐ][通|tōng][知|zhī]",
+"doan": [
+"◆ [提|tí][醒|xǐng]：[下|xià][午|wǔ][云|yún][多|duō]，[天|tiān][气|qì][快|kuài][要|yào][变|biàn][冷|lěng][了|le]。[请|qǐng][每|měi][家|jiā][在|zài][下|xià][午|wǔ]4[点|diǎn][以|yǐ][前|qián]，[收|shōu][好|hǎo][外|wài][面|miàn][晒|shài][的|de][衣|yī][服|fu][和|hé][东|dōng][西|xi]。",
+"◆ [秋|qiū][天|tiān][集|jí][市|shì]：[村|cūn][民|mín][们|men][要|yào][在|zài][小|xiǎo][广|guǎng][场|chǎng][卖|mài][东|dōng][西|xi]。[请|qǐng][在|zài][星|xīng][期|qī][五|wǔ][晚|wǎn][上|shang][以|yǐ][前|qián]，[摆|bǎi][好|hǎo][桌|zhuō][子|zi][和|hé][椅|yǐ][子|zi]。"
+],
+"dich": [
+"◆ Nhắc nhở: Buổi chiều nhiều mây, thời tiết sắp trở lạnh rồi. Xin các gia đình thu dọn quần áo và đồ phơi bên ngoài trước 4 giờ chiều.",
+"◆ Chợ phiên mùa thu: Các hộ dân sẽ bán hàng tại quảng trường nhỏ. Vui lòng xếp xong bàn ghế trước tối thứ Sáu."
+]
+}
+],
+"cau_hoi": [
+{
+"hoi": "[今|jīn][年|nián][卖|mài][香|xiāng][料|liào][和|hé][烤|kǎo][栗|lì][子|zi][的|de]{摊位|tān wèi|摊位}[在|zài][哪|nǎ][里|li]？",
+"chon": [
+"[在|zài][言|yán][叶|yè][菜|cài][园|yuán][里|lǐ]",
+"[在|zài][大|dà]{门|mén|门}{旁边|páng biān|旁边}",
+"[在|zài][村|cūn][长|zhǎng]{家|jiā|家}{门|mén|门}[口|kǒu]"
+],
+"dung": 1,
+"giai_thich": "Đoạn 1 của bài tin làng cho biết năm nay gian hàng bán gia vị và hạt dẻ nướng nằm ngay bên cạnh cổng lớn, rất gần đường."
+},
+{
+"hoi": "[村|cūn][长|zhǎng][在|zài][盒|hé][子|zi][下|xià][面|miàn][看|kàn][见|jiàn][了|le][什|shén][么|me]？",
+"chon": [
+"[一|yí][个|ge][小|xiǎo][印|yìn][章|zhāng]",
+"[一|yí][个|ge][旧|jiù]{茶|chá|茶}[壶|hú]",
+"[很|hěn][多|duō][黄|huáng][叶|yè]"
+],
+"dung": 0,
+"giai_thich": "Ở đoạn 3 của truyện, trưởng thôn dừng lại và cúi đầu nhìn kỹ một con dấu nhỏ ở mặt dưới chiếc hộp."
+},
+{
+"hoi": "[村|cūn][里|lǐ][通|tōng][知|zhī][大|dà]{家|jiā|家}[星|xīng][期|qī][五|wǔ]{晚上|wǎn shang|晚上}[以|yǐ][前|qián][做|zuò][什|shén][么|me]？",
+"chon": [
+"[收|shōu][好|hǎo]{外面|wài miàn|外面}[晒|shài][的|de]{衣服|yī fu|衣服}",
+"[去|qù][言|yán][叶|yè][菜|cài][园|yuán]{喝|hē|喝}[热|rè]{茶|chá|茶}",
+"[摆|bǎi][好|hǎo][桌|zhuō][子|zi][和|hé][椅|yǐ][子|zi]"
+],
+"dung": 2,
+"giai_thich": "Mục thông báo thứ hai của làng nhắc người dân bán hàng tại quảng trường nhỏ hãy xếp xong bàn ghế trước tối thứ Sáu."
+}
+],
+"chinh_ta": [
+{
+"cau": "{今天|jīn tiān|今天}{早上|zǎo shang|早上}，{村子|cūn zi|村子}[里|lǐ][很|hěn][忙|máng]。",
+"them_dap_an": []
+},
+{
+"cau": "{休息|xiū xi|休息}[的|de]{时候|shí hou|时候}[还|hái][能|néng]{喝|hē|喝}[热|rè]{茶|chá|茶}。",
+"them_dap_an": []
+},
+{
+"cau": "[这|zhè]{时候|shí hou|时候}，[村|cūn][长|zhǎng][来|lái]{喝|hē|喝}{茶|chá|茶}。",
+"them_dap_an": []
+}
+],
+"mau_cau": [
+"zh2-04",
+"zh2-06",
+"zh2-12",
+"zh1-08"
+],
+"tu_moi": [
+{
+"w": "集市",
+"r": "jí shì",
+"m": "chợ phiên"
+},
+{
+"w": "广场",
+"r": "guǎng chǎng",
+"m": "quảng trường"
+},
+{
+"w": "摊位",
+"r": "tān wèi",
+"m": "gian hàng"
+}
+],
+"tom_tat": "Số báo thứ hai đưa tin về việc dân làng chuẩn bị gian hàng cho chợ phiên thứ Bảy và thời tiết chuyển nhiều mây, se lạnh vào buổi chiều, kèm theo thông báo thu dọn đồ phơi và xếp bàn ghế.",
+"tra_tu": {
+"今天": [
+"今天",
+"jīn tiān",
+"hôm nay · KIM THIÊN",
+"deck"
+],
+"早上": [
+"早上",
+"zǎo shàng",
+"buổi sáng · TẢO THƯỢNG",
+"deck"
+],
+"村子": [
+"村子",
+"cūn zi",
+"ngôi làng · THÔN TỬ",
+"deck"
+],
+"快": [
+"快",
+"kuài",
+"nhanh · KHOÁI",
+"deck"
+],
+"起床": [
+"起床",
+"qǐ chuáng",
+"thức dậy · KHỞI SÀNG",
+"deck"
+],
+"家": [
+"家",
+"jiā",
+"nhà · GIA",
+"deck"
+],
+"工作": [
+"工作",
+"gōng zuò",
+"công việc · CÔNG TÁC",
+"deck"
+],
+"门": [
+"门",
+"mén",
+"cửa · MÔN",
+"deck"
+],
+"旁边": [
+"旁边",
+"páng biān",
+"bên cạnh · BÀNG BIÊN",
+"deck"
+],
+"路": [
+"路",
+"lù",
+"con đường · LỘ",
+"deck"
+],
+"近": [
+"近",
+"jìn",
+"gần · CẬN",
+"deck"
+],
+"天气": [
+"天气",
+"tiān qì",
+"thời tiết · THIÊN KHÍ",
+"deck"
+],
+"外面": [
+"外面",
+"wài miàn",
+"bên ngoài · NGOẠI DIỆN",
+"deck"
+],
+"时候": [
+"时候",
+"shí hòu",
+"lúc, khi · THỜI HẬU",
+"deck"
+],
+"衣服": [
+"衣服",
+"yī fú",
+"quần áo · Y PHỤC",
+"deck"
+],
+"休息": [
+"休息",
+"xiū xī",
+"nghỉ ngơi · HƯU TỨC",
+"deck"
+],
+"喝": [
+"喝",
+"hē",
+"uống · HÁT",
+"deck"
+],
+"茶": [
+"茶",
+"chá",
+"trà",
+"deck"
+],
+"笑": [
+"笑",
+"xiào",
+"cười · TIẾU",
+"deck"
+],
+"眼睛": [
+"眼睛",
+"yǎn jīng",
+"mắt · NHÃN TINH",
+"deck"
+],
+"喜欢": [
+"喜欢",
+"xǐ huān",
+"thích · HỈ HOAN",
+"deck"
+],
+"晚上": [
+"晚上",
+"wǎn shàng",
+"buổi tối · VÃN THƯỢNG",
+"deck"
+]
+},
+"tra_mau": {
+"zh2-04": [
+"要 / 快要 + V + 了",
+"sắp … rồi",
+"HSK 2"
+],
+"zh2-06": [
+"因为……，所以……",
+"vì … nên …",
+"HSK 2"
+],
+"zh2-12": [
+"还",
+"còn, vẫn",
+"HSK 2"
+],
+"zh1-08": [
+"在 + nơi chốn",
+"ở …",
+"HSK 1"
+]
+},
+"tra_sach": {
+"deck": "Mẫu HSK2"
+}
+},
+"ko/2026-11-17": {
+"ngay": "2026-11-17",
+"so": 1,
+"rut_gon": false,
+"may_viet": "Gemini (gemini-flash-lite-latest)",
+"ngon_ngu": "ko",
+"truyen_chung": true,
+"bai": [
+{
+"loai": "tin_lang",
+"tieu_de": "코토바 마을 날씨와 주말 시장",
+"doan": [
+"{오늘||오늘} {아침||아침} 코토바 {마을||마을}은 {날씨||날씨}가 {좋아요||좋다}. 따뜻한 해 아래에서 차를 말리고 텃밭을 정리할 수 있어요. 아침은 따뜻하지만 오후에는 구름이 {많고||많다} {추울||춥다} 거예요. 밖에 나가면 따뜻한 {옷||옷}을 꼭 입으세요.",
+"이번 주 토요일에 {작은||작다} 광장에서 가을 {시장||시장}이 열릴 거예요. 올해는 따뜻한 {향신료||향신료}와 {군밤||군밤}을 파는 {가게||가게}가 더 많아요. 모두 가을 시장을 많이 {기다리고||기다리다} 있어요. 이번 주말에 {친구||친구}와 함께 시장에 꼭 {오세요||오다}."
+],
+"dich": [
+"Sáng nay làng Kotoba thời tiết thật đẹp. Dưới ánh nắng ấm áp, mọi người có thể phơi trà và dọn dẹp khu vườn. Buổi sáng ấm áp nhưng từ chiều trời sẽ có nhiều mây và lạnh. Khi ra ngoài, mọi người nhớ mặc áo ấm nhé.",
+"Thứ Bảy tuần này, chợ phiên mùa thu sẽ mở ở quảng trường nhỏ. Năm nay sẽ có nhiều cửa hàng bán gia vị ấm và hạt dẻ nướng hơn. Ai cũng đang rất mong chờ chợ phiên mùa thu. Cuối tuần này hãy cùng bạn bè đến chợ nhé."
+]
+},
+{
+"loai": "truyen",
+"tieu_de": "처마 아래 나무 상자",
+"doan": [
+"린은 아침에 코토바 여관 {문||문}을 열었어요. 오늘은 혼자 처음 여관 문을 여는 날이에요. 우체부 아저씨가 작은 나무 {상자||상자}를 {들고||듣다} 문 앞에 서 있었어요. 린은 급하게 인사했어요. \"아저씨, 안녕히 주무세요!\" 아저씨가 조금 놀랐어요. 린은 다시 말했어요. \"아, 아니에요! {안녕하세요||안녕하세요}!\"",
+"우체부 아저씨는 웃으면서 나무 상자를 테이블 위에 놓았어요. 상자에는 받는 사람 이름이 없었어요. 대신 '가을 열쇠를 가진 사람에게'라고 적혀 있었어요. 린은 그 글씨를 천천히 {읽었어요||읽다}. 누가 이런 이상한 상자를 보냈을까요? 그때 하나 씨가 부엌에서 나왔어요.",
+"하나 씨는 상자의 글씨를 {보고||보다} {갑자기||가다} 멈췄어요. 웃음도 {사라졌어요||사다}. 하나 씨는 정원을 보다가 작게 말했어요. \"린 씨, 이 상자를 창고에 두세요.\" 목소리가 평소와 달랐지만 린은 고개를 끄덕였어요. 린이 상자를 안고 돌아설 때, 안에서 작은 소리가 들렸어요."
+],
+"dich": [
+"Buổi sáng, Lin mở cửa quán Kotoba. Hôm nay là ngày đầu tiên cô tự mở cửa quán một mình. Bác đưa thư đang đứng trước cửa với một chiếc hộp gỗ nhỏ trên tay. Lin vội vàng cúi chào: \"Bác ơi, chúc bác ngủ ngon ạ!\" Bác đưa thư hơi ngạc nhiên. Lin vội nói lại: \"À, không phải! Chào buổi sáng bác ạ!\"",
+"Bác đưa thư mỉm cười rồi đặt chiếc hộp gỗ lên bàn. Trên hộp không có tên người nhận. Thay vào đó, có dòng chữ viết: 'Gửi người giữ chìa khóa mùa thu'. Lin đọc chậm rãi dòng chữ đó. Không biết ai lại gửi chiếc hộp kỳ lạ như vậy nhỉ? Đúng lúc đó, chị Hana từ trong bếp bước ra.",
+"Chị Hana nhìn thấy nét chữ trên hộp thì bỗng khựng lại. Nụ cười cũng biến mất. Chị Hana nhìn ra khu vườn rồi nói nhỏ: \"Lin à, em hãy cất chiếc hộp này vào kho nhé.\" Giọng nói hơi khác mọi ngày nhưng Lin vẫn gật đầu. Khi Lin ôm chiếc hộp quay đi, cô nghe thấy một tiếng động nhỏ phát ra từ bên trong."
+],
+"ky": 1
+},
+{
+"loai": "cot",
+"tieu_de": "스택짱의 코너",
+"doan": [
+"오늘 아침에 저는 조용한 텃밭을 걸었어요. 그리고 텃밭에서 떨어지는 노란 잎을 세었어요. 노란 잎 일곱 개가 제 머리 위에 떨어졌어요. 저는 주황색 픽셀 그림으로 노란 잎 일곱 개를 모두 그렸어요.",
+"그때 여관 문 앞에서 린 씨를 보았어요. 린 씨는 우체부 아저씨와 이야기를 하고 있었어요. 아저씨는 네모난 상자를 들고 있었어요. 상자는 보통 과자보다 크지만 안에 맛있는 과자가 있을 거예요. 저도 그 과자를 같이 먹고 싶어요."
+],
+"dich": [
+"Sáng nay tớ đã đi dạo trong khu vườn yên tĩnh. Rồi tớ đếm những chiếc lá vàng rơi ở vườn. Có bảy chiếc lá vàng rơi lên đầu tớ. Tớ đã vẽ lại cả bảy chiếc lá vàng bằng tranh pixel màu cam.",
+"Lúc đó tớ thấy chị Lin ở trước cổng quán trọ. Chị Lin đang nói chuyện với bác đưa thư. Bác ấy đang cầm một chiếc hộp hình chữ nhật. Chiếc hộp lớn hơn bánh quy bình thường nhưng chắc bên trong có bánh quy ngon đấy. Tớ cũng muốn cùng ăn bánh quy đó."
+]
+}
+],
+"cau_hoi": [
+{
+"hoi": "오늘 오후 코토바 마을의 날씨는 어때요?",
+"chon": [
+"해가 있고 아주 더워요",
+"구름이 많고 추울 거예요",
+"바람이 없고 따뜻해요"
+],
+"dung": 1,
+"giai_thich": "Bài tin làng đoạn 1 có câu: \"아침은 따뜻하지만 오후에는 구름이 많고 추울 거예요.\" (Buổi sáng ấm nhưng buổi chiều trời sẽ nhiều mây và lạnh)."
+},
+{
+"hoi": "나무 상자에는 무엇이 없었어요?",
+"chon": [
+"나무 열쇠",
+"작은 소리",
+"받는 사람 이름"
+],
+"dung": 2,
+"giai_thich": "Trong truyện đoạn 2 có câu: \"상자에는 받는 사람 이름이 없었어요.\" (Trên hộp không có tên người nhận)."
+},
+{
+"hoi": "스택짱은 오늘 아침에 텃밭에서 무엇을 했어요?",
+"chon": [
+"노란 잎을 세고 그렸어요",
+"과자를 만들고 먹었어요",
+"린 씨와 차를 마셨어요"
+],
+"dung": 0,
+"giai_thich": "Trong mục Góc của StackChan đoạn 1 có viết: \"그리고 텃밭에서 떨어지는 노란 잎을 세었어요.\" và \"저는 주황색 픽셀 그림으로 노란 잎 일곱 개를 모두 그렸어요.\""
+}
+],
+"chinh_ta": [
+{
+"cau": "밖에 나가면 따뜻한 {옷||옷}을 꼭 입으세요.",
+"them_dap_an": []
+},
+{
+"cau": "린은 그 글씨를 천천히 {읽었어요||읽다}.",
+"them_dap_an": []
+},
+{
+"cau": "{오늘||오늘} {아침||아침}에 저는 {조용한||조용하다} 텃밭을 {걸었어요||걷다}.",
+"them_dap_an": []
+}
+],
+"mau_cau": [
+"ko2-01",
+"ko2-02",
+"ko2-03",
+"ko1-07"
+],
+"tu_moi": [
+{
+"w": "향신료",
+"r": "hyangsinryo",
+"m": "gia vị"
+},
+{
+"w": "군밤",
+"r": "gunbam",
+"m": "hạt dẻ nướng"
+},
+{
+"w": "상자",
+"r": "sangja",
+"m": "cái hộp"
+}
+],
+"tom_tat": "Số báo đầu tiên đưa tin về thời tiết làng Kotoba sáng nắng nhẹ chiều se lạnh và chợ phiên mùa thu sắp mở cuối tuần này. Ngoài ra còn có câu chuyện buổi sáng của StackChan trong vườn và hộp gỗ bí ẩn được gửi tới quán trọ.",
+"tra_tu": {
+"오늘": [
+"오늘",
+"oneul",
+"hôm nay",
+"deck"
+],
+"아침": [
+"아침",
+"achim",
+"buổi sáng",
+"deck"
+],
+"마을": [
+"마을",
+"maeul",
+"làng",
+"deck"
+],
+"날씨": [
+"날씨",
+"nalssi",
+"thời tiết",
+"deck"
+],
+"좋다": [
+"좋다",
+"jota",
+"tốt",
+"deck"
+],
+"많다": [
+"많다",
+"manta",
+"nhiều",
+"deck"
+],
+"춥다": [
+"춥다",
+"chupda",
+"lạnh",
+"deck"
+],
+"옷": [
+"옷",
+"ot",
+"quần áo",
+"deck"
+],
+"작다": [
+"작다",
+"jakda",
+"nhỏ",
+"deck"
+],
+"시장": [
+"시장",
+"sijang",
+"chợ",
+"deck"
+],
+"가게": [
+"가게",
+"gage",
+"cửa hàng",
+"deck"
+],
+"기다리다": [
+"기다리다",
+"gidarida",
+"chờ đợi",
+"deck"
+],
+"친구": [
+"친구",
+"chingu",
+"bạn bè",
+"deck"
+],
+"오다": [
+"오다",
+"oda",
+"đến",
+"deck"
+],
+"문": [
+"문",
+"mun",
+"cửa",
+"deck"
+],
+"듣다": [
+"듣다",
+"deutda",
+"nghe",
+"deck"
+],
+"안녕하세요": [
+"안녕하세요",
+"annyeonghaseyo",
+"xin chào",
+"deck"
+],
+"읽다": [
+"읽다",
+"ikda",
+"đọc",
+"deck"
+],
+"보다": [
+"보다",
+"boda",
+"xem, nhìn",
+"deck"
+],
+"가다": [
+"가다",
+"gada",
+"đi",
+"deck"
+],
+"사다": [
+"사다",
+"sada",
+"mua",
+"deck"
+],
+"조용하다": [
+"조용하다",
+"joyonghada",
+"yên tĩnh",
+"deck"
+],
+"걷다": [
+"걷다",
+"geotda",
+"đi bộ",
+"deck"
+]
+},
+"tra_mau": {
+"ko2-01": [
+"V-(으)ㄹ 거예요",
+"sẽ",
+"TOPIK 2"
+],
+"ko2-02": [
+"V-(으)세요",
+"hãy… (lịch sự)",
+"TOPIK 2"
+],
+"ko2-03": [
+"V/A-지만",
+"nhưng",
+"TOPIK 2"
+],
+"ko1-07": [
+"N에서 V",
+"làm V ở N",
+"TOPIK 1"
+]
+},
+"tra_sach": {
+"deck": "Mẫu TOPIK2"
+}
+},
+"ko/2026-11-18": {
+"ngay": "2026-11-18",
+"so": 2,
+"rut_gon": false,
+"may_viet": "Gemini (gemini-flash-lite-latest)",
+"ngon_ngu": "ko",
+"truyen_chung": true,
+"bai": [
+{
+"loai": "tin_lang",
+"tieu_de": "토요일 시장 준비와 가을 날씨",
+"doan": [
+"{오늘||오늘} {아침||아침}에 {마을||마을} 사람들은 {작은||작다} 광장에서 토요일 {시장||시장}을 {준비하고||준비하다} 있어요. 사람들은 나무 {텐트||텐트}를 {만들어서||만들다} {길||길} 옆에 세웠어요. 올해 따뜻한 음식 {가게||가게}는 시장 {입구||입구}에 있을 거예요. 텃밭 옆 {큰||크다} 길도 아주 {바빠요||바쁘다}.",
+"오늘 {날씨||날씨}는 아침에 맑았지만 오후에는 구름이 {많아져요||많다}. 오후부터 찬 {바람||바람}이 불어서 날씨가 조금 {추울||춥다} 거예요. 텃밭을 {걷거나||걷다} 밖에서 일하면 따뜻한 {옷||옷}을 입으세요."
+],
+"dich": [
+"Sáng nay người dân trong làng đang chuẩn bị cho phiên chợ thứ Bảy tại quảng trường nhỏ. Mọi người dựng lều gỗ dựng bên đường. Năm nay các gian hàng đồ ăn ấm sẽ nằm ngay lối vào chợ. Con đường lớn bên cạnh vườn rau cũng rất nhộn nhịp.",
+"Thời tiết hôm nay buổi sáng trời nắng ráo nhưng chiều sẽ nhiều mây hơn. Từ buổi chiều gió lạnh thổi nên trời sẽ hơi rét. Nếu đi bộ trong vườn rau hoặc làm việc ngoài trời, xin hãy mặc áo ấm."
+]
+},
+{
+"loai": "truyen",
+"tieu_de": "낙엽 사진과 옛날 이야기",
+"doan": [
+"린은 나무 상자를 안고 코토바 텃밭으로 {갔어요||가다}. \"스택짱, 이 글씨에 대한 자료가 있어요?\" 작은 로봇은 고개를 끄덕이며 말했어요. \"지금 저장할 거예요.\" 그리고 스택짱은 풀밭에 떨어진 노란 {낙엽||낙엽} {사진||사진}을 계속 찍었어요. 린은 웃으면서 작은 수첩을 꺼냈어요.",
+"그때 촌장님이 아침에 차를 {마시러||마시다} {오셨어요||오다}. 촌장님은 린의 손에 있는 상자를 보고 말했어요. \"어, 이 상자는 옛날 내 친구 것하고 아주 비슷하네.\" 촌장님은 나무 의자에 앉으셨어요. 그리고 그 친구가 국화차를 좋아한 이야기와 옛날 가을에 깨진 찻주전자 이야기를 계속하셨어요.",
+"린은 조용히 들었지만 이야기는 끝나지 않았어요. 갑자기 하늘에 구름이 많아지고 찬 바람이 불었어요. 촌장님은 이야기를 멈추고 상자 아래를 자세히 보셨어요. 거기에는 아주 흐린 도장이 있었어요. 촌장님은 작은 목소리로 말했어요. \"잠깐만, 설마 이 상자를 보낸 사람이...\""
+],
+"dich": [
+"Lin ôm chiếc hộp gỗ đi ra vườn Kotoba. \"Stack-chan ơi, cậu có dữ liệu về nét chữ này không?\" Robot nhỏ gật đầu rồi nói: \"Tớ sẽ lưu ngay bây giờ.\" Rồi Stack-chan liên tục chụp ảnh những chiếc lá vàng rơi trên bãi cỏ. Lin vừa cười vừa lấy cuốn sổ tay nhỏ ra.",
+"Đúng lúc đó, ông trưởng làng đến uống trà buổi sáng. Nhìn thấy chiếc hộp trên tay Lin, ông liền nói: \"Ồ, cái hộp này giống hệt của người bạn cũ tôi ngày xưa.\" Ông trưởng làng ngồi xuống ghế gỗ. Rồi ông cứ kể mãi chuyện người bạn ấy thích uống trà cúc và chuyện cái ấm trà bị vỡ vào mùa thu năm xưa.",
+"Lin chăm chú lắng nghe nhưng câu chuyện vẫn chưa dứt. Bỗng nhiên trên trời kéo nhiều mây và gió lạnh thổi qua. Ông trưởng làng dừng kể rồi cúi xuống nhìn kỹ phần dưới của chiếc hộp. Ở đó có một dấu triện rất mờ. Ông trưởng làng nói bằng giọng nhỏ hẳn lại: \"Khoan đã, chẳng lẽ người gửi chiếc hộp này là...\""
+],
+"ky": 2,
+"ky_truoc": "Sáng sớm tháng Mười Một, Lin lần đầu tự mở cửa Quán Kotoba và nhận một chiếc hộp gỗ không rõ người nhận từ bác đưa thư. Chị Hana nhìn thấy dòng chữ mực nâu trên hộp liền khựng lại và bảo Lin cất tạm vào kho."
+},
+{
+"loai": "thong_bao",
+"tieu_de": "마을 소식",
+"doan": [
+"오후 날씨 안내: 오늘 오후에는 바람이 불어서 추워져요. 각 집에서는 오후 4시 전에 밖의 옷을 정리하세요.",
+"가을 시장 안내: 작은 광장에서 물건을 파는 집은 금요일 저녁 전에 의자와 책상을 모두 준비해 주세요."
+],
+"dich": [
+"Hướng dẫn thời tiết buổi chiều: Chiều nay trời có gió và trở lạnh. Mỗi gia đình hãy thu dọn quần áo ngoài trời trước 4 giờ chiều.",
+"Hướng dẫn chợ mùa thu: Các gia đình bán đồ ở quảng trường nhỏ xin vui lòng chuẩn bị xong bàn ghế trước tối thứ Sáu."
+]
+}
+],
+"cau_hoi": [
+{
+"hoi": "오늘 오후 날씨는 어때요?",
+"chon": [
+"더운 바람이 불어요.",
+"구름이 많아지고 추워져요.",
+"아침보다 비가 많이 와요."
+],
+"dung": 1,
+"giai_thich": "Đoạn 2 bài tin làng viết: 오후에는 구름이 많아져요. 오후부터 찬 바람이 불어서 날씨가 조금 추울 거예요."
+},
+{
+"hoi": "마을 사람들은 금요일 저녁 전에 무엇을 준비해요?",
+"chon": [
+"의자와 책상",
+"따뜻한 차",
+"노란 낙엽 사진"
+],
+"dung": 0,
+"giai_thich": "Mục thông báo ghi: 금요일 저녁 전에 의자와 책상을 모두 준비해 주세요."
+},
+{
+"hoi": "촌장님은 왜 이야기를 멈추셨어요?",
+"chon": [
+"린의 모자가 예뻐서",
+"국화차가 너무 뜨거워서",
+"상자 아래에서 도장을 보셔서"
+],
+"dung": 2,
+"giai_thich": "Trong truyện có câu: 촌장님은 이야기를 멈추고 상자 아래를 자세히 보셨어요. 거기에는 아주 흐린 도장이 있었어요."
+}
+],
+"chinh_ta": [
+{
+"cau": "린은 조용히 {들었지만||듣다} {이야기||이야기}는 끝나지 않았어요.",
+"them_dap_an": []
+},
+{
+"cau": "밖에서 일하면 따뜻한 {옷||옷}을 입으세요.",
+"them_dap_an": []
+}
+],
+"mau_cau": [
+"ko2-02",
+"ko2-04"
+],
+"tu_moi": [
+{
+"w": "텐트",
+"r": "tenteu",
+"m": "lều rạp"
+},
+{
+"w": "입구",
+"r": "ipgu",
+"m": "lối vào, cổng vào"
+},
+{
+"w": "낙엽",
+"r": "nagyeop",
+"m": "lá rụng"
+}
+],
+"tom_tat": "Dân làng tất bật chuẩn bị dựng lều đón chợ phiên cuối tuần và lưu ý giữ ấm khi trời chuyển lạnh chiều nay.",
+"tra_tu": {
+"오늘": [
+"오늘",
+"oneul",
+"hôm nay",
+"deck"
+],
+"아침": [
+"아침",
+"achim",
+"buổi sáng",
+"deck"
+],
+"마을": [
+"마을",
+"maeul",
+"làng",
+"deck"
+],
+"작다": [
+"작다",
+"jakda",
+"nhỏ",
+"deck"
+],
+"시장": [
+"시장",
+"sijang",
+"chợ",
+"deck"
+],
+"준비하다": [
+"준비하다",
+"junbihada",
+"chuẩn bị",
+"deck"
+],
+"만들다": [
+"만들다",
+"mandeulda",
+"làm, chế tạo",
+"deck"
+],
+"길": [
+"길",
+"gil",
+"con đường",
+"deck"
+],
+"가게": [
+"가게",
+"gage",
+"cửa hàng",
+"deck"
+],
+"크다": [
+"크다",
+"keuda",
+"to",
+"deck"
+],
+"바쁘다": [
+"바쁘다",
+"bappeuda",
+"bận",
+"deck"
+],
+"날씨": [
+"날씨",
+"nalssi",
+"thời tiết",
+"deck"
+],
+"많다": [
+"많다",
+"manta",
+"nhiều",
+"deck"
+],
+"바람": [
+"바람",
+"baram",
+"gió",
+"deck"
+],
+"춥다": [
+"춥다",
+"chupda",
+"lạnh",
+"deck"
+],
+"걷다": [
+"걷다",
+"geotda",
+"đi bộ",
+"deck"
+],
+"옷": [
+"옷",
+"ot",
+"quần áo",
+"deck"
+],
+"가다": [
+"가다",
+"gada",
+"đi",
+"deck"
+],
+"사진": [
+"사진",
+"sajin",
+"ảnh",
+"deck"
+],
+"마시다": [
+"마시다",
+"masida",
+"uống",
+"deck"
+],
+"오다": [
+"오다",
+"oda",
+"đến",
+"deck"
+],
+"듣다": [
+"듣다",
+"deutda",
+"nghe",
+"deck"
+],
+"이야기": [
+"이야기",
+"iyagi",
+"câu chuyện",
+"deck"
+]
+},
+"tra_mau": {
+"ko2-02": [
+"V-(으)세요",
+"hãy… (lịch sự)",
+"TOPIK 2"
+],
+"ko2-04": [
+"V/A-아서 / 어서",
+"vì… nên; rồi (nối hành động)",
+"TOPIK 2"
+]
+},
+"tra_sach": {
+"deck": "Mẫu TOPIK2"
+}
+}
+}
+}

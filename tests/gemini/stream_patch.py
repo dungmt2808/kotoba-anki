@@ -30,10 +30,23 @@ def _request(self, method, path, body=None, timeout=ai.TEXT_TIMEOUT, model=""):
                 self.mark_exhausted(err.quota_model, err.retry_after)
         raise err from None
     except (urllib.error.URLError, socket.timeout, ConnectionError, ssl.SSLError, OSError) as e:
-        raise ai.AIError("Không kết nối được tới Gemini: %s" % str(getattr(e, "reason", e))[:120], "net") from None
+        reason = getattr(e, "reason", e)
+        if isinstance(reason, (socket.timeout, TimeoutError)) or "timed out" in str(reason):   # 1.31.5: như add-on
+            if model:
+                self.slow.add(model)
+            raise ai.AIError("Gemini trả lời quá lâu (hết %d giây)." % int(timeout), "busy", slow=True) from None
+        raise ai.AIError("Không kết nối được tới Gemini: %s" % str(reason)[:120], "net") from None
     think, text, fr, usage, pf, mv = [], [], None, {}, None, None
     with r:
-        for line in r:
+        try:
+            lines = list(r)
+        except (socket.timeout, TimeoutError) as e:          # 1.31.5: luồng quá lâu → như add-on (bận, chậm)
+            if model:
+                self.slow.add(model)
+            raise ai.AIError("Gemini trả lời quá lâu (hết %d giây)." % int(timeout), "busy", slow=True) from None
+        except (ConnectionError, OSError, ValueError) as e:  # proxy cắt luồng giữa chừng → bận (add-on tự thử lại)
+            raise ai.AIError("Luồng trả lời bị ngắt (%s)." % type(e).__name__, "busy") from None
+        for line in lines:
             line = line.decode("utf-8").strip()
             if not line.startswith("data:"):
                 continue

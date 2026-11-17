@@ -27,6 +27,7 @@ try:   # chạy trong Anki (gói add-on)
     from . import text_core as text
     from . import wear_core as wear
     from . import backup_core as backup
+    from . import zh_core as zh
 except ImportError:   # nạp riêng file này (test): nạp season_core.py / fields_core.py nằm cạnh
     import importlib.util as _ilu
 
@@ -48,6 +49,7 @@ except ImportError:   # nạp riêng file này (test): nạp season_core.py / fi
     wear = _load_side("kotoba_wear_core", "wear_core.py")
     wear.more = more
     backup = _load_side("kotoba_backup_core", "backup_core.py")
+    zh = _load_side("kotoba_zh_core", "zh_core.py")
 
 STAGES = ["Hạt giống", "Mầm", "Cây non", "Ra hoa", "Ra quả"]
 STAGE_SEED, STAGE_SPROUT, STAGE_SAPLING, STAGE_FLOWER, STAGE_FRUIT = range(5)
@@ -1645,24 +1647,35 @@ EN_WORD_NAMES = ["word", "vocabulary", "vocab", "english", "term", "expression",
 EN_READING_NAMES = ["ipa", "phonetic", "phonetics", "pronunciation", "phiên âm", "phien am", "transcription"]
 EN_MEANING_NAMES = ["meaning", "nghĩa", "nghia", "ý nghĩa", "vietnamese", "tiếng việt", "definition", "translation",
                     "dịch", "back", "mặt sau"]
+# 1.32: tên trường hay gặp ở deck tiếng Trung / tiếng Hàn
+ZH_WORD_NAMES = ["hanzi", "chinese", "simplified", "traditional", "汉字", "漢字", "中文", "简体", "簡體", "chữ hán",
+                 "tiếng trung", "word", "từ vựng", "từ", "front"]
+ZH_READING_NAMES = ["pinyin", "拼音", "pīnyīn", "phiên âm", "phien am", "pronunciation", "reading"]
+KO_WORD_NAMES = ["korean", "hangul", "한국어", "단어", "한글", "tiếng hàn", "word", "từ vựng", "từ", "front"]
+KO_READING_NAMES = ["romaja", "romanization", "romanisation", "로마자", "발음", "phiên âm", "phien am", "pronunciation",
+                    "reading"]
 
 
 def guess_roles_lang(keys: list[str], cfg: dict[str, Any], lang: str) -> dict[str, Any]:
     """1.17: đoán trường cho loại note tiếng Anh / ngôn ngữ khác (tên trường kiểu English, IPA, Vietnamese…)."""
     keys = list(keys)
     taken: set[str] = set()
-    word = _find_field(keys, "", EN_WORD_NAMES, taken) or (keys[0] if keys else None)
+    word_names = ZH_WORD_NAMES if lang == "zh" else KO_WORD_NAMES if lang == "ko" else EN_WORD_NAMES
+    word = _find_field(keys, "", word_names, taken) or (keys[0] if keys else None)
     taken.add(word or "")
     ex = example_fields(keys, cfg)
     au = audio_field_name(keys, cfg)
     taken |= {x for x in (ex["example"], ex["audio"], ex["meaning"], au) if x}
-    reading = _find_field(keys, "", EN_READING_NAMES, taken)
+    hanviet = _find_field(keys, "", HANVIET_NAMES, taken) if lang in ("zh", "ko") else None     # 1.32
+    taken.add(hanviet or "")
+    reading_names = ZH_READING_NAMES if lang == "zh" else KO_READING_NAMES if lang == "ko" else EN_READING_NAMES
+    reading = _find_field(keys, "", reading_names, taken)
     taken.add(reading or "")
     meaning = _find_field(keys, "", EN_MEANING_NAMES, taken)
     if meaning is None:
         rest = [k for k in keys if k not in taken]
         meaning = rest[0] if rest else None
-    return {"word": word, "reading": reading, "meaning": meaning, "hanviet": None, "kun": None, "reading_extra": [],
+    return {"word": word, "reading": reading, "meaning": meaning, "hanviet": hanviet, "kun": None, "reading_extra": [],
             "audio": au, "example": ex["example"], "ex_audio": ex["audio"], "ex_meaning": ex["meaning"],
             "pos": None, "usage": None, "kind": None, "configured": False}
 
@@ -1706,10 +1719,13 @@ def _sample_words(col: Any, mid: str, idx: int, limit: int = 30) -> list[str]:
 def model_lang(col: Any, mid: str | None, keys: list[str], word_field: str | None, name: str,
                cfg: dict[str, Any], fallback: list[str] | None = None) -> str:
     """Ngôn ngữ của loại note: người dùng đã chọn (khoá lang) → đoán từ ≤ 30 note mẫu (nhớ tạm theo mid)."""
-    chosen = ((cfg.get("_fields") or {}).get("lang") or {}).get(mid or "")
-    if chosen in fields.LANGS:
+    st = cfg.get("_fields") or {}
+    chosen = (st.get("lang") or {}).get(mid or "")
+    if chosen in fields.LANGS and chosen != "other":
         return chosen
-    return guess_model_lang(col, mid, keys, word_field, name, fallback)
+    guessed = guess_model_lang(col, mid, keys, word_field, name, fallback)
+    # 1.32: "other" lưu từ bản ≤ 1.31 + deck đoán ra tiếng Trung / tiếng Hàn → tiếng Trung / tiếng Hàn
+    return fields.effective_lang(st, mid or "", guessed) or guessed
 
 
 def guess_model_lang(col: Any, mid: str | None, keys: list[str], word_field: str | None, name: str,
@@ -1740,14 +1756,27 @@ def note_roles(note: Any, cfg: dict[str, Any]) -> dict[str, Any]:
                       [text.plain_text(note[wf])] if wf else [])
     if lang != "ja" and not conf:
         roles = guess_roles_lang(keys, cfg, lang)
+        if lang == "zh" and roles.get("hanviet") and _zh_kanji_kind(note, roles, name, keys):
+            roles["kind"] = "kanji"
     roles["lang"] = lang
-    if lang != "ja" and roles.get("kind") in ("kanji", "grammar"):
+    if lang != "ja" and roles.get("kind") in ("kanji", "grammar") and roles.get("kind") not in fields.LANG_KINDS.get(lang, ()):
         roles["kind"] = "vocab"
     return roles
 
 
-def note_details(note: Any, cfg: dict[str, Any], roles: dict[str, Any] | None = None) -> dict[str, str]:
-    """Từ, cách đọc (tiếng Anh: phiên âm IPA), nghĩa, âm Hán Việt (chỉ chữ Hán) và cách dùng (ngữ pháp) của note."""
+def _zh_kanji_kind(note: Any, roles: dict[str, Any], name: str, keys: list[str]) -> bool:
+    """1.32: deck tiếng Trung mỗi note một chữ Hán + có trường Hán Việt → loại Chữ Hán (như deck kanji tiếng Nhật)."""
+    try:
+        word = text.plain_text(note[roles["word"]]) if roles.get("word") else ""
+    except Exception:
+        return False
+    return bool(_ONE_KANJI.match(word)) and fields.guess_kind(name, keys, [word]) in ("kanji", "vocab") and \
+        any(h in (name or "").lower() for h in ("kanji", "hán tự", "han tu", "chữ hán", "chu han", "汉字", "漢字", "hanzi"))
+
+
+def note_details(note: Any, cfg: dict[str, Any], roles: dict[str, Any] | None = None) -> dict[str, Any]:
+    """Từ, cách đọc (tiếng Anh: phiên âm IPA), nghĩa, âm Hán Việt (chỉ chữ Hán) và cách dùng (ngữ pháp) của note.
+    1.32.2: tiếng Trung thêm `ruby` — mỗi chữ Hán với âm tiết pinyin của nó (None nếu không ghép được)."""
     roles = roles or note_roles(note, cfg)
     kind = roles.get("kind") or ""
     lang = roles.get("lang") or "ja"
@@ -1762,12 +1791,27 @@ def note_details(note: Any, cfg: dict[str, Any], roles: dict[str, Any] | None = 
     grammar = kind == "grammar"
     if lang != "ja":
         word, ipa = text.en_split_ipa(text.plain_text(raw_word)) if lang == "en" else (text.plain_text(raw_word), "")
+        reading = text.plain_text(get("reading"))
+        ruby = None
+        if lang == "zh":
+            # 1.32.2: pinyin ghi số → dấu thanh; trường Từ kiểu Anki 中[zhōng]文[wén] → chữ + pinyin trong ngoặc
+            br = zh.bracket_pairs(text.tokens(word)) if "[" in word else None
+            if br is not None:
+                word, b_reading, ruby = br
+                reading = reading or b_reading
+            shown = zh.display(word, reading)
+            reading = shown["reading"]
+            ruby = ruby or shown["ruby"]
         word = _cut(word, 60) or "?"
-        reading = _cut(text.plain_text(get("reading")), 60) or ipa
+        reading = _cut(reading, 60) or ipa
         if reading == word:
             reading = ""
-        return {"word": word, "reading": reading, "meaning": _clean(get("meaning")), "hanviet": "",
-                "usage": _clean(get("usage"), 120)}
+        # 1.32: tiếng Trung / tiếng Hàn có thể có trường Hán Việt (do người dùng chọn, hoặc tên trường "Hán Việt")
+        hanviet = _clean(get("hanviet"), 30) if lang in ("zh", "ko") else ""
+        if hanviet and hanviet == _clean(get("meaning")):
+            hanviet = ""
+        return {"word": word, "reading": reading, "meaning": _clean(get("meaning")), "hanviet": hanviet,
+                "usage": _clean(get("usage"), 120), "ruby": ruby}
     word, bracket_reading = plain_word(raw_word)
     word = _cut(word, 60 if grammar else 40) or "?"
     reading = _cut(text.reading_field(get("reading")), 60) or bracket_reading
@@ -2115,8 +2159,11 @@ def guess_config(col: Collection, model: Any, sample_notes: list[Any], cfg: dict
     lang = guess_model_lang(col, str(model["id"]), keys, wf, model["name"], raw_words)
     if lang != "ja":
         roles = guess_roles_lang(keys, cfg, lang)
-        f = {r: roles[r] for r in fields.role_ids("vocab") if roles.get(r)}
-        return {"kind": "vocab", "f": f, "lang": lang}
+        kind = "vocab"
+        if lang == "zh" and roles.get("hanviet") and sample_notes and all(_zh_kanji_kind(n, roles, model["name"], keys) for n in sample_notes):
+            kind = "kanji"
+        f = {r: roles[r] for r in fields.role_ids(kind, lang) if roles.get(r)}
+        return {"kind": kind, "f": f, "lang": lang}
     roles["lang"] = "ja"
     words = [note_details(n, cfg, roles)["word"] for n in sample_notes]
     kind = fields.guess_kind(model["name"], keys, words)
@@ -2157,7 +2204,7 @@ def fields_panel(col: Collection, deck_id: int, cfg: dict[str, Any] | None = Non
         conf = (store.get("models") or {}).get(mid)
         problem = fields.conf_problem(conf, keys)
         guess = guess_config(col, model, notes, cfg)
-        lang = (store.get("lang") or {}).get(mid) or guess["lang"]
+        lang = fields.effective_lang(store, mid, guess["lang"]) or guess["lang"]
         wf = (conf or {}).get("f", {}).get("word") if conf else guess["f"].get("word")
         words = [text.plain_text(n[wf]) for n in notes] if wf in keys else []
         models.append({
@@ -2297,6 +2344,7 @@ def build_garden(col: Collection, deck_id: int, cfg: dict[str, Any] | None = Non
                 "reading": reading,
                 "meaning": meaning,
                 "hanviet": det["hanviet"],
+                "ruby": det.get("ruby"),         # 1.32.2: pinyin trên từng chữ (deck tiếng Trung)
                 "audio": has_audio or (voiced and word != "?"),
                 "lang": lang,
                 "usage": det["usage"],
@@ -2659,6 +2707,29 @@ def record_desktop(data: dict[str, Any], day: int | None, ease: int, before: str
     c["ok"] += 1 if ease > 1 else 0
     c["rev"] += 1 if before == "review" else 0
     c["new"] += 1 if before == "new" else 0
+
+
+def review_undo_target(col: Any, stack: list[dict[str, int]]) -> dict[str, int] | None:
+    """1.31.4: lượt chấm (cuối `stack` = [{"cid", "rev"}…] của bảng ôn trong vườn) mà Ctrl+Z hoàn tác được, hoặc None.
+
+    Chỉ khi bước Undo kế tiếp của Anki đúng là lượt đó: tên bước là "Answer Card" (theo ngôn ngữ của Anki) và dòng revlog
+    mới nhất của cả collection là của lượt đó. Sau lượt chấm mà có thao tác khác (sửa note, chấm thẻ ở cửa sổ ôn của Anki,
+    đổi deck…) thì không hoàn tác — Undo của Anki lúc đó là thao tác kia. Ghi xu (cấu hình không có bước Undo) không tính.
+    Lượt đã bị hoàn tác ở chỗ khác (dòng revlog mất) được bỏ khỏi `stack`."""
+    while stack:
+        e = stack[-1]
+        if col.db.scalar("select count() from revlog where id = ? and cid = ?", int(e["rev"]), int(e["cid"])):
+            break
+        stack.pop()
+    if not stack:
+        return None
+    e = stack[-1]
+    label = col.undo_status().undo
+    if not label or label != col.tr.actions_answer_card():
+        return None
+    if int(col.db.scalar("select max(id) from revlog") or 0) != int(e["rev"]):
+        return None
+    return e
 
 
 def undo_reward(data: dict[str, Any], entry: dict[str, Any]) -> int:

@@ -55,7 +55,7 @@ var GardenJoy = (function () {
     if (!field) { return; }
     let b = $("kb-joy-banner");
     if (!b) { b = document.createElement("div"); b.id = "kb-joy-banner"; b.className = "kb-joy-banner"; field.appendChild(b); }
-    GardenIcons.fill(b, text);
+    GardenIcons.fill(b, typeof GardenLang !== "undefined" ? GardenLang.line(text) : text);     // 1.32
     b.hidden = false;
     b.style.animation = "none"; void b.offsetWidth; b.style.animation = "";
     clearTimeout(bannerTimer);

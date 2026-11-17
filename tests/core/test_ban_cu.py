@@ -3,7 +3,8 @@ nhà 3 gian, tường & sàn + mẫu tự vẽ, món tự làm, thú, giống, v
 diện mùa) được MÃ THẬT của từng bản cũ (lấy từ git) đọc, dùng (cộng xu, mua + đặt một ghế gỗ) rồi lưu; sau đó 1.30 đọc lại:
 không được mất gì. Đây là tình huống thật khi đồng bộ AnkiWeb giữa hai máy mà một máy chưa cập nhật.
 
-Bản cũ thử: 1.23.0 (ba0aa5a) · 1.24.0 (bc66f66) · 1.25.0 (1912fb7) · 1.26.1 (6021c57) · 1.28.0 (59e43c5).
+Bản cũ thử: 1.23.0 (ba0aa5a) · 1.24.0 (bc66f66) · 1.25.0 (1912fb7) · 1.26.1 (6021c57) · 1.28.0 (59e43c5) ·
+1.30.3 (36bb57b) · 1.31.3 (e64eb22, bản phát hành công khai đầu tiên) · 1.31.5 (d5efb47).
 Ngoại lệ đã ghi trong tài liệu: bản ≤ 1.23 không biết hai gian bên (đồ ở đó vẫn nằm nguyên vì bản cũ không đụng khoá NHA).
 
 Chạy: python test_ban_cu.py THƯ_MỤC_ADD_ON
@@ -27,7 +28,8 @@ D = core.decor
 FAIL = []
 TMP = tempfile.mkdtemp(prefix="kbold_")
 OLD = [("1.23.0", "ba0aa5a"), ("1.24.0", "bc66f66"), ("1.25.0", "1912fb7"), ("1.26.1", "6021c57"), ("1.28.0", "59e43c5"),
-       ("1.30.3", "36bb57b")]       # 1.31: + 1.30.3 (bản trước đồ tự vẽ cho StackChan)
+       ("1.30.3", "36bb57b"),       # 1.31: + 1.30.3 (bản trước đồ tự vẽ cho StackChan)
+       ("1.31.3", "e64eb22"), ("1.31.5", "d5efb47")]       # 1.31.4: + bản đã phát hành công khai (máy chưa cập nhật đồng bộ với máy đã cập nhật)
 
 
 def ok(cond, msg):

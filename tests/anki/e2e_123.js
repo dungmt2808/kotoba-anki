@@ -101,7 +101,8 @@ result = 1`);
   await page.shot(SHOTS + '/123_01_cho_bat_dau_viet.png');
   console.log('== mục 2: thẻ Gemini chỉ chọn deck');
   ok(await js('const t = document.querySelector(".kb-ai-lang").textContent; return !/Giáo trình/.test(t) && !/theo giáo trình/.test(t) && /Mọi deck/.test(t);'), 'không còn "Giáo trình" / "theo giáo trình", có Mọi deck / Chọn deck');
-  ok(await js('const b = [...document.querySelectorAll(".kb-ai-lang .kb-chip, .kb-ai-lang button")].filter(x => /^N[1-5]$/.test(x.textContent.trim())); return b.length === 5 && b.every(x => !x.disabled);'), 'Trình độ N5–N1 chọn được');
+  // 1.33.1: Trình độ là ô thả xuống (trước: 5 nút)
+  ok(await js('const o = [...document.querySelectorAll(".kb-ai-lang select.kb-ai-sel option")].filter(x => /^N[1-5]$/.test(x.textContent.trim())); return o.length === 5 && o.every(x => !x.disabled);'), 'Trình độ N5–N1 chọn được');
   await py(KB + 'kb._dialog.refresh(); kb.ai_start_all("auto"); result = 1'); await sleep(600);
   ok(await calls() === 0, 'làm mới vườn / mở hồ sơ (tự viết sau 8 giây): vẫn chờ');
 

@@ -96,7 +96,8 @@ result = 1`);
 
   console.log('== Chọn deck: 24 deck, cuộn + tick giữ vị trí, ô tìm deck');
   await js('GardenPaper.open("src"); return 1;'); await sleep(900);
-  await js('Array.from(document.querySelectorAll(".kb-ai-lang")[0].querySelectorAll(".kb-ai-chip")).find((b) => /Chọn deck/.test(b.textContent)).click(); return 1;');
+  // 1.33.1: Lấy từ là ô thả xuống
+  await js('const s = Array.from(document.querySelectorAll(".kb-ai-lang")[0].querySelectorAll("select.kb-ai-sel")).find((x) => /Lấy từ/.test(x.getAttribute("aria-label"))); s.value = "pick"; s.dispatchEvent(new Event("change")); return 1;');
   ok(await waitFor('document.querySelector(".kb-ai-decks-list")'), 'mở danh sách deck của báo tiếng Nhật');
   const n0 = await js('return document.querySelectorAll(".kb-ai-decks-list .kb-ai-deck").length;');
   ok(n0 >= 24, 'danh sách có ' + n0 + ' deck, có ô "Tìm deck…"' + (await js('return !!document.querySelector(".kb-ai-dq");') ? '' : ' — THIẾU Ô TÌM'));
@@ -165,7 +166,7 @@ result = 1`);
   await measure('them_tieng_anh');
   await py(KB + 'kb._dialog.refresh(); kb.ai_start_all("auto"); result = 1'); await sleep(1200);
   ok((await starts()).length === 0, 'vườn làm mới / tự viết: vẫn không viết báo tiếng Anh');
-  await js('Array.from(document.querySelectorAll(".kb-ai-lang")).find((b) => /Anh/.test(b.querySelector(".kb-ai-lang-h b").textContent)).querySelectorAll(".kb-ai-chip")[0].click(); return 1;');
+  await js('const s = Array.from(document.querySelectorAll(".kb-ai-lang")).find((b) => /Anh/.test(b.querySelector(".kb-ai-lang-h b").textContent)).querySelector("select.kb-ai-sel"); s.value = "A1"; s.dispatchEvent(new Event("change")); return 1;');
   await sleep(500);
   ok((await starts()).length === 0, 'đổi trình độ báo tiếng Anh: vẫn chờ');
   await js('document.querySelector(".kb-ai-start button").click(); return 1;');

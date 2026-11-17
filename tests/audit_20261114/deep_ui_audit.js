@@ -30,6 +30,8 @@ kb._bg=kb._deep_bg_original
 result=True`);
   check('key-race/validation-is-pending',await py('result=[kb._ai["testing"],len(kb._deep_key_pending)]'),[true,1]);
   await wait('!!document.querySelector(".kb-ai-forget")');
+  // 1.33.1: Xoá khoá nằm trong khối thu gọn "Tuỳ chọn thêm" của tab Nguồn báo → mở ra như người dùng bấm
+  await page.eval('document.querySelector(".kb-ai-opts-box").open=true');await sleep(100);
   await page.click('.kb-ai-forget');await page.click('.kb-ai-forget');
   await wait('!!document.querySelector(".kb-ai-flash")&&document.querySelector(".kb-ai-flash").textContent.includes("Đã xoá khoá")');
   check('key-race/delete-actually-clears-config',await py('result=bool(kb.ai.clean_key(kb.config().get("gemini_key")))'),false);

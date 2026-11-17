@@ -242,12 +242,16 @@ var GardenFX = (function () {
 
   function pick(list) { return list[Math.floor(Math.random() * list.length)]; }
 
+  // 1.32: chữ của người dùng (từ vựng, tên vùng / món tự đặt) bọc trong dấu cô lập U+2068…U+2069 — Ngôn ngữ trong vườn
+  // không đổi phần này dù trùng câu tiếng Nhật của StackChan (vd. từ vựng すごい); dấu cô lập không hiện ra
+  function kbKeep(s) { return "\u2068" + String(s === undefined || s === null ? "" : s) + "\u2069"; }
   var sayTimer = null;
-  function say(text, ms) {
+  function say(text, ms, lang) {
     var b = $("kb-say");
     if (!b) { return; }
     if (typeof GardenUI !== "undefined" && GardenUI.allow && !GardenUI.allow("mascot")) { return; }   // 1.14: tắt linh vật nói
-    b.textContent = text;
+    if (typeof GardenLang !== "undefined") { GardenLang.fill(b, text, lang); } else { b.textContent = text; }     // 1.32
+    if (!b.textContent.trim()) { b.hidden = true; return; }
     b.hidden = false;
     b.classList.remove("kb-pop");
     void b.offsetWidth;
@@ -840,7 +844,7 @@ var GardenFX = (function () {
     },
     mood: function (m, ms) { setMood(m, ms); },
     _mood: function () { return mascot.mood; },   // cho test
-    say: function (text, ms) { say(text, ms); },
+    say: function (text, ms, lang) { say(text, ms, lang); },
     effectsOn: function () { return cfg.effects && !reduced; },
     soundAllowed: function () { return cfg.sound; },
     muted: function () { return muted; },
@@ -961,7 +965,7 @@ var GardenFX = (function () {
           setMood("star", 1600);
           var d = G.data();
           var name = (found && found.p.word) || "";
-          say((harvest ? "やった！ " : "わあ！ ") + name + " → " + d.stage_names[info.new], 2000);
+          say((harvest ? "やった！ " : "わあ！ ") + kbKeep(name) + " → " + d.stage_names[info.new], 2000);      // 1.32: từ của deck không dịch
           play(harvest ? "harvest" : "stage");
         }, 200);
       }

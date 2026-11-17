@@ -181,8 +181,11 @@ c = answer(1)
 g, q = state()
 p = g["plants"][0]
 ok(q == 0 and g["stats"]["water_now"] == 0, "vừa bấm Lại, chờ 1 giờ → hàng đợi rỗng, nút 0")
-ok(p["held"] == "later" and abs(p["later_at"] - c.due) < 2, "cây 'later', có giờ tới lượt (%s)" % p.get("later_at"))
-ok(g["stats"]["held"].get("later") == 1, "thống kê: 1 cây chờ tới lượt")
+if c.queue == 1:        # học trong ngày (queue 1, due = giây); qua mốc sang ngày thì Anki chuyển sang queue 3 (due = ngày)
+    ok(p["held"] == "later" and abs(p["later_at"] - c.due) < 2, "cây 'later', có giờ tới lượt (%s)" % p.get("later_at"))
+    ok(g["stats"]["held"].get("later") == 1, "thống kê: 1 cây chờ tới lượt")
+else:      # 1.31.4: chạy trong 1 giờ trước mốc sang ngày của Anki → thẻ tới lượt sau mốc, Anki tính là ngày mai (không phải lỗi)
+    print("  (bỏ qua 2 kiểm tra 'later': giờ tới lượt rơi sau mốc sang ngày của Anki)")
 
 print("== thẻ đang học, bước 10 phút (trong 20 phút học trước): vẫn tưới được")
 reset()

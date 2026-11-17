@@ -163,19 +163,20 @@ ok(fr["fresh"] and len(fr["kho"]) == 40 and sum(1 for it in fr["kho"] if it["due
    "5 từ đã học + 35 thẻ mới của chính deck đó (%d)" % len(fr["kho"]))
 
 print("== khoá collection")
-ok({k: v["decks"] for k, v in words.load_src(col).items()} == {"ja": [], "en": [], "vi": []}, "chưa chọn → rỗng")
+ok({k: v["decks"] for k, v in words.load_src(col).items()} == {"ja": [], "en": [], "vi": [], "zh": [], "ko": []}, "chưa chọn → rỗng (1.33: thêm zh / ko)")
 col.set_config(words.SRC_KEY, {"ja": {"decks": [d_n5, 999999, d_n5, "x", d_n4], "ghi_chu": "giữ"},
-                               "ko": {"decks": [d_ko]}, "_sau": 1})
+                               "ko": {"decks": [d_ko]}, "fr": {"decks": [d_ko]}, "_sau": 1})
 ok(words.load_src(col)["ja"]["decks"] == [d_n5, d_n4], "bỏ id deck không còn, trùng, sai kiểu")
 saved = words.save_src(col, "en", [d_en, d_mix, d_n5, d_n4, d_n4c, d_ko, d_gram])
 raw = col.get_config(words.SRC_KEY)
 ok(len(saved) == 5 and raw["en"]["decks"] == saved, "tối đa 5 deck")
-ok(raw.get("_sau") == 1 and raw.get("ko") == {"decks": [d_ko]} and raw["ja"].get("ghi_chu") == "giữ",
+ok(raw.get("_sau") == 1 and raw.get("ko") == {"decks": [d_ko]} and raw.get("fr") == {"decks": [d_ko]}
+   and raw["ja"].get("ghi_chu") == "giữ",
    "giữ phần lạ của khoá (bản sau)")
 col.decks.remove([d_en])
 ok(d_en not in words.load_src(col)["en"]["decks"], "xoá deck → id tự bỏ khi đọc")
 try:
-    words.save_src(col, "ko", [d_ko])
+    words.save_src(col, "fr", [d_ko])     # 1.33: "ko" thành ngôn ngữ của add-on — thử bằng "fr"
     ok(False, "ngôn ngữ lạ phải bị từ chối")
 except ValueError:
     ok(True, "ngôn ngữ lạ bị từ chối")

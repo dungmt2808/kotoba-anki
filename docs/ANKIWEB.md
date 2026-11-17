@@ -15,7 +15,7 @@ Gửi mã đó cho Claude để điền vào `README.md` (mục Cài đặt), tr
 
 | Ô | Điền |
 |---|---|
-| **File** | `kotoba_batake.ankiaddon` ở gốc repo (bản **1.31.3**, đóng bằng `python3 tests/tools/pack.py`). **Không** tải `tests/tools/kotoba_batake_test.ankiaddon` (công cụ test cho nhiều xu). |
+| **File** | `kotoba_batake.ankiaddon` ở gốc repo (bản **1.31.4**, đóng bằng `python3 tests/tools/pack.py`). **Không** tải `tests/tools/kotoba_batake_test.ankiaddon` (công cụ test cho nhiều xu). |
 | **Title** | `ことば畑 Kotoba Batake – pixel vocabulary garden (Vietnamese UI)` |
 | **Tags** | `japanese english vocabulary gamification garden pixel vietnamese fsrs` |
 | **Support page** | `https://github.com/dungmt2808/kotoba-anki/issues` (hoặc `https://dungmt2808.github.io/kotoba-anki/#bao-loi`) |

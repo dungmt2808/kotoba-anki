@@ -139,7 +139,8 @@ result = [len(res), all(res)]`);
   await page.eval('GardenPaper.open("dict")');
   await waitFor(page, 'document.querySelector(".kb-p-empty") !== null');
   const hintD = await page.eval('Array.from(document.querySelectorAll(".kb-p-empty .kb-p-hint")).map(x => x.textContent)');
-  ok(hintD.some(h => /Windows/.test(h)) && hintD.some(h => /Tự động/.test(h)), 'deck D không giọng: chỉ cách bật Gemini + cài giọng máy (' + hintD.length + ' dòng)');
+  ok(hintD.some(h => /cài giọng tiếng Nhật/.test(h)) && hintD.some(h => /Tự động/.test(h)),     // 1.33.2: câu ngắn hơn (bỏ "Windows / macOS")
+     'deck D không giọng: chỉ cách bật Gemini + cài giọng máy (' + hintD.length + ' dòng)');
   await page.shot(SHOTS + '/08_chep_deckD_trong.png');
   // ---- deck C (từ + audio từ) ----
   await deck('C::Chỉ từ + audio từ', 'kb.save_config(dict_voice="tat")');
@@ -151,12 +152,14 @@ result = [len(res), all(res)]`);
   // ---- tab Nguồn báo: thẻ giọng dự phòng ----
   await py(KB + 'kb.save_config(dict_voice="auto")\nresult = 1');
   await page.eval('GardenPaper.open("src")');
-  ok(await waitFor(page, 'document.querySelector(".kb-ai-dv") !== null'), 'tab Nguồn báo có thẻ "Giọng đọc cho câu không có audio"');
-  await page.eval('document.querySelector(".kb-ai-dv").scrollIntoView()');
+  ok(await waitFor(page, 'document.querySelector(".kb-ai-dv") !== null'), 'tab Nguồn báo có phần "Giọng cho câu không có audio"');
+  // 1.33.1: giọng cho câu không có audio nằm trong khối thu gọn "Tuỳ chọn thêm", chọn bằng ô thả xuống
+  await page.eval('document.querySelector(".kb-ai-opts-box").open = true; document.querySelector(".kb-ai-dv").scrollIntoView()');
+  await sleep(300);
   await page.shot(SHOTS + '/09_nguon_bao.png');
-  await page.eval('Array.from(document.querySelectorAll(".kb-ai-dv .kb-ai-chip")).find(b => b.textContent === "Giọng máy").click()');
+  await page.eval('(() => { const s = document.querySelector(".kb-ai-dv select.kb-ai-sel"); s.value = "may"; s.dispatchEvent(new Event("change")); })()');
   await sleep(800);
-  ok((await py(KB + 'result = kb.config().get("dict_voice")')) === 'may', 'bấm "Giọng máy" → lưu dict_voice = may');
+  ok((await py(KB + 'result = kb.config().get("dict_voice")')) === 'may', 'chọn "Giọng máy" → lưu dict_voice = may');
   await py(KB + 'kb.save_config(dict_voice="auto")\nresult = 1');
   // ---- cửa sổ nhỏ ----
   await py(KB + 'kb._dialog.resize(1024, 640); result = 1'); await sleep(800);
