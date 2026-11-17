@@ -192,7 +192,14 @@ ANKI_PY=~/.venv-anki/bin/python tests/anki/run_ui.sh /tmp/kb_src/kotoba_batake /
 ```
 Cần Node ≥ 22 (có sẵn `fetch` và `WebSocket`). Cổng: `KB_CDP_PORT` (9333), `KB_CTRL_PORT` (9444). `kill_anki.sh` tắt Anki đang chạy từ các script này.
 
-## Kết quả lần chạy gần nhất (bản 1.34.1, 17/11/2026 tối) — so đáp án với bộ gõ / deck thật, đoán ngôn ngữ deck
+## Kết quả lần chạy gần nhất (bản 1.35.0, 17/11/2026 đêm) — tiếng Đức / tiếng Pháp
+- `run_all.sh` trên gói đã đóng (`ANKI_PY` = aqt 26.9.4, `PY39` = aqt 23.10.1): **67 bộ, TẤT CẢ OK** (`test_135` 100/100).
+- Anki 26.9.4: `e2e_135` 60/60 (cả Anki 23.10.1: 60/60), `e2e_135_ngonngu` 5/5, `e2e_133` 77, `e2e_119` 55, `e2e_1251` 49,
+  `e2e_1331` 43, `e2e_1332` 36, `e2e_132c` 23, `e2e_132b` 20, `e2e_134` 85, `e2e_1333_ngonngu` 5, `e2e_117` 55, `e2e_132` 39,
+  `e2e_1322` 40 — đạt hết; `run_capnhat.sh` 1.31.3 → 1.35.0 19/19; `run_habanh.sh` 1.35.0 → 1.31.3 → 1.35.0 (có deck tiếng
+  Đức) 26/26. Gemini thật (khoá thử): báo Đức / Pháp A2 mỗi báo ra số 1. Báo cáo: `docs/kiem_thu/1.35/BAO_CAO.md`.
+
+## Kết quả lần chạy trước (bản 1.34.1, 17/11/2026 tối) — so đáp án với bộ gõ / deck thật, đoán ngôn ngữ deck
 - `run_all.sh` (`ANKI_PY` = venv aqt 26.9.4, `PY39` = venv aqt 23.10.1; **66 bộ**, có `core/test_132c.py` 60/60) **TẤT CẢ OK** trên gói đã đóng.
 - Anki 26.9.4: `e2e_132c` 23/23, `e2e_134` 85/85, `e2e_132b` 20/20, `e2e_133` 77/77, `e2e_1251` 49/49, `e2e_117` 55/55; `run_capnhat.sh` 1.31.3 → 1.34.1 19/19; `run_habanh.sh` 1.34.1 → 1.31.3 → 1.34.1 23/23. Trước đó trên 1.33.4 / 1.32.1 cùng phần sửa: 31 kịch bản cũ, đồng bộ thật 47/47, Anki 23.10.1 (`e2e_132*`, `e2e_133`, Ctrl+Z). Báo cáo: `docs/kiem_thu/1.33.4/BAO_CAO.md`.
 

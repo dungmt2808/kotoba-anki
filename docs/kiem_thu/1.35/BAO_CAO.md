@@ -86,7 +86,11 @@ Việt — bộ lọc của test coi é / à / ô là chữ Việt → sửa tes
 |---|---|
 | Bản gốc chung (kỳ 1) | ra kỳ 1 + 2 tin làng; máy chủ Gemini rất bận lúc chạy (503, ngắt luồng, Hydrogen / flash-latest quá 240 giây) → tự đổi model tới 3.5 Flash-Lite. Phần này 1.35 không đổi. |
 | Der Wortgarten (Đức, A2) | **ra số 1**: kể lại đạt ngay lần đầu, viết số máy kiểm **0 lỗi**, soát lần 2 không thấy lỗi; máy tự chọn lại câu chép, bỏ id mẫu câu sai. Nối tra từ đúng: bringt → bringen, lacht → lachen, schreibt → schreiben, warmes → warm, Blätter… |
-| Le Jardin des Mots (Pháp, A2) | (điền sau) |
+| Le Jardin des Mots (Pháp, A2) | **ra số 1** (20 lượt, dùng lại bản gốc): kể lại đạt lần đầu, viết số bằng Hydrogen máy kiểm **0 lỗi**, soát lần 2 đổi 3 từ khó hơn A2 (nuageux, facteur, tiroir), máy thấy 1 lỗi sau soát → Gemini sửa 1 lần → xong. Nối tra từ: levées → se lever, chaudes → chaud, d'automne → l'automne, acheté → acheter, voisines → la voisine; 3 câu hỏi có đáp án trong bài, 3 câu chép nguyên văn. |
+
+Hai số báo đọc tự nhiên, đúng trình độ A2, cùng kể kỳ 1 của bản gốc (Lin chào nhầm "Entschuldigung" / "Pardon !" thay "Danke"
+/ "Merci !", StackChan đội đĩa, chiếc ngăn kéo khoá dưới bàn trà). Claude đọc thấy ổn; vẫn nên nhờ người giỏi tiếng Đức / Pháp
+đọc vài số thật.
 
 Tìm thấy nhờ Gemini thật: Gemini khai **"die Blätter" là từ mới** trong khi deck có "das Blatt, ¨-er" → tra từ trỏ về từ
 mới thay vì từ của deck → **sửa**: máy bỏ khai báo từ mới chỉ là dạng biến đổi của từ trong deck (lỗi 6 ở mục 4).
