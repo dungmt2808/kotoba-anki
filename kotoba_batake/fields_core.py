@@ -391,6 +391,17 @@ _ZH_ONLY = re.compile("[们这说么吗呢吧你她谁对还让进过时东车�
                       "贵节绍张处办帮备错别诉试结离讲"
                       "們說麼嗎妳對讓學國會來讀賣腦關發實應經濟樣點邊氣雞廣歲聽從兩覺綠]")
 _JA_HINT = ("japanese", "nihongo", "日本語", "tiếng nhật", "tieng nhat", "jlpt", "furigana", "kana", "kanji", "漢字")
+# 1.34.1: ngôn ngữ chữ Latin khác tiếng Anh (chưa có ngôn ngữ riêng → "Ngôn ngữ khác"); chữ của ngôn ngữ khác
+_OTHER_HINT = ("german", "deutsch", "tiếng đức", "tieng duc", "french", "français", "francais", "tiếng pháp", "tieng phap",
+               "spanish", "español", "espanol", "tiếng tây ban nha", "italiano", "tiếng ý", "português", "portugues",
+               "tiếng bồ đào nha", "tiếng nga", "tiếng thái", "bahasa", "tiếng indonesia", "nederlands", "tiếng hà lan")
+_DE_MARK = re.compile(r"(?i)^(der|die|das|ein|eine) \S|[äöüß]")
+_OTHER_SCRIPT = re.compile(r"[\u0370-\u03ff\u0400-\u052f\u0590-\u06ff\u0900-\u0dff\u0e00-\u0eff\u10a0-\u10ff]")
+# 1.34.1: dấu hiệu tiếng Nhật đủ chắc để không tin tên trường "Chinese" / "中文" / "Korean" (deck kanji có trường
+# "Chinese reading", deck tiếng Nhật cho người Hàn) — khi đó đoán theo chữ của note. Không có "漢字" (deck tiếng Trung phồn
+# thể cũng dùng) và "kana".
+_JA_STRONG = ("japanese", "nihongo", "日本語", "tiếng nhật", "tieng nhat", "jlpt", "furigana", "kanji", "onyomi", "kunyomi",
+              "on'yomi", "kun'yomi", "on-yomi", "kun-yomi", "音読み", "訓読み", "âm on", "âm kun", "hiragana", "katakana")
 
 
 def effective_lang(store: dict[str, Any] | None, mid: str, guessed: str | None) -> str | None:
@@ -412,32 +423,48 @@ def guess_lang(name: str, keys: list[str], words: list[str]) -> str:
               for w in words if w and w.strip() and w != "?"][:30]
     sample = [w for w in sample if w]
     hints = " ".join([(name or "").lower()] + [k.lower() for k in keys])
-    if any(h in hints for h in _KO_HINT):
+    n = len(sample)
+    kana = sum(1 for w in sample if _KANA_ANY.search(w))
+    # 1.34.1: chữ kana chỉ có ở tiếng Nhật → xét trước tên trường. Deck tiếng Nhật làm cho người Trung / Hàn có trường nghĩa
+    # "中文" / "Korean", deck kanji có trường "Chinese reading" (âm On) — trước bị nhận là tiếng Trung / tiếng Hàn
+    if n and kana and kana * 5 >= n:
+        return "ja"
+    ja_hint = any(h in hints for h in _JA_STRONG)
+    zh_hint = any(h in hints for h in _ZH_HINT)
+    if any(h in hints for h in _KO_HINT) and not ja_hint:
         return "ko"                        # 1.32: trước 1.32 là "other"
-    if any(h in hints for h in _ZH_HINT):
+    if zh_hint and not ja_hint:
         return "zh"
     if not sample:
         return "en" if any(h in hints for h in _EN_HINT) else "ja"
-    n = len(sample)
-    kana = sum(1 for w in sample if _KANA_ANY.search(w))
     cjk = sum(1 for w in sample if _CJK_ANY.search(w))
     hangul = sum(1 for w in sample if _HANGUL.search(w))
     latin = sum(1 for w in sample if _LATIN.search(w) and not _KANA_ANY.search(w) and not _CJK_ANY.search(w))
     accent = sum(1 for w in sample if _LATIN_ACCENT.search(w))
-    if kana and kana * 5 >= n:
-        return "ja"
+    # 1.34.1: chữ của ngôn ngữ khác (Nga, Thái, Ả Rập, Hindi…) — không phải Latin / Hán / kana / Hangul → "Ngôn ngữ khác"
+    # (trước rơi xuống cuối hàm thành tiếng Nhật)
+    script = sum(1 for w in sample if _OTHER_SCRIPT.search(w) and not _CJK_ANY.search(w) and not _KANA_ANY.search(w)
+                 and not _HANGUL.search(w))
+    if script * 2 >= n:
+        return "other"
     if hangul * 2 >= n:
         return "ko"
     if cjk * 2 >= n:
         # 1.31.4: chỉ chữ Hán, không kana mà có chữ chỉ tiếng Trung mới dùng (≥ 10 % số từ, ít nhất 2 từ) → tiếng Trung
         # ("Ngôn ngữ khác"); tên loại note / trường có dấu hiệu tiếng Nhật thì vẫn là tiếng Nhật
         zh = sum(1 for w in sample if _ZH_ONLY.search(w))
-        if not kana and zh >= min(2, n) and zh * 10 >= n and not any(h in hints for h in _JA_HINT):
+        # 1.34.1: có cả tên trường tiếng Trung lẫn tiếng Nhật (deck tiếng Trung cho người Nhật: 中文 · 日本語) → theo chữ
+        if not kana and zh >= min(2, n) and zh * 10 >= n and (zh_hint or not any(h in hints for h in _JA_HINT)):
             return "zh"
         return "ja"                        # chỉ chữ Hán, không kana: deck kanji (giữ cách cũ)
     if latin * 2 >= n:
         if accent * 10 >= n * 3 and not any(h in hints for h in _EN_HINT):
             return "other"                 # nhiều chữ có dấu (tiếng Việt, Pháp, Tây Ban Nha…)
+        # 1.34.1: tiếng Đức / Pháp / Tây Ban Nha… (tên loại note / trường, hoặc nhiều từ có der / die / das, ä ö ü ß) →
+        # "Ngôn ngữ khác"; trước ít chữ có dấu thì thành tiếng Anh (giọng đọc tiếng Anh, từ lọt vào báo tiếng Anh)
+        de = sum(1 for w in sample if _DE_MARK.search(w))
+        if (any(h in hints for h in _OTHER_HINT) or de * 10 >= n * 3) and not any(h in hints for h in _EN_HINT):
+            return "other"
         return "en"
     return "ja"
 

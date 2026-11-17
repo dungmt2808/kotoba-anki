@@ -319,7 +319,7 @@ result = 1`);
   ok(hasWrite, 'có deck tiếng Nhật / tiếng Anh (chưa tick báo) → Luyện viết hiện lại');
   await js('GardenCal.close && GardenCal.close(); return 1;'); await sleep(500);
 
-  console.log('== Đuổi quạ cho deck tiếng Hàn (Ngôn ngữ khác)');
+  console.log('== Đuổi quạ cho deck tiếng Hàn (1.25.1: Ngôn ngữ khác; từ 1.32: Tiếng Hàn)');
   await py(KB + 'd = kb._dialog; d.deck_id = mw.col.decks.id_for_name("J::Tiếng Hàn"); d.refresh(); result = 1'); await sleep(2500);
   await js('GardenGames.open(); return 1;'); await sleep(1200);
   const crowCard = await js('const c = [...document.querySelectorAll(".kb-g-card, .kb-g-pick, [data-game]")].find((x) => /Đuổi quạ/.test(x.textContent)); return c ? [c.textContent, !!c.querySelector("button:disabled"), c.className] : null;');

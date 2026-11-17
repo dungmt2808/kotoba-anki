@@ -188,6 +188,9 @@ if "${ANKI_PY:-python3}" -c "import anki.collection" 2>/dev/null; then
 else
   echo "– bỏ qua core/test_1333.py, core/test_134.py, audit_20261117/recovery_round2.py (cần gói anki: ANKI_PY)"
 fi
+echo "== core/test_132c.py (1.34.1 kiểm tra thêm: Đuổi quạ so đáp án với deck / bộ gõ thật, đoán ngôn ngữ ~30 kiểu deck ngoài đời, Python 3.9 nếu có PY39)"
+OUT=$("${ANKI_PY:-python3}" -W ignore "$HERE/core/test_132c.py" "$ADDON" 2>&1); RC=$?
+echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
 # trang web chung (site/, GitHub Pages): đăng mã, dữ liệu trang khớp add-on (đổi hình mà quên `node site/tools/xuat_hinh.js` là báo)
 echo "== trang/test_trang.py (trang web: đăng / gỡ mã, biểu mẫu issue, GitHub Actions, dữ liệu khớp add-on)"
 OUT=$(python3 "$HERE/trang/test_trang.py" "$ADDON" 2>&1); RC=$?

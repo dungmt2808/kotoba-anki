@@ -271,9 +271,18 @@ var GardenGames = (function () {
     return out;
   }
   // 1.17: tiếng Anh — so khớp chữ gõ vào (chữ thường, nháy cong = thẳng, gạch nối = dấu cách)
+  // 1.34.1 (kiểm tra lần cuối): NFKC trước khi so — bộ gõ tiếng Việt kiểu "Unicode tổ hợp" / bàn phím Vietnamese cũ của
+  // Windows gõ "quả" = q u a + dấu hỏi rời (trước: dấu rời bị thay bằng dấu cách → "qua ta o", không bao giờ đúng), Hangul
+  // tách nét (NFD), chữ Latin toàn khổ của bộ gõ Nhật (ａｐｐｌｅ); giữ dấu ghép không gộp được (\p{M}: Hindi, Thái…)
   function enNorm(s) {
-    return String(s || "").replace(/[’‘`]/g, "'").toLowerCase().replace(/[-‐–—_]+/g, " ")
-      .replace(/[^\p{L}\p{N}' ]+/gu, " ").split(/\s+/).filter(Boolean).join(" ").replace(/^'+|'+$/g, "");
+    return String(s || "").normalize("NFKC").replace(/[’‘`]/g, "'").toLowerCase().replace(/[-‐–—_]+/g, " ")
+      .replace(/[^\p{L}\p{M}\p{N}' ]+/gu, " ").split(/\s+/).filter(Boolean).join(" ").replace(/^[' ]+|[' ]+$/g, "");
+  }
+  // tiếng Trung / tiếng Hàn gõ chữ: không tính dấu cách (사과주스 = 사과 주스, 你 好 = 你好)
+  function noSpace(list) {
+    const out = list.slice();
+    list.forEach((x) => { const k = x.replace(/ /g, ""); if (k && out.indexOf(k) < 0) { out.push(k); } });
+    return out;
   }
   const POS_ABBR = new Set(["n", "v", "vt", "vi", "adj", "adv", "prep", "conj", "pron", "int", "interj", "det", "phr",
     "phrv", "noun", "verb", "adjective", "adverb", "num", "aux", "modal", "abbr", "sth", "sb", "sbsth", "idiom", "pl",
@@ -318,14 +327,21 @@ var GardenGames = (function () {
     return { l: l, t: t };
   }
   function pyTyped(raw) { const k = pyKey(raw); return k.t ? k.l + "|" + k.t : k.l; }
+  // 1.34.1: deck hay ghi nhiều cách đọc bằng dấu câu Trung (hǎo，hào · hǎo、hào · hǎo；hào) hoặc trong ngoặc
+  // (hǎo（hào） · nǐ hǎo (lịch sự: nín hǎo)) — trước chỉ tách , ; / | nên chữ cái dính liền "haohao", gõ "hao" không đúng
   function pyAnswers(reading) {
     const out = [];
-    String(reading || "").split(/[,;/|]/).forEach((part) => {
+    const sep = /[,;/|，；、]/;
+    const add = (part) => {
       const k = pyKey(part);
       if (!k.l) { return; }
       if (out.indexOf(k.l) < 0) { out.push(k.l); }
       if (out.indexOf(k.l + "|" + k.t) < 0) { out.push(k.l + "|" + k.t); }
-    });
+    };
+    const inner = [];
+    const core = String(reading || "").replace(/[（(]([^（）()]*)[）)]/g, (m, x) => { inner.push(x); return " "; });
+    core.split(sep).forEach(add);
+    inner.forEach((x) => x.split(sep).forEach((y) => y.split(/[:：]\s*/).forEach(add)));
     return out;
   }
   // Nghĩa ngắn gọn cho biển quạ (lấy vế đầu trước dấu ;)
@@ -1750,9 +1766,10 @@ var GardenGames = (function () {
     let lives = LIVES, score = 0, combo = 0, spawned = 0, scared = 0, spawnIn = 0.6, over = false;
     const crows = [];
     const xx = pool.group === "xx" || pool.group === "zh" || pool.group === "ko";   // 1.25.1 / 1.32: đáp án là đúng chữ của thẻ
+    const cjk = cm.type === "spell" && (pool.group === "zh" || pool.group === "ko");   // 1.34.1: gõ chữ Trung / Hàn — bỏ dấu cách
     const answersOf = (p) => py ? (p._py || (p._py = pyAnswers(p.reading)))
       : cm.type === "spell_m" ? (p._sm || (p._sm = spellAnswers(p.meaning)))
-      : spell && xx ? (p._sw || (p._sw = spellAnswers(p.word)))
+      : spell && xx ? (p._sw || (p._sw = cjk ? noSpace(spellAnswers(p.word)) : spellAnswers(p.word)))
         : spell ? enAnswers(p) : cm.type === "both" ? readingsOf(p).concat(wordForms(p)) : readingsOf(p);
     // chữ trên biển của quạ
     function labelOf(p) {
@@ -1839,7 +1856,7 @@ var GardenGames = (function () {
       if (py) {
         typed = pyKey(raw).l ? [pyTyped(raw)] : [];
       } else if (spell) {
-        typed = enNorm(raw) ? [enNorm(raw)] : [];
+        typed = enNorm(raw) ? (cjk ? noSpace([enNorm(raw)]) : [enNorm(raw)]) : [];
       } else {
         const vars = kanaVariants(raw);
         const shown = vars.find((v) => flyingNow.some((c) => crowAnswers(c).some((r) => r.indexOf(normKana(v)) === 0))) || vars[0];
@@ -1871,7 +1888,9 @@ var GardenGames = (function () {
       hud();
       return true;
     }
-    input.addEventListener("input", () => check(false));
+    // 1.34.1: đang ghép chữ bằng bộ gõ (Hàn / Trung / Nhật) thì chưa chấm — xoá ô giữa lúc bộ gõ còn giữ chữ cuối dễ để
+    // lại chữ thừa ở từ sau; chấm khi chữ đã vào ô (compositionend) hoặc Enter
+    input.addEventListener("input", (e) => { if (!e.isComposing) { check(false); } });
     input.addEventListener("compositionend", () => check(false));
     input.addEventListener("keydown", (e) => {
       if (e.key === "Enter" && !e.isComposing) {

@@ -193,7 +193,7 @@ for p in glob.glob(os.path.join(ROOT, "**", "*"), recursive=True):
         continue
     # 1.32: bảng chữ tiếng Trung / tiếng Hàn (Ngôn ngữ trong vườn) và test / ảnh phác của nó có chữ Trung cạnh chữ Nhật
     if p.endswith(("lang_core.py", "test_132.py", "test_132.js", "e2e_132.js", "mock_132_steps.js", "tieng_nhap.py",
-                   "LOI_NHAC_GEMINI.md", "demo_zhko.py", "test_133.py", "ai_zh.py", "tao_bao_133.py", "e2e_133.js")) or "/ke_hoach_1_32/" in p or "/kiem_thu/1.32" in p or "/kiem_thu/1.33" in p or "/fixtures/chu_132" in p:
+                   "LOI_NHAC_GEMINI.md", "demo_zhko.py", "test_132c.py", "test_132c.js", "e2e_132c.js", "test_133.py", "ai_zh.py", "tao_bao_133.py", "e2e_133.js")) or "/ke_hoach_1_32/" in p or "/kiem_thu/1.32" in p or "/kiem_thu/1.33" in p or "/fixtures/chu_132" in p:
         continue
     try:
         text = read(p).decode("utf-8")
