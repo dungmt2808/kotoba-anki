@@ -127,6 +127,11 @@ Sau khi trả lời có hiện cách đọc, Hán Việt, nghĩa (và cách dùn
 - Deck tiếng Trung / tiếng Hàn đã cấu hình ở bản cũ (lưu "Ngôn ngữ khác" — bản cũ chưa có lựa chọn khác) được nhận lại là tiếng Trung / Hàn (`fields_core.effective_lang`); chọn "Ngôn ngữ khác" ở 1.32 thì giữ (`lang2[mid] = "other"`).
 - Từ vựng / tên tự đặt trong câu StackChan không bị dịch nhầm (dấu cô lập U+2068…U+2069).
 - Tên tường / sàn dài không tràn thẻ; bong bóng rỗng không hiện.
+- (lượt kiểm tra thứ hai, 17/11) Đuổi quạ so đáp án: gõ tiếng Việt kiểu tổ hợp / Hangul tách nét / chữ toàn khổ (NFKC), tiếng
+  Trung / Hàn không tính dấu cách, pinyin nhiều cách đọc ghi bằng `，、；（）`, không chấm lúc bộ gõ đang ghép chữ (`games.js`).
+- Đoán ngôn ngữ (`fields_core.guess_lang`): có kana → tiếng Nhật trước khi xét tên trường (deck tiếng Nhật có trường "中文" /
+  "Korean", deck kanji có trường "Chinese reading"); tiếng Đức / Pháp… và chữ Nga / Thái… → "Ngôn ngữ khác" (trước: tiếng Anh /
+  tiếng Nhật).
 
 ### Mới ở 1.32.0: Ngôn ngữ trong vườn, deck tiếng Trung / tiếng Hàn
 - **⚙ → Ngôn ngữ trong vườn**: Tự theo deck (mặc định) · Tiếng Nhật · Tiếng Anh · Tiếng Trung · Tiếng Hàn · Chỉ tiếng Việt. Đổi theo: câu StackChan nói, sinh hoạt (thẻ khi bấm StackChan, Sổ sinh hoạt), đồ nhặt (Hộp sưu tầm), Album khách, tường / sàn, tên giao diện mùa, chữ trang trí ở tiêu đề bảng (おうち → Home / 我的家 / 우리 집). Tiếng Trung kèm pinyin, tiếng Hàn kèm phiên âm. Tự theo deck = ngôn ngữ của phần lớn cây trong vườn. Lưu ở cài đặt riêng máy (config `prefs`, khoá `kb-glang`), không ghi collection.

@@ -216,9 +216,12 @@ KHONG_DOI = {
     "paper.js": "báo và chép chính tả theo ngôn ngữ của số báo",
     "fields.js": "ví dụ cách ghi trường trong deck tiếng Nhật",
 }
-# games.js: bảng chuyển romaji → kana (dòng < 700) và chữ gốc đã đổi qua GardenLang.game / ask / tag (bảng GAMES / ASK / TAGS)
+# games.js: bảng chuyển romaji → kana (trước mục "Chọn từ"; 1.32.1: tìm dòng thay cho số cố định 700 — thêm mã phía trên
+# đẩy bảng xuống) và chữ gốc đã đổi qua GardenLang.game / ask / tag (bảng GAMES / ASK / TAGS)
 GAMES_GOC = {g["ja"] for g in L.GAMES.values()} | set(L.ASK["ja"]) | set(L.TAGS["ja"].values()) | {"する"}
 KHONG_DOI_CHU = {"ことば畑", "ことば畑 · ", "お正月", "一、二文を書いてみよう…"}     # tên add-on, tên lễ, ô luyện viết tiếng Nhật
+_g = open(os.path.join(ADDON, "web", "games.js"), encoding="utf-8").read().split("\n")
+KANA_END = next((i for i, x in enumerate(_g, 1) if x.strip() == "// Chọn từ"), 700)
 lits: list[tuple[str, int, str]] = []
 for fn in sorted(os.listdir(os.path.join(ADDON, "web"))):
     if not fn.endswith(".js") or fn == "glang.js":
@@ -243,7 +246,7 @@ for d in ("2027-01-01", "2026-12-25", "2026-10-31", "2026-09-25", "2026-08-19"):
     if f and f.get("hi"):
         lits.append(("event_core.py", 0, f["hi"]))
 check = [x for x in lits if x[0] not in KHONG_DOI and x[2] not in KHONG_DOI_CHU
-         and not (x[0] == "games.js" and (x[1] < 700 or x[2] in GAMES_GOC)) and not x[2].startswith("Tools → Add-ons → ")
+         and not (x[0] == "games.js" and (x[1] < KANA_END or x[2] in GAMES_GOC)) and not x[2].startswith("Tools → Add-ons → ")
          and "ことば畑 → Config" not in x[2] and "người làm ことば畑" not in x[2]]
 defs = re.findall(r'\{ id: "([a-z]+)", jp: "([^"]+)"', gsrc0 := open(os.path.join(ADDON, "web", "games.js"), encoding="utf-8").read())
 ok(sorted(defs) == sorted((k, g["ja"]) for k, g in L.GAMES.items()), "tên tiếng Nhật của 5 trò chơi khớp bảng GAMES: %s" % defs)
