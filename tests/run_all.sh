@@ -171,6 +171,9 @@ echo "$OUT" | grep -E "✗|KẾT QUẢ|Traceback"; [ $RC = 0 ] || FAIL=1
 echo "== core/test_1331.py (1.33.1: File → Import .colpkg giữ bản vừa khôi phục + không trừ xu, tab Nguồn báo gọn hơn, hợp đồng dữ liệu = 1.33.0)"
 OUT=$(python3 "$HERE/core/test_1331.py" "$ADDON" 2>&1); RC=$?
 echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
+echo "== core/test_1332.py (1.33.2: đang viết báo thì khoá lựa chọn của báo, báo thêm sau khi viết xong thì từ mai, đang đồng bộ thì báo một câu, câu chữ gọn, ⚙ thu gọn)"
+OUT=$(python3 "$HERE/core/test_1332.py" "$ADDON" 2>&1); RC=$?
+echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
 # trang web chung (site/, GitHub Pages): đăng mã, dữ liệu trang khớp add-on (đổi hình mà quên `node site/tools/xuat_hinh.js` là báo)
 echo "== trang/test_trang.py (trang web: đăng / gỡ mã, biểu mẫu issue, GitHub Actions, dữ liệu khớp add-on)"
 OUT=$(python3 "$HERE/trang/test_trang.py" "$ADDON" 2>&1); RC=$?
