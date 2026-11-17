@@ -362,12 +362,20 @@ def autofix(lang: str, raw: Any, scope: dict[str, Any], opts: dict[str, Any]) ->
     tm = [w for w in raw.get("tu_moi", []) if isinstance(w, dict) and isinstance(w.get("w"), str) and w["w"].strip()] \
         if isinstance(raw.get("tu_moi"), list) else []
     tm2 = []
+    deck_list = _deck_words(scope)
+
+    def deck_form(word: str) -> bool:
+        """Gemini thật 17/11: khai "die Blätter" là từ mới trong khi deck có "das Blatt, ¨-er" — chỉ là dạng biến đổi."""
+        base = eu.nfc(eu.strip_article(word, lang))
+        return bool(base) and any(eu.find_word(base, dw, lang) == (0, len(base)) for dw in deck_list)
     for w in tm:
         w["w"] = deck_word(w["w"], lang) or clean_eu(w["w"])
         w["r"] = ai._plain(w.get("r"), 40) if isinstance(w.get("r"), str) else ""
         w["m"] = clean_vi(w.get("m")) if isinstance(w.get("m"), str) else ""
         if w["w"].lower() in deck or eu.strip_article(w["w"], lang).lower() in deck_base:
             notes.append("bỏ khai báo từ mới đã có trong deck")
+        elif w["w"] and deck_form(w["w"]):
+            notes.append("bỏ khai báo từ mới chỉ là dạng biến đổi của từ trong deck")
         elif w["w"]:
             tm2.append(w)
     tm2 = tm2[:int(opts.get("max_new", 3))]

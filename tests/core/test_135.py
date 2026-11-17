@@ -356,6 +356,18 @@ ok(any("Regenschirm" in x for x in ai_de.check(raw, SCOPE["de"], OPTS).errors), 
 f, n = ai_de.autofix(raw, SCOPE["de"], OPTS)
 ok([w["w"] for w in f["tu_moi"]] == ["der Holzschuh"] and any("từ mới" in x for x in n) and not ai_de.check(f, SCOPE["de"], OPTS).errors,
    "… máy tự bỏ từ mới đó (không tốn lượt Gemini sửa), giữ từ mới có trong bài")
+# Gemini thật 17/11: khai "die Blätter" là từ mới trong khi deck có "das Blatt, ¨-er" → bỏ, tra từ trỏ về das Blatt
+raw = issue_with_story("de")
+raw["tu_moi"].append({"w": "die Blätter", "r": "/ˈblɛtɐ/", "m": "những chiếc lá"})
+f, n = ai_de.autofix(raw, SCOPE["de"], OPTS)
+ok([w["w"] for w in f["tu_moi"]] == ["der Holzschuh"] and any("dạng biến đổi" in x for x in n)
+   and "{Blätter||das Blatt}" in json.dumps(f["bai"], ensure_ascii=False),
+   "từ mới chỉ là dạng biến đổi của từ trong deck (die Blätter ← das Blatt) → máy bỏ, tra từ trỏ về das Blatt")
+raw = issue_with_story("fr")
+raw["tu_moi"].append({"w": "les yeux", "r": "", "m": "đôi mắt"})
+f, n = ai_fr.autofix(raw, SCOPE["fr"], OPTS)
+ok([w["w"] for w in f["tu_moi"]] == ["le sabot"] and "{yeux||l'œil}" in json.dumps(f["bai"], ensure_ascii=False),
+   "fr: « les yeux » khai là từ mới → bỏ (deck có l'œil)")
 e = errs_after("fr", lambda r: r["cau_hoi"][0].__setitem__("dung", 7))
 ok(any("dung" in x for x in e), "đáp án ngoài danh sách → lỗi")
 raw = issue_with_story("fr")
