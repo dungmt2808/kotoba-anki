@@ -1,4 +1,6 @@
-# Vườn đỡ rối mắt khi nhiều cây — ảnh phác (17/11, chờ người dùng chọn)
+# Vườn đỡ rối mắt khi nhiều cây — ảnh phác (17/11)
+
+> **Người dùng chọn kiểu ngăn luống `vg_01b_bien_go.png`** (chỉ biển gỗ nhỏ ở đầu luống, không dải đất): "tớ thấy 1b khá ổn nhưng hiện tại chắc chưa triển khai, bạn ghi lại trước đi nhé" → **chưa làm**. Khi làm: hỏi lại chọn cách xếp nào (01 luống theo giai đoạn / 02 cây cần tưới lên đầu / 03 lọc bằng chú thích / 04 vườn quả, kết hợp được) — người dùng mới chốt kiểu ngăn luống.
 
 Người dùng: "nếu vườn cây có nhiều cây quá thì có vẻ nhìn hơi rối mắt. có thể chỉnh vườn to lên hoặc giảm max_plan trong
 config xuống, nhưng còn cách nào khác không" → "chưa biết, vẽ thử được không". Ảnh vẽ bằng chính `Garden.render` của add-on
@@ -29,3 +31,9 @@ các luống) → vẽ lại 3 kiểu không có dải đất (`node mock_vuon_g
 | `vg_01b_bien_go.png` | chỉ biển gỗ nhỏ cắm ở đầu luống; luống mới bắt đầu hàng mới (khoảng cỏ cuối luống trước tự làm chỗ ngăn) |
 | `vg_01c_da_lat.png` | biển gỗ + vài viên đá lát cách quãng trên cỏ |
 | `vg_01d_vien_hoa.png` | biển gỗ + viền hoa dại nhỏ trên cỏ |
+
+**Kết quả (17/11)**: người dùng chọn **01b — chỉ biển gỗ**, để làm sau (chưa triển khai). Gợi ý khi làm: thêm lựa chọn ở ⚙
+("Sắp ruộng: Như cũ / Theo giai đoạn / Cần tưới lên đầu"), mặc định "Như cũ" để không đổi vườn của người đang dùng; biển gỗ vẽ
+bằng điểm ảnh trên canvas ruộng (ảnh phác dùng khung HTML); bấm biển có thể thu gọn luống; chỉ đổi cách hiển thị (không khoá
+collection mới — lựa chọn ở config `prefs` như các mục ⚙ khác); test: thứ tự / số cây mỗi luống đúng, bấm / rê chuột trúng đúng
+cây sau khi xếp lại (`cellAt` dùng chỉ số mới), ôn thẻ / Tưới ngay / hiệu ứng lên giai đoạn vẫn chỉ đúng cây, 5.000 cây không chậm.
