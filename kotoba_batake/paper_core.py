@@ -32,12 +32,12 @@ PAPER_KEY = "kotoba_batake_paper"
 PAPER_KEY_EN = "kotoba_batake_paper_en"   # 1.19: báo tiếng Anh (số đã đọc / câu đã làm theo ngày, tách khỏi báo tiếng Nhật)
 PAPER_KEY_VI = "kotoba_batake_paper_vi"   # 1.25.1: báo tiếng Việt (Báo Làng Kotoba)
 PAPER_KEY_ZH = "kotoba_batake_paper_zh"   # 1.33: báo tiếng Trung
-PAPER_LANGS = ("ja", "en", "zh", "ko", "vi")     # báo của add-on (1.33: thêm tiếng Trung / tiếng Hàn)
-LEARN_LANGS = ("ja", "en", "zh", "ko")            # báo học tiếng (tối đa 2 cùng lúc); tiếng Việt đi một mình
+PAPER_LANGS = ("ja", "en", "zh", "ko", "de", "fr", "vi")     # báo của add-on (1.33: + Trung / Hàn; 1.35: + Đức / Pháp)
+LEARN_LANGS = ("ja", "en", "zh", "ko", "de", "fr")            # báo học tiếng (tối đa 2 cùng lúc); tiếng Việt đi một mình
 
 
 def clean_paper_langs(raw: Any) -> list[str]:
-    """Báo muốn nhận (config gemini_langs) → danh sách hợp lệ: tối đa 2 báo trong Nhật / Anh / Trung / Hàn (giữ 2 báo có
+    """Báo muốn nhận (config gemini_langs) → danh sách hợp lệ: tối đa 2 báo trong Nhật / Anh / Trung / Hàn / Đức / Pháp (giữ 2 báo có
     trước trong danh sách), HOẶC chỉ tiếng Việt; có cả Việt lẫn báo học tiếng → bỏ Việt (1.25.2, 1.33)."""
     if not isinstance(raw, list):
         return []
@@ -46,7 +46,9 @@ def clean_paper_langs(raw: Any) -> list[str]:
         return [x for x in LEARN_LANGS if x in learn]
     return ["vi"] if "vi" in raw else []
 PAPER_KEY_KO = "kotoba_batake_paper_ko"   # 1.33: báo tiếng Hàn
-ISSUE_LANGS = ("ja", "en", "vi", "zh", "ko")     # 1.33: báo tiếng Trung / tiếng Hàn
+PAPER_KEY_DE = "kotoba_batake_paper_de"   # 1.35: báo tiếng Đức (khoá mới — bản cũ không đụng)
+PAPER_KEY_FR = "kotoba_batake_paper_fr"   # 1.35: báo tiếng Pháp
+ISSUE_LANGS = ("ja", "en", "vi", "zh", "ko", "de", "fr")     # 1.33: báo tiếng Trung / tiếng Hàn; 1.35: Đức / Pháp
 DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 AUDIO_RE = re.compile(r"^audio/[A-Za-z0-9_.-]{1,80}\.(?:wav|mp3|ogg|m4a)$")
 MAX_JSON = 1_000_000
@@ -886,7 +888,7 @@ def issue_view(lib: Library, st: dict[str, Any], date: str, voice: Voice | None 
     lang = iss["lang"]
     # 1.25.1: báo tiếng Việt không có giọng đọc (tiếng mẹ đẻ, không nghe / chép)
     machine = voice.tts_en if lang == "en" else (False if lang == "vi" else voice.tts_xx.get(lang, False)
-                                                  if lang in ("zh", "ko") else voice.tts)      # 1.33
+                                                  if lang in XX_LANGS else voice.tts)      # 1.33 / 1.35
     for i, b in enumerate(iss["bai"]):
         a = dict(b)
         files = audio["bai"][i] if i < len(audio["bai"]) else []
@@ -919,7 +921,8 @@ def issue_view(lib: Library, st: dict[str, Any], date: str, voice: Voice | None 
         "date": date, "so": iss["so"], "rut_gon": iss["rut_gon"], "bai": arts, "cau_hoi": questions,
         "chinh_ta": dict_items, "mau": mau, "tu": tu, "credit": audio["credit"], "may_viet": iss["may_viet"],
         "voice_note": "Câu chưa có giọng đọc dùng giọng dự phòng (Gemini hoặc giọng %s của máy)."
-        % {"en": "tiếng Anh", "zh": "tiếng Trung", "ko": "tiếng Hàn"}.get(lang, "tiếng Nhật") if fallback and lang != "vi" else "",
+        % {"en": "tiếng Anh", "zh": "tiếng Trung", "ko": "tiếng Hàn", "de": "tiếng Đức", "fr": "tiếng Pháp"}.get(lang, "tiếng Nhật")
+        if fallback and lang != "vi" else "",
         "lang": lang,
         "coins": r["coins"], "complete": r["bonus"],
         "reward": {"q": Q_COINS, "ct": CT_COINS, "bonus": ISSUE_BONUS},
