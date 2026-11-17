@@ -255,6 +255,44 @@ mw.addonManager.writeConfig(kb.__name__, c); result = 1`);
   }
   await js('GardenPaper.close(); return 1;');
 
+  console.log('== 8. Bấm bừa tab Nguồn báo (120 thao tác ngẫu nhiên, hạt cố định)');
+  await py(KB + 'kb._dialog.resize(1100, 820); result = 1'); await sleep(800);
+  await openSrc();
+  let seed = Number(process.env.KB_SEED || 1331);
+  const rnd = (n) => { seed = (seed * 1103515245 + 12345) % 2147483648; return Math.floor(seed / 65536) % n; };   // bit cao (bit thấp của LCG lặp ngắn)
+  const acts = { tick: 0, sel: 0, det: 0, reopen: 0 };
+  for (let i = 0; i < 120; i++) {
+    const k = rnd(10);
+    if (k < 3) {
+      acts.tick++;
+      await js(`const l = [...document.querySelectorAll(".kb-ai-want .kb-ai-tick input")].filter((x) => !x.disabled); if (l.length) l[${rnd(97)} % l.length].click(); return 1;`);
+    } else if (k < 7) {
+      acts.sel++;
+      // không chọn "Chọn deck…" (mở danh sách deck — phần đó có kịch bản riêng ở e2e_119 / e2e_1223)
+      await js(`const s = [...document.querySelectorAll("select.kb-ai-sel")]; if (!s.length) return 0; const x = s[${rnd(97)} % s.length];
+        const o = [...x.options].filter((op) => !op.disabled && op.value !== "pick"); if (!o.length) return 0; x.value = o[${rnd(89)} % o.length].value; x.dispatchEvent(new Event("change")); return 1;`);
+    } else if (k < 9) {
+      acts.det++;
+      await js('const d = [...document.querySelectorAll("#kb-p-stage details")]; if (d.length) { const x = d[' + rnd(97) + ' % d.length]; x.open = !x.open; } return 1;');
+    } else {
+      acts.reopen++;
+      await openSrc();
+    }
+    await sleep(120 + rnd(250));
+  }
+  await sleep(1200);
+  const inv = await py(KB + `c = kb.config()
+langs = c.get("gemini_langs")
+learn = [x for x in (langs or []) if x in kb.LEARN_LANGS]
+result = {"langs": langs, "ok_langs": isinstance(langs, list) and len(learn) <= 2 and (("vi" not in langs) or langs == ["vi"]) and len(set(langs)) == len(langs),
+          "ok_lv": c.get("gemini_level") in kb.ai.LEVELS and c.get("gemini_level_en") in kb.ai_en.LEVELS and c.get("gemini_level_zh") in kb.ai_zh.LEVELS and c.get("gemini_level_ko") in kb.ai_ko.LEVELS,
+          "ok_other": c.get("gemini_audio") in kb.ai.AUDIO_MODES and c.get("gemini_story") in kb.story_core.MODES and c.get("dict_voice") in kb.DICT_VOICE_MODES,
+          "src": {k: v.get("mode") for k, v in kb.words.load_src(mw.col).items()}}`);
+  ok(inv.ok_langs && inv.ok_lv && inv.ok_other, `sau ${JSON.stringify(acts)}: cấu hình báo luôn hợp lệ ${JSON.stringify(inv)}`);
+  const vis8 = await js('return !!document.querySelector(".kb-ai-want") && document.documentElement.scrollWidth <= innerWidth + 1;');
+  ok(vis8, 'tab Nguồn báo vẫn vẽ đúng, không tràn ngang');
+  await js('GardenPaper.close(); return 1;');
+
   const errs = (await seen()).slice(errs0);
   ok(errs.length === 0, 'nhật ký lỗi của add-on trống (lỗi Python + lỗi JS của trang)' + (errs.length ? ': ' + errs.join(' | ') : ''));
   console.log(`KẾT QUẢ: ${pass}/${total}` + (pass === total ? ' — TẤT CẢ OK' : ''));

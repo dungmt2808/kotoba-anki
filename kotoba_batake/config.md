@@ -56,7 +56,7 @@
 - Cách cài: tải thư mục `kotoba_daily` ở https://github.com/dungmt2808/kotoba-anki (thư mục `kotoba_daily/`), làm theo `HUONG_DAN.md` trong đó, rồi đặt `bao_dir` ở trên thành đường dẫn thư mục đó và mở lại vườn. Từ lúc này tab **Nguồn báo** có thêm thẻ **Claude Code** (chọn thư mục, đổi qua lại với Gemini).
 - Xoá `bao_dir` (để `""`) thì thẻ Claude Code ẩn lại, báo tiếng Nhật về Gemini; các số báo cũ trong thư mục không bị xoá.
 
-**Giọng đọc cho câu không có audio** (từ bản 1.13) — để Chép chính tả chạy với mọi deck
+**Giọng đọc cho câu không có audio** (từ bản 1.13; 1.33.1: ở khối *Tuỳ chọn thêm* cuối tab Nguồn báo) — để Chép chính tả chạy với mọi deck
 - `dict_voice`: `"auto"` (mặc định: giọng Gemini nếu có khoá, trong lúc chờ dùng giọng tiếng Nhật của máy), `"may"` (chỉ giọng của máy, không gửi câu lên Google), `"tat"` (chỉ chép câu / từ có sẵn audio).
 - Lượt chép mỗi ngày lấy: câu chép sai đến hạn ôn → câu trong báo → câu ví dụ của deck → **từ của deck** (nghe từ, gõ lại) khi deck không có câu ví dụ. Câu không có audio thì đọc bằng giọng Gemini (lưu sẵn trong `user_files/bao_gemini/giong/`) hoặc giọng của máy.
 - Giọng tiếng Nhật của máy: Windows → Cài đặt → Thời gian & ngôn ngữ → Giọng nói → Thêm giọng nói → Tiếng Nhật; macOS → Trợ năng → Nội dung đọc → Giọng hệ thống → Quản lý giọng nói → Tiếng Nhật. Mở lại Anki sau khi cài.
