@@ -177,6 +177,12 @@ ANKI_PY=~/.venv-anki/bin/python tests/anki/run_ui.sh /tmp/kb_src/kotoba_batake /
 ```
 Cần Node ≥ 22 (có sẵn `fetch` và `WebSocket`). Cổng: `KB_CDP_PORT` (9333), `KB_CTRL_PORT` (9444). `kill_anki.sh` tắt Anki đang chạy từ các script này.
 
+## Kết quả lần chạy gần nhất (bản 1.32.1, lượt kiểm tra thứ hai, 17/11/2026 tối) — trên gói đã đóng
+- `run_all.sh` (`ANKI_PY` = venv aqt 26.9.4, `PY39` = venv aqt 23.10.1; **59 bộ**, có `core/test_132c.py` 60/60) **TẤT CẢ OK**.
+- Anki 26.9.4, 31 kịch bản đều đạt (`e2e_132c` 23/23, `e2e_117` 55/55, `e2e_1251` 48/48 sau khi sửa kỳ vọng tiếng Hàn của 1.32, `audit_full` 183/183…); `e2e_132` 39/39, `e2e_132b` 20/20, `e2e_1314` 53/53, `e2e_130` 76/76, `e2e_128` 72/72, `e2e_131` 89/89 (một lần 86/89 ở bước bấm khách — chập chờn theo giờ, chạy lại 3 lần đều đạt); `dong_bo/run_e2e.sh` 47/47.
+- Anki 23.10.1 (Python 3.9, Qt 6.6): `e2e_132` 39/39, `e2e_132b` 20/20, `e2e_132c` 23/23, `e2e_1314` 53/53, `e2e_tour` 12/12.
+- `run_capnhat.sh` 1.31.3 → 1.32.1 19/19; `run_habanh.sh` 1.32.1 → 1.31.3 → 1.32.1 23/23. Chi tiết: `docs/kiem_thu/1.32/BAO_CAO.md` mục 7.
+
 ## Kết quả lần chạy gần nhất (bản 1.31.5, 16/11/2026) — Gemini 4 Hydrogen, chia việc theo hạn mức, Sổ tay làng
 - `run_all.sh` (`ANKI_PY` = venv aqt 26.9.4; **56 bộ**, có `core/test_1315.py` 32/32) **TẤT CẢ OK** sau khi chạy lại `node site/tools/xuat_hinh.js`.
 - Anki 26.9.4 thật: `run_capnhat.sh` 1.31.3 (`e64eb22`) → 1.31.5 **17/17** (trên gói), `e2e_1251` 48/48, `e2e_123` 66/66, `e2e_1314` 53/53.

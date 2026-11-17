@@ -313,21 +313,22 @@ result = 1`);
   ok(hasWrite, 'có deck tiếng Nhật / tiếng Anh (chưa tick báo) → Luyện viết hiện lại');
   await js('GardenCal.close && GardenCal.close(); return 1;'); await sleep(500);
 
-  console.log('== Đuổi quạ cho deck tiếng Hàn (Ngôn ngữ khác)');
+  console.log('== Đuổi quạ cho deck tiếng Hàn (1.25.1: Ngôn ngữ khác; từ 1.32: Tiếng Hàn)');
   await py(KB + 'd = kb._dialog; d.deck_id = mw.col.decks.id_for_name("J::Tiếng Hàn"); d.refresh(); result = 1'); await sleep(2500);
   await js('GardenGames.open(); return 1;'); await sleep(1200);
   const crowCard = await js('const c = [...document.querySelectorAll(".kb-g-card, .kb-g-pick, [data-game]")].find((x) => /Đuổi quạ/.test(x.textContent)); return c ? [c.textContent, !!c.querySelector("button:disabled"), c.className] : null;');
   ok(crowCard && !/chưa hỗ trợ/.test(crowCard[0]), 'bảng Trò chơi: Đuổi quạ không còn "chưa hỗ trợ ngôn ngữ này" (' + (crowCard ? crowCard[0].slice(0, 80) : 'không thấy') + ')');
   const modes = await js('const sel = [...document.querySelectorAll("select")].find((s) => [...s.options].some((o) => /gõ nghĩa/.test(o.textContent))); return sel ? [...sel.options].map((o) => o.textContent) : [];');
-  ok(modes.indexOf('Nghĩa → gõ từ') >= 0 && modes.indexOf('Từ → gõ nghĩa') >= 0, 'kiểu chơi: Nghĩa → gõ từ / Từ → gõ nghĩa ' + JSON.stringify(modes));
+  // 1.32: deck tiếng Hàn có nhóm riêng — "Nghĩa → gõ chữ Hàn" thay cho "Nghĩa → gõ từ" của Ngôn ngữ khác
+  ok((modes.indexOf('Nghĩa → gõ từ') >= 0 || modes.indexOf('Nghĩa → gõ chữ Hàn') >= 0) && modes.indexOf('Từ → gõ nghĩa') >= 0, 'kiểu chơi: Nghĩa → gõ từ (1.32: gõ chữ Hàn) / Từ → gõ nghĩa ' + JSON.stringify(modes));
   await shot('08_tro_choi_han');
-  await js('const sel = [...document.querySelectorAll("select")].find((s) => [...s.options].some((o) => /gõ nghĩa/.test(o.textContent))); sel.value = [...sel.options].find((o) => /Nghĩa → gõ từ/.test(o.textContent)).value; sel.dispatchEvent(new Event("change", { bubbles: true })); return 1;');
+  await js('const sel = [...document.querySelectorAll("select")].find((s) => [...s.options].some((o) => /gõ nghĩa/.test(o.textContent))); sel.value = [...sel.options].find((o) => /Nghĩa → gõ (từ|chữ Hàn)/.test(o.textContent)).value; sel.dispatchEvent(new Event("change", { bubbles: true })); return 1;');
   await sleep(600);
   await js('const c = [...document.querySelectorAll(".kb-g-card, .kb-g-pick, [data-game]")].find((x) => /Đuổi quạ/.test(x.textContent)); (c.querySelector("button:not(:disabled)") || c).click(); return 1;');
   await waitFor('document.querySelector(".kb-gc-input")', 6000);
   await sleep(2500);
   const ph = await js('return document.querySelector(".kb-gc-input").placeholder;');
-  ok(/Gõ từ/.test(ph), 'vào game: ô gõ "' + ph + '"');
+  ok(/Gõ (từ|chữ Hàn)/.test(ph), 'vào game: ô gõ "' + ph + '"');
   // gõ đáp án của con quạ đang bay (từ tiếng Hàn tương ứng nghĩa trên biển)
   const KO = { 'quả táo': '사과', 'trường học': '학교', 'nước': '물', 'sách': '책', 'bạn': '친구' };
   let scared = false;
