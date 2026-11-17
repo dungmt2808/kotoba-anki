@@ -1,0 +1,72 @@
+{
+  "tested_commit": "9ef5272f6af34c78168d2b8851259add29bf2561",
+  "round": 2,
+  "suites": {
+    "recovery26": {
+      "cases": 45,
+      "passed": 37,
+      "failed_cases": [
+        "restore/kotoba_batake_state/sync-again/eventual-recovery",
+        "restore/kotoba_batake_state/edit-after-failure/eventual-recovery",
+        "restore/kotoba_batake_more/sync-again/eventual-recovery",
+        "restore/kotoba_batake_more/edit-after-failure/eventual-recovery",
+        "restore/kotoba_batake_journal_2026_11/sync-again/eventual-recovery",
+        "restore/kotoba_batake_journal_2026_11/edit-after-failure/eventual-recovery",
+        "snapshot-read-error/retains-last-good-local-version",
+        "process-stop/kotoba_batake_mobile/review-is-paid-after-recovery"
+      ]
+    },
+    "recovery23": {
+      "cases": 45,
+      "passed": 37,
+      "failed_cases": [
+        "restore/kotoba_batake_state/sync-again/eventual-recovery",
+        "restore/kotoba_batake_state/edit-after-failure/eventual-recovery",
+        "restore/kotoba_batake_more/sync-again/eventual-recovery",
+        "restore/kotoba_batake_more/edit-after-failure/eventual-recovery",
+        "restore/kotoba_batake_journal_2026_11/sync-again/eventual-recovery",
+        "restore/kotoba_batake_journal_2026_11/edit-after-failure/eventual-recovery",
+        "snapshot-read-error/retains-last-good-local-version",
+        "process-stop/kotoba_batake_mobile/review-is-paid-after-recovery"
+      ]
+    },
+    "ui26": {
+      "cases": 20,
+      "passed": 16,
+      "failed_cases": [
+        "merchant/failed-purchase-is-atomic",
+        "merchant/UI-balance-agrees-with-storage",
+        "merchant/retry-pays-for-one-purchase",
+        "sync-retry/new-data-survives-retry"
+      ]
+    },
+    "ui23": {
+      "cases": 20,
+      "passed": 16,
+      "failed_cases": [
+        "merchant/failed-purchase-is-atomic",
+        "merchant/UI-balance-agrees-with-storage",
+        "merchant/retry-pays-for-one-purchase",
+        "sync-retry/new-data-survives-retry"
+      ]
+    }
+  },
+  "unique_assertions_per_anki": 65,
+  "assertion_executions": 130,
+  "passed": 106,
+  "failed": 24,
+  "new_findings": [
+    "F06 P1: retry/edits replace a good recovery checkpoint",
+    "F07 P2: merchant retry buys twice after event-store failure"
+  ],
+  "extended_finding": "F02: an actual child-process stop can persist paid ledger without wallet credit",
+  "large_collection": {
+    "notes": 10000,
+    "plant_limits": [
+      400,
+      5000
+    ],
+    "both_anki_versions_passed": true
+  },
+  "live_gemini": false
+}

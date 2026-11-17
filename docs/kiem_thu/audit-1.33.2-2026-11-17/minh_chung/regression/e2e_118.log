@@ -1,0 +1,35 @@
+== thẻ anh em bị hoãn tới mai (ảnh người dùng: "Tưới ngay 1" mà bảng ôn báo hết thẻ)
+  ✓ trước khi ôn: Tưới ngay 1 (cây 猫 khát)
+  ✓ bảng ôn mở với 1 thẻ
+  ✓ ôn 1 thẻ → hết thẻ (thẻ kia bị Anki hoãn)
+  ✓ Anki thật sự hoãn 1 thẻ anh em
+  ✓ số đếm trên bảng ôn về 0 0 0 (trước 1.18 giữ số của thẻ cuối, vd. "0 1 0"): 0 0 0
+  ✓ nút Tưới ngay không còn số (trước 1.18: còn 1)
+  ✓ cây 猫 vẫn héo (nhớ thật) nhưng không khát / không giọt nước, lý do "buried"
+  ✓ màn hết thẻ nói rõ: 1 cây có thẻ được Anki hoãn tới mai. Mai sẽ tưới được.
+  ✓ chú thích nút Tưới ngay: Ôn thẻ ngay trong vườn (phím R) · chưa cây nào khát · 1 cây chưa tưới được lúc này
+  ✓ đóng bảng ôn
+== thẻ héo nhưng Anki hẹn ôn ở ngày sau
+  ✓ cây héo, nút không có số (trước 1.18: 1), ôn sau 20 ngày: {"badge":true,"wilted":true,"thirsty":false,"held":"notdue","due":20}
+  ✓ bấm Tưới ngay → hết thẻ
+  ✓ màn hết thẻ giải thích: 1 cây héo nhưng Anki hẹn ôn ở ngày sau. Bấm vào cây để xem ngày ôn.
+== nhạc theo chủ đề + nút Xem thử
+  ✓ đang dùng Mùa thu → vườn phát bản Mùa thu (trước 1.18: bản vườn thường): autumn
+  ✓ mở Nhà → hộp nhạc của nhà
+  ✓ chủ đề chưa mở có nút Xem thử
+  ✓ Xem thử “Lễ hội mùa hè” → phát nhạc lễ hội: natsumatsuri
+  ✓ dòng gợi ý: Đang xem thử “Lễ hội mùa hè” · ♪ đang phát nhạc · bấm “Dừng xem thử” để trở lại
+  ✓ chủ đề đã mở mà chưa dùng cũng có nút Xem thử
+  ✓ Xem thử Mùa đông → nhạc Mùa đông
+  ✓ bấm lần nữa = Dừng xem thử
+  ✓ thôi xem thử → lại hộp nhạc của nhà
+  ✓ chủ đề đang dùng không có nút Xem thử: Đang dùng
+  ✓ xem thử Tết → nhạc Tết
+  ✓ đóng Nhà → hết xem thử, lại nhạc Mùa thu: autumn
+  ✓ nhạc nền tắt: Xem thử nhắc bật ở ⚙ (không tự bật nhạc)
+  ✓ nhạc tắt thì vẫn im
+== lỗi
+  ✓ không có lỗi JS
+  ✓ nhật ký lỗi add-on trống
+
+KẾT QUẢ: 29/29 đạt

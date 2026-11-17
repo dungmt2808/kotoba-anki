@@ -1,0 +1,42 @@
+== A. Hôm nay chưa viết số nào: tick thêm báo → chờ "Bắt đầu viết" (như cũ)
+  ✓ tick Tiếng Hàn
+  ✓ báo Hàn chờ "Bắt đầu viết" (không phải "từ mai")
+  ✓ có nút Bắt đầu viết
+== B. Đang viết: khoá các lựa chọn của báo
+  ✓ đang viết báo Trung (báo Hàn xếp sau)
+  ✓ Báo muốn nhận: 5 ô đều khoá + dòng "Gemini đang viết báo — xong mới đổi được."
+  ✓ Trình độ + Lấy từ của hai báo khoá
+  ✓ Đổi khoá + Xoá khoá khoá
+  ✓ Truyện + Chủ đề truyện khoá
+  ✓ Tự viết khi mở Anki + giọng cho câu chép vẫn đổi được (không ảnh hưởng số đang viết)
+  ✓ báo Hàn: "viết sau báo đang viết" {"t":"viết sau báo đang viết","btn":[]}
+  ✓ bấm ô Tiếng Trung (đang viết) → không bỏ tick được
+  ✓ gửi thẳng lệnh đổi báo / trình độ / truyện / nguồn / deck / xoá khoá / đổi khoá → cấu hình + khoá không đổi
+  ✓ "Bắt đầu viết" lần nữa không thay hàng chờ đang chạy
+  ✓ trang báo "Gemini đang viết báo — xong mới đổi được."
+  ✓ "Tạo giọng đọc" khi đang bận: nói đúng lý do (trước: "Không còn giọng đọc nào cần tạo.") {"busy":true,"flash":["Gemini đang viết báo — xong mới đổi được."]}
+  ✓ trong lúc viết vẫn đổi được Tự viết, giọng câu chép, mua gói báo (−100 xu) [true,"may",100]
+  ✓ khoá Gemini còn nguyên
+== C. Viết xong: mở khoá; báo mới thêm → từ mai
+  ✓ viết xong cả báo Trung + Hàn
+  ✓ mỗi báo đúng 3 lượt gọi (không lượt thừa vì đổi giữa chừng)
+  ✓ mở khoá: chỉ còn 2 ô mờ (Nhật, Anh) vì đã đủ 2 báo, không còn dòng "đang viết"
+  ✓ bỏ tick Tiếng Hàn
+  ✓ tick Tiếng Anh
+  ✓ báo Anh: từ mai (2026-11-18), không chờ "Bắt đầu viết" [{"en":"2026-11-18"},[],[],"gemini"]
+  ✓ tab Nguồn báo: báo Anh "Hôm nay: bắt đầu từ mai", không nút Viết {"t":"bắt đầu từ mai","btn":[]}
+  ✓ không hiện khối "Bắt đầu viết"
+  ✓ bấm Viết (gửi thẳng lệnh) / tự viết → không viết báo Anh hôm nay, không gọi Gemini: "Báo tiếng Anh bắt đầu từ mai."
+  ✓ bỏ tick Tiếng Anh
+  ✓ bỏ tick → không còn "từ mai"
+  ✓ tick lại Tiếng Hàn (đã có số hôm nay)
+  ✓ báo Hàn hiện "✓ Số 1" ngay (không "từ mai") {"t":"✓ Số 1: 맑은 가을 날씨","btn":[["Đọc",false]]}
+== D. Sang ngày mai: báo Anh viết như mọi báo
+  ✓ đổi lại: báo Anh từ mai
+  ✓ ngày mai: báo Anh không còn "từ mai", không chờ "Bắt đầu viết" → tự viết như báo Trung {"later":{},"waiting":[]}
+== E. Anki đang đồng bộ: bấm trong vườn → báo một câu, bảng ôn không kẹt
+  ✓ chấm thẻ lúc đồng bộ → "Anki đang đồng bộ — xong rồi bấm lại nhé."
+  ✓ không ghi lượt ôn nào lúc đồng bộ
+  ✓ đồng bộ xong: bấm Được lần nữa là chấm được (bảng ôn không kẹt chờ)
+  ✓ nhật ký lỗi trống
+KẾT QUẢ: 36/36 — TẤT CẢ OK

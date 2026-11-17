@@ -1,0 +1,103 @@
+{
+  "cases": 7,
+  "passed": 3,
+  "results": [
+    {
+      "case": "race/control-two-real-states-in-same-second",
+      "passed": true,
+      "actual": true,
+      "expected": true,
+      "detail": {
+        "same_second": true,
+        "old_mod": 1794894192,
+        "new_mod": 1794894192,
+        "old_reps": 0,
+        "new_reps": 1,
+        "changed": false,
+        "revlog": 1
+      }
+    },
+    {
+      "case": "race/stale-card-detected",
+      "passed": false,
+      "actual": false,
+      "expected": true,
+      "detail": {
+        "same_second": true,
+        "old_mod": 1794894192,
+        "new_mod": 1794894192,
+        "old_reps": 0,
+        "new_reps": 1,
+        "changed": false,
+        "revlog": 1
+      }
+    },
+    {
+      "case": "race/no-scheduler-warning",
+      "passed": false,
+      "actual": [
+        "ことば畑: không lưu được câu trả lời. Bấm chấm lại để thử lần nữa.\n\nInvalidInput()"
+      ],
+      "expected": [],
+      "detail": {
+        "warnings": [
+          "ことば畑: không lưu được câu trả lời. Bấm chấm lại để thử lần nữa.\n\nInvalidInput()"
+        ],
+        "same_card": true,
+        "revlog": 1,
+        "toasts": []
+      }
+    },
+    {
+      "case": "race/no-second-answer-from-stale-view",
+      "passed": true,
+      "actual": 1,
+      "expected": 1,
+      "detail": {
+        "warnings": [
+          "ことば畑: không lưu được câu trả lời. Bấm chấm lại để thử lần nữa.\n\nInvalidInput()"
+        ],
+        "same_card": true,
+        "revlog": 1,
+        "toasts": []
+      }
+    },
+    {
+      "case": "race/does-not-return-stale-card",
+      "passed": false,
+      "actual": true,
+      "expected": false,
+      "detail": {
+        "warnings": [
+          "ことば畑: không lưu được câu trả lời. Bấm chấm lại để thử lần nữa.\n\nInvalidInput()"
+        ],
+        "same_card": true,
+        "revlog": 1,
+        "toasts": []
+      }
+    },
+    {
+      "case": "race/retry-recovers-without-stop",
+      "passed": false,
+      "actual": true,
+      "expected": false,
+      "detail": {
+        "warnings": [
+          "ことば畑: không lưu được câu trả lời. Bấm chấm lại để thử lần nữa.\n\nInvalidInput()",
+          "ことば畑: không lưu được câu trả lời. Bấm chấm lại để thử lần nữa.\n\nInvalidInput()"
+        ],
+        "same_card": true,
+        "revlog": 1
+      }
+    },
+    {
+      "case": "notification/backend-emits-card-changed-message",
+      "passed": true,
+      "actual": true,
+      "expected": true,
+      "detail": [
+        "Thẻ này vừa được ôn hoặc sửa ở chỗ khác — sang thẻ kế tiếp."
+      ]
+    }
+  ]
+}

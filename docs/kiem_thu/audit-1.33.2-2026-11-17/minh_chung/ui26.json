@@ -1,0 +1,712 @@
+{
+  "tested_commit": "9ef5272f6af34c78168d2b8851259add29bf2561",
+  "cases": 53,
+  "passed": 42,
+  "failed": 11,
+  "results": [
+    {
+      "case": "tomorrow/control-keep-written-Japanese",
+      "passed": true,
+      "actual": "2026-11-18",
+      "expected": "2026-11-18",
+      "detail": {
+        "on": [
+          "ja",
+          "en"
+        ],
+        "later": {
+          "en": "2026-11-18"
+        },
+        "waiting": []
+      }
+    },
+    {
+      "case": "tomorrow/control-empty-choice-is-possible",
+      "passed": true,
+      "actual": [],
+      "expected": []
+    },
+    {
+      "case": "tomorrow/uncheck-written-then-add-English",
+      "passed": false,
+      "actual": "",
+      "expected": "2026-11-18",
+      "detail": {
+        "on": [
+          "en"
+        ],
+        "later": {},
+        "waiting": [
+          "en"
+        ]
+      }
+    },
+    {
+      "case": "tomorrow/replacement-cannot-start-extra-paper-today",
+      "passed": false,
+      "actual": 1,
+      "expected": 0,
+      "detail": {
+        "running": true,
+        "jobs": 1,
+        "reason": ""
+      }
+    },
+    {
+      "case": "tomorrow/control-switch-directly-to-Vietnamese",
+      "passed": true,
+      "actual": "2026-11-18",
+      "expected": "2026-11-18"
+    },
+    {
+      "case": "tomorrow/Vietnamese-then-Chinese",
+      "passed": false,
+      "actual": "",
+      "expected": "2026-11-18",
+      "detail": {
+        "on": [
+          "zh"
+        ],
+        "later": {},
+        "waiting": [
+          "zh"
+        ]
+      }
+    },
+    {
+      "case": "tomorrow/control-remaining-English-still-deferred",
+      "passed": true,
+      "actual": "2026-11-18",
+      "expected": "2026-11-18"
+    },
+    {
+      "case": "tomorrow/retick-deferred-language",
+      "passed": false,
+      "actual": "",
+      "expected": "2026-11-18",
+      "detail": {
+        "on": [
+          "en"
+        ],
+        "later": {},
+        "waiting": [
+          "en"
+        ]
+      }
+    },
+    {
+      "case": "archive/ja/fixture-has-readable-issues",
+      "passed": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "case": "archive/ja/key-actually-cleared",
+      "passed": true,
+      "actual": false,
+      "expected": false
+    },
+    {
+      "case": "archive/ja/readable-after-removing-key",
+      "passed": true,
+      "actual": 3,
+      "expected": 3,
+      "detail": {
+        "enabled": true,
+        "issues": 3,
+        "files": 3
+      }
+    },
+    {
+      "case": "archive/en/fixture-has-readable-issues",
+      "passed": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "case": "archive/en/key-actually-cleared",
+      "passed": true,
+      "actual": false,
+      "expected": false
+    },
+    {
+      "case": "archive/en/readable-after-removing-key",
+      "passed": false,
+      "actual": 0,
+      "expected": 1,
+      "detail": {
+        "enabled": false,
+        "issues": 0,
+        "files": 1
+      }
+    },
+    {
+      "case": "archive/zh/fixture-has-readable-issues",
+      "passed": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "case": "archive/zh/key-actually-cleared",
+      "passed": true,
+      "actual": false,
+      "expected": false
+    },
+    {
+      "case": "archive/zh/readable-after-removing-key",
+      "passed": false,
+      "actual": 0,
+      "expected": 1,
+      "detail": {
+        "enabled": false,
+        "issues": 0,
+        "files": 1
+      }
+    },
+    {
+      "case": "archive/ko/fixture-has-readable-issues",
+      "passed": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "case": "archive/ko/key-actually-cleared",
+      "passed": true,
+      "actual": false,
+      "expected": false
+    },
+    {
+      "case": "archive/ko/readable-after-removing-key",
+      "passed": false,
+      "actual": 0,
+      "expected": 1,
+      "detail": {
+        "enabled": false,
+        "issues": 0,
+        "files": 1
+      }
+    },
+    {
+      "case": "archive/vi/fixture-has-readable-issues",
+      "passed": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "case": "archive/vi/key-actually-cleared",
+      "passed": true,
+      "actual": false,
+      "expected": false
+    },
+    {
+      "case": "archive/vi/readable-after-removing-key",
+      "passed": false,
+      "actual": 0,
+      "expected": 1,
+      "detail": {
+        "enabled": false,
+        "issues": 0,
+        "files": 1
+      }
+    },
+    {
+      "case": "rewards/paper/write-fault-reached",
+      "passed": true,
+      "actual": 1,
+      "expected": 1
+    },
+    {
+      "case": "rewards/paper/no-wallet-debit",
+      "passed": true,
+      "actual": 1000,
+      "expected": 1000
+    },
+    {
+      "case": "rewards/paper/retry-eventually-pays-correct-answer",
+      "passed": false,
+      "actual": 1000,
+      "expected": 1002,
+      "detail": {
+        "failed": {
+          "coins": 1000,
+          "progress": {
+            "q": {
+              "0": 1
+            },
+            "ct": {},
+            "coins": 2,
+            "bonus": false
+          },
+          "faults": 1
+        },
+        "retry": {
+          "coins": 1000,
+          "progress": {
+            "q": {
+              "0": 1
+            },
+            "ct": {},
+            "coins": 2,
+            "bonus": false
+          }
+        }
+      }
+    },
+    {
+      "case": "rewards/collection/write-fault-reached",
+      "passed": true,
+      "actual": 1,
+      "expected": 1
+    },
+    {
+      "case": "control/collection/progress-survives-gift-write-error",
+      "passed": true,
+      "actual": 6,
+      "expected": 6,
+      "detail": {
+        "set_done": true,
+        "found": 6,
+        "gift": 0,
+        "faults": 1
+      }
+    },
+    {
+      "case": "rewards/collection/retry-does-not-permanently-lose-gift",
+      "passed": true,
+      "actual": 1,
+      "expected": 1,
+      "detail": {
+        "done": true,
+        "gift": 1
+      }
+    },
+    {
+      "case": "rewards/duplicate/write-fault-reached",
+      "passed": true,
+      "actual": 1,
+      "expected": 1
+    },
+    {
+      "case": "rewards/duplicate/retry-eventually-pays",
+      "passed": false,
+      "actual": 1000,
+      "expected": 1003,
+      "detail": {
+        "coins": 1000,
+        "faults": 1,
+        "picked": [
+          1,
+          2
+        ]
+      }
+    },
+    {
+      "case": "read-failure/UI/buy-hits-single-read-error",
+      "passed": true,
+      "actual": 1,
+      "expected": 1
+    },
+    {
+      "case": "read-failure/UI/buy-must-retain-unrelated-pet",
+      "passed": false,
+      "actual": [],
+      "expected": [
+        "neko"
+      ],
+      "detail": {
+        "before": {
+          "pets": [
+            "neko"
+          ],
+          "coins": 4100
+        },
+        "after": {
+          "pets": [],
+          "coins": 4010,
+          "hits": 1
+        }
+      }
+    },
+    {
+      "case": "layout/1024x768/zoom-1/source",
+      "passed": true,
+      "actual": true,
+      "expected": true,
+      "detail": {
+        "missing": false,
+        "viewport": [
+          1024,
+          768
+        ],
+        "rect": [
+          16,
+          80,
+          994,
+          722
+        ],
+        "horizontalOverflow": 0,
+        "reachable": true
+      }
+    },
+    {
+      "case": "layout/1024x768/zoom-1/settings",
+      "passed": true,
+      "actual": true,
+      "expected": true,
+      "detail": {
+        "missing": false,
+        "viewport": [
+          1024,
+          768
+        ],
+        "rect": [
+          402.65625,
+          61,
+          722.65625,
+          756
+        ],
+        "horizontalOverflow": 0,
+        "reachable": true
+      }
+    },
+    {
+      "case": "layout/1024x768/zoom-1/home",
+      "passed": true,
+      "actual": true,
+      "expected": true,
+      "detail": {
+        "missing": false,
+        "viewport": [
+          1024,
+          768
+        ],
+        "rect": [
+          16,
+          80,
+          994,
+          734.984375
+        ],
+        "horizontalOverflow": 0,
+        "reachable": true
+      }
+    },
+    {
+      "case": "layout/1024x768/zoom-1/games",
+      "passed": true,
+      "actual": true,
+      "expected": true,
+      "detail": {
+        "missing": false,
+        "viewport": [
+          1024,
+          768
+        ],
+        "rect": [
+          16,
+          80,
+          994,
+          718
+        ],
+        "horizontalOverflow": 0,
+        "reachable": true
+      }
+    },
+    {
+      "case": "layout/1024x768/zoom-1/calendar",
+      "passed": true,
+      "actual": true,
+      "expected": true,
+      "detail": {
+        "missing": false,
+        "viewport": [
+          1024,
+          768
+        ],
+        "rect": [
+          16,
+          80,
+          994,
+          722
+        ],
+        "horizontalOverflow": 0,
+        "reachable": true
+      }
+    },
+    {
+      "case": "layout/1024x768/zoom-1.25/source",
+      "passed": true,
+      "actual": true,
+      "expected": true,
+      "detail": {
+        "missing": false,
+        "viewport": [
+          819,
+          614
+        ],
+        "rect": [
+          16,
+          80,
+          789.6000366210938,
+          567.2000122070312
+        ],
+        "horizontalOverflow": 0,
+        "reachable": true
+      }
+    },
+    {
+      "case": "layout/1024x768/zoom-1.25/settings",
+      "passed": true,
+      "actual": true,
+      "expected": true,
+      "detail": {
+        "missing": false,
+        "viewport": [
+          819,
+          614
+        ],
+        "rect": [
+          234.66250610351562,
+          61,
+          553.4625244140625,
+          600.7999877929688
+        ],
+        "horizontalOverflow": 0,
+        "reachable": true
+      }
+    },
+    {
+      "case": "layout/1024x768/zoom-1.25/home",
+      "passed": true,
+      "actual": true,
+      "expected": true,
+      "detail": {
+        "missing": false,
+        "viewport": [
+          819,
+          614
+        ],
+        "rect": [
+          16,
+          80,
+          789.6000366210938,
+          607.4000244140625
+        ],
+        "horizontalOverflow": 0,
+        "reachable": true
+      }
+    },
+    {
+      "case": "layout/1024x768/zoom-1.25/games",
+      "passed": true,
+      "actual": true,
+      "expected": true,
+      "detail": {
+        "missing": false,
+        "viewport": [
+          819,
+          614
+        ],
+        "rect": [
+          16,
+          80,
+          789.6000366210938,
+          563.2000122070312
+        ],
+        "horizontalOverflow": 0,
+        "reachable": true
+      }
+    },
+    {
+      "case": "layout/1024x768/zoom-1.25/calendar",
+      "passed": true,
+      "actual": true,
+      "expected": true,
+      "detail": {
+        "missing": false,
+        "viewport": [
+          819,
+          614
+        ],
+        "rect": [
+          16,
+          80,
+          789.6000366210938,
+          604
+        ],
+        "horizontalOverflow": 0,
+        "reachable": true
+      }
+    },
+    {
+      "case": "layout/1366x768/zoom-1.5/source",
+      "passed": true,
+      "actual": true,
+      "expected": true,
+      "detail": {
+        "missing": false,
+        "viewport": [
+          911,
+          512
+        ],
+        "rect": [
+          16,
+          80,
+          880.6666870117188,
+          523.3333435058594
+        ],
+        "horizontalOverflow": 0,
+        "reachable": true
+      }
+    },
+    {
+      "case": "layout/1366x768/zoom-1.5/settings",
+      "passed": true,
+      "actual": true,
+      "expected": true,
+      "detail": {
+        "missing": false,
+        "viewport": [
+          911,
+          512
+        ],
+        "rect": [
+          292,
+          61,
+          611.3333435058594,
+          499.3333435058594
+        ],
+        "horizontalOverflow": 0,
+        "reachable": true
+      }
+    },
+    {
+      "case": "layout/1366x768/zoom-1.5/home",
+      "passed": true,
+      "actual": true,
+      "expected": true,
+      "detail": {
+        "missing": false,
+        "viewport": [
+          911,
+          512
+        ],
+        "rect": [
+          16,
+          0,
+          880.6666870117188,
+          529.6666870117188
+        ],
+        "horizontalOverflow": 0,
+        "reachable": true
+      }
+    },
+    {
+      "case": "layout/1366x768/zoom-1.5/games",
+      "passed": true,
+      "actual": true,
+      "expected": true,
+      "detail": {
+        "missing": false,
+        "viewport": [
+          911,
+          512
+        ],
+        "rect": [
+          16,
+          80,
+          880.6666870117188,
+          479.3333435058594
+        ],
+        "horizontalOverflow": 0,
+        "reachable": true
+      }
+    },
+    {
+      "case": "layout/1366x768/zoom-1.5/calendar",
+      "passed": true,
+      "actual": true,
+      "expected": true,
+      "detail": {
+        "missing": false,
+        "viewport": [
+          911,
+          512
+        ],
+        "rect": [
+          16,
+          80,
+          880.6666870117188,
+          523.3333435058594
+        ],
+        "horizontalOverflow": 0,
+        "reachable": true
+      }
+    },
+    {
+      "case": "layout/long-deck-title/no-horizontal-scroll",
+      "passed": true,
+      "actual": 0,
+      "expected": 0
+    },
+    {
+      "case": "control/real-ai-start-does-not-run-without-key",
+      "passed": true,
+      "actual": [
+        0,
+        false
+      ],
+      "expected": [
+        0,
+        false
+      ],
+      "detail": {
+        "no_key_jobs": 0,
+        "without_key": false,
+        "after_validation_jobs": 0,
+        "waiting": [
+          "ja",
+          "en"
+        ]
+      }
+    },
+    {
+      "case": "control/real-first-key-keeps-both-papers-waiting",
+      "passed": true,
+      "actual": [
+        0,
+        [
+          "ja",
+          "en"
+        ]
+      ],
+      "expected": [
+        0,
+        [
+          "ja",
+          "en"
+        ]
+      ],
+      "detail": {
+        "no_key_jobs": 0,
+        "without_key": false,
+        "after_validation_jobs": 0,
+        "waiting": [
+          "ja",
+          "en"
+        ]
+      }
+    },
+    {
+      "case": "control/no-provider-network",
+      "passed": true,
+      "actual": [],
+      "expected": []
+    },
+    {
+      "case": "control/no-js-exceptions",
+      "passed": true,
+      "actual": [],
+      "expected": []
+    }
+  ]
+}

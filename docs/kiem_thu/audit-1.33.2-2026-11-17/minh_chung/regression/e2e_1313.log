@@ -1,0 +1,23 @@
+== 1. Xưởng → Mã cộng đồng
+  ✓ ô "Dán mã thiết kế" có nút "Mã cộng đồng ▸"
+  ✓ bấm chuột → mở https://dungmt2808.github.io/kotoba-anki/#cong-dong
+  ✓ dòng gợi ý nói đang mở trang
+  ✓ bảng Nhà vẫn mở (trang mở ở trình duyệt riêng)
+== 2. Mã chia sẻ → Gửi lên trang
+  ✓ món tự làm "Đèn đỏ thử" có nút Mã chia sẻ
+  ✓ thẻ mã chia sẻ hiện nút "Gửi lên trang ▸"
+  ✓ mã đã ở bộ nhớ tạm (KB1:m:16:xJDDqG4gxJH…)
+  ✓ bấm → mở https://dungmt2808.github.io/kotoba-anki/#gui
+== 3. cầu nối chỉ mở mục có tên
+  ✓ app:site:<đường dẫn lạ / mục lạ> → không mở gì
+  ✓ app:site:bao-loi → mở mục Báo lỗi
+== 4. Báo lỗi → Gửi qua GitHub
+  ✓ cửa sổ Báo lỗi: Gửi email… · Gửi qua GitHub… · Chép · Lưu ra file… · Xoá nhật ký lỗi · Đóng
+  ✓ bấm → mở mẫu issue Báo lỗi (https://github.com/dungmt2808/kotoba-anki/issues/new?template=bao_loi.yml)
+  ✓ báo cáo đã chép vào bộ nhớ tạm
+== 5. không mở được trình duyệt → chép đường dẫn
+  ✓ trả về False và chép sẵn https://dungmt2808.github.io/kotoba-anki/#kho
+== 6. lỗi
+  ✓ không lỗi JS
+  ✓ nhật ký lỗi add-on trống
+KẾT QUẢ: 16/16

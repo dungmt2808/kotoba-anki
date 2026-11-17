@@ -1,0 +1,49 @@
+== 1. F01: trả lời lưu về muộn ở mọi chế độ Xưởng
+  ✓ món chế tác: lần lưu đã chạy ở Python, trả lời bị giữ rồi phát lại
+  ✓ món chế tác: trả lời cũ về → Xưởng (Mặt đang vẽ) vẫn mở, bản vẽ còn nguyên
+  ✓ món chế tác: phiên mới không bị kẹt "Đang lưu…"
+  ✓ món chế tác: lần lưu cũ trừ đúng 200 xu một lần, có món mới
+  ✓ món chế tác: không bật chế độ đặt đồ phía dưới Xưởng
+  ✓ mẫu sàn tự vẽ: lần lưu đã chạy ở Python, trả lời bị giữ rồi phát lại
+  ✓ mẫu sàn tự vẽ: trả lời cũ về → Xưởng (Mặt đang vẽ) vẫn mở, bản vẽ còn nguyên
+  ✓ mẫu sàn tự vẽ: phiên mới không bị kẹt "Đang lưu…"
+  ✓ mẫu sàn tự vẽ: lần lưu cũ trừ đúng 250 xu một lần, có món mới
+  ✓ mẫu sàn tự vẽ: không bật chế độ đặt đồ phía dưới Xưởng
+  ✓ mũ StackChan: lần lưu đã chạy ở Python, trả lời bị giữ rồi phát lại
+  ✓ mũ StackChan: trả lời cũ về → Xưởng (Mặt đang vẽ) vẫn mở, bản vẽ còn nguyên
+  ✓ mũ StackChan: phiên mới không bị kẹt "Đang lưu…"
+  ✓ mũ StackChan: lần lưu cũ trừ đúng 200 xu một lần, có món mới
+  ✓ mũ StackChan: không bật chế độ đặt đồ phía dưới Xưởng
+  ✓ lần lưu cũ gặp lỗi ghi → craftError kèm mã lệnh
+  ✓ lỗi của lần lưu cũ về muộn → phiên đang vẽ giữ nguyên (không đóng, không kẹt)
+  ✓ báo rõ là lỗi của lần lưu trước
+  ✓ đồng ý ở hộp hỏi của phiên đã đóng → không tạo vỏ, không trừ xu, phiên mới vẫn mở
+== 2. F06 qua giao diện
+  ✓ lỗi ghi điểm ảnh đã xảy ra đúng một lần
+  ✓ Xưởng giữ bản vẽ + báo "Anki báo lỗi khi lưu"
+  ✓ không trừ xu, không có món nửa vời
+  ✓ bấm Lưu lại khi Anki ghi được → lưu xong, Xưởng đóng
+  ✓ trừ đúng 200 xu một lần, có món
+  ✓ mua nội thất khi ví không ghi được → không trừ xu, không có món
+  ✓ bảng Nhà báo "Anki báo lỗi khi lưu"
+== 3. nhật ký khi Anki ghi lỗi
+  ✓ Lịch hoa mở khung ngày hôm nay có ô nhật ký
+  ✓ lần lưu nhật ký gặp lỗi ghi
+  ✓ bảng Lịch hoa báo "Chưa lưu được"
+  ✓ chữ vẫn còn trong ô
+  ✓ bảng Lịch hoa vẫn mở (lỗi đã bắt, không bật hộp lỗi của Anki)
+  ✓ chữ đã ra file sao lưu của hồ sơ (cứu được bằng tay)
+  ✓ Anki ghi được lại → rời ô lần nữa là lưu (trước: coi như đã lưu, không gửi lại)
+  ✓ đóng vườn lúc Anki ghi lỗi → chữ gõ dở vẫn ra file sao lưu
+== 4. sao lưu theo hồ sơ (F03)
+  ✓ ví sao lưu ở user_files/ho_so/<mã hồ sơ>/state.json, ghi chủ
+  ✓ ho_so.txt ghi tên hồ sơ Anki (Bản sao lưu ことば畑 của hồ sơ Anki: Test)
+  ✓ nhật ký sao lưu trong cùng thư mục hồ sơ
+  ✓ lưu ví không ghi file chung user_files/state.json (hồ sơ khác không bị ghi đè)
+== 5. F04: máy cũ mua Mũ rơm khi đang đội mũ tự vẽ
+  ✓ mở vườn: StackChan đội Mũ rơm (vừa mua ở máy cũ), mũ tự vẽ vẫn trong tủ
+== 6. bấm Lưu thật nhanh, thiếu xu
+  ✓ bấm Lưu 4 lần liền → một vỏ, trừ 150 xu một lần
+  ✓ thiếu xu → Xưởng giữ bản vẽ, không trừ xu
+  ✓ không lỗi JS
+KẾT QUẢ: 42/42 — TẤT CẢ OK

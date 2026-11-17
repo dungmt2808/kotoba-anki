@@ -1,0 +1,58 @@
+  ✓ chuẩn bị: máy tính đẩy collection lên, điện thoại tải về (đã có khoá của vườn)
+== 0. Mở Anki sang ngày mới: mở hồ sơ + tự đồng bộ không sửa collection
+  ✓ Anki mở lại ở ngày 1: việc lúc mở hồ sơ đã chạy sau lần tự đồng bộ
+  ✓ collection không bị sửa (mod 1794892926156 giữ nguyên) → máy đang giữ bản cũ sẽ nhận bản mới của máy chủ thay vì đè lên
+  ✓ không có gì phải trả lại
+== 1. Điện thoại ôn khi chưa đồng bộ → máy tính vẫn giữ được ghế + nhật ký
+  ✓ điện thoại ôn 2 thẻ rồi đồng bộ; bản ví nó giữ hộ là bản cũ (0 xu < 110)
+  ✓ máy tính đồng bộ lại: ghế còn (1), nhật ký còn
+  ✓ xu 110 → 112: giữ nguyên + bù 2 lượt ôn của điện thoại
+  ✓ lớp giữ dữ liệu đã trả lại một lần (sau đồng bộ: bản mang về cũ hơn (5 khoá) lúc 2026-11-17 12:22)
+  ✓ trang vườn hiện đúng số xu sau đồng bộ
+  ✓ không hộp thoại nào bật lên
+  ✓ điện thoại đồng bộ khi không có gì mới → nhận bản mới của máy tính
+  ✓ bản chụp + bản bị thay nằm trong user_files/ho_so/<mã hồ sơ>/
+== 2. Tắt sync_guard → lỗi cũ hiện lại; bật lại thì hết
+  ✓ không có lớp giữ: nhật ký quay về "nhật ký viết trên máy tính (lần 1)", xu 162 → 113 (đúng lỗi cũ)
+  ✓ bật lại: nhật ký còn sau khi điện thoại đè
+== 3. Đồng bộ toàn bộ: máy tính chọn Download khi có 2 lượt ôn chưa đẩy lên
+  ✓ ôn 2 thẻ trong vườn (sổ Undo có 2 lượt)
+  ✓ điện thoại đổi cấu trúc rồi tải cả collection lên
+  ✓ Anki hỏi tải lên / tải về → chọn Download (MessageBox: There is a conflict between decks on thi)
+  ✓ collection tải về: 2 lượt ôn chưa đẩy lên không còn (6 → 4)
+  ✓ dữ liệu vườn (nhật ký, ghế) còn nguyên
+  ✓ sổ Undo đã bỏ, xu giữ nguyên 120 (không bị trừ như thể vừa Undo)
+  ✓ nhật ký lỗi không thêm dòng nào
+== 4. Bảng ôn: thẻ đổi ở chỗ khác / bị xoá / deck hiện tại đổi
+  ✓ thẻ đang hiện đã bị chấm ở chỗ khác → sang thẻ kế tiếp, không chấm chồng
+  ✓ … không hộp lỗi (trước 1.31.2: "không lưu được câu trả lời" lặp mãi)
+  ✗ có dòng báo ngắn trong vườn
+  ✓ thẻ đang hiện bị xoá → sang thẻ kế tiếp, không hộp lỗi
+  ✓ deck hiện tại của Anki đổi giữa chừng → chấm xong vẫn lấy thẻ của deck đang xem trong vườn
+== 5. Collection đang đóng (đồng bộ toàn bộ) mà trang vẫn gửi lệnh
+  ✓ mọi lệnh đều được bỏ qua êm, mở lại collection dùng tiếp được
+  ✓ nhật ký: báo "chưa lưu được" (giữ chữ trong ô), không ném lỗi
+  ✓ không hộp thoại nào bật lên
+  ✓ ví / ghế / nhật ký không đổi
+  ✓ bản sao lưu nhật ký của tháng không bị đè (vẫn là bản trước đó)
+  ✓ collection mở lại → lưu nhật ký bình thường
+== 5b. Đang đồng bộ thường: không lần ghi nào của vườn chen vào trước lúc so
+  ✓ ghi ví bị từ chối ("Anki đang đồng bộ…"), lệnh của trang bị bỏ qua, ví + dấu phiên bản không đổi
+  ✓ nhật ký: báo "chưa lưu được", chữ vẫn trong ô
+  ✓ việc nền gọi về giữa lúc đồng bộ → xếp hàng, đồng bộ xong mới chạy
+  ✓ hết thanh tiến độ là hết khoá; đồng bộ xong ghi lại bình thường
+  ✓ không hộp thoại nào bật lên
+== 6. Việc lúc mở hồ sơ đợi lần tự đồng bộ; mở lại Anki không sửa collection
+  ✓ Anki sắp tự đồng bộ: mở hồ sơ không ghi gì vào collection (mốc / sổ bù xu chờ đồng bộ xong)
+  ✓ không tự đồng bộ: làm ngay như trước
+  ✓ mở lại Anki khi đã có lượt ôn + sổ bù xu: mở hồ sơ + tự đồng bộ vẫn không sửa collection (không có gì mới để bù)
+  ✓ không có gì phải trả lại, xu như lúc đóng
+== 7. Máy tính thứ hai: cài add-on, chơi thử, rồi mới đăng nhập và tải về
+  ✓ máy hai chưa đăng nhập: add-on lập vườn mới (mốc sau mốc của máy một)
+  ✓ máy hai đăng nhập + tải về → nhận vườn thật của máy một (128 xu, 1 ghế, nhật ký), vườn chơi thử không đè lên
+  ✓ lớp giữ dữ liệu không trả lại vườn chơi thử (vườn lập trước là vườn thật)
+  ✓ máy một mở lại (tự đồng bộ) → thấy phần chơi trên máy hai (168 xu, nhật ký mới), ghế còn
+  ✓ hai máy dùng luân phiên: không lần nào phải trả lại
+  ✓ không có Traceback trong nhật ký của Anki ở cả bốn lần mở
+
+KẾT QUẢ: 46/47 đạt

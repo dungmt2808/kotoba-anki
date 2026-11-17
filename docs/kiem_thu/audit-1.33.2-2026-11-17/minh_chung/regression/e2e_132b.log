@@ -1,0 +1,29 @@
+== 1. chỉ xem + đổi ngôn ngữ: dữ liệu không đổi
+  ✗ đổi ngôn ngữ 40 lần xen mở / đóng mọi bảng, đóng mở lại vườn: 61 mục dữ liệu không đổi một byte — đổi: col:kotoba_batake_guests, file:ho_so/c379eac0e7524541/guests.json
+  ✓ 3. đổi ngôn ngữ dồn dập khi đang mở Nhà / Trò chơi / Lịch hoa / Cấu hình trường / ⚙ / thẻ sinh hoạt: không lỗi JS
+  ✓ lựa chọn cuối (Tiếng Trung) được lưu và còn sau khi mở lại
+== 2. Album đầy đủ ở 5 ngôn ngữ × 2 cỡ cửa sổ
+  ✓ đủ ô: sinh hoạt 67, đồ nhặt 42, khách 16, mùa 15, tường / sàn 28
+  ✓ không chữ nào tràn ô (5 ngôn ngữ × 2 cỡ cửa sổ)
+  ✓ ngoài Tiếng Nhật: không chữ kana nào trong Album
+== 4. đổi ngôn ngữ giữa lúc đang chơi Đuổi quạ
+  ✓ Đuổi quạ (deck tiếng Trung) chạy
+  ✓ tiêu đề trò vẫn theo deck tiếng Trung: 赶乌鸦 · Đuổi quạ · Nghĩa → gõ pinyin
+  ✓ vẫn chơi tiếp được (gõ "yiyuan"), không lỗi JS
+== 5. deck tiếng Trung đã cấu hình ở bản cũ
+  ✓ loại note lưu "Ngôn ngữ khác" từ bản cũ → vườn nhận lại là tiếng Trung
+  ✓ Cấu hình trường hiện Tiếng Trung cho loại note đó
+  ✓ chọn "Ngôn ngữ khác" ở 1.32 → ghi lang2 = other
+  ✓ chế độ trò chơi đã lưu ở bản cũ còn nguyên
+  ✓ → vườn giữ đúng "Ngôn ngữ khác" như người dùng chọn
+== 6. Lịch hoa và màn chào
+  ✓ Lịch hoa ngày có sinh hoạt / đồ nhặt mới: tên tiếng Trung, không kana: 睡觉 shuìjiào (Ngủ) · 钻进被炉 zuānjìn bèilú (Ngồi bàn s | 蜗牛 wōniú (ốc sên) · 面具 miànjù (mặt nạ lễ
+  ✓ màn chào Giáng sinh (vi): {"hi":"Giáng sinh vui vẻ!","vi":"Hôm nay ôn 3 lượt rồi đó."}
+  ✓ màn chào Giáng sinh (zh): {"hi":"圣诞快乐！ Shèngdàn kuàilè","vi":"Giáng sinh vui vẻ! Hôm nay ôn 3 lượt rồi đó."}
+== 7. từ vựng trùng câu StackChan
+  ✓ từ すごい của deck giữ nguyên trong câu tiếng Anh
+== 8. deck cha có nhiều ngôn ngữ
+  ✓ deck cha Mix (Trung 14 + Hàn 6) → tiếng Trung
+  ✓ đổi sang deck con tiếng Hàn → tiếng Hàn, ô chọn ghi "đang: Tiếng Hàn"
+
+KẾT QUẢ: 19/20
