@@ -379,7 +379,7 @@ result = date`);
   ok(km.lang === 'ko' && /^\d{4}년 \d{1,2}월 \d{1,2}일 [월화수목금토일]요일$/.test(km.date), 'ngày kiểu Hàn: ' + km.date);
   ok(km.ruby === 0 && km.furi === true, 'không có chữ nhỏ trên chữ, không có nút Ẩn furigana / pinyin');
   ok(!KANA.test(km.text) && !/[一-鿿]/.test(km.text.replace(/StackChan/g, '')), 'không có kana / chữ Hán trong số báo tiếng Hàn');
-  ok(/학교에 → 학교/.test(await js('return document.getElementById("kb-p-info").textContent;')), 'dòng gợi ý tiếng Hàn: nhận cả từ có tiểu từ / đuôi');
+  ok(/Bấm từ gạch chân để tra nghĩa/.test(await js('return document.getElementById("kb-p-info").textContent;')), 'dòng gợi ý tiếng Hàn: bấm từ gạch chân để tra nghĩa (1.33.2: bỏ ví dụ 학교에 → 학교 cho gọn)');
   const kw = await js('return [...document.querySelectorAll("#kb-p-stage .kb-p-w")].map((x) => x.textContent + "→" + x.getAttribute("data-k"));');
   ok(kw.some((x) => x === '축제가→축제' || x === '축제→축제') && kw.some((x) => /^무서워/.test(x) && /→무섭다$/.test(x)), 'gạch chân cả từ biến đổi: ' + kw.filter((x) => /축제|무서/.test(x)).join(' '));
   await js('[...document.querySelectorAll("#kb-p-stage .kb-p-w")].find((x) => x.getAttribute("data-k") === "무섭다").click(); return 1;'); await sleep(400);
@@ -396,7 +396,7 @@ result = date`);
   await js('const t = [...document.querySelectorAll(".kb-p-tab")].find((x) => x.getAttribute("data-ptab") === "dict"); t.click(); return 1;');
   const dl = await waitFor('const r = document.querySelectorAll("#kb-p-stage .kb-p-ct"); return r.length ? { n: r.length, lang: r[0].querySelector("input") && r[0].querySelector("input").lang, info: document.getElementById("kb-p-info").textContent, title: (document.querySelector("#kb-p-stage .kb-p-name") || {}).textContent } : null;', 10000);
   ok(dl && dl.n > 0 && dl.lang === 'zh', 'deck tiếng Trung: lượt chép có ' + (dl && dl.n) + ' câu / từ tiếng Trung (giọng máy zh_CN)');
-  ok(dl && /chữ Hán \(bộ gõ pinyin\)/.test(dl.info) && !/don't/.test(dl.info), 'dòng gợi ý chép: gõ bằng chữ Hán (không còn "don\'t = do not")');
+  ok(dl && /bằng chữ Hán/.test(dl.info) && !/don't/.test(dl.info), 'dòng gợi ý chép: gõ bằng chữ Hán (không còn "don\'t = do not")');
   await shot('133_e2e_09_chep_hang_ngay');
   await py(KB + `for b in kb.AI_DIRS.values():
     if os.path.isdir(os.path.join(b, "bao_e2e_cat")):

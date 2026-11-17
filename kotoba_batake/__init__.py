@@ -548,8 +548,10 @@ SYNC_MSG = "Anki đang đồng bộ — xong rồi bấm lại nhé."
 
 
 def ai_busy() -> bool:
-    """Gemini đang viết báo / tạo giọng đọc cho báo (cả hàng chờ của "Bắt đầu viết")."""
-    return bool(_ai["running"] or _ai.get("queue"))
+    """Gemini đang viết báo / tạo giọng đọc cho báo. Hàng chờ của "Bắt đầu viết" nối liền (_ai_done bắt đầu báo kế tiếp ngay
+    trong cùng lượt xử lý) nên chỉ cần cờ running; không dựa vào `_ai["queue"]` — hàng chờ sót lại (việc nền không bao giờ
+    báo xong) không được khoá lựa chọn của báo mãi."""
+    return bool(_ai["running"])
 
 
 def ai_later(cfg: dict[str, Any] | None = None) -> dict[str, str]:
@@ -1384,7 +1386,8 @@ def ai_view(extra: dict[str, Any] | None = None, lang: str | None = None) -> dic
             "has_tts": any(v["tts"] for v in langs.values()),
             "running": bool(_ai["running"]), "run_lang": _ai.get("lang", "ja"), "testing": bool(_ai["testing"]),
             "busy": ai_busy(),        # 1.33.2: đang viết báo → khoá các lựa chọn của báo (xem BUSY_MSG)
-            "queue": [x for x in (_ai.get("queue") or []) if x in PAPER_LANGS],      # báo chờ viết sau báo đang viết
+            # báo chờ viết sau báo đang viết (chỉ khi đang viết — hàng chờ sót lại không hiện)
+            "queue": [x for x in (_ai.get("queue") or []) if x in PAPER_LANGS] if _ai["running"] else [],
             "msg": _ai["msg"], "langs": langs, "first": bool(key) and bool(cfg.get("gemini_wait_start")),
             "waiting": [x for x in ai_waiting(cfg) if not langs[x]["today"] and not langs[x]["later"]] if key else [],
             # 1.23: báo chờ vì nguồn vừa thành Gemini (bấm "Dùng Gemini", mất thư mục kotoba_daily), không phải vừa tick
@@ -3890,8 +3893,8 @@ class GardenDialog(QDialog):
         has_ex = any(p.get("has_ex") or p.get("cloze") for p in plants)
         vocab = any(p.get("kind", "vocab") == "vocab" for p in plants)
         if not has_ex and not vocab:
-            return ["Deck này không có câu ví dụ để chép. Thêm câu ví dụ vào thẻ, hoặc dán khoá Gemini ở tab Nguồn báo "
-                    "để chép câu trong báo."]
+            return ["Deck chữ Hán / ngữ pháp này không có câu ví dụ để chép. Thêm câu ví dụ vào thẻ, hoặc dán khoá Gemini "
+                    "ở tab Nguồn báo để chép câu trong báo."]
         out.append("Cần có tiếng để nghe:")
         n_lang: dict[str, int] = {}
         for p in plants:

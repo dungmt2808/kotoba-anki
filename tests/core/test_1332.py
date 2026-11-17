@@ -52,7 +52,7 @@ pj = src("web/paper.js")
 print("== 1. Python khoá khi Gemini đang viết")
 ok('BUSY_MSG = "Gemini đang viết báo — xong mới đổi được."' in init, "câu BUSY_MSG")
 ab = re.search(r"def ai_busy\(\) -> bool:\n(.*?)\n\n\n", init, re.S)
-ok(bool(ab) and 'return bool(_ai["running"] or _ai.get("queue"))' in ab.group(1), "ai_busy = đang chạy hoặc còn hàng chờ của Bắt đầu viết")
+ok(bool(ab) and 'return bool(_ai["running"])' in ab.group(1), "ai_busy = việc nền đang chạy (hàng chờ sót lại không khoá mãi)")
 ok('AI_LOCKED_SET = ("langs", "level", "story", "tone", "tones", "audio", "voice", "source")' in init, "ai:set khoá: báo / trình độ / truyện / chủ đề / giọng đọc / nguồn")
 ok('AI_LOCKED = ("decks", "forget", "dir", "start")' in init, "khoá cả: deck lấy từ, xoá khoá, thư mục Claude Code, Bắt đầu viết")
 on_ai = init[init.index("    def _on_ai(self, cmd: str) -> None:"):init.index("    def _choose_bao_dir(self)")]

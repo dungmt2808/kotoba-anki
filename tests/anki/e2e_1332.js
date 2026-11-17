@@ -73,7 +73,7 @@ def fake_models(self):
     return MODELS
 def fake_generate(self, model, system, prompt, schema=None, temperature=0.7, max_tokens=0, thinking=None, **k):
     self.calls += 1
-    time.sleep(2)
+    time.sleep(3)
     lg = kb._ai.get("lang"); f = FIX.get(lg) or FIX["zh"]
     if schema is S.RETELL_SCHEMA:
         kb._e2e_calls.append((lg, "ke_lai")); out = dict(f["story"]); out["nho"] = {"tom_tat": "x"}; return json.dumps(out, ensure_ascii=False)
@@ -141,8 +141,21 @@ result = {"same": before == after, "src_same": src0 == kb.words.load_src(mw.col)
   ok(r.same && r.src_same, 'gửi thẳng lệnh đổi báo / trình độ / truyện / nguồn / deck / xoá khoá / đổi khoá → cấu hình + khoá không đổi');
   ok(r.running && JSON.stringify(r.queue) === '["ko"]', '"Bắt đầu viết" lần nữa không thay hàng chờ đang chạy');
   ok(/Gemini đang viết báo — xong mới đổi được/.test(await waitFor('const f = document.querySelector(".kb-ai-flash"); return f ? f.textContent : "";', 4000) || ''), 'trang báo "Gemini đang viết báo — xong mới đổi được."');
-  const au = await py(KB + 'kb._dialog._on_ai("audio:" + json.dumps({"lang": "zh"})); result = 1');
-  ok(/Gemini đang viết báo/.test(await flash()), '"Tạo giọng đọc" khi đang bận: nói đúng lý do (trước: "Không còn giọng đọc nào cần tạo.")');
+  // bắt đúng câu Python gửi cho trang (không phụ thuộc lúc trang vẽ lại)
+  const au = await py(KB + `d = kb._dialog
+busy = kb.ai_busy()
+got = []
+real = d._js
+def spy(name, *a):
+    got.append([name, a[0].get("flash") if a and isinstance(a[0], dict) else None])
+    return real(name, *a)
+d._js = spy
+try:
+    d._on_ai("audio:" + json.dumps({"lang": "zh"}))
+finally:
+    d._js = real
+result = {"busy": busy, "flash": [g[1] for g in got if g[0] == "aiStatus"]}`);
+  ok(au.busy && /Gemini đang viết báo/.test(au.flash.join(' ')), '"Tạo giọng đọc" khi đang bận: nói đúng lý do (trước: "Không còn giọng đọc nào cần tạo.") ' + JSON.stringify(au));
   // vẫn làm được: Tự viết, giọng câu chép, mua gói
   const ok2 = await py(KB + `d = kb._dialog
 d._on_ai('set:' + json.dumps({"auto": True})); a1 = kb.config().get("gemini_auto")

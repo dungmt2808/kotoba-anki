@@ -55,7 +55,7 @@ Chỉ sửa câu **hiện sẵn trên màn hình** (chú thích khi rê chuột 
 | Khách ghé tuỳ đồ đã đặt, vùng, mùa, giờ và thời tiết. Không phải cho ăn, vắng nhà không mất gì. | Khách ghé tuỳ đồ đã đặt, vùng, mùa, giờ và thời tiết. |
 | Mỗi số: Gemini viết truyện → biên tập chấm → viết cả số → máy kiểm tra → Gemini sửa → soát lần 2. Còn lỗi thì… | Máy kiểm tra từng số, còn lỗi thì không đưa vào hòm thư. Hết lượt miễn phí thì mai viết tiếp. |
 
-Tổng cộng 42 câu (danh sách đầy đủ trong `tests/core/test_1332.py` mục 5 và lịch sử git).
+Tổng cộng 41 câu (danh sách đầy đủ trong `tests/core/test_1332.py` mục 5 và lịch sử git).
 
 ## 4. Bớt nút
 
@@ -83,4 +83,15 @@ Hiện tại:
 
 ## 5. Kết quả test
 
-_đang điền_
+| Bộ | Kết quả |
+|---|---|
+| `tests/run_all.sh` (offline + collection Anki thật) | **62 bộ — TẤT CẢ OK** (thêm `core/test_1332.py`; trên 1.33.1 bộ này trượt 39 ca) |
+| `tests/anki/e2e_1332.js` (mới) | Anki 26.9.4: **36 / 36**; Anki 23.10.1: **36 / 36** |
+| Mọi kịch bản Anki thật (Anki 26.9.4, trên gói đã đóng, mỗi kịch bản một hồ sơ mới; gồm bộ UI audit, đồng bộ thật `e2e_1312`, cài đè) | **48 kịch bản — 2.236 / 2.236 kiểm tra** |
+| Cài đè **1.31.3 (đã phát hành) → 1.33.2** | **19 / 19**: không mất khoá / file / xu / nhật ký / cài đặt |
+| Anki 23.10.1 | `e2e_1332` 36/36, `e2e_1331` 40/40 |
+| Gói `kotoba_batake.ankiaddon` | khớp từng byte với thư mục `kotoba_batake/` |
+
+Lỗi test tìm ra trong lúc làm (đã sửa trước khi xong): lần đầu tớ tính "đang viết" theo cả hàng chờ của "Bắt đầu viết" —
+`e2e_1223` cho thấy nếu hàng chờ còn sót (việc nền không báo xong) thì các lựa chọn của báo **khoá mãi**. Nay chỉ tính khi
+việc nền đang chạy thật. Một câu rút gọn quá tay (gợi ý chép chính tả cho deck chữ Hán) đã trả lại ý cũ.

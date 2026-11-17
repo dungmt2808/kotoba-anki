@@ -181,7 +181,11 @@ ANKI_PY=~/.venv-anki/bin/python tests/anki/run_ui.sh /tmp/kb_src/kotoba_batake /
 ```
 Cần Node ≥ 22 (có sẵn `fetch` và `WebSocket`). Cổng: `KB_CDP_PORT` (9333), `KB_CTRL_PORT` (9444). `kill_anki.sh` tắt Anki đang chạy từ các script này.
 
-## Kết quả lần chạy gần nhất (bản 1.33.1, 17/11/2026) — kiểm tra lần cuối: Import .colpkg, tab Nguồn báo gọn hơn
+## Kết quả lần chạy gần nhất (bản 1.33.2, 17/11/2026) — việc chạy song song, câu chữ gọn, ⚙ thu gọn
+- `run_all.sh` (`ANKI_PY` = venv aqt 26.9.4; **62 bộ**, có `core/test_1332.py`) **TẤT CẢ OK**.
+- Anki 26.9.4 trên gói đã đóng: **48 kịch bản, 2.236 / 2.236** (42 kịch bản `run_ui` qua `run_versions.sh` 2 luồng + chạy lại tuần tự các kịch bản có test đổi theo câu mới; `run_ui_audit.sh`: `e2e_128_fix` 26, `deep_ui_audit` 18, `ui_audit` 191, `lifecycle_audit` 7; `e2e_1312` 47; `run_capnhat.sh` 1.31.3 → 1.33.2 19/19). `e2e_1332` 36/36 cả trên Anki 23.10.1.
+
+## Lần chạy trước (bản 1.33.1, 17/11/2026) — kiểm tra lần cuối: Import .colpkg, tab Nguồn báo gọn hơn
 - `run_all.sh` (`ANKI_PY` = venv aqt 26.9.4; **61 bộ**, có `core/test_1331.py`) **TẤT CẢ OK** (sau `node site/tools/xuat_hinh.js`).
 - Anki 26.9.4 trên gói đã đóng, mỗi kịch bản một hồ sơ mới: **47 kịch bản, 2.200 / 2.200** — 41 kịch bản `run_ui` (`run_versions.sh` 2 luồng `KB_SLOT=1,2`; `e2e_1331` 43/43 mới) + `e2e.js` 24 + `audit_20261114/run_ui_audit.sh` (`e2e_128_fix` 26, `deep_ui_audit` 18, `ui_audit` 191, `lifecycle_audit` 7) + `dong_bo/run_e2e.sh` (`e2e_1312` 47) + `run_capnhat.sh` 1.31.3 → 1.33.1 **19/19** (gói 1.31.3 dựng lại từ `fixtures/ban_cu/e64eb22.tar.gz` bằng `tools/pack.py`). Chạy song song thì `e2e_1253` (localStorage) và `e2e_1322` (câu "Thẻ vừa được sửa.") trượt 1 ca; chạy riêng đạt trọn, giống hệt mã 1.33.0.
 - Anki 23.10.1 (`uv venv --python 3.9` + `aqt[qt6]==23.10.1` + PyQt6 6.6.0): `e2e_1331` 40/40 (phần "Mở bản sao lưu" bỏ qua: Anki 23.10 không có `_start_restore_backup`), `e2e_133` 77, `e2e_1251` 49, `e2e_119` 55, `e2e_1223` 49, `e2e_123` 66, `e2e_1322` 40.
