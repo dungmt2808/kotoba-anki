@@ -316,6 +316,10 @@ input[type="radio"], input[type="checkbox"], input[type="range"] { accent-color:
   font-size: 17px;
 }
 .kb-rate-ivl { font-size: 13px; color: var(--kb-ink-2); }
+/* 1.34: số phím ở góc nút chấm (phím 1–4 có từ lâu, nhưng nút không ghi nên người dùng tưởng chưa có) */
+.kb-rate { position: relative; }
+.kb-rate-key { position: absolute; left: 7px; top: 5px; font-size: 12px; line-height: 1; padding: 2px 5px; border: 2px solid var(--kb-ink);
+  background: var(--kb-paper, #ffffff); color: var(--kb-ink); font-weight: 700; pointer-events: none; }
 .kb-rate-1 { background: #f6a3a3; }
 .kb-rate-2 { background: var(--kb-peach); }
 .kb-rate-3 { background: var(--kb-green); }
@@ -736,6 +740,21 @@ input[type="radio"], input[type="checkbox"], input[type="range"] { accent-color:
 }
 .kb-home-canvas { display: block; image-rendering: pixelated; border: 3px solid var(--kb-ink); cursor: pointer; }
 .kb-h-tip { min-height: 18px; font-size: 13px; color: var(--kb-ink-2); text-align: center; padding: 0 8px; }
+/* 1.34: Trang trí thử — dòng gợi ý dưới cảnh thành thanh: tên cảnh · tóm tắt · Bản 1 2 3 · Như cảnh thật · Dùng bản này */
+.kb-h-tip.kb-h-trybar { display: flex; align-items: center; gap: 6px; flex-wrap: nowrap; min-height: 26px; padding: 2px 8px; align-self: stretch; margin: 0 6px; box-sizing: border-box;
+  background: #fff3c4; border: 2px solid var(--kb-ink); color: var(--kb-ink); text-align: left; overflow: hidden; }
+.kb-h-trybar .kb-try-t { flex: none; font-size: 13px; white-space: nowrap; }
+.kb-h-trybar .kb-try-msg { flex: 0 1 auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 13px; }
+.kb-h-trybar .kb-try-sp { flex: 1 1 auto; }
+.kb-h-trybar .kb-try-l { flex: none; font-size: 12px; color: var(--kb-ink-2); }
+.kb-h-trybar .kb-btn { flex: none; margin: 0; padding: 1px 8px; font-size: 12px; box-shadow: 2px 2px 0 var(--kb-ink); }
+.kb-h-trybar .kb-try-slot { min-width: 24px; }
+.kb-h-trybar .kb-try-slot.is-empty { color: var(--kb-ink-3); border-style: dashed; }
+.kb-h-trybar .kb-try-slot.is-on { background: #ffd23f; color: var(--kb-ink); border-style: solid; }
+.kb-h-trybar .kb-try-use { padding: 1px 10px; }
+.kb-h-try[aria-pressed="true"] { background: #ffd23f; }
+.kb-try-card { box-shadow: 0 0 0 3px #e0b23a inset; }
+.kb-try-has { color: #8a5a00; }
 .kb-h-pop {
   position: absolute;
   z-index: 3;
@@ -1517,6 +1536,33 @@ button { cursor: pointer; }
 .kb-ui-m-review.kb-ui-card-tall .kb-done { min-height: max(240px, calc(100vh - 290px)); }
 .kb-ui-m-review.kb-ui-card-tall.kb-themed .kb-card { height: max(240px, calc(100vh - 320px)); }
 .kb-ui-m-review.kb-ui-card-tall.kb-themed .kb-done { min-height: max(240px, calc(100vh - 320px)); }
+/* 1.34: vườn ẩn khi ôn (nút Ẩn vườn / ⚙) → khung thẻ to hết chỗ, không đổi cỡ thẻ đã chọn ở ⚙ (trước đây nút Ẩn vườn
+   lưu luôn cỡ "To hết chỗ", Hiện vườn không trả về) */
+.kb-ui-m-review.kb-ui-yard-hide.kb-ui-field-hide .kb-card { height: max(240px, calc(100vh - 290px)); }
+.kb-ui-m-review.kb-ui-yard-hide.kb-ui-field-hide .kb-done { min-height: max(240px, calc(100vh - 290px)); }
+.kb-ui-m-review.kb-ui-yard-hide.kb-ui-field-hide.kb-themed .kb-card { height: max(240px, calc(100vh - 320px)); }
+.kb-ui-m-review.kb-ui-yard-hide.kb-ui-field-hide.kb-themed .kb-done { min-height: max(240px, calc(100vh - 320px)); }
+/* 1.34: Phóng to (nút / phím F) — chỉ còn bảng ôn: ẩn thanh trên, dải trang trí, sân, ruộng; đầu bảng ôn một dòng mỏng */
+#kb-app.kb-ui-m-review.kb-ui-zoom-on { padding: 6px 8px 8px; gap: 0; }
+.kb-ui-m-review.kb-ui-zoom-on .kb-bar, .kb-ui-m-review.kb-ui-zoom-on #kb-theme-band, .kb-ui-m-review.kb-ui-zoom-on #kb-yard-wrap,
+.kb-ui-m-review.kb-ui-zoom-on .kb-legend-row, .kb-ui-m-review.kb-ui-zoom-on #kb-field, .kb-ui-m-review.kb-ui-zoom-on #kb-legend,
+.kb-ui-m-review.kb-ui-zoom-on #kb-joy, .kb-ui-m-review.kb-ui-zoom-on #kb-note, .kb-ui-m-review.kb-ui-zoom-on #kb-rv-garden,
+.kb-ui-m-review.kb-ui-zoom-on #kb-active { display: none !important; }
+.kb-ui-m-review.kb-ui-zoom-on .kb-panel { padding: 5px 8px 7px; gap: 5px; border-width: 3px; box-shadow: none; }
+.kb-ui-m-review.kb-ui-zoom-on .kb-panel-top { height: 32px; gap: 8px; }
+.kb-ui-m-review.kb-ui-zoom-on .kb-pot { width: 58px; height: 32px; border-width: 2px; }
+.kb-ui-m-review.kb-ui-zoom-on .kb-pot-side { flex-direction: row; align-items: center; gap: 8px; }
+.kb-ui-m-review.kb-ui-zoom-on .kb-pot-info { font-size: 13px; }
+.kb-ui-m-review.kb-ui-zoom-on .kb-counts { font-size: 16px; }
+.kb-ui-m-review.kb-ui-zoom-on .kb-card { height: max(200px, calc(100vh - 128px)) !important; }
+.kb-ui-m-review.kb-ui-zoom-on .kb-done { min-height: max(200px, calc(100vh - 128px)) !important; }
+.kb-ui-m-review.kb-ui-zoom-on .kb-actions { min-height: 46px; }
+.kb-ui-m-review.kb-ui-zoom-on .kb-actions-main > .kb-btn-wide, .kb-ui-m-review.kb-ui-zoom-on .kb-ratings .kb-rate,
+.kb-ui-m-review.kb-ui-zoom-on .kb-rv-edit { height: 46px; padding-top: 4px; padding-bottom: 4px; }
+.kb-ui-m-review.kb-ui-zoom-on .kb-rate { flex-direction: row; justify-content: center; gap: 8px; }
+.kb-rv-zoom[aria-pressed="true"] { background: #c8f7d2; }
+.kb-rv-replay, .kb-rv-zoom { background: var(--kb-paper, #ffffff); white-space: nowrap; }
+.kb-rv-replay .kb-pi { margin-right: 4px; }
 /* màu bảng ôn */
 .kb-ui-th-paper #kb-panel { background: #fbfaf4; }
 /* 1.23: bỏ màu bảng "Đêm vườn" (1.16) — người dùng thấy không đẹp; cấu hình cũ "theme": "night" về "Vàng vườn" */
@@ -1998,22 +2044,41 @@ button { cursor: pointer; }
 .kb-snap-btns .kb-btn { margin: 0; text-align: left; }
 .kb-h-craftcard { grid-column: span 2; }
 
-/* 1.22.3: tìm deck theo tên (kính lúp cạnh ô Deck, phím /) */
-.kb-deck-find { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 26px; padding: 0;
-  border: 2px solid var(--kb-ink); background: var(--kb-butter); cursor: pointer; }
-.kb-deck-find .kb-pi { margin-right: 0; }
-.kb-deck-find:hover { background: #ffd23f; }
+/* 1.22.3: tìm deck theo tên (phím /); 1.34: bảng này thành cây deck (nút kính lúp bỏ, nút Deck mở bảng) */
 .kb-deck-pop { position: fixed; z-index: 60; width: 360px; max-width: calc(100vw - 16px); padding: 8px; display: flex; flex-direction: column; gap: 6px;
   font-size: 14px; line-height: 1.35; background: var(--kb-cream); border: 3px solid var(--kb-ink); box-shadow: 4px 4px 0 var(--kb-ink); }
 .kb-deck-pop[hidden] { display: none; }
 .kb-deck-q { font: inherit; padding: 4px 8px; border: 2px solid var(--kb-ink); background: var(--kb-paper, #ffffff); color: var(--kb-ink); outline: none; }
 .kb-deck-q:focus { background: #fffdf0; box-shadow: inset 0 0 0 2px #ffd23f; }
 .kb-deck-list { display: flex; flex-direction: column; max-height: min(50vh, 360px); overflow-y: auto; border: 2px solid var(--kb-ink); background: var(--kb-paper, #ffffff); }
-.kb-deck-item { flex: none; font: inherit; text-align: left; padding: 4px 8px; border: 0; border-bottom: 1px dashed var(--kb-line-2); background: transparent; color: var(--kb-ink);
-  cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.kb-deck-item.is-cur { font-weight: 700; }
-.kb-deck-item.is-cur::after { content: " · đang xem"; font-weight: 400; color: var(--kb-ink-2); }
-.kb-deck-item.is-hit { background: #ffd23f; }
+
+/* 1.34: nút gọn ở thanh trên ("Tiếng Nhật › N4 › Bài 17 ▾") + cây deck như màn Decks của Anki */
+.kb-deck-btn { display: inline-flex; align-items: center; gap: 5px; max-width: 300px; min-width: 0; padding: 2px 6px 2px 8px; font: inherit;
+  font-size: 14px; border: 2px solid var(--kb-ink); border-radius: 0; background: var(--kb-butter); color: var(--kb-ink); cursor: pointer;
+  white-space: nowrap; box-shadow: none; }
+.kb-deck-btn:hover, .kb-deck-btn[aria-expanded="true"] { background: #ffd23f; }
+.kb-deck-path { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; color: var(--kb-ink-2); }
+.kb-deck-path:empty { display: none; }
+.kb-deck-leaf { flex: 0 1 auto; min-width: 2.5em; overflow: hidden; text-overflow: ellipsis; }
+.kb-deck-car { flex: none; font-size: 11px; }
+.kb-deck-pop { width: 440px; }
+.kb-deck-head { display: flex; align-items: center; gap: 4px; padding: 0 10px 0 24px; font-size: 12px; color: var(--kb-ink-3); }
+.kb-deck-head .kb-deck-name { flex: 1 1 auto; }
+.kb-deck-list { max-height: min(60vh, 470px); }
+.kb-deck-row { flex: none; display: flex; align-items: center; gap: 4px; padding: 3px 8px 3px 4px; border-bottom: 1px dashed var(--kb-line-2);
+  color: var(--kb-ink); cursor: pointer; white-space: nowrap; }
+.kb-deck-row.is-hit { background: #ffd23f; }
+.kb-deck-row.is-cur .kb-deck-name { font-weight: 700; }
+.kb-deck-row.is-cur .kb-deck-name::after { content: " · đang xem"; font-weight: 400; color: var(--kb-ink-2); }
+.kb-deck-row.is-dyn .kb-deck-name { color: #2f5cc8; }
+.kb-deck-tog { flex: none; width: 16px; height: 18px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px;
+  color: var(--kb-ink-2); }
+.kb-deck-tog.has-kids:hover { background: var(--kb-ink); color: var(--kb-paper); }
+.kb-deck-name { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.kb-deck-name .kb-deck-path { font-weight: 400; }
+.kb-deck-n { flex: none; width: 34px; text-align: right; font-variant-numeric: tabular-nums; }
+.kb-deck-row .kb-deck-n.c0 { color: #1f5faf; } .kb-deck-row .kb-deck-n.c1 { color: #c21f3a; } .kb-deck-row .kb-deck-n.c2 { color: #1f7a3a; }
+.kb-deck-row .kb-deck-n.is-zero { color: #c9b8a6; }
 .kb-deck-none { padding: 6px 8px; color: var(--kb-ink-3); }
 .kb-deck-foot { font-size: 12px; color: var(--kb-ink-3); }
 

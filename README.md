@@ -38,6 +38,8 @@ Xây nhà từng bước, từ bãi đất trống tới gác mái có đèn l�
 
 Mở bảng Nhà & Cửa hàng bằng nút **Nhà & Cửa hàng ▸** (hiện khi rê chuột lên vườn), nút **Nhà** trên cùng hoặc phím **N**. Bấm vào thú nuôi hay khách thì hiện một thẻ nhỏ có tên và nút vào xem; bấm chỗ khác trên vườn không mở cửa hàng.
 
+**Trang trí thử** (mới ở 1.34): bấm nút **Trang trí thử** trong bảng Nhà để bày thử đồ, kể cả đồ chưa mua (hiện mờ, có chữ "thử"). Mỗi cảnh lưu được 3 bản thử. Ưng rồi thì bấm **Dùng bản này**: vườn mua đủ món còn thiếu và bày đúng như bản thử, hỏi bạn một lần trước khi trả xu.
+
 | Sân vườn | Trong nhà |
 |---|---|
 | ![Nhà & Cửa hàng, tab Trang trí sân](docs/anh/03_nha_trang_tri.png) | ![Trong nhà: kotatsu, bể cá, kệ sách, đèn andon, mèo ngủ](docs/anh/16_trong_nha.png) |
@@ -209,7 +211,7 @@ Lần đầu mở vườn có **hướng dẫn 3 bước** ngay trên màn hình
 4. Bấm **Nhà** để xây bước đầu tiên của ngôi nhà.
 5. (Tuỳ chọn) Bấm **B** để mở báo, sang tab **Nguồn báo** và dán khoá Gemini.
 
-Phím tắt trong vườn: **R** Tưới ngay · **N** Nhà · **T** Trò chơi · **B** Báo · **L** Lịch hoa · **Q** Nhiệm vụ · **/** tìm deck · **Esc** đóng bảng đang mở. Khi ôn thẻ: **Space** lật thẻ · **1–4** chấm · **Ctrl+Z** hoàn tác lượt chấm vừa rồi (trả lại cả xu của lượt đó) · **E** (hoặc nút ✎ Sửa ở góc dưới bên trái) sửa thẻ đang ôn bằng cửa sổ sửa của Anki. Nhạc, hiệu ứng và giao diện từng chế độ (ví dụ ẩn sân khi ôn) chỉnh ở nút ⚙.
+Phím tắt trong vườn: **R** Tưới ngay · **N** Nhà · **T** Trò chơi · **B** Báo · **L** Lịch hoa · **Q** Nhiệm vụ · **/** chọn deck (cây deck như Anki, gõ để tìm) · **Esc** đóng bảng đang mở. Khi ôn thẻ: **Space** / **Enter** lật thẻ · **1–4** chấm (số ghi trên nút) · **R** (hoặc **F5**) nghe lại âm thanh · **F** phóng to (chỉ còn thẻ + nút chấm, hợp với thẻ dài) · **Ctrl+Z** hoàn tác lượt chấm vừa rồi (trả lại cả xu của lượt đó) · **E** (hoặc nút ✎ Sửa ở góc dưới bên trái) sửa thẻ đang ôn bằng cửa sổ sửa của Anki. Thẻ trắc nghiệm tự lật khi bấm đáp án (như trong Anki). Nhạc, hiệu ứng và giao diện từng chế độ (ví dụ ẩn sân khi ôn) chỉnh ở nút ⚙.
 
 ## Báo mỗi sáng bằng Gemini (miễn phí)
 

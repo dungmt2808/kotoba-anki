@@ -12,6 +12,10 @@ var GardenHome = (function () {
   let selected = null;           // {scene, index}
   let hover = null;              // {x, y} ô đang trỏ chuột
   let view = null;               // vị trí cảnh trên canvas của bảng {ox, oy, S, scene}
+  // 1.34: Trang trí thử — đang thử thì bảng Nhà đọc / ghi bản thử của cảnh đang xem (homeState trả bản thử), vườn thật không đổi
+  let trying = false;
+  let drafts = null;             // bản thử từ Python {v, scenes: {cảnh: {cur, slots: [bản | null] ×3}}}
+  let draftPending = 0;          // số lệnh bản thử đang chờ Python trả (chưa xong thì không nhận bản cũ đè bản đang sửa)
   const parts = {};               // hạt của từng cảnh (khởi tạo bên dưới, sau ZONE_IDS)
   let RARE = null;                // móc của rare_art.js (1.16: 12 món hiếm mới): frameOf, emit, pal
   let NHA = null;                 // 1.24: móc của nha_art.js (đồ Bếp / Phòng ngủ, nền hai gian bên)
@@ -1160,7 +1164,7 @@ var GardenHome = (function () {
     });
   }
   function placedOf(id) {
-    const home = homeState();
+    const home = realHome();
     return ["yard", "room"].concat(SIDE_IDS, ZONE_IDS, uzIds()).reduce((n, sc) => n + (home[sc] || []).filter((e) => e.id === id).length, 0);
   }
   // 1.14: vùng tự tạo của người dùng (wallet.more.zones), dữ liệu 1.14 tính sẵn (wallet.more_view)
@@ -1189,10 +1193,20 @@ var GardenHome = (function () {
   }
   let itemMap = {};
   function item(id) { catalog(); return itemMap[id] || null; }   // tra nhanh, dựng lại khi danh mục đổi
-  function homeState() {
+  function realHome() {
     const d = H && H.data();
     const w = (d && d.wallet) || {};
     return w.home || { house: 0, owned: {}, yard: [], room: [] };
+  }
+  // 1.34: đang Trang trí thử (bảng Nhà mở) → cảnh đang xem là bản thử; mọi cảnh khác, màn chính, thú, StackChan: đồ thật
+  function homeState() {
+    const h = realHome();
+    if (!trying || !isOpen) { return h; }
+    const sl = draftSlot(scene);
+    if (!sl) { return h; }
+    const o = Object.assign({}, h);
+    o[scene] = sl.items;
+    return o;
   }
   function coins() { const d = H && H.data(); return (d && d.wallet && d.wallet.coins) || 0; }
 
@@ -2927,10 +2941,11 @@ var GardenHome = (function () {
       ctx.globalAlpha = 1;
     }
     const pets = opts && opts.noPets ? [] : petsFor(sceneName, now, st, opts), pst = { i: 0 };
+    const tg = tryMarks(sceneName, home[sceneName]);          // 1.34: món thử chưa có → vẽ mờ
     placedSorted(home[sceneName] || []).forEach((e) => {
       const ghost = placing && placing.index === e.index && placing.scene === sceneName;
       drawPetsBefore(ctx, S, ox, oy, pets, pst, YARD.SKY + (e.y + 1) * T, now);
-      drawItem(ctx, S, ox, oy, e, sceneName, now, tod, ghost ? 0.3 : undefined);
+      drawItem(ctx, S, ox, oy, e, sceneName, now, tod, ghost ? 0.3 : (tg && tg[e.index] ? 0.5 : undefined));
     });
     drawPetsBefore(ctx, S, ox, oy, pets, pst, null, now);
     drawParts(ctx, S, ox, oy, sceneName);
@@ -2979,6 +2994,11 @@ var GardenHome = (function () {
     const use = (decorState().use || {})[kind] || {};
     let wall = use.wall || null, floor = use.floor || null;
     if (decoTry && isOpen && decoTry.room === kind) { if (decoTry.slot === "wall") { wall = decoTry.id || null; } else { floor = decoTry.id || null; } }
+    const sl = trying && isOpen && kind === scene ? draftSlot(kind) : null;      // 1.34: tường / sàn của bản thử
+    if (sl && sl.decor) {
+      if (typeof sl.decor.wall === "string") { wall = sl.decor.wall || null; }
+      if (typeof sl.decor.floor === "string") { floor = sl.decor.floor || null; }
+    }
     return wall || floor ? { wall: wall, floor: floor, tiles: tileRows() } : null;
   }
   // 1.25: cửa sổ phòng chính (cột 4–5, x 64–96) theo kiểu nhà
@@ -3077,11 +3097,12 @@ var GardenHome = (function () {
       .concat(all.filter((e) => ["floor", undefined].indexOf((item(e.id) || {}).place) >= 0));
     drawRoomWear(ctx, S, ox, oy, now, stR, opts && opts.wear);
     const pets = opts && opts.noPets ? (opts.life ? lifeFor("room", now, stR, opts) : []) : petsFor("room", now, stR, opts), pst = { i: 0 };
+    const tg = tryMarks("room", home.room);
     order.forEach((e) => {
       const ghost = placing && placing.index === e.index && placing.scene === "room";
       const pl = (item(e.id) || {}).place;
       if (pl !== "wall" && pl !== "rug") { drawPetsBefore(ctx, S, ox, oy, pets, pst, ROOM.FLOOR + e.y * T - 1, now); }
-      drawItem(ctx, S, ox, oy, e, "room", now, tod, ghost ? 0.3 : undefined);
+      drawItem(ctx, S, ox, oy, e, "room", now, tod, ghost ? 0.3 : (tg && tg[e.index] ? 0.5 : undefined));
     });
     drawPetsBefore(ctx, S, ox, oy, pets, pst, null, now);
     drawParts(ctx, S, ox, oy, "room");      // 1.24: hơi nước, nốt nhạc… của đồ trong nhà (trước đây tính mà không vẽ)
@@ -3125,11 +3146,12 @@ var GardenHome = (function () {
       .concat(all.filter((e) => (item(e.id) || {}).place === "rug"))
       .concat(all.filter((e) => ["floor", undefined].indexOf((item(e.id) || {}).place) >= 0));
     const lf = !opts.noPets || opts.life ? lifeFor(kind, now, stR, opts) : [], pst = { i: 0 };     // 1.30
+    const tg = tryMarks(kind, home[kind]);
     order.forEach((e) => {
       const ghost = placing && placing.index === e.index && placing.scene === kind;
       const pl = (item(e.id) || {}).place;
       if (pl !== "wall" && pl !== "rug") { drawPetsBefore(ctx, S, ox, oy, lf, pst, ROOM.FLOOR + e.y * T - 1, now); }
-      drawItem(ctx, S, ox, oy, e, kind, now, tod, ghost ? 0.3 : undefined);
+      drawItem(ctx, S, ox, oy, e, kind, now, tod, ghost ? 0.3 : (tg && tg[e.index] ? 0.5 : undefined));
     });
     drawPetsBefore(ctx, S, ox, oy, lf, pst, null, now);
     drawParts(ctx, S, ox, oy, kind);
@@ -3552,8 +3574,9 @@ var GardenHome = (function () {
         }
       }
     };
-    if (isOut(scene)) { drawOutdoor(ctx, S, 0, 0, now, scene, { grid: !!placing, overlay: overlay, seen: !document.hidden }); }
-    else { drawRoom(ctx, S, 0, 0, now, { kind: scene, grid: !!placing, overlay: overlay, seen: !document.hidden }); }
+    const over2 = trying ? (c, s, ox, oy) => { drawTryMarks(c, s, ox, oy); overlay(c, s, ox, oy); } : overlay;     // 1.34
+    if (isOut(scene)) { drawOutdoor(ctx, S, 0, 0, now, scene, { grid: !!placing, overlay: over2, seen: !document.hidden, noPets: trying }); }
+    else { drawRoom(ctx, S, 0, 0, now, { kind: scene, grid: !!placing, overlay: over2, seen: !document.hidden, noPets: trying }); }
   }
 
   // ---- 1.22: chụp ảnh vườn — cảnh đang xem (sân / vùng / trong nhà) thành PNG có khung, ngày, tên giao diện mùa ----
@@ -3570,7 +3593,13 @@ var GardenHome = (function () {
     else { drawRoom(ctx, S, ox, oy, now, { kind: sc }); }
     lights.length = 0;
   }
+  // 1.34: đang Trang trí thử thì ảnh vẫn là cảnh thật
   function photoCanvas(size, sc) {
+    const t = trying;
+    trying = false;
+    try { return photoCanvasReal(size, sc); } finally { trying = t; }
+  }
+  function photoCanvasReal(size, sc) {
     sc = sc || mainScene();
     const out = isOut(sc), SW = out ? YARD.W : sc === "house" ? HOUSE3.W : roomW(sc), SH = out ? YARD.H : ROOM.H, now = Date.now(), cap = photoCaption(sc);
     const cv = document.createElement("canvas"), ctx = cv.getContext("2d");
@@ -3703,7 +3732,237 @@ var GardenHome = (function () {
     b.setAttribute("data-tab", c.pets.length ? "pet" : "build");
   }
 
-  function setTip(text) { const t = $("kb-h-tip"); if (t) { t.textContent = text || ""; } }
+  // ---- 1.34: Trang trí thử -------------------------------------------------------------------------------------------
+  // Góp ý: "Trang trí nhà, lưu lại bản trang trí đó, dùng để đặt thử đồ. Hiện tại phải mua mới đặt thử đồ được." Bật "Trang
+  // trí thử" → cảnh đang xem là bản thử (3 bản / cảnh, Python lưu theo hồ sơ trên máy): đặt / dời / cất tuỳ ý, món chưa có
+  // cũng đặt được (vẽ mờ, khung đứt + chữ "thử"). "Dùng bản này" → Python xét lại, mua món còn thiếu + bày đúng như bản thử
+  // trong một lần lưu. Thú nuôi / khách / StackChan không hiện trong lúc thử (không đứng lên đồ chưa có).
+  const DRAFT_SLOTS = 3;
+  function draftScene(sc) { return drafts && drafts.scenes ? drafts.scenes[sc] || null : null; }
+  function draftSlot(sc) { const d = draftScene(sc); return d && Array.isArray(d.slots) ? d.slots[d.cur] || null : null; }
+  function canTryScene(sc) { return isOut(sc) || isRoom(sc); }
+  function decorUse(room) { return ((decorState().use || {})[room]) || {}; }
+  function realCopy(sc) {
+    const out = { items: (realHome()[sc] || []).map((e) => ({ id: e.id, x: e.x, y: e.y })) };
+    if (isRoom(sc)) { const u = decorUse(sc); out.decor = { wall: u.wall || "", floor: u.floor || "" }; }
+    return out;
+  }
+  // lệnh đang chờ quá 8 giây (bị bỏ lúc Anki đồng bộ…) thì thôi chờ — không kẹt "Đang mở bản thử…" / không bỏ qua bản Python trả
+  let draftSentAt = 0;
+  function draftBusy() { if (draftPending && Date.now() - draftSentAt > 8000) { draftPending = 0; } return draftPending > 0; }
+  function sendDraft(action, payload) {
+    draftBusy();
+    draftPending++; draftSentAt = Date.now();
+    H.send("home:draft:" + action + (payload ? ":" + JSON.stringify(payload) : ""));
+  }
+  function putDraft(sc) {
+    const d = draftScene(sc);
+    if (!d) { return; }
+    sendDraft("put", { scene: sc, slot: d.cur, draft: d.slots[d.cur] });
+  }
+  // cảnh đang xem chưa có bản thử ở ô đang chọn → chép cảnh thật vào (chỉ khi đã đọc xong bản thử đã lưu)
+  function ensureDraft(sc) {
+    if (!drafts || !canTryScene(sc) || !canEnter(sc)) { return; }
+    let d = draftScene(sc);
+    if (!d) { d = { cur: 0, slots: [null, null, null] }; drafts.scenes[sc] = d; }
+    if (!d.slots[d.cur]) { d.slots[d.cur] = realCopy(sc); putDraft(sc); }
+  }
+  function drafts_(store) {          // Python trả bản thử (sau get / put / pick)
+    draftPending = Math.max(0, draftPending - 1);
+    if (draftBusy() || !store || typeof store !== "object" || !store.scenes) { return; }
+    drafts = store;
+    if (trying && isOpen) { ensureDraft(scene); renderTry(); if (tab === "room" && roomView === "decor") { renderList(); } }
+  }
+  function placedElsewhere(real, id, sc) {
+    return ["yard", "room"].concat(SIDE_IDS, ZONE_IDS, uzIds()).reduce((n, k) => n + (k === sc ? 0 : (real[k] || []).filter((e) => e.id === id).length), 0);
+  }
+  // món nào trong bản thử chưa có (vẽ mờ, phải mua): theo thứ tự, mỗi món dùng số đang có (trừ chỗ đã đặt ở cảnh khác) trước
+  function tryGhosts(sc, list) {
+    const real = realHome(), owned = real.owned || {}, left = {};
+    return (list || []).map((e) => {
+      if (left[e.id] === undefined) { left[e.id] = (owned[e.id] || 0) - placedElsewhere(real, e.id, sc); }
+      left[e.id]--;
+      return left[e.id] < 0;
+    });
+  }
+  function tryMarks(sc, list) { return trying && isOpen && sc === scene && draftSlot(sc) ? tryGhosts(sc, list) : null; }
+  // tóm tắt bản thử của cảnh đang xem: món phải mua, tường / sàn, tổng xu, giống cảnh thật không
+  function tryPlan(sc) {
+    const sl = draftSlot(sc);
+    if (!sl) { return null; }
+    const g = tryGhosts(sc, sl.items), buy = {}, names = [], bad = [];
+    let cost = 0, n = 0;
+    sl.items.forEach((e, i) => {
+      if (!g[i]) { return; }
+      const it = item(e.id);
+      n++;
+      buy[e.id] = (buy[e.id] || 0) + 1;
+      if (!it || it.custom || it.rare || it.only || (realHome().owned[e.id] || 0) + buy[e.id] > (it.max || 99)) { bad.push(it ? it.name : e.id); }
+      cost += it ? (it.price || 0) : 0;
+    });
+    Object.keys(buy).forEach((id) => { const it = item(id); names.push((it ? it.name : id) + (buy[id] > 1 ? " ×" + buy[id] : "")); });
+    let decorChanged = false;
+    if (isRoom(sc) && sl.decor) {
+      const u = decorUse(sc), dc = (catalog() || {}).decor || {}, dec = decorState();
+      ["wall", "floor"].forEach((slot) => {
+        if (sl.decor[slot] === undefined) { return; }
+        let did = sl.decor[slot] || "";
+        const own = (dc.house_same || {})[slot + ":" + sc] || (slot === "wall" ? "w_h" : "f_h") + sc;
+        if (did === own) { did = ""; }
+        if (did === (u[slot] || "")) { return; }
+        decorChanged = true;
+        if (!did) { return; }
+        const preset = (slot === "wall" ? dc.walls : dc.floors || []) || [];
+        const pr = (preset || []).find((x) => x.id === did);
+        if (pr && (dec.own || []).indexOf(did) < 0) { cost += pr.price || 0; n++; names.push((slot === "wall" ? "Giấy dán tường " : "Sàn ") + pr.name); }
+      });
+    }
+    const a = sl.items.map((e) => e.id + "@" + e.x + "," + e.y).sort().join("|");
+    const b = (realHome()[sc] || []).map((e) => e.id + "@" + e.x + "," + e.y).sort().join("|");
+    return { n: n, cost: cost, names: names, bad: bad, same: !n && !decorChanged && a === b };
+  }
+  // nút "Đặt thử" dùng được không (món không bán / món tự làm chỉ thử được tới số đang có)
+  function tryBlock(it) {
+    if (!it) { return "Không có món này."; }
+    const real = realHome(), sl = draftSlot(scene), owned = real.owned[it.id] || 0;
+    const used = sl ? sl.items.filter((e) => e.id === it.id).length : 0;
+    const avail = owned - placedElsewhere(real, it.id, scene);        // dùng được ở cảnh này mà không phải mua
+    if (avail - used > 0) { return ""; }
+    if (it.custom) { return "Món tự làm: có bao nhiêu cái thử bấy nhiêu (làm thêm ở Xưởng)."; }
+    if (it.rare || it.only) { return "Món này không bán ở cửa hàng."; }
+    if (owned + (used + 1 - Math.max(0, avail)) > (it.max || 99)) { return "Món này chỉ có tối đa " + (it.max || 99) + " cái."; }
+    if ((it.scene === "room" && real.house < ((catalog() || {}).room_unlock || 5)) || (it.zone && !zoneOpen(it.zone)) || (it.season && !themeOpen(it.season))) {
+      return "Món này chưa mở bán.";
+    }
+    return "";
+  }
+  function slotTitle(n) {
+    const d = draftScene(scene), sl = d && d.slots ? d.slots[n] : null;
+    if (!sl) { return "Bản " + (n + 1) + " · trống (bấm để bắt đầu từ cảnh thật)"; }
+    const t = sl.t ? new Date(sl.t * 1000) : null;
+    const two = (v) => (v < 10 ? "0" : "") + v;
+    return "Bản " + (n + 1) + (t ? " · lưu " + two(t.getHours()) + ":" + two(t.getMinutes()) + " " + two(t.getDate()) + "/" + two(t.getMonth() + 1) : "");
+  }
+  function setTrying(on) {
+    on = !!on && isOpen && canTryScene(scene);
+    if (on === trying) { return; }
+    trying = on;
+    placing = null; selected = null; hidePop();
+    if (on && !canTryScene(scene)) { setScene("yard"); }
+    if (on) {
+      if (SEA() && SEA().previewing()) { SEA().preview(null); }
+      decoTry = null;
+      if (drafts === null && !draftBusy()) { sendDraft("get"); }
+      ensureDraft(scene);
+      sfx("flip");
+    }
+    renderTry();
+    renderList();
+    defaultTip();
+  }
+  function pickSlot(n) {
+    if (!trying || !drafts) { return; }
+    let d = draftScene(scene);
+    if (!d) { d = { cur: 0, slots: [null, null, null] }; drafts.scenes[scene] = d; }
+    if (d.cur === n) { return; }
+    d.cur = n;
+    placing = null; selected = null; hidePop();
+    if (!d.slots[n]) { d.slots[n] = realCopy(scene); putDraft(scene); } else { sendDraft("pick", { scene: scene, slot: n }); }
+    sfx("flip");
+    renderTry(); renderList(); defaultTip();
+  }
+  function resetSlot() {
+    const d = draftScene(scene);
+    if (!trying || !d) { return; }
+    d.slots[d.cur] = realCopy(scene);
+    placing = null; selected = null; hidePop();
+    putDraft(scene);
+    renderTry(); renderList(); defaultTip();
+  }
+  function useDraft() {
+    const d = draftScene(scene), p = tryPlan(scene);
+    if (!trying || !d || !p) { return; }
+    if (p.same) { setTip("Bản thử giống hệt cảnh bây giờ rồi."); return; }
+    if (p.bad.length) { setTip("Không mua thêm được: " + p.bad.join(", ") + " — cất bớt khỏi bản thử nhé."); sfx("again"); return; }
+    const note = (p.names.length ? "Mua: " + p.names.join(" · ") + ". " : "") + "Món đang đặt ở " + sceneName(scene) +
+      " mà bản thử không dùng → Kho đồ.";
+    pay("home:draft:use:" + JSON.stringify({ scene: scene, slot: d.cur, draft: d.slots[d.cur] }),
+      { title: "Dùng bản thử " + (d.cur + 1) + " cho " + sceneName(scene) + "?", price: p.cost, note: note, yes: p.n ? "Mua " + p.n + " món & dùng" : "Dùng bản này" },
+      () => { draftPending++; draftSentAt = Date.now(); });        // Python trả homeDrafts sau khi dùng
+  }
+  // thanh dưới cảnh khi đang thử (thay dòng gợi ý): tên cảnh · tóm tắt / chữ hướng dẫn · Bản 1 2 3 · Dùng bản này · Thoát thử
+  function renderTry() {
+    const tip = $("kb-h-tip"), tb = $("kb-h-try");
+    if (tb) {
+      tb.setAttribute("aria-pressed", trying ? "true" : "false");
+      tb.textContent = trying ? "Thoát thử" : "Trang trí thử";
+      tb.title = trying ? "Về cảnh thật (bản thử vẫn giữ) · Esc" : "Bày thử đồ, kể cả đồ chưa mua — vườn thật không đổi tới khi bấm “Dùng bản này”";
+    }
+    if (!tip) { return; }
+    tip.classList.toggle("kb-h-trybar", trying);
+    if (!trying) { if (tip.querySelector(".kb-try-msg")) { tip.textContent = ""; } return; }
+    tip.textContent = "";
+    tip.appendChild(el("b", "kb-try-t", "Thử · " + sceneName(scene)));
+    tip.appendChild(el("span", "kb-try-msg", ""));
+    tip.appendChild(el("span", "kb-try-sp", ""));
+    const d = draftScene(scene);
+    tip.appendChild(el("span", "kb-try-l", "Bản"));
+    for (let n = 0; n < DRAFT_SLOTS; n++) {
+      const b = btn(String(n + 1), "kb-btn-small kb-try-slot" + (d && d.cur === n ? " is-on" : "") + (d && d.slots && d.slots[n] ? "" : " is-empty"), () => pickSlot(n));
+      b.title = slotTitle(n);
+      b.setAttribute("aria-pressed", d && d.cur === n ? "true" : "false");
+      tip.appendChild(b);
+    }
+    tip.appendChild(btn("Như cảnh thật", "kb-btn-small kb-try-reset", resetSlot, !draftSlot(scene), "Bản này về giống hệt cảnh bây giờ"));
+    const p = tryPlan(scene), money = coins();
+    const short = p && p.cost > money;
+    const label = !p ? "Dùng bản này" : p.same ? "Giống cảnh thật" : short ? "Thiếu " + kbXu(p.cost - money) + " xu" : "Dùng bản này" + (p.cost ? " · " + kbXu(p.cost) + " xu" : "");
+    const use = btn(label, "kb-h-buy kb-try-use", useDraft, !p || p.same || short,
+      p && p.names.length ? "Mua: " + p.names.join(" · ") : "Bày cảnh thật đúng như bản thử");
+    tip.appendChild(use);
+    tryMsg();
+  }
+  let tryMsgText = "";
+  function tryMsg(text) {
+    const m = document.querySelector("#kb-h-tip .kb-try-msg");
+    if (text !== undefined) { tryMsgText = text || ""; }
+    if (!m) { return; }
+    let t = tryMsgText;
+    if (!t) {
+      const p = tryPlan(scene);
+      t = !p ? "Đang mở bản thử…" : p.same ? "Giống cảnh thật · bấm “Đặt thử” ở thẻ món hoặc bấm món để dời / cất" :
+        p.n ? p.n + " món chưa có · " + kbXu(p.cost) + " xu" : "Chỉ dời / cất đồ đang có · không tốn xu";
+    }
+    if (m.textContent !== t) { m.textContent = t; m.title = t; }
+  }
+  // khung đứt + chữ "thử" quanh món chưa có (vẽ sau cùng, trên canvas của bảng)
+  function drawTryMarks(c, s, ox, oy) {
+    const sl = trying ? draftSlot(scene) : null;
+    if (!sl) { return; }
+    const g = tryGhosts(scene, sl.items);
+    c.save();
+    sl.items.forEach((e, i) => {
+      if (!g[i]) { return; }
+      const b = itemBox(Object.assign({ index: i }, e), scene);
+      if (!b) { return; }
+      const x = (ox + b.x) * s, y = (oy + b.y) * s, w = b.w * s, h = b.h * s;
+      c.setLineDash([6, 4]); c.lineWidth = 2; c.strokeStyle = "#b07a1a";
+      c.strokeRect(x - 3, y - 3, w + 6, h + 6); c.setLineDash([]);
+      c.font = "bold 12px \"Noto Sans\", sans-serif";
+      const tw = c.measureText("thử").width + 8, ty = Math.max(1, y - 20);
+      c.fillStyle = "#fff3c4"; c.fillRect(x - 3, ty, tw, 16);
+      c.lineWidth = 1.5; c.strokeStyle = "#b07a1a"; c.strokeRect(x - 3, ty, tw, 16);
+      c.fillStyle = "#7a4a00"; c.fillText("thử", x + 1, ty + 12);
+    });
+    c.restore();
+  }
+
+  function setTip(text) {
+    const t = $("kb-h-tip");
+    if (!t) { return; }
+    if (trying && t.classList.contains("kb-h-trybar")) { tryMsg(text || ""); return; }
+    t.textContent = text || "";
+  }
   // 1.22.5: cảnh còn ô đặt được món này không (vườn nhiều đồ: mua thêm khi sân đã kín thì báo rõ thay vì "bấm vào ô trống")
   function hasFreeCell(sc, id) {
     const c = catalog() || {}, g = isOut(sc) ? (c.yard || { cols: 16, rows: 4 }) : sc === "room" ? (c.room || { cols: 10, rows: 4 }) : { cols: (c.side || { cols: 9 }).cols, rows: 4 };
@@ -3711,8 +3970,10 @@ var GardenHome = (function () {
     return false;
   }
   function defaultTip() {
+    if (trying && !placing) { tryMsg(""); return; }
     if (placing) {
       const it = item(placing.id), nm = it ? it.name : placing.id;
+      if (trying) { setTip("Đặt thử “" + nm + "”: bấm ô xanh · Esc: huỷ"); return; }
       if (placing.index === undefined && !hasFreeCell(placing.scene, placing.id)) {
         setTip("“" + sceneName(placing.scene) + "” hết chỗ · “" + nm + "” đã vào Kho đồ: cất bớt đồ rồi bấm Đặt · Esc: huỷ");
         return;
@@ -3736,7 +3997,8 @@ var GardenHome = (function () {
     const it = item(e.id) || { w: 1, name: e.id };
     const r = cellRect(scene, e.x, e.y, it.w);
     const area = cv.parentNode.getBoundingClientRect(), cr = cv.getBoundingClientRect();
-    p.querySelector(".kb-h-pop-name").textContent = it.name;
+    p.querySelector(".kb-h-pop-name").textContent = it.name + (trying && (selected && tryGhosts(scene, homeState()[scene])[selected.index]) ? " (thử)" : "");
+    $("kb-h-take").textContent = trying ? "Bỏ khỏi bản thử" : "Cất vào kho";       // 1.34
     const rd = $("kb-h-read");
     if (rd) { rd.hidden = e.id !== "shelf"; }
     p.hidden = false;
@@ -3775,6 +4037,19 @@ var GardenHome = (function () {
       if (!cell) { return; }
       const err = spotError(scene, placing.id, cell.x, cell.y, placing.index);
       if (err) { sfx("again"); setTip("Không đặt được: " + err + " · Esc để huỷ"); return; }
+      if (trying) {             // 1.34: đặt / dời trong bản thử (không gửi Python lệnh đặt đồ)
+        const sl = draftSlot(scene);
+        if (sl) {
+          if (placing.index !== undefined && sl.items[placing.index]) { sl.items[placing.index] = { id: placing.id, x: cell.x, y: cell.y }; }
+          else { sl.items.push({ id: placing.id, x: cell.x, y: cell.y }); }
+          putDraft(scene);
+          sfx("good");
+          burst(scene, { scene: scene, id: placing.id, x: cell.x, y: cell.y });
+        }
+        placing = null;
+        renderTry(); renderList(); defaultTip();
+        return;
+      }
       pendingSpot = { scene: scene, id: placing.id, x: cell.x, y: cell.y };
       if (placing.index !== undefined) { H.send("home:move:" + scene + ":" + placing.index + ":" + cell.x + ":" + cell.y); }
       else { H.send("home:place:" + scene + ":" + placing.id + ":" + cell.x + ":" + cell.y); }
@@ -3847,6 +4122,10 @@ var GardenHome = (function () {
     defaultTip();
     // 1.30: đang ở "Tường & sàn" thì danh sách theo gian đang xem
     if (decoTry) { decoTry = null; }
+    if (trying) {                          // 1.34: mỗi cảnh một bộ bản thử
+      if (!canTryScene(s)) { trying = false; } else { ensureDraft(s); }
+      renderTry(); renderList();
+    }
     if (isOpen && tab === "room" && roomView === "decor") { renderList(); }
   }
   // Nhiều vùng (6 vùng + vùng tự tạo) thì hàng nút cảnh xuống 2–3 dòng: bớt chiều cao khung xem / danh sách
@@ -4102,6 +4381,18 @@ var GardenHome = (function () {
     }
     if (owned) { info.appendChild(el("div", "kb-h-own", "Có " + owned + (placed ? " · đã đặt " + placed : "") + (avail ? " · trong kho " + avail : ""))); }
     const row = el("div", "kb-h-btns");
+    if (trying) {          // 1.34: đang Trang trí thử — mọi món chỉ có nút "Đặt thử" (mua lúc bấm "Dùng bản này")
+      const sl = draftSlot(scene), nTry = sl ? sl.items.filter((e) => e.id === it.id).length : 0;
+      const gh = sl ? tryGhosts(scene, sl.items).filter((g, i) => g && sl.items[i].id === it.id).length : 0;
+      if (nTry) { info.appendChild(el("div", "kb-h-own kb-try-has", "Trong bản thử: " + nTry + (gh ? " · cần mua " + gh : ""))); }
+      if (gh) { card.classList.add("kb-try-card"); }
+      const why = tryBlock(it);
+      row.appendChild(btn("Đặt thử", "kb-btn-small kb-h-place kb-try-put", () => startPlacing(it.id), !!why, why || "Bày thử, chưa trả xu"));
+      info.appendChild(row);
+      card.appendChild(info);
+      list.appendChild(card);
+      return card;
+    }
     if (!opts.inv && !special && !it.custom) {
       const locked = (it.scene === "room" && home.house < cat.room_unlock) || (it.zone && !zoneOpen(it.zone)) ||
         (it.season && !themeOpen(it.season));
@@ -4427,7 +4718,7 @@ var GardenHome = (function () {
     if (tab === "room" && home.house < unlock) {
       list.appendChild(el("div", "kb-h-empty", "Xây nhà tới bước “" + cat.levels[unlock].name + "” để mua nội thất."));
     }
-    if (tab === "room" && roomView === "decor") { if (home.house >= unlock) { renderDecor(list, cat, money); } return; }
+    if (tab === "room" && roomView === "decor") { if (home.house >= unlock) { renderDecor(list, cat, money); if (trying) { tryDecorCards(list); } } return; }
     if (tab === "inv" && !items.length) { list.appendChild(el("div", "kb-h-empty", "Kho đang trống. Mua đồ ở tab “Trang trí sân” hoặc “Nội thất”.")); }
     if (tab === "inv" && items.length) {
       // có nhiều đồ (hơn 100 món khi mua hết) thì món còn trong kho lên đầu, khỏi phải tìm nút "Đặt" giữa đồ đã đặt
@@ -4487,6 +4778,35 @@ var GardenHome = (function () {
       if (rowsArr || !tile) { NHA.swatch(ctx, sc, 0, 0, 34, 34, id, rowsArr); }
     }
     return cv;
+  }
+  // 1.34: Trang trí thử ở "Tường & sàn": mỗi mẫu một nút "Đặt thử" (mẫu chưa có trả xu lúc "Dùng bản này")
+  function tryDecorCards(list) {
+    const room = decoRoom(), sl = room === scene ? draftSlot(room) : null, dc = (catalog() || {}).decor || {};
+    Array.prototype.forEach.call(list.querySelectorAll(".kb-decor-card[data-decor]"), (card) => {
+      const [slot, id] = String(card.getAttribute("data-decor")).split(":");
+      const row = card.querySelector(".kb-h-btns");
+      if (!row || (slot !== "wall" && slot !== "floor")) { return; }
+      if (!sl) {          // đang xem sân / vùng: tường & sàn thử ở gian trong nhà
+        row.textContent = "";
+        row.appendChild(btn("Đặt thử", "kb-btn-small kb-h-place kb-try-put", () => {}, true, "Sang một gian trong nhà (nút cảnh phía trên) để thử"));
+        return;
+      }
+      const own = (dc.house_same || {})[slot + ":" + room] || (slot === "wall" ? "w_h" : "f_h") + room;
+      let cur = sl.decor && typeof sl.decor[slot] === "string" ? sl.decor[slot] : (decorUse(room)[slot] || "");
+      if (cur === own) { cur = ""; }
+      const on = cur === (id || "");
+      row.textContent = "";
+      row.appendChild(btn(on ? "Đang thử" : "Đặt thử", "kb-btn-small kb-h-place kb-try-put", () => {
+        const s2 = draftSlot(room);
+        if (!s2) { return; }
+        s2.decor = Object.assign({}, s2.decor || {});
+        s2.decor[slot] = id || "";
+        putDraft(room);
+        sfx("flip");
+        renderTry(); renderList(); defaultTip();
+      }, on));
+      card.classList.toggle("kb-h-using", on);
+    });
   }
   function renderDecor(list, cat, money) {
     const dc = cat.decor || { walls: [], floors: [], rooms: [], tile: { price: 250, edit: 50, max: 12 } };
@@ -5280,6 +5600,8 @@ var GardenHome = (function () {
     setScene(which || mainScene());
     renderList();
     H.send("home:open");
+    if (drafts === null && !draftBusy()) { sendDraft("get"); }        // 1.34: bản thử đã lưu (đọc sẵn trước khi bấm Thử)
+    renderTry();
   }
   function close() {
     if (!isOpen) { return; }
@@ -5287,6 +5609,7 @@ var GardenHome = (function () {
     if (SEA() && SEA().previewing()) { SEA().preview(null); }
     isOpen = false;
     placing = null; selected = null; hidePop();
+    if (trying) { trying = false; renderTry(); }          // 1.34: đóng Nhà = thoát thử (bản thử vẫn giữ)
     $("kb-home").hidden = true;
     $("kb-yard-wrap").hidden = false;
     if (scrollBack !== null) { window.scrollTo(0, scrollBack); scrollBack = null; }
@@ -5301,6 +5624,7 @@ var GardenHome = (function () {
       e.preventDefault();
       if (placing) { placing = null; defaultTip(); }
       else if (selected) { selected = null; hidePop(); }
+      else if (trying) { setTrying(false); }          // 1.34: Esc lần 1 thoát thử, lần 2 đóng bảng Nhà
       else { close(); }
     }
   }
@@ -5336,6 +5660,11 @@ var GardenHome = (function () {
       }
     } else if (a === "take") {
       sfx("flip");
+    } else if (a === "draft") {           // 1.34: đã bày cảnh thật như bản thử
+      trying = false;
+      sfx("stage");
+      mood("star", 2200, "できた！ " + keep(sceneName(payload.scene || scene)));
+      tipMsg = "Đã bày " + sceneName(payload.scene || scene) + " như bản thử" + (payload.bought ? " · mua " + payload.bought + " món, " + kbXu(payload.cost || 0) + " xu" : "") + ".";
     } else if (a === "zone") {
       const zs = (homeState().zones || []);
       const z = zs.length > zonesBefore ? zs[zs.length - 1] : null;
@@ -5445,12 +5774,14 @@ var GardenHome = (function () {
       else { sfx("flip"); }
     }
     selected = null; hidePop();
+    renderTry();
     renderList();
     if (!placing) { if (tipMsg) { setTip(tipMsg); } else { defaultTip(); } }
   }
 
   function error(msg, rid) {
     pendingPlace = null; pendingDecor = null; payWait = 0;
+    if (draftPending) { draftPending = 0; sendDraft("get"); }         // 1.34: lệnh bản thử lỗi → đọc lại bản đã lưu
     if (typeof GardenCraft !== "undefined" && (GardenCraft.isOpen() || rid)) { GardenCraft.error(msg, rid); }
     sfx("again");
     mood("sad", 1200, "あれ？");
@@ -5466,6 +5797,8 @@ var GardenHome = (function () {
       cv.addEventListener("mouseleave", () => { hover = null; });
       cv.addEventListener("click", onCanvasClick);
       $("kb-h-exit").addEventListener("click", close);
+      const tryB = $("kb-h-try");            // 1.34: Trang trí thử
+      if (tryB) { tryB.addEventListener("mousedown", (ev) => ev.preventDefault()); tryB.addEventListener("click", () => setTrying(!trying)); }
       window.addEventListener("resize", () => fitHome());
       // chỉ tab của bảng Nhà (bảng Báo / Lịch hoa dùng chung kiểu nút .kb-h-tab nhưng có bộ nghe riêng)
       Array.prototype.forEach.call(document.querySelectorAll("#kb-home .kb-h-tab"), (b) => {
@@ -5479,6 +5812,12 @@ var GardenHome = (function () {
       });
       $("kb-h-take").addEventListener("click", () => {
         if (!selected) { return; }
+        if (trying) {             // 1.34: bỏ khỏi bản thử
+          const sl = draftSlot(selected.scene);
+          if (sl && sl.items[selected.index]) { sl.items.splice(selected.index, 1); putDraft(selected.scene); sfx("flip"); }
+          selected = null; hidePop(); renderTry(); renderList(); defaultTip();
+          return;
+        }
         H.send("home:take:" + selected.scene + ":" + selected.index);
       });
       $("kb-h-cancel").addEventListener("click", () => { selected = null; hidePop(); });
@@ -5611,6 +5950,8 @@ var GardenHome = (function () {
       lights.length = 0;
     },
     update: update,
+    drafts: drafts_,                     // 1.34: Python trả bản thử
+    trying: () => trying,
     error: error,
     // 1.22: mã chia sẻ vừa xuất (Python đã chép vào bộ nhớ tạm) / bản xem trước của mã dán vào
     shareCode: function (p) {
@@ -5627,7 +5968,8 @@ var GardenHome = (function () {
       if (p && p.error) { sfx("again"); }
       if (isOpen) { renderList(); showInList(p && p.error ? ".kb-h-paste" : ".kb-h-peek"); }
     },
-    dataChanged: () => { stillDirty = true; if (isOpen) { renderList(); } syncYardNav(); syncCare(); },
+    // 1.34: xu / đồ đổi khi đang thử (bù xu điện thoại, ôn xong ở cửa sổ khác…) → thanh thử tính lại (nút Thiếu / Dùng)
+    dataChanged: () => { stillDirty = true; if (isOpen) { if (trying) { renderTry(); } renderList(); if (trying && !placing) { defaultTip(); } } syncYardNav(); syncCare(); },
     // cho test
     _sprites: SPR, _pal: P,
     _parts: (sc) => (parts[sc] || []).length,

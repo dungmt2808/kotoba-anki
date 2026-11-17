@@ -189,28 +189,28 @@ result = 1`);
   ok(await py(KB + 'result = kb.config().get("gemini_wait_start") is True'), 'Xoá khoá rồi dán lại → lại chờ bấm Bắt đầu viết');
   await js('GardenPaper.close(); return 1;'); await sleep(400);
 
-  console.log('== tìm deck ở thanh trên (kính lúp, phím /)');
+  console.log('== tìm deck ở thanh trên (1.34: nút Deck gọn mở cây deck — thay kính lúp; phím /)');
   for (const [w, h] of [[1366, 768], [1024, 700]]) {
     await py(KB + `kb._dialog.resize(${w}, ${h}); result = 1`); await sleep(1500);
-    const bar = await js(`const f = document.getElementById("kb-deck-find").getBoundingClientRect(), s = document.getElementById("kb-deck").getBoundingClientRect(), c = document.getElementById("kb-coins").getBoundingClientRect();
-      return { f: [Math.round(f.left), Math.round(f.right), Math.round(f.top)], s: Math.round(s.right), c: Math.round(c.left), w: innerWidth, hs: document.documentElement.scrollWidth > innerWidth + 1 };`);
-    ok(bar.f[0] >= bar.s && bar.f[1] <= bar.c && bar.f[1] <= bar.w && !bar.hs, w + ' px: nút kính lúp nằm giữa ô Deck và ô xu, không tràn (' + JSON.stringify(bar) + ')');
-    await js('document.getElementById("kb-deck-find").click(); return 1;'); await sleep(300);
+    const bar = await js(`const f = document.getElementById("kb-deck-btn").getBoundingClientRect(), s = document.querySelector(".kb-deck").getBoundingClientRect(), c = document.getElementById("kb-coins").getBoundingClientRect();
+      return { f: [Math.round(f.left), Math.round(f.right), Math.round(f.top)], s: [Math.round(s.left), Math.round(s.right)], c: Math.round(c.left), w: innerWidth, hs: document.documentElement.scrollWidth > innerWidth + 1 };`);
+    ok(bar.f[0] >= bar.s[0] && bar.f[1] <= bar.s[1] && bar.s[1] <= bar.c && bar.f[1] <= bar.w && !bar.hs, w + ' px: nút Deck nằm trong ô Deck, trước ô xu, không tràn (' + JSON.stringify(bar) + ')');
+    await js('document.getElementById("kb-deck-btn").click(); return 1;'); await sleep(300);
     const pop = await js(`const p = document.getElementById("kb-deck-pop"), r = p.getBoundingClientRect();
-      return { open: !p.hidden, focus: document.activeElement && document.activeElement.id, n: p.querySelectorAll(".kb-deck-item").length, cur: (p.querySelector(".is-cur") || {}).textContent,
+      return { open: !p.hidden, focus: document.activeElement && document.activeElement.id, n: p.querySelectorAll(".kb-deck-row").length, cur: (p.querySelector(".is-cur .kb-deck-name") || {}).textContent,
         r: [Math.round(r.left), Math.round(r.right), Math.round(r.bottom)], w: innerWidth, h: innerHeight };`);
-    ok(pop.open && pop.focus === 'kb-deck-q' && pop.n >= 30 && /A::Có câu ví dụ/.test(pop.cur || '') && pop.r[1] <= pop.w && pop.r[2] <= pop.h,
-      w + ' px: bảng tìm deck mở, con trỏ ở ô tìm, ' + pop.n + ' deck, tô đậm deck đang xem, nằm trong cửa sổ');
-    const ih = await js('const b = Array.from(document.querySelectorAll("#kb-deck-list .kb-deck-item")); return b.slice(0, 5).map((x) => Math.round(x.getBoundingClientRect().height));');
+    ok(pop.open && pop.focus === 'kb-deck-q' && pop.n >= 5 && /Có câu ví dụ/.test(pop.cur || '') && pop.r[1] <= pop.w && pop.r[2] <= pop.h,
+      w + ' px: bảng cây deck mở, con trỏ ở ô tìm, ' + pop.n + ' dòng (deck con thu gọn như Anki), tô đậm deck đang xem, nằm trong cửa sổ');
+    const ih = await js('const b = Array.from(document.querySelectorAll("#kb-deck-list .kb-deck-row")); return b.slice(0, 5).map((x) => Math.round(x.getBoundingClientRect().height));');
     ok(ih.every((x) => x >= 22), w + ' px: mỗi deck một dòng đọc được, không bị ép dẹt (cao ' + ih.join('/') + ' px)');
     const m = await measure('tim_deck_' + w);
     ok(!m.hscroll && !m.outside.length, w + ' px: không tràn ngang / không lọt khung');
     await page.send('Input.insertText', { text: 'chi tu' }); await sleep(250);
-    const hits = await js('return Array.from(document.querySelectorAll("#kb-deck-list .kb-deck-item")).map((b) => b.textContent);');
+    const hits = await js('return Array.from(document.querySelectorAll("#kb-deck-list .kb-deck-row .kb-deck-name")).map((b) => b.textContent.replace(/ › /g, "::"));');
     ok(hits.length >= 1 && hits.every((t) => /Chỉ từ/.test(t)), 'gõ "chi tu" (không dấu) → ' + JSON.stringify(hits));
     // xếp: khớp nguyên cụm lên trước ("bai 3" → Bài 30… trước Bài 23)
     await js('const q = document.getElementById("kb-deck-q"); q.value = "bai 3"; q.dispatchEvent(new Event("input")); return 1;'); await sleep(200);
-    const rk = await js('return Array.from(document.querySelectorAll("#kb-deck-list .kb-deck-item")).map((b) => b.textContent.replace(/ · đang xem$/, ""));');
+    const rk = await js('return Array.from(document.querySelectorAll("#kb-deck-list .kb-deck-row .kb-deck-name")).map((b) => b.textContent.replace(/ › /g, "::"));');
     ok(rk.length && /Bài 3\d/.test(rk[0]) && rk.indexOf('N4::Bài 23') > rk.indexOf('N4::Bài 38'), 'gõ "bai 3": Bài 30… lên trước, Bài 23 / 13… sau (' + rk.slice(0, 3).join(', ') + ' … ' + rk.slice(-2).join(', ') + ')');
     await js('const q = document.getElementById("kb-deck-q"); q.value = "chi tu"; q.dispatchEvent(new Event("input")); return 1;'); await sleep(200);
     await page.key('ArrowDown', 'ArrowDown', 40); await page.key('ArrowUp', 'ArrowUp', 38);
@@ -229,7 +229,7 @@ result = 1`);
   ok(await js('return !document.getElementById("kb-deck-pop").hidden && document.activeElement.id === "kb-deck-q";'), 'phím / ở màn chính → mở bảng tìm deck');
   await page.key('Escape', 'Escape', 27); await sleep(400);
   ok(await js('return document.getElementById("kb-deck-pop").hidden;') && await py(KB + 'result = kb._dialog is not None and kb._dialog.isVisible()'), 'Esc chỉ đóng bảng tìm deck, cửa sổ vườn vẫn mở');
-  await js('document.getElementById("kb-deck-find").click(); return 1;'); await sleep(200);
+  await js('document.getElementById("kb-deck-btn").click(); return 1;'); await sleep(200);
   await js('document.querySelector(".kb-title").click(); return 1;'); await sleep(200);
   ok(await js('return document.getElementById("kb-deck-pop").hidden;'), 'bấm ra ngoài → đóng bảng tìm deck');
   ok(page.errors.length === 0, 'không lỗi JS ' + page.errors.slice(0, 2).join(' | '));

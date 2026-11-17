@@ -124,6 +124,23 @@ Sau khi trả lời có hiện cách đọc, Hán Việt, nghĩa (và cách dùn
 - **Hiệu ứng thành tích** (`web/joy.js`, Python tính `data.joy` = `more_core.joy_view`): **xong hết thẻ hôm nay** trong deck đang xem (`deck_due_tree` = 0 và hôm nay đã ôn ≥ 1 lượt) → cầu vồng trên ruộng và trên trời sân, giọt sương lấp lánh; **đạt mục tiêu ngày**; **cả vườn xanh tốt / ra hoa / trĩu quả** (≥ 5 cây, không cây nào héo, mọi cây từ Cây non / Ra hoa / Ra quả) → lá lấp lánh / cánh hoa anh đào bay / đốm sáng vàng bay lên; **mốc chuỗi ngày** (7, 14, 21, 30, 50, 75, 100, 150, 200, 250, 300, 365, 500, 730, 1000) → pháo hoa trên trời sân; **xong 3 nhiệm vụ** → đèn trời bay lên. Huy hiệu cạnh chú thích ruộng; dải chúc mừng + linh vật chúc mỗi thành tích **một lần mỗi ngày** (nhớ ở `localStorage kb-joy-<ngày>-<loại>`), đang ôn thẻ thì để dành tới khi đóng bảng ôn.
 - **Lưu trữ**: khoá collection mới `kotoba_batake_more` (`more_core.MORE_KEY`) — mục 4. Bản ≤ 1.13 ở máy khác không đọc khoá này nên không xoá được gì.
 
+### Mới ở 1.34.0: bảng ôn theo góp ý, ô chọn deck dạng cây, Trang trí thử
+- **Bảng ôn**: số phím 1 · 2 · 3 · 4 ở góc nút chấm; **Nghe lại** (nút + phím R / F5, lệnh `rv:replay`; nút chỉ hiện khi mặt
+  đang xem có âm thanh — `audio` trong `showCard` / `showAnswer` / `cardEdited`; mặt sau theo "Skip question when replaying
+  answer" của deck); **thẻ tự lật / tự chấm**: khung thẻ bọc `pycmd` / `bridgeCommand` — `"ans"` → lật (mặt trước), `"ease1".."ease4"`
+  → chấm (đã lật), như màn ôn Anki (`Garden.cardCmd`); sang thẻ mới thì dọn hẹn giờ mẫu thẻ cũ đặt; **Phóng to** (nút + phím F,
+  `ui.zoom`; Esc lần 1 thu nhỏ, lần 2 dừng); ↑ ↓ PageUp PageDown cuộn khung thẻ; giữ phím không chấm liền nhiều thẻ; radio /
+  checkbox / nút trong thẻ không chặn phím; bàn phím số khi tắt NumLock.
+- **Ẩn / Hiện vườn**: Ẩn vườn không đổi cỡ khung thẻ nữa (vườn ẩn thì thẻ tự cao — CSS); Hiện vườn đưa cỡ "To hết chỗ" (bản
+  cũ lỡ lưu) về "Vừa" — trước đây hiện lại chỉ còn một dải vườn rất mỏng.
+- **Ô chọn deck**: một nút gọn (`#kb-deck-btn`) mở **cây deck như màn Decks của Anki** (lệnh `deck:tree` → `garden_core.deck_tree`,
+  trang nhận `deckTree`): thu / mở deck con, số thẻ Mới / Học / Ôn, gõ để lọc, phím ↑ ↓ ← → Enter Esc, phím / mở. Đóng / mở
+  nhánh nhớ theo máy (`prefs` `kb-deck-fold`). Ô `<select id="kb-deck">` vẫn còn (ẩn) để đổi deck như trước.
+- **Trang trí thử** (bảng Nhà): nút "Trang trí thử" → cảnh đang xem thành bản thử (3 bản / cảnh), đặt thử cả đồ chưa mua (vẽ
+  mờ, chữ "thử"), dời / bỏ, tường & sàn; **"Dùng bản này"** mua món còn thiếu + bày đúng như bản thử trong một lần lưu.
+  `draft_core.py` (làm sạch), file theo hồ sơ `user_files/ho_so/<mã>/ban_thu.json` (không vào collection), lệnh
+  `home:draft:get|put|pick|use` (trang nhận `homeDrafts`), `garden_core.draft_plan` + `GardenState.draft_apply`.
+
 ### Mới ở 1.33.2: đang viết báo thì khoá lựa chọn của báo, báo thêm sau khi viết xong thì từ mai, câu chữ gọn
 - **Đang viết báo** (Gemini viết / tạo giọng đọc, cả hàng chờ của "Bắt đầu viết"): Báo muốn nhận, Trình độ, Lấy từ, Truyện,
   Chủ đề truyện, Giọng đọc, Đổi / Xoá khoá, đổi nguồn và "Bắt đầu viết" khoá + dòng "Gemini đang viết báo — xong mới đổi

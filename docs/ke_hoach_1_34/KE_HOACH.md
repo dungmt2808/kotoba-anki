@@ -1,4 +1,4 @@
-# Kế hoạch 1.34 — góp ý về bảng ôn, ô chọn deck, trang trí thử (17/11, **ảnh phác, chưa làm**)
+# Kế hoạch 1.34 — góp ý về bảng ôn, ô chọn deck, trang trí thử (17/11; **đã làm ở 1.34.0** — PHAT_TRIEN.md mục 2.6z16, báo cáo `docs/kiem_thu/1.34.0/BAO_CAO.md`)
 
 Người dùng chuyển góp ý sau khi phát hành:
 
@@ -11,7 +11,7 @@ Người dùng chuyển góp ý sau khi phát hành:
 Ảnh phác vẽ đè lên vườn thật của 1.33.3 trong **Anki 26.9.4 thật** (`tests/anki/mock_134.js` + `mock_134_ghep.py`, bộ thẻ mẫu
 `demo_1334.py`: 38 deck có deck con, thẻ trắc nghiệm tự lật, thẻ bài đọc dài). Đồ "đặt thử" vẽ bằng chính hàm vẽ đồ của
 add-on; thẻ tự lật dùng `Garden.flip()` thật; số thẻ của cây deck lấy từ `deck_due_tree()` của Anki. **Mọi chi tiết Claude
-chọn — chờ người dùng duyệt.** Số bản: **1.34.0** (có tính năng mới; "1.27" / "1.29" vẫn là tên bản trong lộ trình).
+chọn.** Người dùng duyệt: "oke, triển khai đi, xong nhớ test kỹ nha". Số bản: **1.34.0** (có tính năng mới; "1.27" / "1.29" vẫn là tên bản trong lộ trình).
 
 | Ảnh | Nội dung |
 |---|---|
@@ -51,7 +51,8 @@ chọn — chờ người dùng duyệt.** Số bản: **1.34.0** (có tính nă
    đè cỡ thẻ đã chọn ở ⚙. Người đã lỡ bấm ở bản cũ (cài đặt đang "Cao" do nút này) → Hiện vườn trả về "Vừa".
 6. **Phím chắc hơn**: bỏ qua phím lặp khi giữ phím (lật / chấm chỉ một lần mỗi lần nhấn); chỉ coi là "đang gõ" khi ở ô chữ /
    ô gõ đáp án / textarea / chỗ sửa được — bấm radio, checkbox, nút trong thẻ thì phím vẫn chạy; nhận bàn phím số theo vị trí
-   phím (NumLock tắt vẫn chấm); bộ gõ tiếng Việt đang bật (Chromium gửi "Process") thì đọc mã phím vật lý.
+   phím (NumLock tắt vẫn chấm); bộ gõ tiếng Việt đang bật (Chromium gửi "Process") thì đọc mã phím vật lý. *(Khi làm: bỏ ý này — giữ quyết định 1.25.9: phím của bộ gõ đang soạn chữ không chạy phím tắt, vd. Space
+   đổi kana → kanji không được lật thẻ.)*
 
 **Ô chọn deck**
 7. Thay ô thả xuống + nút kính lúp bằng **một nút gọn**: "Tiếng Nhật › N4 › **Bài 17** ▾" (tên dài cắt "…", rê chuột thấy đủ).

@@ -302,7 +302,7 @@ result = n`);
 
   console.log('== 4a. Esc ở từng bảng nổi chỉ đóng bảng đó (1.30.2: Esc ở bảng ⚙ đóng cả cửa sổ vườn)');
   await escAll();
-  for (const [name, sel] of [['⚙', '#kb-sound'], ['Nhiệm vụ', '#kb-quest'], ['Tin làng', '#kb-news-btn'], ['Tìm deck', '#kb-deck-find'],
+  for (const [name, sel] of [['⚙', '#kb-sound'], ['Nhiệm vụ', '#kb-quest'], ['Tin làng', '#kb-news-btn'], ['Tìm deck', '#kb-deck-btn'],
     ['Chụp ảnh', '#kb-yard-snap'], ['StackChan', '#kb-life-chip'], ['Thời tiết (thẻ Hôm nay)', '#kb-weather']]) {
     const shown = await js(`const b = document.querySelector(${JSON.stringify(sel)}); return !!(b && !b.hidden && b.offsetParent);`);
     if (!shown) { console.log('    (bỏ qua ' + name + ': nút không hiện)'); continue; }

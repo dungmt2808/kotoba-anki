@@ -45,7 +45,7 @@ var GardenUI = (function () {
     return (sub && sub[k]) || DEF[k];
   }
   const GLOB_DEF = { card: "normal", theme: "garden", scene: "normal", start: "last", deco: "on", greet: "on", trans: "on",
-    today: "open", buyask: "on" };
+    today: "open", buyask: "on", zoom: "off" };
   function glob(k) { const c = conf(); return (c && c[k]) || GLOB_DEF[k] || "garden"; }
 
   // thẻ đang ôn nằm trong iframe: bảng tối thì thêm lớp nightMode (như Anki) + màu nền dịu.
@@ -74,7 +74,8 @@ var GardenUI = (function () {
     const app = $("kb-app");
     if (!app) { return; }
     const cls = ["kb-ui-m-" + mode, "kb-ui-yard-" + get("yard"), "kb-ui-field-" + get("field"),
-      "kb-ui-th-" + glob("theme"), "kb-ui-card-" + glob("card"), "kb-ui-deco-" + glob("deco"), "kb-ui-today-" + glob("today")];
+      "kb-ui-th-" + glob("theme"), "kb-ui-card-" + glob("card"), "kb-ui-deco-" + glob("deco"), "kb-ui-today-" + glob("today"),
+      "kb-ui-zoom-" + glob("zoom")];
     if (get("sky") === "off") { cls.push("kb-ui-sky-off"); }
     const sig = cls.join(" ");
     syncFrame(glob("theme") === "night");
@@ -106,22 +107,46 @@ var GardenUI = (function () {
     if (isOpen) { render(); }
   }
 
-  // nút nhanh trên bảng ôn: ẩn / hiện sân + ruộng khi ôn thẻ
+  // nút nhanh trên bảng ôn: ẩn / hiện sân + ruộng khi ôn thẻ; 1.34: Phóng to (chỉ còn thẻ + nút chấm)
   function syncQuick() {
     const b = $("kb-rv-garden");
-    if (!b) { return; }
-    const hidden = get("yard", "review") === "hide" && get("field", "review") === "hide";
-    const t = hidden ? "Hiện vườn" : "Ẩn vườn";
-    if (b.textContent !== t) { b.textContent = t; }
-    b.setAttribute("aria-pressed", hidden ? "true" : "false");
+    if (b) {
+      const hidden = get("yard", "review") === "hide" && get("field", "review") === "hide";
+      const t = hidden ? "Hiện vườn" : "Ẩn vườn";
+      if (b.textContent !== t) { b.textContent = t; }
+      b.setAttribute("aria-pressed", hidden ? "true" : "false");
+    }
+    const z = $("kb-rv-zoom");
+    if (z) {
+      const on = glob("zoom") === "on", t = on ? "Thu nhỏ" : "Phóng to";
+      if (z.getAttribute("data-on") !== String(on)) {
+        z.setAttribute("data-on", String(on));
+        z.textContent = t + " ";
+        const k = document.createElement("span"); k.className = "kb-key"; k.textContent = "F"; z.appendChild(k);
+        z.title = on ? "Trở lại bảng ôn bình thường (F hoặc Esc)" : "Chỉ còn thẻ và nút chấm (F)";
+        z.setAttribute("aria-pressed", on ? "true" : "false");
+      }
+    }
   }
+  // 1.34 (góp ý: "ấn Ẩn vườn … ấn lại Hiện vườn thì vùng học lại không được lùi lên, vườn … chỉ có 1 chút xíu"): trước đây
+  // Ẩn vườn đổi luôn cỡ khung thẻ sang "To hết chỗ" và lưu lại, Hiện vườn không trả về. Nay Ẩn vườn chỉ ẩn sân + ruộng (khung
+  // thẻ tự cao ra khi vườn ẩn — garden.css), Hiện vườn trả khung thẻ về "Vừa" (cả người đã lỡ bấm ở bản cũ).
   function toggleQuick() {
     const c = full();
     const hidden = c.review.yard === "hide" && c.review.field === "hide";
     c.review.yard = hidden ? "full" : "hide";
     c.review.field = hidden ? "full" : "hide";
-    if (!hidden) { c.card = "tall"; }
+    if (hidden && c.card === "tall") { c.card = "normal"; }
     save(c);
+  }
+  function zoomOn() { return glob("zoom") === "on"; }
+  function toggleZoom(on) {
+    const c = full();
+    const want = typeof on === "boolean" ? on : c.zoom !== "on";
+    if ((c.zoom === "on") === want) { return; }
+    c.zoom = want ? "on" : "off";
+    save(c);
+    window.scrollTo(0, 0);
   }
 
   // ---- bảng Giao diện ----
@@ -345,6 +370,8 @@ var GardenUI = (function () {
       if (op) { op.addEventListener("click", () => { const pop = $("kb-sound-pop"); if (pop) { pop.hidden = true; } open(); }); }
       const q = $("kb-rv-garden");
       if (q) { q.addEventListener("mousedown", (e) => e.preventDefault()); q.addEventListener("click", toggleQuick); }
+      const z = $("kb-rv-zoom");
+      if (z) { z.addEventListener("mousedown", (e) => e.preventDefault()); z.addEventListener("click", () => toggleZoom()); }
       document.addEventListener("keydown", (e) => {
         if (isOpen && e.key === "Escape") { e.preventDefault(); close(); }
       });
@@ -355,6 +382,8 @@ var GardenUI = (function () {
     glob: glob,
     mode: () => detect(),     // 1.25.8: chế độ lúc gọi (biến `mode` chỉ cập nhật mỗi 200 ms — vừa đóng bảng vẫn còn "panel")
     allow: (k) => get(k) !== "off",
+    zoomOn: zoomOn,             // 1.34: Phóng to khi ôn
+    toggleZoom: toggleZoom,
     open: open,
     close: close,
     isOpen: () => isOpen,

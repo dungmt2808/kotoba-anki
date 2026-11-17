@@ -37,6 +37,7 @@ from . import ai_zh      # 1.33: báo tiếng Trung
 from . import ai_ko      # 1.33: báo tiếng Hàn
 from . import backup_core
 from . import diag
+from . import draft_core     # 1.34: Trang trí thử
 from . import edit_win      # 1.32.2: nút ✎ Sửa / phím E trong bảng ôn
 from . import event_core
 from . import fields_core
@@ -3050,6 +3051,34 @@ class GardenDialog(QDialog):
 
     # -- ôn thẻ trong vườn --------------------------------------------------
 
+    # 1.34: Nghe lại (nút + phím R / F5 như Anki) — âm thanh của mặt đang xem. Mặt sau theo tuỳ chọn deck của Anki
+    # "Skip question when replaying answer" (replay_question_audio_on_answer_side), như Reviewer.replayAudio.
+    @staticmethod
+    def _side_tags(card: Any, side: str) -> list:
+        try:
+            if side == "q":
+                return list(card.question_av_tags())
+            tags = list(card.answer_av_tags())
+            try:
+                if card.replay_question_audio_on_answer_side():
+                    tags = list(card.question_av_tags()) + tags
+            except Exception:
+                pass
+            return tags
+        except Exception as err:
+            _warn("âm thanh của thẻ", err)
+            return []
+
+    def _replay_audio(self) -> None:
+        card = self._shown_card
+        if card is None or self._busy:
+            return
+        tags = self._side_tags(card, getattr(self, "_side", "q"))
+        if not tags:
+            return
+        av_player.stop_and_clear_queue()
+        av_player.play_tags(tags)
+
     def _start_review(self) -> None:
         mw.col.decks.select(self.deck_id)
         self._next_card()
@@ -3111,6 +3140,7 @@ class GardenDialog(QDialog):
             "counts": [queued.new_count, queued.learning_count, queued.review_count],
             "queue": idx,
             "undo": self._undo_target() is not None,     # 1.31.4: nút Hoàn tác / Ctrl+Z
+            "audio": bool(self._side_tags(card, "q")),     # 1.34: nút Nghe lại
         }
         self._js("showCard", payload)
         if card.autoplay():
@@ -3129,7 +3159,7 @@ class GardenDialog(QDialog):
             showWarning(f"ことば畑: không hiện được mặt sau.\n\n{err!r}", parent=self)
             return
         self._side, self._typed = "a", typed
-        self._js("showAnswer", {"cid": card.id, "answer": answer})
+        self._js("showAnswer", {"cid": card.id, "answer": answer, "audio": bool(self._side_tags(card, "a"))})
         if card.autoplay():
             av_player.stop_and_clear_queue()
             av_player.play_tags(card.answer_av_tags())
@@ -3334,6 +3364,7 @@ class GardenDialog(QDialog):
                 "bodyclass": theme_manager.body_classes_for_card_ord(card.ord),
                 "undo": self._undo_target() is not None,
                 "note": "Đã lưu thẻ." if saved else "Thẻ vừa được sửa.",
+                "audio": bool(self._side_tags(card, self._side)),     # 1.34: âm thanh có thể vừa thêm / bỏ
             }
             if self._side == "a":
                 answer = core.type_answer(
@@ -3368,7 +3399,7 @@ class GardenDialog(QDialog):
     # -- cầu nối JS -> Python -------------------------------------------------
 
     # 1.33.2: lệnh trang tự gửi (không phải người dùng bấm) — lúc đồng bộ thì bỏ qua mà không báo
-    AUTO_CMDS = ("ready", "refresh", "life:", "guest:", "ai:status", "paper:index", "game:exaudio")
+    AUTO_CMDS = ("ready", "refresh", "life:", "guest:", "ai:status", "paper:index", "game:exaudio", "deck:tree")
     _sync_note = 0.0
 
     def _on_bridge(self, cmd: str) -> Any:
@@ -3400,6 +3431,11 @@ class GardenDialog(QDialog):
     def _dispatch(self, cmd: str) -> Any:
         if cmd in ("ready", "refresh"):
             self.refresh()
+        elif cmd == "deck:tree":            # 1.34: ô chọn deck dạng cây — cây + số thẻ Mới / Học / Ôn như màn Decks
+            try:
+                self._js("deckTree", core.deck_tree(mw.col))
+            except Exception as err:
+                _warn("cây deck", err)
         elif cmd.startswith("deck:"):
             try:
                 self.deck_id = int(cmd.split(":", 1)[1])
@@ -3427,6 +3463,8 @@ class GardenDialog(QDialog):
             self._undo_review()
         elif cmd == "rv:edit":           # 1.32.2: nút ✎ Sửa / phím E — sửa note của thẻ đang ôn
             self._edit_card()
+        elif cmd == "rv:replay":         # 1.34: nút Nghe lại / phím R, F5 — phát lại âm thanh của mặt đang xem
+            self._replay_audio()
         elif cmd == "rv:stop":
             self._stop_review()
         elif cmd.startswith("game:"):
@@ -4134,6 +4172,9 @@ class GardenDialog(QDialog):
     # -- nhà & cửa hàng ------------------------------------------------------
 
     def _on_home(self, cmd: str) -> None:
+        if cmd.startswith("draft:"):              # 1.34: Trang trí thử
+            self._on_draft(cmd[len("draft:"):])
+            return
         parts = cmd.split(":")
         two = {  # lệnh dạng nhóm:việc:id
             ("style", "buy"): STATE.buy_style, ("style", "use"): STATE.use_style,
@@ -4225,6 +4266,51 @@ class GardenDialog(QDialog):
         if regrow:
             self.refresh()
         self._js("home", out)
+
+    # -- 1.34: Trang trí thử (bản thử đồ đạc, lưu theo hồ sơ trên máy) -----------------------------
+
+    def _on_draft(self, cmd: str) -> None:
+        """draft:get · draft:put:{scene, slot, draft | null} · draft:pick:{scene, slot} · draft:use:{scene, slot}.
+        "use" lấy bản thử ĐÃ LƯU (không tin bản trang gửi kèm) rồi để garden_core xét lại và lưu một lần."""
+        action, _, arg = cmd.partition(":")
+        try:
+            if action == "get":
+                self._js("homeDrafts", STATE.draft_load())
+                return
+            p = draft_core.parse(arg) if arg else {}
+            if not isinstance(p, dict):
+                raise draft_core.DraftError("Bản thử hỏng, chưa lưu được.")
+            if action == "put":
+                store = STATE.draft_store(draft_core.put(STATE.draft_load(), p.get("scene"), p.get("slot"), p.get("draft")))
+                self._js("homeDrafts", store)
+            elif action == "pick":
+                store = STATE.draft_store(draft_core.pick(STATE.draft_load(), p.get("scene"), p.get("slot")))
+                self._js("homeDrafts", store)
+            elif action == "use":
+                scene, slot = p.get("scene"), p.get("slot")
+                # bản người dùng đang thấy (lần lưu trước có thể đã bị bỏ lúc Anki đồng bộ) → lưu trước, rồi dùng BẢN ĐÃ LƯU;
+                # mọi thứ (chỗ đặt, giá, số tối đa, mở bán) garden_core xét lại, không tin gì của trang ngoài vị trí món
+                if isinstance(p.get("draft"), dict):
+                    STATE.draft_store(draft_core.put(STATE.draft_load(), scene, slot, p.get("draft")))
+                sc = STATE.draft_load()["scenes"].get(scene) if isinstance(scene, str) else None
+                n = slot if isinstance(slot, int) and not isinstance(slot, bool) else -1
+                if not sc or not 0 <= n < draft_core.SLOTS or not sc["slots"][n]:
+                    raise core.HomeError("Bản thử này đang trống.")
+                data, plan = STATE.draft_apply(scene, sc["slots"][n])
+                out: dict[str, Any] = {"wallet": data, "action": "draft", "sub": "use", "scene": scene,
+                                       "bought": sum(plan["buy"].values()) + len(plan["decor_buy"]), "cost": plan["cost"]}
+                try:
+                    lv = life_view(data)
+                    lv.pop("defs", None)
+                    out["life"] = lv
+                except Exception as err:
+                    _warn("sinh hoạt sau Trang trí thử", err)
+                self._js("home", out)
+                self._js("homeDrafts", STATE.draft_load())
+        except (core.HomeError, draft_core.DraftError) as err:
+            self._js("homeError", str(err))
+        except (ValueError, OSError) as err:
+            _warn("bản thử", err)
 
     # -- 1.28: chỗ lấp lánh (nhặt đồ), gánh hàng rong ----------------------------------
 
