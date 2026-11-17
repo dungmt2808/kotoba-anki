@@ -807,7 +807,7 @@ def ct_voice(lib: Library, date: str, i: int, cau: str, voice: Voice | None = No
                 "pending": False, "file": a.get("thuong"), "slow_file": a.get("cham")}
     voice = voice or NO_VOICE
     how, slow, data = voice.how(cau, lang)
-    return {"how": how, "audio": how in ("cache", "tts", "tts_en"), "slow": slow, "pending": how == "gen", "data": data,
+    return {"how": how, "audio": how in ("cache", "tts", "tts_en", "tts_zh", "tts_ko"), "slow": slow, "pending": how == "gen", "data": data,
             "want_gen": voice.wants(how)}
 
 
@@ -1179,7 +1179,7 @@ def resolve(sid: str, lib: Library | None, note_item: Resolver, voice: Voice | N
             else:
                 label = "Nghe từ" + (" · " + item["meaning"][:40] if item.get("meaning") else "")
             return {"src": "deck" if sid[0] == "n" else "word", "markup": item["markup"], "extra": [],
-                    "kana_ok": item["kana_ok"], "audio": how in ("media", "cache", "tts", "tts_en"), "slow": slow,
+                    "kana_ok": item["kana_ok"], "audio": how in ("media", "cache", "tts", "tts_en", "tts_zh", "tts_ko"), "slow": slow,
                     "lang": lang,
                     "pending": how == "gen", "how": how, "data": data, "label": label, "want_gen": voice.wants(how),
                     "meaning": item.get("meaning") or "", "words": [item["word"]], "nid": nid}
@@ -1283,7 +1283,7 @@ def daily_pending(st: dict[str, Any], lib: Library | None, note_item: Resolver, 
     return list(dict.fromkeys(out))
 
 
-VOICE_LABEL = {"tts": "giọng máy", "tts_en": "giọng máy", "cache": "giọng Gemini"}
+VOICE_LABEL = {"tts": "giọng máy", "tts_en": "giọng máy", "tts_zh": "giọng máy", "tts_ko": "giọng máy", "cache": "giọng Gemini"}
 
 
 def daily_view(st: dict[str, Any], lib: Library | None, note_item: Resolver, voice: Voice | None = None,

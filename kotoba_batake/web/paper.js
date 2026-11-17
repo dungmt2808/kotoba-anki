@@ -27,7 +27,7 @@ var GardenPaper = (function () {
   // 1.25.1: báo tiếng Việt (Báo Làng Kotoba) — bài thứ ba là "Góc ôn bài" (thẻ đang ôn)
   const LOAI_VI = { tin_lang: "Tin làng", truyen: "Truyện dài kỳ", thong_bao: "Thông báo", cot: "Cột ngắn", tin_that: "Tin thật" };
   const VI_DAYS = ["Chủ Nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy"];
-  const PAPER_NAME = { ja: "Báo tiếng Nhật", en: "Báo tiếng Anh", vi: "Báo tiếng Việt" };
+  const PAPER_NAME = { ja: "Báo tiếng Nhật", en: "Báo tiếng Anh", vi: "Báo tiếng Việt", zh: "Báo tiếng Trung", ko: "Báo tiếng Hàn" };
   // 1.33: tên báo tiếng Trung / tiếng Hàn (Claude đề xuất, người dùng chọn; sửa cùng ai_zh / ai_ko.MASTHEAD)
   const MAST = { ja: "畑新聞", en: "The Garden Gazette", vi: "Báo Làng Kotoba", zh: "词田晨报", ko: "말밭 신문" };
   const LEARN = ["ja", "en", "zh", "ko"];      // báo học tiếng (tối đa 2); tiếng Việt đi một mình
@@ -53,9 +53,18 @@ var GardenPaper = (function () {
     if (onClick) { b.addEventListener("click", onClick); }
     return b;
   }
+  // 1.33: pinyin nhiều âm tiết (chữ Latinh có dấu thanh, cách nhau dấu cách) — furigana tiếng Nhật không bao giờ khớp
+  const PINYIN_RT = /^[a-zü\u00e0-\u01dc\u0300-\u036f]+(?: [a-zü\u00e0-\u01dc\u0300-\u036f]+)+$/i;
+  const HAN_CH = /^[\u3400-\u9fff\uf900-\ufaff]$/;
   function ruby(s, r) {
     if (!r) { return document.createTextNode(s); }
     const rb = el("ruby");
+    // 1.33: từ tiếng Trung có gạch chân {今天|jīn tiān|…} → mỗi chữ một âm tiết như phần còn lại của bài
+    const chars = Array.from(s), syl = PINYIN_RT.test(r) ? r.split(" ") : null;
+    if (syl && syl.length === chars.length && chars.every((c) => HAN_CH.test(c))) {
+      chars.forEach((c, i) => { rb.appendChild(document.createTextNode(c)); rb.appendChild(el("rt", null, syl[i])); });
+      return rb;
+    }
     rb.appendChild(document.createTextNode(s));
     rb.appendChild(el("rt", null, r));
     return rb;
@@ -608,7 +617,7 @@ var GardenPaper = (function () {
     const h = el("div", "kb-ai-lang-h");
     h.appendChild(el("b", null, PAPER_NAME[lang] || "Báo"));
     const nm = el("span", "kb-ai-hint", MAST[lang] || "");
-    if (lang === "ja") { nm.lang = "ja"; }
+    if (lang === "ja" || lang === "zh" || lang === "ko") { nm.lang = HTML_LANG[lang]; }      // 1.33: phông chữ Trung / Hàn
     h.appendChild(nm);
     box.appendChild(h);
     const rows = el("div", "kb-ai-rows");
@@ -903,8 +912,9 @@ var GardenPaper = (function () {
       row.type = "button";
       row.appendChild(el("span", "kb-p-row-date", shortDate(x.date)));
       const mid = el("span", "kb-p-row-mid");
-      const t = el("span", "kb-p-row-title", x.title || (en ? "No. " + x.so : vi ? "Số " + x.so : "第" + x.so + "号"));
-      t.lang = en ? "en" : vi ? "vi" : "ja";
+      const xl = MAST[x.lang] ? x.lang : "ja";        // 1.33: số báo tiếng Trung / tiếng Hàn (trước: ghi như báo Nhật)
+      const t = el("span", "kb-p-row-title", x.title || issueNo(xl, { so: x.so }));
+      t.lang = HTML_LANG[xl];
       mid.appendChild(t);
       const meta = [];
       if (x.so) { meta.push("Số " + x.so); }

@@ -1739,6 +1739,18 @@ def ai_start_all(reason: str = "auto") -> bool:
     return False
 
 
+def _ai_queue_next() -> bool:
+    """1.33: báo kế tiếp trong lượt "Bắt đầu viết" (`_ai["queue"]`); báo đã có số hôm nay / đã bỏ tick thì bỏ qua."""
+    q = [x for x in (_ai.get("queue") or []) if x in PAPER_LANGS]
+    while q:
+        lang = q.pop(0)
+        if lang in wanted_langs() and ai_start("manual", None, lang):
+            _ai["queue"] = q
+            return True
+    _ai["queue"] = []
+    return False
+
+
 def _owner_now() -> str:
     """Mã hồ sơ đang mở ("" khi chưa mở hồ sơ nào) — để việc nền biết nó thuộc hồ sơ nào."""
     try:
@@ -1841,6 +1853,16 @@ def _ai_done(fut: Any, base: str, date: str, client: Any = None, owner: str | No
         msg = "✗ Gemini chưa viết được báo%s: " % lname + str(res.get("error") or "")
     if moved:
         msg = ""                  # việc của hồ sơ khác: không báo trong vườn / thanh Anki của hồ sơ này
+    # 1.33: "Bắt đầu viết" → viết tiếp báo đã chọn còn lại (trước: báo sau chỉ viết khi bật Tự viết). Báo này lỗi (hết
+    # hạn mức, khoá sai…) hoặc hồ sơ đã đổi thì dừng, khỏi tốn lượt.
+    if moved or not res.get("ok") or not mw.col:
+        _ai["queue"] = []
+    elif _ai.get("queue"):
+        try:
+            _ai_queue_next()
+        except Exception as err:
+            _ai["queue"] = []
+            _warn("Gemini (báo kế tiếp đã chọn)", err)
     if _dialog is not None:
         try:
             _dialog.refresh()          # refresh() gọi ai_start_all → báo kế tiếp (nếu có)
@@ -3651,7 +3673,10 @@ class GardenDialog(QDialog):
                 if _lang_source(cfg0, x) == "gemini":
                     conf[x] = "gemini"
             save_config(gemini_wait_start=False, gemini_wait_langs=[], paper_confirmed=conf)
-            if not ai_start_all("manual"):
+            _ai["queue"] = [x for x in wanted_langs(cfg0) if x in PAPER_LANGS]
+            if _ai_queue_next():
+                pass
+            elif not ai_start_all("manual"):
                 flash = {"flash": _ai.get("why") or ("Gemini đang bận, thử lại sau." if _ai["running"] else
                                                      "Hôm nay đã có đủ báo rồi. Từ mai Gemini tự viết khi mở Anki."), "ok": not _ai["running"]}
         elif action in ("write", "audio"):
@@ -3723,7 +3748,9 @@ class GardenDialog(QDialog):
         voice = voice or _voice()
         out = []
         for p in self._plants or []:
-            if p.get("ex_audio") or ((p.get("has_ex") or p.get("cloze")) and voice.any()):
+            # 1.33: hỏi giọng của đúng ngôn ngữ cây (trước: luôn hỏi giọng tiếng Nhật — deck Trung / Hàn / Anh có giọng
+            # máy của tiếng đó nhưng không có giọng Nhật thì bị bỏ khỏi lượt chép)
+            if p.get("ex_audio") or ((p.get("has_ex") or p.get("cloze")) and voice.any(p.get("lang") or "ja")):
                 out.append({"nid": p["nid"], "wilted": p.get("wilted"), "thirsty": p.get("thirsty"),
                             "audio": bool(p.get("ex_audio"))})
         return out
@@ -3733,7 +3760,7 @@ class GardenDialog(QDialog):
         voice = voice or _voice()
         out = []
         for p in self._plants or []:
-            if p.get("kind", "vocab") == "vocab" and (p.get("audio") or voice.any()):
+            if p.get("kind", "vocab") == "vocab" and (p.get("audio") or voice.any(p.get("lang") or "ja")):
                 out.append({"nid": p["nid"], "wilted": p.get("wilted"), "thirsty": p.get("thirsty"),
                             "audio": bool(p.get("audio"))})
         return out

@@ -363,5 +363,13 @@ for text, want in (("林拿着本子，很紧张地说。", "zh"), ("린은 수�
 ok(S.KANA_RE.match("かいてき") and not S.KANA_RE.match("かい的") and not S.KANA_RE.match("快適"),
    "báo tiếng Nhật: soát cách đọc từ mới toàn kana như 1.32")
 
+# câu chép báo tiếng Trung / tiếng Hàn: giọng zh_CN / ko_KR của máy là "có tiếng" (trước: chỉ tts / tts_en → "chưa có giọng")
+v_xx = paper.Voice(tts_xx={"zh": True, "ko": True})
+for lang, cau in (("zh", "[今|jīn][天|tiān]很好。"), ("ko", "오늘 날씨가 좋아요.")):
+    h = v_xx.how(cau, lang)
+    ok(h[0] == "tts_" + lang and paper.VOICE_LABEL.get(h[0]) == "giọng máy", "%s: câu chép phát bằng giọng máy %s" % (lang, h[0]))
+src_pc = open(os.path.join(ADDON, "paper_core.py"), encoding="utf-8").read()
+ok(src_pc.count('"tts_en", "tts_zh", "tts_ko")') >= 4, "mọi chỗ coi giọng máy là có tiếng đều có tts_zh / tts_ko")
+
 print("KẾT QUẢ: %d/%d" % (sum(results), len(results)))
 sys.exit(0 if all(results) else 1)
