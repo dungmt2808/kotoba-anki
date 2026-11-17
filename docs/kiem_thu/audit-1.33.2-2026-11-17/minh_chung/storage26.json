@@ -1,0 +1,1578 @@
+{
+  "tested_commit": "9ef5272f6af34c78168d2b8851259add29bf2561",
+  "results": [
+    {
+      "case": "control/healthy-roundtrip",
+      "passed": true
+    },
+    {
+      "case": "read-failure/wallet/kotoba_batake_state/once",
+      "passed": true,
+      "fault_hits": 1,
+      "error": "",
+      "changed_keys": [
+        "kotoba_batake_state"
+      ],
+      "before": {
+        "kotoba_batake_state": {
+          "best": {},
+          "coins": 96945,
+          "craft": {
+            "items": {},
+            "next": 1
+          },
+          "game_coins": 0,
+          "game_day": "",
+          "harvests": 0,
+          "home": {
+            "beach": [],
+            "festival": [],
+            "house": 7,
+            "owned": {
+              "bench": 1
+            },
+            "room": [],
+            "shrine": [],
+            "style": "classic",
+            "styles": [],
+            "yard": [
+              {
+                "id": "bench",
+                "x": 6,
+                "y": 1
+              }
+            ],
+            "zones": []
+          },
+          "quest": null,
+          "waters": 0,
+          "wear": {
+            "faces": [],
+            "faces_off": [],
+            "on": {},
+            "owned": [
+              "straw"
+            ]
+          }
+        }
+      },
+      "after": {
+        "kotoba_batake_state": {
+          "best": {},
+          "coins": 96946,
+          "craft": {
+            "items": {},
+            "next": 1
+          },
+          "game_coins": 0,
+          "game_day": "",
+          "harvests": 0,
+          "home": {
+            "beach": [],
+            "festival": [],
+            "house": 7,
+            "owned": {
+              "bench": 1
+            },
+            "room": [],
+            "shrine": [],
+            "style": "classic",
+            "styles": [],
+            "yard": [
+              {
+                "id": "bench",
+                "x": 6,
+                "y": 1
+              }
+            ],
+            "zones": []
+          },
+          "quest": null,
+          "waters": 0,
+          "wear": {
+            "faces": [],
+            "faces_off": [],
+            "on": {},
+            "owned": [
+              "straw"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "case": "read-failure/wallet/kotoba_batake_state/persistent",
+      "passed": true,
+      "fault_hits": 2,
+      "error": "",
+      "changed_keys": [
+        "kotoba_batake_state"
+      ],
+      "before": {
+        "kotoba_batake_state": {
+          "best": {},
+          "coins": 96945,
+          "craft": {
+            "items": {},
+            "next": 1
+          },
+          "game_coins": 0,
+          "game_day": "",
+          "harvests": 0,
+          "home": {
+            "beach": [],
+            "festival": [],
+            "house": 7,
+            "owned": {
+              "bench": 1
+            },
+            "room": [],
+            "shrine": [],
+            "style": "classic",
+            "styles": [],
+            "yard": [
+              {
+                "id": "bench",
+                "x": 6,
+                "y": 1
+              }
+            ],
+            "zones": []
+          },
+          "quest": null,
+          "waters": 0,
+          "wear": {
+            "faces": [],
+            "faces_off": [],
+            "on": {},
+            "owned": [
+              "straw"
+            ]
+          }
+        }
+      },
+      "after": {
+        "kotoba_batake_state": {
+          "best": {},
+          "coins": 96946,
+          "craft": {
+            "items": {},
+            "next": 1
+          },
+          "game_coins": 0,
+          "game_day": "",
+          "harvests": 0,
+          "home": {
+            "beach": [],
+            "festival": [],
+            "house": 7,
+            "owned": {
+              "bench": 1
+            },
+            "room": [],
+            "shrine": [],
+            "style": "classic",
+            "styles": [],
+            "yard": [
+              {
+                "id": "bench",
+                "x": 6,
+                "y": 1
+              }
+            ],
+            "zones": []
+          },
+          "quest": null,
+          "waters": 0,
+          "wear": {
+            "faces": [],
+            "faces_off": [],
+            "on": {},
+            "owned": [
+              "straw"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "case": "read-failure/wallet/kotoba_batake_ext/once",
+      "passed": false,
+      "fault_hits": 1,
+      "error": "",
+      "changed_keys": [
+        "kotoba_batake_ext",
+        "kotoba_batake_state"
+      ],
+      "before": {
+        "kotoba_batake_ext": {
+          "craft_fx": {},
+          "owned": {
+            "sunflower": 1
+          },
+          "places": {
+            "yard": [
+              {
+                "id": "sunflower",
+                "x": 8,
+                "y": 1
+              }
+            ]
+          },
+          "v": 1,
+          "zones": []
+        },
+        "kotoba_batake_state": {
+          "best": {},
+          "coins": 96945,
+          "craft": {
+            "items": {},
+            "next": 1
+          },
+          "game_coins": 0,
+          "game_day": "",
+          "harvests": 0,
+          "home": {
+            "beach": [],
+            "festival": [],
+            "house": 7,
+            "owned": {
+              "bench": 1
+            },
+            "room": [],
+            "shrine": [],
+            "style": "classic",
+            "styles": [],
+            "yard": [
+              {
+                "id": "bench",
+                "x": 6,
+                "y": 1
+              }
+            ],
+            "zones": []
+          },
+          "quest": null,
+          "waters": 0,
+          "wear": {
+            "faces": [],
+            "faces_off": [],
+            "on": {},
+            "owned": [
+              "straw"
+            ]
+          }
+        }
+      },
+      "after": {
+        "kotoba_batake_ext": {
+          "craft_fx": {},
+          "owned": {},
+          "places": {},
+          "v": 1,
+          "zones": []
+        },
+        "kotoba_batake_state": {
+          "best": {},
+          "coins": 96946,
+          "craft": {
+            "items": {},
+            "next": 1
+          },
+          "game_coins": 0,
+          "game_day": "",
+          "harvests": 0,
+          "home": {
+            "beach": [],
+            "festival": [],
+            "house": 7,
+            "owned": {
+              "bench": 1
+            },
+            "room": [],
+            "shrine": [],
+            "style": "classic",
+            "styles": [],
+            "yard": [
+              {
+                "id": "bench",
+                "x": 6,
+                "y": 1
+              }
+            ],
+            "zones": []
+          },
+          "quest": null,
+          "waters": 0,
+          "wear": {
+            "faces": [],
+            "faces_off": [],
+            "on": {},
+            "owned": [
+              "straw"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "case": "read-failure/wallet/kotoba_batake_ext/persistent",
+      "passed": false,
+      "fault_hits": 2,
+      "error": "",
+      "changed_keys": [
+        "kotoba_batake_state",
+        "kotoba_batake_ext"
+      ],
+      "before": {
+        "kotoba_batake_state": {
+          "best": {},
+          "coins": 96945,
+          "craft": {
+            "items": {},
+            "next": 1
+          },
+          "game_coins": 0,
+          "game_day": "",
+          "harvests": 0,
+          "home": {
+            "beach": [],
+            "festival": [],
+            "house": 7,
+            "owned": {
+              "bench": 1
+            },
+            "room": [],
+            "shrine": [],
+            "style": "classic",
+            "styles": [],
+            "yard": [
+              {
+                "id": "bench",
+                "x": 6,
+                "y": 1
+              }
+            ],
+            "zones": []
+          },
+          "quest": null,
+          "waters": 0,
+          "wear": {
+            "faces": [],
+            "faces_off": [],
+            "on": {},
+            "owned": [
+              "straw"
+            ]
+          }
+        },
+        "kotoba_batake_ext": {
+          "craft_fx": {},
+          "owned": {
+            "sunflower": 1
+          },
+          "places": {
+            "yard": [
+              {
+                "id": "sunflower",
+                "x": 8,
+                "y": 1
+              }
+            ]
+          },
+          "v": 1,
+          "zones": []
+        }
+      },
+      "after": {
+        "kotoba_batake_state": {
+          "best": {},
+          "coins": 96946,
+          "craft": {
+            "items": {},
+            "next": 1
+          },
+          "game_coins": 0,
+          "game_day": "",
+          "harvests": 0,
+          "home": {
+            "beach": [],
+            "festival": [],
+            "house": 7,
+            "owned": {
+              "bench": 1
+            },
+            "room": [],
+            "shrine": [],
+            "style": "classic",
+            "styles": [],
+            "yard": [
+              {
+                "id": "bench",
+                "x": 6,
+                "y": 1
+              }
+            ],
+            "zones": []
+          },
+          "quest": null,
+          "waters": 0,
+          "wear": {
+            "faces": [],
+            "faces_off": [],
+            "on": {},
+            "owned": [
+              "straw"
+            ]
+          }
+        },
+        "kotoba_batake_ext": {
+          "craft_fx": {},
+          "owned": {},
+          "places": {},
+          "v": 1,
+          "zones": []
+        }
+      }
+    },
+    {
+      "case": "read-failure/wallet/kotoba_batake_season/once",
+      "passed": false,
+      "fault_hits": 1,
+      "error": "",
+      "changed_keys": [
+        "kotoba_batake_state",
+        "kotoba_batake_season"
+      ],
+      "before": {
+        "kotoba_batake_state": {
+          "best": {},
+          "coins": 96945,
+          "craft": {
+            "items": {},
+            "next": 1
+          },
+          "game_coins": 0,
+          "game_day": "",
+          "harvests": 0,
+          "home": {
+            "beach": [],
+            "festival": [],
+            "house": 7,
+            "owned": {
+              "bench": 1
+            },
+            "room": [],
+            "shrine": [],
+            "style": "classic",
+            "styles": [],
+            "yard": [
+              {
+                "id": "bench",
+                "x": 6,
+                "y": 1
+              }
+            ],
+            "zones": []
+          },
+          "quest": null,
+          "waters": 0,
+          "wear": {
+            "faces": [],
+            "faces_off": [],
+            "on": {},
+            "owned": [
+              "straw"
+            ]
+          }
+        },
+        "kotoba_batake_season": {
+          "free_day": null,
+          "mode": "pick",
+          "owned": {
+            "banhchung": 1,
+            "caudoi": 1,
+            "hoadao": 1,
+            "hoamai": 1
+          },
+          "pick": "tet",
+          "places": {},
+          "unlocked": [
+            "tet"
+          ],
+          "v": 1
+        }
+      },
+      "after": {
+        "kotoba_batake_state": {
+          "best": {},
+          "coins": 96946,
+          "craft": {
+            "items": {},
+            "next": 1
+          },
+          "game_coins": 0,
+          "game_day": "",
+          "harvests": 0,
+          "home": {
+            "beach": [],
+            "festival": [],
+            "house": 7,
+            "owned": {
+              "bench": 1
+            },
+            "room": [],
+            "shrine": [],
+            "style": "classic",
+            "styles": [],
+            "yard": [
+              {
+                "id": "bench",
+                "x": 6,
+                "y": 1
+              }
+            ],
+            "zones": []
+          },
+          "quest": null,
+          "waters": 0,
+          "wear": {
+            "faces": [],
+            "faces_off": [],
+            "on": {},
+            "owned": [
+              "straw"
+            ]
+          }
+        },
+        "kotoba_batake_season": {
+          "free_day": null,
+          "mode": "auto",
+          "owned": {},
+          "pick": null,
+          "places": {},
+          "unlocked": [],
+          "v": 1
+        }
+      }
+    },
+    {
+      "case": "read-failure/wallet/kotoba_batake_season/persistent",
+      "passed": false,
+      "fault_hits": 3,
+      "error": "",
+      "changed_keys": [
+        "kotoba_batake_state",
+        "kotoba_batake_season"
+      ],
+      "before": {
+        "kotoba_batake_state": {
+          "best": {},
+          "coins": 96945,
+          "craft": {
+            "items": {},
+            "next": 1
+          },
+          "game_coins": 0,
+          "game_day": "",
+          "harvests": 0,
+          "home": {
+            "beach": [],
+            "festival": [],
+            "house": 7,
+            "owned": {
+              "bench": 1
+            },
+            "room": [],
+            "shrine": [],
+            "style": "classic",
+            "styles": [],
+            "yard": [
+              {
+                "id": "bench",
+                "x": 6,
+                "y": 1
+              }
+            ],
+            "zones": []
+          },
+          "quest": null,
+          "waters": 0,
+          "wear": {
+            "faces": [],
+            "faces_off": [],
+            "on": {},
+            "owned": [
+              "straw"
+            ]
+          }
+        },
+        "kotoba_batake_season": {
+          "free_day": null,
+          "mode": "pick",
+          "owned": {
+            "banhchung": 1,
+            "caudoi": 1,
+            "hoadao": 1,
+            "hoamai": 1
+          },
+          "pick": "tet",
+          "places": {},
+          "unlocked": [
+            "tet"
+          ],
+          "v": 1
+        }
+      },
+      "after": {
+        "kotoba_batake_state": {
+          "best": {},
+          "coins": 96946,
+          "craft": {
+            "items": {},
+            "next": 1
+          },
+          "game_coins": 0,
+          "game_day": "",
+          "harvests": 0,
+          "home": {
+            "beach": [],
+            "festival": [],
+            "house": 7,
+            "owned": {
+              "bench": 1
+            },
+            "room": [],
+            "shrine": [],
+            "style": "classic",
+            "styles": [],
+            "yard": [
+              {
+                "id": "bench",
+                "x": 6,
+                "y": 1
+              }
+            ],
+            "zones": []
+          },
+          "quest": null,
+          "waters": 0,
+          "wear": {
+            "faces": [],
+            "faces_off": [],
+            "on": {},
+            "owned": [
+              "straw"
+            ]
+          }
+        },
+        "kotoba_batake_season": {
+          "free_day": null,
+          "mode": "auto",
+          "owned": {},
+          "pick": null,
+          "places": {},
+          "unlocked": [],
+          "v": 1
+        }
+      }
+    },
+    {
+      "case": "read-failure/wallet/kotoba_batake_more/once",
+      "passed": false,
+      "fault_hits": 1,
+      "error": "",
+      "changed_keys": [
+        "kotoba_batake_state",
+        "kotoba_batake_more"
+      ],
+      "before": {
+        "kotoba_batake_state": {
+          "best": {},
+          "coins": 96945,
+          "craft": {
+            "items": {},
+            "next": 1
+          },
+          "game_coins": 0,
+          "game_day": "",
+          "harvests": 0,
+          "home": {
+            "beach": [],
+            "festival": [],
+            "house": 7,
+            "owned": {
+              "bench": 1
+            },
+            "room": [],
+            "shrine": [],
+            "style": "classic",
+            "styles": [],
+            "yard": [
+              {
+                "id": "bench",
+                "x": 6,
+                "y": 1
+              }
+            ],
+            "zones": []
+          },
+          "quest": null,
+          "waters": 0,
+          "wear": {
+            "faces": [],
+            "faces_off": [],
+            "on": {},
+            "owned": [
+              "straw"
+            ]
+          }
+        },
+        "kotoba_batake_more": {
+          "decor": {
+            "mine": {
+              "items": {},
+              "next": 1
+            },
+            "own": [],
+            "use": {
+              "bedroom": {},
+              "kitchen": {},
+              "room": {}
+            }
+          },
+          "freeze": {
+            "days": [],
+            "n": 0,
+            "since": null
+          },
+          "myseeds": {
+            "items": {},
+            "next": 1,
+            "rules": {
+              "deck": {},
+              "kind": {},
+              "tag": []
+            }
+          },
+          "mywear": {
+            "items": {
+              "w1": {
+                "name": "Mũ kiểm thử",
+                "slot": "head"
+              }
+            },
+            "next": 2,
+            "on": {
+              "head": "w1"
+            }
+          },
+          "paper_sub": {
+            "auto": true,
+            "paid": null,
+            "plan": "tuan",
+            "trial": null,
+            "until": null
+          },
+          "pet_auto": false,
+          "pets": {
+            "neko": {
+              "fed": 500,
+              "got": 500,
+              "love": 1,
+              "name": "Mèo mướp",
+              "scene": "yard"
+            }
+          },
+          "places": {},
+          "repair": {
+            "back": null,
+            "day": null,
+            "seen": null
+          },
+          "seeds": {
+            "deck": {},
+            "kind": {},
+            "owned": [],
+            "tag": []
+          },
+          "v": 1,
+          "zenv": {},
+          "znext": 1,
+          "zones": []
+        }
+      },
+      "after": {
+        "kotoba_batake_state": {
+          "best": {},
+          "coins": 96946,
+          "craft": {
+            "items": {},
+            "next": 1
+          },
+          "game_coins": 0,
+          "game_day": "",
+          "harvests": 0,
+          "home": {
+            "beach": [],
+            "festival": [],
+            "house": 7,
+            "owned": {
+              "bench": 1
+            },
+            "room": [],
+            "shrine": [],
+            "style": "classic",
+            "styles": [],
+            "yard": [
+              {
+                "id": "bench",
+                "x": 6,
+                "y": 1
+              }
+            ],
+            "zones": []
+          },
+          "quest": null,
+          "waters": 0,
+          "wear": {
+            "faces": [],
+            "faces_off": [],
+            "on": {},
+            "owned": [
+              "straw"
+            ]
+          }
+        },
+        "kotoba_batake_more": {
+          "decor": {
+            "mine": {
+              "items": {},
+              "next": 1
+            },
+            "own": [],
+            "use": {
+              "bedroom": {},
+              "kitchen": {},
+              "room": {}
+            }
+          },
+          "freeze": {
+            "days": [],
+            "n": 0,
+            "since": null
+          },
+          "myseeds": {
+            "items": {},
+            "next": 1,
+            "rules": {
+              "deck": {},
+              "kind": {},
+              "tag": []
+            }
+          },
+          "mywear": {
+            "items": {},
+            "next": 1,
+            "on": {}
+          },
+          "paper_sub": {
+            "auto": true,
+            "paid": null,
+            "plan": "tuan",
+            "trial": null,
+            "until": null
+          },
+          "pet_auto": false,
+          "pets": {},
+          "places": {},
+          "repair": {
+            "back": null,
+            "day": null,
+            "seen": null
+          },
+          "seeds": {
+            "deck": {},
+            "kind": {},
+            "owned": [],
+            "tag": []
+          },
+          "v": 1,
+          "zenv": {},
+          "znext": 1,
+          "zones": []
+        }
+      }
+    },
+    {
+      "case": "read-failure/wallet/kotoba_batake_more/persistent",
+      "passed": false,
+      "fault_hits": 3,
+      "error": "",
+      "changed_keys": [
+        "kotoba_batake_more",
+        "kotoba_batake_state"
+      ],
+      "before": {
+        "kotoba_batake_more": {
+          "decor": {
+            "mine": {
+              "items": {},
+              "next": 1
+            },
+            "own": [],
+            "use": {
+              "bedroom": {},
+              "kitchen": {},
+              "room": {}
+            }
+          },
+          "freeze": {
+            "days": [],
+            "n": 0,
+            "since": null
+          },
+          "myseeds": {
+            "items": {},
+            "next": 1,
+            "rules": {
+              "deck": {},
+              "kind": {},
+              "tag": []
+            }
+          },
+          "mywear": {
+            "items": {
+              "w1": {
+                "name": "Mũ kiểm thử",
+                "slot": "head"
+              }
+            },
+            "next": 2,
+            "on": {
+              "head": "w1"
+            }
+          },
+          "paper_sub": {
+            "auto": true,
+            "paid": null,
+            "plan": "tuan",
+            "trial": null,
+            "until": null
+          },
+          "pet_auto": false,
+          "pets": {
+            "neko": {
+              "fed": 500,
+              "got": 500,
+              "love": 1,
+              "name": "Mèo mướp",
+              "scene": "yard"
+            }
+          },
+          "places": {},
+          "repair": {
+            "back": null,
+            "day": null,
+            "seen": null
+          },
+          "seeds": {
+            "deck": {},
+            "kind": {},
+            "owned": [],
+            "tag": []
+          },
+          "v": 1,
+          "zenv": {},
+          "znext": 1,
+          "zones": []
+        },
+        "kotoba_batake_state": {
+          "best": {},
+          "coins": 96945,
+          "craft": {
+            "items": {},
+            "next": 1
+          },
+          "game_coins": 0,
+          "game_day": "",
+          "harvests": 0,
+          "home": {
+            "beach": [],
+            "festival": [],
+            "house": 7,
+            "owned": {
+              "bench": 1
+            },
+            "room": [],
+            "shrine": [],
+            "style": "classic",
+            "styles": [],
+            "yard": [
+              {
+                "id": "bench",
+                "x": 6,
+                "y": 1
+              }
+            ],
+            "zones": []
+          },
+          "quest": null,
+          "waters": 0,
+          "wear": {
+            "faces": [],
+            "faces_off": [],
+            "on": {},
+            "owned": [
+              "straw"
+            ]
+          }
+        }
+      },
+      "after": {
+        "kotoba_batake_more": {
+          "decor": {
+            "mine": {
+              "items": {},
+              "next": 1
+            },
+            "own": [],
+            "use": {
+              "bedroom": {},
+              "kitchen": {},
+              "room": {}
+            }
+          },
+          "freeze": {
+            "days": [],
+            "n": 0,
+            "since": null
+          },
+          "myseeds": {
+            "items": {},
+            "next": 1,
+            "rules": {
+              "deck": {},
+              "kind": {},
+              "tag": []
+            }
+          },
+          "mywear": {
+            "items": {},
+            "next": 1,
+            "on": {}
+          },
+          "paper_sub": {
+            "auto": true,
+            "paid": null,
+            "plan": "tuan",
+            "trial": null,
+            "until": null
+          },
+          "pet_auto": false,
+          "pets": {},
+          "places": {},
+          "repair": {
+            "back": null,
+            "day": null,
+            "seen": null
+          },
+          "seeds": {
+            "deck": {},
+            "kind": {},
+            "owned": [],
+            "tag": []
+          },
+          "v": 1,
+          "zenv": {},
+          "znext": 1,
+          "zones": []
+        },
+        "kotoba_batake_state": {
+          "best": {},
+          "coins": 96946,
+          "craft": {
+            "items": {},
+            "next": 1
+          },
+          "game_coins": 0,
+          "game_day": "",
+          "harvests": 0,
+          "home": {
+            "beach": [],
+            "festival": [],
+            "house": 7,
+            "owned": {
+              "bench": 1
+            },
+            "room": [],
+            "shrine": [],
+            "style": "classic",
+            "styles": [],
+            "yard": [
+              {
+                "id": "bench",
+                "x": 6,
+                "y": 1
+              }
+            ],
+            "zones": []
+          },
+          "quest": null,
+          "waters": 0,
+          "wear": {
+            "faces": [],
+            "faces_off": [],
+            "on": {},
+            "owned": [
+              "straw"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "case": "read-failure/wallet/kotoba_batake_nha/once",
+      "passed": false,
+      "fault_hits": 1,
+      "error": "",
+      "changed_keys": [
+        "kotoba_batake_state",
+        "kotoba_batake_nha"
+      ],
+      "before": {
+        "kotoba_batake_state": {
+          "best": {},
+          "coins": 96945,
+          "craft": {
+            "items": {},
+            "next": 1
+          },
+          "game_coins": 0,
+          "game_day": "",
+          "harvests": 0,
+          "home": {
+            "beach": [],
+            "festival": [],
+            "house": 7,
+            "owned": {
+              "bench": 1
+            },
+            "room": [],
+            "shrine": [],
+            "style": "classic",
+            "styles": [],
+            "yard": [
+              {
+                "id": "bench",
+                "x": 6,
+                "y": 1
+              }
+            ],
+            "zones": []
+          },
+          "quest": null,
+          "waters": 0,
+          "wear": {
+            "faces": [],
+            "faces_off": [],
+            "on": {},
+            "owned": [
+              "straw"
+            ]
+          }
+        },
+        "kotoba_batake_nha": {
+          "owned": {
+            "beddo": 1,
+            "nagashi": 1
+          },
+          "places": {
+            "bedroom": [
+              {
+                "id": "beddo",
+                "x": 1,
+                "y": 2
+              }
+            ],
+            "kitchen": [
+              {
+                "id": "nagashi",
+                "x": 2,
+                "y": 1
+              }
+            ]
+          },
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "v": 1
+        }
+      },
+      "after": {
+        "kotoba_batake_state": {
+          "best": {},
+          "coins": 96946,
+          "craft": {
+            "items": {},
+            "next": 1
+          },
+          "game_coins": 0,
+          "game_day": "",
+          "harvests": 0,
+          "home": {
+            "beach": [],
+            "festival": [],
+            "house": 7,
+            "owned": {
+              "bench": 1
+            },
+            "room": [],
+            "shrine": [],
+            "style": "classic",
+            "styles": [],
+            "yard": [
+              {
+                "id": "bench",
+                "x": 6,
+                "y": 1
+              }
+            ],
+            "zones": []
+          },
+          "quest": null,
+          "waters": 0,
+          "wear": {
+            "faces": [],
+            "faces_off": [],
+            "on": {},
+            "owned": [
+              "straw"
+            ]
+          }
+        },
+        "kotoba_batake_nha": {
+          "owned": {},
+          "places": {},
+          "rooms": [],
+          "v": 1
+        }
+      }
+    },
+    {
+      "case": "read-failure/wallet/kotoba_batake_nha/persistent",
+      "passed": false,
+      "fault_hits": 3,
+      "error": "",
+      "changed_keys": [
+        "kotoba_batake_nha",
+        "kotoba_batake_state"
+      ],
+      "before": {
+        "kotoba_batake_nha": {
+          "owned": {
+            "beddo": 1,
+            "nagashi": 1
+          },
+          "places": {
+            "bedroom": [
+              {
+                "id": "beddo",
+                "x": 1,
+                "y": 2
+              }
+            ],
+            "kitchen": [
+              {
+                "id": "nagashi",
+                "x": 2,
+                "y": 1
+              }
+            ]
+          },
+          "rooms": [
+            "kitchen",
+            "bedroom"
+          ],
+          "v": 1
+        },
+        "kotoba_batake_state": {
+          "best": {},
+          "coins": 96945,
+          "craft": {
+            "items": {},
+            "next": 1
+          },
+          "game_coins": 0,
+          "game_day": "",
+          "harvests": 0,
+          "home": {
+            "beach": [],
+            "festival": [],
+            "house": 7,
+            "owned": {
+              "bench": 1
+            },
+            "room": [],
+            "shrine": [],
+            "style": "classic",
+            "styles": [],
+            "yard": [
+              {
+                "id": "bench",
+                "x": 6,
+                "y": 1
+              }
+            ],
+            "zones": []
+          },
+          "quest": null,
+          "waters": 0,
+          "wear": {
+            "faces": [],
+            "faces_off": [],
+            "on": {},
+            "owned": [
+              "straw"
+            ]
+          }
+        }
+      },
+      "after": {
+        "kotoba_batake_nha": {
+          "owned": {},
+          "places": {},
+          "rooms": [],
+          "v": 1
+        },
+        "kotoba_batake_state": {
+          "best": {},
+          "coins": 96946,
+          "craft": {
+            "items": {},
+            "next": 1
+          },
+          "game_coins": 0,
+          "game_day": "",
+          "harvests": 0,
+          "home": {
+            "beach": [],
+            "festival": [],
+            "house": 7,
+            "owned": {
+              "bench": 1
+            },
+            "room": [],
+            "shrine": [],
+            "style": "classic",
+            "styles": [],
+            "yard": [
+              {
+                "id": "bench",
+                "x": 6,
+                "y": 1
+              }
+            ],
+            "zones": []
+          },
+          "quest": null,
+          "waters": 0,
+          "wear": {
+            "faces": [],
+            "faces_off": [],
+            "on": {},
+            "owned": [
+              "straw"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "case": "read-failure/guests/once",
+      "passed": false,
+      "fault_hits": 1,
+      "error": "",
+      "before": {
+        "met": {
+          "suzume": {
+            "d": "2026-11-16",
+            "l": "2026-11-16",
+            "n": 1,
+            "s": "yard"
+          }
+        }
+      },
+      "after": {
+        "met": {
+          "neko": {
+            "d": "2026-11-17",
+            "l": "2026-11-17",
+            "n": 1,
+            "s": "yard"
+          }
+        }
+      }
+    },
+    {
+      "case": "read-failure/guests/persistent",
+      "passed": false,
+      "fault_hits": 1,
+      "error": "",
+      "before": {
+        "met": {
+          "suzume": {
+            "d": "2026-11-16",
+            "l": "2026-11-16",
+            "n": 1,
+            "s": "yard"
+          }
+        }
+      },
+      "after": {
+        "met": {
+          "neko": {
+            "d": "2026-11-17",
+            "l": "2026-11-17",
+            "n": 1,
+            "s": "yard"
+          }
+        }
+      }
+    },
+    {
+      "case": "read-failure/life/once",
+      "passed": false,
+      "fault_hits": 1,
+      "error": "",
+      "before": {
+        "seen": {
+          "neru": {
+            "d": "2026-11-16",
+            "l": "2026-11-16",
+            "n": 1,
+            "s": "room"
+          }
+        },
+        "v": 1
+      },
+      "after": {
+        "seen": {
+          "taisou": {
+            "d": "2026-11-17",
+            "l": "2026-11-17",
+            "n": 1,
+            "s": "yard"
+          }
+        },
+        "v": 1
+      }
+    },
+    {
+      "case": "read-failure/life/persistent",
+      "passed": false,
+      "fault_hits": 1,
+      "error": "",
+      "before": {
+        "seen": {
+          "neru": {
+            "d": "2026-11-16",
+            "l": "2026-11-16",
+            "n": 1,
+            "s": "room"
+          }
+        },
+        "v": 1
+      },
+      "after": {
+        "seen": {
+          "taisou": {
+            "d": "2026-11-17",
+            "l": "2026-11-17",
+            "n": 1,
+            "s": "yard"
+          }
+        },
+        "v": 1
+      }
+    },
+    {
+      "case": "control/journal-refuses-unread-month",
+      "passed": true,
+      "error": "OSError",
+      "fault_hits": 1,
+      "before": {
+        "2026-11-16": {
+          "t": "Nhật ký hôm trước phải còn."
+        }
+      },
+      "after": {
+        "2026-11-16": {
+          "t": "Nhật ký hôm trước phải còn."
+        }
+      }
+    },
+    {
+      "case": "read-failure/paper/stale-local-backup",
+      "passed": false,
+      "fault_hits": 1,
+      "before": [
+        "2026-11-15",
+        "2026-11-16"
+      ],
+      "after": [
+        "2026-11-15",
+        "2026-11-17"
+      ]
+    },
+    {
+      "case": "read-failure/wallet/stale-local-backup",
+      "passed": false,
+      "fault_hits": 1,
+      "expected_coins": 97046,
+      "actual_coins": 96946
+    },
+    {
+      "case": "read-failure/pixels/stale-local-backup",
+      "passed": true,
+      "fault_hits": 1,
+      "expected": "160g",
+      "actual": "160g"
+    },
+    {
+      "case": "read-failure/collection/retain-known-items",
+      "passed": false,
+      "fault_hits": 1,
+      "expected_found": "katatsumuri",
+      "actual_found": []
+    },
+    {
+      "case": "read-failure/mobile/ledger-retained",
+      "passed": true,
+      "fault_hits": 1,
+      "before": {
+        "days": {},
+        "goals": [],
+        "last": null,
+        "start": 1000000000000,
+        "total": {
+          "coins": 0,
+          "reviews": 0
+        },
+        "v": 1
+      },
+      "after": {
+        "days": {},
+        "goals": [],
+        "last": null,
+        "start": 1000000000000,
+        "total": {
+          "coins": 0,
+          "reviews": 0
+        },
+        "v": 1
+      }
+    }
+  ]
+}

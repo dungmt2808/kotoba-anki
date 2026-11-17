@@ -1,0 +1,134 @@
+{
+  "tested_commit": "9ef5272f6af34c78168d2b8851259add29bf2561",
+  "version": "1.33.2",
+  "branch": "audit/release-review-1.33.2-2026-11-17",
+  "release_recommendation": "HOLD: F01 (P1), F02–F05 (P2)",
+  "baseline_source": {
+    "suites": 62,
+    "exit_code": 0
+  },
+  "baseline_package": {
+    "suites": 62,
+    "exit_code": 0
+  },
+  "existing_ui_regression": {
+    "scenarios": 39,
+    "green_scenarios": 36,
+    "assertions_passed": 1633,
+    "assertions_total": 1637
+  },
+  "new_checks": {
+    "storage26": {
+      "cases": 21,
+      "passed": 6,
+      "failed": 15,
+      "failed_cases": [
+        "read-failure/wallet/kotoba_batake_ext/once",
+        "read-failure/wallet/kotoba_batake_ext/persistent",
+        "read-failure/wallet/kotoba_batake_season/once",
+        "read-failure/wallet/kotoba_batake_season/persistent",
+        "read-failure/wallet/kotoba_batake_more/once",
+        "read-failure/wallet/kotoba_batake_more/persistent",
+        "read-failure/wallet/kotoba_batake_nha/once",
+        "read-failure/wallet/kotoba_batake_nha/persistent",
+        "read-failure/guests/once",
+        "read-failure/guests/persistent",
+        "read-failure/life/once",
+        "read-failure/life/persistent",
+        "read-failure/paper/stale-local-backup",
+        "read-failure/wallet/stale-local-backup",
+        "read-failure/collection/retain-known-items"
+      ]
+    },
+    "storage23": {
+      "cases": 21,
+      "passed": 6,
+      "failed": 15,
+      "failed_cases": [
+        "read-failure/wallet/kotoba_batake_ext/once",
+        "read-failure/wallet/kotoba_batake_ext/persistent",
+        "read-failure/wallet/kotoba_batake_season/once",
+        "read-failure/wallet/kotoba_batake_season/persistent",
+        "read-failure/wallet/kotoba_batake_more/once",
+        "read-failure/wallet/kotoba_batake_more/persistent",
+        "read-failure/wallet/kotoba_batake_nha/once",
+        "read-failure/wallet/kotoba_batake_nha/persistent",
+        "read-failure/guests/once",
+        "read-failure/guests/persistent",
+        "read-failure/life/once",
+        "read-failure/life/persistent",
+        "read-failure/paper/stale-local-backup",
+        "read-failure/wallet/stale-local-backup",
+        "read-failure/collection/retain-known-items"
+      ]
+    },
+    "ui26": {
+      "cases": 53,
+      "passed": 42,
+      "failed": 11,
+      "failed_cases": [
+        "tomorrow/uncheck-written-then-add-English",
+        "tomorrow/replacement-cannot-start-extra-paper-today",
+        "tomorrow/Vietnamese-then-Chinese",
+        "tomorrow/retick-deferred-language",
+        "archive/en/readable-after-removing-key",
+        "archive/zh/readable-after-removing-key",
+        "archive/ko/readable-after-removing-key",
+        "archive/vi/readable-after-removing-key",
+        "rewards/paper/retry-eventually-pays-correct-answer",
+        "rewards/duplicate/retry-eventually-pays",
+        "read-failure/UI/buy-must-retain-unrelated-pet"
+      ]
+    },
+    "ui23": {
+      "cases": 53,
+      "passed": 42,
+      "failed": 11,
+      "failed_cases": [
+        "tomorrow/uncheck-written-then-add-English",
+        "tomorrow/replacement-cannot-start-extra-paper-today",
+        "tomorrow/Vietnamese-then-Chinese",
+        "tomorrow/retick-deferred-language",
+        "archive/en/readable-after-removing-key",
+        "archive/zh/readable-after-removing-key",
+        "archive/ko/readable-after-removing-key",
+        "archive/vi/readable-after-removing-key",
+        "rewards/paper/retry-eventually-pays-correct-answer",
+        "rewards/duplicate/retry-eventually-pays",
+        "read-failure/UI/buy-must-retain-unrelated-pet"
+      ]
+    },
+    "review26": {
+      "cases": 7,
+      "passed": 3,
+      "failed": 4,
+      "failed_cases": [
+        "race/stale-card-detected",
+        "race/no-scheduler-warning",
+        "race/does-not-return-stale-card",
+        "race/retry-recovers-without-stop"
+      ]
+    },
+    "review23": {
+      "cases": 7,
+      "passed": 3,
+      "failed": 4,
+      "failed_cases": [
+        "race/stale-card-detected",
+        "race/no-scheduler-warning",
+        "race/does-not-return-stale-card",
+        "race/retry-recovers-without-stop"
+      ]
+    }
+  },
+  "new_unique_assertions_per_anki": 81,
+  "new_assertion_executions": 162,
+  "new_assertions_failed": 60,
+  "upgrade": {
+    "from": "1.31.3",
+    "to": "1.33.2",
+    "assertions_passed": 19,
+    "assertions_total": 19
+  },
+  "live_gemini_in_new_tests": false
+}

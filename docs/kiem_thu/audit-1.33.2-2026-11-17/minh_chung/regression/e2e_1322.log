@@ -1,0 +1,44 @@
+== 1. pinyin trên từng chữ
+  ✓ bấm cây 你好 (deck ghi ni3 hao3): mỗi chữ một âm tiết, có dấu thanh
+  ✓ dòng pinyin dưới chữ ẩn khi đã có pinyin trên chữ; chữ mang lang="zh"
+  ✓ xue2sheng → âm thứ hai thanh nhẹ, không dấu
+  ✓ trường Từ 中[zhong1]国[guo2] → chữ 中国, pinyin trên từng chữ
+  ✓ fangan (chia được 2 kiểu) → không đoán, dòng pinyin dưới chữ như 1.32.1
+  ✓ 一点儿 (yi4dian3r) → 儿 nhận r
+  ✓ ô gợi ý khi rê chuột: pinyin trên từng chữ
+  ✓ chữ lạ trong trường Từ không thành thẻ HTML (textContent)
+  ✓ deck tiếng Nhật: không cây nào có ruby kiểu mới
+== 2. nút ✎ Sửa / phím E
+  ✓ mặt trước: nút ✎ Sửa ở góc dưới bên trái, cùng hàng + cao bằng nút Lật thẻ (77×60) {"ex":32,"ey":762,"ew":77.359375,"eh":60,"bx":119.359375,"bh":60,"cl":32,"cb":752,"ww":1366}
+  ✓ phím E ở mặt trước → cửa sổ "Sửa thẻ · ことば畑" cho đúng note đang ôn
+  ✓ mở cửa sổ không lật thẻ, không đổi gì trong bảng ôn
+  ✓ bấm E / ✎ Sửa thêm lần nữa → vẫn một cửa sổ (1)
+  ✓ đóng cửa sổ không sửa gì → thẻ như cũ, không báo "Đã lưu"
+  ✓ mặt sau: nút ✎ Sửa vẫn hiện
+  ✓ mặt sau: nút ✎ Sửa bên trái bốn nút chấm, cùng hàng, không tràn
+  ✓ đang gõ trong cửa sổ: thẻ chưa dựng lại sau mỗi chữ (đợi đóng cửa sổ)
+  ✓ đóng cửa sổ → mặt sau hiện chữ mới, vẫn ở mặt sau, bốn nút chấm còn
+  ✓ dòng "Đã lưu thẻ." dưới chậu
+  ✓ đúng thẻ đó; revlog / xu không đổi; cards.mod không đổi (sửa note chỉ đổi notes.mod)
+  ✓ cây trong vườn cập nhật nghĩa mới
+  ✓ sửa xong chấm "Được" như thường: revlog +1, có xu, sang thẻ kế tiếp, không báo "ôn ở chỗ khác"
+  ✓ mặt sau: lưu xong hiện chữ mới (lần hai)
+  ✓ vừa sửa note: nút ↶ Hoàn tác ẩn (bước Undo kế tiếp của Anki là lần sửa, không phải lượt chấm)
+  ✓ Ctrl+Z trong vườn: không hoàn tác lần sửa, không hoàn tác lượt chấm trước đó, báo "Không có lượt chấm nào để hoàn tác." [1,1,"Không có lượt chấm nào để hoàn tác.",true]
+  ✗ Edit → Undo ở cửa sổ chính trả lại chữ cũ: thẻ đang ôn dựng lại, báo "Thẻ vừa được sửa." [false,"Đã lưu thẻ.",true,"edit_wait trước Undo: true"]
+  ✓ phím E trong ô gõ chữ, Ctrl+E, Alt+E, ⌘E → không mở cửa sổ
+  ✓ gõ chữ e trong ô đáp án của thẻ → không mở cửa sổ
+  ✓ đang lưu lượt chấm / đang hoàn tác → ✎ Sửa không mở
+  ✓ note sửa ở chỗ khác (Trình duyệt thẻ) khi đang ôn → thẻ hiện chữ mới, vẫn đúng thẻ
+  ✓ E ở thẻ kế tiếp khi cửa sổ còn mở → cùng cửa sổ chuyển sang note mới; chữ đã sửa ở note trước còn nguyên
+  ✓ đóng vườn khi đang sửa: cửa sổ sửa vẫn mở, lưu được, đóng không lỗi
+  ✓ mở lại vườn: ôn tiếp, nút ✎ Sửa hiện
+  ✓ note bị xoá khi đang sửa → cửa sổ đóng, bảng ôn sang thẻ kế tiếp
+  ✓ không dựng được trình sửa → mở Trình duyệt thẻ ở đúng note (nid:1794893409778)
+  ✓ Anki đóng mọi cửa sổ (như lúc đóng hồ sơ) → cửa sổ sửa lưu xong rồi mới đóng
+  ✓ không thêm khoá collection nào
+  ✓ cửa sổ 1024×700: nút ✎ Sửa + 4 nút chấm cùng hàng, không tràn ngang (nút chấm hẹp nhất 207 px)
+  ✓ cửa sổ 720×520: nút ✎ Sửa + 4 nút chấm cùng hàng, không tràn ngang (nút chấm hẹp nhất 131 px)
+  ✓ nhật ký Báo lỗi không có lỗi mới
+
+KẾT QUẢ: 39/40

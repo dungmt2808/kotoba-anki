@@ -1,0 +1,48 @@
+== 1. mặc định: Tự theo deck
+  ✓ ⚙ có ô Ngôn ngữ trong vườn, 6 mục, đang Tự theo deck: auto=Tự theo deck · đang: Tiếng Nhật | ja=Tiếng Nhật | en=Tiếng Anh | zh=Tiếng Trung | ko=Tiếng Hàn | vi=Chỉ tiếng Việt
+  ✓ deck tiếng Nhật → tiếng Nhật như các bản trước
+  ✓ StackChan nói tiếng Nhật như cũ
+== 2. deck tiếng Trung → vườn tự sang tiếng Trung
+  ✓ cây của deck HSK là tiếng Trung (12 cây)
+  ✓ Hán Việt tự lấy từ trường "Hán Việt": 你好 NHĨ HẢO, 谢谢 TẠ TẠ, 学生 HỌC SINH
+  ✓ Tự theo deck → tiếng Trung
+  ✓ StackChan nói tiếng Trung, có pinyin nhỏ: 不错！ búcuò
+  ✓ bong bóng tiếng Trung dùng phông chữ giản thể: "Noto Sans CJK SC", "Noto Sans SC", "Microsoft YaHei", "Ping
+  ✓ tiêu đề bảng Nhà: 我的家 · …
+== 3. chọn Tiếng Anh ở ⚙
+  ✓ chọn Tiếng Anh
+  ✓ lưu ở cài đặt riêng máy (config prefs kb-glang = en)
+  ✓ StackChan chào bằng ngôn ngữ mới
+  ✓ bấm StackChan đang đọc sách: read a book | đọc sách
+  ✓ Sổ sinh hoạt tiếng Anh: sleep, make tea, study, read a book
+  ✓ đổi sang Tiếng Hàn khi Sổ đang mở → vẽ lại ngay: 자다, 차를 끓이다, 공부하다, 책을 읽다
+  ✓ tiêu đề bảng Nhà: 우리 집 · …
+  ✓ Hộp sưu tầm tiếng Hàn có phiên âm: 달팽이/dalpaengi, 조개껍데기/jogaekkeopdegi
+  ✓ Album khách tiếng Trung: 麻雀 máquè|zh-CN
+== 4. Chỉ tiếng Việt: không còn chữ kana trên trang
+  ✓ StackChan: ドンマイ！ → Không sao đâu!
+  ✓ Album (Sinh hoạt / Hộp / Khách), Giao diện mùa, bong bóng, Trò chơi, ⚙: không còn kana
+== 5. đóng / mở lại vườn
+  ✓ mở lại vườn: vẫn Chỉ tiếng Việt
+  ✓ collection không có lựa chọn Ngôn ngữ trong vườn (chỉ ở config máy này) · khoá mới do việc khác: kotoba_batake_paper_nguon
+== 6. Cấu hình trường tiếng Trung / tiếng Hàn
+  ✓ loại note Chinese HSK: Tiếng Trung, Từ vựng 词汇
+  ✓ tự chọn trường: word=Hanzi, reading=Pinyin, meaning=Nghĩa, hanviet=Hán Việt, example=, ex_meaning=, audio=, ex_audio=
+  ✓ lưu: lang = other (bản cũ hiểu), lang2 = zh
+  ✓ Hán Việt của từ vựng tiếng Trung lưu ở f2
+  ✓ loại note tiếng Hàn: word=Korean, reading=Romaja, meaning=Nghĩa, hanviet=, example=, ex_meaning=, audio=, ex_audio=
+== 7. trò chơi
+  ✓ menu trò chơi: Tiếng Trung · 12 từ
+  ✓ chơi được: market, crow, memory
+  ✓ tên trò theo tiếng của deck: 听音找词 · 早市 · 赶乌鸦 · 翻牌配对 · 填空
+  ✓ Đuổi quạ (Nghĩa → gõ pinyin): quạ bay ra
+  ✓ tiêu đề: 赶乌鸦 · Đuổi quạ · Nghĩa → gõ pinyin
+  ✓ ô gõ: Gõ pinyin… (xia4yu3, xiayu hay xià yǔ đều được)
+  ✓ gõ "tian1qi4" (số thanh) cho biển "THIÊN KHÍ · thời tiết" → đuổi được quạ
+  ✓ Chợ sáng tiếng Trung: khách không hỏi bằng câu tiếng Nhật: Ở đây có “HẠ VŨ – trời mưa” không? / 咦，不对哦…
+  ✓ câu khách hỏi / đáp: tiếng Trung hoặc tiếng Việt
+  ✓ Đuổi quạ tiếng Hàn: quạ bay ra
+  ✓ gõ chữ Hàn "안녕하세요" cho biển "xin chào" → đuổi được quạ
+  ✓ từ tiếng Hàn không có audio → giọng máy ko_KR: TTSTag(field_text='학교', lang='ko_KR', voices=[], speed=1.0, other_args=[])
+
+KẾT QUẢ: 39/39
