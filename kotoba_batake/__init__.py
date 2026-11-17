@@ -90,7 +90,8 @@ AI_MODS = {"en": ai_en, "vi": ai_vi, "zh": ai_zh, "ko": ai_ko}
 # 1.23: tiến độ đọc của nguồn báo tiếng Nhật thứ hai (Kệ báo gộp số Claude Code + Gemini), khoá collection riêng
 BOOK = paper.PaperState(os.path.join(ADDON_DIR, "user_files", "paper_nguon.json"), col_getter=lambda: mw.col,
                         key=paper.PAPER_KEY_SRC, clean=paper.clean_book)
-LANG_NAME = {"ja": "tiếng Nhật", "en": "tiếng Anh", "vi": "tiếng Việt", "zh": "tiếng Trung", "ko": "tiếng Hàn",
+LANG_NAME = {"ja": "tiếng Nhật", "en": "tiếng Anh", "vi": "tiếng Việt", "zh": "tiếng Trung", "ko": "tiếng Hàn", "de": "tiếng Đức",
+             "fr": "tiếng Pháp",
              "other": "ngôn ngữ khác"}
 _ai: dict[str, Any] = {"running": False, "testing": False, "msg": "", "lang": "ja", "why": "",
                        "key_gen": 0}    # 1.31.1 (F07): tăng mỗi lần xoá khoá — kết quả thử khoá cũ không lưu lại khoá
@@ -102,7 +103,8 @@ _voice_job: dict[str, Any] = {"running": False, "tried": set()}   # đang nhờ 
 _ja_tts: bool | None = None      # máy có giọng tiếng Nhật của hệ điều hành (Anki TTS) — kiểm một lần
 _en_tts: bool | None = None      # 1.17: máy có giọng tiếng Anh của hệ điều hành
 _xx_tts: dict[str, bool] = {}    # 1.32: giọng tiếng Trung / tiếng Hàn của máy (zh / ko)
-TTS_LANG = {"en": "en_US", "zh": "zh_CN", "ko": "ko_KR"}
+TTS_LANG = {"en": "en_US", "zh": "zh_CN", "ko": "ko_KR", "de": "de_DE", "fr": "fr_FR"}
+XX_LANGS = ("zh", "ko", "de", "fr")   # 1.32 / 1.33 / 1.35: giọng máy riêng (tts_zh, tts_ko, tts_de, tts_fr)
 _mpv_slow = False                # vừa phát chậm bằng mpv → trả tốc độ về 1 khi phát xong
 _wav_checked = False             # đã sửa file giọng đọc lồng của 1.12 chưa (một lần mỗi lần mở Anki)
 
@@ -161,7 +163,7 @@ def config() -> dict[str, Any]:
     except Exception as err:
         _warn("fields", err)
         cfg["_fields"] = fields_core.clean_store(None)
-    cfg["_tts"] = {"en": en_tts_available(), "zh": xx_tts_available("zh"), "ko": xx_tts_available("ko")}     # 1.17 / 1.32
+    cfg["_tts"] = dict({"en": en_tts_available()}, **{x: xx_tts_available(x) for x in XX_LANGS})     # 1.17 / 1.32 / 1.35
     return cfg
 
 
@@ -771,7 +773,7 @@ def _voice(cfg: dict[str, Any] | None = None) -> paper.Voice:
     if o["dict_voice"] == "tat":
         return paper.Voice(mpv=mpv)
     tts, tts_en = ja_tts_available(), en_tts_available()
-    xx = {x: xx_tts_available(x) for x in ("zh", "ko")}         # 1.33: câu chép báo tiếng Trung / tiếng Hàn
+    xx = {x: xx_tts_available(x) for x in XX_LANGS}         # 1.33: câu chép báo tiếng Trung / tiếng Hàn (1.35: + Đức / Pháp)
     if o["dict_voice"] == "may":
         return paper.Voice(tts=tts, mpv=mpv, tts_en=tts_en, tts_xx=xx)
     has_key = bool(ai.clean_key(cfg.get("gemini_key")))
@@ -785,9 +787,9 @@ def _play(target: tuple[str, Any, float]) -> None:
     """Phát: ('file', đường dẫn tuyệt đối), ('media', tên file media của collection) hoặc ('tts', chữ) + tốc độ."""
     global _mpv_slow
     kind, what, speed = target
-    if kind in ("tts", "tts_en", "tts_zh", "tts_ko"):
+    if kind == "tts" or (kind.startswith("tts_") and kind[4:] in TTS_LANG):
         from anki.sound import TTSTag
-        lang = {"tts_en": "en_US", "tts_zh": "zh_CN", "tts_ko": "ko_KR"}.get(kind, "ja_JP")
+        lang = TTS_LANG.get(kind[4:], "ja_JP")
         av_player.play_tags([TTSTag(field_text=what, lang=lang, voices=[], speed=speed, other_args=[])])
         return
     mgr = _mpv()
@@ -3559,7 +3561,7 @@ class GardenDialog(QDialog):
                 fname = (core.example_audio if example else core.note_audio)(note, cfg, roles)
                 speech = ""
                 tl = roles.get("lang")
-                if not fname and ((tl == "en" and en_tts_available()) or (tl in ("zh", "ko") and xx_tts_available(tl))):
+                if not fname and ((tl == "en" and en_tts_available()) or (tl in XX_LANGS and xx_tts_available(tl))):
                     # 1.17: từ / câu tiếng Anh không có audio → giọng tiếng Anh của máy · 1.32: tiếng Trung / tiếng Hàn
                     speech = (core._clean_example(note[roles["example"]], tl) if example and roles.get("example")
                               else core.note_details(note, cfg, roles)["word"])
@@ -3570,7 +3572,7 @@ class GardenDialog(QDialog):
             if fname:
                 av_player.play_file(fname)
             elif speech and speech != "?":
-                _play(("tts_" + (tl if tl in ("zh", "ko") else "en"), speech, 1.0))
+                _play(("tts_" + (tl if tl in XX_LANGS else "en"), speech, 1.0))
         elif cmd.startswith("reward:"):
             try:
                 parts = cmd.split(":")
@@ -3993,7 +3995,7 @@ class GardenDialog(QDialog):
         for p in plants:
             n_lang[p.get("lang") or "ja"] = n_lang.get(p.get("lang") or "ja", 0) + 1
         # 1.33: deck tiếng Trung / tiếng Hàn có giọng Gemini + giọng zh_CN / ko_KR của máy như tiếng Anh (trước: "other")
-        lang = next((x for x in ("ja", "en", "zh", "ko") if n_lang.get(x, 0) * 2 >= len(plants)), "other")
+        lang = next((x for x in ("ja", "en") + XX_LANGS if n_lang.get(x, 0) * 2 >= len(plants)), "other")
         if lang == "other":     # 1.17: ngôn ngữ khác chỉ nghe được bằng audio của thẻ
             out.append("• Ngôn ngữ này chỉ chép được khi thẻ có audio (chọn đúng trường ở [i:gear] Cấu hình trường).")
             return out
@@ -4009,9 +4011,8 @@ class GardenDialog(QDialog):
             out.append("• Hoặc cài giọng tiếng Nhật cho máy (cách cài: Nguồn báo → Tuỳ chọn thêm).")
         elif lang == "en" and not voice.tts_en:
             out.append("• Hoặc dùng giọng tiếng Anh của máy (Windows / macOS có sẵn).")
-        elif lang in ("zh", "ko") and not voice.tts_xx.get(lang):
-            out.append("• Hoặc cài giọng %s cho máy (Windows: Cài đặt → Thời gian & ngôn ngữ → Giọng nói)."
-                       % ("tiếng Trung" if lang == "zh" else "tiếng Hàn"))
+        elif lang in XX_LANGS and not voice.tts_xx.get(lang):
+            out.append("• Hoặc cài giọng %s cho máy (Windows: Cài đặt → Thời gian & ngôn ngữ → Giọng nói)." % LANG_NAME[lang])
         out.append("• Hoặc thêm audio vào thẻ.")
         return out
 
@@ -4148,7 +4149,7 @@ class GardenDialog(QDialog):
             iss = lib.try_issue(date)
             en = bool(iss and iss["lang"] == "en")
             il = iss["lang"] if iss else "ja"
-            machine = voice.tts_en if en else voice.tts_xx.get(il) if il in ("zh", "ko") else voice.tts   # 1.33
+            machine = voice.tts_en if en else voice.tts_xx.get(il) if il in XX_LANGS else voice.tts   # 1.33 / 1.35
             if kind == "bai":
                 au = lib.audio(date)
                 rel = au["bai"][i][j] if i < len(au["bai"]) and j < len(au["bai"][i]) else None
@@ -4157,7 +4158,7 @@ class GardenDialog(QDialog):
                     target = ("file", path, 1.0)
                 elif machine and iss and i < len(iss["bai"]) and j < len(iss["bai"][i]["doan"]):
                     # 1.13: giọng của máy (1.19: báo tiếng Anh → giọng tiếng Anh; 1.33: tiếng Trung / tiếng Hàn)
-                    target = ("tts_en" if en else "tts_" + il if il in ("zh", "ko") else "tts",
+                    target = ("tts_en" if en else "tts_" + il if il in XX_LANGS else "tts",
                               paper.speech_text(iss["bai"][i]["doan"][j], il), 1.0)
             elif kind == "ct" and iss and i < len(iss["chinh_ta"]):
                 cv = paper.ct_voice(lib, date, i, iss["chinh_ta"][i]["cau"], voice, iss["lang"])

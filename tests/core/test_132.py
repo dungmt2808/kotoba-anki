@@ -329,7 +329,7 @@ print("== 7. trò chơi: Python và games.js cùng chế độ")
 gsrc = open(os.path.join(ADDON, "web", "games.js"), encoding="utf-8").read()
 for game, per in F.GAME_MODES.items():
     m = re.search(r"\n    %s: \{(.*?)\n    \}" % game, gsrc[gsrc.index("const MODES = {"):], re.S)
-    for grp in ("zh", "ko"):
+    for grp in ("zh", "ko", "de", "fr"):      # 1.35: + tiếng Đức / tiếng Pháp
         js_ids = []
         if m:
             g = re.search(r"\n      %s: \[(.*?)\](?:,\n      [a-z]+: \[|\n)" % grp, m.group(1) + "\n", re.S)

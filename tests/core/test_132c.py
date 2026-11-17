@@ -109,12 +109,19 @@ DECKS = [
     ("deck tiếng Anh có cụm động từ (die out, look up…)", "Phrasal verbs", ["Front", "Back"],
      {"Front": ["die out", "die down", "look up", "give up", "run out", "take off", "die", "go on"]}, "en", {}),
     # 1.34.1: trước đây tiếng Đức → Tiếng Anh (giọng đọc tiếng Anh, từ lọt vào báo tiếng Anh); chữ Nga / Thái → Tiếng Nhật
-    ("deck tiếng Đức: Deutsch / Nghĩa", "Deutsch A1", ["Deutsch", "Nghĩa"], {"Deutsch": DE}, "other", {}),
-    ("deck tiếng Đức không gợi ý (Front / Back)", "Basic-de", ["Front", "Back"], {"Front": DE}, "other", {}),
+    # 1.35: tiếng Đức / tiếng Pháp có ngôn ngữ riêng (1.34.1: Ngôn ngữ khác)
+    ("deck tiếng Đức: Deutsch / Nghĩa", "Deutsch A1", ["Deutsch", "Nghĩa"], {"Deutsch": DE}, "de", {"word": "Deutsch", "meaning": "Nghĩa"}),
+    ("deck tiếng Đức không gợi ý (Front / Back)", "Basic-de", ["Front", "Back"], {"Front": DE}, "de", {"word": "Front"}),
     ("deck tiếng Đức, từ không umlaut (der / die / das)", "Basic-de2", ["Front", "Back"],
-     {"Front": [w for w in DE if not any(c in w for c in "äöüß")]}, "other", {}),
+     {"Front": [w for w in DE if not any(c in w for c in "äöüß")]}, "de", {}),
     ("deck tiếng Pháp ít dấu: Français / Nghĩa", "Français A1", ["Français", "Nghĩa"],
-     {"Français": ["bonjour", "merci", "maison", "chat", "chien", "pain", "livre", "rouge"]}, "other", {}),
+     {"Français": ["bonjour", "merci", "maison", "chat", "chien", "pain", "livre", "rouge"]}, "fr", {"word": "Français"}),
+    ("deck tiếng Pháp có mạo từ (Front / Back)", "Basic-fr", ["Front", "Back"],
+     {"Front": ["le chat", "la maison", "l'école", "manger", "être", "très", "le garçon", "le pain"]}, "fr", {}),
+    ("deck tiếng Đức cho người học tiếng Anh: German / English", "German-English", ["German", "English", "Audio"],
+     {"German": DE}, "de", {"word": "German", "meaning": "English"}),
+    ("deck tiếng Tây Ban Nha → Ngôn ngữ khác", "Basic-es", ["Front", "Back"],
+     {"Front": ["el gato", "la casa", "comer", "niño", "está", "sí", "mañana", "también"]}, "other", {}),
     ("deck tiếng Nga (chữ Kirin)", "Basic-ru", ["Front", "Back"], {"Front": ["привет", "спасибо", "дом", "кошка", "собака"]}, "other", {}),
     ("deck tiếng Thái", "Basic-th", ["Front", "Back"], {"Front": ["สวัสดี", "ขอบคุณ", "บ้าน", "แมว"]}, "other", {}),
 ]

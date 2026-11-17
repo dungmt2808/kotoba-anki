@@ -20,6 +20,19 @@ from __future__ import annotations
 import html
 import re
 
+try:   # 1.35: tiếng Đức / tiếng Pháp
+    from . import eu_core as eu
+except ImportError:  # test: thư mục add-on nằm trong sys.path, hoặc nạp riêng file này
+    try:
+        import eu_core as eu  # type: ignore[no-redef]
+    except ImportError:
+        import importlib.util as _ilu
+        import os as _os
+        _spec = _ilu.spec_from_file_location(
+            "kotoba_eu_core", _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "eu_core.py"))
+        eu = _ilu.module_from_spec(_spec)  # type: ignore[assignment]
+        _spec.loader.exec_module(eu)  # type: ignore[union-attr]
+
 KANA_CLASS = "ぁ-ゖゝゞァ-ヺーヽヾ"
 KANJI_CLASS = "㐀-䶿一-鿿豈-﫿々〆"
 HAS_KANJI = re.compile("[%s]" % KANJI_CLASS)
@@ -353,6 +366,8 @@ def en_forms(word: str) -> list[str]:
 
 def find_word(sentence: str, word: str, lang: str = "en") -> tuple[int, int] | None:
     """Vị trí của từ trong câu (không phân biệt hoa thường, theo ranh giới từ). lang="en" thì nhận cả dạng biến đổi."""
+    if lang in eu.LANGS:            # 1.35: tiếng Đức / tiếng Pháp — bỏ mạo từ, nhận dạng biến đổi
+        return eu.find_word(sentence, word, lang)
     forms = en_forms(word) if lang == "en" else sorted({a.lower() for a in en_alternatives(word)}, key=len, reverse=True)
     if not forms:
         return None
@@ -380,6 +395,15 @@ def en_words(s: str) -> list[str]:
     s = re.sub(r"[-‐–—]+", " ", s)
     s = re.sub(r"[^\w' ]+", " ", s)
     return [w.strip("'") for w in s.split() if w.strip("'")]
+
+
+def lang_words(s: str, lang: str) -> list[str]:
+    """1.35: tách từ để chấm chép chính tả theo ngôn ngữ (Anh / Đức / Pháp / ngôn ngữ khác chữ Latin)."""
+    if lang == "en":
+        return en_words(s)
+    if lang in eu.LANGS:
+        return eu.words(s, lang)
+    return latin_words(s)
 
 
 def latin_words(s: str) -> list[str]:

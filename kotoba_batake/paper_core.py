@@ -147,6 +147,10 @@ def speech_text(markup: str, lang: str = "ja") -> str:
     return "".join(out).replace("◆", "").strip()
 
 
+XX_LANGS = ("zh", "ko", "de", "fr")        # 1.33 / 1.35: giọng máy riêng (tts_zh, tts_ko, tts_de, tts_fr)
+MACHINE_HOW = ("tts", "tts_en") + tuple("tts_" + x for x in XX_LANGS)
+
+
 class Voice:
     """Giọng đọc dự phòng cho câu / từ không có file audio (1.13). __init__.py dựng mỗi lần cần.
 
@@ -169,7 +173,7 @@ class Voice:
 
     def how(self, markup: str, lang: str = "ja") -> tuple[str | None, bool, Any]:
         """(cách phát, có bản chậm, dữ liệu) cho một câu không có file audio. Ngôn ngữ khác: chỉ audio của deck."""
-        if lang not in ("ja", "en", "zh", "ko"):
+        if lang not in ("ja", "en") + XX_LANGS:
             return None, False, None
         speech = speech_text(markup, lang)
         if not speech:
@@ -184,7 +188,7 @@ class Voice:
             return "tts", True, speech
         if lang == "en" and self.tts_en:
             return "tts_en", True, speech
-        if lang in ("zh", "ko") and self.tts_xx.get(lang):
+        if lang in XX_LANGS and self.tts_xx.get(lang):
             return "tts_" + lang, True, speech
         if self.gen:
             return "gen", False, speech
@@ -192,12 +196,12 @@ class Voice:
 
     def wants(self, how: str | None) -> bool:
         """Có nên nhờ Gemini tạo giọng đọc cho câu đang phát bằng cách `how` không."""
-        return bool(self.gen and how in ("tts", "tts_en", "tts_zh", "tts_ko", "gen"))
+        return bool(self.gen and how in MACHINE_HOW + ("gen",))
 
     def any(self, lang: str = "ja") -> bool:
         if lang == "en":
             return bool(self.tts_en or self.gen)
-        if lang in ("zh", "ko"):
+        if lang in XX_LANGS:
             return bool(self.tts_xx.get(lang) or self.gen)
         if lang != "ja":
             return False
@@ -758,7 +762,10 @@ def matches(markup: str, extra: list[str], variants: list[str], kana_ok: bool = 
     if lang in ("zh", "ko"):        # 1.33: tiếng Trung so chữ (bỏ dấu câu / dấu cách), tiếng Hàn so theo cụm
         return any(isinstance(v, str) and grade_answer(x, v, lang)["ok"] for x in [markup] + list(extra or []) for v in variants)
     if lang != "ja":
-        norm = text.en_words if lang == "en" else text.latin_words
+        # 1.35: tiếng Đức / tiếng Pháp — so theo từ, gõ không dấu cũng được (ä = ae, ß = ss, é = e): bàn phím tiếng Việt
+        # không gõ được umlaut / ç; vẫn đúng chữ cái
+        norm = (lambda x: [text.eu.fold(w, lang).strip("'") for w in text.lang_words(x, lang)]) if lang in ("de", "fr") \
+            else (lambda x: text.lang_words(x, lang))      # noqa: E731
         ok_set = [norm(surface(x)) for x in [markup] + list(extra or [])]   # 1.19: câu báo tiếng Anh có {chữ||từ gốc}
         return any(isinstance(v, str) and norm(v) in ok_set and norm(v) for v in variants)
     ok = _accepted(markup, extra, kana_ok)
@@ -819,7 +826,7 @@ def ct_voice(lib: Library, date: str, i: int, cau: str, voice: Voice | None = No
                 "pending": False, "file": a.get("thuong"), "slow_file": a.get("cham")}
     voice = voice or NO_VOICE
     how, slow, data = voice.how(cau, lang)
-    return {"how": how, "audio": how in ("cache", "tts", "tts_en", "tts_zh", "tts_ko"), "slow": slow, "pending": how == "gen", "data": data,
+    return {"how": how, "audio": how in ("cache",) + MACHINE_HOW, "slow": slow, "pending": how == "gen", "data": data,
             "want_gen": voice.wants(how)}
 
 
@@ -832,7 +839,7 @@ def dict_len(markup: str, lang: str = "ja") -> tuple[int, str]:
         return len(_ZH_KEEP.findall(surface(markup))), "chữ"
     if lang == "ko":
         return len(_ko().cum(surface(markup))), "cụm"
-    return len((text.en_words if lang == "en" else text.latin_words)(surface(markup))), "từ"
+    return len(text.lang_words(surface(markup), lang)), "từ"
 
 
 def issue_view(lib: Library, st: dict[str, Any], date: str, voice: Voice | None = None,
@@ -901,7 +908,7 @@ def issue_view(lib: Library, st: dict[str, Any], date: str, voice: Voice | None 
     dict_items = []
     for i, c in enumerate(iss["chinh_ta"]):
         cv = ct_voice(lib, date, i, c["cau"], voice, lang)
-        fallback = fallback or cv["how"] in ("cache", "tts", "tts_en", "tts_zh", "tts_ko")
+        fallback = fallback or cv["how"] in ("cache",) + MACHINE_HOW
         n, unit = dict_len(c["cau"], lang)
         item = {"audio": cv["audio"], "slow": cv["slow"], "pending": cv["pending"], "len": n, "unit": unit,
                 "lang": lang, "kana_ok": lang == "ja"}
@@ -1095,7 +1102,7 @@ def note_dict_item(note: Any, cfg: dict[str, Any]) -> dict[str, Any] | None:
     lang = roles.get("lang") or "ja"
     if lang != "ja":                          # 1.17: câu tiếng Anh / ngôn ngữ khác, chấm theo từ
         sent = _MARKUP_CHARS.sub("", core._clean_example(note[roles["example"]] or "", lang)).strip()
-        words = (text.en_words if lang == "en" else text.latin_words)(sent)
+        words = text.lang_words(sent, lang)
         if not 2 <= len(words) <= 25 or len(sent) > 180:
             return None
         meaning = core._clean(note[roles["ex_meaning"]], 160) if roles.get("ex_meaning") else ""
@@ -1191,7 +1198,7 @@ def resolve(sid: str, lib: Library | None, note_item: Resolver, voice: Voice | N
             else:
                 label = "Nghe từ" + (" · " + item["meaning"][:40] if item.get("meaning") else "")
             return {"src": "deck" if sid[0] == "n" else "word", "markup": item["markup"], "extra": [],
-                    "kana_ok": item["kana_ok"], "audio": how in ("media", "cache", "tts", "tts_en", "tts_zh", "tts_ko"), "slow": slow,
+                    "kana_ok": item["kana_ok"], "audio": how in ("media", "cache") + MACHINE_HOW, "slow": slow,
                     "lang": lang,
                     "pending": how == "gen", "how": how, "data": data, "label": label, "want_gen": voice.wants(how),
                     "meaning": item.get("meaning") or "", "words": [item["word"]], "nid": nid}
@@ -1295,7 +1302,7 @@ def daily_pending(st: dict[str, Any], lib: Library | None, note_item: Resolver, 
     return list(dict.fromkeys(out))
 
 
-VOICE_LABEL = {"tts": "giọng máy", "tts_en": "giọng máy", "tts_zh": "giọng máy", "tts_ko": "giọng máy", "cache": "giọng Gemini"}
+VOICE_LABEL = dict({h: "giọng máy" for h in MACHINE_HOW}, cache="giọng Gemini")
 
 
 def daily_view(st: dict[str, Any], lib: Library | None, note_item: Resolver, voice: Voice | None = None,
@@ -1372,7 +1379,7 @@ def play_target(how: str | None, data: Any, slow: bool, lib: Library | None = No
         if slow and data[1]:
             return ("file", data[1], 1.0)
         return ("file", data[0], SLOW_SPEED if slow else 1.0)
-    if how in ("tts", "tts_en", "tts_zh", "tts_ko") and isinstance(data, str) and data:
+    if how in MACHINE_HOW and isinstance(data, str) and data:
         return (how, data, 0.7 if slow else 1.0)
     return None
 

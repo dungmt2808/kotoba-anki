@@ -378,7 +378,10 @@ for lang, cau in (("zh", "[今|jīn][天|tiān]很好。"), ("ko", "오늘 날�
     h = v_xx.how(cau, lang)
     ok(h[0] == "tts_" + lang and paper.VOICE_LABEL.get(h[0]) == "giọng máy", "%s: câu chép phát bằng giọng máy %s" % (lang, h[0]))
 src_pc = open(os.path.join(ADDON, "paper_core.py"), encoding="utf-8").read()
-ok(src_pc.count('"tts_en", "tts_zh", "tts_ko")') >= 4, "mọi chỗ coi giọng máy là có tiếng đều có tts_zh / tts_ko")
+# 1.35: danh sách giọng máy gom về paper.MACHINE_HOW (thêm tts_de / tts_fr) — không còn danh sách viết tay thiếu tiếng nào
+ok({"tts_zh", "tts_ko"} <= set(getattr(paper, "MACHINE_HOW", ())) and src_pc.count("MACHINE_HOW") >= 5
+   and '"tts", "tts_en")' not in src_pc.replace('MACHINE_HOW = ("tts", "tts_en")', ""),
+   "mọi chỗ coi giọng máy là có tiếng đều có tts_zh / tts_ko (paper.MACHINE_HOW)")
 
 print("== 10. 4 số báo Gemini thật (17–18/11, tests/fixtures/bao_133_that.json)")
 REAL = json.load(open(os.path.join(ROOT, "tests", "fixtures", "bao_133_that.json"), encoding="utf-8"))["so"]

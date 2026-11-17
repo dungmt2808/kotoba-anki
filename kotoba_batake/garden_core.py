@@ -1746,13 +1746,20 @@ ZH_READING_NAMES = ["pinyin", "拼音", "pīnyīn", "phiên âm", "phien am", "p
 KO_WORD_NAMES = ["korean", "hangul", "한국어", "단어", "한글", "tiếng hàn", "word", "từ vựng", "từ", "front"]
 KO_READING_NAMES = ["romaja", "romanization", "romanisation", "로마자", "발음", "phiên âm", "phien am", "pronunciation",
                     "reading"]
+# 1.35: tên trường hay gặp ở deck tiếng Đức / tiếng Pháp
+DE_WORD_NAMES = ["deutsch", "german", "wort", "vokabel", "tiếng đức", "word", "vocabulary", "từ vựng", "từ", "front",
+                 "mặt trước"]
+FR_WORD_NAMES = ["français", "francais", "french", "mot", "vocabulaire", "tiếng pháp", "word", "vocabulary", "từ vựng", "từ",
+                 "front", "mặt trước"]
+EU_READING_NAMES = EN_READING_NAMES + ["aussprache", "lautschrift", "prononciation", "api"]
+EU_MEANING_NAMES = EN_MEANING_NAMES + ["bedeutung", "übersetzung", "sens", "signification", "traduction"]
 
 
 def guess_roles_lang(keys: list[str], cfg: dict[str, Any], lang: str) -> dict[str, Any]:
     """1.17: đoán trường cho loại note tiếng Anh / ngôn ngữ khác (tên trường kiểu English, IPA, Vietnamese…)."""
     keys = list(keys)
     taken: set[str] = set()
-    word_names = ZH_WORD_NAMES if lang == "zh" else KO_WORD_NAMES if lang == "ko" else EN_WORD_NAMES
+    word_names = {"zh": ZH_WORD_NAMES, "ko": KO_WORD_NAMES, "de": DE_WORD_NAMES, "fr": FR_WORD_NAMES}.get(lang, EN_WORD_NAMES)
     word = _find_field(keys, "", word_names, taken) or (keys[0] if keys else None)
     taken.add(word or "")
     ex = example_fields(keys, cfg)
@@ -1760,10 +1767,11 @@ def guess_roles_lang(keys: list[str], cfg: dict[str, Any], lang: str) -> dict[st
     taken |= {x for x in (ex["example"], ex["audio"], ex["meaning"], au) if x}
     hanviet = _find_field(keys, "", HANVIET_NAMES, taken) if lang in ("zh", "ko") else None     # 1.32
     taken.add(hanviet or "")
-    reading_names = ZH_READING_NAMES if lang == "zh" else KO_READING_NAMES if lang == "ko" else EN_READING_NAMES
+    reading_names = {"zh": ZH_READING_NAMES, "ko": KO_READING_NAMES, "de": EU_READING_NAMES, "fr": EU_READING_NAMES}.get(
+        lang, EN_READING_NAMES)
     reading = _find_field(keys, "", reading_names, taken)
     taken.add(reading or "")
-    meaning = _find_field(keys, "", EN_MEANING_NAMES, taken)
+    meaning = _find_field(keys, "", EU_MEANING_NAMES if lang in ("de", "fr") else EN_MEANING_NAMES, taken)
     if meaning is None:
         rest = [k for k in keys if k not in taken]
         meaning = rest[0] if rest else None
@@ -1882,7 +1890,7 @@ def note_details(note: Any, cfg: dict[str, Any], roles: dict[str, Any] | None = 
         raw_word = note[list(note.keys())[0]]          # trường từ để trống → dùng trường đầu
     grammar = kind == "grammar"
     if lang != "ja":
-        word, ipa = text.en_split_ipa(text.plain_text(raw_word)) if lang == "en" else (text.plain_text(raw_word), "")
+        word, ipa = text.en_split_ipa(text.plain_text(raw_word)) if lang in ("en", "de", "fr") else (text.plain_text(raw_word), "")
         reading = text.plain_text(get("reading"))
         ruby = None
         if lang == "zh":
