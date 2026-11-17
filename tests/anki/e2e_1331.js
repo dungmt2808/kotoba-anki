@@ -135,19 +135,25 @@ result = 1`);
   await openGarden();
 
   console.log('== 3. Hồi quy: "Mở bản sao lưu" của Anki vẫn giữ bản vừa khôi phục');
-  await py(KB + `mw.col.export_collection_package(${JSON.stringify(TMP + '/sao_luu2.colpkg')}, include_media=False, legacy=False)
+  // Anki 23.10 chỉ mở bản sao lưu từ màn chọn hồ sơ (_openBackup → onOpenProfile theo dòng đang chọn): kịch bản không giả lập
+  // đúng được. Đường này không đổi ở 1.33.1 (lớp giữ 1.31.2, đã thử trên 23.10 ở 1.31.2) → bỏ qua trên bản Anki đó.
+  if (!(await py(KB + 'result = hasattr(mw, "_start_restore_backup")'))) {
+    console.log('  – bỏ qua trên bản Anki này (không có _start_restore_backup)');
+  } else {
+    await py(KB + `mw.col.export_collection_package(${JSON.stringify(TMP + '/sao_luu2.colpkg')}, include_media=False, legacy=False)
 mw.reopen()
 st.add_coins(30)
 kb.sync_core.before_sync(mw.col, kb.USER_DIR)
 result = 1`);
-  const c3 = await coins();
-  await py(KB + `mw.unloadProfile(lambda: mw._start_restore_backup(${JSON.stringify(TMP + '/sao_luu2.colpkg')}))\nresult = 1`);
-  await sleep(2500);
-  await waitPy('result = bool(mw.col) and kb._col_ready() and kb._profile_open', 40000);
-  ok(await coins() === c3 - 30, `Mở bản sao lưu → ví của bản sao lưu (${await coins()} / ${c3 - 30})`);
-  ok(await reopenProfile(), 'mở lại hồ sơ');
-  ok(await coins() === c3 - 30, 'mở lại hồ sơ lần nữa vẫn giữ bản sao lưu');
-  await openGarden();
+    const c3 = await coins();
+    await py(KB + `mw.unloadProfile(lambda: mw._start_restore_backup(${JSON.stringify(TMP + '/sao_luu2.colpkg')}))\nresult = 1`);
+    await sleep(2500);
+    await waitPy('result = bool(mw.col) and kb._col_ready() and kb._profile_open', 40000);
+    ok(await coins() === c3 - 30, `Mở bản sao lưu → ví của bản sao lưu (${await coins()} / ${c3 - 30})`);
+    ok(await reopenProfile(), 'mở lại hồ sơ');
+    ok(await coins() === c3 - 30, 'mở lại hồ sơ lần nữa vẫn giữ bản sao lưu');
+    await openGarden();
+  }
 
   console.log('== 4. File → Export .colpkg khi vườn đang mở');
   const k4 = await gardenKeys();

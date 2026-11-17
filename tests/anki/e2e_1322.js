@@ -198,11 +198,13 @@ async function part2() {
   ok(sC.rev === sB.rev && /✎undo/.test(p.text) && /Không có lượt chấm nào để hoàn tác/.test(p.note),
     'Ctrl+Z trong vườn: không hoàn tác lần sửa, không hoàn tác lượt chấm trước đó, báo "Không có lượt chấm nào để hoàn tác." ' + JSON.stringify([sC.rev, sB.rev, p.note, /✎undo/.test(p.text)]));
   // Undo ở cửa sổ chính trả lại chữ cũ → thẻ dựng lại
+  const waitBefore = await py(KB + 'result = bool(kb._dialog._edit_wait)');
   await py(KB + 'mw.undo()\nresult = 1');
   await waitFor('return !/✎undo/.test(document.getElementById("kb-card").contentDocument.body.innerText);', 8000);
   p = await panel();
-  ok(!/✎undo/.test(p.text) && p.note === 'Thẻ vừa được sửa.' && (await state()).cid === sB.cid,
-    'Edit → Undo ở cửa sổ chính trả lại chữ cũ: thẻ đang ôn dựng lại, báo "Thẻ vừa được sửa."');
+  const sU = await state();
+  ok(!/✎undo/.test(p.text) && p.note === 'Thẻ vừa được sửa.' && sU.cid === sB.cid,
+    'Edit → Undo ở cửa sổ chính trả lại chữ cũ: thẻ đang ôn dựng lại, báo "Thẻ vừa được sửa." ' + JSON.stringify([/✎undo/.test(p.text), p.note, sU.cid === sB.cid, 'edit_wait trước Undo: ' + waitBefore]));
 
   // phím E không chạy khi đang gõ / có Ctrl / Alt / Meta
   await js(`const i = document.createElement("input"); i.id = "mk-e-in"; document.getElementById("kb-panel").appendChild(i); i.focus();

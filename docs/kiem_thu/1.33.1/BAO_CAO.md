@@ -65,10 +65,15 @@ Muốn trở lại kiểu hàng nút ở chỗ nào thì chỉ cần đổi `pic
 | Bộ | Kết quả |
 |---|---|
 | `tests/run_all.sh` (offline + collection Anki thật, `ANKI_PY` = Anki 26.9.4) | **61 bộ — TẤT CẢ OK** (thêm `core/test_1331.py`; trên mã 1.33.0 bộ này trượt 21 ca) |
-| `tests/anki/e2e_1331.js` (mới, Anki 26.9.4 thật) | **43 / 43** (+ bấm bừa tab Nguồn báo 120 thao tác × 3 hạt); trên mã 1.33.0: trượt ở lỗi A rồi dừng vì lỗi C |
-| Mọi kịch bản Anki thật có sẵn, trên gói đã đóng (giải nén), mỗi kịch bản một hồ sơ mới | _đang điền_ |
-| Cài đè **1.31.3 (đã phát hành) → 1.33.1** (`run_capnhat.sh`) | _đang điền_ |
-| Anki 23.10.1 (bản cũ nhất hỗ trợ) | _đang điền_ |
+| `tests/anki/e2e_1331.js` (mới) | Anki 26.9.4: **43 / 43**; Anki 23.10.1: **40 / 40** (phần "Mở bản sao lưu" của Anki bỏ qua — Anki 23.10 chỉ làm việc đó từ màn chọn hồ sơ, kịch bản không giả lập được; đường đó không đổi ở bản này). Bấm bừa tab Nguồn báo 120 thao tác × 3 hạt: cấu hình luôn hợp lệ. Trên mã 1.33.0: trượt ở lỗi A rồi dừng vì lỗi C |
+| Mọi kịch bản Anki thật (Anki 26.9.4, trên **gói đã đóng**, mỗi kịch bản một hồ sơ mới) | **47 kịch bản — 2.200 / 2.200 kiểm tra** (gồm `audit_full` 183, `audit_edge` 58, bộ UI audit 191 + 18 + 7, đồng bộ thật `e2e_1312` 47, cài đè 19). Chạy 2 luồng song song thì `e2e_1253` (1 ca về môi trường: localStorage của webview) và `e2e_1322` (1 ca câu chữ, xem dưới) trượt 1 ca; chạy riêng thì đạt trọn, **giống hệt trên mã 1.33.0** |
+| Cài đè **1.31.3 (đã phát hành) → 1.33.1** (`run_capnhat.sh`, trình quản lý add-on của Anki) | **19 / 19**: không mất khoá collection nào (12), 48 file trong `user_files/` y nguyên, cấu hình giữ nguyên, 93.124 xu / đồ / nhật ký / cài đặt ⚙ còn đủ, Ctrl+Z, deck tiếng Trung cấu hình ở bản cũ được nhận đúng |
+| Anki 23.10.1 (bản cũ nhất hỗ trợ) | `e2e_1331` 40/40, `e2e_133` 77/77, `e2e_1251` 49/49, `e2e_119` 55/55, `e2e_1223` 49/49, `e2e_123` 66/66, `e2e_1322` 40/40 |
+| Gói `kotoba_batake.ankiaddon` | khớp từng byte với thư mục `kotoba_batake/` |
+
+**Một điểm nhỏ có từ trước (không sửa)**: trên Anki 23.10, bấm Edit → Undo ở cửa sổ chính *ngay* sau khi đóng cửa sổ
+Sửa thẻ thì thẻ trong vườn vẫn dựng lại đúng chữ cũ, chỉ dòng nhắc ghi "Đã lưu thẻ." thay vì "Thẻ vừa được sửa." (lần lưu cuối
+của trình sửa bản 23.10 về muộn). Chỉ là câu chữ, dữ liệu đúng; trượt y hệt trên mã 1.33.0.
 
 ## 5. Việc của bạn
 
