@@ -48,7 +48,17 @@ except ImportError:   # nạp riêng file này (test): nạp season_core.py / fi
     decor.more = more
     wear = _load_side("kotoba_wear_core", "wear_core.py")
     wear.more = more
-    backup = _load_side("kotoba_backup_core", "backup_core.py")
+    # 1.33.3: backup_core giữ trạng thái chung (cổng đồng bộ, dữ liệu chờ trả lại sau đồng bộ — F06) → cùng một module với
+    # `import backup_core` của sync_core / guest_core… khi chạy test từ thư mục add-on (trước: hai bản riêng)
+    import sys as _sys
+    _here = os.path.dirname(os.path.abspath(__file__))
+    _bk = _sys.modules.get("backup_core")
+    if _bk is not None and os.path.dirname(os.path.abspath(getattr(_bk, "__file__", "") or "")) == _here:
+        backup = _bk
+    else:
+        backup = _load_side("kotoba_backup_core", "backup_core.py")
+        if _bk is None and any(os.path.abspath(p or ".") == _here for p in _sys.path):
+            _sys.modules["backup_core"] = backup
     zh = _load_side("kotoba_zh_core", "zh_core.py")
 
 STAGES = ["Hạt giống", "Mầm", "Cây non", "Ra hoa", "Ra quả"]
@@ -2866,10 +2876,8 @@ class GardenState:
     def _read(self) -> Any:
         col = self._col()
         if col is not None:
-            try:
-                stored = col.get_config(CONFIG_KEY, None)
-            except Exception:
-                stored = None
+            # 1.33.3 (audit 17/11 F01): đọc lỗi → ReadFailed (trước: coi như chưa có → lấy file sao lưu cũ của máy / ví 0 xu)
+            stored = backup.read_config(col, CONFIG_KEY)
             if isinstance(stored, dict):
                 return stored
         # 1.23 (KB-02): hồ sơ mới không nhận ví của hồ sơ khác trên cùng máy (file phải đúng chủ)
@@ -2889,26 +2897,38 @@ class GardenState:
         # kiểu làm merge_ext ném lỗi → mất hết đồ mới + vùng mới). Nay ghi lại khoá nào đọc hỏng (`_damaged`); `save()` từ
         # chối ghi khi có khoá hỏng: vườn tạm chỉ xem, dữ liệu trong collection còn nguyên cho bản sửa lỗi đọc lại.
         damaged: list[str] = []
+        unread: list[str] = []          # 1.33.3: câu giải thích của lần đọc lỗi (Anki ném lỗi / còn chờ trả lại sau đồng bộ)
 
         def broke(key: str, err: Exception) -> None:
             damaged.append(key)
             print(f"[kotoba_batake] đọc {key}: {type(err).__name__}: {err}")
 
-        stored = self._read()
+        def rd(fn: Any) -> Any:
+            # 1.33.3 (audit 17/11 F01): khoá đọc lỗi (Anki ném lỗi, đọc lại vẫn lỗi) = khoá hỏng: phần đó tạm là giá trị
+            # mặc định để vườn vẫn mở, `save()` từ chối ghi (không ghi giá trị mặc định đè dữ liệu thật)
+            try:
+                return fn()
+            except backup.ReadFailed as err:
+                broke(err.key, err)
+                unread.append(str(err))
+                return None
+
+        stored = rd(self._read)
         if not isinstance(stored, dict):
             stored = {}
-        ext = self._read_ext()
+        wallet_mob = stored.get("mob")
+        ext = rd(self._read_ext)
         try:
             stored = merge_ext(stored, ext)
         except (ValueError, AttributeError, TypeError, KeyError) as err:
             broke(EXT_KEY, err)
-        store = self._read_season()
+        store = rd(self._read_season)
         try:
             stored = merge_season(stored, store)
             data["season"] = season.clean_season(store)
         except (ValueError, AttributeError, TypeError, KeyError) as err:
             broke(SEASON_KEY, err)
-        nha = self._read_nha()      # 1.24: nhà 3 gian
+        nha = rd(self._read_nha)      # 1.24: nhà 3 gian
         try:
             stored = merge_nha(stored, nha)
         except (ValueError, AttributeError, TypeError, KeyError) as err:
@@ -2931,8 +2951,10 @@ class GardenState:
             data["quest"] = _clean_quest(stored.get("quest"))
         except (ValueError, AttributeError, TypeError, KeyError) as err:
             broke(CONFIG_KEY, err)
-        data["mobile"] = clean_mobile(self._read_mobile())
-        more_raw = self._read_more()
+        mob_raw = rd(self._read_mobile)
+        data["mobile"] = clean_mobile(mob_raw)
+        self._mobile_seq(data, mob_raw, wallet_mob)
+        more_raw = rd(self._read_more)
         data["more"] = more.clean_more(more_raw, CRAFT_PALETTE)
         # 1.22: giống cây tự vẽ + luật gieo của chúng (khoá "myseeds", xem share_core)
         data["more"][share.MYSEED_KEY] = share.clean_myseeds(more_raw.get(share.MYSEED_KEY) if isinstance(more_raw, dict) else None)
@@ -2965,7 +2987,10 @@ class GardenState:
                 data["home"][sid] = []
             broke(NHA_KEY, err)
         if damaged:
-            data["_damaged"] = damaged
+            data["_damaged"] = sorted(set(damaged))
+            if unread:
+                data["_damaged_msg"] = unread[0]
+        self._dmg = data.get("_damaged_msg") or (LOAD_DAMAGED if damaged else "")
         data["more_view"] = self._more_view(data)
         if self.on_load is not None:
             try:
@@ -2973,6 +2998,46 @@ class GardenState:
             except Exception as err:   # không để móc Undo làm hỏng việc đọc ví
                 print(f"[kotoba_batake] on_load: {err}")
         return data
+
+    # 1.33.3 (audit 17/11 F02): sổ bù xu (MOBILE_KEY) và ví (CONFIG_KEY) là hai khoá, Anki ghi từng khoá một. Anki tắt đột
+    # ngột đúng giữa hai lần ghi → sổ đã ghi "đã trả xu" mà ví chưa nhận → lần bù sau không trả lại (mất xu). Mỗi lần sổ
+    # đổi: sổ mang số lần lưu "n" + bản trước đó "prev", ví mang {"mob": {"n"}}. Đọc thấy sổ đi trước ví đúng một lần lưu
+    # → dùng "prev" (lượt ôn đó chưa được trả, lần bù sau trả đúng một lần). Bản ≤ 1.33.2 bỏ hai khoá phụ này → không so.
+    MOB_SEQ, MOB_PREV, WALLET_MOB = "n", "prev", "mob"
+
+    @staticmethod
+    def _seq(v: Any) -> int | None:
+        return v if isinstance(v, int) and not isinstance(v, bool) and v >= 0 else None
+
+    def _mobile_seq(self, data: dict[str, Any], raw: Any, wallet_mob: Any) -> None:
+        seq_l = self._seq(raw.get(self.MOB_SEQ)) if isinstance(raw, dict) else None
+        seq_w = self._seq(wallet_mob.get("n")) if isinstance(wallet_mob, dict) else None
+        if seq_w is None and seq_l == 1:
+            seq_w = 0           # ví chưa có dấu (lần lưu đầu của 1.33.3, hoặc bản cũ vừa ghi ví) = trước lần lưu số 1
+        if (data["mobile"] is not None and seq_l is not None and seq_w is not None and seq_l == seq_w + 1
+                and isinstance(raw.get(self.MOB_PREV), dict)):
+            prev = clean_mobile(raw[self.MOB_PREV])
+            if prev is not None:
+                print("[kotoba_batake] sổ bù xu: lần lưu trước dừng giữa sổ và ví → dùng sổ trước đó")
+                data["mobile"] = prev
+                seq_l = seq_w
+                raw = None
+        data["_mseq"] = seq_l if seq_l is not None else (seq_w or 0)
+        data["_mob0"] = json.loads(json.dumps(data["mobile"])) if data["mobile"] is not None else None
+        data["_mobraw"] = raw if isinstance(raw, dict) else None
+
+    def _mobile_out(self, full: dict[str, Any], mobile: dict[str, Any]) -> tuple[dict[str, Any], int]:
+        """Sổ bù xu để ghi + số lần lưu của nó (xem _mobile_seq)."""
+        seq = self._seq(full.get("_mseq")) or 0
+        now = clean_mobile(mobile) or mobile
+        mob0, raw = full.get("_mob0"), full.get("_mobraw")
+        if mob0 is not None and now == mob0 and isinstance(raw, dict):
+            return raw, seq                     # sổ không đổi: ghi y như đang có (lần lưu bỏ qua khoá này)
+        seq += 1
+        out = dict(now, **{self.MOB_SEQ: seq})
+        if mob0 is not None:
+            out[self.MOB_PREV] = mob0
+        return out, seq
 
     # -- 1.14 -----------------------------------------------------------------
     today_override: int | None = None    # cho test (không có collection)
@@ -2997,16 +3062,10 @@ class GardenState:
         """Đọc MORE_KEY; như EXT_KEY: collection có ví mà chưa có khoá này thì không lấy file sao lưu."""
         col = self._col()
         if col is not None:
-            try:
-                stored = col.get_config(MORE_KEY, None)
-            except Exception:
-                stored = None
+            stored = backup.read_config(col, MORE_KEY)       # 1.33.3: đọc lỗi → ReadFailed
             if isinstance(stored, dict):
                 return stored
-            try:
-                has_wallet = isinstance(col.get_config(CONFIG_KEY, None), dict)
-            except Exception:
-                has_wallet = False
+            has_wallet = isinstance(backup.read_config(col, CONFIG_KEY), dict)
             if has_wallet:
                 return None
         return read_backup(self._more_path(), col)
@@ -3018,16 +3077,10 @@ class GardenState:
         """1.24: đọc NHA_KEY; như EXT_KEY: collection có ví mà chưa có khoá này thì không lấy file sao lưu."""
         col = self._col()
         if col is not None:
-            try:
-                stored = col.get_config(NHA_KEY, None)
-            except Exception:
-                stored = None
+            stored = backup.read_config(col, NHA_KEY)       # 1.33.3: đọc lỗi → ReadFailed
             if isinstance(stored, dict):
                 return stored
-            try:
-                has_wallet = isinstance(col.get_config(CONFIG_KEY, None), dict)
-            except Exception:
-                has_wallet = False
+            has_wallet = isinstance(backup.read_config(col, CONFIG_KEY), dict)
             if has_wallet:
                 return None
         return read_backup(self._nha_path(), col)
@@ -3040,10 +3093,7 @@ class GardenState:
         máy này không khớp revlog đã đồng bộ, dùng lại có thể trả trùng."""
         col = self._col()
         if col is not None:
-            try:
-                return col.get_config(MOBILE_KEY, None)
-            except Exception:
-                return None
+            return backup.read_config(col, MOBILE_KEY)        # 1.33.3: đọc lỗi → ReadFailed (không lập sổ mới đè sổ cũ)
         try:
             with open(self._mobile_path(), encoding="utf-8") as f:
                 return json.load(f)
@@ -3056,16 +3106,10 @@ class GardenState:
     def _read_ext(self) -> Any:
         col = self._col()
         if col is not None:
-            try:
-                stored = col.get_config(EXT_KEY, None)
-            except Exception:
-                stored = None
+            stored = backup.read_config(col, EXT_KEY)       # 1.33.3: đọc lỗi → ReadFailed
             if isinstance(stored, dict):
                 return stored
-            try:
-                has_wallet = isinstance(col.get_config(CONFIG_KEY, None), dict)
-            except Exception:
-                has_wallet = False
+            has_wallet = isinstance(backup.read_config(col, CONFIG_KEY), dict)
             if has_wallet:
                 # collection có ví nhưng chưa có phần mới (vd. vừa tải về từ máy chưa cài 1.7):
                 # không lấy file sao lưu của máy này, tránh nhân đôi đồ mà không trừ xu
@@ -3079,16 +3123,10 @@ class GardenState:
         """Đọc SEASON_KEY; như EXT_KEY: collection có ví mà chưa có khoá này thì không lấy file sao lưu."""
         col = self._col()
         if col is not None:
-            try:
-                stored = col.get_config(SEASON_KEY, None)
-            except Exception:
-                stored = None
+            stored = backup.read_config(col, SEASON_KEY)       # 1.33.3: đọc lỗi → ReadFailed
             if isinstance(stored, dict):
                 return stored
-            try:
-                has_wallet = isinstance(col.get_config(CONFIG_KEY, None), dict)
-            except Exception:
-                has_wallet = False
+            has_wallet = isinstance(backup.read_config(col, CONFIG_KEY), dict)
             if has_wallet:
                 return None
         return read_backup(self._season_path(), col)
@@ -3101,43 +3139,58 @@ class GardenState:
         lưu chính → lỗi file ném OSError như cũ."""
         col = self._col()
         if col is None:
-            for _key, path, payload in writes:
-                write_backup(path, payload, None)
+            for w in writes:
+                write_backup(w[1], w[2], None)
             return
-        commit_config(col, [(key, payload) for key, _path, payload in writes])
-        for _key, path, payload in writes:
+        commit_config(col, [(w[0], w[2]) for w in writes])
+        for w in writes:
+            # 1.33.3: phần thứ tư = file sao lưu ghi chủ (mặc định); Hộp sưu tầm ghi không chủ như trước
+            owner = len(w) < 4 or bool(w[3])
             try:
-                write_backup(path, backup_payload(payload, col), col)
+                write_backup(w[1], backup_payload(w[2], col) if owner else w[2], col)
             except OSError as err:
                 print(f"[kotoba_batake] backup file: {err}")
 
-    def save(self, data: dict[str, Any], px: dict[str, str] | None = None) -> None:
+    def save(self, data: dict[str, Any], px: dict[str, str] | None = None, extra: list[tuple[Any, ...]] | None = None) -> None:
         """Ghi ví (phần bản 1.6.1 hiểu) vào CONFIG_KEY, phần của 1.7 vào EXT_KEY, Mùa & Lễ hội vào SEASON_KEY… `px` (1.31.1):
         điểm ảnh món tự làm ghi cùng lần lưu (PX_KEY) — hình mới và xu trả cho nó thành công / thất bại cùng nhau.
-        Thứ tự: điểm ảnh, các tầng đồ, sổ bù xu, ví sau cùng (lỗi giữa chừng không bao giờ trừ xu mà chưa có món)."""
+        Thứ tự: điểm ảnh, các tầng đồ, sổ bù xu, ví sau cùng (lỗi giữa chừng không bao giờ trừ xu mà chưa có món).
+        `extra` (1.33.3, audit 17/11 F02 / F07): khoá của kho khác ghi CÙNG lần lưu, trước ví — [(khoá, file sao lưu, dữ
+        liệu[, file ghi chủ])]: sổ phiên gánh hàng rong + xu trả, đồ đã nhặt + xu thưởng, câu báo đã trả lời + xu thưởng
+        thành công / thất bại cùng nhau (trước: lưu riêng → đã ghi tiến độ mà ví lỗi thì mất thưởng; đã trừ xu mà sổ phiên
+        lỗi thì mua lại bị trừ lần hai)."""
         if data.get("_damaged"):
             # 1.31.2: lần đọc tạo ra `data` có khoá hỏng → phần đó đang là giá trị mặc định; ghi là đè mất dữ liệu thật
-            raise StoreError(LOAD_DAMAGED)
+            raise StoreError(data.get("_damaged_msg") or LOAD_DAMAGED)
         if isinstance(data.get("home"), dict):
             _canon_order(data["home"])
         mobile = data.get("mobile")
         full = data
-        data, more_store = split_more(full)
+        data = {k: v for k, v in full.items() if k not in ("_mseq", "_mob0", "_mobraw", "_damaged_msg")}
+        mob_seq = None
+        if isinstance(mobile, dict):
+            mobile, mob_seq = self._mobile_out(full, mobile)
+            data[self.WALLET_MOB] = {"n": mob_seq}
+        data, more_store = split_more(data)
         data, nha_store = split_nha(data)      # 1.24: trước các tầng cũ (đồ mới / gian bên không lọt vào EXT, SEASON)
+        # 1.33.3: đọc lại để giữ khoá lạ của bản sau — đọc lỗi thì không lưu (ReadFailed → StoreError ở dưới)
         try:
-            keep_foreign_nha(nha_store, self._read_nha())
-        except (ValueError, AttributeError, TypeError):
-            pass
-        rest, store = split_season(data)
-        try:
-            keep_foreign_season(store, self._read_season())
-        except (ValueError, AttributeError, TypeError):
-            pass
-        wallet, ext = split_ext(rest)
-        try:
-            keep_foreign_more(more_store, self._read_more())
-        except (ValueError, AttributeError, TypeError):
-            pass
+            try:
+                keep_foreign_nha(nha_store, self._read_nha())
+            except (ValueError, AttributeError, TypeError):
+                pass
+            rest, store = split_season(data)
+            try:
+                keep_foreign_season(store, self._read_season())
+            except (ValueError, AttributeError, TypeError):
+                pass
+            wallet, ext = split_ext(rest)
+            try:
+                keep_foreign_more(more_store, self._read_more())
+            except (ValueError, AttributeError, TypeError):
+                pass
+        except backup.ReadFailed as err:
+            raise StoreError(str(err)) from None
         writes: list[tuple[str, str, Any]] = []
         if px is not None:
             writes.append((PX_KEY, self._px_file(), dict(px)))
@@ -3146,7 +3199,14 @@ class GardenState:
         if isinstance(mobile, dict):
             writes.append((MOBILE_KEY, self._mobile_path(), mobile))
         writes.append((CONFIG_KEY, self.path, wallet))
+        # 1.33.3: sổ của kho khác (đã nhặt, câu báo đã trả lời, phiên gánh hàng đã mua) sau ví — cùng một lần lưu (lỗi ghi
+        # → trả hết về như cũ); Anki tắt đột ngột giữa hai lần ghi thì lệch về phía người dùng (đã có xu / món, sổ chưa
+        # ghi → nhặt / trả lời / mua lại được), không bao giờ mất xu
+        writes += list(extra or [])
         self._commit(writes)
+        if isinstance(mobile, dict):
+            full["_mseq"], full["_mobraw"] = mob_seq, mobile
+            full["_mob0"] = json.loads(json.dumps(clean_mobile(mobile)))
         # 1.31.1: móc Undo chỉ đánh dấu "đã trả" khi ví đã thật sự ghi được (trước: đánh dấu trước khi ghi)
         if self.on_save is not None:
             try:
@@ -3163,15 +3223,19 @@ class GardenState:
         """File sao lưu điểm ảnh đang ghi (1.31.1: trong thư mục của hồ sơ)."""
         return profile_path(self._px_file(), self._col())
 
-    def load_px(self) -> dict[str, str]:
-        """Điểm ảnh (đã nén) của các món tự làm: {id: mã}."""
+    def load_px(self, strict: bool = True) -> dict[str, str]:
+        """Điểm ảnh (đã nén) của các món tự làm: {id: mã}. 1.33.3 (audit 17/11 F01): đọc lỗi → StoreError khi đọc để sửa
+        rồi ghi (`strict`, mặc định; trước: lấy bản sao lưu cũ của máy rồi ghi đè hình mới từ máy khác); chỉ để vẽ danh mục
+        (`strict=False`) → {} (món tự làm tạm không có hình, không ghi gì)."""
         stored: Any = None
         col = self._col()
         if col is not None:
             try:
-                stored = col.get_config(PX_KEY, None)
-            except Exception:
-                stored = None
+                stored = backup.read_config(col, PX_KEY)
+            except backup.ReadFailed as err:
+                if strict:
+                    raise StoreError(str(err)) from None
+                return {}
         if not isinstance(stored, dict):
             # 1.25.9: file sao lưu chỉ nhận khi ghi đúng chủ (như ví / nhà); 1.31.1: thư mục hồ sơ trước, file chung cũ sau
             stored = read_backup(self._px_file(), col)
@@ -3189,9 +3253,9 @@ class GardenState:
         if col is None:
             return False
         try:
-            if isinstance(col.get_config(CONFIG_KEY, None), dict):
+            if isinstance(backup.read_config(col, CONFIG_KEY), dict):
                 return False
-        except Exception:
+        except backup.ReadFailed:
             return False
         old = read_backup(self.path, col)
         if not isinstance(old, dict):
@@ -3292,11 +3356,11 @@ class GardenState:
             "wallet": data,
         }
 
-    def add_coins(self, n: int) -> dict[str, Any]:
-        """Cộng xu từ báo / chép chính tả (đã tính sẵn và giới hạn trong paper_core)."""
+    def add_coins(self, n: int, extra: list[tuple[Any, ...]] | None = None) -> dict[str, Any]:
+        """Cộng xu từ báo / chép chính tả (đã tính sẵn và giới hạn trong paper_core). `extra`: sổ tiến độ ghi cùng lần."""
         data = self.load()
         data["coins"] += max(0, min(int(n), 100))
-        self.save(data)
+        self.save(data, extra=extra)
         return data
 
     def claim_goal(self, day: int, reviews: int, goal: int, bonus: int) -> int:
@@ -3392,19 +3456,20 @@ class GardenState:
 
     # -- 1.28: Hộp sưu tầm, gánh hàng rong -----------------------------------------------
 
-    def find_reward(self, coins: int = 0, gift: str | None = None) -> dict[str, Any]:
-        """Nhặt trùng → cộng xu; đủ một bộ sưu tầm → tặng món trang trí (vào Kho đồ)."""
+    def find_reward(self, coins: int = 0, gift: str | None = None, extra: list[tuple[Any, ...]] | None = None) -> dict[str, Any]:
+        """Nhặt trùng → cộng xu; đủ một bộ sưu tầm → tặng món trang trí (vào Kho đồ). `extra` (1.33.3): sổ "đã nhặt" ghi
+        cùng lần với xu / quà."""
         data = self.load()
         if coins > 0:
             data["coins"] += int(coins)
         if gift and gift in FIND_ITEMS:
             own = data["home"]["owned"]
             own[gift] = own.get(gift, 0) + 1
-        if coins > 0 or gift:
-            self.save(data)
+        if coins > 0 or gift or extra:
+            self.save(data, extra=extra)
         return data
 
-    def buy_at(self, item_id: str, price: int) -> dict[str, Any]:
+    def buy_at(self, item_id: str, price: int, extra: list[tuple[Any, ...]] | None = None) -> dict[str, Any]:
         """Gánh hàng rong: mua món cửa hàng (đã giảm giá) hoặc món chỉ có ở gánh hàng, theo giá đã tính sẵn."""
         if item_id not in CATALOG:
             raise HomeError("Không có món này.")
@@ -3416,15 +3481,15 @@ class GardenState:
         self._pay(data, int(price))
         own = data["home"]["owned"]
         own[item_id] = own.get(item_id, 0) + 1
-        self.save(data)
+        self.save(data, extra=extra)          # 1.33.3 (F07): sổ phiên gánh hàng ghi cùng lần với xu
         return data
 
     @_more_errors
-    def seed_buy_at(self, sid: str, price: int) -> dict[str, Any]:
+    def seed_buy_at(self, sid: str, price: int, extra: list[tuple[Any, ...]] | None = None) -> dict[str, Any]:
         data = self.load()
         more.buy_seed(data["more"], sid)
         self._pay(data, int(price))
-        self.save(data)
+        self.save(data, extra=extra)
         return data
 
     def build(self, expect: int | None = None) -> dict[str, Any]:
@@ -4110,3 +4175,31 @@ class GardenState:
             data = self.myseed_save({"name": p["name"], "st": p["st"]})
         data["share_t"] = p["t"]
         return data
+
+
+def _guard_damaged(fn: Any) -> Any:
+    """1.33.3 (audit 17/11 F01): thao tác của ví chạy trên dữ liệu đọc chưa trọn (`_damaged`) → báo đúng lý do (đọc lỗi /
+    còn chờ trả lại sau đồng bộ) thay vì câu sai của phần mặc định ("Thiếu 1.000 xu", "chưa có thú này"…)."""
+    def wrap(self: Any, *a: Any, **kw: Any) -> Any:
+        depth = getattr(self, "_dmg_depth", 0)
+        if not depth:
+            self._dmg = ""
+        self._dmg_depth = depth + 1
+        try:
+            return fn(self, *a, **kw)
+        except StoreError:
+            raise
+        except HomeError:
+            if getattr(self, "_dmg", ""):
+                raise StoreError(self._dmg) from None
+            raise
+        finally:
+            self._dmg_depth = depth
+    wrap.__name__ = fn.__name__
+    wrap.__doc__ = fn.__doc__
+    return wrap
+
+
+for _name, _fn in list(vars(GardenState).items()):
+    if callable(_fn) and not _name.startswith("_") and _name not in ("load", "save", "load_px", "save_px", "migrate"):
+        setattr(GardenState, _name, _guard_damaged(_fn))

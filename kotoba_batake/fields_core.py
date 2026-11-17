@@ -479,12 +479,11 @@ class FieldStore:
             return None
 
     def _raw(self) -> Any:
+        """1.33.3 (audit 17/11 F01): đọc lỗi → backup.ReadFailed (trước: None = chưa cấu hình gì; lưu một loại note lúc đó
+        xoá cấu hình mọi loại note khác)."""
         col = self._col()
         if col is not None:
-            try:
-                return col.get_config(KEY, None)
-            except Exception:
-                return None
+            return backup.read_config(col, KEY)
         try:
             with open(self.path, encoding="utf-8") as f:
                 return json.load(f)
@@ -492,9 +491,17 @@ class FieldStore:
             return None
 
     def load(self) -> dict[str, Any]:
-        return clean_store(self._raw())
+        """Đọc lỗi → cấu hình trống có dấu `_damaged` (vườn vẫn mở, đoán trường như chưa cấu hình); `save()` từ chối."""
+        try:
+            return clean_store(self._raw())
+        except backup.ReadFailed:
+            out = clean_store(None)
+            out["_damaged"] = True
+            return out
 
     def save(self, store: dict[str, Any]) -> None:
+        if store.get("_damaged"):
+            raise backup.ReadFailed(KEY)
         payload = keep_foreign(to_raw(store), self._raw())
         col = self._col()
         if col is not None:

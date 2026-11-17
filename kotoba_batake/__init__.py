@@ -214,10 +214,22 @@ def _library(lang: str = "ja") -> paper.Library | None:
     global _wav_checked
     cfg = config()
     if lang in ("en", "vi", "zh", "ko"):
-        if not ai.clean_key(cfg.get("gemini_key")):
-            return None
         # chưa có thư mục thì Library coi như chưa có số nào (thư mục chỉ tạo khi Gemini viết số đầu tiên)
         base = AI_DIRS[lang]
+        if not ai.clean_key(cfg.get("gemini_key")):
+            # 1.33.3 (audit 17/11 F04): xoá khoá Gemini (hoặc chưa dán lại) mà máy còn số báo đã viết → vẫn đọc được (câu
+            # hỏi, chép chính tả, giọng đọc đã có, tiến độ); khoá chỉ cần để viết số mới. Trước: Kệ báo đưa về phần dán
+            # khoá dù thông báo nói "các số báo cũ vẫn còn trong kệ".
+            if not os.path.isdir(base):
+                return None
+            lib = _libraries.get(base) or paper.Library(base, lang)
+            try:
+                if not lib.issues():
+                    return None
+            except Exception:
+                return None
+            _libraries[base] = lib
+            return lib
         if base not in _libraries:
             _libraries[base] = paper.Library(base, lang)
         return _libraries[base]
@@ -2613,6 +2625,8 @@ def finds_view(wallet: dict[str, Any], reviews: int, save: bool = True) -> dict[
     today = cal_today()
     zones = list((wallet.get("home") or {}).get("zones") or [])
     ev = EVENTS.load()
+    if ev.get("_damaged"):           # 1.33.3: sổ đọc lỗi — vẽ như trống, không ghi, không tặng lại quà
+        save = False
     if finds.ensure_day(ev, zones, today) and save and mw.col is not None:
         EVENTS.save(ev)
     if save and mw.col is not None:
@@ -2739,6 +2753,9 @@ def _note_mod(nid: int) -> str | None:
         return None
 
 
+EDIT_SAVE_WINDOW = 3.0      # 1.33.3: giây sau khi đóng cửa sổ Sửa thẻ mà lần lưu cuối của trình sửa còn có thể tới
+
+
 def _edit_closed(nid: int) -> None:
     """1.32.2: cửa sổ Sửa thẻ đã lưu xong và đóng (hoặc chuyển sang note khác). Vườn đang mở và đang ôn đúng note đó → dựng
     lại thẻ. Lần lưu cuối của trình sửa có thể xong sau lúc này → móc operation_did_execute (_on_op) bắt lại."""
@@ -2747,7 +2764,9 @@ def _edit_closed(nid: int) -> None:
         return
     try:
         if d._card is not None and int(d._card.nid) == int(nid):
-            d._edit_wait = True
+            # 1.33.3 (audit P3): nhớ lúc đóng (không phải True mãi): đóng mà không đổi gì, lát sau Undo ở cửa sổ chính thì
+            # phải báo "Thẻ vừa được sửa." chứ không phải "Đã lưu thẻ."
+            d._edit_wait = time.time()
             d._note_changed(saved=True)
         elif not d._busy and _col_ready():
             d.refresh()            # thẻ đã chấm xong trong lúc sửa: chỉ cập nhật chữ / nghĩa của cây
@@ -2755,14 +2774,29 @@ def _edit_closed(nid: int) -> None:
         _warn("sau khi sửa thẻ", err)
 
 
+def _card_sig(cid: int) -> tuple[Any, ...] | None:
+    """1.33.3 (audit 17/11 F05): dấu trạng thái lịch ôn của thẻ — các cột lịch ôn + dòng revlog mới nhất (None nếu thẻ không
+    còn). Không chỉ cards.mod: nó tính theo giây, thẻ được chấm ở chỗ khác trong cùng giây với lúc hiện ra sẽ không nhận ra."""
+    row = mw.col.db.first("select mod, type, queue, due, ivl, factor, reps, lapses, left, odue, odid, did from cards where id = ?",
+                          int(cid))
+    if not row:
+        return None
+    return tuple(row) + (_last_rev(cid),)
+
+
 def _card_changed(card: Any) -> bool:
     """1.31.2: thẻ đang hiện trong bảng ôn đã bị đổi / xoá ở chỗ khác từ lúc lấy ra (chấm ở cửa sổ ôn của Anki, lượt ôn
-    của điện thoại vừa đồng bộ về, sửa lịch / xoá ở Trình duyệt thẻ)."""
+    của điện thoại vừa đồng bộ về, sửa lịch / xoá ở Trình duyệt thẻ). 1.33.3: so dấu lúc hiện ra (`_kb_sig`)."""
     try:
-        mod = mw.col.db.scalar("select mod from cards where id = ?", int(card.id))
+        now = _card_sig(card.id)
     except Exception:
         return False
-    return mod is None or int(mod) != int(card.mod)
+    if now is None:
+        return True
+    sig0 = getattr(card, "_kb_sig", None)
+    if sig0 is None:
+        return int(now[0]) != int(card.mod)
+    return now != sig0
 
 
 class GardenDialog(QDialog):
@@ -2893,7 +2927,7 @@ class GardenDialog(QDialog):
                 "music_volume": float(cfg["music_volume"]),
                 "game_daily_coins": int(cfg["game_daily_coins"]),
             }
-            data["catalog"] = core.home_catalog(data["wallet"], STATE.load_px())
+            data["catalog"] = core.home_catalog(data["wallet"], STATE.load_px(strict=False))
             try:
                 today = _daily_stats()
             except Exception:
@@ -3045,6 +3079,10 @@ class GardenDialog(QDialog):
         top = queued.cards[0]
         card = mw.col.get_card(top.card.id)
         card.start_timer()
+        try:
+            card._kb_sig = _card_sig(card.id)      # 1.33.3 (F05): dấu lúc hiện ra
+        except Exception:
+            pass
         self._card = card
         self._shown_card = card
         self._states = top.states
@@ -3271,7 +3309,7 @@ class GardenDialog(QDialog):
             return
         if mod == self._note_mod:
             return
-        saved = saved or self._edit_wait
+        saved = saved or bool(self._edit_wait and time.time() - float(self._edit_wait) < EDIT_SAVE_WINDOW)
         self._edit_wait = False
         if _card_changed(card):            # thẻ cũng vừa được chấm / đổi lịch ở chỗ khác: như 1.31.2
             self._js("toast", "Thẻ này vừa được ôn hoặc sửa ở chỗ khác — sang thẻ kế tiếp.")
@@ -3632,13 +3670,22 @@ class GardenDialog(QDialog):
             return
         # 1.31.1 (audit 14/11 F06): lưu lỗi → báo lỗi, không cộng xu (trước: lỗi ghi bị nuốt, câu trả lời không được lưu
         # mà vẫn cộng xu); lưu xong mà cộng xu lỗi → báo, câu trả lời vẫn đã lưu
+        # 1.33.3 (audit 17/11 F02): có xu thưởng → sổ tiến độ + xu ghi CÙNG một lần lưu (trước: sổ ghi trước, ví lỗi thì
+        # câu đã tính "đã trả lời" mà không bao giờ nhận được xu)
         try:
-            if group == "paper":
-                save_paper_states(lang, saved, book)
+            if res["gained"]:
+                if group == "paper":
+                    extra = [_paper_state(lang).write(saved)] + ([BOOK.write(book)] if book is not None and lang == "ja" else [])
+                else:
+                    extra = [PAPER.write(saved)]
+                res["wallet"] = STATE.add_coins(res["gained"], extra=extra)
             else:
-                PAPER.save(saved)
-            res["wallet"] = STATE.add_coins(res["gained"]) if res["gained"] else STATE.load()
-        except core.HomeError as err:
+                if group == "paper":
+                    save_paper_states(lang, saved, book)
+                else:
+                    PAPER.save(saved)
+                res["wallet"] = STATE.load()
+        except (core.HomeError, backup_core.StoreFailed) as err:
             self._js("paperError", str(err))
             return
         quests = None
@@ -3700,7 +3747,9 @@ class GardenDialog(QDialog):
                     later = {k: v for k, v in ai_later(cfg0).items() if k in new}
                     # 1.33.2: hôm nay đã viết xong số của báo khác → báo vừa thêm viết từ mai (tự viết như mọi báo,
                     # không chờ "Bắt đầu viết" — còn cả hôm nay để chọn trình độ / deck)
-                    if _wrote_today(before):
+                    # 1.33.3 (audit 17/11 F03): xét MỌI báo đã viết xong hôm nay, không chỉ các báo đang tick (trước: bỏ tick
+                    # báo đã viết → lựa chọn rỗng / Chỉ tiếng Việt → tick báo khác là viết được ngay trong ngày)
+                    if _wrote_today(list(AI_DIRS)):
                         today = ai_today()
                         tomorrow = (datetime.date.fromisoformat(today) + datetime.timedelta(days=1)).isoformat()
                         conf = confirmed_sources(cfg0)
@@ -4157,7 +4206,7 @@ class GardenDialog(QDialog):
         out: dict[str, Any] = {"wallet": data, "action": parts[0],
                                "sub": parts[1] if len(parts) > 2 or parts[0] in ("theme", "repair") else ""}
         if parts[0] in ("craft", "myseed", "tile", "mywear"):
-            out["catalog"] = core.home_catalog(data, STATE.load_px())
+            out["catalog"] = core.home_catalog(data, STATE.load_px(strict=False))
         if parts[0] in LIFE_HOME_ACTIONS:
             # 1.30: đặt / chuyển / cất đồ, mở vùng / gian, thú đổi chỗ → việc StackChan làm được + gợi ý trong sổ đổi ngay
             # (trước đó phải mở lại vườn mới thấy). Không gửi lại "defs" (danh mục 67 việc không đổi).
@@ -4190,8 +4239,9 @@ class GardenDialog(QDialog):
                 gift = res["reward"] if res["set_done"] else None
                 if gift and gift not in core.FIND_ITEMS:
                     raise finds.FindError("Quà của bộ này chưa có trong danh mục.")
-                EVENTS.save(ev)                       # ghi "đã nhặt" trước: lỗi ở bước sau không cho nhặt lại hai lần
-                wallet = STATE.find_reward(res["coins"], gift)
+                # 1.33.3 (audit 17/11 F02): "đã nhặt" + xu / quà ghi CÙNG một lần lưu (trước: ghi "đã nhặt" trước, ví lỗi thì
+                # mất xu mà không nhặt lại được) — lỗi thì không đổi gì, nhặt lại được
+                wallet = STATE.find_reward(res["coins"], gift, extra=[EVENTS.write(ev)])
                 box = finds.box_view(ev, zones, today, {k: v["name"] for k, v in core.FIND_ITEMS.items()})
                 st = next(x for x in box["sets"] if x["scene"] == parts[3])
                 out = {"ok": True, "act": "pick", "k": int(parts[2]), "scene": parts[3],
@@ -4211,19 +4261,21 @@ class GardenDialog(QDialog):
                     raise finds.FindError("Phiên này không có món đó.")
                 if g["bought"]:
                     raise finds.FindError("Món này phiên này đã mua rồi.")
-                if g["kind"] == "seed":
-                    wallet = STATE.seed_buy_at(g["id"], g["now"])
-                else:
-                    wallet = STATE.buy_at(g["id"], g["now"])
+                # 1.33.3 (audit 17/11 F07): sổ phiên ("đã mua") + món + xu ghi CÙNG một lần lưu (trước: trừ xu trước, ghi sổ
+                # phiên lỗi → giao diện báo lỗi mà xu đã trừ, mua lại bị trừ lần hai)
                 ds = today.isoformat()
                 ev["ped"][ds] = sorted(set(ev["ped"].get(ds) or []) | {g["slot"]})
                 finds.trim(ev, today)
-                EVENTS.save(ev)
+                extra = [EVENTS.write(ev)]
+                if g["kind"] == "seed":
+                    wallet = STATE.seed_buy_at(g["id"], g["now"], extra=extra)
+                else:
+                    wallet = STATE.buy_at(g["id"], g["now"], extra=extra)
                 out = {"ok": True, "act": "buy", "slot": g["slot"], "id": g["id"], "kind": g["kind"], "name": g["name"],
                        "paid": g["now"], "scene": g.get("scene", ""), "place": g.get("place", "")}
             else:
                 return
-        except (finds.FindError, core.HomeError) as err:
+        except (finds.FindError, core.HomeError, backup_core.StoreFailed) as err:     # 1.33.3: + lỗi đọc / ghi của Anki
             out = {"ok": False, "msg": str(err)}
             wallet = None
         except Exception as err:
@@ -4311,7 +4363,7 @@ class GardenDialog(QDialog):
                     self.refresh()
                 self._js("home", {"wallet": data, "action": "share", "sub": data.get("share_t"),
                                   "id": data.get("craft_id") or data.get("zone_id") or data.get("myseed_id"),
-                                  "catalog": core.home_catalog(data, STATE.load_px())})
+                                  "catalog": core.home_catalog(data, STATE.load_px(strict=False))})
         except core.HomeError as err:
             if what == "peek":
                 self._js("sharePeek", {"error": str(err)})
@@ -4644,7 +4696,8 @@ class GardenDialog(QDialog):
                 self._js("gameModes", {"games": store["games"], "lang": store["games_lang"]})
         except Exception as err:     # 1.31.1: cả lỗi ghi collection của Anki (DBError) → báo trong bảng, không bật hộp lỗi
             _warn("fields", err)
-            self._js("fieldsError", "Không lưu được cấu hình.")
+            # 1.33.3: Anki đọc / ghi lỗi → câu giải thích của lớp lưu ("chưa lưu thay đổi này… thử lại sau")
+            self._js("fieldsError", str(err) if isinstance(err, backup_core.StoreFailed) else "Không lưu được cấu hình.")
 
     # -- xưởng chế tác ---------------------------------------------------------
 
@@ -4684,7 +4737,7 @@ class GardenDialog(QDialog):
         out = {"wallet": data, "action": action, "sub": "save", "id": data.get(id_key), "rid": rid,
                "new": not payload.get("id")}
         if action != "uzone":
-            out["catalog"] = core.home_catalog(data, STATE.load_px())
+            out["catalog"] = core.home_catalog(data, STATE.load_px(strict=False))
         self._js("home", out)
 
     def _craft_error(self, msg: str, rid: str) -> None:

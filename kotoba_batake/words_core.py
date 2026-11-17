@@ -102,10 +102,7 @@ def save_src(col: Any, lang: str, decks: Any, mode: str | None = None) -> list[i
     1.25.1: `mode` "level" = Không dùng deck; chọn deck / Mọi deck thì về "deck"."""
     if lang not in LANGS:
         raise ValueError("ngôn ngữ không hỗ trợ")
-    try:
-        raw = col.get_config(SRC_KEY, None)
-    except Exception:
-        raw = None
+    raw = backup.read_config(col, SRC_KEY)       # 1.33.3: đọc lỗi → ReadFailed (không ghi đè deck của ngôn ngữ khác)
     raw = dict(raw) if isinstance(raw, dict) else {}
     keep = clean_decks(decks, _deck_exists(col))
     part = dict(raw.get(lang)) if isinstance(raw.get(lang), dict) else {}

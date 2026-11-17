@@ -241,6 +241,15 @@ var GardenFX = (function () {
   };
 
   function pick(list) { return list[Math.floor(Math.random() * list.length)]; }
+  // 1.33.3: câu StackChan theo đúng ngôn ngữ đang chọn — ngoài "Chỉ tiếng Việt" chỉ bốc câu có bản dịch (câu gốc tiếng Nhật);
+  // trước: câu chỉ có tiếng Việt ("Tưới cây thôi!") vẫn bật ra khi đang chọn tiếng Anh / Trung / Hàn / Nhật
+  function pickSay(list, lang) {
+    var L = typeof GardenLang !== "undefined" ? GardenLang : null;
+    var l = lang || (L ? L.cur() : "ja");
+    if (l === "vi") { return pick(list); }
+    var own = list.filter(function (t) { return /[\u3040-\u30ff\u3400-\u9fff]/.test(t); });
+    return pick(own.length ? own : list);
+  }
 
   // 1.32: chữ của người dùng (từ vựng, tên vùng / món tự đặt) bọc trong dấu cô lập U+2068…U+2069 — Ngôn ngữ trong vườn
   // không đổi phần này dù trùng câu tiếng Nhật của StackChan (vd. từ vựng すごい); dấu cô lập không hiện ra
@@ -777,7 +786,7 @@ var GardenFX = (function () {
       mc.width = MW * MS; mc.height = (MH + 1 + TOP) * MS;
       mc.addEventListener("click", function () {
         setMood("happy", 1400);
-        say(pick(SAY.poke));
+        say(pickSay(SAY.poke));
         play("boop");
       });
     }
@@ -845,6 +854,7 @@ var GardenFX = (function () {
     mood: function (m, ms) { setMood(m, ms); },
     _mood: function () { return mascot.mood; },   // cho test
     say: function (text, ms, lang) { say(text, ms, lang); },
+    pickSay: pickSay,      // 1.33.3: bốc câu đúng ngôn ngữ (Chợ sáng dùng cho câu cảm ơn của khách)
     effectsOn: function () { return cfg.effects && !reduced; },
     soundAllowed: function () { return cfg.sound; },
     muted: function () { return muted; },
@@ -882,7 +892,7 @@ var GardenFX = (function () {
         for (var r = 0; r < 6; r++) {
           part(potParts, { kind: "rain", x: TILE_X + 5 + Math.random() * 9, y: 6, vy: 22, life: 450, delay: 150 + r * 110 });
         }
-        setMood("sad", 1300); say(pick(SAY.again), 1300); play("again"); setCombo(0);
+        setMood("sad", 1300); say(pickSay(SAY.again), 1300); play("again"); setCombo(0);
         return;
       }
       pot.canFrom = now; pot.canTo = now + 900;
@@ -899,7 +909,7 @@ var GardenFX = (function () {
         burst(potParts, TILE_X + 9, TILE_Y + 8, 4, "sparkle", 10);
       }
       setMood("happy", 1100);
-      if (Math.random() < 0.45) { say(pick(ease === 2 ? SAY.hard : ease === 3 ? SAY.good : SAY.easy), 1100); }
+      if (Math.random() < 0.45) { say(pickSay(ease === 2 ? SAY.hard : ease === 3 ? SAY.good : SAY.easy), 1100); }
       play(ease === 2 ? "hard" : ease === 3 ? "good" : "easy");
       setCombo(combo + 1);
       if (combo > 0 && combo % 5 === 0) {
@@ -991,7 +1001,7 @@ var GardenFX = (function () {
     },
     done: function () {
       setMood("happy", 2500);
-      say(pick(SAY.done), 2200);
+      say(pickSay(SAY.done), 2200);
       play("done");
       if (cfg.effects) { confetti(potParts, PW, 30); }
       setCombo(0);

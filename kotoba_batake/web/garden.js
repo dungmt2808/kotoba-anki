@@ -1675,6 +1675,8 @@ var Garden = (function () {
     if (typeof GardenLang !== "undefined") {     // 1.32: đổi Ngôn ngữ trong vườn ở ⚙ → vẽ lại chữ đang hiện
       GardenLang.onChange(function () {
         if (typeof GardenHome !== "undefined" && GardenHome.dataChanged) { GardenHome.dataChanged(); }
+        // 1.33.3: menu Trò chơi đang mở → vẽ lại (Chỉ tiếng Việt / bỏ Chỉ tiếng Việt đổi tên trò + tiêu đề)
+        if (typeof GardenGames !== "undefined" && GardenGames.dataChanged) { GardenGames.dataChanged(); }
         if (typeof GardenLife !== "undefined" && GardenLife.closeCard) { GardenLife.closeCard(); }
         if (typeof GardenFinds !== "undefined" && GardenFinds.closeCard) { GardenFinds.closeCard(); }
         if (typeof GardenFX !== "undefined" && GardenFX.say) { GardenFX.say("こんにちは！", 1800); }
