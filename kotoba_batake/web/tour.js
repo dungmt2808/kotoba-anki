@@ -9,7 +9,7 @@ var GardenTour = (function () {
   "use strict";
   const $ = (id) => document.getElementById(id);
   const STEPS = [
-    { target: () => ($("kb-deck") && $("kb-deck").closest("label.kb-deck")) || $("kb-deck"), title: "Chọn deck",
+    { target: () => ($("kb-deck") && $("kb-deck").closest(".kb-deck")) || $("kb-deck"), title: "Chọn deck",
       text: "Chọn deck bạn đang học. Mỗi từ (note) trong deck là một cây trong ruộng." },
     { target: () => $("kb-review"), title: "Tưới cây",
       text: "Bấm Tưới ngay để ôn thẻ đến hạn ngay trong vườn. Nhớ được thì +xu." },

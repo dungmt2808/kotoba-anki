@@ -778,7 +778,7 @@ UI_CHOICES: dict[str, tuple[str, ...]] = {
     "pets": ("on", "off"),                       # thú nuôi + khách ghé vườn (1.21) trên sân
 }
 UI_GLOBAL: dict[str, tuple[str, ...]] = {
-    "card": ("normal", "tall"),                  # khung thẻ khi ôn: vừa / to hết chỗ (khi ẩn vườn)
+    "card": ("normal", "tall"),                  # khung thẻ khi ôn: vừa / to hết chỗ (1.34: vườn ẩn thì luôn to hết chỗ)
     "theme": ("garden", "paper"),                # màu bảng ôn: vàng / trắng giấy (1.23: bỏ "night" — Đêm vườn)
     "scene": ("normal", "large"),                # 1.23: cỡ cảnh trên màn chính: Vừa / Lớn
     "start": ("last", "yard"),                   # 1.23: mở vườn: cảnh đang chọn / luôn về Sân vườn
@@ -787,6 +787,7 @@ UI_GLOBAL: dict[str, tuple[str, ...]] = {
     "trans": ("on", "off"),                      # 1.26: hiệu ứng chuyển cảnh (vòng tròn, dải lá, rèm, bật nhẹ)
     "today": ("open", "mini"),                   # 1.30.1: bảng Hôm nay trên dải cảnh: mở / thu gọn (nút ở góc dải cảnh)
     "buyask": ("on", "off"),                     # 1.30.1: hỏi lại trước khi trả xu (mua đồ, xây, mở vùng…)
+    "zoom": ("off", "on"),                       # 1.34: Phóng to khi ôn (nút / phím F): chỉ còn thẻ + nút chấm
 }
 UI_PRESETS: dict[str, dict[str, Any]] = {
     "full": {},                                  # như cũ: mọi thứ chuyển động
@@ -873,7 +874,7 @@ def merge_prefs(current: Any, changes: Any) -> dict[str, str]:
     return clean_prefs(out)
 
 
-UI_KEEP_ON_PRESET = ("scene", "start", "deco", "greet", "trans", "today", "buyask")    # 1.25: nhóm "Màn chính" không thuộc kiểu có sẵn → bấm kiểu không đổi
+UI_KEEP_ON_PRESET = ("scene", "start", "deco", "greet", "trans", "today", "buyask", "zoom")    # 1.25: nhóm "Màn chính" không thuộc kiểu có sẵn → bấm kiểu không đổi
 
 
 def ui_preset(name: str, current: Any = None) -> dict[str, Any]:
