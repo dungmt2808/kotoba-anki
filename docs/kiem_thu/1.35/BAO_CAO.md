@@ -56,16 +56,40 @@ Tên báo đổi ở `ai_eu.INFO[lang]["masthead"]` + `web/paper.js` `MAST` (2 c
 
 ### 3.2 Bộ test có sẵn
 
-- `tests/run_all.sh` (`ANKI_PY` = aqt 26.9.4): **67 bộ, TẤT CẢ OK** (sau khi chạy lại `node site/tools/xuat_hinh.js` cho bản
-  1.35.0).
+- `tests/run_all.sh` trên **gói đã đóng** (`ANKI_PY` = aqt 26.9.4, `PY39` = aqt 23.10.1): **67 bộ, TẤT CẢ OK** (`test_135`
+  100/100, `test_132c` 66/66; sau khi chạy lại `node site/tools/xuat_hinh.js` cho bản 1.35.0).
 - Test cũ đổi theo 1.35 (ý nghĩa không đổi): 2 khoá báo mới được trừ ra khi so khoá collection với bản cũ (`test_1191`,
   `test_1322`, `test_133`, `test_1331`, `test_1332`); "ngôn ngữ lạ" thử bằng "es" thay "fr"; Báo muốn nhận 7 ô thay 5
   (`e2e_119`, `e2e_1251`, `e2e_133`, `e2e_1332`); tab Nguồn báo ≤ 18 chỗ bấm (thêm 2 ô, `e2e_1331`); `test_132.js` soát cả
   de / fr không còn chữ Nhật.
 
-### 3.3 Anki thật
+### 3.3 Anki thật (gói đã đóng)
 
-(đang chạy — điền sau)
+| Kịch bản | Kết quả |
+|---|---|
+| `e2e_135` (mới) — Anki 26.9.4 / Anki 23.10.1 | **60/60 · 60/60** |
+| `e2e_135_ngonngu` (mới: quét ~800 câu chữ, deck Nhật / Đức / Pháp × 5 chế độ Ngôn ngữ trong vườn) | **5/5** |
+| `run_capnhat.sh` 1.31.3 (đã phát hành) → 1.35.0 (cài đè bằng trình quản lý add-on) | **19/19** |
+| `run_habanh.sh` 1.35.0 → 1.31.3 → 1.35.0 (thêm deck tiếng Đức: bản cũ ghi đè vẫn giữ `lang3` / `games_lang3`, lên lại vẫn là Tiếng Đức) | **26/26** |
+| `e2e_133` 77, `e2e_119` 55, `e2e_1251` 49, `e2e_1331` 43, `e2e_1332` 36, `e2e_132c` 23, `e2e_132b` 20, `e2e_134` 85, `e2e_1333_ngonngu` 5, `e2e_117` 55, `e2e_132` 39, `e2e_1322` 40 | **đạt hết** |
+
+Lần "đỏ" trong lúc chạy: (a) `e2e_1332` (đủ 2 báo → "2 ô mờ") và `e2e_132` ("6 mục" Ngôn ngữ trong vườn) đếm theo 1.34 → sửa
+thành 4 ô / 8 mục; (b) `e2e_1322` một lần 39/40 (Undo ở cửa sổ chính sau khi sửa thẻ, lúc máy chạy 3 Anki cùng lúc) — chạy lại
+2 lần đều 40/40, phần này 1.35 không đụng; (c) `e2e_135_ngonngu` lần đầu báo "Génial !", "À bientôt !" là câu chỉ có tiếng
+Việt — bộ lọc của test coi é / à / ô là chữ Việt → sửa test (chỉ tính chữ riêng của tiếng Việt).
+
+### 3.4 Gemini thật (khoá tài khoản thử, 17/11)
+
+`tests/gemini/run_job.py --lang de|fr --level A2 --master` (deck mẫu `tests/fixtures/de_deck_a2.json` / `fr_deck_a2.json`, 77 từ):
+
+| Báo | Kết quả |
+|---|---|
+| Bản gốc chung (kỳ 1) | ra kỳ 1 + 2 tin làng; máy chủ Gemini rất bận lúc chạy (503, ngắt luồng, Hydrogen / flash-latest quá 240 giây) → tự đổi model tới 3.5 Flash-Lite. Phần này 1.35 không đổi. |
+| Der Wortgarten (Đức, A2) | **ra số 1**: kể lại đạt ngay lần đầu, viết số máy kiểm **0 lỗi**, soát lần 2 không thấy lỗi; máy tự chọn lại câu chép, bỏ id mẫu câu sai. Nối tra từ đúng: bringt → bringen, lacht → lachen, schreibt → schreiben, warmes → warm, Blätter… |
+| Le Jardin des Mots (Pháp, A2) | (điền sau) |
+
+Tìm thấy nhờ Gemini thật: Gemini khai **"die Blätter" là từ mới** trong khi deck có "das Blatt, ¨-er" → tra từ trỏ về từ
+mới thay vì từ của deck → **sửa**: máy bỏ khai báo từ mới chỉ là dạng biến đổi của từ trong deck (lỗi 6 ở mục 4).
 
 ## 4. Lỗi tìm được trong lúc test (đã sửa)
 
@@ -76,6 +100,9 @@ Tên báo đổi ở `ai_eu.INFO[lang]["masthead"]` + `web/paper.js` `MAST` (2 c
 | 3 | Động từ tách có tiền tố hin / her / heim… (hinsetzen) không nhận Partizip "hingesetzt" | thêm tiền tố tách |
 | 4 | Bản gửi Gemini sửa / soát còn dấu tra từ của máy ở câu hỏi / lựa chọn | `ai_eu.plain_issue` bỏ cả ở câu hỏi |
 | 5 | Lời nhắc soát viết "Tiếng đức" / "Tiếng pháp" (`capitalize()` hạ chữ) | viết hoa chữ đầu, giữ phần còn lại |
+| 6 | (Gemini thật) từ mới "die Blätter" trong khi deck có "das Blatt, ¨-er" → tra từ không về từ của deck | bỏ khai báo từ mới chỉ là dạng biến đổi của từ trong deck |
+| 7 | (Anki thật) tra "Blätter" ở báo ra đúng "das Blatt" nhưng không hiện trạng thái cây trong vườn (cây ghi "das Blatt, ¨-er") | trang báo so cả dạng đã bỏ số nhiều / giống khi tìm cây |
+| 8 | (quét chữ trong Anki thật) khách Chợ sáng tiếng Pháp nói "Un « apprendre », s'il vous plaît !" — "Un" sai với động từ / danh từ giống cái | mẫu câu "Je voudrais « %s », s'il vous plaît !" |
 
 ## 5. Giới hạn đã biết
 
