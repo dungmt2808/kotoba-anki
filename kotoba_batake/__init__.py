@@ -544,6 +544,7 @@ def ai_waiting(cfg: dict[str, Any] | None = None) -> list[str]:
 # mai"). Trước: bỏ tick báo đang viết → Gemini vẫn viết xong (tốn lượt, gói báo vẫn tính) mà báo đó không còn hiện; tick
 # báo mới → chờ "Bắt đầu viết" (bấm là viết thêm một số ngay trong ngày).
 BUSY_MSG = "Gemini đang viết báo — xong mới đổi được."
+SYNC_MSG = "Anki đang đồng bộ — xong rồi bấm lại nhé."
 
 
 def ai_busy() -> bool:
@@ -3319,12 +3320,24 @@ class GardenDialog(QDialog):
 
     # -- cầu nối JS -> Python -------------------------------------------------
 
+    # 1.33.2: lệnh trang tự gửi (không phải người dùng bấm) — lúc đồng bộ thì bỏ qua mà không báo
+    AUTO_CMDS = ("ready", "refresh", "life:", "guest:", "ai:status", "paper:index", "game:exaudio")
+    _sync_note = 0.0
+
     def _on_bridge(self, cmd: str) -> Any:
         # 1.31.2: Anki đang đồng bộ toàn bộ (collection đóng) mà trang vẫn chạy (StackChan vừa làm việc mới, khách vừa ghé…)
         # → mọi lệnh đụng collection đều lỗi, có lệnh làm Anki bật hộp lỗi giữa lúc đồng bộ. Bỏ qua các lệnh đó (đồng bộ
         # xong vườn tự dựng lại). Nhật ký (`cal:`) vẫn đi tiếp: nó có đường báo "chưa lưu được" và giữ chữ trong ô.
         # Cũng vậy khi Anki đang đồng bộ thường (`_sync_hold`): lệnh ghi rơi vào lúc đó sẽ chen trước lúc lớp giữ dữ liệu so.
         if (not _col_ready() or _sync_hold()) and not cmd.startswith(("cal:", "prefs:set:", "app:jserr:", "app:report:", "app:mail", "win:")):
+            # 1.33.2: trước đây bỏ qua lặng lẽ — bấm Mua / Tưới ngay / chấm thẻ lúc đồng bộ thì không có gì xảy ra (tưởng
+            # hỏng), lượt chấm còn làm bảng ôn kẹt chờ. Nay báo một câu (lệnh người dùng bấm, ≤ 1 lần / 3 giây) và trả lại
+            # lượt chấm để chấm lại được sau khi đồng bộ xong.
+            if cmd.startswith("rv:ans:") and self._card is not None:
+                self._js("reviewRetry", {"cid": self._card.id})
+            if not cmd.startswith(self.AUTO_CMDS) and time.time() - self._sync_note > 3:
+                self._sync_note = time.time()
+                self._js("toast", SYNC_MSG)
             return None
         try:
             return self._dispatch(cmd)
@@ -3987,8 +4000,8 @@ class GardenDialog(QDialog):
                     self._js("notice", {"msg": "Đã ghi nhận xét. Kỳ sau Gemini sẽ đọc.", "ms": 3000})
             self._reissue_ref(lang, lib, src, date)
             return
-        if _dich_job["running"] or _ai["running"]:
-            self._js("paperError", "Gemini đang bận, thử lại sau.")
+        if _dich_job["running"] or _ai["running"]:      # 1.33.2: nói rõ đang bận việc gì
+            self._js("paperError", "Gemini đang viết báo — xong rồi bấm lại." if _ai["running"] else "Đang dịch số khác — xong rồi bấm lại.")
             return
         key = ai.clean_key(config().get("gemini_key"))
         iss = lib.try_issue(date)

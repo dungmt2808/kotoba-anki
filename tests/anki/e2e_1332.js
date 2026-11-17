@@ -194,6 +194,26 @@ finally:
     kb.ai_today = real`);
   ok(!d.later.en && !d.waiting.includes('en'), 'ngày mai: báo Anh không còn "từ mai", không chờ "Bắt đầu viết" → tự viết như báo Trung ' + JSON.stringify(d));
 
+  console.log('== E. Anki đang đồng bộ: bấm trong vườn → báo một câu, bảng ôn không kẹt');
+  await js('GardenPaper.close(); return 1;'); await sleep(300);
+  await py(KB + 'd = kb._dialog; d.deck_id = mw.col.decks.id_for_name("A::Có câu ví dụ + audio"); d.refresh(); d._dispatch("rv:start"); result = 1');
+  await waitFor('const b = document.getElementById("kb-show"); return b && !b.hidden;', 5000);
+  await js('document.getElementById("kb-show").click(); return 1;');          // lật thẻ trước khi đồng bộ
+  await waitFor('const b = document.querySelector(".kb-rate-3"); return b && b.offsetParent !== null;', 5000);
+  await sleep(500);
+  const rev0 = await py(KB + 'result = mw.col.db.scalar("select count() from revlog")');
+  await py(KB + 'kb._e2e_busy = mw.progress.busy; kb._sync_running = True; mw.progress.busy = lambda: True; result = kb._sync_hold()');
+  await js('document.querySelector(".kb-rate-3").click(); return 1;'); await sleep(800);
+  // thông báo xếp hàng sau thông báo đang hiện (vd. gợi ý cấu hình trường) → chờ tới lượt
+  const t1 = await waitFor('const t = document.getElementById("kb-toast"); return t && !t.hidden && /đồng bộ/.test(t.textContent) ? t.textContent : "";', 15000);
+  ok(/Anki đang đồng bộ — xong rồi bấm lại/.test(t1), 'chấm thẻ lúc đồng bộ → "' + t1 + '"');
+  ok(await py(KB + 'result = mw.col.db.scalar("select count() from revlog")') === rev0, 'không ghi lượt ôn nào lúc đồng bộ');
+  await py(KB + 'mw.progress.busy = kb._e2e_busy; kb._sync_running = False; result = 1');
+  await sleep(300);
+  await js('document.querySelector(".kb-rate-3").click(); return 1;');
+  ok(await waitPy(`result = mw.col.db.scalar("select count() from revlog") == ${rev0} + 1`, 8000), 'đồng bộ xong: bấm Được lần nữa là chấm được (bảng ôn không kẹt chờ)');
+  await py(KB + 'kb._dialog._dispatch("rv:stop"); result = 1');
+
   const errs = await py(KB + 'result = [e["where"] + ": " + e["msg"][:100] for e in kb.ERRORS.entries()]');
   ok(errs.length === 0, 'nhật ký lỗi trống' + (errs.length ? ': ' + errs.join(' | ') : ''));
   console.log(`KẾT QUẢ: ${pass}/${total}` + (pass === total ? ' — TẤT CẢ OK' : ''));
