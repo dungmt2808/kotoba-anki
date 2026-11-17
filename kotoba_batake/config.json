@@ -31,6 +31,8 @@
     "gemini_audio": "chinh_ta",
     "gemini_voice": "Kore",
     "gemini_level_en": "A2",
+    "gemini_level_zh": "HSK2",
+    "gemini_level_ko": "TOPIK2",
     "gemini_auto": true,
     "gemini_scope": "auto",
     "gemini_model": "",

@@ -1,0 +1,52 @@
+  ✓ mở được vườn
+== 1. File → Import .colpkg (bản sao lưu cũ hơn) khi vườn đang mở, vừa ôn trong vườn
+  ✓ ôn 4 thẻ trong vườn: 212 xu, sổ 4 lượt (bản sao lưu 100 xu)
+  ✓ Import xong, Anki về màn deck
+  ✓ ví = bản sao lưu (100 / 100)
+  ✓ sổ phần thưởng lượt ôn của collection cũ đã bỏ
+  ✓ LỖI A: vườn làm mới không trừ xu của ví vừa khôi phục (100 / 100)
+  ✓ bảng ôn đang mở lấy thẻ của collection vừa nhập
+  ✓ chấm tiếp được trên collection mới, ví cộng như thường
+  ✓ mở lại hồ sơ
+  ✓ LỖI B: mở lại hồ sơ → vườn vẫn là bản vừa khôi phục (103 / 103), không bị trả về bản trước khi Import
+  ✓ ví / nhà trong collection không đổi sau khi mở lại
+== 2. Hồi quy 1.31.2: collection giữ bản cũ hơn bản chụp (đồng bộ lúc add-on tắt) → mở hồ sơ trả lại
+  ✓ mở lại hồ sơ
+  ✓ vẫn trả lại bản mới của máy (153 / 153) — móc mới không đổi đường cũ
+== 3. Hồi quy: "Mở bản sao lưu" của Anki vẫn giữ bản vừa khôi phục
+  ✓ Mở bản sao lưu → ví của bản sao lưu (153 / 153)
+  ✓ mở lại hồ sơ
+  ✓ mở lại hồ sơ lần nữa vẫn giữ bản sao lưu
+== 4. File → Export .colpkg khi vườn đang mở
+  ✓ trong lúc xuất: lệnh của vườn bỏ qua êm, xuất xong dùng lại được
+  ✓ dữ liệu vườn không đổi khi xuất
+  ✓ lưu tiếp được sau khi xuất
+== 5. Tools → Check Database
+  ✓ mọi khoá kotoba_batake_* giữ nguyên (cùng nội dung)
+== 6. Xoá deck đang là nguồn báo + loại note đã cấu hình tiếng Hàn
+  ✓ tab Nguồn báo: deck đã xoá không còn trong danh sách / đã chọn
+  ✓ tab Nguồn báo mở được
+== 7. Tab Nguồn báo gọn hơn (người dùng: "bên set up báo hơi nhiều nút")
+  ✓ hai báo (Nhật + Anh), đang dùng: 13 chỗ bấm đang hiện (1.33.0: 49)
+  ✓ "Tuỳ chọn thêm" và dòng Gói báo thu gọn sẵn
+  ✓ mỗi báo: Trình độ + Lấy từ là ô thả xuống, không còn hàng nút ["Trình độ của Báo tiếng Nhật","Lấy từ cho Báo tiếng Nhật","Trình độ của Báo tiếng Anh","Lấy từ cho Báo tiếng Anh"]
+  ✓ chọn được Trình độ báo Nhật
+  ✓ chọn được Trình độ báo Anh
+  ✓ Trình độ lưu gemini_level = N3, gemini_level_en = B1
+  ✓ Lấy từ → Không dùng deck: lưu mode "level"
+  ✓ Lấy từ → Chọn deck…: hiện danh sách deck
+  ✓ Lấy từ → Mọi deck: về "deck"
+  ✓ mở "Tuỳ chọn thêm": có ô Giọng đọc
+  ✓ Giọng đọc → Cả bài: lưu gemini_audio
+  ✓ bảng vẽ lại sau khi đổi: "Tuỳ chọn thêm" vẫn mở
+  ✓ Truyện → Tiết kiệm: lưu gemini_story
+  ✓ Giọng cho câu không có audio → Giọng máy: lưu dict_voice
+  ✓ "Tuỳ chọn thêm" còn đủ: Khoá + Đổi khoá, Chủ đề truyện (8), Tự viết khi mở Anki, Xoá khoá
+  ✓ bấm dòng Gói báo → 2 nút mua + Tự gia hạn ["Mua 1 tuần · 100 xu","Mua 1 tháng · 300 xu"]
+  ✓ 1366 × 768: không tràn ngang, ô thả xuống / nút Gói báo trong khung [0,-14,0]
+  ✓ 720 × 520: không tràn ngang, ô thả xuống / nút Gói báo trong khung [0,-14,0]
+== 8. Bấm bừa tab Nguồn báo (120 thao tác ngẫu nhiên, hạt cố định)
+  ✓ sau {"tick":43,"sel":48,"det":20,"reopen":9}: cấu hình báo luôn hợp lệ {"langs":["en"],"ok_langs":true,"ok_lv":true,"ok_other":true,"src":{"ja":"level","en":"deck","vi":"deck","zh":"level","ko":"level"}}
+  ✓ tab Nguồn báo vẫn vẽ đúng, không tràn ngang
+  ✓ nhật ký lỗi của add-on trống (lỗi Python + lỗi JS của trang)
+KẾT QUẢ: 43/43 — TẤT CẢ OK

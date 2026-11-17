@@ -225,7 +225,7 @@ result = max((d for d in c if c[d]["fruit"] and c[d]["new"]), key=lambda d: c[d]
   await py(FAKE('slow'));
   await page.click('.kb-cal-send');
   ok(await waitFor(page, W('return !!document.querySelector(".kb-cal-wait") && document.querySelector(".kb-cal-ta").readOnly;'), 6000), 'đang sửa: khung "Gemini đang sửa bài…", ô viết tạm khoá');
-  ok(await page.eval(W('return /Thường mất 10–60 giây. Có thể đóng bảng hoặc làm việc khác — xong sẽ có thông báo./.test(document.querySelector(".kb-cal-wait").textContent) && Array.from(document.querySelectorAll(".kb-cal-acts .kb-btn")).some(b => b.textContent === "Đóng bảng");')), 'chữ hướng dẫn + nút "Đóng bảng"');
+  ok(await page.eval(W('return /Thường 10–60 giây · đóng bảng được, xong sẽ báo./.test(document.querySelector(".kb-cal-wait").textContent) && Array.from(document.querySelectorAll(".kb-cal-acts .kb-btn")).some(b => b.textContent === "Đóng bảng");')), 'chữ hướng dẫn + nút "Đóng bảng"');
   ok((await entry(T)).w.st === 'wait', 'bài lưu ngay với cờ "đang sửa"');
   await page.shot(SHOTS + '/122_dang_sua.png');
   await page.eval(W('Array.from(document.querySelectorAll(".kb-cal-acts .kb-btn")).find(b => b.textContent === "Đóng bảng").click(); return 1;'));

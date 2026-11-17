@@ -1,4 +1,4 @@
-// 1.32.1 (kiểm tra lần cuối, 17/11): Đuổi quạ so đáp án với dữ liệu deck / bộ gõ "bẩn" — chạy đúng hàm của web/games.js
+// 1.33.4 (kiểm tra lần cuối, 17/11): Đuổi quạ so đáp án với dữ liệu deck / bộ gõ "bẩn" — chạy đúng hàm của web/games.js
 // trong node. Gọi: node test_132c.js ADDON
 const fs = require('fs');
 const path = require('path');
@@ -6,8 +6,8 @@ const ADDON = process.argv[2];
 const results = []; const ok = (c, m) => { results.push(!!c); console.log((c ? '  ✓ ' : '  ✗ ') + m); };
 const src = fs.readFileSync(path.join(ADDON, 'web', 'games.js'), 'utf8');
 const a = src.indexOf('  function enNorm('), b = src.indexOf('  // Nghĩa ngắn gọn cho biển quạ');
-// lấy luôn phần chú thích + hàm phụ đứng trước enNorm (1.32.1)
-const a0 = src.lastIndexOf('\n', src.lastIndexOf('  // 1.32.1 (kiểm tra lần cuối): NFKC', a) >= 0 ? src.lastIndexOf('  // 1.32.1 (kiểm tra lần cuối): NFKC', a) : a);
+// lấy luôn phần chú thích + hàm phụ đứng trước enNorm (1.33.4)
+const a0 = src.lastIndexOf('\n', src.lastIndexOf('  // 1.33.4 (kiểm tra lần cuối): NFKC', a) >= 0 ? src.lastIndexOf('  // 1.33.4 (kiểm tra lần cuối): NFKC', a) : a);
 ok(a > 0 && b > a, 'tìm thấy enNorm … pyAnswers trong games.js');
 const F = new Function(src.slice(a0 > 0 ? a0 : a, b) + '; return { enNorm, spellAnswers, pyKey, pyTyped, pyAnswers, ' +
   'noSpace: typeof noSpace === "function" ? noSpace : null };')();

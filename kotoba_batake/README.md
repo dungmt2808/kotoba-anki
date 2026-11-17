@@ -2,7 +2,7 @@
 
 Add-on cho **Anki desktop** biến một deck tiếng Nhật (từ vựng, chữ Hán hoặc ngữ pháp) thành một **khu vườn pixel art**. Mỗi note là một cây. Cây lớn lên theo **độ bền trí nhớ FSRS**, khát nước khi thẻ đến hạn và héo khi sắp quên. Ôn thẻ thì được **xu**. Xu dùng để xây nhà, trang trí, mở vùng mới, mua đồ cho linh vật StackChan, tự chế tác đồ vật pixel và mở **giao diện theo mùa / lễ hội** (Tết, Giáng sinh, hoa anh đào, lá đỏ…). Từ 1.14: **tự chỉnh giao diện** theo từng chế độ (vd. ẩn sân khi ôn thẻ), **sửa nhà**, **thú nuôi**, **giống cây** cho ruộng, **vùng tự tạo** và **hiệu ứng thành tích** của vườn. Bản 1.15: màn chính gọn lại (một thẻ "Hôm nay" thay cho 6 nút rời), Xưởng có thêm kẻ thẳng / chữ nhật / làm lại / cỡ bút, đỡ tốn CPU. Bản 1.16 (bản chốt): 12 món hiếm mới cho rương nhiệm vụ, giao diện ôn tối "Đêm vườn", bảng chọn Trò chơi sắp lại, vẽ được cả cảnh nền của vùng tự tạo. **Bản 1.17**: dùng được với **deck tiếng Anh** (cây, 5 trò chơi, chép chính tả; IPA, dạng biến đổi went / studying, giọng tiếng Anh của máy), hiểu **mọi kiểu furigana hay gặp** (ngoặc vuông, ruby HTML, Migaku, ngoặc tròn), bảng Trò chơi trở lại kiểu 1.15 với **drop-down**, bỏ Hán Việt / Loại từ khỏi từ vựng cho gọn. **Bản 1.18**: **14 giao diện mùa đều có nhạc riêng** (thêm 11 bản tự soạn, các lễ Nhật dùng thang âm Nhật), nút **Xem thử** phát luôn nhạc của chủ đề; nút **Tưới ngay** chỉ đếm cây Anki thật sự cho ôn, màn hết thẻ nói rõ cây nào còn chờ và vì sao. **Bản 1.19**: **báo tiếng Anh** *The Garden Gazette* — deck đang xem là tiếng Anh thì Gemini viết mỗi ngày một số báo tiếng Anh bằng các từ trong deck (trình độ CEFR A1–C1), máy tự gạch chân từ đã học kể cả dạng biến đổi (went → go) để bấm tra nghĩa; deck ngôn ngữ khác thì tab Báo ghi "chưa hỗ trợ" và không tốn lượt Gemini. **Bản 1.20**: **花暦 · Lịch hoa** — lịch tháng có cây theo số lượt ôn mỗi ngày (mỗi giao diện mùa một loài hoa), lịch năm kiểu heatmap, dải tên mùa / lễ; **nhật ký một dòng + sticker tâm trạng** (đồng bộ AnkiWeb, không gửi cho Gemini); **luyện viết** 60 ký tự / 30 từ mỗi ngày, Gemini sửa một lần (câu đã sửa · lỗi · nhận xét), chạy nền, xong thì báo; **cuốn nhật ký** cuối tháng / năm, xuất PDF khổ A5. **Bản 1.21**: **khách ghé vườn** — chim sẻ, mèo hoang, cò, cú, tanuki, cáo, hươu, đom đóm… ghé tuỳ đồ đã đặt (ghế gỗ → mèo nằm, ao → cò, đèn đá → cú, chuông gió → chim vành khuyên ở bậu cửa sổ), vùng, mùa, giờ, thời tiết; vườn nhiều cây Ra quả thì khách tới thường hơn; **Album khách** ghi ngày gặp lần đầu (16 khách, 3 khách hiếm theo mùa). Không có xu, không phải cho ăn. **Bản 1.22**: **giống cây tự vẽ** (Xưởng vẽ 5 giai đoạn 16×16, tối thiểu 3, gieo cho deck / loại note / tag như giống mua), **mã chia sẻ thiết kế** (món tự làm / vùng tự tạo / giống cây → một đoạn chữ `KB1:…`; dán mã → xem trước → làm, trả xu như tự chế tác), **chụp ảnh vườn** (cỡ thường / lớn / hình nền 1920×1080, có khung + ngày + tên giao diện mùa) và **chuyển ảnh thành pixel giữ đúng màu** (hồng / đỏ không còn ra nâu).
 
-- Phiên bản: **1.31.5** (`manifest.json` → `human_version`)
+- Phiên bản: **1.33.2** (`manifest.json` → `human_version`)
 - Giấy phép: **GNU AGPL-3.0** (hoặc bản mới hơn, như Anki) — toàn văn ở `LICENSE.txt` (bản sao của `LICENSE` ở gốc repo). © 2026 dungmt2808.
 - Chạy trên: **Anki 23.10 → 26.9.4** (`min_point_version` 231000, đã test từng bản, xem "Sửa ở 1.22.7"); FSRS bật thì có cây héo. Người dùng chạy Anki 26.09.x trên Ubuntu 22.04.
 - Ngôn ngữ giao diện: **tiếng Việt** (kèm tiếng Nhật trang trí). Chú thích trong mã cũng bằng tiếng Việt.
@@ -85,6 +85,7 @@ Sau khi trả lời có hiện cách đọc, Hán Việt, nghĩa (và cách dùn
 - Loại note **chưa cấu hình** vẫn chạy bằng cách đoán tên trường như ≤ 1.8 (kể cả `word_field`… trong config). **Đã cấu hình** thì chỉ dùng đúng trường đã chọn, vai trò để trống là không có (không đoán Audio / Example nữa). Đổi tên hay xoá trường đã chọn → cấu hình "hỏng", vườn quay về đoán và hiện lại thông báo.
 
 ### Báo 畑新聞 & chép chính tả (bảng "新聞", 4 tab, từ bản 1.6)
+- **1.33: báo tiếng Trung 词田晨报 (HSK 1–6) / tiếng Hàn 말밭 신문 (TOPIK 1–6)** — tối đa 2 báo trong Nhật / Anh / Trung / Hàn (tiếng Việt đi một mình), chưa từng chọn thì mặc định 1 báo theo deck; tiếng Trung: pinyin từng chữ (máy soát mỗi âm tiết với bảng cách đọc `zh_data.READINGS_RAW`), tra từ có Hán Việt, chép chấm từng chữ; tiếng Hàn: tra từ nhận tiểu từ / đuôi (`ko_core.py`), chép chấm theo cụm. Chi tiết: `PHAT_TRIEN.md` mục 2.6z12.
 - **Hai nguồn báo** (tab **Nguồn báo**, từ 1.12; chọn một):
   - **Gemini** (dễ nhất, cho người không rành kỹ thuật): dán khoá Gemini API (lấy miễn phí ở aistudio.google.com/apikey) → **Thử khoá** → add-on tự viết mỗi ngày một số vào `user_files/bao_gemini/` (cùng định dạng `kotoba_daily`), kèm giọng đọc Gemini cho câu chép chính tả (hoặc cả bài). Xem mục "Báo do Gemini viết" bên dưới.
   - **Claude Code** (1.22.8: thẻ này **chỉ hiện khi đã đặt `bao_dir`** trong config; người dùng chung chỉ thấy Gemini) — bộ **`kotoba_daily`** viết mỗi sáng (Claude Code chạy theo lịch, đọc giáo trình đã học), giọng VOICEVOX. Add-on chỉ **đọc** thư mục đó (`bao_dir`, chọn bằng nút **Chọn thư mục…**).
@@ -123,16 +124,45 @@ Sau khi trả lời có hiện cách đọc, Hán Việt, nghĩa (và cách dùn
 - **Hiệu ứng thành tích** (`web/joy.js`, Python tính `data.joy` = `more_core.joy_view`): **xong hết thẻ hôm nay** trong deck đang xem (`deck_due_tree` = 0 và hôm nay đã ôn ≥ 1 lượt) → cầu vồng trên ruộng và trên trời sân, giọt sương lấp lánh; **đạt mục tiêu ngày**; **cả vườn xanh tốt / ra hoa / trĩu quả** (≥ 5 cây, không cây nào héo, mọi cây từ Cây non / Ra hoa / Ra quả) → lá lấp lánh / cánh hoa anh đào bay / đốm sáng vàng bay lên; **mốc chuỗi ngày** (7, 14, 21, 30, 50, 75, 100, 150, 200, 250, 300, 365, 500, 730, 1000) → pháo hoa trên trời sân; **xong 3 nhiệm vụ** → đèn trời bay lên. Huy hiệu cạnh chú thích ruộng; dải chúc mừng + linh vật chúc mỗi thành tích **một lần mỗi ngày** (nhớ ở `localStorage kb-joy-<ngày>-<loại>`), đang ôn thẻ thì để dành tới khi đóng bảng ôn.
 - **Lưu trữ**: khoá collection mới `kotoba_batake_more` (`more_core.MORE_KEY`) — mục 4. Bản ≤ 1.13 ở máy khác không đọc khoá này nên không xoá được gì.
 
-### Mới ở 1.32.1: kiểm tra lần cuối
-- Deck tiếng Trung / tiếng Hàn đã cấu hình ở bản cũ (lưu "Ngôn ngữ khác" — bản cũ chưa có lựa chọn khác) được nhận lại là tiếng Trung / Hàn (`fields_core.effective_lang`); chọn "Ngôn ngữ khác" ở 1.32 thì giữ (`lang2[mid] = "other"`).
-- Từ vựng / tên tự đặt trong câu StackChan không bị dịch nhầm (dấu cô lập U+2068…U+2069).
-- Tên tường / sàn dài không tràn thẻ; bong bóng rỗng không hiện.
-- (lượt kiểm tra thứ hai, 17/11) Đuổi quạ so đáp án: gõ tiếng Việt kiểu tổ hợp / Hangul tách nét / chữ toàn khổ (NFKC), tiếng
-  Trung / Hàn không tính dấu cách, pinyin nhiều cách đọc ghi bằng `，、；（）`, không chấm lúc bộ gõ đang ghép chữ (`games.js`).
+### Mới ở 1.33.4: kiểm tra thêm — so đáp án với bộ gõ / deck thật, đoán ngôn ngữ deck
+- Đuổi quạ so đáp án: gõ tiếng Việt kiểu tổ hợp / Hangul tách nét / chữ toàn khổ (NFKC), tiếng Trung / Hàn không tính dấu
+  cách, pinyin nhiều cách đọc ghi bằng `，、；（）`, không chấm lúc bộ gõ đang ghép chữ (`games.js`).
 - Đoán ngôn ngữ (`fields_core.guess_lang`): có kana → tiếng Nhật trước khi xét tên trường (deck tiếng Nhật có trường "中文" /
   "Korean", deck kanji có trường "Chinese reading"); tiếng Đức / Pháp… và chữ Nga / Thái… → "Ngôn ngữ khác" (trước: tiếng Anh /
   tiếng Nhật).
 
+### Mới ở 1.33.2: đang viết báo thì khoá lựa chọn của báo, báo thêm sau khi viết xong thì từ mai, câu chữ gọn
+- **Đang viết báo** (Gemini viết / tạo giọng đọc, cả hàng chờ của "Bắt đầu viết"): Báo muốn nhận, Trình độ, Lấy từ, Truyện,
+  Chủ đề truyện, Giọng đọc, Đổi / Xoá khoá, đổi nguồn và "Bắt đầu viết" khoá + dòng "Gemini đang viết báo — xong mới đổi
+  được."; Python cũng từ chối lệnh gửi thẳng (`ai_busy`, `AI_LOCKED_SET`, `AI_LOCKED`). Tự viết, giọng câu chép, gói báo vẫn
+  đổi được. Trước: bỏ tick báo đang viết thì Gemini vẫn viết xong (tốn lượt, gói báo vẫn tính) mà báo đó không còn hiện.
+- **Viết xong rồi tick thêm báo** → báo đó **bắt đầu từ mai** (config `gemini_later`, mai tự viết, không chờ "Bắt đầu viết");
+  hôm nay chưa viết số nào thì như cũ (chờ "Bắt đầu viết"). Báo xếp hàng ghi "viết sau báo đang viết".
+- **Anki đang đồng bộ**: bấm trong vườn → "Anki đang đồng bộ — xong rồi bấm lại nhé." (trước: không có gì xảy ra); chấm thẻ
+  lúc đó không làm bảng ôn kẹt.
+- Câu chữ rút gọn (gợi ý trò chơi, chép chính tả, tra từ, Luyện viết, Nhà, Xưởng); ⚙ gom Tạo biểu tượng / Báo lỗi / Góp ý /
+  email / phím tắt / ôn trên điện thoại vào dòng thu gọn **Báo lỗi · góp ý · khác**.
+
+### Mới ở 1.33.1: kiểm tra lần cuối — Import .colpkg không làm mất xu, tab Nguồn báo gọn hơn
+- **File → Import một file .colpkg** (khôi phục bản sao lưu / chuyển collection từ máy khác) khi đang dùng vườn: Anki thay
+  collection mà không đóng / mở hồ sơ. Trước bản này (tái hiện trong Anki thật): (1) sổ phần thưởng lượt ôn còn lượt của
+  collection cũ → lần vườn làm mới kế tiếp coi là Undo, **trừ xu khỏi ví vừa khôi phục**; (2) lần mở hồ sơ sau, lớp giữ dữ
+  liệu khi đồng bộ (1.31.2) **trả lại vườn cũ đè lên bản vừa khôi phục**; (3) bảng ôn đang mở chấm thẻ của collection đã
+  đóng → hộp lỗi. Nay móc `collection_did_load` (`_on_collection_load`, chỉ khi hồ sơ đang mở) làm như "Mở bản sao lưu" của
+  Anki: giữ bản vừa nhập (đóng dấu mới), bỏ bộ nhớ tạm của collection cũ, vườn dựng lại, bảng ôn lấy thẻ của collection mới.
+- **Tab Nguồn báo gọn hơn** (người dùng: "bên set up báo hơi nhiều nút"): hai báo trước có ~49 chỗ bấm, nay 15 — Trình độ /
+  Lấy từ của mỗi báo là ô thả xuống; Gói báo là một dòng trong thẻ Gemini (bấm mới hiện nút mua + Tự gia hạn, hết hạn thì
+  mở sẵn); khoá (Đổi / Xoá), Giọng đọc, Truyện, Chủ đề truyện, Tự viết khi mở Anki và giọng cho câu không có audio gom vào
+  khối thu gọn **Tuỳ chọn thêm** (nhớ mở / đóng khi bảng vẽ lại). Không đổi tính năng, cấu hình hay dữ liệu.
+
+### Mới ở 1.32.2: sửa thẻ ngay lúc ôn, pinyin trên từng chữ
+- **Nút ✎ Sửa / phím E** ở góc dưới bên trái bảng ôn (cả mặt trước và mặt sau, như nút Edit khi ôn trong Anki; người dùng góp ý): mở **cửa sổ sửa note của Anki** ("Sửa thẻ · ことば畑", `edit_win.py`) cho note của thẻ đang ôn — `aqt.editcurrent` của Anki chỉ dùng `mw.reviewer.card` nên vườn tự dựng `aqt.editor.Editor` (23.10 → 26.x). Đăng ký với `aqt.dialogs` (`register_dialog`): một cửa sổ (E ở thẻ khác → lưu note cũ rồi nạp note mới), đóng hồ sơ / đồng bộ toàn bộ thì lưu rồi đóng; note bị xoá → đóng; không dựng được trình sửa → Trình duyệt thẻ ở `nid:`. Đóng (Close / Ctrl+Enter) là lưu; lượt ôn giữ nguyên (không bỏ thẻ, không xu, không revlog), thẻ hiện lại chữ mới ở đúng mặt đang xem (`_note_changed`: `Garden.cardEdited`, dòng "Đã lưu thẻ."), cây cập nhật. Note đổi ở chỗ khác (Trình duyệt thẻ, Edit → Undo) khi đang ôn cũng dựng lại thẻ ("Thẻ vừa được sửa."). Nhận ra note đổi bằng nội dung note (`_note_mod`: mod + chữ các trường + tag + kiểu note — `notes.mod` tính theo giây). Ctrl+Z trong vườn không hoàn tác lần sửa (bước Undo kế tiếp của Anki là "Update Note", không phải lượt chấm — như 1.31.4). Phím E không chạy khi đang gõ / có Ctrl / Alt / ⌘; nút không lấy focus. Không khoá collection / config mới (vị trí cửa sổ lưu trong hồ sơ Anki: `kotoba_batake_edit`).
+- **Pinyin trên từng chữ** (deck tiếng Trung): thẻ cây + ô gợi ý hiện `<ruby>` mỗi chữ một âm tiết (`zh_core.py`; âm tiết hợp lệ ở `zh_data.py`, sinh từ pypinyin bằng `tests/tools/sinh_zh_data.py`). Pinyin ghi số (`ni3 hao3`, `lv4`, `nu:3`, thanh nhẹ 5 / 0 / không số) → dấu thanh; trường Từ kiểu Anki `中[zhong1]文[wen2]`; 儿 (erhua). Thà không hiện còn hơn hiện sai: viết liền mà chia được nhiều kiểu / thiếu dấu nháy bắt buộc / số âm tiết khác số chữ → giữ một dòng pinyin dưới chữ như 1.32.1. Deck tiếng Nhật / tiếng Anh không đổi.
+
+### Mới ở 1.32.1: kiểm tra lần cuối
+- Deck tiếng Trung / tiếng Hàn đã cấu hình ở bản cũ (lưu "Ngôn ngữ khác" — bản cũ chưa có lựa chọn khác) được nhận lại là tiếng Trung / Hàn (`fields_core.effective_lang`); chọn "Ngôn ngữ khác" ở 1.32 thì giữ (`lang2[mid] = "other"`).
+- Từ vựng / tên tự đặt trong câu StackChan không bị dịch nhầm (dấu cô lập U+2068…U+2069).
+- Tên tường / sàn dài không tràn thẻ; bong bóng rỗng không hiện.
 ### Mới ở 1.32.0: Ngôn ngữ trong vườn, deck tiếng Trung / tiếng Hàn
 - **⚙ → Ngôn ngữ trong vườn**: Tự theo deck (mặc định) · Tiếng Nhật · Tiếng Anh · Tiếng Trung · Tiếng Hàn · Chỉ tiếng Việt. Đổi theo: câu StackChan nói, sinh hoạt (thẻ khi bấm StackChan, Sổ sinh hoạt), đồ nhặt (Hộp sưu tầm), Album khách, tường / sàn, tên giao diện mùa, chữ trang trí ở tiêu đề bảng (おうち → Home / 我的家 / 우리 집). Tiếng Trung kèm pinyin, tiếng Hàn kèm phiên âm. Tự theo deck = ngôn ngữ của phần lớn cây trong vườn. Lưu ở cài đặt riêng máy (config `prefs`, khoá `kb-glang`), không ghi collection.
 - Trò chơi theo ngôn ngữ của deck đang chơi (tên trò, câu khách ở Chợ sáng, góc thẻ Lật cặp).
@@ -276,7 +306,7 @@ Sau khi trả lời có hiện cách đọc, Hán Việt, nghĩa (và cách dùn
 ### Mới ở 1.25.1: cho người không học tiếng Nhật / tiếng Anh, gói báo, chủ đề truyện
 - **Báo tiếng Việt "Báo Làng Kotoba"** (`ai_vi.py`, `user_files/bao_gemini_vi/`, khoá `kotoba_batake_paper_vi`): không giọng đọc / chép chính tả / bản dịch / furigana. (1.25.1 đan nội dung thẻ vào báo; 1.25.2 bỏ — chỉ truyện + tin làng.)
 - **Không dùng deck** (tab Nguồn báo → Lấy từ / Lấy thẻ): Gemini viết theo trình độ, tự khai báo 8–12 từ mới (bảng tra của số). Deck đã chọn < 10 từ cũng viết theo trình độ.
-- **Gói báo**: 1 tuần 100 xu / 1 tháng 300 xu (thẻ Gói báo ở tab Nguồn báo), tặng 7 ngày cho số Gemini đầu tiên, **Tự gia hạn** khi đủ xu, tối đa 60 ngày phía trước; hết gói thì Gemini không viết số mới (số cũ vẫn đọc). Báo Claude Code không cần gói. Lưu `paper_sub` trong `kotoba_batake_more`.
+- **Gói báo**: 1 tuần 100 xu / 1 tháng 300 xu (dòng Gói báo trong thẻ Gemini ở tab Nguồn báo — 1.33.1: bấm dòng mới hiện nút mua + Tự gia hạn, hết hạn thì mở sẵn), tặng 7 ngày cho số Gemini đầu tiên, **Tự gia hạn** khi đủ xu, tối đa 60 ngày phía trước; hết gói thì Gemini không viết số mới (số cũ vẫn đọc). Báo Claude Code không cần gói. Lưu `paper_sub` trong `kotoba_batake_more`.
 - **Chủ đề truyện chọn nhiều** (`gemini_story_tones`): thêm Dễ thương, Kinh dị nhẹ, Lãng mạn nhẹ, Kỳ ảo; mỗi đợt 6–8 kỳ một chủ đề, lần lượt.
 - **Đuổi quạ cho Ngôn ngữ khác**: Nghĩa → gõ từ / Từ → gõ nghĩa (chữ cần gõ ≤ 24 ký tự). Luyện viết chỉ hiện khi học tiếng Nhật / tiếng Anh; thẻ Hôm nay không ghi "Chép 0/5" khi không có gì để chép.
 - Lời nhắc gửi Gemini (nguyên văn): `docs/LOI_NHAC_GEMINI.md` trong repo.

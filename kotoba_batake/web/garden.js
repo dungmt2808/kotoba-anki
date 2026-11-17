@@ -362,11 +362,30 @@ var Garden = (function () {
 
   // Bấm vào cây: ghim thẻ thông tin (chữ, cách đọc, nghĩa, lịch ôn) + nút nghe.
   var pinned = null;
+  // 1.32.2: pinyin nằm trên từng chữ (deck tiếng Trung) — p.ruby = [[chữ, âm tiết], …] do Python ghép (zh_core);
+  // không ghép được thì giữ một dòng pinyin dưới chữ như 1.32.1. Trả về true khi đã dựng ruby.
+  function wordInto(elm, p) {
+    elm.textContent = "";
+    if (p.lang === "zh") { elm.setAttribute("lang", "zh"); } else { elm.removeAttribute("lang"); }
+    if (p.lang !== "zh" || !p.ruby || !p.ruby.length) { elm.textContent = p.word; return false; }
+    var r = document.createElement("ruby");
+    r.className = "kb-ruby kb-ruby-zh";
+    p.ruby.forEach(function (x) {
+      r.appendChild(document.createTextNode(String(x[0] || "")));
+      var rt = document.createElement("rt");
+      rt.textContent = String(x[1] || "");
+      r.appendChild(rt);
+    });
+    elm.appendChild(r);
+    return true;
+  }
+
   function showPin(idx) {
     var p = data.plants[idx], pin = $("kb-pin");
     pinned = p;
-    $("kb-pin-word").textContent = p.word;
-    $("kb-pin-reading").textContent = p.reading || p.usage || "";
+    var ruby = wordInto($("kb-pin-word"), p);
+    $("kb-pin-reading").textContent = ruby ? "" : (p.reading || p.usage || "");
+    $("kb-pin-reading").hidden = ruby;
     $("kb-pin-meaning").textContent = (p.hanviet ? String(p.hanviet).toUpperCase() + " · " : "") + (p.meaning || "");
     var meta = [data.stage_names[p.stage], stateText(p), dueText(p)];
     if (p.stability !== null && p.stability !== undefined) { meta.push("nhớ ~" + p.stability + " ngày"); }
@@ -472,6 +491,30 @@ var Garden = (function () {
 
   // ---- 1.9: Cấu hình trường theo loại note ----
   var fieldsWarned = {};
+  // 1.33.3 (audit 17/11 F01): Anki báo lỗi khi đọc dữ liệu vườn (hoặc dữ liệu mới hơn còn chờ trả lại sau đồng bộ) → vườn
+  // tạm chỉ xem. Trước: không báo gì, ví hiện 0 xu / đồ trống như mất hết.
+  function drawDamaged() {
+    var w = data && data.wallet, bad = !!(w && w._damaged && w._damaged.length);
+    var b = $("kb-damaged");
+    if (!bad) { if (b) { b.hidden = true; } return; }
+    if (!b) {
+      var field = $("kb-field");
+      if (!field || !field.parentNode) { return; }
+      b = document.createElement("div"); b.id = "kb-damaged"; b.className = "kb-damaged"; b.setAttribute("role", "alert");
+      field.parentNode.insertBefore(b, field);
+    }
+    var TXT = {
+      pending: "Dữ liệu vườn mới hơn của máy này chưa trả lại xong sau lần đồng bộ trước nên vườn tạm chỉ xem. " +
+        "Đóng vườn rồi mở lại, hoặc đồng bộ lại nhé — bản chụp vẫn còn nguyên.",
+      read: "Anki đang báo lỗi khi đọc dữ liệu vườn nên vườn tạm chỉ xem, chưa lưu gì. Xu / đồ đang hiện có thể chưa đúng — " +
+        "dữ liệu thật vẫn còn nguyên. Đóng vườn rồi mở lại sau ít phút nhé.",
+      broken: "Một phần dữ liệu vườn đọc chưa được nên vườn tạm chỉ xem, chưa lưu gì (để không ghi đè phần đó). " +
+        "Mở ⚙ → Báo lỗi để gửi thông tin nhé."
+    };
+    GardenIcons.fill(b, "[i:warn] " + (TXT[w._damaged_kind] || TXT.broken));
+    b.hidden = false;
+  }
+
   function drawFieldsChip() {
     var b = $("kb-fields-btn");
     if (!b) { return; }
@@ -739,7 +782,9 @@ var Garden = (function () {
     hover.style.height = ch + "px";
     hover.hidden = false;
     // 1.17: phiên âm IPA của từ tiếng Anh viết liền sau chữ, không bọc ngoặc Nhật
-    $("kb-tip-word").textContent = p.word + (!p.reading ? "" : (p.lang && p.lang !== "ja") ? " " + p.reading : "（" + p.reading + "）");
+    if (!wordInto($("kb-tip-word"), p)) {         // 1.32.2: tiếng Trung có ruby thì pinyin nằm trên chữ như thẻ cây
+      $("kb-tip-word").textContent = p.word + (!p.reading ? "" : (p.lang && p.lang !== "ja") ? " " + p.reading : "（" + p.reading + "）");
+    }
     $("kb-tip-meaning").textContent = (p.hanviet ? String(p.hanviet).toUpperCase() + " · " : "") + (p.meaning || "");
     var parts = [data.stage_names[p.stage], stateText(p), dueText(p)];
     if (p.stability !== null && p.stability !== undefined) { parts.push("nhớ ~" + p.stability + " ngày"); }
@@ -916,6 +961,27 @@ var Garden = (function () {
   // Python không hoàn tác được (hoặc bảng ôn đã dừng trong lúc hoàn tác)
   function reviewUndo(p) { setUndo(p && p.undo); }
 
+  // 1.32.2: nút ✎ Sửa / phím E — mở cửa sổ sửa note của Anki cho thẻ đang ôn (Python: edit_win). Lượt ôn giữ nguyên.
+  function setEdit(on) { var b = $("kb-rv-edit"); if (b) { b.hidden = !on; } }
+  function editCard() {
+    if ($("kb-panel").hidden || !card || waiting || flipping || undoing) { return; }
+    send("rv:edit");
+  }
+  // Python: note của thẻ đang ôn vừa được lưu → dựng lại đúng mặt đang xem (không lật lại, không đổi trạng thái chấm)
+  function cardEdited(p) {
+    if (!card || !p || p.cid !== card.cid) { return; }
+    card.question = p.question;
+    if (p.css) { card.css = p.css; }
+    if (p.bodyclass) { card.bodyclass = p.bodyclass; }
+    setUndo(p.undo);
+    if (showingAnswer) {
+      if (p.answer) { showSide(p.answer, "a"); }
+    } else if (!flipping) {
+      showSide(p.question, "q");
+    }
+    if (p.note) { rvNote(p.note); }
+  }
+
   function showCard(c) {
     if ($("kb-panel").hidden) { fx("startReview"); }
     card = c;
@@ -923,6 +989,7 @@ var Garden = (function () {
     waiting = false;
     flipping = false;
     setUndo(c.undo);
+    setEdit(true);
     $("kb-panel").hidden = false;
     $("kb-card-wrap").hidden = false;
     $("kb-done").hidden = true;
@@ -994,6 +1061,7 @@ var Garden = (function () {
     waiting = false;
     flipping = false;
     setUndo(info && info.undo);        // 1.31.4: thẻ cuối chấm nhầm vẫn hoàn tác được ở màn "Hết thẻ"
+    setEdit(false);
     $("kb-panel").hidden = false;
     $("kb-card-wrap").hidden = true;
     $("kb-done").hidden = false;
@@ -1019,6 +1087,7 @@ var Garden = (function () {
     waiting = false;
     flipping = false;
     setUndo(false);
+    setEdit(false);
     rvNote("");
     $("kb-panel").hidden = true;
     $("kb-card").srcdoc = "";
@@ -1049,6 +1118,9 @@ var Garden = (function () {
     } else if (k >= "1" && k <= "4") {
       e.preventDefault();
       rate(Number(k));
+    } else if ((k === "e" || k === "E") && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      e.preventDefault();          // 1.32.2: sửa thẻ (như phím E khi ôn trong Anki)
+      editCard();
     } else if (k === "Escape") {
       e.preventDefault();
       closePanel(true);
@@ -1287,6 +1359,7 @@ var Garden = (function () {
     drawQuests();
     drawPaperChip();
     drawFieldsChip();
+    drawDamaged();
     drawJournal();
     if (typeof GardenLang !== "undefined") { GardenLang.applyTitles(document); GardenLang.syncSelect(); }
     fitTodayList();
@@ -1448,6 +1521,8 @@ var Garden = (function () {
     // 1.31.4: không lấy focus khỏi thẻ (phím Space / 1–4 vẫn chạy sau khi bấm)
     $("kb-rv-undo").addEventListener("mousedown", function (e) { e.preventDefault(); });
     $("kb-rv-undo").addEventListener("click", undoRate);
+    $("kb-rv-edit").addEventListener("mousedown", function (e) { e.preventDefault(); });     // 1.32.2: như nút Hoàn tác
+    $("kb-rv-edit").addEventListener("click", editCard);
     $("kb-close-done").addEventListener("click", function () { closePanel(true); });
     var rates = document.querySelectorAll(".kb-rate");
     for (var r = 0; r < rates.length; r++) {
@@ -1625,6 +1700,8 @@ var Garden = (function () {
     if (typeof GardenLang !== "undefined") {     // 1.32: đổi Ngôn ngữ trong vườn ở ⚙ → vẽ lại chữ đang hiện
       GardenLang.onChange(function () {
         if (typeof GardenHome !== "undefined" && GardenHome.dataChanged) { GardenHome.dataChanged(); }
+        // 1.33.3: menu Trò chơi đang mở → vẽ lại (Chỉ tiếng Việt / bỏ Chỉ tiếng Việt đổi tên trò + tiêu đề)
+        if (typeof GardenGames !== "undefined" && GardenGames.dataChanged) { GardenGames.dataChanged(); }
         if (typeof GardenLife !== "undefined" && GardenLife.closeCard) { GardenLife.closeCard(); }
         if (typeof GardenFinds !== "undefined" && GardenFinds.closeCard) { GardenFinds.closeCard(); }
         if (typeof GardenFX !== "undefined" && GardenFX.say) { GardenFX.say("こんにちは！", 1800); }
@@ -1647,6 +1724,7 @@ var Garden = (function () {
     showCard: showCard,
     reviewRetry: reviewRetry,      // 1.31.1 (F08)
     reviewUndo: reviewUndo,        // 1.31.4: Ctrl+Z trong bảng ôn
+    cardEdited: cardEdited,        // 1.32.2: note của thẻ đang ôn vừa được sửa
     rvNote: rvNote,
     showAnswer: showAnswer,
     celebrate: function (info) {

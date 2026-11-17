@@ -205,12 +205,15 @@ class GuestStore:
         except Exception:
             return None
 
-    def _raw(self) -> dict[str, Any]:
+    def _raw(self, strict: bool = True) -> dict[str, Any]:
         col = self._col()
         if col is not None:
             try:
-                raw = col.get_config(GUEST_KEY, None)
-            except Exception:
+                raw = backup.read_config(col, GUEST_KEY)
+            except backup.ReadFailed:
+                # 1.33.3 (audit 17/11 F01): đọc lỗi không phải "trống" — đọc để ghi thì dừng (không ghi sổ trống đè sổ thật)
+                if strict:
+                    raise
                 raw = None
             return dict(raw) if isinstance(raw, dict) else {}
         try:
@@ -221,7 +224,7 @@ class GuestStore:
         return dict(raw) if isinstance(raw, dict) else {}
 
     def album(self) -> dict[str, dict[str, Any]]:
-        return clean_album(self._raw())
+        return clean_album(self._raw(strict=False))
 
     def met(self, gid: str, scene: str, today: _dt.date) -> tuple[dict[str, dict[str, Any]], bool, bool]:
         """Ghi một lần gặp. Trả (album, gặp lần đầu?, có ghi?). Mỗi khách chỉ ghi một lần mỗi ngày (đếm ngày đã ghé)."""

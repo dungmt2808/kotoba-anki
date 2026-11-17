@@ -1,10 +1,22 @@
-# Kế hoạch 1.32.2 — sửa thẻ ngay lúc ôn trong vườn (chưa làm)
+# Kế hoạch 1.32.2 — sửa thẻ ngay lúc ôn trong vườn (**đã làm ở 1.32.2** — PHAT_TRIEN.md mục 2.6z11, báo cáo `docs/kiem_thu/1.32.2/BAO_CAO.md`)
 
 Góp ý của một người dùng (17/11, người dùng chuyển lời): "thêm phần chỉnh sửa thẻ ngay lúc học thẻ luôn … thường học thẻ
 anki sẽ có nút chỉnh sửa bên góc dưới bên trái". Người dùng: "tớ nghĩ tớ sẽ làm ở session sau". Claude đề xuất làm thẳng
 (nút nhỏ giống Anki) rồi gửi ảnh chụp, không cần ảnh phác — người dùng trả lời **"có"**: **làm ảnh phác cho người dùng duyệt trước** (vẽ đè lên bảng ôn thật như `tests/anki/mock_132.js`).
 
 Phiên sau làm cùng: **pinyin trên từng chữ** (`PINYIN_TREN_CHU.md`). Báo tiếng Trung / tiếng Hàn: Claude đề xuất để bản riêng (xem PHAT_TRIEN.md mục 10.0c).
+
+## Ảnh phác (người dùng duyệt: "tớ thấy giao diện ổn rồi")
+
+Vẽ đè lên bảng ôn / thẻ cây thật của 1.32.1 (`tests/anki/mock_1322.js` + `mock_1322_ghep.py`); cửa sổ sửa là **cửa sổ sửa
+note thật của Anki 26.9** (`aqt.editor.Editor` dựng cho thẻ đang ôn, chụp bằng `QWidget.grab()`). **Chi tiết Claude chọn.**
+
+| Ảnh | Nội dung |
+|---|---|
+| `1322_01_nut_sua.png` | Nút **✎ Sửa** (chữ nhỏ "E") ở góc dưới bên trái, cao bằng nút Lật thẻ / nút chấm, hiện ở mặt trước và mặt sau; nút Lật thẻ / 4 nút chấm ngắn lại một chút |
+| `1322_02_cua_so_sua.png` | Bấm ✎ Sửa / E → cửa sổ "Sửa thẻ · ことば畑" (cửa sổ sửa note của Anki: Fields…, Cards…, định dạng, Tags), đóng (Close / Ctrl+Enter) là lưu |
+| `1322_03_da_luu.png` | Lưu xong: thẻ đang ôn hiện chữ mới ở đúng mặt đang xem, dòng "Đã lưu thẻ." dưới chậu; không tính lượt ôn, không đổi xu |
+| `1322_04_pinyin_tren_chu.png` | Cây tiếng Trung: pinyin dòng dưới (1.32.1) → nằm trên từng chữ; deck ghi số (`ni3 hao3`) → dấu thanh |
 
 ## Làm gì
 

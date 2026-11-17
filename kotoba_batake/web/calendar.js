@@ -577,7 +577,7 @@ var GardenCal = (function () {
       hg.appendChild(GardenIcons.el("hourglass"));
       hg.appendChild(el("b", null, "Gemini đang sửa bài…"));
       box.appendChild(hg);
-      box.appendChild(el("div", "kb-cal-why", "Thường mất 10–60 giây. Có thể đóng bảng hoặc làm việc khác — xong sẽ có thông báo."));
+      box.appendChild(el("div", "kb-cal-why", "Thường 10–60 giây · đóng bảng được, xong sẽ báo."));
       c.appendChild(box);
     } else if (w.st === "queue") {
       const box = el("div", "kb-cal-wait kb-cal-queue");
@@ -609,14 +609,14 @@ var GardenCal = (function () {
     if (w.st === "wait") {
       const b = btn("", "Đang sửa…"); b.disabled = true; acts.appendChild(b);
       acts.appendChild(btn("", "Đóng bảng", close));
-      acts.appendChild(el("span", "kb-cal-lock", "Bài đã gửi, tạm khoá để khỏi lệch với bản sửa"));
+      acts.appendChild(el("span", "kb-cal-lock", "Bài đã gửi, chờ Gemini sửa"));
     } else if (w.st === "done") {
       if (w.today) {
         const b = btn("", "Đã sửa hôm nay"); b.disabled = true; acts.appendChild(b);
         acts.appendChild(el("span", "kb-cal-lock", "Gemini sửa 1 lần mỗi ngày · mai viết bài mới"));
       }
     } else if (w.st === "queue") {
-      acts.appendChild(el("span", "kb-cal-lock", "Bài đã gửi, không tính lượt khi Gemini chưa sửa"));
+      acts.appendChild(el("span", "kb-cal-lock", "Bài đã gửi · chưa sửa thì không tính lượt"));
     } else if (!w.today) {
       acts.appendChild(el("span", "kb-cal-lock", w.goc ? "Bài chưa gửi sửa · luyện viết chỉ cho hôm nay" : ""));
     } else if (!w.key) {

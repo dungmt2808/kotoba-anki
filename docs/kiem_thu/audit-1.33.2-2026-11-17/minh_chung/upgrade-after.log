@@ -1,0 +1,18 @@
+== sau khi cập nhật: 1.31.3 → 1.33.2
+  ✓ Anki chạy bản mới 1.33.2
+  ✓ không mất khoá nào của collection (12 khoá)
+  ✓ mọi khoá giữ nguyên nội dung (trừ dấu phiên bản kotoba_batake_rev)
+  ✓ mọi file trong user_files/ còn nguyên (48 file)
+  ✓ nội dung file không đổi
+  ✓ cấu hình add-on (⚙, khoá Gemini, mục tiêu ngày…) giữ nguyên (thêm mục mặc định mới: gemini_level_zh, gemini_level_ko)
+  ✓ xu 93124, đồ đã mua, đồ trên sân, lượt ôn y như trước
+  ✓ nhật ký "nhật ký viết bằng 1.31.3, trước khi cập nhật" và sổ sinh hoạt còn nguyên
+== mở vườn bằng bản mới
+  ✓ vườn hiện đúng số xu: 93.124 xu
+  ✓ cài đặt ⚙ còn: Mưa
+  ✓ tính năng mới trên dữ liệu cũ: ôn 1 thẻ (+3 xu) → Ctrl+Z → xu / lượt ôn về như trước
+  ✓ deck tiếng Trung cấu hình ở bản cũ ("Ngôn ngữ khác") → bản mới nhận là tiếng Trung, vườn tự sang tiếng Trung
+  ✓ Cấu hình trường trong collection không bị đổi khi chỉ mở vườn
+  ✓ nhật ký Báo lỗi không có lỗi của bản mới
+
+14/14 kiểm tra đạt

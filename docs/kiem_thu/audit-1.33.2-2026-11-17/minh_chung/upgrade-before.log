@@ -1,0 +1,10 @@
+== bản cũ 1.31.3: chơi đủ thứ
+  ✓ bản cũ làm được: xây nhà, ghế gỗ, hướng dương, vùng Bãi biển, mèo, tường anh đào, mũ rơm, nhật ký, sổ sinh hoạt, deck tiếng Trung + Cấu hình trường
+  ✓ đã chụp dữ liệu: 12 khoá collection, 48 file user_files, 93124 xu, 3 lượt ôn
+  ✓ cài đặt ⚙ (Mưa) đã lưu ở cấu hình add-on
+== cài đè gói mới bằng trình quản lý add-on của Anki
+  ✓ Anki cài xong (InstallOk), trên đĩa là bản 1.33.2
+  ✓ user_files/ còn đủ 48 file ngay sau khi cài (Anki giữ thư mục này)
+== đóng Anki (bản cũ còn trong bộ nhớ chạy móc đóng hồ sơ)
+
+5/5 kiểm tra đạt

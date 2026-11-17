@@ -46,7 +46,10 @@ async function waitPy(code, ms = 20000) {
 }
 const KB = 'import sys, os, time, json, shutil, datetime\nkb = sys.modules["kotoba_batake"]\nfrom aqt import mw\n';
 const flash = () => js('const f = document.querySelector(".kb-ai-flash"); return f ? f.textContent : "";');
-const srcText = () => js('return document.getElementById("kb-p-stage").innerText;');
+// 1.33.1: Gói báo + "Tuỳ chọn thêm" là khối thu gọn → mở ra (như người dùng bấm) rồi mới đọc chữ
+const openMore = () => js('document.querySelectorAll("#kb-p-stage details.kb-ai-plan, #kb-p-stage details.kb-ai-opts-box").forEach((d) => { d.open = true; }); return 1;');
+const srcText = () => js('document.querySelectorAll("#kb-p-stage details.kb-ai-plan, #kb-p-stage details.kb-ai-opts-box").forEach((d) => { d.open = true; }); return document.getElementById("kb-p-stage").innerText;');
+const selSrc = (paper, v) => js(`const r = [...document.querySelectorAll(".kb-ai-lang")].find((x) => new RegExp(${JSON.stringify(paper)}).test(x.textContent)); const s = [...r.querySelectorAll("select.kb-ai-sel")].find((x) => /Lấy từ/.test(x.getAttribute("aria-label"))); s.value = ${JSON.stringify(v)}; s.dispatchEvent(new Event("change")); return 1;`);
 async function shot(name) { await page.shot(SHOTS + '/1251_' + name + '.png'); }
 
 // Gemini giả (1.25.2 "Một làng, một truyện"): bản gốc chung (truyện + tin làng) → số báo tiếng Việt
@@ -131,11 +134,12 @@ result = len(nids)`);
   await waitFor('document.querySelector(".kb-ai-plan")');
   await sleep(500);
   const want = await js('return [...document.querySelectorAll(".kb-ai-want label")].map((l) => [l.textContent.trim(), l.querySelector("input").checked, l.querySelector("input").disabled]);');
-  ok(want.length === 3 && want[2][0] === 'Chỉ tiếng Việt' && want[2][1] && !want[0][2] && !want[1][2],
-     'Báo muốn nhận: Tiếng Nhật / Tiếng Anh / Tiếng Việt, tick được cả khi chưa có deck (' + JSON.stringify(want) + ')');
+  // 1.33: thêm Tiếng Trung / Tiếng Hàn (5 ô)
+  ok(want.length === 5 && want[4][0] === 'Chỉ tiếng Việt' && want[4][1] && want.slice(0, 4).every((x) => !x[2]),
+     'Báo muốn nhận: Nhật / Anh / Trung / Hàn / Chỉ tiếng Việt, tick được cả khi chưa có deck (' + JSON.stringify(want) + ')');
   let txt = await srcText();
   ok(/Gói báo/.test(txt) && /Số báo đầu tiên được tặng 7 ngày/.test(txt) && /Mua 1 tuần · 100 xu/.test(txt) && /Mua 1 tháng · 300 xu/.test(txt),
-     'thẻ Gói báo: chưa có gói, tặng 7 ngày, Mua 1 tuần · 100 xu / 1 tháng · 300 xu');
+     'dòng Gói báo: chưa có gói, tặng 7 ngày, Mua 1 tuần · 100 xu / 1 tháng · 300 xu');
   ok(/Báo tiếng Việt/.test(txt) && /Báo Làng Kotoba/.test(txt) && !/Trình độ/.test(txt) && !/Lấy thẻ|Lấy từ/.test(txt)
      && /truyện dài kỳ \+ tin làng/.test(txt), 'khối Báo tiếng Việt: Báo Làng Kotoba, không Trình độ, không lấy thẻ / deck (1.25.2: chỉ truyện + tin làng)');
   ok(!/Giọng đọc/.test(txt) && !/câu không có audio/.test(txt), 'chỉ có báo tiếng Việt: không hàng Giọng đọc, không thẻ giọng cho câu chép');
@@ -239,7 +243,8 @@ result = 1`);
   const noIssue = await py(KB + 'result = not kb.ai.has_issue(kb.AI_DIR_VI, kb.ai_today()) and kb.STATE.load()["coins"] == 400');
   ok(noIssue && /Gói báo đã hết hạn/.test(fl), 'hết hạn, Tự gia hạn tắt → không gọi Gemini, không trừ xu, báo "' + fl + '"');
   txt = await srcText();
-  ok(/Đã hết hạn/.test(txt) && /Gói báo hết hạn — gia hạn ở thẻ Gói báo/.test(txt) && /Gia hạn|Mua 1 tuần/.test(txt), 'thẻ Gói báo "Đã hết hạn"; hàng Hôm nay: "Gói báo hết hạn — gia hạn ở thẻ Gói báo"');
+  ok(/Đã hết hạn/.test(txt) && /Gói báo hết hạn — gia hạn ở dòng Gói báo/.test(txt) && /Gia hạn|Mua 1 tuần/.test(txt), 'dòng Gói báo "Đã hết hạn"; hàng Hôm nay: "Gói báo hết hạn — gia hạn ở dòng Gói báo"');
+  ok(await js('return document.querySelector(".kb-ai-plan").open && document.querySelector(".kb-ai-plan").classList.contains("is-warn");'), '1.33.1: hết hạn → dòng Gói báo mở sẵn nút mua');
   await shot('05_het_han');
   await js('GardenPaper.close(); GardenPaper.open("issue"); return 1;'); await sleep(1500);
   txt = await srcText();
@@ -255,6 +260,7 @@ result = 1`);
   console.log('== nút mua khoá khi thiếu xu / quá 60 ngày');
   await py(KB + 'd = kb.STATE.load(); d["coins"] = 120; kb.STATE.save(d); result = 1');
   await js('GardenPaper.close(); GardenPaper.open("src"); return 1;'); await sleep(1200);
+  await openMore(); await sleep(200);
   let bt = await js('return [...document.querySelectorAll(".kb-ai-plan button")].map((b) => [b.textContent, b.disabled, b.title]);');
   const planTxt = await js('return document.querySelector(".kb-ai-plan").innerText;');
   ok(bt.length === 2 && !bt[0][1] && bt[1][1] && /Thiếu [0-9.]+ xu/.test(bt[1][2]) && /Còn 7 ngày/.test(planTxt),
@@ -291,15 +297,15 @@ result = 1`);
   await js('GardenPaper.close(); GardenPaper.open("src"); return 1;'); await sleep(1200);
   txt = await srcText();
   ok(/Giọng đọc/.test(txt), 'báo tiếng Nhật / tiếng Anh → hàng Giọng đọc hiện lại');
-  await js('const r = [...document.querySelectorAll(".kb-ai-lang")].find((x) => /Báo tiếng Nhật/.test(x.textContent)); [...r.querySelectorAll(".kb-ai-chip")].find((b) => b.textContent === "Không dùng deck").click(); return 1;');
+  await selSrc('Báo tiếng Nhật', 'level');
   await sleep(1000);
   const lv = await py(KB + 'src = kb.words.load_src(mw.col); sc = kb._ai_scope(kb.config(), kb._ai_opts(kb.config()), "ja"); result = [src["ja"]["mode"], sc.get("khong_deck"), len(sc.get("kho") or [])]');
   ok(lv[0] === 'level' && lv[1] === true && lv[2] === 0, 'tiếng Nhật → Không dùng deck: lưu mode "level", phạm vi không deck (Gemini viết theo trình độ)');
-  const lvOn = await js('const r = [...document.querySelectorAll(".kb-ai-lang")].find((x) => /Báo tiếng Nhật/.test(x.textContent)); return [[...r.querySelectorAll(".kb-ai-chip.is-on")].map((b) => b.textContent), /Trình độ/.test(r.textContent)];');
-  ok(lvOn[0].indexOf('Không dùng deck') >= 0 && lvOn[1], 'nút "Không dùng deck" sáng, vẫn chọn Trình độ');
-  await js('const r = [...document.querySelectorAll(".kb-ai-lang")].find((x) => /Báo tiếng Nhật/.test(x.textContent)); [...r.querySelectorAll(".kb-ai-chip")].find((b) => b.textContent === "Mọi deck").click(); return 1;');
+  const lvOn = await js('const r = [...document.querySelectorAll(".kb-ai-lang")].find((x) => /Báo tiếng Nhật/.test(x.textContent)); return [[...r.querySelectorAll("select.kb-ai-sel option")].filter((o) => o.selected).map((o) => o.textContent), /Trình độ/.test(r.textContent)];');
+  ok(lvOn[0].indexOf('Không dùng deck') >= 0 && lvOn[1], 'ô Lấy từ ở "Không dùng deck", vẫn chọn Trình độ');
+  await selSrc('Báo tiếng Nhật', 'all');
   await sleep(900);
-  ok(await py(KB + 'result = kb.words.load_src(mw.col)["ja"]["mode"]') === 'deck', 'bấm Mọi deck → về "deck"');
+  ok(await py(KB + 'result = kb.words.load_src(mw.col)["ja"]["mode"]') === 'deck', 'chọn Mọi deck → về "deck"');
   await shot('07_hai_bao');
   await js('GardenPaper.close(); return 1;');
   // Luyện viết: chỉ báo tiếng Việt + không có deck Nhật / Anh → ẩn
@@ -319,8 +325,8 @@ result = 1`);
   const crowCard = await js('const c = [...document.querySelectorAll(".kb-g-card, .kb-g-pick, [data-game]")].find((x) => /Đuổi quạ/.test(x.textContent)); return c ? [c.textContent, !!c.querySelector("button:disabled"), c.className] : null;');
   ok(crowCard && !/chưa hỗ trợ/.test(crowCard[0]), 'bảng Trò chơi: Đuổi quạ không còn "chưa hỗ trợ ngôn ngữ này" (' + (crowCard ? crowCard[0].slice(0, 80) : 'không thấy') + ')');
   const modes = await js('const sel = [...document.querySelectorAll("select")].find((s) => [...s.options].some((o) => /gõ nghĩa/.test(o.textContent))); return sel ? [...sel.options].map((o) => o.textContent) : [];');
-  // 1.32: deck tiếng Hàn có nhóm riêng — "Nghĩa → gõ chữ Hàn" thay cho "Nghĩa → gõ từ" của Ngôn ngữ khác
-  ok((modes.indexOf('Nghĩa → gõ từ') >= 0 || modes.indexOf('Nghĩa → gõ chữ Hàn') >= 0) && modes.indexOf('Từ → gõ nghĩa') >= 0, 'kiểu chơi: Nghĩa → gõ từ (1.32: gõ chữ Hàn) / Từ → gõ nghĩa ' + JSON.stringify(modes));
+  // 1.32: deck tiếng Hàn có chế độ riêng "Nghĩa → gõ chữ Hàn" (trước: "Nghĩa → gõ từ" của nhóm Ngôn ngữ khác)
+  ok(modes.some((m) => /^Nghĩa → gõ (từ|chữ Hàn)$/.test(m)) && modes.indexOf('Từ → gõ nghĩa') >= 0, 'kiểu chơi: Nghĩa → gõ chữ Hàn / Từ → gõ nghĩa ' + JSON.stringify(modes));
   await shot('08_tro_choi_han');
   await js('const sel = [...document.querySelectorAll("select")].find((s) => [...s.options].some((o) => /gõ nghĩa/.test(o.textContent))); sel.value = [...sel.options].find((o) => /Nghĩa → gõ (từ|chữ Hàn)/.test(o.textContent)).value; sel.dispatchEvent(new Event("change", { bubbles: true })); return 1;');
   await sleep(600);
@@ -328,7 +334,7 @@ result = 1`);
   await waitFor('document.querySelector(".kb-gc-input")', 6000);
   await sleep(2500);
   const ph = await js('return document.querySelector(".kb-gc-input").placeholder;');
-  ok(/Gõ (từ|chữ Hàn)/.test(ph), 'vào game: ô gõ "' + ph + '"');
+  ok(/Gõ từ|Gõ chữ Hàn/.test(ph), 'vào game: ô gõ "' + ph + '"');
   // gõ đáp án của con quạ đang bay (từ tiếng Hàn tương ứng nghĩa trên biển)
   const KO = { 'quả táo': '사과', 'trường học': '학교', 'nước': '물', 'sách': '책', 'bạn': '친구' };
   let scared = false;
@@ -354,8 +360,9 @@ result = 1`);
   for (const [w, h] of [[1366, 768], [720, 520]]) {
     await py(KB + `kb._dialog.resize(${w}, ${h}); result = 1`); await sleep(1200);
     await js('GardenPaper.close(); GardenPaper.open("src"); return 1;'); await sleep(1500);
+    await openMore(); await sleep(300);
     const m = await js('const p = document.querySelector(".kb-ai-plan"), st = document.getElementById("kb-p-stage"); const r = p.getBoundingClientRect(), s = st.getBoundingClientRect(); return [Math.round(r.left - s.left), Math.round(s.right - r.right), st.scrollWidth - st.clientWidth, document.documentElement.scrollWidth - window.innerWidth, [...p.querySelectorAll("button")].map((b) => Math.round(b.getBoundingClientRect().right - s.right))];');
-    ok(m[0] >= 0 && m[1] >= 0 && m[2] <= 1 && m[3] <= 1 && m[4].every((x) => x <= 0), w + ' px: thẻ Gói báo trong khung, không tràn ngang ' + JSON.stringify(m));
+    ok(m[0] >= 0 && m[1] >= 0 && m[2] <= 1 && m[3] <= 1 && m[4].every((x) => x <= 0), w + ' px: dòng Gói báo (mở) trong khung, không tràn ngang ' + JSON.stringify(m));
     await shot('10_nguon_bao_' + w);
   }
   await py(KB + 'kb._dialog.resize(1366, 768); result = 1');

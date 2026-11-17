@@ -271,7 +271,7 @@ var GardenGames = (function () {
     return out;
   }
   // 1.17: tiếng Anh — so khớp chữ gõ vào (chữ thường, nháy cong = thẳng, gạch nối = dấu cách)
-  // 1.32.1 (kiểm tra lần cuối): NFKC trước khi so — bộ gõ tiếng Việt kiểu "Unicode tổ hợp" / bàn phím Vietnamese cũ của
+  // 1.33.4 (kiểm tra lần cuối): NFKC trước khi so — bộ gõ tiếng Việt kiểu "Unicode tổ hợp" / bàn phím Vietnamese cũ của
   // Windows gõ "quả" = q u a + dấu hỏi rời (trước: dấu rời bị thay bằng dấu cách → "qua ta o", không bao giờ đúng), Hangul
   // tách nét (NFD), chữ Latin toàn khổ của bộ gõ Nhật (ａｐｐｌｅ); giữ dấu ghép không gộp được (\p{M}: Hindi, Thái…)
   function enNorm(s) {
@@ -327,7 +327,7 @@ var GardenGames = (function () {
     return { l: l, t: t };
   }
   function pyTyped(raw) { const k = pyKey(raw); return k.t ? k.l + "|" + k.t : k.l; }
-  // 1.32.1: deck hay ghi nhiều cách đọc bằng dấu câu Trung (hǎo，hào · hǎo、hào · hǎo；hào) hoặc trong ngoặc
+  // 1.33.4: deck hay ghi nhiều cách đọc bằng dấu câu Trung (hǎo，hào · hǎo、hào · hǎo；hào) hoặc trong ngoặc
   // (hǎo（hào） · nǐ hǎo (lịch sự: nín hǎo)) — trước chỉ tách , ; / | nên chữ cái dính liền "haohao", gõ "hao" không đúng
   function pyAnswers(reading) {
     const out = [];
@@ -439,28 +439,28 @@ var GardenGames = (function () {
     crow: {
       vocab: [{ id: "vi", label: "Nghĩa → gõ từ Nhật", show: "meaning", type: "both", alt: [["meaning"]] },
         { id: "jp", label: "Chữ → gõ cách đọc", show: "word", type: "reading", alt: [["reading"]],
-          desc: "Quạ mang chữ Nhật bay tới trộm hạt. Gõ cách đọc (romaji hoặc kana) để đuổi." }],
+          desc: "Quạ mang chữ Nhật bay tới. Gõ cách đọc (romaji hoặc kana) để đuổi." }],
       kanji: [{ id: "word", label: "Kanji → gõ âm On/Kun", show: "word", type: "reading", alt: [["reading"]],
-        desc: "Quạ mang chữ Hán bay tới trộm hạt. Gõ âm On hoặc Kun (romaji hoặc kana) để đuổi." },
+        desc: "Quạ mang chữ Hán bay tới. Gõ âm On hoặc Kun để đuổi." },
       { id: "hanviet", label: "Hán Việt → gõ âm / chữ", show: "hanviet", type: "both", alt: [["hanviet"]],
-        desc: "Quạ mang âm Hán Việt bay tới. Gõ âm On / Kun (romaji, kana) hoặc chính chữ Hán (IME) để đuổi." }],
+        desc: "Quạ mang âm Hán Việt bay tới. Gõ âm On / Kun hoặc chữ Hán để đuổi." }],
       grammar: [],
       en: [{ id: "spell", label: "Nghĩa → gõ từ tiếng Anh", show: "meaning", type: "spell", alt: [["meaning"]],
-        desc: "Quạ mang nghĩa tiếng Việt bay tới trộm hạt. Gõ đúng chính tả từ tiếng Anh để đuổi." }],
+        desc: "Quạ mang nghĩa bay tới. Gõ đúng từ tiếng Anh để đuổi." }],
       // 1.25.1: ngôn ngữ khác / deck kiến thức — gõ đúng chữ (chỉ thẻ có chữ cần gõ ngắn, ≤ 24 ký tự)
       xx: [{ id: "spell", label: "Nghĩa → gõ từ", show: "meaning", type: "spell", alt: [["meaning"]],
-        desc: "Quạ mang nghĩa bay tới trộm hạt. Gõ đúng từ (mặt trước của thẻ) để đuổi. Không tính hoa thường, dấu câu." },
+        desc: "Quạ mang nghĩa bay tới. Gõ đúng từ để đuổi." },
       { id: "answer", label: "Từ → gõ nghĩa", show: "word", type: "spell_m", alt: [["meaning"]],
-        desc: "Quạ mang mặt trước của thẻ bay tới. Gõ đúng mặt sau (câu trả lời ngắn) để đuổi. Không tính hoa thường, dấu câu." }],
+        desc: "Quạ mang mặt trước của thẻ bay tới. Gõ đúng mặt sau để đuổi." }],
       // 1.32: tiếng Trung — gõ pinyin (số thanh, dấu thanh hoặc không dấu) / gõ chữ bằng bộ gõ / gõ nghĩa
       zh: [{ id: "pinyin", label: "Nghĩa → gõ pinyin", show: "meaning", type: "pinyin", alt: [["meaning", "reading"]],
-        desc: "Quạ mang nghĩa bay tới trộm hạt. Gõ pinyin để đuổi: xia4yu3, xiayu hay xià yǔ đều được." },
+        desc: "Quạ mang nghĩa bay tới. Gõ pinyin để đuổi (xiayu, xia4yu3 đều được)." },
       { id: "spell", label: "Nghĩa → gõ chữ Hán", show: "meaning", type: "spell", alt: [["meaning"]],
-        desc: "Quạ mang nghĩa bay tới trộm hạt. Gõ đúng chữ Hán (bằng bộ gõ tiếng Trung) để đuổi." },
+        desc: "Quạ mang nghĩa bay tới. Gõ chữ Hán để đuổi." },
       { id: "answer", label: "Chữ → gõ nghĩa", show: "word", type: "spell_m", alt: [["meaning"]],
         desc: "Quạ mang chữ Hán bay tới. Gõ đúng nghĩa tiếng Việt để đuổi." }],
       ko: [{ id: "spell", label: "Nghĩa → gõ chữ Hàn", show: "meaning", type: "spell", alt: [["meaning"]],
-        desc: "Quạ mang nghĩa bay tới trộm hạt. Gõ đúng từ tiếng Hàn (bằng bộ gõ Hangul) để đuổi." },
+        desc: "Quạ mang nghĩa bay tới. Gõ từ tiếng Hàn để đuổi." },
       { id: "answer", label: "Từ → gõ nghĩa", show: "word", type: "spell_m", alt: [["meaning"]],
         desc: "Quạ mang từ tiếng Hàn bay tới. Gõ đúng nghĩa tiếng Việt để đuổi." }]
     },
@@ -490,11 +490,11 @@ var GardenGames = (function () {
     cloze: {
       vocab: [{ id: "word", label: "Điền từ vào câu ví dụ", alt: [["cloze"]] }],
       kanji: [{ id: "word", label: "Điền chữ vào ví dụ", alt: [["cloze"]],
-        desc: "Từ / câu ví dụ của bạn bị che một chữ Hán. Chọn chữ đúng để điền." }],
+        desc: "Câu ví dụ bị che một chữ Hán. Chọn chữ đúng để điền." }],
       grammar: [{ id: "word", label: "Điền mẫu vào câu ví dụ", alt: [["cloze"]],
-        desc: "Câu ví dụ bị che mẫu ngữ pháp. Chọn mẫu đúng để điền, rồi nghe cả câu." }],
+        desc: "Câu ví dụ bị che mẫu ngữ pháp. Chọn mẫu đúng để điền." }],
       en: [{ id: "word", label: "Điền từ vào câu ví dụ", alt: [["cloze"]],
-        desc: "Câu ví dụ tiếng Anh bị che một từ (nhận cả dạng went, studying, cities…). Chọn từ đúng để điền." }],
+        desc: "Câu ví dụ bị che một từ. Chọn từ đúng để điền." }],
       xx: [{ id: "word", label: "Điền từ vào câu ví dụ", alt: [["cloze"]] }],
       zh: [{ id: "word", label: "Điền từ vào câu ví dụ", alt: [["cloze"]] }],
       ko: [{ id: "word", label: "Điền từ vào câu ví dụ", alt: [["cloze"]] }]
@@ -914,11 +914,11 @@ var GardenGames = (function () {
     { id: "market", jp: "朝市", vi: "Chợ sáng", min: 4,
       desc: "Khách hỏi mua theo nghĩa hoặc theo chữ, bán đúng trong 75 giây." },
     { id: "crow", jp: "カラス追い", vi: "Đuổi quạ", min: 3,
-      desc: "Quạ mang nghĩa tiếng Việt bay tới trộm hạt. Gõ từ tiếng Nhật (romaji, kana hoặc kanji) để đuổi." },
+      desc: "Quạ mang nghĩa bay tới. Gõ từ tiếng Nhật (romaji, kana hoặc kanji) để đuổi." },
     { id: "memory", jp: "神経衰弱", vi: "Lật cặp", min: 4,
       desc: "Lật thẻ tìm cặp: chữ ↔ nghĩa hoặc cách đọc." },
     { id: "cloze", jp: "穴埋め", vi: "Điền vào câu", min: 4,
-      desc: "Câu ví dụ của bạn bị che một từ. Chọn từ đúng để điền, rồi nghe cả câu." }
+      desc: "Câu ví dụ bị che một từ. Chọn từ đúng để điền." }
   ];
   const BUILDERS = {};
 
@@ -1029,12 +1029,14 @@ var GardenGames = (function () {
   function showMenu() {
     screen = "menu";
     const st = clearStage();
+    const kinds = kindsIn(), kind = curKind();
+    // 1.33.3: tiêu đề theo ngôn ngữ của deck đang chọn như tên trò bên dưới (trước: theo Ngôn ngữ trong vườn → 小游戏 trên
+    // bảng trò chơi tiếng Nhật); garden.js vẽ lại tiêu đề khi đổi ngôn ngữ cũng giữ ngôn ngữ này (data-kb-lang)
     $("kb-g-title").textContent = "ミニゲーム · Trò chơi ôn từ";
-    if (GLx()) { GLx().applyTitles($("kb-g-title").parentNode); }
+    if (GLx()) { $("kb-g-title").dataset.kbLang = glFor(kind); GLx().applyTitles($("kb-g-title").parentNode); }
     const d = H.data() || {};
     const wallet = d.wallet || {};
     const best = wallet.best || {};
-    const kinds = kindsIn(), kind = curKind();
     const box = el("div", "kb-gmenu");
     // hàng trên: chọn nhóm note để ôn (drop-down) · một nút Cấu hình trường (đỏ khi có loại note chưa cấu hình)
     const head = el("div", "kb-gmenu-kinds");
@@ -1602,7 +1604,10 @@ var GardenGames = (function () {
         mood(combo >= 5 ? "star" : "happy", 800, combo === 5 || combo === 10 ? "Combo ×" + combo + "！" : null);
         cust.mood = "happy";
         cust.state = "thanks";
-        bubble.textContent = gline(["ありがとう！", "Cảm ơn nha!", "またね！"][rnd(3)]);
+        // 1.33.3: khách nói tiếng của deck thì cảm ơn cũng tiếng đó (trước: "Cảm ơn nha!" lẫn vào khi khách hỏi tiếng Nhật / Anh…)
+        const thanks = ["ありがとう！", "Cảm ơn nha!", "またね！"];
+        const f = fxApi();
+        bubble.textContent = gline(f && f.pickSay ? f.pickSay(thanks, gameLang) : thanks[rnd(3)]);
         const me = cust;
         later(g, () => leave(me, "happy"), 900);
       } else {
@@ -1761,7 +1766,7 @@ var GardenGames = (function () {
     let lives = LIVES, score = 0, combo = 0, spawned = 0, scared = 0, spawnIn = 0.6, over = false;
     const crows = [];
     const xx = pool.group === "xx" || pool.group === "zh" || pool.group === "ko";   // 1.25.1 / 1.32: đáp án là đúng chữ của thẻ
-    const cjk = cm.type === "spell" && (pool.group === "zh" || pool.group === "ko");   // 1.32.1: gõ chữ Trung / Hàn — bỏ dấu cách
+    const cjk = cm.type === "spell" && (pool.group === "zh" || pool.group === "ko");   // 1.33.4: gõ chữ Trung / Hàn — bỏ dấu cách
     const answersOf = (p) => py ? (p._py || (p._py = pyAnswers(p.reading)))
       : cm.type === "spell_m" ? (p._sm || (p._sm = spellAnswers(p.meaning)))
       : spell && xx ? (p._sw || (p._sw = cjk ? noSpace(spellAnswers(p.word)) : spellAnswers(p.word)))
@@ -1883,7 +1888,7 @@ var GardenGames = (function () {
       hud();
       return true;
     }
-    // 1.32.1: đang ghép chữ bằng bộ gõ (Hàn / Trung / Nhật) thì chưa chấm — xoá ô giữa lúc bộ gõ còn giữ chữ cuối dễ để
+    // 1.33.4: đang ghép chữ bằng bộ gõ (Hàn / Trung / Nhật) thì chưa chấm — xoá ô giữa lúc bộ gõ còn giữ chữ cuối dễ để
     // lại chữ thừa ở từ sau; chấm khi chữ đã vào ô (compositionend) hoặc Enter
     input.addEventListener("input", (e) => { if (!e.isComposing) { check(false); } });
     input.addEventListener("compositionend", () => check(false));

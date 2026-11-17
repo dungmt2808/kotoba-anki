@@ -1,4 +1,4 @@
-"""1.32.1 — kiểm tra lần cuối trước phát hành (17/11), kịch bản NGOÀI các bộ test đã có:
+"""1.33.4 — kiểm tra lần cuối trước phát hành (17/11), kịch bản NGOÀI các bộ test đã có:
 
 1. Đuổi quạ so đáp án với dữ liệu deck / bộ gõ "bẩn" (core/test_132c.js — hàm thật của web/games.js chạy trong node):
    gõ tiếng Việt kiểu tổ hợp, Hangul tách nét, tiếng Hàn viết liền / cách, pinyin nhiều cách đọc ghi bằng dấu câu Trung /
@@ -108,7 +108,7 @@ DECKS = [
     ("deck kiến thức tiếng Việt (lịch sử)", "Lịch sử", ["Câu hỏi", "Trả lời"], {"Câu hỏi": VN}, "other", {}),
     ("deck tiếng Anh có cụm động từ (die out, look up…)", "Phrasal verbs", ["Front", "Back"],
      {"Front": ["die out", "die down", "look up", "give up", "run out", "take off", "die", "go on"]}, "en", {}),
-    # 1.32.1: trước đây tiếng Đức → Tiếng Anh (giọng đọc tiếng Anh, từ lọt vào báo tiếng Anh); chữ Nga / Thái → Tiếng Nhật
+    # 1.33.4: trước đây tiếng Đức → Tiếng Anh (giọng đọc tiếng Anh, từ lọt vào báo tiếng Anh); chữ Nga / Thái → Tiếng Nhật
     ("deck tiếng Đức: Deutsch / Nghĩa", "Deutsch A1", ["Deutsch", "Nghĩa"], {"Deutsch": DE}, "other", {}),
     ("deck tiếng Đức không gợi ý (Front / Back)", "Basic-de", ["Front", "Back"], {"Front": DE}, "other", {}),
     ("deck tiếng Đức, từ không umlaut (der / die / das)", "Basic-de2", ["Front", "Back"],
@@ -263,7 +263,7 @@ print(json.dumps({"ver": sys.version.split()[0], "bad": bad, "imp": imp, "calls"
     ok(out["ver"].startswith("3.9"), "chạy bằng Python %s" % out["ver"])
     ok(not out["bad"], "mọi file .py biên dịch được trên Python 3.9" + ("" if not out["bad"] else ": " + "; ".join(out["bad"][:3])))
     ok(not out["imp"], "nạp được các module thuần Python + garden_core (anki 23.10)" + ("" if not out["imp"] else ": " + "; ".join(out["imp"][:3])))
-    ok(out["calls"] and all(out["calls"]), "hàm 1.32 / 1.32.1 chạy đúng trên Python 3.9: %s" % out["calls"])
+    ok(out["calls"] and all(out["calls"]), "hàm 1.32 / 1.33.4 chạy đúng trên Python 3.9: %s" % out["calls"])
 
 print("\nKẾT QUẢ: %d/%d" % (sum(results), len(results)))
 sys.exit(0 if all(results) else 1)

@@ -1,0 +1,13 @@
+{
+  "tested_commit": "9ef5272f6af34c78168d2b8851259add29bf2561",
+  "version": "1.33.2",
+  "branch": "audit/release-review-1.33.2-2026-11-17",
+  "release_recommendation": "HOLD: F01 and F06 (P1); F02–F05 and F07 (P2)",
+  "round1_summary": "round1-release-summary.json",
+  "round2_summary": "vong2/summary.json",
+  "unique_assertions_per_anki": 146,
+  "assertion_executions": 292,
+  "failed_assertions": 84,
+  "passed_assertions": 208,
+  "product_changes": false
+}

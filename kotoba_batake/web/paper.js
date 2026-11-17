@@ -19,6 +19,9 @@ var GardenPaper = (function () {
   let deckOpen = {};       // 1.19.1: báo đang mở danh sách chọn deck ({ja: true})
   // 1.22.3: ô tìm deck + vị trí cuộn của danh sách (tick một deck thì bảng vẽ lại — trước đây nhảy về deck đầu tiên)
   const deckQuery = {}, deckScroll = {};
+  // 1.33.1 (người dùng: "bên set up báo hơi nhiều nút"): khối thu gọn "Tuỳ chọn thêm" và dòng Gói báo — nhớ đang mở hay
+  // đóng qua các lần bảng vẽ lại (trạng thái Gemini về là vẽ lại); planOpen null = theo mặc định (hết hạn thì mở)
+  let moreOpen = false, planOpen = null;
 
   const $ = (id) => document.getElementById(id);
   const RE = /\{([^{}\[\]|]*)\|([^{}\[\]|]*)\|([^{}\[\]|]*)\}|\[([^{}\[\]|]*)\|([^{}\[\]|]*)\]/g;
@@ -27,8 +30,11 @@ var GardenPaper = (function () {
   // 1.25.1: báo tiếng Việt (Báo Làng Kotoba) — bài thứ ba là "Góc ôn bài" (thẻ đang ôn)
   const LOAI_VI = { tin_lang: "Tin làng", truyen: "Truyện dài kỳ", thong_bao: "Thông báo", cot: "Cột ngắn", tin_that: "Tin thật" };
   const VI_DAYS = ["Chủ Nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy"];
-  const PAPER_NAME = { ja: "Báo tiếng Nhật", en: "Báo tiếng Anh", vi: "Báo tiếng Việt" };
-  const MAST = { ja: "畑新聞", en: "The Garden Gazette", vi: "Báo Làng Kotoba" };
+  const PAPER_NAME = { ja: "Báo tiếng Nhật", en: "Báo tiếng Anh", vi: "Báo tiếng Việt", zh: "Báo tiếng Trung", ko: "Báo tiếng Hàn" };
+  // 1.33: tên báo tiếng Trung / tiếng Hàn (Claude đề xuất, người dùng chọn; sửa cùng ai_zh / ai_ko.MASTHEAD)
+  const MAST = { ja: "畑新聞", en: "The Garden Gazette", vi: "Báo Làng Kotoba", zh: "词田晨报", ko: "말밭 신문" };
+  const LEARN = ["ja", "en", "zh", "ko"];      // báo học tiếng (tối đa 2); tiếng Việt đi một mình
+  const HTML_LANG = { ja: "ja", en: "en", vi: "vi", zh: "zh", ko: "ko" };
   const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
@@ -50,9 +56,18 @@ var GardenPaper = (function () {
     if (onClick) { b.addEventListener("click", onClick); }
     return b;
   }
+  // 1.33: pinyin nhiều âm tiết (chữ Latinh có dấu thanh, cách nhau dấu cách) — furigana tiếng Nhật không bao giờ khớp
+  const PINYIN_RT = /^[a-zü\u00e0-\u01dc\u0300-\u036f]+(?: [a-zü\u00e0-\u01dc\u0300-\u036f]+)+$/i;
+  const HAN_CH = /^[\u3400-\u9fff\uf900-\ufaff]$/;
   function ruby(s, r) {
     if (!r) { return document.createTextNode(s); }
     const rb = el("ruby");
+    // 1.33: từ tiếng Trung có gạch chân {今天|jīn tiān|…} → mỗi chữ một âm tiết như phần còn lại của bài
+    const chars = Array.from(s), syl = PINYIN_RT.test(r) ? r.split(" ") : null;
+    if (syl && syl.length === chars.length && chars.every((c) => HAN_CH.test(c))) {
+      chars.forEach((c, i) => { rb.appendChild(document.createTextNode(c)); rb.appendChild(el("rt", null, syl[i])); });
+      return rb;
+    }
     rb.appendChild(document.createTextNode(s));
     rb.appendChild(el("rt", null, r));
     return rb;
@@ -100,6 +115,25 @@ var GardenPaper = (function () {
     if (isNaN(t.getTime())) { return d; }
     return (t.getMonth() + 1) + "月" + t.getDate() + "日（" + "日月火水木金土"[t.getDay()] + "）";
   }
+  function zhDate(d) {        // 1.33: 2026年11月16日 星期一
+    const t = new Date(d + "T00:00:00");
+    if (isNaN(t.getTime())) { return d; }
+    return t.getFullYear() + "年" + (t.getMonth() + 1) + "月" + t.getDate() + "日 星期" + "日一二三四五六"[t.getDay()];
+  }
+  function koDate(d) {        // 1.33: 2026년 11월 16일 월요일
+    const t = new Date(d + "T00:00:00");
+    if (isNaN(t.getTime())) { return d; }
+    return t.getFullYear() + "년 " + (t.getMonth() + 1) + "월 " + t.getDate() + "일 " + "일월화수목금토"[t.getDay()] + "요일";
+  }
+  function issueDate(lg, d) { return lg === "en" ? enDate(d) : lg === "vi" ? viDate(d) : lg === "zh" ? zhDate(d) : lg === "ko" ? koDate(d) : jpDate(d); }
+  function issueNo(lg, v) {
+    const n = v.so || "?";
+    if (lg === "en") { return "No. " + n + (v.rut_gon ? " · short edition" : ""); }
+    if (lg === "vi") { return "Số " + n + (v.rut_gon ? " · số ngắn" : ""); }
+    if (lg === "zh") { return "第" + n + "期" + (v.rut_gon ? " · 简版" : ""); }
+    if (lg === "ko") { return "제" + n + "호" + (v.rut_gon ? " · 요약판" : ""); }
+    return "第" + n + "号" + (v.rut_gon ? "・短縮版" : "");
+  }
 
   // Gõ romaji cũng được: dùng bộ chuyển của game Đuổi quạ (mọi cách hiểu của "nn"). Câu tiếng Anh: giữ nguyên.
   function variants(raw, latin) {
@@ -126,7 +160,12 @@ var GardenPaper = (function () {
     Object.keys(n).forEach((l) => { if (n[l] > k) { k = n[l]; best = l; } });
     return best;
   }
-  const LANG_NAME = { ja: "tiếng Nhật", en: "tiếng Anh", vi: "tiếng Việt", other: "ngôn ngữ khác" };
+  const LANG_NAME = { ja: "tiếng Nhật", en: "tiếng Anh", vi: "tiếng Việt", zh: "tiếng Trung", ko: "tiếng Hàn", other: "ngôn ngữ khác" };
+  function lvName(x) { return String(x || "").replace(/^(HSK|TOPIK)(\d)$/, "$1 $2"); }     // 1.33: HSK2 → HSK 2
+  // 1.33.2: Gemini đang viết báo → khoá các lựa chọn làm đổi số đang viết (Python cũng từ chối); xong là mở lại
+  const BUSY = "Gemini đang viết báo — xong mới đổi được.";
+  function isBusy(v) { return !!(v && v.gemini && v.gemini.busy); }
+  function lock(e, busy) { if (e && busy) { e.disabled = true; e.title = BUSY; } return e; }
   // 1.19.1: ngôn ngữ của báo đang đọc (nút chuyển ở Kệ báo; mở bảng thì Python chọn báo có số chưa đọc)
   function paperLang() {
     if (index && index.lang) { return index.lang; }
@@ -141,7 +180,7 @@ var GardenPaper = (function () {
     if (!v || !v.bai) { return " · ▶ để nghe"; }
     let t = v.bai.some((b) => (b.audio || []).some(Boolean)) ? " · ▶ để nghe"
       : v.src === "claude" ? " · số này chưa có giọng đọc từng đoạn (cần VOICEVOX)"
-        : " · số này chưa có giọng đọc từng đoạn (Nguồn báo → Giọng đọc: Cả bài)";
+        : " · số này chưa có giọng đọc từng đoạn";
     if (v.has_dich) { t += " · Dịch: xem bản dịch"; }
     return t;
   }
@@ -150,11 +189,18 @@ var GardenPaper = (function () {
     if (tab === "issue" && pl === "vi") {
       setInfo("Truyện dài kỳ và tin làng hôm nay. Trả lời câu hỏi cuối số để nhận xu.");
     } else if (tab === "issue" && pl === "en") {
-      setInfo("Bấm từ gạch chân để tra nghĩa (nhận cả dạng biến đổi: went → go). Gạch chấm: từ mới." + issueTip());
-    } else if (tab === "issue") { setInfo("Bấm từ gạch chân để tra nghĩa · gạch liền: từ đã học · gạch chấm: từ mới" + issueTip()); }
+      setInfo("Bấm từ gạch chân để tra nghĩa · gạch chấm: từ mới" + issueTip());
+    } else if (tab === "issue" && pl === "zh") {          // 1.33
+      setInfo("Bấm từ gạch chân để tra nghĩa · gạch chấm: từ mới" + issueTip());
+    } else if (tab === "issue" && pl === "ko") {
+      setInfo("Bấm từ gạch chân để tra nghĩa · gạch chấm: từ mới" + issueTip());
+    } else if (tab === "issue") { setInfo("Bấm từ gạch chân để tra nghĩa · gạch chấm: từ mới" + issueTip()); }
     else if (tab === "dict") {
-      setInfo(dictLang() === "ja" ? "Nghe rồi gõ lại câu (kana, kanji hoặc romaji). Enter để kiểm tra."
-        : "Nghe rồi gõ lại câu. Không tính hoa thường, dấu câu; don't = do not. Enter để kiểm tra.");
+      const dl = dictLang();
+      setInfo(dl === "ja" ? "Nghe rồi gõ lại câu (kana, kanji hoặc romaji) · Enter để kiểm tra."
+        : dl === "zh" ? "Nghe rồi gõ lại bằng chữ Hán · Enter để kiểm tra."
+          : dl === "ko" ? "Nghe rồi gõ lại bằng chữ Hàn · Enter để kiểm tra."
+            : "Nghe rồi gõ lại câu · Enter để kiểm tra.");
     }
     else if (tab === "src") { setInfo("Chọn báo muốn nhận và ai viết báo."); }
     else { setInfo("Chọn một số báo để đọc."); }
@@ -165,8 +211,11 @@ var GardenPaper = (function () {
   function dictLang() {
     const items = (daily && daily.items) || [];
     if (!items.length) { return deckLang(); }
-    const latin = items.filter((c) => c.lang && c.lang !== "ja").length;
-    return latin * 2 > items.length ? "en" : "ja";
+    const n = {};
+    items.forEach((c) => { const l = c.lang || "ja"; n[l] = (n[l] || 0) + 1; });
+    let best = "ja", k = -1;
+    Object.keys(n).forEach((l) => { if (n[l] > k) { k = n[l]; best = l; } });      // 1.33: zh / ko
+    return best === "other" ? "en" : best;
   }
   function plantOf(word) {
     const d = H && H.data();
@@ -237,7 +286,10 @@ var GardenPaper = (function () {
     const fb = $("kb-p-furi");       // chỉ có nghĩa ở bài báo và câu chép tiếng Nhật
     if (!fb) { return; }
     const issueLang = issue && tab === "issue" ? issue.lang || "ja" : paperLang();
-    fb.hidden = !((tab === "issue" && issueLang === "ja") || (tab === "dict" && dictLang() === "ja"));
+    const lg = tab === "issue" ? issueLang : dictLang();
+    fb.hidden = !((tab === "issue" || tab === "dict") && (lg === "ja" || lg === "zh"));
+    const word = lg === "zh" ? "pinyin" : "furigana";           // 1.33: báo tiếng Trung có pinyin trên chữ
+    fb.textContent = ($("kb-paper").classList.contains("kb-p-nofuri") ? "Hiện " : "Ẩn ") + word;
   }
 
   function open(which) {
@@ -352,6 +404,24 @@ var GardenPaper = (function () {
     });
     return box;
   }
+  // 1.33.1: chọn một trong nhiều bằng ô thả xuống (trước: hàng nút — 2 báo là ~50 chỗ bấm). options: [giá trị, chữ,
+  // giải thích (title), không chọn được?]
+  function pick(options, current, onPick, label) {
+    const s = el("select", "kb-ai-sel");
+    s.setAttribute("aria-label", label || "");
+    options.forEach((o) => {
+      const op = el("option", null, o[1]);
+      op.value = o[0];
+      if (o[2]) { op.title = o[2]; }
+      if (o[3]) { op.disabled = true; }
+      if (o[0] === current) { op.selected = true; }
+      s.appendChild(op);
+    });
+    const cur = options.filter((o) => o[0] === current)[0];
+    if (cur && cur[2]) { s.title = cur[2]; }
+    s.addEventListener("change", () => { if (s.value !== current) { onPick(s.value); } });
+    return s;
+  }
   // 1.25.1: nút chọn nhiều (Chủ đề truyện) — luôn còn ít nhất một nút bật
   function multiChips(options, on, onChange) {
     const box = el("div", "kb-ai-chips kb-ai-multi");
@@ -434,33 +504,53 @@ var GardenPaper = (function () {
   }
   // 1.19.1: "Báo muốn nhận: ☑ Tiếng Nhật ☐ Tiếng Anh" — Gemini viết mỗi sáng một số cho mỗi báo đã tick
   function wantRow(v) {
+    const busy = isBusy(v);
     const r = el("div", "kb-ai-row kb-ai-want");
     r.appendChild(el("span", "kb-ai-k", "Báo muốn nhận"));
     const val = el("span", "kb-ai-v");
     const on = v.langs_on || [];
     // 1.25.1: thêm báo tiếng Việt; chưa có deck của tiếng đó vẫn tick được (Gemini viết theo trình độ).
     // 1.25.2 "Một làng, một truyện": Nhật và / hoặc Anh, HOẶC chỉ tiếng Việt (báo Nhật / Anh đã có bản dịch tiếng Việt)
-    [["ja", "Tiếng Nhật"], ["en", "Tiếng Anh"], ["vi", "Chỉ tiếng Việt"]].forEach((x) => {
+    // 1.33 (người dùng chốt 17/11): tối đa 2 báo trong Nhật / Anh / Trung / Hàn; đủ 2 thì các ô còn lại mờ đi
+    const learnOn = on.filter((l) => LEARN.indexOf(l) >= 0);
+    [["ja", "Tiếng Nhật"], ["en", "Tiếng Anh"], ["zh", "Tiếng Trung"], ["ko", "Tiếng Hàn"], ["vi", "Chỉ tiếng Việt"]].forEach((x) => {
       const lab = el("label", "kb-ai-tick" + (x[0] === "vi" ? " kb-ai-tick-vi" : ""));
       const cb = el("input");
       cb.type = "checkbox";
       cb.checked = on.indexOf(x[0]) >= 0;
       const none = !((v.decks || {})[x[0]] || []).length;
-      if (x[0] === "vi") { lab.title = "Cho người không học tiếng Nhật / tiếng Anh: truyện + tin làng bằng tiếng Việt (thay cho hai báo kia)"; }
+      const full = x[0] !== "vi" && !cb.checked && learnOn.length >= 2;
+      if (busy) { cb.disabled = true; lab.classList.add("is-off"); lab.title = BUSY; }
+      else if (full) { cb.disabled = true; lab.classList.add("is-off"); lab.title = "Tối đa 2 báo: bỏ tick một báo trước"; }
+      else if (x[0] === "vi") { lab.title = "Cho người không học ngoại ngữ: truyện + tin làng bằng tiếng Việt (thay cho các báo kia)"; }
       else if (none) { lab.title = "Chưa có deck " + LANG_NAME[x[0]] + ": báo viết theo trình độ"; }
       cb.addEventListener("change", () => {
         let next;
         if (x[0] === "vi") { next = cb.checked ? ["vi"] : []; }
-        else { next = ["ja", "en"].filter((l) => (l === x[0] ? cb.checked : on.indexOf(l) >= 0)); }
+        else {
+          next = learnOn.filter((l) => l !== x[0]);
+          if (cb.checked) { next.push(x[0]); }
+          if (next.length > 2) { cb.checked = false; return; }
+        }
         aiSet({ langs: next });
       });
       lab.appendChild(cb);
       lab.appendChild(document.createTextNode(" " + x[1]));
       val.appendChild(lab);
     });
-    if (!on.length) { val.appendChild(el("span", "kb-ai-hint", "chưa chọn báo nào")); }
+    if (busy) { val.appendChild(el("span", "kb-ai-hint kb-ai-busyhint", BUSY)); }
+    else if (!on.length) { val.appendChild(el("span", "kb-ai-hint", "chưa chọn báo nào")); }
     else if (on.length > 1) { val.appendChild(el("span", "kb-ai-hint", "hai báo cùng kể một chuyện")); }
+    else { val.appendChild(el("span", "kb-ai-hint", "tối đa 2 báo")); }
     r.appendChild(val);
+    // 1.33: "Bạn cũng học tiếng X — thêm báo tiếng X?" (Python chọn ngôn ngữ ôn nhiều nhất 30 ngày qua)
+    if (v.suggest && LANG_NAME[v.suggest] && !busy) {
+      const tip = el("div", "kb-ai-suggest");
+      tip.appendChild(el("span", null, "Bạn cũng học " + LANG_NAME[v.suggest] + " — thêm báo " + LANG_NAME[v.suggest] + "?"));
+      tip.appendChild(btn("kb-btn-small", "Thêm báo " + LANG_NAME[v.suggest], () => aiSet({ langs: learnOn.concat([v.suggest]) })));
+      tip.appendChild(btn("kb-btn-small", "Không", () => aiSet({ suggest_off: v.suggest })));
+      r.appendChild(tip);
+    }
     return r;
   }
   // nút "Đọc ngay" ở tab Nguồn báo: chuyển sang báo của ngôn ngữ đó
@@ -472,22 +562,20 @@ var GardenPaper = (function () {
     const none = !((v.decks || {})[lang] || []).length;
     const vi = lang === "vi";
     const opts = [];
-    opts.push(["all", "Mọi deck", vi ? "Mỗi số lấy ngẫu nhiên 60 thẻ trong các deck không phải tiếng Nhật / tiếng Anh"
-      : "Mỗi số lấy ngẫu nhiên 100 từ trong mọi deck " + LANG_NAME[lang]]);
-    opts.push(["pick", picked.length ? "Deck đã chọn (" + picked.length + ")" : "Chọn deck", "Tối đa " + (v.max_decks || 5) + " deck"]);
+    // chưa có deck nào của tiếng này: hai mục đầu không có gì để lấy (1.33.1: ô thả xuống — mục mờ, không chọn được)
+    const noDeck = none ? "Chưa có deck " + (vi ? "nào" : LANG_NAME[lang]) : "";
+    opts.push(["all", "Mọi deck", noDeck || (vi ? "Mỗi số lấy ngẫu nhiên 60 thẻ trong các deck không phải tiếng Nhật / tiếng Anh"
+      : "Mỗi số lấy ngẫu nhiên 100 từ trong mọi deck " + LANG_NAME[lang]), none]);
+    opts.push(["pick", picked.length ? "Deck đã chọn (" + picked.length + ")" : "Chọn deck…", noDeck || "Tối đa " + (v.max_decks || 5) + " deck", none]);
     // 1.25.1: không cần deck — Gemini viết theo trình độ (báo tiếng Việt: kiến thức chung)
     opts.push(["level", "Không dùng deck", vi ? "Tin làng, truyện và kiến thức chung" : "Gemini viết theo trình độ, tự chọn từ đáng học"]);
     const cur = mode === "level" ? "level" : (picked.length || deckOpen[lang]) ? "pick" : "all";
-    const box = chips(opts, cur, (x) => {
+    return pick(opts, cur, (x) => {
       aiFlash = null;
       if (x === "all") { deckOpen[lang] = false; H.send("ai:decks:" + JSON.stringify({ lang: lang, decks: [] })); }
       else if (x === "level") { deckOpen[lang] = false; H.send("ai:decks:" + JSON.stringify({ lang: lang, decks: [], mode: "level" })); }
       else { deckOpen[lang] = true; drawSource(); }
-    });
-    if (none) {        // chưa có deck nào của tiếng này: hai nút đầu không có gì để lấy
-      Array.prototype.forEach.call(box.children, (b, i) => { if (i < 2) { b.disabled = true; b.title = "Chưa có deck " + (vi ? "nào" : LANG_NAME[lang]); } });
-    }
-    return box;
+    }, "Lấy từ cho " + (PAPER_NAME[lang] || "báo"));
   }
   function deckHas(name, q) {
     if (typeof Garden !== "undefined" && Garden.deckMatch) { return Garden.deckMatch(name, q); }
@@ -550,12 +638,12 @@ var GardenPaper = (function () {
     return box;
   }
   function langBlock(v, lang) {
-    const g = v.gemini, L = (g.langs || {})[lang] || {}, en = lang === "en", vi = lang === "vi";
+    const g = v.gemini, L = (g.langs || {})[lang] || {}, en = lang === "en", vi = lang === "vi", busy = isBusy(v);
     const box = el("div", "kb-ai-lang");
     const h = el("div", "kb-ai-lang-h");
     h.appendChild(el("b", null, PAPER_NAME[lang] || "Báo"));
     const nm = el("span", "kb-ai-hint", MAST[lang] || "");
-    if (lang === "ja") { nm.lang = "ja"; }
+    if (lang === "ja" || lang === "zh" || lang === "ko") { nm.lang = HTML_LANG[lang]; }      // 1.33: phông chữ Trung / Hàn
     h.appendChild(nm);
     box.appendChild(h);
     const rows = el("div", "kb-ai-rows");
@@ -567,6 +655,10 @@ var GardenPaper = (function () {
     if (L.running) {
       const val = aiRow(rows, "Hôm nay", "[i:hourglass] " + (g.msg || "Đang viết…"), null, "is-busy");
       val.id = "kb-ai-busy";
+    } else if (L.later) {                    // 1.33.2: thêm sau khi hôm nay đã viết xong báo khác
+      aiRow(rows, "Hôm nay", "bắt đầu từ mai");
+    } else if ((g.queue || []).indexOf(lang) >= 0 && !L.today) {      // 1.33.2: "Bắt đầu viết" — báo kế tiếp
+      aiRow(rows, "Hôm nay", "[i:hourglass] viết sau báo đang viết", null, "is-busy");
     } else if (L.today) {
       const val = el("span", null);
       val.appendChild(document.createTextNode("✓ Số " + L.today.so + ": "));
@@ -575,32 +667,34 @@ var GardenPaper = (function () {
       val.appendChild(t);
       aiRow(rows, "Hôm nay", val, [
         btn("kb-ai-main", "Đọc", () => readNow(lang, L.today.date)),
-        L.today.audio_left && g.audio !== "tat" ? btn("", "Tạo giọng đọc (" + L.today.audio_left + ")", () => {
+        L.today.audio_left && g.audio !== "tat" ? lock(btn("", "Tạo giọng đọc (" + L.today.audio_left + ")", () => {
           aiFlash = null; H.send("ai:audio:" + JSON.stringify({ lang: lang }));
-        }) : null]);
+        }), busy) : null]);
     } else if ((g.waiting || []).indexOf(lang) >= 0 && !L.error) {   // 1.22.3 / 1.22.4: chờ bấm "Bắt đầu viết"
       aiRow(rows, "Hôm nay", "chờ bấm “Bắt đầu viết” bên dưới");
     } else if (L.sub_off && v.sub && !v.sub.active) {                 // 1.25.1: gói báo hết hạn
-      aiRow(rows, "Hôm nay", "[i:warn] Gói báo hết hạn — gia hạn ở thẻ Gói báo", null, "is-warn");
+      aiRow(rows, "Hôm nay", "[i:warn] Gói báo hết hạn — gia hạn ở dòng Gói báo", null, "is-warn");
     } else {
-      aiRow(rows, "Hôm nay", L.error ? "✗ " + L.error : "chưa có số", [btn("kb-ai-main", L.error ? "Viết lại" : "Viết",
-        () => { aiFlash = null; H.send("ai:write:" + JSON.stringify({ lang: lang })); }, g.running ? "Gemini đang viết báo khác" : "")],
+      aiRow(rows, "Hôm nay", L.error ? "✗ " + L.error : "chưa có số", [lock(btn("kb-ai-main", L.error ? "Viết lại" : "Viết",
+        () => { aiFlash = null; H.send("ai:write:" + JSON.stringify({ lang: lang })); }), busy)],
         L.error ? "is-bad" : "");
     }
     if (L.focus && L.focus[1] && L.today) { aiRow(rows, vi ? "Thẻ phải ôn" : "Từ phải ôn", "dùng " + L.focus[0] + " / " + L.focus[1] + (vi ? " thẻ" : " từ")); }
     if (L.audio_error && !L.running && !vi) { aiRow(rows, "Giọng đọc", "[i:warn] " + L.audio_error, null, "is-warn"); }
-    if ((L.levels || []).length) { aiRow(rows, "Trình độ", chips((L.levels || []).map((x) => [x, x]), L.level, (x) => aiSet({ level: x }))); }
+    if ((L.levels || []).length) {      // 1.33.1: ô thả xuống (5–6 nút trước đây)
+      aiRow(rows, "Trình độ", lock(pick((L.levels || []).map((x) => [x, lvName(x)]), L.level, (x) => aiSet({ level: x }), "Trình độ của " + (PAPER_NAME[lang] || "báo")), busy));
+    }
     const picked = vi ? [] : (v.picked || {})[lang] || [];
     if (!vi) {            // 1.25.2: báo tiếng Việt chỉ truyện + tin làng, không lấy thẻ
-      aiRow(rows, "Lấy từ", sourcePicker(v, lang));
+      aiRow(rows, "Lấy từ", lock(sourcePicker(v, lang), busy));
       if (L.thieu && ((v.modes || {})[lang] || "deck") !== "level") { aiRow(rows, "", L.thieu, null, "kb-ai-sub-row"); }
-    } else { aiRow(rows, "Nội dung", "truyện dài kỳ + tin làng (cùng chuyện với báo Nhật / Anh)"); }
+    } else { aiRow(rows, "Nội dung", "truyện dài kỳ + tin làng"); }
     if (picked.length && !deckOpen[lang]) {
       const names = ((v.decks || {})[lang] || []).filter((d) => picked.indexOf(d.id) >= 0).map((d) => d.name);
-      aiRow(rows, "", names.join(", "), [btn("", "Đổi", () => { deckOpen[lang] = true; drawSource(); })], "kb-ai-sub-row");
+      aiRow(rows, "", names.join(", "), [lock(btn("", "Đổi", () => { deckOpen[lang] = true; drawSource(); }), busy)], "kb-ai-sub-row");
     }
     box.appendChild(rows);
-    if (deckOpen[lang]) { box.appendChild(deckList(v, lang)); }
+    if (deckOpen[lang] && !busy) { box.appendChild(deckList(v, lang)); }      // 1.33.2: đang viết → ẩn danh sách deck
     if (L.log && L.log.length) {
       const det = el("details", "kb-ai-log");
       det.appendChild(el("summary", null, "Nhật ký" + (L.log_day ? " " + shortDate(L.log_day) : "") +
@@ -619,7 +713,7 @@ var GardenPaper = (function () {
     const t = el("div", "kb-ai-start-t");
     if (g.first) {
       t.appendChild(el("b", null, "Bước 3 · "));
-      t.appendChild(document.createTextNode(langs.length ? "Chọn báo muốn nhận, trình độ và deck lấy từ ở trên, rồi bấm Bắt đầu viết." :
+      t.appendChild(document.createTextNode(langs.length ? "Chọn báo, trình độ, deck ở trên rồi bấm Bắt đầu viết." :
         "Tick ít nhất một báo ở “Báo muốn nhận” trước đã."));
     } else {
       // 1.23: nguồn vừa thành Gemini (bấm "Dùng Gemini", thư mục kotoba_daily không thấy) cũng chờ, không tự viết
@@ -627,7 +721,7 @@ var GardenPaper = (function () {
       t.appendChild(el("b", null, (sw ? "Chuyển sang Gemini: " : "Vừa bật ") + names.join(", ") + " · "));
       // 1.25.2: báo tiếng Việt không có trình độ / deck
       t.appendChild(document.createTextNode(wait.every((x) => x === "vi") ? "Bấm Bắt đầu viết." :
-        "Chọn trình độ và deck lấy từ ở trên, rồi bấm Bắt đầu viết."));
+        "Chọn trình độ, deck ở trên rồi bấm Bắt đầu viết."));
     }
     box.appendChild(t);
     const busy = !!g.running;
@@ -640,18 +734,24 @@ var GardenPaper = (function () {
       "Mỗi báo 1–2 phút, chạy nền · từ mai tự viết khi mở Anki" + (g.auto ? "" : " (đang tắt)")));
     return box;
   }
-  // 1.25.1: Gói báo — mua bằng xu (1 tuần 100 xu / 1 tháng 300 xu), lần đầu tặng 7 ngày, Tự gia hạn
-  function subCard(v) {
-    const sb = v.sub, card = el("section", "kb-ai-card kb-ai-plan" + (sb.active ? " is-on" : ""));
-    const h = el("div", "kb-ai-h");
-    h.appendChild(GardenIcons.fill(el("span", "kb-ai-name"), "[i:book] Gói báo"));
-    h.appendChild(el("span", "kb-ai-sub", "Gemini viết số mới khi còn gói · số cũ luôn đọc được"));
-    card.appendChild(h);
-    const rows = el("div", "kb-ai-rows");
+  // 1.25.1: Gói báo — mua bằng xu (1 tuần 100 xu / 1 tháng 300 xu), lần đầu tặng 7 ngày, Tự gia hạn.
+  // 1.33.1: một dòng thu gọn trong thẻ Gemini (trước: thẻ riêng 3 nút luôn hiện) — bấm dòng mới hiện nút mua + Tự gia hạn;
+  // hết hạn thì mở sẵn
+  function planBlock(v) {
+    const sb = v.sub;
+    const warn = !sb.active && !!sb.trial_used;
+    const det = el("details", "kb-ai-plan kb-ai-more" + (sb.active ? " is-on" : "") + (warn ? " is-warn" : ""));
+    det.open = planOpen === null ? warn : planOpen;
+    det.addEventListener("toggle", () => { planOpen = det.open; });
     const until = sb.until ? shortDate(sb.until) : "";
     const state = sb.active ? (sb.in_trial ? "Dùng thử · còn " : "Còn ") + sb.left + " ngày (tới hết " + until + ")"
       : sb.trial_used ? "[i:warn] Đã hết hạn" + (until ? " (" + until + ")" : "") : "Số báo đầu tiên được tặng " + (sb.trial_days || 7) + " ngày";
-    aiRow(rows, "Hiện tại", state, null, sb.active || !sb.trial_used ? "" : "is-warn");
+    const sum = el("summary", "kb-ai-plan-s");
+    sum.appendChild(el("span", "kb-ai-k", "Gói báo"));
+    sum.appendChild(GardenIcons.fill(el("span", "kb-ai-v"), state));
+    sum.appendChild(el("span", "kb-ai-plan-go", sb.active ? "Gia hạn" : "Mua gói"));
+    det.appendChild(sum);
+    const body = el("div", "kb-ai-plan-b");
     const btns = el("span", "kb-ai-chips");
     (sb.plans || []).forEach((pn) => {
       const over = sb.left + pn.days > (sb.ahead_max || 60), poor = (sb.coins || 0) < pn.price;
@@ -661,8 +761,7 @@ var GardenPaper = (function () {
       b.disabled = over || poor;
       btns.appendChild(b);
     });
-    aiRow(rows, "Mua", btns);
-    card.appendChild(rows);
+    body.appendChild(btns);
     const lab = el("label", "kb-ai-auto");
     const cb = el("input");
     cb.type = "checkbox";
@@ -670,8 +769,10 @@ var GardenPaper = (function () {
     cb.addEventListener("change", () => { aiFlash = null; H.send("ai:sub:" + JSON.stringify({ auto: cb.checked })); });
     lab.appendChild(cb);
     lab.appendChild(document.createTextNode(" Tự gia hạn khi hết hạn (nếu đủ xu)"));
-    card.appendChild(lab);
-    return card;
+    body.appendChild(lab);
+    body.appendChild(el("div", "kb-ai-hint", "Gemini viết số mới khi còn gói · số cũ luôn đọc được"));
+    det.appendChild(body);
+    return det;
   }
   function geminiCard(v) {
     const g = v.gemini, on = !!g.key;
@@ -680,39 +781,65 @@ var GardenPaper = (function () {
     h.appendChild(el("span", "kb-ai-name", "✦ Gemini"));
     h.appendChild(el("span", "kb-ai-sub", "Gemini viết báo mỗi sáng · khoá miễn phí"));
     if (g.key && v.source !== "gemini" && (v.source === "claude" || v.want === "claude")) {
-      h.appendChild(btn("", "Dùng Gemini cho báo tiếng Nhật", () => aiSet({ source: "gemini" })));
+      h.appendChild(lock(btn("", "Dùng Gemini cho báo tiếng Nhật", () => aiSet({ source: "gemini" })), isBusy(v)));
     }
     card.appendChild(h);
     if (!g.key || keyOpen) {
       card.appendChild(keyForm(g));
+      if (!g.key) { card.appendChild(privacyNote()); }
     } else {
-      const rows = el("div", "kb-ai-rows");
-      aiRow(rows, "Khoá", g.key + " ✓", [btn("", "Đổi khoá", () => { keyOpen = true; aiFlash = null; drawSource(); })]);
-      if (g.model) { aiRow(rows, "Model", g.model); }
-      card.appendChild(rows);
+      if (v.sub) { card.appendChild(planBlock(v)); }
       (v.langs_on || []).forEach((lang) => card.appendChild(langBlock(v, lang)));
       if (g.first || (g.waiting || []).length) { card.appendChild(startBlock(v)); }
-      const listen = (v.langs_on || []).some((x) => x !== "vi");     // 1.25.1: báo tiếng Việt không có giọng đọc
-
-      const opts = el("div", "kb-ai-opts");
-      const voice = el("select", "kb-ai-voice");
-      voice.setAttribute("aria-label", "Giọng đọc");
-      v.voices.forEach((x) => { const o = el("option", null, x); o.value = x; if (x === g.voice) { o.selected = true; } voice.appendChild(o); });
-      voice.addEventListener("change", () => aiSet({ voice: voice.value }));
+    }
+    return card;
+  }
+  function privacyNote() {
+    const note = el("details", "kb-ai-note kb-ai-more");
+    note.appendChild(el("summary", null, "Khoá lưu trên máy này, không đồng bộ."));
+    note.appendChild(el("div", null, "Gemini nhận từ bạn đang học, nội dung báo và nhận xét truyện bạn gõ. Bản miễn phí: Google có thể dùng dữ liệu này."));
+    note.appendChild(el("div", null, "Máy kiểm tra từng số, còn lỗi thì không đưa vào hòm thư. Hết lượt miễn phí thì mai viết tiếp."));
+    return note;
+  }
+  // 1.33.1: "Tuỳ chọn thêm" — thứ ít khi đổi (khoá, giọng đọc, truyện, Tự viết, giọng cho câu không có audio, Xoá khoá)
+  // gom vào một khối thu gọn; hằng ngày chỉ thấy báo muốn nhận + từng báo (Hôm nay · Trình độ · Lấy từ)
+  function moreBlock(v) {
+    const g = v.gemini, key = !!g.key && !keyOpen, busy = isBusy(v);
+    const dict = (v.langs_on || []).some((x) => x !== "vi") || !(v.langs_on || []).length;   // báo tiếng Việt không chép
+    if (!key && !dict) { return null; }
+    const det = el("details", "kb-ai-card kb-ai-opts-box kb-ai-more");
+    det.open = moreOpen;
+    det.addEventListener("toggle", () => { moreOpen = det.open; });
+    const sum = el("summary", "kb-ai-h");
+    sum.appendChild(el("span", "kb-ai-name", "Tuỳ chọn thêm"));
+    const listen = (v.langs_on || []).some((x) => x !== "vi");     // 1.25.1: báo tiếng Việt không có giọng đọc
+    sum.appendChild(el("span", "kb-ai-sub", key ? "khoá, " + (listen ? "giọng đọc, " : "") + "truyện, tự viết" : "giọng đọc cho Chép chính tả"));
+    det.appendChild(sum);
+    if (key) {
+      const opts = el("div", "kb-ai-rows kb-ai-opts");
+      aiRow(opts, "Khoá", g.key + " ✓", [lock(btn("", "Đổi khoá", () => { keyOpen = true; aiFlash = null; drawSource(); }), busy)]);
+      if (g.model) { aiRow(opts, "Model", g.model); }
       if (listen) {
-        aiRow(opts, "Giọng đọc", chips([["chinh_ta", "Câu chép", "Chỉ câu chép chính tả: ít lượt gọi nhất"], ["ca_bai", "Cả bài", "Thêm giọng đọc từng đoạn"], ["tat", "Tắt"]],
-          g.audio, (x) => aiSet({ audio: x })), [g.audio !== "tat" ? voice : null]);
-        if (!g.has_tts && g.audio !== "tat") { opts.lastChild.appendChild(el("span", "kb-ai-hint", "khoá chưa có giọng đọc")); }
+        const voice = el("select", "kb-ai-voice");
+        voice.setAttribute("aria-label", "Giọng đọc");
+        v.voices.forEach((x) => { const o = el("option", null, x); o.value = x; if (x === g.voice) { o.selected = true; } voice.appendChild(o); });
+        voice.addEventListener("change", () => aiSet({ voice: voice.value }));
+        lock(voice, busy);
+        const row = aiRow(opts, "Giọng đọc", lock(pick([["chinh_ta", "Câu chép", "Chỉ câu chép chính tả: ít lượt gọi nhất"], ["ca_bai", "Cả bài", "Thêm giọng đọc từng đoạn"], ["tat", "Tắt"]],
+          g.audio, (x) => aiSet({ audio: x }), "Giọng đọc của báo"), busy), [g.audio !== "tat" ? voice : null]);
+        if (!g.has_tts && g.audio !== "tat") { row.parentNode.appendChild(el("span", "kb-ai-hint", "khoá chưa có giọng đọc")); }
       }
       // 1.23: truyện dài kỳ — Hay hơn (lập mạch, biên tập, viết lại) / Tiết kiệm (như cũ, ít lượt gọi) / Tắt
-      aiRow(opts, "Truyện", chips([["hay", "Hay hơn", "Lập mạch truyện, biên tập chấm điểm, viết lại khi nhạt (thêm 2–3 lượt gọi mỗi số)"],
+      aiRow(opts, "Truyện", lock(pick([["hay", "Hay hơn", "Lập mạch truyện, biên tập chấm điểm, viết lại khi nhạt (thêm 2–3 lượt gọi mỗi số)"],
         ["tiet_kiem", "Tiết kiệm", "Viết chung một lượt với cả số báo, ít lượt gọi"], ["tat", "Tắt", "Số báo không có truyện"]],
-        g.story || "hay", (x) => aiSet({ story: x })));
+        g.story || "hay", (x) => aiSet({ story: x }), "Truyện dài kỳ"), busy));
       if ((g.story || "hay") !== "tat") {       // 1.25.1: chọn nhiều chủ đề — mỗi đợt 6–8 kỳ một chủ đề, xoay vòng
         const r = el("div", "kb-ai-row kb-ai-tones");
         r.appendChild(el("span", "kb-ai-k", "Chủ đề truyện"));
         const tv = el("span", "kb-ai-v");
-        tv.appendChild(multiChips(g.tones || [], g.tones_on || [g.tone || "am"], (next) => aiSet({ tones: next })));
+        const tc = multiChips(g.tones || [], g.tones_on || [g.tone || "am"], (next) => aiSet({ tones: next }));
+        if (busy) { Array.prototype.forEach.call(tc.children, (b) => lock(b, true)); }
+        tv.appendChild(tc);
         if ((g.tones_on || []).length > 1) { tv.appendChild(el("span", "kb-ai-hint", "mỗi đợt 6–8 kỳ một chủ đề, lần lượt")); }
         r.appendChild(tv);
         opts.appendChild(r);
@@ -725,21 +852,18 @@ var GardenPaper = (function () {
       lab.appendChild(cb);
       lab.appendChild(document.createTextNode(" Tự viết khi mở Anki"));
       opts.appendChild(lab);
-      card.appendChild(opts);
+      det.appendChild(opts);
     }
-    const note = el("details", "kb-ai-note kb-ai-more");
-    note.appendChild(el("summary", null, "Khoá lưu trên máy này, không đồng bộ."));
-    note.appendChild(el("div", null, "Gemini nhận danh sách từ bạn đang học, nội dung báo, câu cần giọng đọc và dòng nhận xét truyện bạn gõ. Bản miễn phí: Google có thể dùng dữ liệu này để cải thiện sản phẩm."));
-    note.appendChild(el("div", null, "Mỗi số: Gemini viết truyện → biên tập chấm → viết cả số → máy kiểm tra → Gemini sửa → soát lần 2. Còn lỗi thì không đưa vào hòm thư. Hết lượt miễn phí thì hôm sau viết tiếp."));
-    card.appendChild(note);
-    if (g.key) {
+    if (dict) { det.appendChild(voiceBox(v)); }
+    if (key) {
+      det.appendChild(privacyNote());
       const f = btn("kb-ai-forget", forgetArmed ? "Bấm lần nữa để xoá khoá" : "Xoá khoá", () => {
         if (!forgetArmed) { forgetArmed = true; f.textContent = "Bấm lần nữa để xoá khoá"; return; }
         forgetArmed = false; keyOpen = false; aiFlash = null; H.send("ai:forget");
       });
-      card.appendChild(f);
+      det.appendChild(lock(f, busy));
     }
-    return card;
+    return det;
   }
   function claudeCard(v) {
     const c = v.claude, on = v.source === "claude";
@@ -748,41 +872,37 @@ var GardenPaper = (function () {
     h.appendChild(el("span", "kb-ai-name", "Claude Code"));
     h.appendChild(el("span", "kb-ai-sub", "Bộ kotoba_daily · chỉ báo tiếng Nhật"));
     if (on) { h.appendChild(el("span", "kb-p-tag is-done", "Đang dùng")); }
-    else if (c.ok) { h.appendChild(btn("", "Dùng Claude Code", () => aiSet({ source: "claude" }))); }
+    else if (c.ok) { h.appendChild(lock(btn("", "Dùng Claude Code", () => aiSet({ source: "claude" })), isBusy(v))); }
     card.appendChild(h);
     const rows = el("div", "kb-ai-rows");
     const state = c.ok ? " ✓ " + c.issues + " số" + (c.pham_vi ? " · có pham_vi.json" : "") : c.set ? " ✗ không thấy thư mục" : "";
-    aiRow(rows, "Thư mục", (c.path || "chưa chọn") + state, [btn("", "Chọn thư mục", () => { aiFlash = null; H.send("ai:dir"); })], c.set && !c.ok ? "is-bad" : "");
+    aiRow(rows, "Thư mục", (c.path || "chưa chọn") + state, [lock(btn("", "Chọn thư mục", () => { aiFlash = null; H.send("ai:dir"); }), isBusy(v))], c.set && !c.ok ? "is-bad" : "");
     card.appendChild(rows);
     card.appendChild(el("div", "kb-ai-note", "Cách cài: xem HUONG_DAN.md trong thư mục kotoba_daily."));
     return card;
   }
-  // 1.13: giọng cho câu chép không có audio (câu ví dụ / từ của deck, câu báo thiếu giọng đọc)
-  function voiceCard(v) {
+  // 1.13: giọng cho câu chép không có audio (câu ví dụ / từ của deck, câu báo thiếu giọng đọc).
+  // 1.33.1: nằm trong "Tuỳ chọn thêm" (trước: thẻ riêng luôn hiện, 3 nút)
+  function voiceBox(v) {
     const dv = v.dict_voice || { mode: "auto" };
-    const card = el("section", "kb-ai-card kb-ai-dv");
-    const h = el("div", "kb-ai-h");
-    h.appendChild(GardenIcons.fill(el("span", "kb-ai-name"), "[i:speaker] Giọng đọc cho câu không có audio"));
-    h.appendChild(el("span", "kb-ai-sub", "Dùng cho Chép chính tả"));
-    card.appendChild(h);
-    const rows = el("div", "kb-ai-rows");
-    aiRow(rows, "Dùng", chips([["auto", "Tự động", "Giọng Gemini (nếu có khoá); trong lúc chờ dùng giọng của máy"],
-      ["may", "Giọng máy", "Không gửi câu lên Google"], ["tat", "Tắt", "Chỉ chép câu / từ có sẵn audio"]], dv.mode, (x) => aiSet({ dict_voice: x })));
-    aiRow(rows, "Máy này", dv.tts ? "✓ có giọng tiếng Nhật" : "chưa có giọng tiếng Nhật", null, dv.tts ? "" : "is-warn");
+    const box = el("div", "kb-ai-rows kb-ai-opts kb-ai-dv");
+    box.appendChild(GardenIcons.fill(el("div", "kb-ai-dv-h"), "[i:speaker] Giọng cho câu không có audio (Chép chính tả)"));
+    aiRow(box, "Dùng", pick([["auto", "Tự động", "Giọng Gemini (nếu có khoá); trong lúc chờ dùng giọng của máy"],
+      ["may", "Giọng máy", "Không gửi câu lên Google"], ["tat", "Tắt", "Chỉ chép câu / từ có sẵn audio"]], dv.mode, (x) => aiSet({ dict_voice: x }), "Giọng cho câu không có audio"));
+    aiRow(box, "Máy này", dv.tts ? "✓ có giọng tiếng Nhật" : "chưa có giọng tiếng Nhật", null, dv.tts ? "" : "is-warn");
     if (dv.mode === "auto") {
-      aiRow(rows, "Gemini", dv.running ? "[i:hourglass] đang tạo giọng đọc…" : dv.key ? (dv.error ? "[i:warn] " + dv.error : "✓ tạo giọng đọc khi cần") : "chưa có khoá",
+      aiRow(box, "Gemini", dv.running ? "[i:hourglass] đang tạo giọng đọc…" : dv.key ? (dv.error ? "[i:warn] " + dv.error : "✓ tạo giọng đọc khi cần") : "chưa có khoá",
         null, dv.error ? "is-warn" : "");
     }
-    card.appendChild(rows);
     if (!dv.tts) {
       const how = el("details", "kb-ai-note kb-ai-more");
       how.appendChild(el("summary", null, "Cách cài giọng tiếng Nhật"));
       how.appendChild(el("div", null, "Windows: Cài đặt → Thời gian & ngôn ngữ → Giọng nói → Thêm giọng nói → Tiếng Nhật."));
       how.appendChild(el("div", null, "macOS: Cài đặt hệ thống → Trợ năng → Nội dung đọc → Giọng hệ thống → Quản lý giọng nói → Tiếng Nhật."));
       how.appendChild(el("div", null, "Cài xong thì mở lại Anki."));
-      card.appendChild(how);
+      box.appendChild(how);
     }
-    return card;
+    return box;
   }
   function drawSource() {
     if (!isOpen || tab !== "src") { return; }
@@ -803,12 +923,12 @@ var GardenPaper = (function () {
     }
     if (aiFlash && aiFlash.flash) { wrap.appendChild(el("div", "kb-ai-flash " + (aiFlash.ok ? "is-ok" : "is-bad"), aiFlash.flash)); }
     wrap.appendChild(wantRow(v));
-    if (v.gemini.key && v.sub) { wrap.appendChild(subCard(v)); }
-    wrap.appendChild(geminiCard(v));
+    wrap.appendChild(geminiCard(v));          // 1.33.1: Gói báo là một dòng trong thẻ Gemini
     // 1.22.8: thẻ Claude Code chỉ hiện khi đã đặt bao_dir trong config (cách nâng cao, hướng dẫn ở config.md / README)
     if (v.claude.set) { wrap.appendChild(claudeCard(v)); }
-    // 1.25.1: giọng cho câu chép chính tả — chỉ khi có báo tiếng Nhật / tiếng Anh (báo tiếng Việt không chép)
-    if ((v.langs_on || []).some((x) => x !== "vi") || !(v.langs_on || []).length) { wrap.appendChild(voiceCard(v)); }
+    // 1.33.1: tuỳ chọn ít khi đổi + giọng cho câu chép chính tả (chỉ khi có báo học tiếng — báo tiếng Việt không chép)
+    const more = moreBlock(v);
+    if (more) { wrap.appendChild(more); }
     st.appendChild(wrap);
     st.scrollTop = keep;
     Array.prototype.forEach.call(st.querySelectorAll(".kb-ai-decks-list"), (e) => { e.scrollTop = deckScroll[e.getAttribute("data-lang")] || 0; });
@@ -850,8 +970,9 @@ var GardenPaper = (function () {
       row.type = "button";
       row.appendChild(el("span", "kb-p-row-date", shortDate(x.date)));
       const mid = el("span", "kb-p-row-mid");
-      const t = el("span", "kb-p-row-title", x.title || (en ? "No. " + x.so : vi ? "Số " + x.so : "第" + x.so + "号"));
-      t.lang = en ? "en" : vi ? "vi" : "ja";
+      const xl = MAST[x.lang] ? x.lang : "ja";        // 1.33: số báo tiếng Trung / tiếng Hàn (trước: ghi như báo Nhật)
+      const t = el("span", "kb-p-row-title", x.title || issueNo(xl, { so: x.so }));
+      t.lang = HTML_LANG[xl];
       mid.appendChild(t);
       const meta = [];
       if (x.so) { meta.push("Số " + x.so); }
@@ -894,19 +1015,17 @@ var GardenPaper = (function () {
 
   function drawIssue() {
     const v = issue, st = stage();
-    const en = v.lang === "en", vi = v.lang === "vi", lg = en ? "en" : vi ? "vi" : "ja";   // 1.19: The Garden Gazette; 1.25.1: Báo Làng Kotoba
+    const en = v.lang === "en", vi = v.lang === "vi", lg = MAST[v.lang] ? v.lang : "ja";   // 1.19 / 1.25.1 / 1.33 (zh / ko)
     st.textContent = "";
     furiButton();
     const mast = el("div", "kb-p-mast");
     const name = el("div", "kb-p-name" + (en || vi ? " kb-p-name-en" : ""), MAST[lg]);
-    name.lang = lg;
+    name.lang = HTML_LANG[lg];
     mast.appendChild(name);
     const meta = el("div", "kb-p-meta");
-    meta.lang = lg;
-    meta.appendChild(el("div", null, en ? enDate(v.date) : vi ? viDate(v.date) : jpDate(v.date)));
-    meta.appendChild(el("div", null, en ? "No. " + (v.so || "?") + (v.rut_gon ? " · short edition" : "")
-      : vi ? "Số " + (v.so || "?") + (v.rut_gon ? " · số ngắn" : "")
-        : "第" + (v.so || "?") + "号" + (v.rut_gon ? "・短縮版" : "")));
+    meta.lang = HTML_LANG[lg];
+    meta.appendChild(el("div", null, issueDate(lg, v.date)));
+    meta.appendChild(el("div", null, issueNo(lg, v)));
     mast.appendChild(meta);
     st.appendChild(mast);
     if (v.rut_gon) {
@@ -914,8 +1033,8 @@ var GardenPaper = (function () {
     }
     v.bai.forEach((b, i) => {
       const art = el("article", "kb-p-art kb-p-" + b.loai);
-      art.lang = lg;
-      const head = el("div", "kb-p-kind", (en ? LOAI_EN : vi ? LOAI_VI : LOAI)[b.loai] + (b.ky ? " · Kỳ " + b.ky : ""));
+      art.lang = HTML_LANG[lg];
+      const head = el("div", "kb-p-kind", (lg === "ja" ? LOAI : vi ? LOAI_VI : LOAI_EN)[b.loai] + (b.ky ? " · Kỳ " + b.ky : ""));
       head.lang = "vi";
       art.appendChild(head);
       if (b.tieu_de) {
@@ -1124,17 +1243,19 @@ var GardenPaper = (function () {
       row.appendChild(el("div", "kb-p-ct-hint", "Câu này chưa có giọng đọc."));
       return row;
     }
-    const latin = !!c.lang && c.lang !== "ja";       // 1.17: câu / từ tiếng Anh (hoặc ngôn ngữ khác)
+    const latin = !!c.lang && c.lang !== "ja";       // 1.17: câu / từ tiếng Anh (hoặc ngôn ngữ khác); 1.33: zh / ko
+    const xx = c.lang === "zh" || c.lang === "ko";
     if (c.kana_ok === false && !latin) {
       row.appendChild(el("div", "kb-p-ct-hint", "Câu này không có furigana: gõ đúng chữ Hán."));
     }
     const line = el("div", "kb-p-ct-line");
     const inp = el("input", "kb-p-in");
     inp.type = "text";
-    inp.lang = latin ? (c.lang === "en" ? "en" : "") : "ja";
+    inp.lang = latin ? (c.lang === "en" || xx ? c.lang : "") : "ja";
     inp.autocomplete = "off";
     inp.spellcheck = false;
-    inp.placeholder = (c.src === "word" ? "Gõ từ vừa nghe" : "Gõ câu vừa nghe") + (latin ? " (hoa thường, dấu câu không tính)" : "");
+    inp.placeholder = (c.src === "word" ? "Gõ từ vừa nghe" : "Gõ câu vừa nghe") + (c.lang === "zh" ? " bằng chữ Hán (bộ gõ pinyin)"
+      : c.lang === "ko" ? " bằng chữ Hàn (bộ gõ Hangul)" : latin ? " (hoa thường, dấu câu không tính)" : "");
     inp.setAttribute("aria-label", label);
     const chk = btn("kb-p-check", "Kiểm tra", null);
     line.appendChild(inp);
@@ -1178,10 +1299,22 @@ var GardenPaper = (function () {
       fb.className = "kb-p-fb is-bad";
       fb.textContent = "Chưa đúng. Câu đúng là:";
     }
-    if (res.cau) { ans.appendChild(md(res.cau, null)); }
+    const g = res.grade;
+    if (g && g.marks && g.marks.length && res.ok === false) {
+      // 1.33: tiếng Trung chấm từng chữ, tiếng Hàn từng cụm — tô xanh / hồng chỗ đúng / chưa đúng
+      fb.textContent = "Gần đúng — " + g.right + "/" + g.total + (res.lang === "ko" ? " cụm" : " chữ") + ". Câu đúng là:";
+      const line = el("div", "kb-p-ans-g");
+      line.lang = res.lang;
+      g.marks.forEach((m, k) => {
+        if (k && res.lang === "ko") { line.appendChild(document.createTextNode(" ")); }
+        line.appendChild(el("span", m[1] ? "kb-p-g-ok" : "kb-p-g-bad", m[0]));
+      });
+      ans.appendChild(line);
+    } else if (res.cau) { ans.appendChild(md(res.cau, null)); }
+    if (g && g.spacing && res.ok) { fb.textContent += " (khác chỗ cách chữ)"; }
     if (res.meaning) { const m = el("div", "kb-p-ans-m", res.meaning); m.lang = "vi"; ans.appendChild(m); }
     if (res.ok === false) {
-      const note = el("div", "kb-p-ans-m", "Câu này sẽ quay lại để ôn sau 1 ngày.");
+      const note = el("div", "kb-p-ans-m", (g && g.marks ? "Xanh: đúng · hồng: chưa đúng. " : "") + "Câu này sẽ quay lại để ôn sau 1 ngày.");
       note.lang = "vi";
       ans.appendChild(note);
     }
@@ -1198,7 +1331,10 @@ var GardenPaper = (function () {
     const v = daily, st = stage();
     st.textContent = "";
     const head = el("div", "kb-p-dhead");
-    head.appendChild(el("div", "kb-p-name kb-p-name-s", "書き取り"));
+    const dl = dictLang();                          // 1.33: 听写 / 받아쓰기
+    const dn = el("div", "kb-p-name kb-p-name-s", dl === "zh" ? "听写" : dl === "ko" ? "받아쓰기" : "書き取り");
+    dn.lang = dl === "zh" || dl === "ko" ? dl : "ja";
+    head.appendChild(dn);
     const meta = el("div", "kb-p-dmeta");
     meta.appendChild(el("div", "kb-p-dcount", "Hôm nay " + v.done + "/" + v.total + " câu" + (v.complete ? " ✓" : "")));
     meta.appendChild(el("div", "kb-p-reward", "Đúng ngay lần đầu +" + kbXu(v.reward.each) + " xu mỗi câu · làm hết +" + kbXu(v.reward.bonus) + " xu" +
@@ -1244,7 +1380,7 @@ var GardenPaper = (function () {
     if (res.gained) { sfx("coin"); } else if (res.ok) { sfx("good"); } else { sfx("again"); }
     if (res.bonus) {
       if (typeof GardenFX !== "undefined" && GardenFX.say) {
-        GardenFX.say(res.kind === "dict" ? "書き取り完了！ Xong lượt chép +" + kbXu(res.bonus) + " xu" : "Đọc xong số báo! +" + kbXu(res.bonus) + " xu", 2600);
+        GardenFX.say(res.kind === "dict" ? "書き取り完了！ Xong lượt chép +" + kbXu(res.bonus) + " xu" : "できた！ Đọc xong số báo! +" + kbXu(res.bonus) + " xu", 2600);     // 1.33.3: như "Xong nhiệm vụ"
       }
       if (typeof GardenFX !== "undefined" && GardenFX.mood) { GardenFX.mood("star", 1800); }
     }
@@ -1307,7 +1443,8 @@ var GardenPaper = (function () {
       $("kb-p-furi").addEventListener("click", (e) => {
         const p = $("kb-paper");
         p.classList.toggle("kb-p-nofuri");
-        e.currentTarget.textContent = p.classList.contains("kb-p-nofuri") ? "Hiện furigana" : "Ẩn furigana";
+        const word = /pinyin/.test(e.currentTarget.textContent) ? "pinyin" : "furigana";
+        e.currentTarget.textContent = (p.classList.contains("kb-p-nofuri") ? "Hiện " : "Ẩn ") + word;
       });
       stage().addEventListener("click", (e) => {
         const w = e.target.closest ? e.target.closest(".kb-p-w") : null;

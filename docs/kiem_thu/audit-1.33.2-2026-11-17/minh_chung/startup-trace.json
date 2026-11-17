@@ -1,0 +1,127 @@
+{
+  "observed": [
+    [
+      "manual",
+      "en"
+    ]
+  ],
+  "trace": [
+    {
+      "reason": "auto",
+      "key_present": false,
+      "waiting": [],
+      "calls_to_stub": [
+        [
+          "auto",
+          "ja"
+        ]
+      ]
+    },
+    {
+      "reason": "auto",
+      "key_present": false,
+      "waiting": [],
+      "calls_to_stub": [
+        [
+          "auto",
+          "ja"
+        ]
+      ]
+    },
+    {
+      "reason": "auto",
+      "key_present": false,
+      "waiting": [],
+      "calls_to_stub": [
+        [
+          "auto",
+          "ja"
+        ]
+      ]
+    },
+    {
+      "reason": "auto",
+      "key_present": false,
+      "waiting": [],
+      "calls_to_stub": [
+        [
+          "auto",
+          "ja"
+        ]
+      ]
+    },
+    {
+      "reason": "auto",
+      "key_present": true,
+      "waiting": [
+        "ja",
+        "en"
+      ],
+      "calls_to_stub": []
+    },
+    {
+      "reason": "auto",
+      "key_present": true,
+      "waiting": [
+        "ja",
+        "en"
+      ],
+      "calls_to_stub": []
+    },
+    {
+      "reason": "auto",
+      "key_present": true,
+      "waiting": [
+        "ja",
+        "en"
+      ],
+      "calls_to_stub": []
+    },
+    {
+      "reason": "auto",
+      "key_present": true,
+      "waiting": [],
+      "calls_to_stub": [
+        [
+          "auto",
+          "ja"
+        ]
+      ]
+    },
+    {
+      "reason": "auto",
+      "key_present": true,
+      "waiting": [],
+      "calls_to_stub": [
+        [
+          "auto",
+          "ja"
+        ]
+      ]
+    },
+    {
+      "reason": "auto",
+      "key_present": true,
+      "waiting": [
+        "en"
+      ],
+      "calls_to_stub": []
+    },
+    {
+      "reason": "auto",
+      "key_present": true,
+      "waiting": [
+        "en"
+      ],
+      "calls_to_stub": []
+    },
+    {
+      "reason": "auto",
+      "key_present": true,
+      "waiting": [
+        "en"
+      ],
+      "calls_to_stub": []
+    }
+  ]
+}

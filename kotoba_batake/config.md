@@ -34,6 +34,8 @@
 - `gemini_level`: trình độ báo tiếng Nhật `"N5"`…`"N1"`.
 - `gemini_audio`: giọng đọc Gemini — `"chinh_ta"` (chỉ câu chép chính tả, ít lượt gọi), `"ca_bai"` (cả từng đoạn), `"tat"`. `gemini_voice`: tên giọng (`"Kore"`, `"Leda"`, `"Aoede"`…).
 - `gemini_level_en` (1.19): trình độ `"A1"`…`"C1"` của **báo tiếng Anh** (The Garden Gazette), lưu ở `user_files/bao_gemini_en/`. Giọng đọc dùng chung `gemini_voice` (`gemini_voice_en` của bản 1.19.0 vẫn được đọc nếu có).
+- `gemini_level_zh` / `gemini_level_ko` (1.33): trình độ `"HSK1"`…`"HSK6"` của **báo tiếng Trung** (`user_files/bao_gemini_zh/`) và `"TOPIK1"`…`"TOPIK6"` của **báo tiếng Hàn** (`user_files/bao_gemini_ko/`).
+- `gemini_langs` (1.19.1; 1.33): báo muốn nhận — tối đa 2 trong `ja` / `en` / `zh` / `ko`, hoặc chỉ `vi`. `gemini_langs_chosen` (1.33): đã tự tick ở "Báo muốn nhận" (chưa tick lần nào và báo chưa từng chạy thì báo mặc định theo deck); `gemini_suggest_off`: ngôn ngữ đã bấm "Không" ở dòng gợi ý thêm báo thứ hai.
 - `gemini_auto`: tự viết số hôm nay khi mở Anki / mở vườn (mỗi ngày tối đa 2 lần thử). `false` = chỉ viết khi bấm **Viết số hôm nay**.
 - `gemini_wait_start` (1.22.3, add-on tự đặt): `true` sau khi dán khoá lần đầu và **Thử khoá** đúng — chưa tự viết, chờ bạn chọn báo muốn nhận / trình độ / deck rồi bấm **Bắt đầu viết** ở tab Nguồn báo (bấm xong thành `false`). Đặt `false` bằng tay cũng được.
 - `gemini_wait_langs` (1.22.4, add-on tự đặt): báo vừa tick thêm ở "Báo muốn nhận" khi đã có khoá, ví dụ `["en"]` — báo đó chưa tự viết, chờ bạn chọn trình độ / deck rồi bấm **Bắt đầu viết**; các báo khác vẫn tự viết như cũ.
@@ -54,7 +56,7 @@
 - Cách cài: tải thư mục `kotoba_daily` ở https://github.com/dungmt2808/kotoba-anki (thư mục `kotoba_daily/`), làm theo `HUONG_DAN.md` trong đó, rồi đặt `bao_dir` ở trên thành đường dẫn thư mục đó và mở lại vườn. Từ lúc này tab **Nguồn báo** có thêm thẻ **Claude Code** (chọn thư mục, đổi qua lại với Gemini).
 - Xoá `bao_dir` (để `""`) thì thẻ Claude Code ẩn lại, báo tiếng Nhật về Gemini; các số báo cũ trong thư mục không bị xoá.
 
-**Giọng đọc cho câu không có audio** (từ bản 1.13) — để Chép chính tả chạy với mọi deck
+**Giọng đọc cho câu không có audio** (từ bản 1.13; 1.33.1: ở khối *Tuỳ chọn thêm* cuối tab Nguồn báo) — để Chép chính tả chạy với mọi deck
 - `dict_voice`: `"auto"` (mặc định: giọng Gemini nếu có khoá, trong lúc chờ dùng giọng tiếng Nhật của máy), `"may"` (chỉ giọng của máy, không gửi câu lên Google), `"tat"` (chỉ chép câu / từ có sẵn audio).
 - Lượt chép mỗi ngày lấy: câu chép sai đến hạn ôn → câu trong báo → câu ví dụ của deck → **từ của deck** (nghe từ, gõ lại) khi deck không có câu ví dụ. Câu không có audio thì đọc bằng giọng Gemini (lưu sẵn trong `user_files/bao_gemini/giong/`) hoặc giọng của máy.
 - Giọng tiếng Nhật của máy: Windows → Cài đặt → Thời gian & ngôn ngữ → Giọng nói → Thêm giọng nói → Tiếng Nhật; macOS → Trợ năng → Nội dung đọc → Giọng hệ thống → Quản lý giọng nói → Tiếng Nhật. Mở lại Anki sau khi cài.

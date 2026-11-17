@@ -60,6 +60,70 @@ class StoreFailed(Exception):
         self.partial = partial
 
 
+READ_FAILED = "Anki báo lỗi khi đọc dữ liệu vườn nên chưa lưu thay đổi này (để không ghi đè dữ liệu thật). Thử lại sau vài giây nhé."
+
+
+RESTORE_PENDING = ("Dữ liệu vườn mới hơn của máy này chưa trả lại xong sau lần đồng bộ trước (Anki báo lỗi khi ghi) nên "
+                   "chưa lưu thay đổi này. Đóng vườn rồi mở lại, hoặc đồng bộ lại nhé — bản chụp vẫn còn nguyên.")
+RESTORED_RETRY = "Vừa trả lại dữ liệu vườn mới hơn sau lần đồng bộ trước nên chưa lưu thay đổi này. Thử lại nhé."
+
+
+class ReadFailed(StoreFailed):
+    """1.33.3 (audit 17/11 F01): đọc một khoá collection lỗi (Anki ném lỗi ở `get_config`, đọc lại vẫn lỗi). Không biết
+    khoá có hay không, có gì — tuyệt đối không coi là "chưa có" (trước: thành giá trị mặc định / bản sao lưu cũ của máy, lần
+    lưu kế tiếp ghi đè dữ liệu thật). Người đọc để sửa rồi ghi phải dừng; chỉ để xem thì có thể hiện tạm như trống."""
+
+    def __init__(self, key: str, err: BaseException | None = None, msg: str = "") -> None:
+        super().__init__(msg or READ_FAILED)
+        self.key = key
+        self.err = err
+
+
+# 1.33.3 (audit 17/11 F06): sync_core đặt PENDING (hàm(col) → True nếu vừa trả lại) khi trả lại dữ liệu mới hơn sau đồng
+# bộ bị lỗi ghi. Mọi lần đọc dữ liệu vườn (`read_config`) và ghi (`commit_config` / `put_config`) trả lại xong trước:
+# trước đây thao tác kế tiếp (mua, cộng xu, viết nhật ký, đồng bộ lại) đóng dấu "mới nhất" lên chính bản cũ vừa mang về →
+# lớp giữ dữ liệu coi bản cũ là bản mới, bản chụp tốt bị ghi đè.
+PENDING: Any = None
+_settling = False
+
+
+def settle(col: Any) -> bool:
+    """Trả lại dữ liệu đang chờ (nếu có). True = vừa trả lại. Trả lại lỗi → StoreFailed(RESTORE_PENDING).
+    Đang đồng bộ (`held()`) thì để sau (after_sync làm)."""
+    global _settling
+    fn = PENDING
+    if fn is None or _settling or held():
+        return False
+    _settling = True
+    try:
+        return bool(fn(col))
+    except StoreFailed:
+        raise StoreFailed(RESTORE_PENDING) from None
+    except Exception as err:          # noqa: BLE001
+        print(f"[kotoba_batake] trả lại dữ liệu sau đồng bộ: {type(err).__name__}: {err}")
+        raise StoreFailed(RESTORE_PENDING) from None
+    finally:
+        _settling = False
+
+
+def read_config(col: Any, key: str, tries: int = 2) -> Any:
+    """1.33.3: `col.get_config(key, None)`; lỗi thì đọc lại (lỗi thoáng qua: ổ đĩa bận, collection đang được ghi…), vẫn lỗi
+    → ReadFailed. Không có khoá → None như cũ. Có dữ liệu chờ trả lại sau đồng bộ (F06) → trả lại trước; chưa được →
+    ReadFailed (người đọc để sửa rồi ghi phải dừng)."""
+    try:
+        settle(col)
+    except StoreFailed as err:
+        raise ReadFailed(key, err, RESTORE_PENDING) from None
+    last: BaseException | None = None
+    for _ in range(max(1, int(tries))):
+        try:
+            return col.get_config(key, None)
+        except Exception as err:      # noqa: BLE001 — mọi lỗi của Anki ở đây đều là "không đọc được"
+            last = err
+    print(f"[kotoba_batake] đọc {key}: {type(last).__name__}: {last}")
+    raise ReadFailed(key, last)
+
+
 def profile_key(col: Any) -> str:
     """Mã ngắn của hồ sơ Anki (theo thư mục chứa collection). "" nếu không biết (collection giả trong test)."""
     path = getattr(col, "path", "") if col is not None else ""
@@ -166,7 +230,11 @@ def touch_rev(col: Any, floor: int = 0, now_ms: int | None = None) -> dict[str, 
     try:
         prev = clean_rev(col.get_config(REV_KEY, None))
     except Exception:
-        prev = None
+        try:                      # 1.33.3: đọc lại một lần; vẫn lỗi thì không đóng dấu (dấu đoán có thể NHỎ hơn dấu đang có —
+            prev = clean_rev(col.get_config(REV_KEY, None))      # đồng hồ máy khác chạy nhanh — làm bản mới trông như bản cũ)
+        except Exception as err:
+            print(f"[kotoba_batake] dấu phiên bản (đọc): {type(err).__name__}: {err}")
+            return None
     now = int(time.time() * 1000) if now_ms is None else int(now_ms)
     rev = {"v": 1, "t": max(now, (prev["t"] + 1) if prev else 0, int(floor) + 1), "d": DEVICE}
     try:
@@ -182,8 +250,31 @@ def put_config(col: Any, key: str, payload: Any) -> None:
     Anki đang đồng bộ → StoreFailed(SYNCING), không ghi."""
     if held():
         raise StoreFailed(SYNCING)
+    _settle_before_write(col)
     col.set_config(key, payload)
     touch_rev(col)
+
+
+class restoring:
+    """Đang ghi chính bản trả lại (sync_core.restore): lần ghi này không cần (và không được) chờ trả lại."""
+
+    def __enter__(self) -> "restoring":
+        global _settling
+        self._was = _settling
+        _settling = True
+        return self
+
+    def __exit__(self, *_exc: Any) -> None:
+        global _settling
+        _settling = self._was
+
+
+def _settle_before_write(col: Any) -> None:
+    """1.33.3 (F06): còn dữ liệu chờ trả lại → trả lại trước; vừa trả lại thì không ghi (`payload` tính từ bản cũ)."""
+    if PENDING is None or _settling:
+        return
+    if settle(col):
+        raise StoreFailed(RESTORED_RETRY)
 
 
 _UNREAD = object()       # giá trị cũ của một khoá không đọc được (không trả về được khi lỗi)
@@ -197,6 +288,7 @@ def commit_config(col: Any, writes: list[tuple[str, Any]], floor: int = 0) -> li
     (`held()`) → StoreFailed(SYNCING), không ghi gì."""
     if held():
         raise StoreFailed(SYNCING)
+    _settle_before_write(col)
     old: dict[str, Any] = {}
     done: list[str] = []
     key = ""
@@ -205,7 +297,10 @@ def commit_config(col: Any, writes: list[tuple[str, Any]], floor: int = 0) -> li
             try:
                 prev = col.get_config(key, None)
             except Exception:
-                prev = _UNREAD
+                try:              # 1.33.3: đọc lại một lần (không đọc được giá trị cũ thì lỗi sau đó không trả về được)
+                    prev = col.get_config(key, None)
+                except Exception:
+                    prev = _UNREAD
             if prev is not _UNREAD and prev == payload:
                 continue
             old[key] = prev

@@ -127,7 +127,7 @@ const plantsOf = () => page.eval(W('return Garden._data().plants.map(p => ({ w: 
       crowDesc: document.querySelector('.kb-gcard[data-game="crow"] .kb-gcard-desc').textContent };`));
   ok(enMenu.kind === 'en' && /Tiếng Anh · 8 từ/.test(enMenu.label), 'menu: ' + enMenu.label);
   ok(enMenu.ok.length === 5, 'cả 5 trò chơi được với deck tiếng Anh: ' + enMenu.ok.join(', '));
-  ok(/chính tả từ tiếng Anh/.test(enMenu.crowDesc), 'Đuổi quạ: ' + enMenu.crowDesc);
+  ok(/từ tiếng Anh/.test(enMenu.crowDesc), 'Đuổi quạ: ' + enMenu.crowDesc);      // 1.33.2: câu ngắn hơn
   await page.shot(SHOTS + '/52_tro_choi_tieng_anh.png');
   await page.eval(W('localStorage.setItem("kb-crow-speed", "vslow"); document.querySelector(\'.kb-gcard[data-game="crow"]\').click(); return 1;'));
   ok(await waitFor(page, 'GardenGames._debug().flying && GardenGames._debug().flying.length > 0'), 'quạ bay ra');
@@ -160,7 +160,7 @@ const plantsOf = () => page.eval(W('return Garden._data().plants.map(p => ({ w: 
   await page.eval(W('GardenPaper.open("dict"); return 1;'));
   ok(await waitFor(page, 'document.querySelectorAll(".kb-p-ct .kb-p-in").length >= 5'), 'lượt chép có 5 câu tiếng Anh');
   const head = await page.eval(W('return { furi: document.getElementById("kb-p-furi").hidden, info: document.getElementById("kb-p-info").textContent };'));
-  ok(head.furi && /don't = do not/.test(head.info), 'deck tiếng Anh: ẩn nút Ẩn furigana, hướng dẫn gõ tiếng Anh: ' + head.info);
+  ok(head.furi && /Nghe rồi gõ lại câu · Enter/.test(head.info) && !/kana/.test(head.info), 'deck tiếng Anh: ẩn nút Ẩn furigana, hướng dẫn gõ tiếng Anh (1.33.2: câu ngắn hơn): ' + head.info);
   const ct = await page.eval(W('const r = document.querySelector(".kb-p-ct"); return { id: r.getAttribute("data-ct"), ph: r.querySelector(".kb-p-in").placeholder, hint: Array.from(r.querySelectorAll(".kb-p-ct-hint")).map(x => x.textContent) };'));
   ok(/dấu câu không tính/.test(ct.ph) && !ct.hint.some(h => /furigana/.test(h)), 'ô gõ tiếng Anh, không nhắc furigana: ' + ct.ph);
   const sent = await py(KB + `P = kb.paper\ninfo = P.resolve(${JSON.stringify(ct.id)}, None, kb._note_item, kb._voice(), kb._word_item)\nresult = info["markup"]`);

@@ -87,6 +87,9 @@ sang Tiếng Anh rồi về "Ngôn ngữ khác" → 1.32 hiểu là tiếng Hàn
 
 ## 7. Kiểm tra lần cuối — lượt 2 (17/11 tối, vẫn 1.32.1, chưa phát hành)
 
+> Ghi chú: trong lúc làm, nhánh đã lên 1.33.3 (phiên khác). Các lỗi dưới đây vẫn còn ở 1.33.3 → sửa ở **1.33.4**; kết quả
+> chạy lại trên 1.33.4: `docs/kiem_thu/1.33.4/BAO_CAO.md`.
+
 Người dùng: "test kỹ giúp tớ addon này và tính năng vừa hiện thực. test thêm nhiều kịch bản, những bộ test ngoài bộ test
 có sẵn … đây gần như là lần release cuối cùng rồi". Lượt này nhắm vào chỗ bộ test cũ chưa đụng: **dữ liệu deck và bộ gõ như
 ngoài đời**, **kiểu deck có thật trên AnkiWeb**, **Anki bản thấp nhất (23.10)**, **hạ bản rồi lên lại**.

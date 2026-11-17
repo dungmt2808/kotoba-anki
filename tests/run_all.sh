@@ -162,7 +162,30 @@ echo "$OUT" | grep -E "✗|KẾT QUẢ|JS:"; [ $RC = 0 ] || FAIL=1
 echo "== core/test_132b.py (1.32: kiểm tra lần cuối — 3 bản (1.31.3, 1.31.5, 1.32) thay nhau lưu Cấu hình trường 3.000 lần, dữ liệu hỏng, deck tiếng Trung cấu hình ở bản cũ, chữ người dùng không bị dịch)"
 OUT=$("${ANKI_PY:-python3}" -W ignore "$HERE/core/test_132b.py" "$ADDON" 2>&1); RC=$?
 echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
-echo "== core/test_132c.py (1.32.1 kiểm tra lần cuối: Đuổi quạ so đáp án với deck / bộ gõ thật, đoán ngôn ngữ ~30 kiểu deck ngoài đời, Python 3.9 nếu có PY39)"
+echo "== core/test_1322.py (1.32.2: pinyin trên từng chữ — đối chiếu 2.000 từ pypinyin, không bao giờ ghép sai; deck Nhật / Anh không đổi)"
+OUT=$("${ANKI_PY:-python3}" -W ignore "$HERE/core/test_1322.py" "$ADDON" 2>&1); RC=$?
+echo "$OUT" | grep -E "✗|KẾT QUẢ|bỏ qua"; [ $RC = 0 ] || FAIL=1
+echo "== core/test_133.py (1.33: báo tiếng Trung / tiếng Hàn — tối đa 2 báo, soát pinyin từng chữ, tiểu từ / đuôi tiếng Hàn, cả quy trình với Gemini giả, lời nhắc tiếng Anh không đổi, hợp đồng dữ liệu)"
+OUT=$("${ANKI_PY:-python3}" -W ignore "$HERE/core/test_133.py" "$ADDON" 2>&1); RC=$?
+echo "$OUT" | grep -E "✗|KẾT QUẢ|Traceback"; [ $RC = 0 ] || FAIL=1
+echo "== core/test_1331.py (1.33.1: File → Import .colpkg giữ bản vừa khôi phục + không trừ xu, tab Nguồn báo gọn hơn, hợp đồng dữ liệu = 1.33.0)"
+OUT=$(python3 "$HERE/core/test_1331.py" "$ADDON" 2>&1); RC=$?
+echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
+echo "== core/test_1332.py (1.33.2: đang viết báo thì khoá lựa chọn của báo, báo thêm sau khi viết xong thì từ mai, đang đồng bộ thì báo một câu, câu chữ gọn, ⚙ thu gọn)"
+OUT=$(python3 "$HERE/core/test_1332.py" "$ADDON" 2>&1); RC=$?
+echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
+if "${ANKI_PY:-python3}" -c "import anki.collection" 2>/dev/null; then
+  echo "== core/test_1333.py (1.33.3: lỗi audit 17/11 — đọc lỗi kéo dài ở từng kho, trả lại sau đồng bộ lỗi, lưu chung một lần, Anki tắt giữa sổ bù xu và ví, mã 1.31.3 thật xen kẽ, thử ngẫu nhiên có đối chứng, chữ không lẫn ngôn ngữ)"
+  OUT=$("${ANKI_PY:-python3}" -W ignore "$HERE/core/test_1333.py" "$ADDON" 2>&1); RC=$?
+  echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
+  # 1.33.3: lỗi của nhánh audit/release-review-1.33.2-2026-11-17 đã sửa → giữ bộ phục hồi của audit làm kiểm tra hồi quy
+  echo "== audit_20261117/recovery_round2.py (trả lại sau đồng bộ lỗi × 3 khoá × 3 cách tiếp tục, dừng tiến trình giữa hai lần ghi)"
+  OUT=$("${ANKI_PY:-python3}" "$HERE/audit_20261117/recovery_round2.py" "$ADDON" --out "${TMPDIR:-/tmp}/kb_recovery_1117.json" 2>&1); RC=$?
+  echo "$OUT" | grep -E "^FAIL|ROUND2"; [ $RC = 0 ] || FAIL=1
+else
+  echo "– bỏ qua core/test_1333.py, audit_20261117/recovery_round2.py (cần gói anki: ANKI_PY)"
+fi
+echo "== core/test_132c.py (1.33.4 kiểm tra thêm: Đuổi quạ so đáp án với deck / bộ gõ thật, đoán ngôn ngữ ~30 kiểu deck ngoài đời, Python 3.9 nếu có PY39)"
 OUT=$("${ANKI_PY:-python3}" -W ignore "$HERE/core/test_132c.py" "$ADDON" 2>&1); RC=$?
 echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
 # trang web chung (site/, GitHub Pages): đăng mã, dữ liệu trang khớp add-on (đổi hình mà quên `node site/tools/xuat_hinh.js` là báo)

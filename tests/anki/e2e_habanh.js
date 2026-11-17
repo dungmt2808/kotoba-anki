@@ -1,4 +1,4 @@
-// 1.32.1 (kiểm tra lần cuối, 17/11): HẠ BẢN rồi LÊN LẠI trong Anki thật — chạy bằng run_habanh.sh GÓI_MỚI GÓI_CŨ SHOTS.
+// 1.33.4 (kiểm tra lần cuối, 17/11): HẠ BẢN rồi LÊN LẠI trong Anki thật — chạy bằng run_habanh.sh GÓI_MỚI GÓI_CŨ SHOTS.
 // Giống người dùng có máy thứ hai còn bản cũ (cùng collection qua AnkiWeb), hoặc lỡ cài lại gói cũ:
 //   p1 (bản mới 1.32.x): deck tiếng Trung + Hán Việt, Cấu hình trường lưu là Tiếng Trung, Đuổi quạ pinyin, Ngôn ngữ trong
 //      vườn = Tiếng Trung, mua đồ, nhật ký → chụp dữ liệu → cài đè GÓI_CŨ → đóng Anki
@@ -60,15 +60,19 @@ result = {"kind": type(r).__name__, "ver": m.get("human_version")}`);
   ok(r.kind === 'InstallOk', 'cài gói ' + r.ver + ' (' + r.kind + ')');
   await py('from aqt.qt import QTimer\nQTimer.singleShot(300, mw.close)\nresult = 1');
 }
+// so theo nội dung (khoá xếp theo tên): bản cũ ghi lại config theo thứ tự khoá của nó — cùng nội dung là giữ nguyên
+const canon = (v) => JSON.stringify(v, (k, x) => (x && typeof x === 'object' && !Array.isArray(x)
+  ? Object.keys(x).sort().reduce((o, key) => { o[key] = x[key]; return o; }, {}) : x));
 function compare(want, got, label) {
   const keys = Object.keys(want.cfg);
   const lost = keys.filter((k) => !(k in got.cfg));
-  const changed = keys.filter((k) => k in got.cfg && k !== 'kotoba_batake_rev' && JSON.stringify(got.cfg[k]) !== JSON.stringify(want.cfg[k]));
+  const changed = keys.filter((k) => k in got.cfg && k !== 'kotoba_batake_rev' && canon(got.cfg[k]) !== canon(want.cfg[k]));
   ok(!lost.length && !changed.length, label + ': ' + keys.length + ' khoá collection còn đủ, nội dung y nguyên' +
     (lost.length ? ' — MẤT: ' + lost.join(', ') : '') + (changed.length ? ' — ĐỔI: ' + changed.join(', ') : ''));
   const gone = Object.keys(want.files).filter((f) => !(f in got.files) || got.files[f] !== want.files[f]);
   ok(!gone.length, label + ': ' + Object.keys(want.files).length + ' file user_files/ y nguyên' + (gone.length ? ' — KHÁC: ' + gone.join(', ') : ''));
-  ok(JSON.stringify(got.addon) === JSON.stringify(want.addon), label + ': cấu hình add-on (⚙, Ngôn ngữ trong vườn…) giữ nguyên');
+  ok(canon(got.addon) === canon(want.addon), label + ': cấu hình add-on (⚙, Ngôn ngữ trong vườn…) giữ nguyên' +
+    (canon(got.addon) === canon(want.addon) ? '' : ' — khác: ' + Object.keys(Object.assign({}, want.addon, got.addon)).filter((k) => canon(got.addon[k]) !== canon(want.addon[k])).join(', ')));
   ok(got.coins === want.coins && JSON.stringify(got.owned) === JSON.stringify(want.owned) && JSON.stringify(got.yard) === JSON.stringify(want.yard)
     && got.diary === want.diary, label + ': xu ' + got.coins + ', đồ, sân, nhật ký y nguyên');
 }

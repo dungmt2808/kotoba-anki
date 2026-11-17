@@ -375,7 +375,7 @@ var GardenFinds = (function () {
     if (!b) { ti.appendChild(el("div", "kb-h-name", "Hộp sưu tầm")); return; }
     GardenIcons.fill(ti.appendChild(el("div", "kb-h-name")), "[i:sparkle] Hộp sưu tầm · " + b.found + "/" + b.total);
     ti.appendChild(el("div", "kb-h-desc", "Mỗi " + (v.per || 10) + " lượt ôn hôm nay mở một chỗ lấp lánh (tối đa " + (v.max || 3) +
-      "), ở sân hoặc một vùng đã mở. Món chưa có được ưu tiên; nhặt trùng đổi 3 xu. Đủ một bộ được một món trang trí."));
+      "), ở sân hoặc một vùng đã mở. Nhặt trùng đổi 3 xu · đủ bộ được quà."));
     const left = (v.spots || []).filter((s) => s.open && !s.picked);
     ti.appendChild(el("div", "kb-h-own", left.length ? "Hôm nay còn " + left.length + " chỗ: " + left.map((s) => SCENE_NAME[s.scene]).join(" · ") :
       v.next ? "Hôm nay " + v.reviews + " lượt · tới " + v.next + " lượt có chỗ lấp lánh mới" : "Hôm nay đã mở đủ " + (v.max || 3) + " chỗ"));

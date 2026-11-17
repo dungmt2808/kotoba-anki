@@ -1,0 +1,87 @@
+== chuẩn bị: deck tiếng Trung / tiếng Hàn, lượt ôn có kiểm soát
+== 1. báo mặc định theo deck (chưa có khoá, chưa có số báo nào, chưa từng chọn)
+  ✓ máy chưa có khoá / số báo → báo chưa từng chạy
+  ✓ deck tiếng Trung → báo tiếng Trung
+  ✓ deck tiếng Hàn → báo tiếng Hàn
+  ✓ deck tiếng Nhật (A::Có câu ví dụ + audio) → báo tiếng Nhật
+  ✓ deck tiếng Anh (M::Tiếng Anh A2) → báo tiếng Anh
+  ✓ deck không có thẻ → ngôn ngữ ôn nhiều nhất 30 ngày qua: tiếng Hàn (40 lượt; tiếng Anh 200 lượt cũ hơn 30 ngày không tính)
+  ✓ thứ tự ngôn ngữ theo lượt ôn 30 ngày: ko > zh > ja > en
+  ✓ chưa ôn gì → ngôn ngữ nhiều thẻ nhất: en ({"ja":54,"en":64,"ko":22,"zh":18})
+  ✓ tài khoản không có deck ngôn ngữ nào → báo tiếng Việt
+== 2. tab Nguồn báo: ô theo deck, gợi ý báo thứ hai, dán khoá lần đầu giữ lựa chọn
+  ✓ mở tab Nguồn báo
+  ✓ 5 ô: Tiếng Nhật · Tiếng Anh · Tiếng Trung · Tiếng Hàn · Chỉ tiếng Việt
+  ✓ deck tiếng Trung → tick sẵn Tiếng Trung, dòng nhỏ "tối đa 2 báo"
+  ✓ gợi ý ngôn ngữ ôn nhiều nhất còn lại: Bạn cũng học tiếng Hàn — thêm báo tiếng Hàn?Thêm báo tiếng HànKhông
+  ✓ đổi sang deck tiếng Hàn → tick Tiếng Hàn, gợi ý tiếng Trung
+  ✓ thử khoá xong → lưu khoá
+  ✓ dán khoá lần đầu → lưu báo mặc định lúc đó (tiếng Trung), chờ "Bắt đầu viết"
+  ✓ chưa ghi "đã tự chọn" (người dùng chưa tick gì)
+  ✓ có khoá rồi: đổi sang deck tiếng Hàn → báo vẫn là tiếng Trung (không tự đổi theo deck)
+  ✓ đã dùng báo nhưng config chưa có lựa chọn (máy từ bản ≤ 1.19.0) → như 1.19.1: tiếng Nhật, không theo deck (["ja"])
+== 3. tối đa 2 báo, Chỉ tiếng Việt, gợi ý, trình độ
+  ✓ có khoá vẫn gợi ý thêm báo tiếng Hàn
+  ✓ "Không" → lưu gemini_suggest_off = ["ko"]
+  ✓ gợi ý chuyển sang ngôn ngữ ôn nhiều kế tiếp (tiếng Nhật): Bạn cũng học tiếng Nhật — thêm báo tiếng Nhật?Thêm báo tiếng NhậtKhông
+  ✓ tick Tiếng Hàn → 2 báo [zh, ko], ghi "đã tự chọn"
+  ✓ đủ 2 báo → Tiếng Nhật / Tiếng Anh mờ, "Tối đa 2 báo: bỏ tick một báo trước"
+  ✓ đủ 2 báo → không còn dòng gợi ý; "hai báo cùng kể một chuyện"
+  ✓ bấm ô mờ (Tiếng Nhật) → không đổi
+  ✓ config bị sửa tay 4 báo → chỉ giữ 2 báo đầu
+  ✓ tick Chỉ tiếng Việt → chỉ báo tiếng Việt
+  ✓ báo tiếng Việt: các ô khác bấm được, không gợi ý
+  ✓ tick Tiếng Trung → bỏ tiếng Việt, còn [zh]
+  ✓ tick lại Tiếng Hàn → [zh, ko]
+  ✓ khối báo tiếng Trung: 词田晨报, HSK 1–6 (đang HSK 2)
+  ✓ khối báo tiếng Hàn: 말밭 신문, TOPIK 1–6 (đang TOPIK 2)
+  ✓ chọn HSK 3 / TOPIK 3 → gemini_level_zh / _ko, trình độ báo Nhật không đổi
+== 4. "Bắt đầu viết" với Gemini giả (không gọi mạng)
+  ✓ nút "Bắt đầu viết" (báo chờ sau khi dán khoá)
+  ✓ viết xong số hôm nay của cả báo tiếng Trung và báo tiếng Hàn
+  ✓ mỗi báo đúng 3 lượt gọi (kể lại, viết, soát): zh ke_lai,viet,soat · ko ke_lai,viet,soat
+  ✓ không có lượt gọi mạng / lượt gọi lạ nào
+  ✓ không lỗi; gói báo tặng thử bắt đầu từ số đầu tiên
+  ✓ tab Nguồn báo: "Hôm nay ✓ Số 1" ở cả hai báo
+== 5. báo tiếng Trung
+  ✓ đầu báo 词田晨报
+  ✓ ngày kiểu Trung: 2026年11月17日 星期二 · 第1期 · bài lang=zh (phông chữ Trung)
+  ✓ pinyin trên từng chữ: 277 / 277 chữ Hán có một âm tiết có dấu riêng
+  ✓ truyện kể lại có 木屐 (mù jī) đúng pinyin
+  ✓ không có chữ kana nào trong số báo tiếng Trung
+  ✓ nút "Ẩn pinyin"
+  ✓ bấm → pinyin ẩn, nút thành "Hiện pinyin"
+  ✓ bấm lại → pinyin hiện
+  ✓ dòng gợi ý: "Bấm từ gạch chân để tra nghĩa" (1.33.2: rút gọn)
+  ✓ từ của deck được gạch chân: 今天 天气 漂亮 大家 拍照 节日 村长 旅店 准备 木屐
+  ✓ tra 害怕: 害怕 · hài pà · sợ · HẠI PHẠ
+  ✓ tra từ có trạng thái cây trong vườn: Đã học ở deck · Cây trong vườn: Cây non
+  ✓ câu hỏi 1 trả lời đúng → "Đúng +… xu"
+  ✓ xu tăng sau câu hỏi đúng
+  ✓ ô chép câu tiếng Trung: lang=zh, "Gõ câu vừa nghe bằng chữ Hán (bộ gõ pinyin)", 12 chữ
+  ✓ gõ sai một chữ (汽 thay 气) → "Gần đúng — 11/12 chữ. ", chỉ tô 气
+  ✓ gõ lại đúng (có dấu câu) → Đúng rồi.
+  ✓ câu 2 gõ không dấu câu → đúng
+== 6. báo tiếng Hàn
+  ✓ Kệ báo tiếng Trung: tiêu đề số báo lang=zh — 秋天的好天气@zh
+  ✓ thanh chuyển báo: Báo tiếng Trung · Báo tiếng Hàn · 1 mới
+  ✓ chuyển sang báo tiếng Hàn ở Kệ báo: 맑은 가을 날씨@ko
+  ✓ đầu báo 말밭 신문
+  ✓ ngày kiểu Hàn: 2026년 11월 17일 화요일
+  ✓ không có chữ nhỏ trên chữ, không có nút Ẩn furigana / pinyin
+  ✓ không có kana / chữ Hán trong số báo tiếng Hàn
+  ✓ dòng gợi ý tiếng Hàn: bấm từ gạch chân để tra nghĩa (1.33.2: bỏ ví dụ 학교에 → 학교 cho gọn)
+  ✓ gạch chân cả từ biến đổi: 축제→축제 무서워서→무섭다
+  ✓ tra 무서워서 → 무섭다 · sợ
+  ✓ thiếu một cụm → "Gần đúng — 4/5 cụm. ", chỉ tô 주에
+  ✓ chỉ khác chỗ cách → Đúng rồi. (khác chỗ cách chữ)
+== 7. lượt Chép hằng ngày (deck tiếng Trung) + báo tiếng Nhật / tiếng Anh như cũ
+  ✓ deck tiếng Trung: lượt chép có 5 câu / từ tiếng Trung (giọng máy zh_CN)
+  ✓ dòng gợi ý chép: gõ bằng chữ Hán (không còn "don't = do not")
+  ✓ bỏ Tiếng Hàn, tick Tiếng Nhật → ["ja","zh"]
+  ✓ báo tiếng Nhật như cũ: 畑新聞 · 11月3日（火） · 52 furigana · nút "Ẩn furigana"
+== 8. hợp đồng dữ liệu
+  ✓ khoá collection mới (trong lúc test): kotoba_batake_events, kotoba_batake_guests, kotoba_batake_paper, kotoba_batake_paper_ko, kotoba_batake_paper_nguon, kotoba_batake_paper_zh
+  ✓ tiến độ báo tiếng Trung / tiếng Hàn lưu ở kotoba_batake_paper_zh / _ko
+  ✓ kotoba_batake_paper_zh có kết quả hôm nay
+KẾT QUẢ: 77/77 — TẤT CẢ OK

@@ -1,4 +1,4 @@
-// 1.32.1 (kiểm tra lần cuối, 17/11) trong Anki thật — kịch bản NGOÀI e2e_132 / e2e_132b:
+// 1.33.4 (kiểm tra lần cuối, 17/11) trong Anki thật — kịch bản NGOÀI e2e_132 / e2e_132b:
 //   1. deck "bẩn" như ngoài đời: pinyin tô màu bằng HTML (add-on Chinese Support), nhiều cách đọc ghi bằng dấu câu Trung /
 //      ngoặc (hǎo，hào · xíng（háng） · hái、huán); deck tiếng Hàn có dấu cách (사과 주스); deck tiếng Nhật làm cho người
 //      Trung có trường nghĩa "中文"; deck kanji có trường "Chinese reading" (âm On); deck tiếng Đức; deck chỉ 1 thẻ
@@ -116,7 +116,7 @@ result = 1`);
   await deck('JA::Cho người Trung');
   ps = await plants();
   ok(ps.length === 6 && ps.every((p) => p.lang === 'ja') && ps.find((p) => p.word === '食べる').reading === 'たべる',
-    'deck tiếng Nhật có trường nghĩa "中文" → tiếng Nhật, cách đọc たべる (1.32.1 trước: tiếng Trung)');
+    'deck tiếng Nhật có trường nghĩa "中文" → tiếng Nhật, cách đọc たべる (trước 1.33.4: tiếng Trung)');
   ok(await js('return GardenLang.cur();') === 'ja', 'Tự theo deck → tiếng Nhật');
   await js('document.getElementById("kb-fields-open").click(); return 1;'); await sleep(1500);
   const fz = await js('const b = document.querySelector(".kb-f-edit"); return b ? b.querySelector(".kb-f-lang").value : null;');
@@ -128,7 +128,7 @@ result = 1`);
     'deck kanji có trường "Chinese reading" → tiếng Nhật, biển cây là chữ Hán (' + ps.map((p) => p.word).join(' ') + '), không phải âm On');
   await deck('DE::A1');
   ps = await plants();
-  ok(ps.length === 6 && ps.every((p) => p.lang === 'other'), 'deck tiếng Đức → Ngôn ngữ khác (1.32.1 trước: Tiếng Anh): ' + ps.map((p) => p.lang).join(','));
+  ok(ps.length === 6 && ps.every((p) => p.lang === 'other'), 'deck tiếng Đức → Ngôn ngữ khác (trước 1.33.4: Tiếng Anh): ' + ps.map((p) => p.lang).join(','));
   ok(await js('return GardenLang.cur();') !== 'en', 'Tự theo deck không thành tiếng Anh vì deck tiếng Đức: ' + await js('return GardenLang.cur();'));
   const ld = await py(KB + 'import importlib\nw = kb.words\nr = w.lang_decks(mw.col, kb.config())\nresult = {k: [d["name"] for d in v] for k, v in r.items()}');
   ok(!(ld.en || []).some((n) => /^DE/.test(n)) && !(ld.en || []).some((n) => /^JA::Cho/.test(n)),

@@ -1,0 +1,872 @@
+{
+  "tested_commit": "9ef5272f6af34c78168d2b8851259add29bf2561",
+  "results": [
+    {
+      "case": "restore/kotoba_batake_state/reopen/fault-reached",
+      "passed": true,
+      "actual": [
+        1,
+        "failed"
+      ],
+      "expected": [
+        1,
+        "failed"
+      ],
+      "detail": {
+        "action": "failed",
+        "why": "Anki báo lỗi khi lưu nên chưa đổi gì. Thử lại sau nhé.",
+        "keys": []
+      }
+    },
+    {
+      "case": "restore/kotoba_batake_state/reopen/good-checkpoint-survives-first-error",
+      "passed": true,
+      "actual": "9eb645f734ea41cd2126",
+      "expected": "9eb645f734ea41cd2126"
+    },
+    {
+      "case": "restore/kotoba_batake_state/reopen/eventual-recovery",
+      "passed": true,
+      "actual": {
+        "coins": 2000,
+        "pets": [
+          "neko"
+        ],
+        "diary": "Nhật ký bản mới cần giữ"
+      },
+      "expected": {
+        "coins": 2000,
+        "pets": [
+          "neko"
+        ],
+        "diary": "Nhật ký bản mới cần giữ"
+      },
+      "detail": {
+        "first_error": {
+          "action": "failed",
+          "why": "Anki báo lỗi khi lưu nên chưa đổi gì. Thử lại sau nhé.",
+          "keys": []
+        },
+        "checkpoint_after_retry_coins": 2000,
+        "on_open": {
+          "action": "restore",
+          "why": "bản mang về cũ hơn",
+          "keys": [
+            "kotoba_batake_journal_2026_11",
+            "kotoba_batake_more",
+            "kotoba_batake_state"
+          ]
+        }
+      }
+    },
+    {
+      "case": "restore/kotoba_batake_state/sync-again/fault-reached",
+      "passed": true,
+      "actual": [
+        1,
+        "failed"
+      ],
+      "expected": [
+        1,
+        "failed"
+      ],
+      "detail": {
+        "action": "failed",
+        "why": "Anki báo lỗi khi lưu nên chưa đổi gì. Thử lại sau nhé.",
+        "keys": []
+      }
+    },
+    {
+      "case": "restore/kotoba_batake_state/sync-again/good-checkpoint-survives-first-error",
+      "passed": true,
+      "actual": "9eb645f734ea41cd2126",
+      "expected": "9eb645f734ea41cd2126"
+    },
+    {
+      "case": "restore/kotoba_batake_state/sync-again/eventual-recovery",
+      "passed": false,
+      "actual": {
+        "coins": 1000,
+        "pets": [],
+        "diary": "Nhật ký bản cũ"
+      },
+      "expected": {
+        "coins": 2000,
+        "pets": [
+          "neko"
+        ],
+        "diary": "Nhật ký bản mới cần giữ"
+      },
+      "detail": {
+        "first_error": {
+          "action": "failed",
+          "why": "Anki báo lỗi khi lưu nên chưa đổi gì. Thử lại sau nhé.",
+          "keys": []
+        },
+        "checkpoint_after_retry_coins": 1000,
+        "on_open": {
+          "action": "keep",
+          "why": "không đổi",
+          "keys": []
+        }
+      }
+    },
+    {
+      "case": "restore/kotoba_batake_state/edit-after-failure/fault-reached",
+      "passed": true,
+      "actual": [
+        1,
+        "failed"
+      ],
+      "expected": [
+        1,
+        "failed"
+      ],
+      "detail": {
+        "action": "failed",
+        "why": "Anki báo lỗi khi lưu nên chưa đổi gì. Thử lại sau nhé.",
+        "keys": []
+      }
+    },
+    {
+      "case": "restore/kotoba_batake_state/edit-after-failure/good-checkpoint-survives-first-error",
+      "passed": true,
+      "actual": "9eb645f734ea41cd2126",
+      "expected": "9eb645f734ea41cd2126"
+    },
+    {
+      "case": "restore/kotoba_batake_state/edit-after-failure/eventual-recovery",
+      "passed": false,
+      "actual": {
+        "coins": 1001,
+        "pets": [],
+        "diary": "Nhật ký bản cũ"
+      },
+      "expected": {
+        "coins": 2001,
+        "pets": [
+          "neko"
+        ],
+        "diary": "Nhật ký bản mới cần giữ"
+      },
+      "detail": {
+        "first_error": {
+          "action": "failed",
+          "why": "Anki báo lỗi khi lưu nên chưa đổi gì. Thử lại sau nhé.",
+          "keys": []
+        },
+        "checkpoint_after_retry_coins": 2000,
+        "on_open": {
+          "action": "keep",
+          "why": "bản mang về mới hơn",
+          "keys": []
+        }
+      }
+    },
+    {
+      "case": "restore/kotoba_batake_more/reopen/fault-reached",
+      "passed": true,
+      "actual": [
+        1,
+        "failed"
+      ],
+      "expected": [
+        1,
+        "failed"
+      ],
+      "detail": {
+        "action": "failed",
+        "why": "Anki báo lỗi khi lưu nên chưa đổi gì. Thử lại sau nhé.",
+        "keys": []
+      }
+    },
+    {
+      "case": "restore/kotoba_batake_more/reopen/good-checkpoint-survives-first-error",
+      "passed": true,
+      "actual": "9eb645f734ea41cd2126",
+      "expected": "9eb645f734ea41cd2126"
+    },
+    {
+      "case": "restore/kotoba_batake_more/reopen/eventual-recovery",
+      "passed": true,
+      "actual": {
+        "coins": 2000,
+        "pets": [
+          "neko"
+        ],
+        "diary": "Nhật ký bản mới cần giữ"
+      },
+      "expected": {
+        "coins": 2000,
+        "pets": [
+          "neko"
+        ],
+        "diary": "Nhật ký bản mới cần giữ"
+      },
+      "detail": {
+        "first_error": {
+          "action": "failed",
+          "why": "Anki báo lỗi khi lưu nên chưa đổi gì. Thử lại sau nhé.",
+          "keys": []
+        },
+        "checkpoint_after_retry_coins": 2000,
+        "on_open": {
+          "action": "restore",
+          "why": "bản mang về cũ hơn",
+          "keys": [
+            "kotoba_batake_journal_2026_11",
+            "kotoba_batake_more",
+            "kotoba_batake_state"
+          ]
+        }
+      }
+    },
+    {
+      "case": "restore/kotoba_batake_more/sync-again/fault-reached",
+      "passed": true,
+      "actual": [
+        1,
+        "failed"
+      ],
+      "expected": [
+        1,
+        "failed"
+      ],
+      "detail": {
+        "action": "failed",
+        "why": "Anki báo lỗi khi lưu nên chưa đổi gì. Thử lại sau nhé.",
+        "keys": []
+      }
+    },
+    {
+      "case": "restore/kotoba_batake_more/sync-again/good-checkpoint-survives-first-error",
+      "passed": true,
+      "actual": "9eb645f734ea41cd2126",
+      "expected": "9eb645f734ea41cd2126"
+    },
+    {
+      "case": "restore/kotoba_batake_more/sync-again/eventual-recovery",
+      "passed": false,
+      "actual": {
+        "coins": 1000,
+        "pets": [],
+        "diary": "Nhật ký bản cũ"
+      },
+      "expected": {
+        "coins": 2000,
+        "pets": [
+          "neko"
+        ],
+        "diary": "Nhật ký bản mới cần giữ"
+      },
+      "detail": {
+        "first_error": {
+          "action": "failed",
+          "why": "Anki báo lỗi khi lưu nên chưa đổi gì. Thử lại sau nhé.",
+          "keys": []
+        },
+        "checkpoint_after_retry_coins": 1000,
+        "on_open": {
+          "action": "keep",
+          "why": "không đổi",
+          "keys": []
+        }
+      }
+    },
+    {
+      "case": "restore/kotoba_batake_more/edit-after-failure/fault-reached",
+      "passed": true,
+      "actual": [
+        1,
+        "failed"
+      ],
+      "expected": [
+        1,
+        "failed"
+      ],
+      "detail": {
+        "action": "failed",
+        "why": "Anki báo lỗi khi lưu nên chưa đổi gì. Thử lại sau nhé.",
+        "keys": []
+      }
+    },
+    {
+      "case": "restore/kotoba_batake_more/edit-after-failure/good-checkpoint-survives-first-error",
+      "passed": true,
+      "actual": "9eb645f734ea41cd2126",
+      "expected": "9eb645f734ea41cd2126"
+    },
+    {
+      "case": "restore/kotoba_batake_more/edit-after-failure/eventual-recovery",
+      "passed": false,
+      "actual": {
+        "coins": 1001,
+        "pets": [],
+        "diary": "Nhật ký bản cũ"
+      },
+      "expected": {
+        "coins": 2001,
+        "pets": [
+          "neko"
+        ],
+        "diary": "Nhật ký bản mới cần giữ"
+      },
+      "detail": {
+        "first_error": {
+          "action": "failed",
+          "why": "Anki báo lỗi khi lưu nên chưa đổi gì. Thử lại sau nhé.",
+          "keys": []
+        },
+        "checkpoint_after_retry_coins": 2000,
+        "on_open": {
+          "action": "keep",
+          "why": "bản mang về mới hơn",
+          "keys": []
+        }
+      }
+    },
+    {
+      "case": "restore/kotoba_batake_journal_2026_11/reopen/fault-reached",
+      "passed": true,
+      "actual": [
+        1,
+        "failed"
+      ],
+      "expected": [
+        1,
+        "failed"
+      ],
+      "detail": {
+        "action": "failed",
+        "why": "Anki báo lỗi khi lưu nên chưa đổi gì. Thử lại sau nhé.",
+        "keys": []
+      }
+    },
+    {
+      "case": "restore/kotoba_batake_journal_2026_11/reopen/good-checkpoint-survives-first-error",
+      "passed": true,
+      "actual": "9eb645f734ea41cd2126",
+      "expected": "9eb645f734ea41cd2126"
+    },
+    {
+      "case": "restore/kotoba_batake_journal_2026_11/reopen/eventual-recovery",
+      "passed": true,
+      "actual": {
+        "coins": 2000,
+        "pets": [
+          "neko"
+        ],
+        "diary": "Nhật ký bản mới cần giữ"
+      },
+      "expected": {
+        "coins": 2000,
+        "pets": [
+          "neko"
+        ],
+        "diary": "Nhật ký bản mới cần giữ"
+      },
+      "detail": {
+        "first_error": {
+          "action": "failed",
+          "why": "Anki báo lỗi khi lưu nên chưa đổi gì. Thử lại sau nhé.",
+          "keys": []
+        },
+        "checkpoint_after_retry_coins": 2000,
+        "on_open": {
+          "action": "restore",
+          "why": "bản mang về cũ hơn",
+          "keys": [
+            "kotoba_batake_journal_2026_11",
+            "kotoba_batake_more",
+            "kotoba_batake_state"
+          ]
+        }
+      }
+    },
+    {
+      "case": "restore/kotoba_batake_journal_2026_11/sync-again/fault-reached",
+      "passed": true,
+      "actual": [
+        1,
+        "failed"
+      ],
+      "expected": [
+        1,
+        "failed"
+      ],
+      "detail": {
+        "action": "failed",
+        "why": "Anki báo lỗi khi lưu nên chưa đổi gì. Thử lại sau nhé.",
+        "keys": []
+      }
+    },
+    {
+      "case": "restore/kotoba_batake_journal_2026_11/sync-again/good-checkpoint-survives-first-error",
+      "passed": true,
+      "actual": "9eb645f734ea41cd2126",
+      "expected": "9eb645f734ea41cd2126"
+    },
+    {
+      "case": "restore/kotoba_batake_journal_2026_11/sync-again/eventual-recovery",
+      "passed": false,
+      "actual": {
+        "coins": 1000,
+        "pets": [],
+        "diary": "Nhật ký bản cũ"
+      },
+      "expected": {
+        "coins": 2000,
+        "pets": [
+          "neko"
+        ],
+        "diary": "Nhật ký bản mới cần giữ"
+      },
+      "detail": {
+        "first_error": {
+          "action": "failed",
+          "why": "Anki báo lỗi khi lưu nên chưa đổi gì. Thử lại sau nhé.",
+          "keys": []
+        },
+        "checkpoint_after_retry_coins": 1000,
+        "on_open": {
+          "action": "keep",
+          "why": "không đổi",
+          "keys": []
+        }
+      }
+    },
+    {
+      "case": "restore/kotoba_batake_journal_2026_11/edit-after-failure/fault-reached",
+      "passed": true,
+      "actual": [
+        1,
+        "failed"
+      ],
+      "expected": [
+        1,
+        "failed"
+      ],
+      "detail": {
+        "action": "failed",
+        "why": "Anki báo lỗi khi lưu nên chưa đổi gì. Thử lại sau nhé.",
+        "keys": []
+      }
+    },
+    {
+      "case": "restore/kotoba_batake_journal_2026_11/edit-after-failure/good-checkpoint-survives-first-error",
+      "passed": true,
+      "actual": "9eb645f734ea41cd2126",
+      "expected": "9eb645f734ea41cd2126"
+    },
+    {
+      "case": "restore/kotoba_batake_journal_2026_11/edit-after-failure/eventual-recovery",
+      "passed": false,
+      "actual": {
+        "coins": 1001,
+        "pets": [],
+        "diary": "Nhật ký bản cũ"
+      },
+      "expected": {
+        "coins": 2001,
+        "pets": [
+          "neko"
+        ],
+        "diary": "Nhật ký bản mới cần giữ"
+      },
+      "detail": {
+        "first_error": {
+          "action": "failed",
+          "why": "Anki báo lỗi khi lưu nên chưa đổi gì. Thử lại sau nhé.",
+          "keys": []
+        },
+        "checkpoint_after_retry_coins": 2000,
+        "on_open": {
+          "action": "keep",
+          "why": "bản mang về mới hơn",
+          "keys": []
+        }
+      }
+    },
+    {
+      "case": "snapshot-read-error/returns-no-live-snapshot",
+      "passed": true,
+      "actual": null,
+      "expected": null
+    },
+    {
+      "case": "snapshot-read-error/retains-last-good-local-version",
+      "passed": false,
+      "actual": 1000,
+      "expected": 2000,
+      "detail": {
+        "after_sync": {
+          "action": "keep",
+          "why": "máy này chưa có dữ liệu vườn",
+          "keys": []
+        },
+        "on_open": {
+          "action": "keep",
+          "why": "không đổi",
+          "keys": []
+        },
+        "checkpoint_coins": 1000
+      }
+    },
+    {
+      "case": "process-stop/none/stopped-at-requested-point",
+      "passed": true,
+      "actual": 0,
+      "expected": 0,
+      "detail": {
+        "stderr": ""
+      }
+    },
+    {
+      "case": "process-stop/none/real-review-is-durable",
+      "passed": true,
+      "actual": 1,
+      "expected": 1
+    },
+    {
+      "case": "process-stop/none/review-is-paid-after-recovery",
+      "passed": true,
+      "actual": 1001,
+      "expected": 1001,
+      "detail": {
+        "coins_before_recovery": 1001,
+        "mobile": {
+          "v": 1,
+          "start": 1794898699613,
+          "days": {
+            "0": {
+              "all": 1,
+              "ok": 1,
+              "rev": 0,
+              "new": 1
+            }
+          },
+          "goals": [],
+          "total": {
+            "reviews": 0,
+            "coins": 0
+          },
+          "last": null
+        },
+        "catch_up": null
+      }
+    },
+    {
+      "case": "process-stop/none/recovery-does-not-change-scheduling",
+      "passed": true,
+      "actual": {
+        "revlog": 1,
+        "cards": [
+          [
+            1794898759611,
+            1794898759611,
+            1794898759610,
+            2,
+            2,
+            4,
+            4,
+            2500,
+            1,
+            0,
+            0,
+            0,
+            0,
+            "{\"pos\":1}"
+          ]
+        ]
+      },
+      "expected": {
+        "revlog": 1,
+        "cards": [
+          [
+            1794898759611,
+            1794898759611,
+            1794898759610,
+            2,
+            2,
+            4,
+            4,
+            2500,
+            1,
+            0,
+            0,
+            0,
+            0,
+            "{\"pos\":1}"
+          ]
+        ]
+      }
+    },
+    {
+      "case": "process-stop/kotoba_batake_mobile/stopped-at-requested-point",
+      "passed": true,
+      "actual": 73,
+      "expected": 73,
+      "detail": {
+        "stderr": ""
+      }
+    },
+    {
+      "case": "process-stop/kotoba_batake_mobile/real-review-is-durable",
+      "passed": true,
+      "actual": 1,
+      "expected": 1
+    },
+    {
+      "case": "process-stop/kotoba_batake_mobile/review-is-paid-after-recovery",
+      "passed": false,
+      "actual": 1000,
+      "expected": 1001,
+      "detail": {
+        "coins_before_recovery": 1000,
+        "mobile": {
+          "v": 1,
+          "start": 1794898699873,
+          "days": {
+            "0": {
+              "all": 1,
+              "ok": 1,
+              "rev": 0,
+              "new": 1
+            }
+          },
+          "goals": [],
+          "total": {
+            "reviews": 0,
+            "coins": 0
+          },
+          "last": null
+        },
+        "catch_up": null
+      }
+    },
+    {
+      "case": "process-stop/kotoba_batake_mobile/recovery-does-not-change-scheduling",
+      "passed": true,
+      "actual": {
+        "revlog": 1,
+        "cards": [
+          [
+            1794898759872,
+            1794898759872,
+            1794898759872,
+            2,
+            2,
+            3,
+            3,
+            2500,
+            1,
+            0,
+            0,
+            0,
+            0,
+            "{\"pos\":1}"
+          ]
+        ]
+      },
+      "expected": {
+        "revlog": 1,
+        "cards": [
+          [
+            1794898759872,
+            1794898759872,
+            1794898759872,
+            2,
+            2,
+            3,
+            3,
+            2500,
+            1,
+            0,
+            0,
+            0,
+            0,
+            "{\"pos\":1}"
+          ]
+        ]
+      }
+    },
+    {
+      "case": "process-stop/kotoba_batake_state/stopped-at-requested-point",
+      "passed": true,
+      "actual": 73,
+      "expected": 73,
+      "detail": {
+        "stderr": ""
+      }
+    },
+    {
+      "case": "process-stop/kotoba_batake_state/real-review-is-durable",
+      "passed": true,
+      "actual": 1,
+      "expected": 1
+    },
+    {
+      "case": "process-stop/kotoba_batake_state/review-is-paid-after-recovery",
+      "passed": true,
+      "actual": 1001,
+      "expected": 1001,
+      "detail": {
+        "coins_before_recovery": 1001,
+        "mobile": {
+          "v": 1,
+          "start": 1794898700065,
+          "days": {
+            "0": {
+              "all": 1,
+              "ok": 1,
+              "rev": 0,
+              "new": 1
+            }
+          },
+          "goals": [],
+          "total": {
+            "reviews": 0,
+            "coins": 0
+          },
+          "last": null
+        },
+        "catch_up": null
+      }
+    },
+    {
+      "case": "process-stop/kotoba_batake_state/recovery-does-not-change-scheduling",
+      "passed": true,
+      "actual": {
+        "revlog": 1,
+        "cards": [
+          [
+            1794898760064,
+            1794898760064,
+            1794898760064,
+            2,
+            2,
+            3,
+            3,
+            2500,
+            1,
+            0,
+            0,
+            0,
+            0,
+            "{\"pos\":1}"
+          ]
+        ]
+      },
+      "expected": {
+        "revlog": 1,
+        "cards": [
+          [
+            1794898760064,
+            1794898760064,
+            1794898760064,
+            2,
+            2,
+            3,
+            3,
+            2500,
+            1,
+            0,
+            0,
+            0,
+            0,
+            "{\"pos\":1}"
+          ]
+        ]
+      }
+    },
+    {
+      "case": "process-stop/kotoba_batake_rev/stopped-at-requested-point",
+      "passed": true,
+      "actual": 73,
+      "expected": 73,
+      "detail": {
+        "stderr": ""
+      }
+    },
+    {
+      "case": "process-stop/kotoba_batake_rev/real-review-is-durable",
+      "passed": true,
+      "actual": 1,
+      "expected": 1
+    },
+    {
+      "case": "process-stop/kotoba_batake_rev/review-is-paid-after-recovery",
+      "passed": true,
+      "actual": 1001,
+      "expected": 1001,
+      "detail": {
+        "coins_before_recovery": 1001,
+        "mobile": {
+          "v": 1,
+          "start": 1794898700231,
+          "days": {
+            "0": {
+              "all": 1,
+              "ok": 1,
+              "rev": 0,
+              "new": 1
+            }
+          },
+          "goals": [],
+          "total": {
+            "reviews": 0,
+            "coins": 0
+          },
+          "last": null
+        },
+        "catch_up": null
+      }
+    },
+    {
+      "case": "process-stop/kotoba_batake_rev/recovery-does-not-change-scheduling",
+      "passed": true,
+      "actual": {
+        "revlog": 1,
+        "cards": [
+          [
+            1794898760230,
+            1794898760230,
+            1794898760229,
+            2,
+            2,
+            4,
+            4,
+            2500,
+            1,
+            0,
+            0,
+            0,
+            0,
+            "{\"pos\":1}"
+          ]
+        ]
+      },
+      "expected": {
+        "revlog": 1,
+        "cards": [
+          [
+            1794898760230,
+            1794898760230,
+            1794898760229,
+            2,
+            2,
+            4,
+            4,
+            2500,
+            1,
+            0,
+            0,
+            0,
+            0,
+            "{\"pos\":1}"
+          ]
+        ]
+      }
+    }
+  ]
+}
