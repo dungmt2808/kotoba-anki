@@ -101,6 +101,10 @@ Chạy trên gói `kotoba_batake.ankiaddon` 1.35.2 đã giải nén (đúng th�
 | `e2e_133` (báo Trung / Hàn) | 77/77 |
 | `e2e_123` | 66/66 |
 | `e2e_1303` (bấm bừa 500 phím / 300 chuột, đổi cỡ cửa sổ, tương phản) | 49/49 |
+| `run_capnhat.sh` — cài đè 1.31.3 (gói đã phát hành `e64eb22`) → 1.35.2 bằng trình quản lý add-on | 19/19 |
+| `run_habanh.sh` — 1.35.2 → 1.31.3 → 1.35.2 | 26/26 |
+| `dong_bo/run_e2e.sh` (`e2e_1312`, máy chủ đồng bộ thật + "điện thoại") | **47/47** (audit: 46/47 — ca đọc thông báo sớm) |
+| **Đối chứng**: `e2e_1352` trên mã 1.35.1 | lỗi 02 tái hiện y như audit (bài tiếng Đức còn 14 từ, mở lại "60 / 60 ký tự"), lỗi 03 không có hộp hỏi → kịch bản dừng; các lỗi còn lại tái hiện ở `test_1352` (đỏ trên mã 1.35.1) |
 
 Trước khi sửa, 3 test cũ chỉ soát chữ trong mã phải chỉnh theo mã mới: `test_1303` (thứ tự hai dòng trong `_check_day` — giữ
 nguyên thứ tự, việc mới đặt sau), `test_1332` (`AI_LOCKED` thêm 2 lệnh), `test_1351` (manifest ≥ 1.35.1); trang web xuất lại
