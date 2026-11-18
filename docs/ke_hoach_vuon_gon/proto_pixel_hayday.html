@@ -1,0 +1,1559 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ことば畑 – Bản thử nghiệm Hướng 1: Pixel Hay Day (2.5D Nông trại sống)</title>
+<style>
+  :root {
+    --kb-ink: #1b1b2f;
+    --kb-cream: #fff9eb;
+    --kb-cream2: #f4ead2;
+    --kb-gold: #ffd23f;
+    --kb-orange: #ff9f1c;
+    --kb-green: #3ccb5e;
+    --kb-green-dark: #25853b;
+    --kb-blue: #3d8bff;
+    --kb-blue-pale: #cfe8ff;
+    --kb-wood: #a0603a;
+    --kb-wood-dark: #6b3b1f;
+    --kb-wood-light: #e2a46a;
+  }
+  * { box-sizing: border-box; user-select: none; }
+  body {
+    margin: 0;
+    padding: 12px;
+    background: #f5efe0;
+    color: var(--kb-ink);
+    font-family: "Noto Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+  }
+  .hd-shell {
+    max-width: 1120px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  /* Thanh tiêu đề & phím nhảy nhanh */
+  .hd-topbar {
+    background: var(--kb-cream);
+    border: 3px solid var(--kb-ink);
+    box-shadow: 4px 4px 0 var(--kb-ink);
+    padding: 8px 12px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .hd-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .hd-tag {
+    background: var(--kb-gold);
+    border: 2px solid var(--kb-ink);
+    box-shadow: 2px 2px 0 var(--kb-ink);
+    padding: 3px 8px;
+    font-weight: 800;
+    font-size: 12px;
+    letter-spacing: 0.3px;
+  }
+  .hd-sub {
+    font-size: 12.5px;
+    color: #4b4b63;
+    font-weight: 600;
+  }
+  .hd-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .hd-btn {
+    background: var(--kb-cream);
+    color: var(--kb-ink);
+    border: 2px solid var(--kb-ink);
+    box-shadow: 2px 2px 0 var(--kb-ink);
+    padding: 5px 9px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: transform 0.06s;
+  }
+  .hd-btn:hover { background: #fff3c4; }
+  .hd-btn:active {
+    transform: translate(1px, 1px);
+    box-shadow: 1px 1px 0 var(--kb-ink);
+  }
+  .hd-btn.is-on {
+    background: var(--kb-gold);
+  }
+  .hd-btn-group {
+    display: inline-flex;
+    border: 2px solid var(--kb-ink);
+    box-shadow: 2px 2px 0 var(--kb-ink);
+    background: var(--kb-cream);
+  }
+  .hd-btn-group .hd-btn {
+    border: none;
+    border-right: 2px solid var(--kb-ink);
+    box-shadow: none;
+  }
+  .hd-btn-group .hd-btn:last-child { border-right: none; }
+
+  /* Bố cục chính: Khung bản đồ Hay Day + Cột chi tiết bên phải */
+  .hd-main {
+    display: grid;
+    grid-template-columns: 1fr 305px;
+    gap: 12px;
+    align-items: start;
+  }
+  @media (max-width: 900px) {
+    .hd-main { grid-template-columns: 1fr; }
+  }
+
+  /* Khung Canvas Nông trại */
+  .hd-viewport {
+    position: relative;
+    height: 550px;
+    background: #7ec850;
+    border: 3px solid var(--kb-ink);
+    box-shadow: 4px 4px 0 var(--kb-ink);
+    overflow: hidden;
+  }
+  #farmCanvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    cursor: grab;
+    image-rendering: pixelated;
+  }
+  #farmCanvas:active { cursor: grabbing; }
+
+  /* HUD góc trái trên kiểu Hay Day */
+  .hd-hud-tl {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    pointer-events: none;
+    flex-wrap: wrap;
+  }
+  .hd-pill {
+    pointer-events: auto;
+    background: rgba(255, 249, 235, 0.96);
+    border: 2px solid var(--kb-ink);
+    box-shadow: 2px 2px 0 var(--kb-ink);
+    padding: 4px 10px;
+    font-size: 12.5px;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .hd-lv-star {
+    background: var(--kb-gold);
+    border: 2px solid var(--kb-ink);
+    padding: 1px 6px;
+    font-size: 11px;
+  }
+
+  /* Cụm nút nhảy nhanh góc phải trên trong bản đồ */
+  .hd-hud-tr {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+  }
+  .hd-cam-btn {
+    background: rgba(255, 249, 235, 0.95);
+    border: 2px solid var(--kb-ink);
+    box-shadow: 2px 2px 0 var(--kb-ink);
+    padding: 4px 8px;
+    font-size: 11.5px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .hd-cam-btn:hover { background: var(--kb-gold); }
+
+  /* Thanh hành động góc dưới bản đồ kiểu Hay Day */
+  .hd-hud-bottom {
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    pointer-events: none;
+    gap: 10px;
+  }
+  .hd-hint-bar {
+    pointer-events: auto;
+    background: rgba(255, 249, 235, 0.94);
+    border: 2px solid var(--kb-ink);
+    box-shadow: 2px 2px 0 var(--kb-ink);
+    padding: 5px 10px;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #3a3a52;
+  }
+  .hd-water-cta {
+    pointer-events: auto;
+    background: #3ccb5e;
+    color: #fff;
+    text-shadow: 1px 1px 0 var(--kb-ink);
+    border: 3px solid var(--kb-ink);
+    box-shadow: 3px 3px 0 var(--kb-ink);
+    padding: 9px 16px;
+    font-size: 14px;
+    font-weight: 900;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform 0.08s;
+  }
+  .hd-water-cta:hover { background: #2fb850; }
+  .hd-water-cta:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 var(--kb-ink);
+  }
+  .hd-water-badge {
+    background: var(--kb-gold);
+    color: var(--kb-ink);
+    text-shadow: none;
+    border: 2px solid var(--kb-ink);
+    padding: 1px 7px;
+    font-size: 12px;
+    font-weight: 900;
+  }
+
+  /* Cột thông tin bên phải */
+  .hd-side {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .hd-card {
+    background: var(--kb-cream);
+    border: 3px solid var(--kb-ink);
+    box-shadow: 4px 4px 0 var(--kb-ink);
+    padding: 12px;
+  }
+  .hd-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    padding-bottom: 8px;
+    margin-bottom: 10px;
+    border-bottom: 2px dashed #c8bc9e;
+  }
+  .hd-card-title {
+    font-size: 13.5px;
+    font-weight: 800;
+    margin: 0;
+  }
+  .hd-badge {
+    background: #ffe89e;
+    border: 2px solid var(--kb-ink);
+    padding: 2px 7px;
+    font-size: 11px;
+    font-weight: 800;
+  }
+  .hd-inspect-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  #inspectCanvas {
+    width: 60px;
+    height: 60px;
+    background: #e8f6d9;
+    border: 2px solid var(--kb-ink);
+    image-rendering: pixelated;
+    flex-shrink: 0;
+  }
+  .hd-inspect-word {
+    font-size: 16px;
+    font-weight: 900;
+    line-height: 1.25;
+  }
+  .hd-inspect-sub {
+    font-size: 12.5px;
+    color: #55556b;
+    margin-top: 3px;
+  }
+  .hd-inspect-desc {
+    background: var(--kb-cream2);
+    border: 2px solid #d5c7a3;
+    padding: 8px 10px;
+    font-size: 12px;
+    line-height: 1.45;
+    margin-bottom: 10px;
+  }
+  .hd-action-btn {
+    width: 100%;
+    background: var(--kb-blue-pale);
+    border: 2px solid var(--kb-ink);
+    box-shadow: 2px 2px 0 var(--kb-ink);
+    padding: 8px 10px;
+    font-weight: 800;
+    font-size: 12.5px;
+    cursor: pointer;
+  }
+  .hd-action-btn:hover { background: #b5dcff; }
+
+  /* Danh sách công trình chạm nhanh */
+  .hd-bldg-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+  .hd-bldg-item {
+    background: var(--kb-cream2);
+    border: 2px solid var(--kb-ink);
+    padding: 6px 8px;
+    font-size: 11.5px;
+    font-weight: 700;
+    cursor: pointer;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .hd-bldg-item:hover {
+    background: #ffe89e;
+  }
+  .hd-toast {
+    position: absolute;
+    top: 52px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--kb-ink);
+    color: var(--kb-gold);
+    border: 2px solid var(--kb-gold);
+    padding: 6px 14px;
+    font-size: 12.5px;
+    font-weight: 800;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+    z-index: 10;
+  }
+  .hd-toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+<div class="hd-shell">
+  <!-- Thanh điều khiển trên cùng -->
+  <div class="hd-topbar">
+    <div class="hd-brand">
+      <span class="hd-tag">HƯỚNG 1 · PIXEL HAY DAY</span>
+      <span class="hd-sub">Giữ 100% đồ Pixel 16×16 · Bản đồ Nông trại kéo-thả, công trình bấm được &amp; thú đi dạo</span>
+    </div>
+    <div class="hd-controls">
+      <button class="hd-btn" id="btnCenter" title="Đưa camera về giữa nông trại">🎯 Về giữa</button>
+      <div class="hd-btn-group">
+        <button class="hd-btn" id="btnZoomOut" title="Thu nhỏ">➖</button>
+        <button class="hd-btn" id="btnZoomReset" title="Tỉ lệ chuẩn">100%</button>
+        <button class="hd-btn" id="btnZoomIn" title="Phóng to">➕</button>
+      </div>
+      <div class="hd-btn-group">
+        <button class="hd-btn is-on" data-tod="day">☀ Sáng</button>
+        <button class="hd-btn" data-tod="dusk">🌇 Chiều</button>
+        <button class="hd-btn" data-tod="night">🌙 Đêm</button>
+      </div>
+      <button class="hd-btn is-on" id="btnToggleOrchard">🍎 Gộp Vườn Quả (180)</button>
+    </div>
+  </div>
+
+  <div class="hd-main">
+    <!-- Khung bản đồ Nông trại 2.5D -->
+    <div class="hd-viewport">
+      <canvas id="farmCanvas"></canvas>
+
+      <!-- HUD góc trên trái -->
+      <div class="hd-hud-tl">
+        <div class="hd-pill">
+          <span class="hd-lv-star">★ Lv.14</span>
+          <span>221 cây</span>
+          <span style="color:#b5a785">|</span>
+          <span>🪙 <span id="coinCount">1.480</span></span>
+          <span style="color:#b5a785">|</span>
+          <span>🔥 27 ngày</span>
+        </div>
+      </div>
+
+      <!-- Nhảy nhanh tới từng khu -->
+      <div class="hd-hud-tr">
+        <button class="hd-cam-btn" data-focus="thirsty">💧 Ruộng khát</button>
+        <button class="hd-cam-btn" data-focus="house">🏠 Nhà</button>
+        <button class="hd-cam-btn" data-focus="shop">🏪 Quầy Game</button>
+        <button class="hd-cam-btn" data-focus="orchard">🍎 Vườn Quả</button>
+      </div>
+
+      <div class="hd-toast" id="farmToast"></div>
+
+      <!-- Thanh đáy: Gợi ý + Nút Tưới ngay cố định cho người bận ôn Anki -->
+      <div class="hd-hud-bottom">
+        <div class="hd-hint-bar">
+          🖱️ Kéo chuột để dạo quanh · Cuộn để thu phóng · Chạm vào <b>Nhà, Hòm thư, Quầy hàng, Thú nuôi</b> hoặc từng <b>Cây</b>
+        </div>
+        <button class="hd-water-cta" id="btnQuickWater">
+          🚿 TƯỚI NGAY <span class="hd-water-badge" id="thirstyBadge">17 cây khát</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Cột phải: Chi tiết đối tượng đang chọn + Phím tắt công trình -->
+    <div class="hd-side">
+      <div class="hd-card">
+        <div class="hd-card-head">
+          <h3 class="hd-card-title" id="inspectTitle">Đang xem trên trang trại</h3>
+          <span class="hd-badge" id="inspectBadge">Công trình</span>
+        </div>
+        <div class="hd-inspect-box">
+          <canvas id="inspectCanvas" width="60" height="60"></canvas>
+          <div>
+            <div class="hd-inspect-word" id="inspectMain">🏠 Nhà chính (Cấp 7)</div>
+            <div class="hd-inspect-sub" id="inspectSub">Ống khói đang đỏ lửa · Có 3 gian</div>
+          </div>
+        </div>
+        <div class="hd-inspect-desc" id="inspectDesc">
+          Trong phong cách Hay Day, bấm trực tiếp vào <b>Ngôi nhà</b> sẽ mở bảng <b>Nhà &amp; Trang trí</b> thay vì phải tìm trên thanh menu.
+        </div>
+        <button class="hd-action-btn" id="inspectActionBtn">🏠 Mở bảng Nhà &amp; Trang trí</button>
+      </div>
+
+      <div class="hd-card">
+        <div class="hd-card-head">
+          <h3 class="hd-card-title">Chạm công trình = Mở tính năng</h3>
+          <span class="hd-badge">Kiểu Hay Day</span>
+        </div>
+        <div class="hd-bldg-grid">
+          <button class="hd-bldg-item" data-bldg="house">🏠 Nhà &amp; Nội thất</button>
+          <button class="hd-bldg-item" data-bldg="mailbox">📬 Hòm thư Báo mới</button>
+          <button class="hd-bldg-item" data-bldg="shop">🏪 Quầy 5 Trò chơi</button>
+          <button class="hd-bldg-item" data-bldg="diary">📖 Bàn trà Nhật ký</button>
+          <button class="hd-bldg-item" data-bldg="craft">🎨 Xưởng Chế tác</button>
+          <button class="hd-bldg-item" data-bldg="pet">🐕 Gọi Shiba &amp; Mèo</button>
+        </div>
+      </div>
+
+      <div class="hd-card">
+        <div class="hd-card-head">
+          <h3 class="hd-card-title">Điểm mạnh của “Pixel Hay Day”</h3>
+        </div>
+        <ul style="margin:0; padding-left:17px; font-size:11.8px; line-height:1.5; color:#333348;">
+          <li><b>Giữ trọn 100% kho đồ cũ:</b> Cây 5 giai đoạn, nhà, thú nuôi và đồ tự vẽ ở Xưởng 16×16 đều khớp hoàn hảo.</li>
+          <li><b>Không còn điểm mù UI:</b> Báo mới nhảy bong bóng ở <i>Hòm thư</i>, Nhật ký ở <i>Bàn trà dưới cây Anh Đào</i>, Game ở <i>Quầy ven đường</i>.</li>
+          <li><b>Ôn thẻ vẫn nhanh 1 giây:</b> Thửa <i>💧 Cần tưới</i> nằm ngay giữa sân kèm nút <b>🚿 Tưới ngay</b> cố định góc dưới.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  // =========================================================================
+  // 1. BẢNG MÀU & SPRITE PIXEL CHÍNH CHỦ TỪ KOTOBA_BATAKE (garden.js, home.js, pets.js)
+  // =========================================================================
+  const PAL = {
+    k: "#1b1b2f", w: "#ffffff", y: "#ffd23f", Y: "#e9a800", o: "#ff9f1c", O: "#d9620a",
+    r: "#ff4f6d", R: "#c21f3a", p: "#ff7fa0", P: "#ffc4d6",
+    g: "#3ccb5e", G: "#2e8b3a", f: "#b8e05a", j: "#1f5f2a",
+    b: "#8a4a22", B: "#5a3010", t: "#e2a46a", h: "#f5b971",
+    s: "#d4d4e0", S: "#8a8fa8", m: "#9aa0b5", n: "#2b2b44",
+    d: "#3d8bff", l: "#8fd3ff", c: "#fff2b3", v: "#c77dff", i: "#e9b949",
+    u: "#2f5fb0", U: "#1e3a8a", a: "#2ec4b6", A: "#1a7f78"
+  };
+
+  // 5 giai đoạn cây từ garden.js
+  const PLANT_SPR = [
+    [
+      "................","................","................","................",
+      "................","................","................","................",
+      "......kkkk......",".....kbbbbk.....",".....kbBBbk.....","......kkkk......",
+      "................","................","................","................"
+    ],
+    [
+      "................","................","................","................",
+      ".....kkk..kkk...","....kggk.kggk...","....kgGkkkgGk...",".....kkkkgkkk...",
+      ".......kGk......",".......kGk......",".......kGk......",".......kkk......",
+      "................","................","................","................"
+    ],
+    [
+      "................",".....kkkkkk.....","....kggggggk....","...kggwgggggk...",
+      "...kggggggggk...","....kggggggk....","...kkkGGGGkkk...","..kggkGGGGkggk..",
+      "..kgGkkkkkkgGk..","...kkk.kbbk.kkk.",".......kbbk.....",".......kbbk.....",
+      ".......kkkk.....","................","................","................"
+    ],
+    [
+      ".....kkkkkk.....","...kkppppppkk...","..kppwpppppppk..","..kppppyyppppk..",
+      "..kppppyyppppk..","..kppppppppppk..","...kkggggggkk...","....kggggggk....",
+      "...kggkbbkggk...","...kkk.kbbk.kkk.",".......kbbk.....",".......kbbk.....",
+      ".......kkkk.....","................","................","................"
+    ],
+    [
+      "....kkkkkkkk....","..kkggggggggkk..",".kggwgggggggggk.",".kgggrrggggrrgk.",
+      ".kgggrrggggrrgk.",".kggggggggggggk.",".kgggggrrgggggk.","..kggggrrggggk..",
+      "...kkggggggkk...",".....kkbbkk.....","......kbbk......","......kbbk......",
+      "......kkkk......","................","................","................"
+    ]
+  ];
+
+  // Thú nuôi từ pets.js
+  const PET_SPR = {
+    shiba: {
+      walk0: ["...........k..k.", "..........kokkok", "..k.......kokkok", ".kok.....koooook", "kocokkkkkkokoook", "koookoooooooock.", ".kooooooooooccck", ".kooooooooooock.", ".koooooooooook..", "..kooocccccok...", "...koooooook....", "...kokokkkok....", "....k.k...k....."],
+      walk1: ["...........k..k.", "..........kokkok", "..k.......kokkok", ".kok.....koooook", "kocokkkkkkokoook", "koookoooooooock.", ".kooooooooooccck", ".kooooooooooock.", ".koooooooooook..", "..kooocccccok...", "..kokoooookok...", ".kok.kkokk.kok..", "..k....k....k..."],
+      sit:   [".......k....k...", "......kokkkkok..", "......kooooook..", "......kooooook..", "......kokookok..", ".....kkooockok..", "..kkkoooocccck..", ".koooooooocck...", "kocooooocokk....", ".koooooccck.....", "..kkoooccck.....", "...koooocok.....", "....kooook......"]
+    },
+    neko: {
+      walk0: ["................", "...........k.k..", "k.........ktktk.", "tk.......ktttttk", "ktk...kkkktttttk", "ktkkkktttktktktk", ".ktttBtBtBtttttk", "..ktttttttttptk.", "..ktttttttttkk..", "..ktttttttttk...", "...ktkttttkk....", "....ktkkkktk....", ".....k....k....."],
+      walk1: ["................", "...........k.k..", "k.........ktktk.", "tk.......ktttttk", "ktk...kkkktttttk", "ktkkkktttktktktk", ".ktttBtBtBtttttk", "..ktttttttttptk.", "..ktttttttttkk..", "..ktttttttttk...", "..ktkktttktk....", "..ktk.kkk.ktk...", "...k.......k...."],
+      sit:   [".......k....k...", "......ktkkkktk..", ".......kttttk...", ".......kttttk...", "......ktkttktk..", ".....kkttttttk..", "....ktttttptk...", "...ktBtttttk....", ".k.ktttBttk.....", "ktkktBttttk.....", ".ktkttttttk.....", ".ktkttttttk.....", "..ktkttctck....."]
+    },
+    niwatori: {
+      walk0: [".........krrk...", "..........krk...", "..kk.....kwwwkk.", ".kwwk.kkkwwkwyyk", ".kwkkkwwkwwwwwk.", "kwkwwwwwwwwwrk..", ".kkwwwwwwwwkk...", ".kwwsswwwwwwk...", "..kwwwsswwwk....", "..kwwwwwwwwk....", "...kkkywykk.....", ".....kykkyk.....", "......k..k......"],
+      walk1: [".........krrk...", "..........krk...", "..kk.....kwwwkk.", ".kwwk.kkkwwkwyyk", ".kwkkkwwkwwwwwk.", "kwkwwwwwwwwwrk..", ".kkwwwwwwwwkk...", ".kwwsswwwwwwk...", "..kwwwsswwwk....", "..kwwwwwwwwk....", "...kkkywykk.....", "....kykkyk......", ".....k..k......."]
+    },
+    usagi: {
+      walk0: ["........kwkkwk..", "........kPkkPk..", ".........kwkwk..", ".........kwkwk..", ".........kwwwwk.", "..kkkkkkkkwwkwk.", ".kwwwwwwwwwwwwpk", ".kwwwwwwwwwwwwk.", ".kwwwwwwwwwwkk..", "..kwwwwwwwwwk...", "...kwwwwwwwk....", "...kwwkkkwwk....", "....kk...kk....."],
+      walk1: ["........kwkkwk..", "........kPkkPk..", ".........kwkwk..", ".........kwwwwk.", "..kkkkkkkkwwkwk.", ".kwwwwwwwwwwwwpk", ".kwwwwwwwwwwwwk.", ".kwwwwwwwwwwkk..", "..kwwwwwwwwwk...", "...kwwwwwwwk....", "..kkwkkkkwkk....", ".kwwk....kwwk...", "..kk......kk...."]
+    },
+    ahiru: {
+      walk0: ["................", "................", ".........kkkk...", "........kyyyyk..", "........kyykykk.", "....kkkkkyyyyook", "..kkyyyyyyyyyook", ".kyyyyyyyyyykkk.", "..kyYYyyyyyyk...", "..kyyyYYyyyyk...", "...kyyyyyyyk....", "....kkokkok.....", "....kok.kok....."],
+      walk1: ["................", "................", ".........kkkk...", "........kyyyyk..", "........kyykykk.", "....kkkkkyyyyook", "..kkyyyyyyyyyook", ".kyyyyyyyyyykkk.", "..kyYYyyyyyyk...", "..kyyyYYyyyyk...", "...kyyyyyyyk....", "....kkokkok.....", ".....kok.kok...."]
+    }
+  };
+
+  // Đồ trang trí & công trình từ home.js
+  const DECOR_SPR = {
+    mailbox: [
+      "...kkkkkk...","..krrrrrrk..",".krrrrrrrrk.",".krkkkkkkrk.",".krrrrrrrrk.",
+      ".krrrrrrrrkk",".kkkkkkkkkk.",".....kbk....",".....kbk....",".....kbk....",
+      ".....kbk....",".....kbk....","....kbbbk...","...kkkkkkk.."
+    ],
+    scarecrow: [
+      "....kkkkkk....","...kyyyyyyk...",".kkyyyyyyyykk.","kyyyyyyyyyyyyk",".kkkkkkkkkkkk.",
+      "...kttttttk...","...ktkttktk...","...kttttttk...","...ktkkkktk...","....kttttk....",
+      "kkkkkkbbkkkkkk","kbbbkrrrrkbbbk","kkkkkrrrrkkkkk","....krrrrk....","....krddrk....",
+      "....krrrrk....","....kkbbkk....",".....kbbk.....",".....kbbk.....",".....kbbk.....",
+      "....kkbbkk....","...kGGGGGGk..."
+    ],
+    bench: [
+      "kkkkkkkkkkkkkkkk","kttttttttttttttk","kkkkkkkkkkkkkkkk","kttttttttttttttk","kkkkkkkkkkkkkkkk",
+      ".kbk........kbk.",".kbk........kbk.","kkkkkkkkkkkkkkkk","kttttttttttttttk","kkkkkkkkkkkkkkkk",
+      ".kbk........kbk.",".kbk........kbk.",".kkk........kkk."
+    ],
+    chochin: [
+      "...kkkk...","..kRRRRk..",".krrrrrrk.","krrwrrrrrk","kRRRRRRRRk","krrrrrrrrk",
+      "kRRRRRRRRk","krrrrrrrrk",".krrrrrrk.","..kRRRRk..","...kkkk...","....kbk...",
+      "....kbk...","....kbk...","....kbk...","....kbk...","...kbbbk..","..kkkkkkk."
+    ],
+    flowers: [
+      "...kk......kk...","..kppk....kyyk..",".kpwppk..kywyyk.","..kppk.kk.kyyk..","...kkgkrrk.kk...",
+      "..kgGkkrwrk.k...",".kgGGk.krrk.kgk.",".kGGGGkgkkgkgGk.","..kGGGGGGGGGGk..","...kkkkkkkkkk..."
+    ]
+  };
+
+  // Hàm dựng sprite procedurally giống home.js (sakura, well, shop, house)
+  function makeGrid(w, h) { const g = []; for (let j = 0; j < h; j++) g.push(new Array(w).fill(".")); return g; }
+  function gRect(g, x, y, w, h, c) {
+    for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) if (g[j] && i >= 0 && i < g[0].length) g[j][i] = c;
+  }
+  function gDisc(g, cx, cy, r, c) {
+    for (let j = 0; j < g.length; j++)
+      for (let i = 0; i < g[0].length; i++)
+        if ((i - cx) * (i - cx) + (j - cy) * (j - cy) <= r * r + r * 0.6) g[j][i] = c;
+  }
+  function gDot(g, x, y, c) { if (g[y] && x >= 0 && x < g[0].length) g[y][x] = c; }
+  function gOutline(g) {
+    const h = g.length, w = g[0].length, out = g.map(r => r.slice());
+    for (let j = 0; j < h; j++) {
+      for (let i = 0; i < w; i++) {
+        if (g[j][i] !== ".") continue;
+        const n = [[0,1],[0,-1],[1,0],[-1,0]].some(([dx,dy]) => g[j+dy] && g[j+dy][i+dx] && g[j+dy][i+dx] !== ".");
+        if (n) out[j][i] = "k";
+      }
+    }
+    return out.map(r => r.join(""));
+  }
+
+  // Cây anh đào Sakura (home.js)
+  DECOR_SPR.sakura = (function () {
+    const g = makeGrid(34, 36);
+    gRect(g, 15, 20, 4, 15, "B"); gRect(g, 16, 20, 1, 15, "b");
+    gRect(g, 10, 21, 5, 2, "B"); gRect(g, 19, 19, 6, 2, "B");
+    gDisc(g, 10, 13, 7, "p"); gDisc(g, 23, 12, 8, "p"); gDisc(g, 17, 8, 7, "p"); gDisc(g, 6, 17, 4, "p"); gDisc(g, 28, 17, 4, "p");
+    gDisc(g, 15, 7, 3, "P"); gDisc(g, 23, 9, 3, "P"); gDisc(g, 9, 11, 2, "P"); gDisc(g, 27, 14, 1, "P");
+    [[12,15],[20,6],[25,15],[7,14],[18,12],[29,18],[14,3],[22,17],[5,18]].forEach(([x,y]) => gDot(g, x, y, "w"));
+    [[10,17],[26,10],[19,15]].forEach(([x,y]) => gDot(g, x, y, "R"));
+    return gOutline(g);
+  })();
+
+  // Quầy hàng ven đường kiểu Hay Day (dựa trên SPR.ringoame của home.js)
+  DECOR_SPR.shop = (function () {
+    const g = makeGrid(24, 28);
+    for (let i = 1; i < 23; i++) gRect(g, i, 3, 1, 5, Math.floor(i / 3) % 2 ? "r" : "w");
+    for (let i = 1; i < 23; i += 2) gDot(g, i, 8, Math.floor(i / 3) % 2 ? "r" : "w");
+    gRect(g, 2, 9, 2, 16, "B"); gRect(g, 20, 9, 2, 16, "B");
+    gRect(g, 4, 14, 16, 2, "w");
+    [5, 9, 13, 17].forEach((x, idx) => {
+      gRect(g, x, 11, 3, 3, ["y", "r", "g", "o"][idx]);
+      gDot(g, x, 11, "w");
+    });
+    gRect(g, 1, 16, 22, 2, "t");
+    gRect(g, 2, 18, 20, 7, "b");
+    for (let x = 5; x < 20; x += 4) gRect(g, x, 18, 1, 7, "B");
+    gRect(g, 1, 25, 22, 1, "B");
+    return gOutline(g);
+  })();
+
+  // Giếng nước & Bàn chế tác (dựa trên SPR.well của home.js)
+  DECOR_SPR.well = (function () {
+    const g = makeGrid(18, 28);
+    for (let j = 0; j < 4; j++) gRect(g, 6 - j, 1 + j, 6 + j * 2, 1, j === 3 ? "B" : "b");
+    gRect(g, 3, 5, 2, 11, "B"); gRect(g, 13, 5, 2, 11, "B");
+    gRect(g, 5, 7, 8, 1, "t"); gRect(g, 8, 6, 2, 3, "B");
+    gRect(g, 8, 9, 1, 4, "S"); gRect(g, 7, 12, 3, 3, "b");
+    gRect(g, 2, 16, 14, 2, "s");
+    gRect(g, 2, 18, 14, 8, "S");
+    for (let y = 18; y < 25; y += 3) gRect(g, 2, y + 2, 14, 1, "m");
+    return gOutline(g);
+  })();
+
+  // Ngôi nhà chính cấp 7 (từ drawHouse trong home.js)
+  DECOR_SPR.house = (function () {
+    const g = makeGrid(42, 42);
+    // Móng đá
+    gRect(g, 3, 34, 36, 6, "S"); gRect(g, 3, 34, 36, 1, "s");
+    // Tường gỗ ấm
+    gRect(g, 5, 18, 32, 16, "c");
+    for (let y = 21; y < 33; y += 4) gRect(g, 5, y, 32, 1, "h");
+    gRect(g, 5, 18, 2, 16, "b"); gRect(g, 35, 18, 2, 16, "b");
+    // Ống khói gạch đỏ bên phải mái
+    gRect(g, 29, 4, 5, 11, "R"); gRect(g, 28, 3, 7, 2, "S");
+    // Mái ngói đỏ
+    for (let y = 6; y <= 18; y++) {
+      const half = Math.min(20, Math.round((y - 6) * 1.4) + 3);
+      gRect(g, 21 - half, y, half * 2, 1, (y - 6) % 3 === 2 ? "R" : "r");
+    }
+    // Cửa sổ áp mái + 2 cửa sổ dưới + cửa gỗ + rèm noren xanh
+    gRect(g, 18, 10, 6, 5, "l"); gRect(g, 20, 10, 1, 5, "w");
+    gRect(g, 8, 22, 6, 6, "l"); gRect(g, 8, 28, 6, 2, "b"); gDot(g, 9, 27, "p"); gDot(g, 11, 27, "y");
+    gRect(g, 28, 22, 6, 6, "l"); gRect(g, 28, 28, 6, 2, "b"); gDot(g, 29, 27, "r"); gDot(g, 31, 27, "y");
+    gRect(g, 18, 23, 6, 11, "b"); gRect(g, 18, 23, 6, 4, "u");
+    gRect(g, 17, 39, 8, 2, "s");
+    return gOutline(g);
+  })();
+
+  // Cây táo lớn cho Vườn Cổ Thụ (Orchard)
+  DECOR_SPR.appleTree = (function () {
+    const g = makeGrid(24, 28);
+    gRect(g, 10, 16, 4, 10, "B"); gRect(g, 11, 16, 1, 10, "b");
+    gDisc(g, 12, 10, 8, "G"); gDisc(g, 8, 12, 6, "G"); gDisc(g, 16, 12, 6, "G");
+    gDisc(g, 11, 8, 6, "g"); gDisc(g, 7, 10, 4, "g"); gDisc(g, 15, 10, 4, "g");
+    [[7,9],[12,6],[16,10],[9,13],[14,13],[11,10]].forEach(([x,y]) => {
+      gRect(g, x, y, 2, 2, "r"); gDot(g, x, y, "w");
+    });
+    return gOutline(g);
+  })();
+
+  // =========================================================================
+  // 2. DỮ LIỆU BẢN ĐỒ NÔNG TRẠI (18×16 Ô ISOMETRIC)
+  // =========================================================================
+  const COLS = 18, ROWS = 16;
+  const TW = 54, TH = 27; // Ô thoi chuẩn 2:1
+
+  const WORDS_THIRSTY = [
+    ["冒険 (ぼうけん)", "Phiêu lưu"], ["約束 (やくそく)", "Lời hứa"], ["準備 (じゅんび)", "Chuẩn bị"],
+    ["経験 (けいけん)", "Kinh nghiệm"], ["習慣 (しゅうかん)", "Thói quen"], ["連絡 (れんらく)", "Liên lạc"],
+    ["相談 (そうだん)", "Thảo luận"], ["応援 (おうえん)", "Cổ vũ"], ["感動 (かんどう)", "Cảm động"],
+    ["挑戦 (ちょうせん)", "Thử thách"], ["発見 (はっけん)", "Phát hiện"], ["表現 (ひょうげん)", "Biểu đạt"],
+    ["記憶 (きおく)", "Ký ức"], ["目標 (もくひょう)", "Mục tiêu"], ["努力 (どりょく)", "Nỗ lực"],
+    ["成長 (せいちょう)", "Trưởng thành"], ["感謝 (かんしゃ)", "Biết ơn"]
+  ];
+  const WORDS_GROWING = [
+    ["季節 (きせつ)", "Mùa", 0], ["天気 (てんき)", "Thời tiết", 0], ["散歩 (さんぽ)", "Dạo bộ", 0],
+    ["料理 (りょうり)", "Nấu ăn", 0], ["掃除 (そうじ)", "Dọn dẹp", 1], ["洗濯 (せんたく)", "Giặt giũ", 1],
+    ["買物 (かいもの)", "Mua sắm", 1], ["旅行 (りょこう)", "Du lịch", 1], ["図書館 (としょかん)", "Thư viện", 2],
+    ["美術館 (びじゅつかん)", "Bảo tàng mỹ thuật", 2], ["動物園 (どうぶつえん)", "Sở thú", 2], ["水族館 (すいぞくかん)", "Thuỷ cung", 2],
+    ["新幹線 (しんかんせん)", "Tàu siêu tốc", 3], ["飛行機 (ひこうき)", "Máy bay", 3], ["自転車 (じてんしゃ)", "Xe đạp", 3],
+    ["交差点 (こうさてん)", "Ngã tư", 3], ["信号 (しんごう)", "Đèn giao thông", 2], ["景色 (けしき)", "Phong cảnh", 3],
+    ["お土産 (おみやげ)", "Quà lưu niệm", 1], ["招待 (しょうたい)", "Mời", 2]
+  ];
+  const WORDS_ORCHARD = [
+    ["桜 (さくら)", "Hoa anh đào · 120 ngày"], ["言葉 (ことば)", "Ngôn từ · 95 ngày"],
+    ["未来 (みらい)", "Tương lai · 140 ngày"], ["希望 (きぼう)", "Hy vọng · 110 ngày"],
+    ["平和 (へいわ)", "Hoà bình · 180 ngày"], ["家族 (かぞく)", "Gia đình · 210 ngày"],
+    ["友達 (ともだち)", "Bạn bè · 160 ngày"], ["笑顔 (えがお)", "Nụ cười · 130 ngày"],
+    ["故郷 (ふるさと)", "Quê hương · 150 ngày"]
+  ];
+
+  // Các công trình bấm được (Kiểu Hay Day)
+  const BUILDINGS = {
+    house: {
+      id: "house", gx: 2.2, gy: 2.2, spr: "house", scale: 2.5,
+      label: "🏠 Nhà & Trang trí", badge: "Cấp 7",
+      title: "🏠 Nhà chính (3 gian)",
+      sub: "Bếp · Phòng khách · Phòng ngủ",
+      desc: "Bấm vào Ngôi nhà trên nông trại sẽ mở ngay bảng Xây nhà, Trang trí sân & Nội thất (không cần tìm trên thanh menu).",
+      action: "🏠 Mở bảng Nhà & Cửa hàng"
+    },
+    mailbox: {
+      id: "mailbox", gx: 6.2, gy: 5.6, spr: "mailbox", scale: 2.6,
+      label: "📬 Báo mới!", badge: "📰 Có số mới", bubble: "📰 Báo!",
+      title: "📬 Hòm thư Báo & Chép chính tả",
+      sub: "NHK Easy · Truyện ngắn theo từ đang học",
+      desc: "Trong Hay Day, hòm thư trước cổng nhấp nhô khi có tờ báo mới. Người dùng không bao giờ bị quên tính năng đọc báo nữa!",
+      action: "📰 Đọc tờ báo hôm nay"
+    },
+    shop: {
+      id: "shop", gx: 1.8, gy: 8.6, spr: "shop", scale: 2.5,
+      label: "🏪 Quầy Trò chơi", badge: "5 мини-game", bubble: "🎮 Chơi!",
+      title: "🏪 Quầy hàng Trò chơi từ vựng",
+      sub: "Ghép thẻ · Nghe bắt chữ · Bắn sao · Đố nhanh",
+      desc: "Giống Roadside Shop của Hay Day: đặt ngay bên đường đất chính, chạm vào là mở 5 trò chơi ôn tập.",
+      action: "🎮 Mở 5 Trò chơi từ vựng"
+    },
+    diary: {
+      id: "diary", gx: 12.8, gy: 2.2, spr: "sakura", scale: 2.5,
+      label: "📖 Nhật ký & Lịch hoa", badge: "🔥 27 ngày",
+      title: "📖 Bàn trà dưới gốc Anh Đào",
+      sub: "Lịch hoa · Nhật ký · Gemini sửa câu luyện viết",
+      desc: "Chạm vào góc ghế gỗ dưới cây Sakura để mở Lịch hoa, viết nhật ký hôm nay và luyện đặt câu tiếng Nhật.",
+      action: "🌸 Mở Lịch hoa & Nhật ký"
+    },
+    craft: {
+      id: "craft", gx: 6.2, gy: 1.8, spr: "well", scale: 2.4,
+      label: "🎨 Xưởng vẽ 16×16", badge: "Tự vẽ đồ",
+      title: "🎨 Giếng cổ & Xưởng Chế tác",
+      sub: "Tự vẽ cây, món đồ trang trí & mũ StackChan",
+      desc: "Giữ nguyên 100% tính năng Xưởng vẽ pixel 16×16 của bạn — mọi món đồ người dùng tự vẽ đều đặt lên nông trại 2.5D này được!",
+      action: "🎨 Mở Xưởng chế tác Pixel"
+    }
+  };
+
+  let thirstyPlants = WORDS_THIRSTY.map((w, i) => ({
+    id: "t" + i, word: w[0], mean: w[1], stage: 2 + (i % 3), thirsty: true, ivl: 3 + (i * 2) % 14
+  }));
+  let growingPlants = WORDS_GROWING.map((w, i) => ({
+    id: "g" + i, word: w[0], mean: w[1], stage: w[2], thirsty: false, ivl: 1 + i
+  }));
+  let orchardCompact = true;
+  let coins = 1480;
+  let tod = "day";
+
+  // Thú nuôi đi dạo trên đường đất & bãi cỏ
+  const pets = [
+    { id: "shiba", name: "Chó Shiba (Mame)", gx: 7.4, gy: 6.8, tx: 7.4, ty: 10.5, dir: 1, act: "walk", timer: 2, heart: 0 },
+    { id: "neko", name: "Mèo Tam thể (Mikan)", gx: 4.5, gy: 4.2, tx: 5.5, ty: 4.8, dir: 1, act: "sit", timer: 3, heart: 0 },
+    { id: "niwatori", name: "Gà con chăm chỉ", gx: 5.2, gy: 11.2, tx: 6.2, ty: 12.2, dir: -1, act: "walk", timer: 1.5, heart: 0 },
+    { id: "usagi", name: "Thỏ trắng (Usagi)", gx: 11.5, gy: 4.5, tx: 13.2, ty: 4.2, dir: 1, act: "walk", timer: 2.5, heart: 0 },
+    { id: "ahiru", name: "Vịt vàng (Ahiru)", gx: 14.2, gy: 12.2, tx: 15.0, ty: 12.8, dir: -1, act: "walk", timer: 2, heart: 0 }
+  ];
+
+  // Hạt môi trường: khói ống khói + cánh hoa anh đào rơi
+  const particles = [];
+
+  // =========================================================================
+  // 3. CAMERA PAN & ZOOM + PHÉP CHIẾU ISOMETRIC
+  // =========================================================================
+  const canvas = document.getElementById("farmCanvas");
+  const ctx = canvas.getContext("2d");
+  const inspectCanvas = document.getElementById("inspectCanvas");
+  const ictx = inspectCanvas.getContext("2d");
+
+  let cam = { x: 0, y: 65, zoom: 1.0 };
+  let isDragging = false, dragStart = { x: 0, y: 0 }, camStart = { x: 0, y: 0 }, movedDist = 0;
+  let hoveredHit = null;
+  let selectedHit = { kind: "bldg", data: BUILDINGS.house };
+
+  function resizeCanvas() {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = Math.round(rect.width);
+    canvas.height = Math.round(rect.height);
+  }
+  window.addEventListener("resize", resizeCanvas);
+  resizeCanvas();
+
+  function isoToScreen(gx, gy, elev) {
+    const cx = canvas.width * 0.5 + cam.x;
+    const cy = 62 + cam.y;
+    const sx = cx + (gx - gy) * (TW * 0.5) * cam.zoom;
+    const sy = cy + (gx + gy) * (TH * 0.5) * cam.zoom - (elev || 0) * cam.zoom;
+    return { x: sx, y: sy };
+  }
+
+  // Vẽ khối ô đất/cỏ/đường Isometric
+  function drawIsoTile(gx, gy, elev, thickness, topCol, leftCol, rightCol, strokeCol) {
+    const p0 = isoToScreen(gx, gy, elev);
+    const p1 = isoToScreen(gx + 1, gy, elev);
+    const p2 = isoToScreen(gx + 1, gy + 1, elev);
+    const p3 = isoToScreen(gx, gy + 1, elev);
+    const h = thickness * cam.zoom;
+
+    if (h > 0.5) {
+      // Mặt bên trái
+      ctx.fillStyle = leftCol;
+      ctx.beginPath();
+      ctx.moveTo(p3.x, p3.y);
+      ctx.lineTo(p2.x, p2.y);
+      ctx.lineTo(p2.x, p2.y + h);
+      ctx.lineTo(p3.x, p3.y + h);
+      ctx.closePath();
+      ctx.fill();
+
+      // Mặt bên phải
+      ctx.fillStyle = rightCol;
+      ctx.beginPath();
+      ctx.moveTo(p2.x, p2.y);
+      ctx.lineTo(p1.x, p1.y);
+      ctx.lineTo(p1.x, p1.y + h);
+      ctx.lineTo(p2.x, p2.y + h);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    // Mặt trên
+    ctx.fillStyle = topCol;
+    ctx.beginPath();
+    ctx.moveTo(p0.x, p0.y);
+    ctx.lineTo(p1.x, p1.y);
+    ctx.lineTo(p2.x, p2.y);
+    ctx.lineTo(p3.x, p3.y);
+    ctx.closePath();
+    ctx.fill();
+
+    if (strokeCol) {
+      ctx.strokeStyle = strokeCol;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+  }
+
+  // Vẽ hàng rào gỗ nông trại dọc cạnh ô (Kiểu Hay Day)
+  function drawIsoFenceEdge(gx0, gy0, gx1, gy1, elev) {
+    const a = isoToScreen(gx0, gy0, elev);
+    const b = isoToScreen(gx1, gy1, elev);
+    const postH = 11 * cam.zoom;
+    ctx.strokeStyle = "#5a3010";
+    ctx.lineWidth = Math.max(2, 2.5 * cam.zoom);
+
+    // 2 thanh ngang
+    [0.38, 0.75].forEach(r => {
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y - postH * r);
+      ctx.lineTo(b.x, b.y - postH * r);
+      ctx.stroke();
+    });
+    // Cọc gỗ 2 đầu
+    [a, b].forEach(p => {
+      ctx.fillStyle = "#8a4a22";
+      ctx.fillRect(p.x - 2 * cam.zoom, p.y - postH, 4 * cam.zoom, postH);
+      ctx.fillStyle = "#e2a46a";
+      ctx.fillRect(p.x - 1.5 * cam.zoom, p.y - postH, 3 * cam.zoom, 2.5 * cam.zoom);
+    });
+  }
+
+  // Vẽ sprite pixel art tại tâm ô (gx, gy)
+  function drawPixelSprite(targetCtx, rows, sx, sy, scale, flip) {
+    if (!rows || !rows.length) return;
+    const h = rows.length, w = rows[0].length;
+    const px = Math.max(1, scale);
+    const startX = sx - (w * px) * 0.5;
+    const startY = sy - h * px;
+    for (let j = 0; j < h; j++) {
+      const r = rows[j];
+      for (let i = 0; i < w; i++) {
+        const ch = r[i];
+        if (ch === ".") continue;
+        targetCtx.fillStyle = PAL[ch] || ch;
+        const colIdx = flip ? (w - 1 - i) : i;
+        targetCtx.fillRect(
+          Math.round(startX + colIdx * px),
+          Math.round(startY + j * px),
+          Math.ceil(px),
+          Math.ceil(px)
+        );
+      }
+    }
+  }
+
+  // =========================================================================
+  // 4. DỰNG CẢNH NÔNG TRẠI & CẬP NHẬT CHUYỂN ĐỘNG
+  // =========================================================================
+  let hitBoxes = []; // Lưu vùng bấm của cây, công trình, thú nuôi
+
+  function tileType(gx, gy) {
+    // Đường đất chính chữ T uốn qua trang trại
+    if (gx === 7 && gy >= 1 && gy <= 14) return "road";
+    if (gy === 6 && gx >= 2 && gx <= 15) return "road";
+    // Sân gạch quanh nhà chính
+    if (gx >= 1 && gx <= 5 && gy >= 1 && gy <= 5) return "patio";
+    // Khu bàn trà Anh Đào
+    if (gx >= 11 && gx <= 15 && gy >= 1 && gy <= 4) return "sakura_yard";
+    // Ao vịt góc dưới phải
+    if (gx >= 13 && gx <= 16 && gy >= 11 && gy <= 14) return "pond";
+    // Thửa 1: Ruộng Cần Tưới (Trung tâm: gx 8..12, gy 7..10)
+    if (gx >= 8 && gx <= 12 && gy >= 7 && gy <= 10) return "bed_thirsty";
+    // Thửa 2: Ruộng Đang Lớn (Trái dưới: gx 2..6, gy 10..13)
+    if (gx >= 2 && gx <= 6 && gy >= 10 && gy <= 13) return "bed_growing";
+    // Thửa 3: Đồi Cây Ăn Quả (Phải giữa: gx 13..16, gy 7..10)
+    if (gx >= 13 && gx <= 16 && gy >= 7 && gy <= 10) return "bed_orchard";
+    return "grass";
+  }
+
+  function updateSimulation(dt, now) {
+    // 1. Khói ống khói từ Nhà chính
+    if (Math.random() < dt * 3.2) {
+      const hp = isoToScreen(BUILDINGS.house.gx, BUILDINGS.house.gy, 10);
+      particles.push({
+        kind: "smoke",
+        gx: BUILDINGS.house.gx - 0.3,
+        gy: BUILDINGS.house.gy - 0.6,
+        z: 74 + Math.random() * 4,
+        vx: 0.25 + Math.random() * 0.2,
+        vy: -0.15,
+        vz: 14 + Math.random() * 5,
+        t: 0,
+        life: 2.4
+      });
+    }
+    // 2. Cánh hoa anh đào rơi ở góc Nhật ký
+    if (Math.random() < dt * 2.5) {
+      particles.push({
+        kind: "petal",
+        gx: 12.2 + Math.random() * 2.2,
+        gy: 1.8 + Math.random() * 2.0,
+        z: 48 + Math.random() * 15,
+        vx: 0.35,
+        vy: 0.25,
+        vz: -10,
+        t: 0,
+        life: 3.2
+      });
+    }
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.t += dt;
+      p.gx += p.vx * dt;
+      p.gy += p.vy * dt;
+      p.z += p.vz * dt;
+      if (p.t >= p.life) particles.splice(i, 1);
+    }
+
+    // 3. Thú nuôi đi dạo
+    pets.forEach(pet => {
+      if (pet.heart > 0) pet.heart = Math.max(0, pet.heart - dt);
+      pet.timer -= dt;
+      if (pet.timer <= 0) {
+        if (pet.id === "shiba") {
+          // Chạy dọc đường đất chính
+          pet.act = Math.random() < 0.25 ? "sit" : "walk";
+          pet.tx = 6.8 + Math.random() * 1.2;
+          pet.ty = 3.0 + Math.random() * 9.5;
+        } else if (pet.id === "ahiru") {
+          pet.act = "walk";
+          pet.tx = 13.5 + Math.random() * 2.3;
+          pet.ty = 11.5 + Math.random() * 2.3;
+        } else if (pet.id === "neko") {
+          pet.act = Math.random() < 0.45 ? "sit" : "walk";
+          pet.tx = 2.5 + Math.random() * 3.2;
+          pet.ty = 3.5 + Math.random() * 2.2;
+        } else {
+          pet.act = Math.random() < 0.35 ? "sit" : "walk";
+          pet.tx = pet.gx + (Math.random() - 0.5) * 2.4;
+          pet.ty = pet.gy + (Math.random() - 0.5) * 2.4;
+          pet.tx = Math.max(1.5, Math.min(15.5, pet.tx));
+          pet.ty = Math.max(1.5, Math.min(14.5, pet.ty));
+        }
+        pet.timer = 2.5 + Math.random() * 3.0;
+      }
+      if (pet.act === "walk") {
+        const dx = pet.tx - pet.gx, dy = pet.ty - pet.gy;
+        const d = Math.hypot(dx, dy);
+        if (d < 0.08) {
+          pet.act = "sit";
+        } else {
+          const sp = pet.id === "shiba" ? 1.15 : 0.65;
+          pet.gx += (dx / d) * sp * dt;
+          pet.gy += (dy / d) * sp * dt;
+          const screenDx = (dx - dy);
+          if (Math.abs(screenDx) > 0.05) pet.dir = screenDx > 0 ? 1 : -1;
+        }
+      }
+    });
+  }
+
+  function renderFarm(now) {
+    // Màu bầu trời theo buổi
+    const skyColors = {
+      day: ["#a9e2ff", "#dff6ff"],
+      dusk: ["#f9a875", "#fde1a8"],
+      night: ["#192142", "#293566"]
+    }[tod];
+    const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    grad.addColorStop(0, skyColors[0]);
+    grad.addColorStop(1, skyColors[1]);
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    hitBoxes = [];
+    const night = tod === "night";
+    const dusk = tod === "dusk";
+
+    // Bảng màu mặt đất theo buổi
+    const grassA = night ? "#2b5836" : dusk ? "#5ca84b" : "#68c755";
+    const grassB = night ? "#264e30" : dusk ? "#539b43" : "#5ebb4c";
+    const soilDry = night ? "#5c4028" : "#9c663b";
+    const soilWet = night ? "#47301d" : "#784a27";
+    const roadTop = night ? "#7a6342" : "#e3ba78";
+    const patioTop = night ? "#35663e" : "#7ed968";
+
+    // 1. Vẽ toàn bộ mặt đất 18×16 theo thứ tự painter (gx + gy tăng dần)
+    for (let s = 0; s < COLS + ROWS - 1; s++) {
+      for (let gx = 0; gx < COLS; gx++) {
+        const gy = s - gx;
+        if (gy < 0 || gy >= ROWS) continue;
+        const t = tileType(gx, gy);
+        const checker = (gx + gy) % 2 === 0;
+
+        if (t === "road") {
+          drawIsoTile(gx, gy, 2, 6, checker ? roadTop : (night ? "#705a3b" : "#d8ae6c"), "#6b3b1f", "#532d16", "rgba(90,48,16,0.2)");
+          // Viền sỏi nhỏ trên đường đất
+          const p = isoToScreen(gx + 0.5, gy + 0.5, 2);
+          ctx.fillStyle = night ? "#59462d" : "#b8894a";
+          ctx.fillRect(p.x - 3 * cam.zoom, p.y - 1 * cam.zoom, 2 * cam.zoom, 2 * cam.zoom);
+        } else if (t === "patio" || t === "sakura_yard") {
+          drawIsoTile(gx, gy, 9, 13, checker ? patioTop : grassA, "#3b7a31", "#2b5e23", "rgba(27,27,47,0.12)");
+        } else if (t === "pond") {
+          const waterCol = night ? "#24528a" : ((Math.floor(now / 500) + gx + gy) % 2 ? "#59b5f7" : "#4aa3e8");
+          drawIsoTile(gx, gy, 0, 5, waterCol, "#2b5e23", "#1e4618", "#357ab8");
+        } else if (t === "bed_thirsty" || t === "bed_growing") {
+          const isThirstyBed = t === "bed_thirsty";
+          drawIsoTile(
+            gx, gy, 5, 9,
+            isThirstyBed ? soilDry : soilWet,
+            "#6b3b1f", "#4e2a14", "rgba(27,27,47,0.28)"
+          );
+        } else if (t === "bed_orchard") {
+          drawIsoTile(gx, gy, 8, 12, checker ? "#54b346" : "#4ca63e", "#3b7a31", "#2b5e23", "rgba(27,27,47,0.15)");
+        } else {
+          drawIsoTile(gx, gy, 0, 6, checker ? grassA : grassB, "#3b7a31", "#2b5e23", "rgba(27,27,47,0.08)");
+        }
+      }
+    }
+
+    // 2. Vẽ hàng rào gỗ bao quanh các thửa ruộng (Đậm chất Hay Day)
+    for (let gx = 8; gx <= 12; gx++) drawIsoFenceEdge(gx, 7, gx + 1, 7, 5);
+    for (let gy = 7; gy <= 10; gy++) drawIsoFenceEdge(8, gy, 8, gy + 1, 5);
+    for (let gx = 2; gx <= 6; gx++) drawIsoFenceEdge(gx, 10, gx + 1, 10, 5);
+    for (let gy = 10; gy <= 13; gy++) drawIsoFenceEdge(2, gy, 2, gy + 1, 5);
+
+    // 3. Gom tất cả đối tượng nổi (cây trồng, công trình, đồ trang trí, thú nuôi) để sắp xếp theo chiều sâu (gx + gy)
+    const drawList = [];
+    const tagQueue = [];
+
+    // 3a. Công trình chính bấm được
+    Object.values(BUILDINGS).forEach(b => {
+      const elev = (b.id === "house" || b.id === "diary") ? 9 : 2;
+      drawList.push({
+        depth: b.gx + b.gy,
+        draw: () => {
+          const pos = isoToScreen(b.gx, b.gy, elev);
+          const rows = DECOR_SPR[b.spr];
+          const sc = b.scale * cam.zoom;
+          const isHov = hoveredHit && hoveredHit.kind === "bldg" && hoveredHit.data.id === b.id;
+          const bounce = isHov ? -4 * cam.zoom : 0;
+
+          // Bóng đổ dưới chân
+          ctx.fillStyle = "rgba(27,27,47,0.22)";
+          ctx.beginPath();
+          ctx.ellipse(pos.x, pos.y - 2 * cam.zoom, 22 * cam.zoom, 10 * cam.zoom, 0, 0, Math.PI * 2);
+          ctx.fill();
+
+          drawPixelSprite(ctx, rows, pos.x, pos.y + bounce, sc, false);
+
+          // Bàn trà & ghế gỗ đi kèm dưới gốc Sakura
+          if (b.id === "diary") {
+            const bp = isoToScreen(b.gx + 0.9, b.gy + 0.7, elev);
+            drawPixelSprite(ctx, DECOR_SPR.bench, bp.x, bp.y, 2.2 * cam.zoom, false);
+          }
+
+          // Nhãn tên công trình nổi phía trên
+          const labelY = pos.y - rows.length * sc - 8 * cam.zoom + bounce;
+          tagQueue.push({ x: pos.x, y: labelY, text: b.label, bg: isHov ? "#ffd23f" : "#fff9eb", fg: "#1b1b2f" });
+
+          // Lưu vùng bấm
+          const wPx = rows[0].length * sc, hPx = rows.length * sc;
+          hitBoxes.push({
+            kind: "bldg", data: b,
+            x: pos.x - wPx * 0.55, y: pos.y - hPx - 18 * cam.zoom,
+            w: wPx * 1.1, h: hPx + 22 * cam.zoom
+          });
+        }
+      });
+    });
+
+    // 3b. Đồ trang trí phụ (Bù nhìn rơm canh ruộng, Đèn lồng Chochin dọc đường, Khóm hoa)
+    const extraDecors = [
+      { gx: 2.3, gy: 9.6, spr: "scarecrow", elev: 5, sc: 2.1 },
+      { gx: 6.6, gy: 3.2, spr: "chochin", elev: 2, sc: 2.1, light: true },
+      { gx: 8.3, gy: 6.3, spr: "chochin", elev: 2, sc: 2.1, light: true },
+      { gx: 11.4, gy: 5.5, spr: "flowers", elev: 0, sc: 2.2 },
+      { gx: 4.8, gy: 5.2, spr: "flowers", elev: 9, sc: 2.2 }
+    ];
+    extraDecors.forEach(d => {
+      drawList.push({
+        depth: d.gx + d.gy,
+        draw: () => {
+          const pos = isoToScreen(d.gx, d.gy, d.elev);
+          if (d.light && night) {
+            const g = ctx.createRadialGradient(pos.x, pos.y - 18 * cam.zoom, 2, pos.x, pos.y - 18 * cam.zoom, 48 * cam.zoom);
+            g.addColorStop(0, "rgba(255, 210, 63, 0.55)");
+            g.addColorStop(1, "rgba(255, 210, 63, 0)");
+            ctx.fillStyle = g;
+            ctx.beginPath();
+            ctx.arc(pos.x, pos.y - 18 * cam.zoom, 48 * cam.zoom, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          drawPixelSprite(ctx, DECOR_SPR[d.spr], pos.x, pos.y, d.sc * cam.zoom, false);
+        }
+      });
+    });
+
+    // 3c. Cây trong Thửa 1: Ruộng Cần Tưới (gx 8..12, gy 7..10)
+    thirstyPlants.forEach((pl, idx) => {
+      const gx = 8 + (idx % 5) + 0.5;
+      const gy = 7 + Math.floor(idx / 5) + 0.5;
+      if (gy >= 11) return;
+      drawList.push({
+        depth: gx + gy,
+        draw: () => drawPlantOnTile(pl, gx, gy, 5, now)
+      });
+    });
+
+    // 3d. Cây trong Thửa 2: Ruộng Đang Lớn (gx 2..6, gy 10..13)
+    growingPlants.forEach((pl, idx) => {
+      const gx = 2 + (idx % 5) + 0.5;
+      const gy = 10 + Math.floor(idx / 5) + 0.5;
+      if (gy >= 14) return;
+      drawList.push({
+        depth: gx + gy,
+        draw: () => drawPlantOnTile(pl, gx, gy, 5, now)
+      });
+    });
+
+    // 3e. Thửa 3: Đồi Cây Ăn Quả (Orchard — gx 13..16, gy 7..10)
+    if (orchardCompact) {
+      // Hiển thị 4 cây đại cổ thụ đại diện cho 180 từ đã thuộc vững (Kiểu Orchard của Hay Day)
+      const spots = [[13.8, 7.8], [15.6, 7.8], [13.8, 9.6], [15.6, 9.6]];
+      spots.forEach(([gx, gy], idx) => {
+        const w = WORDS_ORCHARD[idx];
+        drawList.push({
+          depth: gx + gy,
+          draw: () => {
+            const pos = isoToScreen(gx, gy, 8);
+            const sc = 2.4 * cam.zoom;
+            drawPixelSprite(ctx, DECOR_SPR.appleTree, pos.x, pos.y, sc, false);
+            if (idx === 1) {
+              tagQueue.push({ x: pos.x + 8 * cam.zoom, y: pos.y - 72 * cam.zoom, text: "🍎 Vườn Cổ Thụ · 180 cây", bg: "#ffd23f", fg: "#1b1b2f" });
+            }
+            hitBoxes.push({
+              kind: "orchard",
+              data: { word: w[0], mean: w[1], count: 45 },
+              x: pos.x - 28 * cam.zoom, y: pos.y - 64 * cam.zoom,
+              w: 56 * cam.zoom, h: 64 * cam.zoom
+            });
+          }
+        });
+      });
+    } else {
+      // Bung thành từng cây Ra quả trên đồi
+      for (let idx = 0; idx < 16; idx++) {
+        const gx = 13 + (idx % 4) + 0.5;
+        const gy = 7 + Math.floor(idx / 4) + 0.5;
+        const w = WORDS_ORCHARD[idx % WORDS_ORCHARD.length];
+        drawList.push({
+          depth: gx + gy,
+          draw: () => drawPlantOnTile({
+            id: "o" + idx, word: w[0], mean: w[1], stage: 4, thirsty: false, ivl: 90 + idx * 5
+          }, gx, gy, 8, now)
+        });
+      }
+    }
+
+    // 3f. Thú nuôi đi dạo trên bản đồ
+    pets.forEach(pet => {
+      drawList.push({
+        depth: pet.gx + pet.gy + 0.1,
+        draw: () => {
+          const t = tileType(Math.floor(pet.gx), Math.floor(pet.gy));
+          const elev = t === "patio" ? 9 : t === "road" ? 2 : 0;
+          const pos = isoToScreen(pet.gx, pet.gy, elev);
+          const sprSet = PET_SPR[pet.id];
+          const frameName = pet.act === "walk"
+            ? (Math.floor(now / 200) % 2 ? "walk1" : "walk0")
+            : (sprSet.sit ? "sit" : "walk0");
+          const rows = sprSet[frameName];
+          const sc = 2.2 * cam.zoom;
+          drawPixelSprite(ctx, rows, pos.x, pos.y, sc, pet.dir < 0);
+
+          if (pet.heart > 0) {
+            tagQueue.push({ x: pos.x, y: pos.y - 34 * cam.zoom, text: "❤️ +5 thân thiết", bg: "#ffccd8", fg: "#1b1b2f" });
+          }
+          hitBoxes.push({
+            kind: "pet", data: pet,
+            x: pos.x - 18 * cam.zoom, y: pos.y - 28 * cam.zoom,
+            w: 36 * cam.zoom, h: 30 * cam.zoom
+          });
+        }
+      });
+    });
+
+    // Sắp xếp và vẽ theo thứ tự xa -> gần
+    drawList.sort((a, b) => a.depth - b.depth);
+    drawList.forEach(item => item.draw());
+
+    // 4. Biển tên cho 2 thửa ruộng chính + toàn bộ nhãn công trình vẽ ở lớp trên cùng
+    const signThirsty = isoToScreen(9.5, 10.7, 5);
+    const thirstyLeft = thirstyPlants.filter(p => p.thirsty).length;
+    tagQueue.push({ x: signThirsty.x, y: signThirsty.y + 4 * cam.zoom, text: "💧 Thửa Cần Tưới · " + thirstyLeft + " cây", bg: "#cfe8ff", fg: "#1b1b2f" });
+
+    const signGrow = isoToScreen(4.5, 9.8, 5);
+    tagQueue.push({ x: signGrow.x, y: signGrow.y - 22 * cam.zoom, text: "🌱 Thửa Đang Lớn · " + growingPlants.length + " cây", bg: "#d8f5d0", fg: "#1b1b2f" });
+
+    tagQueue.forEach(t => drawFloatingTag(t.x, t.y, t.text, t.bg, t.fg));
+
+    // 5. Vẽ hạt khói ống khói & cánh hoa anh đào
+    particles.forEach(p => {
+      const sp = isoToScreen(p.gx, p.gy, p.z);
+      const k = p.t / p.life;
+      if (p.kind === "smoke") {
+        ctx.fillStyle = "rgba(255,255,255," + (0.65 * (1 - k)).toFixed(2) + ")";
+        const sz = (5 + k * 8) * cam.zoom;
+        ctx.fillRect(sp.x - sz * 0.5, sp.y - sz * 0.5, sz, sz);
+      } else if (p.kind === "petal") {
+        ctx.fillStyle = "#ff8da8";
+        ctx.fillRect(sp.x, sp.y, 3.5 * cam.zoom, 3.5 * cam.zoom);
+      }
+    });
+  }
+
+  function drawPlantOnTile(pl, gx, gy, elev, now) {
+    const pos = isoToScreen(gx, gy, elev);
+    const isHov = hoveredHit && hoveredHit.kind === "plant" && hoveredHit.data.id === pl.id;
+    const isSel = selectedHit && selectedHit.kind === "plant" && selectedHit.data.id === pl.id;
+
+    if (isHov || isSel) {
+      drawIsoTile(Math.floor(gx), Math.floor(gy), elev + 0.3, 0, "rgba(255, 210, 63, 0.55)", "", "", "#1b1b2f");
+    }
+
+    const sway = Math.sin(now / 650 + gx * 1.7 + gy) * 1.2 * cam.zoom;
+    const sc = 2.15 * cam.zoom;
+    drawPixelSprite(ctx, PLANT_SPR[pl.stage], pos.x + sway, pos.y + 4 * cam.zoom, sc, false);
+
+    // Giọt nước nhấp nhô kiểu Hay Day cho cây khát
+    if (pl.thirsty) {
+      const bob = Math.sin(now / 260 + gx * 2) * 3 * cam.zoom;
+      const dx = pos.x + 8 * cam.zoom;
+      const dy = pos.y - 28 * cam.zoom + bob;
+      ctx.fillStyle = "#1b1b2f";
+      ctx.fillRect(dx - 5 * cam.zoom, dy - 5 * cam.zoom, 10 * cam.zoom, 10 * cam.zoom);
+      ctx.fillStyle = "#3d8bff";
+      ctx.fillRect(dx - 3.5 * cam.zoom, dy - 3.5 * cam.zoom, 7 * cam.zoom, 7 * cam.zoom);
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(dx - 2 * cam.zoom, dy - 2 * cam.zoom, 2.5 * cam.zoom, 2.5 * cam.zoom);
+    }
+
+    hitBoxes.push({
+      kind: "plant", data: pl,
+      x: pos.x - 18 * cam.zoom, y: pos.y - 34 * cam.zoom,
+      w: 36 * cam.zoom, h: 38 * cam.zoom
+    });
+  }
+
+  function drawFloatingTag(x, y, text, bg, fg) {
+    ctx.save();
+    const fontPx = Math.max(10, Math.round(11 * Math.min(1.15, Math.max(0.85, cam.zoom))));
+    ctx.font = "800 " + fontPx + "px 'Noto Sans', sans-serif";
+    const padX = 7, h = fontPx + 8;
+    const w = ctx.measureText(text).width + padX * 2;
+    const rx = Math.round(x - w * 0.5), ry = Math.round(y - h * 0.5);
+
+    ctx.fillStyle = "#1b1b2f";
+    ctx.fillRect(rx + 2, ry + 2, w, h);
+    ctx.fillStyle = bg;
+    ctx.fillRect(rx, ry, w, h);
+    ctx.strokeStyle = "#1b1b2f";
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(rx, ry, w, h);
+
+    ctx.fillStyle = fg;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(text, x, ry + h * 0.5 + 0.5);
+    ctx.restore();
+  }
+
+  // =========================================================================
+  // 5. TƯƠNG TÁC CHUỘT (KÉO BẢN ĐỒ, CUỘN ZOOM, BẤM CÔNG TRÌNH / CÂY / THÚ)
+  // =========================================================================
+  function findHitAt(mx, my) {
+    for (let i = hitBoxes.length - 1; i >= 0; i--) {
+      const b = hitBoxes[i];
+      if (mx >= b.x && mx <= b.x + b.w && my >= b.y && my <= b.y + b.h) {
+        return b;
+      }
+    }
+    return null;
+  }
+
+  canvas.addEventListener("mousedown", e => {
+    isDragging = true;
+    movedDist = 0;
+    dragStart = { x: e.clientX, y: e.clientY };
+    camStart = { x: cam.x, y: cam.y };
+  });
+
+  window.addEventListener("mousemove", e => {
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+    if (isDragging) {
+      const dx = e.clientX - dragStart.x, dy = e.clientY - dragStart.y;
+      movedDist = Math.hypot(dx, dy);
+      cam.x = camStart.x + dx;
+      cam.y = camStart.y + dy;
+      return;
+    }
+    if (mx >= 0 && my >= 0 && mx <= canvas.width && my <= canvas.height) {
+      hoveredHit = findHitAt(mx, my);
+      canvas.style.cursor = hoveredHit ? "pointer" : "grab";
+    }
+  });
+
+  window.addEventListener("mouseup", e => {
+    if (!isDragging) return;
+    isDragging = false;
+    if (movedDist < 6) {
+      const rect = canvas.getBoundingClientRect();
+      const hit = findHitAt(e.clientX - rect.left, e.clientY - rect.top);
+      if (hit) selectObject(hit, true);
+    }
+  });
+
+  canvas.addEventListener("wheel", e => {
+    e.preventDefault();
+    const factor = e.deltaY < 0 ? 1.1 : 0.9;
+    cam.zoom = Math.max(0.65, Math.min(1.55, cam.zoom * factor));
+    document.getElementById("btnZoomReset").textContent = Math.round(cam.zoom * 100) + "%";
+  }, { passive: false });
+
+  function showToast(msg) {
+    const t = document.getElementById("farmToast");
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(showToast._timer);
+    showToast._timer = setTimeout(() => t.classList.remove("show"), 2200);
+  }
+
+  function updateInspectPanel() {
+    ictx.clearRect(0, 0, 60, 60);
+    const titleEl = document.getElementById("inspectTitle");
+    const badgeEl = document.getElementById("inspectBadge");
+    const mainEl = document.getElementById("inspectMain");
+    const subEl = document.getElementById("inspectSub");
+    const descEl = document.getElementById("inspectDesc");
+    const btnEl = document.getElementById("inspectActionBtn");
+
+    if (!selectedHit) return;
+    const { kind, data } = selectedHit;
+
+    if (kind === "bldg") {
+      titleEl.textContent = "Công trình Nông trại";
+      badgeEl.textContent = data.badge;
+      mainEl.textContent = data.title;
+      subEl.textContent = data.sub;
+      descEl.textContent = data.desc;
+      btnEl.textContent = data.action;
+      const rows = DECOR_SPR[data.spr];
+      const sc = Math.min(3, Math.floor(50 / Math.max(rows.length, rows[0].length)));
+      drawPixelSprite(ictx, rows, 30, 54, sc, false);
+    } else if (kind === "plant") {
+      const stageNames = ["Hạt giống", "Mầm non", "Cây non", "Ra hoa", "Ra quả"];
+      titleEl.textContent = "Ô cây từ vựng";
+      badgeEl.textContent = stageNames[data.stage] + (data.thirsty ? " · 💧 Khát" : " · Đã tưới");
+      mainEl.textContent = data.word;
+      subEl.textContent = "Nghĩa: " + data.mean;
+      descEl.textContent = data.thirsty
+        ? "Cây này đang đến hạn ôn hôm nay! Bấm tưới ngay bên dưới để lật thẻ và nhận +10 xu."
+        : "Cây đang xanh tốt (khoảng cách ôn: " + data.ivl + " ngày).";
+      btnEl.textContent = data.thirsty ? "💧 Tưới cây này (+10 xu)" : "✅ Đã tưới hôm nay";
+      drawPixelSprite(ictx, PLANT_SPR[data.stage], 30, 52, 3, false);
+    } else if (kind === "orchard") {
+      titleEl.textContent = "Khu Vườn Cổ Thụ (Orchard)";
+      badgeEl.textContent = "Gộp 180 cây";
+      mainEl.textContent = "🍎 Cụm cây: " + data.word;
+      subEl.textContent = data.mean;
+      descEl.textContent = "Giống khu cây ăn quả lâu năm của Hay Day: gom 180 từ đã thuộc vững thành 4 cây cổ thụ sum suê, tiết kiệm 80% diện tích mặt đất!";
+      btnEl.textContent = orchardCompact ? "🔎 Bung xem từng cây Ra quả" : "🍎 Thu gọn lại thành Vườn Cổ Thụ";
+      drawPixelSprite(ictx, DECOR_SPR.appleTree, 30, 54, 1.9, false);
+    } else if (kind === "pet") {
+      titleEl.textContent = "Bạn đồng hành";
+      badgeEl.textContent = "Thân thiết Lv.3";
+      mainEl.textContent = data.name;
+      subEl.textContent = "Đang dạo chơi trên đường trang trại";
+      descEl.textContent = "Thú nuôi tự đi dạo trên đường đất, ghé bên hiên nhà và ao nước. Chạm vào để vuốt ve nhận tim!";
+      btnEl.textContent = "❤️ Vuốt ve " + data.name;
+      drawPixelSprite(ictx, PET_SPR[data.id].walk0, 30, 48, 2.8, false);
+    }
+  }
+
+  function selectObject(hit, fromClick) {
+    selectedHit = hit;
+    if (hit.kind === "pet" && fromClick) {
+      hit.data.heart = 2.0;
+      showToast("❤️ " + hit.data.name + " nhảy lên vui mừng!");
+    } else if (hit.kind === "bldg" && fromClick) {
+      showToast("👉 Mở nhanh: " + hit.data.title);
+    }
+    updateInspectPanel();
+  }
+
+  function waterOnePlant(pl) {
+    if (!pl || !pl.thirsty) return;
+    pl.thirsty = false;
+    pl.stage = Math.min(4, pl.stage + 1);
+    coins += 10;
+    document.getElementById("coinCount").textContent = coins.toLocaleString("vi-VN");
+    const left = thirstyPlants.filter(p => p.thirsty).length;
+    document.getElementById("thirstyBadge").textContent = left > 0 ? (left + " cây khát") : "Đã tưới hết!";
+    showToast("💧 Đã tưới 「" + pl.word + "」 · +10 xu!");
+    updateInspectPanel();
+  }
+
+  // Nút hành động ở cột phải
+  document.getElementById("inspectActionBtn").addEventListener("click", () => {
+    if (!selectedHit) return;
+    if (selectedHit.kind === "plant") {
+      waterOnePlant(selectedHit.data);
+    } else if (selectedHit.kind === "orchard") {
+      document.getElementById("btnToggleOrchard").click();
+    } else if (selectedHit.kind === "pet") {
+      selectedHit.data.heart = 2.2;
+      showToast("❤️ Đã cho " + selectedHit.data.name + " ăn bánh thưởng!");
+    } else if (selectedHit.kind === "bldg") {
+      showToast("✨ Đã mở bảng: " + selectedHit.data.title);
+    }
+  });
+
+  // Nút TƯỚI NGAY góc dưới phải
+  document.getElementById("btnQuickWater").addEventListener("click", () => {
+    const next = thirstyPlants.find(p => p.thirsty);
+    if (!next) {
+      showToast("🎉 Tuyệt vời! Bạn đã tưới hết toàn bộ cây khát hôm nay!");
+      return;
+    }
+    selectedHit = { kind: "plant", data: next };
+    waterOnePlant(next);
+  });
+
+  // Phím nhảy nhanh camera tới từng khu vực
+  function focusGrid(gx, gy) {
+    cam.x = -(gx - gy) * (TW * 0.5) * cam.zoom;
+    cam.y = canvas.height * 0.45 - (gx + gy) * (TH * 0.5) * cam.zoom;
+  }
+
+  document.querySelectorAll("[data-focus]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const f = btn.getAttribute("data-focus");
+      if (f === "thirsty") focusGrid(10, 8.5);
+      else if (f === "house") { focusGrid(3, 3); selectObject({ kind: "bldg", data: BUILDINGS.house }, true); }
+      else if (f === "shop") { focusGrid(2.5, 9); selectObject({ kind: "bldg", data: BUILDINGS.shop }, true); }
+      else if (f === "orchard") focusGrid(14.5, 8.5);
+    });
+  });
+
+  document.querySelectorAll("[data-bldg]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const id = btn.getAttribute("data-bldg");
+      if (id === "pet") {
+        const shiba = pets[0];
+        focusGrid(shiba.gx, shiba.gy);
+        selectObject({ kind: "pet", data: shiba }, true);
+        return;
+      }
+      const b = BUILDINGS[id];
+      if (b) {
+        focusGrid(b.gx, b.gy);
+        selectObject({ kind: "bldg", data: b }, true);
+      }
+    });
+  });
+
+  document.getElementById("btnCenter").addEventListener("click", () => {
+    cam.x = 0; cam.y = 65; cam.zoom = 1.0;
+    document.getElementById("btnZoomReset").textContent = "100%";
+  });
+  document.getElementById("btnZoomIn").addEventListener("click", () => {
+    cam.zoom = Math.min(1.55, cam.zoom + 0.15);
+    document.getElementById("btnZoomReset").textContent = Math.round(cam.zoom * 100) + "%";
+  });
+  document.getElementById("btnZoomOut").addEventListener("click", () => {
+    cam.zoom = Math.max(0.65, cam.zoom - 0.15);
+    document.getElementById("btnZoomReset").textContent = Math.round(cam.zoom * 100) + "%";
+  });
+  document.getElementById("btnZoomReset").addEventListener("click", () => {
+    cam.zoom = 1.0;
+    document.getElementById("btnZoomReset").textContent = "100%";
+  });
+
+  document.querySelectorAll("[data-tod]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      tod = btn.getAttribute("data-tod");
+      document.querySelectorAll("[data-tod]").forEach(b => b.classList.toggle("is-on", b === btn));
+    });
+  });
+
+  document.getElementById("btnToggleOrchard").addEventListener("click", function () {
+    orchardCompact = !orchardCompact;
+    this.classList.toggle("is-on", orchardCompact);
+    this.textContent = orchardCompact ? "🍎 Gộp Vườn Quả (180)" : "🍎 Đang bung Vườn Quả";
+    updateInspectPanel();
+  });
+
+  updateInspectPanel();
+
+  // Vòng lặp hoạt ảnh 60FPS
+  let lastTime = performance.now();
+  function loop(now) {
+    const dt = Math.min(0.1, (now - lastTime) / 1000);
+    lastTime = now;
+    updateSimulation(dt, now);
+    renderFarm(now);
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

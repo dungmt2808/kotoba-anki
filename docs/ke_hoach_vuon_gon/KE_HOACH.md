@@ -90,3 +90,25 @@ Xem bản chạy thử tương tác tại [`proto_iso_25d.html`](proto_iso_25d.h
 | :---: | :---: |
 | ![Vườn 2.5D Isometric ban ngày](vg_07_isometric_25d.png) | ![Vườn 2.5D Isometric ban đêm xoay 90 độ](vg_07b_isometric_dem.png) |
 
+---
+
+## 8. Thử nghiệm Hướng 1: “Pixel Hay Day” (Nông trại sống 2.5D kéo-thả & chạm công trình) — `proto_pixel_hayday.html`
+
+Phát triển từ nền 2.5D Isometric lên mô hình **nông trại tương tác kiểu Hay Day** nhưng **giữ nguyên 100% kho đồ Pixel Art `16×16` hiện có** (`garden.js`, `home.js`, `pets.js`, `craft.js`):
+- **Chạm công trình trên bản đồ thay cho menu chữ**:
+  - 🏠 **Ngôi nhà chính (Cấp 7, khói bếp bay)**: Bấm mở *Nhà & Trang trí*.
+  - 📬 **Hòm thư ở ngã tư đường đất**: Có nhãn nổi `📬 Báo mới!` — bấm mở *Báo & Chép chính tả* (không còn bị ẩn khi thu gọn thẻ `Hôm nay`).
+  - 🏪 **Quầy hàng ven đường (Roadside Shop)**: Bấm mở *5 Trò chơi từ vựng*.
+  - 📖 **Bàn trà dưới gốc Anh Đào (cánh hoa rơi)**: Bấm mở *Lịch hoa, Nhật ký & Luyện viết*.
+  - 🎨 **Giếng cổ & Bàn chế tác**: Bấm mở *Xưởng vẽ 16×16*.
+- **Chia thửa có hàng rào gỗ + Đồi Vườn Cổ Thụ (Orchard)**:
+  - **Thửa `💧 Cần Tưới`** nằm ngay trung tâm kèm nút lớn **`🚿 TƯỚI NGAY`** cố định ở góc dưới phải (đảm bảo người dùng Anki mở lên là bấm ôn được ngay trong 1 giây).
+  - **Thửa `🌱 Đang Lớn`** bên trái có bù nhìn rơm canh ruộng.
+  - **Khu `🍎 Vườn Cổ Thụ`** gom 180 cây `Ra quả` đã thuộc vững thành cụm cây đại thụ sum suê (có nút bung/gộp).
+- **Thú nuôi đi dạo tự động (`pets.js`)**: Chó Shiba, Mèo tam thể, Thỏ trắng, Gà con và Vịt vàng tự đi lại trên đường đất / ao nước, bấm vào thả tim `❤️`.
+
+Xem bản chạy thử tương tác tại [`proto_pixel_hayday.html`](proto_pixel_hayday.html):
+
+![Nông trại Pixel Hay Day](vg_08_pixel_hayday.png)
+
+
