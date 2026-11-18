@@ -1,4 +1,89 @@
-# Kế hoạch 1.36 — Giáng sinh: tủ lịch 24 ngăn, sân sáng đèn, cây thông được tặng đầy dần, thiệp điều ước (18–19/11; **ảnh phác bản 5, chưa làm**)
+# Kế hoạch 1.36 — Giáng sinh: tủ lịch 24 ngăn, sân sáng đèn, cây thông được tặng đầy dần, thiệp điều ước (18–19/11; **bản chốt 19/11, đang làm**)
+
+## BẢN CHỐT (19/11) — người dùng: "tớ thấy cũng ổn rồi á" sau bản 5
+
+Gom bản 3 (tủ lịch, cây thông được tặng, hộp quà, hộp nhạc, bánh + sữa, tường / sàn) + bản 4 (sân sáng đèn, hết Noel) + bản 5
+(sân đã có đồ) + thiệp / ông già Noel / sáng 25 của bản 2. Các điểm còn để ngỏ **Claude chọn** (ghi rõ dưới đây), người dùng
+xem lại trên máy thật trước khi phát hành. **Phát hành mục tiêu 29–30/11.**
+
+### Người dùng thấy gì
+- **Trước 1/12** (giao diện mùa Giáng sinh đã chạy từ 15/11): Tin làng "1/12 mở Lịch chờ Giáng sinh".
+- **1/12** (lần đầu mở vườn): vườn tặng **Tủ lịch 2026** (tự treo ở tường phòng khách nếu còn ô, không thì ở Kho đồ) và, nếu chưa
+  có, **cây thông** (`xmastree` của giao diện mùa — tặng cả khi chưa mở giao diện Giáng sinh); cây chưa đặt thì tự đặt vào 2 ô trống
+  gần nhà nhất (hết chỗ → nhắc trong Lịch). Cây về **dạng trơn** cho tới khi treo đủ.
+- **Mỗi ngày có ôn** (revlog, ôn trên điện thoại cũng tính): mở ngăn của ngày đó — ngăn trượt ra, lấp lánh, món bay ra, tiếng chuông,
+  món tự bày vào chỗ. **Ngăn mai hé bóng** món bên trong. Lỡ ngày: **15 lượt ôn thêm mở bù 1 ngăn, tối đa 2 ngăn bù / ngày**, tới hết
+  31/12. Không cho xu, không chuỗi, không đếm ngược.
+- **24 ngăn** (cây 9 · nhà / sân 5 · trong nhà 7 · hộp quà bí mật 3):
+
+  | Ngày | Ngăn | | Ngày | Ngăn | | Ngày | Ngăn |
+  |---|---|---|---|---|---|---|---|
+  | 1 | Nhà · vòng hoa cửa + nơ đỏ đèn lồng | | 9 | Cây · nơ đỏ | | 17 | Nhà · **tự vẽ** hình dán cửa sổ 8 × 8 |
+  | 2 | Cây · quả châu đỏ | | 10 | Cây · dây đèn | | 18 | Trong nhà · đèn ngủ ngôi sao |
+  | 3 | Trong nhà · hộp nhạc (học dần Silent Night) | | 11 | Trong nhà · bánh kem dâu クリスマスケーキ | | 19 | Cây · quả châu tím |
+  | 4 | Cây · chuông vàng | | 12 | Cây · quả châu xanh | | 20 | **Hộp quà bí mật** (đèn lồng ngôi sao) |
+  | 5 | Trong nhà · tất Noel | | 13 | **Hộp quà bí mật** (gấu bông Noel) | | 21 | Sân · dây đèn võng, tuần lộc đèn, thông sáng trên đồi, người tuyết, sao mái |
+  | 6 | **Hộp quà bí mật** (quả cầu tuyết) | | 14 | Sân · đèn lối đi + **đồ trên sân quấn đèn** | | 22 | Cây · quả châu vàng |
+  | 7 | Nhà · mái tuyết, dây lá thông, viền mái đèn, đèn băng | | 15 | Trong nhà · bộ sàn Noel (2 mẫu) | | 23 | Trong nhà · bánh quy + sữa |
+  | 8 | Trong nhà · bộ tường Noel (3 mẫu) | | 16 | Cây · dây kim tuyến | | 24 | Cây · **ngôi sao** + ông già Noel |
+
+  Quả châu / dây trên cây là **đúng các món vẽ sẵn của cây `xmastree`** (10 quả châu chia cho 6 ngăn), đêm 24 cây giống hệt cây gốc
+  + đèn sân. Hộp quà bí mật đặt dưới gốc cây, **lắc nghe đoán**, chỉ mở từ sáng 25.
+- **Sân sáng đèn ban đêm** (đèn trắng ấm / vàng / xanh băng, nhấp nháy, dây đèn chạy đuổi, quầng sáng trên tuyết), lên theo ngăn
+  7 / 14 / 21. Sân đã có đồ: **luật bản 5** (quấn đèn theo hình món, dây võng móc ống khói + đỉnh món cao, đồ chiếm chỗ chỉ vào
+  ô trống — hết ô thì ở Kho đồ). Đèn lối đi vẽ dọc mép trước các ô trống hàng trước, không chiếm ô. Ban ngày: dây đèn tắt + tuyết.
+- **Kiểu nhà** (Claude chọn): nhà gốc có đủ áo (mái tuyết, dây lá thông, vòng hoa, viền mái, đèn băng, sao mái); minka / nhà trà /
+  lâu đài có **viền mái + đèn băng + vòng hoa** theo đường mái / cửa của từng kiểu (bảng điểm riêng), không có mái tuyết vẽ thêm.
+- **Thiệp điều ước** (từ 1/12, sửa tới 18:00 ngày 24): mặt trước chọn giấy + sticker + hình 16 × 16, mặt sau viết điều ước (tiếng
+  Việt hoặc tiếng đang học, "Nhờ Gemini sửa" như Luyện viết — 1 lượt khi bấm), treo lên cây.
+- **Đêm 24** (lần đầu mở vườn từ 18:00 ngày 24 tới hết 31/12, giờ máy): cảnh ~10 giây, bỏ qua được, có "Xem lại" — sân sáng hết,
+  ông già Noel đáp xe tuần lộc lấy thiệp, StackChan đội mũ Noel + thú nuôi ra xem, hộp nhạc phát trọn bài; bánh quy + sữa trên bàn.
+- **Sáng 25**: hộp quà mở được (3 món vào Kho đồ), vụn bánh + tờ giấy cảm ơn, **thư trả lời viết sẵn** (theo Ngôn ngữ trong vườn,
+  trích điều ước, nhắc đồ đã bày) — không gọi Gemini; StackChan ăn bánh kem (một việc sinh hoạt ngày 25).
+- **Hết Noel** (lần đầu mở vườn từ 1/1): StackChan cất đồ Noel (cảnh ngắn) — đèn sân, áo nhà, đồ Noel trong nhà gỡ xuống; gian đang
+  dùng tường / sàn Noel về mẫu cũ. **Tủ lịch 2026** thành món kỷ niệm (bấm xem lại 24 ngăn); đồ trong nhà (hộp nhạc, tất, đèn ngủ,
+  quà) bày quanh năm; đèn sân + áo nhà = **Bộ Giáng sinh 2026**, chỉ bày được trong mùa Giáng sinh, 1/12 năm sau hỏi "bày lại ngay /
+  sáng dần cùng tủ lịch mới". Album: **Kỷ niệm Giáng sinh 2026** (ảnh sân đêm 24 + trong nhà tự chụp, thiệp, thư, tủ lịch).
+- **Tắt được**: ⚙ → "Sự kiện mùa: Bật / Tắt" (tắt thì không có gì của sự kiện; dữ liệu giữ nguyên, bật lại là thấy).
+
+### Dữ liệu (đã phát hành 1.31.3 → giữ dữ liệu)
+- Khoá collection **mới** `kotoba_batake_le` = `{"v": 1, "noel2026": {"open": {"<ngày>": {"d": ngày Anki mở, "b": 0|1 mở bù}},
+  "bu": {"<ngày Anki>": số ngăn bù đã mở}, "px": {"17": mã 8 × 8}, "card": {...}, "santa": {"seen", "gift"}, "music": số câu,
+  "keep": ""|"cat"}}`; làm sạch khi đọc, giữ khoá lạ; ghi qua `backup_core.commit_config` (+ dấu phiên bản, `sync_core`);
+  sao lưu `user_files/ho_so/<mã>/le.json`. Hai máy cùng mở ngăn: gộp theo hợp (ngăn đã mở ở máy nào cũng tính).
+- Đồ mới `LE_ITEMS` (tủ lịch, hộp nhạc, tất, bánh kem, đèn ngủ ngôi sao, quả cầu tuyết, gấu bông, đèn lồng ngôi sao, bánh quy + sữa,
+  người tuyết, tuần lộc đèn) ở **tầng NHA_KEY** như `FIND_ITEMS` (1.28) — bản 1.24+ giữ hộ món lạ. Cây thông dùng `xmastree` có sẵn.
+  Đèn sân / áo nhà / hình dán cửa sổ không phải món — vẽ theo trạng thái ngăn.
+- Tường / sàn Noel: thêm vào `decor_core`, **sở hữu lưu ở `kotoba_batake_le`** (bản cũ làm sạch `decor` không xoá được); bản cũ
+  gặp mẫu lạ đang dùng thì về "Theo kiểu nhà" — bản mới vẫn còn mẫu.
+- Config: chỉ thêm `season_event` (Bật / Tắt). Không đổi khoá cũ.
+
+### Mã
+- `le_core.py` (thuần Python): sự kiện `NOEL_2026` (24 ngăn), `door_state`, `open_door` / `open_makeup`, `tree_state` (quả châu đã
+  treo), `illum_level`, `santa_due`, `season_phase` (trước / trong / đêm 24 / sau 25 / hết mùa), `clean_le`, `LeStore`, `view`,
+  `letter` (thư viết sẵn), `wrap_points` dùng chung cho test.
+- `garden_core`: `LE_ITEMS` + tặng / tự bày (`le_gift`), cất đồ 1/1 (`le_pack`), tường / sàn Noel; `__init__.py`: `le_view`,
+  `_on_le` (`le:open`, `le:makeup`, `le:shake`, `le:card`, `le:santa`, `le:gift`, `le:keep`), Tin làng / thẻ Hôm nay.
+- JS: `web/le.js` (`GardenLe`: tủ lịch + bảng, mở ngăn, hộp quà lắc, thiệp, cảnh đêm 24, thư, Kỷ niệm), `web/le_art.js` (hình:
+  tủ lịch, món, áo nhà 4 kiểu, đèn sân + quấn đèn, tuần lộc đèn, ông già Noel), móc vào `home.js` (vẽ đèn sau lớp đồ / thú,
+  cây trơn), `music.js` (Silent Night 8-bit học dần), `decor` (5 mẫu Noel trong `nha_art.js`).
+- Test: `core/test_136.py` (ngày giả 15/11 → 2/1: mọi ngăn, mở bù, ôn điện thoại, hai máy gộp, đồng bộ, bản cũ 1.31.3 chạy chen,
+  lỗi ghi, hết mùa / năm sau), `core/test_136.js` (quấn đèn mọi món có sẵn + món tự vẽ, ô trống, dây võng), `anki/e2e_136.js`
+  (Anki thật, đồng hồ giả), `run_capnhat.sh` 1.31.3 → 1.36, `run_habanh.sh`, `tests/dong_bo/`.
+
+### Lịch làm
+| Ngày | Việc |
+|---|---|
+| 19–20/11 | `le_core.py` + test lõi, `LE_ITEMS`, cầu nối |
+| 21–22/11 | tủ lịch + mở ngăn, cây trơn → đầy, hộp quà, hộp nhạc, bánh + sữa, tường / sàn |
+| 23–24/11 | sân sáng đèn + quấn đèn + áo nhà 4 kiểu |
+| 25/11 | thiệp, đêm 24, sáng 25 + thư, hết Noel, Kỷ niệm |
+| 26–27/11 | test Anki thật (đồng hồ giả 1/12 → 1/1), cài đè 1.31.3, hạ bản, đồng bộ thật |
+| 28/11 | báo cáo + danh sách xem trên máy thật · 29–30/11 phát hành |
+
+---
+Phần dưới: bản 1 → bản 5 và góp ý (giữ lại để biết vì sao đổi).
+
 
 ## Bản 5 (19/11) — **sân đã có đồ trang trí sẵn** — chờ người dùng duyệt
 
