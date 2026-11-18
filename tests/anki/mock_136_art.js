@@ -392,6 +392,59 @@ window.MK = (function () {
     }
   }
 
+  // ---------------------------------------------------------------- 1.36 bản 5: sân đã có đồ — đèn quấn quanh đồ có sẵn, đồ sự kiện chỉ vào ô trống
+  const TALL_TREE = ["sakura", "momiji", "bonsai", "pagoda", "sunflower"];
+  function itemBoxes(items) {       // items: [{id, x, y, w}] (ô của sân 16 × 3, ô = 16 điểm ảnh, sân bắt đầu ở y = 28)
+    return items.map((e) => { const sp = L.SPR[e.id]; if (!sp) { return null; } const w = sp[0].length, h = sp.length, bottom = 28 + (e.y + 1) * 16;
+      return { id: e.id, sp, x: e.x * 16 + Math.floor((e.w * 16 - w) / 2), y: bottom - h, w, h, cx: e.x, cy: e.y, cw: e.w }; }).filter(Boolean);
+  }
+  function wrapLights(v, b, t, k0) {
+    const tw = (i) => hsh(i * 3.7 + Math.floor(t)) > 0.12;
+    if (b.id === "xmastree") { return; }
+    let id = k0;
+    // viền trên của hình: mỗi 3 cột một bóng, ngay dưới mép
+    for (let i = 1; i < b.w - 1; i += 3) {
+      let j = 0; while (j < b.h && b.sp[j][i] === ".") { j++; }
+      if (j >= b.h - 2) { continue; }
+      bulb(v, b.x + i, b.y + j + 1, [WARM, GOLD, ICE][(i + k0) % 3], tw(id++), 1.8);
+    }
+    // cây / tán lá: rắc thêm bóng bên trong
+    if (TALL_TREE.indexOf(b.id) >= 0 || b.h >= 28) {
+      for (let j = 2; j < b.h - 6; j++) { for (let i = 1; i < b.w - 1; i++) { const c = b.sp[j][i]; if (c !== "." && c !== "k" && (i * 7 + j * 5) % 13 === 0) { bulb(v, b.x + i, b.y + j, (i + j) % 2 ? WARM : GOLD, tw(id++), 1.6); } } }
+    }
+    if (["lantern", "chochin", "well"].indexOf(b.id) >= 0) { pool(v, b.x + b.w / 2, b.y + b.h, 10, "rgba(255,210,90,A)", 0.5); }
+    if (b.id === "pond" || b.id === "fountain") { for (let i = 3; i < b.w - 3; i += 4) { bulb(v, b.x + i, b.y + b.h - 3, ICE, tw(id++), 1.4); } }
+    return id;
+  }
+  function freeCells(items, cols, rows, from) {
+    const used = new Set(); items.forEach((e) => { for (let k = 0; k < e.w; k++) { used.add((e.x + k) + "," + e.y); } });
+    const out = []; for (let y = 0; y < rows; y++) { for (let x = from; x < cols; x++) { if (!used.has(x + "," + y)) { out.push([x, y]); } } } return out;
+  }
+  function drawIllumBusy(v, t, items, opt) {
+    const boxes = itemBoxes(items), tw = (i) => hsh(i * 3.7 + Math.floor(t)) > 0.12;
+    let id = 0;
+    // viền mái + đèn băng (như bản 4)
+    for (let y = 14; y <= 33; y += 2) { const h = Math.round((y - 13) * 1.45) + 3; bulb(v, 32 - h - 1, y, WARM, tw(id++), 2.2); bulb(v, 32 + h, y, WARM, tw(id++), 2.2); }
+    for (let x = 1; x <= 63; x += 2) { bulb(v, x, 37, GOLD, tw(id++), 2); }
+    const LEN = [3, 5, 7, 4, 6, 8, 5, 3, 6, 4];
+    for (let x = 2, k = 0; x <= 62; x += 3, k++) { for (let j = 2; j <= LEN[k % LEN.length]; j += 2) { bulb(v, x, 37 + j, j % 4 === 0 ? ICE : WARM, tw(id++), 1.6); } }
+    // đèn quấn quanh đồ có sẵn
+    boxes.forEach((b, n) => { id = wrapLights(v, b, t, id + n * 7) || id; });
+    // dây đèn võng: móc vào ống khói + đỉnh các món cao (luôn ở trên các món)
+    const anchors = [[52, 13]].concat(boxes.filter((b) => b.h >= 30).map((b) => [b.x + Math.floor(b.w / 2), b.y + 2])).sort((a, b2) => a[0] - b2[0]);
+    for (let k = 0; k + 1 < anchors.length; k++) {
+      const [x0, y0] = anchors[k], [x1, y1] = anchors[k + 1], n = Math.round((x1 - x0) / 4);
+      for (let q = 0; q <= n; q++) { const u = q / n, x = x0 + (x1 - x0) * u, y = y0 + (y1 - y0) * u + 6 * 4 * u * (1 - u); const on = (q + Math.floor(t)) % 3 !== 0; bulb(v, Math.round(x), Math.round(y), [GOLD, ICE, WARM][(q + k) % 3], on, on ? 2.4 : 0); }
+    }
+    // tuần lộc đèn: chỉ vào ô trống (hàng 1–2, từ phải sang)
+    const skip = (opt && opt.skip) || [];
+    const free = freeCells(items, 16, 3, 4).filter(([x, y]) => y >= 1 && !skip.some(([sx, sy]) => sx === x && sy === y)).sort((a, b2) => b2[1] - a[1] || b2[0] - a[0]);
+    const rein = (opt && opt.rein) || 2, placed = [], cols = new Set();
+    free.filter(([cx]) => { if (cols.has(cx)) { return false; } cols.add(cx); return true; }).slice(0, rein).forEach(([cx, cy], r) => { const x0 = cx * 16 - 0, y0 = 28 + (cy + 1) * 16 - 12; pool(v, x0 + 8, y0 + 12, 12, "rgba(255,240,190,A)", 0.4);
+      REIN_EDGE.forEach(([x, y], k) => bulb(v, x0 + x - 1, y0 + y, r ? WARM : GOLD, tw(k + r * 50) || k % 2 === 0, 1.6)); placed.push([cx, cy]); });
+    return { free, placed, anchors };
+  }
+
   // ---------------------------------------------------------------- vẽ đè lên dải cảnh
   function cover(id) {
     const cv = document.getElementById("kb-yard"), r = cv.getBoundingClientRect();
@@ -473,5 +526,5 @@ window.MK = (function () {
     drawTree(fake, Object.assign({}, st, { tx: 0, ty: 0 }));
     return fake;
   }
-  return { xstar, drawIllum, XT, XT_BARE, xtree, drawXTree, drawHouseNoel, drawCabinet, drawCabinetMini, MUSIC_BOX, COOKIES, CRUMBS, MILK, GLASS, NOTE, BOW, ROOF_STAR, SPOTS2, WREATH, SNOWMAN_BIG, CANE_BIG, CANDLE, STICKER, STOCKING, MINI_TREE, CAKE, YUZU_BOWL, GIFTS, PAINT, drawHouseDeco, drawRoomDeco, coverHouse, L, P, ORN, ORN_NAME, DOORS, TREE, TREE_W, TREE_H, SPOTS, SANTA, SANTA_BAG, STACK, CAT, PRINT, SANTA_HAT, cover, drawTree, glow, spr, tint, icon, miniTree, pic };
+  return { itemBoxes, freeCells, drawIllumBusy, xstar, drawIllum, XT, XT_BARE, xtree, drawXTree, drawHouseNoel, drawCabinet, drawCabinetMini, MUSIC_BOX, COOKIES, CRUMBS, MILK, GLASS, NOTE, BOW, ROOF_STAR, SPOTS2, WREATH, SNOWMAN_BIG, CANE_BIG, CANDLE, STICKER, STOCKING, MINI_TREE, CAKE, YUZU_BOWL, GIFTS, PAINT, drawHouseDeco, drawRoomDeco, coverHouse, L, P, ORN, ORN_NAME, DOORS, TREE, TREE_W, TREE_H, SPOTS, SANTA, SANTA_BAG, STACK, CAT, PRINT, SANTA_HAT, cover, drawTree, glow, spr, tint, icon, miniTree, pic };
 })();

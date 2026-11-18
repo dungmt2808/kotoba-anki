@@ -1,4 +1,24 @@
-# Kế hoạch 1.36 — Giáng sinh: tủ lịch 24 ngăn, sân sáng đèn, cây thông được tặng đầy dần, thiệp điều ước (18–19/11; **ảnh phác bản 4, chưa làm**)
+# Kế hoạch 1.36 — Giáng sinh: tủ lịch 24 ngăn, sân sáng đèn, cây thông được tặng đầy dần, thiệp điều ước (18–19/11; **ảnh phác bản 5, chưa làm**)
+
+## Bản 5 (19/11) — **sân đã có đồ trang trí sẵn** — chờ người dùng duyệt
+
+Người dùng sau bản 4: "tớ thấy cũng khá đẹp á, nhưng nếu bên ngoài sân có đồ trang trí sẵn thì sao". Ảnh `ban5/` (bước `v5dodat`
+của `mock_136.js`: bày thật 14 món lên sân 16 × 3 ô — anh đào, torii, bonsai, giếng, đèn đá, cây thông Noel, ghế, đèn lồng giấy,
+bụi hoa, ao koi, hòm thư, 2 hàng rào, mèo vẫy tay — rồi dọn lại):
+
+| Ảnh | Nội dung |
+|---|---|
+| `ban5/01_san_co_do.png` | ban ngày (đồ như cũ + tuyết phủ) / ban đêm tuần 4, đánh số 5 luật |
+| `ban5/02_san_co_do.gif` | ảnh động ban đêm (12 khung) |
+
+Luật (Claude đề xuất): ① **đồ có sẵn tự quấn đèn theo hình của món** (dò mép trên của hình, mỗi 3 cột một bóng; món cao / cây thì rắc
+thêm bóng trong tán) — áp cho mọi món kể cả đồ tự vẽ, không dời / không che món nào; ② dây đèn võng móc vào **ống khói + đỉnh các
+món cao** (≥ 30 điểm ảnh), luôn ở phía trên; ③ đèn lồng / đèn đá / giếng có quầng sáng trên tuyết, ao có đèn soi nước; ④ đồ của sự
+kiện chiếm chỗ (người tuyết, tuần lộc đèn, đèn lối đi) **chỉ vào ô trống** (tuần lộc ưu tiên hàng trước, mỗi con một cột; người
+tuyết ô trống gần nhà nhất) — **hết ô thì nằm trong Kho đồ**, dọn một ô là bày được, kéo sang ô khác được như đồ thường;
+⑤ cây thông là đồ của người dùng, đặt đâu cũng được, đèn + ngôi sao đi theo cây. Các vùng khác (Bãi biển, Đền…) không đổi.
+
+---
 
 ## Bản 4 (19/11) — ngoài nhà = **sân sáng đèn**; sau Noel thì sao — **chờ người dùng duyệt**
 

@@ -580,6 +580,67 @@ STEPS.v4den = async () => {
   console.log('  gif 14 khung');
 };
 
+// ======================================================================= bản 5 (19/11): sân đã có đồ sẵn
+const BUSY = [["sakura", 4, 0], ["torii", 10, 0], ["bonsai", 13, 0], ["well", 15, 0], ["lantern", 6, 1], ["xmastree", 8, 1], ["bench", 12, 1],
+  ["chochin", 14, 1], ["flowers", 4, 2], ["pond", 5, 2], ["mailbox", 7, 2], ["fence", 10, 2], ["fence", 11, 2], ["maneki", 13, 2]];
+async function busyYard() {
+  const r = await py(KB + `import json
+d = st.load(); d["coins"] = 500000; st.save(d)
+for _ in range(20):
+    if not st.load()["home"].get("yard"):
+        break
+    st.take("yard", 0)
+for iid, x, y in ${JSON.stringify(BUSY)}:
+    try:
+        if iid != "xmastree":
+            st.buy(iid)
+        st.place("yard", iid, x, y)
+    except Exception as e:
+        print("lỗi", iid, e)
+d = st.load(); d["coins"] = 3420; st.save(d)
+kb._dialog.refresh()
+cat = kb.core.CATALOG if hasattr(kb, "core") else None
+items = []
+for e in st.load()["home"]["yard"]:
+    w = 2 if e["id"] in ("sakura", "torii", "pond", "xmastree") else 1
+    items.append({"id": e["id"], "x": e["x"], "y": e["y"], "w": w})
+result = json.dumps(items)`);
+  await sleep(1500);
+  return JSON.parse(r);
+}
+async function busyNight(items, t, night) {
+  await clearMk(); await loadArt();
+  return js(`MKU.ensureCss(); const v = MK.cover("mk-ov"); const items = ${JSON.stringify(items)};
+    const fr = MK.freeCells(items, 16, 3, 4).filter(([x, y]) => y >= 1).sort((a, b) => a[0] - b[0] || a[1] - b[1]), snow = fr[0];
+    MK.drawHouseNoel(v, 2, ${night}); if (snow) { MK.spr(v, MK.SNOWMAN_BIG, snow[0] * 16 - 0.5, 28 + (snow[1] + 1) * 16 - 19); }
+    ${night ? 'MK.tint(v, 0.38); MK.drawHouseNoel(v, 4, true, true);' : ''}
+    const res = ${night} ? MK.drawIllumBusy(v, ${t}, items, { skip: snow ? [snow] : [] }) : null;
+    if (res) { res.snow = snow; }
+    const xt = items.find((e) => e.id === "xmastree");
+    if (xt && ${night}) { const S = v.S, bx = xt.x * 16, cx = (v.ox + bx + 16) * S, cy = (v.oy + 28 + (xt.y + 1) * 16 - 41) * S, g = v.ctx.createRadialGradient(cx, cy, S, cx, cy, 13 * S); g.addColorStop(0, "rgba(255,240,160,.5)"); g.addColorStop(1, "rgba(255,240,160,0)"); v.ctx.fillStyle = g; v.ctx.fillRect(cx - 13 * S, cy - 13 * S, 26 * S, 26 * S); }
+    window.__v = v; window.SX = (x) => v.r.left + (v.ox + x) * v.S; window.SY = (yy) => v.r.top + (v.oy + yy) * v.S;
+    return res ? JSON.stringify(res) : "";`);
+}
+STEPS.v5dodat = async () => {
+  await collapseToday();
+  const items = await busyYard();
+  console.log('  sân:', items.map((e) => e.id + '@' + e.x + ',' + e.y).join(' '));
+  await sky(11, 'snow'); await sleep(1200);
+  await busyNight(items, 0, false); await hideToast(); await shot('raw_v5_ngay');
+  await sky(21, 'snow'); await sleep(1200);
+  const res = JSON.parse(await busyNight(items, 0, true));
+  console.log('  ô trống:', JSON.stringify(res.free), 'tuần lộc:', JSON.stringify(res.placed));
+  await hideToast(); await shot('raw_v5_dem');
+  fs.mkdirSync(path.join(OUT, 'gif5'), { recursive: true });
+  for (let f = 0; f < 12; f++) { await busyNight(items, f, true); await sleep(60); await page.shot(path.join(OUT, 'gif5', 'f' + String(f).padStart(2, '0') + '.png')); }
+  // dọn sân về như cũ (trống) cho các bước khác
+  await py(KB + `for _ in range(30):
+    if not st.load()["home"].get("yard"):
+        break
+    st.take("yard", 0)
+kb._dialog.refresh(); result = 1`);
+};
+
 (async () => {
   await connect();
   await py(KB + `kb.finds.is_market = lambda day: False
