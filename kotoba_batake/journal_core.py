@@ -53,18 +53,40 @@ def _ai_en() -> Any:
     return ai_en
 
 
+def _eu() -> Any:
+    try:
+        from . import eu_core as eu
+    except ImportError:
+        import eu_core as eu  # type: ignore[no-redef]
+    return eu
+
+
+def _ko() -> Any:
+    try:
+        from . import ko_core as ko
+    except ImportError:
+        import ko_core as ko  # type: ignore[no-redef]
+    return ko
+
+
 JOURNAL_PREFIX = "kotoba_batake_journal_"
 STICKERS = ("vui", "hao_hung", "thu_thai", "binh_thuong", "met", "buon", "ban", "om")
 STICKER_NAMES = {"vui": "Vui", "hao_hung": "Hào hứng", "thu_thai": "Thư thái", "binh_thuong": "Bình thường",
                  "met": "Mệt", "buon": "Buồn", "ban": "Bận", "om": "Ốm"}
 DIARY_MAX = 200
-WRITE_LANGS = ("ja", "en")
-WRITE_MAX = {"ja": 60, "en": 30}
+WRITE_LANGS = ("ja", "en", "zh", "ko", "de", "fr")
+# 1.35.1: luyện viết tiếng Trung / Hàn / Đức / Pháp. LƯU như bản cũ hiểu được: "lang" chỉ là "ja" (đếm ký tự, ≤ 60) hoặc
+# "en" (đếm từ, ≤ 30) — tiếng Trung / Hàn theo kiểu "ja", Đức / Pháp theo kiểu "en" —, ngôn ngữ thật ở trường "l". Bản
+# 1.31.3 (đã phát hành) đọc bài "de" mà không có cách này sẽ coi là tiếng Nhật và cắt còn 60 ký tự rồi ghi đè; với cách
+# này nó thấy bài tiếng Anh ≤ 30 từ (giới hạn y hệt) → không mất chữ (chỉ quên nhãn ngôn ngữ nếu chính nó ghi lại tháng đó).
+BASE = {"ja": "ja", "en": "en", "zh": "ja", "ko": "ja", "de": "en", "fr": "en"}
+WRITE_MAX = {k: (60 if b == "ja" else 30) for k, b in BASE.items()}
 # 1.25.9: trần ký tự khi lưu, sau khi đã cắt theo từ / ký tự (30 từ tiếng Anh dài có thể quá 400 ký tự)
 WRITE_CHARS = 1200
-WRITE_UNIT = {"ja": "ký tự", "en": "từ"}
-FIX_LIMIT = {"ja": 72, "en": 36}           # câu đã sửa: ≤ bài gốc + 20%
-ERR_PART = {"ja": 15, "en": 5}             # "chỗ sai → sửa" của một lỗi: chỉ trích đúng chỗ sai
+WRITE_UNIT = {k: ("ký tự" if b == "ja" else "từ") for k, b in BASE.items()}
+FIX_LIMIT = {k: (72 if b == "ja" else 36) for k, b in BASE.items()}     # câu đã sửa: ≤ bài gốc + 20%
+ERR_PART = {k: (15 if b == "ja" else 5) for k, b in BASE.items()}       # "chỗ sai → sửa" của một lỗi: chỉ trích đúng chỗ sai
+SPACED = ("en", "de", "fr", "ko")          # so chỗ sửa theo từ (có dấu cách); tiếng Nhật / Trung theo ký tự
 WHY_MAX = 60                               # giải thích một lỗi: 1 câu
 MORE_MAX = 60                              # "còn lại": khi có hơn 3 lỗi
 NOTE_MAX = 100                             # nhận xét: tối đa 2 câu
@@ -318,8 +340,8 @@ _EN_WORD = re.compile(r"[A-Za-z0-9À-ɏ]+(?:['’\-][A-Za-z0-9À-ɏ]+)*")
 
 
 def count_units(s: str, lang: str) -> int:
-    """Độ dài bài luyện viết: tiếng Nhật đếm ký tự (không tính khoảng trắng), tiếng Anh đếm từ."""
-    if lang == "en":
+    """Độ dài bài luyện viết: tiếng Nhật / Trung / Hàn đếm ký tự (không tính khoảng trắng), tiếng Anh / Đức / Pháp đếm từ."""
+    if BASE.get(lang) == "en":
         return len(_EN_WORD.findall(s or ""))
     return len(re.sub(r"\s", "", s or ""))
 
@@ -328,7 +350,7 @@ def clip_units(s: str, lang: str, limit: int) -> tuple[str, bool]:
     """Cắt bài ở đơn vị thứ `limit` (tiếng Anh: hết từ thứ 30; tiếng Nhật: ký tự thứ 60, không tính khoảng trắng)."""
     if count_units(s, lang) <= limit:
         return s, False
-    if lang == "en":
+    if BASE.get(lang) == "en":
         ms = list(_EN_WORD.finditer(s))
         end = ms[limit - 1].end()
         # giữ dấu câu dính ngay sau từ cuối (vd. "happy." )
@@ -368,10 +390,25 @@ def _clean_err(raw: Any) -> dict[str, str] | None:
 WRITE_STATES = ("", "wait", "queue", "done")
 
 
+def store_writing(w: Any) -> Any:
+    """Bài luyện viết lúc dùng ("lang" = ngôn ngữ thật) → lúc lưu ("lang" = ja / en như bản cũ hiểu + "l" = ngôn ngữ
+    thật). Gọi ở JournalStore._apply (chỗ duy nhất ghi bài)."""
+    if not isinstance(w, dict):
+        return w
+    real = w.get("lang") if w.get("lang") in WRITE_LANGS else w.get("l")
+    out = dict(w)
+    out.pop("l", None)
+    if real in BASE and BASE[real] != real:
+        out["lang"], out["l"] = BASE[real], real
+    return out
+
+
 def clean_writing(raw: Any) -> dict[str, Any] | None:
     if not isinstance(raw, dict):
         return None
-    lang = raw.get("lang") if raw.get("lang") in WRITE_LANGS else "ja"
+    base = raw.get("lang") if raw.get("lang") in ("ja", "en") else "ja"
+    # 1.35.1: ngôn ngữ thật ở "l" (chỉ nhận khi khớp kiểu lưu — bản cũ ghi lại tháng đó thì "l" mất, còn "ja" / "en")
+    lang = raw.get("l") if raw.get("l") in WRITE_LANGS and BASE[raw.get("l")] == base else base
     goc = clip_chars(clip_units(clean_line(raw.get("goc"), 4000), lang, WRITE_MAX[lang])[0], WRITE_CHARS)
     st = raw.get("st") if raw.get("st") in WRITE_STATES else ""
     w: dict[str, Any] = {"lang": lang, "goc": goc, "st": st}
@@ -519,7 +556,7 @@ class JournalStore:
             if v in (None, "", {}, []):
                 cur.pop(k, None)
             else:
-                cur[k] = v
+                cur[k] = store_writing(v) if k == "w" else v
         if cur:
             raw[key] = cur
         else:
@@ -703,10 +740,27 @@ def word_spans(textv: str, words: list[str], lang: str) -> list[tuple[int, int, 
         idx = en.LinkIndex({"tu_vung": [[w] for w in words if w]})
         return [(a, b, k) for a, b, k in idx.spans(textv, False)]
     cands: list[tuple[int, int, str]] = []
-    for w in words:
-        for f in jp_forms(w):
-            for a, b in jp_find(textv, f):
-                cands.append((a, b, w))
+    if lang in ("de", "fr"):             # 1.35.1: dạng biến đổi + đúng ngữ cảnh như tra từ của báo
+        eu = _eu()
+        for w in words:
+            fs = eu.forms(w, lang)
+            if fs:
+                kind = eu.word_kind(w, lang)
+                cands += [(m.start(), m.end(), w) for m in re.finditer(eu.pattern(fs), textv, re.I)
+                          if eu.context_ok(textv, m.start(), m.end(), w, lang, kind)]
+    elif lang == "ko":                   # tiểu từ / đuôi chia dính sau từ
+        cands = [(a, b, w) for a, b, w in _ko().find_links(textv, [w for w in words if w])]
+    elif lang == "zh":
+        for w in words:
+            i = textv.find(w) if w else -1
+            while i >= 0:
+                cands.append((i, i + len(w), w))
+                i = textv.find(w, i + 1)
+    else:
+        for w in words:
+            for f in jp_forms(w):
+                for a, b in jp_find(textv, f):
+                    cands.append((a, b, w))
     cands.sort(key=lambda x: (-(x[1] - x[0]), x[0]))
     taken: list[tuple[int, int, str]] = []
     for a, b, w in cands:
@@ -726,6 +780,12 @@ def hint_ok(it: dict[str, Any], lang: str) -> bool:
         return False
     if lang == "en":
         return bool(re.match(r"^[A-Za-z][A-Za-z' \-]*$", w)) and len(w.split()) <= 3 and len(w) <= 24
+    if lang in ("de", "fr"):             # 1.35.1: từ đã bỏ ghi chú số nhiều / giống (der Hund, l'école)
+        return bool(re.match(r"^[A-Za-zÀ-ɏ][A-Za-zÀ-ɏ'’ \-]*$", w)) and len(w.split()) <= 3 and len(w) <= 30
+    if lang == "zh":
+        return bool(re.fullmatch(r"[㐀-鿿]{1,6}", w))
+    if lang == "ko":
+        return bool(re.fullmatch(r"[가-힣]{1,8}( [가-힣]{1,8})?", w))
     return bool(_JP.search(w)) and len(w) <= 8 and not re.search(r"[\[\]{}|<>/;,、()（）〜～\s]", w)
 
 
@@ -763,7 +823,7 @@ def diff_marks(goc: str, sua: str, lang: str) -> tuple[list[tuple[int, int]], li
         return [], []
     out: list[tuple[int, int]] = []
     dels: list[tuple[int, str]] = []
-    if lang == "en":
+    if lang in SPACED:                   # 1.35.1: Đức / Pháp / Hàn có dấu cách — so theo từ như tiếng Anh
         a, b = _tokens_en(goc), _tokens_en(sua)
         sm = difflib.SequenceMatcher(None, [_norm_en(t[2]) for t in a], [_norm_en(t[2]) for t in b], autojunk=False)
         for op, i1, i2, j1, j2 in sm.get_opcodes():
@@ -830,7 +890,15 @@ FIX_SCHEMA: dict[str, Any] = {
     },
     "required": ["sua", "loi", "con_lai", "tu_nhien", "nhan_xet"],
 }
-LANG_VI = {"ja": "tiếng Nhật", "en": "tiếng Anh"}
+LANG_VI = {"ja": "tiếng Nhật", "en": "tiếng Anh", "zh": "tiếng Trung", "ko": "tiếng Hàn", "de": "tiếng Đức",
+           "fr": "tiếng Pháp"}
+# 1.35.1: điều riêng của từng tiếng (thêm vào lời nhắc hệ thống)
+LANG_RULE = {
+    "zh": " Giữ kiểu chữ của người học (giản thể hay phồn thể); không viết pinyin.",
+    "ko": " Viết bằng Hangul, giữ cách xưng hô / đuôi câu (요, 다…) người học chọn nếu không sai.",
+    "de": " Viết hoa danh từ đúng chính tả tiếng Đức; dùng ä ö ü ß (không viết ae / oe / ue / ss thay).",
+    "fr": " Dùng đúng dấu của tiếng Pháp (é è ê à ç…).",
+}
 
 
 def fix_system(lang: str, level: str) -> str:
@@ -838,8 +906,45 @@ def fix_system(lang: str, level: str) -> str:
             "(một hai câu tự viết). Chỉ sửa lỗi thật, sửa ít nhất có thể, giữ ý và cách nói của người học; "
             "không viết lại thành bài khác. Giải thích và nhận xét bằng tiếng Việt CÓ DẤU đầy đủ (viết \"Tính từ\", "
             "không viết \"Tinh tu\"), ngắn gọn, thân thiện. "
-            "Không dùng markdown, không emoji, không đánh dấu furigana. Chỉ trả về JSON đúng khuôn."
-            % (LANG_VI.get(lang, "ngoại ngữ"), level))
+            "Không dùng markdown, không emoji, không đánh dấu furigana. Chỉ trả về JSON đúng khuôn.%s"
+            % (LANG_VI.get(lang, "ngoại ngữ"), level, LANG_RULE.get(lang, "")))
+
+
+# Ví dụ JSON trong lời nhắc (chỉ minh hoạ khuôn + độ dài) — mỗi tiếng một ví dụ đúng tiếng đó
+FIX_EXAMPLE: dict[str, dict[str, Any]] = {
+    "en": {"sua": "Yesterday it rained, so I booked a table and we ate together.",
+           "loi": [{"goc": "it rain", "sua": "it rained", "loai": "dạng chia", "quy_tac": "thì quá khứ",
+                    "giai_thich": "Chuyện hôm qua thì chia động từ ở quá khứ."},
+                   {"goc": "I book", "sua": "I booked", "loai": "dạng chia", "quy_tac": "thì quá khứ",
+                    "giai_thich": "Cùng quy tắc như lỗi trên."}],
+           "con_lai": "", "tu_nhien": "", "nhan_xet": "Dùng đúng từ book. Kể chuyện đã qua thì nhớ chia quá khứ."},
+    "ja": {"sua": "きのうは寒かったですが、レストランを予約しました。",
+           "loi": [{"goc": "寒いでした", "sua": "寒かったです", "loai": "ngữ pháp", "quy_tac": "tính từ đuôi い (〜かった)",
+                    "giai_thich": "Tính từ đuôi い: quá khứ là bỏ い + かった(です)."}],
+           "con_lai": "", "tu_nhien": "", "nhan_xet": "Dùng đúng 予約する, nối câu bằng が tự nhiên. Nhớ quá khứ của tính từ い."},
+    "zh": {"sua": "我很喜欢吃苹果，昨天我买了三个苹果。",
+           "loi": [{"goc": "买三个", "sua": "买了三个", "loai": "ngữ pháp", "quy_tac": "了 sau động từ (việc đã xong)",
+                    "giai_thich": "Kể việc đã làm xong thì thêm 了 sau động từ."}],
+           "con_lai": "", "tu_nhien": "", "nhan_xet": "Dùng đúng 喜欢 và lượng từ 个. Nhớ 了 khi kể việc đã xong."},
+    "ko": {"sua": "어제 친구하고 같이 영화를 봤어요.",
+           "loi": [{"goc": "영화을", "sua": "영화를", "loai": "trợ từ", "quy_tac": "을 / 를",
+                    "giai_thich": "Danh từ kết thúc bằng nguyên âm thì dùng 를."},
+                   {"goc": "봐요", "sua": "봤어요", "loai": "dạng chia", "quy_tac": "thì quá khứ (았/었)",
+                    "giai_thich": "Chuyện hôm qua thì chia quá khứ: 보다 → 봤어요."}],
+           "con_lai": "", "tu_nhien": "", "nhan_xet": "Dùng đúng 같이. Nhớ chọn 을 / 를 theo âm cuối của danh từ."},
+    "de": {"sua": "Gestern habe ich Tee getrunken und bin in den Park gegangen.",
+           "loi": [{"goc": "Gestern ich habe", "sua": "Gestern habe ich", "loai": "ngữ pháp",
+                    "quy_tac": "động từ ở vị trí thứ 2", "giai_thich": "Câu bắt đầu bằng Gestern thì động từ đứng trước chủ ngữ."},
+                   {"goc": "gehe in Park", "sua": "bin in den Park gegangen", "loai": "dạng chia",
+                    "quy_tac": "Perfekt với sein", "giai_thich": "Chuyện hôm qua: gehen chia Perfekt với sein."}],
+           "con_lai": "", "tu_nhien": "", "nhan_xet": "Dùng đúng getrunken. Nhớ đảo động từ lên khi câu bắt đầu bằng trạng từ."},
+    "fr": {"sua": "Hier, je suis allé au marché et j'ai acheté des pommes.",
+           "loi": [{"goc": "j'ai allé", "sua": "je suis allé", "loai": "dạng chia", "quy_tac": "passé composé với être",
+                    "giai_thich": "Aller dùng trợ động từ être ở passé composé."},
+                   {"goc": "à le marché", "sua": "au marché", "loai": "trợ từ", "quy_tac": "à + le = au",
+                    "giai_thich": "à + le luôn gộp thành au."}],
+           "con_lai": "", "tu_nhien": "", "nhan_xet": "Dùng đúng acheté. Nhớ aller và các động từ di chuyển đi với être."},
+}
 
 
 def fix_prompt(goc: str, lang: str, level: str, hints: list[str]) -> str:
@@ -847,18 +952,7 @@ def fix_prompt(goc: str, lang: str, level: str, hints: list[str]) -> str:
     unit = WRITE_UNIT[lang]
     lim = fix_limit(n, lang)
     part = ERR_PART[lang]
-    if lang == "en":
-        ex = {"sua": "Yesterday it rained, so I booked a table and we ate together.",
-              "loi": [{"goc": "it rain", "sua": "it rained", "loai": "dạng chia", "quy_tac": "thì quá khứ",
-                       "giai_thich": "Chuyện hôm qua thì chia động từ ở quá khứ."},
-                      {"goc": "I book", "sua": "I booked", "loai": "dạng chia", "quy_tac": "thì quá khứ",
-                       "giai_thich": "Cùng quy tắc như lỗi trên."}],
-              "con_lai": "", "tu_nhien": "", "nhan_xet": "Dùng đúng từ book. Kể chuyện đã qua thì nhớ chia quá khứ."}
-    else:
-        ex = {"sua": "きのうは寒かったですが、レストランを予約しました。",
-              "loi": [{"goc": "寒いでした", "sua": "寒かったです", "loai": "ngữ pháp", "quy_tac": "tính từ đuôi い (〜かった)",
-                       "giai_thich": "Tính từ đuôi い: quá khứ là bỏ い + かった(です)."}],
-              "con_lai": "", "tu_nhien": "", "nhan_xet": "Dùng đúng 予約する, nối câu bằng が tự nhiên. Nhớ quá khứ của tính từ い."}
+    ex = FIX_EXAMPLE.get(lang, FIX_EXAMPLE["ja"])
     lines = [
         "Trình độ: %s. Ngôn ngữ của bài: %s." % (level, LANG_VI[lang]),
         "Bài của người học (%d %s):" % (n, unit),
@@ -892,7 +986,7 @@ def fix_prompt(goc: str, lang: str, level: str, hints: list[str]) -> str:
 
 def fix_limit(n: int, lang: str) -> int:
     """Độ dài tối đa của câu đã sửa: bài gốc + 20% (ít nhất + 6 ký tự / + 3 từ cho bài rất ngắn), trần 72 / 36."""
-    extra = 6 if lang == "ja" else 3
+    extra = 6 if BASE.get(lang) == "ja" else 3
     return max(1, min(FIX_LIMIT[lang], max(int(math.ceil(n * 1.2)), n + extra)))
 
 
@@ -914,8 +1008,15 @@ def lang_ok(s: str, lang: str) -> bool:
     """Kiểm tra mức nhẹ: câu đã sửa đúng ngôn ngữ của bài."""
     if not s:
         return False
-    if lang == "en":
+    if lang in ("en", "de", "fr"):
         return not _CJK.search(s) and not _VI_ONLY.search(s) and len(_EN_WORD.findall(s)) > 0
+    if lang == "zh":                     # 1.35.1: chữ Hán, không kana / Hangul, ít chữ Latin
+        han = len(re.findall(r"[㐀-鿿]", s))
+        return han > 0 and not re.search(r"[ぁ-ヿ가-힯]", s) and len(re.findall(r"[A-Za-zÀ-ỹ]", s)) <= max(3, han // 3)
+    if lang == "ko":
+        hg = len(re.findall(r"[가-힯]", s))
+        return hg > 0 and not re.search(r"[ぁ-ヿ]", s) and len(re.findall(r"[A-Za-zÀ-ỹ]", s)) <= max(3, hg // 3) \
+            and not _VI_ONLY.search(s)
     jp = len(_JP.findall(s))
     latin = len(re.findall(r"[A-Za-zÀ-ỹ]", s))
     return jp > 0 and latin <= max(3, jp // 3) and not _VI_ONLY.search(s)
@@ -946,12 +1047,12 @@ def cut_units(s: str, lang: str, limit: int) -> tuple[str, bool]:
     ok = [e for e in ends if count_units(s[:e], lang) <= limit]
     if ok:
         return s[:ok[-1]].strip(), True
-    part, _ = clip_units(s, lang, max(1, limit - 1) if lang == "ja" else limit)   # "…" cũng là một ký tự
+    part, _ = clip_units(s, lang, max(1, limit - 1) if BASE.get(lang) == "ja" else limit)   # "…" cũng là một ký tự
     return part.rstrip(" ,、") + "…", True
 
 
 def _norm_find(s: str, lang: str) -> str:
-    if lang == "en":
+    if lang in SPACED:
         return re.sub(r"\s+", " ", s.lower().replace("’", "'")).strip()
     return re.sub(r"\s", "", s)
 
@@ -1012,8 +1113,8 @@ def check_fix(raw: Any, goc: str, lang: str) -> tuple[dict[str, Any], list[str]]
             notes.append("bỏ lỗi %d: chỗ sai \"%s\" không có trong bài" % (i + 1, eg[:20]))
             continue
         lim = ERR_PART[lang]
-        eg2, c1 = (cut_units(eg, lang, lim) if lang == "en" else cut_chars(eg, lim))
-        es2, c2 = (cut_units(es, lang, lim) if lang == "en" else cut_chars(es, lim))
+        eg2, c1 = (cut_units(eg, lang, lim) if BASE.get(lang) == "en" else cut_chars(eg, lim))
+        es2, c2 = (cut_units(es, lang, lim) if BASE.get(lang) == "en" else cut_chars(es, lim))
         if c1 or c2:
             notes.append("cắt chỗ sai / sửa của lỗi %d" % (i + 1))
         why = clean_line(e.get("giai_thich"), 400)
@@ -1052,7 +1153,7 @@ def check_fix(raw: Any, goc: str, lang: str) -> tuple[dict[str, Any], list[str]]
         if loi:
             notes.append("bỏ cách nói tự nhiên hơn: bài có lỗi")
             tn = ""
-        elif not lang_ok(tn, lang) or count_units(tn, lang) > max(n, 1) + (2 if lang == "ja" else 1):
+        elif not lang_ok(tn, lang) or count_units(tn, lang) > max(n, 1) + (2 if BASE.get(lang) == "ja" else 1):
             notes.append("bỏ cách nói tự nhiên hơn: sai ngôn ngữ hoặc dài hơn bài gốc")
             tn = ""
         elif _norm_find(tn, lang) == g:

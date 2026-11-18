@@ -460,15 +460,21 @@ var GardenCal = (function () {
     return c;
   }
 
-  // đếm như Python (journal_core.count_units): tiếng Nhật đếm ký tự không tính khoảng trắng, tiếng Anh đếm từ
+  // đếm như Python (journal_core.count_units): tiếng Nhật / Trung / Hàn đếm ký tự không tính khoảng trắng, tiếng Anh /
+  // Đức / Pháp đếm từ (1.35.1: thêm 4 tiếng — WORDY = ngôn ngữ đếm theo từ, LATIN = chữ Latin)
   const EN_WORD = /[A-Za-z0-9À-ɏ]+(?:['’\-][A-Za-z0-9À-ɏ]+)*/g;
+  const WORDY = { en: 1, de: 1, fr: 1 };
+  const WLANGS = [["ja", "Tiếng Nhật"], ["en", "Tiếng Anh"], ["zh", "Tiếng Trung"], ["ko", "Tiếng Hàn"], ["de", "Tiếng Đức"],
+    ["fr", "Tiếng Pháp"]];
+  const PLACE = { ja: "一、二文を書いてみよう…", en: "Write one or two sentences…", zh: "写一两句话吧…", ko: "한두 문장을 써 보세요…",
+    de: "Schreib ein, zwei Sätze…", fr: "Écris une ou deux phrases…" };
   function units(s, lang) {
-    if (lang === "en") { return (String(s || "").match(EN_WORD) || []).length; }
+    if (WORDY[lang]) { return (String(s || "").match(EN_WORD) || []).length; }
     return Array.from(String(s || "").replace(/\s/g, "")).length;     // đếm theo ký tự (code point) như Python
   }
   function clip(s, lang, max) {
     if (units(s, lang) <= max) { return s; }
-    if (lang === "en") {
+    if (WORDY[lang]) {
       let m, n = 0, end = s.length;
       EN_WORD.lastIndex = 0;
       while ((m = EN_WORD.exec(s))) { n++; if (n === max) { end = m.index + m[0].length; break; } }
@@ -488,10 +494,10 @@ var GardenCal = (function () {
     const c = el("div", "kb-cal-card kb-cal-write");
     const h = el("div", "kb-cal-h");
     h.appendChild(el("span", null, "Luyện viết"));
-    h.appendChild(el("small", null, w.lang === "en" ? "tối đa 30 từ" : "tối đa 60 ký tự (khoảng 20–30 từ)"));
+    h.appendChild(el("small", null, WORDY[w.lang] ? "tối đa 30 từ" : "tối đa 60 ký tự (khoảng 20–30 từ)"));
     if (w.today && !w.locked && w.langs.length > 1) {
       const lc = el("div", "kb-ai-chips kb-cal-langs");
-      [["ja", "Tiếng Nhật"], ["en", "Tiếng Anh"]].forEach((x) => {
+      WLANGS.forEach((x) => {
         if (w.langs.indexOf(x[0]) < 0) { return; }
         const b = btn("kb-ai-chip" + (x[0] === w.lang ? " is-on" : ""), x[1], () => {
           if (x[0] === w.lang) { return; }
@@ -514,13 +520,13 @@ var GardenCal = (function () {
       if (!w.locked) { hint.appendChild(btn("kb-cal-swap", "Đổi gợi ý", () => { flushAll(); H.send("cal:hint:" + v.d); sfx("flip"); }, "2 từ khác trong các từ phải ôn hôm nay")); }
       c.appendChild(hint);
     }
-    const ta = el("textarea", "kb-cal-in kb-cal-ta" + (w.lang === "en" ? " is-en" : ""));
+    const ta = el("textarea", "kb-cal-in kb-cal-ta" + (WORDY[w.lang] ? " is-en" : ""));
     ta.rows = 2;
     ta.value = w.goc || "";
     ta.setAttribute("lang", w.lang);
     ta.setAttribute("aria-label", "Bài luyện viết");
     ta.spellcheck = false;
-    ta.placeholder = w.locked ? "" : w.lang === "en" ? "Write one or two sentences…" : "一、二文を書いてみよう…";
+    ta.placeholder = w.locked ? "" : PLACE[w.lang] || PLACE.ja;
     ta.readOnly = !!w.locked;
     if (w.locked) { ta.classList.add("is-locked"); }
     c.appendChild(ta);
@@ -640,7 +646,7 @@ var GardenCal = (function () {
     let n = 1;
     if (f.segs && f.segs.length) {
       box.appendChild(el("b", null, (n++) + ". Câu đã sửa"));
-      const jp = el("div", "kb-cal-fixed" + (w.lang === "en" ? " is-en" : ""));
+      const jp = el("div", "kb-cal-fixed" + (WORDY[w.lang] ? " is-en" : ""));
       jp.setAttribute("lang", w.lang);
       f.segs.forEach((s) => {
         if (s[1] === "d") { const d = el("del", null, s[0]); d.title = "Chữ của bài gốc đã bỏ"; jp.appendChild(d); return; }

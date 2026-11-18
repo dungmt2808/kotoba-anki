@@ -2132,10 +2132,10 @@ def _fruit_ivl(cfg: dict[str, Any]) -> int:
 
 
 def write_langs(cfg: dict[str, Any] | None = None) -> list[str]:
-    """Ngôn ngữ luyện viết = báo tiếng Nhật / tiếng Anh đã tick (1.19.1).
+    """Ngôn ngữ luyện viết = báo đã tick (1.19.1; 1.35.1: cả Trung / Hàn / Đức / Pháp — trước chỉ Nhật / Anh).
 
-    1.25.1: không tick báo Nhật / Anh nào (vd. chỉ báo tiếng Việt) → ngôn ngữ có deck trong collection; không có deck
-    tiếng Nhật / tiếng Anh nào → [] = ẩn Luyện viết (người không học hai thứ tiếng này)."""
+    1.25.1: không tick báo học tiếng nào (vd. chỉ báo tiếng Việt) → ngôn ngữ có deck trong collection; không có deck
+    nào của các tiếng đó → [] = ẩn Luyện viết."""
     ticked = [x for x in wanted_langs(cfg) if x in journal.WRITE_LANGS]
     if ticked:
         return ticked
@@ -2157,7 +2157,7 @@ def _lang_presence() -> dict[str, bool]:
     if time.time() - _presence["t"] > 60 or not _presence["v"] or _presence["col"] != path:
         infos = words.model_infos(mw.col, core.merged_config(config()))
         langs = {i["lang"] for i in infos.values()}
-        _presence.update(t=time.time(), v={"ja": "ja" in langs, "en": "en" in langs}, col=path)
+        _presence.update(t=time.time(), v={x: x in langs for x in journal.WRITE_LANGS}, col=path)
     return _presence["v"]
 
 
@@ -2168,8 +2168,7 @@ def _write_lang(cfg: dict[str, Any]) -> str:
 
 
 def _write_level(cfg: dict[str, Any], lang: str) -> str:
-    o = _ai_opts(cfg)
-    return o["level_en"] if lang == "en" else o["level"]
+    return _level_of(_ai_opts(cfg), lang)          # 1.35.1: trình độ của báo cùng tiếng (HSK / TOPIK / A1–C1…)
 
 
 def _words_for(ds: str, lang: str, cfg: dict[str, Any]) -> dict[str, Any]:
@@ -2189,22 +2188,36 @@ def _words_for(ds: str, lang: str, cfg: dict[str, Any]) -> dict[str, Any]:
                 raise ValueError("không đọc được deck đã chọn")
             if len(_words_cache) > 6:
                 _words_cache.clear()
+            mod = AI_MODS.get(lang)
             _words_cache[k] = words.pick(mw.col, cfg, lang, src[lang]["decks"], ds,
-                                         eligible=ai_en.kho_ok if lang == "en" else ai.kho_ok)
+                                         eligible=mod.kho_ok if mod else ai.kho_ok)
         except Exception as err:
             _warn("từ cho luyện viết", err)
             _words_cache[k] = {"kho": [], "all": []}
     return _words_cache[k]
 
 
+def _write_word(lang: str, raw: Any) -> str:
+    """1.35.1: từ của deck → chữ để gợi ý / tìm trong bài (Đức / Pháp bỏ ghi chú số nhiều / giống: "der Hund, -(e)s, -e" →
+    "der Hund"; Trung / Hàn bỏ ghi chú) — như từ gốc khi tra từ của báo cùng tiếng."""
+    if lang in ("zh", "ko", "de", "fr"):
+        try:
+            return AI_MODS[lang].deck_word(raw) or ""
+        except Exception:
+            return ""
+    return str(raw or "")
+
+
 def _hints(ds: str, lang: str, gr: int, cfg: dict[str, Any]) -> list[str]:
     pk = _words_for(ds, lang, cfg)
-    return journal.pick_hints(pk.get("kho") or [], lang, "%s:%s:%d" % (ds, lang, gr))
+    items = [dict(it, word=_write_word(lang, it.get("word"))) for it in pk.get("kho") or []]
+    return journal.pick_hints(items, lang, "%s:%s:%d" % (ds, lang, gr))
 
 
 def _learned(ds: str, lang: str, cfg: dict[str, Any]) -> list[str]:
     pk = _words_for(ds, lang, cfg)
-    return [it["word"] for it in (pk.get("all") or []) + (pk.get("kho") or []) if it.get("word")][:3000]
+    out = [_write_word(lang, it.get("word")) for it in (pk.get("all") or []) + (pk.get("kho") or []) if it.get("word")]
+    return [w for w in dict.fromkeys(out) if w][:3000]
 
 
 def _unstale(d: datetime.date, entry: dict[str, Any]) -> dict[str, Any]:

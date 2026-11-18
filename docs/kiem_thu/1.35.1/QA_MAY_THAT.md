@@ -4,7 +4,7 @@ Không cần biết tiếng Đức / Pháp / Trung / Hàn: chỉ cần so màn h
 sách này Claude đã chạy thử trong Anki thật với đúng bộ thẻ mẫu (`tests/anki/e2e_qa1351.js`, 21 / 21 đạt — cùng bộ thẻ trên
 1.35.0 trượt 9 ca).
 
-**Thời gian**: phần **A + B + D** khoảng 30 phút (bắt buộc); phần **C** (báo, tốn lượt Gemini) và **E** (đồng bộ) làm nếu có
+**Thời gian**: phần **A + B + D** khoảng 35 phút (bắt buộc); phần **C** (báo, tốn lượt Gemini) và **E** (đồng bộ) làm nếu có
 thời gian.
 
 Gặp gì lạ: chụp màn hình + trong vườn bấm ⚙ → *Báo lỗi · góp ý · khác* → **Báo lỗi** → *Chép báo cáo* → gửi tớ.
@@ -133,6 +133,23 @@ Nhà → *Album* → **Sinh hoạt**: mọi ô chữ Đức đọc trọn từ, 
 đôi giữa chữ** (so với ảnh `so_sinh_hoat_de_truoc_sau.png` cùng thư mục: trên = 1.35.0 "Morgengymnas / tik", dưới = 1.35.1).
 Đổi sang Tiếng Pháp / Trung / Hàn xem lướt; StackChan góc trái nói câu ngắn bằng đúng tiếng đó. Xong đặt lại *Tự theo deck*.
 
+### B7. Luyện viết tiếng Trung / Hàn / Đức / Pháp (mới ở 1.35.1) ⭐
+
+Luyện viết chọn tiếng theo **báo đã tick** (không cần viết báo). Ở hồ sơ `QA`: vườn → *Báo* → tab *Nguồn báo* → *Báo muốn
+nhận*: tick **Tiếng Đức + Tiếng Pháp** (bỏ tick khác) → mở **Lịch hoa** (phím L) → hôm nay → khung **Luyện viết**:
+
+| Làm | Phải thấy |
+|---|---|
+| Nhìn đầu khung | Hai nút **Tiếng Đức · Tiếng Pháp**; "tối đa 30 từ"; bộ đếm "0 / 30 từ" |
+| Bấm **Tiếng Đức** | Chữ mờ trong ô: *Schreib ein, zwei Sätze…*; "Gợi ý:" 2 từ của deck Đức, **không** kèm ", -e" / "(m)" |
+| Bấm **Tiếng Pháp** | Chữ mờ: *Écris une ou deux phrases…* |
+| (Tiếng Đức) dán: `Gestern ich habe Tee getrunken und gehe in Park.` → **Gửi Gemini sửa** (cần khoá, 1 lần / ngày, ~10–60 giây) | "Câu đã sửa" kiểu **Gestern habe ich Tee getrunken und bin in den Park gegangen.**, chỗ sửa tô xanh; phần "Lỗi" có giải thích **tiếng Việt có dấu** |
+
+Đổi tick sang **Tiếng Trung + Tiếng Hàn** → khung có nút Tiếng Trung / Tiếng Hàn, đếm "… / 60 ký tự", chữ mờ *写一两句话吧…* /
+*한두 문장을 써 보세요…*; gõ quá 60 ký tự thì tự cắt + báo "Đã cắt bớt".
+
+(Bản 1.35.0: người chỉ học 4 tiếng này **không có** khung Luyện viết; người có cả deck Nhật thì chỉ viết được tiếng Nhật.)
+
 ## C. Báo tiếng Đức / Pháp (tuỳ chọn — tốn ~6 lượt Gemini, chờ ~5–10 phút)
 
 Ở hồ sơ `QA`: vườn → *Báo* → tab **Nguồn báo** → dán khoá Gemini → *Báo muốn nhận*: chỉ tick **Tiếng Đức** (hoặc Đức + Pháp)
@@ -161,6 +178,9 @@ Làm ở hồ sơ thật (đặt thử không tốn xu tới khi bấm "Dùng b�
 | D6 | Đặt thử lại 1 món → **Dùng bản này · N xu** → đồng ý | Xu giảm **đúng N**; món bày đúng chỗ; thoát thử |
 
 ## E. Đồng bộ AnkiWeb (tuỳ chọn, nếu cậu có dùng)
+
+0. (Nếu còn máy khác chạy bản 1.31.3) Viết luyện viết tiếng Đức ở máy 1.35.1 → đồng bộ → máy cũ mở Lịch hoa: bài vẫn đủ chữ
+   (máy cũ ghi là tiếng Anh — bình thường); máy cũ viết nhật ký cùng tháng → đồng bộ về máy mới: bài tiếng Đức còn nguyên.
 
 1. Đang ở Trang trí thử thì bấm **Sync** của Anki; trong lúc thanh đồng bộ còn chạy, dời một món thử.
    Phải thấy: món dời vẫn còn sau khi đóng / mở vườn (bản 1.35.0 mất lần dời đó).

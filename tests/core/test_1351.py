@@ -505,6 +505,150 @@ ok(r.returncode == 0, "node test_1351.js (Đuổi quạ: động từ phản th�
                                                                                                " — " + r.stderr[-300:]))
 
 # =========================================================================================================================
+print("== 9b. Luyện viết tiếng Trung / Hàn / Đức / Pháp (1.35.0: chỉ Nhật / Anh — người học 4 tiếng này không có)")
+import journal_core as J  # noqa: E402
+ok(set(J.WRITE_LANGS) == {"ja", "en", "zh", "ko", "de", "fr"} and J.WRITE_MAX["de"] == 30 and J.WRITE_MAX["ko"] == 60,
+   "6 tiếng luyện viết; Đức / Pháp ≤ 30 từ (như tiếng Anh), Trung / Hàn ≤ 60 ký tự (như tiếng Nhật)")
+DE30 = " ".join(["Heute"] + ["habe ich im Garten mit meinem Hund gespielt"] * 5)          # 41 từ → cắt còn 30
+ok(J.count_units("Ich habe Tee getrunken.", "de") == 4 and J.count_units("我喝茶。", "zh") == 4
+   and J.count_units("저는 차를 마셔요.", "ko") == 8 and J.count_units(J.clip_units(DE30, "de", 30)[0], "de") == 30,
+   "đếm: Đức / Pháp theo từ, Trung / Hàn theo ký tự (không tính dấu cách); cắt đúng 30 từ")
+# lưu: "lang" chỉ ja / en (bản cũ hiểu) + "l" = ngôn ngữ thật
+for real, base in (("de", "en"), ("fr", "en"), ("zh", "ja"), ("ko", "ja"), ("en", "en"), ("ja", "ja")):
+    st_ = J.store_writing({"lang": real, "goc": "x", "st": ""})
+    back = J.clean_writing(st_)
+    if not (st_["lang"] == base and st_.get("l") == (real if real != base else None) and back["lang"] == real):
+        ok(False, "lưu / đọc %s: %s → %s" % (real, st_, back))
+        break
+else:
+    ok(True, "lưu: Đức / Pháp → lang \"en\" + l, Trung / Hàn → lang \"ja\" + l; đọc lại đúng ngôn ngữ thật; Nhật / Anh như cũ")
+ok(J.clean_writing({"lang": "en", "l": "zh", "goc": "abc", "st": ""})["lang"] == "en"
+   and J.clean_writing({"lang": "ja", "l": "xx", "goc": "あ", "st": ""})["lang"] == "ja",
+   "\"l\" không khớp kiểu lưu / lạ → bỏ, theo \"lang\" (không bao giờ đổi cách đếm của bài)")
+# từ gợi ý + gạch chân từ đã học trong câu đã sửa
+ok(J.hint_ok({"word": "der Hund"}, "de") and J.hint_ok({"word": "l'école"}, "fr") and J.hint_ok({"word": "苹果"}, "zh")
+   and J.hint_ok({"word": "학교"}, "ko") and not J.hint_ok({"word": "der Hund, -e"}, "de")
+   and not J.hint_ok({"word": "苹果 (píngguǒ)"}, "zh"), "từ gợi ý: chữ gọn của deck (đã bỏ ghi chú), không nhận chữ còn ghi chú")
+SP = [("Die Hunde spielen im Garten.", ["der Hund"], "de", ["Hunde"]),
+      ("Je me lève tôt et je lis le journal.", ["se lever", "lire", "le lit"], "fr", ["lève", "lis"]),
+      ("我昨天买了三个苹果。", ["苹果", "买"], "zh", ["买", "苹果"]),
+      ("어제 친구를 도와줘요. 학교에서 공부했어요.", ["돕다", "학교", "공부하다"], "ko", ["도와줘요.", "학교", "공부했어요."])]
+bad = []
+for txt_, ws, lang, want in SP:
+    got = [txt_[a:b] for a, b, _w in J.word_spans(txt_, ws, lang)]
+    if [g.rstrip(".") for g in got] != [x.rstrip(".") for x in want]:
+        bad.append("%s → %s (cần %s)" % (lang, got, want))
+ok(not bad, "gạch chân từ đã học trong câu đã sửa (dạng biến đổi Đức / Pháp, tiểu từ / đuôi Hàn; \"le lit\" ≠ \"je lis\")%s"
+   % ((" — " + "; ".join(bad)) if bad else ""))
+ch, dl = J.diff_marks("어제 영화을 봐요.", "어제 영화를 봤어요.", "ko")
+_k = "어제 영화를 봤어요."
+ok(ch and "".join(_k[a:b] for a, b in ch).replace(" ", "") == "영화를봤어요." and not any(a < 2 for a, b in ch),
+   "chỗ sửa tiếng Hàn tính theo từ (영화을 → 영화를, 봐요 → 봤어요; 어제 không tô)")
+# lời nhắc + máy kiểm đầu ra Gemini cho từng tiếng (ví dụ của chính lời nhắc qua máy kiểm không bị bỏ gì)
+GOC = {"de": "Gestern ich habe Tee getrunken und gehe in Park.", "fr": "Hier, j'ai allé à le marché et j'ai acheté des pommes.",
+       "zh": "我很喜欢吃苹果，昨天我买三个苹果。", "ko": "어제 친구하고 같이 영화을 봐요."}
+bad = []
+for lang, goc in GOC.items():
+    pr = J.fix_prompt(goc, lang, "A2", [])
+    sysm = J.fix_system(lang, "A2")
+    if J.LANG_VI[lang] not in pr or J.LANG_VI[lang] not in sysm or "予約" in pr or "Yesterday" in pr:
+        bad.append(lang + ": lời nhắc sai tiếng / còn ví dụ tiếng khác")
+    res, notes = J.check_fix(J.FIX_EXAMPLE[lang], goc, lang)
+    if not res.get("sua") or len(res.get("loi") or []) != len(J.FIX_EXAMPLE[lang]["loi"]) or any("bỏ" in n for n in notes):
+        bad.append("%s: máy kiểm bỏ phần đúng — %s" % (lang, notes))
+    wrong = {"de": "我喝茶。", "fr": "私はお茶を飲みます。", "zh": "Ich trinke Tee.", "ko": "我喝茶。"}[lang]
+    if J.lang_ok(wrong, lang):
+        bad.append(lang + ": câu sai tiếng vẫn qua lang_ok")
+ok(not bad, "lời nhắc đúng tiếng (Trung: giữ giản / phồn thể; Đức: viết hoa danh từ), ví dụ đúng tiếng; máy kiểm nhận câu "
+   "đúng tiếng, bỏ câu sai tiếng%s" % ((" — " + "; ".join(bad)) if bad else ""))
+# cả lượt sửa với Gemini giả (1 lượt, Flash-Lite trước)
+
+
+class _FakeAI:
+    exhausted: dict = {}
+
+    def __init__(self, out):
+        self.out, self.calls = out, []
+
+    def is_exhausted(self, m):
+        return False
+
+    def generate(self, model, system, prompt, schema=None, **kw):
+        self.calls.append((model, system, prompt))
+        return json.dumps(self.out, ensure_ascii=False)
+
+
+fa = _FakeAI(J.FIX_EXAMPLE["de"])
+r = J.run_fix(fa, ["gemini-flash-lite-latest", "gemini-3.6-flash"], GOC["de"], "de", "A2", ["der Tee"])
+ok(len(fa.calls) == 1 and "tiếng Đức" in fa.calls[0][1] and str((r.get("raw") or r).get("sua", "")).startswith("Gestern habe ich"),
+   "luyện viết tiếng Đức với Gemini giả: 1 lượt, lời nhắc tiếng Đức, câu đã sửa giữ nguyên")
+
+# mã thật 1.31.3 (bản đã phát hành, có thể còn ở máy khác) đọc / ghi lại tháng có bài tiếng Đức / Hàn
+import io as _io  # noqa: E402
+import tarfile as _tar  # noqa: E402
+OLD_DIR = tempfile.mkdtemp(prefix="kb1351_old_")
+try:
+    _tar.open(fileobj=_io.BytesIO(__import__("ma_cu").archive(ROOT, "e64eb22"))).extractall(OLD_DIR)
+    have_old = True
+except Exception as err:          # noqa: BLE001
+    print("  – bỏ qua mã 1.31.3:", err)
+    have_old = False
+if have_old:
+    de_goc = " ".join(["Heute"] + ["habe ich im Garten mit meinem Hund gespielt"] * 4)[:400]
+    de_goc = J.clip_units(de_goc, "de", 30)[0]
+    ko_goc = "오늘은 친구하고 같이 공원에서 산책을 했어요. 날씨가 아주 좋아서 기분도 좋았어요. 내일도 같이 가요"
+    ko_goc = J.clip_units(ko_goc, "ko", 60)[0]
+    raw = {}
+    J.JournalStore._apply(raw, __import__("datetime").date(2026, 11, 17), {"w": {"lang": "de", "goc": de_goc, "st": ""}})
+    J.JournalStore._apply(raw, __import__("datetime").date(2026, 11, 18), {"w": {"lang": "ko", "goc": ko_goc, "st": ""}, "m": "vui"})
+    code = r"""
+import sys, json, datetime
+sys.path.insert(0, sys.argv[1] + "/kotoba_batake")
+try:
+    import anki.collection
+except ImportError:
+    sys.path.insert(0, sys.argv[2])
+import journal_core as j
+raw = json.load(sys.stdin)
+cm = j.clean_month(raw, 2026, 11)
+j.JournalStore._apply(raw, datetime.date(2026, 11, 18), {"t": "ghi ở máy còn bản cũ"})      # bản cũ ghi lại tháng đó
+print(json.dumps({"seen": cm, "raw": raw}, ensure_ascii=False))
+"""
+    pr = subprocess.run([sys.executable, "-c", code, OLD_DIR, os.path.join(ROOT, "tests", "stubs")], input=json.dumps(raw),
+                        capture_output=True, text=True)
+    try:
+        res = json.loads(pr.stdout)
+    except ValueError:
+        res = {}
+        print(pr.stderr[-500:])
+    seen = res.get("seen", {})
+    ok(seen.get("2026-11-17", {}).get("w", {}).get("goc") == de_goc and seen.get("2026-11-18", {}).get("w", {}).get("goc") == ko_goc,
+       "mã 1.31.3 đọc bài tiếng Đức (%d từ) / tiếng Hàn (%d ký tự): KHÔNG cắt chữ nào (thấy là tiếng Anh / tiếng Nhật)"
+       % (J.count_units(de_goc, "de"), J.count_units(ko_goc, "ko")))
+    back = J.clean_month(res.get("raw", {}), 2026, 11)
+    ok(back.get("2026-11-17", {}).get("w", {}).get("lang") == "de" and back.get("2026-11-18", {}).get("w", {}).get("lang") == "ko"
+       and back["2026-11-18"].get("t") == "ghi ở máy còn bản cũ" and back["2026-11-18"]["w"]["goc"] == ko_goc,
+       "mã 1.31.3 ghi lại tháng đó (thêm nhật ký) → 1.35.1 đọc lại: bài + ngôn ngữ còn nguyên")
+    naive = {"2026-11-17": {"w": {"lang": "de", "goc": de_goc, "st": ""}}}
+    pr2 = subprocess.run([sys.executable, "-c", code, OLD_DIR, os.path.join(ROOT, "tests", "stubs")], input=json.dumps(naive),
+                         capture_output=True, text=True)
+    try:
+        cut = json.loads(pr2.stdout)["seen"]["2026-11-17"]["w"]["goc"]
+    except (ValueError, KeyError):
+        cut = None
+    ok(cut is not None and len(cut) < len(de_goc),
+       "(vì sao phải lưu kiểu này) nếu lưu thẳng lang \"de\", mã 1.31.3 coi là tiếng Nhật và cắt bài còn %s / %d ký tự"
+       % (len(cut) if cut else "?", len(de_goc)))
+
+# __init__.py: chọn tiếng luyện viết theo báo đã tick / deck có trong collection, trình độ theo báo cùng tiếng
+ok("v={x: x in langs for x in journal.WRITE_LANGS}" in init_src and "return _level_of(_ai_opts(cfg), lang)" in init_src
+   and "eligible=mod.kho_ok if mod else ai.kho_ok)" in init_src and "def _write_word(" in init_src,
+   "vườn: luyện viết hiện cho người có deck / báo Trung / Hàn / Đức / Pháp; trình độ = trình độ báo cùng tiếng; từ gợi ý "
+   "lấy chữ gọn của deck")
+cal = open(os.path.join(ADDON, "web", "calendar.js"), encoding="utf-8").read()
+ok('["de", "Tiếng Đức"]' in cal and "WORDY[w.lang]" in cal and "PLACE[w.lang]" in cal,
+   "giao diện: nút chọn 6 tiếng, đếm từ cho Anh / Đức / Pháp, chữ mờ gợi ý theo tiếng")
+
 print("== 10. Hợp đồng dữ liệu so với 1.35.0")
 KEY_RE = re.compile(r"\"(kotoba_batake_[a-z0-9_]+)\"")
 

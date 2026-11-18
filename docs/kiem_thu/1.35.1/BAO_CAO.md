@@ -54,6 +54,23 @@ Không nhận nhầm (đã thử): 해가 ≠ 하다, 와인 ≠ 오다, 가게 
 
 Bộ thẻ mẫu QA (mục 6) trên 1.35.0: **không thẻ Đức / Pháp / Trung / Hàn nào có câu Điền vào câu** (đỏ 9 / 21 ca); 1.35.1: 29 / 29.
 
+### 1.3c Luyện viết tiếng Trung / Hàn / Đức / Pháp (người dùng hỏi 18/11: "còn phần luyện viết thì sao nhỉ")
+
+1.35.0: luyện viết chỉ có **Tiếng Nhật / Tiếng Anh** — người chỉ học Trung / Hàn / Đức / Pháp **không có** khung Luyện viết
+(ẩn), người có cả deck Nhật thì chỉ viết được tiếng Nhật. 1.35.1 (Claude chọn, như đã làm cho tiếng Anh ở 1.20):
+
+- Chọn tiếng theo báo đã tick (không tick báo nào → theo deck có trong collection), nút chọn 6 tiếng; Đức / Pháp ≤ 30 từ, Trung /
+  Hàn ≤ 60 ký tự; chữ mờ gợi ý theo tiếng; từ gợi ý = chữ gọn của deck ("der Hund", không ", -(e)s, -e"); trình độ gửi Gemini
+  = trình độ báo cùng tiếng (HSK / TOPIK / A1–C1); vẫn **1 lượt Gemini / ngày** (Flash-Lite trước).
+- Lời nhắc + ví dụ JSON riêng từng tiếng (Trung: giữ giản / phồn thể; Hàn: Hangul, giữ đuôi câu; Đức: viết hoa danh từ, ä ö ü ß;
+  Pháp: đúng dấu); máy kiểm câu đã sửa đúng tiếng; chỗ sửa so theo từ (Đức / Pháp / Hàn) hoặc ký tự (Trung); gạch chân từ đã
+  học (dạng biến đổi Đức / Pháp, tiểu từ / đuôi Hàn).
+- **Lưu tương thích bản đã phát hành**: `lang` trong collection vẫn chỉ là `ja` / `en` (Trung / Hàn lưu kiểu `ja`, Đức / Pháp
+  kiểu `en` — giới hạn y hệt), ngôn ngữ thật ở trường mới `l` (`journal_core.store_writing` / `clean_writing`). Thử bằng **mã
+  thật 1.31.3**: đọc bài Đức 30 từ / Hàn 60 ký tự **không cắt chữ nào**; nó ghi lại tháng đó (thêm nhật ký) → 1.35.1 đọc lại
+  vẫn đúng tiếng. Nếu lưu thẳng `lang: "de"` thì 1.31.3 coi là tiếng Nhật và **cắt bài còn 60 ký tự** (test giữ ca này làm
+  minh chứng). Giới hạn: máy còn 1.31.3 tự bấm "Gemini sửa" cho bài tiếng Đức thì nó gửi như bài tiếng Anh.
+
 ### 1.4 Đoán ngôn ngữ deck (loại note chưa cấu hình)
 
 | Deck | 1.35.0 đoán | 1.35.1 |
@@ -139,7 +156,7 @@ bỏ mạo từ.
 |---|---|
 | `tests/run_all.sh` (thư mục mã nguồn, `ANKI_PY` = aqt 26.9.4) | 68 bộ — một lần đỏ: `test_1314` quét thấy chính dòng báo cáo này có chữ kana cạnh chữ Trung → sửa câu trong báo cáo, chạy lại 32 / 32 |
 | `tests/run_all.sh` trên **gói đã đóng** (giải nén, khớp thư mục mã nguồn từng file) | **68 bộ, TẤT CẢ OK** |
-| `core/test_1351.py` | 33 / 33 (mã 1.35.0: 10 / 31) |
+| `core/test_1351.py` | 47 / 47 (mã 1.35.0: 10 / 31 trước phần luyện viết) |
 | Gói cuối (sau phần QA, 18/11): `run_all.sh` | **68 bộ, TẤT CẢ OK** |
 | Gói cuối, Anki 26.9.4: `e2e_qa1351` 29 / 29, `e2e_1351` 35 / 35, `e2e_135` 60 / 60, `e2e_132` 39 / 39, `e2e_133` 77 / 77, `e2e_117` 55 / 55, `e2e_132b` 20 / 20; `run_capnhat.sh` 1.31.3 → 1.35.1 19 / 19 | đạt hết |
 | Anki 26.9.4: `e2e_1351` (thư mục mã nguồn + gói đã đóng; tên trò chơi đo với deck Đức / Pháp) | 35 / 35 · 35 / 35 |

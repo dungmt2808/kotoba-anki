@@ -108,6 +108,65 @@ result = mw.col.note_count() - before`);
   await page.shot(path.join(SHOTS, 'qa_cau_hinh_truong_de.png'));
   ok(!!fl, 'Cấu hình trường: loại note tiếng Đức hiện "Tiếng Đức" (' + fl + ')');
 
+  console.log('== 1b. Luyện viết tiếng Trung / Hàn / Đức / Pháp (1.35.0: chỉ Nhật / Anh)');
+  const W = (x) => x;
+  const card = () => js(`const c = document.querySelector(".kb-cal-write"); if (!c) return null; const t = c.querySelector(".kb-cal-ta");
+    return { chips: Array.from(c.querySelectorAll(".kb-cal-langs .kb-ai-chip")).map((b) => b.textContent), on: (c.querySelector(".kb-cal-langs .is-on") || {}).textContent || "",
+      lang: t ? t.getAttribute("lang") : "", ph: t ? t.placeholder : "", small: (c.querySelector(".kb-cal-h small") || {}).textContent || "",
+      cnt: (c.querySelector(".kb-cal-cnt") || {}).textContent || "", hints: Array.from(c.querySelectorAll(".kb-cal-word")).map((x) => x.textContent) };`);
+  const openCal = async () => { await js('if (GardenCal.isOpen && GardenCal.isOpen()) GardenCal.close(); GardenCal.open({}); return 1;'); await sleep(1500); };
+  const chip = async (name) => { await js(`const b = Array.from(document.querySelectorAll(".kb-cal-langs .kb-ai-chip")).find((x) => x.textContent === ${JSON.stringify(name)}); if (b) b.click(); return 1;`); await sleep(1300); };
+  const typeIn = async (txt) => { await js('const t = document.querySelector(".kb-cal-ta"); t.value = ""; t.dispatchEvent(new Event("input")); t.focus(); return 1;'); await page.type(txt); await sleep(1500); };
+  const today = await py(KB + 'result = kb.cal_today().isoformat()');
+  const rawW = () => py(KB + `import datetime\nd = kb.cal_today()\nraw = mw.col.get_config("kotoba_batake_journal_%04d_%02d" % (d.year, d.month), {}) or {}\nresult = (raw.get(d.isoformat()) or {}).get("w")`);
+  // báo đã tick: Trung + Hàn
+  await py(KB + 'kb.save_config(gemini_langs=["zh", "ko"], gemini_langs_chosen=True, gemini_key="AIzaDUMMY-proxy-injects-the-real-key-00"); result = 1');
+  await deck('Tiếng Trung');
+  await openCal();
+  let c = await card();
+  ok(c && c.chips.join(',') === 'Tiếng Trung,Tiếng Hàn', 'báo Trung + Hàn: Luyện viết có nút ' + (c && c.chips.join(' · ')));
+  await chip('Tiếng Trung'); c = await card();
+  ok(c.lang === 'zh' && c.ph === '写一两句话吧…' && c.cnt === '0 / 60 ký tự' && c.hints.length === 2 && c.hints.every((h) => /^[㐀-鿿]+$/.test(h)),
+    'Tiếng Trung: chữ mờ 写一两句话吧…, đếm 60 ký tự, 2 từ gợi ý của deck: ' + c.hints.join(', '));
+  await chip('Tiếng Hàn'); c = await card();
+  ok(c.lang === 'ko' && c.ph === '한두 문장을 써 보세요…' && c.cnt === '0 / 60 ký tự' && c.hints.every((h) => /^[가-힣 ]+$/.test(h)),
+    'Tiếng Hàn: chữ mờ 한두 문장을 써 보세요…, đếm 60 ký tự, gợi ý chữ Hangul: ' + c.hints.join(', '));
+  await typeIn('오늘은 친구하고 같이 공원에서 산책을 했어요. 날씨가 아주 좋아서 기분도 좋았어요. 내일도 같이 가요. 그리고 저녁에는 학교 앞 식당에서 맛있는 밥을 먹을 거예요');
+  let rw = await rawW();
+  ok(rw && rw.lang === 'ja' && rw.l === 'ko' && Array.from(rw.goc.replace(/\s/g, '')).length === 60,
+    'gõ tiếng Hàn quá 60 ký tự → cắt còn 60; lưu trong collection: lang "ja" + l "ko" (bản 1.31.3 đọc được, không cắt thêm)');
+  await typeIn(''); await sleep(500);
+  // báo đã tick: Đức + Pháp
+  await py(KB + 'kb.save_config(gemini_langs=["de", "fr"], gemini_langs_chosen=True); result = 1');
+  await deck('Tiếng Đức');
+  await openCal();
+  await chip('Tiếng Pháp'); c = await card();
+  ok(c.lang === 'fr' && c.ph === 'Écris une ou deux phrases…' && c.cnt === '0 / 30 từ' && c.small === 'tối đa 30 từ',
+    'Tiếng Pháp: chữ mờ Écris une ou deux phrases…, tối đa 30 từ');
+  await chip('Tiếng Đức'); c = await card();
+  ok(c.lang === 'de' && c.ph === 'Schreib ein, zwei Sätze…' && c.hints.length === 2 && c.hints.every((h) => !/,|\(|¨/.test(h)),
+    'Tiếng Đức: chữ mờ Schreib ein, zwei Sätze…, từ gợi ý gọn (không ", -e"): ' + c.hints.join(', '));
+  await typeIn('Heute habe ich im Garten mit meinem Hund gespielt und danach habe ich mit meiner Mutter Kaffee getrunken und wir haben sehr lange über das alte Haus gesprochen und gelacht');
+  rw = await rawW();
+  ok(rw && rw.lang === 'en' && rw.l === 'de' && rw.goc.split(/\s+/).length === 30, 'gõ 32 từ tiếng Đức → lưu 30 từ; lang "en" + l "de"');
+  await typeIn('Gestern ich habe Tee getrunken und gehe in Park.');
+  await py(KB + `def _fake(client, names, goc, lang, level, hints):
+    kb._fake_lang = (lang, level)
+    return {"raw": kb.journal.FIX_EXAMPLE["de"], "model": "gemini-flash-lite-latest"}
+kb.journal.run_fix = _fake
+result = 1`);
+  await js('const b = document.querySelector(".kb-cal-send"); if (b) b.click(); return 1;');
+  const fixed = await (async () => { for (let i = 0; i < 40; i++) { const x = await js('return !!document.querySelector(".kb-cal-fix");'); if (x) return true; await sleep(300); } return false; })();
+  const fx = await js('const f = document.querySelector(".kb-cal-fix"); return f ? { fixed: Array.from((f.querySelector(".kb-cal-fixed") || { childNodes: [] }).childNodes).filter((n) => n.nodeName !== "DEL").map((n) => n.textContent).join(""), lang: (f.querySelector(".kb-cal-fixed") || { getAttribute: () => "" }).getAttribute("lang"), marks: Array.from(f.querySelectorAll(".kb-cal-fixed mark")).map((x) => x.textContent), text: f.textContent } : null;');
+  const sent = await py(KB + 'result = list(getattr(kb, "_fake_lang", ("", "")))');
+  await page.shot(path.join(SHOTS, 'qa_luyen_viet_de.png'));
+  ok(fixed && fx && fx.lang === 'de' && /Gestern habe ich Tee getrunken/.test(fx.fixed) && fx.marks.length >= 1 && /Gestern ich habe → Gestern habe ich/.test(fx.text) && /Câu bắt đầu bằng Gestern/.test(fx.text),
+    'gửi Gemini (giả): câu đã sửa tô chỗ sửa (' + (fx && fx.marks.join(' · ')) + '), lỗi "Gestern ich habe → Gestern habe ich" + giải thích tiếng Việt');
+  ok(sent[0] === 'de' && /^[ABC][12]$/.test(sent[1]), 'gửi Gemini đúng tiếng + trình độ báo tiếng Đức: ' + sent.join(' · '));
+  rw = await rawW();
+  ok(rw && rw.st === 'done' && rw.lang === 'en' && rw.l === 'de', 'kết quả lưu: st done, lang "en" + l "de"');
+  await js('GardenCal.close(); return 1;'); await sleep(400);
+
   console.log('== 2. Không lỗi');
   const jsErr = page.errors.filter((e) => !/ResizeObserver/.test(e));
   ok(!jsErr.length, 'không lỗi JS' + (jsErr.length ? ' — ' + jsErr.slice(0, 2).join(' | ') : ''));

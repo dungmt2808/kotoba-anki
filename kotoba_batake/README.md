@@ -130,6 +130,9 @@ Sau khi trả lời có hiện cách đọc, Hán Việt, nghĩa (và cách dùn
   sánh (älter, besser); tiếng Pháp không nối nhầm từ cùng mặt chữ (le lit ≠ "il lit", la porte ≠ "elle porte", l'été ≠ "a été"),
   danh từ số nhiều (papiers, livres), lève / répète, devenu / obtenu, aujourd’hui (nháy cong); tiếng Trung không nối từ một chữ
   vào giữa từ ghép (家 trong 大家); tiếng Hàn nhận 쉬어요, 도와줘요.
+- **Luyện viết tiếng Trung / Hàn / Đức / Pháp** (trước chỉ Nhật / Anh): chọn theo báo đã tick, Gemini sửa 1 lần / ngày như cũ.
+- **Điền vào câu** có câu cho deck tiếng Trung / Hàn (trước không có câu nào); tự nhận trường câu ví dụ Beispiel / Exemple /
+  例句 / 예문.
 - **Đuổi quạ**: gõ "Hund" đúng cả khi deck ghi "der Hund, -(e)s, -e"; động từ phản thân không cần gõ sich / se.
 - **Đoán ngôn ngữ deck**: deck tiếng Ý / Tây Ban Nha không còn bị nhận là tiếng Pháp, tiếng Phần Lan không còn là tiếng Đức.
 - **Trang trí thử**: sửa bản thử lúc Anki đang đồng bộ vẫn được lưu; file bản thử hỏng được giữ lại (`ban_thu.json.hong`) thay
