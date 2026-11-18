@@ -362,6 +362,200 @@ STEPS.sang = async () => {
   await hideToast(); await shot('raw_sang');
 };
 
+// ======================================================================= bản 3 (19/11): tủ lịch, nhà khoác áo Noel 4 nấc, tường / sàn Noel,
+// cây thông được tặng trơn → đầy, hộp quà bí mật, hộp nhạc, bánh + sữa
+// 24 ô bản 3: nhà 4 nấc + 1 tự vẽ · cây 9 · trong nhà 7 · hộp quà bí mật 3 (Chủ nhật)
+const D3 = { 1: ['nha', 'Vòng hoa cửa · nấc 1'], 2: ['cay', 'Quả châu đỏ'], 3: ['trong', 'Hộp nhạc'], 4: ['cay', 'Chuông vàng'], 5: ['trong', 'Tất Noel'],
+  6: ['qua', 'Hộp quà bí mật'], 7: ['nha', 'Mái tuyết · nấc 2'], 8: ['trong', 'Tường bông tuyết'], 9: ['cay', 'Nơ đỏ'], 10: ['cay', 'Dây đèn'],
+  11: ['trong', 'Bánh kem dâu'], 12: ['cay', 'Quả châu xanh'], 13: ['qua', 'Hộp quà bí mật'], 14: ['nha', 'Đèn mái · nấc 3'], 15: ['trong', 'Sàn caro đỏ'],
+  16: ['cay', 'Dây kim tuyến'], 17: ['nha', 'Tự vẽ hình dán cửa sổ'], 18: ['trong', 'Đèn ngủ ngôi sao'], 19: ['cay', 'Quả châu tím'], 20: ['qua', 'Hộp quà bí mật'],
+  21: ['nha', 'Sao mái + người tuyết · nấc 4'], 22: ['cay', 'Quả châu vàng'], 23: ['trong', 'Bánh quy + sữa'], 24: ['cay', 'Ngôi sao'] };
+const CABINET_JS = `const ICON3 = { 1: MK.WREATH, 2: MK.ORN.ball, 3: MK.MUSIC_BOX, 4: MK.ORN.bell, 5: MK.STOCKING, 6: MK.ORN.gift, 7: MK.pic(["..www..", ".wwwww.", "wwwwwww", "RRRRRRR"]),
+    8: MK.STICKER, 9: MK.ORN.bow, 10: MK.pic(["k.k.k.k.k", "r.y.l.p.f"], true), 11: MK.CAKE };`;
+// trạng thái cây được tặng theo ngày (ô cây: quả châu theo thứ tự XT_BALLS; 10 dây đèn, 16 dây kim tuyến, 24 ngôi sao)
+function xtAt(day) {
+  const order = { 2: [0, 4], 4: [1], 9: [2, 7], 12: [3, 5], 19: [6, 8], 22: [9] }, st = { balls: [] };
+  for (let d = 1; d <= day; d++) { (order[d] || []).forEach((k) => st.balls.push(k)); if (d === 10) { st.lights = true; } if (d === 16) { st.garland = true; } if (d === 24) { st.star = true; } }
+  return st;
+}
+const houseAt = (day) => day >= 21 ? 4 : day >= 14 ? 3 : day >= 7 ? 2 : day >= 1 ? 1 : 0;
+const giftsAt = (day) => [6, 13, 20].filter((d) => d <= day).length;
+const GIFT_JS = `const giftSpr = [MK.pic(["..w.w..", "...w...", "rrrwrrr", "rrrwrrr", "wwwwwww", "rrrwrrr", "rrrwrrr"]), MK.pic([".y...y.", "..yyy..", "ddddydd", "ddddydd", "yyyyyyy", "ddddydd"]), MK.pic(["...r...", "..rrr..", "iiiriii", "iiiriii", "rrrrrrr", "iiiriii", "iiiriii"])];
+  const drawGifts = (v, n, tx) => { [[-6, 67], [27, 68], [33, 66]].slice(0, n).forEach(([x, y], k) => MK.spr(v, giftSpr[k], tx + x, y)); };`;
+async function yard3(day, opts) {
+  opts = opts || {};
+  await sky(opts.hour || 10, opts.weather || 'snow'); await sleep(900); await clearMk(); await loadArt();
+  return js(`MKU.ensureCss(); const v = MK.cover("mk-ov"); ${GIFT_JS}
+    const night = ${!!opts.night}, st = ${JSON.stringify(xtAt(day))}; st.night = night;
+    MK.drawHouseNoel(v, ${houseAt(day)}, night); MK.drawXTree(v, 150, 30, st); drawGifts(v, ${giftsAt(day)}, 150);
+    ${opts.extra || ''}
+    window.__v = v; window.SX = (x) => v.r.left + (v.ox + x) * v.S; window.SY = (yy) => v.r.top + (v.oy + yy) * v.S; return 1;`);
+}
+
+// 01 — Tủ lịch gỗ 24 ngăn treo tường phòng khách (giả hôm nay 10/12); ngăn mai hé bóng mờ; mở ngăn có hiệu ứng
+STEPS.v3lich = async () => {
+  await collapseToday(); await toScene('Trong nhà'); await sky(15, 'snow'); await sleep(1200); await clearMk(); await loadArt();
+  await js(`MKU.ensureCss(); ${CABINET_JS}
+    const v = MK.coverHouse("mk-ov"); const open = {}; [1, 2, 3, 5, 6, 7, 8, 9].forEach((d) => { open[d] = ICON3[d]; });
+    MK.drawCabinetMini(v, 24, 12, { open, today: 10 }); MK.spr(v, MK.MUSIC_BOX, 1, 27);
+    const X = (x) => v.r.left + (v.ox + x) * v.S, Y = (y) => v.r.top + (v.oy + y) * v.S;
+    MKU.tagAt(X(-34), Y(2) - 4, "tủ lịch treo tường phòng khách — bấm để mở");
+    const p = MKU.pop("mk-cab", 110, 420, 0);
+    MKU.head(p, "Lịch chờ Giáng sinh", "tủ lịch 24 ngăn · アドベントカレンダー", "Thứ Năm 10/12");
+    const body = p.appendChild(MKU.el("div", "mk-body")); body.style.gap = "18px"; body.style.alignItems = "flex-start";
+    const c = body.appendChild(document.createElement("canvas")); c.width = 560; c.height = 380;
+    MK.drawCabinet(c, 5, { open, today: 10, tomorrow: MK.ORN.cane.length ? MK.pic(["..www..", ".wwwww.", "wwwwwww", "wwwwwww"]) : null, miss: [4] });
+    const side = body.appendChild(MKU.el("div", "")); side.style.cssText = "display:flex;flex-direction:column;gap:8px;width:330px";
+    side.appendChild(MKU.el("div", "", "<b>Mở ngăn hôm nay</b>"));
+    const strip = side.appendChild(MKU.el("div", "mk-row")); strip.style.gap = "6px"; strip.style.flexWrap = "nowrap";
+    const S = 5, DW = 16, DH = 13;
+    [0, 1, 2].forEach((f) => {
+      const cv = strip.appendChild(document.createElement("canvas")); cv.width = 104; cv.height = 130; cv.style.border = "2px solid var(--kb-ink)"; cv.style.background = "#8a4a26";
+      const ctx = cv.getContext("2d"), b = (x, y, w, h, col) => { ctx.fillStyle = col; ctx.fillRect(x * S, y * S, w * S, h * S); };
+      const x0 = 2, y0 = 10;
+      if (f === 0) { ctx.globalAlpha = .55; b(x0 - 1.5, y0 - 1.5, DW + 3, DH + 3, "#fff3a0"); ctx.globalAlpha = 1; b(x0, y0, DW, DH, "#3a2a22"); b(x0 + 1, y0 + 1, DW - 2, DH - 2, "#e9b949"); b(x0 + 4, y0 + 2, 8, 4, "#f4e7c8"); b(x0 + 7, y0 + DH - 3, 2, 2, "#f2d36b"); [[1, 9], [18, 12], [4, 24], [15, 7]].forEach(([sx, sy]) => b(sx, sy, 1, 1, "#ffffff")); }
+      if (f === 1) { b(x0, y0, DW, DH, "#1a100a"); b(x0 - 1, y0 + 6, DW + 2, DH - 4, "#3a2a22"); b(x0, y0 + 7, DW, DH - 6, "#e9b949"); [[2, 6], [16, 5], [9, 3], [5, 2], [13, 1]].forEach(([sx, sy], k) => b(sx, sy, 1, 1, k % 2 ? "#ffd23f" : "#ffffff")); }
+      if (f === 2) { b(x0, y0 + 4, DW, DH - 4, "#3a2a22"); b(x0 + 1, y0 + 5, DW - 2, DH - 6, "#2a1a12"); const sp = ICON3[10]; MK.L.sprite(ctx, sp, 4, 3, S); ctx.fillStyle = "#fff"; ctx.font = "bold 13px sans-serif"; ctx.fillText("Dây đèn!", 18, 122); [[1, 1], [18, 2], [3, 8], [17, 9]].forEach(([sx, sy]) => b(sx, sy, 1, 1, "#ffd23f")); }
+    });
+    side.appendChild(MKU.el("div", "mk-note", "Ngăn sáng → bấm: ngăn trượt ra, lấp lánh, món bay ra kèm tiếng chuông; món tự bày vào chỗ của nó (cây, nhà hoặc trong nhà)."));
+    side.appendChild(MKU.el("div", "", "<b>Ngăn ngày mai</b> hé ra một chút: thấy <b>bóng</b> món bên trong — “trắng trắng, tròn tròn… là gì nhỉ?”"));
+    side.appendChild(MKU.el("div", "", "<b>Ngăn lỡ ngày</b> (4): ôn thêm 15 lượt là mở bù được."));
+    side.appendChild(MKU.el("div", "mk-note", "Mỗi ngăn một món cho nhà, cây thông, trong nhà, hoặc một hộp quà bí mật (Chủ nhật). Đồ chỉ để trang trí và giữ làm kỷ niệm."));
+    const r = c.getBoundingClientRect();
+    return 1;`);
+  await hideToast(); await shot('raw_v3_lich');
+  await toScene('Sân vườn');
+};
+
+// 02 — Nhà khoác áo Noel: 1/12 → 7/12 → 14/12 → 21/12 (đêm)
+STEPS.v3nha = async () => {
+  await collapseToday();
+  for (const [k, day] of [[1, 1], [2, 7], [3, 14]]) {
+    await sky(10, 'snow'); await sleep(700); await clearMk(); await loadArt();
+    await js(`const v = MK.cover("mk-ov"); MK.drawHouseNoel(v, ${houseAt(day)}, false); return 1;`);
+    await hideToast(); await shot('raw_v3_nha' + k);
+  }
+  await sky(21, 'clear'); await sleep(900); await clearMk(); await loadArt();
+  await js(`const v = MK.cover("mk-ov"); MK.drawHouseNoel(v, 4, true); MK.tint(v, 0.3); MK.drawHouseNoel(v, 4, true, true); return 1;`);
+  await hideToast(); await shot('raw_v3_nha4');
+};
+
+// 03 — Tường / sàn Noel (mẫu thật của add-on: tạo mẫu tự vẽ 16 × 16 rồi dùng cho Phòng khách)
+const TILES = (() => {
+  const g = (f) => { const out = []; for (let y = 0; y < 16; y++) { let r = ''; for (let x = 0; x < 16; x++) { r += f(x, y); } out.push(r); } return out; };
+  const flake = (x, y, cx, cy) => (x === cx && Math.abs(y - cy) <= 2) || (y === cy && Math.abs(x - cx) <= 2) || (Math.abs(x - cx) === 1 && Math.abs(y - cy) === 1);
+  return {
+    w_tuyet: ['Bông tuyết trên nền thông', 'wall', g((x, y) => flake(x, y, 4, 4) || flake(x, y, 12, 12) ? 'w' : ((x === 12 && y === 3) || (x === 3 && y === 11) ? 'i' : ((x + y) % 7 === 0 && x % 3 === 0 ? 'j' : 'G')))],
+    w_keo: ['Sọc kẹo gậy', 'wall', g((x, y) => { const v = (x + y) % 8; return v < 2 ? 'r' : v === 2 ? 'P' : 'w'; })],
+    w_do: ['Đỏ mận cây thông nhỏ', 'wall', g((x, y) => { const t = (cx, cy) => (y >= cy && y <= cy + 3 && Math.abs(x - cx) <= (y - cy) * 0.6 + 0.2); return t(4, 2) || t(12, 10) ? 'i' : ((x === 4 && y === 6) || (x === 12 && y === 14) ? 'i' : 'R'); })],
+    f_caro: ['Thảm caro đỏ', 'floor', g((x, y) => { const a = x === 3 || x === 4, b = y === 3 || y === 4; if (a && b) { return 'j'; } if (a || b) { return 'G'; } if (x === 11 || y === 11) { return 'B'; } return 'R'; })],
+    f_len: ['Thảm len tuyết', 'floor', g((x, y) => { if (y === 1 || y === 14) { return (x % 4 < 2) ? 'r' : 'w'; } if (y === 2 || y === 13) { return 'R'; } const d = Math.abs(x - 7.5) + Math.abs(y - 7.5); return d < 2 ? 'r' : d < 3 ? 'w' : d < 4 ? 'r' : 's'; })]
+  };
+})();
+STEPS.v3tuong = async () => {
+  await collapseToday();
+  const enc = (rows) => { const flat = rows.join(''); let out = '', i = 0; while (i < flat.length) { let j = i; while (j < flat.length && flat[j] === flat[i]) { j++; } out += (j - i > 1 ? String(j - i) : '') + flat[i]; i = j; } return out; };
+  const ids = JSON.parse(await py(KB + `import json
+d = st.load(); d["coins"] = 200000; st.save(d)
+out = {}
+for key, (name, kind, code) in json.loads(${JSON.stringify(JSON.stringify(Object.fromEntries(Object.entries(TILES).map(([k, [n, kd, rows]]) => [k, [n, kd, enc(rows)]]))))}).items():
+    r = st.tile_save({"name": name, "kind": kind, "px": code})
+    out[key] = r["tile_id"]
+st.decor_use("room", "wall", out["w_tuyet"]); st.decor_use("room", "floor", out["f_caro"])
+d = st.load(); d["coins"] = 3420; st.save(d)
+kb._dialog.refresh()
+result = json.dumps(out)`));
+  await sleep(1500);
+  await toScene('Trong nhà'); await sky(15, 'snow'); await sleep(1500); await clearMk(); await loadArt();
+  await js(`MKU.ensureCss(); const v = MK.coverHouse("mk-ov"); MK.spr(v, MK.MUSIC_BOX, 1, 27); MK.drawRoomDeco(v, { stocking: true });
+    const T = ${JSON.stringify(TILES)}, P = MK.P;
+    const p = MKU.pop("mk-tile", 260, 430, 0);
+    MKU.head(p, "Tường & sàn Noel", "quà của 3 ngăn “Trong nhà”", "");
+    const body = p.appendChild(MKU.el("div", "mk-body")); body.style.gap = "16px";
+    Object.keys(T).forEach((k, i) => {
+      const [name, kind, rows] = T[k], box = body.appendChild(MKU.el("div", "")); box.style.cssText = "display:flex;flex-direction:column;align-items:center;gap:4px;width:130px;text-align:center";
+      const cv = box.appendChild(document.createElement("canvas")); cv.width = 96; cv.height = 96; cv.style.border = "2px solid var(--kb-ink)"; cv.style.imageRendering = "pixelated";
+      const ctx = cv.getContext("2d"); for (let ty = 0; ty < 2; ty++) { for (let tx = 0; tx < 2; tx++) { rows.forEach((r, y) => { for (let x = 0; x < 16; x++) { ctx.fillStyle = P[r[x]]; ctx.fillRect((tx * 16 + x) * 3, (ty * 16 + y) * 3, 3, 3); } }); } }
+      box.appendChild(MKU.el("div", "", "<b style='font-size:13px'>" + name + "</b>"));
+      box.appendChild(MKU.el("div", "mk-note", kind === "wall" ? "tường" : "sàn"));
+      if (i === 0 || i === 3) { cv.style.boxShadow = "0 0 0 3px #ffd23f"; }
+    });
+    p.appendChild(MKU.el("div", "mk-foot", "Dùng như mẫu ở Nhà → Tường & sàn: chọn cho từng gian (bếp, phòng khách, phòng ngủ), giữ mãi, mùa nào cũng đổi lại được."));
+    const X = (x) => v.r.left + (v.ox + x) * v.S, Y = (y) => v.r.top + (v.oy + y) * v.S;
+    MKU.tagAt(X(100), Y(14) - 4, "tường “Bông tuyết trên nền thông”");
+    MKU.tagAt(X(100), Y(70), "sàn “Thảm caro đỏ”");
+    return 1;`);
+  await hideToast(); await shot('raw_v3_tuong');
+  await py(KB + `st.decor_use("room", "wall", "none"); st.decor_use("room", "floor", "none")
+for tid in ${JSON.stringify(Object.values(ids))}:
+    try:
+        st.tile_delete(tid)
+    except Exception:
+        pass
+kb._dialog.refresh(); result = 1`);
+  await sleep(800); await toScene('Sân vườn');
+};
+
+// 04 — Cây thông được tặng: trơn (1/12) → đầy dần, hộp quà bí mật mỗi Chủ nhật; lắc nghe đoán
+STEPS.v3cay = async () => {
+  await collapseToday();
+  for (const day of [1, 10, 17]) {
+    await yard3(day); await hideToast(); await shot('raw_v3_cay' + day);
+  }
+  await yard3(24, { hour: 22, weather: 'clear', night: true, extra: `MK.tint(v, 0.3); MK.drawXTree(v, 150, 30, Object.assign({}, st, { night: true }));` });
+  await hideToast(); await shot('raw_v3_cay24');
+  await yard3(17);
+  await js(`const b = MKU.el("div", "mk-bubble mk-x", "<b>Lắc lắc… lục cục!</b><br>Nghe như có gì tròn tròn bên trong."); document.body.appendChild(b);
+    b.style.left = (SX(84)) + "px"; b.style.top = (SY(18)) + "px";
+    const t = MKU.el("div", "mk-tip mk-x", "<b style='font-size:15px'>Hộp quà bí mật · 6/12</b><br><span class='mk-note'>Mở sáng 25/12</span><br><button class='kb-btn kb-btn-small' style='margin-top:4px'>Lắc thử</button>"); document.body.appendChild(t);
+    t.style.left = (SX(84)) + "px"; t.style.top = (SY(18) + b.offsetHeight + 10) + "px";
+    const ptr = MKU.el("div", "mk-ghost-ptr mk-x"); document.body.appendChild(ptr); ptr.style.left = (SX(146)) + "px"; ptr.style.top = (SY(70)) + "px";
+    return 1;`);
+  await hideToast(); await shot('raw_v3_lac');
+};
+
+// 05 — Hộp nhạc học dần + bánh quy & sữa cho ông già Noel (tối 24 → sáng 25)
+STEPS.v3nhac = async () => {
+  await collapseToday(); await toScene('Trong nhà'); await sky(15, 'snow'); await sleep(1200); await clearMk(); await loadArt();
+  await js(`MKU.ensureCss(); const v = MK.coverHouse("mk-ov"); MK.spr(v, MK.MUSIC_BOX, 1, 27); MK.drawRoomDeco(v, { stocking: true });
+    const X = (x) => v.r.left + (v.ox + x) * v.S, Y = (y) => v.r.top + (v.oy + y) * v.S;
+    for (let k = 0; k < 3; k++) { const n = MKU.el("div", "mk-x"); n.textContent = "♪"; n.style.cssText = "position:fixed;z-index:6;font:bold 20px sans-serif;color:#7a4a00;left:" + (X(8 + k * 5)) + "px;top:" + (Y(22 - k * 4)) + "px"; document.body.appendChild(n); }
+    const p = MKU.pop("mk-music", 260, 430, 620);
+    MKU.head(p, "Hộp nhạc", "ô cửa 3/12 · mỗi ngày học thêm một câu", "");
+    const body = p.appendChild(MKU.el("div", "mk-body")); body.style.flexDirection = "column"; body.style.gap = "10px";
+    const r1 = body.appendChild(MKU.el("div", "mk-row")); r1.appendChild(MK.icon(MK.MUSIC_BOX, 6));
+    r1.appendChild(MKU.el("div", "", "<b>きよしこの夜 · Silent Night</b><br>Đã học <b>10 / 24</b> câu — hôm nay thêm một câu mới."));
+    const roll = body.appendChild(MKU.el("div", "mk-row")); roll.style.gap = "3px";
+    for (let i = 1; i <= 24; i++) { const c = roll.appendChild(MKU.el("span", "")); c.style.cssText = "display:inline-block;width:16px;height:26px;border:2px solid var(--kb-ink);background:" + (i <= 9 ? "#e9b949" : i === 10 ? "#ffd23f" : "#f5efe4"); if (i === 10) { c.style.boxShadow = "0 0 0 2px #fff3a0"; } }
+    const r3 = body.appendChild(MKU.el("div", "mk-row")); r3.appendChild(MKU.el("button", "kb-btn", "♪ Nghe đoạn đã học")); r3.appendChild(MKU.el("button", "kb-btn kb-btn-small", "Nghe câu mới"));
+    body.appendChild(MKU.el("div", "mk-note", "Nhạc 8-bit soạn bằng bộ phát nhạc của vườn (bài hát đã hết bản quyền). Đêm 24 hộp nhạc phát trọn bài khi ông già Noel ghé; sau đó bày trong nhà, bấm là phát."));
+    MKU.tagAt(X(-30), Y(14) - 6, "hộp nhạc trên kệ — bấm để nghe", "is-blue");
+    return 1;`);
+  await hideToast(); await shot('raw_v3_nhac');
+  for (const [k, hour] of [['toi', 21], ['sang', 8]]) {
+    await sky(hour, 'clear'); await sleep(1200); await clearMk(); await loadArt();
+    await js(`MKU.ensureCss(); const v = MK.coverHouse("mk-ov"); MK.spr(v, MK.MUSIC_BOX, 1, 27); MK.drawRoomDeco(v, { stocking: true });
+      ${k === 'toi' ? 'MK.spr(v, MK.COOKIES, 62, 50); MK.spr(v, MK.MILK, 92, 50); MK.spr(v, MK.NOTE, 80, 50);' : 'MK.spr(v, MK.CRUMBS, 62, 50); MK.spr(v, MK.GLASS, 92, 50); MK.spr(v, MK.NOTE, 80, 50);'}
+      const X = (x) => v.r.left + (v.ox + x) * v.S, Y = (y) => v.r.top + (v.oy + y) * v.S;
+      const b = MKU.el("div", "mk-bubble mk-x", ${k === 'toi' ? '"<b>Tối 24/12</b><br>Để bánh quy + sữa cho ông già Noel"' : '"<b>Sáng 25/12</b><br>Chỉ còn vụn bánh! Tờ giấy: «Bánh ngon quá, cảm ơn cháu! ホッホッホー»"'}); document.body.appendChild(b);
+      b.style.maxWidth = "250px"; b.style.left = (X(60)) + "px"; b.style.top = (Y(48) - b.offsetHeight - 14) + "px"; return 1;`);
+    await hideToast(); await shot('raw_v3_banh_' + k);
+  }
+  await toScene('Sân vườn');
+};
+
+// 06 — Đêm 24 toàn cảnh: nhà nấc 4 + cây đủ món + 3 hộp quà + ông già Noel
+STEPS.v3dem = async () => {
+  await collapseToday();
+  await yard3(24, { hour: 22, weather: 'snow', night: true, extra: `
+    MK.spr(v, MK.L.SPR.sleigh, 214, 52); MK.spr(v, MK.SANTA, 196, 57);
+    MK.spr(v, MK.STACK, 118, 64); MK.spr(v, MK.SANTA_HAT, 115, 59); MK.spr(v, MK.CAT, 131, 67);
+    MK.tint(v, 0.3); MK.drawHouseNoel(v, 4, true, true); MK.drawXTree(v, 150, 30, Object.assign({}, st, { night: true }));` });
+  await js(`const b = MKU.el("div", "mk-bubble mk-x", "<b>ホッホッホー！メリークリスマス！</b><br>Ông nhận thiệp của cháu rồi nhé!"); document.body.appendChild(b);
+    b.style.left = (SX(196) - 12) + "px"; b.style.top = (SY(57) - b.offsetHeight - 14) + "px"; return 1;`);
+  await hideToast(); await shot('raw_v3_dem');
+};
+
 (async () => {
   await connect();
   await py(KB + `kb.finds.is_market = lambda day: False

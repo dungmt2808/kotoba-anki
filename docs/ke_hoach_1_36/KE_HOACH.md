@@ -1,4 +1,35 @@
-# Kế hoạch 1.36 — Giáng sinh: Lịch chờ Giáng sinh, trang trí cây thông + ngôi nhà, thiệp điều ước (18/11; **ảnh phác bản 2, chưa làm**)
+# Kế hoạch 1.36 — Giáng sinh: tủ lịch 24 ngăn, nhà khoác áo Noel, cây thông được tặng đầy dần, thiệp điều ước (18–19/11; **ảnh phác bản 3, chưa làm**)
+
+## Bản 3 (19/11) — đề xuất hiện tại, **chờ người dùng duyệt**
+
+Người dùng sau bản 2: "trang trí bên ngoài nhà thì tớ thấy chưa đẹp lắm … sàn hoặc tường có vibe giáng sinh … mở mùa giáng sinh
+cũng tặng 1 cây giáng sinh rồi á … code thì chưa đến 1 tuần đâu. làm sao trước 29 30 release bản sự kiện là được. còn ý tưởng gì
+hay nữa không nhỉ … ý tưởng hiện tại ổn nhưng tớ thấy triển khai chưa được đẹp lắm, mong chờ" → Claude đề xuất (mục 0b) →
+"chưa hình dung được á" → ảnh phác bản 3 ở **`ban3/`** (bước `v3lich v3nha v3tuong v3cay v3nhac v3dem` của `tests/anki/mock_136.js`,
+ghép bằng `mock_136_ghep3.py`; tường / sàn là **mẫu vẽ thật của add-on** tạo qua `tile_save`):
+
+| Ảnh | Nội dung |
+|---|---|
+| `ban3/01_tu_lich.png` | **Tủ lịch gỗ 24 ngăn** treo tường phòng khách (bấm mở) thay bảng ô vuông: ngăn đã mở thấy món, ngăn hôm nay sáng, **ngăn mai hé bóng món bên trong**, ngăn lỡ ngày mở bù; 3 khung hiệu ứng mở ngăn |
+| `ban3/02_nha_4_nac.png` | **Nhà khoác áo Noel lên dần 4 nấc** (vẽ liền, thay 7 món rời): 1/12 vòng hoa cửa + nơ đèn lồng · 7/12 mái tuyết dày + dây lá thông · 14/12 đèn viền mái, cột băng, nến cửa sổ · 21/12 sao trên mái, người tuyết |
+| `ban3/03_tuong_san.png` | **Tường & sàn Noel**: Bông tuyết trên nền thông, Sọc kẹo gậy, Đỏ mận cây thông nhỏ (tường); Thảm caro đỏ, Thảm len tuyết (sàn) — dùng như Nhà → Tường & sàn |
+| `ban3/04_cay_qua.png` | **Cây thông được tặng** (`xmastree` của giao diện Giáng sinh) **trơn → đầy dần** bằng đúng các món của cây; **hộp quà bí mật** mỗi Chủ nhật, lắc nghe đoán, mở sáng 25 |
+| `ban3/05_nhac_banh.png` | **Hộp nhạc học dần** (きよしこの夜 · Silent Night, mỗi ngày một câu, đêm 24 trọn bài) · **bánh quy + sữa** tối 24 → sáng 25 vụn bánh + tờ giấy cảm ơn |
+| `ban3/06_dem_24.png` | Đêm 24 toàn cảnh: nhà nấc 4, cây có ngôi sao, 3 hộp quà, ông già Noel + xe tuần lộc, StackChan + thú |
+
+Thiệp điều ước, sáng 25 (quả cầu tuyết + thư), Kỷ niệm Giáng sinh 2026: như bản 2 (`ban2/136_06_thiep.png`, `ban2/136_08_sang_25.png`).
+
+**24 ngăn bản 3**: nhà 4 nấc (1, 7, 14, 21) + 17 tự vẽ hình dán cửa sổ · cây 9 (2 quả châu đỏ, 4 chuông vàng, 9 nơ đỏ, 10 dây đèn,
+12 quả châu xanh, 16 dây kim tuyến, 19 quả châu tím, 22 quả châu vàng, 24 ngôi sao — trên cây được tặng là các quả châu / dây có sẵn
+của nó) · trong nhà 7 (3 hộp nhạc, 5 tất Noel, 8 tường bông tuyết, 11 bánh kem dâu クリスマスケーキ, 15 sàn caro đỏ, 18 đèn ngủ
+ngôi sao, 23 bánh quy + sữa) · hộp quà bí mật 3 (Chủ nhật 6, 13, 20). Ai chưa mở giao diện Giáng sinh thì 1/12 được tặng cây trơn.
+Luật mở ô / mở bù / không cho xu / tắt được như mục 2; dữ liệu như mục 3 (thêm: nấc áo nhà, nhạc đã học, hộp quà).
+Còn để ngỏ thêm: nội dung 3 hộp quà bí mật (đề xuất: quả cầu tuyết có cây của bạn, khăn len cho thú nuôi, khung ảnh Kỷ niệm), nhà
+kiểu khác cần vẽ áo riêng (ảnh chỉ vẽ nhà gốc — mỗi kiểu nhà một bộ 4 nấc, hoặc kiểu khác chỉ có vòng hoa + đèn).
+
+---
+Phần dưới là bản 1 / bản 2 và các góp ý (giữ lại để biết vì sao đổi).
+
 
 Người dùng (18/11, sau 1.35.2):
 
@@ -26,14 +57,14 @@ Noel cho StackChan — **chỉ để ngắm, không có việc gì để mong ch
 
 | Ảnh | Nội dung |
 |---|---|
-| `136_01_lich.png` | **Lịch chờ Giáng sinh** (giả hôm nay 10/12): 24 ô cửa, ô đã mở hiện món + nhãn Cây / Nhà / Trong nhà, ô lỡ ngày (ôn thêm 15 lượt để mở bù), ô hôm nay, ô tự vẽ (Chủ nhật), ô 24 ngôi sao; mở từ chip Giáng sinh / dòng nhắc trong thẻ Hôm nay / bấm cây ở sân |
-| `136_02_cay.png` | 1/12 cây trống, **10 chỗ treo đặt sẵn** → mở ô → bấm chấm để treo, chọn màu; 24/12 cây xong, rê chuột: "Quả châu đỏ · mở ngày 1/12" |
-| `136_03_nha.png` | **Ngoài nhà** (14/12): vòng hoa cửa, đèn mái nhà, cột băng, hình dán cửa sổ tự vẽ, người tuyết — mỗi món vài chỗ đặt sẵn (Cạnh cửa / Góc sân / Cạnh cây thông), cất vào kho được |
-| `136_04_trong_nha.png` | **Trong nhà** (23/12): vòng hoa tường, tất Noel, tranh tự vẽ 16 × 16, cây thông nhỏ, hộp quà, bánh khúc cây, bát yuzu (冬至) — đặt như đồ nội thất, gian nào cũng được |
-| `136_05_tu_ve.png` | **Chủ nhật tự vẽ**: 6/12 món treo cây 8 × 8, 13/12 hình dán cửa sổ 8 × 8, 20/12 tranh tường 16 × 16 (bút / tẩy / đổ màu như Xưởng), "Lấy món có sẵn" nếu không muốn vẽ |
-| `136_06_thiep.png` | **Thiệp điều ước**: mặt trước trang trí (giấy, sticker, hình 16 × 16), mặt sau viết điều ước (tiếng Việt hoặc tiếng đang học — tiếng nước ngoài có "Nhờ Gemini sửa" như Luyện viết), treo thiệp lên cây |
-| `136_07_dem_24.png` | **Đêm 24/12**: ngôi sao lên đỉnh, cây + nhà sáng đèn (đèn mái, nến cửa sổ) = thành phẩm; ông già Noel đáp xe tuần lộc xuống sân lấy thiệp; StackChan đội mũ Noel + thú nuôi ra xem |
-| `136_08_sang_25.png` | **Sáng 25/12**: hộp quà dưới gốc, dấu chân + vết xe trên tuyết; **quả cầu tuyết có cây của bạn bên trong** + **thư trả lời** nhắc điều ước + đồ đã bày; **Kỷ niệm Giáng sinh 2026** ở tab Album |
+| `ban2/136_01_lich.png` | **Lịch chờ Giáng sinh** (giả hôm nay 10/12): 24 ô cửa, ô đã mở hiện món + nhãn Cây / Nhà / Trong nhà, ô lỡ ngày (ôn thêm 15 lượt để mở bù), ô hôm nay, ô tự vẽ (Chủ nhật), ô 24 ngôi sao; mở từ chip Giáng sinh / dòng nhắc trong thẻ Hôm nay / bấm cây ở sân |
+| `ban2/136_02_cay.png` | 1/12 cây trống, **10 chỗ treo đặt sẵn** → mở ô → bấm chấm để treo, chọn màu; 24/12 cây xong, rê chuột: "Quả châu đỏ · mở ngày 1/12" |
+| `ban2/136_03_nha.png` | **Ngoài nhà** (14/12): vòng hoa cửa, đèn mái nhà, cột băng, hình dán cửa sổ tự vẽ, người tuyết — mỗi món vài chỗ đặt sẵn (Cạnh cửa / Góc sân / Cạnh cây thông), cất vào kho được |
+| `ban2/136_04_trong_nha.png` | **Trong nhà** (23/12): vòng hoa tường, tất Noel, tranh tự vẽ 16 × 16, cây thông nhỏ, hộp quà, bánh khúc cây, bát yuzu (冬至) — đặt như đồ nội thất, gian nào cũng được |
+| `ban2/136_05_tu_ve.png` | **Chủ nhật tự vẽ**: 6/12 món treo cây 8 × 8, 13/12 hình dán cửa sổ 8 × 8, 20/12 tranh tường 16 × 16 (bút / tẩy / đổ màu như Xưởng), "Lấy món có sẵn" nếu không muốn vẽ |
+| `ban2/136_06_thiep.png` | **Thiệp điều ước**: mặt trước trang trí (giấy, sticker, hình 16 × 16), mặt sau viết điều ước (tiếng Việt hoặc tiếng đang học — tiếng nước ngoài có "Nhờ Gemini sửa" như Luyện viết), treo thiệp lên cây |
+| `ban2/136_07_dem_24.png` | **Đêm 24/12**: ngôi sao lên đỉnh, cây + nhà sáng đèn (đèn mái, nến cửa sổ) = thành phẩm; ông già Noel đáp xe tuần lộc xuống sân lấy thiệp; StackChan đội mũ Noel + thú nuôi ra xem |
+| `ban2/136_08_sang_25.png` | **Sáng 25/12**: hộp quà dưới gốc, dấu chân + vết xe trên tuyết; **quả cầu tuyết có cây của bạn bên trong** + **thư trả lời** nhắc điều ước + đồ đã bày; **Kỷ niệm Giáng sinh 2026** ở tab Album |
 
 ## 0. Góp ý bản 2 (18/11) — **đang nghĩ thêm, chưa chốt**
 

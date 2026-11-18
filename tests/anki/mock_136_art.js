@@ -181,6 +181,153 @@ window.MK = (function () {
     const v = cover(id); v.S = Sh; v.ox = hx + H3.X.room; v.oy = hy; return v;
   }
 
+  // ---------------------------------------------------------------- 1.36 bản 3
+  // cây thông được tặng khi mở giao diện mùa Giáng sinh (SPR.xmastree 32 × 44) — bản trơn rồi đầy dần
+  const XT = L.SPR.xmastree, XT_W = XT[0].length, XT_H = XT.length;
+  const XT_BALLS = [[14, 9], [11, 16], [20, 17], [8, 23], [17, 24], [24, 24], [12, 29], [21, 31], [6, 31], [26, 32]];
+  const XT_GARL = []; for (let k = 0; k < 9; k++) { XT_GARL.push([Math.round(10 + k * 1.6), 14 + k]); XT_GARL.push([Math.round(23 - k * 1.7), Math.round(22 + k * 1.1)]); }
+  const XT_LIGHTS = [[12, 11], [19, 13], [9, 18], [16, 19], [23, 20], [6, 26], [13, 26], [20, 27], [26, 28], [10, 31], [17, 32]];
+  const XT_BARE = (function () {
+    const g = XT.map((r) => r.split(""));
+    for (let j = 0; j < 34; j++) {
+      for (let i = 0; i < XT_W; i++) {
+        const c = g[j][i];
+        if (c === "k") { g[j][i] = "."; continue; }
+        if (c === ".") { continue; }
+        if (j < 5) { g[j][i] = "."; continue; }
+        if (["g", "G", "j"].indexOf(c) < 0) { g[j][i] = i < 14 ? "g" : i > 18 ? "j" : "G"; }
+      }
+    }
+    // giữ nguyên chậu + thân (dòng 34 trở xuống), viền lại phần lá
+    const top = g.slice(0, 34), o = outline(top.map((r) => r.slice()).concat([new Array(XT_W).fill(".")]));
+    return rows(o.slice(0, 34)).concat(XT.slice(34));
+  })();
+  // st: {balls: [chỉ số XT_BALLS], garland, lights, star, night}
+  function xtree(st) {
+    const g = XT_BARE.map((r) => r.split(""));
+    const take = (x, y) => { if (XT[y] && XT[y][x] !== undefined && XT[y][x] !== ".") { g[y][x] = XT[y][x]; } };
+    (st.balls || []).forEach((k) => { const [x, y] = XT_BALLS[k]; take(x, y); take(x + 1, y); take(x, y + 1); take(x + 1, y + 1); });
+    if (st.garland) { XT_GARL.forEach(([x, y]) => take(x, y)); }
+    if (st.star) { for (let y = 0; y < 8; y++) { for (let x = 0; x < XT_W; x++) { if (XT[y][x] !== ".") { g[y][x] = XT[y][x]; } else if (y < 5) { g[y][x] = "."; } } } }
+    return rows(g);
+  }
+  function drawXTree(v, x, y, st) {
+    const { ctx, S } = v, X = v.ox + x, Y = v.oy + y;
+    ctx.globalAlpha = 0.18; ctx.fillStyle = "#1b1b2f"; ctx.fillRect((X + 4) * S, (Y + XT_H - 1) * S, 24 * S, S); ctx.globalAlpha = 1;
+    L.sprite(ctx, xtree(st), X, Y, S);
+    if (st.lights) {
+      const cols = [P.r, P.y, P.l, P.p, P.f];
+      XT_LIGHTS.forEach(([lx, ly], k) => {
+        const c = cols[k % cols.length];
+        if (st.night) { ctx.globalAlpha = 0.45; L.box(ctx, X + lx - 1, Y + ly - 1, 3, 3, c, S); ctx.globalAlpha = 1; }
+        L.box(ctx, X + lx, Y + ly, 1, 1, st.night || k % 2 ? c : "#3a3f55", S);
+      });
+    }
+    if (st.star && st.night) {
+      const cx = (X + 16) * S, cy = (Y + 3) * S, gr = ctx.createRadialGradient(cx, cy, S, cx, cy, 12 * S);
+      gr.addColorStop(0, "rgba(255, 240, 160, .5)"); gr.addColorStop(1, "rgba(255, 240, 160, 0)"); ctx.fillStyle = gr; ctx.fillRect(cx - 12 * S, cy - 12 * S, 24 * S, 24 * S);
+      for (let y2 = 0; y2 < 8; y2++) { for (let x2 = 0; x2 < XT_W; x2++) { const c = XT[y2][x2]; if (c !== "." ) { L.box(ctx, X + x2, Y + y2, 1, 1, P[c] || c, S); } } }
+    }
+  }
+  // nhà khoác áo Noel: nấc 1–4 (nhà gốc 64 × 76 ở toạ độ sân x 0..64)
+  const BOW = pic(["r.r", "rRr", ".r."], true);
+  const LAMP_POST = pic([".kk.", "kyyk", "kyyk", ".kk.", "..k.", "..k.", "..k.", ".kkk"].map((s) => s), true);
+  const ROOF_STAR = pic(["....y....", "...yyy...", "yyyyiyyyy", ".yyyiyyy.", "..yyyyy..", ".yyy.yyy.", ".yy...yy."]);
+  function drawHouseNoel(v, n, night, onlyGlow) {
+    const { ctx, S } = v, X = v.ox, Y = v.oy, b = (x, y, w, h, c) => L.box(ctx, X + x, Y + y, w, h, c, S);
+    if (n >= 2 && !onlyGlow) {
+      // mái tuyết dày: phủ phần trên mái, mép dưới lượn sóng + bóng xanh nhạt, tuyết trên ống khói
+      for (let x = 4; x <= 60; x++) {
+        const half = Math.abs(x - 31.5);
+        const yTop = 13 + Math.max(0, Math.ceil((half - 3) / 1.45));
+        const yBot = 25 + Math.round(1.2 * Math.sin(x * 0.9) + 0.8 * Math.sin(x * 0.37));
+        if (yTop > yBot) { continue; }
+        for (let y = yTop; y <= yBot; y++) { if (!(x >= 27 && x <= 37 && y >= 19 && y <= 29)) { b(x, y, 1, 1, "#ffffff"); } }
+        if (x >= 27 && x <= 37 && yTop < 19) { b(x, 18, 1, 1, "#e8f2fb"); }
+        b(x, yBot + 1, 1, 1, "#cfe0f0");
+        if ((x * 7) % 11 === 0) { b(x, yBot + 1, 1, 2, "#e8f2fb"); }
+      }
+      b(42, 8, 10, 3, "#ffffff"); b(42, 11, 10, 1, "#cfe0f0");
+      // dây lá thông dọc mép mái + nơ đỏ
+      for (let x = 1; x <= 62; x++) { const y = 35 + (x % 3 === 0 ? 1 : 0); b(x, y, 1, 2, (x % 4 === 0) ? P.g : (x % 3 ? P.G : P.j)); }
+      for (let x = 6; x <= 58; x += 13) { L.sprite(ctx, BOW, X + x - 1, Y + 34, S); }
+    }
+    if (n >= 1 && !onlyGlow) {
+      L.sprite(ctx, WREATH, X + 26.5, Y + 44, S);
+      [[22, 45], [39, 45]].forEach(([x, y]) => L.sprite(ctx, BOW, X + x - 0.5, Y + y, S));
+    }
+    if (n >= 3) {
+      const cols = [P.r, P.y, P.l, P.f, P.p], pts = [];
+      for (let x = 3; x <= 61; x += 3) { pts.push([x, 37]); }
+      for (let y = 27; y <= 33; y += 2) { const h = Math.round((y - 13) * 1.45) + 3; pts.push([32 - h - 1, y]); pts.push([32 + h, y]); }
+      pts.forEach(([x, y], k) => { const c = cols[k % cols.length]; if (night) { ctx.globalAlpha = 0.45; b(x - 1, y - 1, 3, 3, c); ctx.globalAlpha = 1; } b(x, y, 1, 1, night || k % 2 ? c : "#3a3f55"); });
+      if (!onlyGlow) { for (let x = 3; x <= 61; x += 2) { b(x, 38, 1, 1 + ((x * 7) % 3), (x % 4) ? "#dff3ff" : "#ffffff"); } }
+      [[15, 43], [44, 43]].forEach(([x, y]) => { if (night) { ctx.globalAlpha = 0.4; b(x - 2, y - 2, 7, 6, "#ffd23f"); ctx.globalAlpha = 1; } L.sprite(ctx, CANDLE, X + x, Y + y, S); });
+    }
+    if (n >= 4) {
+      if (night) { const cx = (X + 32) * S, cy = (Y + 5) * S, gr = ctx.createRadialGradient(cx, cy, S, cx, cy, 10 * S); gr.addColorStop(0, "rgba(255,240,160,.5)"); gr.addColorStop(1, "rgba(255,240,160,0)"); ctx.fillStyle = gr; ctx.fillRect(cx - 10 * S, cy - 10 * S, 20 * S, 20 * S); }
+      L.sprite(ctx, ROOF_STAR, X + 27.5, Y + 1, S);
+      if (!onlyGlow) { L.sprite(ctx, SNOWMAN_BIG, X + 64, Y + 57, S); }
+    }
+  }
+  // tủ lịch gỗ 24 ngăn (vẽ trên canvas riêng, S điểm ảnh): o = {open: {ngày: sprite}, today, tomorrow: sprite, miss: [..]}
+  function drawCabinet(c, S, o) {
+    const ctx = c.getContext("2d"); ctx.imageSmoothingEnabled = false;
+    const b = (x, y, w, h, col) => { ctx.fillStyle = col; ctx.fillRect(Math.round(x * S), Math.round(y * S), Math.round(w * S), Math.round(h * S)); };
+    const DW = 16, DH = 13, G = 2, FR = 3, TOP = 12, W = FR * 2 + 6 * DW + 5 * G, H = TOP + FR * 2 + 4 * DH + 3 * G;
+    // mái nhọn + biển "24"
+    for (let y = 0; y < TOP; y++) { const half = Math.round((W / 2) * (y + 1) / TOP); b(W / 2 - half, y, half * 2, 1, y % 3 === 0 ? "#8a4a26" : "#a0603a"); b(W / 2 - half, y, 1, 1, "#3a2a22"); b(W / 2 + half - 1, y, 1, 1, "#3a2a22"); }
+    for (let x = 0; x < W; x += 6) { b(x + 1, TOP - 2, 4, 2, "#ffffff"); }
+    b(W / 2 - 7, 4, 14, 7, "#f2d36b"); b(W / 2 - 7, 4, 14, 1, "#3a2a22"); b(W / 2 - 7, 10, 14, 1, "#3a2a22"); b(W / 2 - 7, 4, 1, 7, "#3a2a22"); b(W / 2 + 6, 4, 1, 7, "#3a2a22");
+    ctx.fillStyle = "#7a2a1a"; ctx.font = "bold " + (5 * S) + "px monospace"; ctx.textAlign = "center"; ctx.fillText("24", (W / 2) * S, 9.6 * S);
+    // thân tủ
+    b(0, TOP, W, H - TOP, "#3a2a22"); b(1, TOP + 1, W - 2, H - TOP - 2, "#8a4a26"); b(1, TOP + 1, W - 2, 1, "#b0703c");
+    for (let r = 0; r < 4; r++) {
+      for (let col = 0; col < 6; col++) {
+        const d = r * 6 + col + 1, x = FR + col * (DW + G), y = TOP + FR + r * (DH + G);
+        const isOpen = o.open[d], isToday = d === o.today, isTom = d === o.today + 1, isMiss = (o.miss || []).indexOf(d) >= 0;
+        if (isOpen) {
+          b(x, y, DW, DH, "#3a2a22"); b(x + 1, y + 1, DW - 2, DH - 2, "#2a1a12");
+          b(x + 1, y + DH - 3, DW - 2, 2, "#5a3a22");
+          const sp = isOpen, sw = sp[0].length, sh = sp.length, k = Math.min(1, Math.min((DW - 2) / sw, (DH - 2) / sh));
+          const t = document.createElement("canvas"); t.width = sw * S; t.height = sh * S; L.sprite(t.getContext("2d"), sp, 0, 0, S);
+          const dw = sw * S * k, dh = sh * S * k; ctx.drawImage(t, (x + DW / 2) * S - dw / 2, (y + DH - 1.5) * S - dh, dw, dh);
+          ctx.fillStyle = "#f2d36b"; ctx.font = "bold " + (3 * S) + "px monospace"; ctx.textAlign = "left"; ctx.fillText(String(d), (x + 1) * S, (y + 3.6) * S);
+          continue;
+        }
+        const face = isToday ? "#e9b949" : (d % 2 ? "#c8534b" : "#3f7d4f");
+        if (isToday) { ctx.globalAlpha = 0.55; b(x - 1.5, y - 1.5, DW + 3, DH + 3, "#fff3a0"); ctx.globalAlpha = 1; }
+        let dy = 0;
+        if (isTom) {      // ngăn ngày mai hé ra: thấy bóng món bên trong
+          b(x, y, DW, DH, "#3a2a22"); b(x + 1, y + 1, DW - 2, 4, "#6a4428"); dy = 4;
+          if (o.tomorrow) { const sp = o.tomorrow.map((r2) => r2.replace(/[^.]/g, "k")); const t = document.createElement("canvas"); t.width = sp[0].length * S; t.height = sp.length * S; L.sprite(t.getContext("2d"), sp, 0, 0, S, undefined, 0.85);
+            const k = Math.min(1, (DW - 4) / sp[0].length, 6 / sp.length); ctx.drawImage(t, (x + DW / 2) * S - t.width * k / 2, (y + 0.5) * S, t.width * k, t.height * k); }
+        }
+        b(x, y + dy, DW, DH - dy, "#3a2a22"); b(x + 1, y + dy + 1, DW - 2, DH - dy - 2, face); b(x + 1, y + dy + 1, DW - 2, 1, "rgba(255,255,255,.25)");
+        b(x + DW / 2 - 4, y + dy + 2, 8, 4, "#f4e7c8"); b(x + DW / 2 - 4, y + dy + 2, 8, 0.5, "#3a2a22");
+        b(x + DW / 2 - 1, y + DH - 3, 2, 2, "#f2d36b"); b(x + DW / 2 - 1, y + DH - 3, 2, 0.6, "#ffffff");
+        ctx.fillStyle = isMiss ? "#9a8a7a" : "#3a2a22"; ctx.font = "bold " + (3.4 * S) + "px monospace"; ctx.textAlign = "center"; ctx.fillText(String(d), (x + DW / 2) * S, (y + dy + 5.2) * S);
+        if (isMiss) { ctx.strokeStyle = "#fff3c4"; ctx.setLineDash([S, S]); ctx.lineWidth = 2; ctx.strokeRect((x + 0.5) * S, (y + 0.5) * S, (DW - 1) * S, (DH - 1) * S); ctx.setLineDash([]); }
+        if (isToday) { [[x - 1, y - 1], [x + DW, y + 2], [x + 3, y + DH], [x + DW - 2, y - 2]].forEach(([sx, sy]) => { b(sx, sy, 1, 1, "#ffffff"); }); }
+      }
+    }
+    return { W, H };
+  }
+  // tủ lịch nhỏ treo tường (trong cảnh): khối gỗ + lưới ngăn
+  function drawCabinetMini(v, x, y, o) {
+    const { ctx, S } = v, X = v.ox + x, Y = v.oy + y, b = (xx, yy, w, h, c) => L.box(ctx, X + xx, Y + yy, w, h, c, S);
+    for (let yy = 0; yy < 4; yy++) { const h = 2 + yy * 4; b(13 - h, yy, h * 2, 1, "#a0603a"); }
+    b(0, 4, 26, 19, "#3a2a22"); b(1, 5, 24, 17, "#8a4a26");
+    for (let r = 0; r < 4; r++) { for (let c = 0; c < 6; c++) { const d = r * 6 + c + 1, xx = 1 + c * 4, yy = 5 + r * 4; b(xx + 0.5, yy + 0.5, 3, 3, (o.open[d] ? "#2a1a12" : d === o.today ? "#ffd23f" : (d % 2 ? "#c8534b" : "#3f7d4f"))); } }
+  }
+  const MUSIC_BOX = pic(["..BBBBBBBB..", ".BbbbbbbbbB.", "BBBBBBBBBBBB", ".....G......", "....GGG.....", "...GGGGG....", "cccccBcccccc", "bbbbbbbbbbbi", "bhbbbbbbbbbi", "bbbbbbbbbbbb"], false);
+  const COOKIES = pic(["..tt..tt..", ".twtt.ttt.", "..tt.twtt.", "SSSSSSSSSS"]);
+  const CRUMBS = pic(["..........", "...t....t.", ".t...t....", "SSSSSSSSSS"]);
+  const MILK = pic(["sws", "sws", "sws", "sws"]);
+  const GLASS = pic(["s.s", "s.s", "s.s", "sss"]);
+  const NOTE = pic(["wwwww", "wkkkw", "wwwww", "wkkww", "wwwww"]);
+  const BOX_R = L.SPR.presents;
+
   // ---------------------------------------------------------------- vẽ đè lên dải cảnh
   function cover(id) {
     const cv = document.getElementById("kb-yard"), r = cv.getBoundingClientRect();
@@ -262,5 +409,5 @@ window.MK = (function () {
     drawTree(fake, Object.assign({}, st, { tx: 0, ty: 0 }));
     return fake;
   }
-  return { SPOTS2, WREATH, SNOWMAN_BIG, CANE_BIG, CANDLE, STICKER, STOCKING, MINI_TREE, CAKE, YUZU_BOWL, GIFTS, PAINT, drawHouseDeco, drawRoomDeco, coverHouse, L, P, ORN, ORN_NAME, DOORS, TREE, TREE_W, TREE_H, SPOTS, SANTA, SANTA_BAG, STACK, CAT, PRINT, SANTA_HAT, cover, drawTree, glow, spr, tint, icon, miniTree, pic };
+  return { XT, XT_BARE, xtree, drawXTree, drawHouseNoel, drawCabinet, drawCabinetMini, MUSIC_BOX, COOKIES, CRUMBS, MILK, GLASS, NOTE, BOW, ROOF_STAR, SPOTS2, WREATH, SNOWMAN_BIG, CANE_BIG, CANDLE, STICKER, STOCKING, MINI_TREE, CAKE, YUZU_BOWL, GIFTS, PAINT, drawHouseDeco, drawRoomDeco, coverHouse, L, P, ORN, ORN_NAME, DOORS, TREE, TREE_W, TREE_H, SPOTS, SANTA, SANTA_BAG, STACK, CAT, PRINT, SANTA_HAT, cover, drawTree, glow, spr, tint, icon, miniTree, pic };
 })();
