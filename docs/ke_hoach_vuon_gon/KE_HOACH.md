@@ -195,3 +195,60 @@ Xem bản chạy thử tương tác tại [`proto_duyet_asset_play_together.html
 | :---: | :---: | :---: |
 | ![Nhân vật Play Together 3D](vg_12a_pt_nhan_vat.png) | ![Quán Trọ Kotoba Play Together 3D](vg_12b_pt_quan_kotoba.png) | ![Góc phố Plaza Play Together 3D](vg_12c_pt_plaza_4_asset.png) |
 
+---
+
+## 13. Chốt Kế Hoạch Tổng Thể (2D Anki + Làng Kotoba 3D)
+
+Tổng hợp từ các bản thử nghiệm ở Mục 1–12, hướng đi chốt lại là **kiến trúc Lai (Hybrid 2D + 3D)**, phân vai rõ ràng theo điểm mạnh của từng môi trường:
+
+### 13.1. Phân tách nhiệm vụ 2D (trong Anki) vs. 3D (Web Companion)
+
+| Không gian | Công nghệ | Vai trò & Lý do |
+| :--- | :--- | :--- |
+| **Nhà & Sân vườn cá nhân** (`#kb-field`, `home.js`) | **2D Pixel Art** trong `AnkiWebView` | Bảo toàn 100% kho đồ tự trang trí (`NHA_ITEMS`, `FIND_ITEMS`, `SEASON_ITEMS`), Xưởng vẽ `16×16`, Vùng tự tạo và tốc độ mở Anki tức thì kể cả khi tắt GPU. |
+| **Vườn nhiều cây 200–500+ từ** | **2D tối ưu** theo Mục 6 ([`vg_06_ket_hop_toi_uu.png`](vg_06_ket_hop_toi_uu.png)) | Gom cây `Ra quả` chưa tới hạn vào **Vườn cổ thụ**, đẩy luống `💧 Cần tưới hôm nay` lên đầu, chia cụm 5 cây + biển gỗ + ô tìm từ, đưa **Hòm thư / Báo mới** ra vị trí dễ thấy. |
+| **Làng Kotoba & Vùng ngắm cảnh** (`ことば村`) | **Web 3D** (duyệt từng Asset trước) | Chỉ dùng 3D cho các khu **không cần ánh xạ đồ 2D của người chơi**: **Quảng trường Làng** (đọc `Báo Làng`, bán nông sản lấy từ vườn 2D, gặp `StackChan`, `Chị Hana`, `Lin`, `Mèo trắng`) và các **Vùng ngắm cảnh** (*Đồi Đền Sakura*, *Bến Cảng*). |
+
+### 13.2. Phong cách đồ hoạ & Quy trình Asset-First
+1. **Gu mỹ thuật đã duyệt**: Chọn **Play Together Smooth Low-Poly** (Mục 12 — bo tròn mềm, pastel, bóng đổ PCF 1024×1024) hoặc **MagicaVoxel AO** (Mục 11 — voxel `1×1×1` + Vertex AO). Cả hai đều phải **chế tác và duyệt từng asset độc lập** trước khi ghép cảnh.
+2. **Lộ trình 3 giai đoạn gọn nhẹ (phù hợp solo dev)**:
+   - **Giai đoạn 1 (1–2 tuần)**: Triển khai làm gọn ruộng `#kb-field` (Mục 6) trong Anki + thử nghiệm **Sự kiện Noel 2026** (Mục 14 bên dưới).
+   - **Giai đoạn 2 (3–4 tuần)**: Chế tác 6 asset cốt lõi thành 1 **Quảng trường Làng Kotoba thu gọn** (Quán `ことば屋`, Sạp Chợ, Bưu Điện, Tháp Đồng Hồ, Bộ 3 Nhân Vật, Mèo Trắng), đọc dữ liệu tiến độ từ JSON (`tien_do.json`, `bao_gemini/`).
+   - **Giai đoạn 3 (Mở rộng dài hạn)**: Bổ sung các **Vùng ngắm cảnh 3D** (*Đồi Đền Sakura*, *Bến Cảng Hải Đăng*) và tương tác bán quả từ cây `Ra quả`.
+
+---
+
+## 14. Đề xuất Sự kiện Noel: “Xây Thành Phẩm Giáng Sinh Tích Luỹ Mỗi Ngày”
+
+### 14.1. Đánh giá hiện trạng & Lý do nên làm ngay
+Trong mã nguồn hiện tại, [`kotoba_batake/season_core.py`](../../kotoba_batake/season_core.py#L161-L163) đã mở chủ đề `"noel"` từ **15/11 đến 31/12** và [`kotoba_batake/event_core.py`](../../kotoba_batake/event_core.py#L81-L82) đã có lời chào đêm **24–25/12**. Tuy nhiên, người học hiện chỉ cần trả `1.000 xu` (hoặc chuỗi 10 ngày) là mở ngay 4 món tĩnh (`xmastree`, `presents`, `sleigh`, `wreath`), **chưa có trải nghiệm tích luỹ từng ngày hướng tới đêm Giáng Sinh**.
+
+**Có nên thêm sự kiện Noel không?** → **Rất nên**, vì 3 lý do:
+1. **Đúng tâm lý học đều**: Biến mỗi buổi ôn thẻ từ cuối tháng 11 đến 24/12 thành một công đoạn hữu hình (dựng cây, treo đèn, gói quà) thay vì chỉ tăng một con số.
+2. **Tiêu `xu` hợp lý & chống lạm phát**: Kết hợp giữa **điểm ôn mỗi ngày** (nguồn chính) và **đổi thêm bằng `xu`** (cho người học dư xu hoặc bắt đầu muộn) giúp xu có ý nghĩa mà vẫn công bằng.
+3. **Dễ chia sẻ cộng đồng**: Đúng ngày 24–25/12, người dùng có một **thành phẩm kỷ niệm mang dấu ấn cá nhân** (ghi lại số lượt ôn / ngày học của riêng họ trong mùa Noel năm đó).
+
+### 14.2. Cơ chế gợi ý: “Dựng Cây Thông / Quả Cầu Tuyết Quảng Trường (`スノードーム 2026`)”
+
+Thay vì đẻ quá nhiều mini-game phức tạp (không kịp tiến độ trước Noel), nên tập trung vào **1 công trình trung tâm tiến hoá qua 5 tầng** từ công sức mỗi ngày:
+
+- **Tài nguyên sự kiện nhẹ (`❄️ Bông Tuyết Ấm` hoặc dùng trực tiếp `xu` mua vật liệu theo ngày)**:
+  - **Nguồn chính (học mỗi ngày)**: Ôn tối thiểu 15 thẻ/ngày nhận `+2 ❄️`, hoàn thành mục tiêu ngày (`daily_goal`) nhận thêm `+1 ❄️` (tối đa `3 ❄️/ngày` từ việc học).
+  - **Nguồn phụ bằng `xu` (bù ngày lỡ & tiêu xu dư)**: Cho phép dùng `xu` đổi vật liệu trang trí (vd: `30 xu = +1 ❄️`, giới hạn mềm theo ngày hoặc mở tự do từ 18/12) để người vào muộn vẫn kịp hoàn thành trước đêm 24/12 — giữ đúng nguyên tắc **“FOMO lành mạnh”** của [`finds_core.py`](../../kotoba_batake/finds_core.py#L3).
+- **Lộ trình 5 tầng nâng cấp thành phẩm (tổng mốc hoàn hảo: `30 ❄️` ≈ 10–15 ngày học)**:
+  1. **Tầng 1 (0 → 5 ❄️) — Bệ Gỗ & Nền Tuyết**: Dựng bệ gỗ khắc năm `2026` cùng lớp tuyết nền.
+  2. **Tầng 2 (6 → 12 ❄️) — Khung Cây Thông / Ngôi Nhà Bánh Gừng**: Hiện khối cây thông xanh hoặc khung nhà bánh gừng phủ kem trắng.
+  3. **Tầng 3 (13 → 19 ❄️) — Quả Châu Từ Vựng & Dây Đèn**: Treo châu nhiều màu, bật dây đèn vàng nhấp nháy vào ban đêm.
+  4. **Tầng 4 (20 → 26 ❄️) — Nhân Vật & Thú Cưng Mũ Len**: `StackChan` người tuyết và thú nuôi quàng khăn đỏ quây quần quanh cây.
+  5. **Tầng 5 (27 → 30 ❄️) — Ngôi Sao Đỉnh Tháp & Mái Kính Tuyết Rơi**: Hoàn thiện trọn vẹn!
+- **Thành phẩm nhận được đúng dịp Noel (24/12 – 31/12)**:
+  - Người chơi bấm **“🎁 Đóng gói thành phẩm Noel 2026”** → Nhận **1 Vật Phẩm Kỷ Niệm Vĩnh Viễn** cất trong Kho đồ để bày ở `Nhà` hoặc `Sân vườn` quanh năm:
+    - Đạt `30/30 ❄️`: Nhận **Quả Cầu Tuyết Hoàng Kim 2026** (bấm vào lắc tuyết rơi, phát đoạn nhạc hộp âm Giáng Sinh, tooltip ghi *"Kết tinh từ N lượt ôn mùa Noel 2026"*).
+    - Đạt `10–29/30 ❄️`: Nhận **Cây Thông Nhỏ / Quả Cầu Tuyết Bạc** (không mất trắng nếu lỡ vài ngày).
+  - **Số Báo Làng đặc biệt 24–25/12**: `event_core` & `Báo Làng` có tin chúc mừng từ `Chị Hana` và `StackChan` nhắc tới thành phẩm mà người học tự tay dựng suốt tháng 12.
+
+### 14.3. Kiến trúc kỹ thuật gọn để kịp ra mắt trước Giáng Sinh (ước tính 4–6 ngày)
+- **Lưu trữ an toàn**: Tái sử dụng khoá đồng bộ [`kotoba_batake_events`](../../kotoba_batake/finds_core.py#L39) (với nhánh `"noel_2026": {"pts", "days", "xu_spent", "claimed"}`) — không tạo khoá collection mới và giữ tương thích máy chạy bản cũ.
+- **Vật phẩm thưởng**: Khai báo trong `FIND_ITEMS` ([`garden_core.py`](../../kotoba_batake/garden_core.py#L339-L376)) để được bảo vệ bởi `keep_foreign_nha` khi đồng bộ AnkiWeb.
+- **Điểm nối thông minh với kế hoạch 3D (Mục 13)**: Có thể dựng thêm **1 trang xem 3D mini chỉ riêng “Quả Cầu Tuyết / Cây Thông Noel” xoay 360°** (từ bộ shader Smooth Low-Poly ở Mục 12) làm phần thưởng ngắm thử dịp Noel — vừa kịp deadline 24/12, vừa kiểm chứng trải nghiệm 3D thật trước khi dựng toàn bộ Làng Kotoba!
+
