@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Minh Hoạ Sự Kiện Noel 2026 — Tích Luỹ Mỗi Ngày → Thành Phẩm Giáng Sinh</title>
+<style>
+  :root {
+    --ink: #1b1c30;
+    --cream: #fffaf0;
+    --cream-2: #f6ecd6;
+    --gold: #ffd43b;
+    --red: #e03131;
+    --green: #2b8a3e;
+    --blue: #228be6;
+  }
+  * { box-sizing: border-box; user-select: none; }
+  body {
+    margin: 0;
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    background: #13182a;
+    color: var(--ink);
+  }
+  .shell {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 10px 14px 16px;
+  }
+
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    background: var(--cream);
+    border: 3px solid var(--ink);
+    border-radius: 15px;
+    box-shadow: 0 4px 0 #090b14;
+    padding: 8px 12px;
+    margin-bottom: 10px;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .badge-noel {
+    background: linear-gradient(135deg, #d63031, #e17055);
+    color: #fff;
+    border: 2px solid var(--ink);
+    border-radius: 9px;
+    padding: 3px 10px;
+    font-size: 11.8px;
+    font-weight: 900;
+    box-shadow: 0 2px 0 var(--ink);
+  }
+  .btn-group {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .btn {
+    border: 2px solid var(--ink);
+    background: var(--cream-2);
+    color: var(--ink);
+    border-radius: 10px;
+    padding: 5px 10px;
+    font-size: 11.8px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 2px 0 var(--ink);
+    transition: transform 0.08s, background 0.12s;
+  }
+  .btn:hover { background: #ffe8a3; }
+  .btn:active { transform: translateY(2px); box-shadow: 0 0 0 var(--ink); }
+  .btn.active { background: var(--gold); }
+  .btn.primary { background: #2f9e44; color: #fff; }
+  .btn.primary:hover { background: #37b24d; }
+  .btn.festive { background: #e03131; color: #fff; }
+  .btn.festive:hover { background: #f03e3e; }
+  .btn.ice { background: #d0ebff; color: #1864ab; }
+  .btn.ice:hover { background: #a5d8ff; }
+
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr 370px;
+    gap: 12px;
+    align-items: start;
+  }
+  @media (max-width: 980px) {
+    .main-grid { grid-template-columns: 1fr; }
+  }
+
+  .stage-wrap {
+    position: relative;
+    height: 585px;
+    border: 3px solid var(--ink);
+    border-radius: 16px;
+    box-shadow: 0 6px 0 #090b14;
+    overflow: hidden;
+    background: #14213d;
+  }
+  #glCanvas, #yardCanvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  #glCanvas { cursor: grab; }
+  #glCanvas:active { cursor: grabbing; }
+  #yardCanvas { display: none; image-rendering: pixelated; }
+
+  .stage-hud-tl {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+    pointer-events: none;
+  }
+  .pill {
+    pointer-events: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(255, 250, 240, 0.95);
+    border: 2.5px solid var(--ink);
+    border-radius: 11px;
+    padding: 5px 11px;
+    font-size: 12px;
+    font-weight: 800;
+    box-shadow: 0 3px 0 rgba(0, 0, 0, 0.25);
+  }
+  .stage-hud-bl {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    right: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 8px;
+    pointer-events: none;
+  }
+  .toast-banner {
+    position: absolute;
+    top: 56px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(27, 28, 48, 0.92);
+    color: #fff;
+    border: 2px solid #ffd43b;
+    border-radius: 99px;
+    padding: 5px 14px;
+    font-size: 12px;
+    font-weight: 800;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s, transform 0.25s;
+    white-space: nowrap;
+  }
+  .toast-banner.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(4px);
+  }
+
+  .panel {
+    background: var(--cream);
+    border: 3px solid var(--ink);
+    border-radius: 16px;
+    box-shadow: 0 6px 0 #090b14;
+    padding: 10px 11px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .sec-title {
+    font-size: 12px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: #5c4028;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .status-box {
+    background: #fff4d9;
+    border: 2.5px solid var(--ink);
+    border-radius: 12px;
+    padding: 7px 10px;
+  }
+  .stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    font-weight: 800;
+    margin-bottom: 4px;
+  }
+  .prog-track {
+    height: 12px;
+    background: #e9dec4;
+    border: 2px solid var(--ink);
+    border-radius: 99px;
+    overflow: hidden;
+    position: relative;
+  }
+  .prog-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #339af0, #51cf66, #fcc419);
+    transition: width 0.28s ease;
+  }
+  .action-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .act-btn {
+    width: 100%;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 6px 9px;
+    border: 2px solid var(--ink);
+    border-radius: 10px;
+    background: #fff;
+    font-size: 11.8px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 2px 0 var(--ink);
+  }
+  .act-btn:hover { background: #fff9db; }
+  .act-btn:active { transform: translateY(2px); box-shadow: 0 0 0 var(--ink); }
+  .act-btn.study { background: #ebfbee; }
+  .act-btn.study:hover { background: #d3f9d8; }
+  .act-btn.goal { background: #e7f5ff; }
+  .act-btn.goal:hover { background: #d0ebff; }
+  .act-btn.coin { background: #fff9db; }
+  .act-btn.coin:hover { background: #ffec99; }
+  .tag-pill {
+    background: var(--ink);
+    color: #fff;
+    border-radius: 8px;
+    padding: 2px 7px;
+    font-size: 10.8px;
+    font-weight: 900;
+    white-space: nowrap;
+  }
+  .tag-pill.ice { background: #1971c2; }
+  .tag-pill.gold { background: #e67700; }
+
+  .tier-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .tier-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    text-align: left;
+    padding: 5px 8px;
+    border: 2px solid var(--ink);
+    border-radius: 9px;
+    background: #fff;
+    cursor: pointer;
+    font-size: 11.4px;
+    transition: background 0.1s, transform 0.08s;
+  }
+  .tier-item:hover { background: #fff3bf; }
+  .tier-item.active {
+    background: #ffe066;
+    box-shadow: 0 2px 0 var(--ink);
+  }
+  .tier-item.done .tier-badge {
+    background: #2f9e44;
+    color: #fff;
+  }
+  .tier-badge {
+    flex: 0 0 auto;
+    background: #e9ecef;
+    border: 1.5px solid var(--ink);
+    border-radius: 7px;
+    padding: 2px 6px;
+    font-size: 10.5px;
+    font-weight: 900;
+  }
+  .tier-text b { display: block; font-size: 11.6px; }
+  .tier-text span { font-size: 10.6px; color: #5f5242; }
+
+  /* Modal mở quà Noel 24/12 */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(12, 16, 30, 0.72);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+    padding: 16px;
+  }
+  .modal-backdrop.open { display: flex; }
+  .modal-card {
+    max-width: 460px;
+    width: 100%;
+    background: var(--cream);
+    border: 3px solid var(--ink);
+    border-radius: 18px;
+    box-shadow: 0 8px 0 #090b14;
+    padding: 16px 18px;
+    text-align: center;
+  }
+  .modal-card h2 {
+    margin: 6px 0 4px;
+    font-size: 18px;
+    color: #b02a37;
+  }
+  .modal-quote {
+    background: #fff;
+    border: 2px dashed #c99a5b;
+    border-radius: 12px;
+    padding: 10px 12px;
+    margin: 10px 0;
+    text-align: left;
+    font-size: 12.5px;
+    line-height: 1.45;
+  }
+  .keepsake-box {
+    background: linear-gradient(135deg, #fff3bf, #ffe8cc);
+    border: 2.5px solid var(--ink);
+    border-radius: 12px;
+    padding: 10px;
+    margin: 8px 0 12px;
+    font-size: 12.2px;
+    line-height: 1.4;
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="topbar">
+    <div class="brand">
+      <span class="badge-noel">🎄 SỰ KIỆN NOEL 2026 · 1/12 → 25/12</span>
+      <strong style="font-size:13.5px">Mô Hình: Học Mỗi Ngày → Đêm Noel Nhận Thành Phẩm</strong>
+    </div>
+    <div class="btn-group">
+      <button class="btn active" id="tab3D">🔮 Thành phẩm 3D (Quả Cầu Tuyết)</button>
+      <button class="btn" id="tab2D">🏡 Trong Sân Anki 2D</button>
+      <span style="width:2px;height:18px;background:#d8ccb2;margin:0 2px"></span>
+      <button class="btn" data-tod="day">☀️ Ngày</button>
+      <button class="btn" data-tod="dusk">🌆 Chiều</button>
+      <button class="btn active" data-tod="night">🌙 Đêm Noel</button>
+    </div>
+  </div>
+
+  <div class="main-grid">
+    <div class="stage-wrap">
+      <canvas id="glCanvas"></canvas>
+      <canvas id="yardCanvas"></canvas>
+
+      <div class="stage-hud-tl">
+        <div class="pill">
+          <span id="stageIcon">🔮</span>
+          <span id="stageTitle">Tầng 3/5 · Quả Châu &amp; Dây Đèn Ấm</span>
+        </div>
+        <div class="pill" style="background:rgba(27,28,48,0.9);color:#fff">
+          <span id="hudProgress">❄️ 15 / 30 Bông Tuyết · Ngày 9/12</span>
+        </div>
+      </div>
+
+      <div class="toast-banner" id="toastBanner">+2 ❄️ Đã nâng cấp lên Tầng 3!</div>
+
+      <div class="stage-hud-bl">
+        <div class="pill" id="hintPill">🖱️ Kéo để xoay 360° Quả Cầu Tuyết · Cuộn để zoom</div>
+        <div style="display:flex;gap:6px;pointer-events:auto">
+          <button class="btn ice" id="btnShake">❄️ Lắc Tuyết Bay</button>
+          <button class="btn active" id="btnSpin">🔄 Tự xoay: BẬT</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="status-box">
+        <div class="stat-row">
+          <span>📅 Lịch sự kiện: <b id="lblDate">Ngày 9/12</b></span>
+          <span>🪙 Ví xu: <b id="lblCoins">420 xu</b></span>
+        </div>
+        <div class="stat-row" style="margin-bottom:4px">
+          <span>❄️ Tích luỹ: <b id="lblSnow">15 / 30</b></span>
+          <span style="color:#1971c2" id="lblTierText">Tầng 3 / 5</span>
+        </div>
+        <div class="prog-track">
+          <div class="prog-fill" id="progFill" style="width:50%"></div>
+        </div>
+      </div>
+
+      <div class="sec-title">
+        <span>1. Thử 1 ngày học (Tăng tiến độ thật)</span>
+        <button class="btn" id="btnReset" style="padding:2px 7px;font-size:10.5px">↺ Về Ngày 1</button>
+      </div>
+      <div class="action-stack">
+        <button class="act-btn study" id="btnStudy">
+          <span>📚 Ôn 15 thẻ hôm nay <small style="display:block;font-weight:600;color:#2b8a3e">Qua 1 ngày · nguồn tích luỹ chính</small></span>
+          <span class="tag-pill ice">+2 ❄️ · +15 xu</span>
+        </button>
+        <button class="act-btn goal" id="btnGoal">
+          <span>🎯 Đạt mục tiêu 30 thẻ <small style="display:block;font-weight:600;color:#1864ab">Thưởng thêm khi hoàn thành mục tiêu ngày</small></span>
+          <span class="tag-pill ice">+1 ❄️ · +15 xu</span>
+        </button>
+        <button class="act-btn coin" id="btnSpendCoin">
+          <span>🪙 Dùng 30 xu mua phụ kiện <small style="display:block;font-weight:600;color:#9c6500">Tiêu bớt xu dư hoặc bù ngày lỡ ôn</small></span>
+          <span class="tag-pill gold">-30 xu → +1 ❄️</span>
+        </button>
+      </div>
+
+      <div class="sec-title">
+        <span>2. Xem nhanh 5 Tầng tiến hoá</span>
+        <span style="font-size:10.5px;color:#7c674f">Bấm để soi từng bước</span>
+      </div>
+      <div class="tier-list" id="tierList"></div>
+
+      <button class="btn festive" id="btnOpenGift" style="width:100%;padding:9px;font-size:12.8px">
+        🎁 Xem Đêm 24/12: Mở Thành Phẩm Noel!
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Đêm 24/12 Mở Thành Phẩm -->
+<div class="modal-backdrop" id="giftModal">
+  <div class="modal-card">
+    <div style="font-size:38px" id="modalEmoji">🔮✨</div>
+    <h2 id="modalTitle">Đêm 24/12 · Thành Phẩm Noel 2026!</h2>
+    <div style="font-size:12px;font-weight:700;color:#5c4028" id="modalSub">
+      Bạn đã hoàn thành 30/30 ❄️ từ 15 ngày ôn thẻ trong tháng 12
+    </div>
+    <div class="modal-quote" id="modalQuote">
+      <b>📰 Tin đặc biệt trên Báo Làng 24/12:</b><br>
+      <i>"Đêm nay cả Quảng Trường Kotoba bừng sáng! Cây thông và Quả Cầu Tuyết bạn tự tay dựng suốt tháng 12 đã thắp đèn rực rỡ cùng StackChan và Chị Hana."</i>
+    </div>
+    <div class="keepsake-box" id="modalReward">
+      <b>🎁 Vật phẩm nhận vĩnh viễn vào Kho Đồ Nhà (`FIND_ITEMS`):</b><br>
+      <b>Quả Cầu Tuyết Hoàng Kim 2026</b> — Bày được trong Nhà quanh năm, bấm vào là tuyết bay &amp; phát hộp âm Giáng Sinh. Tooltip lưu mãi dòng: <i>"Kết tinh từ 390 lượt ôn mùa Noel 2026"</i>.
+    </div>
+    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+      <button class="btn ice" id="btnModalShake">❄️ Đóng &amp; Lắc Thử Quả Cầu 3D</button>
+      <button class="btn primary" id="btnModalClose">✓ Xong</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  // =========================================================================
+  // 1. TRẠNG THÁI SỰ KIỆN NOEL (1/12 -> 25/12, 5 TẦNG)
+  // =========================================================================
+  const TIERS = [
+    { tier: 1, minSnow: 0,  targetSnow: 3,  day: 1,  icon: "🪵", name: "Tầng 1 · Bệ Gỗ & Tuyết Nền", short: "0–5 ❄️ · Dựng đế gỗ khắc năm 2026 & lớp tuyết đầu mùa" },
+    { tier: 2, minSnow: 6,  targetSnow: 9,  day: 5,  icon: "🎄", name: "Tầng 2 · Cây Thông & Nhà Bánh Gừng", short: "6–12 ❄️ · Mọc cây thông phủ tuyết + nhà bánh gừng nhỏ" },
+    { tier: 3, minSnow: 13, targetSnow: 16, day: 9,  icon: "💡", name: "Tầng 3 · Quả Châu & Dây Đèn Ấm", short: "13–19 ❄️ · Treo châu nhiều màu, đèn nhấp nháy & hộp quà" },
+    { tier: 4, minSnow: 20, targetSnow: 23, day: 13, icon: "☃️", name: "Tầng 4 · StackChan & Mèo Quàng Khăn", short: "20–26 ❄️ · StackChan mũ Noel, Mèo Trắng & Người Tuyết" },
+    { tier: 5, minSnow: 27, targetSnow: 30, day: 17, icon: "🔮", name: "Tầng 5 · Ngôi Sao & Lồng Kính Tuyết Rơi", short: "27–30 ❄️ · Gắn sao vàng đỉnh cây + mái kính Quả Cầu Tuyết!" }
+  ];
+
+  let state = {
+    snow: 16,
+    coins: 420,
+    day: 9,
+    reviews: 210,
+    viewTab: "3d",     // "3d" | "2d"
+    tod: "night",      // "day" | "dusk" | "night"
+    autoSpin: true,
+    shakeBoost: 0
+  };
+
+  function getTier(snow) {
+    let cur = TIERS[0];
+    for (const t of TIERS) if (snow >= t.minSnow) cur = t;
+    return cur;
+  }
+
+  let toastTimer = null;
+  function showToast(msg) {
+    const el = document.getElementById("toastBanner");
+    el.textContent = msg;
+    el.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.classList.remove("show"), 2200);
+  }
+
+  // =========================================================================
+  // 2. WEBGL SMOOTH LOW-POLY BUILDER (PLAY TOGETHER STYLE + GLASS DOME)
+  // =========================================================================
+  const canvas = document.getElementById("glCanvas");
+  const yardCanvas = document.getElementById("yardCanvas");
+  const gl = canvas.getContext("webgl", { antialias: true, alpha: false });
+
+  function resize() {
+    const r = canvas.parentElement.getBoundingClientRect();
+    canvas.width = Math.max(300, Math.round(r.width));
+    canvas.height = Math.max(300, Math.round(r.height));
+    yardCanvas.width = canvas.width;
+    yardCanvas.height = canvas.height;
+  }
+  window.addEventListener("resize", resize);
+  resize();
+
+  function hexToRgb(hex) {
+    const v = parseInt(hex.slice(1), 16);
+    return [((v >> 16) & 255) / 255, ((v >> 8) & 255) / 255, (v & 255) / 255];
+  }
+  function createMesh() { return { pos: [], norm: [], col: [], mat: [] }; }
+  function pushTri(m, p0, p1, p2, n0, n1, n2, rgb, gloss, emissive) {
+    m.pos.push(...p0, ...p1, ...p2);
+    m.norm.push(...n0, ...n1, ...n2);
+    m.col.push(...rgb, ...rgb, ...rgb);
+    m.mat.push(gloss, emissive, gloss, emissive, gloss, emissive);
+  }
+  function addSphere(m, cx, cy, cz, rx, ry, rz, lat, lon, hex, opts) {
+    const o = opts || {};
+    const rgb = hexToRgb(hex);
+    const gls = o.gloss || 0.2;
+    const em = o.emissive || 0.0;
+    const rings = lat || 12, segs = lon || 16;
+    function pt(i, j) {
+      const th = (i / rings) * Math.PI;
+      const ph = (j / segs) * Math.PI * 2;
+      const st = Math.sin(th), ct = Math.cos(th), sp = Math.sin(ph), cp = Math.cos(ph);
+      const nx = st * cp, ny = ct, nz = st * sp;
+      const nl = Math.hypot(nx / rx, ny / ry, nz / rz) || 1;
+      return {
+        p: [cx + rx * nx, cy + ry * ny, cz + rz * nz],
+        n: [(nx / rx) / nl, (ny / ry) / nl, (nz / rz) / nl]
+      };
+    }
+    for (let i = 0; i < rings; i++) {
+      for (let j = 0; j < segs; j++) {
+        const a = pt(i, j), b = pt(i + 1, j), c = pt(i + 1, j + 1), d = pt(i, j + 1);
+        if (i !== 0) pushTri(m, a.p, b.p, c.p, a.n, b.n, c.n, rgb, gls, em);
+        if (i !== rings - 1) pushTri(m, a.p, c.p, d.p, a.n, c.n, d.n, rgb, gls, em);
+      }
+    }
+  }
+  function addCylinder(m, cx, y0, cz, rTop, rBot, h, segs, hex, opts) {
+    const o = opts || {};
+    const rgb = hexToRgb(hex);
+    const gls = o.gloss || 0.2;
+    const em = o.emissive || 0.0;
+    const s = segs || 18;
+    const y1 = y0 + h;
+    const slope = (rBot - rTop) / (h || 1);
+    for (let i = 0; i < s; i++) {
+      const a0 = (i / s) * Math.PI * 2;
+      const a1 = ((i + 1) / s) * Math.PI * 2;
+      const c0 = Math.cos(a0), s0 = Math.sin(a0);
+      const c1 = Math.cos(a1), s1 = Math.sin(a1);
+      const pB0 = [cx + c0 * rBot, y0, cz + s0 * rBot];
+      const pB1 = [cx + c1 * rBot, y0, cz + s1 * rBot];
+      const pT0 = [cx + c0 * rTop, y1, cz + s0 * rTop];
+      const pT1 = [cx + c1 * rTop, y1, cz + s1 * rTop];
+      const n0 = [c0, slope, s0], n1 = [c1, slope, s1];
+      pushTri(m, pB0, pT1, pB1, n0, n1, n1, rgb, gls, em);
+      pushTri(m, pB0, pT0, pT1, n0, n0, n1, rgb, gls, em);
+      if (rTop > 0.001) pushTri(m, [cx, y1, cz], pT1, pT0, [0,1,0],[0,1,0],[0,1,0], rgb, gls, em);
+      if (rBot > 0.001) pushTri(m, [cx, y0, cz], pB0, pB1, [0,-1,0],[0,-1,0],[0,-1,0], rgb, gls, em);
+    }
+  }
+  function addRoundedBox(m, cx, cy, cz, wx, wy, wz, rad, segs, hex, opts) {
+    const o = opts || {};
+    const rgb = hexToRgb(hex);
+    const gls = o.gloss || 0.2;
+    const em = o.emissive || 0.0;
+    const r = Math.min(rad, wx * 0.45, wy * 0.45, wz * 0.45);
+    const hx = wx * 0.5 - r, hy = wy * 0.5 - r, hz = wz * 0.5 - r;
+    const res = segs || 4;
+    function boxPt(u, v) {
+      const th = v * Math.PI, ph = u * Math.PI * 2;
+      const st = Math.sin(th), ct = Math.cos(th), sp = Math.sin(ph), cp = Math.cos(ph);
+      const nx = st * cp, ny = ct, nz = st * sp;
+      const sx = nx >= 0 ? hx : -hx, sy = ny >= 0 ? hy : -hy, sz = nz >= 0 ? hz : -hz;
+      return { p: [cx + sx + r * nx, cy + sy + r * ny, cz + sz + r * nz], n: [nx, ny, nz] };
+    }
+    const rings = res * 2, sl = res * 4;
+    for (let i = 0; i < rings; i++) {
+      for (let j = 0; j < sl; j++) {
+        const v00 = boxPt(j / sl, i / rings);
+        const v10 = boxPt((j + 1) / sl, i / rings);
+        const v01 = boxPt(j / sl, (i + 1) / rings);
+        const v11 = boxPt((j + 1) / sl, (i + 1) / rings);
+        pushTri(m, v00.p, v01.p, v11.p, v00.n, v01.n, v11.n, rgb, gls, em);
+        pushTri(m, v00.p, v11.p, v10.p, v00.n, v11.n, v10.n, rgb, gls, em);
+      }
+    }
+  }
+
+  // Tạo lưới Quả Cầu Tuyết theo Tầng 1..5
+  function buildSnowGlobeTier(tier) {
+    const m = createMesh();
+    // Nền bàn gỗ nhẹ bên dưới
+    addCylinder(m, 0, -0.45, 0, 7.2, 7.6, 0.45, 32, "#323b57", { gloss: 0.15 });
+
+    // --- TẦNG 1: ĐẾ GỖ QUẢ CẦU TUYẾT + NỀN TUYẾT + BIỂN 2026 ---
+    addCylinder(m, 0, 0.0, 0, 4.95, 5.45, 1.15, 34, "#6f3c1e", { gloss: 0.35 });
+    addCylinder(m, 0, 1.15, 0, 4.68, 4.95, 0.32, 34, "#8c4e28", { gloss: 0.35 });
+    // Vòng vàng sang trọng quanh đế
+    addCylinder(m, 0, 1.05, 0, 4.98, 5.02, 0.14, 34, "#ffd43b", { gloss: 0.85, emissive: 0.12 });
+    // Bảng tên vàng phía trước đế ("2026")
+    addRoundedBox(m, 0, 0.62, 5.18, 2.5, 0.72, 0.35, 0.12, 4, "#ffd43b", { gloss: 0.8 });
+    addRoundedBox(m, 0, 0.62, 5.33, 2.15, 0.44, 0.12, 0.06, 3, "#3b2313", { gloss: 0.2 });
+    // Đồi tuyết trắng mịn trên mặt đế
+    addCylinder(m, 0, 1.44, 0, 4.45, 4.64, 0.34, 32, "#f8fbff", { gloss: 0.15 });
+    addSphere(m, 0, 1.55, -0.2, 4.35, 0.48, 4.25, 10, 24, "#ffffff", { gloss: 0.12 });
+    // Vài tảng tuyết & hàng rào gỗ nhỏ báo hiệu công trình đang dựng ở Tầng 1
+    if (tier === 1) {
+      for (let i = 0; i < 6; i++) {
+        const a = (i / 6) * Math.PI * 2;
+        addCylinder(m, Math.cos(a) * 2.5, 1.78, Math.sin(a) * 2.5, 0.10, 0.10, 0.75, 8, "#c4844a", { gloss: 0.2 });
+      }
+    }
+
+    // --- TẦNG 2: CÂY THÔNG NOEL BO TRÒN PHỦ TUYẾT + NHÀ BÁNH GỪNG MINI ---
+    if (tier >= 2) {
+      // Thân cây thông
+      addCylinder(m, -0.2, 1.75, -0.2, 0.42, 0.56, 1.25, 14, "#6b3e1f", { gloss: 0.15 });
+      // 3 Tầng tán thông bo tròn + lớp tuyết trắng phủ mép
+      const treeLayers = [
+        { y: 2.55, r: 2.35, h: 1.95, snowR: 2.20, col: "#1e7e34" },
+        { y: 4.00, r: 1.80, h: 1.75, snowR: 1.66, col: "#25913d" },
+        { y: 5.25, r: 1.22, h: 1.55, snowR: 1.12, col: "#2fb344" }
+      ];
+      treeLayers.forEach(tl => {
+        addCylinder(m, -0.2, tl.y, -0.2, 0.25, tl.r, tl.h, 22, tl.col, { gloss: 0.18 });
+        addSphere(m, -0.2, tl.y + 0.15, -0.2, tl.r * 0.96, 0.36, tl.r * 0.96, 8, 18, "#ffffff", { gloss: 0.15 });
+      });
+
+      // Ngôi nhà bánh gừng nhỏ cạnh cây thông
+      const gx = 2.05, gz = -0.95;
+      addRoundedBox(m, gx, 2.25, gz, 1.45, 1.20, 1.35, 0.14, 4, "#b86b35", { gloss: 0.18 });
+      addRoundedBox(m, gx, 2.95, gz, 1.62, 0.46, 1.52, 0.18, 4, "#ffffff", { gloss: 0.2 });
+      addRoundedBox(m, gx, 3.22, gz, 1.15, 0.35, 1.15, 0.16, 4, "#ff8fab", { gloss: 0.35 });
+      addRoundedBox(m, gx, 2.08, gz + 0.68, 0.46, 0.66, 0.10, 0.06, 3, "#ffd43b", { emissive: 0.6 });
+    }
+
+    // --- TẦNG 3: QUẢ CHÂU BÓNG LOÁNG + DÂY ĐÈN ẤM + HỘP QUÀ ---
+    if (tier >= 3) {
+      const baubleCols = ["#ff3b30", "#ffd43b", "#339af0", "#ff6b9d", "#74c0fc"];
+      const rings = [
+        { y: 2.95, r: 2.05, n: 8 },
+        { y: 4.30, r: 1.52, n: 6 },
+        { y: 5.50, r: 0.95, n: 5 }
+      ];
+      rings.forEach((rg, ri) => {
+        for (let i = 0; i < rg.n; i++) {
+          const a = (i / rg.n) * Math.PI * 2 + ri * 0.45;
+          const bx = -0.2 + Math.cos(a) * rg.r;
+          const bz = -0.2 + Math.sin(a) * rg.r;
+          const col = baubleCols[(i + ri) % baubleCols.length];
+          addSphere(m, bx, rg.y, bz, 0.22, 0.22, 0.22, 8, 12, col, { gloss: 0.92, emissive: 0.15 });
+          // Bóng đèn vàng phát sáng xen kẽ
+          const la = a + Math.PI / rg.n;
+          addSphere(m, -0.2 + Math.cos(la) * (rg.r * 0.96), rg.y + 0.28, -0.2 + Math.sin(la) * (rg.r * 0.96), 0.11, 0.11, 0.11, 6, 8, "#ffe066", { emissive: 0.95 });
+        }
+      });
+      // 3 Hộp quà nơ đỏ vàng dưới gốc cây
+      const gifts = [
+        { x: -1.8, z: 0.8, w: 0.82, h: 0.72, c: "#ff4d6d", rib: "#ffd43b" },
+        { x: -1.1, z: 1.8, w: 0.68, h: 0.58, c: "#339af0", rib: "#ffffff" },
+        { x:  1.1, z: 1.8, w: 0.76, h: 0.64, c: "#ffd43b", rib: "#e03131" }
+      ];
+      gifts.forEach(g => {
+        addRoundedBox(m, g.x, 1.85 + g.h * 0.45, g.z, g.w, g.h, g.w, 0.08, 3, g.c, { gloss: 0.4 });
+        addRoundedBox(m, g.x, 1.85 + g.h * 0.92, g.z, g.w * 0.35, 0.16, g.w * 0.95, 0.05, 3, g.rib, { gloss: 0.5 });
+      });
+    }
+
+    // --- TẦNG 4: STACKCHAN MŨ NOEL + MÈO TRẮNG + NGƯỜI TUYẾT ---
+    if (tier >= 4) {
+      // StackChan (bên trái phía trước)
+      const sx = -1.65, sz = 1.95, sy = 1.85;
+      addCylinder(m, sx, sy, sz, 0.38, 0.46, 0.78, 14, "#339af0", { gloss: 0.25 });
+      addRoundedBox(m, sx, sy + 1.25, sz, 1.05, 0.92, 0.92, 0.25, 5, "#ffffff", { gloss: 0.35 });
+      // Mắt StackChan
+      [-0.20, 0.20].forEach(ex => {
+        addSphere(m, sx + ex, sy + 1.28, sz + 0.46, 0.07, 0.09, 0.05, 6, 8, "#1a1b2e", { gloss: 0.9 });
+        addSphere(m, sx + ex + 0.02, sy + 1.32, sz + 0.49, 0.025, 0.025, 0.025, 5, 6, "#74c0fc", { emissive: 0.9 });
+      });
+      // Mũ Ông Già Noel đỏ viền trắng
+      addCylinder(m, sx, sy + 1.66, sz, 0.52, 0.54, 0.18, 14, "#ffffff", { gloss: 0.15 });
+      addCylinder(m, sx, sy + 1.82, sz, 0.06, 0.46, 0.65, 14, "#e03131", { gloss: 0.25 });
+      addSphere(m, sx, sy + 2.48, sz, 0.15, 0.15, 0.15, 8, 10, "#ffffff", { gloss: 0.15 });
+
+      // Mèo Trắng quàng khăn đỏ (bên phải phía trước)
+      const cx = 1.75, cz = 1.75, cy = 1.85;
+      addSphere(m, cx, cy + 0.35, cz, 0.36, 0.34, 0.40, 10, 14, "#ffffff", { gloss: 0.25 });
+      addSphere(m, cx, cy + 0.80, cz + 0.08, 0.31, 0.28, 0.30, 10, 14, "#ffffff", { gloss: 0.25 });
+      addCylinder(m, cx - 0.15, cy + 0.98, cz + 0.08, 0.02, 0.11, 0.20, 8, "#ffffff", { gloss: 0.2 });
+      addCylinder(m, cx + 0.15, cy + 0.98, cz + 0.08, 0.02, 0.11, 0.20, 8, "#ffffff", { gloss: 0.2 });
+      addCylinder(m, cx, cy + 0.54, cz + 0.05, 0.28, 0.30, 0.12, 12, "#e03131", { gloss: 0.2 });
+      addSphere(m, cx, cy + 0.78, cz + 0.36, 0.05, 0.04, 0.04, 6, 8, "#ff8fab", { gloss: 0.3 });
+
+      // Người Tuyết nhỏ bên phải cây
+      const nx = 2.55, nz = 0.65, ny = 1.82;
+      addSphere(m, nx, ny + 0.45, nz, 0.52, 0.46, 0.52, 10, 14, "#ffffff", { gloss: 0.15 });
+      addSphere(m, nx, ny + 1.05, nz, 0.36, 0.34, 0.36, 10, 14, "#ffffff", { gloss: 0.15 });
+      addCylinder(m, nx, ny + 1.15, nz + 0.32, 0.02, 0.07, 0.24, 8, "#ff922b", { gloss: 0.2 }); // Mũi cà rốt
+      addCylinder(m, nx, ny + 1.32, nz, 0.28, 0.30, 0.32, 10, "#252638", { gloss: 0.25 });     // Mũ đen
+    }
+
+    // --- TẦNG 5: NGÔI SAO VÀNG ĐỈNH THÁP ---
+    if (tier >= 5) {
+      addSphere(m, -0.2, 7.05, -0.2, 0.46, 0.46, 0.22, 10, 14, "#ffd43b", { gloss: 0.9, emissive: 0.85 });
+      addSphere(m, -0.2, 7.05, -0.2, 0.24, 0.68, 0.20, 8, 12, "#fff3bf", { gloss: 0.9, emissive: 0.95 });
+      addSphere(m, -0.2, 7.05, -0.2, 0.68, 0.24, 0.20, 8, 12, "#fff3bf", { gloss: 0.9, emissive: 0.95 });
+    }
+    return m;
+  }
+
+  // Lưới Lồng Kính Trong Suốt (chỉ hiện ở Tầng 5)
+  function buildGlassDome() {
+    const m = createMesh();
+    addSphere(m, 0, 4.15, 0, 4.72, 4.72, 4.72, 22, 32, "#dff4ff", { gloss: 0.95, emissive: 0.25 });
+    return m;
+  }
+
+  // Lưới Bông Tuyết 3D bên trong Quả Cầu
+  function buildSnowflakeMesh() {
+    const m = createMesh();
+    addSphere(m, 0, 0, 0, 0.09, 0.09, 0.09, 5, 6, "#ffffff", { emissive: 0.95 });
+    return m;
+  }
+
+  // Shaders
+  const shadowVS = `
+    attribute vec3 aPos;
+    uniform mat4 uLightMVP;
+    void main() { gl_Position = uLightMVP * vec4(aPos, 1.0); }
+  `;
+  const shadowFS = `
+    precision mediump float;
+    vec4 packDepth(float depth) {
+      const vec4 bitShift = vec4(1.0, 256.0, 65536.0, 16777216.0);
+      const vec4 bitMask = vec4(1.0/256.0, 1.0/256.0, 1.0/256.0, 0.0);
+      vec4 res = fract(depth * bitShift);
+      res -= res.gbaa * bitMask;
+      return res;
+    }
+    void main() { gl_FragColor = packDepth(gl_FragCoord.z); }
+  `;
+
+  const mainVS = `
+    attribute vec3 aPos;
+    attribute vec3 aNorm;
+    attribute vec3 aCol;
+    attribute vec2 aMat;
+    uniform mat4 uProj;
+    uniform mat4 uView;
+    uniform mat4 uLightMVP;
+    uniform vec3 uOffset;
+    varying vec3 vPos;
+    varying vec3 vNorm;
+    varying vec3 vCol;
+    varying vec2 vMat;
+    varying vec4 vLightSpacePos;
+    void main() {
+      vec3 wp = aPos + uOffset;
+      vPos = wp;
+      vNorm = normalize(aNorm);
+      vCol = aCol;
+      vMat = aMat;
+      vLightSpacePos = uLightMVP * vec4(wp, 1.0);
+      gl_Position = uProj * uView * vec4(wp, 1.0);
+    }
+  `;
+  const mainFS = `
+    precision mediump float;
+    varying vec3 vPos;
+    varying vec3 vNorm;
+    varying vec3 vCol;
+    varying vec2 vMat;
+    varying vec4 vLightSpacePos;
+    uniform sampler2D uShadowMap;
+    uniform vec3 uEyePos;
+    uniform vec3 uSunDir;
+    uniform vec3 uSunCol;
+    uniform vec3 uSkyCol;
+    uniform vec3 uGroundCol;
+    uniform float uNight;
+    uniform float uAlpha;
+    uniform float uIsGlass;
+
+    float unpackDepth(vec4 rgba) {
+      const vec4 bitShift = vec4(1.0, 1.0/256.0, 1.0/65536.0, 1.0/16777216.0);
+      return dot(rgba, bitShift);
+    }
+    float calcShadow(vec4 lsPos, float ndotl) {
+      vec3 proj = lsPos.xyz / lsPos.w;
+      proj = proj * 0.5 + 0.5;
+      if (proj.x < 0.0 || proj.x > 1.0 || proj.y < 0.0 || proj.y > 1.0 || proj.z > 1.0) return 1.0;
+      float bias = max(0.0028 * (1.0 - ndotl), 0.0012);
+      float texel = 1.0 / 1024.0;
+      float sum = 0.0;
+      for (int dx = -1; dx <= 1; dx++) {
+        for (int dy = -1; dy <= 1; dy++) {
+          float d = unpackDepth(texture2D(uShadowMap, proj.xy + vec2(float(dx), float(dy)) * texel));
+          sum += (proj.z - bias <= d) ? 1.0 : 0.0;
+        }
+      }
+      return sum / 9.0;
+    }
+    void main() {
+      vec3 N = normalize(vNorm);
+      vec3 L = normalize(uSunDir);
+      vec3 V = normalize(uEyePos - vPos);
+      vec3 H = normalize(L + V);
+      float fresnel = pow(1.0 - max(dot(N, V), 0.0), 2.8);
+
+      if (uIsGlass > 0.5) {
+        float spec = pow(max(dot(N, H), 0.0), 56.0) * 0.98;
+        float rimGlass = pow(1.0 - max(dot(N, V), 0.0), 3.2);
+        vec3 glassCol = mix(vec3(0.78, 0.94, 1.0), vec3(1.0), rimGlass * 0.8) + vec3(spec);
+        float a = clamp(0.03 + rimGlass * 0.58 + spec * 0.72, 0.03, 0.85);
+        gl_FragColor = vec4(glassCol, a);
+        return;
+      }
+
+      float ndotl = max(dot(N, L), 0.0);
+      float shadow = calcShadow(vLightSpacePos, ndotl);
+      float hemi = N.y * 0.5 + 0.5;
+      vec3 ambient = mix(uGroundCol, uSkyCol, hemi) * 0.60;
+      vec3 direct = uSunCol * ndotl * mix(0.30, 1.0, shadow) * 0.65;
+      float spec = pow(max(dot(N, H), 0.0), 28.0) * vMat.x * shadow * 0.42;
+      float rim = fresnel * 0.15;
+      vec3 lit = vCol * (ambient + direct) + vec3(spec) + uSkyCol * rim;
+      vec3 glow = vCol * (1.05 + uNight * 0.45);
+      gl_FragColor = vec4(mix(lit, glow, vMat.y), uAlpha);
+    }
+  `;
+
+  function makeProg(vs, fs) {
+    const p = gl.createProgram();
+    const s1 = gl.createShader(gl.VERTEX_SHADER); gl.shaderSource(s1, vs); gl.compileShader(s1);
+    const s2 = gl.createShader(gl.FRAGMENT_SHADER); gl.shaderSource(s2, fs); gl.compileShader(s2);
+    gl.attachShader(p, s1); gl.attachShader(p, s2); gl.linkProgram(p);
+    return p;
+  }
+  const shProg = makeProg(shadowVS, shadowFS);
+  const mnProg = makeProg(mainVS, mainFS);
+
+  const SH_SIZE = 1024;
+  const shTex = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, shTex);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, SH_SIZE, SH_SIZE, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  const shFB = gl.createFramebuffer();
+  gl.bindFramebuffer(gl.FRAMEBUFFER, shFB);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, shTex, 0);
+  const shRB = gl.createRenderbuffer();
+  gl.bindRenderbuffer(gl.RENDERBUFFER, shRB);
+  gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, SH_SIZE, SH_SIZE);
+  gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, shRB);
+  gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
+  function uploadMesh(m) {
+    const bufPos = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, bufPos); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(m.pos), gl.STATIC_DRAW);
+    const bufNorm = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, bufNorm); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(m.norm), gl.STATIC_DRAW);
+    const bufCol = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, bufCol); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(m.col), gl.STATIC_DRAW);
+    const bufMat = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, bufMat); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(m.mat), gl.STATIC_DRAW);
+    return { bufPos, bufNorm, bufCol, bufMat, count: m.pos.length / 3 };
+  }
+
+  const tierMeshes = {};
+  for (let t = 1; t <= 5; t++) tierMeshes[t] = uploadMesh(buildSnowGlobeTier(t));
+  const domeMesh = uploadMesh(buildGlassDome());
+  const flakeMesh = uploadMesh(buildSnowflakeMesh());
+
+  // Hạt tuyết 3D lơ lửng
+  const flakes = [];
+  for (let i = 0; i < 85; i++) {
+    const a = Math.random() * Math.PI * 2;
+    const r = Math.random() * 3.6;
+    flakes.push({
+      x: Math.cos(a) * r,
+      y: 1.9 + Math.random() * 5.8,
+      z: Math.sin(a) * r,
+      spd: 0.7 + Math.random() * 1.1,
+      ph: Math.random() * 6.28
+    });
+  }
+
+  function matMul(a, b) {
+    const out = new Float32Array(16);
+    for (let c = 0; c < 4; c++)
+      for (let r = 0; r < 4; r++)
+        out[c * 4 + r] = a[r]*b[c*4] + a[4+r]*b[c*4+1] + a[8+r]*b[c*4+2] + a[12+r]*b[c*4+3];
+    return out;
+  }
+  function ortho(l, r, b, t, n, f) {
+    return new Float32Array([2/(r-l),0,0,0, 0,2/(t-b),0,0, 0,0,-2/(f-n),0, -(r+l)/(r-l),-(t+b)/(t-b),-(f+n)/(f-n),1]);
+  }
+  function perspective(fovY, aspect, near, far) {
+    const f = 1.0 / Math.tan(fovY * 0.5), nf = 1.0 / (near - far);
+    return new Float32Array([f/aspect,0,0,0, 0,f,0,0, 0,0,(far+near)*nf,-1, 0,0,(2*far*near)*nf,0]);
+  }
+  function lookAt(eye, target, up) {
+    let zx = eye[0]-target[0], zy = eye[1]-target[1], zz = eye[2]-target[2];
+    const zl = Math.hypot(zx, zy, zz) || 1; zx/=zl; zy/=zl; zz/=zl;
+    let xx = up[1]*zz - up[2]*zy, xy = up[2]*zx - up[0]*zz, xz = up[0]*zy - up[1]*zx;
+    const xl = Math.hypot(xx, xy, xz) || 1; xx/=xl; xy/=xl; xz/=xl;
+    const yx = zy*xz - zz*xy, yy = zz*xx - zx*xz, yz = zx*xy - zy*xx;
+    return new Float32Array([
+      xx, yx, zx, 0, xy, yy, zy, 0, xz, yz, zz, 0,
+      -(xx*eye[0]+xy*eye[1]+xz*eye[2]), -(yx*eye[0]+yy*eye[1]+yz*eye[2]), -(zx*eye[0]+zy*eye[1]+zz*eye[2]), 1
+    ]);
+  }
+
+  // =========================================================================
+  // 3. CANVAS 2D PIXEL ART — GÓC SÂN ANKI HIỆN TẠI (ことば畑)
+  // =========================================================================
+  const yctx = yardCanvas.getContext("2d");
+  const snow2D = Array.from({ length: 50 }, () => ({
+    x: Math.random(), y: Math.random(), r: 1.5 + Math.random() * 2.5, s: 0.08 + Math.random() * 0.15
+  }));
+
+  function drawAnki2DScene(t) {
+    const w = yardCanvas.width, h = yardCanvas.height;
+    const skyColors = {
+      day: ["#7cc4ff", "#d0ebff"],
+      dusk: ["#f08c6e", "#ffd8a8"],
+      night: ["#111936", "#233567"]
+    }[state.tod];
+    const grad = yctx.createLinearGradient(0, 0, 0, h * 0.56);
+    grad.addColorStop(0, skyColors[0]);
+    grad.addColorStop(1, skyColors[1]);
+    yctx.fillStyle = grad;
+    yctx.fillRect(0, 0, w, h);
+
+    // Đồi tuyết xa & dây đèn lễ hội
+    yctx.fillStyle = state.tod === "night" ? "#c5d9ed" : "#eef6ff";
+    yctx.beginPath();
+    yctx.moveTo(0, h * 0.45);
+    yctx.quadraticCurveTo(w * 0.25, h * 0.32, w * 0.55, h * 0.43);
+    yctx.quadraticCurveTo(w * 0.82, h * 0.34, w, h * 0.45);
+    yctx.lineTo(w, h); yctx.lineTo(0, h); yctx.fill();
+
+    // Sân cỏ phủ tuyết mùa Noel (season_core: "noel")
+    yctx.fillStyle = state.tod === "night" ? "#b4cce4" : "#f4f9ff";
+    yctx.fillRect(0, h * 0.44, w, h * 0.28);
+    // Ngôi nhà gỗ của người học (giữa-phải sân, né thẻ Hôm nay) + Vòng hoa Noel (wreath)
+    const hx = Math.round(w * 0.43), hy = Math.round(h * 0.28);
+    // Đường đất dẫn từ cửa nhà ra ruộng
+    yctx.fillStyle = "#c9a679";
+    yctx.fillRect(hx + 66, hy + 150, 42, h * 0.72 - (hy + 150));
+
+    yctx.fillStyle = "#f2dec0"; yctx.fillRect(hx, hy + 48, 175, 102);
+    yctx.strokeStyle = "#5c371b"; yctx.lineWidth = 4; yctx.strokeRect(hx, hy + 48, 175, 102);
+    // Mái nhà phủ tuyết trắng
+    yctx.fillStyle = "#6c4529";
+    yctx.beginPath(); yctx.moveTo(hx - 18, hy + 54); yctx.lineTo(hx + 88, hy); yctx.lineTo(hx + 193, hy + 54); yctx.closePath(); yctx.fill();
+    yctx.fillStyle = "#ffffff";
+    yctx.beginPath(); yctx.moveTo(hx - 20, hy + 52); yctx.lineTo(hx + 88, hy - 4); yctx.lineTo(hx + 195, hy + 52); yctx.lineTo(hx + 165, hy + 52); yctx.lineTo(hx + 88, hy + 14); yctx.lineTo(hx + 10, hy + 52); yctx.fill();
+    // Cửa & vòng hoa Noel trên cửa
+    yctx.fillStyle = "#7f4f24"; yctx.fillRect(hx + 66, hy + 94, 42, 56);
+    yctx.strokeStyle = "#2b8a3e"; yctx.lineWidth = 6; yctx.beginPath(); yctx.arc(hx + 87, hy + 114, 11, 0, Math.PI * 2); yctx.stroke();
+    yctx.fillStyle = "#e03131"; yctx.fillRect(hx + 84, hy + 122, 6, 6);
+    // Cửa sổ sáng ấm
+    yctx.fillStyle = state.tod === "night" ? "#ffe066" : "#a5d8ff";
+    yctx.fillRect(hx + 18, hy + 78, 34, 34); yctx.fillRect(hx + 124, hy + 78, 34, 34);
+
+    // CÔNG TRÌNH NOEL ĐANG XÂY Ở GÓC SÂN BÊN TRÁI (Lớn dần theo Tầng 1..5!)
+    const curT = getTier(state.snow).tier;
+    const cx = Math.round(w * 0.21), cy = Math.round(h * 0.56);
+    // Tầng 1: Bệ gỗ khắc 2026
+    yctx.fillStyle = "#7f4f24"; yctx.fillRect(cx - 56, cy, 112, 24);
+    yctx.fillStyle = "#ffd43b"; yctx.fillRect(cx - 24, cy + 5, 48, 13);
+    yctx.fillStyle = "#3b2313"; yctx.font = "bold 11px monospace"; yctx.textAlign = "center";
+    yctx.fillText("2026", cx, cy + 15);
+    yctx.fillStyle = "#ffffff"; yctx.fillRect(cx - 60, cy - 8, 120, 10);
+
+    // Tầng 2+: Cây thông pixel 3 tầng + tuyết
+    if (curT >= 2) {
+      yctx.fillStyle = "#5c371b"; yctx.fillRect(cx - 8, cy - 26, 16, 20);
+      [[38, -26, 36], [28, -56, 32], [18, -82, 28]].forEach(([rw, oy, rh]) => {
+        yctx.fillStyle = "#2b8a3e";
+        yctx.beginPath(); yctx.moveTo(cx - rw, cy + oy); yctx.lineTo(cx, cy + oy - rh); yctx.lineTo(cx + rw, cy + oy); yctx.closePath(); yctx.fill();
+        yctx.fillStyle = "#fff"; yctx.fillRect(cx - rw + 6, cy + oy - 5, (rw - 6) * 2, 5);
+      });
+    }
+    // Tầng 3+: Quả châu + Đèn + Quà
+    if (curT >= 3) {
+      const blink = Math.sin(t * 4) > 0;
+      const dots = [[-18,-36,"#ff4d6d"], [14,-34,"#ffd43b"], [-10,-62,"#339af0"], [12,-66,"#ffe066"], [0,-88, blink ? "#ffe066" : "#ff922b"]];
+      dots.forEach(([dx, dy, c]) => {
+        yctx.fillStyle = c; yctx.beginPath(); yctx.arc(cx + dx, cy + dy, 4.5, 0, Math.PI * 2); yctx.fill();
+      });
+      yctx.fillStyle = "#e03131"; yctx.fillRect(cx - 46, cy - 22, 16, 14);
+      yctx.fillStyle = "#339af0"; yctx.fillRect(cx + 30, cy - 20, 16, 12);
+    }
+    // Tầng 4+: StackChan đội mũ Noel & Mèo Trắng bên cây
+    if (curT >= 4) {
+      // StackChan pixel
+      yctx.fillStyle = "#339af0"; yctx.fillRect(cx - 52, cy - 34, 18, 26);
+      yctx.fillStyle = "#ffffff"; yctx.fillRect(cx - 54, cy - 54, 22, 20);
+      yctx.fillStyle = "#1b1c30"; yctx.fillRect(cx - 49, cy - 46, 4, 4); yctx.fillRect(cx - 41, cy - 46, 4, 4);
+      yctx.fillStyle = "#e03131"; yctx.fillRect(cx - 52, cy - 64, 18, 10);
+      // Mèo trắng pixel
+      yctx.fillStyle = "#ffffff"; yctx.fillRect(cx + 36, cy - 26, 16, 18);
+      yctx.fillStyle = "#e03131"; yctx.fillRect(cx + 36, cy - 18, 16, 4);
+    }
+    // Tầng 5: Ngôi sao vàng + Lồng kính trong suốt bao quanh!
+    if (curT >= 5) {
+      yctx.fillStyle = "#ffd43b";
+      yctx.beginPath(); yctx.arc(cx, cy - 116, 8, 0, Math.PI * 2); yctx.fill();
+      yctx.strokeStyle = "rgba(180,235,255,0.85)";
+      yctx.lineWidth = 4;
+      yctx.fillStyle = "rgba(210,245,255,0.16)";
+      yctx.beginPath(); yctx.arc(cx, cy - 52, 74, Math.PI, 0); yctx.lineTo(cx + 60, cy); yctx.lineTo(cx - 60, cy); yctx.closePath();
+      yctx.fill(); yctx.stroke();
+    }
+
+    // Ruộng từ vựng gọn phía dưới (#kb-field theo Mục 6)
+    yctx.fillStyle = "#4d9e45";
+    yctx.fillRect(0, h * 0.72, w, h * 0.28);
+    yctx.fillStyle = "#2b4c7e";
+    yctx.fillRect(26, h * 0.745, 186, 22);
+    yctx.fillStyle = "#fff"; yctx.font = "bold 11.5px sans-serif"; yctx.textAlign = "left";
+    yctx.fillText("💧 Luống Cần Tưới Hôm Nay", 34, h * 0.745 + 15);
+    for (let i = 0; i < 12; i++) {
+      const px = 32 + i * 64, py = h * 0.82;
+      yctx.fillStyle = "#7a5330"; yctx.fillRect(px, py + 24, 44, 14);
+      yctx.fillStyle = i < 4 ? "#40c057" : "#ff8fab";
+      yctx.fillRect(px + 12, py, 20, 26);
+      if (i < 4) {
+        yctx.fillStyle = "#339af0"; yctx.fillRect(px + 18, py - 14, 8, 10);
+      }
+    }
+
+    // THẺ "HÔM NAY" GÓC PHẢI TRÊN GIỐNG ANKI THẬT
+    const cardW = 246, cardX = w - cardW - 18, cardY = 62;
+    yctx.fillStyle = "rgba(255, 250, 240, 0.94)";
+    yctx.fillRect(cardX, cardY, cardW, 114);
+    yctx.strokeStyle = "#1b1c30"; yctx.lineWidth = 2.5; yctx.strokeRect(cardX, cardY, cardW, 114);
+    yctx.fillStyle = "#1b1c30"; yctx.font = "bold 12px sans-serif";
+    yctx.fillText("Hôm nay " + Math.min(30, state.reviews % 31) + "/30 lượt · Chuỗi 14 ngày", cardX + 12, cardY + 22);
+    yctx.fillStyle = "#e9dec4"; yctx.fillRect(cardX + 12, cardY + 30, cardW - 24, 8);
+    yctx.fillStyle = "#40c057"; yctx.fillRect(cardX + 12, cardY + 30, (cardW - 24) * 0.72, 8);
+    // Dòng mới thêm cho Sự kiện Noel!
+    yctx.fillStyle = "#d63031"; yctx.fillRect(cardX + 12, cardY + 46, 4, 24);
+    yctx.fillStyle = "#b02a37"; yctx.font = "bold 12px sans-serif";
+    yctx.fillText("❄️ Noel 2026: " + state.snow + "/30 · Tầng " + curT + "/5 ▸", cardX + 22, cardY + 62);
+    yctx.fillStyle = "#c92a2a"; yctx.fillRect(cardX + 12, cardY + 78, 4, 22);
+    yctx.fillStyle = "#495057"; yctx.font = "600 11.5px sans-serif";
+    yctx.fillText("📰 Báo mới · Chép chính tả 2/5 ▸", cardX + 22, cardY + 93);
+
+    // Tuyết rơi phủ toàn sân 2D
+    yctx.fillStyle = "rgba(255,255,255,0.88)";
+    snow2D.forEach(s => {
+      s.y = (s.y + s.s * 0.015) % 1;
+      yctx.beginPath(); yctx.arc(s.x * w, s.y * h, s.r, 0, Math.PI * 2); yctx.fill();
+    });
+  }
+
+  // =========================================================================
+  // 4. UI & TƯƠNG TÁC
+  // =========================================================================
+  let cam = { yaw: 0.45, pitch: 0.28, dist: 15.8 };
+
+  function syncUI() {
+    const t = getTier(state.snow);
+    document.getElementById("lblDate").textContent = "Ngày " + state.day + "/12";
+    document.getElementById("lblCoins").textContent = state.coins + " xu";
+    document.getElementById("lblSnow").textContent = state.snow + " / 30";
+    document.getElementById("lblTierText").textContent = "Tầng " + t.tier + " / 5";
+    document.getElementById("progFill").style.width = Math.min(100, (state.snow / 30) * 100) + "%";
+
+    document.getElementById("stageIcon").textContent = t.icon;
+    document.getElementById("stageTitle").textContent = t.name;
+    document.getElementById("hudProgress").textContent = "❄️ " + state.snow + " / 30 Bông Tuyết · Ngày " + state.day + "/12";
+
+    const list = document.getElementById("tierList");
+    list.innerHTML = "";
+    TIERS.forEach(item => {
+      const btn = document.createElement("button");
+      const isActive = item.tier === t.tier;
+      const isDone = state.snow >= item.targetSnow;
+      btn.className = "tier-item" + (isActive ? " active" : "") + (isDone ? " done" : "");
+      btn.innerHTML = `
+        <span class="tier-badge">${isDone ? "✓" : "T" + item.tier}</span>
+        <div class="tier-text">
+          <b>${item.icon} ${item.name}</b>
+          <span>${item.short}</span>
+        </div>
+      `;
+      btn.addEventListener("click", () => {
+        const prev = getTier(state.snow).tier;
+        state.snow = item.targetSnow;
+        state.day = item.day;
+        if (item.tier === 5) state.shakeBoost = 1.6;
+        if (item.tier !== prev) showToast("Đang xem " + item.name);
+        syncUI();
+      });
+      list.appendChild(btn);
+    });
+
+    const is3D = state.viewTab === "3d";
+    canvas.style.display = is3D ? "block" : "none";
+    yardCanvas.style.display = is3D ? "none" : "block";
+    document.getElementById("tab3D").classList.toggle("active", is3D);
+    document.getElementById("tab2D").classList.toggle("active", !is3D);
+    document.getElementById("btnShake").style.display = is3D ? "inline-flex" : "none";
+    document.getElementById("btnSpin").style.display = is3D ? "inline-flex" : "none";
+    document.getElementById("hintPill").textContent = is3D
+      ? "🖱️ Kéo để xoay 360° Quả Cầu Tuyết · Cuộn để zoom"
+      : "🏡 Minh hoạ góc sân 2D Anki: công trình Noel mọc dần ngay bên trái nhà";
+  }
+  syncUI();
+
+  document.getElementById("btnStudy").addEventListener("click", () => {
+    const oldT = getTier(state.snow).tier;
+    state.day = Math.min(24, state.day + 1);
+    state.reviews += 15;
+    state.coins += 15;
+    state.snow = Math.min(30, state.snow + 2);
+    const newT = getTier(state.snow).tier;
+    showToast(newT > oldT ? "🎉 Lên " + getTier(state.snow).name + "!" : "+2 ❄️ từ buổi ôn hôm nay!");
+    if (newT > oldT) state.shakeBoost = 1.4;
+    syncUI();
+  });
+
+  document.getElementById("btnGoal").addEventListener("click", () => {
+    const oldT = getTier(state.snow).tier;
+    state.reviews += 15;
+    state.coins += 15;
+    state.snow = Math.min(30, state.snow + 1);
+    const newT = getTier(state.snow).tier;
+    showToast(newT > oldT ? "🎉 Hoàn thành mục tiêu! Lên Tầng " + newT : "🎯 Đạt mục tiêu ngày: +1 ❄️!");
+    syncUI();
+  });
+
+  document.getElementById("btnSpendCoin").addEventListener("click", () => {
+    if (state.coins < 30) { showToast("Không đủ 30 xu!"); return; }
+    if (state.snow >= 30) { showToast("Đã tối đa 30/30 ❄️ rồi!"); return; }
+    const oldT = getTier(state.snow).tier;
+    state.coins -= 30;
+    state.snow = Math.min(30, state.snow + 1);
+    const newT = getTier(state.snow).tier;
+    showToast(newT > oldT ? "🪙 Đổi xu lên Tầng " + newT + "!" : "🪙 Dùng 30 xu đổi +1 ❄️!");
+    syncUI();
+  });
+
+  document.getElementById("btnReset").addEventListener("click", () => {
+    state.snow = 2; state.day = 1; state.coins = 420; state.reviews = 30;
+    showToast("↺ Quay lại Ngày 1/12 — Bắt đầu dựng Bệ Gỗ");
+    syncUI();
+  });
+
+  document.getElementById("tab3D").addEventListener("click", () => { state.viewTab = "3d"; syncUI(); });
+  document.getElementById("tab2D").addEventListener("click", () => { state.viewTab = "2d"; syncUI(); });
+  document.getElementById("btnShake").addEventListener("click", () => {
+    state.shakeBoost = 2.4;
+    showToast("❄️ Tuyết đang xoay tung bên trong quả cầu!");
+  });
+  document.getElementById("btnSpin").addEventListener("click", function () {
+    state.autoSpin = !state.autoSpin;
+    this.classList.toggle("active", state.autoSpin);
+    this.textContent = state.autoSpin ? "🔄 Tự xoay: BẬT" : "🔄 Tự xoay: TẮT";
+  });
+  document.querySelectorAll("[data-tod]").forEach(b => {
+    b.addEventListener("click", () => {
+      state.tod = b.getAttribute("data-tod");
+      document.querySelectorAll("[data-tod]").forEach(x => x.classList.toggle("active", x === b));
+    });
+  });
+
+  // Modal Đêm 24/12
+  document.getElementById("btnOpenGift").addEventListener("click", () => {
+    const isMax = state.snow >= 30;
+    document.getElementById("modalEmoji").textContent = isMax ? "🔮✨🎄" : "🎄🎁";
+    document.getElementById("modalTitle").textContent = isMax
+      ? "Đêm 24/12 · Thành Phẩm Noel Hoàn Hảo!"
+      : "Đêm 24/12 · Quà Kỷ Niệm Noel (FOMO Lành Mạnh)";
+    document.getElementById("modalSub").textContent =
+      `Tiến độ hiện tại: ${state.snow}/30 ❄️ · Tổng ${state.reviews} lượt ôn trong tháng 12`;
+    document.getElementById("modalReward").innerHTML = isMax
+      ? `<b>🎁 Vật phẩm nhận vĩnh viễn vào Nhà:</b><br><b>Quả Cầu Tuyết Hoàng Kim 2026</b> — Bày quanh năm, bấm vào lắc tuyết bay + phát hộp âm Giáng Sinh. Ghi dấu ấn: <i>"Kết tinh từ ${state.reviews} lượt ôn mùa Noel 2026"</i>.`
+      : `<b>🎁 Không bao giờ mất trắng:</b><br>Dù mới đạt <b>${state.snow}/30 ❄️</b> (chưa đủ 30), bạn vẫn nhận <b>Cây Thông Kỷ Niệm 2026 (Bản Bạc)</b> để cất vào Kho đồ — hoặc dùng xu tích trữ để nâng lên Bản Hoàng Kim trước 31/12!`;
+    document.getElementById("giftModal").classList.add("open");
+  });
+  document.getElementById("btnModalClose").addEventListener("click", () => {
+    document.getElementById("giftModal").classList.remove("open");
+  });
+  document.getElementById("btnModalShake").addEventListener("click", () => {
+    document.getElementById("giftModal").classList.remove("open");
+    state.snow = 30; state.day = 24; state.viewTab = "3d"; state.shakeBoost = 2.8;
+    syncUI();
+  });
+
+  // Mouse Orbit
+  let dragging = false, lastM = { x: 0, y: 0 };
+  canvas.addEventListener("mousedown", e => {
+    dragging = true; lastM = { x: e.clientX, y: e.clientY };
+    state.autoSpin = false;
+    document.getElementById("btnSpin").classList.remove("active");
+    document.getElementById("btnSpin").textContent = "🔄 Tự xoay: TẮT";
+  });
+  window.addEventListener("mousemove", e => {
+    if (!dragging) return;
+    cam.yaw -= (e.clientX - lastM.x) * 0.008;
+    cam.pitch = Math.max(0.08, Math.min(1.15, cam.pitch + (e.clientY - lastM.y) * 0.006));
+    lastM = { x: e.clientX, y: e.clientY };
+  });
+  window.addEventListener("mouseup", () => { dragging = false; });
+  canvas.addEventListener("wheel", e => {
+    e.preventDefault();
+    cam.dist = Math.max(10, Math.min(28, cam.dist + e.deltaY * 0.02));
+  }, { passive: false });
+
+  // =========================================================================
+  // 5. RENDER LOOP
+  // =========================================================================
+  function bindMeshAttribs(mesh) {
+    const bindAttr = (name, buf, size) => {
+      const loc = gl.getAttribLocation(mnProg, name);
+      gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+      gl.enableVertexAttribArray(loc);
+      gl.vertexAttribPointer(loc, size, gl.FLOAT, false, 0, 0);
+    };
+    bindAttr("aPos", mesh.bufPos, 3);
+    bindAttr("aNorm", mesh.bufNorm, 3);
+    bindAttr("aCol", mesh.bufCol, 3);
+    bindAttr("aMat", mesh.bufMat, 2);
+  }
+
+  let last = performance.now();
+  function frame(now) {
+    const dt = Math.min(0.05, (now - last) / 1000);
+    last = now;
+    if (state.shakeBoost > 0) state.shakeBoost = Math.max(0, state.shakeBoost - dt * 0.9);
+
+    if (state.viewTab === "2d") {
+      drawAnki2DScene(now / 1000);
+      requestAnimationFrame(frame);
+      return;
+    }
+
+    if (state.autoSpin) cam.yaw += 0.36 * dt;
+
+    const env = {
+      day:   { bg: [0.76, 0.90, 0.99], sunCol: [1.05, 1.00, 0.92], skyCol: [0.85, 0.94, 1.0], grdCol: [0.72, 0.78, 0.85], night: 0.0 },
+      dusk:  { bg: [0.92, 0.65, 0.56], sunCol: [1.15, 0.76, 0.54], skyCol: [0.98, 0.74, 0.68], grdCol: [0.58, 0.50, 0.64], night: 0.45 },
+      night: { bg: [0.09, 0.13, 0.25], sunCol: [0.58, 0.68, 0.98], skyCol: [0.34, 0.44, 0.74], grdCol: [0.24, 0.28, 0.42], night: 1.0 }
+    }[state.tod];
+
+    const tier = getTier(state.snow).tier;
+    const mesh = tierMeshes[tier];
+    const sunDir = [12, 20, 14];
+    const lightView = lookAt(sunDir, [0, 3.0, 0], [0, 1, 0]);
+    const lightProj = ortho(-9.5, 9.5, -9.5, 9.5, 2.0, 50.0);
+    const lightMVP = matMul(lightProj, lightView);
+
+    gl.enable(gl.DEPTH_TEST);
+    gl.enable(gl.CULL_FACE);
+    gl.disable(gl.BLEND);
+    gl.depthMask(true);
+
+    // PASS 1: Shadow Map
+    gl.bindFramebuffer(gl.FRAMEBUFFER, shFB);
+    gl.viewport(0, 0, SH_SIZE, SH_SIZE);
+    gl.clearColor(1, 1, 1, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    gl.useProgram(shProg);
+    gl.uniformMatrix4fv(gl.getUniformLocation(shProg, "uLightMVP"), false, lightMVP);
+    const shPos = gl.getAttribLocation(shProg, "aPos");
+    gl.bindBuffer(gl.ARRAY_BUFFER, mesh.bufPos);
+    gl.enableVertexAttribArray(shPos);
+    gl.vertexAttribPointer(shPos, 3, gl.FLOAT, false, 0, 0);
+    gl.drawArrays(gl.TRIANGLES, 0, mesh.count);
+
+    // PASS 2: Main Pass
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    gl.clearColor(env.bg[0], env.bg[1], env.bg[2], 1.0);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    gl.useProgram(mnProg);
+
+    const shakeX = state.shakeBoost > 0.05 ? Math.sin(now * 0.045) * 0.14 * state.shakeBoost : 0;
+    const eye = [
+      Math.sin(cam.yaw) * Math.cos(cam.pitch) * cam.dist + shakeX,
+      3.8 + Math.sin(cam.pitch) * cam.dist,
+      Math.cos(cam.yaw) * Math.cos(cam.pitch) * cam.dist
+    ];
+    const proj = perspective(Math.PI / 4.0, canvas.width / canvas.height, 0.5, 140.0);
+    const view = lookAt(eye, [0, 3.8, 0], [0, 1, 0]);
+
+    gl.uniformMatrix4fv(gl.getUniformLocation(mnProg, "uProj"), false, proj);
+    gl.uniformMatrix4fv(gl.getUniformLocation(mnProg, "uView"), false, view);
+    gl.uniformMatrix4fv(gl.getUniformLocation(mnProg, "uLightMVP"), false, lightMVP);
+    gl.uniform3fv(gl.getUniformLocation(mnProg, "uEyePos"), eye);
+    gl.uniform3fv(gl.getUniformLocation(mnProg, "uSunDir"), sunDir);
+    gl.uniform3fv(gl.getUniformLocation(mnProg, "uSunCol"), env.sunCol);
+    gl.uniform3fv(gl.getUniformLocation(mnProg, "uSkyCol"), env.skyCol);
+    gl.uniform3fv(gl.getUniformLocation(mnProg, "uGroundCol"), env.grdCol);
+    gl.uniform1f(gl.getUniformLocation(mnProg, "uNight"), env.night);
+    gl.uniform1f(gl.getUniformLocation(mnProg, "uAlpha"), 1.0);
+    gl.uniform1f(gl.getUniformLocation(mnProg, "uIsGlass"), 0.0);
+    gl.uniform3f(gl.getUniformLocation(mnProg, "uOffset"), 0, 0, 0);
+
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, shTex);
+    gl.uniform1i(gl.getUniformLocation(mnProg, "uShadowMap"), 0);
+
+    bindMeshAttribs(mesh);
+    gl.drawArrays(gl.TRIANGLES, 0, mesh.count);
+
+    // Tuyết rơi 3D (mạnh hơn bên trong khi ở Tầng 5 hoặc bấm Lắc)
+    bindMeshAttribs(flakeMesh);
+    const swirl = 1 + state.shakeBoost * 3.5;
+    flakes.forEach(f => {
+      f.y -= f.spd * dt * (1 + state.shakeBoost * 0.8);
+      if (f.y < 1.85) f.y = 7.7;
+      const ox = f.x + Math.sin(now * 0.002 * swirl + f.ph) * 0.25 * swirl;
+      const oz = f.z + Math.cos(now * 0.002 * swirl + f.ph) * 0.25 * swirl;
+      gl.uniform3f(gl.getUniformLocation(mnProg, "uOffset"), ox, f.y, oz);
+      gl.drawArrays(gl.TRIANGLES, 0, flakeMesh.count);
+    });
+
+    // Vẽ Lồng Kính Trong Suốt ở Tầng 5!
+    if (tier >= 5) {
+      gl.enable(gl.BLEND);
+      gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+      gl.depthMask(false);
+      gl.uniform1f(gl.getUniformLocation(mnProg, "uIsGlass"), 1.0);
+      gl.uniform3f(gl.getUniformLocation(mnProg, "uOffset"), 0, 0, 0);
+      bindMeshAttribs(domeMesh);
+      gl.drawArrays(gl.TRIANGLES, 0, domeMesh.count);
+      gl.depthMask(true);
+      gl.disable(gl.BLEND);
+    }
+
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

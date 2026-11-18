@@ -252,3 +252,11 @@ Thay vì đẻ quá nhiều mini-game phức tạp (không kịp tiến độ tr
 - **Vật phẩm thưởng**: Khai báo trong `FIND_ITEMS` ([`garden_core.py`](../../kotoba_batake/garden_core.py#L339-L376)) để được bảo vệ bởi `keep_foreign_nha` khi đồng bộ AnkiWeb.
 - **Điểm nối thông minh với kế hoạch 3D (Mục 13)**: Có thể dựng thêm **1 trang xem 3D mini chỉ riêng “Quả Cầu Tuyết / Cây Thông Noel” xoay 360°** (từ bộ shader Smooth Low-Poly ở Mục 12) làm phần thưởng ngắm thử dịp Noel — vừa kịp deadline 24/12, vừa kiểm chứng trải nghiệm 3D thật trước khi dựng toàn bộ Làng Kotoba!
 
+### 14.4. Bản chạy thử tương tác — [`proto_su_kien_noel_2026.html`](proto_su_kien_noel_2026.html)
+- Cho phép bấm **“📚 Ôn 15 thẻ hôm nay (+2 ❄️)”**, **“🎯 Đạt mục tiêu (+1 ❄️)”**, **“🪙 Dùng 30 xu bù tiến độ (+1 ❄️)”** hoặc nhảy nhanh từng **Tầng 1 → 5** để tận mắt xem thành phẩm lớn dần mỗi ngày.
+- Hỗ trợ chuyển tức thì giữa **🔮 Quả Cầu Tuyết 3D xoay 360° (có nút Lắc Tuyết Bay)**, **🏡 Góc Sân Anki 2D** và **🎁 Mở Quà Đêm 24/12**:
+
+| Tầng 3 · Quả Châu & Dây Đèn | Tầng 5 · Quả Cầu Tuyết Hoàn Chỉnh | Trong Sân Anki 2D (`ことば畑`) |
+| :---: | :---: | :---: |
+| ![Noel Tầng 3](vg_14a_noel_tang3.png) | ![Noel Tầng 5 Hoàn Chỉnh](vg_14b_noel_tang5_hoan_chinh.png) | ![Noel trong sân 2D Anki](vg_14c_noel_trong_san_2d.png) |
+
