@@ -487,7 +487,8 @@ print(json.dumps({"mig": ai.migrate_story(sh, [ja]), "ky": ai.next_ky(s.load_sto
     ok(rr.get("mig") == "" and rr.get("ky") == 3,
        "mã 1.31.3 (máy khác / quay về bản cũ) trên thư mục đã bắt đầu lại: không chép truyện cũ về, viết tiếp kỳ 3: %s" % rr)
 man = json.load(open(os.path.join(ADDON, "manifest.json"), encoding="utf-8"))
-ok(man.get("human_version") == "1.35.2", "manifest: %s" % man.get("human_version"))
+_hv2 = tuple(int(x) for x in re.findall(r"\d+", str(man.get("human_version", "")))[:3])
+ok(_hv2 >= (1, 35, 2), "manifest: %s (≥ 1.35.2)" % man.get("human_version"))
 
 shutil.rmtree(TMP, ignore_errors=True)
 if OLD_DIR:

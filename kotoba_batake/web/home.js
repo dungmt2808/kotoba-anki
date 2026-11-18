@@ -2960,7 +2960,7 @@ var GardenHome = (function () {
         if (dark > 0.01) { ctx.globalAlpha = dark; box(ctx, ox + bx0, oy - P0, bx1 - bx0, P0, "#0b0b2a", S); ctx.globalAlpha = 1; }
       }
       drawNight(ctx, S, ox, oy, bx0, bx1, YARD.H, st);
-      if (sea) { sea.nightTop(ctx, S, ox, oy, now, bx0, bx1, YARD.H, st); }
+      if (sea) { sea.nightTop(ctx, S, ox, oy, now, bx0, bx1, YARD.H, st, oy - P0); }
     }
     guestsTop(ctx, S, ox, oy, sceneName, now, st, opts);
     // 1.28: gánh hàng rong + chỗ lấp lánh (không vẽ ở ảnh xem trước / ảnh chụp / bản vẽ của Xưởng)

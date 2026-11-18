@@ -460,13 +460,14 @@ var GardenSeason = (function () {
       for (let i = 0; i < n; i++) { flyer(ctx, S, ox, oy, kind, i + kk * 101, now, x0, W, top, h); }
     });
   }
-  function nightTop(ctx, S, ox, oy, now, x0, x1, H, st) {
+  // gy: oy của dây trang trí (cỡ cảnh Lớn vẽ dây ở oy − padTop) — lớp đèn sáng phải trùng chỗ dây, không thì thành dây thứ hai ngang cảnh (1.35.3)
+  function nightTop(ctx, S, ox, oy, now, x0, x1, H, st, gy) {
     const v = V();
     if (!v) { return; }
     if ((v.sky || []).indexOf("fireworks") >= 0 && st.light < 0.5 && !st.rain && effects()) {
       fireworks(ctx, S, ox, oy, now, x0, x1 - x0, 26, v.fw || [C.r, C.y, C.l], Math.max(2, Math.round((x1 - x0) / 150)), 0);
     }
-    sceneGarland(ctx, S, ox, oy, now, x0, x1, 1, st);
+    sceneGarland(ctx, S, ox, gy === undefined ? oy : gy, now, x0, x1, 1, st);
   }
   // Trong phòng: dây trang trí dưới xà nhà
   function room(ctx, S, ox, oy, now, W, pass, st) {
