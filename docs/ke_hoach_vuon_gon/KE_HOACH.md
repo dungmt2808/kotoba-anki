@@ -260,3 +260,11 @@ Thay vì đẻ quá nhiều mini-game phức tạp (không kịp tiến độ tr
 | :---: | :---: | :---: |
 | ![Noel Tầng 3](vg_14a_noel_tang3.png) | ![Noel Tầng 5 Hoàn Chỉnh](vg_14b_noel_tang5_hoan_chinh.png) | ![Noel trong sân 2D Anki](vg_14c_noel_trong_san_2d.png) |
 
+### 14.5. Bản chạy thử đúng phong cách Pixel Vườn `ことば畑` — [`proto_su_kien_noel_vuon_pixel.html`](proto_su_kien_noel_vuon_pixel.html)
+- Dựng lại **đúng 100% bảng màu, viền đen `#1b1b2f`, thẻ vuông không bo góc (`border-radius: 0`), ngôi nhà phủ tuyết (`drawHouse`), thẻ `Hôm nay`, thú nuôi `Shiba`/`Mèo`/`StackChan` và ruộng cây 5 giai đoạn (`SPRITES[0..4]`)** từ mã nguồn thật của [`garden.css`](../../kotoba_batake/web/garden.css), [`home.js`](../../kotoba_batake/web/home.js) và [`garden.js`](../../kotoba_batake/web/garden.js).
+- Cho phép chuyển giữa 2 kiểu thành phẩm (**🔮 Quả Cầu Tuyết** vs **🎄 Cây Thông Đại Sảnh**), thử từng tầng `1 → 5` ngay trên sân vườn, xem thành phẩm bày **🏠 Trong nhà (`160×88`)** sau đêm `24/12`, và mở hộp thoại nhận quà kỷ niệm:
+
+| Sân vườn Pixel (Tầng 5 hoàn chỉnh) | Trong nhà sau 24/12 (`★ Kỷ vật Noel 2026`) | Hộp thoại Đóng gói & Báo Làng 24/12 |
+| :---: | :---: | :---: |
+| ![Sân vườn Pixel Tầng 5](vg_15b_pixel_san_tang5.png) | ![Bày trong nhà](vg_15c_pixel_trong_nha.png) | ![Hộp thoại nhận quà](vg_15d_pixel_mo_qua.png) |
+
