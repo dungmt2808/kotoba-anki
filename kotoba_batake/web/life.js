@@ -779,6 +779,7 @@ var GardenLife = (function () {
         }
       });
     });
+    if (typeof GardenLang !== "undefined" && GardenLang.fitWords) { GardenLang.fitWords(list); }     // 1.35.1: từ Đức / Pháp dài
   }
 
   function init(helpers) {

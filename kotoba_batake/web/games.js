@@ -302,11 +302,30 @@ var GardenGames = (function () {
     const add = (x) => [false, true].forEach((plain) => { const k = euFold(enNorm(x), lang, plain); if (k && out.indexOf(k) < 0) { out.push(k); } });
     String(p.word || "").replace(/\[[^\]]*\]|\/[^/\s][^/]*\//g, " ").split(/[;/|]|,(?!\s*[¨\u0308]?\s*-)/).forEach((part) => {
       if (/^\s*[¨\u0308]?\s*-/.test(part)) { return; }
-      const core = part.replace(/,\s*[¨\u0308]?\s*-\S*/g, " ").replace(/\([^)]*\)/g, " ").trim();
-      if (core) { add(core); add(euStrip(core, lang)); }
+      const core = part.replace(/,\s*[¨\u0308]?\s*-[^\s,]*/g, " ").replace(/\([^)]*\)/g, " ").trim();
+      if (core) {
+        add(core);
+        const base = euStrip(core, lang);
+        add(base);
+        // 1.35.1: động từ phản thân gõ không cần sich / se (sich freuen → freuen, s'asseoir → asseoir) — như bỏ mạo từ
+        const refl = lang === "de" ? base.match(/^sich\s+(.+)$/i) : base.match(/^(?:se\s+|s['’])(.+)$/i);
+        if (refl) { add(refl[1]); }
+      }
     });
     p._eu = out;
     return out;
+  }
+  // 1.35.1: chữ để khách Chợ sáng nói trong câu — bỏ ghi chú số nhiều / giống / cách viết thứ hai của deck tiếng Đức /
+  // tiếng Pháp („der Hund, -e“, bitte! → „der Hund“, bitte! · « l'œil (m) » → « l'œil »); thẻ / biển vẫn ghi đủ như deck
+  function euFace(s) {
+    const raw = String(s || "");
+    const parts = raw.replace(/\[[^\]]*\]|\/[^/\s][^/]*\//g, " ").split(/[;/|]|,(?!\s*[¨\u0308]?\s*-)/);
+    for (const part of parts) {
+      if (/^\s*[¨\u0308]?\s*-/.test(part)) { continue; }
+      const core = part.replace(/,\s*[¨\u0308]?\s*-[^\s,]*/g, " ").replace(/\([^)]*\)/g, " ").replace(/\s+/g, " ").trim();
+      if (core.replace(/[¨\u0308\-–\s]/g, "")) { return core; }
+    }
+    return raw;
   }
   // tiếng Trung / tiếng Hàn gõ chữ: không tính dấu cách (사과주스 = 사과 주스, 你 好 = 你好)
   function noSpace(list) {
@@ -1616,7 +1635,8 @@ var GardenGames = (function () {
         crates.appendChild(b);
       });
       const jpAsk = ask === "word" || ask === "reading";
-      const text = (jpAsk ? ASK_WORD : ASK_MEANING)[rnd(3)].replace("%s", faceText(target, ask, kind));
+      const said = jpAsk && ask === "word" && EU[pool.group] ? euFace(faceText(target, ask, kind)) : faceText(target, ask, kind);
+      const text = (jpAsk ? ASK_WORD : ASK_MEANING)[rnd(3)].replace("%s", said);
       bubble.textContent = text;
       bubble.hidden = true;
     }

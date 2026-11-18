@@ -427,8 +427,17 @@ _DE_MARK = re.compile(r"(?i)^(der|die|das|ein|eine) \S|[äöüß]")
 _DE_HINT = ("german", "deutsch", "tiếng đức", "tieng duc", "goethe", "allemand")
 _FR_HINT = ("french", "français", "francais", "tiếng pháp", "tieng phap", "delf", "dalf", "französisch")
 _FR_MARK = re.compile(r"(?i)^(le|la|les|un|une|des|du)\s\S|^l['’]\w|[çœæëîïûÿèêâ]")
-_NOT_FR = re.compile(r"[ñ¿¡áíóúãõìò]")          # Tây Ban Nha / Bồ Đào Nha / Ý (tiếng Pháp không dùng)
-_NOT_DE = re.compile(r"[åøőűşğı]")               # Thuỵ Điển / Na Uy / Hungary / Thổ Nhĩ Kỳ
+_NOT_FR = re.compile(r"[ñ¿¡áíóúãõìòşğı]"          # Tây Ban Nha / Bồ Đào Nha / Ý / Thổ Nhĩ Kỳ (tiếng Pháp không dùng)
+                     # 1.35.1: mạo từ Tây Ban Nha / Ý (el perro, gli amici, una casa) + đuôi -zione / -ción / -ità — deck tiếng
+                     # Ý / Tây Ban Nha không dấu từng bị nhận là tiếng Pháp (la casa, l'acqua, caffè giống chữ Pháp)
+                     r"|(?i:^(?:el|los|las|lo|gli|una|uno|unos|unas)\s\S)|(?i:(?:zione|ción|ità)\b)")
+_IT_IL = re.compile(r"(?i)^il\s\S")                # "il cane" (Ý) — tiếng Pháp cũng có "il pleut" nên chỉ xét kèm _FR_ONLY
+_FR_ONLY = re.compile(r"(?i)^(?:les|des|du|une|aux?)\s\S|[çœæëîïûÿêâ]|\b(?:est|pas|avec|dans|très|vous|nous)\b|"
+                      r"\b(?:qu|c|j|n|d)['’]\w")
+_NOT_DE = re.compile(r"[åøőűşğıõ]"               # Thuỵ Điển / Na Uy / Hungary / Thổ Nhĩ Kỳ / Estonia
+                     # 1.35.1: Phần Lan / Estonia (äiti, hyvää, tyttö, süüa) — nhiều ä ö ü nên từng bị nhận là tiếng Đức
+                     r"|ää|öö|üü|yy|[äö]\S*y|y\S*[äö]")
+_NL_MARK = re.compile(r"(?i)^(?:het|een)\s\S|ij")   # 1.35.1: tiếng Hà Lan (het huis, een boek, fiets / ijs) → Ngôn ngữ khác
 _VI_LETTER = re.compile("[ăắằẳẵặấầẩẫậđếềểễệốồổỗộơớờởỡợưứừửữựạảẹẻẽịỉọỏụủỳỵỷỹĩũõãĂẮẰẲẴẶẤẦẨẪẬĐẾỀỂỄỆỐỒỔỖỘƠỚỜỞỠỢƯỨỪỬỮỰẠẢẸẺẼỊỈỌỎỤỦỲỴỶỸĨŨÕÃ]")
 _OTHER_SCRIPT = re.compile(r"[\u0370-\u03ff\u0400-\u052f\u0590-\u06ff\u0900-\u0dff\u0e00-\u0eff\u10a0-\u10ff]")
 # 1.34.1: dấu hiệu tiếng Nhật đủ chắc để không tin tên trường "Chinese" / "中文" / "Korean" (deck kanji có trường
@@ -501,6 +510,8 @@ def guess_lang(name: str, keys: list[str], words: list[str]) -> str:
         de_h, fr_h = any(h in hints for h in _DE_HINT), any(h in hints for h in _FR_HINT)
         de = 0 if any(_NOT_DE.search(w) for w in sample) else sum(1 for w in sample if _DE_MARK.search(w))
         fr = 0 if any(_NOT_FR.search(w) for w in sample) else sum(1 for w in sample if _FR_MARK.search(w))
+        if fr and sum(1 for w in sample if _IT_IL.search(w)) >= 2 and not any(_FR_ONLY.search(w) for w in sample):
+            fr = 0                         # "il cane", "la casa", "l'acqua" mà không có les / des / ç / ê… → tiếng Ý
         need = n * 5 if en_hint and not (de_h or fr_h) else n * 3     # "German" + "English": học tiếng nào thì theo chữ
         if de_h and not fr_h and not en_hint:
             return "de"
@@ -512,6 +523,11 @@ def guess_lang(name: str, keys: list[str], words: list[str]) -> str:
             return "fr"
         if accent * 10 >= n * 3 and not en_hint:
             return "other"                 # nhiều chữ có dấu (Tây Ban Nha, Bồ Đào Nha…)
+        if not en_hint and sum(1 for w in sample if _NL_MARK.search(w)) * 10 >= n * 2 and \
+                sum(1 for w in sample if re.match(r"(?i)(?:de|het|een)\s\S", w)) * 10 >= n * 2:
+            return "other"                 # 1.35.1: tiếng Hà Lan (de hond, het huis, een boek) — trước thành tiếng Anh
+        if not en_hint and sum(1 for w in sample if re.match(r"(?i)(?:el|los|las|lo|gli|il|una|uno|unos|unas)\s\S", w)) * 10 >= n * 2:
+            return "other"                 # 1.35.1: tiếng Tây Ban Nha / Ý không dấu (el perro, il cane) — trước thành tiếng Anh
         # 1.34.1: Tây Ban Nha / Ý… (tên loại note / trường) → "Ngôn ngữ khác"; trước thành tiếng Anh
         if any(h in hints for h in _OTHER_HINT) and not en_hint:
             return "other"

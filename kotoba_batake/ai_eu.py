@@ -268,8 +268,8 @@ def _rx(word: str, lang: str) -> Any:
             _RX[key] = None
         else:
             fs = [f for f in eu.forms(word, lang) if eu.strip_article(f, lang).lower() not in STOP.get(lang, set())]
-            body = "|".join(re.escape(f).replace(r"\ ", r"\s+") for f in fs)
-            _RX[key] = re.compile(r"(?<![%s])(?:%s)(?![%s])" % (eu.LETTERS, body, eu.LETTERS), re.I) if body else None
+            # 1.35.1: nháy cong = nháy thẳng (aujourd’hui) — eu.pattern; ngữ cảnh xét ở find_links (eu.context_ok)
+            _RX[key] = (re.compile(eu.pattern(fs), re.I), eu.word_kind(word, lang)) if fs else None
         if len(_RX) > 20000:
             _RX.clear()
     return _RX[key]
@@ -282,8 +282,10 @@ def find_links(s: str, words_: list[str], lang: str) -> list[tuple[int, int, str
         rx = _rx(w, lang)
         if rx is None:
             continue
-        for m in rx.finditer(s):
-            cands.append((m.start(), m.end(), w))
+        for m in rx[0].finditer(s):
+            # 1.35.1: bỏ chỗ cùng mặt chữ mà khác từ (der Morgen ≠ "morgen" = ngày mai, le lit ≠ "il lit", l'été ≠ "a été")
+            if eu.context_ok(s, m.start(), m.end(), w, lang, rx[1]):
+                cands.append((m.start(), m.end(), w))
     cands.sort(key=lambda x: (x[0], -(x[1] - x[0])))
     out, end = [], -1
     for a, b, w in cands:

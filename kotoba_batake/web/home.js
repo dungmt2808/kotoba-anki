@@ -3748,7 +3748,7 @@ var GardenHome = (function () {
     return out;
   }
   // lệnh đang chờ quá 8 giây (bị bỏ lúc Anki đồng bộ…) thì thôi chờ — không kẹt "Đang mở bản thử…" / không bỏ qua bản Python trả
-  let draftSentAt = 0;
+  let draftSentAt = 0, draftErrAt = 0;
   function draftBusy() { if (draftPending && Date.now() - draftSentAt > 8000) { draftPending = 0; } return draftPending > 0; }
   function sendDraft(action, payload) {
     draftBusy();
@@ -3874,10 +3874,20 @@ var GardenHome = (function () {
   function resetSlot() {
     const d = draftScene(scene);
     if (!trying || !d) { return; }
-    d.slots[d.cur] = realCopy(scene);
-    placing = null; selected = null; hidePop();
-    putDraft(scene);
-    renderTry(); renderList(); defaultTip();
+    const sc = scene, n = d.cur, p = tryPlan(sc);
+    const go = () => {
+      const d2 = draftScene(sc);
+      if (!trying || scene !== sc || !d2 || d2.cur !== n) { return; }
+      d2.slots[n] = realCopy(sc);
+      placing = null; selected = null; hidePop();
+      putDraft(sc);
+      renderTry(); renderList(); defaultTip();
+    };
+    // 1.35.1: bản thử đã khác cảnh thật → hỏi trước (một cú bấm nhầm từng xoá sạch bản bày công phu, không lấy lại được)
+    if (p && !p.same && typeof GardenUI !== "undefined" && GardenUI.ask) {
+      GardenUI.ask({ title: "Bản " + (n + 1) + " về giống cảnh thật?", note: "Đồ đang bày thử ở bản này sẽ bỏ hết.",
+        yes: "Về giống cảnh thật", then: go });
+    } else { go(); }
   }
   function useDraft() {
     const d = draftScene(scene), p = tryPlan(scene);
@@ -5781,7 +5791,12 @@ var GardenHome = (function () {
 
   function error(msg, rid) {
     pendingPlace = null; pendingDecor = null; payWait = 0;
-    if (draftPending) { draftPending = 0; sendDraft("get"); }         // 1.34: lệnh bản thử lỗi → đọc lại bản đã lưu
+    // 1.34: lệnh bản thử lỗi → đọc lại bản đã lưu. 1.35.1: tối đa một lần / 5 giây — file bản thử không đọc / ghi được thì
+    // đọc lại → chép cảnh thật vào ô trống → lưu → lỗi → đọc lại… thành vòng lặp không dứt (tiếng "あれ？" liên tục)
+    if (draftPending) {
+      draftPending = 0;
+      if (Date.now() - draftErrAt > 5000) { draftErrAt = Date.now(); sendDraft("get"); }
+    }
     if (typeof GardenCraft !== "undefined" && (GardenCraft.isOpen() || rid)) { GardenCraft.error(msg, rid); }
     sfx("again");
     mood("sad", 1200, "あれ？");

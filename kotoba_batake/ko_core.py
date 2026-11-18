@@ -106,6 +106,8 @@ def _stem_variants(stem: str) -> list[str]:
         if tail == "ㅂ":                               # 춥다 → 추워, 무섭다 → 무서워 / 무서운
             base = head + join(lead, vowel)
             out.update({base + "워", base + "웠", base + "운", base + "울", base + "우"})
+            if last in ("돕", "곱"):                    # 1.35.1: 돕다 → 도와 (도와줘요), 곱다 → 고와
+                out.update({base + "와", base + "왔"})
         if tail == "ㄷ":                               # 듣다 → 들어
             out.add(head + join(lead, vowel, "ㄹ"))
         if tail == "ㅅ":                               # 낫다 → 나아
@@ -124,6 +126,8 @@ ENDING_START = set("아어았었고는은을지면니습세셨시겠기게자요
 ENDING_START_SHORT = set("고는서세셨시면니겠도려러던며야라네죠잖든다요")
 # thân kết thúc bằng nguyên âm: 아 / 어 / 은 / 을 / 으 đã gộp vào thân (가 + 아요 → 가요, 가 + ㄹ → 갈) nên không đứng riêng
 NO_AFTER_VOWEL = set("아어았었은을으")
+# 1.35.1: động từ phụ sau dạng 아 / 어 viết liền (-아/어 주다, 보다, 드리다, 있다, 버리다, 놓다): 도와줘요, 해 봐요
+AUX_START = set("주줘줬드보봐봤있버놓놨")
 
 
 def predicate_match(eojeol: str, lemma: str) -> bool:
@@ -147,6 +151,13 @@ def predicate_match(eojeol: str, lemma: str) -> bool:
             if v != stem:
                 return True
             continue
+        # 1.35.1: nguyên âm không gộp với 어 (쉬어요, 띄어, 되어요 / 돼요, 개어, 메어) — 어 / 었 đứng sau thân vẫn là động từ
+        if v == stem and open_end and rest[0] in ("어", "었") and split(stem[-1])[1] in ("ㅟ", "ㅢ", "ㅚ", "ㅐ", "ㅔ", "ㅕ"):
+            return True
+        # 1.35.1: dạng 아 / 어 đã gộp (không phụ âm cuối: 도와, 마셔, 해) + động từ phụ — 도와줘요, 마셔봐요, 해드려요
+        # (không áp cho 간 / 갈 / 갑 của 가다: 간주, 간보다 là từ khác)
+        if v != stem and not split(v[-1])[2] and rest[0] in AUX_START:
+            return True
         if rest[0] not in (starts if v == stem else ENDING_START):     # dạng gộp (갔, 했, 봐…) đã chắc là động từ
             continue
         if v == stem and open_end and rest[0] in NO_AFTER_VOWEL:

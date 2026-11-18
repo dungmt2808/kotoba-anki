@@ -51,9 +51,10 @@ def alternatives(word: str, lang: str) -> list[str]:
         if x and x.lower() not in [o.lower() for o in out]:
             out.append(x)
     for part in re.split(r"[;/|]|,(?!\s*(?:¨|̈)?\s*-)", w):
-        if _PLURAL_DE.match(part):
+        if _PLURAL_DE.match(part) or part.strip(" ¨̈-–") == "":     # 1.35.1: "die Mutter, ¨" (số nhiều chỉ đổi umlaut)
             continue
-        part = re.sub(r",\s*(?:¨|̈)?\s*-\S*", " ", part)         # số nhiều dính sau dấu phẩy
+        part = re.sub(r",\s*(?:¨|̈)?\s*-[^\s,]*", " ", part)      # số nhiều / sở hữu cách sau dấu phẩy (1.35.1: dừng ở
+        # dấu phẩy kế — "der Hund, -(e)s, -e" từng thành "Hund -e")
         core = _FR_TAG_RE.sub(" ", _NOTE_RE.sub(" ", part))
         core = re.sub(r"\([^)]*\)", " ", core)
         add(core)
@@ -91,7 +92,28 @@ DE_IRREGULAR = (
     "verlieren verlor verloren|gewinnen gewann gewannen|verstehen verstand verstanden|bitten bat baten gebeten|"
     "sterben stirbt starb gestorben|wachsen wächst wuchs gewachsen|vergessen vergaß|schließen schloss geschlossen|"
     "lassen lässt ließ ließen gelassen|heißen hieß hießen geheißen|scheinen schien schienen geschienen|"
-    "steigen stieg stiegen gestiegen|wenden wandte gewandt|rennen rannte gerannt|senden sandte gesandt"
+    "steigen stieg stiegen gestiegen|wenden wandte gewandt|rennen rannte gerannt|senden sandte gesandt|"
+    # 1.35.1: động từ mạnh hay gặp A1–B1 còn thiếu (+ làm gốc cho động từ có tiền tố: anfangen, einladen, anbieten…)
+    "fangen fängt fängst fing fingen gefangen|gießen goss gossen gegossen|schneiden schnitt schnitten geschnitten|"
+    "springen sprang sprangen gesprungen|hängen hing hingen gehangen|brennen brannte brannten gebrannt|"
+    "nennen nannte nannten genannt|schlagen schlägt schlug schlugen geschlagen|bieten bot boten geboten|"
+    "stehlen stiehlt stahl stahlen gestohlen|laden lädt lud luden geladen|leihen lieh liehen geliehen|"
+    "schreien schrie schrien geschrien|gleichen glich glichen geglichen|frieren fror froren gefroren|"
+    "riechen roch rochen gerochen|schieben schob schoben geschoben|greifen griff griffen gegriffen|"
+    "streiten stritt stritten gestritten|leiden litt litten gelitten|reiten ritt ritten geritten|"
+    "treiben trieb trieben getrieben|schweigen schwieg schwiegen geschwiegen|lügen log logen gelogen|"
+    "braten brät briet brieten gebraten|raten rät riet rieten geraten|fressen frisst fraß fraßen gefressen|"
+    "messen misst maß maßen gemessen|treten tritt trat traten getreten|"
+    "empfehlen empfiehlt empfahl empfahlen empfohlen|genießen genoss genossen|schießen schoss schossen geschossen|"
+    "fließen floss flossen geflossen|binden band banden gebunden|sinken sank sanken gesunken|"
+    "zwingen zwang zwangen gezwungen|weisen wies wiesen gewiesen|scheiden schied schieden geschieden|"
+    "backen backte backten gebacken|erschrecken erschrickt erschrak erschraken erschrocken|"
+    "gelingen gelingt gelang gelangen gelungen|"
+    # tính từ bất quy tắc (so sánh hơn / nhất)
+    "gut besser bessere besseren besserer besseres besserem beste besten bester bestes bestem|"
+    "viel mehr meiste meisten meister meistes|hoch hohe hohen hoher hohes hohem höher höhere höheren höherer höchste "
+    "höchsten höchster höchstes|nah nahe nahen naher näher nähere näheren nächste nächsten nächster nächstes|"
+    "gern gerne lieber liebsten|groß größer größere größeren größerer größeres größte größten größter größtes größtem"
 )
 FR_IRREGULAR = (
     "être suis es est sommes êtes sont été étais était étions étiez étaient serai sera seront serait soit|"
@@ -131,7 +153,17 @@ FR_IRREGULAR = (
     "beau beaux bel belle belles|nouveau nouveaux nouvel nouvelle nouvelles|vieux vieil vieille vieilles|"
     "blanc blanche blanches|long longue longues|gentil gentille gentilles|doux douce douces|faux fausse fausses|"
     "frais fraîche fraîches|sec sèche sèches|cher chère chères|premier première premières|"
-    "dernier dernière dernières|fou folle folles|œil yeux|ciel cieux|travail travaux"
+    "dernier dernière dernières|fou folle folles|œil yeux|ciel cieux|travail travaux|"
+    # 1.35.1: động từ nhóm 3 còn thiếu (+ làm gốc cho động từ có tiền tố: ressentir, desservir, apparaître…) và giả định
+    "sentir sens sent sentons sentez sentent senti sentie sentait sentaient sentira|"
+    "servir sers sert servons servez servent servi servie servait servaient servira|"
+    "mentir mens ment mentons mentez mentent menti mentait|paraître parais paraît paraissons paraissez paraissent paru "
+    "paraissait|battre bats bat battons battez battent battu battait|valoir vaut valent valu valait vaudra vaudrait|"
+    "aller aille ailles aillent|pouvoir puisse puisses puissent|vouloir veuille veuillent|savoir sache saches sachent|"
+    "venir vienne viennes|prendre prenne prennes prennent|faire fasses fassent fit firent|dire dise disent dit|"
+    "mettre mette mettent|voir voie voient vit virent|être fut furent sois soient|avoir eut eurent aie aies aient|"
+    "bon bonne bonnes meilleur meilleure meilleurs meilleures|bien mieux|mauvais mauvaise mauvaises pire pires|"
+    "public publique publiques|grec grecque grecques|frais fraîche|roux rousse rousses|jaloux jalouse jalouses"
 )
 
 
@@ -159,6 +191,24 @@ def _de_umlaut(w: str) -> str:
     return w[:m.start()] + rep + w[m.end():]
 
 
+# động từ tách / không tách của tiếng Đức (1.35.1: thêm um, durch, statt, kennen, wieder…: umziehen → umgezogen, stattfinden
+# → stattgefunden, kennenlernen → kennengelernt)
+_DE_SEP = re.compile(r"^(zurück|zusammen|weiter|hinaus|heraus|herein|hinein|vorbei|kennen|statt|nieder|wieder|durch|"
+                     r"ab|an|auf|aus|bei|ein|mit|nach|vor|weg|zu|um|fern|los|hin|her|heim|fest|teil|frei|hoch|dar|da)(.+)$")
+_DE_INSEP = ("be", "ge", "er", "ver", "zer", "ent", "emp", "miss")
+_DE_VERB_SUF = ("e", "st", "t", "et", "est", "en", "te", "test", "ten", "tet", "ete", "etest", "eten", "etet", "end", "ende",
+                "enden", "ender", "endes")
+_DE_ADJ_SUF = ("e", "en", "er", "es", "em", "ere", "eren", "erer", "eres", "erem", "st", "ste", "sten", "ster", "stes", "stem",
+               "este", "esten", "ester", "estes", "estem")
+_DE_CMP_SUF = ("er", "ere", "eren", "erer", "eres", "erem", "ste", "sten", "ster", "stes", "stem", "este", "esten", "ester",
+               "estes", "estem")
+_ONE_VOWEL = re.compile(r"^[^aeiouäöüy]*(?:au|a|o|u)[^aeiouäöüy]*$")
+
+
+def _de_verb_stem(w: str) -> str:
+    return w[:-2] if w.lower().endswith("en") else w[:-1]
+
+
 def _de_forms(w: str) -> list[str]:
     out = [w]
     low = w.lower()
@@ -172,52 +222,89 @@ def _de_forms(w: str) -> list[str]:
             out += [u, u + "e", u + "er", u + "en", u + "ern"]
         return out
     if low.endswith(("en", "ern", "eln")) and len(low) > 3:     # động từ
-        stem = w[:-2] if low.endswith("en") else w[:-1]
-        sep = re.match(r"^(ab|an|auf|aus|bei|ein|mit|nach|vor|weg|zu|zurück|fern|los|vorbei|hin|her|heim|fest|teil|"
-                       r"zusammen|weiter|hinaus|heraus|herein|hinein)(.+)$", low)
-        for suf in ("e", "st", "t", "et", "est", "en", "te", "test", "ten", "tet", "end", "ende", "enden"):
-            out.append(stem + suf)
-        if sep and len(sep.group(2)) > 3:              # anrufen → angerufen, anzurufen
-            pre, rest = sep.group(1), w[len(sep.group(1)):]
-            out += [pre + "ge" + rest[:-2] + "t", pre + "ge" + rest, pre + "zu" + rest]
-        elif not low.startswith(("be", "ge", "er", "ver", "zer", "ent", "emp", "miss")) and not low.endswith("ieren"):
+        stem = _de_verb_stem(w)
+        out += [stem + suf for suf in _DE_VERB_SUF]
+        sep = _DE_SEP.match(low)
+        insep = next((p for p in _DE_INSEP if low.startswith(p) and len(low) - len(p) > 3), "")
+        if sep and len(sep.group(2)) > 3:              # anrufen → angerufen, anzurufen; aufstehen → aufgestanden
+            pre, rest = w[:len(sep.group(1))], w[len(sep.group(1)):]
+            out += [pre + "ge" + _de_verb_stem(rest) + "t", pre + "ge" + rest, pre + "zu" + rest]
+            out += [pre + f for f in _DE_IRR.get(rest.lower(), [])]
+        elif insep:                                     # bekommen → bekam, gefallen → gefällt (Partizip không có ge-)
+            out += [stem + "t"]
+            rest = w[len(insep):]
+            out += [w[:len(insep)] + (f[2:] if f.startswith("ge") and len(f) > 4 else f)
+                    for f in _DE_IRR.get(rest.lower(), [])]
+        elif not low.endswith("ieren"):
             out += ["ge" + stem + "t", "ge" + stem + "et", "ge" + w]
         else:
             out += [stem + "t"]
         return out
-    for suf in ("e", "en", "er", "es", "em", "ere", "eren", "erer", "st", "ste", "sten", "ster"):   # tính từ
-        out.append(w + suf)
+    out += [w + suf for suf in _DE_ADJ_SUF]          # tính từ (+ so sánh: kleiner, kleinste)
     if low.endswith("e"):
         out += [w + "n", w + "r", w + "s", w + "m"]
+    if _ONE_VOWEL.match(low):                        # alt → älter, älteste · warm → wärmer · jung → jünger
+        u = _de_umlaut(w)
+        if u:
+            out += [u + suf for suf in _DE_CMP_SUF]
     return out
 
 
+# 1.35.1: động từ nhóm 3 có tiền tố (devenir, obtenir, permettre, décrire, reconnaître, découvrir…) — gốc + đuôi ở bảng
+_FR_PREFIXABLE = ("venir", "tenir", "prendre", "mettre", "faire", "partir", "sortir", "lire", "dire", "connaître", "paraître",
+                  "vivre", "suivre", "ouvrir", "offrir", "sentir", "servir", "dormir", "courir", "écrire", "battre", "voir")
+_FR_VOIR_PRE = ("re", "pré", "entre")          # revoir, prévoir — không phải pouvoir / savoir / devoir / recevoir
+_FR_GENDER_NOTE = re.compile(r"(?i)\((?:m|f|n|nm|nf|n\.\s?m\.?|n\.\s?f\.?|m\.|f\.|masc\.?|fém\.?|fem\.?|pl\.?)\)|"
+                             r"(?:^|\s)n\.\s?[mf]\.?(?=\s|$)")
+
+
 def _fr_forms(w: str, noun: bool = False) -> list[str]:
-    """noun: từ của deck có mạo từ (le port, la porte) → danh từ, chỉ thêm số nhiều (không thêm giống cái -e: le port ≠
-    porte)."""
+    """noun: từ của deck có mạo từ / ghi giống (le port, la porte, soir (m)) → danh từ, chỉ thêm số nhiều (không thêm giống
+    cái -e: le port ≠ porte; không chia như động từ: le papier ≠ papie, le soir ≠ soit)."""
     out = [w]
     low = w.lower()
     if low in _FR_IRR:
         out += _FR_IRR[low]
+    if noun:                                         # danh từ: số nhiều
+        out += [w + "s", w + "x"]
+        if low.endswith(("al", "ail")):
+            out.append(w[:-2 if low.endswith("al") else -3] + "aux")
+        return out
+    if low not in _FR_IRR:
+        for base in _FR_PREFIXABLE:
+            pre = low[:-len(base)] if low.endswith(base) else ""
+            if pre and len(pre) <= 6 and (base != "voir" or pre in _FR_VOIR_PRE):
+                out += [w[:len(pre)] + f for f in [base] + _FR_IRR.get(base, [])]
+                break
     if low.endswith("er") and len(low) > 3:          # động từ nhóm 1
         st = w[:-2]
         out += [st + x for x in ("e", "es", "ons", "ez", "ent", "é", "ée", "és", "ées", "ais", "ait", "ions", "iez",
-                                 "aient", "erai", "eras", "era", "erons", "erez", "eront", "erais", "erait", "ant")]
+                                 "aient", "erai", "eras", "era", "erons", "erez", "eront", "erais", "erait", "erions",
+                                 "eriez", "eraient", "ant", "a", "èrent")]
         if st.endswith("g"):
-            out += [st + "eons", st + "eais", st + "eait", st + "eant"]
+            out += [st + "eons", st + "eais", st + "eait", st + "eaient", st + "eant", st + "ea"]
         if st.endswith("c"):
-            out += [st[:-1] + "çons", st[:-1] + "çais", st[:-1] + "çait"]
-    elif low.endswith("ir") and len(low) > 3:        # nhóm 2 (finir)
+            out += [st[:-1] + "çons", st[:-1] + "çais", st[:-1] + "çait", st[:-1] + "çaient", st[:-1] + "çant"]
+        m = re.search(r"([eé])([^aeiouyéèêëàâîïôûù]+)$", st)     # lever → lève, répéter → répète (e / é → è)
+        if m and m.start() > 0:
+            st2 = st[:m.start()] + "è" + m.group(2)
+            out += [st2 + x for x in ("e", "es", "ent")]
+            if m.group(1) == "e":
+                out += [st2 + x for x in ("erai", "eras", "era", "erons", "erez", "eront", "erais", "erait", "eraient")]
+        out.append(w + "s")                          # từ ghi không mạo từ nhưng là danh từ (papier → papiers)
+    elif low.endswith("ir") and not low.endswith("oir") and len(low) > 3:     # nhóm 2 (finir); "-oir" là nhóm 3 / danh từ
         st = w[:-2]
-        out += [st + x for x in ("is", "it", "issons", "issez", "issent", "i", "ie", "is", "ies", "issait", "issaient",
-                                 "irai", "ira", "iront", "issant")]
+        out += [st + x for x in ("is", "it", "issons", "issez", "issent", "i", "ie", "ies", "issais", "issait", "issions",
+                                 "issiez", "issaient", "irai", "iras", "ira", "irons", "irez", "iront", "irais", "irait",
+                                 "irions", "iriez", "iraient", "issant", "isse", "issent")]
+        out.append(w + "s")
+    elif low.endswith("uire") and len(low) > 4:      # construire, traduire → construit, traduisons
+        st = w[:-2]
+        out += [st + x for x in ("s", "t", "te", "ts", "tes", "sons", "sez", "sent", "sait", "saient", "sant", "rai", "ra")]
     elif low.endswith("re") and len(low) > 3:        # nhóm 3 (vendre)
         st = w[:-2]
         out += [st + x for x in ("s", "", "ons", "ez", "ent", "u", "ue", "us", "ues", "ait", "aient", "rai", "ra")]
-    elif noun:                                       # danh từ: số nhiều
-        out += [w + "s", w + "x"]
-        if low.endswith("al"):
-            out.append(w[:-2] + "aux")
+        out.append(w + "s")                          # danh từ / tính từ ghi không mạo từ (livre → livres, autre → autres)
     else:                                            # tính từ (hoặc danh từ không ghi mạo từ)
         out += [w + "s", w + "e", w + "es", w + "x"]
         if low.endswith("al"):
@@ -235,14 +322,21 @@ def _fr_forms(w: str, noun: bool = False) -> list[str]:
     return out
 
 
+def _fr_is_noun(word: str, alts0: list[str], lang: str = "fr") -> bool:
+    """Từ của deck tiếng Pháp là danh từ: có mạo từ (le / la / l' / un…) hoặc ghi giống (m) / (f) / n.m. — không tính
+    "(e)" / "(ne)" của ami(e), chien(ne) (vẫn nhận giống cái)."""
+    w = nfc(word)
+    if re.search(r"\((?:e|ne|se|ve|le)\)", w):
+        return False
+    return (bool(alts0) and strip_article(alts0[0], lang) != alts0[0]) or bool(_FR_GENDER_NOTE.search(w))
+
+
 def forms(word: str, lang: str) -> list[str]:
     """Mọi dạng để tìm từ / cụm từ của deck trong câu (dài trước). Cụm từ: biến đổi chữ đầu (động từ) và chữ cuối."""
     out: list[str] = []
     fx = _de_forms if lang == "de" else _fr_forms
     if lang == "fr":
-        alts0 = alternatives(word, lang)
-        # có mạo từ → danh từ; ghi "(e)" / "(ne)" (ami(e), chien(ne)) → vẫn nhận giống cái
-        noun = bool(alts0) and strip_article(alts0[0], lang) != alts0[0] and not re.search(r"\((?:e|ne|se|ve|le)\)", nfc(word))
+        noun = _fr_is_noun(word, alternatives(word, lang), lang)
         fx = (lambda x: _fr_forms(x, noun))      # noqa: E731
     for alt in alternatives(word, lang):
         parts = alt.split()
@@ -262,14 +356,113 @@ def forms(word: str, lang: str) -> list[str]:
     return sorted(seen, key=len, reverse=True)
 
 
+def pattern(fs: list[str]) -> str:
+    """Biểu thức tìm một trong các dạng `fs` (dài trước) theo ranh giới chữ; dấu nháy thẳng / cong như nhau (Gemini và bộ
+    gõ hay viết aujourd’hui, d’accord)."""
+    body = "|".join(re.escape(f).replace(r"\ ", r"\s+").replace("'", "['’]") for f in fs)
+    return r"(?<![%s])(?:%s)(?![%s])" % (LETTERS, body, LETTERS)
+
+
+# ---------------------------------------------------------------------------
+# Ngữ cảnh (1.35.1): không nối nhầm từ cùng mặt chữ khác nghĩa
+# ---------------------------------------------------------------------------
+
+_FR_SUBJ = {"je", "j'", "tu", "il", "elle", "on", "nous", "vous", "ils", "elles", "ne", "n'", "me", "m'", "te", "t'", "se",
+            "s'", "qui", "ça"}
+_FR_DET = {"le", "la", "les", "l'", "un", "une", "des", "du", "au", "aux", "ce", "cet", "cette", "ces", "mon", "ma", "mes",
+           "ton", "ta", "tes", "son", "sa", "ses", "notre", "nos", "votre", "vos", "leur", "leurs", "chaque", "quel",
+           "quelle", "quels", "quelles"}
+_FR_AVOIR = {"a", "ai", "as", "avons", "avez", "ont", "avait", "avais", "avaient", "avions", "aviez", "aura", "aurai", "auras",
+             "aurons", "aurez", "auront", "aurait", "aurais", "auraient", "ait", "aient", "avoir", "ayant", "eu"}
+_FR_ADV = {"pas", "jamais", "déjà", "toujours", "bien", "tous", "toutes", "tout", "souvent", "vraiment", "très", "plus",
+           "trop", "encore", "aussi", "peut-être", "rarement", "beaucoup"}
+_TOKEN_BACK = re.compile(r"([%s]+['’]?|['’])\s*$" % LETTERS)
+
+
+def _prev_tokens(text: str, start: int, n: int = 4) -> list[str]:
+    """`n` chữ ngay trước vị trí `start` (gần nhất trước), chữ thường, nháy cong → thẳng; dừng ở dấu câu."""
+    out: list[str] = []
+    head = text[:start]
+    while len(out) < n:
+        m = _TOKEN_BACK.search(head)
+        if not m:
+            break
+        out.append(m.group(1).lower().replace("’", "'"))
+        head = head[:m.start()]
+    return out
+
+
+def word_kind(word: str, lang: str) -> str:
+    """Loại của từ trong deck để xét ngữ cảnh: "noun" / "verb" / "other"."""
+    alts = alternatives(word, lang)
+    if not alts:
+        return "other"
+    base = strip_article(alts[0], lang)
+    if lang == "de":
+        if base != alts[0] or (len(base.split()) == 1 and base[:1].isupper()):
+            return "noun"
+        return "verb" if len(base.split()) == 1 and base.lower().endswith(("en", "ern", "eln")) else "other"
+    if _fr_is_noun(word, alts, lang):
+        return "noun"
+    b = re.sub(r"(?i)^(?:se\s+|s['’])", "", base)
+    return "verb" if len(b.split()) == 1 and b.lower().endswith(("er", "ir", "re", "oir")) else "other"
+
+
+def context_ok(text: str, start: int, end: int, word: str, lang: str, kind: str | None = None) -> bool:
+    """Chỗ khớp [start, end) có đúng là từ này không (xét hoa / thường và chữ đứng trước):
+    - tiếng Đức: danh từ viết hoa (der Morgen) không nhận "morgen" (ngày mai); từ viết thường (arm, essen) không nhận chữ
+      viết hoa giữa câu (der Arm, das Essen) — đầu câu / sau dấu ngoặc kép thì nhận;
+    - tiếng Pháp: danh từ (le lit, la porte, l'été) không nhận khi đứng ngay sau đại từ chủ ngữ / ne (il lit, il porte) hay
+      "été" sau avoir (il a été); động từ (lire, porter) không nhận khi đứng sau mạo từ / từ hạn định (le lit, la porte) —
+      trừ đại từ tân ngữ (je la porte, il le fait)."""
+    kind = kind or word_kind(word, lang)
+    m = text[start:end]
+    if not m:
+        return False
+    if lang == "de":
+        alts = alternatives(word, lang)
+        base = strip_article(alts[0], lang) if alts else ""
+        if kind == "noun" and base[:1].isupper():
+            core = strip_article(m, lang)            # chỗ khớp có thể kèm mạo từ ("Die Mütter") → xét chữ của danh từ
+            return core[:1].isupper()
+        if base[:1].islower() and m[:1].isupper():
+            head = text[:start].rstrip()
+            return not head or head[-1] in ".!?…:;„“\"«»‚‘(–—-\n"
+        return True
+    prev = _prev_tokens(text, start)
+    if kind == "noun":
+        if prev and prev[0] in _FR_SUBJ:
+            return False
+        if fold(m, "fr") in ("ete", "etes"):
+            for t in prev:
+                if t in _FR_AVOIR:
+                    return False
+                if t not in _FR_ADV and t not in ("n'", "ne"):
+                    break
+        return True
+    if kind == "verb" and prev and prev[0] in _FR_DET:
+        plain = {fold(re.sub(r"(?i)^(?:se\s+|s['’])", "", strip_article(a, lang)), lang) for a in alternatives(word, lang)}
+        if fold(m, lang) in plain | {x + "s" for x in plain}:
+            return True                              # đúng chữ của deck (livre, fenêtre ghi không mạo từ) / số nhiều
+        if prev[0] not in ("le", "la", "les", "l'"):
+            return False                             # un / du / mon / ce… + chữ = danh từ (du pouvoir, un dîner)
+        # đại từ tân ngữ: je la porte, ne le fais pas (nguyên mẫu sau le / la / les — je vais le faire — đã nhận ở trên)
+        return len(prev) > 1 and prev[1] in _FR_SUBJ
+    return True
+
+
 def find_word(sentence: str, word: str, lang: str) -> tuple[int, int] | None:
-    """Vị trí của từ (kể cả dạng biến đổi, không phân biệt hoa thường) trong câu; tiếng Pháp nhận cả sau l' / d' / qu'."""
+    """Vị trí của từ (kể cả dạng biến đổi, không phân biệt hoa thường) trong câu; tiếng Pháp nhận cả sau l' / d' / qu'.
+    1.35.1: bỏ chỗ khớp sai ngữ cảnh (context_ok) — tìm tiếp chỗ sau."""
     fs = forms(word, lang)
     if not fs:
         return None
-    body = "|".join(re.escape(f).replace(r"\ ", r"\s+") for f in fs)
-    m = re.search(r"(?<![%s])(?:%s)(?![%s])" % (LETTERS, body, LETTERS), nfc(sentence), re.I)
-    return (m.start(), m.end()) if m else None
+    s = nfc(sentence)
+    kind = word_kind(word, lang)
+    for m in re.finditer(pattern(fs), s, re.I):
+        if context_ok(s, m.start(), m.end(), word, lang, kind):
+            return (m.start(), m.end())
+    return None
 
 
 def words(s: str, lang: str) -> list[str]:

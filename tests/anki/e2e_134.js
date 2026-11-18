@@ -436,8 +436,16 @@ d.refresh(); result = 1`);
   ok(b.slot === 0 && /3 món chưa có/.test(b.msg), 'mở lại + Trang trí thử: Bản 1 vẫn còn (3 món)');
   // Như cảnh thật → rồi đặt lại
   await js('document.querySelector("#kb-h-tip .kb-try-reset").click(); return 1;'); await sleep(600);
+  // 1.35.1: bản thử khác cảnh thật → hỏi trước; Huỷ thì bản thử còn nguyên
+  ok(await js('const a = document.getElementById("kb-ask"); return !!a && !a.hidden && /giống cảnh thật/.test(a.textContent);'),
+    '"Như cảnh thật" khi bản thử đã khác: hỏi trước');
+  await js('document.querySelector(".kb-ask-no").click(); return 1;'); await sleep(400);
   b = await bar();
-  ok(/Giống cảnh thật/.test(b.msg), '"Như cảnh thật": Bản 1 về giống cảnh bây giờ');
+  ok(/3 món chưa có/.test(b.msg), 'Huỷ: bản thử còn nguyên (3 món)');
+  await js('document.querySelector("#kb-h-tip .kb-try-reset").click(); return 1;'); await sleep(600);
+  await js('document.querySelector(".kb-ask-yes").click(); return 1;'); await sleep(600);
+  b = await bar();
+  ok(/Giống cảnh thật/.test(b.msg), '"Như cảnh thật" → đồng ý: Bản 1 về giống cảnh bây giờ');
   ok((await tryPut('TV cổ', 6, 3)) === 'ok' && (await tryPut('Bể cá', 8, 1)) === 'ok', 'đặt thử lại TV + Bể cá');
   await py(KB + 'dd = st.load(); dd["coins"] = 3000; st.save(dd); d.refresh(); result = 1'); await sleep(1200);
   b = await bar();
@@ -457,14 +465,15 @@ d.refresh(); result = 1`);
   ok(w1[3].some((e) => e.id === 'tv' && e.x === 6 && e.y === 3) && w1[3].some((e) => e.id === 'aquarium' && e.x === 8 && e.y === 1), 'phòng thật bày đúng như bản thử');
   ok(!(await js('return GardenHome.trying();')) && /Đã bày/.test(await js('return document.getElementById("kb-h-tip").textContent;')), 'xong: thoát thử, dòng "Đã bày … như bản thử"');
   await shot('134_09b_da_dung');
-  // lần lưu bản thử bị bỏ vì Anki đang đồng bộ → "Dùng bản này" vẫn bày đúng như bản đang thấy
+  // lúc Anki đang đồng bộ: 1.34 bỏ lệnh lưu bản thử (đóng vườn là mất lần sửa) — 1.35.1 lưu luôn (bản thử chỉ là file trên
+  // máy); "Dùng bản này" vẫn bày đúng như bản đang thấy
   await js('GardenHome.open("room"); return 1;'); await sleep(800);
   await js('document.querySelector(\'.kb-h-tab[data-tab="room"]\').click(); return 1;'); await sleep(300);
   await page.click('#kb-h-try'); await sleep(700);
   await py(KB + 'kb._e2e_busy = mw.progress.busy; kb._sync_running = True; mw.progress.busy = lambda: True; result = kb._sync_hold()');
-  ok((await tryPut('Đèn cây', 3, 1)) === 'ok', 'đang "đồng bộ": đặt thử Đèn cây (lệnh lưu bị bỏ, có câu báo)');
-  const lost = await drafts();
-  ok(!lost.scenes.room.slots[lost.scenes.room.cur].items.some((e) => e.id === 'lamp'), '… Python chưa có Đèn cây trong bản thử (lệnh bị bỏ)');
+  ok((await tryPut('Đèn cây', 3, 1)) === 'ok', 'đang "đồng bộ": đặt thử Đèn cây');
+  const kept = await drafts();
+  ok(kept.scenes.room.slots[kept.scenes.room.cur].items.some((e) => e.id === 'lamp'), '… 1.35.1: bản thử vẫn lưu xuống file lúc đồng bộ (có Đèn cây)');
   await py(KB + 'mw.progress.busy = kb._e2e_busy; kb._sync_running = False; result = kb._sync_hold()');
   await sleep(300);
   const c0 = await py(KB + 'result = st.load()["coins"]');

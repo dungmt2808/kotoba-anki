@@ -408,6 +408,7 @@ var GardenFinds = (function () {
       });
       if (focusScene === s.scene) { focusEl = sec; }
     });
+    if (typeof GardenLang !== "undefined" && GardenLang.fitWords) { GardenLang.fitWords(list); }     // 1.35.1: từ Đức / Pháp dài
     if (focusEl) { const f = focusEl; requestAnimationFrame(() => { try { f.scrollIntoView({ block: "start" }); } catch (e) { /* bỏ qua */ } }); }
   }
 

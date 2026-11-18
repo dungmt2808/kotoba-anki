@@ -246,7 +246,7 @@ var GardenPaper = (function () {
   // (ai_eu.deck_word) → so cả dạng gọn để tìm cây
   function euKey(s) {
     return String(s || "").normalize("NFC").replace(/\[[^\]]*\]|\/[^/\s][^/]*\//g, " ").split(/[;/|]|,(?!\s*[¨̈]?\s*-)/)[0]
-      .replace(/,\s*[¨̈]?\s*-\S*/g, " ").replace(/\([^)]*\)/g, " ").replace(/’/g, "'").replace(/\s+/g, " ").trim().toLowerCase();
+      .replace(/,\s*[¨̈]?\s*-[^\s,]*/g, " ").replace(/\([^)]*\)/g, " ").replace(/’/g, "'").replace(/\s+/g, " ").trim().toLowerCase();
   }
   function plantOf(word) {
     const d = H && H.data();

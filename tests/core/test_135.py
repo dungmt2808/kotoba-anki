@@ -552,6 +552,7 @@ def all_words(lang: str) -> list[str]:
 NGOAI_LE = {
     "de": {"Bambussprosse": "từ ghép (Bambus + Sprosse)", "Bambussprossen": "số nhiều của từ ghép trên",
            "Fischgrätparkett": "từ ghép (sàn gỗ xương cá)", "Hehe": "thán từ", "Hm": "thán từ", "Hä": "thán từ",
+           "Nanu": "thán từ (ngạc nhiên nhẹ, 1.35.1 thay Hä)", "Ah": "thán từ (1.35.1: Ah, tut das gut~)",
            "Juhu": "thán từ", "Kiefernzapfen": "từ ghép (quả thông)", "Kois": "số nhiều của Koi (cá koi)",
            "Kotatsu": "từ mượn tiếng Nhật", "Kotoba": "tên làng", "Mandschurenkranich": "tên loài (sếu đầu đỏ)",
            "Meerglas": "từ ghép (thuỷ tinh biển)", "Memory": "tên trò chơi lật cặp ở Đức", "Mooskugel": "từ ghép (bóng rêu)",

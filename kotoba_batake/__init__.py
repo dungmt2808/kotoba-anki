@@ -3418,6 +3418,7 @@ class GardenDialog(QDialog):
 
     # 1.33.2: lệnh trang tự gửi (không phải người dùng bấm) — lúc đồng bộ thì bỏ qua mà không báo
     AUTO_CMDS = ("ready", "refresh", "life:", "guest:", "ai:status", "paper:index", "game:exaudio", "deck:tree")
+    DRAFT_LOCAL = ("home:draft:get", "home:draft:put:", "home:draft:pick:")     # 1.35.1: lệnh chỉ đụng file bản thử
     _sync_note = 0.0
 
     def _on_bridge(self, cmd: str) -> Any:
@@ -3425,7 +3426,11 @@ class GardenDialog(QDialog):
         # → mọi lệnh đụng collection đều lỗi, có lệnh làm Anki bật hộp lỗi giữa lúc đồng bộ. Bỏ qua các lệnh đó (đồng bộ
         # xong vườn tự dựng lại). Nhật ký (`cal:`) vẫn đi tiếp: nó có đường báo "chưa lưu được" và giữ chữ trong ô.
         # Cũng vậy khi Anki đang đồng bộ thường (`_sync_hold`): lệnh ghi rơi vào lúc đó sẽ chen trước lúc lớp giữ dữ liệu so.
-        if (not _col_ready() or _sync_hold()) and not cmd.startswith(("cal:", "prefs:set:", "app:jserr:", "app:report:", "app:mail", "win:")):
+        # 1.35.1: bản thử (Trang trí thử) chỉ là file trên máy, không đụng collection → lưu được cả lúc đồng bộ (trước: lệnh
+        # bị bỏ, trang vẫn hiện món vừa dời — đóng vườn là mất lần sửa đó). Cần biết hồ sơ (mw.col) để ghi đúng file.
+        draft_ok = cmd.startswith(self.DRAFT_LOCAL) and mw.col is not None
+        if (not _col_ready() or _sync_hold()) and not draft_ok and \
+                not cmd.startswith(("cal:", "prefs:set:", "app:jserr:", "app:report:", "app:mail", "win:")):
             # 1.33.2: trước đây bỏ qua lặng lẽ — bấm Mua / Tưới ngay / chấm thẻ lúc đồng bộ thì không có gì xảy ra (tưởng
             # hỏng), lượt chấm còn làm bảng ôn kẹt chờ. Nay báo một câu (lệnh người dùng bấm, ≤ 1 lần / 3 giây) và trả lại
             # lượt chấm để chấm lại được sau khi đồng bộ xong.

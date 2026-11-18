@@ -8,6 +8,8 @@ Cập nhật: 2026-11-17. Add-on **1.34.1** (1.34.1: Đuổi quạ so đáp án 
 
 ## 0. Đọc nhanh (cho phiên chat mới)
 
+> 18/11: **1.35.1** — người dùng: "kiểm tra lại thật kỹ logic, giao diện, tính năng, UI … test thêm ngoài những test đã có sẵn. các ngôn ngữ mới được thêm vào (Trung, Hàn, Pháp, Đức) thì mọi thứ đã viết tự nhiên chưa (tên báo, đồ vật, stack-chan), logic ngôn ngữ, xem nó đã bao gồm hầu hết các trường hợp chưa … mất dữ liệu (trang trí thử,...)" → mục 2.6z19: nối tra từ Đức / Pháp phân biệt từ đồng hình (der Morgen ≠ morgen, le lit ≠ il lit, l'été ≠ a été), ký hiệu "der Hund, -(e)s, -e", động từ tách / tiền tố + bất quy tắc, so sánh; tiếng Trung không nối 家 vào 大家; tiếng Hàn 쉬어요 / 도와줘요; đoán ngôn ngữ (Ý / Tây Ban Nha → không còn là Pháp, Phần Lan → không còn là Đức); Trang trí thử không mất bản thử khi Anki đang đồng bộ / file hỏng, "Như cảnh thật" hỏi trước; 11 câu chữ Đức / Pháp / Hàn tự nhiên hơn. Báo cáo `docs/kiem_thu/1.35.1/BAO_CAO.md`. **Cách sửa Claude chọn, người dùng chưa xem.**
+
 > 17/11 (tối, sau 1.34.0): **1.34.1** — người dùng (gửi khi repo còn ở 1.32.1): "test kỹ giúp tớ addon này và tính năng vừa hiện thực. test thêm nhiều kịch bản, những bộ test ngoài bộ test có sẵn … đây gần như là lần release cuối cùng rồi. và nếu thêm tiếng Đức hoặc reset báo lại từ đầu thì có làm nhiều không. vì bản trước release có người nhờ tớ thêm tiếng Đức". Phiên này bắt đầu ở 1.32.1; trong lúc làm, phiên khác đẩy 1.32.2 → 1.33.3 (cùng nhánh) và 1.34.0 (master) → gộp cả hai, mọi lỗi tìm được **vẫn còn** → sửa ở **1.34.1** (mục 2.6z17): Đuổi quạ so đáp án (gõ tiếng Việt kiểu tổ hợp, Hangul tách nét, tiếng Hàn viết liền, pinyin `hǎo，hào` / `xíng（háng）`, bộ gõ đang ghép chữ) và đoán ngôn ngữ (deck tiếng Nhật có trường "中文" / "Korean" — với báo tiếng Trung của 1.33 thì từ Nhật lọt vào báo Trung; deck kanji có trường "Chinese reading"; **deck tiếng Đức từng bị nhận là tiếng Anh**; chữ Nga / Thái thành tiếng Nhật). Người dùng xem ước lượng (mục 10.0c) rồi: "gộp với master đi ạ. tớ nghĩ làm tiếng Đức và tiếng Pháp tương tự như Anh, Trung, Nhật, Hàn luôn á" → gộp 1.34.1 vào master, rồi làm tiếng Đức + tiếng Pháp.
 
 > 17/11 (sau 1.33.3): người dùng chuyển góp ý sau phát hành — bảng ôn: phím 1–4, Space / Enter, Replay Audio, thẻ tự lật (thẻ chọn đáp án…), nút phóng to cho thẻ dài, "Ẩn vườn rồi Hiện vườn thì vùng học không lùi lên, vườn chỉ hiện một chút xíu", "tìm thêm một số trường hợp"; ô chọn deck gọn như Anki (nhiều deck con); Trang trí nhà lưu bản trang trí để đặt thử đồ chưa mua. "Phác họa trước rồi mới bắt đầu triển khai" → **ảnh phác 1.34** ở `docs/ke_hoach_1_34/` (`KE_HOACH.md` + 7 ảnh, vẽ đè lên vườn thật trong Anki 26.9.4: `tests/anki/mock_134.js` + `mock_134_ghep.py`, bộ thẻ mẫu `demo_1334.py`). Thử trên 1.33.3 (`tests/anki/probe_1334.js`): phím Space / 1–4 **đã có** (chỉ chưa ghi số trên nút); **lỗi thật**: Hiện vườn không trả cỡ khung thẻ (`toggleQuick` đặt "Cao" mà không trả), mẫu thẻ gọi `pycmd("ans")` không lật, **giữ Space ~0,4 giây chấm liền 3 thẻ**, bấm radio trong thẻ rồi Space không lật, NumLock tắt không chấm, R không phát lại. Người dùng duyệt: "oke, triển khai đi, xong nhớ test kỹ nha" → **1.34.0 đã làm** (mục 2.6z16, báo cáo `docs/kiem_thu/1.34.0/BAO_CAO.md`); chi tiết Claude chọn (mục 7).
@@ -412,6 +414,35 @@ Giờ thật / giờ game / cố định, 6 buổi trong ngày, thời tiết đ
 - **Tên gọi** (thử thật 09/11: Gemini đặt tên "Soncho" — phiên âm 村長 — cho ông trưởng làng, gọi quán là "Kotobaya", rồi báo Anh in "Mayor Soncho", "Grandma Hana"): lời nhắc dặn ông trưởng làng không có tên riêng, quán là "Quán Kotoba"; bảng tên của bước kể lại ghi Hana khoảng 30 tuổi (không "Grandma" / おばあさん); `story_core.fix_names_vi` đưa "Soncho" / "Kotobaya" về đúng tên trong bản gốc (truyện, tóm tắt, tin, mục thứ ba) trước khi lưu và kể lại; `clean_episode` sửa luôn phần tiếng Việt của bộ nhớ cũ (tóm tắt "quán trọ Kotobaya" của kỳ trước chính là chỗ Gemini học theo).
 - **Nhận xét Hay / Nhạt** (`ai.feedback_bases`): số viết từ truyện chung mang `"truyen_chung": true` trong `bao.json` → nhận xét vào `bao_chung/truyen.json`; số cũ (trước 1.25.2) → thư mục của báo đó, và cả `bao_chung` nếu kỳ ấy đã được chép sang (cùng kỳ, ngày, tóm tắt). Không bao giờ tạo `bao_chung` từ một nhận xét — trước đây bấm Nhạt ở số cũ trước lần viết đầu của 1.25.2 tạo `truyen.json` chung chỉ có một dòng, `migrate_story` thấy đã có nên không chép truyện cũ sang → truyện bắt đầu lại (tìm thấy khi chạy lại `e2e_123`).
 - Test: `core/test_1251.py` (viết lại: bản gốc + 3 báo cùng ngày với Gemini giả, thời tiết khớp `sky.js` 80 khung, nối kỳ / nối tin hôm sau, dự phòng khi bận / kể lại hỏng, chép bộ nhớ), `anki/e2e_1251.js` (48 kiểm tra), Gemini thật một ngày (bản gốc → Nhật N4 + Anh A2 + Việt) — `docs/kiem_thu/1.25.2/BAO_CAO.md`.
+
+### 2.6z19 Bản 1.35.1 — kiểm tra lại 1.35: logic ngôn ngữ, câu chữ, Trang trí thử (18/11)
+Người dùng: kiểm tra kỹ, test ngoài bộ có sẵn, ngôn ngữ mới viết tự nhiên chưa, logic ngôn ngữ đủ trường hợp chưa, mất dữ liệu
+(trang trí thử…). Báo cáo + bảng lỗi đầy đủ: `docs/kiem_thu/1.35.1/BAO_CAO.md`. **Không đổi lưu trữ** (không khoá / mục config
+mới). **Cách sửa Claude chọn, người dùng chưa xem.**
+- **Tiếng Đức** (`eu_core`): ký hiệu "der Hund, -(e)s, -e" / "die Frau, -, -en" (sở hữu cách + số nhiều) từng thành "Hund -e" —
+  không nối tra từ, Đuổi quạ gõ "Hund" bị chấm sai (sửa cả `games.js`, `paper.js`); hoa / thường (`context_ok`: danh từ chỉ
+  nhận chữ hoa, từ viết thường chỉ nhận chữ hoa ở đầu câu — der Morgen ≠ morgen, arm ≠ der Arm); tiền tố tách thêm um / durch /
+  statt / kennen…, tiền tố + động từ bất quy tắc (aufgestanden, bekam, gefällt), ~40 động từ mạnh, -ete, so sánh (älter,
+  besser, größte).
+- **Tiếng Pháp**: danh từ có mạo từ / ghi giống chỉ thêm số nhiều (le papier → papiers; le soir không còn nối soit / sois);
+  từ đồng hình (`context_ok`: danh từ không nhận sau đại từ chủ ngữ / ne / qui, "été" không nhận sau avoir, động từ không nhận
+  sau mạo từ — trừ đại từ tân ngữ / nguyên mẫu); e / é → è, tiền tố của động từ bất quy tắc (devenu, obtenu, permis), đuôi
+  còn thiếu, nháy cong ’ (`eu_core.pattern`). `ai_eu.find_links` dùng chung `pattern` + `context_ok`.
+- **Tiếng Trung** (`ai_zh.word_groups` / `_cuts`): từ một chữ của deck không nối vào giữa từ hai chữ Gemini đã đánh dấu (大|家,
+  今|天) trừ chữ hư / số (不好, 一天), nhóm ≥ 3 chữ chỉ chặn chữ ở giữa. **Tiếng Hàn** (`ko_core`): 어 sau nguyên âm không gộp
+  (쉬어요, 되어요), ㅂ → 와 (돕다 → 도와), động từ phụ viết liền (`AUX_START`: 도와줘요, 해봐요).
+- **Đoán ngôn ngữ** (`fields_core.guess_lang`, chỉ loại note chưa cấu hình): tiếng Ý / Tây Ban Nha không dấu → "other" (trước:
+  Pháp), Phần Lan / Estonia → "other" (trước: Đức), Hà Lan → "other" (trước: Anh); `_NOT_FR` / `_IT_IL` / `_FR_ONLY` /
+  `_NOT_DE` / `_NL_MARK`.
+- **Trang trí thử**: lệnh `home:draft:get` / `put:` / `pick:` chạy cả lúc Anki đang đồng bộ khi `mw.col` còn (`DRAFT_LOCAL` —
+  trước bị bỏ, đóng vườn là mất lần sửa; `use` vẫn chặn); `draft_store`: file hỏng → `ban_thu.json.hong` rồi mới ghi, file không
+  đọc được → không ghi đè; trang: lệnh lỗi đọc lại ≤ 1 lần / 5 giây (`draftErrAt`, trước lặp vô tận), "Như cảnh thật" hỏi trước
+  khi bản thử đã khác cảnh thật (`GardenUI.ask`).
+- **Câu chữ** (`lang_core`): Đức Nanu? / Gut gekämpft! / Ah, tut das gut~; Pháp Courage ! / Ça rend bien ! / Ah, l'eau est bonne~;
+  Hàn 창밖을 보다 / 눈 구경을 하다 / 이끼볼 / 따뜻해서 좋다~; khách Chợ sáng Đức / Pháp nói chữ của deck không kèm ", -e" / "(m)"
+  (`games.js euFace`); Đuổi quạ nhận động từ phản thân không cần sich / se. `tests/fixtures/chu_135_ref.json` sinh lại.
+- Test: `core/test_1351.py` + `.js` (31 + 5), `anki/e2e_1351.js`; `e2e_134` đổi theo hành vi mới (bản thử lưu được lúc đồng bộ,
+  "Như cảnh thật" hỏi trước); `test_135` thêm 2 thán từ.
 
 ### 2.6z18 Bản 1.35.0 — tiếng Đức / tiếng Pháp như Anh / Trung / Nhật / Hàn (17/11 đêm)
 Người dùng: "gộp với master đi ạ. tớ nghĩ làm tiếng Đức và tiếng Pháp tương tự như Anh, Trung, Nhật, Hàn luôn á" (ước lượng ở mục 10.0c). Không có ảnh phác — **mọi chi tiết Claude chọn, người dùng chưa xem** (tên báo, câu chữ tiếng Đức / Pháp của Ngôn ngữ trong vườn, ngữ pháp A1–C1). Ba bước như tiếng Trung / Hàn:
@@ -1160,6 +1191,7 @@ Add-on chỉ **ghi hai file** trong `bao_dir`: `tien_do.json` và (1.25.8) `truy
 
 ## 7. Quyết định đã chốt (đừng đảo ngược khi chưa hỏi người dùng)
 
+- **1.35.1 (Claude chọn, người dùng chưa xem)**: nối tra từ "thà bỏ sót còn hơn nối nhầm" cả cho tiếng Đức / Pháp — xét hoa / thường (Đức) và chữ đứng trước (Pháp) thay vì từ điển; bản thử (Trang trí thử) lưu được cả lúc Anki đang đồng bộ (chỉ là file trên máy, đảo quyết định ngầm của 1.34 "lệnh lúc đồng bộ bị bỏ" riêng cho bản thử; "Dùng bản này" vẫn chặn); "Như cảnh thật" dùng hộp hỏi chung (tắt "Hỏi trước khi trả xu" ở ⚙ thì cũng không hỏi).
 - **1.34 (người dùng duyệt ảnh phác `docs/ke_hoach_1_34/`; chi tiết Claude chọn, người dùng chưa xem trên máy)**: Nghe lại = R / F5 như Anki; Phóng to = phím F, nhớ theo máy, **Esc lần 1 thu nhỏ, lần 2 dừng**; Ẩn vườn không đổi cỡ thẻ đã chọn ở ⚙ (vườn ẩn thì thẻ tự cao), Hiện vườn đưa "To hết chỗ" về "Vừa"; giữ phím không lặp lại lượt chấm; **phím của bộ gõ vẫn không chạy phím tắt (1.25.9)**; không làm "Auto Advance" (tự lật / tự chấm theo giây của tuỳ chọn deck) — mẫu thẻ tự lật thì chạy. Ô deck: một nút + cây như Anki, đóng / mở nhánh nhớ theo máy, không ghi cờ thu gọn của Anki. Trang trí thử: **3 bản mỗi cảnh**, lưu **theo hồ sơ trên máy** (không đồng bộ), "Dùng bản này" mua + bày một lần, món đang đặt ở cảnh khác không bị lấy sang (mua thêm), món bản thử không dùng → Kho đồ; thú / khách / StackChan không hiện lúc thử; ảnh chụp lúc thử là cảnh thật.
 - **1.33.3 (Claude chọn, người dùng chưa xem)**: (1) StackChan nói **đúng ngôn ngữ đang chọn** — ở Tiếng Nhật / Anh / Trung /
   Hàn không bốc câu chỉ có tiếng Việt (trước đây chế độ Tiếng Nhật xen câu tiếng Việt); muốn giữ câu tiếng Việt xen ở Tiếng
@@ -1452,6 +1484,8 @@ Kế hoạch + cách làm: **`KE_HOACH_VUON_3D.md`**. Phạm vi người dùng c
 ---
 
 ## 11. Lịch sử phiên bản
+- **1.35.1**: kiểm tra lại 1.35 — nối tra từ Đức / Pháp không nhầm từ đồng hình, ký hiệu "der Hund, -(e)s, -e", động từ tách / tiền tố, so sánh; tiếng Trung không nối từ một chữ vào giữa từ ghép; tiếng Hàn 쉬어요 / 도와줘요; đoán ngôn ngữ Ý / Tây Ban Nha / Phần Lan / Hà Lan; Trang trí thử không mất bản thử lúc đồng bộ / file hỏng, "Như cảnh thật" hỏi trước; câu chữ tự nhiên hơn; không đổi lưu trữ — mục 2.6z19.
+- **1.35.0**: tiếng Đức / tiếng Pháp như Anh / Trung / Nhật / Hàn (deck, trò chơi, Ngôn ngữ trong vườn, báo Der Wortgarten / Le Jardin des Mots; khoá mới `lang3` / `games_lang3`, `kotoba_batake_paper_de` / `_fr`) — mục 2.6z18.
 - **1.34.1**: Đuổi quạ so đáp án với bộ gõ / deck thật (gõ tiếng Việt kiểu tổ hợp, Hangul tách nét, tiếng Hàn viết liền, pinyin nhiều cách đọc, bộ gõ đang ghép chữ); đoán ngôn ngữ deck (deck Nhật có trường 中文 / Korean, kanji có trường Chinese reading → tiếng Nhật; tiếng Đức / Pháp, chữ Nga / Thái → Ngôn ngữ khác) — mục 2.6z17.
 - **1.34.0**: góp ý sau phát hành — số phím 1–4 trên nút chấm, Nghe lại (R / F5), thẻ tự lật / tự chấm (`pycmd("ans")`, `"ease1…4"`), Phóng to (F), sửa Ẩn / Hiện vườn, giữ phím không chấm liền, radio / NumLock; ô chọn deck dạng cây như Anki; Nhà → Trang trí thử (3 bản / cảnh, đặt thử đồ chưa mua, "Dùng bản này" mua + bày một lần); không đổi dữ liệu collection (bản thử là file theo hồ sơ trên máy) — mục 2.6z16.
 - **1.33.3**: sửa 7 lỗi + 1 lỗi nhỏ của nhánh `audit/release-review-1.33.2-2026-11-17` (đọc lỗi không còn ghi đè dữ liệu thật, trả lại sau đồng bộ lỗi không mất bản chụp, lưu chung một lần cho thưởng / gánh hàng, sổ bù xu khi Anki tắt đột ngột, báo "từ mai", đọc báo cũ không cần khoá, thẻ chấm ở chỗ khác cùng giây, nhãn sau Undo), dòng cảnh báo khi vườn tạm chỉ xem, chữ không lẫn ngôn ngữ (StackChan, Chợ sáng, tiêu đề Trò chơi) — mục 2.6z15.

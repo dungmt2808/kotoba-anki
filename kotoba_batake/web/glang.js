@@ -180,6 +180,26 @@ var GardenLang = (function () {
     return (t && t[k]) || fallback;
   }
   function attr(lang) { return ATTR[lang || cur()] || ""; }
+  // 1.35.1: tên tiếng Đức / Pháp / Anh trong ô nhỏ (Sổ sinh hoạt, Hộp sưu tầm): từ ghép dài hơn ô ("Morgengymnastik",
+  // "Sonnenuntergang") từng bị bẻ giữa chữ ("Morgengymnas / tik") → thu nhỏ chữ của ô đó vừa đủ (≥ 11px). Đo hết rồi mới đổi
+  // cỡ (không đo / ghi xen kẽ); chữ Trung / Hàn / Nhật xuống dòng ở đâu cũng được nên không đụng.
+  let fitCv = null;
+  function fitWords(root) {
+    if (!root || !root.querySelectorAll || typeof document === "undefined") { return 0; }
+    const els = Array.prototype.filter.call(root.querySelectorAll(".kb-box-ja[lang]"), (e) => /^(de|fr|en)/.test(e.getAttribute("lang") || ""));
+    if (!els.length) { return 0; }
+    fitCv = fitCv || document.createElement("canvas").getContext("2d");
+    const plan = els.map((e) => {
+      e.style.fontSize = "";
+      const w = e.clientWidth, cs = getComputedStyle(e), fs = parseFloat(cs.fontSize) || 14;
+      if (!w || !fitCv) { return null; }
+      fitCv.font = cs.fontWeight + " " + fs + "px " + cs.fontFamily;
+      const long = Math.max.apply(null, e.textContent.split(/[\s\u00a0]+/).map((x) => fitCv.measureText(x).width));
+      return long > w ? [e, Math.max(11, Math.floor(fs * w / long * 10) / 10)] : null;
+    }).filter(Boolean);
+    plan.forEach(([e, fs]) => { e.style.fontSize = fs + "px"; });
+    return plan.length;
+  }
   function names() { return (B && B.names) || {}; }
 
   // ⚙ → Ngôn ngữ trong vườn (select#kb-glang): "Tự theo deck · đang: Tiếng Trung", Tiếng Nhật…
@@ -204,7 +224,7 @@ var GardenLang = (function () {
     syncSelect: syncSelect,
     setData: setData, pref: pref, setPref: setPref, cur: cur, auto: auto, forDeck: forDeck, onChange: onChange,
     line: line, fill: fill, item: item, label: label, title: title, applyTitles: applyTitles,
-    game: game, ask: ask, tag: tag, attr: attr, names: names, LANGS: LANGS,
+    game: game, ask: ask, tag: tag, attr: attr, names: names, LANGS: LANGS, fitWords: fitWords,
     _parts: parts
   };
 })();

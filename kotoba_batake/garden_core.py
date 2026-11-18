@@ -3669,9 +3669,23 @@ class GardenState:
         return draft.clean(read_backup(self._draft_path(), self._col()))
 
     def draft_store(self, store: dict[str, Any]) -> dict[str, Any]:
-        """Ghi bản thử (OSError → HomeError). Chỉ là bản nháp trên máy: không đụng ví / collection."""
+        """Ghi bản thử (OSError → HomeError). Chỉ là bản nháp trên máy: không đụng ví / collection.
+        1.35.1: file đang có mà không đọc được (lỗi đọc đĩa) → không ghi (bản đọc ra trống, ghi là mất mọi bản thử của các
+        cảnh khác); file hỏng (không phải JSON) → giữ lại thành `ban_thu.json.hong` rồi mới ghi bản mới."""
         out = draft.clean(store)
         col = self._col()
+        target = backup.profile_path(self._draft_path(), col)
+        if os.path.exists(target):
+            try:
+                with open(target, encoding="utf-8") as f:
+                    json.load(f)
+            except ValueError:
+                try:
+                    os.replace(target, target + ".hong")
+                except OSError:
+                    raise HomeError("Chưa lưu được bản thử (file bản thử cũ hỏng, không dời được).") from None
+            except OSError:
+                raise HomeError("Chưa đọc được bản thử đã lưu (lỗi file trên máy) — chưa lưu để không mất bản cũ.") from None
         try:
             write_backup(self._draft_path(), backup_payload(out, col), col)
         except OSError:
