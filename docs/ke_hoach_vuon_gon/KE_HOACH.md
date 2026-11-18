@@ -268,3 +268,12 @@ Thay vì đẻ quá nhiều mini-game phức tạp (không kịp tiến độ tr
 | :---: | :---: | :---: |
 | ![Sân vườn Pixel Tầng 5](vg_15b_pixel_san_tang5.png) | ![Bày trong nhà](vg_15c_pixel_trong_nha.png) | ![Hộp thoại nhận quà](vg_15d_pixel_mo_qua.png) |
 
+### 14.6. Bản chạy thử Mở Rộng: Tự Xếp Đồ Nhà + Tủ Đồ StackChan + Xưởng Vẽ `16×16` — [`proto_noel_tu_trang_tri_stackchan.html`](proto_noel_tu_trang_tri_stackchan.html)
+- Kết nối sự kiện tích luỹ Noel thẳng vào 3 hệ thống sẵn có của vườn ([`garden_core.py`](../../kotoba_batake/garden_core.py), [`wear_core.py`](../../kotoba_batake/wear_core.py), [`decor_core.py`](../../kotoba_batake/decor_core.py), [`craft.js`](../../kotoba_batake/web/craft.js)) theo **lộ trình 4 chặng (`5 ❄` → `12 ❄` → `20 ❄` → `30 ❄`)**:
+  1. **Tab `🏠 Đồ Nhà`**: Tự chọn `Lò sưởi Noel`, `Bàn Cacao`, `Tất Noel`, `Vòng Hoa`, `Thảm Tuyết Đỏ`, `Cây Thông '26`, `Quả Cầu Tuyết`, đổi tường/sàn rồi bấm thẳng lên từng ô lưới `10×3` trong **Phòng Chính** để tự sắp xếp bố cục phòng ấm cúng theo ý thích.
+  2. **Tab `🤖 StackChan`**: Thay `Mũ` (`Mũ Noel`, `Sừng Tuần Lộc`, `Mũ Len` hoặc **tự vẽ mũ `20×8`**), `Cổ` (`Khăn Đỏ`, `Chuông Vàng`, `Nơ Xanh`) và `Vỏ` (`Đỏ–Trắng`, `Xanh Thông–Vàng`, `Bánh Gừng`) — cập nhật đồng bộ tức thì lên **StackChan góc trái**, **StackChan đi chơi trong nhà**, và **ngoài sân tuyết**.
+  3. **Tab `🎨 Tự Vẽ 16×16`**: Bảng vẽ pixel có tự động viền đen `#1b1b2f` (kèm 3 mẫu gợi ý *Người tuyết*, *Hộp quà*, *Bánh Noel*) để người học tự chấm món đồ độc bản rồi đặt thẳng vào phòng khách.
+
+| Tab Tự Xếp Đồ Trong Nhà (Lưới `10×3`) | Tab Tủ Đồ & Vẽ Mũ StackChan (`20×8`) | Tab Tự Vẽ `16×16` & Ngoài Sân Đồng Bộ |
+| :---: | :---: | :---: |
+| ![Tab Đồ Nhà](vg_16a_tab_do_nha.png) | ![Tab StackChan](vg_16b_tab_stackchan.png) | ![Tab Tự Vẽ & Sân](vg_16c_tab_tu_ve_16x16.png) |

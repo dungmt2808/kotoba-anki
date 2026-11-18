@@ -1,0 +1,1420 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ことば畑 — Tự Trang Trí Nhà Noel + Đồ StackChan & Xưởng Tự Vẽ</title>
+<style>
+  :root {
+    --kb-ink: #3a2a22;
+    --kb-ink-2: #6b5546;
+    --kb-line: #c7b199;
+    --kb-paper: #fffaf0;
+    --kb-butter: #fcefc9;
+    --kb-cream: #fff5de;
+    --kb-green: #8ed9a0;
+    --kb-green-hi: #abe6b9;
+    --kb-peach: #f9c590;
+    --kb-lilac: #cdb7ef;
+    --kb-water: #3f86c9;
+  }
+  * { box-sizing: border-box; user-select: none; }
+  body {
+    margin: 0;
+    padding: 10px 14px 14px;
+    background: #3b4b6b;
+    color: var(--kb-ink);
+    font-family: system-ui, -apple-system, "Noto Sans", "Segoe UI", Roboto, sans-serif;
+    transition: background-color 0.35s ease;
+  }
+  body.is-day { background: #9bb8d6; }
+
+  .wrap {
+    max-width: 1220px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 12px;
+    align-items: start;
+  }
+  @media (max-width: 980px) {
+    .wrap { grid-template-columns: 1fr; }
+  }
+
+  /* CỘT TRÁI: KHUNGことば畑 CHUẨN */
+  .kb-left {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .kb-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 7px;
+  }
+  .kb-mascot-chip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--kb-paper);
+    border: 3px solid var(--kb-ink);
+    box-shadow: 3px 3px 0 var(--kb-ink);
+    padding: 2px 7px 2px 3px;
+  }
+  #mascotCanvas {
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    display: block;
+  }
+  .kb-title {
+    font-size: 19px;
+    font-weight: 900;
+    color: #fff;
+    text-shadow: -2px 0 var(--kb-ink), 2px 0 var(--kb-ink), 0 -2px var(--kb-ink), 0 2px var(--kb-ink), 3px 3px 0 var(--kb-ink);
+  }
+  .kb-box {
+    background: var(--kb-paper);
+    border: 3px solid var(--kb-ink);
+    box-shadow: 3px 3px 0 var(--kb-ink);
+  }
+  .kb-chip { padding: 4px 8px; font-size: 12px; font-weight: 800; white-space: nowrap; }
+  .kb-chip.coins { background: #ffe27a; }
+  .kb-chip.season { background: #e6f2ff; }
+  .kb-btn {
+    font: inherit;
+    font-size: 12px;
+    font-weight: 800;
+    padding: 5px 9px;
+    background: var(--kb-paper);
+    color: var(--kb-ink);
+    border: 3px solid var(--kb-ink);
+    box-shadow: 3px 3px 0 var(--kb-ink);
+    cursor: pointer;
+  }
+  .kb-btn:hover { background: var(--kb-butter); }
+  .kb-btn:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 var(--kb-ink); }
+  .kb-btn.active { background: #ffd23f; }
+  .kb-btn.green { background: var(--kb-green); }
+  .kb-btn.peach { background: var(--kb-peach); }
+  .kb-btn.red { background: #c21f3a; color: #fff; }
+
+  .kb-stage-wrap {
+    position: relative;
+    border: 4px solid var(--kb-ink);
+    box-shadow: 4px 4px 0 var(--kb-ink);
+    background: #241b17;
+    overflow: hidden;
+    line-height: 0;
+  }
+  #stageCanvas {
+    width: 100%;
+    height: auto;
+    display: block;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    cursor: pointer;
+  }
+
+  .kb-today {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 244px;
+    background: rgba(255, 250, 240, 0.96);
+    border: 3px solid var(--kb-ink);
+    box-shadow: 3px 3px 0 var(--kb-ink);
+    padding: 6px 8px;
+    line-height: 1.3;
+    z-index: 4;
+  }
+  .kb-today-head {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11.2px;
+    font-weight: 800;
+  }
+  .kb-today-bar {
+    height: 7px;
+    background: #ece3d4;
+    border: 2px solid var(--kb-ink);
+    margin: 4px 0 6px;
+  }
+  .kb-today-fill { height: 100%; background: var(--kb-water); }
+  .kb-today-row {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    text-align: left;
+    font: inherit;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 6px;
+    margin-bottom: 3px;
+    background: #fff5de;
+    border: 2px solid var(--kb-ink);
+    border-left-width: 5px;
+    cursor: pointer;
+    color: var(--kb-ink);
+  }
+  .kb-today-row:last-child { margin-bottom: 0; }
+  .kb-today-row.noel { border-left-color: #c21f3a; background: #fff0f2; color: #8f1429; }
+  .kb-today-row.quest { border-left-color: #4a9258; }
+
+  .kb-toast {
+    position: absolute;
+    left: 12px;
+    top: 8px;
+    background: #1b1b2f;
+    color: #fff;
+    border: 2px solid #ffd23f;
+    box-shadow: 2px 2px 0 #000;
+    padding: 4px 9px;
+    font-size: 11.2px;
+    font-weight: 800;
+    line-height: 1.3;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+    z-index: 5;
+  }
+  .kb-toast.show { opacity: 1; }
+
+  .kb-toolbar-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+  }
+  .kb-btn-group { display: flex; flex-wrap: wrap; gap: 6px; }
+
+  /* THANH MỐC THƯỞNG NOEL DƯỚI SÂN */
+  .kb-roadmap {
+    background: var(--kb-paper);
+    border: 4px solid var(--kb-ink);
+    box-shadow: 4px 4px 0 var(--kb-ink);
+    padding: 8px 10px;
+  }
+  .kb-roadmap-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    font-weight: 900;
+    margin-bottom: 6px;
+  }
+  .kb-milestones {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 7px;
+  }
+  .ms-card {
+    border: 2px solid var(--kb-ink);
+    background: var(--kb-cream);
+    padding: 6px 7px;
+    font-size: 11px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .ms-card.unlocked { background: #e8f8ed; border-color: #2b6e3f; }
+  .ms-head { display: flex; justify-content: space-between; font-weight: 900; }
+  .ms-badge {
+    background: var(--kb-ink);
+    color: #fff;
+    padding: 0 4px;
+    font-size: 10px;
+  }
+  .ms-card.unlocked .ms-badge { background: #2b6e3f; }
+
+  /* CỘT PHẢI: XƯỞNG TỰ TRANG TRÍ 3 TAB */
+  .kb-side {
+    background: var(--kb-paper);
+    border: 4px solid var(--kb-ink);
+    box-shadow: 5px 5px 0 var(--kb-ink);
+    padding: 9px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .kb-side-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 6px;
+    background: var(--kb-cream);
+    border: 2px solid var(--kb-ink);
+    padding: 6px 8px;
+  }
+  .kb-prog-bar {
+    height: 9px;
+    background: #ece3d4;
+    border: 2px solid var(--kb-ink);
+    margin-top: 4px;
+  }
+  .kb-prog-fill { height: 100%; background: #c21f3a; transition: width 0.25s; }
+
+  .kb-tabs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+  }
+  .kb-tab {
+    font: inherit;
+    font-size: 11.4px;
+    font-weight: 800;
+    padding: 6px 4px;
+    background: #ece3d4;
+    color: var(--kb-ink);
+    border: 2px solid var(--kb-ink);
+    cursor: pointer;
+    text-align: center;
+  }
+  .kb-tab.active {
+    background: #ffd23f;
+    box-shadow: 2px 2px 0 var(--kb-ink);
+  }
+  .tab-pane { display: none; flex-direction: column; gap: 7px; }
+  .tab-pane.active { display: flex; }
+
+  .sec-lbl {
+    font-size: 11px;
+    font-weight: 900;
+    color: var(--kb-ink-2);
+    letter-spacing: 0.2px;
+  }
+  .item-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+  .furn-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-align: left;
+    font: inherit;
+    font-size: 11px;
+    padding: 5px 6px;
+    background: #fff;
+    border: 2px solid var(--kb-ink);
+    cursor: pointer;
+    color: var(--kb-ink);
+  }
+  .furn-btn:hover { background: var(--kb-butter); }
+  .furn-btn.selected {
+    background: #ffd23f;
+    box-shadow: 2px 2px 0 var(--kb-ink);
+    font-weight: 800;
+  }
+  .furn-icon {
+    width: 30px;
+    height: 30px;
+    image-rendering: pixelated;
+    background: #efe6d4;
+    border: 1.5px solid var(--kb-ink);
+    flex: 0 0 auto;
+  }
+  .tag-slot {
+    display: inline-block;
+    font-size: 9.5px;
+    font-weight: 800;
+    padding: 0 4px;
+    background: #e6eef6;
+    border: 1px solid var(--kb-ink);
+    margin-top: 2px;
+  }
+
+  .swatch-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  .sw-btn {
+    font: inherit;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 7px;
+    background: #fff;
+    border: 2px solid var(--kb-ink);
+    cursor: pointer;
+    color: var(--kb-ink);
+  }
+  .sw-btn.active { background: #ffd23f; font-weight: 900; }
+
+  /* TAB 2: STACKCHAN PREVIEW + WEAR GRID */
+  .sc-hero {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    background: var(--kb-cream);
+    border: 2px solid var(--kb-ink);
+    padding: 7px 9px;
+  }
+  #scPreviewCanvas {
+    image-rendering: pixelated;
+    background: #d8ebfb;
+    border: 2px solid var(--kb-ink);
+    flex: 0 0 auto;
+  }
+
+  /* MINI PIXEL EDITOR (dùng chung cho Mũ 20x8 & Đồ Nhà 16x16) */
+  .px-pad-wrap {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    background: var(--kb-cream);
+    border: 2px solid var(--kb-ink);
+    padding: 7px;
+  }
+  .px-grid-canvas {
+    border: 2px solid var(--kb-ink);
+    background: #fff;
+    cursor: crosshair;
+    image-rendering: pixelated;
+    touch-action: none;
+  }
+  .pal-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 4px;
+  }
+  .pal-dot {
+    width: 22px;
+    height: 22px;
+    border: 2px solid var(--kb-ink);
+    cursor: pointer;
+    padding: 0;
+  }
+  #hatPal .pal-dot { width: 19px; height: 19px; }
+  .pal-dot.active { outline: 2px solid #ff4f6d; outline-offset: 1px; transform: scale(1.06); }
+  .kb-input {
+    font: inherit;
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 4px 7px;
+    border: 2px solid var(--kb-ink);
+    background: #fff;
+    color: var(--kb-ink);
+    width: 100%;
+  }
+  .hint-box {
+    background: #fff;
+    border: 2px dashed var(--kb-line);
+    padding: 5px 7px;
+    font-size: 11px;
+    line-height: 1.38;
+    color: var(--kb-ink-2);
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <!-- BÊN TRÁI: CẢNH NHÀ & SÂN ことば畑 -->
+  <div class="kb-left">
+    <div class="kb-bar">
+      <div class="kb-mascot-chip" title="StackChan góc trái mặc đồng bộ với đồ Noel vừa chọn!">
+        <canvas id="mascotCanvas" width="38" height="38"></canvas>
+        <span class="kb-title" style="color:var(--kb-ink);text-shadow:none;font-size:16px">ことば畑</span>
+      </div>
+      <span class="kb-box kb-chip coins" id="chipCoins">420 xu</span>
+      <span class="kb-box kb-chip season">❄ Giáng sinh 2026</span>
+      <button class="kb-btn peach" id="btnToggleScene">🏡 Xem Ngoài Sân</button>
+      <button class="kb-btn active" id="btnToggleGrid">📐 Lưới Xếp Đồ: Bật</button>
+      <button class="kb-btn" id="btnToggleTod">🌙 Đêm</button>
+    </div>
+
+    <div class="kb-stage-wrap">
+      <canvas id="stageCanvas" width="1024" height="352"></canvas>
+      <div class="kb-toast" id="toastBox">Đã đặt Lò sưởi Noel vào ô (1, 1)!</div>
+
+      <div class="kb-today">
+        <div class="kb-today-head">
+          <span>Hôm nay 26/30 · Chuỗi 14 ngày</span>
+          <span style="cursor:pointer" id="miniTod">🌙</span>
+        </div>
+        <div class="kb-today-bar"><div class="kb-today-fill" style="width:86%"></div></div>
+        <button class="kb-today-row noel" id="btnQuickMilestone">
+          <span id="todayNoelText">❄ Noel: 18/30 · Tặng 1 Phiếu Tự Vẽ</span><span>▸</span>
+        </button>
+        <button class="kb-today-row quest">
+          <span>✓ StackChan: Đang mặc đồ Noel</span><span>▸</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="kb-toolbar-row">
+      <div class="kb-btn-group">
+        <button class="kb-btn active" id="presetCozy">✨ Gợi ý: Phòng Khách Ấm Áp</button>
+        <button class="kb-btn" id="presetBakery">🍪 Gợi ý: Góc Bánh & Quà</button>
+        <button class="kb-btn" id="btnRemoveMode">🧹 Bấm ô để Gỡ đồ</button>
+      </div>
+      <span style="font-size:11.2px;font-weight:800;color:#fff;text-shadow:1px 1px 0 #1b1b2f" id="stageHint">
+        💡 Bấm vào từng ô trong Phòng Chính để tự đặt hoặc dời đồ!
+      </span>
+    </div>
+
+    <!-- CHUỖI MỞ KHOÁ SỰ KIỆN NOEL -->
+    <div class="kb-roadmap">
+      <div class="kb-roadmap-title">
+        <span>🎄 LỘ TRÌNH HỌC MỖI NGÀY → TỰ TRANG TRÍ NHÀ &amp; STACKCHAN</span>
+        <span style="color:#c21f3a" id="roadmapSnow">Đã tích: 18 / 30 ❄</span>
+      </div>
+      <div class="kb-milestones" id="milestoneGrid"></div>
+    </div>
+  </div>
+
+  <!-- BÊN PHẢI: XƯỞNG TỰ CHỈNH ĐỒ NHÀ + ĐỒ STACKCHAN + TỰ VẼ -->
+  <div class="kb-side">
+    <div class="kb-side-top">
+      <div style="flex:1">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:12px;font-weight:900">
+          <span>❄ Tích luỹ Noel</span>
+          <span id="sideSnowText" style="color:#c21f3a;white-space:nowrap">18 / 30 ❄</span>
+        </div>
+        <div class="kb-prog-bar"><div class="kb-prog-fill" id="sideProgFill" style="width:60%"></div></div>
+      </div>
+      <button class="kb-btn green" id="btnAddDay" style="padding:5px 8px;font-size:11.2px;white-space:nowrap">📚 +1 Ngày (+3❄)</button>
+    </div>
+
+    <div class="kb-tabs">
+      <button class="kb-tab active" data-tab="room">🏠 Đồ Nhà</button>
+      <button class="kb-tab" data-tab="wear">🤖 StackChan</button>
+      <button class="kb-tab" data-tab="craft">🎨 Tự Vẽ 16×16</button>
+    </div>
+
+    <!-- TAB 1: XẾP ĐỒ TRANG TRÍ NHÀ -->
+    <div class="tab-pane active" id="pane-room">
+      <div class="sec-lbl">1. CHỌN MÓN NOEL RỒI BẤM Ô TRONG PHÒNG ĐỂ ĐẶT</div>
+      <div class="item-grid" id="furnPalette"></div>
+
+      <div class="sec-lbl">2. TƯỜNG &amp; SÀN PHÒNG (DECOR_CORE)</div>
+      <div class="swatch-row" id="wallSwatches"></div>
+      <div class="swatch-row" id="floorSwatches"></div>
+
+      <div class="hint-box">
+        👆 <b>Cách chơi:</b> Chọn món ở trên rồi bấm thẳng lên ô Tường hoặc ô Sàn bên trái. Món <b>★ Tự vẽ của tớ</b> lấy hình cậu tự chấm ở tab <b>🎨 Tự Vẽ 16×16</b>!
+      </div>
+    </div>
+
+    <!-- TAB 2: ĐỒ STACKCHAN + TỰ VẼ MŨ -->
+    <div class="tab-pane" id="pane-wear">
+      <div class="sc-hero">
+        <canvas id="scPreviewCanvas" width="88" height="80"></canvas>
+        <div style="font-size:11.3px;line-height:1.4">
+          <b style="font-size:12.5px">StackChan của bạn</b>
+          <div style="color:var(--kb-ink-2)">Đổi đồ là hiện đồng bộ cả ở <b>góc trái</b>, <b>trong nhà</b> và <b>ngoài sân</b>!</div>
+        </div>
+      </div>
+
+      <div class="sec-lbl">MŨ NOEL (HEAD · 20×8)</div>
+      <div class="swatch-row" id="hatChoices"></div>
+
+      <div class="sec-lbl">CỔ &amp; PHỤ KIỆN (NECK · 20×5)</div>
+      <div class="swatch-row" id="neckChoices"></div>
+
+      <div class="sec-lbl">MÀU VỎ (SHELL)</div>
+      <div class="swatch-row" id="shellChoices"></div>
+
+      <div id="customHatBox">
+        <div class="sec-lbl" style="margin-bottom:4px">✏️ TỰ VẼ MŨ CHO STACKCHAN (20×8 PIXEL)</div>
+        <div class="px-pad-wrap">
+          <canvas id="hatEditorCanvas" class="px-grid-canvas" width="160" height="64"></canvas>
+          <div style="display:flex;flex-direction:column;gap:5px;flex:1;min-width:0">
+            <div class="pal-grid" id="hatPal" style="grid-template-columns:repeat(6,1fr);gap:3px"></div>
+            <button class="kb-btn" id="btnWearSelfHat" style="padding:3px 6px;font-size:10.6px">✓ Đeo mũ tự vẽ này</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: TỰ VẼ ĐỒ TRANG TRÍ NHÀ 16×16 -->
+    <div class="tab-pane" id="pane-craft">
+      <div class="sec-lbl">XƯỞNG VẼ MÓN ĐỒ NOEL RIÊNG (16×16 · VIỀN ĐEN TỰ ĐỘNG)</div>
+      <div class="px-pad-wrap">
+        <canvas id="craftEditorCanvas" class="px-grid-canvas" width="192" height="192"></canvas>
+        <div style="display:flex;flex-direction:column;gap:6px;flex:1">
+          <div style="font-size:10.5px;font-weight:800">Xem trước trong nhà:</div>
+          <canvas id="craftMiniPreview" width="48" height="48" style="image-rendering:pixelated;border:2px solid var(--kb-ink);background:#c98b55;align-self:flex-start"></canvas>
+          <div class="pal-grid" id="craftPal" style="grid-template-columns:repeat(4,1fr)"></div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:72px 1fr;gap:6px;align-items:center">
+        <span style="font-size:11px;font-weight:800">Tên món:</span>
+        <input class="kb-input" id="craftNameInput" value="Người tuyết của tớ" maxlength="22" />
+      </div>
+
+      <div class="swatch-row">
+        <button class="kb-btn" id="stampSnowman" style="padding:3px 6px;font-size:10.8px">⛄ Mẫu Người tuyết</button>
+        <button class="kb-btn" id="stampGift" style="padding:3px 6px;font-size:10.8px">🎁 Mẫu Hộp quà</button>
+        <button class="kb-btn" id="stampCake" style="padding:3px 6px;font-size:10.8px">🎂 Bánh Noel</button>
+        <button class="kb-btn" id="craftClear" style="padding:3px 6px;font-size:10.8px">🗑 Xoá trắng</button>
+      </div>
+
+      <button class="kb-btn red" id="btnPlaceCustomCraft" style="padding:7px">
+        ✨ Lưu &amp; Đặt món tự vẽ này vào Phòng!
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  // =========================================================================
+  // 1. BẢNG MÀU & HÀM VẼ PIXEL CHUẨN CỦA ことば畑
+  // =========================================================================
+  const P = {
+    k: "#1b1b2f", w: "#ffffff", y: "#ffd23f", o: "#ff9f1c", r: "#ff4f6d", R: "#c21f3a",
+    p: "#ff7fa0", P: "#ffc4d6", g: "#3ccb5e", G: "#2e8b3a", b: "#a0603a", B: "#6b3b1f",
+    t: "#e2a46a", s: "#d4d4e0", S: "#8a8fa8", d: "#3d8bff", l: "#8fd3ff", c: "#fff2b3",
+    n: "#2b2b44", h: "#f5b971", i: "#e9b949", Y: "#fff6a8", j: "#1f5f2a", f: "#b8e05a"
+  };
+
+  function grid(w, h) {
+    const g = [];
+    for (let j = 0; j < h; j++) g.push(new Array(w).fill("."));
+    return g;
+  }
+  function dot(g, x, y, c) {
+    const xi = Math.round(x), yi = Math.round(y);
+    if (g[yi] && xi >= 0 && xi < g[0].length) g[yi][xi] = c;
+  }
+  function rect(g, x, y, w, h, c) {
+    for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) dot(g, i, j, c);
+  }
+  function outline(g) {
+    const h = g.length, w = g[0].length, out = g.map(r => r.slice());
+    for (let j = 0; j < h; j++) {
+      for (let i = 0; i < w; i++) {
+        if (g[j][i] !== ".") continue;
+        if ([[0,1],[0,-1],[1,0],[-1,0]].some(([dx,dy]) => g[j+dy] && g[j+dy][i+dx] && g[j+dy][i+dx] !== ".")) {
+          out[j][i] = "k";
+        }
+      }
+    }
+    return out.map(r => r.join(""));
+  }
+  function drawSprite(ctx, rowsArr, ox, oy, S, pal, flip) {
+    const map = pal || P;
+    const h = rowsArr.length, w = rowsArr[0].length;
+    for (let j = 0; j < h; j++) {
+      const row = rowsArr[j];
+      for (let i = 0; i < w; i++) {
+        const ch = row.charAt(flip ? (w - 1 - i) : i);
+        if (ch === ".") continue;
+        ctx.fillStyle = map[ch] || ch;
+        ctx.fillRect(Math.round((ox + i) * S), Math.round((oy + j) * S), S, S);
+      }
+    }
+  }
+  function box(ctx, x, y, w, h, col, S) {
+    ctx.fillStyle = col;
+    ctx.fillRect(Math.round(x * S), Math.round(y * S), Math.round(w * S), Math.round(h * S));
+  }
+
+  // =========================================================================
+  // 2. SPRITES NỘI THẤT NOEL (16x16 / 32x16) & MẪU TỰ VẼ
+  // =========================================================================
+  function makeFireplace(now) {
+    const g = grid(16, 16);
+    rect(g, 1, 2, 14, 13, "R");
+    rect(g, 0, 1, 16, 2, "b"); rect(g, 1, 14, 14, 1, "B");
+    rect(g, 4, 7, 8, 7, "n");
+    const f = Math.floor(now / 180) % 2;
+    rect(g, 5, 11, 6, 3, "o");
+    rect(g, 6, 9 + f, 4, 3, "y");
+    dot(g, 7 + f, 8, "w");
+    // 2 chiếc tất nhỏ trên bệ lò sưởi
+    rect(g, 3, 3, 2, 3, "g"); rect(g, 11, 3, 2, 3, "r");
+    return outline(g);
+  }
+  function makeCacaoTable(now) {
+    const g = grid(16, 16);
+    rect(g, 2, 8, 12, 2, "b"); rect(g, 3, 10, 2, 5, "B"); rect(g, 11, 10, 2, 5, "B");
+    rect(g, 3, 7, 10, 1, "w"); // khăn trải bàn trắng
+    // Tách cacao đỏ + bánh quy
+    rect(g, 4, 4, 3, 3, "r"); dot(g, 7, 5, "r");
+    rect(g, 9, 5, 4, 2, "o"); dot(g, 10, 5, "B"); dot(g, 12, 5, "B");
+    const steam = Math.floor(now / 320) % 2;
+    dot(g, 5 + steam, 2, "w"); dot(g, 6 - steam, 1, "s");
+    return outline(g);
+  }
+  function makeTree(now) {
+    const g = grid(16, 16);
+    rect(g, 7, 12, 2, 3, "B");
+    rect(g, 3, 10, 10, 2, "G"); rect(g, 4, 7, 8, 3, "g"); rect(g, 5, 4, 6, 3, "G"); rect(g, 6, 2, 4, 2, "g");
+    dot(g, 7, 1, "y"); dot(g, 8, 1, "y");
+    const blink = Math.floor(now / 400) % 2;
+    dot(g, 6, 5, blink ? "r" : "y"); dot(g, 10, 6, blink ? "y" : "l");
+    dot(g, 5, 9, blink ? "l" : "r"); dot(g, 11, 10, blink ? "Y" : "p");
+    dot(g, 4, 11, "w"); dot(g, 9, 11, "w");
+    return outline(g);
+  }
+  function makeGlobe(now) {
+    const g = grid(16, 16);
+    rect(g, 4, 12, 8, 3, "b"); rect(g, 6, 13, 4, 1, "y");
+    for (let j = 2; j <= 11; j++) {
+      for (let i = 3; i <= 12; i++) {
+        if (Math.hypot(i - 7.5, j - 6.8) <= 4.7) dot(g, i, j, "l");
+      }
+    }
+    rect(g, 6, 6, 4, 5, "G"); rect(g, 7, 4, 2, 2, "g"); dot(g, 7, 3, "y");
+    dot(g, 5, 4, "w"); dot(g, 10, 5 + (Math.floor(now / 300) % 3), "w");
+    return outline(g);
+  }
+  const SPR_STOCKINGS = outline((function () {
+    const g = grid(16, 16);
+    rect(g, 1, 2, 14, 1, "G");
+    [[3,"r"], [7,"g"], [11,"d"]].forEach(([x, c]) => {
+      rect(g, x, 4, 2, 2, "w");
+      rect(g, x, 6, 2, 5, c);
+      rect(g, x, 10, 3, 2, c);
+    });
+    return g;
+  })());
+  const SPR_WREATH = [
+    "..kkkkkkkk..", ".kGggGGggGk.", "kGrGggggGrGk", "kGGgGGGGgGGk",
+    "kGrGgyygGrGk", ".kGGrrrrGGk.", "..krrrrrrk..", "..kRkkkkRk.."
+  ];
+  const SPR_NEKO_SLEEP = [
+    "................", "..........k.....", ".........ktk.k..", ".....kkkkkkkktk.",
+    "...kkBtBtBttttk.", "..kttttttttttttk", ".ktttttttttBtBtk", ".kttttttttttttk.",
+    ".ktttttttttttk..", "..kktttttttkk..."
+  ];
+  const SPR_SHIBA = [
+    "...........k..k.", "..........kokkok", "..k.......kokkok", ".kok.....koooook",
+    "kocokkkkkkokoook", "koookoooooooock.", ".kooooooooooccck", ".kooooooooooock.",
+    ".koooooooooook..", "..kooocccccok...", "...koooooook....", "...kokokkkok....",
+    "....k.k...k....."
+  ];
+
+  // =========================================================================
+  // 3. MẪU TỰ VẼ 16x16 & MŨ STACKCHAN 20x8
+  // =========================================================================
+  function stampFromStrings(rows) {
+    const arr = [];
+    for (let j = 0; j < rows.length; j++) {
+      for (let i = 0; i < rows[j].length; i++) arr.push(rows[j][i]);
+    }
+    return arr;
+  }
+  const STAMPS_16 = {
+    snowman: stampFromStrings([
+      "................",
+      ".....rrrrrr.....",
+      ".....rrrrrr.....",
+      "....wwwwwwww....",
+      ".....wwwwww.....",
+      "....wkwwwwkw....",
+      "....wwwowwww....",
+      ".....wwwwww.....",
+      ".....rrrrrr.....",
+      "....wwwwwwww....",
+      "...wwwwkwwwww...",
+      "...wwwwwwwwww...",
+      "...wwwwkwwwww...",
+      "....wwwwwwww....",
+      ".....bbbbbb.....",
+      "................"
+    ]),
+    gift: stampFromStrings([
+      "................",
+      "....yy....yy....",
+      "...yyyy..yyyy...",
+      "....yyyyyyyy....",
+      "..rrrrrrrrrrrr..",
+      "..rrrrryyrrrrr..",
+      "..rrrrrrrrrrrr..",
+      "...rrrryyrrrr...",
+      "...rrrryyrrrr...",
+      "...yyyyyyyyyy...",
+      "...rrrryyrrrr...",
+      "...rrrryyrrrr...",
+      "...rrrryyrrrr...",
+      "...rrrrrrrrrr...",
+      "................",
+      "................"
+    ]),
+    cake: stampFromStrings([
+      "................",
+      "......r.........",
+      "......yy........",
+      ".....wwww.......",
+      "....wwwwww......",
+      "....wrrrrw......",
+      "...pppppppp.....",
+      "...pwwwwwwp.....",
+      "...pppppppp.....",
+      "..tttttttttt....",
+      "..ttrrrtrrtt....",
+      "..tttttttttt....",
+      "..bbbbbbbbbb....",
+      "..ssssssssss....",
+      "................",
+      "................"
+    ])
+  };
+  let customCraftPx = STAMPS_16.snowman.slice();
+
+  // Mũ StackChan tự vẽ 20x8
+  let customHatPx = stampFromStrings([
+    "........wwww........",
+    ".......rrrrrr.......",
+    "......rrrrrrrr......",
+    ".....rrrrrrrrrr.....",
+    "....rrrrryyrrrrr....",
+    "....rrrrrrrrrrrr....",
+    "...wwwwwwwwwwwwww...",
+    "...................."
+  ]);
+
+  const HATS = {
+    none: { name: "Không đội", rows: null },
+    santa: {
+      name: "🎅 Mũ Noel",
+      rows: [
+        "........ww..........", ".......rrrr.........", "......rrrrrr........",
+        ".....rrrrrrrr.......", "....rrrrrrrrrr......", "....rrrrrrrrrr......",
+        "...wwwwwwwwwwww.....", "...................."
+      ]
+    },
+    antler: {
+      name: "🦌 Sừng Tuần Lộc",
+      rows: [
+        "...b...........b....", "...bb..b...b..bb....", "....bbb.....bbb.....",
+        ".....bb..r..bb......", ".....bbbbbbbbb......", "......rrrrrrr.......",
+        "....................", "...................."
+      ]
+    },
+    beanie: {
+      name: "🧶 Mũ Len Xanh",
+      rows: [
+        "........rr..........", ".......gggg.........", "......gwgwgw........",
+        ".....gggggggg.......", ".....gGgGgGgG.......", "....rrrrrrrrrr......",
+        "....................", "...................."
+      ]
+    },
+    mine: { name: "✏️ Mũ Tự Vẽ", rows: null }
+  };
+  const NECKS = {
+    none: { name: "Không", rows: null },
+    scarf: {
+      name: "🧣 Khăn Đỏ",
+      rows: [
+        "....rrrrrrrrrrrr....", "...rrrrryyyrrrrrr...", "......rrrr..rr......",
+        "......rrrr..........", "......ryyr.........."
+      ]
+    },
+    bell: {
+      name: "🔔 Chuông Vàng",
+      rows: [
+        "....rrrrrrrrrrrr....", "........yyyy........", ".......yyyyyy.......",
+        "........yyyy........", ".........oo........."
+      ]
+    },
+    bow: {
+      name: "🎀 Nơ Xanh",
+      rows: [
+        "....gg..rr..gg......", "...gggggggggggg.....", "....gg..rr..gg......",
+        "....................", "...................."
+      ]
+    }
+  };
+  const SHELLS = {
+    noel: { name: "Đỏ – Trắng Noel", c: ["R", "w"] },
+    pine: { name: "Xanh Thông – Vàng", c: ["G", "y"] },
+    ginger: { name: "Bánh Gừng Ấm", c: ["b", "t"] },
+    classic: { name: "Trắng Cổ Điển", c: ["w", "s"] }
+  };
+
+  function toOutlinedGrid(flatArr, w, h) {
+    const g = grid(w, h);
+    for (let j = 0; j < h; j++) for (let i = 0; i < w; i++) g[j][i] = flatArr[j * w + i] || ".";
+    return outline(g);
+  }
+  function rowsToFlatOutlined(rows) {
+    const g = rows.map(r => r.split(""));
+    return outline(g);
+  }
+
+  function drawStackChan(ctx, cx, cy, S, wear, lookDir, isHappy) {
+    const sh = SHELLS[wear.shell] || SHELLS.noel;
+    const bodyCol = P[sh.c[0]] || "#c21f3a";
+    const rimCol = P[sh.c[1]] || "#ffffff";
+    // Thân hộp 20x15
+    box(ctx, cx - 1, cy - 1, 22, 17, P.k, S);
+    box(ctx, cx, cy, 20, 15, bodyCol, S);
+    box(ctx, cx, cy + 12, 20, 3, rimCol, S);
+    // Màn hình mặt đen
+    box(ctx, cx + 2, cy + 2, 16, 10, P.k, S);
+    const dx = lookDir || 0;
+    // Mắt & miệng
+    if (isHappy) {
+      box(ctx, cx + 5 + dx, cy + 5, 2, 1, P.w, S);
+      box(ctx, cx + 4 + dx, cy + 6, 1, 1, P.w, S); box(ctx, cx + 7 + dx, cy + 6, 1, 1, P.w, S);
+      box(ctx, cx + 13 + dx, cy + 5, 2, 1, P.w, S);
+      box(ctx, cx + 12 + dx, cy + 6, 1, 1, P.w, S); box(ctx, cx + 15 + dx, cy + 6, 1, 1, P.w, S);
+      box(ctx, cx + 5 + dx, cy + 8, 2, 1, P.p, S); box(ctx, cx + 13 + dx, cy + 8, 2, 1, P.p, S);
+    } else {
+      box(ctx, cx + 5 + dx, cy + 5, 2, 2, P.w, S);
+      box(ctx, cx + 13 + dx, cy + 5, 2, 2, P.w, S);
+    }
+    box(ctx, cx + 8 + dx, cy + 9, 4, 1, P.w, S);
+    // Mũ (dy = -5)
+    if (wear.hat === "mine") {
+      drawSprite(ctx, toOutlinedGrid(customHatPx, 20, 8), cx, cy - 5, S, P);
+    } else if (HATS[wear.hat] && HATS[wear.hat].rows) {
+      drawSprite(ctx, rowsToFlatOutlined(HATS[wear.hat].rows), cx, cy - 5, S, P);
+    }
+    // Cổ (dy = +12)
+    if (NECKS[wear.neck] && NECKS[wear.neck].rows) {
+      drawSprite(ctx, rowsToFlatOutlined(NECKS[wear.neck].rows), cx, cy + 12, S, P);
+    }
+  }
+
+  // =========================================================================
+  // 4. DANH MỤC ĐỒ NHÀ & TRẠNG THÁI CHUNG
+  // =========================================================================
+  const FURN_CATALOG = {
+    fireplace: { name: "Lò sưởi Noel", place: "floor", w: 1, render: makeFireplace },
+    cacao: { name: "Bàn Cacao", place: "floor", w: 1, render: makeCacaoTable },
+    tree: { name: "Cây Thông '26", place: "floor", w: 1, render: makeTree },
+    globe: { name: "Quả Cầu Tuyết", place: "floor", w: 1, render: makeGlobe },
+    stocking: { name: "Tất Noel", place: "wall", w: 1, render: () => SPR_STOCKINGS },
+    wreath: { name: "Vòng Hoa", place: "wall", w: 1, render: () => SPR_WREATH },
+    rug: { name: "Thảm Tuyết Đỏ", place: "rug", w: 2, render: null },
+    custom: { name: "★ Đồ Tự Vẽ", place: "floor", w: 1, render: () => toOutlinedGrid(customCraftPx, 16, 16) }
+  };
+
+  const WALL_STYLES = {
+    cream: { name: "Tường Kem Ấm", bg: "#f3e3c3", line: "#e5d0aa" },
+    wood: { name: "Ốp Gỗ Thông", bg: "#d9a773", line: "#c48d57" },
+    star: { name: "Trời Sao Noel", bg: "#22315c", line: "#2d4075" },
+    brick: { name: "Gạch Đỏ Ấm", bg: "#b55245", line: "#9e4135" }
+  };
+  const FLOOR_STYLES = {
+    oak: { name: "Sàn Gỗ Sồi", bg: "#c98b55", line: "#b17440" },
+    tatami: { name: "Chiếu Tatami", bg: "#98b878", line: "#7e9e60" },
+    carpet: { name: "Sàn Thảm Đỏ", bg: "#a33345", line: "#8a2636" }
+  };
+
+  let state = {
+    snow: 18,
+    coins: 420,
+    scene: "room", // "room" | "yard"
+    showGrid: true,
+    tod: "night",
+    wall: "wood",
+    floor: "oak",
+    selectedBrush: "fireplace", // id | "erase"
+    customName: "Người tuyết của tớ",
+    wear: { hat: "santa", neck: "scarf", shell: "noel" },
+    items: [
+      { id: "stocking", place: "wall", gx: 1, gy: 0 },
+      { id: "wreath", place: "wall", gx: 7, gy: 0 },
+      { id: "rug", place: "rug", gx: 4, gy: 1, w: 2 },
+      { id: "fireplace", place: "floor", gx: 1, gy: 0 },
+      { id: "cacao", place: "floor", gx: 6, gy: 1 },
+      { id: "tree", place: "floor", gx: 8, gy: 0 },
+      { id: "custom", place: "floor", gx: 3, gy: 2 }
+    ]
+  };
+
+  // =========================================================================
+  // 5. VẼ SÂN KHẤU CHÍNH (PHÒNG CHÍNH 10×3 TỪ x=12..172 + CẢNH ĐÊM BÊN PHẢI)
+  // =========================================================================
+  const stageCv = document.getElementById("stageCanvas");
+  const sctx = stageCv.getContext("2d");
+  const ROOM_OX = 12, ROOM_W = 160, WALL_Y = 14, FLOOR_Y = 38, T = 16;
+
+  function renderStage(now) {
+    const S = 4;
+    if (state.scene === "yard") {
+      renderYardScene(now, S);
+      return;
+    }
+
+    // Nền ngoài bên phải phòng (hiên tuyết bên ngoài tường nhà, nơi .kb-today nằm đè → phòng chính x=12..172 luôn SẠCH 100%)
+    box(sctx, 0, 0, 256, 88, "#221814", S);
+    const outSky = state.tod === "night" ? "#1e2747" : "#8fd3ff";
+    const outSnow = state.tod === "night" ? "#8ea7c4" : "#e6f0fa";
+    box(sctx, 174, 0, 82, 52, outSky, S);
+    box(sctx, 174, 52, 82, 36, outSnow, S);
+    // Hàng rào tuyết nhỏ + cây thông nhỏ ngoài hiên dưới thẻ Hôm nay
+    for (let fx = 178; fx < 252; fx += 8) {
+      box(sctx, fx, 48, 3, 10, "#a0603a", S);
+      box(sctx, fx, 48, 3, 2, "#ffffff", S);
+    }
+    box(sctx, 176, 52, 78, 2, "#6b3b1f", S);
+    drawSprite(sctx, makeTree(now), 212, 46, S * 1.4, P);
+    for (let i = 0; i < 16; i++) {
+      box(sctx, 176 + (i * 19) % 76, (i * 13 + (now / 80)) % 84, 1, 1, "#ffffff", S);
+    }
+
+    // Nền tường & sàn của Phòng Chính (160×88)
+    const ws = WALL_STYLES[state.wall];
+    const fs = FLOOR_STYLES[state.floor];
+    box(sctx, ROOM_OX, 0, ROOM_W, FLOOR_Y, ws.bg, S);
+    for (let x = 0; x < ROOM_W; x += 16) box(sctx, ROOM_OX + x, 0, 1, FLOOR_Y, ws.line, S);
+    if (state.wall === "star") {
+      for (let i = 0; i < 14; i++) box(sctx, ROOM_OX + 5 + (i * 23) % 150, 5 + (i * 11) % 28, 1, 1, "#fff6a8", S);
+    }
+    box(sctx, ROOM_OX, FLOOR_Y - 2, ROOM_W, 3, "#6b3b1f", S);
+    box(sctx, ROOM_OX, FLOOR_Y, ROOM_W, 48, fs.bg, S);
+    for (let y = FLOOR_Y + 6; y < 86; y += 8) box(sctx, ROOM_OX, y, ROOM_W, 1, fs.line, S);
+
+    // Cửa sổ giữa phòng (cột 4–5) nhìn ra trời tuyết
+    const wx = ROOM_OX + 66, wy = 9;
+    box(sctx, wx - 1, wy - 1, 28, 22, P.k, S);
+    box(sctx, wx, wy, 26, 20, state.tod === "night" ? "#1d2a52" : "#8fd3ff", S);
+    box(sctx, wx + 12, wy, 2, 20, "#fff4dc", S);
+    box(sctx, wx, wy + 9, 26, 2, "#fff4dc", S);
+    for (let i = 0; i < 6; i++) {
+      box(sctx, wx + 3 + (i * 4) % 20, wy + ((now / 130 + i * 5) % 18), 1, 1, "#ffffff", S);
+    }
+
+    // Dây đèn Noel trên trần phòng
+    for (let dx = 2; dx < ROOM_W - 2; dx += 5) {
+      const sag = Math.round(Math.sin(Math.PI * (dx % 32) / 32) * 2);
+      box(sctx, ROOM_OX + dx, 1 + sag, 3, 1, "#1f5f2a", S);
+      const c = [P.r, P.y, P.l, P.g][((dx / 5) + Math.floor(now / 500)) % 4];
+      box(sctx, ROOM_OX + dx + 1, 2 + sag, 1, 2, c, S);
+    }
+
+    // Lưới xếp đồ nếu bật
+    if (state.showGrid) {
+      sctx.globalAlpha = 0.28;
+      for (let gx = 0; gx <= 10; gx++) {
+        box(sctx, ROOM_OX + gx * T, WALL_Y, 0.35, 16, P.k, S);
+        box(sctx, ROOM_OX + gx * T, FLOOR_Y, 0.35, 48, P.k, S);
+      }
+      box(sctx, ROOM_OX, WALL_Y, ROOM_W, 0.35, P.k, S);
+      box(sctx, ROOM_OX, WALL_Y + 16, ROOM_W, 0.35, P.k, S);
+      for (let gy = 0; gy <= 3; gy++) box(sctx, ROOM_OX, FLOOR_Y + gy * T, ROOM_W, 0.35, P.k, S);
+      sctx.globalAlpha = 1;
+    }
+
+    // Vẽ đồ theo thứ tự: wall -> rug -> floor
+    state.items.filter(it => it.place === "wall").forEach(it => {
+      const def = FURN_CATALOG[it.id];
+      if (def && def.render) drawSprite(sctx, def.render(now), ROOM_OX + it.gx * T, WALL_Y, S, P);
+    });
+    state.items.filter(it => it.place === "rug").forEach(it => {
+      const rx = ROOM_OX + it.gx * T, ry = FLOOR_Y + it.gy * T;
+      box(sctx, rx + 1, ry + 2, 30, 12, P.k, S);
+      box(sctx, rx + 2, ry + 3, 28, 10, "#c21f3a", S);
+      box(sctx, rx + 4, ry + 5, 24, 6, "#ff4f6d", S);
+      drawSprite(sctx, SPR_NEKO_SLEEP, rx + 8, ry + 3, S, P);
+    });
+
+    // StackChan đang đi chơi trong phòng (mặc đúng đồ vừa chọn!)
+    const walkPhase = now / 1700;
+    const scX = ROOM_OX + 44 + Math.round(Math.sin(walkPhase) * 28);
+    const scY = FLOOR_Y + 15 + Math.round(Math.cos(now / 260) * 1);
+    const scDir = Math.cos(walkPhase) >= 0 ? 1 : -1;
+    // StackChan mini trên sàn phòng
+    drawStackChan(sctx, scX, scY, S * 0.72, state.wear, scDir, Math.floor(now / 900) % 2 === 0);
+
+    // Đồ sàn (floor)
+    state.items.filter(it => it.place === "floor").sort((a, b) => a.gy - b.gy).forEach(it => {
+      const def = FURN_CATALOG[it.id];
+      if (!def || !def.render) return;
+      drawSprite(sctx, def.render(now), ROOM_OX + it.gx * T, FLOOR_Y + it.gy * T, S, P);
+      // Nếu có lò sưởi: toả ánh sáng vàng ấm
+      if (it.id === "fireplace" && state.tod === "night") {
+        sctx.globalAlpha = 0.14;
+        sctx.fillStyle = "#ff9f1c";
+        sctx.beginPath();
+        sctx.arc((ROOM_OX + it.gx * T + 8) * S, (FLOOR_Y + it.gy * T + 10) * S, 18 * S, 0, Math.PI * 2);
+        sctx.fill();
+        sctx.globalAlpha = 1;
+      }
+    });
+  }
+
+  function renderYardScene(now, S) {
+    const night = state.tod === "night";
+    box(sctx, 0, 0, 256, 30, night ? "#1b2447" : "#80c4f8", S);
+    box(sctx, 0, 30, 256, 58, night ? "#8ea7c4" : "#e1edf7", S);
+    // Nhà nhỏ bên trái
+    box(sctx, 10, 32, 48, 30, P.k, S); box(sctx, 11, 33, 46, 28, "#fff4dc", S);
+    for (let y = 12; y <= 33; y++) {
+      const hw = Math.round((y - 12) * 1.3) + 3;
+      box(sctx, 34 - hw - 1, y, hw * 2 + 2, 1, P.k, S);
+      box(sctx, 34 - hw, y, hw * 2, 1, "#ff4f6d", S);
+      box(sctx, 34 - hw, y, 2, 1, "#ffffff", S);
+      box(sctx, 34 + hw - 2, y, 2, 1, "#ffffff", S);
+    }
+    box(sctx, 29, 44, 10, 17, P.k, S); box(sctx, 30, 45, 8, 16, "#a0603a", S);
+    drawSprite(sctx, SPR_WREATH, 28, 46, S, P);
+    // Cây thông lớn ngoài sân
+    drawSprite(sctx, makeTree(now), 92, 34, S * 1.8, P);
+    // Shiba + StackChan mặc đồ Noel đi chơi ngoài sân!
+    drawSprite(sctx, SPR_SHIBA, 66, 60, S, P);
+    const scX = 132 + Math.round(Math.sin(now / 1500) * 14);
+    drawStackChan(sctx, scX, 58, S * 0.78, state.wear, Math.cos(now / 1500) >= 0 ? 1 : -1, true);
+    // Tuyết rơi
+    for (let i = 0; i < 36; i++) {
+      box(sctx, (i * 37 + Math.sin(now / 600 + i) * 3 + 256) % 256, ((i * 19) + (now / 45)) % 88, 1, 1, "#ffffff", S);
+    }
+  }
+
+  // Click trực tiếp lên ô phòng để Đặt / Gỡ món đang chọn!
+  stageCv.addEventListener("click", (ev) => {
+    if (state.scene !== "room") {
+      toast("Chuyển sang 🏠 Trong Nhà để bấm ô tự xếp đồ nhé!");
+      return;
+    }
+    const r = stageCv.getBoundingClientRect();
+    const lx = (ev.clientX - r.left) / r.width * 256;
+    const ly = (ev.clientY - r.top) / r.height * 88;
+    const gx = Math.floor((lx - ROOM_OX) / T);
+    if (gx < 0 || gx >= 10) return;
+
+    // Xác định bấm vào Tường hay Sàn
+    let targetPlace = null, gy = 0;
+    if (ly >= WALL_Y && ly < FLOOR_Y) {
+      if (gx === 4 || gx === 5) { toast("Ô cửa sổ không treo đồ nhé!"); return; }
+      targetPlace = "wall"; gy = 0;
+    } else if (ly >= FLOOR_Y && ly < FLOOR_Y + 3 * T) {
+      targetPlace = "floor"; gy = Math.floor((ly - FLOOR_Y) / T);
+    } else return;
+
+    if (state.selectedBrush === "erase") {
+      const idx = state.items.findIndex(it =>
+        (it.place === targetPlace || (targetPlace === "floor" && it.place === "rug")) &&
+        gy === it.gy && gx >= it.gx && gx < it.gx + (it.w || 1)
+      );
+      if (idx >= 0) {
+        const rem = state.items.splice(idx, 1)[0];
+        toast("🧹 Đã gỡ " + FURN_CATALOG[rem.id].name);
+      } else {
+        toast("Ô này chưa có đồ để gỡ.");
+      }
+      return;
+    }
+
+    const itemDef = FURN_CATALOG[state.selectedBrush];
+    const reqPlace = itemDef.place; // "wall" | "floor" | "rug"
+    if (reqPlace === "wall" && targetPlace !== "wall") {
+      toast(itemDef.name + " treo ở hàng TƯỜNG phía trên!"); return;
+    }
+    if ((reqPlace === "floor" || reqPlace === "rug") && targetPlace !== "floor") {
+      toast(itemDef.name + " đặt ở các ô SÀN phía dưới!"); return;
+    }
+
+    const w = itemDef.w || 1;
+    const clampedGx = Math.min(gx, 10 - w);
+    // Thay món đang nằm cùng chỗ
+    state.items = state.items.filter(it => {
+      if (reqPlace === "rug") return !(it.place === "rug" && it.gy === gy);
+      if (reqPlace === "wall") return !(it.place === "wall" && it.gx === clampedGx);
+      return !(it.place === "floor" && it.gx === clampedGx && it.gy === gy);
+    });
+    state.items.push({ id: state.selectedBrush, place: reqPlace, gx: clampedGx, gy, w });
+    toast("✓ Đã đặt " + (state.selectedBrush === "custom" ? state.customName : itemDef.name) + " vào ô (" + (clampedGx + 1) + ", " + (gy + 1) + ")");
+  });
+
+  // =========================================================================
+  // 6. VẼ LINH VẬT GÓC TRÁI + XEM TRƯỚC STACKCHAN + MINI ICON
+  // =========================================================================
+  const mascotCv = document.getElementById("mascotCanvas");
+  const mctx = mascotCv.getContext("2d");
+  const scCv = document.getElementById("scPreviewCanvas");
+  const scctx = scCv.getContext("2d");
+
+  function renderMascot(now) {
+    mctx.clearRect(0, 0, 38, 38);
+    drawStackChan(mctx, 9, 10, 1.35, state.wear, 0, Math.floor(now / 1200) % 2 === 0);
+
+    scctx.clearRect(0, 0, 88, 80);
+    scctx.fillStyle = "#d8ebfb"; scctx.fillRect(0, 0, 88, 80);
+    drawStackChan(scctx, 13, 14, 2.7, state.wear, 0, true);
+  }
+
+  // =========================================================================
+  // 7. BUILD UI BÊN PHẢI (TABS + ĐỒ NHÀ + STACKCHAN + PIXEL EDITOR)
+  // =========================================================================
+  let toastT = null;
+  function toast(msg) {
+    const el = document.getElementById("toastBox");
+    el.textContent = msg;
+    el.classList.add("show");
+    clearTimeout(toastT);
+    toastT = setTimeout(() => el.classList.remove("show"), 2000);
+  }
+
+  function renderMilestones() {
+    const ms = [
+      { req: 5, title: "5 ❄ · Tuần 1", desc: "Tủ đồ Noel StackChan + Phiếu vẽ mũ" },
+      { req: 12, title: "12 ❄ · Tuần 2", desc: "Lò sưởi & Bàn Cacao tự xếp trong nhà" },
+      { req: 20, title: "20 ❄ · Tuần 3", desc: "Phiếu tự vẽ món 16×16 đặt phòng" },
+      { req: 30, title: "30 ❄ · 24/12", desc: "Quả Cầu Tuyết / Cây Thông '26 vĩnh viễn" }
+    ];
+    const gridEl = document.getElementById("milestoneGrid");
+    gridEl.innerHTML = "";
+    ms.forEach(m => {
+      const ok = state.snow >= m.req;
+      const div = document.createElement("div");
+      div.className = "ms-card" + (ok ? " unlocked" : "");
+      div.innerHTML = `<div class="ms-head"><span>${m.title}</span><span class="ms-badge">${ok ? "✓ ĐÃ MỞ" : "CHƯA"}</span></div><div>${m.desc}</div>`;
+      gridEl.appendChild(div);
+    });
+    document.getElementById("roadmapSnow").textContent = "Đã tích: " + state.snow + " / 30 ❄";
+    document.getElementById("sideSnowText").textContent = state.snow + " / 30 ❄";
+    document.getElementById("sideProgFill").style.width = Math.min(100, (state.snow / 30) * 100) + "%";
+    document.getElementById("todayNoelText").textContent = `❄ Noel: ${state.snow}/30 · ${state.snow >= 20 ? "Đã mở Tự Vẽ!" : "Sắp mở Tự Vẽ"}`;
+  }
+
+  function buildFurnPalette() {
+    const boxEl = document.getElementById("furnPalette");
+    boxEl.innerHTML = "";
+    Object.keys(FURN_CATALOG).forEach(id => {
+      const item = FURN_CATALOG[id];
+      const b = document.createElement("button");
+      b.className = "furn-btn" + (state.selectedBrush === id ? " selected" : "");
+      const label = id === "custom" ? state.customName : item.name;
+      const slotName = item.place === "wall" ? "Tường" : item.place === "rug" ? "Thảm 2 ô" : "Sàn";
+      b.innerHTML = `<canvas class="furn-icon" width="32" height="32"></canvas><div><div>${label}</div><span class="tag-slot">${slotName}</span></div>`;
+      const icv = b.querySelector("canvas").getContext("2d");
+      if (item.render) drawSprite(icv, item.render(0), 0, item.place === "wall" ? 4 : 0, 2, P);
+      else { icv.fillStyle = "#c21f3a"; icv.fillRect(4, 10, 24, 12); icv.fillStyle = "#ff4f6d"; icv.fillRect(7, 13, 18, 6); }
+      b.addEventListener("click", () => {
+        state.selectedBrush = id;
+        document.getElementById("btnRemoveMode").classList.remove("active");
+        buildFurnPalette();
+        toast("Đang cầm " + label + " — bấm ô trong Phòng để đặt!");
+      });
+      boxEl.appendChild(b);
+    });
+  }
+
+  function buildSwatches() {
+    const ws = document.getElementById("wallSwatches");
+    ws.innerHTML = "";
+    Object.keys(WALL_STYLES).forEach(k => {
+      const b = document.createElement("button");
+      b.className = "sw-btn" + (state.wall === k ? " active" : "");
+      b.textContent = WALL_STYLES[k].name;
+      b.addEventListener("click", () => { state.wall = k; buildSwatches(); });
+      ws.appendChild(b);
+    });
+    const fl = document.getElementById("floorSwatches");
+    fl.innerHTML = "";
+    Object.keys(FLOOR_STYLES).forEach(k => {
+      const b = document.createElement("button");
+      b.className = "sw-btn" + (state.floor === k ? " active" : "");
+      b.textContent = FLOOR_STYLES[k].name;
+      b.addEventListener("click", () => { state.floor = k; buildSwatches(); });
+      fl.appendChild(b);
+    });
+  }
+
+  function buildWearChoices() {
+    const hBox = document.getElementById("hatChoices"); hBox.innerHTML = "";
+    Object.keys(HATS).forEach(k => {
+      const b = document.createElement("button");
+      b.className = "sw-btn" + (state.wear.hat === k ? " active" : "");
+      b.textContent = HATS[k].name;
+      b.addEventListener("click", () => { state.wear.hat = k; buildWearChoices(); });
+      hBox.appendChild(b);
+    });
+    const nBox = document.getElementById("neckChoices"); nBox.innerHTML = "";
+    Object.keys(NECKS).forEach(k => {
+      const b = document.createElement("button");
+      b.className = "sw-btn" + (state.wear.neck === k ? " active" : "");
+      b.textContent = NECKS[k].name;
+      b.addEventListener("click", () => { state.wear.neck = k; buildWearChoices(); });
+      nBox.appendChild(b);
+    });
+    const sBox = document.getElementById("shellChoices"); sBox.innerHTML = "";
+    Object.keys(SHELLS).forEach(k => {
+      const b = document.createElement("button");
+      b.className = "sw-btn" + (state.wear.shell === k ? " active" : "");
+      b.textContent = SHELLS[k].name;
+      b.addEventListener("click", () => { state.wear.shell = k; buildWearChoices(); });
+      sBox.appendChild(b);
+    });
+  }
+
+  // =========================================================================
+  // 8. PIXEL EDITOR TÁI SỬ DỤNG CHO CẢ MŨ (20×8) & MÓN NHÀ (16×16)
+  // =========================================================================
+  const EDIT_COLORS = ["R", "r", "g", "G", "w", "y", "d", "l", "b", "o", "p", "."];
+  function attachPixelEditor(canvasId, palId, gw, gh, cellPx, getArr, onUpdate) {
+    const cv = document.getElementById(canvasId);
+    const ctx = cv.getContext("2d");
+    const palEl = document.getElementById(palId);
+    let curCol = "R", drawing = false;
+
+    function renderGrid() {
+      const arr = getArr();
+      for (let j = 0; j < gh; j++) {
+        for (let i = 0; i < gw; i++) {
+          const ch = arr[j * gw + i] || ".";
+          ctx.fillStyle = ch === "." ? ((i + j) % 2 ? "#f6f0e4" : "#fffaf0") : (P[ch] || "#000");
+          ctx.fillRect(i * cellPx, j * cellPx, cellPx, cellPx);
+        }
+      }
+      ctx.strokeStyle = "rgba(58,42,34,0.16)"; ctx.lineWidth = 1;
+      for (let i = 0; i <= gw; i++) { ctx.beginPath(); ctx.moveTo(i * cellPx, 0); ctx.lineTo(i * cellPx, gh * cellPx); ctx.stroke(); }
+      for (let j = 0; j <= gh; j++) { ctx.beginPath(); ctx.moveTo(0, j * cellPx); ctx.lineTo(gw * cellPx, j * cellPx); ctx.stroke(); }
+      if (onUpdate) onUpdate();
+    }
+
+    palEl.innerHTML = "";
+    EDIT_COLORS.forEach(c => {
+      const btn = document.createElement("button");
+      btn.className = "pal-dot" + (c === curCol ? " active" : "");
+      btn.title = c === "." ? "Tẩy" : c;
+      btn.style.background = c === "." ? "repeating-linear-gradient(45deg,#fff,#fff 4px,#ddd 4px,#ddd 8px)" : P[c];
+      btn.addEventListener("click", () => {
+        curCol = c;
+        palEl.querySelectorAll(".pal-dot").forEach(el => el.classList.remove("active"));
+        btn.classList.add("active");
+      });
+      palEl.appendChild(btn);
+    });
+
+    function paintAt(ev) {
+      const r = cv.getBoundingClientRect();
+      const x = Math.floor((ev.clientX - r.left) / r.width * gw);
+      const y = Math.floor((ev.clientY - r.top) / r.height * gh);
+      if (x < 0 || x >= gw || y < 0 || y >= gh) return;
+      getArr()[y * gw + x] = curCol;
+      renderGrid();
+    }
+    cv.addEventListener("pointerdown", (e) => { drawing = true; paintAt(e); });
+    window.addEventListener("pointermove", (e) => { if (drawing) paintAt(e); });
+    window.addEventListener("pointerup", () => { drawing = false; });
+    renderGrid();
+    return renderGrid;
+  }
+
+  attachPixelEditor("hatEditorCanvas", "hatPal", 20, 8, 8, () => customHatPx, () => {
+    state.wear.hat = "mine";
+    buildWearChoices();
+  });
+
+  const craftPrevCtx = document.getElementById("craftMiniPreview").getContext("2d");
+  const refreshCraftGrid = attachPixelEditor("craftEditorCanvas", "craftPal", 16, 16, 12, () => customCraftPx, () => {
+    craftPrevCtx.clearRect(0, 0, 48, 48);
+    craftPrevCtx.fillStyle = FLOOR_STYLES[state.floor].bg; craftPrevCtx.fillRect(0, 0, 48, 48);
+    drawSprite(craftPrevCtx, toOutlinedGrid(customCraftPx, 16, 16), 0, 0, 3, P);
+    buildFurnPalette();
+  });
+
+  // Reset hat back to Santa initially so Tab 1 shows Santa unless user draws or clicks Mũ Tự Vẽ
+  state.wear.hat = "santa";
+  buildWearChoices();
+  buildFurnPalette();
+  buildSwatches();
+  renderMilestones();
+
+  // =========================================================================
+  // 9. SỰ KIỆN NÚT BẤM
+  // =========================================================================
+  document.querySelectorAll(".kb-tab").forEach(tab => {
+    tab.addEventListener("click", () => {
+      document.querySelectorAll(".kb-tab").forEach(t => t.classList.remove("active"));
+      document.querySelectorAll(".tab-pane").forEach(p => p.classList.remove("active"));
+      tab.classList.add("active");
+      document.getElementById("pane-" + tab.dataset.tab).classList.add("active");
+    });
+  });
+
+  document.getElementById("btnAddDay").addEventListener("click", () => {
+    state.snow = Math.min(30, state.snow + 3);
+    renderMilestones();
+    toast("📚 Hoàn thành 1 ngày ôn: +3 ❄ (Tổng " + state.snow + "/30 ❄)");
+  });
+  document.getElementById("btnToggleScene").addEventListener("click", () => {
+    state.scene = state.scene === "room" ? "yard" : "room";
+    document.getElementById("btnToggleScene").textContent = state.scene === "room" ? "🏡 Xem Ngoài Sân" : "🏠 Về Trong Nhà";
+  });
+  document.getElementById("btnToggleGrid").addEventListener("click", () => {
+    state.showGrid = !state.showGrid;
+    const b = document.getElementById("btnToggleGrid");
+    b.classList.toggle("active", state.showGrid);
+    b.textContent = "📐 Lưới Xếp Đồ: " + (state.showGrid ? "Bật" : "Tắt");
+  });
+  function toggleTod() {
+    state.tod = state.tod === "night" ? "day" : "night";
+    document.body.classList.toggle("is-day", state.tod === "day");
+    document.getElementById("btnToggleTod").textContent = state.tod === "night" ? "🌙 Đêm" : "☀ Sáng";
+    document.getElementById("miniTod").textContent = state.tod === "night" ? "🌙" : "☀";
+  }
+  document.getElementById("btnToggleTod").addEventListener("click", toggleTod);
+  document.getElementById("miniTod").addEventListener("click", toggleTod);
+
+  document.getElementById("btnRemoveMode").addEventListener("click", () => {
+    state.selectedBrush = "erase";
+    document.getElementById("btnRemoveMode").classList.add("active");
+    buildFurnPalette();
+    toast("🧹 Đang chọn Gỡ đồ — bấm vào món trong Phòng để cất");
+  });
+  document.getElementById("presetCozy").addEventListener("click", () => {
+    state.wall = "wood"; state.floor = "oak";
+    state.items = [
+      { id: "stocking", place: "wall", gx: 1, gy: 0 },
+      { id: "wreath", place: "wall", gx: 7, gy: 0 },
+      { id: "rug", place: "rug", gx: 4, gy: 1, w: 2 },
+      { id: "fireplace", place: "floor", gx: 1, gy: 0 },
+      { id: "cacao", place: "floor", gx: 6, gy: 1 },
+      { id: "tree", place: "floor", gx: 8, gy: 0 },
+      { id: "custom", place: "floor", gx: 3, gy: 2 }
+    ];
+    buildSwatches();
+    toast("✨ Đã xếp mẫu Phòng Khách Ấm Áp!");
+  });
+  document.getElementById("presetBakery").addEventListener("click", () => {
+    state.wall = "star"; state.floor = "carpet";
+    state.items = [
+      { id: "wreath", place: "wall", gx: 2, gy: 0 },
+      { id: "stocking", place: "wall", gx: 8, gy: 0 },
+      { id: "rug", place: "rug", gx: 2, gy: 2, w: 2 },
+      { id: "cacao", place: "floor", gx: 1, gy: 1 },
+      { id: "cacao", place: "floor", gx: 7, gy: 1 },
+      { id: "globe", place: "floor", gx: 4, gy: 0 },
+      { id: "custom", place: "floor", gx: 6, gy: 2 }
+    ];
+    buildSwatches();
+    toast("🍪 Đã xếp mẫu Góc Bánh & Quà!");
+  });
+
+  document.getElementById("btnWearSelfHat").addEventListener("click", () => {
+    state.wear.hat = "mine";
+    buildWearChoices();
+    toast("🤖 StackChan đã đội mũ tự vẽ của bạn!");
+  });
+  document.getElementById("stampSnowman").addEventListener("click", () => { customCraftPx = STAMPS_16.snowman.slice(); refreshCraftGrid(); });
+  document.getElementById("stampGift").addEventListener("click", () => { customCraftPx = STAMPS_16.gift.slice(); refreshCraftGrid(); });
+  document.getElementById("stampCake").addEventListener("click", () => { customCraftPx = STAMPS_16.cake.slice(); refreshCraftGrid(); });
+  document.getElementById("craftClear").addEventListener("click", () => { customCraftPx = new Array(256).fill("."); refreshCraftGrid(); });
+  document.getElementById("craftNameInput").addEventListener("input", (e) => {
+    state.customName = e.target.value.trim() || "★ Đồ Tự Vẽ";
+    buildFurnPalette();
+  });
+  document.getElementById("btnPlaceCustomCraft").addEventListener("click", () => {
+    state.selectedBrush = "custom";
+    state.scene = "room";
+    state.items = state.items.filter(it => !(it.place === "floor" && it.gx === 3 && it.gy === 2));
+    state.items.push({ id: "custom", place: "floor", gx: 3, gy: 2 });
+    buildFurnPalette();
+    toast("✨ Đã đặt \"" + state.customName + "\" vào Phòng! Bấm ô khác nếu muốn dời chỗ.");
+  });
+
+  function loop(now) {
+    renderStage(now);
+    renderMascot(now);
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
