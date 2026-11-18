@@ -1,4 +1,4 @@
-# Kế hoạch 1.36 — Giáng sinh: tủ lịch 24 ngăn, sân sáng đèn, cây thông được tặng đầy dần, thiệp điều ước (18–19/11; **bản chốt 19/11, đang làm**)
+# Kế hoạch 1.36 — Giáng sinh: tủ lịch 24 ngăn, sân sáng đèn, cây thông được tặng đầy dần, thiệp điều ước (18–19/11; **bản chốt 19/11 — kế hoạch mã ở `KE_HOACH_MA.md`, chưa làm**)
 
 ## BẢN CHỐT (19/11) — người dùng: "tớ thấy cũng ổn rồi á" sau bản 5
 
@@ -18,17 +18,17 @@ xem lại trên máy thật trước khi phát hành. **Phát hành mục tiêu 
 
   | Ngày | Ngăn | | Ngày | Ngăn | | Ngày | Ngăn |
   |---|---|---|---|---|---|---|---|
-  | 1 | Nhà · vòng hoa cửa + nơ đỏ đèn lồng | | 9 | Cây · nơ đỏ | | 17 | Nhà · **tự vẽ** hình dán cửa sổ 8 × 8 |
+  | 1 | Nhà · vòng hoa cửa + nơ đỏ đèn lồng | | 9 | Cây · quả châu xanh | | 17 | Nhà · **tự vẽ** hình dán cửa sổ 8 × 8 |
   | 2 | Cây · quả châu đỏ | | 10 | Cây · dây đèn | | 18 | Trong nhà · đèn ngủ ngôi sao |
-  | 3 | Trong nhà · hộp nhạc (học dần Silent Night) | | 11 | Trong nhà · bánh kem dâu クリスマスケーキ | | 19 | Cây · quả châu tím |
-  | 4 | Cây · chuông vàng | | 12 | Cây · quả châu xanh | | 20 | **Hộp quà bí mật** (đèn lồng ngôi sao) |
+  | 3 | Trong nhà · hộp nhạc (học dần Silent Night) | | 11 | Trong nhà · bánh kem dâu クリスマスケーキ | | 19 | Cây · thêm quả châu đỏ |
+  | 4 | Cây · quả châu vàng | | 12 | Cây · quả châu tím | | 20 | **Hộp quà bí mật** (đèn lồng ngôi sao) |
   | 5 | Trong nhà · tất Noel | | 13 | **Hộp quà bí mật** (gấu bông Noel) | | 21 | Sân · dây đèn võng, tuần lộc đèn, thông sáng trên đồi, người tuyết, sao mái |
-  | 6 | **Hộp quà bí mật** (quả cầu tuyết) | | 14 | Sân · đèn lối đi + **đồ trên sân quấn đèn** | | 22 | Cây · quả châu vàng |
+  | 6 | **Hộp quà bí mật** (quả cầu tuyết) | | 14 | Sân · đèn lối đi + **đồ trên sân quấn đèn** | | 22 | Cây · kẹo gậy |
   | 7 | Nhà · mái tuyết, dây lá thông, viền mái đèn, đèn băng | | 15 | Trong nhà · bộ sàn Noel (2 mẫu) | | 23 | Trong nhà · bánh quy + sữa |
   | 8 | Trong nhà · bộ tường Noel (3 mẫu) | | 16 | Cây · dây kim tuyến | | 24 | Cây · **ngôi sao** + ông già Noel |
 
-  Quả châu / dây trên cây là **đúng các món vẽ sẵn của cây `xmastree`** (10 quả châu chia cho 6 ngăn), đêm 24 cây giống hệt cây gốc
-  + đèn sân. Hộp quà bí mật đặt dưới gốc cây, **lắc nghe đoán**, chỉ mở từ sáng 25.
+  Quả châu / dây trên cây là **đúng các món vẽ sẵn của cây `xmastree`** (10 quả châu đỏ / xanh / vàng / tím chia cho 5 ngăn +
+  2 kẹo gậy nhỏ thêm vào), đêm 24 cây giống hệt cây gốc + kẹo gậy + đèn sân. Hộp quà bí mật đặt dưới gốc cây, **lắc nghe đoán**, chỉ mở từ sáng 25.
 - **Sân sáng đèn ban đêm** (đèn trắng ấm / vàng / xanh băng, nhấp nháy, dây đèn chạy đuổi, quầng sáng trên tuyết), lên theo ngăn
   7 / 14 / 21. Sân đã có đồ: **luật bản 5** (quấn đèn theo hình món, dây võng móc ống khói + đỉnh món cao, đồ chiếm chỗ chỉ vào
   ô trống — hết ô thì ở Kho đồ). Đèn lối đi vẽ dọc mép trước các ô trống hàng trước, không chiếm ô. Ban ngày: dây đèn tắt + tuyết.
