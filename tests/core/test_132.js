@@ -49,10 +49,10 @@ prefs['kb-glang'] = 'abc'; ok(G.pref() === 'auto', 'cài đặt hỏng → Tự 
 G.setPref('auto');
 
 console.log('== 5b. mọi câu tiếng Nhật trong mã trang đổi được');
-const bad = { en: [], zh: [], ko: [], vi: [] };
+const bad = { en: [], zh: [], ko: [], vi: [], de: [], fr: [] };       // 1.35: + de / fr
 const tr = (s, l) => { const t = G.title(s, l); return t !== s ? G.line(t, l) : G.line(s, l); };
 IN.lits.forEach(([f, i, s]) => {
-  ['en', 'zh', 'ko', 'vi'].forEach((l) => {
+  ['en', 'zh', 'ko', 'vi', 'de', 'fr'].forEach((l) => {
     const out = tr(s, l);
     const same = IN.bundle.say[s] && IN.bundle.say[s][1] === s;          // 天才！ viết giống nhau ở hai tiếng
     const leak = l === 'zh' ? KANA.test(out) || (out === s && !same) : JP.test(out);
@@ -60,7 +60,7 @@ IN.lits.forEach(([f, i, s]) => {
     if (leak || (l === 'vi' && !out.trim() && f !== 'event_core.py' && !/^\s*\S+ · $/.test(s))) { bad[l].push(f + ':' + i + ' ' + JSON.stringify(s) + ' → ' + JSON.stringify(out)); }
   });
 });
-['en', 'zh', 'ko', 'vi'].forEach((l) => ok(!bad[l].length, IN.lits.length + ' chuỗi → ' + l + ': không còn chữ Nhật' +
+['en', 'zh', 'ko', 'vi', 'de', 'fr'].forEach((l) => ok(!bad[l].length, IN.lits.length + ' chuỗi → ' + l + ': không còn chữ Nhật' +
   (bad[l].length ? ' — ' + bad[l].slice(0, 4).join(' | ') : '')));
 ok(G.line('雨だ！ Mưa rồi, cây được tưới miễn phí ♪', 'en') === "It's raining! Mưa rồi, cây được tưới miễn phí ♪", 'câu kèm tiếng Việt: chỉ đổi phần tiếng Nhật');
 ok(G.line('雨だ！ Mưa rồi, cây được tưới miễn phí ♪', 'vi') === 'Mưa rồi, cây được tưới miễn phí ♪', 'Chỉ tiếng Việt: bỏ phần tiếng Nhật, không thừa dấu cách');

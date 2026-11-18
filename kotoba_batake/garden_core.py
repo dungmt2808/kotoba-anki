@@ -12,6 +12,7 @@ import html
 import json
 import os
 import re
+import unicodedata
 from typing import Any
 
 from anki.collection import Collection, SearchNode
@@ -1503,10 +1504,15 @@ def note_audio(note: Any, cfg: dict[str, Any], roles: dict[str, Any] | None = No
 # Câu ví dụ → câu điền từ (game "Điền vào câu")
 # ---------------------------------------------------------------------------
 
-EXAMPLE_NAMES = ["example", "examples", "ví dụ", "câu ví dụ", "例文", "例", "sentence", "câu"]
-_EX_NOT = ("audio", "sound", "âm", "音", "meaning", "translation", "nghĩa", "dịch", "english", "訳", "furigana", "reading")
+# 1.35.1: + tên trường câu ví dụ của deck tiếng Đức / Pháp / Trung / Hàn (Beispiel, Exemple, 例句, 예문) — trước phải tự chọn
+# ở Cấu hình trường thì Điền vào câu / chép chính tả mới có câu
+EXAMPLE_NAMES = ["example", "examples", "ví dụ", "câu ví dụ", "例文", "例", "sentence", "câu", "beispiel", "beispielsatz",
+                 "exemple", "exemples", "例句", "例子", "예문", "예시"]
+_EX_NOT = ("audio", "sound", "âm", "音", "meaning", "translation", "nghĩa", "dịch", "english", "訳", "furigana", "reading",
+           "übersetzung", "traduction", "翻译", "번역", "해석")
 _EX_AUDIO_HINT = ("audio", "sound", "âm thanh", "音声")
-_EX_MEAN_HINT = ("meaning", "translation", "nghĩa", "dịch", "訳", "english", "vietnamese", "tiếng việt")
+_EX_MEAN_HINT = ("meaning", "translation", "nghĩa", "dịch", "訳", "english", "vietnamese", "tiếng việt", "übersetzung",
+                 "traduction", "翻译", "번역", "해석")
 _FURI_TOKEN = re.compile(r" ?([^ >\[\]]+?)\[([^\]]+)\]")
 _KANA_CHARS = re.compile(r"[\u3041-\u309f\u30a0-\u30ff]")
 BLANK = '<span class="kb-blank">\u3000？\u3000</span>'
@@ -1514,7 +1520,7 @@ BLANK = '<span class="kb-blank">\u3000？\u3000</span>'
 
 def _is_exampleish(name: str) -> bool:
     low = name.lower()
-    return any(x in low for x in ("example", "ví dụ", "例", "sentence", "câu"))
+    return any(x in low for x in ("example", "ví dụ", "例", "sentence", "câu", "beispiel", "exemple", "예문", "예시"))
 
 
 def example_fields(keys: list[str], cfg: dict[str, Any]) -> dict[str, str | None]:
@@ -1607,6 +1613,9 @@ def _cloze_latin(sentence: str, word: str, lang: str) -> dict[str, str] | None:
     """1.17: câu tiếng Anh (nhận cả dạng biến đổi: went, studying, stopped…) / ngôn ngữ khác (đúng chữ)."""
     if not sentence:
         return None
+    # 1.35.2 (audit #06): câu nhập bằng mã HTML / dấu tách (Apre&#x300;s = e + dấu huyền) — bộ tìm trả vị trí trong chữ
+    # dựng sẵn (NFC) nên cắt cũng phải trên chữ NFC (trước đây che ", le ch" thay vì "le chat")
+    sentence = unicodedata.normalize("NFC", sentence)
     span = text.find_word(sentence, word, lang)
     if span is None:
         return None
@@ -1746,13 +1755,20 @@ ZH_READING_NAMES = ["pinyin", "拼音", "pīnyīn", "phiên âm", "phien am", "p
 KO_WORD_NAMES = ["korean", "hangul", "한국어", "단어", "한글", "tiếng hàn", "word", "từ vựng", "từ", "front"]
 KO_READING_NAMES = ["romaja", "romanization", "romanisation", "로마자", "발음", "phiên âm", "phien am", "pronunciation",
                     "reading"]
+# 1.35: tên trường hay gặp ở deck tiếng Đức / tiếng Pháp
+DE_WORD_NAMES = ["deutsch", "german", "wort", "vokabel", "tiếng đức", "word", "vocabulary", "từ vựng", "từ", "front",
+                 "mặt trước"]
+FR_WORD_NAMES = ["français", "francais", "french", "mot", "vocabulaire", "tiếng pháp", "word", "vocabulary", "từ vựng", "từ",
+                 "front", "mặt trước"]
+EU_READING_NAMES = EN_READING_NAMES + ["aussprache", "lautschrift", "prononciation", "api"]
+EU_MEANING_NAMES = EN_MEANING_NAMES + ["bedeutung", "übersetzung", "sens", "signification", "traduction"]
 
 
 def guess_roles_lang(keys: list[str], cfg: dict[str, Any], lang: str) -> dict[str, Any]:
     """1.17: đoán trường cho loại note tiếng Anh / ngôn ngữ khác (tên trường kiểu English, IPA, Vietnamese…)."""
     keys = list(keys)
     taken: set[str] = set()
-    word_names = ZH_WORD_NAMES if lang == "zh" else KO_WORD_NAMES if lang == "ko" else EN_WORD_NAMES
+    word_names = {"zh": ZH_WORD_NAMES, "ko": KO_WORD_NAMES, "de": DE_WORD_NAMES, "fr": FR_WORD_NAMES}.get(lang, EN_WORD_NAMES)
     word = _find_field(keys, "", word_names, taken) or (keys[0] if keys else None)
     taken.add(word or "")
     ex = example_fields(keys, cfg)
@@ -1760,10 +1776,11 @@ def guess_roles_lang(keys: list[str], cfg: dict[str, Any], lang: str) -> dict[st
     taken |= {x for x in (ex["example"], ex["audio"], ex["meaning"], au) if x}
     hanviet = _find_field(keys, "", HANVIET_NAMES, taken) if lang in ("zh", "ko") else None     # 1.32
     taken.add(hanviet or "")
-    reading_names = ZH_READING_NAMES if lang == "zh" else KO_READING_NAMES if lang == "ko" else EN_READING_NAMES
+    reading_names = {"zh": ZH_READING_NAMES, "ko": KO_READING_NAMES, "de": EU_READING_NAMES, "fr": EU_READING_NAMES}.get(
+        lang, EN_READING_NAMES)
     reading = _find_field(keys, "", reading_names, taken)
     taken.add(reading or "")
-    meaning = _find_field(keys, "", EN_MEANING_NAMES, taken)
+    meaning = _find_field(keys, "", EU_MEANING_NAMES if lang in ("de", "fr") else EN_MEANING_NAMES, taken)
     if meaning is None:
         rest = [k for k in keys if k not in taken]
         meaning = rest[0] if rest else None
@@ -1882,7 +1899,7 @@ def note_details(note: Any, cfg: dict[str, Any], roles: dict[str, Any] | None = 
         raw_word = note[list(note.keys())[0]]          # trường từ để trống → dùng trường đầu
     grammar = kind == "grammar"
     if lang != "ja":
-        word, ipa = text.en_split_ipa(text.plain_text(raw_word)) if lang == "en" else (text.plain_text(raw_word), "")
+        word, ipa = text.en_split_ipa(text.plain_text(raw_word)) if lang in ("en", "de", "fr") else (text.plain_text(raw_word), "")
         reading = text.plain_text(get("reading"))
         ruby = None
         if lang == "zh":
@@ -3656,14 +3673,47 @@ class GardenState:
     def _draft_path(self) -> str:
         return os.path.join(os.path.dirname(self.path), draft.FILE_NAME)
 
-    def draft_load(self) -> dict[str, Any]:
-        """Bản thử của hồ sơ đang mở (file theo hồ sơ trên máy; không có / hỏng → trống)."""
-        return draft.clean(read_backup(self._draft_path(), self._col()))
+    def draft_load(self, strict: bool = True) -> dict[str, Any]:
+        """Bản thử của hồ sơ đang mở (file theo hồ sơ trên máy; không có / hỏng → trống).
+        1.35.1 (audit 01): file của hồ sơ CÓ mà không mở / đọc được (lỗi đĩa, bị khoá) → HomeError, không trả kho trống —
+        mọi lệnh đọc → sửa một ô → ghi dựa vào đây, kho trống ghi lên là mất bản thử của mọi ô / cảnh khác.
+        `strict=False` chỉ cho chỗ cần "đọc được gì thì đọc" (không ghi lại)."""
+        col = self._col()
+        target = backup.profile_path(self._draft_path(), col)
+        try:
+            with open(target, encoding="utf-8") as f:
+                raw = json.load(f)
+        except FileNotFoundError:
+            return draft.clean(read_backup(self._draft_path(), col))      # chưa có file của hồ sơ → file chung cũ / trống
+        except ValueError:
+            return draft.clean(None)        # không phải JSON: draft_store dời thành .hong trước khi ghi
+        except OSError:
+            if not strict:
+                return draft.clean(None)
+            raise HomeError("Chưa đọc được bản thử đã lưu (lỗi file trên máy) — chưa đổi gì để không mất bản cũ.") from None
+        got = backup_data(raw, col)
+        if got is None:
+            return draft.clean(read_backup(self._draft_path(), col))
+        return draft.clean(got)
 
     def draft_store(self, store: dict[str, Any]) -> dict[str, Any]:
-        """Ghi bản thử (OSError → HomeError). Chỉ là bản nháp trên máy: không đụng ví / collection."""
+        """Ghi bản thử (OSError → HomeError). Chỉ là bản nháp trên máy: không đụng ví / collection.
+        1.35.1: file đang có mà không đọc được (lỗi đọc đĩa) → không ghi (bản đọc ra trống, ghi là mất mọi bản thử của các
+        cảnh khác); file hỏng (không phải JSON) → giữ lại thành `ban_thu.json.hong` rồi mới ghi bản mới."""
         out = draft.clean(store)
         col = self._col()
+        target = backup.profile_path(self._draft_path(), col)
+        if os.path.exists(target):
+            try:
+                with open(target, encoding="utf-8") as f:
+                    json.load(f)
+            except ValueError:
+                try:
+                    os.replace(target, target + ".hong")
+                except OSError:
+                    raise HomeError("Chưa lưu được bản thử (file bản thử cũ hỏng, không dời được).") from None
+            except OSError:
+                raise HomeError("Chưa đọc được bản thử đã lưu (lỗi file trên máy) — chưa lưu để không mất bản cũ.") from None
         try:
             write_backup(self._draft_path(), backup_payload(out, col), col)
         except OSError:

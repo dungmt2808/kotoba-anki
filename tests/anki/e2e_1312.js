@@ -231,7 +231,10 @@ result={"same": card.id==c.id, "first": c.id, "now": d._card.id if d._card else 
   await sleep(500);
   ok(r4.same && r4.now && r4.now !== r4.first && r4.added === 0 && !r4.busy, 'thẻ đang hiện đã bị chấm ở chỗ khác → sang thẻ kế tiếp, không chấm chồng');
   ok((await seen()).length === 0, '… không hộp lỗi (trước 1.31.2: "không lưu được câu trả lời" lặp mãi)');
-  ok(/chỗ khác/.test(await page.eval('(document.querySelector("#kb-toast")||{}).textContent||""')), 'có dòng báo ngắn trong vườn');
+  // audit 18/11: thông báo xếp hàng sau thông báo đang hiện (hàng chờ của garden.js) — có thể tới sau 1–2 giây, không đọc ở 500 ms
+  let toastTxt = '';
+  for (let i = 0; i < 20 && !/chỗ khác/.test(toastTxt); i++) { toastTxt = await page.eval('(document.querySelector("#kb-toast")||{}).textContent||""'); if (!/chỗ khác/.test(toastTxt)) await sleep(250); }
+  ok(/chỗ khác/.test(toastTxt), 'có dòng báo ngắn trong vườn');
   const r5 = await py(`d=kb._dialog
 c=d._card
 mw.col.remove_notes([c.nid])                     # xoá ở Trình duyệt thẻ

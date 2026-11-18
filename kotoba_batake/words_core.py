@@ -35,7 +35,7 @@ fields = core.fields
 backup = core.backup
 
 SRC_KEY = "kotoba_batake_paper_src"   # {"ja": {"decks": [id…], "mode": "deck"|"level"}, "en": …, "vi": …}
-LANGS = ("ja", "en", "vi", "zh", "ko")     # 1.25.1: "vi" = báo tiếng Việt (thẻ bất kỳ); 1.33: báo tiếng Trung / tiếng Hàn
+LANGS = ("ja", "en", "vi", "zh", "ko", "de", "fr")     # 1.25.1: "vi" = báo tiếng Việt (thẻ bất kỳ); 1.33: Trung / Hàn; 1.35: Đức / Pháp
 MODES = ("deck", "level")              # 1.25.1: "level" = Không dùng deck (Gemini viết theo trình độ)
 MAX_DECKS = 5
 LIMIT = 100            # số note gửi Gemini mỗi số báo (tổng, không phải mỗi deck)
@@ -214,7 +214,7 @@ def lang_mids(infos: dict[str, dict[str, Any]], lang: str, chosen: bool = False)
     """Loại note dùng cho báo `lang`. 1.25.1 báo tiếng Việt: "Mọi deck" = loại note không phải tiếng Nhật / tiếng Anh
     (deck kiến thức, tiếng Hàn…); "Chọn deck" = mọi loại note trong deck đã chọn (vd. thuật ngữ y khoa tiếng Anh)."""
     if lang == "vi":
-        return [m for m, i in infos.items() if chosen or i["lang"] not in ("ja", "en", "zh", "ko")]
+        return [m for m, i in infos.items() if chosen or i["lang"] not in ("ja", "en", "zh", "ko", "de", "fr")]
     return [m for m, i in infos.items() if i["lang"] == lang]
 
 

@@ -2141,7 +2141,7 @@ def translate_issue(client: Gemini, issue: dict[str, Any], lang: str = "ja", pre
     prompt = ("Dịch số báo %s dưới đây sang tiếng Việt cho người Việt đang học: dịch tự nhiên, đúng ý, tên riêng viết "
               "Latin (Lin, Hana, Stack-chan, quán Kotoba, làng Kotoba), không thêm ghi chú hay giải thích trong ngoặc, không để chữ %s trong bản dịch. Mỗi bài trả về \"dich\" là "
               "danh sách bản dịch của TỪNG đoạn, đúng thứ tự và đúng số đoạn (không dịch tiêu đề).\n\nSỐ BÁO:\n%s" % (
-                  "tiếng Anh" if lang == "en" else "tiếng Nhật", "Anh" if lang == "en" else "Nhật / Hán",
+                  *TRANSLATE_FROM.get(lang, ("tiếng Nhật", "Nhật / Hán")),
                   json.dumps({"bai": arts}, ensure_ascii=False)))
     last: AIError | None = None
     for name in names[:MAX_MODELS]:
@@ -2310,6 +2310,7 @@ def feedback_bases(shared: str, base: str, date: str, ky: int) -> list[str]:
             raw = json.load(f)
     except (OSError, ValueError):
         raw = {}
+    shared = story_core.episode_base(shared, date)      # 1.35.2: số của truyện đã cất → thư mục cất truyện đó
     if isinstance(raw, dict) and raw.get("truyen_chung"):
         return [shared]
     out = [base]
@@ -2500,11 +2501,15 @@ def import_claude_story(shared: str, claude_dir: str | None, until: str) -> int:
     mem = story_core.load_story(shared)
     last_day = max([e["ngay"] for e in mem if e.get("ngay")] or [""])
     last_ky = max([e["ky"] for e in mem] or [0])
-    new = [c for c in eps if c["ngay"] > last_day]
+    # 1.35.2: sau "Bắt đầu truyện mới" — kỳ Claude đăng trước lúc truyện mới bắt đầu là của truyện đã cất (không chép về);
+    # kỳ sau đó đánh số nối truyện mới (không giữ số kỳ của Claude)
+    rs = story_core.resets(shared)
+    cut = rs[-1]["tu_ngay"] if rs else ""
+    new = [c for c in eps if c["ngay"] > last_day and c["ngay"] >= cut]
     if not new:
         return 0
     for c in new:
-        ky = c["ky"] if c["ky"] > last_ky else last_ky + 1     # bộ nhớ chung trống → giữ đúng số kỳ của Claude
+        ky = c["ky"] if c["ky"] > last_ky and not rs else last_ky + 1     # bộ nhớ chung trống → giữ đúng số kỳ của Claude
         last_ky = ky
         raw = [x for x in raw if x.get("ky") != ky]
         raw.append({"ky": ky, "ngay": c["ngay"], "tieu_de": c["tieu_de"], "tom_tat": c["tom_tat"] or c["tieu_de"],
@@ -2551,6 +2556,11 @@ def export_story_for_claude(shared: str, claude_dir: str | None) -> bool:
     return True
 
 
+# 1.35: tên ngôn ngữ cho lời nhắc dịch số cũ (trước: mọi báo không phải tiếng Anh đều ghi "tiếng Nhật")
+TRANSLATE_FROM = {"en": ("tiếng Anh", "Anh"), "zh": ("tiếng Trung", "Trung"), "ko": ("tiếng Hàn", "Hàn"),
+                  "de": ("tiếng Đức", "Đức"), "fr": ("tiếng Pháp", "Pháp")}
+
+
 def tts_text(markup: str, lang: str = "ja") -> str:
     """Chữ gửi cho giọng đọc: giữ chữ Hán (để đúng ngữ điệu) trừ số đếm / từ nhiều cách đọc thì dùng kana.
     1.33: báo tiếng Trung / tiếng Hàn đọc chữ (không đọc pinyin / phiên âm)."""
@@ -2593,17 +2603,18 @@ def _lang_module(lang: str) -> Any:
         return _en_module()
     if lang == "vi":
         return _vi_module()
-    if lang in ("zh", "ko"):
+    if lang in ("zh", "ko", "de", "fr"):          # 1.33: Trung / Hàn; 1.35: Đức / Pháp
         import importlib
         try:
-            return importlib.import_module("." + ("ai_zh" if lang == "zh" else "ai_ko"), __package__)
+            return importlib.import_module(".ai_" + lang, __package__)
         except (ImportError, TypeError):
-            return importlib.import_module("ai_zh" if lang == "zh" else "ai_ko")
+            return importlib.import_module("ai_" + lang)
     return None
 
 
-LANG_LABEL = {"ja": "", "en": " (tiếng Anh)", "vi": " (tiếng Việt)", "zh": " (tiếng Trung)", "ko": " (tiếng Hàn)"}
-FOREIGN = ("en", "vi", "zh", "ko")     # báo có phần riêng (mô-đun ai_xx); tiếng Nhật dùng phần chung của file này
+LANG_LABEL = {"ja": "", "en": " (tiếng Anh)", "vi": " (tiếng Việt)", "zh": " (tiếng Trung)", "ko": " (tiếng Hàn)",
+              "de": " (tiếng Đức)", "fr": " (tiếng Pháp)"}
+FOREIGN = ("en", "vi", "zh", "ko", "de", "fr")     # báo có phần riêng (mô-đun ai_xx); tiếng Nhật dùng phần chung của file này
 
 
 class Job:
@@ -2655,7 +2666,8 @@ class Job:
             for b in raw.get("bai") if isinstance(raw.get("bai"), list) else []:
                 if isinstance(b, dict) and b.get("loai") == "truyen" and isinstance(b.get("ky"), int) and b["ky"] > 1 \
                         and not (isinstance(b.get("ky_truoc"), str) and VI_LETTER_RE.search(b["ky_truoc"])):
-                    prev = [e for e in story_core.load_story(self.story_base) if e["ky"] < b["ky"] and e.get("tom_tat")]
+                    prev = [e for e in story_core.load_story(story_core.episode_base(self.story_base, self.date))
+                            if e["ky"] < b["ky"] and e.get("tom_tat")]
                     if prev:
                         b["ky_truoc"] = prev[-1]["tom_tat"]
         goc = self.opts.get("story_goc") if isinstance(self.opts.get("story_goc"), dict) else None
@@ -2980,10 +2992,12 @@ class Job:
         _write_json(issue_path(self.base, self.date), out)
         sb = next((b for b in out["bai"] if b.get("loai") == "truyen"), None)
         ky = sb.get("ky") if sb else None
+        # 1.35.2: số của truyện đã cất (bản gốc hôm nay giữ lại sau "Bắt đầu truyện mới") → ghi vào thư mục cất truyện đó
+        ep_base = story_core.episode_base(self.story_base, self.date) if self.story_base != self.base else self.story_base
         if ky and isinstance(ky, int) and self.master and self.master.get("truyen") and int(self.master["ky"]) == ky:
             # 1.25.2: bộ nhớ truyện chung ghi BẢN GỐC (cùng một kỳ cho mọi báo; báo thứ hai cùng ngày ghi lại y hệt)
             t = self.master["truyen"]
-            story_core.save_episode(self.story_base, self.date, ky,
+            story_core.save_episode(ep_base, self.date, ky,
                                     {"doan": t["doan"], "nho": t.get("nho") or {}, "diem": t.get("diem") or {}},
                                     t.get("tieu_de") or "")
         elif ky and isinstance(ky, int):
@@ -2995,7 +3009,7 @@ class Job:
                 nho["tom_tat"] = raw["tom_tat_truyen"].strip()[:300]
             ep["nho"] = nho
             if nho.get("tom_tat"):
-                story_core.save_episode(self.story_base, self.date, ky, ep, paper.surface(sb.get("tieu_de") or ""))
+                story_core.save_episode(ep_base, self.date, ky, ep, paper.surface(sb.get("tieu_de") or ""))
         words = [paper.norm_key(k) for t in _all_jp(out) for k in paper.keys(t)]
         history = [h for h in history if isinstance(h, dict) and h.get("ngay") != self.date]
         history.append({"ngay": self.date, "so": out["so"], "mau": out["mau_cau"],
@@ -3230,7 +3244,7 @@ def make_audio(client: Gemini, base: str, date: str, mode: str, voice: str, mode
                 out["made"] += 1
                 _write_json(meta_path, meta)
             continue
-        speech = tts_text(text, raw.get("ngon_ngu") if raw.get("ngon_ngu") in ("en", "vi", "zh", "ko") else "ja")
+        speech = tts_text(text, raw.get("ngon_ngu") if raw.get("ngon_ngu") in ("en", "vi", "zh", "ko", "de", "fr") else "ja")
         if not speech:
             continue
         done_api += 1

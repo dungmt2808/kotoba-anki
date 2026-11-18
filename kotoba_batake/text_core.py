@@ -18,7 +18,38 @@ trường Cách đọc riêng trong Cấu hình trường.
 from __future__ import annotations
 
 import html
+import importlib
 import re
+
+try:   # 1.35: tiếng Đức / tiếng Pháp
+    from . import eu_core as eu
+except ImportError:  # test: thư mục add-on nằm trong sys.path, hoặc nạp riêng file này
+    try:
+        import eu_core as eu  # type: ignore[no-redef]
+    except ImportError:
+        import importlib.util as _ilu
+        import os as _os
+        _spec = _ilu.spec_from_file_location(
+            "kotoba_eu_core", _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "eu_core.py"))
+        eu = _ilu.module_from_spec(_spec)  # type: ignore[assignment]
+        _spec.loader.exec_module(eu)  # type: ignore[union-attr]
+
+def _load(name: str):     # noqa: ANN202 — 1.35.1: nạp mô-đun cùng thư mục (chạy trong Anki / test / nạp riêng file này)
+    try:
+        return importlib.import_module("." + name, __package__) if __package__ else importlib.import_module(name)
+    except ImportError:
+        import importlib.util as _ilu2
+        import os as _os2
+        spec = _ilu2.spec_from_file_location("kotoba_" + name, _os2.path.join(_os2.path.dirname(_os2.path.abspath(__file__)),
+                                                                             name + ".py"))
+        mod = _ilu2.module_from_spec(spec)
+        spec.loader.exec_module(mod)  # type: ignore[union-attr]
+        return mod
+
+
+ko = _load("ko_core")      # 1.35.1: Điền vào câu của deck tiếng Hàn (tiểu từ / đuôi chia dính sau từ)
+# chữ không dùng dấu cách giữa các từ (Hán, kana, Hangul, Thái, Lào, Khmer, Miến Điện): tìm không cần ranh giới chữ
+_NOSPACE = re.compile(r"[\u0e00-\u0eff\u1000-\u109f\u1780-\u17ff\u3040-\u30ff\u3400-\u9fff\uf900-\ufaff\uac00-\ud7af]")
 
 KANA_CLASS = "ぁ-ゖゝゞァ-ヺーヽヾ"
 KANJI_CLASS = "㐀-䶿一-鿿豈-﫿々〆"
@@ -353,10 +384,21 @@ def en_forms(word: str) -> list[str]:
 
 def find_word(sentence: str, word: str, lang: str = "en") -> tuple[int, int] | None:
     """Vị trí của từ trong câu (không phân biệt hoa thường, theo ranh giới từ). lang="en" thì nhận cả dạng biến đổi."""
+    if lang in eu.LANGS:            # 1.35: tiếng Đức / tiếng Pháp — bỏ mạo từ, nhận dạng biến đổi
+        return eu.find_word(sentence, word, lang)
     forms = en_forms(word) if lang == "en" else sorted({a.lower() for a in en_alternatives(word)}, key=len, reverse=True)
     if not forms:
         return None
-    latin = all(re.match(r"^[\w' ]+$", f) for f in forms)
+    if lang == "ko":                # 1.35.1: 학교 → 학교에서, 쉬다 → 쉬어요 (trước tìm đúng nguyên chữ + ranh giới → không bao giờ thấy)
+        for f in forms:
+            got = ko.find_links(sentence, [f]) if " " not in f else []
+            if got:
+                return got[0][0], got[0][1]
+    # 1.35.1: \w gồm cả chữ Hán / Hangul → trước đây đòi ranh giới chữ cả với tiếng Trung (không có dấu cách) nên Điền vào câu
+    # của deck tiếng Trung / Hàn không có câu nào
+    latin = not any(_NOSPACE.search(f) for f in forms) and all(re.match(r"^[\w' ]+$", f) for f in forms)
+    if lang == "ko" and not all(" " in f for f in forms):
+        return None                 # tiếng Hàn một từ: chỉ nhận theo ko_core (가 trong 가방 không phải 가다)
     body = "|".join(re.escape(f).replace(r"\ ", r"\s+") for f in forms)
     pat = r"(?<![\w'])(?:%s)(?![\w])" % body if latin else "(?:%s)" % body
     m = re.search(pat, sentence, re.I)
@@ -380,6 +422,15 @@ def en_words(s: str) -> list[str]:
     s = re.sub(r"[-‐–—]+", " ", s)
     s = re.sub(r"[^\w' ]+", " ", s)
     return [w.strip("'") for w in s.split() if w.strip("'")]
+
+
+def lang_words(s: str, lang: str) -> list[str]:
+    """1.35: tách từ để chấm chép chính tả theo ngôn ngữ (Anh / Đức / Pháp / ngôn ngữ khác chữ Latin)."""
+    if lang == "en":
+        return en_words(s)
+    if lang in eu.LANGS:
+        return eu.words(s, lang)
+    return latin_words(s)
 
 
 def latin_words(s: str) -> list[str]:

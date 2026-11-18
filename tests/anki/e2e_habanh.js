@@ -6,6 +6,7 @@
 //      note khác, đổi chế độ trò chơi "Ngôn ngữ khác", ôn thẻ) → chụp → cài lại GÓI_MỚI → đóng Anki
 //   p3 (bản mới): những gì bản cũ vừa làm còn đủ; deck tiếng Trung vẫn là Tiếng Trung, Hán Việt (f2), Đuổi quạ pinyin
 //      (games_lang2), Ngôn ngữ trong vườn vẫn Tiếng Trung; không lỗi
+//   1.35: thêm deck tiếng Đức (lang3 / games_lang3) — bản cũ ghi đè vẫn giữ, lên lại vẫn là Tiếng Đức
 const fs = require('fs'), path = require('path');
 const { pages, Page, sleep } = require('./cdp');
 const PHASE = process.argv[2], SHOTS = process.argv[3] || '/tmp/kb_shots_habanh', PKG = path.resolve(process.argv[4] || '');
@@ -94,6 +95,19 @@ conf, err = kb.fields_core.validate_save({"kind": "vocab", "f": {"word": "Hanzi"
 assert conf, err
 kb.FIELDS.set_model(str(m["id"]), conf, "zh")
 kb.FIELDS.set_game("crow", "zh", "spell")
+if "de" in kb.fields_core.LANGS:          # 1.35: deck tiếng Đức — lưu ở lang3 / games_lang3
+    md = mm.new("Deutsch (hạ bản)")
+    for f in ("Wort", "Bedeutung"):
+        mm.add_field(md, mm.new_field(f))
+    t = mm.new_template("T1"); t["qfmt"] = "{{Wort}}"; t["afmt"] = "{{FrontSide}}<hr id=answer>{{Bedeutung}}"
+    mm.add_template(md, t); mm.add(md); md = mm.by_name("Deutsch (hạ bản)")
+    dd = col.decks.id("DE::Hạ bản")
+    for w, me in (("der Hund, -e", "con chó"), ("die Straße", "con đường"), ("schön", "đẹp"), ("gehen", "đi")):
+        n = col.new_note(md); n["Wort"], n["Bedeutung"] = w, me; col.add_note(n, dd)
+    conf, err = kb.fields_core.validate_save({"kind": "vocab", "f": {"word": "Wort", "meaning": "Bedeutung"}}, ["Wort", "Bedeutung"], "de")
+    assert conf, err
+    kb.FIELDS.set_model(str(md["id"]), conf, "de")
+    kb.FIELDS.set_game("crow", "de", "spell")
 d = st.load(); d["coins"] += 100000; st.save(d)
 [st.build() for _ in range(7)]
 st.buy("bench"); st.place("yard", "bench", 6, 1)
@@ -104,6 +118,11 @@ result = did`);
   const mid = Object.keys(raw.lang2 || {}).find((k) => raw.lang2[k] === 'zh');
   ok(mid && raw.lang[mid] === 'other' && raw.f2[mid].hanviet === 'Hán Việt' && raw.games_lang2.zh.crow === 'spell',
     'bản mới lưu: lang = other + lang2 = zh, Hán Việt ở f2, Đuổi quạ "gõ chữ Hán" ở games_lang2');
+  if (raw.lang3) {
+    const md = Object.keys(raw.lang3).find((k) => raw.lang3[k] === 'de');
+    ok(md && raw.lang[md] === 'other' && !(md in (raw.lang2 || {})) && raw.games_lang3.de.crow === 'spell' && !raw.games_lang2.de,
+      '1.35: tiếng Đức lưu ở lang3 (lang = other), Đuổi quạ ở games_lang3 — không đụng lang2 / games_lang2');
+  }
   await openGarden();
   await py(KB + `kb._dialog.deck_id = ${did}; kb._dialog.refresh(); result = 1`); await sleep(1500);
   ok(await js('return GardenLang.pref() === "zh" && Garden._data().plants.every((p) => p.lang === "zh");'), 'vườn: deck tiếng Trung, Ngôn ngữ trong vườn = Tiếng Trung');
@@ -148,6 +167,10 @@ result = done`);
   const raw = await py(KB + 'result = mw.col.get_config("kotoba_batake_fields", None)');
   ok(raw.lang2 && Object.values(raw.lang2).includes('zh') && raw.f2 && raw.games_lang2 && raw.games_lang2.zh,
     'bản cũ ghi đè Cấu hình trường mà vẫn giữ lang2 / f2 / games_lang2 của bản mới');
+  if (raw.lang3 || want.cfg.kotoba_batake_fields && want.cfg.kotoba_batake_fields.lang3) {
+    ok(raw.lang3 && Object.values(raw.lang3).includes('de') && raw.games_lang3 && raw.games_lang3.de && raw.games_lang3.de.crow === 'spell',
+      '1.35: bản cũ ghi đè mà vẫn giữ lang3 / games_lang3 (tiếng Đức)');
+  }
   const snap = await py(SNAPSHOT);
   fs.writeFileSync(SNAP(2), JSON.stringify(snap));
   await install();
@@ -170,6 +193,13 @@ async function p3() {
   const st2 = await py(KB + 'result = kb.FIELDS.load()');
   ok(st2.games_lang.zh && st2.games_lang.zh.crow === 'spell' && st2.games_lang.other && st2.games_lang.other.crow === 'answer',
     'chế độ Đuổi quạ: tiếng Trung "gõ chữ Hán" (bản mới đặt) + Ngôn ngữ khác "gõ nghĩa" (bản cũ đặt) đều còn');
+  if (first.cfg.kotoba_batake_fields && first.cfg.kotoba_batake_fields.lang3) {      // 1.35
+    const dd = await py(KB + 'result = mw.col.decks.id_for_name("DE::Hạ bản")');
+    await py(KB + `kb._dialog.deck_id = ${dd}; kb._dialog.refresh(); result = 1`); await sleep(1500);
+    const dl = await js('return Garden._data().plants.map((p) => p.lang);');
+    ok(dl.length === 4 && dl.every((l) => l === 'de') && st2.games_lang.de && st2.games_lang.de.crow === 'spell',
+      'deck tiếng Đức vẫn là Tiếng Đức, Đuổi quạ tiếng Đức "gõ chữ" còn: ' + dl.join(','));
+  }
   await page.shot(path.join(SHOTS, 'habanh_p3.png'));
   const errs = await py(KB + 'result = [e.get("where") for e in kb.ERRORS.entries() if e.get("ver") == kb.VERSION]');
   ok(!errs.length, 'nhật ký Báo lỗi không có lỗi của bản mới' + (errs.length ? ': ' + errs.join(', ') : ''));

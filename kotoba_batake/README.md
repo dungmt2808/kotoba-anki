@@ -124,6 +124,33 @@ Sau khi trả lời có hiện cách đọc, Hán Việt, nghĩa (và cách dùn
 - **Hiệu ứng thành tích** (`web/joy.js`, Python tính `data.joy` = `more_core.joy_view`): **xong hết thẻ hôm nay** trong deck đang xem (`deck_due_tree` = 0 và hôm nay đã ôn ≥ 1 lượt) → cầu vồng trên ruộng và trên trời sân, giọt sương lấp lánh; **đạt mục tiêu ngày**; **cả vườn xanh tốt / ra hoa / trĩu quả** (≥ 5 cây, không cây nào héo, mọi cây từ Cây non / Ra hoa / Ra quả) → lá lấp lánh / cánh hoa anh đào bay / đốm sáng vàng bay lên; **mốc chuỗi ngày** (7, 14, 21, 30, 50, 75, 100, 150, 200, 250, 300, 365, 500, 730, 1000) → pháo hoa trên trời sân; **xong 3 nhiệm vụ** → đèn trời bay lên. Huy hiệu cạnh chú thích ruộng; dải chúc mừng + linh vật chúc mỗi thành tích **một lần mỗi ngày** (nhớ ở `localStorage kb-joy-<ngày>-<loại>`), đang ôn thẻ thì để dành tới khi đóng bảng ôn.
 - **Lưu trữ**: khoá collection mới `kotoba_batake_more` (`more_core.MORE_KEY`) — mục 4. Bản ≤ 1.13 ở máy khác không đọc khoá này nên không xoá được gì.
 
+### Mới ở 1.35.1: kiểm tra lại tiếng Đức / Pháp / Trung / Hàn, Trang trí thử không mất bản thử
+- **Tra từ của báo, Điền vào câu nhận đúng hơn**: tiếng Đức phân biệt chữ hoa / thường (der Morgen "buổi sáng" không nối
+  "morgen" = ngày mai), nhận ký hiệu "der Hund, -(e)s, -e", động từ tách / có tiền tố (aufgestanden, bekam, kennengelernt), so
+  sánh (älter, besser); tiếng Pháp không nối nhầm từ cùng mặt chữ (le lit ≠ "il lit", la porte ≠ "elle porte", l'été ≠ "a été"),
+  danh từ số nhiều (papiers, livres), lève / répète, devenu / obtenu, aujourd’hui (nháy cong); tiếng Trung không nối từ một chữ
+  vào giữa từ ghép (家 trong 大家); tiếng Hàn nhận 쉬어요, 도와줘요.
+- **Luyện viết tiếng Trung / Hàn / Đức / Pháp** (trước chỉ Nhật / Anh): chọn theo báo đã tick, Gemini sửa 1 lần / ngày như cũ.
+- **Điền vào câu** có câu cho deck tiếng Trung / Hàn (trước không có câu nào); tự nhận trường câu ví dụ Beispiel / Exemple /
+  例句 / 예문.
+- **Đuổi quạ**: gõ "Hund" đúng cả khi deck ghi "der Hund, -(e)s, -e"; động từ phản thân không cần gõ sich / se.
+- **Đoán ngôn ngữ deck**: deck tiếng Ý / Tây Ban Nha không còn bị nhận là tiếng Pháp, tiếng Phần Lan không còn là tiếng Đức.
+- **Trang trí thử**: sửa bản thử lúc Anki đang đồng bộ vẫn được lưu; file bản thử hỏng được giữ lại (`ban_thu.json.hong`) thay
+  vì bị ghi đè; "Như cảnh thật" hỏi trước khi bỏ bản thử đang bày.
+- Câu chữ tiếng Đức / Pháp / Hàn tự nhiên hơn (StackChan, sinh hoạt, khách Chợ sáng). Không đổi dữ liệu đã lưu.
+
+### Mới ở 1.35.0: tiếng Đức và tiếng Pháp
+- **Deck tiếng Đức / tiếng Pháp**: ngôn ngữ riêng trong Cấu hình trường (tự nhận deck có der / die / das, ä ö ü ß hoặc le / la /
+  l', é è ç); lưu ở khoá mới `lang3` / `games_lang3` của `kotoba_batake_fields` (bản cũ đọc là "Ngôn ngữ khác", không mất
+  gì khi máy khác còn bản cũ). Trò chơi có nhóm de / fr; Đuổi quạ không cần gõ mạo từ, gõ không dấu cũng được (ä = ae,
+  ß = ss, é = e, œ = oe); giọng máy `de_DE` / `fr_FR` (`eu_core.py`).
+- **Ngôn ngữ trong vườn**: ⚙ thêm Tiếng Đức / Tiếng Pháp — StackChan, sinh hoạt, đồ nhặt, khách, tường / sàn, mùa, tên bảng,
+  trò chơi (`lang_core.EU`, `web/glang.js`).
+- **Báo**: Der Wortgarten (tiếng Đức) / Le Jardin des Mots (tiếng Pháp), trình độ A1–C1 (`gemini_level_de` / `_fr`), cùng
+  truyện "Một làng, một truyện", tối đa 2 báo trong Nhật / Anh / Trung / Hàn / Đức / Pháp; tra từ nhận dạng chia / số nhiều
+  (Blätter → das Blatt, yeux → l'œil); chép chính tả gõ không dấu vẫn đúng (`ai_eu.py`, `ai_de.py`, `ai_fr.py`). Khoá
+  collection mới `kotoba_batake_paper_de` / `_fr`; số báo ở `user_files/bao_gemini_de` / `_fr`.
+
 ### Mới ở 1.34.1: kiểm tra thêm — so đáp án với bộ gõ / deck thật, đoán ngôn ngữ deck
 - Đuổi quạ so đáp án: gõ tiếng Việt kiểu tổ hợp / Hangul tách nét / chữ toàn khổ (NFKC), tiếng Trung / Hàn không tính dấu
   cách, pinyin nhiều cách đọc ghi bằng `，、；（）`, không chấm lúc bộ gõ đang ghép chữ (`games.js`).

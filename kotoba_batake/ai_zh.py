@@ -258,12 +258,46 @@ def serialize(cs: list[tuple[str, str | None]], links: list[tuple[int, int, str]
     return "".join(out)
 
 
+# 1.35.1: từ một chữ của deck (家, 天, 生) nằm trong một nhóm [..|..] của Gemini là một phần của từ khác (大家, 今天, 学生) —
+# trừ khi chữ còn lại chỉ là chữ hư / số / chỉ định ([不好], [我们的], [一天], [这天]). Nhóm ≥ 3 chữ có thể là cụm
+# ([很漂亮], [今天天气]): chỉ chặn khi chữ đó nằm giữa nhóm (图|书|馆). Từ ≥ 2 chữ của deck không bị chặn.
+_ZH_LOOSE = set("的了着过们地得吗呢吧啊呀儿都也很不没在是就还又再太真最更一二三四五六七八九十两几每这那哪")
+
+
+def word_groups(markup: str) -> list[tuple[int, int]]:
+    """Khoảng chữ của từng nhóm nhiều chữ [学生|xue2 sheng5] / {…|…|…} Gemini đánh dấu (cùng vị trí với `chars`) — ranh
+    giới từ của tiếng Trung (không có dấu cách)."""
+    out: list[tuple[int, int]] = []
+    pos = 0
+    for t in paper.tokenize(markup or ""):
+        n = len(t[1])
+        if t[0] != "plain" and n >= 2:
+            out.append((pos, pos + n))
+        pos += n
+    return out
+
+
+def _cuts(text: str, a: int, b: int, groups: list[tuple[int, int]]) -> bool:
+    """Chỗ [a, b) (một chữ) cắt ngang một từ Gemini đã đánh dấu → là một phần của từ khác, không nối."""
+    if b - a != 1:
+        return False
+    for g0, g1 in groups:
+        if g0 <= a and b <= g1 and (g0, g1) != (a, b):
+            if g1 - g0 == 2:
+                other = text[g0] if a == g1 - 1 else text[g1 - 1]
+                return other not in _ZH_LOOSE
+            return g0 < a and b < g1                 # nhóm ≥ 3 chữ: chỉ chặn chữ ở giữa
+    return False
+
+
 def find_links(text: str, words_: list[str], used: set[str], cap: list[int], first_only: bool = True,
-               must: set[str] | None = None) -> list[tuple[int, int, str]]:
+               must: set[str] | None = None, groups: list[tuple[int, int]] | None = None) -> list[tuple[int, int, str]]:
     """Từ của deck trong chuỗi chữ (dò từ dài nhất trước, không chồng nhau). `must` (từ mới của số): luôn nối, không
     tính giới hạn LINK_MAX — 1.33 (Gemini thật 17/11): hết chỗ nối trước bài có từ mới thì máy kiểm lại tưởng từ mới
-    "không có trong bài" và gửi Gemini sửa vô ích."""
+    "không có trong bài" và gửi Gemini sửa vô ích. `groups` (1.35.1, `word_groups`): không nối chỗ cắt ngang một từ của
+    Gemini (家 trong 大家, 天 trong 今天)."""
     must = must or set()
+    groups = groups or []
     ordered = sorted({w for w in words_ if w}, key=len, reverse=True)
     taken = [False] * len(text)
     found: list[tuple[int, int, str]] = []
@@ -275,7 +309,7 @@ def find_links(text: str, words_: list[str], used: set[str], cap: list[int], fir
             i = text.find(w, start)
             if i < 0:
                 break
-            if not any(taken[i:i + len(w)]):
+            if not any(taken[i:i + len(w)]) and not _cuts(text, i, i + len(w), groups):
                 if cap[0] >= LINK_MAX and w not in must:
                     break
                 found.append((i, i + len(w), w))
@@ -435,7 +469,7 @@ def autofix(raw: Any, scope: dict[str, Any], opts: dict[str, Any]) -> tuple[Any,
         text = "".join(c for c, _s in cs)
         is_body = id(holder) in body           # bài: mỗi từ gạch chân một lần; câu hỏi / câu chép: mọi chỗ
         links = find_links(text, words_, used if is_body else set(), cap if is_body else [0], first_only=is_body,
-                           must={w["w"] for w in tm3})
+                           must={w["w"] for w in tm3}, groups=word_groups(v))
         s = serialize(cs, links)
         if isinstance(holder, list):
             holder[key] = s

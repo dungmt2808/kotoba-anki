@@ -1,0 +1,24 @@
+{
+ "cong_cu": "1.35: deck tiếng Đức A2 mẫu cho tests/gemini/run_job.py --lang de (Claude soạn; từ, phiên âm rỗng, nghĩa tiếng Việt)",
+ "tu_vung": [
+  ["das Wetter", "", "thời tiết"], ["der Regen", "", "mưa"], ["die Sonne", "", "mặt trời"], ["der Wind", "", "gió"],
+  ["der Schnee", "", "tuyết"], ["warm", "", "ấm"], ["kalt", "", "lạnh"], ["der Herbst", "", "mùa thu"],
+  ["das Blatt, ¨-er", "", "chiếc lá"], ["der Baum, ¨-e", "", "cái cây"], ["die Blume, -n", "", "bông hoa"], ["der Garten, ¨", "", "khu vườn"],
+  ["das Dorf, ¨-er", "", "ngôi làng"], ["das Gasthaus, ¨-er", "", "quán trọ"], ["der Bürgermeister", "", "trưởng làng, thị trưởng"],
+  ["der Brief, -e", "", "lá thư"], ["der Brunnen", "", "cái giếng"], ["die Brücke, -n", "", "cây cầu"], ["der Markt, ¨-e", "", "chợ"],
+  ["das Fest, -e", "", "lễ hội"], ["die Katze, -n", "", "con mèo"], ["der Vogel, ¨", "", "con chim"], ["der Fisch, -e", "", "con cá"],
+  ["das Brot", "", "bánh mì"], ["der Tee", "", "trà"], ["die Suppe, -n", "", "món súp"], ["der Apfel, ¨", "", "quả táo"],
+  ["das Fenster", "", "cửa sổ"], ["die Tür, -en", "", "cái cửa"], ["der Tisch, -e", "", "cái bàn"], ["die Lampe, -n", "", "cái đèn"],
+  ["das Geräusch, -e", "", "tiếng động"], ["die Angst", "", "nỗi sợ"], ["die Geschichte, -n", "", "câu chuyện"], ["das Geheimnis, -se", "", "bí mật"],
+  ["die Nacht, ¨-e", "", "đêm"], ["der Morgen", "", "buổi sáng"], ["der Abend, -e", "", "buổi tối"], ["morgen", "", "ngày mai"],
+  ["gestern", "", "hôm qua"], ["heute", "", "hôm nay"], ["immer", "", "luôn luôn"], ["manchmal", "", "đôi khi"],
+  ["plötzlich", "", "đột nhiên"], ["leise", "", "khẽ, nhỏ tiếng"], ["laut", "", "to, ồn"], ["schön", "", "đẹp"],
+  ["müde", "", "mệt"], ["glücklich", "", "hạnh phúc"], ["traurig", "", "buồn"], ["neugierig", "", "tò mò"],
+  ["gehen", "", "đi"], ["kommen", "", "đến"], ["sehen", "", "nhìn, thấy"], ["hören", "", "nghe"], ["finden", "", "tìm thấy"],
+  ["suchen", "", "tìm kiếm"], ["helfen", "", "giúp đỡ"], ["lachen", "", "cười"], ["schreiben", "", "viết"], ["lesen", "", "đọc"],
+  ["kochen", "", "nấu ăn"], ["warten", "", "chờ đợi"], ["vorbereiten", "", "chuẩn bị"], ["aufstehen", "", "thức dậy"],
+  ["einkaufen", "", "mua sắm"], ["anrufen", "", "gọi điện"], ["vergessen", "", "quên"], ["erzählen", "", "kể"],
+  ["fragen", "", "hỏi"], ["antworten", "", "trả lời"], ["bringen", "", "mang đến"], ["öffnen", "", "mở"],
+  ["der Freund, -e", "", "bạn bè"], ["die Nachbarin, -nen", "", "chị hàng xóm"], ["das Kind, -er", "", "đứa trẻ"], ["die Stimme, -n", "", "giọng nói"]
+ ]
+}

@@ -57,16 +57,22 @@ KINDS: dict[str, dict[str, str]] = {
 }
 
 # Ngôn ngữ của loại note (1.17). Mục đầu = mặc định (giữ y như các bản trước).
-LANGS = ("ja", "en", "zh", "ko", "other")
+LANGS = ("ja", "en", "zh", "ko", "de", "fr", "other")
 OLD_LANGS = ("ja", "en", "other")              # bản ≤ 1.31 hiểu được (khoá lang)
 NEW_LANGS = ("zh", "ko")                       # 1.32: lưu ở khoá lang2
-LANG_NAMES = {"ja": "Tiếng Nhật", "en": "Tiếng Anh", "zh": "Tiếng Trung", "ko": "Tiếng Hàn", "other": "Ngôn ngữ khác"}
+# 1.35: tiếng Đức / tiếng Pháp lưu ở khoá lang3 / games_lang3 — bản 1.32–1.34 ghi lại lang2 / games_lang2 theo danh sách của
+# nó (chỉ zh / ko) nên de / fr để ở đó sẽ bị xoá khi máy khác còn bản đó lưu Cấu hình trường; khoá mới thì được giữ nguyên
+# (keep_foreign). Bản ≤ 1.34 thấy deck tiếng Đức / Pháp là "Ngôn ngữ khác".
+NEW_LANGS3 = ("de", "fr")
+LANG_NAMES = {"ja": "Tiếng Nhật", "en": "Tiếng Anh", "zh": "Tiếng Trung", "ko": "Tiếng Hàn", "de": "Tiếng Đức",
+              "fr": "Tiếng Pháp", "other": "Ngôn ngữ khác"}
 LANG_KINDS = {"ja": KIND_ORDER, "en": ("vocab", "other"), "zh": ("vocab", "kanji", "other"), "ko": ("vocab", "other"),
-              "other": ("vocab", "other")}
-GAME_GROUPS = {"en": "en", "other": "xx", "zh": "zh", "ko": "ko"}      # nhóm trò chơi theo ngôn ngữ (games.js)
+              "de": ("vocab", "other"), "fr": ("vocab", "other"), "other": ("vocab", "other")}
+GAME_GROUPS = {"en": "en", "other": "xx", "zh": "zh", "ko": "ko", "de": "de", "fr": "fr"}   # nhóm trò chơi theo ngôn ngữ (games.js)
 # Chữ trang trí cạnh tên loại (Từ vựng 単語 / 词汇 / 단어)
 KIND_JP = {"en": {"vocab": "Vocabulary", "other": "Other"}, "zh": {"vocab": "词汇", "kanji": "汉字", "other": "其他"},
-           "ko": {"vocab": "단어", "other": "기타"}, "other": {"vocab": "", "other": ""}}
+           "ko": {"vocab": "단어", "other": "기타"}, "de": {"vocab": "Wortschatz", "other": "Sonstiges"},
+           "fr": {"vocab": "Vocabulaire", "other": "Autre"}, "other": {"vocab": "", "other": ""}}
 
 # Vai trò của từng loại: (mã, nhãn, bắt buộc, gợi ý). Mã giống nhau giữa các loại để game dùng chung.
 # 1.17: bỏ "Âm Hán Việt" và "Loại từ" khỏi Từ vựng cho gọn (Hán Việt chỉ còn ở loại Chữ Hán).
@@ -128,6 +134,14 @@ ROLE_LABELS = {
            "reading": ("Phiên âm (romaja)", "Nếu deck có, vd. annyeonghaseyo"),
            "example": ("Câu ví dụ (Example)", "Câu tiếng Hàn có dùng từ này"),
            "audio": ("Audio của từ", "Không có thì đọc bằng giọng tiếng Hàn của máy")},
+    "de": {"word": ("Từ (Wort)", "vd. der Hund · danh từ nên kèm der / die / das"),
+           "reading": ("Phiên âm (IPA)", "Nếu deck có"),
+           "example": ("Câu ví dụ (Beispiel)", "Câu tiếng Đức có dùng từ này"),
+           "audio": ("Audio của từ", "Không có thì đọc bằng giọng tiếng Đức của máy")},
+    "fr": {"word": ("Từ (Mot)", "vd. le chat · danh từ nên kèm le / la / l'"),
+           "reading": ("Phiên âm (IPA)", "Nếu deck có"),
+           "example": ("Câu ví dụ (Exemple)", "Câu tiếng Pháp có dùng từ này"),
+           "audio": ("Audio của từ", "Không có thì đọc bằng giọng tiếng Pháp của máy")},
 }
 ROLE_LABELS_KIND = {("zh", "kanji"): {"word": ("Chữ Hán", "Một chữ của note"), "reading": ("Pinyin", "vd. xué")}}
 
@@ -135,20 +149,24 @@ ROLE_LABELS_KIND = {("zh", "kanji"): {"word": ("Chữ Hán", "Một chữ của 
 GAMES = ("listen", "market", "crow", "memory", "cloze")
 GAME_MODES: dict[str, dict[str, list[str]]] = {
     "listen": {"vocab": ["word", "meaning"], "kanji": ["word", "hanviet"], "grammar": ["word"],
-               "en": ["word", "meaning"], "xx": ["word", "meaning"], "zh": ["word", "meaning"], "ko": ["word", "meaning"]},
+               "en": ["word", "meaning"], "xx": ["word", "meaning"], "zh": ["word", "meaning"], "ko": ["word", "meaning"],
+               "de": ["word", "meaning"], "fr": ["word", "meaning"]},
     "market": {"vocab": ["mix", "meaning-word", "word-meaning", "reading-word"],
                "kanji": ["hanviet-word", "meaning-word", "word-hanviet", "word-reading", "mix"],
                "grammar": ["mix", "meaning-word", "word-meaning"],
                "en": ["mix", "meaning-word", "word-meaning", "reading-word"], "xx": ["mix", "meaning-word", "word-meaning"],
                "zh": ["mix", "meaning-word", "word-meaning", "reading-word", "hanviet-word"],
-               "ko": ["mix", "meaning-word", "word-meaning", "reading-word"]},
+               "ko": ["mix", "meaning-word", "word-meaning", "reading-word"],
+               "de": ["mix", "meaning-word", "word-meaning", "reading-word"],
+               "fr": ["mix", "meaning-word", "word-meaning", "reading-word"]},
     "crow": {"vocab": ["vi", "jp"], "kanji": ["word", "hanviet"], "grammar": [], "en": ["spell"], "xx": ["spell", "answer"],
-             "zh": ["pinyin", "spell", "answer"], "ko": ["spell", "answer"]},
+             "zh": ["pinyin", "spell", "answer"], "ko": ["spell", "answer"], "de": ["spell", "answer"], "fr": ["spell", "answer"]},
     "memory": {"vocab": ["mix", "meaning", "reading"], "kanji": ["hanviet", "meaning", "reading", "mix"],
                "grammar": ["meaning"], "en": ["mix", "meaning", "reading"], "xx": ["mix", "meaning", "reading"],
-               "zh": ["mix", "meaning", "reading", "hanviet"], "ko": ["mix", "meaning", "reading"]},
+               "zh": ["mix", "meaning", "reading", "hanviet"], "ko": ["mix", "meaning", "reading"],
+               "de": ["mix", "meaning", "reading"], "fr": ["mix", "meaning", "reading"]},
     "cloze": {"vocab": ["word"], "kanji": ["word"], "grammar": ["word"], "en": ["word"], "xx": ["word"], "zh": ["word"],
-              "ko": ["word"]},
+              "ko": ["word"], "de": ["word"], "fr": ["word"]},
 }
 
 MAX_MODELS = 500
@@ -249,18 +267,25 @@ def clean_store(raw: Any) -> dict[str, Any]:
                 out["lang"][mid] = lang
             elif lang == "other" and out["lang"].get(mid) == "other":
                 out["fixed"].append(mid)        # "Ngôn ngữ khác" chọn ở 1.32+: không đoán lại
+    langs3 = raw.get("lang3")          # 1.35: de / fr — chỉ khi lang[mid] vẫn "other" và lang2 không chọn gì cho mid đó
+    if isinstance(langs3, dict):
+        for mid, lang in list(langs3.items())[:MAX_MODELS]:
+            if (isinstance(mid, str) and _MID_RE.match(mid) and lang in NEW_LANGS3 and out["lang"].get(mid, "other") == "other"
+                    and mid not in out["fixed"] and not (isinstance(langs2, dict) and langs2.get(mid) in NEW_LANGS + ("other",))):
+                out["lang"][mid] = lang
     fixed = raw.get("fixed")             # dạng trong add-on (to_raw / set_model gọi lại clean_store)
     if isinstance(fixed, list):
         for mid in fixed[:MAX_MODELS]:
             if isinstance(mid, str) and out["lang"].get(mid) == "other" and mid not in out["fixed"]:
                 out["fixed"].append(mid)
-    for key in ("games_lang", "games_lang2"):
+    # games_lang: dạng trong add-on có mọi ngôn ngữ; khoá lưu: games_lang2 chỉ zh / ko, games_lang3 chỉ de / fr (1.35)
+    for key, only in (("games_lang", None), ("games_lang2", NEW_LANGS), ("games_lang3", NEW_LANGS3)):
         gl = raw.get(key)
         if not isinstance(gl, dict):
             continue
         for lang, per in gl.items():
             group = GAME_GROUPS.get(lang)
-            if not group or not isinstance(per, dict):
+            if not group or not isinstance(per, dict) or (only and lang not in only):
                 continue
             keep = {g: m for g, m in per.items() if g in GAME_MODES and m in GAME_MODES[g].get(group, [])}
             if keep:
@@ -296,11 +321,14 @@ def to_raw(store: dict[str, Any]) -> dict[str, Any]:
     games_lang2. Luôn có đủ ba khoá mới (kể cả rỗng) để keep_foreign không mang lại giá trị cũ."""
     st = clean_store(store)
     out: dict[str, Any] = {"models": {}, "games": st["games"], "lang": {}, "games_lang": {}, "lang2": {}, "f2": {},
-                           "games_lang2": {}}
+                           "games_lang2": {}, "lang3": {}, "games_lang3": {}}
     for mid, lang in st["lang"].items():
         if lang in NEW_LANGS:
             out["lang"][mid] = "other"
             out["lang2"][mid] = lang
+        elif lang in NEW_LANGS3:           # 1.35: tiếng Đức / tiếng Pháp
+            out["lang"][mid] = "other"
+            out["lang3"][mid] = lang
         else:
             out["lang"][mid] = lang
             if lang == "other" and mid in st["fixed"]:
@@ -313,7 +341,7 @@ def to_raw(store: dict[str, Any]) -> dict[str, Any]:
         if new:
             out["f2"][mid] = new
     for lang, per in st["games_lang"].items():
-        out["games_lang2" if lang in NEW_LANGS else "games_lang"][lang] = per
+        out["games_lang2" if lang in NEW_LANGS else "games_lang3" if lang in NEW_LANGS3 else "games_lang"][lang] = per
     return out
 
 
@@ -392,10 +420,25 @@ _ZH_ONLY = re.compile("[们这说么吗呢吧你她谁对还让进过时东车�
                       "們說麼嗎妳對讓學國會來讀賣腦關發實應經濟樣點邊氣雞廣歲聽從兩覺綠]")
 _JA_HINT = ("japanese", "nihongo", "日本語", "tiếng nhật", "tieng nhat", "jlpt", "furigana", "kana", "kanji", "漢字")
 # 1.34.1: ngôn ngữ chữ Latin khác tiếng Anh (chưa có ngôn ngữ riêng → "Ngôn ngữ khác"); chữ của ngôn ngữ khác
-_OTHER_HINT = ("german", "deutsch", "tiếng đức", "tieng duc", "french", "français", "francais", "tiếng pháp", "tieng phap",
-               "spanish", "español", "espanol", "tiếng tây ban nha", "italiano", "tiếng ý", "português", "portugues",
+_OTHER_HINT = ("spanish", "español", "espanol", "tiếng tây ban nha", "italiano", "tiếng ý", "português", "portugues",
                "tiếng bồ đào nha", "tiếng nga", "tiếng thái", "bahasa", "tiếng indonesia", "nederlands", "tiếng hà lan")
 _DE_MARK = re.compile(r"(?i)^(der|die|das|ein|eine) \S|[äöüß]")
+# 1.35: tiếng Đức / tiếng Pháp có ngôn ngữ riêng (1.34.1 xếp vào "Ngôn ngữ khác")
+_DE_HINT = ("german", "deutsch", "tiếng đức", "tieng duc", "goethe", "allemand")
+_FR_HINT = ("french", "français", "francais", "tiếng pháp", "tieng phap", "delf", "dalf", "französisch")
+_FR_MARK = re.compile(r"(?i)^(le|la|les|un|une|des|du)\s\S|^l['’]\w|[çœæëîïûÿèêâ]")
+_NOT_FR = re.compile(r"[ñ¿¡áíóúãõìòşğı]"          # Tây Ban Nha / Bồ Đào Nha / Ý / Thổ Nhĩ Kỳ (tiếng Pháp không dùng)
+                     # 1.35.1: mạo từ Tây Ban Nha / Ý (el perro, gli amici, una casa) + đuôi -zione / -ción / -ità — deck tiếng
+                     # Ý / Tây Ban Nha không dấu từng bị nhận là tiếng Pháp (la casa, l'acqua, caffè giống chữ Pháp)
+                     r"|(?i:^(?:el|los|las|lo|gli|una|uno|unos|unas)\s\S)|(?i:(?:zione|ción|ità)\b)")
+_IT_IL = re.compile(r"(?i)^il\s\S")                # "il cane" (Ý) — tiếng Pháp cũng có "il pleut" nên chỉ xét kèm _FR_ONLY
+_FR_ONLY = re.compile(r"(?i)^(?:les|des|du|une|aux?)\s\S|[çœæëîïûÿêâ]|\b(?:est|pas|avec|dans|très|vous|nous)\b|"
+                      r"\b(?:qu|c|j|n|d)['’]\w")
+_NOT_DE = re.compile(r"[åøőűşğıõ]"               # Thuỵ Điển / Na Uy / Hungary / Thổ Nhĩ Kỳ / Estonia
+                     # 1.35.1: Phần Lan / Estonia (äiti, hyvää, tyttö, süüa) — nhiều ä ö ü nên từng bị nhận là tiếng Đức
+                     r"|ää|öö|üü|yy|[äö]\S*y|y\S*[äö]")
+_NL_MARK = re.compile(r"(?i)^(?:het|een)\s\S|ij")   # 1.35.1: tiếng Hà Lan (het huis, een boek, fiets / ijs) → Ngôn ngữ khác
+_VI_LETTER = re.compile("[ăắằẳẵặấầẩẫậđếềểễệốồổỗộơớờởỡợưứừửữựạảẹẻẽịỉọỏụủỳỵỷỹĩũõãĂẮẰẲẴẶẤẦẨẪẬĐẾỀỂỄỆỐỒỔỖỘƠỚỜỞỠỢƯỨỪỬỮỰẠẢẸẺẼỊỈỌỎỤỦỲỴỶỸĨŨÕÃ]")
 _OTHER_SCRIPT = re.compile(r"[\u0370-\u03ff\u0400-\u052f\u0590-\u06ff\u0900-\u0dff\u0e00-\u0eff\u10a0-\u10ff]")
 # 1.34.1: dấu hiệu tiếng Nhật đủ chắc để không tin tên trường "Chinese" / "中文" / "Korean" (deck kanji có trường
 # "Chinese reading", deck tiếng Nhật cho người Hàn) — khi đó đoán theo chữ của note. Không có "漢字" (deck tiếng Trung phồn
@@ -411,7 +454,7 @@ def effective_lang(store: dict[str, Any] | None, mid: str, guessed: str | None) 
     chosen = (st.get("lang") or {}).get(mid)
     if chosen not in LANGS:
         return None
-    if chosen == "other" and mid not in (st.get("fixed") or ()) and guessed in NEW_LANGS:
+    if chosen == "other" and mid not in (st.get("fixed") or ()) and guessed in NEW_LANGS + NEW_LANGS3:     # 1.35: + de / fr
         return guessed
     return chosen
 
@@ -431,15 +474,27 @@ def guess_lang(name: str, keys: list[str], words: list[str]) -> str:
         return "ja"
     ja_hint = any(h in hints for h in _JA_STRONG)
     zh_hint = any(h in hints for h in _ZH_HINT)
-    if any(h in hints for h in _KO_HINT) and not ja_hint:
+    ko_hint = any(h in hints for h in _KO_HINT)
+    cjk = sum(1 for w in sample if _CJK_ANY.search(w))
+    hangul = sum(1 for w in sample if _HANGUL.search(w))
+    latin = sum(1 for w in sample if _LATIN.search(w) and not _KANA_ANY.search(w) and not _CJK_ANY.search(w))
+    if n and latin * 2 >= n and cjk * 2 < n and hangul * 2 < n and (zh_hint or ko_hint):
+        # 1.35.2 (audit 18/11 #05): chữ của note là chữ Latin mà chỉ có TRƯỜNG nghĩa tên "Chinese" / "中文" / "한국어" (deck
+        # tiếng Đức / Pháp / Anh cho người Trung / Hàn) → theo chữ, không theo tên trường (trước: deck "German Vocabulary"
+        # trường Wort · Chinese thành deck tiếng Trung, cây hiện 狗 猫 书). Vẫn tin: tên loại note (trừ khi tên có tiếng Đức /
+        # Pháp), trường phiên âm pinyin / hanzi (deck tiếng Trung để pinyin ở trường đầu) / hangul / romaja.
+        name_l, keys_l = (name or "").lower(), " ".join(k.lower() for k in keys)
+        eu_name = any(h in name_l for h in _DE_HINT + _FR_HINT)
+        zh_hint = zh_hint and (any(h in keys_l for h in ("pinyin", "拼音", "hanzi")) or
+                               (any(h in name_l for h in _ZH_HINT) and not eu_name))
+        ko_hint = ko_hint and (any(h in keys_l for h in ("hangul", "romaja", "한글")) or
+                               (any(h in name_l for h in _KO_HINT) and not eu_name))
+    if ko_hint and not ja_hint:
         return "ko"                        # 1.32: trước 1.32 là "other"
     if zh_hint and not ja_hint:
         return "zh"
     if not sample:
         return "en" if any(h in hints for h in _EN_HINT) else "ja"
-    cjk = sum(1 for w in sample if _CJK_ANY.search(w))
-    hangul = sum(1 for w in sample if _HANGUL.search(w))
-    latin = sum(1 for w in sample if _LATIN.search(w) and not _KANA_ANY.search(w) and not _CJK_ANY.search(w))
     accent = sum(1 for w in sample if _LATIN_ACCENT.search(w))
     # 1.34.1: chữ của ngôn ngữ khác (Nga, Thái, Ả Rập, Hindi…) — không phải Latin / Hán / kana / Hangul → "Ngôn ngữ khác"
     # (trước rơi xuống cuối hàm thành tiếng Nhật)
@@ -458,12 +513,35 @@ def guess_lang(name: str, keys: list[str], words: list[str]) -> str:
             return "zh"
         return "ja"                        # chỉ chữ Hán, không kana: deck kanji (giữ cách cũ)
     if latin * 2 >= n:
-        if accent * 10 >= n * 3 and not any(h in hints for h in _EN_HINT):
-            return "other"                 # nhiều chữ có dấu (tiếng Việt, Pháp, Tây Ban Nha…)
-        # 1.34.1: tiếng Đức / Pháp / Tây Ban Nha… (tên loại note / trường, hoặc nhiều từ có der / die / das, ä ö ü ß) →
-        # "Ngôn ngữ khác"; trước ít chữ có dấu thì thành tiếng Anh (giọng đọc tiếng Anh, từ lọt vào báo tiếng Anh)
-        de = sum(1 for w in sample if _DE_MARK.search(w))
-        if (any(h in hints for h in _OTHER_HINT) or de * 10 >= n * 3) and not any(h in hints for h in _EN_HINT):
+        en_hint = any(h in hints for h in _EN_HINT)
+        vi = sum(1 for w in sample if _VI_LETTER.search(w))
+        if vi * 10 >= n * 2:
+            return "other"                 # chữ chỉ tiếng Việt có (ă ơ ư đ ạ ả…): deck kiến thức tiếng Việt
+        # 1.35: tiếng Đức / tiếng Pháp — tên loại note / trường, hoặc chữ của note (der / die / das, ä ö ü ß · le / la / l',
+        # ç œ è ê…); có cả tên tiếng Anh thì cần nhiều dấu hiệu hơn (deck tiếng Đức cho người học có trường "English")
+        de_h, fr_h = any(h in hints for h in _DE_HINT), any(h in hints for h in _FR_HINT)
+        de = 0 if any(_NOT_DE.search(w) for w in sample) else sum(1 for w in sample if _DE_MARK.search(w))
+        fr = 0 if any(_NOT_FR.search(w) for w in sample) else sum(1 for w in sample if _FR_MARK.search(w))
+        if fr and sum(1 for w in sample if _IT_IL.search(w)) >= 2 and not any(_FR_ONLY.search(w) for w in sample):
+            fr = 0                         # "il cane", "la casa", "l'acqua" mà không có les / des / ç / ê… → tiếng Ý
+        need = n * 5 if en_hint and not (de_h or fr_h) else n * 3     # "German" + "English": học tiếng nào thì theo chữ
+        if de_h and not fr_h and not en_hint:
+            return "de"
+        if fr_h and not de_h and not en_hint:
+            return "fr"
+        if de * 10 >= need and de >= fr:
+            return "de"
+        if fr * 10 >= need:
+            return "fr"
+        if accent * 10 >= n * 3 and not en_hint:
+            return "other"                 # nhiều chữ có dấu (Tây Ban Nha, Bồ Đào Nha…)
+        if not en_hint and sum(1 for w in sample if _NL_MARK.search(w)) * 10 >= n * 2 and \
+                sum(1 for w in sample if re.match(r"(?i)(?:de|het|een)\s\S", w)) * 10 >= n * 2:
+            return "other"                 # 1.35.1: tiếng Hà Lan (de hond, het huis, een boek) — trước thành tiếng Anh
+        if not en_hint and sum(1 for w in sample if re.match(r"(?i)(?:el|los|las|lo|gli|il|una|uno|unos|unas)\s\S", w)) * 10 >= n * 2:
+            return "other"                 # 1.35.1: tiếng Tây Ban Nha / Ý không dấu (el perro, il cane) — trước thành tiếng Anh
+        # 1.34.1: Tây Ban Nha / Ý… (tên loại note / trường) → "Ngôn ngữ khác"; trước thành tiếng Anh
+        if any(h in hints for h in _OTHER_HINT) and not en_hint:
             return "other"
         return "en"
     return "ja"

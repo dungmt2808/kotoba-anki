@@ -750,7 +750,7 @@ var GardenLife = (function () {
     const ti = top.appendChild(el("div", "kb-h-info"));
     if (!v) { ti.appendChild(el("div", "kb-h-name", "Sinh hoạt")); return; }
     GardenIcons.fill(ti.appendChild(el("div", "kb-h-name")), "[i:book] Sinh hoạt · " + v.seen + "/" + v.total);
-    const lname = { ja: "tiếng Nhật", en: "tiếng Anh", zh: "tiếng Trung", ko: "tiếng Hàn" }[typeof GardenLang !== "undefined" ? GardenLang.cur() : "ja"];
+    const lname = { ja: "tiếng Nhật", en: "tiếng Anh", zh: "tiếng Trung", ko: "tiếng Hàn", de: "tiếng Đức", fr: "tiếng Pháp" }[typeof GardenLang !== "undefined" ? GardenLang.cur() : "ja"];
     ti.appendChild(el("div", "kb-h-desc", "StackChan làm việc theo giờ, đồ và vùng. Thấy việc nào thì ghi vào sổ" + (lname ? ", kèm một câu " + lname + "." : ".")));
     const w = where();
     if (w) { ti.appendChild(el("div", "kb-h-own", "Bây giờ: " + w.name + " · " + (isRoom(w.scene) ? "trong nhà" : sceneName(w.scene)))); }
@@ -779,6 +779,7 @@ var GardenLife = (function () {
         }
       });
     });
+    if (typeof GardenLang !== "undefined" && GardenLang.fitWords) { GardenLang.fitWords(list); }     // 1.35.1: từ Đức / Pháp dài
   }
 
   function init(helpers) {

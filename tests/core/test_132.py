@@ -70,7 +70,7 @@ ok(all(len(r) == 5 and all(isinstance(x, str) and x == x.strip() for x in r) for
    "mỗi mục đủ 5 ô (Anh, Trung, pinyin, Hàn, phiên âm), không khoảng trắng thừa")
 ok(all(r[0] and r[1] and r[2] and r[3] and r[4] for t in TABLES.values() for r in t.values()), "không ô nào trống")
 ok(all(len(r) == 5 and r[0] and r[1] and r[2] and r[3] for r in L.SAY.values()), "%d câu StackChan nói: đủ Anh / Trung / pinyin / Hàn" % len(L.SAY))
-ok(all(set(g) == {"ja", "en", "zh", "ko"} and all(g.values()) for g in L.GAMES.values()) and set(L.GAMES) == {"listen", "market", "crow", "memory", "cloze"},
+ok(all(set(g) >= {"ja", "en", "zh", "ko"} and all(g.values()) for g in L.GAMES.values()) and set(L.GAMES) == {"listen", "market", "crow", "memory", "cloze"},
    "tên 5 trò chơi đủ 4 tiếng")
 ok(all(len(v) == 3 and all(x.count("%s") == 1 for x in v) for v in L.ASK.values()) and set(L.ASK) == set(L.LANGS),
    "khách ở Chợ sáng: 3 câu mỗi tiếng, mỗi câu một chỗ %s")
@@ -219,7 +219,8 @@ KHONG_DOI = {
 # games.js: bảng chuyển romaji → kana (trước mục "Chọn từ"; 1.32.1: tìm dòng thay cho số cố định 700 — thêm mã phía trên
 # đẩy bảng xuống) và chữ gốc đã đổi qua GardenLang.game / ask / tag (bảng GAMES / ASK / TAGS)
 GAMES_GOC = {g["ja"] for g in L.GAMES.values()} | set(L.ASK["ja"]) | set(L.TAGS["ja"].values()) | {"する"}
-KHONG_DOI_CHU = {"ことば畑", "ことば畑 · ", "お正月", "一、二文を書いてみよう…"}     # tên add-on, tên lễ, ô luyện viết tiếng Nhật
+KHONG_DOI_CHU = {"ことば畑", "ことば畑 · ", "お正月", "一、二文を書いてみよう…",     # tên add-on, tên lễ, ô luyện viết tiếng Nhật
+                 "写一两句话吧…"}     # 1.35.1: chữ mờ ô luyện viết tiếng Trung — theo tiếng đang viết, không theo Ngôn ngữ trong vườn
 _g = open(os.path.join(ADDON, "web", "games.js"), encoding="utf-8").read().split("\n")
 KANA_END = next((i for i, x in enumerate(_g, 1) if x.strip() == "// Chọn từ"), 700)
 lits: list[tuple[str, int, str]] = []
@@ -329,7 +330,7 @@ print("== 7. trò chơi: Python và games.js cùng chế độ")
 gsrc = open(os.path.join(ADDON, "web", "games.js"), encoding="utf-8").read()
 for game, per in F.GAME_MODES.items():
     m = re.search(r"\n    %s: \{(.*?)\n    \}" % game, gsrc[gsrc.index("const MODES = {"):], re.S)
-    for grp in ("zh", "ko"):
+    for grp in ("zh", "ko", "de", "fr"):      # 1.35: + tiếng Đức / tiếng Pháp
         js_ids = []
         if m:
             g = re.search(r"\n      %s: \[(.*?)\](?:,\n      [a-z]+: \[|\n)" % grp, m.group(1) + "\n", re.S)

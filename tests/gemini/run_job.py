@@ -4,6 +4,7 @@ Chạy:  GEMINI_API_KEY=... python run_job.py ADDON OUT_DIR [--date 2026-11-03] 
                                             [--audio chinh_ta|ca_bai|tat] [--model TÊN] [--skip-test]
        1.19 báo tiếng Anh:  ... run_job.py ADDON OUT_DIR --lang en [--level A2] [--en-deck fixtures/en_deck_a2.json]
        1.33 báo tiếng Trung / tiếng Hàn:  ... --lang zh --level HSK2 | --lang ko --level TOPIK2 (deck mẫu ở tests/fixtures)
+       1.35 báo tiếng Đức / tiếng Pháp:   ... --lang de --level A2 | --lang fr --level A2 (deck mẫu de_deck_a2 / fr_deck_a2)
        1.25.1 báo tiếng Việt: ... --lang vi [--vi-deck fixtures/vi_deck.json]; không dùng deck: --no-deck (ja / en / vi);
               chủ đề truyện: --tones kinh_di,hai
 Kết quả: OUT_DIR/bao_gemini/ (tiếng Anh: OUT_DIR/bao_gemini_en/, cùng cấu trúc user_files/ của add-on) + nhật ký sửa lỗi."""
@@ -19,7 +20,7 @@ _PV = os.path.join(_setup.HERE, "..", "..", "kotoba_daily", "pham_vi.json")
 ap.add_argument("--scope", default=_PV if os.path.isfile(_PV) else os.path.join(_setup.HERE, "..", "fixtures", "pham_vi_thu.json"))
 ap.add_argument("--deck-n5", action="store_true", help="giả lập người học N5 chỉ có deck (400 từ của giáo trình N5)")
 ap.add_argument("--audio", default="chinh_ta"); ap.add_argument("--model", default=""); ap.add_argument("--skip-test", action="store_true")
-ap.add_argument("--lang", default="ja", choices=["ja", "en", "vi", "zh", "ko"]); ap.add_argument("--level", default="A2")
+ap.add_argument("--lang", default="ja", choices=["ja", "en", "vi", "zh", "ko", "de", "fr"]); ap.add_argument("--level", default="A2")
 ap.add_argument("--vi-deck", default=os.path.join(_setup.HERE, "..", "fixtures", "vi_deck.json"))
 ap.add_argument("--no-deck", action="store_true", help="1.25.1: Không dùng deck — Gemini viết theo trình độ")
 ap.add_argument("--tones", default="am", help="1.25.1: chủ đề truyện, vd. kinh_di,hai")
@@ -31,6 +32,9 @@ ap.add_argument("--en-deck", default=os.path.join(_setup.HERE, "..", "fixtures",
 # 1.33: báo tiếng Trung (HSK) / tiếng Hàn (TOPIK) — deck mẫu tests/tools/tao_deck_133.py
 ap.add_argument("--zh-deck", default=os.path.join(_setup.HERE, "..", "fixtures", "zh_deck_hsk2.json"))
 ap.add_argument("--ko-deck", default=os.path.join(_setup.HERE, "..", "fixtures", "ko_deck_topik2.json"))
+# 1.35: báo tiếng Đức / tiếng Pháp (A1–C1) — deck mẫu A2
+ap.add_argument("--de-deck", default=os.path.join(_setup.HERE, "..", "fixtures", "de_deck_a2.json"))
+ap.add_argument("--fr-deck", default=os.path.join(_setup.HERE, "..", "fixtures", "fr_deck_a2.json"))
 ap.add_argument("--voice", default="Kore")
 ap.add_argument("--pick", action="store_true", help="1.19.1: kho 100 từ (70 phải ôn / 30 đã thuộc) như words_core.pick")
 a = ap.parse_args()
@@ -61,10 +65,10 @@ if a.no_deck:                               # 1.25.1: không dùng deck
     scope = (ai_en.scope_from_pick(empty, a.level) if a.lang == "en" else ai_vi.scope_from_pick(empty) if a.lang == "vi"
              else ai.scope_from_pick(empty, a.level if a.level in ai.LEVELS else "N4"))
     scope["khong_deck"] = True
-elif a.lang in ("zh", "ko"):                 # 1.33: kho như words_core.pick (70 từ phải ôn / còn lại đã thuộc)
+elif a.lang in ("zh", "ko", "de", "fr"):     # 1.33 / 1.35: kho như words_core.pick (70 từ phải ôn / còn lại đã thuộc)
     import random
     mod = __import__("ai_" + a.lang)
-    rows = json.load(open(a.zh_deck if a.lang == "zh" else a.ko_deck, encoding="utf-8"))["tu_vung"]
+    rows = json.load(open({"zh": a.zh_deck, "ko": a.ko_deck, "de": a.de_deck, "fr": a.fr_deck}[a.lang], encoding="utf-8"))["tu_vung"]
     items = [{"nid": i, "word": r[0], "reading": r[1], "meaning": r[2], "hanviet": r[3] if len(r) > 3 else "",
               "kind": "vocab", "learned": True, "due": False} for i, r in enumerate(rows)]
     rng = random.Random(a.date + a.lang)
@@ -92,7 +96,7 @@ elif a.deck_n5:
     scope = ai.scope_from_plants(plants, "N5")
 else:
     scope = ai.scope_from_pham_vi(raw)
-if a.pick and a.lang not in ("vi", "zh", "ko") and not a.no_deck:     # 1.19.1: lời nhắc chỉ gửi 100 từ, kiểm tra dùng mọi từ đã học
+if a.pick and a.lang not in ("vi", "zh", "ko", "de", "fr") and not a.no_deck:     # 1.19.1: lời nhắc chỉ gửi 100 từ, kiểm tra dùng mọi từ đã học
     import random
     rows = [r for r in scope["tu_vung"] if r[0]]
     items = [{"nid": i, "word": r[0], "reading": r[1], "meaning": r[2], "kind": "vocab", "learned": True, "due": False}
@@ -111,7 +115,8 @@ t0 = time.time()
 prefer = ""
 if not a.skip_test:
     r = ai.test_key(client); prefer = r["model"]; print("THỬ KHOÁ:", r["model"], "| model chữ:", r["models"][:4], "| TTS:", r["tts"])
-base = os.path.join(a.out, {"en": "bao_gemini_en", "vi": "bao_gemini_vi", "zh": "bao_gemini_zh", "ko": "bao_gemini_ko"}.get(a.lang, "bao_gemini"))
+base = os.path.join(a.out, {"en": "bao_gemini_en", "vi": "bao_gemini_vi", "zh": "bao_gemini_zh", "ko": "bao_gemini_ko",
+                            "de": "bao_gemini_de", "fr": "bao_gemini_fr"}.get(a.lang, "bao_gemini"))
 tones = [t for t in a.tones.split(",") if t]
 jopts = {"max_new": ai.NO_DECK_NEW if a.no_deck and a.lang != "vi" else 3, "short": False,
          "model": a.model, "prefer": prefer, "story": a.story, "tones": tones, "tone": tones[0] if tones else "am"}

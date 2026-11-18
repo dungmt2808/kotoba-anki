@@ -42,7 +42,7 @@ var GardenGames = (function () {
   // 1.32: chữ trang trí của trò chơi (tên trò, câu nói, khách ở Chợ sáng) theo ngôn ngữ của deck đang chơi
   let gameLang = "ja";
   const GLx = () => (typeof GardenLang !== "undefined" ? GardenLang : null);
-  function langOfGroup(group) { return group === "en" || group === "zh" || group === "ko" ? group : group === "xx" ? "" : "ja"; }
+  function langOfGroup(group) { return EU[group] || group === "en" || group === "zh" || group === "ko" ? group : group === "xx" ? "" : "ja"; }
   function glFor(group) { const L = GLx(); return L ? L.forDeck(langOfGroup(group)) : "ja"; }
   function gline(text) { const L = GLx(); return L ? L.line(text, gameLang) : text; }
   function gname(def, lang) { const L = GLx(); return L ? L.game(def.id, def.jp, lang) : def.jp; }
@@ -278,6 +278,55 @@ var GardenGames = (function () {
     return String(s || "").normalize("NFKC").replace(/[’‘`]/g, "'").toLowerCase().replace(/[-‐–—_]+/g, " ")
       .replace(/[^\p{L}\p{M}\p{N}' ]+/gu, " ").split(/\s+/).filter(Boolean).join(" ").replace(/^[' ]+|[' ]+$/g, "");
   }
+  // 1.35: tiếng Đức / tiếng Pháp — đáp án không cần mạo từ (der Hund → Hund, l'école → école), gõ không dấu cũng được:
+  // tiếng Đức ä = ae (hoặc a), ß = ss; tiếng Pháp é = e, ç = c, œ = oe. Bỏ phần số nhiều của deck tiếng Đức ("der Hund, -e").
+  const EU = { de: 1, fr: 1 };
+  const EU_ART = { de: ["der", "die", "das", "den", "dem", "des", "ein", "eine", "einen", "einem", "einer", "eines"],
+    fr: ["de la", "de l'", "le", "la", "les", "un", "une", "des", "du", "l'", "d'"] };
+  function euFold(s, lang, plain) {
+    let t = String(s || "").normalize("NFC").toLowerCase();
+    if (lang === "de" && !plain) { t = t.replace(/ä/g, "ae").replace(/ö/g, "oe").replace(/ü/g, "ue"); }
+    t = t.replace(/ß/g, "ss").replace(/œ/g, "oe").replace(/æ/g, "ae");
+    return t.normalize("NFD").replace(/\p{M}/gu, "").normalize("NFC");
+  }
+  function euStrip(s, lang) {
+    const t = String(s || "").trim(), low = t.toLowerCase().replace(/’/g, "'");
+    for (const a of EU_ART[lang] || []) {
+      if (a.endsWith("'") ? low.startsWith(a) : low.startsWith(a + " ")) { return t.slice(a.endsWith("'") ? a.length : a.length + 1).trim(); }
+    }
+    return t;
+  }
+  function euAnswers(p, lang) {
+    if (p._eu) { return p._eu; }
+    const out = [];
+    const add = (x) => [false, true].forEach((plain) => { const k = euFold(enNorm(x), lang, plain); if (k && out.indexOf(k) < 0) { out.push(k); } });
+    String(p.word || "").replace(/\[[^\]]*\]|\/[^/\s][^/]*\//g, " ").split(/[;/|]|,(?!\s*[¨\u0308]?\s*-)/).forEach((part) => {
+      if (/^\s*[¨\u0308]?\s*-/.test(part)) { return; }
+      const core = part.replace(/,\s*[¨\u0308]?\s*-[^\s,]*/g, " ").replace(/\([^)]*\)/g, " ").trim();
+      if (core) {
+        add(core);
+        const base = euStrip(core, lang);
+        add(base);
+        // 1.35.1: động từ phản thân gõ không cần sich / se (sich freuen → freuen, s'asseoir → asseoir) — như bỏ mạo từ
+        const refl = lang === "de" ? base.match(/^sich\s+(.+)$/i) : base.match(/^(?:se\s+|s['’])(.+)$/i);
+        if (refl) { add(refl[1]); }
+      }
+    });
+    p._eu = out;
+    return out;
+  }
+  // 1.35.1: chữ để khách Chợ sáng nói trong câu — bỏ ghi chú số nhiều / giống / cách viết thứ hai của deck tiếng Đức /
+  // tiếng Pháp („der Hund, -e“, bitte! → „der Hund“, bitte! · « l'œil (m) » → « l'œil »); thẻ / biển vẫn ghi đủ như deck
+  function euFace(s) {
+    const raw = String(s || "");
+    const parts = raw.replace(/\[[^\]]*\]|\/[^/\s][^/]*\//g, " ").split(/[;/|]|,(?!\s*[¨\u0308]?\s*-)/);
+    for (const part of parts) {
+      if (/^\s*[¨\u0308]?\s*-/.test(part)) { continue; }
+      const core = part.replace(/,\s*[¨\u0308]?\s*-[^\s,]*/g, " ").replace(/\([^)]*\)/g, " ").replace(/\s+/g, " ").trim();
+      if (core.replace(/[¨\u0308\-–\s]/g, "")) { return core; }
+    }
+    return raw;
+  }
   // tiếng Trung / tiếng Hàn gõ chữ: không tính dấu cách (사과주스 = 사과 주스, 你 好 = 你好)
   function noSpace(list) {
     const out = list.slice();
@@ -359,12 +408,13 @@ var GardenGames = (function () {
   // ---------------------------------------------------------------------
   const KINDS = { vocab: "Từ vựng", kanji: "Chữ Hán", grammar: "Ngữ pháp" };
   const GROUPS = { vocab: "Từ vựng", kanji: "Chữ Hán", grammar: "Ngữ pháp", en: "Tiếng Anh", zh: "Tiếng Trung",
-    ko: "Tiếng Hàn", xx: "Ngôn ngữ khác" };
-  const GROUP_IDS = ["vocab", "kanji", "grammar", "en", "zh", "ko", "xx"];
-  const GROUP_KIND = { vocab: "vocab", kanji: "kanji", grammar: "grammar", en: "vocab", zh: "vocab", ko: "vocab", xx: "vocab" };
-  const GROUP_LANG = { en: "en", zh: "zh", ko: "ko", xx: "other" };      // khoá games_lang (Python)
-  const UNIT = { vocab: "từ", kanji: "chữ", grammar: "mẫu", en: "từ", zh: "từ", ko: "từ", xx: "từ" };
-  const VOICED = { en: 1, zh: 1, ko: 1 };      // nhóm có giọng đọc của máy khi deck không có audio
+    ko: "Tiếng Hàn", de: "Tiếng Đức", fr: "Tiếng Pháp", xx: "Ngôn ngữ khác" };
+  const GROUP_IDS = ["vocab", "kanji", "grammar", "en", "zh", "ko", "de", "fr", "xx"];
+  const GROUP_KIND = { vocab: "vocab", kanji: "kanji", grammar: "grammar", en: "vocab", zh: "vocab", ko: "vocab", de: "vocab",
+    fr: "vocab", xx: "vocab" };
+  const GROUP_LANG = { en: "en", zh: "zh", ko: "ko", de: "de", fr: "fr", xx: "other" };      // khoá games_lang (Python)
+  const UNIT = { vocab: "từ", kanji: "chữ", grammar: "mẫu", en: "từ", zh: "từ", ko: "từ", de: "từ", fr: "từ", xx: "từ" };
+  const VOICED = { en: 1, zh: 1, ko: 1, de: 1, fr: 1 };      // nhóm có giọng đọc của máy khi deck không có audio
   // Tên "mặt" của note theo nhóm (dùng trong lý do thiếu trường)
   const FACE_NAME = {
     vocab: { word: "chữ", meaning: "nghĩa", reading: "cách đọc", audio: "audio của từ",
@@ -380,7 +430,11 @@ var GardenGames = (function () {
     zh: { word: "chữ", meaning: "nghĩa", reading: "pinyin", hanviet: "Hán Việt", audio: "audio (hoặc giọng đọc tiếng Trung của máy)",
       exaudio: "audio câu ví dụ", cloze: "câu ví dụ chứa đúng từ đó" },
     ko: { word: "từ", meaning: "nghĩa", reading: "phiên âm", hanviet: "Hán Việt", audio: "audio (hoặc giọng đọc tiếng Hàn của máy)",
-      exaudio: "audio câu ví dụ", cloze: "câu ví dụ chứa đúng từ đó" }
+      exaudio: "audio câu ví dụ", cloze: "câu ví dụ chứa đúng từ đó" },
+    de: { word: "từ", meaning: "nghĩa", reading: "phiên âm", audio: "audio (hoặc giọng đọc tiếng Đức của máy)",
+      exaudio: "audio câu ví dụ", cloze: "câu ví dụ chứa từ đó" },
+    fr: { word: "từ", meaning: "nghĩa", reading: "phiên âm", audio: "audio (hoặc giọng đọc tiếng Pháp của máy)",
+      exaudio: "audio câu ví dụ", cloze: "câu ví dụ chứa từ đó" }
   };
   // Mặt → vai trò (trường) trong Cấu hình trường
   const FACE_ROLE = { word: ["word"], meaning: ["meaning"], reading: ["reading", "kun"], hanviet: ["hanviet"],
@@ -404,6 +458,12 @@ var GardenGames = (function () {
       { id: "meaning", label: "Nghe → chọn nghĩa", ans: "meaning", alt: [["audio", "meaning"]] }],
       ko: [{ id: "word", label: "Nghe → chọn từ", ans: "word", alt: [["audio"]],
         desc: "Nghe đọc từ tiếng Hàn rồi chọn đúng chữ trên biển cây." },
+      { id: "meaning", label: "Nghe → chọn nghĩa", ans: "meaning", alt: [["audio", "meaning"]] }],
+      de: [{ id: "word", label: "Nghe → chọn từ", ans: "word", alt: [["audio"]],
+        desc: "Nghe đọc từ tiếng Đức rồi chọn đúng chữ trên biển cây." },
+      { id: "meaning", label: "Nghe → chọn nghĩa", ans: "meaning", alt: [["audio", "meaning"]] }],
+      fr: [{ id: "word", label: "Nghe → chọn từ", ans: "word", alt: [["audio"]],
+        desc: "Nghe đọc từ tiếng Pháp rồi chọn đúng chữ trên biển cây." },
       { id: "meaning", label: "Nghe → chọn nghĩa", ans: "meaning", alt: [["audio", "meaning"]] }]
     },
     market: {
@@ -434,6 +494,14 @@ var GardenGames = (function () {
       ko: [{ id: "mix", label: "Trộn", alt: [["meaning", "word"], ["word", "meaning"]] },
         { id: "meaning-word", label: "Nghĩa → Từ", alt: [["meaning", "word"]] },
         { id: "word-meaning", label: "Từ → Nghĩa", alt: [["word", "meaning"]] },
+        { id: "reading-word", label: "Phiên âm → Từ", alt: [["reading", "word"]] }],
+      de: [{ id: "mix", label: "Trộn", alt: [["meaning", "word"], ["word", "meaning"]] },
+        { id: "meaning-word", label: "Nghĩa → Từ", alt: [["meaning", "word"]] },
+        { id: "word-meaning", label: "Từ → Nghĩa", alt: [["word", "meaning"]] },
+        { id: "reading-word", label: "Phiên âm → Từ", alt: [["reading", "word"]] }],
+      fr: [{ id: "mix", label: "Trộn", alt: [["meaning", "word"], ["word", "meaning"]] },
+        { id: "meaning-word", label: "Nghĩa → Từ", alt: [["meaning", "word"]] },
+        { id: "word-meaning", label: "Từ → Nghĩa", alt: [["word", "meaning"]] },
         { id: "reading-word", label: "Phiên âm → Từ", alt: [["reading", "word"]] }]
     },
     crow: {
@@ -462,7 +530,15 @@ var GardenGames = (function () {
       ko: [{ id: "spell", label: "Nghĩa → gõ chữ Hàn", show: "meaning", type: "spell", alt: [["meaning"]],
         desc: "Quạ mang nghĩa bay tới. Gõ từ tiếng Hàn để đuổi." },
       { id: "answer", label: "Từ → gõ nghĩa", show: "word", type: "spell_m", alt: [["meaning"]],
-        desc: "Quạ mang từ tiếng Hàn bay tới. Gõ đúng nghĩa tiếng Việt để đuổi." }]
+        desc: "Quạ mang từ tiếng Hàn bay tới. Gõ đúng nghĩa tiếng Việt để đuổi." }],
+      de: [{ id: "spell", label: "Nghĩa → gõ từ tiếng Đức", show: "meaning", type: "spell", alt: [["meaning"]],
+        desc: "Quạ mang nghĩa bay tới. Gõ từ tiếng Đức để đuổi (không cần der / die / das; ä gõ ae, ß gõ ss)." },
+      { id: "answer", label: "Từ → gõ nghĩa", show: "word", type: "spell_m", alt: [["meaning"]],
+        desc: "Quạ mang từ tiếng Đức bay tới. Gõ đúng nghĩa tiếng Việt để đuổi." }],
+      fr: [{ id: "spell", label: "Nghĩa → gõ từ tiếng Pháp", show: "meaning", type: "spell", alt: [["meaning"]],
+        desc: "Quạ mang nghĩa bay tới. Gõ từ tiếng Pháp để đuổi (không cần le / la; gõ không dấu cũng được)." },
+      { id: "answer", label: "Từ → gõ nghĩa", show: "word", type: "spell_m", alt: [["meaning"]],
+        desc: "Quạ mang từ tiếng Pháp bay tới. Gõ đúng nghĩa tiếng Việt để đuổi." }]
     },
     memory: {
       vocab: [{ id: "mix", label: "Trộn", alt: [["meaning"], ["reading"]] },
@@ -485,6 +561,12 @@ var GardenGames = (function () {
         { id: "hanviet", label: "Chữ ↔ Hán Việt", alt: [["hanviet"]] }],
       ko: [{ id: "mix", label: "Trộn", alt: [["meaning"], ["reading"]] },
         { id: "meaning", label: "Từ ↔ Nghĩa", alt: [["meaning"]] },
+        { id: "reading", label: "Từ ↔ Phiên âm", alt: [["reading"]] }],
+      de: [{ id: "mix", label: "Trộn", alt: [["meaning"], ["reading"]] },
+        { id: "meaning", label: "Từ ↔ Nghĩa", alt: [["meaning"]] },
+        { id: "reading", label: "Từ ↔ Phiên âm", alt: [["reading"]] }],
+      fr: [{ id: "mix", label: "Trộn", alt: [["meaning"], ["reading"]] },
+        { id: "meaning", label: "Từ ↔ Nghĩa", alt: [["meaning"]] },
         { id: "reading", label: "Từ ↔ Phiên âm", alt: [["reading"]] }]
     },
     cloze: {
@@ -497,7 +579,11 @@ var GardenGames = (function () {
         desc: "Câu ví dụ bị che một từ. Chọn từ đúng để điền." }],
       xx: [{ id: "word", label: "Điền từ vào câu ví dụ", alt: [["cloze"]] }],
       zh: [{ id: "word", label: "Điền từ vào câu ví dụ", alt: [["cloze"]] }],
-      ko: [{ id: "word", label: "Điền từ vào câu ví dụ", alt: [["cloze"]] }]
+      ko: [{ id: "word", label: "Điền từ vào câu ví dụ", alt: [["cloze"]] }],
+      de: [{ id: "word", label: "Điền từ vào câu ví dụ", alt: [["cloze"]],
+        desc: "Câu ví dụ tiếng Đức bị che một từ. Chọn từ đúng để điền." }],
+      fr: [{ id: "word", label: "Điền từ vào câu ví dụ", alt: [["cloze"]],
+        desc: "Câu ví dụ tiếng Pháp bị che một từ. Chọn từ đúng để điền." }]
     }
   };
   const KIND_DESC = {
@@ -506,7 +592,8 @@ var GardenGames = (function () {
       grammar: "Khách hỏi theo nghĩa hoặc theo mẫu ngữ pháp, bán đúng trong 75 giây." },
     memory: { en: "Lật thẻ tìm cặp từ ↔ nghĩa hoặc phiên âm.",
       xx: "Lật thẻ tìm cặp từ ↔ nghĩa hoặc phiên âm.",
-      zh: "Lật thẻ tìm cặp chữ ↔ nghĩa, pinyin hoặc Hán Việt.", ko: "Lật thẻ tìm cặp từ ↔ nghĩa hoặc phiên âm." }
+      zh: "Lật thẻ tìm cặp chữ ↔ nghĩa, pinyin hoặc Hán Việt.", ko: "Lật thẻ tìm cặp từ ↔ nghĩa hoặc phiên âm.",
+      de: "Lật thẻ tìm cặp từ ↔ nghĩa hoặc phiên âm.", fr: "Lật thẻ tìm cặp từ ↔ nghĩa hoặc phiên âm." }
   };
 
   // cách đọc viết sau chữ: tiếng Nhật trong ngoặc （…）, phiên âm tiếng Anh viết liền (đã có / /)
@@ -523,6 +610,7 @@ var GardenGames = (function () {
     if (!latin(p)) { return k; }
     if (p.lang === "zh" && (k === "vocab" || k === "kanji")) { return "zh"; }      // 1.32
     if (p.lang === "ko" && k === "vocab") { return "ko"; }
+    if (EU[p.lang] && k === "vocab") { return p.lang; }      // 1.35: tiếng Đức / tiếng Pháp
     return k === "vocab" ? (p.lang === "en" ? "en" : "xx") : "other";
   }
   function has(p, f) {
@@ -593,7 +681,8 @@ var GardenGames = (function () {
   function supportFor(kind, roles, lang) {
     const hasRole = (f) => (FACE_ROLE[f] || []).some((r) => roles && roles[r]);
     const group = !lang || lang === "ja" ? kind : (lang === "zh" && (kind === "vocab" || kind === "kanji")) ? "zh"
-      : (lang === "ko" && kind === "vocab") ? "ko" : (kind === "vocab" ? (lang === "en" ? "en" : "xx") : "other");
+      : (lang === "ko" && kind === "vocab") ? "ko" : (EU[lang] && kind === "vocab") ? lang
+        : (kind === "vocab" ? (lang === "en" ? "en" : "xx") : "other");
     return DEFS.map((def) => {
       const list = GROUPS[group] ? modeList(def.id, group) : [];
       const out = { id: def.id, name: def.vi, jp: def.jp, ok: false, modes: [], why: "" };
@@ -725,7 +814,7 @@ var GardenGames = (function () {
     if (!mode) { return { items: [], targets: [], learnedOnly: false, kind: kind, group: group, mode: null, base: base }; }
     let items = base;
     if (def.id === "market" || def.id === "memory" || def.id === "crow") { items = base.filter((p) => fits(p, mode)); }
-    if (def.id === "crow" && (group === "xx" || ((group === "zh" || group === "ko") && mode.type !== "pinyin"))) { items = items.filter((p) => typeable(p, mode)); }   // 1.25.1
+    if (def.id === "crow" && (group === "xx" || ((group === "zh" || group === "ko" || EU[group]) && mode.type !== "pinyin"))) { items = items.filter((p) => typeable(p, mode)); }   // 1.25.1 · 1.35
     else if (def.id === "listen") { items = base.filter((p) => has(p, mode.ans)); }
     let targets = def.id === "listen" || def.id === "cloze" ? items.filter((p) => fits(p, mode)) : items.slice();
     const learned = targets.filter((p) => p.stage >= 1);
@@ -1546,7 +1635,8 @@ var GardenGames = (function () {
         crates.appendChild(b);
       });
       const jpAsk = ask === "word" || ask === "reading";
-      const text = (jpAsk ? ASK_WORD : ASK_MEANING)[rnd(3)].replace("%s", faceText(target, ask, kind));
+      const said = jpAsk && ask === "word" && EU[pool.group] ? euFace(faceText(target, ask, kind)) : faceText(target, ask, kind);
+      const text = (jpAsk ? ASK_WORD : ASK_MEANING)[rnd(3)].replace("%s", said);
       bubble.textContent = text;
       bubble.hidden = true;
     }
@@ -1767,7 +1857,9 @@ var GardenGames = (function () {
     const crows = [];
     const xx = pool.group === "xx" || pool.group === "zh" || pool.group === "ko";   // 1.25.1 / 1.32: đáp án là đúng chữ của thẻ
     const cjk = cm.type === "spell" && (pool.group === "zh" || pool.group === "ko");   // 1.34.1: gõ chữ Trung / Hàn — bỏ dấu cách
+    const eu = cm.type === "spell" && EU[pool.group] ? pool.group : "";     // 1.35: gõ từ tiếng Đức / tiếng Pháp
     const answersOf = (p) => py ? (p._py || (p._py = pyAnswers(p.reading)))
+      : eu ? euAnswers(p, eu)
       : cm.type === "spell_m" ? (p._sm || (p._sm = spellAnswers(p.meaning)))
       : spell && xx ? (p._sw || (p._sw = cjk ? noSpace(spellAnswers(p.word)) : spellAnswers(p.word)))
         : spell ? enAnswers(p) : cm.type === "both" ? readingsOf(p).concat(wordForms(p)) : readingsOf(p);
@@ -1792,8 +1884,9 @@ var GardenGames = (function () {
     const row = el("div", "kb-gc-row");
     const input = el("input", "kb-gc-input");
     input.type = "text";
-    input.placeholder = cm.type === "spell_m" ? (pool.group === "zh" || pool.group === "ko" ? "Gõ nghĩa tiếng Việt…" : "Gõ mặt sau của thẻ…")
-      : py ? "Gõ pinyin… (xia4yu3, xiayu hay xià yǔ đều được)" : spell && pool.group === "zh" ? "Gõ chữ Hán… (bộ gõ tiếng Trung)"
+    input.placeholder = cm.type === "spell_m" ? (pool.group === "zh" || pool.group === "ko" || EU[pool.group] ? "Gõ nghĩa tiếng Việt…" : "Gõ mặt sau của thẻ…")
+      : py ? "Gõ pinyin… (xia4yu3, xiayu hay xià yǔ đều được)" : eu === "de" ? "Gõ từ tiếng Đức… (ä = ae, ß = ss, không cần der / die / das)"
+      : eu === "fr" ? "Gõ từ tiếng Pháp… (không dấu cũng được, không cần le / la)" : spell && pool.group === "zh" ? "Gõ chữ Hán… (bộ gõ tiếng Trung)"
         : spell && pool.group === "ko" ? "Gõ chữ Hàn… (bộ gõ Hangul)" : spell && xx ? "Gõ từ…" : spell ? "Gõ từ tiếng Anh… (vd. apple, look up)" : kind === "kanji" ? (cm.type === "both" ? "Gõ âm On / Kun (romaji, kana) hoặc chữ Hán (IME)…"
       : "Gõ âm On hoặc Kun… (romaji: chikara / kana)")
       : cm.type === "both" ? "Gõ từ tiếng Nhật: romaji (saraishuu), kana hoặc kanji (IME)…"
@@ -1856,7 +1949,7 @@ var GardenGames = (function () {
       if (py) {
         typed = pyKey(raw).l ? [pyTyped(raw)] : [];
       } else if (spell) {
-        typed = enNorm(raw) ? (cjk ? noSpace([enNorm(raw)]) : [enNorm(raw)]) : [];
+        typed = enNorm(raw) ? (cjk ? noSpace([enNorm(raw)]) : eu ? [euFold(enNorm(raw), eu)] : [enNorm(raw)]) : [];
       } else {
         const vars = kanaVariants(raw);
         const shown = vars.find((v) => flyingNow.some((c) => crowAnswers(c).some((r) => r.indexOf(normKana(v)) === 0))) || vars[0];

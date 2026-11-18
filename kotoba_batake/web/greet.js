@@ -160,7 +160,7 @@ var GardenGreet = (function () {
     const [hi, vi] = hello(g, st);
     const hiEl = el("div", "kb-greet-hi", hi); hiEl.setAttribute("lang", "ja"); bub.appendChild(hiEl);
     if (typeof GardenLang !== "undefined" && GardenLang.cur() !== "ja") {        // 1.32
-      if (GardenLang.cur() === "vi") { hiEl.setAttribute("lang", "vi"); } else { GardenLang.fill(hiEl, hi); if (GardenLang.cur() === "en") { hiEl.setAttribute("lang", "en"); } }
+      if (GardenLang.cur() === "vi") { hiEl.setAttribute("lang", "vi"); } else { GardenLang.fill(hiEl, hi); if (GardenLang.cur() === "en") { hiEl.setAttribute("lang", "en"); } }   // 1.35: de / fr do fill() gắn lang
     }
     if (vi) { bub.appendChild(el("div", "kb-greet-vi", vi)); }
     const lines = (g.news || []).slice(0, 3);

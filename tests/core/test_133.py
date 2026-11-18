@@ -344,6 +344,7 @@ with tarfile.open(fileobj=io.BytesIO(ma_cu.archive(ROOT, "d5efb47")), mode="r:*"
         if m.isfile() and m.name.count("/") == 1 and m.name.endswith(".py"):
             old_keys |= set(re.findall(r'"(kotoba_batake_[a-z0-9_]+)"', tf.extractfile(m).read().decode("utf-8")))
 diff = sorted(new_keys - old_keys - {"kotoba_batake_edit"})       # kotoba_batake_edit: vị trí cửa sổ (1.32.2, hồ sơ máy)
+diff = [k for k in diff if k not in ("kotoba_batake_paper_de", "kotoba_batake_paper_fr")]   # 1.35: báo de / fr (test_135.py)
 ok(diff == ["kotoba_batake_paper_ko", "kotoba_batake_paper_zh"] and not (old_keys - new_keys),
    "khoá collection mới chỉ kotoba_batake_paper_zh / _ko, không bỏ khoá nào: %s" % diff)
 cfg = json.load(open(os.path.join(ADDON, "config.json"), encoding="utf-8"))
@@ -378,7 +379,10 @@ for lang, cau in (("zh", "[今|jīn][天|tiān]很好。"), ("ko", "오늘 날�
     h = v_xx.how(cau, lang)
     ok(h[0] == "tts_" + lang and paper.VOICE_LABEL.get(h[0]) == "giọng máy", "%s: câu chép phát bằng giọng máy %s" % (lang, h[0]))
 src_pc = open(os.path.join(ADDON, "paper_core.py"), encoding="utf-8").read()
-ok(src_pc.count('"tts_en", "tts_zh", "tts_ko")') >= 4, "mọi chỗ coi giọng máy là có tiếng đều có tts_zh / tts_ko")
+# 1.35: danh sách giọng máy gom về paper.MACHINE_HOW (thêm tts_de / tts_fr) — không còn danh sách viết tay thiếu tiếng nào
+ok({"tts_zh", "tts_ko"} <= set(getattr(paper, "MACHINE_HOW", ())) and src_pc.count("MACHINE_HOW") >= 5
+   and '"tts", "tts_en")' not in src_pc.replace('MACHINE_HOW = ("tts", "tts_en")', ""),
+   "mọi chỗ coi giọng máy là có tiếng đều có tts_zh / tts_ko (paper.MACHINE_HOW)")
 
 print("== 10. 4 số báo Gemini thật (17–18/11, tests/fixtures/bao_133_that.json)")
 REAL = json.load(open(os.path.join(ROOT, "tests", "fixtures", "bao_133_that.json"), encoding="utf-8"))["so"]

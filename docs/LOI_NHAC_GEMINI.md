@@ -1,8 +1,8 @@
 # Lời nhắc (prompt) gửi Gemini khi viết báo — nguyên văn
 
-Xuất bằng `tests/tools/dump_prompts.py` (mã 1.33; ngày mẫu 08/11/2026, chủ đề truyện: Kinh dị nhẹ + Hài, thời tiết của vườn hôm đó: cả ngày nhiều mây). Danh sách từ ở đây rút gọn còn vài từ; mỗi số thật gửi khoảng 100 từ.
+Xuất bằng `tests/tools/dump_prompts.py` (mã 1.35; ngày mẫu 08/11/2026, chủ đề truyện: Kinh dị nhẹ + Hài, thời tiết của vườn hôm đó: cả ngày nhiều mây). Danh sách từ ở đây rút gọn còn vài từ; mỗi số thật gửi khoảng 100 từ.
 
-**Một làng, một truyện (1.25.2):** mỗi ngày Gemini viết **một bản gốc tiếng Việt** cho cả làng — kỳ truyện dài kỳ + 2–3 tin làng + mục thứ ba (thông báo / cột của một nhân vật). Thứ tự gọi: **0. lập mạch** (khoảng mỗi tuần) → **1. nhà văn** (bản gốc) → **2. biên tập** chấm 7 tiêu chí → (điểm < 4: **viết lại** một lần). Rồi mỗi báo: **3. kể lại** truyện bằng tiếng Nhật / Anh / Trung / Hàn theo trình độ (báo tiếng Việt in thẳng bản gốc) → **4. viết cả số** (chép truyện + furigana, tin làng kể lại từ tin bản gốc, câu hỏi, câu chép) → máy kiểm tra → **sửa** (≤ 2 lần) → **5. soát lần 2**. Gemini trả JSON theo khuôn cố định của từng bước. Báo thứ hai trong ngày không viết lại bản gốc.
+**Một làng, một truyện (1.25.2):** mỗi ngày Gemini viết **một bản gốc tiếng Việt** cho cả làng — kỳ truyện dài kỳ + 2–3 tin làng + mục thứ ba (thông báo / cột của một nhân vật). Thứ tự gọi: **0. lập mạch** (khoảng mỗi tuần) → **1. nhà văn** (bản gốc) → **2. biên tập** chấm 7 tiêu chí → (điểm < 4: **viết lại** một lần). Rồi mỗi báo: **3. kể lại** truyện bằng tiếng Nhật / Anh / Trung / Hàn / Đức / Pháp theo trình độ (báo tiếng Việt in thẳng bản gốc) → **4. viết cả số** (chép truyện + furigana, tin làng kể lại từ tin bản gốc, câu hỏi, câu chép) → máy kiểm tra → **sửa** (≤ 2 lần) → **5. soát lần 2**. Gemini trả JSON theo khuôn cố định của từng bước. Báo thứ hai trong ngày không viết lại bản gốc.
 
 Bản gốc thấy được: nguyên văn kỳ trước, tóm tắt các kỳ trong đợt, mạch đợt, chỗ bỏ ngỏ, nhận xét Hay / Nhạt của người đọc, ngày + mùa, thời tiết của vườn, tin làng mấy số trước (để tin nối tin).
 
@@ -1053,6 +1053,358 @@ DANH SÁCH TỪ VỰNG ĐÃ HỌC (từ = nghĩa):
 무섭다 = sợ
 친구 = bạn bè
 예쁘다 = đẹp
+
+SỐ BÁO:
+{"bai": [{"loai": "tin_lang", "tieu_de": "…", "doan": ["…"]}]}
+```
+
+## Báo tiếng Đức (Der Wortgarten, A2) — 1.35
+
+### 3. Kể lại truyện — lời nhắc
+
+```text
+KỂ LẠI kỳ 12 của truyện dài kỳ dưới đây bằng tiếng Đức trình độ A2 cho người Việt đang học. Đây là cùng một câu chuyện in trong báo làng bằng nhiều thứ tiếng: GIỮ ĐÚNG sự việc, nhân vật, lời thoại chính, chi tiết bất ngờ và móc câu cuối; không thêm chuyện mới, không bỏ móc câu.
+
+Viết lại cho hợp trình độ: câu ngắn, tự nhiên như sách đọc cho người học; được rút gọn chi tiết phụ. Chỗ nhân vật nói nhầm (lời chào, cách nói lịch sự) thì cho nhầm theo kiểu của tiếng Đức (vd. nhầm du / Sie, nhầm der / die / das).
+
+TÊN GỌI (dùng đúng):
+- Lin → Lin
+- chị Hana (chủ quán, khoảng 30 tuổi) → Hana (Wirtin, etwa 30; nicht „Oma“)
+- StackChan → StackChan
+- ông trưởng làng (không có tên riêng) → der Bürgermeister
+- Quán Kotoba (quán trọ) → das Gasthaus Kotoba
+- làng Kotoba → das Kotoba-Dorf
+- vườn Kotoba → der Kotoba-Garten
+- bác đưa thư → der Briefträger
+- con mèo hoang trắng → die weiße streunende Katze
+
+Độ dài: đúng 3 đoạn như bản gốc, mỗi đoạn 25–70 từ tiếng Đức.
+
+TỪ NGƯỜI HỌC ĐÃ HỌC (trình độ A2) — dùng khi hợp, ĐỪNG ép câu:
+das Wetter, das Gasthaus, vorbereiten, die Angst, schön, der Freund
+
+MẪU NGỮ PHÁP ĐANG HỌC (dùng 1–2 mẫu trong lời thoại nếu tự nhiên):
+- Perfekt: haben / sein + Partizip II: quá khứ (kể chuyện, văn nói)
+- können, müssen, dürfen, wollen: có thể, phải, được phép, muốn
+- weil + động từ cuối câu: bởi vì
+
+BẢN GỐC:
+{"tieu_de": "（truyện bản gốc tiếng Việt）", "doan": ["（đoạn 1）", "（đoạn 2）", "（đoạn 3）"]}
+
+Trả về đúng một object JSON theo khuôn: tieu_de (tiếng Đức, 3–8 từ), doan = các đoạn tiếng Đức (chữ trơn, không đánh dấu; viết hoa danh từ, dùng ä ö ü ß; thoại trong „…“), dich = bản dịch tiếng Việt TỰ NHIÊN của từng đoạn bạn vừa viết (cùng số phần tử, không có chữ Đức; tên riêng viết Latin: Lin, Hana, Stack-chan, quán Kotoba, làng Kotoba; không ghi chú trong ngoặc), tu_moi (≤ 2 từ khó ngoài danh sách: w, r = phiên âm IPA /…/ hoặc rỗng, m = nghĩa tiếng Việt).
+```
+
+### 4. Viết cả số — system
+
+```text
+Bạn là người Đức bản xứ, viết báo làng "Der Wortgarten" (bản tiếng Đức của 畑新聞) cho người Việt Nam đang học tiếng Đức trình độ A2 (khung CEFR, như kỳ thi Goethe).
+Viết tiếng Đức tự nhiên, đúng ngữ pháp và chính tả: câu ngắn và rõ (trung bình khoảng 11 từ một câu), ấm áp, hơi hài hước; không dịch từng chữ từ tiếng Việt.
+Chỉ dùng ngữ pháp tới trình độ A2 (danh sách được cho, hoặc đơn giản hơn). Dùng THẬT NHIỀU từ trong danh sách từ vựng đã học, còn lại là từ rất cơ bản; từ khó ngoài danh sách chỉ khi thật cần, khai báo trong tu_moi.
+Nội dung hoàn toàn mới, không chép đoạn văn của sách giáo khoa nào.
+Độ dài phần bài của cả số báo: 160–340 từ.
+
+QUY TẮC (máy sẽ kiểm tra, sai là phải viết lại):
+- Bài, tiêu đề, câu hỏi, lựa chọn, câu chép chính tả viết HOÀN TOÀN bằng tiếng Đức: không chữ Hán / kana / Hangul, không chữ tiếng Việt, không phiên âm. StackChan viết StackChan.
+- Chữ trơn, KHÔNG đánh dấu gì: không [ ] { } |, không markdown (* _ #). Máy tự gạch chân từ đã học để người đọc bấm tra.
+- Dùng từ trong DANH SÁCH TỪ VỰNG ĐÃ HỌC đúng nghĩa đã ghi; được chia động từ, đổi số nhiều, đổi đuôi tính từ bình thường.
+- Viết hoa mọi danh từ như tiếng Đức chuẩn; dùng ä ö ü ß đúng chính tả (không viết ae / oe / ue).
+- Văn kể dùng Präteritum hoặc Perfekt thống nhất trong một bài.
+- Phần tiếng Việt (giai_thich, tom_tat, ky_truoc, tom_tat_truyen, nghĩa m trong tu_moi) viết tiếng Việt CÓ DẤU.
+
+Trả về đúng MỘT object JSON theo khuôn, không viết gì thêm.
+```
+
+### 4. Viết cả số — lời nhắc
+
+```text
+HÔM NAY: Chủ Nhật, ngày 8/11/2026, mùa thu. Số báo 30. Thời tiết ở làng: cả ngày nhiều mây.
+
+CẤU TRÚC: bai gồm đúng 2 bài theo thứ tự (KHÔNG viết truyện dài kỳ: máy tự chèn truyện đã viết sẵn làm bài giữa):
+1. loai "tin_lang": tin trong làng Kotoba-Dorf và khu vườn Kotoba-Garten, 2–3 đoạn (đừng kể lại truyện).
+2. loai "thong_bao": Dorfnachrichten — 2–3 mục thông báo của làng, mỗi mục là một đoạn bắt đầu bằng "◆ ", tiêu đề "Dorfnachrichten".
+Tiêu đề viết kiểu tiêu đề báo tiếng Đức, ngắn (3–8 từ).
+cau_hoi: 2–3 câu trắc nghiệm TIẾNG ĐỨC về nội dung CẢ SỐ (nên có 1 câu về truyện), mỗi câu đúng 3 lựa chọn tiếng Đức ngắn, CHỈ MỘT đáp án đúng, "dung" là vị trí đáp án đúng tính từ 0 (đổi vị trí giữa các câu), "giai_thich" tiếng Việt chỉ ra câu nào trong bài cho biết đáp án.
+chinh_ta: 2–3 câu CHÉP NGUYÊN VĂN từ bài hoặc truyện (một câu trọn vẹn, 4–13 từ, chép đúng cả dấu câu), nên chứa từ trong danh sách từ vựng, KHÔNG có tên riêng và không phải lời thoại trong ngoặc kép; "them_dap_an": thường để rỗng.
+ĐỘ DÀI: hai bài này tổng khoảng 64–255 từ (truyện không tính).
+TRUYỆN ĐÃ VIẾT SẴN (kỳ 12, để đặt câu hỏi / câu chép):
+{"tieu_de": "（truyện đã kể lại bằng tiếng của báo）", "doan": ["（đoạn 1）", "（đoạn 2）", "（đoạn 3）"]}
+
+TIN HÔM NAY CỦA LÀNG (bản gốc tiếng Việt — báo làng in bằng nhiều thứ tiếng, mọi bản đăng cùng tin):
+- （tin 1）: （nội dung tin 1）
+- （tin 2）: （nội dung tin 2）
+→ Bài tin_lang KỂ LẠI đúng các tin này bằng tiếng Đức đúng trình độ (được rút gọn, gộp, chọn 2–3 tin); KHÔNG bịa tin khác.
+MỤC THỨ BA (bản gốc): （thông báo của làng） — ◆ （mục 1） / ◆ （mục 2）
+→ Bài thứ 3 kể lại mục này bằng tiếng Đức (giữ ý, giữ dạng ◆ nếu có).
+
+dich: mỗi bài thêm "dich" = bản dịch tiếng Việt TỰ NHIÊN (có dấu) của từng đoạn (cùng số phần tử với doan; không ghi chú trong ngoặc). Người học bấm "Dịch" mới thấy.
+
+mau_cau: 2–4 id lấy đúng từ DANH SÁCH NGỮ PHÁP (cột đầu), là các mẫu được nhấn mạnh; mỗi mẫu xuất hiện ít nhất 2 lần. Phần lớn là mẫu TRỌNG TÂM (đúng trình độ A2), thêm 1 mẫu thấp hơn để ôn.
+Dùng 10–20 từ khác nhau trong DANH SÁCH TỪ VỰNG ĐÃ HỌC (ưu tiên từ trọng tâm, từ sắp quên). tu_moi tối đa 3 từ ngoài danh sách thật sự cần (w = từ tiếng Đức ở dạng từ điển — danh từ kèm mạo từ; r = phiên âm IPA dạng /.../ nếu chắc, không thì rỗng; m = nghĩa tiếng Việt). tom_tat: 1–2 câu tiếng Việt tóm tắt số báo.
+
+TỪ TRỌNG TÂM (người học phải ôn hôm nay): das Wetter, das Gasthaus, vorbereiten, die Angst
+Dùng được bao nhiêu thì dùng, tối thiểu khoảng 8 từ; từ nào không hợp thì bỏ, ĐỪNG ép câu. Nhìn danh sách rồi chọn chủ đề của số báo sao cho nhiều từ hợp nhau. Gợi ý: số đếm / giờ / ngày / giá / số lượng → Dorfnachrichten hoặc tin làng; động từ / tính từ / cảm xúc → truyện; nơi chốn / sự kiện / thời tiết → tin làng.
+
+DANH SÁCH NGỮ PHÁP (id|mẫu|nghĩa) — chỉ dùng ngữ pháp này và đơn giản hơn:
+de1-01|sein: ich bin, du bist, er ist|là (động từ sein)
+de1-02|haben: ich habe, du hast|có
+de1-03|der / die / das + Nomen|mạo từ xác định theo giống
+de1-04|ein / eine / kein|mạo từ không xác định; không có (danh từ)
+de1-05|Verb ở vị trí thứ hai|động từ đứng thứ hai trong câu
+de1-06|nicht|không (phủ định)
+de1-07|W-Fragen: wer, was, wo, wann, wie|câu hỏi với từ để hỏi
+de1-08|Ich möchte …|tôi muốn … (lịch sự)
+de1-09|Akkusativ: den / einen|tân ngữ trực tiếp (giống đực)
+de1-10|in / an / auf + Dativ (Wo?)|ở đâu
+de2-01|Perfekt: haben / sein + Partizip II|quá khứ (kể chuyện, văn nói) (TRỌNG TÂM)
+de2-02|können, müssen, dürfen, wollen|có thể, phải, được phép, muốn (TRỌNG TÂM)
+de2-03|weil + động từ cuối câu|bởi vì (TRỌNG TÂM)
+de2-04|dass + động từ cuối câu|rằng (TRỌNG TÂM)
+de2-05|Dativ: dem / der / einem|tặng cách (cho ai) (TRỌNG TÂM)
+de2-06|trennbare Verben: aufstehen → ich stehe auf|động từ tách (TRỌNG TÂM)
+de2-07|Komparativ: größer als|so sánh hơn (TRỌNG TÂM)
+de2-08|Präteritum: war, hatte|quá khứ của sein / haben (TRỌNG TÂM)
+de2-09|wenn …, dann …|khi / nếu …, thì … (TRỌNG TÂM)
+
+DANH SÁCH TỪ VỰNG ĐÃ HỌC (từ = nghĩa):
+das Wetter = thời tiết
+das Gasthaus = quán trọ
+vorbereiten = chuẩn bị
+die Angst = nỗi sợ
+der Freund = bạn bè
+schön = đẹp
+
+VÍ DỤ ĐỊNH DẠNG (chỉ xem hình thức, không chép nội dung):
+{"loai":"tin_lang","tieu_de":"StackChan streicht die alte Brücke","doan":["Gestern Nachmittag ging StackChan mit einem kleinen Farbkasten zur alten Brücke. „Ich möchte die Brücke glücklich machen!“, sagte StackChan."]}
+```
+
+### 5. Soát lần 2 — lời nhắc (cuối lời nhắc là cả số báo JSON)
+
+```text
+Bạn là biên tập viên người Đức, soát lại số báo tiếng Đức dưới đây dành cho người Việt học tiếng Đức trình độ A2 trước khi in.
+Kiểm tra kỹ từng câu:
+1. Tiếng Đức có tự nhiên và đúng ngữ pháp không (giống der / die / das, cách (Nominativ / Akkusativ / Dativ), vị trí động từ, chia động từ, viết hoa danh từ).
+2. Ngữ pháp và độ dài câu có vượt trình độ A2 không → viết lại đơn giản, tách câu dài.
+3. Từ khó hơn trình độ A2 (không có trong danh sách từ vựng, không phải từ rất cơ bản) → đổi từ dễ hơn, hoặc khai báo trong tu_moi (kèm nghĩa tiếng Việt).
+4. GIỮ các từ trong danh sách từ vựng đã học (đừng đổi sang từ đồng nghĩa): đó là từ người học đang ôn.
+5. Mỗi câu hỏi có đúng MỘT đáp án đúng, đáp án đó có trong bài, "dung" chỉ đúng vị trí; giai_thich đúng.
+6. Câu chép chính tả có chép nguyên văn một câu trong bài không.
+7. Tiêu đề, tom_tat, ky_truoc, giai_thich (tiếng Việt có dấu) viết đúng nghĩa với bài.
+8. Lời thoại: rõ ai nói câu nào; nhân vật nhất quán (Hana là chủ Gasthaus Kotoba, Lin là nhân viên mới).
+9. Số báo thường phải đủ 3 bài: tin_lang, truyen, rồi thong_bao hoặc cot.
+Ghi mỗi chỗ đã sửa vào van_de (cho = vị trí như bai[1].doan[0], loi = lỗi gì bằng tiếng Việt, sua = câu mới). Không có lỗi thì van_de rỗng. "bao" là toàn bộ số báo sau khi sửa (không có lỗi thì trả nguyên). Giữ nguyên các id mau_cau, số kỳ truyện. Bài truyện (loai truyen) đã qua biên tập: chỉ sửa lỗi thật sự, không viết lại. "dich" (bản dịch tiếng Việt) giữ nguyên, chỉ sửa câu dịch của đoạn bạn vừa sửa.
+
+QUY TẮC (máy sẽ kiểm tra, sai là phải viết lại):
+- Bài, tiêu đề, câu hỏi, lựa chọn, câu chép chính tả viết HOÀN TOÀN bằng tiếng Đức: không chữ Hán / kana / Hangul, không chữ tiếng Việt, không phiên âm. StackChan viết StackChan.
+- Chữ trơn, KHÔNG đánh dấu gì: không [ ] { } |, không markdown (* _ #). Máy tự gạch chân từ đã học để người đọc bấm tra.
+- Dùng từ trong DANH SÁCH TỪ VỰNG ĐÃ HỌC đúng nghĩa đã ghi; được chia động từ, đổi số nhiều, đổi đuôi tính từ bình thường.
+- Viết hoa mọi danh từ như tiếng Đức chuẩn; dùng ä ö ü ß đúng chính tả (không viết ae / oe / ue).
+- Văn kể dùng Präteritum hoặc Perfekt thống nhất trong một bài.
+- Phần tiếng Việt (giai_thich, tom_tat, ky_truoc, tom_tat_truyen, nghĩa m trong tu_moi) viết tiếng Việt CÓ DẤU.
+
+DANH SÁCH NGỮ PHÁP:
+de1-01|sein: ich bin, du bist, er ist|là (động từ sein)
+de1-02|haben: ich habe, du hast|có
+de1-03|der / die / das + Nomen|mạo từ xác định theo giống
+de1-04|ein / eine / kein|mạo từ không xác định; không có (danh từ)
+de1-05|Verb ở vị trí thứ hai|động từ đứng thứ hai trong câu
+de1-06|nicht|không (phủ định)
+de1-07|W-Fragen: wer, was, wo, wann, wie|câu hỏi với từ để hỏi
+de1-08|Ich möchte …|tôi muốn … (lịch sự)
+de1-09|Akkusativ: den / einen|tân ngữ trực tiếp (giống đực)
+de1-10|in / an / auf + Dativ (Wo?)|ở đâu
+de2-01|Perfekt: haben / sein + Partizip II|quá khứ (kể chuyện, văn nói) (TRỌNG TÂM)
+de2-02|können, müssen, dürfen, wollen|có thể, phải, được phép, muốn (TRỌNG TÂM)
+de2-03|weil + động từ cuối câu|bởi vì (TRỌNG TÂM)
+de2-04|dass + động từ cuối câu|rằng (TRỌNG TÂM)
+de2-05|Dativ: dem / der / einem|tặng cách (cho ai) (TRỌNG TÂM)
+de2-06|trennbare Verben: aufstehen → ich stehe auf|động từ tách (TRỌNG TÂM)
+de2-07|Komparativ: größer als|so sánh hơn (TRỌNG TÂM)
+de2-08|Präteritum: war, hatte|quá khứ của sein / haben (TRỌNG TÂM)
+de2-09|wenn …, dann …|khi / nếu …, thì … (TRỌNG TÂM)
+
+DANH SÁCH TỪ VỰNG ĐÃ HỌC (từ = nghĩa):
+das Wetter = thời tiết
+das Gasthaus = quán trọ
+vorbereiten = chuẩn bị
+die Angst = nỗi sợ
+der Freund = bạn bè
+schön = đẹp
+
+SỐ BÁO:
+{"bai": [{"loai": "tin_lang", "tieu_de": "…", "doan": ["…"]}]}
+```
+
+## Báo tiếng Pháp (Le Jardin des Mots, A2) — 1.35
+
+### 3. Kể lại truyện — lời nhắc
+
+```text
+KỂ LẠI kỳ 12 của truyện dài kỳ dưới đây bằng tiếng Pháp trình độ A2 cho người Việt đang học. Đây là cùng một câu chuyện in trong báo làng bằng nhiều thứ tiếng: GIỮ ĐÚNG sự việc, nhân vật, lời thoại chính, chi tiết bất ngờ và móc câu cuối; không thêm chuyện mới, không bỏ móc câu.
+
+Viết lại cho hợp trình độ: câu ngắn, tự nhiên như sách đọc cho người học; được rút gọn chi tiết phụ. Chỗ nhân vật nói nhầm (lời chào, cách nói lịch sự) thì cho nhầm theo kiểu của tiếng Pháp (vd. nhầm tu / vous, nhầm le / la).
+
+TÊN GỌI (dùng đúng):
+- Lin → Lin
+- chị Hana (chủ quán, khoảng 30 tuổi) → Hana (l'aubergiste, la trentaine ; pas « grand-mère »)
+- StackChan → StackChan
+- ông trưởng làng (không có tên riêng) → le maire
+- Quán Kotoba (quán trọ) → l'auberge Kotoba
+- làng Kotoba → le village de Kotoba
+- vườn Kotoba → le jardin Kotoba
+- bác đưa thư → le facteur
+- con mèo hoang trắng → le chat errant blanc
+
+Độ dài: đúng 3 đoạn như bản gốc, mỗi đoạn 25–70 từ tiếng Pháp.
+
+TỪ NGƯỜI HỌC ĐÃ HỌC (trình độ A2) — dùng khi hợp, ĐỪNG ép câu:
+le temps, l'auberge, préparer, la peur, beau, l'ami
+
+MẪU NGỮ PHÁP ĐANG HỌC (dùng 1–2 mẫu trong lời thoại nếu tự nhiên):
+- passé composé avec avoir / être: quá khứ kép
+- imparfait: quá khứ miêu tả, thói quen
+- pronoms COD: le / la / les: đại từ tân ngữ trực tiếp
+
+BẢN GỐC:
+{"tieu_de": "（truyện bản gốc tiếng Việt）", "doan": ["（đoạn 1）", "（đoạn 2）", "（đoạn 3）"]}
+
+Trả về đúng một object JSON theo khuôn: tieu_de (tiếng Pháp, 3–8 từ), doan = các đoạn tiếng Pháp (chữ trơn, không đánh dấu; đúng dấu é è ê à ç; thoại trong « … »), dich = bản dịch tiếng Việt TỰ NHIÊN của từng đoạn bạn vừa viết (cùng số phần tử, không có chữ Pháp; tên riêng viết Latin: Lin, Hana, Stack-chan, quán Kotoba, làng Kotoba; không ghi chú trong ngoặc), tu_moi (≤ 2 từ khó ngoài danh sách: w, r = phiên âm IPA /…/ hoặc rỗng, m = nghĩa tiếng Việt).
+```
+
+### 4. Viết cả số — system
+
+```text
+Bạn là người Pháp bản xứ, viết báo làng "Le Jardin des Mots" (bản tiếng Pháp của 畑新聞) cho người Việt Nam đang học tiếng Pháp trình độ A2 (khung CEFR, như kỳ thi DELF).
+Viết tiếng Pháp tự nhiên, đúng ngữ pháp và chính tả: câu ngắn và rõ (trung bình khoảng 11 từ một câu), ấm áp, hơi hài hước; không dịch từng chữ từ tiếng Việt.
+Chỉ dùng ngữ pháp tới trình độ A2 (danh sách được cho, hoặc đơn giản hơn). Dùng THẬT NHIỀU từ trong danh sách từ vựng đã học, còn lại là từ rất cơ bản; từ khó ngoài danh sách chỉ khi thật cần, khai báo trong tu_moi.
+Nội dung hoàn toàn mới, không chép đoạn văn của sách giáo khoa nào.
+Độ dài phần bài của cả số báo: 160–340 từ.
+
+QUY TẮC (máy sẽ kiểm tra, sai là phải viết lại):
+- Bài, tiêu đề, câu hỏi, lựa chọn, câu chép chính tả viết HOÀN TOÀN bằng tiếng Pháp: không chữ Hán / kana / Hangul, không chữ tiếng Việt, không phiên âm. StackChan viết StackChan.
+- Chữ trơn, KHÔNG đánh dấu gì: không [ ] { } |, không markdown (* _ #). Máy tự gạch chân từ đã học để người đọc bấm tra.
+- Dùng từ trong DANH SÁCH TỪ VỰNG ĐÃ HỌC đúng nghĩa đã ghi; được chia động từ, đổi số nhiều, đổi đuôi tính từ bình thường.
+- Dùng dấu tiếng Pháp đúng chính tả (é è ê à ç œ…); khoảng trắng trước ! ? : ; theo kiểu Pháp.
+- Văn kể dùng passé composé + imparfait (A1–B1) thống nhất trong một bài.
+- Phần tiếng Việt (giai_thich, tom_tat, ky_truoc, tom_tat_truyen, nghĩa m trong tu_moi) viết tiếng Việt CÓ DẤU.
+
+Trả về đúng MỘT object JSON theo khuôn, không viết gì thêm.
+```
+
+### 4. Viết cả số — lời nhắc
+
+```text
+HÔM NAY: Chủ Nhật, ngày 8/11/2026, mùa thu. Số báo 30. Thời tiết ở làng: cả ngày nhiều mây.
+
+CẤU TRÚC: bai gồm đúng 2 bài theo thứ tự (KHÔNG viết truyện dài kỳ: máy tự chèn truyện đã viết sẵn làm bài giữa):
+1. loai "tin_lang": tin trong làng le village de Kotoba và khu vườn le jardin Kotoba, 2–3 đoạn (đừng kể lại truyện).
+2. loai "thong_bao": Nouvelles du village — 2–3 mục thông báo của làng, mỗi mục là một đoạn bắt đầu bằng "◆ ", tiêu đề "Nouvelles du village".
+Tiêu đề viết kiểu tiêu đề báo tiếng Pháp, ngắn (3–8 từ).
+cau_hoi: 2–3 câu trắc nghiệm TIẾNG PHÁP về nội dung CẢ SỐ (nên có 1 câu về truyện), mỗi câu đúng 3 lựa chọn tiếng Pháp ngắn, CHỈ MỘT đáp án đúng, "dung" là vị trí đáp án đúng tính từ 0 (đổi vị trí giữa các câu), "giai_thich" tiếng Việt chỉ ra câu nào trong bài cho biết đáp án.
+chinh_ta: 2–3 câu CHÉP NGUYÊN VĂN từ bài hoặc truyện (một câu trọn vẹn, 4–13 từ, chép đúng cả dấu câu), nên chứa từ trong danh sách từ vựng, KHÔNG có tên riêng và không phải lời thoại trong ngoặc kép; "them_dap_an": thường để rỗng.
+ĐỘ DÀI: hai bài này tổng khoảng 64–255 từ (truyện không tính).
+TRUYỆN ĐÃ VIẾT SẴN (kỳ 12, để đặt câu hỏi / câu chép):
+{"tieu_de": "（truyện đã kể lại bằng tiếng của báo）", "doan": ["（đoạn 1）", "（đoạn 2）", "（đoạn 3）"]}
+
+TIN HÔM NAY CỦA LÀNG (bản gốc tiếng Việt — báo làng in bằng nhiều thứ tiếng, mọi bản đăng cùng tin):
+- （tin 1）: （nội dung tin 1）
+- （tin 2）: （nội dung tin 2）
+→ Bài tin_lang KỂ LẠI đúng các tin này bằng tiếng Pháp đúng trình độ (được rút gọn, gộp, chọn 2–3 tin); KHÔNG bịa tin khác.
+MỤC THỨ BA (bản gốc): （thông báo của làng） — ◆ （mục 1） / ◆ （mục 2）
+→ Bài thứ 3 kể lại mục này bằng tiếng Pháp (giữ ý, giữ dạng ◆ nếu có).
+
+dich: mỗi bài thêm "dich" = bản dịch tiếng Việt TỰ NHIÊN (có dấu) của từng đoạn (cùng số phần tử với doan; không ghi chú trong ngoặc). Người học bấm "Dịch" mới thấy.
+
+mau_cau: 2–4 id lấy đúng từ DANH SÁCH NGỮ PHÁP (cột đầu), là các mẫu được nhấn mạnh; mỗi mẫu xuất hiện ít nhất 2 lần. Phần lớn là mẫu TRỌNG TÂM (đúng trình độ A2), thêm 1 mẫu thấp hơn để ôn.
+Dùng 10–20 từ khác nhau trong DANH SÁCH TỪ VỰNG ĐÃ HỌC (ưu tiên từ trọng tâm, từ sắp quên). tu_moi tối đa 3 từ ngoài danh sách thật sự cần (w = từ tiếng Pháp ở dạng từ điển — danh từ kèm mạo từ; r = phiên âm IPA dạng /.../ nếu chắc, không thì rỗng; m = nghĩa tiếng Việt). tom_tat: 1–2 câu tiếng Việt tóm tắt số báo.
+
+TỪ TRỌNG TÂM (người học phải ôn hôm nay): le temps, l'auberge, préparer, la peur
+Dùng được bao nhiêu thì dùng, tối thiểu khoảng 8 từ; từ nào không hợp thì bỏ, ĐỪNG ép câu. Nhìn danh sách rồi chọn chủ đề của số báo sao cho nhiều từ hợp nhau. Gợi ý: số đếm / giờ / ngày / giá / số lượng → Nouvelles du village hoặc tin làng; động từ / tính từ / cảm xúc → truyện; nơi chốn / sự kiện / thời tiết → tin làng.
+
+DANH SÁCH NGỮ PHÁP (id|mẫu|nghĩa) — chỉ dùng ngữ pháp này và đơn giản hơn:
+fr1-01|être / avoir|là / có
+fr1-02|le / la / les, un / une / des|mạo từ
+fr1-03|ne … pas|không (phủ định)
+fr1-04|présent des verbes en -er|hiện tại của động từ nhóm 1
+fr1-05|il y a|có (tồn tại)
+fr1-06|est-ce que / qu'est-ce que|câu hỏi
+fr1-07|aller + infinitif|sắp làm gì (tương lai gần)
+fr1-08|je voudrais …|tôi muốn … (lịch sự)
+fr1-09|à / au / chez|ở, đến
+fr1-10|accord de l'adjectif: petit / petite|tính từ hợp giống / số
+fr2-01|passé composé avec avoir / être|quá khứ kép (TRỌNG TÂM)
+fr2-02|imparfait|quá khứ miêu tả, thói quen (TRỌNG TÂM)
+fr2-03|pronoms COD: le / la / les|đại từ tân ngữ trực tiếp (TRỌNG TÂM)
+fr2-04|parce que|bởi vì (TRỌNG TÂM)
+fr2-05|futur simple|tương lai đơn (TRỌNG TÂM)
+fr2-06|plus … que / moins … que|so sánh hơn / kém (TRỌNG TÂM)
+fr2-07|pouvoir / vouloir / devoir + infinitif|có thể / muốn / phải (TRỌNG TÂM)
+fr2-08|verbes pronominaux: se lever|động từ phản thân (TRỌNG TÂM)
+fr2-09|y / en|đại từ y / en (TRỌNG TÂM)
+
+DANH SÁCH TỪ VỰNG ĐÃ HỌC (từ = nghĩa):
+le temps = thời tiết
+l'auberge = quán trọ
+préparer = chuẩn bị
+la peur = nỗi sợ
+l'ami = bạn bè
+beau = đẹp
+
+VÍ DỤ ĐỊNH DẠNG (chỉ xem hình thức, không chép nội dung):
+{"loai":"tin_lang","tieu_de":"StackChan repeint le vieux pont","doan":["Hier après-midi, StackChan est allé au vieux pont avec une petite boîte de peinture. « Je veux rendre le pont heureux ! » a dit StackChan."]}
+```
+
+### 5. Soát lần 2 — lời nhắc (cuối lời nhắc là cả số báo JSON)
+
+```text
+Bạn là biên tập viên người Pháp, soát lại số báo tiếng Pháp dưới đây dành cho người Việt học tiếng Pháp trình độ A2 trước khi in.
+Kiểm tra kỹ từng câu:
+1. Tiếng Pháp có tự nhiên và đúng ngữ pháp không (giống le / la, hợp giống / số, chia động từ, passé composé với être / avoir, dấu).
+2. Ngữ pháp và độ dài câu có vượt trình độ A2 không → viết lại đơn giản, tách câu dài.
+3. Từ khó hơn trình độ A2 (không có trong danh sách từ vựng, không phải từ rất cơ bản) → đổi từ dễ hơn, hoặc khai báo trong tu_moi (kèm nghĩa tiếng Việt).
+4. GIỮ các từ trong danh sách từ vựng đã học (đừng đổi sang từ đồng nghĩa): đó là từ người học đang ôn.
+5. Mỗi câu hỏi có đúng MỘT đáp án đúng, đáp án đó có trong bài, "dung" chỉ đúng vị trí; giai_thich đúng.
+6. Câu chép chính tả có chép nguyên văn một câu trong bài không.
+7. Tiêu đề, tom_tat, ky_truoc, giai_thich (tiếng Việt có dấu) viết đúng nghĩa với bài.
+8. Lời thoại: rõ ai nói câu nào; nhân vật nhất quán (Hana là chủ l'auberge Kotoba, Lin là nhân viên mới).
+9. Số báo thường phải đủ 3 bài: tin_lang, truyen, rồi thong_bao hoặc cot.
+Ghi mỗi chỗ đã sửa vào van_de (cho = vị trí như bai[1].doan[0], loi = lỗi gì bằng tiếng Việt, sua = câu mới). Không có lỗi thì van_de rỗng. "bao" là toàn bộ số báo sau khi sửa (không có lỗi thì trả nguyên). Giữ nguyên các id mau_cau, số kỳ truyện. Bài truyện (loai truyen) đã qua biên tập: chỉ sửa lỗi thật sự, không viết lại. "dich" (bản dịch tiếng Việt) giữ nguyên, chỉ sửa câu dịch của đoạn bạn vừa sửa.
+
+QUY TẮC (máy sẽ kiểm tra, sai là phải viết lại):
+- Bài, tiêu đề, câu hỏi, lựa chọn, câu chép chính tả viết HOÀN TOÀN bằng tiếng Pháp: không chữ Hán / kana / Hangul, không chữ tiếng Việt, không phiên âm. StackChan viết StackChan.
+- Chữ trơn, KHÔNG đánh dấu gì: không [ ] { } |, không markdown (* _ #). Máy tự gạch chân từ đã học để người đọc bấm tra.
+- Dùng từ trong DANH SÁCH TỪ VỰNG ĐÃ HỌC đúng nghĩa đã ghi; được chia động từ, đổi số nhiều, đổi đuôi tính từ bình thường.
+- Dùng dấu tiếng Pháp đúng chính tả (é è ê à ç œ…); khoảng trắng trước ! ? : ; theo kiểu Pháp.
+- Văn kể dùng passé composé + imparfait (A1–B1) thống nhất trong một bài.
+- Phần tiếng Việt (giai_thich, tom_tat, ky_truoc, tom_tat_truyen, nghĩa m trong tu_moi) viết tiếng Việt CÓ DẤU.
+
+DANH SÁCH NGỮ PHÁP:
+fr1-01|être / avoir|là / có
+fr1-02|le / la / les, un / une / des|mạo từ
+fr1-03|ne … pas|không (phủ định)
+fr1-04|présent des verbes en -er|hiện tại của động từ nhóm 1
+fr1-05|il y a|có (tồn tại)
+fr1-06|est-ce que / qu'est-ce que|câu hỏi
+fr1-07|aller + infinitif|sắp làm gì (tương lai gần)
+fr1-08|je voudrais …|tôi muốn … (lịch sự)
+fr1-09|à / au / chez|ở, đến
+fr1-10|accord de l'adjectif: petit / petite|tính từ hợp giống / số
+fr2-01|passé composé avec avoir / être|quá khứ kép (TRỌNG TÂM)
+fr2-02|imparfait|quá khứ miêu tả, thói quen (TRỌNG TÂM)
+fr2-03|pronoms COD: le / la / les|đại từ tân ngữ trực tiếp (TRỌNG TÂM)
+fr2-04|parce que|bởi vì (TRỌNG TÂM)
+fr2-05|futur simple|tương lai đơn (TRỌNG TÂM)
+fr2-06|plus … que / moins … que|so sánh hơn / kém (TRỌNG TÂM)
+fr2-07|pouvoir / vouloir / devoir + infinitif|có thể / muốn / phải (TRỌNG TÂM)
+fr2-08|verbes pronominaux: se lever|động từ phản thân (TRỌNG TÂM)
+fr2-09|y / en|đại từ y / en (TRỌNG TÂM)
+
+DANH SÁCH TỪ VỰNG ĐÃ HỌC (từ = nghĩa):
+le temps = thời tiết
+l'auberge = quán trọ
+préparer = chuẩn bị
+la peur = nỗi sợ
+l'ami = bạn bè
+beau = đẹp
 
 SỐ BÁO:
 {"bai": [{"loai": "tin_lang", "tieu_de": "…", "doan": ["…"]}]}

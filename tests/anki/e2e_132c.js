@@ -128,7 +128,8 @@ result = 1`);
     'deck kanji có trường "Chinese reading" → tiếng Nhật, biển cây là chữ Hán (' + ps.map((p) => p.word).join(' ') + '), không phải âm On');
   await deck('DE::A1');
   ps = await plants();
-  ok(ps.length === 6 && ps.every((p) => p.lang === 'other'), 'deck tiếng Đức → Ngôn ngữ khác (trước 1.34.1: Tiếng Anh): ' + ps.map((p) => p.lang).join(','));
+  // 1.35: tiếng Đức có ngôn ngữ riêng (1.34.1: Ngôn ngữ khác; trước nữa: Tiếng Anh)
+  ok(ps.length === 6 && ps.every((p) => p.lang === 'de' || p.lang === 'other'), 'deck tiếng Đức → Tiếng Đức (1.35) / Ngôn ngữ khác (1.34.1), không phải Tiếng Anh: ' + ps.map((p) => p.lang).join(','));
   ok(await js('return GardenLang.cur();') !== 'en', 'Tự theo deck không thành tiếng Anh vì deck tiếng Đức: ' + await js('return GardenLang.cur();'));
   const ld = await py(KB + 'import importlib\nw = kb.words\nr = w.lang_decks(mw.col, kb.config())\nresult = {k: [d["name"] for d in v] for k, v in r.items()}');
   ok(!(ld.en || []).some((n) => /^DE/.test(n)) && !(ld.en || []).some((n) => /^JA::Cho/.test(n)),
