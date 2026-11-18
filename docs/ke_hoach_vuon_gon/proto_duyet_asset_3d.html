@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Phòng Duyệt Asset 3D — Kotoba Town (MagicaVoxel &amp; Play Together)</title>
+<style>
+  :root {
+    --ink: #1a1b2e;
+    --cream: #fff9ec;
+    --cream-2: #f4ead2;
+    --gold: #ffd23f;
+    --accent: #ff6b35;
+    --green: #2fb344;
+  }
+  * { box-sizing: border-box; user-select: none; }
+  body {
+    margin: 0;
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    background: #141726;
+    color: var(--ink);
+  }
+  .shell {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 10px 14px 16px;
+  }
+
+  /* Thanh điều khiển trên cùng */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+    background: var(--cream);
+    border: 3px solid var(--ink);
+    border-radius: 14px;
+    box-shadow: 0 4px 0 #0b0d16;
+    padding: 8px 12px;
+    margin-bottom: 10px;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .badge {
+    background: #e8590c;
+    color: #fff;
+    border: 2px solid var(--ink);
+    border-radius: 8px;
+    padding: 3px 9px;
+    font-size: 11.5px;
+    font-weight: 900;
+    box-shadow: 0 2px 0 var(--ink);
+  }
+  .btn-group {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    border: 2px solid var(--ink);
+    background: var(--cream-2);
+    color: var(--ink);
+    border-radius: 9px;
+    padding: 5px 10px;
+    font-size: 11.8px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 2px 0 var(--ink);
+    transition: transform 0.08s, background 0.12s;
+  }
+  .btn:hover { background: #ffe8a3; }
+  .btn:active { transform: translateY(2px); box-shadow: 0 0 0 var(--ink); }
+  .btn.active { background: var(--gold); }
+  .btn.approve { background: #b2f2bb; color: #185c26; }
+  .btn.approve.active { background: #40c057; color: #fff; }
+
+  /* Bố cục 2 cột: Bàn xoay 3D lớn + Danh sách 6 Asset cần duyệt */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 12px;
+    align-items: start;
+  }
+  @media (max-width: 940px) {
+    .main-grid { grid-template-columns: 1fr; }
+  }
+
+  /* Khung Bàn Xoay 3D Studio */
+  .stage-wrap {
+    position: relative;
+    height: 575px;
+    border: 3px solid var(--ink);
+    border-radius: 16px;
+    box-shadow: 0 6px 0 #0b0d16;
+    overflow: hidden;
+    background: #dff0ff;
+  }
+  #glCanvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    cursor: grab;
+  }
+  #glCanvas:active { cursor: grabbing; }
+
+  .stage-hud-tl {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+    pointer-events: none;
+  }
+  .pill {
+    pointer-events: auto;
+    background: rgba(255, 249, 236, 0.94);
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    box-shadow: 0 2px 0 var(--ink);
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .stage-hud-bottom {
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    pointer-events: none;
+  }
+  .help-bar {
+    pointer-events: auto;
+    background: rgba(26, 27, 46, 0.86);
+    color: #fff9ec;
+    border: 2px solid rgba(255, 210, 63, 0.7);
+    border-radius: 10px;
+    padding: 6px 12px;
+    font-size: 11.5px;
+    font-weight: 700;
+  }
+
+  /* Cột phải: Thẻ chọn 6 Asset + Chi tiết & Nút Duyệt */
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .card {
+    background: var(--cream);
+    border: 3px solid var(--ink);
+    border-radius: 14px;
+    box-shadow: 0 4px 0 #0b0d16;
+    padding: 11px;
+  }
+  .card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 6px;
+    margin-bottom: 8px;
+    border-bottom: 2px dashed #c8bc9e;
+  }
+  .card-title {
+    margin: 0;
+    font-size: 13.5px;
+    font-weight: 900;
+  }
+  .tag {
+    background: #ffe066;
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    padding: 2px 8px;
+    font-size: 10.5px;
+    font-weight: 900;
+  }
+
+  .asset-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 7px;
+  }
+  .asset-item {
+    position: relative;
+    background: #fff;
+    border: 2px solid var(--ink);
+    border-radius: 11px;
+    padding: 8px 8px 7px;
+    cursor: pointer;
+    box-shadow: 0 2px 0 var(--ink);
+    transition: transform 0.08s, background 0.12s;
+    text-align: left;
+  }
+  .asset-item:hover { background: #fff3bf; }
+  .asset-item.active {
+    background: var(--gold);
+    transform: translateY(-1px);
+  }
+  .asset-icon {
+    font-size: 20px;
+    line-height: 1;
+    margin-bottom: 4px;
+    display: block;
+  }
+  .asset-name {
+    font-size: 11.8px;
+    font-weight: 900;
+    line-height: 1.2;
+  }
+  .asset-sub {
+    font-size: 10px;
+    color: #555770;
+    font-weight: 700;
+    margin-top: 2px;
+  }
+  .status-dot {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    font-size: 11px;
+    font-weight: 900;
+  }
+
+  .detail-desc {
+    background: var(--cream-2);
+    border: 2px solid #d4c49e;
+    border-radius: 10px;
+    padding: 8px 10px;
+    font-size: 11.8px;
+    line-height: 1.48;
+    margin-bottom: 9px;
+  }
+  .review-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 7px;
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="topbar">
+    <div class="brand">
+      <span class="badge">🎨 PHÒNG DUYỆT ASSET 3D</span>
+      <div class="btn-group">
+        <button class="btn active" id="btnModeSingle">🔍 Soi từng Asset (360°)</button>
+        <button class="btn" id="btnModeAll">🏛️ Sảnh Trưng Bày Cả 6 Asset</button>
+      </div>
+    </div>
+    <div class="btn-group">
+      <button class="btn active" data-style="smooth">✨ Voxel Mịn (MagicaVoxel AO)</button>
+      <button class="btn" data-style="crisp">🧱 Viền Khối Pixel (Minecraft)</button>
+      <button class="btn active" data-tod="day">☀ Sáng Studio</button>
+      <button class="btn" data-tod="dusk">🌇 Chiều Vàng</button>
+      <button class="btn" data-tod="night">🏮 Đêm Đèn Lồng</button>
+    </div>
+  </div>
+
+  <div class="main-grid">
+    <!-- Bàn xoay 3D chính -->
+    <div class="stage-wrap">
+      <canvas id="glCanvas"></canvas>
+
+      <div class="stage-hud-tl">
+        <div class="pill">
+          <span id="stageIcon">🏮</span>
+          <b id="stageTitle">Asset #1: Quán Trọ Kotoba (ことば屋)</b>
+          <span style="color:#666; font-weight:700;" id="voxelStats">· 0 khối Voxel</span>
+        </div>
+        <button class="btn active" id="btnSpin" style="pointer-events:auto;">🔄 Tự xoay: BẬT</button>
+      </div>
+
+      <div class="stage-hud-bottom">
+        <div class="help-bar">
+          🖱️ <b>Kéo chuột:</b> Xoay 360° mọi góc · <b>Cuộn chuột:</b> Phóng to soi chi tiết · Bấm từng thẻ bên phải để duyệt đủ <b>6 Asset 3D</b>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cột phải: Chọn 6 Asset & Duyệt phong cách -->
+    <div class="sidebar">
+      <div class="card">
+        <div class="card-head">
+          <h3 class="card-title">Danh sách 6 Asset 3D mẫu</h3>
+          <span class="tag" id="approvedCount">Đã duyệt: 0/6</span>
+        </div>
+        <div class="asset-list" id="assetList"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h3 class="card-title" id="detailName">Chi tiết Asset</h3>
+          <span class="tag" id="detailGridTag">34×32×28 Voxel</span>
+        </div>
+        <div class="detail-desc" id="detailDesc"></div>
+        <div class="review-actions">
+          <button class="btn approve" id="btnApprove">✅ Ưng mẫu này!</button>
+          <button class="btn" id="btnNext">➡️ Xem mẫu tiếp</button>
+        </div>
+      </div>
+
+      <div class="card" style="padding:10px 12px;">
+        <div style="font-size:11.6px; line-height:1.45; color:#2b2b44;">
+          💡 <b>Khác biệt so với bản trước:</b> Thay vì kéo giãn texture lên hộp chữ nhật lớn, toàn bộ asset ở đây dựng từ <b>lưới khối Voxel đồng đều chuẩn MagicaVoxel</b> có tính <b>Ambient Occlusion (đổ bóng góc kẽ chân thực)</b> và <b>đèn phát sáng ban đêm</b>!
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  // =========================================================================
+  // 1. ENGINE VOXEL CHI TIẾT + ĐỔ BÓNG AMBIENT OCCLUSION (CHUẨN MAGICAVOXEL)
+  // =========================================================================
+  function createVoxelGrid() {
+    const map = new Map();
+    const key = (x, y, z) => x + "," + y + "," + z;
+    let minX = 999, maxX = -999, minY = 999, maxY = -999, minZ = 999, maxZ = -999;
+
+    function set(x, y, z, color, emissive) {
+      x = Math.round(x); y = Math.round(y); z = Math.round(z);
+      const k = key(x, y, z);
+      if (!color) {
+        map.delete(k);
+        return;
+      }
+      map.set(k, { x, y, z, color, emissive: !!emissive });
+      if (x < minX) minX = x; if (x > maxX) maxX = x;
+      if (y < minY) minY = y; if (y > maxY) maxY = y;
+      if (z < minZ) minZ = z; if (z > maxZ) maxZ = z;
+    }
+
+    function get(x, y, z) {
+      return map.get(key(x, y, z));
+    }
+
+    function box(x0, y0, z0, x1, y1, z1, color, emissive) {
+      const ax = Math.min(x0, x1), bx = Math.max(x0, x1);
+      const ay = Math.min(y0, y1), by = Math.max(y0, y1);
+      const az = Math.min(z0, z1), bz = Math.max(z0, z1);
+      for (let x = ax; x <= bx; x++) {
+        for (let y = ay; y <= by; y++) {
+          for (let z = az; z <= bz; z++) {
+            const c = typeof color === "function" ? color(x, y, z) : color;
+            if (c) set(x, y, z, c, emissive);
+          }
+        }
+      }
+    }
+
+    function hollowBox(x0, y0, z0, x1, y1, z1, color) {
+      for (let x = x0; x <= x1; x++) {
+        for (let y = y0; y <= y1; y++) {
+          for (let z = z0; z <= z1; z++) {
+            if (x === x0 || x === x1 || y === y0 || y === y1 || z === z0 || z === z1) {
+              const c = typeof color === "function" ? color(x, y, z) : color;
+              if (c) set(x, y, z, c, false);
+            }
+          }
+        }
+      }
+    }
+
+    function sphere(cx, cy, cz, r, color) {
+      const r2 = r * r;
+      const ir = Math.ceil(r);
+      for (let x = -ir; x <= ir; x++) {
+        for (let y = -ir; y <= ir; y++) {
+          for (let z = -ir; z <= ir; z++) {
+            if (x * x + y * y + z * z <= r2) {
+              const c = typeof color === "function" ? color(cx + x, cy + y, cz + z) : color;
+              if (c) set(cx + x, cy + y, cz + z, c, false);
+            }
+          }
+        }
+      }
+    }
+
+    return {
+      map, set, get, box, hollowBox, sphere,
+      bounds: () => ({ minX, maxX, minY, maxY, minZ, maxZ, count: map.size })
+    };
+  }
+
+  function hexToRgb(hex) {
+    const n = parseInt(hex.slice(1), 16);
+    return [((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255];
+  }
+
+  // Tạo Mesh WebGL từ lưới Voxel với True Per-Vertex Ambient Occlusion (chuẩn MagicaVoxel/Minecraft)
+  function compileVoxelMesh(grid, offsetX, offsetZ) {
+    const ox = offsetX || 0;
+    const oz = offsetZ || 0;
+    const b = grid.bounds();
+    const cx = (b.minX + b.maxX) * 0.5;
+    const cz = (b.minZ + b.maxZ) * 0.5;
+    const baseY = b.minY;
+
+    const verts = []; // x,y,z, r,g,b, u,v, ao, light, emissive
+    const occ = (x, y, z) => (grid.get(x, y, z) ? 1 : 0);
+
+    function vertexAO(side1, side2, corner) {
+      if (side1 && side2) return 0.48;
+      const val = 3 - (side1 + side2 + corner);
+      return [0.48, 0.68, 0.85, 1.0][val];
+    }
+
+    const FACES = [
+      { // +Y Top
+        dir: [0, 1, 0], light: 1.06,
+        corners: [[0,1,1],[1,1,1],[1,1,0],[0,1,0]],
+        aoDirs: [
+          [[-1,1,0],[0,1,1],[-1,1,1]],
+          [[1,1,0],[0,1,1],[1,1,1]],
+          [[1,1,0],[0,1,-1],[1,1,-1]],
+          [[-1,1,0],[0,1,-1],[-1,1,-1]]
+        ]
+      },
+      { // -Y Bottom
+        dir: [0, -1, 0], light: 0.52,
+        corners: [[0,0,0],[1,0,0],[1,0,1],[0,0,1]],
+        aoDirs: [
+          [[-1,-1,0],[0,-1,-1],[-1,-1,-1]],
+          [[1,-1,0],[0,-1,-1],[1,-1,-1]],
+          [[1,-1,0],[0,-1,1],[1,-1,1]],
+          [[-1,-1,0],[0,-1,1],[-1,-1,1]]
+        ]
+      },
+      { // +Z Front
+        dir: [0, 0, 1], light: 0.94,
+        corners: [[0,0,1],[1,0,1],[1,1,1],[0,1,1]],
+        aoDirs: [
+          [[-1,0,1],[0,-1,1],[-1,-1,1]],
+          [[1,0,1],[0,-1,1],[1,-1,1]],
+          [[1,0,1],[0,1,1],[1,1,1]],
+          [[-1,0,1],[0,1,1],[-1,1,1]]
+        ]
+      },
+      { // -Z Back
+        dir: [0, 0, -1], light: 0.74,
+        corners: [[1,0,0],[0,0,0],[0,1,0],[1,1,0]],
+        aoDirs: [
+          [[1,0,-1],[0,-1,-1],[1,-1,-1]],
+          [[-1,0,-1],[0,-1,-1],[-1,-1,-1]],
+          [[-1,0,-1],[0,1,-1],[-1,1,-1]],
+          [[1,0,-1],[0,1,-1],[1,1,-1]]
+        ]
+      },
+      { // +X Right
+        dir: [1, 0, 0], light: 0.87,
+        corners: [[1,0,1],[1,0,0],[1,1,0],[1,1,1]],
+        aoDirs: [
+          [[1,0,1],[1,-1,0],[1,-1,1]],
+          [[1,0,-1],[1,-1,0],[1,-1,-1]],
+          [[1,0,-1],[1,1,0],[1,1,-1]],
+          [[1,0,1],[1,1,0],[1,1,1]]
+        ]
+      },
+      { // -X Left
+        dir: [-1, 0, 0], light: 0.79,
+        corners: [[0,0,0],[0,0,1],[0,1,1],[0,1,0]],
+        aoDirs: [
+          [[-1,0,-1],[-1,-1,0],[-1,-1,-1]],
+          [[-1,0,1],[-1,-1,0],[-1,-1,1]],
+          [[-1,0,1],[-1,1,0],[-1,1,1]],
+          [[-1,0,-1],[-1,1,0],[-1,1,-1]]
+        ]
+      }
+    ];
+
+    const uvs = [[0,0],[1,0],[1,1],[0,1]];
+
+    grid.map.forEach(v => {
+      const [r, g, bl] = hexToRgb(v.color);
+      const em = v.emissive ? 1.0 : 0.0;
+
+      for (let f = 0; f < 6; f++) {
+        const face = FACES[f];
+        if (grid.get(v.x + face.dir[0], v.y + face.dir[1], v.z + face.dir[2])) continue;
+
+        const aos = [0, 0, 0, 0];
+        for (let i = 0; i < 4; i++) {
+          if (v.emissive) {
+            aos[i] = 1.0;
+          } else {
+            const d = face.aoDirs[i];
+            aos[i] = vertexAO(
+              occ(v.x + d[0][0], v.y + d[0][1], v.z + d[0][2]),
+              occ(v.x + d[1][0], v.y + d[1][1], v.z + d[1][2]),
+              occ(v.x + d[2][0], v.y + d[2][1], v.z + d[2][2])
+            );
+          }
+        }
+
+        const pts = face.corners.map(c => [
+          v.x - cx - 0.5 + c[0] + ox,
+          v.y - baseY + c[1],
+          v.z - cz - 0.5 + c[2] + oz
+        ]);
+
+        // Chọn đường chéo chia tam giác chuẩn tránh lỗi sọc AO
+        const idx = (aos[0] + aos[2] > aos[1] + aos[3])
+          ? [0, 1, 2, 0, 2, 3]
+          : [1, 2, 3, 1, 3, 0];
+
+        for (let k = 0; k < 6; k++) {
+          const i = idx[k];
+          verts.push(
+            pts[i][0], pts[i][1], pts[i][2],
+            r, g, bl,
+            uvs[i][0], uvs[i][1],
+            aos[i], face.light, em
+          );
+        }
+      }
+    });
+
+    return { data: new Float32Array(verts), count: verts.length / 11, voxels: b.count };
+  }
+
+  // =========================================================================
+  // 2. XÂY DỰNG 6 BỘ ASSET 3D CHI TIẾT CHO LÀNG KOTOBA
+  // =========================================================================
+  function addPedestalBase(g, rx, rz, rimCol, topCol) {
+    g.box(-rx, 0, -rz, rx, 1, rz, (x, y, z) => {
+      if (y === 0) return "#5c6470";
+      if (Math.abs(x) === rx || Math.abs(z) === rz) return rimCol || "#9aa5b1";
+      return typeof topCol === "function" ? topCol(x, z) : (topCol || "#7bd463");
+    });
+  }
+
+  // ASSET 1: QUÁN TRỌ KOTOBA (ことば屋 — Nhà 2 tầng mái ngói Nhật, rèm Noren, đèn lồng)
+  function buildInnAsset() {
+    const g = createVoxelGrid();
+    addPedestalBase(g, 16, 14, "#a8b2be", (x, z) => {
+      if (z >= 7 && Math.abs(x) <= 3) return ((x + z) % 2 === 0) ? "#e9dcc2" : "#dfd0b0";
+      return ((x + z) % 3 === 0) ? "#67cc56" : "#58bf48";
+    });
+
+    // Nền móng đá & Bậc thềm cửa trước
+    g.box(-12, 2, -10, 12, 3, 8, (x, y, z) => ((x + z) % 2 === 0 ? "#b8c2cc" : "#a1acb8"));
+    g.box(-3, 2, 9, 3, 3, 10, "#cbd2d9");
+    g.box(-3, 2, 11, 3, 2, 11, "#dce1e7");
+
+    // Sàn hiên gỗ (Engawa) nhô ra phía trước
+    g.box(-12, 3, 7, 12, 3, 9, "#c4844a");
+    // Lan can gỗ hai bên cầu thang
+    g.box(-12, 4, 9, -4, 5, 9, "#693e1e");
+    g.box(4, 4, 9, 12, 5, 9, "#693e1e");
+
+    // Tầng 1: Tường kem khung gỗ & Cửa giấy Shoji phát sáng
+    g.hollowBox(-11, 4, -9, 11, 12, 6, (x, y, z) => {
+      const isCorner = (Math.abs(x) === 11 || Math.abs(x) === 5) && (z === 6 || z === -9);
+      if (isCorner || y === 4 || y === 12) return "#4a2c18";
+      return (x + y) % 2 === 0 ? "#fff7e6" : "#f7ebd2";
+    });
+    // Cửa lùa Shoji ở mặt tiền tầng 1
+    g.box(-4, 5, 6, 4, 10, 6, (x, y) => {
+      if (x === 0 || x === -4 || x === 4 || y === 10) return "#4a2c18";
+      return "#ffe58f";
+    }, true);
+    // Cửa sổ phát sáng hai bên
+    g.box(-9, 7, 6, -7, 10, 6, "#ffe58f", true);
+    g.box(7, 7, 6, 9, 10, 6, "#ffe58f", true);
+
+    // Rèm Noren xanh chàm trước cửa Quán Kotoba
+    g.box(-3, 9, 7, 3, 11, 7, (x, y) => {
+      if (x === -1 || x === 1) return null; // khe hở giữa 3 tấm rèm
+      if (y === 10 && Math.abs(x) === 0) return "#fff9eb"; // huy hiệu trắng giữa rèm
+      return "#2b59c3";
+    });
+
+    // Hai đèn lồng đỏ (提灯) treo hai bên cửa phát sáng ban đêm
+    [-6, 6].forEach(lx => {
+      g.set(lx, 11, 7, "#4a2c18");
+      g.box(lx, 9, 8, lx, 11, 8, (x, y) => (y === 10 ? "#ffd43b" : "#ff4d4f"), true);
+    });
+
+    // Mái ngói Nhật tầng 1 xòe rộng + đường viền trắng
+    for (let i = 0; i < 4; i++) {
+      const y = 13 + i;
+      const rx = 14 - i, z0 = -12 + i, z1 = 9 - i;
+      g.box(-rx, y, z0, rx, y, z1, (x, yy, z) => {
+        if (Math.abs(x) === rx || z === z0 || z === z1) return "#465878";
+        return ((x + z) % 2 === 0) ? "#2d384f" : "#35425c";
+      });
+    }
+
+    // Tầng 2 (nhỏ gọn hơn) + Cửa sổ tròn/Shoji
+    g.hollowBox(-7, 16, -7, 7, 22, 3, (x, y, z) => {
+      if (Math.abs(x) === 7 || y === 16 || y === 22) return "#4a2c18";
+      return "#fff7e6";
+    });
+    g.box(-3, 18, 3, 3, 21, 3, (x, y) => (x === 0 ? "#4a2c18" : "#ffe58f"), true);
+    // Ban công nhỏ trước tầng 2
+    g.box(-4, 16, 4, 4, 17, 5, "#693e1e");
+
+    // Mái ngói tầng 2 kiểu chữ A (Irimoya) + Sống mái trắng vàng
+    for (let i = 0; i < 5; i++) {
+      const y = 23 + i;
+      const rx = 10 - Math.floor(i * 0.6);
+      const rz = 6 - i;
+      g.box(-rx, y, -2 - rz, rx, y, -2 + rz, (x, yy, z) => {
+        if (i === 4) return "#f1f3f5";
+        return (x % 2 === 0) ? "#293347" : "#344159";
+      });
+    }
+    // Chóp vàng trang trí hai đầu nóc mái
+    g.set(-7, 28, -2, "#ffd43b", true);
+    g.set(7, 28, -2, "#ffd43b", true);
+
+    // Chậu cây cảnh & Biển hiệu gỗ bên hiên
+    g.box(-10, 4, 8, -9, 5, 8, "#c87d4b");
+    g.sphere(-9, 6, 8, 1.3, "#51cf66");
+    g.box(8, 4, 8, 10, 7, 8, "#d4955c");
+
+    return g;
+  }
+
+  // ASSET 2: SẠP CHỢ NÔNG SẢN (ことばマルシェ — Mái bạt sọc đỏ kem & thùng trái cây 3D)
+  function buildMarketAsset() {
+    const g = createVoxelGrid();
+    addPedestalBase(g, 14, 12, "#a8b2be", (x, z) => ((x + z) % 2 === 0 ? "#f2e2c4" : "#e6d2ae"));
+
+    // Sàn gỗ sạp hàng + 4 bồn hoa nhỏ 2 bên
+    g.box(-10, 2, -6, 10, 3, 6, "#b87a46");
+    [-11, 11].forEach(fx => {
+      g.box(fx - 1, 2, -2, fx + 1, 3, 2, "#8c562c");
+      g.box(fx - 1, 4, -2, fx + 1, 4, 2, (x, y, z) => (z === 0 ? "#ff6b6b" : "#51cf66"));
+    });
+
+    // Quầy gỗ chính & Giá đỡ trưng bày phía trước
+    g.box(-8, 4, -2, 8, 7, 1, (x, y) => (y === 7 ? "#d99b62" : "#9c6234"));
+    g.box(-8, 4, 2, 8, 5, 5, "#8c562c");
+
+    // 4 Thùng gỗ đựng nông sản từ vựng đầy màu sắc (Táo đỏ, Cam vàng, Lê xanh, Nho tím)
+    const crates = [
+      { x0: -7, x1: -4, fruit: "#ff3b30", leaf: "#51cf66" },
+      { x0: -3, x1: 0,  fruit: "#ff9f1c", leaf: "#74b816" },
+      { x0: 1,  x1: 4,  fruit: "#a9e34b", leaf: "#2b8a3e" },
+      { x0: 5,  x1: 8,  fruit: "#9775fa", leaf: "#51cf66" }
+    ];
+    crates.forEach(c => {
+      g.box(c.x0, 6, 2, c.x1, 7, 5, "#c4844a");
+      g.box(c.x0 + 1, 7, 3, c.x1 - 1, 8, 4, (x, y, z) => ((x + y + z) % 3 === 0 ? c.leaf : c.fruit));
+    });
+
+    // 4 Cột gỗ chống mái sạp
+    [[-8, -5], [8, -5], [-8, 1], [8, 1]].forEach(([px, pz]) => {
+      g.box(px, 4, pz, px, 14, pz, "#5c371b");
+    });
+
+    // Mái bạt sọc Đỏ - Kem xiên dốc chuẩn Play Together
+    for (let z = -6; z <= 4; z++) {
+      const y = 16 - Math.floor((z + 6) / 3);
+      g.box(-10, y, z, 10, y, z, (x) => ((Math.floor((x + 10) / 2)) % 2 === 0 ? "#e03131" : "#fff9eb"));
+    }
+    // Diềm bạt lượn sóng phía trước
+    g.box(-10, 12, 4, 10, 12, 4, (x) => (x % 2 === 0 ? ((Math.floor((x + 10) / 2)) % 2 === 0 ? "#e03131" : "#fff9eb") : null));
+
+    // Biển hiệu Trái Táo khổng lồ trên nóc sạp
+    g.box(-4, 17, -2, 4, 21, -1, "#fff3d6");
+    g.sphere(0, 19, -1, 1.7, "#ff3b30");
+    g.set(0, 21, -1, "#40c057");
+
+    // Thùng rượu gỗ & Đèn lồng treo góc sạp
+    g.box(-10, 4, 4, -9, 6, 5, "#8a5a36");
+    g.set(9, 13, 2, "#4a2c18");
+    g.box(9, 11, 2, 9, 12, 2, "#ffd43b", true);
+
+    return g;
+  }
+
+  // ASSET 3: BỘ 3 NHÂN VẬT CHIBI (STACKCHAN · CHỊ HANA · LIN)
+  function buildCharactersAsset() {
+    const g = createVoxelGrid();
+    addPedestalBase(g, 16, 9, "#a8b2be", (x, z) => ((x + z) % 2 === 0 ? "#fff3d6" : "#ebd4a7"));
+
+    // --- 1. CHỊ HANA (Bên trái: x = -9) ---
+    g.box(-11, 2, -1, -10, 4, 0, "#3b2313"); // Giày/Guốc gỗ
+    g.box(-8, 2, -1, -7, 4, 0, "#3b2313");
+    // Thân áo Kimono chàm + Tạp dề kem
+    g.box(-11, 5, -2, -7, 11, 1, (x, y, z) => {
+      if (z === 1 && Math.abs(x + 9) <= 1 && y <= 10) return "#fff6e5";
+      return "#2b59c3";
+    });
+    // Tay cầm khay trà
+    g.box(-12, 8, -1, -12, 10, 0, "#ffdbbc");
+    g.box(-6, 8, 0, -6, 10, 2, "#ffdbbc");
+    g.box(-7, 9, 2, -5, 9, 3, "#8a5a36"); // Khay gỗ
+    g.set(-6, 10, 2, "#51cf66"); // Chén trà xanh
+    // Đầu Chị Hana (Tóc búi Nhật + Trâm cài đỏ + Mắt cười)
+    g.box(-12, 12, -3, -6, 17, 2, (x, y, z) => {
+      if (z === 2 && y <= 15 && Math.abs(x + 9) <= 2) {
+        if (y === 14 && (x === -10 || x === -8)) return "#1a1b2e"; // Mắt
+        if (y === 13 && (x === -11 || x === -7)) return "#ff9ebb"; // Má hồng
+        return "#ffdbbc";
+      }
+      return "#222436";
+    });
+    g.box(-10, 18, -2, -8, 19, 0, "#222436"); // Búi tóc
+    g.set(-7, 18, -1, "#ff4d4f"); // Trâm cài hoa đỏ
+
+    // --- 2. STACKCHAN CHIBI (Chính giữa: x = 0) ---
+    g.box(-2, 2, -1, -1, 4, 0, "#2b3040");
+    g.box(1, 2, -1, 2, 4, 0, "#2b3040");
+    // Áo hoodie xanh dương + Balo nâu sau lưng
+    g.box(-3, 5, -2, 3, 11, 2, (x, y, z) => (y === 8 && z === 2 ? "#ffd23f" : "#339af0"));
+    g.box(-2, 6, -4, 2, 10, -3, "#b87a46"); // Balo thám hiểm
+    g.box(-4, 7, -1, -4, 10, 0, "#339af0");
+    g.box(4, 7, -1, 4, 10, 0, "#339af0");
+    // Đầu Robot màn hình trắng bo góc + Mắt sáng đáng yêu
+    g.box(-4, 12, -3, 4, 18, 3, (x, y, z) => {
+      if (z === 3 && Math.abs(x) <= 3 && y >= 13 && y <= 17) {
+        if (y === 15 && (x === -2 || x === 2)) return "#1a1b2e"; // Mắt
+        if (y === 14 && x === 0) return "#1a1b2e"; // Miệng cười
+        if (y === 14 && (x === -3 || x === 3)) return "#ffa8c5"; // Má hồng
+        return "#ffffff";
+      }
+      return "#e9ecef";
+    });
+    // Mũ khám phá vàng rực
+    g.box(-4, 19, -3, 4, 20, 4, (x, y, z) => (y === 20 && z === 4 ? null : "#ffd43b"));
+
+    // --- 3. LIN (Bên phải: x = +9) ---
+    g.box(7, 2, -1, 8, 4, 0, "#5c371b");
+    g.box(10, 2, -1, 11, 4, 0, "#5c371b");
+    // Áo trắng + Tạp dề cam ấm
+    g.box(7, 5, -2, 11, 11, 1, (x, y, z) => {
+      if (z === 1 && y >= 5 && y <= 10) return "#f76707";
+      return "#fff9eb";
+    });
+    // Tay cầm cuốn sổ tay nhỏ (手帳) màu vàng
+    g.box(6, 7, 1, 6, 10, 2, "#ffdbbc");
+    g.box(5, 8, 2, 7, 10, 3, "#ffd43b");
+    g.box(12, 7, -1, 12, 10, 0, "#ffdbbc");
+    // Đầu Lin (Tóc nâu + Mũ nồi kem + Đuôi tóc sau)
+    g.box(6, 12, -3, 12, 17, 2, (x, y, z) => {
+      if (z === 2 && y <= 15 && Math.abs(x - 9) <= 2) {
+        if (y === 14 && (x === 8 || x === 10)) return "#1a1b2e";
+        if (y === 13 && (x === 7 || x === 11)) return "#ff9ebb";
+        return "#ffdbbc";
+      }
+      return "#5c371b";
+    });
+    g.box(7, 18, -2, 11, 19, 1, "#fff3d6"); // Mũ nồi dễ thương
+    g.box(8, 12, -4, 10, 15, -4, "#5c371b"); // Đuôi tóc
+
+    return g;
+  }
+
+  // ASSET 4: ĐỒI ĐỀN SAKURA & CÂY ĐẠI THỤ TRI THỨC (桜の大樹と鳥居)
+  function buildShrineAsset() {
+    const g = createVoxelGrid();
+    addPedestalBase(g, 15, 15, "#868e96", "#58bf48");
+
+    // Đồi cỏ bậc thang 2 tầng
+    g.box(-12, 2, -12, 12, 4, 10, "#4ab33d");
+    g.box(-9, 5, -11, 9, 7, 4, "#e6d8be");
+    // Bậc thang đá dẫn lên cổng Torii
+    for (let s = 0; s < 6; s++) {
+      g.box(-3, 2 + s, 11 - s * 2, 3, 2 + s, 10 - s * 2, "#ced4da");
+    }
+
+    // CỔNG TORII ĐỎ THẪM (Ở bậc thềm phía trước: z = 5)
+    g.box(-4, 5, 5, -3, 14, 6, "#e03131");
+    g.box(3, 5, 5, 4, 14, 6, "#e03131");
+    g.box(-5, 12, 5, 5, 13, 6, "#e03131");
+    g.box(-6, 14, 4, 6, 15, 7, (x, y) => (y === 15 ? "#252f45" : "#c92a2a"));
+    g.set(-7, 15, 5, "#252f45");
+    g.set(7, 15, 5, "#252f45");
+    g.box(-1, 13, 6, 1, 14, 6, "#ffd43b"); // Biển đền vàng
+
+    // ĐÔI ĐÈN ĐÁ (石灯籠) phát sáng hai bên đỉnh đền
+    [-6, 6].forEach(lx => {
+      g.box(lx, 8, -1, lx, 10, -1, "#adb5bd");
+      g.set(lx, 11, -1, "#ffe066", true);
+      g.box(lx - 1, 12, -2, lx + 1, 12, 0, "#868e96");
+    });
+
+    // CÂY ĐẠI THỤ ANH ĐÀO KHỔNG LỒ (Tâm x=0, z=-5)
+    g.box(-2, 8, -7, 2, 20, -3, "#593318"); // Thân cây to
+    // Rễ cây bám ra xung quanh
+    g.box(-4, 8, -6, 4, 9, -4, "#693e1e");
+    g.box(-1, 8, -9, 1, 9, -1, "#693e1e");
+    // Các cụm tán hoa Sakura bồng bềnh nhiều lớp sắc độ
+    const sakCol = (x, y, z) => {
+      const h = (x * 7 + y * 13 + z * 17) & 7;
+      if (y > 25) return "#ffd6e5";
+      if (h <= 1) return "#ff7aa2";
+      if (h <= 4) return "#ff9ebb";
+      return "#ffc2d6";
+    };
+    g.sphere(0, 22, -5, 7.5, sakCol);
+    g.sphere(-6, 20, -3, 5.0, sakCol);
+    g.sphere(6, 20, -4, 5.0, sakCol);
+    g.sphere(0, 25, -5, 5.5, sakCol);
+
+    // Cánh hoa Sakura rơi lơ lửng quanh đền
+    [[-8, 16, 4], [7, 18, 6], [-5, 13, 9], [9, 14, 2], [2, 17, 8]].forEach(([px, py, pz]) => {
+      g.set(px, py, pz, "#ffc2d6", true);
+    });
+
+    return g;
+  }
+
+  // ASSET 5: GÓC BƯU ĐIỆN, BẢNG TIN LÀNG & MÈO HOANG TRẮNG
+  function buildPostAsset() {
+    const g = createVoxelGrid();
+    addPedestalBase(g, 13, 12, "#a8b2be", (x, z) => (z >= 3 ? "#cbd2d9" : "#65cb54"));
+
+    // Trạm Bưu Điện gạch đỏ nhỏ xinh góc trái sau
+    g.hollowBox(-10, 2, -9, -1, 11, 0, (x, y, z) => {
+      if (x === -10 || x === -1) return "#f1f3f5";
+      return ((x + y) % 2 === 0 ? "#c94a38" : "#b53d2b");
+    });
+    g.box(-7, 4, 0, -4, 8, 0, "#ffe58f", true); // Cửa sổ sáng đèn
+    // Mái tam giác trạm bưu điện
+    for (let i = 0; i < 4; i++) {
+      g.box(-11 + i, 12 + i, -10 + i, 0 - i, 12 + i, 1 - i, "#2f5946");
+    }
+
+    // Bảng tin gỗ Báo Làng Kotoba (畑新聞) ở giữa phải
+    g.box(2, 2, -4, 2, 10, -4, "#5c371b");
+    g.box(9, 2, -4, 9, 10, -4, "#5c371b");
+    g.box(2, 5, -4, 9, 10, -4, (x, y) => {
+      if (y === 10 || y === 5 || x === 2 || x === 9) return "#693e1e";
+      if ((x >= 3 && x <= 5) && (y >= 7 && y <= 9)) return "#fff9eb"; // Tờ báo 1
+      if ((x >= 6 && x <= 8) && (y >= 6 && y <= 9)) return "#ffe066"; // Tờ tin làng
+      return "#b87a46";
+    });
+    g.box(1, 11, -5, 10, 12, -3, "#4a2e1b"); // Mái che bảng tin
+
+    // Hòm thư đỏ Nhật Bản (〒 郵便ポスト) góc trước trái
+    g.box(-6, 2, 4, -4, 7, 6, (x, y, z) => {
+      if (y === 6 && z === 6 && x === -5) return "#ffffff"; // Khe thư trắng
+      return "#e03131";
+    });
+    g.box(-6, 8, 4, -4, 8, 6, "#c92a2a");
+
+    // Ghế băng công viên & Con Mèo Hoang Trắng (白いのらねこ) ngồi tắm nắng
+    g.box(2, 2, 3, 9, 4, 5, (x, y) => (y === 2 ? "#495057" : "#c4844a"));
+    // Mèo trắng chibi ngồi trên ghế (x=6, y=5, z=4)
+    g.box(5, 5, 3, 7, 7, 5, "#ffffff"); // Thân mèo
+    g.box(5, 8, 4, 7, 9, 6, "#ffffff"); // Đầu mèo
+    g.set(5, 10, 5, "#ffffff"); // Tai trái
+    g.set(7, 10, 5, "#ffffff"); // Tai phải
+    g.set(6, 8, 6, "#ff8fab");  // Mũi hồng
+    g.box(8, 5, 3, 9, 6, 3, "#ffffff"); // Đuôi cong
+
+    return g;
+  }
+
+  // ASSET 6: THÁP ĐỒNG HỒ & ĐÀI PHUN NƯỚC PLAZA (PLAY TOGETHER CENTERPIECE)
+  function buildPlazaAsset() {
+    const g = createVoxelGrid();
+    addPedestalBase(g, 14, 14, "#9aa5b1", (x, z) => (((Math.floor(x / 2) + Math.floor(z / 2)) % 2 === 0) ? "#fff3d6" : "#ebd4a7"));
+
+    // Thành bể đài phun nước bát giác / vuông bo góc + nước xanh phát sáng
+    g.box(-9, 2, -9, 9, 4, 9, (x, y, z) => {
+      if (Math.abs(x) === 9 && Math.abs(z) === 9) return null;
+      if (Math.abs(x) >= 8 || Math.abs(z) >= 8) return "#cbd2d9";
+      if (y <= 3) return ((x + z) % 3 === 0 ? "#74c0fc" : "#339af0");
+      return null;
+    });
+
+    // Bồn hoa nhỏ 4 góc Plaza
+    [[-11, -11], [11, -11], [-11, 11], [11, 11]].forEach(([cx, cz]) => {
+      g.box(cx - 1, 2, cz - 1, cx + 1, 3, cz + 1, (x, y) => (y === 2 ? "#693e1e" : "#51cf66"));
+      g.set(cx, 4, cz, "#ff6b6b");
+    });
+
+    // Tia nước trắng phun ra xung quanh chân tháp
+    [[-5, 0], [5, 0], [0, -5], [0, 5]].forEach(([sx, sz]) => {
+      g.box(sx, 4, sz, sx, 6, sz, "#e7f5ff", true);
+    });
+
+    // Thân Tháp Đồng Hồ gạch đỏ & đá kem
+    g.box(-3, 2, -3, 3, 14, 3, (x, y, z) => {
+      if (Math.abs(x) === 3 && Math.abs(z) === 3) return "#f1f3f5";
+      if (y === 14) return "#dee2e6";
+      return ((x + y) % 2 === 0 ? "#c94a38" : "#b53d2b");
+    });
+
+    // Khoang Đồng Hồ vàng 4 mặt phát sáng (y = 15..20)
+    g.box(-3, 15, -3, 3, 20, 3, (x, y, z) => {
+      if (Math.abs(x) === 3 && Math.abs(z) === 3) return "#4a2e1b";
+      if (y === 15 || y === 20) return "#e67700";
+      const onFace = (Math.abs(x) <= 1 && Math.abs(z) === 3) || (Math.abs(z) <= 1 && Math.abs(x) === 3);
+      if (onFace && y >= 16 && y <= 19) {
+        if ((x === 0 && y === 18) || (x === 1 && y === 17) || (z === 0 && y === 18)) return "#1a1b2e"; // Kim đồng hồ
+        return "#fff9db";
+      }
+      return "#ffd43b";
+    }, true);
+
+    // Mái chóp nhọn & Chóp kim vàng
+    for (let i = 0; i < 4; i++) {
+      const r = 4 - i;
+      g.box(-r, 21 + i * 2, -r, r, 22 + i * 2, r, "#2d384f");
+    }
+    g.box(0, 29, 0, 0, 32, 0, "#ffd43b", true);
+
+    return g;
+  }
+
+  const ASSETS = [
+    {
+      id: "inn", icon: "🏮", name: "Quán Trọ Kotoba (ことば屋)",
+      sub: "Nhà 2 tầng · Mái ngói", gridTag: "33×29×29 Voxel",
+      desc: "<b>Quán trọ nổi tiếng trong Báo Làng Kotoba:</b> Mái ngói Nhật 2 tầng, hiên gỗ, rèm Noren xanh, cửa giấy Shoji phát sáng và đôi đèn lồng đỏ treo trước cổng.",
+      build: buildInnAsset
+    },
+    {
+      id: "market", icon: "🛒", name: "Sạp Chợ Nông Sản",
+      sub: "Bán trái cây từ vựng", gridTag: "29×22×25 Voxel",
+      desc: "<b>Khu bán nông sản từ cây Ra quả:</b> Mái bạt sọc đỏ-kem kiểu Play Together, bảng hiệu Trái Táo 3D và 4 thùng gỗ bày đầy táo đỏ, cam, lê, nho tím.",
+      build: buildMarketAsset
+    },
+    {
+      id: "chars", icon: "🤖", name: "Bộ 3 Nhân Vật Chibi",
+      sub: "StackChan · Hana · Lin", gridTag: "33×21×19 Voxel",
+      desc: "<b>Nhân vật sống động:</b> <b>Chị Hana</b> cầm khay trà xanh, <b>StackChan</b> đội mũ khám phá đeo balo, và cô bé <b>Lin</b> cầm cuốn sổ tay vàng ghi chép.",
+      build: buildCharactersAsset
+    },
+    {
+      id: "shrine", icon: "⛩️", name: "Đồi Đền & Đại Thụ Sakura",
+      sub: "Vùng ngắm cảnh 3D", gridTag: "31×31×31 Voxel",
+      desc: "<b>Kỳ quan mở khoá để ngắm cảnh:</b> Cầu thang đá dẫn qua cổng Torii đỏ thẫm, hai đèn đá phát sáng và Cây Đại Thụ Anh Đào tán hoa nhiều sắc độ.",
+      build: buildShrineAsset
+    },
+    {
+      id: "post", icon: "📮", name: "Bưu Điện & Mèo Trắng",
+      sub: "Tin làng · Bảng báo", gridTag: "27×16×25 Voxel",
+      desc: "<b>Góc tin tức mỗi ngày:</b> Trạm bưu điện gạch đỏ, hòm thư đỏ Nhật Bản, bảng tin <i>畑新聞</i> có mái che và chú Mèo Hoang Trắng ngồi trên ghế gỗ.",
+      build: buildPostAsset
+    },
+    {
+      id: "plaza", icon: "⛲", name: "Tháp Đồng Hồ & Đài Phun",
+      sub: "Tâm Quảng Trường Plaza", gridTag: "29×33×29 Voxel",
+      desc: "<b>Điểm hẹn trung tâm thị trấn:</b> Nền gạch caro Play Together, hồ nước xanh phun tia bọt trắng và Tháp Đồng Hồ gạch đỏ 4 mặt phát sáng.",
+      build: buildPlazaAsset
+    }
+  ];
+
+  // =========================================================================
+  // 3. KHỞI TẠO WEBGL & BIÊN DỊCH TOÀN BỘ MESH ASSET
+  // =========================================================================
+  const canvas = document.getElementById("glCanvas");
+  const gl = canvas.getContext("webgl", { antialias: true, alpha: false });
+
+  function resize() {
+    const r = canvas.parentElement.getBoundingClientRect();
+    canvas.width = Math.round(r.width);
+    canvas.height = Math.round(r.height);
+    if (gl) gl.viewport(0, 0, canvas.width, canvas.height);
+  }
+  window.addEventListener("resize", resize);
+  resize();
+
+  const vsSrc = `
+    attribute vec3 aPos;
+    attribute vec3 aCol;
+    attribute vec2 aUV;
+    attribute float aAO;
+    attribute float aLight;
+    attribute float aEmissive;
+    uniform mat4 uProj;
+    uniform mat4 uView;
+    varying vec3 vCol;
+    varying vec2 vUV;
+    varying float vAO;
+    varying float vLight;
+    varying float vEmissive;
+    void main() {
+      gl_Position = uProj * uView * vec4(aPos, 1.0);
+      vCol = aCol;
+      vUV = aUV;
+      vAO = aAO;
+      vLight = aLight;
+      vEmissive = aEmissive;
+    }
+  `;
+  const fsSrc = `
+    precision mediump float;
+    varying vec3 vCol;
+    varying vec2 vUV;
+    varying float vAO;
+    varying float vLight;
+    varying float vEmissive;
+    uniform vec3 uSunTint;
+    uniform float uPixelGrid;
+    uniform float uNight;
+    void main() {
+      float edge = min(min(vUV.x, 1.0 - vUV.x), min(vUV.y, 1.0 - vUV.y));
+      // MagicaVoxel smooth bevel vs Crisp Minecraft pixel border
+      float border = mix(
+        mix(0.95, 1.02, smoothstep(0.0, 0.14, edge)),
+        mix(0.84, 1.03, step(0.06, edge)),
+        uPixelGrid
+      );
+      vec3 lit = vCol * vAO * vLight * uSunTint * border;
+      vec3 glow = vCol * (1.08 + uNight * 0.35);
+      gl_FragColor = vec4(mix(lit, glow, vEmissive), 1.0);
+    }
+  `;
+
+  function compile(type, src) {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    return s;
+  }
+  const prog = gl.createProgram();
+  gl.attachShader(prog, compile(gl.VERTEX_SHADER, vsSrc));
+  gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, fsSrc));
+  gl.linkProgram(prog);
+  gl.useProgram(prog);
+
+  const locs = {
+    aPos: gl.getAttribLocation(prog, "aPos"),
+    aCol: gl.getAttribLocation(prog, "aCol"),
+    aUV: gl.getAttribLocation(prog, "aUV"),
+    aAO: gl.getAttribLocation(prog, "aAO"),
+    aLight: gl.getAttribLocation(prog, "aLight"),
+    aEmissive: gl.getAttribLocation(prog, "aEmissive"),
+    uProj: gl.getUniformLocation(prog, "uProj"),
+    uView: gl.getUniformLocation(prog, "uView"),
+    uSunTint: gl.getUniformLocation(prog, "uSunTint"),
+    uPixelGrid: gl.getUniformLocation(prog, "uPixelGrid"),
+    uNight: gl.getUniformLocation(prog, "uNight")
+  };
+
+  // Biên dịch sẵn từng asset và 1 mesh gộp cả 6 asset cho chế độ "Sảnh trưng bày"
+  const meshes = {};
+  ASSETS.forEach(a => {
+    const g = a.build();
+    const m = compileVoxelMesh(g, 0, 0);
+    const buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, m.data, gl.STATIC_DRAW);
+    meshes[a.id] = { buf, count: m.count, voxels: m.voxels };
+  });
+
+  // Ghép cả 6 asset lên 6 bục trong cùng 1 không gian 3D (2 hàng × 3 cột)
+  const galleryOffsets = [
+    [-38, -22], [0, -22], [38, -22],
+    [-38, 22],  [0, 22],  [38, 22]
+  ];
+  const allParts = [];
+  let totalAllVerts = 0;
+  let totalAllVoxels = 0;
+  ASSETS.forEach((a, i) => {
+    const g = a.build();
+    const m = compileVoxelMesh(g, galleryOffsets[i][0], galleryOffsets[i][1]);
+    allParts.push(m.data);
+    totalAllVerts += m.count;
+    totalAllVoxels += m.voxels;
+  });
+  const combinedData = new Float32Array(totalAllVerts * 11);
+  let ptr = 0;
+  allParts.forEach(arr => { combinedData.set(arr, ptr); ptr += arr.length; });
+  const galleryBuf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, galleryBuf);
+  gl.bufferData(gl.ARRAY_BUFFER, combinedData, gl.STATIC_DRAW);
+
+  // =========================================================================
+  // 4. UI DUYỆT ASSET & ĐIỀU KHIỂN BÀN XOAY 360°
+  // =========================================================================
+  let activeId = "inn";
+  let viewMode = "single"; // single | all
+  let styleMode = "smooth"; // smooth | crisp
+  let tod = "day";
+  let autoSpin = true;
+  const approved = new Set();
+
+  let cam = { yaw: 0.58, pitch: 0.44, dist: 50 };
+
+  function syncUI() {
+    const a = ASSETS.find(x => x.id === activeId);
+    if (viewMode === "single") {
+      document.getElementById("stageIcon").textContent = a.icon;
+      document.getElementById("stageTitle").textContent = a.name;
+      document.getElementById("voxelStats").textContent = "· " + meshes[activeId].voxels.toLocaleString("vi-VN") + " khối Voxel";
+    } else {
+      document.getElementById("stageIcon").textContent = "🏛️";
+      document.getElementById("stageTitle").textContent = "Sảnh Trưng Bày Cả 6 Asset 3D Cùng Lúc";
+      document.getElementById("voxelStats").textContent = "· " + totalAllVoxels.toLocaleString("vi-VN") + " khối Voxel";
+    }
+
+    document.getElementById("detailName").textContent = a.icon + " " + a.name;
+    document.getElementById("detailGridTag").textContent = a.gridTag;
+    document.getElementById("detailDesc").innerHTML = a.desc;
+
+    const btnApp = document.getElementById("btnApprove");
+    const isOk = approved.has(activeId);
+    btnApp.classList.toggle("active", isOk);
+    btnApp.textContent = isOk ? "💚 Đã duyệt mẫu này" : "✅ Ưng mẫu này!";
+    document.getElementById("approvedCount").textContent = "Đã duyệt: " + approved.size + "/6";
+
+    const listEl = document.getElementById("assetList");
+    listEl.innerHTML = "";
+    ASSETS.forEach((item, idx) => {
+      const d = document.createElement("button");
+      d.className = "asset-item" + (item.id === activeId && viewMode === "single" ? " active" : "");
+      d.innerHTML = `
+        <span class="status-dot">${approved.has(item.id) ? "✅" : "#" + (idx + 1)}</span>
+        <span class="asset-icon">${item.icon}</span>
+        <div class="asset-name">${item.name.split(" (")[0]}</div>
+        <div class="asset-sub">${item.sub}</div>
+      `;
+      d.addEventListener("click", () => {
+        activeId = item.id;
+        viewMode = "single";
+        document.getElementById("btnModeSingle").classList.add("active");
+        document.getElementById("btnModeAll").classList.remove("active");
+        cam.dist = 48;
+        syncUI();
+      });
+      listEl.appendChild(d);
+    });
+  }
+  syncUI();
+
+  // Toán học Ma trận Camera
+  function perspective(fovY, aspect, near, far) {
+    const f = 1.0 / Math.tan(fovY * 0.5);
+    const nf = 1.0 / (near - far);
+    return new Float32Array([
+      f / aspect, 0, 0, 0,
+      0, f, 0, 0,
+      0, 0, (far + near) * nf, -1,
+      0, 0, (2 * far * near) * nf, 0
+    ]);
+  }
+  function lookAt(eye, target, up) {
+    let zx = eye[0] - target[0], zy = eye[1] - target[1], zz = eye[2] - target[2];
+    const zlen = Math.hypot(zx, zy, zz) || 1;
+    zx /= zlen; zy /= zlen; zz /= zlen;
+    let xx = up[1] * zz - up[2] * zy;
+    let xy = up[2] * zx - up[0] * zz;
+    let xz = up[0] * zy - up[1] * zx;
+    const xlen = Math.hypot(xx, xy, xz) || 1;
+    xx /= xlen; xy /= xlen; xz /= xlen;
+    const yx = zy * xz - zz * xy, yy = zz * xx - zx * xz, yz = zx * xy - zy * xx;
+    return new Float32Array([
+      xx, yx, zx, 0, xy, yy, zy, 0, xz, yz, zz, 0,
+      -(xx * eye[0] + xy * eye[1] + xz * eye[2]),
+      -(yx * eye[0] + yy * eye[1] + yz * eye[2]),
+      -(zx * eye[0] + zy * eye[1] + zz * eye[2]),
+      1
+    ]);
+  }
+
+  let dragging = false, lastM = { x: 0, y: 0 };
+  canvas.addEventListener("mousedown", e => {
+    dragging = true;
+    lastM = { x: e.clientX, y: e.clientY };
+    autoSpin = false;
+    document.getElementById("btnSpin").classList.remove("active");
+    document.getElementById("btnSpin").textContent = "🔄 Tự xoay: TẮT";
+  });
+  window.addEventListener("mousemove", e => {
+    if (!dragging) return;
+    const dx = e.clientX - lastM.x, dy = e.clientY - lastM.y;
+    lastM = { x: e.clientX, y: e.clientY };
+    cam.yaw -= dx * 0.008;
+    cam.pitch = Math.max(0.14, Math.min(1.25, cam.pitch + dy * 0.006));
+  });
+  window.addEventListener("mouseup", () => { dragging = false; });
+  canvas.addEventListener("wheel", e => {
+    e.preventDefault();
+    const minD = viewMode === "single" ? 24 : 50;
+    const maxD = viewMode === "single" ? 95 : 175;
+    cam.dist = Math.max(minD, Math.min(maxD, cam.dist + e.deltaY * 0.04));
+  }, { passive: false });
+
+  document.getElementById("btnSpin").addEventListener("click", function () {
+    autoSpin = !autoSpin;
+    this.classList.toggle("active", autoSpin);
+    this.textContent = autoSpin ? "🔄 Tự xoay: BẬT" : "🔄 Tự xoay: TẮT";
+  });
+  document.getElementById("btnModeSingle").addEventListener("click", function () {
+    viewMode = "single";
+    this.classList.add("active");
+    document.getElementById("btnModeAll").classList.remove("active");
+    cam.dist = 48;
+    syncUI();
+  });
+  document.getElementById("btnModeAll").addEventListener("click", function () {
+    viewMode = "all";
+    this.classList.add("active");
+    document.getElementById("btnModeSingle").classList.remove("active");
+    cam.dist = 108;
+    cam.pitch = 0.52;
+    syncUI();
+  });
+  document.querySelectorAll("[data-style]").forEach(b => {
+    b.addEventListener("click", () => {
+      styleMode = b.getAttribute("data-style");
+      document.querySelectorAll("[data-style]").forEach(x => x.classList.toggle("active", x === b));
+    });
+  });
+  document.querySelectorAll("[data-tod]").forEach(b => {
+    b.addEventListener("click", () => {
+      tod = b.getAttribute("data-tod");
+      document.querySelectorAll("[data-tod]").forEach(x => x.classList.toggle("active", x === b));
+    });
+  });
+  document.getElementById("btnApprove").addEventListener("click", () => {
+    if (approved.has(activeId)) approved.delete(activeId);
+    else approved.add(activeId);
+    syncUI();
+  });
+  document.getElementById("btnNext").addEventListener("click", () => {
+    const idx = ASSETS.findIndex(x => x.id === activeId);
+    activeId = ASSETS[(idx + 1) % ASSETS.length].id;
+    viewMode = "single";
+    document.getElementById("btnModeSingle").classList.add("active");
+    document.getElementById("btnModeAll").classList.remove("active");
+    syncUI();
+  });
+
+  // =========================================================================
+  // 5. RENDER LOOP
+  // =========================================================================
+  let last = performance.now();
+  function frame(now) {
+    const dt = Math.min(0.05, (now - last) / 1000);
+    last = now;
+    if (autoSpin) cam.yaw += 0.35 * dt;
+
+    const env = {
+      day:   { bg: [0.85, 0.93, 0.99], tint: [1.02, 1.0, 0.97], night: 0.0 },
+      dusk:  { bg: [0.96, 0.72, 0.56], tint: [1.08, 0.86, 0.70], night: 0.45 },
+      night: { bg: [0.09, 0.11, 0.21], tint: [0.56, 0.62, 0.86], night: 1.0 }
+    }[tod];
+
+    gl.clearColor(env.bg[0], env.bg[1], env.bg[2], 1.0);
+    gl.enable(gl.DEPTH_TEST);
+    gl.enable(gl.CULL_FACE);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+    const targetY = viewMode === "single" ? 9.5 : 8.0;
+    const eye = [
+      Math.sin(cam.yaw) * Math.cos(cam.pitch) * cam.dist,
+      targetY + Math.sin(cam.pitch) * cam.dist,
+      Math.cos(cam.yaw) * Math.cos(cam.pitch) * cam.dist
+    ];
+    const proj = perspective(Math.PI / 4.0, canvas.width / canvas.height, 1.0, 400.0);
+    const view = lookAt(eye, [0, targetY, 0], [0, 1, 0]);
+
+    gl.uniformMatrix4fv(locs.uProj, false, proj);
+    gl.uniformMatrix4fv(locs.uView, false, view);
+    gl.uniform3fv(locs.uSunTint, env.tint);
+    gl.uniform1f(locs.uPixelGrid, styleMode === "crisp" ? 1.0 : 0.0);
+    gl.uniform1f(locs.uNight, env.night);
+
+    const activeMesh = viewMode === "single"
+      ? meshes[activeId]
+      : { buf: galleryBuf, count: totalAllVerts };
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, activeMesh.buf);
+    const stride = 11 * 4;
+    gl.enableVertexAttribArray(locs.aPos);
+    gl.vertexAttribPointer(locs.aPos, 3, gl.FLOAT, false, stride, 0);
+    gl.enableVertexAttribArray(locs.aCol);
+    gl.vertexAttribPointer(locs.aCol, 3, gl.FLOAT, false, stride, 3 * 4);
+    gl.enableVertexAttribArray(locs.aUV);
+    gl.vertexAttribPointer(locs.aUV, 2, gl.FLOAT, false, stride, 6 * 4);
+    gl.enableVertexAttribArray(locs.aAO);
+    gl.vertexAttribPointer(locs.aAO, 1, gl.FLOAT, false, stride, 8 * 4);
+    gl.enableVertexAttribArray(locs.aLight);
+    gl.vertexAttribPointer(locs.aLight, 1, gl.FLOAT, false, stride, 9 * 4);
+    gl.enableVertexAttribArray(locs.aEmissive);
+    gl.vertexAttribPointer(locs.aEmissive, 1, gl.FLOAT, false, stride, 10 * 4);
+
+    gl.drawArrays(gl.TRIANGLES, 0, activeMesh.count);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

@@ -157,3 +157,23 @@ Xem bản chạy thử tương tác tại [`proto_lang_kotoba_3d.html`](proto_la
 | ⛲ Quảng Trường Plaza & Tháp Đồng Hồ (Góc nhìn Play Together) | 🛒 Phố Chợ Nông Sản `ことばマルシェ` (Bán trái cây từ vựng) |
 | :---: | :---: |
 | ![Quảng trường Làng Kotoba 3D Play Together x Minecraft](vg_10_lang_kotoba_3d.png) | ![Phố Chợ Nông Sản Làng Kotoba 3D](vg_10b_den_dai_thu_3d.png) |
+
+---
+
+## 11. Phòng Duyệt Asset 3D trước khi dựng map lớn (MagicaVoxel AO & Viền Pixel) — `proto_duyet_asset_3d.html`
+
+Rút kinh nghiệm từ bản thử nghiệm trên: việc dựng map rộng ngay bằng các khối chữ nhật kéo giãn texture sẽ khiến công trình và nhân vật thô, thiếu chiều sâu. Bước chuẩn xác hơn là **chế tác và duyệt từng bộ Asset 3D theo chuẩn MagicaVoxel** (lưới Voxel `1×1×1` đồng đều + thuật toán đổ bóng góc kẽ **True Per-Vertex Ambient Occlusion** + cửa giấy Shoji/đèn lồng phát sáng) trước khi ghép thành thị trấn:
+
+1. **🏮 Quán Trọ Kotoba (`ことば屋`, 7.566 khối Voxel)**: Mái ngói Nhật 2 tầng, hiên gỗ, cầu thang đá, rèm Noren xanh chàm, cửa Shoji và đèn lồng đỏ phát sáng.
+2. **🛒 Sạp Chợ Nông Sản (`ことばマルシェ`)**: Mái bạt sọc đỏ-kem, biển hiệu Trái Táo 3D và 4 thùng gỗ bày đầy táo đỏ, cam, lê, nho tím.
+3. **🤖 Bộ 3 Nhân Vật Chibi (`StackChan` · `Chị Hana` · `Lin`, 3.119 khối Voxel)**: Khuôn mặt biểu cảm rõ nét, Chị Hana cầm khay trà xanh, StackChan đội mũ vàng đeo balo, Lin cầm cuốn sổ tay vàng.
+4. **⛩️ Đồi Đền & Đại Thụ Sakura**: Bậc thang đá dẫn qua cổng Torii đỏ, đôi đèn đá phát sáng và tán cây anh đào 4 sắc độ kèm cánh hoa bay.
+5. **📮 Góc Bưu Điện, Bảng Tin `畑新聞` & Mèo Hoang Trắng**: Hòm thư đỏ Nhật Bản, bảng tin gỗ có mái che và chú mèo trắng ngồi trên ghế băng.
+6. **⛲ Tháp Đồng Hồ & Đài Phun Nước Plaza**: Nền gạch caro Play Together, hồ phun bọt trắng và đồng hồ 4 mặt phát sáng.
+
+Bản duyệt tương tác hỗ trợ xoay 360° từng mẫu, chuyển **Voxel Mịn (MagicaVoxel AO)** ↔ **Viền Khối Pixel (Minecraft)**, đổi **Sáng Studio / Chiều Vàng / Đêm Đèn Lồng** và chế độ **Sảnh Trưng Bày Cả 6 Asset** tại [`proto_duyet_asset_3d.html`](proto_duyet_asset_3d.html):
+
+| 🏮 Asset #1: Quán Trọ Kotoba (`7.566 Voxel`) | 🤖 Asset #3: Bộ 3 Nhân Vật Chibi (`3.119 Voxel`) | 🏛️ Sảnh Trưng Bày Cả 6 Asset (`27.315 Voxel`) |
+| :---: | :---: | :---: |
+| ![Asset Quán Trọ Kotoba 3D](vg_11a_asset_quan_kotoba.png) | ![Asset Bộ 3 Nhân Vật Chibi 3D](vg_11b_asset_nhan_vat.png) | ![Sảnh Trưng Bày 6 Asset 3D](vg_11c_asset_tat_ca_6.png) |
+
