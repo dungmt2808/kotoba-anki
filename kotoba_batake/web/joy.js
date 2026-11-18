@@ -159,8 +159,10 @@ var GardenJoy = (function () {
     }
     ctx.globalAlpha = 1;
   }
-  function drawYard(ctx, S, ox, oy, now, x0, x1, skyH, st) {
+  // pad (1.35.3): cỡ cảnh Lớn — đèn trời bay tới mép trên của phần trời thêm (trước: biến mất giữa trời)
+  function drawYard(ctx, S, ox, oy, now, x0, x1, skyH, st, pad) {
     if (!joy) { return; }
+    const P = Math.max(0, pad || 0);
     const W = x1 - x0, night = st && st.light < 0.6;
     if (joy.streak_mark) {
       const cols = ["#ff4f6d", "#ffd23f", "#8fd3ff", "#c77dff", "#6be08a"];
@@ -173,7 +175,7 @@ var GardenJoy = (function () {
     if (joy.quests) {       // đèn trời bay lên
       for (let i = 0; i < 5; i++) {
         const per = 16000 + i * 2300, ph = ((now + i * 4100) % per) / per;
-        const x = x0 + 80 + hash(i * 3 + 1) * (W - 100) + Math.sin(now / 1500 + i) * 3, y = skyH + 6 - ph * (skyH + 14);
+        const x = x0 + 80 + hash(i * 3 + 1) * (W - 100) + Math.sin(now / 1500 + i) * 3, y = skyH + 6 - ph * (skyH + 14 + P);
         ctx.globalAlpha = night ? 0.25 : 0.12; ctx.fillStyle = "#ffd23f";
         ctx.fillRect(Math.round((ox + x - 2) * S), Math.round((oy + y - 2) * S), 7 * S, 8 * S);
         ctx.globalAlpha = 1;

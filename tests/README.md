@@ -22,7 +22,8 @@ Nhớ tăng `human_version` trong `manifest.json` và ghi lịch sử phiên b�
 
 | File | Nội dung |
 |---|---|
-| `core/test_1353.js ADDON` (Playwright) | 1.35.3 (8): dây trang trí ở cỡ cảnh Lớn — dựng cảnh thật trong Chromium, 9 chủ đề × sân + 6 vùng × cỡ thường / Lớn × đêm / ngày; lớp đèn sáng ban đêm nằm sát dây (mã 1.35.2: đỏ 2) |
+| `core/test_1353.js ADDON` (Playwright) | 1.35.3 (15, ~1 phút): dây trang trí ở cỡ cảnh Lớn — dựng cảnh thật trong Chromium; lớp đèn sáng sát dây (9 chủ đề × 7 nơi × 2 cỡ × đêm / ngày) + móc hàm `garland` nội bộ ở mọi đường vẽ (sân, vùng, vùng tự tạo, 3 gian, cả nhà); quét 48.000 lần vẽ không ném lỗi (15 nơi gồm 8 nền vùng tự tạo × 16 chủ đề × giờ × thời tiết × hiệu ứng bật / tắt × hẹp / rộng / Lớn / ảnh); đất ở cỡ Lớn = cỡ thường từng điểm ảnh (1.800 tổ hợp); hạt bay / đèn trời tới mép trên; màn rộng không có chấm đất trên trời (mã 1.35.2: đỏ 10) |
+| `anki/e2e_1353.js` | 1.35.3 (12, Anki thật): cửa sổ 1920 × 1080, cỡ Lớn, Giáng sinh, 22 giờ — đọc điểm ảnh dải cảnh: đèn chỉ ở mép trên, không có hàng đèn giữa trời; tắt hiệu ứng vẫn vẽ đủ; vùng tự tạo Đồi hoa vẽ đủ; nhật ký lỗi trống (mã 1.35.2: đỏ 4) |
 | `core/test_1352.py ADDON` (`ANKI_PY`) | 1.35.2 (68): lỗi nhánh audit 18/11 — Trang trí thử một lần đọc lỗi (đúng đoạn tái hiện của audit), chữ NFD (Python + trang), deck có trường nghĩa Chinese / 한국어, Điền vào câu mã HTML dấu tách, kệ nhật ký, bộ đệm tra từ 20.001 mục, viết hoa tiếng Đức, hai báo cùng ngày, README, soát mã 02 / 03 / 12–15; **Bắt đầu truyện mới** với Gemini giả (ensure_master thật): cất / lấy lại / bấm hai lần / hôm nay đã có bản gốc / nhận xét số cũ / báo Claude Code / lỗi ghi giữa chừng; hợp đồng dữ liệu = 1.35.1, mã 1.31.3 chạy trên thư mục đã bắt đầu lại. Trên mã 1.35.1: đỏ |
 | `anki/e2e_1352.js` | 1.35.2 (33, Anki thật): bỏ chọn báo Đức khi đang viết, đổi tiếng hỏi trước / Huỷ / lệnh cũ không cắt, Import .colpkg thật khi Lịch hoa mở, đồng bộ mang về bản khác (giữ chữ gõ dở / báo lại / lần lưu tới sau đồng bộ không ghi đè), Nhờ Gemini sửa khi ghi lỗi 2 lần, cảnh báo đỏ tắt, sang ngày giữa lúc chờ tự lưu, Trang trí thử một lần đọc lỗi qua `_on_draft`, Nguồn báo → Bắt đầu truyện mới → khoá khi đang viết → Lấy lại truyện cũ |
 | `core/test_1351.py ADDON` (`ANKI_PY` cho phần collection thật) | 1.35.1 (31 kiểm tra + 5 ở `core/test_1351.js`): kiểm tra lại 1.35 ngoài bộ có sẵn — tiếng Đức hoa / thường (der Morgen ≠ morgen, arm ≠ der Arm), ký hiệu "der Hund, -(e)s, -e", động từ tách / tiền tố + bất quy tắc, so sánh; tiếng Pháp từ đồng hình (le lit ≠ il lit, la porte ≠ elle porte, l'été ≠ a été), danh từ / số nhiều, e → è, tiền tố, nháy cong; 3.000 câu ngẫu nhiên (không chồng, không cắt giữa chữ, đúng ngữ cảnh); đoán ngôn ngữ 12 kiểu deck (Ý / Tây Ban Nha / Phần Lan / Estonia / Hà Lan / Thổ Nhĩ Kỳ); tiếng Trung từ một chữ trong từ ghép; tiếng Hàn 쉬어요 / 도와줘요; Trang trí thử (file hỏng → `.hong`, file không đọc được → không ghi đè, mã thật `_on_bridge` lúc đồng bộ); câu chữ; hợp đồng dữ liệu = 1.35.0 |
@@ -199,8 +200,9 @@ Cần Node ≥ 22 (có sẵn `fetch` và `WebSocket`). Cổng: `KB_CDP_PORT` (93
 
 ## Kết quả lần chạy gần nhất (bản 1.35.3, 18/11/2026 khuya) — dây trang trí ở cỡ cảnh Lớn
 
-- `run_all.sh` (`ANKI_PY` = aqt 26.9.3, môi trường mới): **TẤT CẢ OK**; `core/test_1353.js` 8/8 (mã 1.35.2: đỏ 2);
-  `run_capnhat.sh` 1.31.3 (`e64eb22`) → 1.35.3: bước sau cập nhật 14/14. Không đổi lưu trữ nên không chạy lại các e2e khác.
+- Gói cuối 1.35.3: `run_all.sh` (`ANKI_PY` = aqt 26.9.3, môi trường mới) **TẤT CẢ OK**; `core/test_1353.js` 15/15 (mã 1.35.2:
+  đỏ 10); Anki 26.9.3 trên gói đã giải nén: `e2e_1353` 12/12 (mã 1.35.2: đỏ 4), `e2e_126` 39/39, `e2e_1303` 49/49, `e2e_123` 66/66;
+  `run_capnhat.sh` 1.31.3 (`e64eb22`) → 1.35.3 5/5 + 14/14. Không đổi lưu trữ.
 
 ## Kết quả lần chạy trước (bản 1.35.2, 18/11/2026) — sửa lỗi audit 18/11 + Bắt đầu truyện mới
 
