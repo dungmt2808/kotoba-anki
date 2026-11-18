@@ -1,6 +1,6 @@
 # ことば畑 · Vườn từ vựng cho Anki
 
-**Mỗi từ bạn học là một cái cây.** ことば畑 (*kotoba batake*, "ruộng chữ") là add-on cho Anki trên máy tính. Nó biến deck từ vựng tiếng Nhật hoặc tiếng Anh thành một khu vườn pixel. Cây lớn theo trí nhớ thật của bạn: ôn đều thì vườn xanh, ra hoa, ra quả; bỏ bê thì cây khát nước và héo. Xu kiếm được khi ôn dùng để xây nhà, trang trí sân, nuôi mèo và đổi giao diện theo mùa. Mỗi sáng còn có một tờ báo nhỏ viết bằng chính những từ bạn đang học.
+**Mỗi từ bạn học là một cái cây.** ことば畑 (*kotoba batake*, "ruộng chữ") là add-on cho Anki trên máy tính. Nó biến deck từ vựng (tiếng Nhật, Anh, Trung, Hàn, Đức, Pháp…) thành một khu vườn pixel. Cây lớn theo trí nhớ thật của bạn: ôn đều thì vườn xanh, ra hoa, ra quả; bỏ bê thì cây khát nước và héo. Xu kiếm được khi ôn dùng để xây nhà, trang trí sân, nuôi mèo và đổi giao diện theo mùa. Mỗi sáng còn có một tờ báo nhỏ viết bằng chính những từ bạn đang học.
 
 *A pixel-art garden for Anki: every note grows into a plant as your memory gets stronger. Vietnamese interface; works with Japanese and English decks.*
 
@@ -131,7 +131,7 @@ Mỗi ngày bạn ôn là một chậu hoa trên lịch, loài hoa đổi theo g
 
 Sợ đứt chuỗi ngày ôn? Mua **vé giữ chuỗi** ngay trong Lịch hoa (150 xu một vé, giữ tối đa 2 vé). Hôm nào quên ôn, vườn tự dùng một vé và chuỗi không đứt. Ngày dùng vé có bông tuyết trên lịch. Vé chỉ giữ con số chuỗi, không đổi lịch ôn thẻ.
 
-Hết tháng, nhật ký tự đóng thành **một cuốn** trên kệ sách: ảnh vườn của tháng, số ngày ôn, ngày ôn nhiều nhất, tâm trạng cả tháng, từng dòng nhật ký. Cuốn nhật ký **xuất được ra PDF** khổ A5 để in hay giữ làm kỷ niệm. Có thêm ô **luyện viết** một hai câu tiếng Nhật hoặc tiếng Anh, Gemini sửa một lần mỗi ngày.
+Hết tháng, nhật ký tự đóng thành **một cuốn** trên kệ sách: ảnh vườn của tháng, số ngày ôn, ngày ôn nhiều nhất, tâm trạng cả tháng, từng dòng nhật ký. Cuốn nhật ký **xuất được ra PDF** khổ A5 để in hay giữ làm kỷ niệm. Có thêm ô **luyện viết** một hai câu bằng tiếng bạn đang học (Nhật, Anh, Trung, Hàn, Đức hoặc Pháp), Gemini sửa một lần mỗi ngày.
 
 | Lịch tháng + nhật ký | Cuốn nhật ký |
 |---|---|
@@ -220,7 +220,7 @@ Phím tắt trong vườn: **R** Tưới ngay · **N** Nhà · **T** Trò chơi 
 1. Mở báo (phím **B**) → tab **Nguồn báo** → **Mở trang lấy khoá** (aistudio.google.com/apikey).
 2. Đăng nhập Google → **Create API key** → **Copy**.
 3. Dán khoá vào ô → **Thử khoá**.
-4. Chọn báo muốn nhận (tối đa 2 trong tiếng Nhật, Anh, Trung, Hàn; hoặc chỉ tiếng Việt — add-on chọn sẵn báo theo deck bạn đang học), trình độ và deck lấy từ (hoặc **Không dùng deck**) → **Bắt đầu viết**. Số đầu tiên về sau 1–2 phút. Từ hôm sau, Gemini tự viết khi bạn mở Anki.
+4. Chọn báo muốn nhận (tối đa 2 trong tiếng Nhật, Anh, Trung, Hàn, Đức, Pháp; hoặc chỉ tiếng Việt — add-on chọn sẵn báo theo deck bạn đang học), trình độ và deck lấy từ (hoặc **Không dùng deck**) → **Bắt đầu viết**. Số đầu tiên về sau 1–2 phút. Từ hôm sau, Gemini tự viết khi bạn mở Anki.
 5. **Gói báo**: số đầu tiên được tặng 7 ngày. Sau đó mua ở thẻ **Gói báo** (1 tuần 100 xu, 1 tháng 300 xu); **Tự gia hạn** (bật sẵn) tự mua tiếp khi hết hạn nếu đủ xu. Hết gói thì không có số mới, số cũ vẫn đọc được.
 
 **Riêng tư:**

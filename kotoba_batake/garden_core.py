@@ -12,6 +12,7 @@ import html
 import json
 import os
 import re
+import unicodedata
 from typing import Any
 
 from anki.collection import Collection, SearchNode
@@ -1612,6 +1613,9 @@ def _cloze_latin(sentence: str, word: str, lang: str) -> dict[str, str] | None:
     """1.17: câu tiếng Anh (nhận cả dạng biến đổi: went, studying, stopped…) / ngôn ngữ khác (đúng chữ)."""
     if not sentence:
         return None
+    # 1.35.2 (audit #06): câu nhập bằng mã HTML / dấu tách (Apre&#x300;s = e + dấu huyền) — bộ tìm trả vị trí trong chữ
+    # dựng sẵn (NFC) nên cắt cũng phải trên chữ NFC (trước đây che ", le ch" thay vì "le chat")
+    sentence = unicodedata.normalize("NFC", sentence)
     span = text.find_word(sentence, word, lang)
     if span is None:
         return None
@@ -3669,9 +3673,28 @@ class GardenState:
     def _draft_path(self) -> str:
         return os.path.join(os.path.dirname(self.path), draft.FILE_NAME)
 
-    def draft_load(self) -> dict[str, Any]:
-        """Bản thử của hồ sơ đang mở (file theo hồ sơ trên máy; không có / hỏng → trống)."""
-        return draft.clean(read_backup(self._draft_path(), self._col()))
+    def draft_load(self, strict: bool = True) -> dict[str, Any]:
+        """Bản thử của hồ sơ đang mở (file theo hồ sơ trên máy; không có / hỏng → trống).
+        1.35.1 (audit 01): file của hồ sơ CÓ mà không mở / đọc được (lỗi đĩa, bị khoá) → HomeError, không trả kho trống —
+        mọi lệnh đọc → sửa một ô → ghi dựa vào đây, kho trống ghi lên là mất bản thử của mọi ô / cảnh khác.
+        `strict=False` chỉ cho chỗ cần "đọc được gì thì đọc" (không ghi lại)."""
+        col = self._col()
+        target = backup.profile_path(self._draft_path(), col)
+        try:
+            with open(target, encoding="utf-8") as f:
+                raw = json.load(f)
+        except FileNotFoundError:
+            return draft.clean(read_backup(self._draft_path(), col))      # chưa có file của hồ sơ → file chung cũ / trống
+        except ValueError:
+            return draft.clean(None)        # không phải JSON: draft_store dời thành .hong trước khi ghi
+        except OSError:
+            if not strict:
+                return draft.clean(None)
+            raise HomeError("Chưa đọc được bản thử đã lưu (lỗi file trên máy) — chưa đổi gì để không mất bản cũ.") from None
+        got = backup_data(raw, col)
+        if got is None:
+            return draft.clean(read_backup(self._draft_path(), col))
+        return draft.clean(got)
 
     def draft_store(self, store: dict[str, Any]) -> dict[str, Any]:
         """Ghi bản thử (OSError → HomeError). Chỉ là bản nháp trên máy: không đụng ví / collection.

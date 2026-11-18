@@ -474,15 +474,27 @@ def guess_lang(name: str, keys: list[str], words: list[str]) -> str:
         return "ja"
     ja_hint = any(h in hints for h in _JA_STRONG)
     zh_hint = any(h in hints for h in _ZH_HINT)
-    if any(h in hints for h in _KO_HINT) and not ja_hint:
+    ko_hint = any(h in hints for h in _KO_HINT)
+    cjk = sum(1 for w in sample if _CJK_ANY.search(w))
+    hangul = sum(1 for w in sample if _HANGUL.search(w))
+    latin = sum(1 for w in sample if _LATIN.search(w) and not _KANA_ANY.search(w) and not _CJK_ANY.search(w))
+    if n and latin * 2 >= n and cjk * 2 < n and hangul * 2 < n and (zh_hint or ko_hint):
+        # 1.35.2 (audit 18/11 #05): chữ của note là chữ Latin mà chỉ có TRƯỜNG nghĩa tên "Chinese" / "中文" / "한국어" (deck
+        # tiếng Đức / Pháp / Anh cho người Trung / Hàn) → theo chữ, không theo tên trường (trước: deck "German Vocabulary"
+        # trường Wort · Chinese thành deck tiếng Trung, cây hiện 狗 猫 书). Vẫn tin: tên loại note (trừ khi tên có tiếng Đức /
+        # Pháp), trường phiên âm pinyin / hanzi (deck tiếng Trung để pinyin ở trường đầu) / hangul / romaja.
+        name_l, keys_l = (name or "").lower(), " ".join(k.lower() for k in keys)
+        eu_name = any(h in name_l for h in _DE_HINT + _FR_HINT)
+        zh_hint = zh_hint and (any(h in keys_l for h in ("pinyin", "拼音", "hanzi")) or
+                               (any(h in name_l for h in _ZH_HINT) and not eu_name))
+        ko_hint = ko_hint and (any(h in keys_l for h in ("hangul", "romaja", "한글")) or
+                               (any(h in name_l for h in _KO_HINT) and not eu_name))
+    if ko_hint and not ja_hint:
         return "ko"                        # 1.32: trước 1.32 là "other"
     if zh_hint and not ja_hint:
         return "zh"
     if not sample:
         return "en" if any(h in hints for h in _EN_HINT) else "ja"
-    cjk = sum(1 for w in sample if _CJK_ANY.search(w))
-    hangul = sum(1 for w in sample if _HANGUL.search(w))
-    latin = sum(1 for w in sample if _LATIN.search(w) and not _KANA_ANY.search(w) and not _CJK_ANY.search(w))
     accent = sum(1 for w in sample if _LATIN_ACCENT.search(w))
     # 1.34.1: chữ của ngôn ngữ khác (Nga, Thái, Ả Rập, Hindi…) — không phải Latin / Hán / kana / Hangul → "Ngôn ngữ khác"
     # (trước rơi xuống cuối hàm thành tiếng Nhật)

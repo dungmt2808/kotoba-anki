@@ -881,6 +881,7 @@ var GardenPaper = (function () {
         r.appendChild(tv);
         opts.appendChild(r);
       }
+      opts.appendChild(restartRow(g, busy));
       const lab = el("label", "kb-ai-auto");
       const cb = el("input");
       cb.type = "checkbox";
@@ -901,6 +902,35 @@ var GardenPaper = (function () {
       det.appendChild(lock(f, busy));
     }
     return det;
+  }
+  // 1.35.2 (người dùng 18/11: "hiện thực tính năng reset báo … vì bây giờ thêm ngôn ngữ mới"): Bắt đầu truyện mới — truyện
+  // chung của mọi báo về kỳ 1; truyện cũ cất lại (Python: story_core.restart_story), lấy lại được khi chưa có kỳ mới
+  function ddmmIso(s) { return s ? Number(s.slice(8, 10)) + "/" + Number(s.slice(5, 7)) : ""; }
+  function restartRow(g, busy) {
+    const t = g.truyen || { ky: 0, reset: null, undo: false };
+    const r = el("div", "kb-ai-row kb-ai-restart");
+    r.appendChild(el("span", "kb-ai-k", "Truyện dài kỳ"));
+    const rs = t.reset;
+    let text = t.ky ? "đang ở kỳ " + t.ky : "chưa có kỳ nào";
+    if (rs && rs.cho) { text = "truyện mới bắt đầu từ số ngày " + ddmmIso(rs.tu_ngay) + " (kỳ 1)"; }
+    else if (rs && !t.ky) { text = "số tới bắt đầu truyện mới (kỳ 1)"; }
+    r.appendChild(el("span", "kb-ai-v", text));
+    if (t.undo) {
+      r.appendChild(lock(btn("kb-ai-restart-undo", "Lấy lại truyện cũ", () => {
+        aiFlash = null; H.send("ai:restart_undo");
+      }, "Truyện mới chưa có kỳ nào: trả lại truyện cũ (kỳ " + (rs ? rs.ky_cu : "") + ") để viết tiếp"), busy));
+    } else if (t.ky) {
+      r.appendChild(lock(btn("kb-ai-restart-btn", "Bắt đầu truyện mới", () => {
+        const go = () => { aiFlash = null; H.send("ai:restart"); };
+        if (typeof GardenUI !== "undefined" && GardenUI.ask) {
+          GardenUI.ask({ title: "Bắt đầu truyện mới từ kỳ 1?", always: true, yes: "Bắt đầu truyện mới",
+            note: "Mọi báo cùng kể một truyện mới từ kỳ 1 (hợp khi vừa thêm báo tiếng khác). Truyện cũ (" + t.ky +
+              " kỳ) được cất lại, chưa viết kỳ mới thì lấy lại được. Số báo cũ vẫn ở Kệ báo; xu, gói báo giữ nguyên, số báo đánh tiếp.",
+            then: go });
+        } else { go(); }
+      }, "Mọi báo cùng kể một truyện mới từ kỳ 1"), busy));
+    }
+    return r;
   }
   function claudeCard(v) {
     const c = v.claude, on = v.source === "claude";

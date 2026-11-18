@@ -2310,6 +2310,7 @@ def feedback_bases(shared: str, base: str, date: str, ky: int) -> list[str]:
             raw = json.load(f)
     except (OSError, ValueError):
         raw = {}
+    shared = story_core.episode_base(shared, date)      # 1.35.2: số của truyện đã cất → thư mục cất truyện đó
     if isinstance(raw, dict) and raw.get("truyen_chung"):
         return [shared]
     out = [base]
@@ -2500,11 +2501,15 @@ def import_claude_story(shared: str, claude_dir: str | None, until: str) -> int:
     mem = story_core.load_story(shared)
     last_day = max([e["ngay"] for e in mem if e.get("ngay")] or [""])
     last_ky = max([e["ky"] for e in mem] or [0])
-    new = [c for c in eps if c["ngay"] > last_day]
+    # 1.35.2: sau "Bắt đầu truyện mới" — kỳ Claude đăng trước lúc truyện mới bắt đầu là của truyện đã cất (không chép về);
+    # kỳ sau đó đánh số nối truyện mới (không giữ số kỳ của Claude)
+    rs = story_core.resets(shared)
+    cut = rs[-1]["tu_ngay"] if rs else ""
+    new = [c for c in eps if c["ngay"] > last_day and c["ngay"] >= cut]
     if not new:
         return 0
     for c in new:
-        ky = c["ky"] if c["ky"] > last_ky else last_ky + 1     # bộ nhớ chung trống → giữ đúng số kỳ của Claude
+        ky = c["ky"] if c["ky"] > last_ky and not rs else last_ky + 1     # bộ nhớ chung trống → giữ đúng số kỳ của Claude
         last_ky = ky
         raw = [x for x in raw if x.get("ky") != ky]
         raw.append({"ky": ky, "ngay": c["ngay"], "tieu_de": c["tieu_de"], "tom_tat": c["tom_tat"] or c["tieu_de"],
@@ -2661,7 +2666,8 @@ class Job:
             for b in raw.get("bai") if isinstance(raw.get("bai"), list) else []:
                 if isinstance(b, dict) and b.get("loai") == "truyen" and isinstance(b.get("ky"), int) and b["ky"] > 1 \
                         and not (isinstance(b.get("ky_truoc"), str) and VI_LETTER_RE.search(b["ky_truoc"])):
-                    prev = [e for e in story_core.load_story(self.story_base) if e["ky"] < b["ky"] and e.get("tom_tat")]
+                    prev = [e for e in story_core.load_story(story_core.episode_base(self.story_base, self.date))
+                            if e["ky"] < b["ky"] and e.get("tom_tat")]
                     if prev:
                         b["ky_truoc"] = prev[-1]["tom_tat"]
         goc = self.opts.get("story_goc") if isinstance(self.opts.get("story_goc"), dict) else None
@@ -2986,10 +2992,12 @@ class Job:
         _write_json(issue_path(self.base, self.date), out)
         sb = next((b for b in out["bai"] if b.get("loai") == "truyen"), None)
         ky = sb.get("ky") if sb else None
+        # 1.35.2: số của truyện đã cất (bản gốc hôm nay giữ lại sau "Bắt đầu truyện mới") → ghi vào thư mục cất truyện đó
+        ep_base = story_core.episode_base(self.story_base, self.date) if self.story_base != self.base else self.story_base
         if ky and isinstance(ky, int) and self.master and self.master.get("truyen") and int(self.master["ky"]) == ky:
             # 1.25.2: bộ nhớ truyện chung ghi BẢN GỐC (cùng một kỳ cho mọi báo; báo thứ hai cùng ngày ghi lại y hệt)
             t = self.master["truyen"]
-            story_core.save_episode(self.story_base, self.date, ky,
+            story_core.save_episode(ep_base, self.date, ky,
                                     {"doan": t["doan"], "nho": t.get("nho") or {}, "diem": t.get("diem") or {}},
                                     t.get("tieu_de") or "")
         elif ky and isinstance(ky, int):
@@ -3001,7 +3009,7 @@ class Job:
                 nho["tom_tat"] = raw["tom_tat_truyen"].strip()[:300]
             ep["nho"] = nho
             if nho.get("tom_tat"):
-                story_core.save_episode(self.story_base, self.date, ky, ep, paper.surface(sb.get("tieu_de") or ""))
+                story_core.save_episode(ep_base, self.date, ky, ep, paper.surface(sb.get("tieu_de") or ""))
         words = [paper.norm_key(k) for t in _all_jp(out) for k in paper.keys(t)]
         history = [h for h in history if isinstance(h, dict) and h.get("ngay") != self.date]
         history.append({"ngay": self.date, "so": out["so"], "mau": out["mau_cau"],

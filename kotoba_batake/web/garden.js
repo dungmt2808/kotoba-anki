@@ -2010,6 +2010,7 @@ var Garden = (function () {
       if (cal()) { cal().view(v); }
     },
     calSaved: function (r) { if (cal()) { cal().saved(r); } },
+    calStale: function (o) { if (cal() && cal().stale) { cal().stale(o && o.msg); } },     // 1.35.2: đồng bộ / nhập collection xong
     calPdf: function (r) { if (cal()) { cal().pdf(r); } },
     calFix: function (r) {
       if (!r) { return; }

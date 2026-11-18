@@ -262,17 +262,19 @@ _RX: dict[tuple[str, str], Any] = {}
 
 def _rx(word: str, lang: str) -> Any:
     key = (lang, word)
-    if key not in _RX:
-        base = {eu.strip_article(a, lang).lower() for a in eu.alternatives(word, lang)}
-        if base & STOP.get(lang, set()) or base & NAMES:
-            _RX[key] = None
-        else:
-            fs = [f for f in eu.forms(word, lang) if eu.strip_article(f, lang).lower() not in STOP.get(lang, set())]
-            # 1.35.1: nháy cong = nháy thẳng (aujourd’hui) — eu.pattern; ngữ cảnh xét ở find_links (eu.context_ok)
-            _RX[key] = (re.compile(eu.pattern(fs), re.I), eu.word_kind(word, lang)) if fs else None
-        if len(_RX) > 20000:
-            _RX.clear()
-    return _RX[key]
+    if key in _RX:
+        return _RX[key]
+    base = {eu.strip_article(a, lang).lower() for a in eu.alternatives(word, lang)}
+    if base & STOP.get(lang, set()) or base & NAMES:
+        got = None
+    else:
+        fs = [f for f in eu.forms(word, lang) if eu.strip_article(f, lang).lower() not in STOP.get(lang, set())]
+        # 1.35.1: nháy cong = nháy thẳng (aujourd’hui) — eu.pattern; ngữ cảnh xét ở find_links (eu.context_ok)
+        got = (re.compile(eu.pattern(fs), re.I), eu.word_kind(word, lang)) if fs else None
+    if len(_RX) >= 20000:       # 1.35.2 (audit #08): dọn TRƯỚC khi thêm — trước đây dọn cả khoá vừa thêm rồi đọc lại → KeyError
+        _RX.clear()
+    _RX[key] = got
+    return got
 
 
 def find_links(s: str, words_: list[str], lang: str) -> list[tuple[int, int, str]]:

@@ -418,15 +418,19 @@ if HAVE_ANKI:
         return real_open(path, *a, **k)
     builtins.open = flaky_open
     try:
-        seen = st2.draft_load()                          # đọc lỗi → trống (như 1.34), trang chép cảnh thật vào ô trống
         err = ""
-        try:
-            st2.draft_store(draft.put(seen, "yard", 0, s2))
+        try:                                             # 1.35.2 (audit 01): đọc lỗi → báo lỗi luôn, không trả kho trống
+            st2.draft_store(draft.put(st2.draft_load(), "yard", 0, s2))
         except core.HomeError as e:
             err = str(e)
+        err2 = ""
+        try:                                             # kho trống (trang đọc lỗi) mà vẫn gửi lưu → draft_store cũng chặn
+            st2.draft_store(draft.put(draft.empty(), "yard", 0, s2))
+        except core.HomeError as e:
+            err2 = str(e)
     finally:
         builtins.open = real_open
-    ok(seen == draft.empty() and "Chưa đọc được bản thử" in err and open(t2, encoding="utf-8").read() == keep,
+    ok("Chưa đọc được bản thử" in err and "Chưa đọc được bản thử" in err2 and open(t2, encoding="utf-8").read() == keep,
        "file bản thử không đọc được → không ghi đè (bản thử của sân + phòng còn nguyên), báo một câu: " + err[:60])
     # hồ sơ chưa mở (không biết hồ sơ) → không ghi lẫn vào file chung
     st3 = core.GardenState(os.path.join(uf, "state.json"), lambda: None)
@@ -677,7 +681,8 @@ if old.returncode == 0:
 else:
     print("  – bỏ qua so với 1.35.0 (repo không có commit b5fc017)")
 man = json.load(open(os.path.join(ADDON, "manifest.json"), encoding="utf-8"))
-ok(man.get("human_version") == "1.35.1", "manifest: 1.35.1")
+_hv = tuple(int(x) for x in re.findall(r"\d+", str(man.get("human_version", "")))[:3])
+ok(_hv >= (1, 35, 1), "manifest: %s (≥ 1.35.1)" % man.get("human_version"))
 
 print("\nKẾT QUẢ: %d/%d" % (PASS, PASS + FAIL))
 sys.exit(1 if FAIL else 0)

@@ -166,8 +166,10 @@ var GardenCal = (function () {
     } else if (v.kind === "day") {
       if (tab !== "month" || v.d !== sel) { return; }
       day = v;
+      base = { d: v.d, note: v.t || "", write: (v.w && v.w.goc) || "", lang: v.w ? v.w.lang : "" };   // bản trong collection
       drawDay();
       if (v.flash) { setInfo(v.flash, true); sfx("again"); }
+      if (merge && merge.d === v.d) { mergeTyping(); }
     } else if (v.kind === "year") {
       year = v;
       if (tab === "year") { drawYear(); }
@@ -329,9 +331,10 @@ var GardenCal = (function () {
       const k = ta.classList.contains("kb-cal-note") ? "note" : ta.classList.contains("kb-cal-ta") ? "write" : "";
       if (!k || ta.readOnly) { return; }
       const dirty = ta._kbDirty ? ta._kbDirty() : false;
-      if (dirty && ta._kbSave && !composing) { ta._kbSave(); }
+      const saved = !!(dirty && ta._kbSave && !composing);
+      if (saved) { ta._kbSave(); }
       out[k] = { val: ta.value, a: ta.selectionStart, b: ta.selectionEnd, dir: ta.selectionDirection,
-                 focus: document.activeElement === ta, dirty: dirty, top: ta.scrollTop };
+                 focus: document.activeElement === ta, dirty: dirty, saved: saved, top: ta.scrollTop };
     });
     return out;
   }
@@ -351,13 +354,62 @@ var GardenCal = (function () {
       }
     });
   }
+  // 1.35.2 (audit 18/11 #12): Anki vừa đồng bộ / nhập collection (.colpkg) khi Lịch hoa đang mở → chữ trong ô là bản CŨ;
+  // gõ tiếp là lưu bản cũ đè bản vừa nhận (của máy khác / bản khôi phục). Nay: bỏ hẹn lưu, khoá lưu của các ô đang thấy,
+  // đọc lại từ collection rồi so ba bên — ô không đổi ở collection mà người dùng đang gõ dở → giữ chữ đang gõ (lưu lại);
+  // ô đã đổi ở collection → hiện bản vừa nhận, chữ gõ dở (nếu có) báo lại một dòng, không ghi đè.
+  let merge = null;
+  let base = null;         // chữ của ngày đang xem mà Python đã đọc / đã lưu được (không phải chữ trang đã gửi đi)
+  function stale(msg) {
+    if (!isOpen) { return; }
+    clearTimeout(timers.note); timers.note = null;
+    clearTimeout(timers.write); timers.write = null;
+    const R = $("kb-cal-right");
+    merge = null;
+    if (tab === "month" && day && R && R.getAttribute("data-d") === day.d) {
+      merge = { d: day.d };
+      Array.prototype.forEach.call(R.querySelectorAll("textarea"), (ta) => {
+        const k = ta.classList.contains("kb-cal-note") ? "note" : ta.classList.contains("kb-cal-ta") ? "write" : "";
+        if (!k || ta.readOnly) { return; }
+        const b = base && base.d === day.d ? base : { note: day.t || "", write: (day.w && day.w.goc) || "" };
+        merge[k] = { saved: k === "note" ? b.note : b.write, cur: ta.value, lang: k === "write" && day.w ? day.w.lang : "" };
+      });
+    }
+    Array.prototype.forEach.call(stage().querySelectorAll("textarea"), (ta) => { ta._kbSave = null; ta._kbDirty = () => false; });
+    day = null;
+    setTab(tab, tab === "month" && month ? { month: month.id } : null);
+    setInfo(msg || "Anki vừa đồng bộ / nhập dữ liệu — Lịch hoa đã đọc lại bản mới nhất.");
+  }
+  function mergeTyping() {
+    const m = merge, R = $("kb-cal-right");
+    merge = null;
+    if (!m || !R || !day) { return; }
+    const lost = [];
+    Array.prototype.forEach.call(R.querySelectorAll("textarea"), (ta) => {
+      const k = ta.classList.contains("kb-cal-note") ? "note" : ta.classList.contains("kb-cal-ta") ? "write" : "";
+      const s = m[k];
+      if (!s || ta.readOnly || s.cur === s.saved || ta.value === s.cur) { return; }
+      const fresh = ta.value;
+      if (fresh === s.saved && (k === "note" || (day.w && day.w.lang === s.lang))) {
+        ta.value = s.cur;                   // collection không đổi ô này → chữ đang gõ dở là của người dùng, lưu tiếp
+        ta.dispatchEvent(new Event("kb-sync"));
+        if (ta._kbSave) { ta._kbSave(); }
+      } else {
+        lost.push((k === "note" ? "Nhật ký" : "Luyện viết") + ": «" + (s.cur.length > 60 ? s.cur.slice(0, 60) + "…" : s.cur) + "»");
+      }
+    });
+    if (lost.length) {
+      setInfo("Ngày này vừa đổi ở máy khác / bản khôi phục — đang hiện bản mới. Chữ bạn gõ dở chưa lưu: " + lost.join(" · "), true);
+    }
+  }
   function drawDay() {
     const R = $("kb-cal-right");
     if (!R || !day) { return; }
     const v = day;
     const keepT = grabTyping(R, v.d);
-    if (keepT.note && keepT.note.dirty) { v.t = keepT.note.val; }          // vừa lưu ở grabTyping
-    if (keepT.write && keepT.write.dirty && v.w && !v.w.locked) { v.w.goc = keepT.write.val; }
+    // vừa lưu ở grabTyping → coi như bản đã lưu; chưa lưu (đang gõ bằng bộ gõ, đang gửi sửa) → ô mới vẫn "chưa lưu"
+    if (keepT.note && keepT.note.saved) { v.t = keepT.note.val; }
+    if (keepT.write && keepT.write.saved && v.w && !v.w.locked) { v.w.goc = keepT.write.val; }
     R.textContent = "";
     R.setAttribute("data-d", v.d);
     const c1 = el("div", "kb-cal-card");
@@ -438,16 +490,20 @@ var GardenCal = (function () {
     meta.appendChild(el("span", null, "Đồng bộ qua AnkiWeb"));
     const cnt = el("span", "kb-cal-cnt", ta.value.length + " / " + ta.maxLength + " ký tự");
     meta.appendChild(cnt);
+    // 1.35.2 (audit #12): gửi kèm b = chữ của ô mà trang tin là đã lưu (null = không biết) — collection đã khác thì Python
+    // không ghi đè (máy khác vừa đồng bộ về / vừa nhập .colpkg)
+    const known = () => (v.t === null || v.t === undefined ? null : v.t);
     const save = () => {
       clearTimeout(timers.note); timers.note = null;
       if (ta.value === (v.t || "")) { return; }
+      const b = known();
       v.t = ta.value;
-      H.send("cal:note:" + JSON.stringify({ d: v.d, t: ta.value }));
+      H.send("cal:note:" + JSON.stringify({ d: v.d, t: ta.value, b: b }));
     };
     ta.addEventListener("input", () => {
       cnt.textContent = ta.value.length + " / " + ta.maxLength + " ký tự";
       grow(ta);
-      keep("note", { d: v.d, t: ta.value });
+      keep("note", { d: v.d, t: ta.value, b: known() });
       if (!composing) { clearTimeout(timers.note); timers.note = setTimeout(save, 1500); }
     });
     ta.addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey && !e.isComposing) { e.preventDefault(); ta.blur(); } });
@@ -466,13 +522,25 @@ var GardenCal = (function () {
   const WORDY = { en: 1, de: 1, fr: 1 };
   const WLANGS = [["ja", "Tiếng Nhật"], ["en", "Tiếng Anh"], ["zh", "Tiếng Trung"], ["ko", "Tiếng Hàn"], ["de", "Tiếng Đức"],
     ["fr", "Tiếng Pháp"]];
+  const WMAX = { ja: 60, en: 30, zh: 60, ko: 60, de: 30, fr: 30 };     // = journal_core.WRITE_MAX
+  // 1.35.2 (audit 18/11 #04): chữ có dấu viết tách (NFD — "é" = e + dấu) / Hangul tách nét đếm như chữ dựng sẵn (NFC)
+  function nfc(s) { try { return String(s || "").normalize("NFC"); } catch (e) { return String(s || ""); } }
+  function nfcBox(ta) {
+    const v = ta.value, n = nfc(v);
+    if (n === v) { return; }
+    const a = nfc(v.slice(0, ta.selectionStart || 0)).length;
+    ta.value = n;
+    try { ta.setSelectionRange(a, a); } catch (e) { /* bỏ qua */ }
+  }
   const PLACE = { ja: "一、二文を書いてみよう…", en: "Write one or two sentences…", zh: "写一两句话吧…", ko: "한두 문장을 써 보세요…",
     de: "Schreib ein, zwei Sätze…", fr: "Écris une ou deux phrases…" };
   function units(s, lang) {
-    if (WORDY[lang]) { return (String(s || "").match(EN_WORD) || []).length; }
-    return Array.from(String(s || "").replace(/\s/g, "")).length;     // đếm theo ký tự (code point) như Python
+    s = nfc(s);
+    if (WORDY[lang]) { return (s.match(EN_WORD) || []).length; }
+    return Array.from(s.replace(/\s/g, "")).length;     // đếm theo ký tự (code point) như Python
   }
   function clip(s, lang, max) {
+    s = nfc(s);
     if (units(s, lang) <= max) { return s; }
     if (WORDY[lang]) {
       let m, n = 0, end = s.length;
@@ -501,8 +569,20 @@ var GardenCal = (function () {
         if (w.langs.indexOf(x[0]) < 0) { return; }
         const b = btn("kb-ai-chip" + (x[0] === w.lang ? " is-on" : ""), x[1], () => {
           if (x[0] === w.lang) { return; }
-          flushAll();
-          H.send("cal:lang:" + x[0]);
+          // 1.35.2 (audit 18/11 #03): bài đang viết dài hơn giới hạn của tiếng mới → hỏi trước (đổi là cắt bớt phần cuối);
+          // Python cũng không cắt nếu lệnh không kèm ":cut"
+          const go = (cut) => { flushAll(); H.send("cal:lang:" + x[0] + (cut ? ":cut" : "")); };
+          const ta = c.querySelector(".kb-cal-ta");
+          const txt = nfc(ta ? ta.value : (w.goc || ""));
+          const mx = WMAX[x[0]] || 60;
+          if (txt.trim() && clip(txt, x[0], mx) !== txt && typeof GardenUI !== "undefined" && GardenUI.ask) {
+            GardenUI.ask({ title: "Đổi sang " + x[1] + "?", always: true, yes: "Đổi và cắt bớt",
+              note: "Bài đang viết dài hơn " + mx + (WORDY[x[0]] ? " từ" : " ký tự") + " (giới hạn của " + x[1] +
+                ") — đổi tiếng sẽ cắt bớt phần cuối bài. Muốn giữ nguyên bài thì bấm Huỷ.",
+              then: () => go(true) });
+            return;
+          }
+          go(false);
         });
         lc.appendChild(b);
       });
@@ -548,13 +628,16 @@ var GardenCal = (function () {
     note.hidden = true;
     c.appendChild(note);
     if (!w.locked) {
+      const known = () => (w.goc === null || w.goc === undefined ? null : w.goc);
       const save = () => {
         clearTimeout(timers.write); timers.write = null;
         if (ta.value === (w.goc || "")) { return; }
+        const b = known();
         w.goc = ta.value;
-        H.send("cal:draft:" + JSON.stringify({ d: v.d, lang: w.lang, t: ta.value }));
+        H.send("cal:draft:" + JSON.stringify({ d: v.d, lang: w.lang, t: ta.value, b: b }));
       };
       const limit = () => {
+        nfcBox(ta);
         const t = clip(ta.value, w.lang, w.max);
         if (t !== ta.value) {
           ta.value = t;
@@ -567,7 +650,7 @@ var GardenCal = (function () {
         if (!composing) { limit(); }
         paint(units(ta.value, w.lang), w.used);
         grow(ta);
-        keep("draft", { d: v.d, lang: w.lang, t: ta.value });
+        keep("draft", { d: v.d, lang: w.lang, t: ta.value, b: known() });
         if (!composing) { clearTimeout(timers.write); timers.write = setTimeout(save, 800); }
         actsFor(c, v);
       });
@@ -631,9 +714,12 @@ var GardenCal = (function () {
     } else {
       const b = btn("kb-cal-send", "Nhờ Gemini sửa", () => {
         if (!ta || !ta.value.trim()) { return; }
-        if (ta._kbSave) { ta._kbSave(); }
+        clearTimeout(timers.write); timers.write = null;
+        // 1.35.2 (audit #13): gửi kèm chữ đang thấy — Python lưu trước, lưu không được thì không gửi (không mất lượt);
+        // ô cũ không tự lưu nữa (bài sắp khoá), lưu lỗi thì ô mới vẫn giữ chữ này và "chưa lưu"
+        ta._kbSave = null;
         b.disabled = true; b.textContent = "Đang gửi…";
-        H.send("cal:fix:" + v.d);
+        H.send("cal:fix:" + JSON.stringify({ d: v.d, t: ta.value, lang: w.lang }));
       }, "Gemini sửa 1 lần mỗi ngày (câu đã sửa · lỗi · nhận xét)");
       b.disabled = !has;
       acts.appendChild(b);
@@ -700,9 +786,16 @@ var GardenCal = (function () {
     Array.prototype.forEach.call(st.querySelectorAll("textarea"), (ta) => { if (ta._kbSave) { ta._kbSave(); } });
   }
 
+  let saveBad = false;      // 1.35.2 (audit #15): đang hiện "Chưa lưu được" — lần lưu sau được thì xoá
   function onSaved(r) {
     if (!r) { return; }
+    if (r.ok && saveBad) { saveBad = false; if (isOpen) { setInfo("Đã lưu."); } }
+    if (!r.ok && r.conflict) {      // 1.35.2: ngày này vừa đổi ở chỗ khác → đọc lại, so ba bên (chữ gõ dở báo lại)
+      if (isOpen && day && day.d === r.d) { stale(r.msg); }
+      return;
+    }
     if (!r.ok) {
+      saveBad = !!r.store_error;
       // 1.31.1: Anki báo lỗi khi ghi → chữ trong ô coi như chưa lưu: lần rời ô / gõ tiếp / đóng bảng sau gửi lại
       if (r.store_error && day && (!r.d || day.d === r.d)) {
         if (r.kind === "note") { day.t = null; }
@@ -712,6 +805,10 @@ var GardenCal = (function () {
       return;
     }
     refreshCell(r.d, r.mood, r.note);
+    if (base && base.d === r.d) {
+      if (r.kind === "note" && typeof r.t === "string") { base.note = r.t; }
+      if (r.kind === "draft" && typeof r.goc === "string") { base.write = r.goc; }
+    }
     if (day && day.d === r.d) {
       day.mood = r.mood;
       if (r.kind === "draft" && day.w) {
@@ -1131,6 +1228,7 @@ var GardenCal = (function () {
     close: close,
     isOpen: function () { return isOpen; },
     view: onView,
+    stale: stale,
     saved: onSaved,
     fix: onFix,
     pdf: onPdf,

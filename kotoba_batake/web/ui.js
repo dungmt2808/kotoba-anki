@@ -334,10 +334,12 @@ var GardenUI = (function () {
     }, true);
     (document.getElementById("kb-app") || document.body).appendChild(askBox);
   }
-  // o: {title, price (xu; 0 / thiếu = không ghi giá), cost (chữ thay cho giá, vd "chuỗi 7 ngày"), yes (chữ nút), note, then}
+  // o: {title, price (xu; 0 / thiếu = không ghi giá), cost (chữ thay cho giá, vd "chuỗi 7 ngày"), yes (chữ nút), note, then,
+  //     always}
   function ask(o) {
     if (!o || typeof o.then !== "function") { return; }
-    if (askOff()) { o.then(); return; }
+    // o.always (1.35.2): hỏi trước khi bỏ chữ của người dùng — không theo ⚙ "Hỏi trước khi trả xu"
+    if (o.always ? !!(G && G.data() && G.data().ask_off) : askOff()) { o.then(); return; }
     if (!askBox) { askBuild(); }
     if (!askBox.hidden) { return; }                 // đang hỏi món khác: bỏ lần bấm này
     const d = G && G.data(), have = (d && d.wallet && d.wallet.coins) || 0, price = Math.max(0, Number(o.price) || 0);

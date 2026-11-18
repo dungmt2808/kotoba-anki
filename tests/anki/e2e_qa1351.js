@@ -154,6 +154,8 @@ result = mw.col.note_count() - before`);
     kb._fake_lang = (lang, level)
     return {"raw": kb.journal.FIX_EXAMPLE["de"], "model": "gemini-flash-lite-latest"}
 kb.journal.run_fix = _fake
+# audit 18/11: hồ sơ mới chưa có danh sách model lưu sẵn → fix_start hỏi Gemini thật trước khi tới hàm giả
+kb.ai.Gemini.models = lambda self: [{"name": "models/gemini-flash-lite-latest", "supportedGenerationMethods": ["generateContent"]}]
 result = 1`);
   await js('const b = document.querySelector(".kb-cal-send"); if (b) b.click(); return 1;');
   const fixed = await (async () => { for (let i = 0; i < 40; i++) { const x = await js('return !!document.querySelector(".kb-cal-fix");'); if (x) return true; await sleep(300); } return false; })();

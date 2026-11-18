@@ -71,6 +71,8 @@ def fake(client, models, goc, lang, level, hints):
                     "tu_nhien": "", "nhan_xet": nx}, "model": "gemini-flash-lite-latest"}
 kb._fake_calls = getattr(kb, "_fake_calls", [])
 kb.journal.run_fix = fake
+# audit 18/11: hồ sơ mới chưa có danh sách model lưu sẵn → fix_start hỏi Gemini thật trước khi tới hàm giả
+kb.ai.Gemini.models = lambda self: [{"name": "models/gemini-flash-lite-latest", "supportedGenerationMethods": ["generateContent"]}]
 result = 1`;
 // lịch sử ôn giả 140 ngày (để có hoa, năm, cuốn nhật ký)
 const SEED = KB + `

@@ -23,6 +23,7 @@ import math
 import os
 import re
 import time
+import unicodedata
 from typing import Any, Callable
 
 try:
@@ -330,6 +331,7 @@ def clean_line(s: Any, limit: int) -> str:
     """Chữ một đoạn: bỏ ký tự điều khiển, xuống dòng → dấu cách, gộp khoảng trắng, cắt theo độ dài."""
     if not isinstance(s, str):
         return ""
+    s = unicodedata.normalize("NFC", s)       # 1.35.2 (audit #04): "é" tách dấu (NFD) / Hangul tách nét = chữ dựng sẵn
     s = _CTRL.sub("", s.replace("\r\n", "\n").replace("\r", "\n").replace("\t", " "))
     s = re.sub(r"\s*\n\s*", " ", s)
     s = re.sub(r" {2,}", " ", s).strip()
@@ -341,13 +343,16 @@ _EN_WORD = re.compile(r"[A-Za-z0-9À-ɏ]+(?:['’\-][A-Za-z0-9À-ɏ]+)*")
 
 def count_units(s: str, lang: str) -> int:
     """Độ dài bài luyện viết: tiếng Nhật / Trung / Hàn đếm ký tự (không tính khoảng trắng), tiếng Anh / Đức / Pháp đếm từ."""
+    s = unicodedata.normalize("NFC", s or "")
     if BASE.get(lang) == "en":
-        return len(_EN_WORD.findall(s or ""))
-    return len(re.sub(r"\s", "", s or ""))
+        return len(_EN_WORD.findall(s))
+    return len(re.sub(r"\s", "", s))
 
 
 def clip_units(s: str, lang: str, limit: int) -> tuple[str, bool]:
-    """Cắt bài ở đơn vị thứ `limit` (tiếng Anh: hết từ thứ 30; tiếng Nhật: ký tự thứ 60, không tính khoảng trắng)."""
+    """Cắt bài ở đơn vị thứ `limit` (tiếng Anh: hết từ thứ 30; tiếng Nhật: ký tự thứ 60, không tính khoảng trắng).
+    1.35.2: chữ tách dấu (NFD) → dựng sẵn (NFC) trước khi đếm / cắt."""
+    s = unicodedata.normalize("NFC", s or "")
     if count_units(s, lang) <= limit:
         return s, False
     if BASE.get(lang) == "en":
@@ -808,8 +813,8 @@ def _tokens_en(s: str) -> list[tuple[int, int, str]]:
     return [(m.start(), m.end(), m.group(0)) for m in re.finditer(r"\S+", s)]
 
 
-def _norm_en(tok: str) -> str:
-    return re.sub(r"[^\w'’]", "", tok.lower()).replace("’", "'")
+def _norm_en(tok: str, keep_case: bool = False) -> str:
+    return re.sub(r"[^\w'’]", "", tok if keep_case else tok.lower()).replace("’", "'")
 
 
 def changed_ranges(goc: str, sua: str, lang: str) -> list[tuple[int, int]]:
@@ -825,7 +830,9 @@ def diff_marks(goc: str, sua: str, lang: str) -> tuple[list[tuple[int, int]], li
     dels: list[tuple[int, str]] = []
     if lang in SPACED:                   # 1.35.1: Đức / Pháp / Hàn có dấu cách — so theo từ như tiếng Anh
         a, b = _tokens_en(goc), _tokens_en(sua)
-        sm = difflib.SequenceMatcher(None, [_norm_en(t[2]) for t in a], [_norm_en(t[2]) for t in b], autojunk=False)
+        # 1.35.2 (audit #09): tiếng Đức viết hoa danh từ là chỗ người học cần thấy (hund → Hund) → so cả hoa / thường
+        kc = lang == "de"
+        sm = difflib.SequenceMatcher(None, [_norm_en(t[2], kc) for t in a], [_norm_en(t[2], kc) for t in b], autojunk=False)
         for op, i1, i2, j1, j2 in sm.get_opcodes():
             if op in ("replace", "insert") and j2 > j1:
                 out.append((b[j1][0], b[j2 - 1][1]))
@@ -1273,19 +1280,24 @@ def writing_view(w: dict[str, Any] | None, lang: str, langs: list[str], is_today
 def paper_line(read: dict[str, dict[str, Any]], issues: dict[str, dict[str, Any]], ds: str) -> str:
     """"đọc số N · chép đúng a / b câu" cho số báo của ngày ds (mọi báo đã đọc của ngày đó)."""
     parts = []
+    # 1.35.2 (audit #10): hôm đó đọc từ 2 báo trở lên → mỗi phần ghi báo tiếng gì (trước chỉ báo tiếng Anh có tên, hai báo
+    # Đức + Pháp thành "đọc số 1 · chép đúng 0 / 2 câu · đọc số 1 · chép đúng 0 / 2 câu")
+    many = sum(1 for r in read.values() if isinstance(r, dict) and ds in r) > 1
     for lang, r in read.items():
-        if ds not in r:
+        if not isinstance(r, dict) or ds not in r:
             continue
-        x = r[ds]
+        x = r[ds] if isinstance(r[ds], dict) else {}
         info = issues.get(lang, {}).get(ds) or {}
         so = info.get("so")
         total = info.get("ct") or len(x.get("ct", {}))
         ok = sum(1 for v in (x.get("ct") or {}).values() if v)
-        p = ("đọc số %s" % so if so else "đã đọc") + (" tiếng Anh" if lang == "en" and len(read) > 1 else "")
+        p = "đọc số %s" % so if so else "đã đọc"
         if total:
             p += " · chép đúng %d / %d câu" % (ok, total)
+        if many:
+            p = "báo %s: %s" % (dict(LANG_VI, vi="tiếng Việt").get(lang, lang), p)
         parts.append(p)
-    return " · ".join(parts)
+    return "; ".join(parts)
 
 
 def day_head(d: _dt.date, today: _dt.date) -> dict[str, Any]:

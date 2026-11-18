@@ -1634,3 +1634,149 @@ def story_matches(raw_doan: list[str], plain: list[str]) -> float:
     if not a or not b:
         return 0.0
     return difflib.SequenceMatcher(None, a, b, autojunk=False).ratio()
+
+
+# ---------------------------------------------------------------------------
+# 1.35.2: "Bắt đầu truyện mới" (người dùng 18/11: "hiện thực tính năng reset báo … vì bây giờ thêm ngôn ngữ mới nên tớ
+# nghĩ cần reset báo") — truyện chung của mọi báo bắt đầu lại từ kỳ 1 (người mới đọc báo tiếng Đức / Pháp không phải vào
+# giữa truyện). Bộ nhớ truyện của thư mục chung được CẤT (không xoá) vào truyen_cu/<ngày>_<n>/; số báo cũ vẫn ở Kệ báo,
+# số báo (số 1, 2…) của từng báo, xu, gói báo, tiến độ đọc không đổi. Hôm nay đã có bản gốc (một báo đã viết) thì bản gốc
+# đó giữ lại để các báo còn lại hôm nay kể cùng một kỳ — truyện mới bắt đầu từ số ngày mai.
+# ---------------------------------------------------------------------------
+
+RESET_FILE = "bat_dau_lai.json"      # các lần bắt đầu lại: {"v": 1, "lan": [{ngay, tu_ngay, thu_muc, ky_cu, giu}]}
+ARCHIVE_DIR = "truyen_cu"            # <thư mục chung>/truyen_cu/<ngày>_<n>/ — bộ nhớ truyện đã cất
+RESET_ITEMS = (STORY_FILE, ARC_FILE, NOTE_FILE, SUM_FILE, NEWS_FILE, DRAFT_DIR, MASTER_DIR)
+_DAY_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+
+
+def _next_day(date: str) -> str:
+    import datetime as _dt
+    return (_dt.date.fromisoformat(date) + _dt.timedelta(days=1)).isoformat()
+
+
+def resets(base: str) -> list[dict[str, Any]]:
+    """Các lần bắt đầu lại (cũ trước). Bản ghi hỏng → bỏ qua."""
+    raw = _read(os.path.join(base, RESET_FILE), None)
+    out = []
+    for x in (raw.get("lan") if isinstance(raw, dict) and isinstance(raw.get("lan"), list) else []):
+        if isinstance(x, dict) and all(isinstance(x.get(k), str) and _DAY_RE.match(x[k]) for k in ("ngay", "tu_ngay")) \
+                and isinstance(x.get("thu_muc"), str) and re.match(r"^[0-9_-]+$", x["thu_muc"]):
+            out.append({"ngay": x["ngay"], "tu_ngay": x["tu_ngay"], "thu_muc": x["thu_muc"],
+                        "ky_cu": x["ky_cu"] if isinstance(x.get("ky_cu"), int) and not isinstance(x.get("ky_cu"), bool) else 0,
+                        "giu": x["giu"] if isinstance(x.get("giu"), str) and _DAY_RE.match(x["giu"]) else ""})
+    return out
+
+
+def episode_base(base: str, date: str) -> str:
+    """Thư mục bộ nhớ truyện của số báo ngày `date`: số của một truyện đã cất (ngày trước lúc truyện mới bắt đầu) → thư
+    mục cất truyện đó (nhận xét Hay / Nhạt của số cũ, báo thứ hai hôm nay kể lại kỳ cũ — không lẫn vào truyện mới)."""
+    for r in resets(base):
+        if isinstance(date, str) and date < r["tu_ngay"]:
+            return os.path.join(base, ARCHIVE_DIR, r["thu_muc"])
+    return base
+
+
+def last_ky(base: str) -> int:
+    return max([e["ky"] for e in load_story(base) if e.get("ngay") or e.get("nguyen_van")] or [0])
+
+
+def _new_started(base: str, r: dict[str, Any]) -> bool:
+    """Truyện mới đã có kỳ nào chưa (đã có thì không lấy lại truyện cũ được — tránh lẫn hai truyện)."""
+    if last_ky(base):
+        return True
+    folder = os.path.join(base, MASTER_DIR)
+    try:
+        names = os.listdir(folder)
+    except OSError:
+        names = []
+    return any(n.endswith(".json") and n[:10] >= r["tu_ngay"] for n in names)
+
+
+def story_state(base: str, today: str) -> dict[str, Any]:
+    """Cho tab Nguồn báo: kỳ cuối của truyện đang viết, lần bắt đầu lại gần nhất, còn lấy lại được truyện cũ không."""
+    rs = resets(base)
+    last = rs[-1] if rs else None
+    out: dict[str, Any] = {"ky": last_ky(base), "reset": None, "undo": False}
+    if last:
+        out["reset"] = {"ngay": last["ngay"], "tu_ngay": last["tu_ngay"], "ky_cu": last["ky_cu"],
+                        "cho": last["tu_ngay"] > today}
+        out["undo"] = not _new_started(base, last) and os.path.isdir(os.path.join(base, ARCHIVE_DIR, last["thu_muc"]))
+    return out
+
+
+def restart_story(base: str, today: str) -> dict[str, Any]:
+    """Cất bộ nhớ truyện chung, truyện mới bắt đầu từ kỳ 1. Trả {tu_ngay, ky_cu, thu_muc}. OSError → người gọi báo lỗi
+    (cất dở thì trả các file đã dời về như cũ)."""
+    if not _DAY_RE.match(today or ""):
+        raise ValueError("ngày không hợp lệ")
+    rs = resets(base)
+    if rs and not _new_started(base, rs[-1]):
+        return {"tu_ngay": rs[-1]["tu_ngay"], "ky_cu": rs[-1]["ky_cu"], "thu_muc": rs[-1]["thu_muc"], "same": True}
+    ky_cu = last_ky(base)
+    keep = today if load_master(base, today) else ""
+    root = os.path.join(base, ARCHIVE_DIR)
+    n = 1
+    while os.path.exists(os.path.join(root, "%s_%d" % (today, n))):
+        n += 1
+    name = "%s_%d" % (today, n)
+    dest = os.path.join(root, name)
+    os.makedirs(dest)
+    moved: list[tuple[str, str]] = []
+    try:
+        for item in RESET_ITEMS:
+            src = os.path.join(base, item)
+            if not os.path.exists(src):
+                continue
+            if item == MASTER_DIR and keep:          # bản gốc hôm nay ở lại: các báo còn lại hôm nay kể cùng kỳ đó
+                os.makedirs(os.path.join(dest, item), exist_ok=True)
+                for f in sorted(os.listdir(src)):
+                    if f != keep + ".json":
+                        os.replace(os.path.join(src, f), os.path.join(dest, item, f))
+                        moved.append((os.path.join(src, f), os.path.join(dest, item, f)))
+                continue
+            os.replace(src, os.path.join(dest, item))
+            moved.append((src, os.path.join(dest, item)))
+        # truyen.json rỗng: ai_core.migrate_story thấy đã có bộ nhớ chung → không chép truyện cũ của từng báo (≤ 1.25.1) về
+        _write(os.path.join(base, STORY_FILE), [])
+        rec = {"ngay": today, "tu_ngay": _next_day(today) if keep else today, "thu_muc": name, "ky_cu": ky_cu, "giu": keep}
+        _write(os.path.join(base, RESET_FILE), {"v": 1, "lan": (rs + [rec])[-50:]})
+    except OSError:
+        for a, b in reversed(moved):
+            try:
+                os.replace(b, a)
+            except OSError:
+                pass
+        raise
+    return {"tu_ngay": rec["tu_ngay"], "ky_cu": ky_cu, "thu_muc": name}
+
+
+def undo_restart(base: str) -> bool:
+    """Lấy lại truyện cũ — chỉ khi truyện mới chưa có kỳ nào. False = không lấy lại được (không có gì / đã viết kỳ mới)."""
+    rs = resets(base)
+    if not rs or _new_started(base, rs[-1]):
+        return False
+    last = rs[-1]
+    src_root = os.path.join(base, ARCHIVE_DIR, last["thu_muc"])
+    if not os.path.isdir(src_root):
+        return False
+    for item in RESET_ITEMS:
+        src = os.path.join(src_root, item)
+        if not os.path.exists(src):
+            continue
+        dst = os.path.join(base, item)
+        if item in (MASTER_DIR, DRAFT_DIR) and os.path.isdir(dst):
+            for f in sorted(os.listdir(src)):
+                if not os.path.exists(os.path.join(dst, f)):
+                    os.replace(os.path.join(src, f), os.path.join(dst, f))
+            continue
+        if os.path.isdir(dst):
+            continue
+        os.replace(src, dst)                 # truyen.json rỗng / tin làng mới (chưa có kỳ mới) bị thay bằng bản cũ
+    _write(os.path.join(base, RESET_FILE), {"v": 1, "lan": rs[:-1]})
+    try:
+        for dirpath, _dirs, _files in os.walk(src_root, topdown=False):
+            os.rmdir(dirpath)                # chỉ xoá thư mục đã trống
+    except OSError:
+        pass
+    return True

@@ -32,7 +32,7 @@ Mỗi lần ra bản mới: **Update** trên trang add-on của mình → tải 
 
 ![Khu vườn ことば畑](https://raw.githubusercontent.com/dungmt2808/kotoba-anki/master/docs/anh/01_vuon.png)
 
-**Mỗi từ bạn học là một cái cây.** ことば畑 biến deck tiếng Nhật hoặc tiếng Anh thành một khu vườn pixel. Cây lớn theo trí nhớ thật (FSRS): ôn đều thì ra hoa, ra quả; đến hạn thì khát nước; sắp quên thì héo. Nhìn vườn là biết mình đang nhớ tới đâu.
+**Mỗi từ bạn học là một cái cây.** ことば畑 biến deck từ vựng (tiếng Nhật, Anh, Trung, Hàn, Đức, Pháp…) thành một khu vườn pixel. Cây lớn theo trí nhớ thật (FSRS): ôn đều thì ra hoa, ra quả; đến hạn thì khát nước; sắp quên thì héo. Nhìn vườn là biết mình đang nhớ tới đâu.
 
 ![Xem nhanh: tưới cây, Nhà, các vùng](https://raw.githubusercontent.com/dungmt2808/kotoba-anki/master/docs/video/tour.gif)
 

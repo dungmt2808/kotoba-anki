@@ -198,6 +198,9 @@ echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
 echo "== core/test_1351.py (1.35.1: kiểm tra lại 1.35 — từ đồng hình Đức / Pháp, động từ tách / tiền tố, đoán ngôn ngữ Ý / Tây Ban Nha / Phần Lan, từ một chữ tiếng Trung, tiếng Hàn 쉬어요 / 도와줘요, Trang trí thử không mất bản thử lúc đồng bộ / file hỏng, câu chữ)"
 OUT=$("${ANKI_PY:-python3}" -W ignore "$HERE/core/test_1351.py" "$ADDON" 2>&1); RC=$?
 echo "$OUT" | grep -E "✗|KẾT QUẢ|Traceback"; [ $RC = 0 ] || FAIL=1
+echo "== core/test_1352.py (1.35.2: lỗi audit 18/11 — Trang trí thử đọc lỗi một lần, chữ tách dấu NFD, deck có trường nghĩa tiếng Trung / Hàn, Điền vào câu mã HTML, kệ nhật ký, bộ đệm tra từ, viết hoa tiếng Đức, hai báo cùng ngày; Bắt đầu truyện mới với Gemini giả + mã 1.31.3)"
+OUT=$("${ANKI_PY:-python3}" -W ignore "$HERE/core/test_1352.py" "$ADDON" 2>&1); RC=$?
+echo "$OUT" | grep -E "✗|KẾT QUẢ|Traceback"; [ $RC = 0 ] || FAIL=1
 echo "== trang/test_trang.py (trang web: đăng / gỡ mã, biểu mẫu issue, GitHub Actions, dữ liệu khớp add-on)"
 OUT=$(python3 "$HERE/trang/test_trang.py" "$ADDON" 2>&1); RC=$?
 echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1

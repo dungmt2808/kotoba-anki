@@ -1382,6 +1382,51 @@ def _level_of(o: dict[str, Any], lang: str) -> str:
     return o.get("level_" + lang) if lang in ("en", "zh", "ko", "de", "fr") else o["level"]
 
 
+
+# -- 1.35.2: Bắt đầu truyện mới -------------------------------------------------------------------------------------------
+
+def story_view() -> dict[str, Any]:
+    """Tab Nguồn báo → Tuỳ chọn thêm → Truyện dài kỳ: kỳ cuối đã viết, lần bắt đầu lại gần nhất, lấy lại được không."""
+    try:
+        return story_core.story_state(AI_DIR_SHARED, ai_today())
+    except Exception as err:
+        _warn("truyện dài kỳ", err)
+        return {"ky": 0, "reset": None, "undo": False}
+
+
+def story_restart() -> dict[str, Any]:
+    """Cất bộ nhớ truyện chung (user_files/bao_chung → truyen_cu/<ngày>_<n>/); số báo / xu / gói báo / tiến độ giữ nguyên."""
+    if ai_busy():
+        return {"flash": BUSY_MSG, "ok": False}
+    today = ai_today()
+    try:
+        ai.ensure_dir(AI_DIR_SHARED)
+        if not story_core.last_ky(AI_DIR_SHARED) and not story_core.resets(AI_DIR_SHARED):
+            ai.migrate_story(AI_DIR_SHARED, [AI_DIR, AI_DIR_EN, AI_DIR_VI, AI_DIR_ZH, AI_DIR_KO, AI_DIR_DE, AI_DIR_FR])
+        res = story_core.restart_story(AI_DIR_SHARED, today)
+    except (OSError, ValueError) as err:
+        _warn("bắt đầu truyện mới", err)
+        return {"flash": "✗ Chưa cất được truyện cũ (lỗi file trên máy) — truyện giữ nguyên.", "ok": False}
+    if res["tu_ngay"] > today:
+        msg = "✓ Đã cất truyện cũ. Hôm nay đã có báo kể kỳ %d nên truyện mới bắt đầu từ số ngày mai (kỳ 1)." % res["ky_cu"]
+    else:
+        msg = "✓ Đã cất truyện cũ. Số báo tiếp theo bắt đầu truyện mới (kỳ 1)."
+    return {"flash": msg, "ok": True}
+
+
+def story_restart_undo() -> dict[str, Any]:
+    if ai_busy():
+        return {"flash": BUSY_MSG, "ok": False}
+    try:
+        ok = story_core.undo_restart(AI_DIR_SHARED)
+    except OSError as err:
+        _warn("lấy lại truyện cũ", err)
+        ok = False
+    if not ok:
+        return {"flash": "✗ Không lấy lại được: truyện mới đã có kỳ đầu (truyện cũ vẫn cất ở thư mục bao_chung/truyen_cu).",
+                "ok": False}
+    return {"flash": "✓ Đã lấy lại truyện cũ — báo viết tiếp từ kỳ %d." % (story_core.last_ky(AI_DIR_SHARED) + 1), "ok": True}
+
 def ai_view(extra: dict[str, Any] | None = None, lang: str | None = None) -> dict[str, Any]:
     """Dữ liệu cho tab Nguồn báo. Không bao giờ gửi khoá (chỉ dạng che AIza…abcd / AQ.A…abcd).
 
@@ -1414,6 +1459,7 @@ def ai_view(extra: dict[str, Any] | None = None, lang: str | None = None) -> dic
             "has_tts": any(v["tts"] for v in langs.values()),
             "running": bool(_ai["running"]), "run_lang": _ai.get("lang", "ja"), "testing": bool(_ai["testing"]),
             "busy": ai_busy(),        # 1.33.2: đang viết báo → khoá các lựa chọn của báo (xem BUSY_MSG)
+            "truyen": story_view(),   # 1.35.2: kỳ truyện đang tới, Bắt đầu truyện mới / Lấy lại truyện cũ
             # báo chờ viết sau báo đang viết (chỉ khi đang viết — hàng chờ sót lại không hiện)
             "queue": [x for x in (_ai.get("queue") or []) if x in PAPER_LANGS] if _ai["running"] else [],
             "msg": _ai["msg"], "langs": langs, "first": bool(key) and bool(cfg.get("gemini_wait_start")),
@@ -2418,7 +2464,18 @@ def cal_book(bid: str) -> dict[str, Any]:
     cfg = config()
     today = cal_today()
     first = journal.first_review_day(mw.col)
-    shelf = journal.shelf(first, today)
+    # 1.35.2 (audit 18/11 #07): tháng có viết nhật ký / luyện viết mà chưa có lượt ôn nào (viết trước lượt ôn đầu tiên) cũng
+    # lên kệ — trước đây kệ bắt đầu từ tháng có lượt ôn đầu tiên nên cuốn tháng đó không mở / xuất riêng được
+    extra: list[tuple[int, int]] = []
+    try:
+        for y, m in JOURNAL.all_keys():
+            if (y, m) <= (today.year, today.month) and any(
+                    isinstance(e, dict) and (e.get("t") or e.get("m") or (e.get("w") or {}).get("goc"))
+                    for e in JOURNAL.month(y, m).values()):
+                extra.append((y, m))
+    except Exception as err:
+        _warn("kệ nhật ký", err)
+    shelf = journal.shelf(first, today, extra)
     ids = [b["id"] for b in shelf]
     if bid not in ids:
         py, pm = journal.add_months(today.year, today.month, -1)
@@ -2915,9 +2972,14 @@ class GardenDialog(QDialog):
             pass
         try:
             day = _today()
+            old = self._day_seen
             if day != self._day_seen:
                 self._day_seen = day        # ghi trước: dựng vườn lỗi thì không thử lại (và báo lỗi) mỗi phút
                 self.refresh()
+                try:      # 1.35.2 (audit #14): chữ luyện viết gõ trước lúc đổi ngày → ngày cũ; Lịch hoa đọc lại
+                    self.cal_rollover(cal_today() - datetime.timedelta(days=day - old) if day > old else None)
+                except Exception as err:
+                    _warn("Lịch hoa (sang ngày mới)", err)
         except Exception as err:
             _warn("sang ngày mới", err)
 
@@ -3787,7 +3849,7 @@ class GardenDialog(QDialog):
 
     # 1.33.2: lệnh đổi báo bị khoá khi Gemini đang viết (ai_busy) — `set` chỉ khoá các mục đổi số đang viết
     AI_LOCKED_SET = ("langs", "level", "story", "tone", "tones", "audio", "voice", "source")
-    AI_LOCKED = ("decks", "forget", "dir", "start")
+    AI_LOCKED = ("decks", "forget", "dir", "start", "restart", "restart_undo")    # 1.35.2: + Bắt đầu truyện mới
 
     def _on_ai(self, cmd: str) -> None:
         action, _, arg = cmd.partition(":")
@@ -3956,6 +4018,10 @@ class GardenDialog(QDialog):
                         bao_source="auto" if cfg.get("bao_source") == "gemini" else cfg.get("bao_source", "auto"))
             flash = {"flash": "Đã xoá khoá. Các số báo cũ vẫn còn trong kệ.", "ok": True}
             refresh = True
+        elif action == "restart":                         # 1.35.2: Bắt đầu truyện mới (truyện chung của mọi báo)
+            flash = story_restart()
+        elif action == "restart_undo":
+            flash = story_restart_undo()
         elif action == "keypage":
             openLink(ai.KEY_PAGE)
         elif action == "dir":
@@ -4659,7 +4725,7 @@ class GardenDialog(QDialog):
                 if r.get("ok") or not r.get("store_error"):
                     self._cal_keep.pop(self._keep_key(name, p), None)
                 elif name in ("note", "draft") and isinstance(p.get("t"), str):
-                    self._cal_keep[self._keep_key(name, p)] = (name, {k: p.get(k) for k in ("d", "lang", "t")})
+                    self._cal_keep[self._keep_key(name, p)] = (name, {k: p.get(k) for k in ("d", "lang", "t", "b")})
                 self._js("calSaved", r)
         elif name == "keep":            # 1.23 (KB-01): chữ đang gõ, chưa tới lần tự lưu
             try:
@@ -4667,19 +4733,32 @@ class GardenDialog(QDialog):
             except ValueError:
                 return
             if isinstance(p, dict) and p.get("k") in ("note", "draft") and isinstance(p.get("t"), str):
-                self._cal_keep[self._keep_key(p["k"], p)] = (p["k"], {k: p.get(k) for k in ("d", "lang", "t")})
+                self._cal_keep[self._keep_key(p["k"], p)] = (p["k"], {k: p.get(k) for k in ("d", "lang", "t", "b")})
         elif name == "lang":
-            if arg in journal.WRITE_LANGS:
-                save_config(journal_lang=arg)
+            # 1.35.2 (audit 18/11 #03): đổi tiếng mà bài đang viết dài hơn giới hạn của tiếng mới → không cắt, trừ khi
+            # trang đã hỏi và người dùng chọn "Đổi và cắt bớt" (lệnh kèm ":cut") — trước đây cắt ngay rồi lưu đè, đổi lại
+            # tiếng cũ cũng không lấy lại được phần đã cắt
+            lang, _, force = arg.partition(":")
+            if lang in journal.WRITE_LANGS:
                 today = cal_today()
                 w = JOURNAL.entry(today).get("w") or {}
-                if w.get("st", "") == "" and w.get("lang") != arg:
-                    cfg = config()
-                    w2 = dict(w, lang=arg, goi_y=_hints(today.isoformat(), arg, int(w.get("gr") or 0), cfg))
-                    goc, _cut = journal.clip_units(w2.get("goc", ""), arg, journal.WRITE_MAX[arg])
-                    w2["goc"] = goc
-                    JOURNAL.update(today, {"w": w2})
-                self._js("calView", dict(cal_day(today.isoformat()), kind="day"))
+                flash = ""
+                if w.get("st", "") == "" and w.get("lang") != lang:
+                    goc, cut = journal.clip_units(w.get("goc", ""), lang, journal.WRITE_MAX[lang])
+                    if cut and force != "cut":
+                        flash = "Bài đang viết dài hơn giới hạn của %s — chưa đổi tiếng (bài giữ nguyên)." % \
+                            journal.LANG_VI.get(lang, lang)
+                    else:
+                        save_config(journal_lang=lang)
+                        cfg = config()
+                        w2 = dict(w, lang=lang, goi_y=_hints(today.isoformat(), lang, int(w.get("gr") or 0), cfg), goc=goc)
+                        JOURNAL.update(today, {"w": w2})
+                else:
+                    save_config(journal_lang=lang)
+                v = dict(cal_day(today.isoformat()), kind="day")
+                if flash:
+                    v["flash"] = flash
+                self._js("calView", v)
         elif name == "hint":
             today = cal_today()
             w = JOURNAL.entry(today).get("w") or {}
@@ -4690,7 +4769,22 @@ class GardenDialog(QDialog):
                 JOURNAL.update(today, {"w": dict(w, lang=lang, gr=gr, goi_y=_hints(today.isoformat(), lang, gr, cfg))})
             self._js("calView", dict(cal_day(today.isoformat()), kind="day"))
         elif name == "fix":
-            err = fix_start(arg)
+            # 1.35.2 (audit 18/11 #13): trang gửi kèm chữ đang thấy trong ô → lưu trước (khác bản đã lưu); lưu không được thì
+            # KHÔNG gửi — trước đây Gemini nhận bản cũ còn trong collection và lượt sửa của ngày bị dùng mất
+            ds = arg
+            if arg.startswith("{"):
+                try:
+                    p = json.loads(arg)
+                except ValueError:
+                    return
+                if not isinstance(p, dict):
+                    return
+                ds = str(p.get("d") or "")[:10]
+                err = self._fix_text(ds, p.get("t"), p.get("lang"))
+            else:
+                err = ""
+            err = err or fix_start(ds)
+            arg = ds
             v = dict(cal_day(arg), kind="day")
             if err:
                 v["flash"] = err
@@ -4718,6 +4812,49 @@ class GardenDialog(QDialog):
                     _warn("ảnh vườn", err)
                 _push_journal()
 
+    def _fix_text(self, ds: str, t: Any, lang: Any) -> str:
+        """Chữ trang gửi kèm nút "Nhờ Gemini sửa": khác bản đã lưu → lưu trước. Trả lý do không gửi ("" = gửi được)."""
+        if not isinstance(t, str):
+            return ""
+        d = journal.parse_date(ds)
+        if d is None:
+            return "Ngày không hợp lệ."
+        cur = JOURNAL.entry(d).get("w") or {}
+        if cur.get("st", "") != "":
+            return ""                     # đã gửi / đã sửa: fix_start trả lời đúng câu
+        lg = lang if lang in journal.WRITE_LANGS else cur.get("lang")
+        lg = lg if lg in journal.WRITE_LANGS else _write_lang(config())
+        want = journal.clip_units(journal.clean_line(t, 2000), lg, journal.WRITE_MAX[lg])[0]
+        if want == cur.get("goc", "") and lg == cur.get("lang"):
+            return ""
+        p = {"d": ds, "lang": lg, "t": t}
+        r = self._cal_save("draft", p)
+        if not r.get("ok"):
+            if r.get("store_error"):
+                self._cal_keep[self._keep_key("draft", p)] = ("draft", p)
+            return "Chưa lưu được bài vừa viết nên chưa gửi (không tính lượt) — thử lại sau nhé."
+        self._cal_keep.pop(self._keep_key("draft", p), None)
+        return ""
+
+    def cal_rollover(self, old: datetime.date | None) -> None:
+        """1.35.2 (audit 18/11 #14): Anki vừa sang ngày mới khi Lịch hoa đang mở → chữ luyện viết gõ trước lúc đổi ngày
+        (đang chờ tự lưu) lưu vào bài của ngày cũ (_cal_save_now nhận hôm qua), rồi Lịch hoa đọc lại: ô của ngày cũ
+        khoá, không còn cho gõ tiếp mà không lưu được."""
+        n = self.flush_unsaved()
+        if old is not None:
+            try:
+                self._js("calStale", {"msg": "Đã sang ngày mới" + (" — chữ đang gõ đã lưu vào ngày %s" % journal.ddmm(old)
+                                                                    if n else "") + "."})
+            except Exception as err:
+                _warn("Lịch hoa (sang ngày mới)", err)
+
+    def cal_stale(self) -> None:
+        """1.35.2 (audit 18/11 #12): Anki vừa đồng bộ / nhập collection → nhật ký / bài luyện viết trong collection có thể
+        vừa đổi (máy khác, bản khôi phục). Chữ đang giữ để lưu nốt là của bản cũ → bỏ (không ghi đè lúc đóng cửa sổ); Lịch
+        hoa đang mở đọc lại và tự so (web/calendar.js `stale`): ô collection không đổi thì giữ chữ đang gõ dở."""
+        self._cal_keep = {}
+        self._js("calStale")
+
     @staticmethod
     def _keep_key(name: str, p: dict[str, Any]) -> str:
         return "%s:%s:%s" % (name, p.get("d"), p.get("lang") if name == "draft" else "")
@@ -4733,6 +4870,9 @@ class GardenDialog(QDialog):
         for name, p in items[:20]:
             r = self._cal_save(name, p)
             n += 1 if r.get("ok") else 0
+            if r.get("conflict"):       # 1.35.2: ngày đó vừa đổi ở máy khác — không ghi đè lúc đóng cửa sổ (ghi lại để cứu tay)
+                _warn("lưu nốt nhật ký", Exception("bỏ chữ đang gõ (%s %s) vì ngày đó vừa đổi ở chỗ khác: %s"
+                                                   % (name, p.get("d"), str(p.get("t"))[:200])))
         return n
 
     def _cal_save(self, name: str, p: dict[str, Any]) -> dict[str, Any]:
@@ -4752,23 +4892,40 @@ class GardenDialog(QDialog):
         if d is None or d > today:
             return {"ok": False, "msg": "Không ghi được cho ngày này."}
         out: dict[str, Any] = {"ok": True, "d": d.isoformat(), "kind": name}
+        # 1.35.2 (audit 18/11 #12): trang gửi kèm `b` = chữ của ô lúc bắt đầu sửa (bản trang tin là đã lưu). Collection đã
+        # khác cả `b` lẫn chữ mới (máy khác vừa đồng bộ về, vừa nhập .colpkg, lần lưu này tới sau đồng bộ) → không ghi đè
+        # bản vừa nhận; trang đọc lại và báo chữ gõ dở (web/calendar.js onSaved → stale). b = None: không biết → ghi như cũ.
+        conflict = {"ok": False, "conflict": True, "kind": name, "d": d.isoformat(),
+                    "msg": "Ngày này vừa đổi ở máy khác / bản khôi phục — chưa ghi đè, đang hiện bản mới."}
         if name == "mood":
             m = p.get("m") if p.get("m") in journal.STICKERS else ""
             e = JOURNAL.update(d, {"m": m})
         elif name == "note":
             t = journal.clean_line(p.get("t"), journal.DIARY_MAX)
+            if isinstance(p.get("b"), str):
+                have = JOURNAL.entry(d).get("t", "") or ""
+                if have not in (journal.clean_line(p["b"], journal.DIARY_MAX), t):
+                    return conflict
             e = JOURNAL.update(d, {"t": t})
             out["t"] = t
         else:
-            if d != today:
+            # 1.35.2 (audit #14): bài của HÔM QUA còn nhận lần lưu cuối (chữ gõ ngay trước lúc Anki sang ngày mới, lần tự lưu
+            # tới sau đó) — chỉ lưu chữ, không gửi sửa được nữa (fix_start chỉ nhận hôm nay)
+            if d != today and not (d == today - datetime.timedelta(days=1) and p.get("lang") in journal.WRITE_LANGS):
                 return {"ok": False, "msg": "Luyện viết chỉ cho hôm nay."}
             cur = JOURNAL.entry(d).get("w") or {}
             if cur.get("st", "") != "":
                 return {"ok": False, "msg": "Bài đã gửi cho Gemini, tạm khoá."}
             cfg = config()
-            lang = p.get("lang") if p.get("lang") in write_langs(cfg) else _write_lang(cfg)
+            # 1.35.2 (audit 18/11 #02): giữ tiếng của ô người dùng đang viết (trang hiện theo tiếng đã lưu) — trước đây
+            # bỏ chọn báo tiếng Đức là lần lưu kế tiếp tự chuyển bài sang tiếng của báo còn lại và cắt theo giới hạn mới
+            lang = p.get("lang") if p.get("lang") in journal.WRITE_LANGS else _write_lang(cfg)
             raw = journal.clean_line(p.get("t"), 2000)
             goc, cut = journal.clip_units(raw, lang, journal.WRITE_MAX[lang])
+            if isinstance(p.get("b"), str):
+                bb = journal.clip_units(journal.clean_line(p["b"], 2000), lang, journal.WRITE_MAX[lang])[0]
+                if (cur.get("goc", "") or "") not in (bb, goc) and cur.get("goc", "") != p["b"]:
+                    return conflict
             w2 = dict(cur, lang=lang, goc=goc, st="")
             w2.pop("err", None)
             if not w2.get("goi_y") or cur.get("lang") != lang:
@@ -5504,6 +5661,10 @@ def _on_collection_load(*_args: Any) -> None:
         _warn("giữ dữ liệu vườn (nhập collection)", err)
     if _dialog is not None:
         try:
+            _dialog.cal_stale()           # 1.35.2: trước khi dựng lại — Lịch hoa đang mở không ghi bản cũ đè bản vừa nhập
+        except Exception as err:
+            _warn("Lịch hoa (nhập collection)", err)
+        try:
             _dialog.collection_replaced()
         except Exception as err:
             _warn("dựng lại vườn (nhập collection)", err)
@@ -5518,6 +5679,11 @@ def _on_sync_finished() -> None:
     # vừa Undo → trừ xu của ví vừa tải về (ví đó chưa từng được cộng số xu ấy).
     _ledger.clear()
     _day_total.update(key=None, v=0)      # 1.28 (F07): lịch sử ôn vừa đổi → mốc "N ngày có ôn" tính lại
+    if _dialog is not None:
+        try:
+            _dialog.cal_stale()           # 1.35.2 (audit #12): nhật ký / luyện viết có thể vừa về từ máy khác
+        except Exception as err:
+            _warn("Lịch hoa (đồng bộ)", err)
     if _open_pending:                     # 1.31.2: việc lúc mở hồ sơ chờ lần tự đồng bộ này (có cả lần bù xu + lời báo)
         _open_tasks()
         if _dialog is not None:

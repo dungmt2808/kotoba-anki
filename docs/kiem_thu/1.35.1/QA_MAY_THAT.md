@@ -1,10 +1,10 @@
-# QA trên máy thật — ことば畑 1.35.1
+# QA trên máy thật — ことば畑 1.35.1 + 1.35.2
 
 Không cần biết tiếng Đức / Pháp / Trung / Hàn: chỉ cần so màn hình với cột **"Phải thấy"** ở các bảng. Mỗi kết quả trong danh
 sách này Claude đã chạy thử trong Anki thật với đúng bộ thẻ mẫu (`tests/anki/e2e_qa1351.js`, 21 / 21 đạt — cùng bộ thẻ trên
 1.35.0 trượt 9 ca).
 
-**Thời gian**: phần **A + B + D** khoảng 35 phút (bắt buộc); phần **C** (báo, tốn lượt Gemini) và **E** (đồng bộ) làm nếu có
+**Thời gian**: phần **A + B + D + G** khoảng 40 phút (bắt buộc); phần **C** (báo, tốn lượt Gemini) và **E** (đồng bộ) làm nếu có
 thời gian.
 
 Gặp gì lạ: chụp màn hình + trong vườn bấm ⚙ → *Báo lỗi · góp ý · khác* → **Báo lỗi** → *Chép báo cáo* → gửi tớ.
@@ -20,7 +20,7 @@ Gặp gì lạ: chụp màn hình + trong vườn bấm ⚙ → *Báo lỗi · g
    - gói add-on: <https://github.com/dungmt2808/kotoba-anki/raw/claude/addon-review-new-languages-y9hrzh/kotoba_batake.ankiaddon>
    - bộ thẻ mẫu: <https://github.com/dungmt2808/kotoba-anki/raw/claude/addon-review-new-languages-y9hrzh/docs/kiem_thu/1.35.1/qa/the_mau_QA_1351.apkg>
 4. **Cài đè**: *Tools → Add-ons → Install from file…* → chọn `kotoba_batake.ankiaddon` → khởi động lại Anki.
-5. Kiểm bản: vườn → ⚙ → *Báo lỗi* → dòng **Add-on** ghi `ことば畑 1.35.1`.
+5. Kiểm bản: vườn → ⚙ → *Báo lỗi* → dòng **Add-on** ghi `ことば畑 1.35.2`.
 
 ## A. Dữ liệu cũ còn nguyên — hồ sơ thật (5 phút) ⭐ quan trọng nhất
 
@@ -187,11 +187,26 @@ Làm ở hồ sơ thật (đặt thử không tốn xu tới khi bấm "Dùng b�
 2. Đồng bộ xong → mở Anki trên điện thoại, ôn 1 thẻ, đồng bộ → máy tính đồng bộ lại → mở vườn: xu / đồ / nhật ký **không**
    lùi về bản cũ.
 
+## G. Mới ở 1.35.2 (5 phút) ⭐
+
+Sửa 15 lỗi của nhánh audit 18/11 + **Bắt đầu truyện mới**. Làm ở hồ sơ `QA` (hoặc hồ sơ thật — bấm "Lấy lại truyện cũ"
+ngay sau G2 là về như cũ).
+
+| # | Làm | Phải thấy |
+|---|---|---|
+| G1 | Vườn → *Báo* → tab **Nguồn báo** → mở **Tuỳ chọn thêm** | Dòng **Truyện dài kỳ** "đang ở kỳ N" + nút **Bắt đầu truyện mới** (chưa có kỳ nào thì chỉ ghi "chưa có kỳ nào") |
+| G2 | Bấm **Bắt đầu truyện mới** | Hộp hỏi "Bắt đầu truyện mới từ kỳ 1?"; bấm **Bắt đầu truyện mới** → dòng xanh "Đã cất truyện cũ…"; dòng Truyện dài kỳ "số tới bắt đầu truyện mới (kỳ 1)" (hôm nay đã có báo: "… từ số ngày …") + nút **Lấy lại truyện cũ** |
+| G3 | Mở *Kệ báo* | Các số cũ **vẫn còn**, xu / gói báo không đổi |
+| G4 | (Hồ sơ thật, nếu không muốn bắt đầu lại) bấm **Lấy lại truyện cũ** | Dòng về "đang ở kỳ N" như trước |
+| G5 | (Nếu giữ truyện mới) hôm sau đọc báo | Truyện là **kỳ 1**; hai báo cùng ngày kể cùng một kỳ |
+| G6 | Lịch hoa → Luyện viết, tick 2 báo Đức + Trung, viết ~25 từ tiếng Đức → bấm **Tiếng Trung** | Hộp hỏi "Đổi sang Tiếng Trung?" (bài sẽ bị cắt); **Huỷ** → bài nguyên vẹn |
+| G7 | Bỏ tick báo Đức (giữ Trung) → mở lại Lịch hoa → gõ thêm vào bài tiếng Đức | Bài vẫn tiếng Đức, đủ chữ (1.35.1: thành tiếng Trung, cắt còn 60 ký tự) |
+
 ## F. Kết thúc
 
 1. Vườn → ⚙ → *Báo lỗi*: phần nhật ký **không có lỗi mới** trong lúc test (có thì *Chép báo cáo* gửi tớ).
 2. Xoá hồ sơ thử nếu muốn: *File → Switch Profile* → chọn `QA` → *Delete*.
-3. Mọi thứ ổn → nhắn tớ "gộp master" để gộp 1.35.0 + 1.35.1.
+3. Mọi thứ ổn → nhắn tớ "gộp master" để gộp 1.35.0 + 1.35.1 + 1.35.2.
 
 **Nếu cần quay lại bản cũ**: cài lại gói 1.31.3 (bản trên AnkiWeb) như bước 0.4 — dữ liệu vườn giữ nguyên (đã thử hạ bản rồi
 lên lại trong Anki thật: 26 / 26).
