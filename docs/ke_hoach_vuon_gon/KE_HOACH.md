@@ -134,27 +134,26 @@ Xem bản chạy thử tương tác tại [`proto_hayday_25d_min.html`](proto_ha
 
 ---
 
-## 10. Kiến trúc Hybrid 2D + 3D: Giữ Nhà/Vườn ở 2D, mở rộng 3D cho “Làng Kotoba 3D (Bán hàng & Tin làng)” và “Các vùng ngắm cảnh 3D” — `proto_lang_kotoba_3d.html`
+## 10. Thị trấn Làng Kotoba 3D phong cách Play Together × Minecraft (WebGL Pixel Voxel 16×16) — `proto_lang_kotoba_3d.html`
 
-Giải quyết bài toán **đồ trang trí 2D do người dùng đặt trong Nhà & Vườn rất khó tự động ánh xạ sang 3D**:
+Giải quyết bài toán **đồ trang trí 2D do người dùng đặt trong Nhà & Vườn rất khó tự động ánh xạ sang 3D**, đồng thời nâng cấp quy mô Làng từ một mô hình nhỏ thành một **Thị trấn Mở 3D rộng lớn (`96 × 96` khối Voxel) chạy bằng WebGL 60 FPS**:
 - **Không gian tuỳ biến (`Nhà` & `Sân vườn`) giữ nguyên 2D trong Anki**: Bảo toàn 100% tương thích với toàn bộ vật phẩm trang trí tường/sàn, thú nuôi và xưởng vẽ pixel `16×16`.
-- **Không gian cố định mở bằng Trình duyệt 3D (`3D Web Companion`)**:
-  1. **🏘️ Đi vào Làng Kotoba 3D (`ことば村`) — Kết nối trực tiếp với Báo Làng (`畑新聞` / `story_core.py`) & Bán hàng**:
-     - Đưa các nhân vật và địa danh vốn chỉ xuất hiện bằng chữ trên mục *Tin làng* và *Truyện dài kỳ* bước ra đời thực dưới dạng một ngôi làng 3D xoay 360° (hoặc điều khiển **StackChan 3D** chạy bằng phím `WASD`):
-       - **🏮 Quán trọ Kotoba (`ことば屋`)**: Gặp **chị chủ quán Hana (`はなさん`)** và **cô bé Lin (`リンさん`)** cầm cuốn sổ tay nhỏ.
-       - **🛒 Sạp Chợ Phiên (`朝市`)**: Nơi người học đem **trái cây từ vựng thu hoạch từ các cây `Ra quả` ở vườn 2D** vào giao đơn cho dân làng (trả lời nhanh từ vựng theo yêu cầu của khách để bán quả nhận **+40 xu/đơn**).
-       - **📮 Trạm Bưu Điện & Bác Đưa Thư (`郵便屋さん`)**: Xem chuyện đang diễn ra trong *Tin làng* mỗi ngày.
-       - **👴 Nhà Ông Trưởng Làng (`村長さん`) & Con Mèo Hoang Trắng (`白いのらねこ`)**.
-  2. **⛩️ Các vùng 3D mới chỉ dùng để ngắm cảnh (3D Scenic Dioramas)**:
-     - Vì người dùng không đặt đồ trang trí 2D ở các vùng này, ta có thể thiết kế sẵn các **kỳ quan 3D cố định** làm phần thưởng mở khoá theo chuỗi ngày học (*streak*) hoặc số cây đạt *Ra quả*:
-       - **Đỉnh Đền & Cây Đại Thụ Anh Đào 3D**: Cổng Torii đỏ dẫn lên cây đại thụ toả sáng với mưa cánh hoa Sakura rơi trong không gian 3D.
-       - **Đèo Biển & Đoàn Tàu Hoả 3D**: Đoàn tàu 3 toa chạy qua cầu cạn trên vịnh biển xanh dưới ánh hoàng hôn hoặc đèn đêm.
+- **Thị trấn Làng Kotoba 3D (`ことば村`) phong cách Play Together × Minecraft**:
+  1. **⛏️ Đồ hoạ Voxel Pixel Art `16×16` sắc nét (`gl.NEAREST`)**:
+     - Toàn bộ mặt cỏ, đất, đường đá, gạch lát quảng trường caro, gỗ sồi, tường trắng Nhật, cửa giấy Shoji, mái ngói, sạp chợ sọc đỏ/xanh, thùng táo/cam và lá anh đào đều dùng **Texture Atlas `16×16` Pixel Art** chuẩn *Minecraft*.
+  2. **🏃 Góc nhìn thứ 3 theo sau nhân vật giống *Play Together* (`WASD` chạy bộ + `Space` nhảy + Xoay chuột 360°)**:
+     - Hỗ trợ chuyển đổi 3 góc nhìn: **🏃 Góc nhìn Play Together (Theo sau lưng nhân vật)**, **👁️ Góc nhìn Minecraft (Nhập vai góc nhìn thứ nhất)** và **🦅 Toàn cảnh Thị trấn (Xoay 360°)**.
+     - Có **Minimap radar** góc trên phải và **cư dân / học viên đi dạo trên đại lộ kèm bong bóng chat nổi trên đầu**.
+  3. **🏘️ 6 Phân khu lớn kết nối trực tiếp với Báo Làng (`畑新聞` / `story_core.py`) & Bán nông sản**:
+     - **⛲ Quảng Trường Tháp Đồng Hồ & Đài Phun Nước**: Giao lộ trung tâm với vạch qua đường trắng (*zebra crosswalk*), gặp **Ông Trưởng Làng (`村長さん`)** và các học viên đang trò chuyện.
+     - **🏮 Quán Trọ Kotoba (`ことば屋`)**: Toà nhà 2 tầng bề thế có đèn lồng đỏ, cửa Shoji sáng đèn, nơi **Chị Hana (`はなさん`)** và **Lin (`リンさん`)** đứng đón khách.
+     - **🛒 Phố Chợ Nông Sản (`ことばマルシェ`)**: Khu siêu thị và các sạp bạt sọc đỏ/xanh chất đầy thùng gỗ đựng táo, cam từ vựng — nơi người học đem quả thu hoạch từ cây `Ra quả` ở vườn 2D vào bán lấy **+50 xu/đơn**.
+     - **📮 Bưu Điện Đỏ & Bảng Tin Làng**: Nơi **Bác Đưa Thư (`郵便屋さん`)** phát báo sáng.
+     - **⛩️ Đồi Đền Sakura & Cây Đại Thụ (Vùng ngắm cảnh Bắc)**: Qua cầu đá bắc ngang kênh đào xanh, leo bậc thang qua 2 cổng Torii đỏ lên gốc Đại Thụ Anh Đào khổng lồ.
+     - **⚓ Bến Cảng Biển, Ngọn Hải Đăng & Tàu Viễn Dương (Vùng ngắm cảnh Nam)**.
 
 Xem bản chạy thử tương tác tại [`proto_lang_kotoba_3d.html`](proto_lang_kotoba_3d.html):
 
-| 🏘️ Làng Kotoba 3D (Quán Kotoba, Chợ phiên, Bán nông sản) | ⛩️ Đỉnh Đền & Đại Thụ Anh Đào 3D (Vùng ngắm cảnh 360°) |
+| ⛲ Quảng Trường Plaza & Tháp Đồng Hồ (Góc nhìn Play Together) | 🛒 Phố Chợ Nông Sản `ことばマルシェ` (Bán trái cây từ vựng) |
 | :---: | :---: |
-| ![Làng Kotoba 3D](vg_10_lang_kotoba_3d.png) | ![Đỉnh Đền & Đại Thụ Anh Đào 3D](vg_10b_den_dai_thu_3d.png) |
-
-
-
+| ![Quảng trường Làng Kotoba 3D Play Together x Minecraft](vg_10_lang_kotoba_3d.png) | ![Phố Chợ Nông Sản Làng Kotoba 3D](vg_10b_den_dai_thu_3d.png) |

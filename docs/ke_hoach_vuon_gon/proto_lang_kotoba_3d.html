@@ -3,46 +3,42 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>ことば村 3D – Làng Kotoba (Bán hàng & Tin làng) + Vùng Ngắm Cảnh 3D</title>
+<title>Làng Kotoba 3D — Phong cách Play Together × Minecraft Pixel Voxel</title>
 <style>
   :root {
-    --ink: #1b1b2f;
+    --ink: #181826;
     --cream: #fff9eb;
-    --cream-2: #f4e8cd;
+    --cream-2: #f4ead2;
     --gold: #ffd23f;
-    --orange: #ff9f1c;
-    --red: #e03131;
+    --accent: #ff6b35;
     --green: #2fb344;
-    --blue: #339af0;
   }
   * { box-sizing: border-box; user-select: none; }
   body {
     margin: 0;
-    padding: 12px;
-    background: #181b28;
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    background: #121624;
     color: var(--ink);
-    font-family: "Segoe UI", "Noto Sans", system-ui, -apple-system, sans-serif;
   }
   .shell {
-    max-width: 1150px;
+    max-width: 1180px;
     margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+    padding: 10px 14px 16px;
   }
 
   /* Thanh điều khiển trên cùng */
   .topbar {
-    background: var(--cream);
-    border: 3px solid var(--ink);
-    border-radius: 12px;
-    box-shadow: 0 4px 0 #0d0f18;
-    padding: 8px 12px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    flex-wrap: wrap;
     gap: 8px;
+    flex-wrap: wrap;
+    background: var(--cream);
+    border: 3px solid var(--ink);
+    border-radius: 14px;
+    box-shadow: 0 4px 0 #0b0d16;
+    padding: 8px 12px;
+    margin-bottom: 10px;
   }
   .brand {
     display: flex;
@@ -50,88 +46,85 @@
     gap: 8px;
     flex-wrap: wrap;
   }
-  .badge-3d {
-    background: linear-gradient(135deg, #ff6b6b 0%, #f03e3e 100%);
+  .badge-voxel {
+    background: #2b8a3e;
     color: #fff;
     border: 2px solid var(--ink);
     border-radius: 8px;
-    padding: 4px 10px;
+    padding: 3px 9px;
+    font-size: 11.5px;
     font-weight: 900;
-    font-size: 12px;
     letter-spacing: 0.4px;
+    box-shadow: 0 2px 0 var(--ink);
   }
-  .scene-tabs {
+  .btn-group {
     display: flex;
     gap: 6px;
     flex-wrap: wrap;
   }
   .btn {
-    background: #ffffff;
-    color: var(--ink);
     border: 2px solid var(--ink);
-    border-radius: 8px;
-    box-shadow: 0 2px 0 var(--ink);
+    background: var(--cream-2);
+    color: var(--ink);
+    border-radius: 9px;
     padding: 5px 10px;
     font-size: 12px;
     font-weight: 800;
     cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    transition: transform 0.06s;
+    box-shadow: 0 2px 0 var(--ink);
+    transition: transform 0.08s, background 0.12s;
   }
-  .btn:hover { background: #fff3bf; }
-  .btn:active {
-    transform: translateY(2px);
-    box-shadow: none;
-  }
-  .btn.active {
-    background: var(--gold);
-  }
-  .btn.orbit-on {
-    background: #d0ebff;
-    border-color: #1864ab;
-    color: #1864ab;
-  }
+  .btn:hover { background: #ffe8a3; }
+  .btn:active { transform: translateY(2px); box-shadow: 0 0 0 var(--ink); }
+  .btn.active { background: var(--gold); }
 
   /* Bố cục chính */
   .main-grid {
     display: grid;
-    grid-template-columns: 1fr 335px;
+    grid-template-columns: 1fr 330px;
     gap: 12px;
     align-items: start;
   }
-  @media (max-width: 920px) {
+  @media (max-width: 940px) {
     .main-grid { grid-template-columns: 1fr; }
   }
 
-  /* Khung 3D Viewport */
-  .viewport-3d {
+  /* Khung 3D WebGL Voxel World */
+  .viewport-wrap {
     position: relative;
-    height: 560px;
+    height: 580px;
     border: 3px solid var(--ink);
     border-radius: 14px;
-    box-shadow: 0 6px 0 #0d0f18;
+    box-shadow: 0 6px 0 #0b0d16;
     overflow: hidden;
-    background: #1a233a;
+    background: #67b7f7;
   }
-  #canvas3d {
+  #glCanvas, #hudCanvas {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
     display: block;
-    cursor: grab;
   }
-  #canvas3d:active { cursor: grabbing; }
+  #glCanvas { cursor: grab; }
+  #glCanvas:active { cursor: grabbing; }
+  #hudCanvas { pointer-events: none; }
 
-  /* HUD trên góc trái */
-  .hud-tl {
+  /* HUD góc trên trái: Thông tin người chơi & Phím dịch chuyển nhanh giống Play Together Plaza */
+  .hud-top-left {
     position: absolute;
     top: 12px;
     left: 12px;
+    right: 170px;
     display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 6px;
     pointer-events: none;
+  }
+  .hud-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
   }
   .hud-pill {
     pointer-events: auto;
@@ -139,69 +132,97 @@
     border: 2px solid var(--ink);
     border-radius: 999px;
     box-shadow: 0 2px 0 var(--ink);
-    padding: 4px 12px;
-    font-size: 12px;
+    padding: 3px 9px;
+    font-size: 11px;
     font-weight: 800;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
   }
-
-  /* HUD hàng 2 góc trên trái: Phím tắt đến nhân vật trong làng */
-  .hud-tr {
-    position: absolute;
-    top: 48px;
-    left: 12px;
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-  }
-  .npc-chip {
-    background: rgba(255, 249, 235, 0.92);
-    border: 2px solid var(--ink);
+  .tp-btn {
+    pointer-events: auto;
+    background: rgba(27, 27, 47, 0.88);
+    color: #fff9eb;
+    border: 2px solid #ffd23f;
     border-radius: 999px;
-    box-shadow: 0 2px 0 var(--ink);
-    padding: 4px 9px;
-    font-size: 11.5px;
+    padding: 3px 8px;
+    font-size: 10.8px;
     font-weight: 800;
     cursor: pointer;
+    box-shadow: 0 2px 0 #000;
   }
-  .npc-chip:hover { background: var(--gold); }
+  .tp-btn:hover {
+    background: var(--gold);
+    color: var(--ink);
+  }
 
-  /* Thanh hướng dẫn dưới đáy */
+  /* Minimap góc trên phải kiểu Play Together */
+  .minimap-box {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 138px;
+    height: 138px;
+    background: rgba(24, 24, 38, 0.88);
+    border: 3px solid var(--ink);
+    border-radius: 14px;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.45);
+    overflow: hidden;
+    pointer-events: none;
+  }
+  #minimapCanvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .minimap-title {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(24, 24, 38, 0.86);
+    color: var(--gold);
+    font-size: 10px;
+    font-weight: 900;
+    text-align: center;
+    padding: 2px 4px;
+  }
+
+  /* Thanh hướng dẫn điều khiển dưới đáy */
   .hud-bottom {
     position: absolute;
     left: 12px;
     right: 12px;
     bottom: 12px;
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    gap: 10px;
+    align-items: center;
+    gap: 8px;
     pointer-events: none;
   }
-  .ctrl-help {
+  .ctrl-bar {
     pointer-events: auto;
-    background: rgba(27, 27, 47, 0.86);
+    background: rgba(24, 24, 38, 0.88);
     color: #fff9eb;
-    border: 2px solid rgba(255, 210, 63, 0.6);
+    border: 2px solid rgba(255, 210, 63, 0.75);
     border-radius: 10px;
     padding: 6px 12px;
     font-size: 11.5px;
-    font-weight: 600;
+    font-weight: 700;
   }
   .kbd {
     background: var(--gold);
     color: var(--ink);
-    padding: 1px 5px;
     border-radius: 4px;
+    padding: 1px 5px;
     font-weight: 900;
-    font-size: 11px;
+    font-size: 10.5px;
+    margin: 0 1px;
   }
 
   .toast-3d {
     position: absolute;
-    top: 86px;
+    bottom: 48px;
     left: 50%;
     transform: translateX(-50%);
     background: var(--ink);
@@ -209,8 +230,8 @@
     border: 2px solid var(--gold);
     border-radius: 999px;
     padding: 6px 16px;
-    font-size: 12.5px;
-    font-weight: 800;
+    font-size: 12px;
+    font-weight: 900;
     opacity: 0;
     transition: opacity 0.2s;
     pointer-events: none;
@@ -218,7 +239,7 @@
   }
   .toast-3d.show { opacity: 1; }
 
-  /* Cột bên phải: Tương tác Làng Kotoba & Bán Hàng */
+  /* Cột phải: Tương tác NPC & Bán hàng trong Plaza */
   .sidebar {
     display: flex;
     flex-direction: column;
@@ -228,7 +249,7 @@
     background: var(--cream);
     border: 3px solid var(--ink);
     border-radius: 14px;
-    box-shadow: 0 4px 0 #0d0f18;
+    box-shadow: 0 4px 0 #0b0d16;
     padding: 12px;
   }
   .card-head {
@@ -252,58 +273,46 @@
     font-size: 11px;
     font-weight: 800;
   }
-
-  /* Hộp thoại NPC từ Báo Làng Kotoba */
   .npc-box {
     display: flex;
     gap: 10px;
     align-items: flex-start;
-    margin-bottom: 9px;
+    margin-bottom: 8px;
   }
   .npc-avatar {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
+    width: 46px;
+    height: 46px;
+    border-radius: 11px;
     border: 2px solid var(--ink);
     background: #ffec99;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 25px;
+    font-size: 24px;
     flex-shrink: 0;
   }
-  .npc-name {
-    font-size: 14.5px;
-    font-weight: 900;
-  }
-  .npc-role {
-    font-size: 11.5px;
-    color: #5c5c75;
-    font-weight: 700;
-  }
+  .npc-name { font-size: 14px; font-weight: 900; }
+  .npc-role { font-size: 11.5px; color: #5c5c75; font-weight: 700; }
   .dialogue {
     background: var(--cream-2);
     border: 2px solid #d4c49e;
     border-radius: 10px;
-    padding: 9px 10px;
-    font-size: 12.2px;
-    line-height: 1.48;
-    margin-bottom: 10px;
+    padding: 8px 10px;
+    font-size: 12px;
+    line-height: 1.46;
+    margin-bottom: 9px;
   }
-
-  /* Khu vực Bán Nông Sản Từ Vựng (Market Order) */
   .order-box {
     background: #ffffff;
     border: 2px solid var(--ink);
     border-radius: 10px;
     padding: 9px 10px;
-    margin-bottom: 8px;
   }
   .order-title {
     font-size: 12px;
     font-weight: 900;
     color: #b45309;
-    margin-bottom: 6px;
+    margin-bottom: 5px;
     display: flex;
     justify-content: space-between;
   }
@@ -320,7 +329,6 @@
     font-size: 12px;
     font-weight: 800;
     cursor: pointer;
-    text-align: center;
   }
   .opt-btn:hover { background: #e7f5ff; }
   .opt-btn.correct { background: #b2f2bb; }
@@ -329,95 +337,97 @@
 </head>
 <body>
 <div class="shell">
-  <!-- Thanh chọn Cảnh 3D & Góc nhìn -->
+  <!-- Thanh công cụ chọn Góc nhìn & Khu vực -->
   <div class="topbar">
     <div class="brand">
-      <span class="badge-3d">3D WEB COMPANION</span>
-      <div class="scene-tabs">
-        <button class="btn active" data-scene="village">🏘️ Làng Kotoba 3D (Bán hàng &amp; Tin làng)</button>
-        <button class="btn" data-scene="shrine">⛩️ Đỉnh Đền &amp; Đại Thụ Sakura (Ngắm cảnh)</button>
-        <button class="btn" data-scene="coast">🚂 Đèo Biển &amp; Tàu Hoả 3D (Ngắm cảnh)</button>
+      <span class="badge-voxel">⛏️ PLAY TOGETHER × MINECRAFT VOXEL</span>
+      <div class="btn-group">
+        <button class="btn active" data-cam="chase">🏃 Góc nhìn Play Together (Theo sau nhân vật)</button>
+        <button class="btn" data-cam="fps">👁️ Góc nhìn Minecraft (Nhập vai)</button>
+        <button class="btn" data-cam="bird">🦅 Toàn cảnh Thị trấn (Xoay 360°)</button>
       </div>
     </div>
-    <div class="scene-tabs">
-      <button class="btn orbit-on" id="btnAutoOrbit">🎥 Tự xoay 360°: BẬT</button>
-      <button class="btn" data-tod="day">☀ Ngày</button>
-      <button class="btn active" data-tod="dusk">🌇 Chiều tà</button>
-      <button class="btn" data-tod="night">🏮 Đêm hội</button>
+    <div class="btn-group">
+      <button class="btn active" data-tod="day">☀ Nắng sớm</button>
+      <button class="btn" data-tod="dusk">🌇 Hoàng hôn</button>
+      <button class="btn" data-tod="night">🏮 Đêm Plaza</button>
     </div>
   </div>
 
   <div class="main-grid">
-    <!-- Khung 3D tương tác -->
-    <div class="viewport-3d">
-      <canvas id="canvas3d"></canvas>
+    <!-- Khung 3D WebGL Voxel -->
+    <div class="viewport-wrap">
+      <canvas id="glCanvas"></canvas>
+      <canvas id="hudCanvas"></canvas>
 
-      <div class="hud-tl">
-        <div class="hud-pill">🤖 <b>StackChan 3D</b></div>
-        <div class="hud-pill">🍎 Giỏ nông sản: <b id="fruitCount">14 quả</b> (từ cây Ra quả)</div>
-        <div class="hud-pill">🪙 <b id="coinCount">1.850</b> xu</div>
+      <div class="hud-top-left">
+        <div class="hud-row">
+          <div class="hud-pill">🤖 <b>StackChan</b> · 📍 <span id="zoneLabel">Quảng trường Trung tâm</span></div>
+          <div class="hud-pill">🍎 Giỏ nông sản: <b id="fruitCount">16 quả</b></div>
+          <div class="hud-pill">🪙 <b id="coinCount">2.450</b> xu</div>
+        </div>
+        <div class="hud-row">
+          <button class="tp-btn" data-tp="plaza">⛲ Quảng Trường</button>
+          <button class="tp-btn" data-tp="inn">🏮 Quán Kotoba (Hana &amp; Lin)</button>
+          <button class="tp-btn" data-tp="market">🛒 Phố Chợ Nông Sản</button>
+          <button class="tp-btn" data-tp="post">📮 Bưu Điện &amp; Tin Làng</button>
+          <button class="tp-btn" data-tp="shrine">⛩️ Đồi Đền Sakura (Ngắm cảnh)</button>
+          <button class="tp-btn" data-tp="harbor">⚓ Bến Cảng Biển (Ngắm cảnh)</button>
+        </div>
       </div>
 
-      <div class="hud-tr" id="villageChips">
-        <button class="npc-chip" data-goto="inn">🏮 Quán Kotoba (Chị Hana &amp; Lin)</button>
-        <button class="npc-chip" data-goto="market">🛒 Sạp Bán Hàng</button>
-        <button class="npc-chip" data-goto="post">📮 Bác Đưa Thư</button>
-        <button class="npc-chip" data-goto="mayor">👴 Trưởng Làng</button>
+      <!-- Bản đồ nhỏ góc trên phải giống Play Together -->
+      <div class="minimap-box">
+        <canvas id="minimapCanvas" width="138" height="138"></canvas>
+        <div class="minimap-title">🗺️ BẢN ĐỒ LÀNG KOTOBA</div>
       </div>
 
       <div class="toast-3d" id="toast3d"></div>
 
       <div class="hud-bottom">
-        <div class="ctrl-help">
-          🖱️ <b>Kéo chuột:</b> Xoay 360° &amp; Ngắm cảnh · <b>Cuộn:</b> Phóng to · <span class="kbd">W</span><span class="kbd">A</span><span class="kbd">S</span><span class="kbd">D</span> hoặc <b>bấm nút góc trên</b> để dạo bước trong Làng!
+        <div class="ctrl-bar">
+          🎮 Di chuyển: <span class="kbd">W</span><span class="kbd">A</span><span class="kbd">S</span><span class="kbd">D</span> hoặc <b>Phím mũi tên</b> · Nhảy: <span class="kbd">Space</span> · <b>Kéo chuột:</b> Xoay góc nhìn 360° · <b>Cuộn:</b> Zoom xa/gần
         </div>
       </div>
     </div>
 
-    <!-- Cột phải: Hội thoại Làng Kotoba + Bán nông sản từ vựng -->
+    <!-- Cột phải: Hội thoại & Bán hàng giống Play Together -->
     <div class="sidebar">
       <div class="card">
         <div class="card-head">
-          <h3 class="card-title" id="panelHeader">Đang ở trong Làng Kotoba 3D</h3>
-          <span class="tag" id="panelTag">Bước ra từ Báo Làng</span>
+          <h3 class="card-title" id="spotTitle">Khu vực đang đứng gần</h3>
+          <span class="tag" id="spotTag">Plaza Làng Kotoba</span>
         </div>
 
         <div class="npc-box">
           <div class="npc-avatar" id="npcAvatar">🏮</div>
           <div>
             <div class="npc-name" id="npcName">Chị Hana &amp; Lin (Quán trọ ことば屋)</div>
-            <div class="npc-role" id="npcRole">Nhân vật chính trong truyện dài kỳ Báo Làng Kotoba</div>
+            <div class="npc-role" id="npcRole">Nhân vật bước ra từ Báo Làng Kotoba</div>
           </div>
         </div>
 
-        <div class="dialogue" id="npcDialogue">
-          <b>Chị Hana:</b> “Chào buổi chiều! Hôm nay trong <i>Tin làng</i> báo đăng có đoàn khách phương xa ghé trọ. Em còn trái cây từ vựng thu hoạch ở vườn không, bán cho quán chị vài quả nhé!”<br/>
-          <b>Lin:</b> “Để em ghi vào sổ tay đã!「がんばります！」”
-        </div>
+        <div class="dialogue" id="npcDialogue"></div>
 
-        <!-- Hộp Bán Hàng Chợ Làng (Giao đơn bằng từ vựng đã học) -->
-        <div class="order-box" id="marketBox">
+        <div class="order-box">
           <div class="order-title">
-            <span id="orderPrompt">🛒 Đơn mua hàng của Quán Kotoba:</span>
-            <span style="color:#2fb344;">+40 xu / đơn</span>
+            <span>🛒 Giao nông sản từ vựng cho NPC:</span>
+            <span style="color:#2fb344;">+50 xu / đơn</span>
           </div>
-          <div style="font-size:12.5px; margin-bottom:7px;" id="orderQuestion">
-            Khách ở quán đang cần quả mang nghĩa <b>“Lời hứa”</b> để làm bánh. Bạn giao quả nào?
-          </div>
+          <div style="font-size:12px; margin-bottom:7px;" id="orderQuestion"></div>
           <div class="order-options" id="orderChoices"></div>
         </div>
       </div>
 
       <div class="card">
         <div class="card-head">
-          <h3 class="card-title">Vì sao hướng 3D này cực kỳ hợp lý?</h3>
-          <span class="tag">Kiến trúc 2D + 3D</span>
+          <h3 class="card-title">Thị trấn Pixel Voxel (Play Together × Minecraft)</h3>
+          <span class="tag">WebGL 60 FPS</span>
         </div>
-        <ul style="margin:0; padding-left:17px; font-size:11.8px; line-height:1.5; color:#2b2b44;">
-          <li><b>Không đụng tới đồ trang trí 2D:</b> Nhà và Vườn vẫn giữ 2D trong Anki nên người dùng đặt đồ thoải mái không sợ lỗi map sang 3D.</li>
-          <li><b>Biến tờ Báo Làng thành thế giới sống:</b> Bình thường người học chỉ <i>đọc</i> về <b>Quán Kotoba, chị Hana, Lin, Bác đưa thư</b> trên báo — nay mở 3D là bước thẳng vào ngôi làng đó!</li>
-          <li><b>Vòng lặp kinh tế mới:</b> Cây <i>Ra quả</i> ở vườn 2D thu hoạch thành nông sản → mang vào <b>Chợ Làng 3D bán cho NPC</b> kiếm xu thưởng.</li>
-          <li><b>Các vùng mở thêm chỉ để ngắm 3D:</b> Đền Núi Sakura, Đèo Tàu Hoả Ven Biển được dựng 3D cố định cực đẹp để xoay 360° thư giãn.</li>
+        <ul style="margin:0; padding-left:17px; font-size:11.6px; line-height:1.48; color:#252538;">
+          <li><b>Thị trấn rộng gấp 15 lần:</b> Có đại lộ, vạch qua đường, đài phun nước, tháp đồng hồ, kênh đào, cầu đá, khu phố chợ, đồi đền Torii và bến cảng biển.</li>
+          <li><b>Texture Pixel Art 16×16 (`gl.NEAREST`):</b> Toàn bộ khối gạch, cỏ, gỗ, mái ngói, lá anh đào đều dùng vân pixel sắc nét đúng chất <i>Minecraft</i>.</li>
+          <li><b>Camera theo sau lưng (Third-Person):</b> Điều khiển nhân vật chạy bộ, nhảy qua cầu, gặp gỡ cư dân có bong bóng chat trên đầu giống hệt <i>Play Together</i>!</li>
         </ul>
       </div>
     </div>
@@ -428,224 +438,33 @@
 (function () {
   "use strict";
 
-  const canvas = document.getElementById("canvas3d");
-  const ctx = canvas.getContext("2d");
-
-  function resize() {
-    const r = canvas.parentElement.getBoundingClientRect();
-    canvas.width = Math.round(r.width);
-    canvas.height = Math.round(r.height);
-  }
-  window.addEventListener("resize", resize);
-  resize();
-
   // =========================================================================
-  // 1. ENGINE 3D PERSPECTIVE & VOXEL-POLY MESH (THUẦN JS, 0% DEPENDENCY NGOÀI)
+  // 1. DỮ LIỆU ĐỊA ĐIỂM, NPC TRONG BÁO LÀNG & ĐƠN HÀNG NÔNG SẢN TỪ VỰNG
   // =========================================================================
-  let currentScene = "village"; // village | shrine | coast
-  let tod = "dusk";             // day | dusk | night
-  let autoOrbit = true;
-
-  // Camera 3D
-  let cam = {
-    yaw: 0.65,
-    pitch: 0.50,
-    dist: 245,
-    tx: 0, ty: 14, tz: 0
-  };
-
-  // Nhân vật người chơi: StackChan 3D
-  let player = {
-    x: 0, z: 38, y: 0,
-    vx: 0, vz: 0,
-    tx: 0, tz: 38,
-    facing: Math.PI
-  };
-
-  let fruits = 14;
-  let coins = 1850;
-  const keys = {};
-
-  function getCamPos() {
-    const cp = Math.cos(cam.pitch), sp = Math.sin(cam.pitch);
-    const cy = Math.cos(cam.yaw), sy = Math.sin(cam.yaw);
-    return {
-      x: cam.tx + cam.dist * cp * sy,
-      y: cam.ty + cam.dist * sp,
-      z: cam.tz + cam.dist * cp * cy
-    };
-  }
-
-  // Chiếu điểm 3D (x, y, z) sang màn hình 2D có chiều sâu z-buffer chính xác
-  function project3D(x, y, z) {
-    const dx = x - cam.tx;
-    const dy = y - cam.ty;
-    const dz = z - cam.tz;
-
-    // Xoay theo Yaw (quanh trục Y)
-    const cy = Math.cos(cam.yaw), sy = Math.sin(cam.yaw);
-    const rx = dx * cy - dz * sy;
-    const rz1 = dx * sy + dz * cy; // +rz1 là hướng về phía camera
-
-    // Xoay theo Pitch (camera nhìn từ trên xuống với pitch > 0)
-    const cp = Math.cos(cam.pitch), sp = Math.sin(cam.pitch);
-    const ry = dy * cp - rz1 * sp;
-    const rz = cam.dist - rz1 * cp - dy * sp;
-
-    if (rz < 10) return null;
-    const fov = 640;
-    const scale = fov / rz;
-    return {
-      x: canvas.width * 0.5 + rx * scale,
-      y: canvas.height * 0.56 - ry * scale,
-      depth: rz,
-      scale: scale
-    };
-  }
-
-  // Hàm tô độ sáng cho từng mặt khối 3D theo hướng nắng
-  function shadeHex(hex, factor) {
-    const n = parseInt(hex.slice(1), 16);
-    const r = Math.min(255, Math.max(0, Math.round(((n >> 16) & 255) * factor)));
-    const g = Math.min(255, Math.max(0, Math.round(((n >> 8) & 255) * factor)));
-    const b = Math.min(255, Math.max(0, Math.round((n & 255) * factor)));
-    return "rgb(" + r + "," + g + "," + b + ")";
-  }
-
-  // Hàng đợi mặt đa giác 3D (Painter's Algorithm + Backface Culling + Layer Sort)
-  let faces3D = [];
-  let billboards3D = [];
-  let currentLayer = 1; // 0: Đế đảo & mặt đất, 1: Công trình & cây cối, 2: Mái/nhân vật
-
-  function pushQuad(p0, p1, p2, p3, color, stroke, layerOverride) {
-    const s0 = project3D(p0[0], p0[1], p0[2]);
-    const s1 = project3D(p1[0], p1[1], p1[2]);
-    const s2 = project3D(p2[0], p2[1], p2[2]);
-    const s3 = project3D(p3[0], p3[1], p3[2]);
-    if (!s0 || !s1 || !s2 || !s3) return;
-    const avgDepth = (s0.depth + s1.depth + s2.depth + s3.depth) * 0.25;
-    faces3D.push({
-      pts: [s0, s1, s2, s3],
-      depth: avgDepth,
-      layer: layerOverride !== undefined ? layerOverride : currentLayer,
-      color: color,
-      stroke: stroke
-    });
-  }
-
-  // Vẽ khối hộp 3D có tâm đáy tại (cx, y0, cz) và kích thước (wx, hy, wz)
-  function addBox3D(cx, y0, cz, wx, hy, wz, hexColor, strokeCol) {
-    const hx = wx * 0.5, hz = wz * 0.5;
-    const x0 = cx - hx, x1 = cx + hx;
-    const z0 = cz - hz, z1 = cz + hz;
-    const y1 = y0 + hy;
-    const camPos = getCamPos();
-
-    const nightFactor = tod === "night" ? 0.58 : tod === "dusk" ? 0.88 : 1.0;
-    const cTop   = shadeHex(hexColor, 1.08 * nightFactor);
-    const cFront = shadeHex(hexColor, 0.92 * nightFactor);
-    const cBack  = shadeHex(hexColor, 0.72 * nightFactor);
-    const cLeft  = shadeHex(hexColor, 0.80 * nightFactor);
-    const cRight = shadeHex(hexColor, 0.86 * nightFactor);
-    const st = strokeCol || "rgba(20,20,35,0.22)";
-
-    // Chỉ đẩy các mặt hướng về phía camera (3D Backface Culling)
-    if (camPos.y > y1) {
-      pushQuad([x0, y1, z0], [x1, y1, z0], [x1, y1, z1], [x0, y1, z1], cTop, st);
-    }
-    if (camPos.z > z1) {
-      pushQuad([x0, y0, z1], [x1, y0, z1], [x1, y1, z1], [x0, y1, z1], cFront, st);
-    }
-    if (camPos.z < z0) {
-      pushQuad([x1, y0, z0], [x0, y0, z0], [x0, y1, z0], [x1, y1, z0], cBack, st);
-    }
-    if (camPos.x < x0) {
-      pushQuad([x0, y0, z0], [x0, y0, z1], [x0, y1, z1], [x0, y1, z0], cLeft, st);
-    }
-    if (camPos.x > x1) {
-      pushQuad([x1, y0, z1], [x1, y0, z0], [x1, y1, z0], [x1, y1, z1], cRight, st);
-    }
-  }
-
-  // Vẽ mái nhà 3D hình chóp / thu hồi (Gable / Hip Roof)
-  function addRoof3D(cx, y0, cz, wx, hy, wz, hexColor) {
-    const hx = wx * 0.5, hz = wz * 0.5;
-    const y1 = y0 + hy;
-    const rx0 = cx - hx * 0.65, rx1 = cx + hx * 0.65;
-    const nf = tod === "night" ? 0.62 : tod === "dusk" ? 0.9 : 1.0;
-
-    pushQuad([cx - hx, y0, cz + hz], [cx + hx, y0, cz + hz], [rx1, y1, cz], [rx0, y1, cz], shadeHex(hexColor, 1.02 * nf), "rgba(20,20,35,0.3)");
-    pushQuad([cx + hx, y0, cz - hz], [cx - hx, y0, cz - hz], [rx0, y1, cz], [rx1, y1, cz], shadeHex(hexColor, 0.78 * nf), "rgba(20,20,35,0.3)");
-    pushQuad([cx - hx, y0, cz - hz], [cx - hx, y0, cz + hz], [rx0, y1, cz], [rx0, y1, cz], shadeHex(hexColor, 0.85 * nf), "rgba(20,20,35,0.3)");
-    pushQuad([cx + hx, y0, cz + hz], [cx + hx, y0, cz - hz], [rx1, y1, cz], [rx1, y1, cz], shadeHex(hexColor, 0.90 * nf), "rgba(20,20,35,0.3)");
-  }
-
-  // Vẽ đèn lồng phát sáng 3D
-  function addLantern3D(x, y, z, color) {
-    addBox3D(x, y, z, 4, 6, 4, color || "#ff5252");
-    if (tod !== "day") {
-      billboards3D.push({
-        x, y: y + 3, z,
-        draw: (sp) => {
-          const r = 24 * sp.scale;
-          const g = ctx.createRadialGradient(sp.x, sp.y, 1, sp.x, sp.y, r);
-          g.addColorStop(0, "rgba(255, 215, 70, 0.75)");
-          g.addColorStop(1, "rgba(255, 160, 40, 0)");
-          ctx.fillStyle = g;
-          ctx.beginPath();
-          ctx.arc(sp.x, sp.y, r, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      });
-    }
-  }
-
-  // Vẽ nhân vật 3D (StackChan hoặc NPC trong làng)
-  function addCharacter3D(x, y, z, bodyCol, headCol, hatCol, label, badge) {
-    // Chân & Thân
-    addBox3D(x, y, z, 7, 9, 6, bodyCol);
-    // Đầu
-    addBox3D(x, y + 9, z, 8, 7, 7, headCol);
-    // Mũ / Tóc
-    if (hatCol) addBox3D(x, y + 16, z, 9, 3, 8, hatCol);
-
-    if (label) {
-      billboards3D.push({
-        x, y: y + 24, z,
-        draw: (sp) => {
-          ctx.save();
-          ctx.font = "800 11.5px 'Segoe UI', sans-serif";
-          const text = badge ? (badge + " " + label) : label;
-          const w = ctx.measureText(text).width + 14;
-          const h = 21;
-          ctx.fillStyle = "rgba(27, 27, 47, 0.88)";
-          ctx.beginPath();
-          ctx.roundRect(sp.x - w * 0.5, sp.y - h * 0.5, w, h, 10);
-          ctx.fill();
-          ctx.strokeStyle = "#ffd23f";
-          ctx.lineWidth = 1.5;
-          ctx.stroke();
-          ctx.fillStyle = "#fff9eb";
-          ctx.textAlign = "center";
-          ctx.textBaseline = "middle";
-          ctx.fillText(text, sp.x, sp.y + 0.5);
-          ctx.restore();
-        }
-      });
-    }
-  }
-
-  // =========================================================================
-  // 2. DỮ LIỆU HỘI THOẠI & ĐƠN BÁN HÀNG TRONG LÀNG KOTOBA 3D
-  // =========================================================================
-  const VILLAGE_SPOTS = {
+  const SPOTS = {
+    plaza: {
+      id: "plaza", x: 0, z: 4, yaw: 0.35,
+      zone: "Quảng Trường Tháp Đồng Hồ",
+      avatar: "⛲",
+      name: "Ông Trưởng Làng (村長さん) & Quảng Trường",
+      role: "Trung tâm giao lưu của Làng Kotoba (Play Together Plaza)",
+      dialogue: "<b>Ông Trưởng Làng:</b> “Chào mừng cháu tới Quảng trường Làng Kotoba! Ở đây lúc nào cũng nhộn nhịp cư dân đi dạo. Cháu thử chạy qua Phố Chợ bên phải hoặc ghé Quán Kotoba của cô Hana bên trái xem!”",
+      question: "Ông Trưởng Làng muốn mua quả từ vựng mang nghĩa <b>“Biết ơn”</b> để tặng khách quý:",
+      options: [
+        { text: "🍎 感謝 (かんしゃ)", ok: true },
+        { text: "🍊 成長 (せいちょう)", ok: false },
+        { text: "🍐 挑戦 (ちょうせん)", ok: false },
+        { text: "🍑 感動 (かんどう)", ok: false }
+      ]
+    },
     inn: {
-      id: "inn", x: -42, z: -26,
+      id: "inn", x: -18, z: 3.2, yaw: 0.18,
+      zone: "Quán Trọ Kotoba (ことば屋)",
       avatar: "🏮",
       name: "Chị Hana & Lin (Quán trọ ことば屋)",
       role: "Nhân vật chính trong truyện dài kỳ Báo Làng Kotoba",
-      dialogue: "<b>Chị Hana:</b> “Chào mừng tới Làng Kotoba 3D! Hôm nay trong mục <i>Tin làng</i> có đoàn khách ghé nghỉ tại Quán Kotoba. Em bán cho quán vài quả từ vựng mới thu hoạch nhé!”<br/><b>Lin:</b> “Để em ghi vào sổ tay đã!「がんばります！」”",
-      question: "Chị Hana cần mua quả mang nghĩa <b>“Lời hứa”</b> để đãi khách trọ. Bạn giao quả nào?",
+      dialogue: "<b>Chị Hana:</b> “Hôm nay mục <i>Tin làng</i> đăng có lễ hội ẩm thực ở quảng trường nên Quán Kotoba đông khách lắm! Em có quả từ vựng mới thu hoạch từ vườn 2D không, để lại cho quán chị vài sọt nhé!”<br/><b>Lin:</b> “Để em ghi sổ ngay ạ!「がんばります！」”",
+      question: "Chị Hana cần quả mang nghĩa <b>“Lời hứa”</b> để làm món tráng miệng:",
       options: [
         { text: "🍎 約束 (やくそく)", ok: true },
         { text: "🍊 準備 (じゅんび)", ok: false },
@@ -654,12 +473,13 @@
       ]
     },
     market: {
-      id: "market", x: 42, z: -18,
+      id: "market", x: 18, z: 1.5, yaw: -0.15,
+      zone: "Phố Chợ Nông Sản (ことばマルシェ)",
       avatar: "🛒",
-      name: "Sạp Chợ Phiên Làng Kotoba (朝市)",
-      role: "Nơi bán nông sản thu hoạch từ cây Ra quả ở vườn 2D",
-      dialogue: "<b>Chủ sạp chợ:</b> “Cây từ vựng ở vườn 2D của bạn ra quả nhiều quá! Đem vào chợ làng 3D bán lấy xu mua đồ hiếm hoặc mở vùng ngắm cảnh mới nhé!”",
-      question: "Khách chợ phiên đang tìm mua quả mang nghĩa <b>“Phiêu lưu”</b>:",
+      name: "Phố Chợ Phiên Làng Kotoba (朝市)",
+      role: "Khu bán nông sản thu hoạch từ cây Ra quả ở vườn 2D",
+      dialogue: "<b>Chủ Sạp Chợ:</b> “Chào chủ vườn! Ở vườn 2D bạn trồng được bao nhiêu cây <i>Ra quả</i> thì cứ đem hết vào Phố Chợ 3D này bán lấy xu nhé!”",
+      question: "Khách ở Sạp Đỏ đang tìm mua quả mang nghĩa <b>“Phiêu lưu”</b>:",
       options: [
         { text: "🍇 相談 (そうだん)", ok: false },
         { text: "🍎 冒険 (ぼうけん)", ok: true },
@@ -668,12 +488,13 @@
       ]
     },
     post: {
-      id: "post", x: -38, z: 32,
+      id: "post", x: -16, z: 12, yaw: 2.8,
+      zone: "Bưu Điện & Bảng Tin Làng",
       avatar: "📮",
-      name: "Bác Đưa Thư (郵便屋さん) & Bảng Tin Làng",
-      role: "Người phát báo 畑新聞 mỗi sáng",
-      dialogue: "<b>Bác Đưa Thư:</b> “Số báo sáng nay vừa in xong! Ngoài việc đọc báo 2D, giờ cháu có thể đi dạo quanh quảng trường làng 3D để xem chuyện gì đang diễn ra nhé!”",
-      question: "Bác Đưa Thư nhờ bạn chọn đúng từ mang nghĩa <b>“Liên lạc”</b> để gửi thư:",
+      name: "Bác Đưa Thư (郵便屋さん) & Bảng Tin",
+      role: "Tác giả mục Tin làng trên tờ 畑新聞 mỗi sáng",
+      dialogue: "<b>Bác Đưa Thư:</b> “Mọi tin tức cháu đọc trên tờ báo 2D mỗi sáng đều lấy từ những chuyện xảy ra quanh khu phố này đấy! Nhìn kìa, con mèo hoang trắng lại đang rình bên sạp cá!”",
+      question: "Bác Đưa Thư nhờ bạn chọn quả mang nghĩa <b>“Liên lạc”</b>:",
       options: [
         { text: "🍎 表現 (ひょうげん)", ok: false },
         { text: "🍊 発見 (はっけん)", ok: false },
@@ -681,36 +502,55 @@
         { text: "🍑 記憶 (きおく)", ok: false }
       ]
     },
-    mayor: {
-      id: "mayor", x: 38, z: 32,
-      avatar: "👴",
-      name: "Ông Trưởng Làng (村長さん) & Mèo Hoang Trắng",
-      role: "Người giữ lịch sử Làng Kotoba",
-      dialogue: "<b>Ông Trưởng Làng:</b> “Hồi xưa khi làng mới lập… à mà thôi kẻo ta lại kể dài dòng! Con mèo hoang trắng cứ quấn lấy giỏ trái cây từ vựng của cháu kìa!”",
-      question: "Ông Trưởng Làng muốn mua quả mang nghĩa <b>“Biết ơn”</b>:",
+    shrine: {
+      id: "shrine", x: 0, z: -18, yaw: 0.0,
+      zone: "Đồi Đền Sakura & Đại Thụ (Vùng ngắm cảnh)",
+      avatar: "⛩️",
+      name: "Đỉnh Đền Thần & Cây Đại Thụ Sakura",
+      role: "Vùng ngắm cảnh 3D mở khoá khi đạt chuỗi học tập",
+      dialogue: "<b>Cảnh sắc 3D:</b> Qua cây cầu đá bắc ngang dòng kênh đào là bậc thang dẫn lên Cổng Torii đỏ và Cây Đại Thụ Anh Đào khổng lồ rợp bóng cả thị trấn.",
+      question: "Thử thách dưới gốc Đại Thụ — từ nào mang nghĩa <b>“Hy vọng”</b>?",
       options: [
-        { text: "🍎 感謝 (かんしゃ)", ok: true },
-        { text: "🍊 成長 (せいちょう)", ok: false },
-        { text: "🍐 挑戦 (ちょうせん)", ok: false },
-        { text: "🍑 感動 (かんどう)", ok: false }
+        { text: "🌸 希望 (きぼう)", ok: true },
+        { text: "🌿 勇気 (ゆうき)", ok: false },
+        { text: "🍀 未来 (みらい)", ok: false },
+        { text: "🌺 自由 (じゆう)", ok: false }
+      ]
+    },
+    harbor: {
+      id: "harbor", x: 6, z: 32, yaw: 2.7,
+      zone: "Bến Cảng Biển & Hải Đăng (Vùng ngắm cảnh)",
+      avatar: "⚓",
+      name: "Bến Cảng Kotoba & Con Tàu Viễn Dương",
+      role: "Vùng ngắm cảnh bờ biển 3D phía Nam thị trấn",
+      dialogue: "<b>Cảnh sắc 3D:</b> Bờ cát vàng trải dài cùng cầu cảng gỗ, ngọn hải đăng đỏ trắng và con tàu gỗ đang neo đậu chờ chở nông sản từ vựng đi muôn nơi.",
+      question: "Thử thách bên Bến Cảng — từ nào mang nghĩa <b>“Thế giới”</b>?",
+      options: [
+        { text: "🌊 世界 (せかい)", ok: true },
+        { text: "⛵ 旅行 (りょこう)", ok: false },
+        { text: "🐚 季節 (きせつ)", ok: false },
+        { text: "🏝️ 自然 (しぜん)", ok: false }
       ]
     }
   };
 
-  let activeSpotId = "inn";
+  let fruits = 16;
+  let coins = 2450;
+  let currentSpotId = "inn";
 
   function showToast(msg) {
-    const t = document.getElementById("toast3d");
-    t.textContent = msg;
-    t.classList.add("show");
-    clearTimeout(showToast._tm);
-    showToast._tm = setTimeout(() => t.classList.remove("show"), 2300);
+    const el = document.getElementById("toast3d");
+    el.textContent = msg;
+    el.classList.add("show");
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => el.classList.remove("show"), 2300);
   }
 
-  function renderSpotPanel(spotId) {
-    activeSpotId = spotId;
-    const sp = VILLAGE_SPOTS[spotId];
+  function updateSidePanel(spotId) {
+    currentSpotId = spotId;
+    const sp = SPOTS[spotId];
     if (!sp) return;
+    document.getElementById("zoneLabel").textContent = sp.zone;
     document.getElementById("npcAvatar").textContent = sp.avatar;
     document.getElementById("npcName").textContent = sp.name;
     document.getElementById("npcRole").textContent = sp.role;
@@ -726,185 +566,580 @@
       b.addEventListener("click", () => {
         if (opt.ok) {
           if (fruits <= 0) {
-            showToast("🧺 Bạn đã bán hết sạch giỏ quả hôm nay rồi!");
+            showToast("🧺 Bạn đã bán hết nông sản trong giỏ hôm nay!");
             return;
           }
           b.classList.add("correct");
           fruits--;
-          coins += 40;
+          coins += 50;
           document.getElementById("fruitCount").textContent = fruits + " quả";
           document.getElementById("coinCount").textContent = coins.toLocaleString("vi-VN");
-          showToast("🎉 Giao hàng chuẩn xác! +40 xu từ " + sp.name.split(" (")[0]);
+          showToast("🎉 Bán thành công! +50 xu từ " + sp.name.split(" (")[0]);
         } else {
           b.classList.add("wrong");
-          showToast("😅 Chưa đúng quả khách đặt rồi, thử lại nhé!");
+          showToast("😅 Chưa đúng quả khách cần rồi, chọn lại nhé!");
         }
       });
       box.appendChild(b);
     });
   }
-  renderSpotPanel("inn");
+  updateSidePanel("inn");
 
   // =========================================================================
-  // 3. DỰNG 3 THẾ GIỚI 3D: (A) LÀNG KOTOBA 3D · (B) ĐỀN ĐẠI THỤ · (C) ĐÈO TÀU HOẢ
+  // 2. KHỞI TẠO WEBGL & TẠO TEXTURE ATLAS PIXEL ART 16×16 (CHUẨN MINECRAFT)
   // =========================================================================
-  const petals = Array.from({ length: 42 }, (_, i) => ({
-    x: (Math.sin(i * 17) * 95),
-    y: 15 + (i * 13) % 75,
-    z: (Math.cos(i * 23) * 95),
-    vy: 8 + (i % 5) * 2
-  }));
+  const glCanvas = document.getElementById("glCanvas");
+  const hudCanvas = document.getElementById("hudCanvas");
+  const hudCtx = hudCanvas.getContext("2d");
+  const mmCanvas = document.getElementById("minimapCanvas");
+  const mmCtx = mmCanvas.getContext("2d");
 
-  function buildVillageScene(now) {
-    // Đế Hòn Đảo Làng Kotoba 3D nhiều tầng (Layer 0: Mặt đất & đường lát đá)
-    currentLayer = 0;
-    addBox3D(0, -18, 0, 198, 18, 188, "#5c4028");
-    addBox3D(0, -4, 0, 204, 5, 194, "#59b84a");
+  const gl = glCanvas.getContext("webgl", { antialias: true, alpha: false });
 
-    // Quảng trường lát đá chữ thập
-    addBox3D(0, 1, 0, 42, 1.5, 186, "#d8ccb8");
-    addBox3D(0, 1, 0, 186, 1.5, 38, "#d8ccb8");
+  function resize() {
+    const r = glCanvas.parentElement.getBoundingClientRect();
+    glCanvas.width = Math.round(r.width);
+    glCanvas.height = Math.round(r.height);
+    hudCanvas.width = glCanvas.width;
+    hudCanvas.height = glCanvas.height;
+    if (gl) gl.viewport(0, 0, glCanvas.width, glCanvas.height);
+  }
+  window.addEventListener("resize", resize);
+  resize();
 
-    // Layer 1: Công trình, cây cối, đài phun nước & nhân vật 3D trên mặt đảo
-    currentLayer = 1;
-    addBox3D(0, 2, 0, 24, 5, 24, "#9aa0b5");
-    addBox3D(0, 5, 0, 18, 2.5, 18, "#4dabf7");
-    addBox3D(0, 7, 0, 5, 9, 5, "#d4d4e0");
+  // Danh mục ID Texture 16×16 trên Atlas (8 cột × 4 hàng = 32 ô 16×16)
+  const TEX = {
+    GRASS_TOP: 0,
+    GRASS_SIDE: 1,
+    DIRT: 2,
+    ROAD_STONE: 3,
+    PLAZA_TILE: 4,
+    WOOD_PLANK: 5,
+    DARK_TIMBER: 6,
+    WHITE_WALL: 7,
+    SHOJI_WIN: 8,
+    ROOF_DARK: 9,
+    AWNING_RED: 10,
+    AWNING_GREEN: 11,
+    SAKURA_LEAF: 12,
+    GREEN_LEAF: 13,
+    TREE_BARK: 14,
+    LANTERN: 15,
+    WATER: 16,
+    RED_BRICK: 17,
+    CRATE_APPLE: 18,
+    CRATE_ORANGE: 19,
+    GOLD_BLOCK: 20,
+    SAND: 21,
+    STONE_FOUND: 22,
+    CROSSWALK: 23,
+    CLOUD: 24,
+    TORII_RED: 25
+  };
 
-    // 1. QUÁN TRỌ KOTOBA (ことば屋 — Góc Tây Bắc: x=-56, z=-52)
-    addBox3D(-56, 1, -52, 54, 4, 42, "#8a7f70"); // Móng đá
-    addBox3D(-56, 5, -52, 48, 22, 36, "#f5ead4"); // Tầng 1
-    addRoof3D(-56, 27, -52, 58, 10, 44, "#3b4254"); // Mái ngói tầng 1
-    addBox3D(-56, 35, -52, 36, 16, 26, "#fff3dc"); // Tầng 2
-    addRoof3D(-56, 51, -52, 46, 12, 34, "#2b3040"); // Mái đỉnh
-    // Rèm Noren xanh trước cửa Quán Kotoba + 2 đèn lồng đỏ
-    addBox3D(-56, 14, -33, 16, 7, 2, "#2f5fb0");
-    addLantern3D(-70, 16, -32, "#ff4d4f");
-    addLantern3D(-42, 16, -32, "#ff4d4f");
-    // Chị Hana & Lin đứng đón khách trước quán
-    addCharacter3D(-62, 2, -28, "#2f5fb0", "#ffd8b8", "#1b1b2f", "Quán Kotoba (Hana & Lin)", "🏮");
-    addCharacter3D(-46, 2, -28, "#e8590c", "#ffd8b8", "#3b2414", null, null);
+  function buildPixelAtlas() {
+    const c = document.createElement("canvas");
+    c.width = 128;  // 8 tiles * 16px
+    c.height = 64;  // 4 tiles * 16px
+    const cx = c.getContext("2d");
 
-    // 2. KHU CHỢ PHIÊN BÁN HÀNG (Góc Đông Bắc: x=56, z=-48)
-    addBox3D(56, 1, -48, 46, 14, 30, "#c88344"); // Quầy gỗ
-    addRoof3D(56, 24, -48, 52, 10, 36, "#e03131"); // Mái bạt đỏ
-    // Các thùng gỗ đựng quả từ vựng rực rỡ
-    addBox3D(44, 15, -38, 9, 4, 8, "#ff3b30");
-    addBox3D(56, 15, -38, 9, 4, 8, "#ffd43b");
-    addBox3D(68, 15, -38, 9, 4, 8, "#51cf66");
-    addLantern3D(36, 18, -32, "#ff9f1c");
-    addCharacter3D(56, 2, -26, "#2b8a3e", "#ffd8b8", "#ffd43b", "Sạp Bán Nông Sản", "🛒");
+    function hash(x, y, s) {
+      return ((Math.sin(x * 12.9898 + y * 78.233 + s * 43.12) * 43758.5453) % 1 + 1) % 1;
+    }
 
-    // 3. TRẠM BƯU ĐIỆN & BẢNG TIN LÀNG (Góc Tây Nam: x=-56, z=50)
-    addBox3D(-58, 1, 52, 30, 20, 26, "#fff0d4");
-    addRoof3D(-58, 21, 52, 36, 10, 32, "#c92a2a");
-    addBox3D(-38, 1, 42, 6, 12, 6, "#e03131"); // Hòm thư đỏ 3D
-    addCharacter3D(-48, 2, 34, "#1c7ed6", "#ffd8b8", "#1864ab", "Bác Đưa Thư (Tin làng)", "📮");
-
-    // 4. NHÀ ÔNG TRƯỞNG LÀNG & CÂY CỔ THỤ (Góc Đông Nam: x=56, z=50)
-    addBox3D(58, 1, 52, 36, 18, 28, "#e8d3a6");
-    addRoof3D(58, 19, 52, 42, 11, 34, "#5c3b1e");
-    // Cây anh đào cạnh nhà Trưởng làng
-    addBox3D(36, 1, 56, 6, 18, 6, "#6b3b1f");
-    addBox3D(36, 19, 56, 24, 16, 24, "#ff9ebb");
-    addCharacter3D(50, 2, 34, "#5c3b1e", "#ffd8b8", "#d4d4e0", "Ông Trưởng Làng & Mèo", "👴");
-    addCharacter3D(36, 2, 38, "#ffffff", "#ffffff", null, null, null);
-
-    // Đèn đường dọc quảng trường
-    [[-24, -18], [24, -18], [-24, 20], [24, 20]].forEach(([lx, lz]) => {
-      addBox3D(lx, 1, lz, 2.5, 16, 2.5, "#3b2414");
-      addLantern3D(lx, 17, lz, "#ffd43b");
-    });
-
-    // Nhân vật người chơi: StackChan 3D (chạy bằng WASD)
-    const bob = Math.abs(Math.sin(now / 150)) * (Math.hypot(player.vx, player.vz) > 0.5 ? 2.5 : 0.4);
-    addBox3D(player.x, 1 + bob, player.z, 9, 10, 8, "#339af0");
-    addBox3D(player.x, 11 + bob, player.z, 11, 9, 9, "#ffffff"); // Đầu màn hình StackChan
-    addBox3D(player.x, 20 + bob, player.z, 8, 3, 8, "#ffd43f");  // Mũ vàng
-    billboards3D.push({
-      x: player.x, y: 28 + bob, z: player.z,
-      draw: (sp) => {
-        ctx.fillStyle = "#ffd23f";
-        ctx.font = "900 11.5px 'Segoe UI', sans-serif";
-        ctx.textAlign = "center";
-        ctx.fillText("▼ BẠN (StackChan)", sp.x, sp.y);
+    function drawTile(id, fn) {
+      const tx = (id % 8) * 16;
+      const ty = Math.floor(id / 8) * 16;
+      for (let y = 0; y < 16; y++) {
+        for (let x = 0; x < 16; x++) {
+          cx.fillStyle = fn(x, y, hash(x, y, id));
+          cx.fillRect(tx + x, ty + y, 1, 1);
+        }
       }
+    }
+
+    // 0: Grass Top (Minecraft pixel grass)
+    drawTile(TEX.GRASS_TOP, (x, y, h) => h > 0.65 ? "#69db5c" : h < 0.25 ? "#48a83e" : "#57c44b");
+    // 1: Grass Side
+    drawTile(TEX.GRASS_SIDE, (x, y, h) => {
+      const grassEdge = 3 + Math.floor(hash(x, 0, 99) * 3);
+      if (y < grassEdge) return h > 0.5 ? "#57c44b" : "#48a83e";
+      return h > 0.6 ? "#8a5a36" : h < 0.25 ? "#694224" : "#7a4e2d";
+    });
+    // 2: Dirt
+    drawTile(TEX.DIRT, (x, y, h) => h > 0.6 ? "#8a5a36" : h < 0.25 ? "#694224" : "#7a4e2d");
+    // 3: Road Stone (Asphalt / Cobble street)
+    drawTile(TEX.ROAD_STONE, (x, y, h) => {
+      if (y % 8 === 0 || (x + (y >> 3) * 4) % 8 === 0) return "#495057";
+      return h > 0.5 ? "#6c757d" : "#5c646b";
+    });
+    // 4: Plaza Checkered Tile (Play Together cream/terracotta plaza)
+    drawTile(TEX.PLAZA_TILE, (x, y, h) => {
+      if (x === 0 || y === 0) return "#c7b89c";
+      const chk = ((x >> 3) + (y >> 3)) % 2 === 0;
+      return chk ? (h > 0.5 ? "#fff3d6" : "#f5e6c4") : (h > 0.5 ? "#ebd4a7" : "#dfc594");
+    });
+    // 5: Wood Plank
+    drawTile(TEX.WOOD_PLANK, (x, y, h) => {
+      if (y % 4 === 0) return "#8f5b2d";
+      return h > 0.5 ? "#c28246" : "#b3743b";
+    });
+    // 6: Dark Timber
+    drawTile(TEX.DARK_TIMBER, (x, y, h) => (x === 0 || x === 15) ? "#2b190d" : (h > 0.5 ? "#472b18" : "#3b2313"));
+    // 7: White Japanese Wall with wood frame
+    drawTile(TEX.WHITE_WALL, (x, y, h) => {
+      if (x < 2 || x > 13 || y < 2 || y > 13) return "#4a2e19";
+      return h > 0.5 ? "#fff9ed" : "#f2e9d8";
+    });
+    // 8: Shoji Window (Glowing lattice)
+    drawTile(TEX.SHOJI_WIN, (x, y) => {
+      if (x < 2 || x > 13 || y < 2 || y > 13 || x === 7 || x === 8 || y === 7 || y === 8) return "#4a2e19";
+      return "#ffe89e";
+    });
+    // 9: Dark Japanese Roof Tile
+    drawTile(TEX.ROOF_DARK, (x, y, h) => {
+      if (y % 4 === 0 || x % 4 === 0) return "#222738";
+      return h > 0.5 ? "#363e57" : "#2d344a";
+    });
+    // 10: Red/White Market Awning (Play Together Stall)
+    drawTile(TEX.AWNING_RED, (x) => ((x >> 2) % 2 === 0) ? "#e03131" : "#fff9eb");
+    // 11: Green/White Market Awning
+    drawTile(TEX.AWNING_GREEN, (x) => ((x >> 2) % 2 === 0) ? "#2b8a3e" : "#fff9eb");
+    // 12: Sakura Blossom Leaf Block
+    drawTile(TEX.SAKURA_LEAF, (x, y, h) => h > 0.7 ? "#ffccd8" : h < 0.25 ? "#f06595" : "#ff8fab");
+    // 13: Green Foliage Block
+    drawTile(TEX.GREEN_LEAF, (x, y, h) => h > 0.65 ? "#51cf66" : h < 0.25 ? "#2b8a3e" : "#37b24d");
+    // 14: Tree Bark
+    drawTile(TEX.TREE_BARK, (x, y, h) => (x % 4 === 0) ? "#4a2c16" : (h > 0.5 ? "#694122" : "#5c371b"));
+    // 15: Glowing Lantern
+    drawTile(TEX.LANTERN, (x, y) => (y < 2 || y > 13) ? "#c92a2a" : ((x + y) % 3 === 0 ? "#fff3bf" : "#ffd43b"));
+    // 16: Water Block
+    drawTile(TEX.WATER, (x, y, h) => (y % 5 === 0 && x % 3 !== 0) ? "#74c0fc" : (h > 0.5 ? "#339af0" : "#228be6"));
+    // 17: Red Brick
+    drawTile(TEX.RED_BRICK, (x, y, h) => {
+      const row = y >> 2;
+      if (y % 4 === 0 || (x + (row % 2) * 4) % 8 === 0) return "#d8ccb8";
+      return h > 0.5 ? "#c94a38" : "#b53d2b";
+    });
+    // 18: Apple Crate
+    drawTile(TEX.CRATE_APPLE, (x, y, h) => {
+      if (x < 2 || x > 13 || y < 2 || y > 13) return "#9c6634";
+      return h > 0.35 ? "#fa5252" : "#51cf66";
+    });
+    // 19: Orange Crate
+    drawTile(TEX.CRATE_ORANGE, (x, y, h) => {
+      if (x < 2 || x > 13 || y < 2 || y > 13) return "#9c6634";
+      return h > 0.3 ? "#fd7e14" : "#ffd43b";
+    });
+    // 20: Gold / Clock Face
+    drawTile(TEX.GOLD_BLOCK, (x, y, h) => (x < 2 || x > 13 || y < 2 || y > 13) ? "#e67700" : (h > 0.5 ? "#ffe066" : "#ffd43b"));
+    // 21: Beach Sand
+    drawTile(TEX.SAND, (x, y, h) => h > 0.6 ? "#ffec99" : "#ffe066");
+    // 22: Stone Foundation
+    drawTile(TEX.STONE_FOUND, (x, y, h) => (y % 4 === 0 || x % 8 === 0) ? "#495057" : (h > 0.5 ? "#adb5bd" : "#868e96"));
+    // 23: Zebra Crosswalk
+    drawTile(TEX.CROSSWALK, (x) => ((x >> 2) % 2 === 0) ? "#f8f9fa" : "#495057");
+    // 24: Cloud
+    drawTile(TEX.CLOUD, () => "#ffffff");
+    // 25: Torii Red
+    drawTile(TEX.TORII_RED, (x, y, h) => h > 0.5 ? "#e03131" : "#c92a2a");
+
+    return c;
+  }
+
+  // Khởi tạo Shader WebGL cho Voxel Mesh
+  const vsSrc = `
+    attribute vec3 aPos;
+    attribute vec2 aUV;
+    attribute float aLight;
+    uniform mat4 uProj;
+    uniform mat4 uView;
+    varying vec2 vUV;
+    varying float vLight;
+    varying float vDist;
+    void main() {
+      vec4 viewPos = uView * vec4(aPos, 1.0);
+      gl_Position = uProj * viewPos;
+      vUV = aUV;
+      vLight = aLight;
+      vDist = length(viewPos.xyz);
+    }
+  `;
+  const fsSrc = `
+    precision mediump float;
+    varying vec2 vUV;
+    varying float vLight;
+    varying float vDist;
+    uniform sampler2D uTex;
+    uniform vec3 uTint;
+    uniform vec3 uFogColor;
+    void main() {
+      vec4 texCol = texture2D(uTex, vUV);
+      vec3 lit = texCol.rgb * vLight * uTint;
+      float fog = clamp((vDist - 55.0) / 75.0, 0.0, 1.0);
+      gl_FragColor = vec4(mix(lit, uFogColor, fog), 1.0);
+    }
+  `;
+
+  function compileShader(type, src) {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    return s;
+  }
+  const prog = gl.createProgram();
+  gl.attachShader(prog, compileShader(gl.VERTEX_SHADER, vsSrc));
+  gl.attachShader(prog, compileShader(gl.FRAGMENT_SHADER, fsSrc));
+  gl.linkProgram(prog);
+  gl.useProgram(prog);
+
+  const aPosLoc = gl.getAttribLocation(prog, "aPos");
+  const aUVLoc = gl.getAttribLocation(prog, "aUV");
+  const aLightLoc = gl.getAttribLocation(prog, "aLight");
+  const uProjLoc = gl.getUniformLocation(prog, "uProj");
+  const uViewLoc = gl.getUniformLocation(prog, "uView");
+  const uTintLoc = gl.getUniformLocation(prog, "uTint");
+  const uFogLoc = gl.getUniformLocation(prog, "uFogColor");
+
+  const atlasCanvas = buildPixelAtlas();
+  const glTex = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, glTex);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, atlasCanvas);
+  // Chuẩn Minecraft Pixel Art: NEAREST filtering sắc nét tuyệt đối
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+  // =========================================================================
+  // 3. XÂY DỰNG THỊ TRẤN VOXEL RỘNG LỚN (PLAY TOGETHER × MINECRAFT WORLD)
+  // =========================================================================
+  const verts = []; // x, y, z, u, v, light
+
+  function uvRect(texId) {
+    const col = texId % 8;
+    const row = Math.floor(texId / 8);
+    const pad = 0.0015;
+    return [
+      col / 8 + pad, row / 4 + pad,
+      (col + 1) / 8 - pad, (row + 1) / 4 - pad
+    ];
+  }
+
+  function pushFace(p0, p1, p2, p3, texId, light) {
+    const [u0, v0, u1, v1] = uvRect(texId);
+    // 2 triangles: (p0, p1, p2) & (p0, p2, p3)
+    verts.push(
+      p0[0], p0[1], p0[2], u0, v1, light,
+      p1[0], p1[1], p1[2], u1, v1, light,
+      p2[0], p2[1], p2[2], u1, v0, light,
+      p0[0], p0[1], p0[2], u0, v1, light,
+      p2[0], p2[1], p2[2], u1, v0, light,
+      p3[0], p3[1], p3[2], u0, v0, light
+    );
+  }
+
+  // Thêm khối hộp Voxel từ (cx, y0, cz) với kích thước (wx, hy, wz)
+  function addVoxelBox(cx, y0, cz, wx, hy, wz, texTop, texSide, texBottom) {
+    const tSide = texSide !== undefined ? texSide : texTop;
+    const tBot = texBottom !== undefined ? texBottom : tSide;
+    const x0 = cx - wx * 0.5, x1 = cx + wx * 0.5;
+    const z0 = cz - wz * 0.5, z1 = cz + wz * 0.5;
+    const y1 = y0 + hy;
+
+    // Top (+Y)
+    pushFace([x0, y1, z1], [x1, y1, z1], [x1, y1, z0], [x0, y1, z0], texTop, 1.05);
+    // Front (+Z)
+    pushFace([x0, y0, z1], [x1, y0, z1], [x1, y1, z1], [x0, y1, z1], tSide, 0.92);
+    // Back (-Z)
+    pushFace([x1, y0, z0], [x0, y0, z0], [x0, y1, z0], [x1, y1, z0], tSide, 0.76);
+    // Right (+X)
+    pushFace([x1, y0, z1], [x1, y0, z0], [x1, y1, z0], [x1, y1, z1], tSide, 0.86);
+    // Left (-X)
+    pushFace([x0, y0, z0], [x0, y0, z1], [x0, y1, z1], [x0, y1, z0], tSide, 0.80);
+    // Bottom (-Y)
+    if (y0 > 0) {
+      pushFace([x0, y0, z0], [x1, y0, z0], [x1, y0, z1], [x0, y0, z1], tBot, 0.55);
+    }
+  }
+
+  // Thêm mái nhà bậc thang Voxel (Minecraft stepped pyramid roof)
+  function addVoxelRoof(cx, y0, cz, wx, wz, steps, texId) {
+    for (let i = 0; i < steps; i++) {
+      addVoxelBox(cx, y0 + i * 0.8, cz, wx - i * 1.8, 0.8, wz - i * 1.4, texId, texId);
+    }
+  }
+
+  // Thêm cây Voxel kiểu Minecraft (Thân gỗ + Tán lá khối nhiều tầng)
+  function addVoxelTree(x, y0, z, isSakura, scale) {
+    const s = scale || 1;
+    const leafTex = isSakura ? TEX.SAKURA_LEAF : TEX.GREEN_LEAF;
+    addVoxelBox(x, y0, z, 1.0 * s, 3.6 * s, 1.0 * s, TEX.TREE_BARK, TEX.TREE_BARK);
+    addVoxelBox(x, y0 + 2.8 * s, z, 4.2 * s, 2.0 * s, 4.2 * s, leafTex, leafTex);
+    addVoxelBox(x, y0 + 4.4 * s, z, 3.0 * s, 1.6 * s, 3.0 * s, leafTex, leafTex);
+    addVoxelBox(x, y0 + 5.6 * s, z, 1.6 * s, 1.0 * s, 1.6 * s, leafTex, leafTex);
+  }
+
+  // Thêm cột đèn đường Voxel
+  function addStreetLamp(x, z) {
+    addVoxelBox(x, 0, z, 0.45, 3.8, 0.45, TEX.DARK_TIMBER, TEX.DARK_TIMBER);
+    addVoxelBox(x, 3.8, z, 1.1, 0.9, 1.1, TEX.LANTERN, TEX.LANTERN);
+  }
+
+  // Dựng toàn bộ Thị trấn Kotoba Voxel (96 × 96 blocks)
+  function buildTownWorld() {
+    // 1. Nền cỏ xanh toàn thị trấn + Bờ biển phía Nam
+    addVoxelBox(0, -3, 0, 96, 3, 96, TEX.GRASS_TOP, TEX.GRASS_SIDE, TEX.DIRT);
+    // Dòng kênh đào xanh mát chảy ngang phía Bắc (z = -19.. -15)
+    addVoxelBox(0, -1.2, -18, 96, 1.3, 5.5, TEX.WATER, TEX.WATER);
+    // Biển xanh & Bãi cát vàng phía Nam (z = 27..48)
+    addVoxelBox(0, -0.4, 27, 96, 0.5, 5, TEX.SAND, TEX.SAND);
+    addVoxelBox(0, -1.5, 39, 96, 1.6, 20, TEX.WATER, TEX.WATER);
+
+    // 2. QUẢNG TRƯỜNG TRUNG TÂM & ĐẠI LỘ PLAY TOGETHER
+    addVoxelBox(0, 0, 0, 26, 0.18, 24, TEX.PLAZA_TILE, TEX.STONE_FOUND);
+    // Đại lộ Đông - Tây & Nam - Bắc
+    addVoxelBox(0, 0, 0, 88, 0.14, 7.5, TEX.ROAD_STONE, TEX.ROAD_STONE);
+    addVoxelBox(0, 0, 2, 7.5, 0.14, 56, TEX.ROAD_STONE, TEX.ROAD_STONE);
+    // Vạch qua đường trắng (Crosswalks kiểu Play Together)
+    addVoxelBox(-14, 0.02, 0, 2.2, 0.16, 7.2, TEX.CROSSWALK, TEX.CROSSWALK);
+    addVoxelBox(14, 0.02, 0, 2.2, 0.16, 7.2, TEX.CROSSWALK, TEX.CROSSWALK);
+    addVoxelBox(0, 0.02, 13, 7.2, 0.16, 2.2, TEX.CROSSWALK, TEX.CROSSWALK);
+    addVoxelBox(0, 0.02, -13, 7.2, 0.16, 2.2, TEX.CROSSWALK, TEX.CROSSWALK);
+
+    // Đài phun nước Voxel & Tháp Đồng Hồ ở tâm Quảng trường (x=0, z=0)
+    addVoxelBox(0, 0.18, 0, 7.5, 0.9, 7.5, TEX.STONE_FOUND, TEX.STONE_FOUND);
+    addVoxelBox(0, 0.8, 0, 5.8, 0.5, 5.8, TEX.WATER, TEX.WATER);
+    addVoxelBox(0, 1.0, 0, 2.2, 3.6, 2.2, TEX.RED_BRICK, TEX.RED_BRICK);
+    addVoxelBox(0, 4.6, 0, 2.5, 1.8, 2.5, TEX.GOLD_BLOCK, TEX.GOLD_BLOCK);
+    addVoxelRoof(0, 6.4, 0, 3.4, 3.4, 2, TEX.ROOF_DARK);
+
+    // 3. QUÁN TRỌ KOTOBA (ことば屋 — Khu phố Tây Bắc: x=-22, z=-9)
+    addVoxelBox(-22, 0, -9, 16, 0.8, 12, TEX.STONE_FOUND, TEX.STONE_FOUND);
+    addVoxelBox(-22, 0.8, -9, 14, 5.2, 10, TEX.WHITE_WALL, TEX.WHITE_WALL);
+    addVoxelBox(-22, 2.2, -3.9, 10, 2.6, 0.3, TEX.SHOJI_WIN, TEX.SHOJI_WIN);
+    addVoxelRoof(-22, 6.0, -9, 17, 13, 3, TEX.ROOF_DARK);
+    // Tầng 2 Quán trọ Kotoba
+    addVoxelBox(-22, 8.2, -9, 10, 4.0, 7.5, TEX.WHITE_WALL, TEX.WHITE_WALL);
+    addVoxelBox(-22, 9.2, -5.1, 6.5, 2.2, 0.3, TEX.SHOJI_WIN, TEX.SHOJI_WIN);
+    addVoxelRoof(-22, 12.2, -9, 13, 10, 3, TEX.ROOF_DARK);
+    // Cổng chào & Đèn lồng đỏ trước Quán Kotoba
+    addVoxelBox(-22, 0.8, -2.5, 4.5, 3.2, 1.2, TEX.AWNING_RED, TEX.DARK_TIMBER);
+    addVoxelBox(-26, 2.8, -2.5, 1.1, 1.4, 1.1, TEX.LANTERN, TEX.LANTERN);
+    addVoxelBox(-18, 2.8, -2.5, 1.1, 1.4, 1.1, TEX.LANTERN, TEX.LANTERN);
+
+    // 4. PHỐ CHỢ NÔNG SẢN (ことばマルシェ — Khu phố Đông Bắc: x=22, z=-8)
+    // Toà nhà Siêu thị Nông sản chính + 2 Sạp Chợ Phiên ngoài trời
+    addVoxelBox(24, 0, -10, 15, 0.6, 10, TEX.PLAZA_TILE, TEX.STONE_FOUND);
+    addVoxelBox(24, 0.6, -10, 13, 4.8, 8.5, TEX.WOOD_PLANK, TEX.WOOD_PLANK);
+    addVoxelRoof(24, 5.4, -10, 15, 10.5, 3, TEX.AWNING_RED);
+    // Sạp hàng Đỏ & Sạp hàng Xanh bày thùng Táo / Cam từ vựng
+    [16, 25].forEach((sx, idx) => {
+      const aw = idx === 0 ? TEX.AWNING_RED : TEX.AWNING_GREEN;
+      addVoxelBox(sx, 0, -3.2, 6.2, 1.5, 3.2, TEX.WOOD_PLANK, TEX.WOOD_PLANK);
+      addVoxelBox(sx - 2.6, 1.5, -3.2, 0.35, 2.4, 0.35, TEX.DARK_TIMBER, TEX.DARK_TIMBER);
+      addVoxelBox(sx + 2.6, 1.5, -3.2, 0.35, 2.4, 0.35, TEX.DARK_TIMBER, TEX.DARK_TIMBER);
+      addVoxelBox(sx, 3.8, -3.2, 6.8, 0.8, 3.8, aw, aw);
+      addVoxelBox(sx - 1.5, 1.5, -2.8, 1.3, 1.1, 1.3, TEX.CRATE_APPLE, TEX.WOOD_PLANK);
+      addVoxelBox(sx + 0.2, 1.5, -2.8, 1.3, 1.1, 1.3, TEX.CRATE_ORANGE, TEX.WOOD_PLANK);
+      addVoxelBox(sx + 1.8, 1.5, -2.8, 1.3, 1.1, 1.3, TEX.CRATE_APPLE, TEX.WOOD_PLANK);
+    });
+
+    // 5. TRẠM BƯU ĐIỆN & BẢNG TIN LÀNG (Khu phố Tây Nam: x=-22, z=21)
+    addVoxelBox(-22, 0, 21, 12, 5.2, 10, TEX.RED_BRICK, TEX.RED_BRICK);
+    addVoxelBox(-22, 1.5, 15.9, 6, 2.5, 0.3, TEX.SHOJI_WIN, TEX.SHOJI_WIN);
+    addVoxelRoof(-22, 5.2, 21, 14, 12, 3, TEX.ROOF_DARK);
+    // Hòm thư đỏ 3D & Bảng tin gỗ lớn trước Bưu Điện
+    addVoxelBox(-15, 0, 14, 1.4, 2.6, 1.4, TEX.TORII_RED, TEX.TORII_RED);
+    addVoxelBox(-18, 0, 13.5, 4.2, 3.0, 0.5, TEX.WOOD_PLANK, TEX.DARK_TIMBER);
+
+    // 6. KHU NHÀ ÔNG TRƯỞNG LÀNG & CÔNG VIÊN (Khu phố Đông Nam: x=22, z=21)
+    addVoxelBox(22, 0, 21, 13, 4.8, 10, TEX.WHITE_WALL, TEX.WHITE_WALL);
+    addVoxelRoof(22, 4.8, 21, 15, 12, 3, TEX.WOOD_PLANK);
+
+    // 7. CẦU ĐÁ BẮC QUA KÊNH ĐÀO & ĐỒI ĐỀN SAKURA ĐẠI THỤ (Phía Bắc: z=-34)
+    addVoxelBox(0, 0.2, -18, 7.5, 0.8, 7.0, TEX.PLAZA_TILE, TEX.STONE_FOUND);
+    addVoxelBox(-3.4, 1.0, -18, 0.6, 1.1, 7.0, TEX.STONE_FOUND, TEX.STONE_FOUND);
+    addVoxelBox(3.4, 1.0, -18, 0.6, 1.1, 7.0, TEX.STONE_FOUND, TEX.STONE_FOUND);
+
+    // Đồi Đền 3 tầng + 2 Cổng Torii đỏ + Cây Đại Thụ Anh Đào khổng lồ
+    addVoxelBox(0, 0, -34, 34, 2.5, 22, TEX.GRASS_TOP, TEX.STONE_FOUND);
+    addVoxelBox(0, 2.5, -36, 22, 2.5, 15, TEX.PLAZA_TILE, TEX.STONE_FOUND);
+    // Bậc thang đá lên đền
+    for (let s = 0; s < 5; s++) {
+      addVoxelBox(0, s * 1.0, -22 - s * 1.6, 6.5, 1.0, 1.8, TEX.PLAZA_TILE, TEX.STONE_FOUND);
+    }
+    // Cổng Torii Đỏ
+    [-23, -29].forEach((tz, i) => {
+      const ty = i * 2.5;
+      addVoxelBox(-2.8, ty, tz, 0.7, 5.8, 0.7, TEX.TORII_RED, TEX.TORII_RED);
+      addVoxelBox(2.8, ty, tz, 0.7, 5.8, 0.7, TEX.TORII_RED, TEX.TORII_RED);
+      addVoxelBox(0, ty + 4.8, tz, 7.5, 0.6, 0.8, TEX.TORII_RED, TEX.TORII_RED);
+      addVoxelBox(0, ty + 5.7, tz, 8.6, 0.7, 1.0, TEX.ROOF_DARK, TEX.ROOF_DARK);
+    });
+    // CÂY ĐẠI THỤ SAKURA KHỔNG LỒ trên đỉnh đồi
+    addVoxelBox(0, 5.0, -37, 3.2, 8.5, 3.2, TEX.TREE_BARK, TEX.TREE_BARK);
+    addVoxelBox(0, 12.0, -37, 15.0, 4.5, 14.0, TEX.SAKURA_LEAF, TEX.SAKURA_LEAF);
+    addVoxelBox(-5, 10.5, -35, 8.0, 3.5, 8.0, TEX.SAKURA_LEAF, TEX.SAKURA_LEAF);
+    addVoxelBox(5, 10.5, -35, 8.0, 3.5, 8.0, TEX.SAKURA_LEAF, TEX.SAKURA_LEAF);
+    addVoxelBox(0, 16.5, -37, 9.5, 3.2, 9.5, TEX.SAKURA_LEAF, TEX.SAKURA_LEAF);
+
+    // 8. BẾN CẢNG BIỂN, CẦU TÀU GỖ & NGỌN HẢI ĐĂNG (Phía Nam: z=30..42)
+    addVoxelBox(0, 0, 33, 8.0, 0.5, 14.0, TEX.WOOD_PLANK, TEX.DARK_TIMBER);
+    // Ngọn hải đăng bên bờ vịnh Đông Nam
+    addVoxelBox(28, 0, 28, 5.0, 12.0, 5.0, TEX.WHITE_WALL, TEX.WHITE_WALL);
+    addVoxelBox(28, 6, 28, 5.2, 3.0, 5.2, TEX.TORII_RED, TEX.TORII_RED);
+    addVoxelBox(28, 12.0, 28, 4.2, 2.5, 4.2, TEX.LANTERN, TEX.LANTERN);
+    // Con tàu gỗ đậu ở cầu cảng
+    addVoxelBox(10, -0.3, 37, 9.0, 2.2, 4.2, TEX.WOOD_PLANK, TEX.DARK_TIMBER);
+    addVoxelBox(10, 1.9, 37, 0.5, 6.0, 0.5, TEX.DARK_TIMBER, TEX.DARK_TIMBER);
+    addVoxelBox(10, 3.5, 37, 0.8, 3.8, 3.6, TEX.CLOUD, TEX.CLOUD);
+
+    // 9. CÂY CỐI, ĐÈN ĐƯỜNG & MÂY KHỐI MINECRAFT TRÊN TRỜI
+    const treeCoords = [
+      [-34, -12, true], [-34, 6, false], [-32, 22, true],
+      [35, -12, false], [36, 6, true], [34, 22, false],
+      [-12, -26, true], [12, -26, true], [-26, -28, false], [26, -28, false],
+      [-11, 22, true], [12, 22, false]
+    ];
+    treeCoords.forEach(([tx, tz, sak]) => addVoxelTree(tx, 0, tz, sak, 1.05));
+
+    [
+      [-10, -5], [10, -5], [-10, 6], [10, 6],
+      [-5, -13], [5, -13], [-5, 16], [5, 16]
+    ].forEach(([lx, lz]) => addStreetLamp(lx, lz));
+
+    // Mây khối Voxel lơ lửng trên bầu trời
+    [
+      [-28, 26, -25, 12, 8], [18, 28, -20, 14, 7],
+      [-15, 27, 18, 11, 6], [28, 25, 14, 13, 8]
+    ].forEach(([cx, cy, cz, cw, cd]) => {
+      addVoxelBox(cx, cy, cz, cw, 1.8, cd, TEX.CLOUD, TEX.CLOUD);
     });
   }
 
-  function buildShrineScene(now) {
-    // Vùng ngắm cảnh 1: Đỉnh Đền Thần & Cây Đại Thụ Anh Đào 3D (Xoay 360° ngắm cảnh)
-    currentLayer = 0;
-    addBox3D(0, -22, 0, 150, 22, 150, "#4a5568");
-    addBox3D(0, 0, 0, 156, 5, 156, "#489e44");
-    addBox3D(0, 5, -10, 96, 10, 96, "#54b34e");
-    addBox3D(0, 15, -20, 64, 10, 64, "#d8ccb8");
+  buildTownWorld();
+  const staticVertCount = verts.length / 6;
+  const vbo = gl.createBuffer();
 
-    currentLayer = 1;
-    // Bậc thang đá dẫn lên đền + 2 Cổng Torii 3D đỏ thẫm
-    for (let i = 0; i < 6; i++) {
-      addBox3D(0, i * 2.5, 58 - i * 8, 24, 2.5, 8, "#c2bcb0");
-    }
-    [48, 22].forEach((tz, idx) => {
-      const ty = idx * 7 + 4;
-      addBox3D(-12, ty, tz, 3.5, 24, 3.5, "#c92a2a");
-      addBox3D(12, ty, tz, 3.5, 24, 3.5, "#c92a2a");
-      addBox3D(0, ty + 20, tz, 30, 2.5, 3.5, "#c92a2a");
-      addBox3D(0, ty + 24, tz, 34, 3, 4.5, "#1b1b2f");
-    });
+  // =========================================================================
+  // 4. HỆ THỐNG NHÂN VẬT VOXEL CHUYỂN ĐỘNG CHÂN TAY & CƯ DÂN PLAY TOGETHER
+  // =========================================================================
+  const player = {
+    x: 0, y: 0, z: 9,
+    vx: 0, vy: 0, vz: 0,
+    tx: null, tz: null,
+    yaw: Math.PI,
+    walkPhase: 0
+  };
 
-    // CÂY ĐẠI THỤ TRI THỨC KHỔNG LỒ 3D ở đỉnh đồi (Mỗi chùm sáng = từ vựng đã thuộc)
-    addBox3D(0, 25, -22, 14, 34, 14, "#5c3317");
-    addBox3D(0, 56, -22, 62, 26, 62, "#ff85a1");
-    addBox3D(-22, 48, -14, 36, 20, 36, "#ffa6c1");
-    addBox3D(24, 48, -16, 36, 20, 36, "#ffa6c1");
-    addBox3D(0, 76, -22, 42, 16, 42, "#ffc2d4");
+  // Các NPC cố định từ Báo Làng + các Cư dân đi dạo trên phố giống Play Together Plaza
+  const NPCS = [
+    { id: "inn", x: -19, z: -2.2, name: "Chị Hana (ことば屋)", chat: "Quán Kotoba mới nấu trà nóng, ghé bán nông sản nhé!", texBody: TEX.ROOF_DARK, texHead: TEX.PLAZA_TILE, spot: "inn" },
+    { id: "lin", x: -16.5, z: -2.2, name: "Lin (リンさん)", chat: "Để em ghi sổ tay:「がんばります！」", texBody: TEX.AWNING_RED, texHead: TEX.PLAZA_TILE, spot: "inn" },
+    { id: "market", x: 16, z: -0.8, name: "Chủ Sạp Chợ Phiên", chat: "Thu mua trái cây từ vựng giá cao +50 xu/đơn!", texBody: TEX.AWNING_GREEN, texHead: TEX.PLAZA_TILE, spot: "market" },
+    { id: "post", x: -16, z: 8.5, name: "Bác Đưa Thư (Tin làng)", chat: "Báo Làng Kotoba sáng nay vừa ra lò!", texBody: TEX.WATER, texHead: TEX.PLAZA_TILE, spot: "post" },
+    { id: "plaza", x: 3.5, z: 3.8, name: "Ông Trưởng Làng", chat: "Quảng trường hôm nay đông vui quá!", texBody: TEX.WOOD_PLANK, texHead: TEX.PLAZA_TILE, spot: "plaza" },
+    // Cư dân đi dạo tự động trên đại lộ Play Together
+    { id: "w1", x: -8, z: 0, vx: 3.2, vz: 0, name: "Học viên Minh (N3)", chat: "Vừa tưới xong 25 cây trong vườn 2D!", texBody: TEX.GOLD_BLOCK, texHead: TEX.PLAZA_TILE, patrolX: [-12, 12] },
+    { id: "w2", x: 8, z: -2, vx: -2.8, vz: 0, name: "Học viên Yuki (N2)", chat: "Đang đem táo từ vựng qua chợ bán!", texBody: TEX.SAKURA_LEAF, texHead: TEX.PLAZA_TILE, patrolX: [-10, 14] },
+    { id: "w3", x: 0, z: -16, vx: 0, vz: 2.5, name: "Khách Lữ Hành", chat: "Đồi Đền Sakura phía Bắc đẹp mê hồn!", texBody: TEX.GREEN_LEAF, texHead: TEX.PLAZA_TILE, patrolZ: [-24, -6] }
+  ];
 
-    // Đèn lồng quanh gốc Đại Thụ
-    [[-24, 2], [24, 2], [-24, -42], [24, -42]].forEach(([lx, lz]) => {
-      addLantern3D(lx, 25, lz, "#ffd43b");
-    });
-  }
-
-  function buildCoastScene(now) {
-    // Vùng ngắm cảnh 2: Đèo Biển & Đoàn Tàu Hoả 3D chạy qua cầu cạn
-    currentLayer = 0;
-    addBox3D(0, -16, 0, 180, 14, 170, "#1971c2"); // Biển xanh sâu
-    addBox3D(0, -2, 0, 180, 2, 170, "#339af0");  // Mặt nước biển
-
-    currentLayer = 1;
-    // Vách núi xanh & Ngọn hải đăng bên bờ vịnh
-    addBox3D(-45, 0, -35, 76, 22, 76, "#51b848");
-    addBox3D(-52, 22, -42, 16, 38, 16, "#f8f9fa");
-    addBox3D(-52, 36, -42, 16.5, 10, 16.5, "#e03131");
-    addLantern3D(-52, 60, -42, "#ffd43b");
-
-    // Cầu cạn đá bắc ngang qua vịnh biển + Đường ray
-    for (let x = -75; x <= 75; x += 30) {
-      addBox3D(x, 0, 18, 8, 20, 10, "#adb5bd");
-    }
-    addBox3D(0, 20, 18, 176, 4, 14, "#ced4da");
-
-    // Đoàn tàu 3D 3 toa chạy lướt qua cầu cạn trên biển
-    const trainX = ((now / 28) % 220) - 110;
-    for (let c = 0; c < 3; c++) {
-      const cx = trainX - c * 28;
-      if (cx < -92 || cx > 92) continue;
-      addBox3D(cx, 24, 18, 24, 11, 10, "#f8f0dc");
-      addBox3D(cx, 26, 18, 24.4, 3, 10.4, "#2b8a3e");
-      if (tod !== "day") addLantern3D(cx, 29, 18, "#ffe066");
+  // Đẩy nhân vật Voxel 6 khớp (Đầu + Thân + 2 Tay + 2 Chân vung vẩy kiểu Minecraft/Play Together)
+  function pushVoxelCharacter(x, y, z, yaw, phase, bodyTex, headTex, hatTex) {
+    const swing = Math.sin(phase) * 0.35;
+    // Chân trái & phải
+    addVoxelBox(x - 0.28, y + Math.max(0, swing * 0.5), z, 0.45, 0.9, 0.45, TEX.ROOF_DARK, TEX.ROOF_DARK);
+    addVoxelBox(x + 0.28, y + Math.max(0, -swing * 0.5), z, 0.45, 0.9, 0.45, TEX.ROOF_DARK, TEX.ROOF_DARK);
+    // Thân áo
+    addVoxelBox(x, y + 0.9, z, 1.05, 1.15, 0.65, bodyTex, bodyTex);
+    // Tay trái & phải
+    addVoxelBox(x - 0.72, y + 1.05, z + swing * 0.4, 0.38, 0.95, 0.42, bodyTex, bodyTex);
+    addVoxelBox(x + 0.72, y + 1.05, z - swing * 0.4, 0.38, 0.95, 0.42, bodyTex, bodyTex);
+    // Đầu khối Voxel
+    addVoxelBox(x, y + 2.05, z, 1.15, 1.1, 1.1, headTex, headTex);
+    if (hatTex !== undefined) {
+      addVoxelBox(x, y + 3.15, z, 1.28, 0.32, 1.25, hatTex, hatTex);
     }
   }
 
   // =========================================================================
-  // 4. CẬP NHẬT CHUYỂN ĐỘNG & VẼ KHUNG HÌNH 3D
+  // 5. MA TRẬN CAMERA 3D (PLAY TOGETHER FOLLOW CAM / MINECRAFT FPS / BIRD'S EYE)
   // =========================================================================
+  let camMode = "chase"; // chase | fps | bird
+  let tod = "day";
+  let camYaw = 0.28;
+  let camPitch = 0.34;
+  let camDist = 14.5;
+  const keys = {};
+
+  function perspective(fovY, aspect, near, far) {
+    const f = 1.0 / Math.tan(fovY * 0.5);
+    const nf = 1.0 / (near - far);
+    return new Float32Array([
+      f / aspect, 0, 0, 0,
+      0, f, 0, 0,
+      0, 0, (far + near) * nf, -1,
+      0, 0, (2 * far * near) * nf, 0
+    ]);
+  }
+
+  function lookAt(eye, target, up) {
+    let zx = eye[0] - target[0], zy = eye[1] - target[1], zz = eye[2] - target[2];
+    let zlen = Math.hypot(zx, zy, zz) || 1;
+    zx /= zlen; zy /= zlen; zz /= zlen;
+
+    let xx = up[1] * zz - up[2] * zy;
+    let xy = up[2] * zx - up[0] * zz;
+    let xz = up[0] * zy - up[1] * zx;
+    let xlen = Math.hypot(xx, xy, xz) || 1;
+    xx /= xlen; xy /= xlen; xz /= xlen;
+
+    const yx = zy * xz - zz * xy;
+    const yy = zz * xx - zx * xz;
+    const yz = zx * xy - zy * xx;
+
+    return new Float32Array([
+      xx, yx, zx, 0,
+      xy, yy, zy, 0,
+      xz, yz, zz, 0,
+      -(xx * eye[0] + xy * eye[1] + xz * eye[2]),
+      -(yx * eye[0] + yy * eye[1] + yz * eye[2]),
+      -(zx * eye[0] + zy * eye[1] + zz * eye[2]),
+      1
+    ]);
+  }
+
+  // Chiếu toạ độ 3D (x,y,z) sang màn hình 2D HUD để vẽ Nhãn tên & Bong bóng Chat Play Together
+  function projectToHUD(x, y, z, viewMat, projMat) {
+    const vx = viewMat[0] * x + viewMat[4] * y + viewMat[8] * z + viewMat[12];
+    const vy = viewMat[1] * x + viewMat[5] * y + viewMat[9] * z + viewMat[13];
+    const vz = viewMat[2] * x + viewMat[6] * y + viewMat[10] * z + viewMat[14];
+    if (vz > -1.0) return null;
+
+    const pw = -vz;
+    const cx = (projMat[0] * vx) / pw;
+    const cy = (projMat[5] * vy) / pw;
+    return {
+      x: (cx * 0.5 + 0.5) * hudCanvas.width,
+      y: (1.0 - (cy * 0.5 + 0.5)) * hudCanvas.height,
+      dist: -vz
+    };
+  }
+
+  // =========================================================================
+  // 6. VÒNG LẶP VẬT LÝ, RENDER WEBGL VOXEL & BONG BÓNG CHAT PLAY TOGETHER
+  // =========================================================================
+  function getGroundY(x, z) {
+    if (z < -29 && Math.abs(x) < 11) return 5.0;
+    if (z < -23 && Math.abs(x) < 17) return 2.5;
+    if (z >= -21 && z <= -15 && Math.abs(x) < 4) return 1.0; // Trên cầu đá
+    return 0.18;
+  }
+
   function update(dt) {
-    if (autoOrbit) {
-      cam.yaw += 0.22 * dt;
-    }
-
-    // Điều khiển StackChan bằng WASD / Phím mũi tên
+    // Điều khiển nhân vật bằng WASD / Phím mũi tên
     let mx = 0, mz = 0;
     if (keys["KeyW"] || keys["ArrowUp"]) mz -= 1;
     if (keys["KeyS"] || keys["ArrowDown"]) mz += 1;
@@ -912,173 +1147,301 @@
     if (keys["KeyD"] || keys["ArrowRight"]) mx += 1;
 
     if (mx !== 0 || mz !== 0) {
-      autoOrbit = false;
-      document.getElementById("btnAutoOrbit").classList.remove("orbit-on");
-      document.getElementById("btnAutoOrbit").textContent = "🎥 Tự xoay 360°: TẮT";
-      const cy = Math.cos(cam.yaw), sy = Math.sin(cam.yaw);
+      player.tx = null;
+      const cy = Math.cos(camYaw), sy = Math.sin(camYaw);
       const wx = mx * cy + mz * sy;
       const wz = -mx * sy + mz * cy;
       const len = Math.hypot(wx, wz) || 1;
-      player.vx = (wx / len) * 42;
-      player.vz = (wz / len) * 42;
-      player.x = Math.max(-72, Math.min(72, player.x + player.vx * dt));
-      player.z = Math.max(-68, Math.min(68, player.z + player.vz * dt));
-      player.tx = player.x;
-      player.tz = player.z;
-    } else {
-      // Tự đi tới điểm vừa chọn nếu bấm nút nhảy nhanh
+      const speed = 11.5;
+      player.vx = (wx / len) * speed;
+      player.vz = (wz / len) * speed;
+      player.x = Math.max(-42, Math.min(42, player.x + player.vx * dt));
+      player.z = Math.max(-40, Math.min(36, player.z + player.vz * dt));
+      player.walkPhase += dt * 12;
+    } else if (player.tx !== null) {
       const dx = player.tx - player.x, dz = player.tz - player.z;
       const d = Math.hypot(dx, dz);
-      if (d > 1.5) {
-        player.vx = (dx / d) * 45;
-        player.vz = (dz / d) * 45;
+      if (d > 0.6) {
+        player.vx = (dx / d) * 14;
+        player.vz = (dz / d) * 14;
         player.x += player.vx * dt;
         player.z += player.vz * dt;
+        player.walkPhase += dt * 13;
       } else {
+        player.tx = null;
         player.vx = 0;
         player.vz = 0;
       }
+    } else {
+      player.vx = 0;
+      player.vz = 0;
     }
 
-    // Kiểm tra xem StackChan đang đứng gần NPC nào trong Làng Kotoba
-    if (currentScene === "village") {
-      let nearest = null, bestD = 26;
-      Object.values(VILLAGE_SPOTS).forEach(sp => {
-        const d = Math.hypot(player.x - sp.x, player.z - sp.z);
-        if (d < bestD) { bestD = d; nearest = sp; }
-      });
-      if (nearest && nearest.id !== activeSpotId) {
-        renderSpotPanel(nearest.id);
+    // Nhảy (Space) & Trọng lực
+    const groundY = getGroundY(player.x, player.z);
+    if (keys["Space"] && player.y <= groundY + 0.05) {
+      player.vy = 11.0;
+    }
+    player.vy -= 26.0 * dt;
+    player.y += player.vy * dt;
+    if (player.y < groundY) {
+      player.y = groundY;
+      player.vy = 0;
+    }
+
+    // Cư dân đi dạo trên phố
+    NPCS.forEach(n => {
+      if (n.patrolX) {
+        n.x += n.vx * dt;
+        if (n.x < n.patrolX[0] || n.x > n.patrolX[1]) n.vx *= -1;
       }
-    }
-
-    // Cánh hoa Sakura bay trong không gian 3D
-    petals.forEach(p => {
-      p.y -= p.vy * dt;
-      p.x += Math.sin(p.y * 0.1) * 4 * dt;
-      if (p.y < 2) p.y = 85;
+      if (n.patrolZ) {
+        n.z += n.vz * dt;
+        if (n.z < n.patrolZ[0] || n.z > n.patrolZ[1]) n.vz *= -1;
+      }
     });
+
+    // Tự động nhận diện khu vực gần nhất để cập nhật bảng hội thoại & bán hàng
+    let bestSpot = null, bestDist = 11.0;
+    Object.values(SPOTS).forEach(sp => {
+      const d = Math.hypot(player.x - sp.x, player.z - sp.z);
+      if (d < bestDist) { bestDist = d; bestSpot = sp; }
+    });
+    if (bestSpot && bestSpot.id !== currentSpotId) {
+      updateSidePanel(bestSpot.id);
+    }
   }
 
   function render(now) {
-    // Bầu trời 3D theo buổi
-    const skies = {
-      day: ["#74c0fc", "#e7f5ff"],
-      dusk: ["#2b2d5c", "#f08c4b"],
-      night: ["#0b1026", "#1c254a"]
+    // Xây dựng lại phần đỉnh động (Người chơi StackChan + Cư dân đi dạo)
+    verts.length = staticVertCount * 6;
+
+    // Vẽ người chơi StackChan Voxel (trừ khi ở góc nhìn thứ nhất Minecraft)
+    if (camMode !== "fps") {
+      pushVoxelCharacter(player.x, player.y, player.z, player.yaw, player.walkPhase, TEX.WATER, TEX.CLOUD, TEX.GOLD_BLOCK);
+    }
+
+    // Vẽ toàn bộ NPC & Cư dân trong thị trấn
+    NPCS.forEach((n, i) => {
+      const ny = getGroundY(n.x, n.z);
+      const ph = (n.patrolX || n.patrolZ) ? (now * 0.008 + i) : 0;
+      pushVoxelCharacter(n.x, ny, n.z, 0, ph, n.texBody, n.texHead, i % 2 === 0 ? TEX.DARK_TIMBER : undefined);
+    });
+
+    // Thiết lập màu bầu trời & ánh sáng theo buổi
+    const env = {
+      day:   { sky: [0.42, 0.73, 0.98], tint: [1.0, 0.99, 0.96] },
+      dusk:  { sky: [0.92, 0.52, 0.34], tint: [1.05, 0.82, 0.68] },
+      night: { sky: [0.07, 0.10, 0.22], tint: [0.62, 0.68, 0.92] }
     }[tod];
-    const g = ctx.createLinearGradient(0, 0, 0, canvas.height);
-    g.addColorStop(0, skies[0]);
-    g.addColorStop(1, skies[1]);
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    faces3D = [];
-    billboards3D = [];
+    gl.clearColor(env.sky[0], env.sky[1], env.sky[2], 1.0);
+    gl.enable(gl.DEPTH_TEST);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    if (currentScene === "village") buildVillageScene(now);
-    else if (currentScene === "shrine") buildShrineScene(now);
-    else buildCoastScene(now);
+    // Tính vị trí Camera theo 3 chế độ: Play Together Chase Cam / Minecraft FPS / Bird's Eye
+    let eye, target;
+    if (camMode === "chase") {
+      target = [player.x, player.y + 2.2, player.z];
+      eye = [
+        target[0] + Math.sin(camYaw) * Math.cos(camPitch) * camDist,
+        target[1] + Math.sin(camPitch) * camDist,
+        target[2] + Math.cos(camYaw) * Math.cos(camPitch) * camDist
+      ];
+    } else if (camMode === "fps") {
+      eye = [player.x, player.y + 3.0, player.z];
+      target = [
+        eye[0] - Math.sin(camYaw) * Math.cos(camPitch * 0.5),
+        eye[1] - Math.sin(camPitch * 0.4),
+        eye[2] - Math.cos(camYaw) * Math.cos(camPitch * 0.5)
+      ];
+    } else {
+      target = [0, 2, -4];
+      const d = 44;
+      eye = [
+        Math.sin(camYaw + now * 0.00018) * Math.cos(0.55) * d,
+        Math.sin(0.55) * d,
+        Math.cos(camYaw + now * 0.00018) * Math.cos(0.55) * d
+      ];
+    }
 
-    // Sắp xếp đa giác 3D: Mặt đất/Đế đảo vẽ trước (layer 0), công trình vẽ sau theo chiều sâu Z-Sort
-    faces3D.sort((a, b) => (a.layer - b.layer) || (b.depth - a.depth));
+    const projMat = perspective(Math.PI / 3.4, glCanvas.width / glCanvas.height, 0.5, 160.0);
+    const viewMat = lookAt(eye, target, [0, 1, 0]);
 
-    faces3D.forEach(f => {
-      ctx.fillStyle = f.color;
-      ctx.beginPath();
-      ctx.moveTo(f.pts[0].x, f.pts[0].y);
-      ctx.lineTo(f.pts[1].x, f.pts[1].y);
-      ctx.lineTo(f.pts[2].x, f.pts[2].y);
-      ctx.lineTo(f.pts[3].x, f.pts[3].y);
-      ctx.closePath();
-      ctx.fill();
-      if (f.stroke) {
-        ctx.strokeStyle = f.stroke;
-        ctx.lineWidth = 0.8;
-        ctx.stroke();
+    gl.uniformMatrix4fv(uProjLoc, false, projMat);
+    gl.uniformMatrix4fv(uViewLoc, false, viewMat);
+    gl.uniform3fv(uTintLoc, env.tint);
+    gl.uniform3fv(uFogLoc, env.sky);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(verts), gl.DYNAMIC_DRAW);
+    const stride = 6 * 4;
+    gl.enableVertexAttribArray(aPosLoc);
+    gl.vertexAttribPointer(aPosLoc, 3, gl.FLOAT, false, stride, 0);
+    gl.enableVertexAttribArray(aUVLoc);
+    gl.vertexAttribPointer(aUVLoc, 2, gl.FLOAT, false, stride, 3 * 4);
+    gl.enableVertexAttribArray(aLightLoc);
+    gl.vertexAttribPointer(aLightLoc, 1, gl.FLOAT, false, stride, 5 * 4);
+
+    gl.drawArrays(gl.TRIANGLES, 0, verts.length / 6);
+
+    // =======================================================================
+    // VẼ LỚP HUD 2D: TÊN NHÂN VẬT & BONG BÓNG CHAT KIỂU PLAY TOGETHER
+    // =======================================================================
+    hudCtx.clearRect(0, 0, hudCanvas.width, hudCanvas.height);
+
+    // Nhãn trên đầu người chơi StackChan
+    if (camMode !== "fps") {
+      const sp = projectToHUD(player.x, player.y + 3.9, player.z, viewMat, projMat);
+      if (sp) {
+        hudCtx.font = "900 12px 'Segoe UI', sans-serif";
+        hudCtx.textAlign = "center";
+        hudCtx.fillStyle = "#ffd23f";
+        hudCtx.strokeStyle = "#181826";
+        hudCtx.lineWidth = 3;
+        hudCtx.strokeText("▼ BẠN (StackChan)", sp.x, sp.y);
+        hudCtx.fillText("▼ BẠN (StackChan)", sp.x, sp.y);
       }
+    }
+
+    // Nhãn tên + Bong bóng Chat trên đầu NPC & Cư dân
+    NPCS.forEach(n => {
+      const ny = getGroundY(n.x, n.z);
+      const sp = projectToHUD(n.x, ny + 3.9, n.z, viewMat, projMat);
+      if (!sp || sp.dist > 55) return;
+
+      const dPlayer = Math.hypot(player.x - n.x, player.z - n.z);
+
+      hudCtx.save();
+      hudCtx.textAlign = "center";
+
+      // Tên nhân vật
+      hudCtx.font = "800 11.5px 'Segoe UI', sans-serif";
+      const nw = hudCtx.measureText(n.name).width + 14;
+      hudCtx.fillStyle = "rgba(24, 24, 38, 0.86)";
+      hudCtx.beginPath();
+      hudCtx.roundRect(sp.x - nw * 0.5, sp.y - 18, nw, 20, 9);
+      hudCtx.fill();
+      hudCtx.strokeStyle = dPlayer < 9 ? "#ffd23f" : "rgba(255,255,255,0.4)";
+      hudCtx.lineWidth = 1.5;
+      hudCtx.stroke();
+      hudCtx.fillStyle = "#fff9eb";
+      hudCtx.fillText(n.name, sp.x, sp.y - 4);
+
+      // Bong bóng chat kiểu Play Together khi đứng gần (dPlayer < 14)
+      if (dPlayer < 14 && n.chat) {
+        hudCtx.font = "700 11px 'Segoe UI', sans-serif";
+        const cw = hudCtx.measureText(n.chat).width + 20;
+        hudCtx.fillStyle = "rgba(255, 255, 255, 0.95)";
+        hudCtx.beginPath();
+        hudCtx.roundRect(sp.x - cw * 0.5, sp.y - 44, cw, 22, 10);
+        hudCtx.fill();
+        hudCtx.strokeStyle = "#181826";
+        hudCtx.lineWidth = 1.5;
+        hudCtx.stroke();
+        hudCtx.fillStyle = "#181826";
+        hudCtx.fillText(n.chat, sp.x, sp.y - 29);
+      }
+      hudCtx.restore();
     });
 
-    // Vẽ cánh hoa 3D bay trong gió
-    petals.forEach(pt => {
-      const sp = project3D(pt.x, pt.y, pt.z);
-      if (!sp) return;
-      ctx.fillStyle = "#ffb3c6";
-      const sz = Math.max(2, 3.2 * sp.scale);
-      ctx.fillRect(sp.x, sp.y, sz, sz);
+    // Vẽ Minimap góc trên phải
+    drawMinimap();
+  }
+
+  function drawMinimap() {
+    mmCtx.fillStyle = "#48a83e";
+    mmCtx.fillRect(0, 0, 138, 138);
+    const toMM = (wx, wz) => [69 + wx * 1.35, 69 + wz * 1.35];
+
+    // Kênh đào & Biển
+    mmCtx.fillStyle = "#339af0";
+    mmCtx.fillRect(0, 69 - 21 * 1.35, 138, 7);
+    mmCtx.fillRect(0, 69 + 29 * 1.35, 138, 35);
+
+    // Đường chữ thập & Quảng trường
+    mmCtx.fillStyle = "#ced4da";
+    mmCtx.fillRect(0, 63, 138, 12);
+    mmCtx.fillRect(63, 0, 12, 138);
+    mmCtx.fillStyle = "#fff3d6";
+    mmCtx.fillRect(52, 52, 34, 34);
+
+    // Các công trình chính trên Minimap
+    const blds = [
+      [-22, -9, "#e03131"], // Quán Kotoba
+      [22, -8, "#ffd43b"],  // Phố Chợ
+      [-22, 15, "#f03e3e"], // Bưu Điện
+      [22, 15, "#d9480f"],  // Nhà Trưởng Làng
+      [0, -35, "#ff8fab"]   // Đồi Đền Sakura
+    ];
+    blds.forEach(([bx, bz, col]) => {
+      const [mx, mz] = toMM(bx, bz);
+      mmCtx.fillStyle = col;
+      mmCtx.fillRect(mx - 7, mz - 6, 14, 12);
+      mmCtx.strokeStyle = "#181826";
+      mmCtx.strokeRect(mx - 7, mz - 6, 14, 12);
     });
 
-    // Vẽ nhãn 3D & hiệu ứng phát sáng đèn lồng
-    billboards3D
-      .map(b => ({ b, sp: project3D(b.x, b.y, b.z) }))
-      .filter(x => x.sp)
-      .sort((a, b) => b.sp.depth - a.sp.depth)
-      .forEach(x => x.b.draw(x.sp));
+    // Chấm vị trí người chơi StackChan
+    const [px, pz] = toMM(player.x, player.z);
+    mmCtx.fillStyle = "#ffd23f";
+    mmCtx.beginPath();
+    mmCtx.arc(px, pz, 4.5, 0, Math.PI * 2);
+    mmCtx.fill();
+    mmCtx.strokeStyle = "#181826";
+    mmCtx.lineWidth = 2;
+    mmCtx.stroke();
   }
 
   // =========================================================================
-  // 5. SỰ KIỆN CHUỘT & BÀN PHÍM
+  // 7. SỰ KIỆN CHUỘT, BÀN PHÍM & NÚT DỊCH CHUYỂN NHANH TRONG THỊ TRẤN
   // =========================================================================
-  let dragging = false, lastMouse = { x: 0, y: 0 };
-
-  canvas.addEventListener("mousedown", e => {
+  let dragging = false, lastM = { x: 0, y: 0 };
+  glCanvas.addEventListener("mousedown", e => {
     dragging = true;
-    lastMouse = { x: e.clientX, y: e.clientY };
-    autoOrbit = false;
-    document.getElementById("btnAutoOrbit").classList.remove("orbit-on");
-    document.getElementById("btnAutoOrbit").textContent = "🎥 Tự xoay 360°: TẮT";
+    lastM = { x: e.clientX, y: e.clientY };
   });
-
   window.addEventListener("mousemove", e => {
     if (!dragging) return;
-    const dx = e.clientX - lastMouse.x;
-    const dy = e.clientY - lastMouse.y;
-    lastMouse = { x: e.clientX, y: e.clientY };
-    cam.yaw -= dx * 0.007;
-    cam.pitch = Math.max(0.22, Math.min(1.15, cam.pitch + dy * 0.006));
+    const dx = e.clientX - lastM.x;
+    const dy = e.clientY - lastM.y;
+    lastM = { x: e.clientX, y: e.clientY };
+    camYaw -= dx * 0.007;
+    camPitch = Math.max(0.12, Math.min(1.15, camPitch + dy * 0.006));
   });
-
   window.addEventListener("mouseup", () => { dragging = false; });
 
-  canvas.addEventListener("wheel", e => {
+  glCanvas.addEventListener("wheel", e => {
     e.preventDefault();
-    cam.dist = Math.max(170, Math.min(460, cam.dist + e.deltaY * 0.25));
+    camDist = Math.max(6, Math.min(34, camDist + e.deltaY * 0.02));
   }, { passive: false });
 
-  window.addEventListener("keydown", e => { keys[e.code] = true; });
+  window.addEventListener("keydown", e => {
+    keys[e.code] = true;
+    if (e.code === "Space") e.preventDefault();
+  });
   window.addEventListener("keyup", e => { keys[e.code] = false; });
 
-  document.querySelectorAll("[data-scene]").forEach(btn => {
+  document.querySelectorAll("[data-tp]").forEach(btn => {
     btn.addEventListener("click", () => {
-      currentScene = btn.getAttribute("data-scene");
-      document.querySelectorAll("[data-scene]").forEach(b => b.classList.toggle("active", b === btn));
-      document.getElementById("villageChips").style.display = currentScene === "village" ? "flex" : "none";
-      if (currentScene === "shrine") {
-        showToast("⛩️ Đang ngắm Đỉnh Đền & Đại Thụ Anh Đào 3D (Xoay 360°)");
-      } else if (currentScene === "coast") {
-        showToast("🚂 Đang ngắm Đèo Biển & Tàu Hoả 3D (Xoay 360°)");
-      } else {
-        showToast("🏘️ Đã vào Làng Kotoba 3D!");
-      }
-    });
-  });
-
-  document.querySelectorAll("[data-goto]").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const id = btn.getAttribute("data-goto");
-      const sp = VILLAGE_SPOTS[id];
+      const id = btn.getAttribute("data-tp");
+      const sp = SPOTS[id];
       if (!sp) return;
-      player.tx = sp.x;
-      player.tz = sp.z + 10;
-      renderSpotPanel(id);
-      showToast("🤖 StackChan đang chạy tới chỗ " + sp.name.split(" (")[0] + "!");
+      player.x = sp.x;
+      player.z = sp.z;
+      player.y = getGroundY(sp.x, sp.z);
+      player.tx = null;
+      camYaw = sp.yaw;
+      updateSidePanel(id);
+      showToast("📍 Đã tới " + sp.zone + "!");
     });
   });
 
-  document.getElementById("btnAutoOrbit").addEventListener("click", function () {
-    autoOrbit = !autoOrbit;
-    this.classList.toggle("orbit-on", autoOrbit);
-    this.textContent = autoOrbit ? "🎥 Tự xoay 360°: BẬT" : "🎥 Tự xoay 360°: TẮT";
+  document.querySelectorAll("[data-cam]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      camMode = btn.getAttribute("data-cam");
+      document.querySelectorAll("[data-cam]").forEach(b => b.classList.toggle("active", b === btn));
+    });
   });
 
   document.querySelectorAll("[data-tod]").forEach(btn => {
@@ -1090,7 +1453,7 @@
 
   let last = performance.now();
   function loop(now) {
-    const dt = Math.min(0.1, (now - last) / 1000);
+    const dt = Math.min(0.05, (now - last) / 1000);
     last = now;
     update(dt);
     render(now);
