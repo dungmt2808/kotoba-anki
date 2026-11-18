@@ -51,6 +51,25 @@ Claude ghi nhận + hướng đề xuất (chưa vẽ):
 - **Thời gian**: lịch 24 ô cần phát hành trước ~28/11; nghĩ thêm lâu hơn thì có thể làm **lịch ngắn 13–24/12 (12 ô)** hoặc để khung
   này cho **Tết** (mùng 1 = 6/2/2027).
 
+## 0b. Ý tưởng thêm (18/11, người dùng: "code thì chưa đến 1 tuần … trước 29 30 release bản sự kiện là được. còn ý tưởng gì hay nữa không nhỉ (thiệp, mỗi ngày 1 đồ sự kiện,...). ý tưởng hiện tại ổn nhưng tớ thấy triển khai chưa được đẹp lắm, mong chờ")
+
+Claude đề xuất (chưa chốt, chưa vẽ):
+- **Làm cho mong chờ**: (a) **lịch là một món đồ thật** — tủ lịch gỗ 24 ngăn treo tường phòng khách, mở ngăn có hiệu ứng (ngăn bật,
+  món bay ra, tiếng chuông), **ngăn ngày mai hiện bóng mờ** của món bên trong; (b) **hộp quà bí mật dưới cây** — mỗi Chủ nhật thêm một
+  hộp, **lắc nghe đoán** ("lục cục… tròn tròn"), chỉ mở sáng 25; (c) **hộp nhạc học dần** — mỗi ngày thêm một câu của bài hát Giáng
+  sinh (Silent Night / Jingle Bells, đã hết bản quyền, soạn chiptune bằng `music.js`), đêm 24 phát trọn bài; (d) **làng sáng đèn
+  イルミネーション** — mỗi tối các vùng đã mở (Ga, Phố lễ hội…) thêm đèn, đêm 24 cả làng sáng.
+- **Làm cho đẹp**: nhà khoác áo Noel lên dần 3–4 nấc (vẽ liền một khối), tường / sàn Noel, trang trí chính cây `xmastree` đã tặng
+  (cây trơn → đầy dần), ít món hơn nhưng to + kỹ, một bảng màu (đỏ, vàng kim, xanh thông, kem).
+- **Thiệp**: thiệp điều ước + ông già Noel (đã có) và **thiệp gửi bạn bè** — lưu ảnh PNG hoặc mã `KB1:` để gửi; dán mã của bạn → thiệp
+  hiện trong hòm thư đêm 24 (không gửi gì lên mạng); trang web chung có mục "Thiệp Giáng sinh".
+- **Chi tiết dễ thương**: tối 24 để **bánh + sữa** trên bàn cho ông già Noel → sáng 25 còn vụn bánh, thư nhắc "bánh ngon quá";
+  kiểu Nhật: **bánh kem dâu クリスマスケーキ**, 冬至 21/12 StackChan **tắm yuzu** ở Suối nước nóng; **StackChan sinh hoạt tháng 12**
+  (nướng bánh gừng, gói quà, viết thiệp, đắp người tuyết); thú nuôi đội mũ / quàng khăn Noel; 26/12 StackChan cất đồ Noel, chuẩn
+  bị 大掃除 và お正月 (giao diện mùa お正月 từ 1/1 đã có).
+- **Truyện làng**: một dòng trong lời nhắc Gemini → truyện tháng 12 có mạch chuẩn bị Giáng sinh, kỳ 24/12 đặc biệt (không thêm lượt).
+- Lịch: ảnh phác 19/11 → duyệt → mã 20–27/11 → test (cài đè 1.31.3, đồng bộ thật) 27–28/11 → phát hành 29–30/11.
+
 ## 1. 24 ô cửa (Chủ nhật 6 / 13 / 20 tự vẽ)
 
 | Cây (10) | Ngoài nhà (7) | Trong nhà (7) |
