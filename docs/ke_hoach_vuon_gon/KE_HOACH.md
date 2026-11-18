@@ -111,4 +111,26 @@ Xem bản chạy thử tương tác tại [`proto_pixel_hayday.html`](proto_pixe
 
 ![Nông trại Pixel Hay Day](vg_08_pixel_hayday.png)
 
+---
+
+## 9. Thử nghiệm Hướng 2: Nông trại Hay Day 2.5D Nét Mịn & Quy hoạch 5 Phân khu — `proto_hayday_25d_min.html`
+
+Bản thử nghiệm đồ hoạ **2.5D nét mịn bo tròn, đổ bóng mềm kiểu Hay Day** kèm **Sơ đồ Quy hoạch 5 Phân khu hợp lý** (có nút `🗺️ Sơ đồ 5 Khu: BẬT/TẮT` ngay trên thanh công cụ để soi ranh giới từng vùng):
+
+1. **Khu ① — Khu Trung Tâm Tác Chiến (`💧 Ruộng Cần Tưới` + `📋 Bảng Nhiệm Vụ Hôm Nay`)**:
+   - Đặt **ngay chính diện tâm màn hình** trước hiên nhà và ngã ba đường chính. Người học mở Anki trong 0.5 giây thấy ngay số cây khát hôm nay và tiến độ nhiệm vụ ngày (`18/30`).
+2. **Khu ② — Trục Đường Lớn (`🏪 Quầy Hàng Trò Chơi` & `📬 Hòm Thư Đọc Báo`)**:
+   - Đặt dọc trục đường sỏi dẫn vào trang trại (đúng vị trí *Roadside Shop* và *Mailbox* kinh điển của Hay Day), giúp tính năng đọc Báo và 5 Trò chơi luôn nổi bật.
+3. **Khu ③ — Đồi Tây Bắc (`🏡 Nhà Chính 3 Gian` & `🐕 Sân Thú Cưng`)**:
+   - Nằm trên thềm đất cao nhìn xuống toàn trang trại, nơi trang trí nhà cửa và thú cưng chạy nhảy.
+4. **Khu ④ — Cánh Đồng Nam (`🌱 Khu Ươm Mầm` & `Cối Xay Gió`)**:
+   - Chia thành 3 luống đất xốp gọn gàng cho các từ đang học (`Hạt giống → Mầm → Cây non`) cùng cối xay gió quay đều.
+5. **Khu ⑤ — Đồi Đông & Bờ Suối (`🏛️ Silo & Rừng Táo Cổ Thụ` + `🌸 Lầu Trà Nhật Ký`)**:
+   - Gom 180+ cây `Ra quả` chưa tới hạn ôn vào **Silo & Rừng Cây Ăn Quả (Orchard)** ở hậu cảnh (giải phóng 70% diện tích đất trồng), cạnh dòng suối xanh có cầu gỗ và **Lầu Trà Anh Đào** để mở Lịch hoa & Nhật ký.
+
+Xem bản chạy thử tương tác tại [`proto_hayday_25d_min.html`](proto_hayday_25d_min.html):
+
+![Nông trại Hay Day 2.5D Nét Mịn & Quy hoạch 5 Phân khu](vg_09_hayday_25d_min.png)
+
+
 
