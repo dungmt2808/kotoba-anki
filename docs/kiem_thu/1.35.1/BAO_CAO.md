@@ -139,7 +139,9 @@ bỏ mạo từ.
 |---|---|
 | `tests/run_all.sh` (thư mục mã nguồn, `ANKI_PY` = aqt 26.9.4) | 68 bộ — một lần đỏ: `test_1314` quét thấy chính dòng báo cáo này có chữ kana cạnh chữ Trung → sửa câu trong báo cáo, chạy lại 32 / 32 |
 | `tests/run_all.sh` trên **gói đã đóng** (giải nén, khớp thư mục mã nguồn từng file) | **68 bộ, TẤT CẢ OK** |
-| `core/test_1351.py` | 31 / 31 (mã 1.35.0: 10 / 31) |
+| `core/test_1351.py` | 33 / 33 (mã 1.35.0: 10 / 31) |
+| Gói cuối (sau phần QA, 18/11): `run_all.sh` | **68 bộ, TẤT CẢ OK** |
+| Gói cuối, Anki 26.9.4: `e2e_qa1351` 29 / 29, `e2e_1351` 35 / 35, `e2e_135` 60 / 60, `e2e_132` 39 / 39, `e2e_133` 77 / 77, `e2e_117` 55 / 55, `e2e_132b` 20 / 20; `run_capnhat.sh` 1.31.3 → 1.35.1 19 / 19 | đạt hết |
 | Anki 26.9.4: `e2e_1351` (thư mục mã nguồn + gói đã đóng; tên trò chơi đo với deck Đức / Pháp) | 35 / 35 · 35 / 35 |
 | Anki 26.9.4: `e2e_135` 60 / 60, `e2e_134` 87 / 87 (đổi theo hành vi mới: bản thử lưu được lúc đồng bộ, "Như cảnh thật" hỏi trước), `e2e_135_ngonngu` 5 / 5, `e2e_1333_ngonngu` 5 / 5, `e2e_132` 39 / 39, `e2e_133` 77 / 77 | đạt hết |
 | `run_capnhat.sh` gói **1.31.3 đã phát hành** (`e64eb22`) → 1.35.1, cài đè bằng trình quản lý add-on | 19 / 19 |
