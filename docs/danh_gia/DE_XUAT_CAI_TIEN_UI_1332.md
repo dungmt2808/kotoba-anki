@@ -172,3 +172,18 @@ Qua kiểm tra [`03_nha_trang_tri.png`](../anh/03_nha_trang_tri.png), [`web/home
 1. **Nhà & Cửa hàng (`web/home.js`)**: Gom 11 tab thành 6 nhóm có chip con + thêm bộ lọc `Tất cả / Đủ xu / Đã có`.
 2. **Trò chơi (`web/games.js`)**: Đưa dropdown chọn chế độ chơi vào bên trong chân thẻ `.kb-gcard`.
 3. **Báo (`web/paper.js`) & Ôn thẻ (`web/body.html`)**: Thêm popover tra từ ngay tại vị trí từ được bấm trong bài báo; hiển thị gợi ý phím tắt `[Space]`, `[1]–[4]`, `[E]` nhẹ nhàng trên nút ôn thẻ.
+
+---
+
+## Phần 4: Hướng mở rộng Nâng tầm Thị giác (2.5D Isometric & 3D qua trình duyệt ngoài)
+
+1. **Phương án 2.5D Isometric bằng Canvas 2D thuần (Chạy trực tiếp trong Anki)**:
+   - Đã dựng bản chạy thử tương tác tại [`docs/ke_hoach_vuon_gon/proto_iso_25d.html`](../ke_hoach_vuon_gon/proto_iso_25d.html) (ảnh xem trước: [`vg_07_isometric_25d.png`](../ke_hoach_vuon_gon/vg_07_isometric_25d.png), [`vg_07b_isometric_dem.png`](../ke_hoach_vuon_gon/vg_07b_isometric_dem.png)).
+   - Giữ nguyên toàn bộ kho đồ pixel art `16×16` hiện tại của người dùng (kể cả đồ tự vẽ trong Xưởng chế tác) nhưng có chiều sâu bậc thềm, luống đất nổi, xoay 4 góc `90°`, ánh sáng Sáng/Chiều/Đêm và không đụng tới WebGL nên không lo lỗi màn hình đen trên `QtWebEngine`.
+
+2. **Phương án 3D thực thụ bằng nút “Mở vườn 3D trên trình duyệt”**:
+   - Nếu làm 3D (Three.js / WebGL), thay vì ép chạy nặng nề bên trong `AnkiWebView`, addon có thể mở một đường dẫn trên trình duyệt mặc định (`Chrome` / `Edge` / `Firefox`) thông qua `aqt.utils.openLink()`:
+     - **Cách tối ưu nhất (Localhost Server nội bộ + đồng bộ 2 chiều)**: Addon khởi chạy một `ThreadingHTTPServer` nhỏ trên `127.0.0.1:<port>` (chỉ lắng nghe nội bộ, kèm token ngẫu nhiên chống truy cập chéo) để phục vụ trang 3D offline hoàn toàn và cung cấp API JSON đọc/ghi trạng thái vườn Anki (gọi thao tác `mw.col` qua `mw.taskman.run_on_main`).
+     - **Cách đơn giản nhất (File HTML tĩnh)**: Xuất snapshot JSON của vườn nhúng thẳng vào 1 file HTML trong `user_files/` và mở qua `file://...` để ngắm vườn 3D không cần mở server.
+     - **Cách kết hợp (GitHub Pages + cầu nối Localhost)**: Đưa bộ engine/asset 3D nặng lên web tĩnh để giữ file `.ankiaddon` nhỏ gọn, còn dữ liệu vườn lấy trực tiếp từ cổng `127.0.0.1` khi Anki đang chạy.
+

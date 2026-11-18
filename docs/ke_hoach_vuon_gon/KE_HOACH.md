@@ -74,3 +74,19 @@ Kết hợp các điểm mạnh nhất:
 4. **Biển gỗ đầu luống + Lối đi đá lát dọc mỗi 5 cây**: Các luống `Hạt giống`, `Mầm`, `Cây non`, `Ra hoa` vừa có biển gỗ rõ ràng, vừa được chia thành từng cụm 5 cây thoáng mắt, toàn bộ vườn 320 cây vừa khít trong 1 màn hình chuẩn `1366×768`.
 
 ![Bản kết hợp tối ưu](vg_06_ket_hop_toi_uu.png)
+
+---
+
+## 7. Thử nghiệm Phương án 2.5D Isometric (Canvas 2D thuần) — `proto_iso_25d.html`
+
+Ngoài bố cục 2D phẳng ở các mục 1–6, có thể dựng hẳn **vườn nổi 2.5D Isometric** bằng **Canvas 2D thuần** (0% WebGL, chạy an toàn trực tiếp trong `AnkiWebView` của QtWebEngine kể cả khi tắt tăng tốc GPU):
+- **Tái sử dụng 100% pixel art `16×16` hiện có** (`SPRITES`, `PAL`, `DRY` trong [`web/garden.js`](../../kotoba_batake/web/garden.js) cùng nhà, hoa anh đào, đèn lồng `CHOCHIN`, StackChan trong [`web/home.js`](../../kotoba_batake/web/home.js)) đặt thẳng đứng trên nền ô thoi 2:1 (`54×27px`).
+- **Sân nhà trên bậc thềm nâng cao (`elev`)** tách biệt với **3 luống đất nổi** bên dưới (`💧 Khát`, `🌱 Đang lớn`, `🌸 Hoa & Quả (gộp)`) ngăn bằng lối đi đá lát và cắm biển gỗ.
+- Hỗ trợ **xoay 4 góc 90°**, chuyển ánh sáng **Sáng / Chiều / Đêm**, chuyển chế độ **Luống gọn / Đủ cây**, di chuột & bấm vào từng cây để xem nghĩa hoặc tưới mẫu.
+
+Xem bản chạy thử tương tác tại [`proto_iso_25d.html`](proto_iso_25d.html):
+
+| Góc nhìn Sáng (mặc định) | Góc nhìn Đêm (xoay 90°) |
+| :---: | :---: |
+| ![Vườn 2.5D Isometric ban ngày](vg_07_isometric_25d.png) | ![Vườn 2.5D Isometric ban đêm xoay 90 độ](vg_07b_isometric_dem.png) |
+

@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ことば畑 – Prototype 2.5D Isometric (Canvas 2D)</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 12px;
+      font-family: "Noto Sans", system-ui, -apple-system, sans-serif;
+      background: var(--background, #f6efe0);
+      color: var(--foreground, #1b1b2f);
+    }
+    .kb-wrap { max-width: 1080px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; }
+    .kb-pixel { image-rendering: pixelated; }
+    .kb-box {
+      background: var(--card, #fffcf2);
+      border: 3px solid #1b1b2f;
+      box-shadow: 3px 3px 0 #1b1b2f;
+    }
+    .kb-toolbar {
+      padding: 8px 12px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 12px;
+    }
+    .kb-toolbar-left, .kb-toolbar-right {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+    .kb-badge {
+      padding: 2px 8px;
+      font-weight: 700;
+      background: #ffd23f;
+      color: #1b1b2f;
+      border: 2px solid #1b1b2f;
+    }
+    .kb-muted { color: var(--muted-foreground, #5f574f); }
+    .kb-btn {
+      font: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border: 2px solid #1b1b2f;
+      box-shadow: 2px 2px 0 #1b1b2f;
+      color: #1b1b2f;
+      background: #fff6d8;
+      cursor: pointer;
+      transition: transform 0.06s, background-color 0.12s;
+    }
+    .kb-btn:hover:not(:disabled) { background: #ffe48f; }
+    .kb-btn:active:not(:disabled) { transform: translate(2px, 2px); box-shadow: none; }
+    .kb-btn:disabled { opacity: 0.5; cursor: default; }
+    .kb-seg { display: inline-flex; border: 2px solid #1b1b2f; box-shadow: 2px 2px 0 #1b1b2f; }
+    .kb-seg button {
+      font: inherit;
+      font-size: 12px;
+      padding: 4px 8px;
+      border: 0;
+      border-right: 2px solid #1b1b2f;
+      background: #fffdf3;
+      color: #1b1b2f;
+      cursor: pointer;
+    }
+    .kb-seg button:last-child { border-right: 0; }
+    .kb-seg button.is-on { background: #ffd23f; font-weight: 700; }
+
+    .kb-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 280px;
+      gap: 12px;
+      align-items: start;
+    }
+    @media (max-width: 860px) { .kb-grid { grid-template-columns: 1fr; } }
+
+    .kb-stage-box { position: relative; overflow: hidden; background: #8fd3ff; }
+    .kb-stage-box canvas { display: block; width: 100%; height: auto; cursor: pointer; }
+    .kb-hud-tl {
+      position: absolute; left: 10px; top: 10px;
+      padding: 3px 9px; font-size: 12px; font-weight: 600;
+      background: rgba(255, 252, 242, 0.92); color: #1b1b2f;
+      border: 2px solid #1b1b2f; box-shadow: 2px 2px 0 #1b1b2f;
+    }
+    .kb-hud-br {
+      position: absolute; right: 10px; bottom: 10px;
+      padding: 2px 8px; font-size: 11px;
+      background: rgba(255, 252, 242, 0.9); color: #1b1b2f;
+      border: 2px solid #1b1b2f;
+    }
+    .kb-side { display: flex; flex-direction: column; gap: 10px; }
+    .kb-card { padding: 12px; display: flex; flex-direction: column; gap: 8px; font-size: 12px; }
+    .kb-card-h {
+      font-weight: 700; font-size: 13px;
+      border-bottom: 2px dashed var(--border, #c8bfa8);
+      padding-bottom: 4px;
+      display: flex; align-items: center; justify-content: space-between; gap: 6px;
+    }
+    .kb-pill {
+      padding: 1px 6px; font-size: 11px; font-weight: 700;
+      background: #ffe9a8; color: #1b1b2f; border: 1.5px solid #1b1b2f;
+    }
+    .kb-sel-row { display: flex; align-items: center; gap: 10px; }
+    .kb-sel-ico {
+      width: 48px; height: 48px; flex: none;
+      background: #e8f7e4; border: 2px solid #1b1b2f;
+    }
+    .kb-sel-word { font-size: 18px; font-weight: 700; line-height: 1.25; }
+    .kb-sel-mean { font-size: 13px; color: var(--muted-foreground, #5f574f); }
+    .kb-meta-box {
+      padding: 7px 9px;
+      background: var(--background, #f6efe0);
+      border: 1.5px solid var(--border, #c8bfa8);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+    .kb-note-list { margin: 0; padding-left: 16px; display: flex; flex-direction: column; gap: 4px; line-height: 1.4; }
+  </style>
+</head>
+<body class="bg-[var(--background)] text-[var(--foreground)] antialiased">
+  <div class="kb-wrap">
+    <!-- Thanh điều khiển -->
+    <div class="kb-box kb-toolbar">
+      <div class="kb-toolbar-left">
+        <span class="kb-badge">2.5D ISOMETRIC · CANVAS 2D</span>
+        <span class="kb-muted">Thử nghiệm góc nhìn có chiều sâu, chạy trực tiếp trong Anki (0% WebGL)</span>
+      </div>
+      <div class="kb-toolbar-right">
+        <button id="btn-rot" class="kb-btn">↻ Xoay góc 90°</button>
+        <div class="kb-seg">
+          <button data-tod="day" class="tod-btn is-on">☀ Sáng</button>
+          <button data-tod="dusk" class="tod-btn">🌇 Chiều</button>
+          <button data-tod="night" class="tod-btn">🌙 Đêm</button>
+        </div>
+        <button id="btn-mode" class="kb-btn" style="background:#c8f7d2">Luống gọn (Gom Ra quả)</button>
+        <button id="btn-water-all" class="kb-btn" style="background:#bfe8ff">💧 Tưới 1 cây mẫu</button>
+      </div>
+    </div>
+
+    <!-- Khung chính -->
+    <div class="kb-grid">
+      <div class="kb-box kb-stage-box">
+        <canvas id="iso" width="760" height="530" class="kb-pixel"></canvas>
+        <div class="kb-hud-tl">
+          Sân vườn 2.5D · <span id="stat-count">0</span> cây · <span id="stat-thirsty" style="color:#1f5fbf">0 cần tưới</span>
+        </div>
+        <div class="kb-hud-br">
+          Rê chuột để soi · Bấm cây để xem / tưới · Chia 3 luống rõ ràng
+        </div>
+      </div>
+
+      <!-- Cột phải -->
+      <div class="kb-side">
+        <div class="kb-box kb-card">
+          <div class="kb-card-h">
+            <span>Ô đất đang chọn</span>
+            <span id="sel-stage" class="kb-pill">Ra quả</span>
+          </div>
+          <div class="kb-sel-row">
+            <canvas id="preview-sprite" width="48" height="48" class="kb-sel-ico kb-pixel"></canvas>
+            <div style="min-width:0">
+              <div id="sel-word" class="kb-sel-word">桜（さくら）</div>
+              <div id="sel-meaning" class="kb-sel-mean">Hoa anh đào</div>
+            </div>
+          </div>
+          <div id="sel-meta" class="kb-meta-box">
+            Bấm vào bất kỳ cây nào trên ruộng 2.5D để xem chi tiết từ vựng hoặc tưới thử.
+          </div>
+          <button id="btn-water-one" class="kb-btn" style="width:100%;background:#bfe8ff;padding:6px 10px;">
+            💧 Tưới cây này (+10 xu)
+          </button>
+        </div>
+
+        <div class="kb-box kb-card">
+          <div class="kb-card-h"><span>Vì sao 2.5D Isometric hợp với Anki?</span></div>
+          <ul class="kb-note-list kb-muted">
+            <li><b>An toàn 100%:</b> Thuần Canvas 2D sẵn có trong <code>AnkiWebView</code>, không đen màn hình khi máy tắt GPU.</li>
+            <li><b>Tái sử dụng trọn bộ pixel 16×16:</b> Giữ nguyên cây gốc, giống tự vẽ, mũ StackChan và đồ Xưởng chế tác.</li>
+            <li><b>Đỡ rối mắt khi nhiều cây:</b> Bậc đất nổi + lối đi đá lát tách rõ luống <i>Cần tưới</i>, <i>Đang lớn</i> và <i>Ra hoa/quả</i>.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const PAL = {
+        k: "#1b1b2f", g: "#3ccb5e", G: "#2e8b3a", b: "#8a4a22",
+        y: "#ffd23f", p: "#ff7fa0", r: "#ff4f6d", w: "#ffffff", d: "#3d8bff",
+        t: "#e2a46a", R: "#c21f3a", B: "#6b3b1f", s: "#d4d4e0", S: "#8a8fa8",
+        l: "#8fd3ff", n: "#2b2b44", P: "#ffc4d6"
+      };
+      const DRY = {
+        k: "#3a2f2a", g: "#b7a86a", G: "#8a7a45", b: "#7a5a3a",
+        y: "#c8b77a", p: "#b59a8e", r: "#9b6e5c", w: "#ffffff", d: "#3d8bff"
+      };
+      const E = "................";
+      const STEM = ".......kbk......";
+      const SPRITES = [
+        [E, E, E, E, E, E, E, E, E, E, E, E, "......kkkk......", ".....kbbbbk.....", ".....kbbbbk.....", "......kkkk......"],
+        [E, E, E, E, E, E, E, E, "...kk.....kk....", "..kggk...kggk...", "..kgggk.kgggk...", "...kkgGkGgkk....", ".......kGk......", ".......kGk......", ".......kGk......", ".......kGk......"],
+        [E, E, "......kkkk......", ".....kggggk.....", "....kgggggGk....", "...kgggggGGGk...", "...kggggGGGGk...", "....kgggGGGk....", ".....kkGGkk.....", STEM, STEM, STEM, STEM, STEM, STEM],
+        [E, "....kk....kk....", "...kppk..kppk...", "...kpypkkpypk...", "....kpkggkpk....", "....kggggggk....", "...kgggggGGGk...", "...kggggGGGGk...", "....kgggGGGk....", ".....kkGGkk.....", STEM, STEM, STEM, STEM, STEM, STEM],
+        [".....kkkkkk.....", "....kggggggk....", "...kggrgggggk...", "..kggrrggggGGk..", "..kgggggrgGGGk..", "..kggggrrGGGGk..", "...kggggGGrGk...", "....kgGGGGGk....", ".....kkkkkk.....", STEM, STEM, STEM, STEM, STEM, STEM, STEM]
+      ];
+      const DROP = ["..k..", ".kdk.", "kdddk", "kdwdk", ".kkk."];
+      const CHOCHIN = [
+        "...kkkk...", "..kRRRRk..", ".krrrrrrk.", "krrwrrrrrk", "kRRRRRRRRk",
+        ".krrrrrrk.", "..kRRRRk..", "...kkkk...", "....kbk...", "....kbk...",
+        "....kbk...", "...kbbbk..", "..kkkkkkk."
+      ];
+      const FLOWERS = [
+        "...kk......kk...", "..kppk....kyyk..", ".kpwppk..kywyyk.", "..kppk.kk.kyyk..",
+        "...kkgkrrk.kk...", "..kgGkkrwrk.k...", ".kgGGk.krrk.kgk.", ".kGGGGkgkkgkgGk.",
+        "..kGGGGGGGGGGk..", "...kkkkkkkkkk..."
+      ];
+      const SAKURA = [
+        "....kkkkkkkk....",
+        "..kkppPPPPppkk..",
+        ".kpPPPPwwPPPPpk.",
+        "kpPPpPppppPpPPpk",
+        "kpppppPPPPpppppk",
+        ".kpppppPPpppppk.",
+        "..kkkbbbbbbkkk..",
+        ".....kbbbbk.....",
+        ".....kbbbbk.....",
+        "....kkbbbbkk...."
+      ];
+
+      const WORDS = [
+        ["桜", "さくら", "Hoa anh đào"], ["木漏れ日", "こもれび", "Nắng xuyên kẽ lá"],
+        ["風鈴", "ふうりん", "Chuông gió"], ["花火", "はなび", "Pháo hoa"],
+        ["図書館", "としょかん", "Thư viện"], ["冒険", "ぼうけん", "Phiêu lưu"],
+        ["約束", "やくそく", "Lời hứa"], ["星空", "ほしぞら", "Bầu trời sao"],
+        ["朝露", "あさつゆ", "Sương mai"], ["紅葉", "もみじ", "Lá phong đỏ"],
+        ["季節", "きせつ", "Mùa trong năm"], ["夢中", "むちゅう", "Say mê"],
+        ["笑顔", "えがお", "Nụ cười"], ["散歩", "さんぽ", "Đi dạo"],
+        ["景色", "けしき", "Phong cảnh"], ["記憶", "きおく", "Ký ức"]
+      ];
+      const STAGE_NAMES = ["Hạt giống", "Mầm", "Cây non", "Ra hoa", "Ra quả"];
+
+      const allPlants = [];
+      const stageDist = [8, 10, 14, 15, 25]; // 72 cây
+      let idSeq = 1;
+      stageDist.forEach((cnt, st) => {
+        for (let i = 0; i < cnt; i++) {
+          const w = WORDS[(idSeq * 5 + i) % WORDS.length];
+          const thirsty = st === 0 ? i < 4 : (st < 4 ? i % 5 === 0 : i % 6 === 0);
+          allPlants.push({
+            id: idSeq++,
+            word: w[0],
+            reading: w[1],
+            meaning: w[2],
+            stage: st,
+            thirsty,
+            wilted: st >= 2 && !thirsty && i % 9 === 0,
+            ivl: st === 0 ? 0 : st * 18 + i
+          });
+        }
+      });
+
+      let rot = 0;
+      let tod = "day";
+      let compactMode = true;
+      let selectedPlant = allPlants.find(p => p.thirsty) || allPlants[0];
+      let hoverPlant = null;
+      let hitBoxes = [];
+
+      const cv = document.getElementById("iso");
+      const ctx = cv.getContext("2d");
+      const TW = 54, TH = 27;
+
+      const THEMES = {
+        day:   { skyTop: "#8fd3ff", skyBot: "#d8f3ff", grass: "#5ed35e", grassL: "#4db84f", grassR: "#3b963f", grassLine: "#45bf4a", soilTop: "#b87344", soilL: "#8a4a22", soilR: "#683516", tint: null },
+        dusk:  { skyTop: "#ff9e7d", skyBot: "#ffd6a5", grass: "#4fa856", grassL: "#3c8a47", grassR: "#2c6d38", grassLine: "#429648", soilTop: "#a4623d", soilL: "#774124", soilR: "#572c15", tint: "rgba(255,130,70,0.09)" },
+        night: { skyTop: "#1f254d", skyBot: "#3a457a", grass: "#35784d", grassL: "#275b3b", grassR: "#1c432b", grassLine: "#2b6842", soilTop: "#704935", soilL: "#523222", soilR: "#3a2115", tint: "rgba(20,25,65,0.20)" }
+      };
+
+      function buildGrid() {
+        const W = 12, H = 10;
+        const cells = [];
+        for (let y = 0; y < H; y++) {
+          for (let x = 0; x < W; x++) {
+            cells.push({ x, y, type: "grass", elev: 0, plant: null, prop: null, sign: null });
+          }
+        }
+        const at = (x, y) => cells[y * W + x];
+
+        // Sân trên cao (elev = 11)
+        for (let y = 0; y <= 1; y++) {
+          for (let x = 0; x < W; x++) { at(x, y).elev = 11; }
+        }
+        at(1, 0).prop = "house";
+        at(3, 0).prop = "sakura";
+        at(4, 1).prop = "mascot";
+        at(6, 0).prop = "chochin";
+        at(7, 1).prop = "flowers";
+        at(9, 0).prop = "pond";
+        at(11, 1).prop = "chochin";
+
+        // Lối đi đá lát ngang tách sân và ruộng
+        for (let x = 0; x < W; x++) {
+          if (x % 2 === 0) at(x, 2).type = "stone";
+        }
+
+        // Lối đi đá dọc tại cột 4 và cột 8 -> tạo 3 luống rõ ràng:
+        // Luống 1 (cột 0..3): Cần tưới hôm nay
+        // Luống 2 (cột 5..7): Cây đang lớn (Hạt · Mầm · Cây non)
+        // Luống 3 (cột 9..11): Ra hoa · Ra quả
+        for (let y = 3; y < H; y++) {
+          if (y % 2 === 1) {
+            at(4, y).type = "stone";
+            at(8, y).type = "stone";
+          }
+        }
+
+        const thirsty = allPlants.filter(p => p.thirsty).sort((a, b) => a.stage - b.stage);
+        const growing = allPlants.filter(p => !p.thirsty && p.stage <= 2).sort((a, b) => a.stage - b.stage);
+        const blooming = allPlants.filter(p => !p.thirsty && p.stage >= 3).sort((a, b) => a.stage - b.stage);
+        const bloomingShown = compactMode ? blooming.slice(0, 18) : blooming;
+
+        function fillBlock(x0, x1, list) {
+          let idx = 0;
+          for (let y = 3; y < H; y++) {
+            for (let x = x0; x <= x1; x++) {
+              if (idx < list.length) {
+                const cell = at(x, y);
+                cell.type = "soil";
+                cell.elev = 6;
+                cell.plant = list[idx++];
+              }
+            }
+          }
+          return idx;
+        }
+
+        const c1 = fillBlock(0, 3, thirsty);
+        const c2 = fillBlock(5, 7, growing);
+        const c3 = fillBlock(9, 11, bloomingShown);
+
+        at(0, 2).sign = { text: "💧 Khát · " + c1, bg: "#bfe8ff", fg: "#1b1b2f" };
+        at(5, 2).sign = { text: "🌱 Đang lớn · " + c2, bg: "#8a4a22", fg: "#fff6d8" };
+        at(9, 2).sign = { text: compactMode ? "🌸 Hoa & Quả (gộp)" : "🌸 Hoa & Quả · " + c3, bg: "#8a4a22", fg: "#fff6d8" };
+
+        const hiddenFruit = compactMode ? Math.max(0, blooming.length - bloomingShown.length) : 0;
+        document.getElementById("stat-count").textContent = (c1 + c2 + c3) + (hiddenFruit ? " (gộp " + hiddenFruit + " Ra quả)" : "");
+        document.getElementById("stat-thirsty").textContent = thirsty.length + " cần tưới";
+        return { W, H, cells };
+      }
+
+      function rotCoord(x, y, W, H, r) {
+        if (r === 1) return [H - 1 - y, x];
+        if (r === 2) return [W - 1 - x, H - 1 - y];
+        if (r === 3) return [y, W - 1 - x];
+        return [x, y];
+      }
+
+      function isoTilePoly(sx, sy, elev, h, topCol, leftCol, rightCol, outlineCol, w, th) {
+        w = w || TW; th = th || TH;
+        const hw = w / 2, hh = th / 2;
+        const topY = sy - elev;
+
+        ctx.fillStyle = leftCol;
+        ctx.beginPath();
+        ctx.moveTo(sx - hw, topY + hh);
+        ctx.lineTo(sx, topY + th);
+        ctx.lineTo(sx, topY + th + h);
+        ctx.lineTo(sx - hw, topY + hh + h);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = rightCol;
+        ctx.beginPath();
+        ctx.moveTo(sx + hw, topY + hh);
+        ctx.lineTo(sx, topY + th);
+        ctx.lineTo(sx, topY + th + h);
+        ctx.lineTo(sx + hw, topY + hh + h);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = topCol;
+        ctx.beginPath();
+        ctx.moveTo(sx, topY);
+        ctx.lineTo(sx + hw, topY + hh);
+        ctx.lineTo(sx, topY + th);
+        ctx.lineTo(sx - hw, topY + hh);
+        ctx.closePath();
+        ctx.fill();
+
+        if (outlineCol) {
+          ctx.strokeStyle = outlineCol;
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
+      }
+
+      function drawPixelArt(c, rows, ox, oy, s, pal) {
+        for (let j = 0; j < rows.length; j++) {
+          const row = rows[j];
+          for (let i = 0; i < row.length; i++) {
+            const ch = row.charAt(i);
+            if (ch !== "." && pal[ch]) {
+              c.fillStyle = pal[ch];
+              c.fillRect(Math.round(ox + i * s), Math.round(oy + j * s), s, s);
+            }
+          }
+        }
+      }
+
+      function drawIsoHouse(sx, sy, isNight) {
+        const x = Math.round(sx - 25), y = Math.round(sy - 38);
+        ctx.fillStyle = "#fff6e3"; ctx.fillRect(x + 6, y + 20, 40, 22);
+        ctx.fillStyle = "#e3d4b4"; ctx.fillRect(x + 28, y + 20, 18, 22);
+        ctx.strokeStyle = "#1b1b2f"; ctx.lineWidth = 2; ctx.strokeRect(x + 6, y + 20, 40, 22);
+        ctx.fillStyle = "#8a4a22"; ctx.fillRect(x + 12, y + 28, 10, 14);
+        ctx.strokeRect(x + 12, y + 28, 10, 14);
+        ctx.fillStyle = isNight ? "#ffd23f" : "#8fd3ff";
+        ctx.fillRect(x + 31, y + 26, 10, 9);
+        ctx.strokeRect(x + 31, y + 26, 10, 9);
+        ctx.fillStyle = "#ff4f6d";
+        ctx.beginPath();
+        ctx.moveTo(x + 2, y + 21);
+        ctx.lineTo(x + 26, y + 4);
+        ctx.lineTo(x + 50, y + 21);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+      }
+
+      function drawPond(sx, sy) {
+        ctx.fillStyle = "#1b1b2f";
+        ctx.beginPath(); ctx.ellipse(sx, sy, 18, 9, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = "#8fd3ff";
+        ctx.beginPath(); ctx.ellipse(sx, sy, 16, 7, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(sx - 7, sy - 2, 5, 2);
+      }
+
+      function drawStackChan(sx, sy, now) {
+        const bob = Math.sin(now / 300) > 0 ? 0 : -1;
+        const x = Math.round(sx - 10), y = Math.round(sy - 15 + bob);
+        ctx.fillStyle = "#1b1b2f"; ctx.fillRect(x - 1, y - 1, 22, 18);
+        ctx.fillStyle = "#f4f6ff"; ctx.fillRect(x, y, 20, 16);
+        ctx.fillStyle = "#2b2b44"; ctx.fillRect(x + 3, y + 3, 14, 10);
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(x + 5, y + 6, 3, 3);
+        ctx.fillRect(x + 12, y + 6, 3, 3);
+        ctx.fillRect(x + 8, y + 10, 4, 1);
+      }
+
+      function render(now) {
+        const th = THEMES[tod];
+        const grad = ctx.createLinearGradient(0, 0, 0, cv.height);
+        grad.addColorStop(0, th.skyTop);
+        grad.addColorStop(1, th.skyBot);
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, cv.width, cv.height);
+
+        if (tod === "night") {
+          ctx.fillStyle = "#fff6c2";
+          [[60, 40], [150, 26], [310, 52], [580, 30], [690, 62], [440, 22]].forEach(([x, y], idx) => {
+            if ((Math.floor(now / 500) + idx) % 4 !== 0) ctx.fillRect(x, y, 3, 3);
+          });
+        }
+
+        const { W, H, cells } = buildGrid();
+        const rW = rot % 2 === 0 ? W : H;
+        const rH = rot % 2 === 0 ? H : W;
+        const originX = cv.width / 2 + ((rH - rW) * TW) / 4;
+        const originY = 104;
+
+        const drawList = cells.map(c => {
+          const [rx, ry] = rotCoord(c.x, c.y, W, H, rot);
+          return { c, rx, ry, depth: rx + ry };
+        }).sort((a, b) => a.depth - b.depth || a.rx - b.rx);
+
+        hitBoxes = [];
+        const signQueue = [];
+
+        drawList.forEach(({ c, rx, ry }) => {
+          const sx = Math.round(originX + (rx - ry) * (TW / 2));
+          const sy = Math.round(originY + (rx + ry) * (TH / 2));
+
+          isoTilePoly(sx, sy, 0, 9, th.grass, th.grassL, th.grassR, th.grassLine);
+
+          if (c.elev > 0) {
+            if (c.type === "soil") {
+              isoTilePoly(sx, sy, c.elev, c.elev, c.plant && c.plant.wilted ? "#c9a27a" : th.soilTop, th.soilL, th.soilR, "#1b1b2f");
+            } else {
+              isoTilePoly(sx, sy, c.elev, c.elev, th.grass, th.grassL, th.grassR, "#2e8b3a");
+            }
+          }
+
+          if (c.type === "stone") {
+            isoTilePoly(sx, sy + 5, 2, 3, "#d4d4e0", "#8a8fa8", "#686e88", "#1b1b2f", 26, 13);
+          }
+
+          const baseCenterY = sy + TH / 2 - c.elev;
+
+          if (c.prop === "house") drawIsoHouse(sx, baseCenterY, tod === "night");
+          if (c.prop === "sakura") drawPixelArt(ctx, SAKURA, sx - 20, baseCenterY - 26, 2.5, PAL);
+          if (c.prop === "pond") drawPond(sx, baseCenterY);
+          if (c.prop === "mascot") drawStackChan(sx, baseCenterY, now);
+          if (c.prop === "chochin") {
+            if (tod === "night") {
+              ctx.fillStyle = "rgba(255, 210, 63, 0.35)";
+              ctx.beginPath(); ctx.arc(sx, baseCenterY - 14, 18, 0, Math.PI * 2); ctx.fill();
+            }
+            drawPixelArt(ctx, CHOCHIN, sx - 10, baseCenterY - 26, 2, PAL);
+          }
+          if (c.prop === "flowers") drawPixelArt(ctx, FLOWERS, sx - 16, baseCenterY - 14, 2, PAL);
+
+          if (c.sign) {
+            signQueue.push({ sx, sy: baseCenterY - 2, sign: c.sign });
+          }
+
+          if (c.plant) {
+            const p = c.plant;
+            const pal = p.wilted ? DRY : PAL;
+            const isSel = selectedPlant && selectedPlant.id === p.id;
+            const isHov = hoverPlant && hoverPlant.id === p.id;
+
+            ctx.fillStyle = "rgba(27,27,47,0.22)";
+            ctx.beginPath();
+            ctx.ellipse(sx, baseCenterY + 1, 9, 4, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            if (isSel || isHov) {
+              ctx.strokeStyle = isSel ? "#ffd23f" : "#ffffff";
+              ctx.lineWidth = 2;
+              ctx.beginPath();
+              ctx.moveTo(sx, sy - c.elev + 2);
+              ctx.lineTo(sx + TW / 2 - 4, sy + TH / 2 - c.elev);
+              ctx.lineTo(sx, sy + TH - c.elev - 2);
+              ctx.lineTo(sx - TW / 2 + 4, sy + TH / 2 - c.elev);
+              ctx.closePath();
+              ctx.stroke();
+            }
+
+            const sway = p.stage >= 2 ? Math.round(Math.sin(now / 600 + p.id) * 0.8) : 0;
+            const artX = sx - 16 + sway;
+            const artY = baseCenterY - 29;
+            drawPixelArt(ctx, SPRITES[p.stage], artX, artY, 2, pal);
+
+            if (p.thirsty) {
+              const dropBob = Math.round(Math.sin(now / 260 + p.id) * 2);
+              drawPixelArt(ctx, DROP, sx + 4, artY - 4 + dropBob, 2, PAL);
+            }
+
+            hitBoxes.push({ plant: p, x: sx - 18, y: artY - 4, w: 36, h: 38 });
+          }
+        });
+
+        // Vẽ biển gỗ luống sau cùng để chữ luôn rõ
+        ctx.font = "bold 11px 'Noto Sans', sans-serif";
+        signQueue.forEach(({ sx, sy, sign }) => {
+          const w = Math.round(ctx.measureText(sign.text).width + 12);
+          const bx = Math.round(sx - w / 2), by = Math.round(sy - 14);
+          ctx.fillStyle = "#1b1b2f"; ctx.fillRect(bx + 2, by + 2, w, 17);
+          ctx.fillStyle = sign.bg; ctx.fillRect(bx, by, w, 17);
+          ctx.strokeStyle = "#1b1b2f"; ctx.lineWidth = 1.5; ctx.strokeRect(bx, by, w, 17);
+          ctx.fillStyle = sign.fg; ctx.fillText(sign.text, bx + 6, by + 12);
+        });
+
+        if (th.tint) {
+          ctx.fillStyle = th.tint;
+          ctx.fillRect(0, 0, cv.width, cv.height);
+        }
+      }
+
+      function updateSideCard() {
+        const p = selectedPlant;
+        if (!p) return;
+        document.getElementById("sel-stage").textContent = STAGE_NAMES[p.stage] + (p.thirsty ? " · Khát" : "");
+        document.getElementById("sel-word").textContent = p.word + "（" + p.reading + "）";
+        document.getElementById("sel-meaning").textContent = p.meaning;
+        document.getElementById("sel-meta").textContent = p.thirsty
+          ? "Cây đang chờ tưới hôm nay · Khoảng ôn: " + p.ivl + " ngày"
+          : (p.wilted ? "Cây hơi héo vì quá hạn ôn · Cần tưới lại" : "Đang xanh tốt · Ổn định ~" + p.ivl + " ngày");
+        const btn = document.getElementById("btn-water-one");
+        btn.disabled = !p.thirsty;
+        btn.textContent = p.thirsty ? "💧 Tưới cây này (+10 xu)" : "✓ Hôm nay đã tưới";
+
+        const pv = document.getElementById("preview-sprite");
+        const pctx = pv.getContext("2d");
+        pctx.clearRect(0, 0, 48, 48);
+        drawPixelArt(pctx, SPRITES[p.stage], 8, 8, 2, p.wilted ? DRY : PAL);
+      }
+
+      function pickPlant(clientX, clientY) {
+        const r = cv.getBoundingClientRect();
+        const x = (clientX - r.left) * (cv.width / r.width);
+        const y = (clientY - r.top) * (cv.height / r.height);
+        for (let i = hitBoxes.length - 1; i >= 0; i--) {
+          const b = hitBoxes[i];
+          if (x >= b.x && x <= b.x + b.w && y >= b.y && y <= b.y + b.h) return b.plant;
+        }
+        return null;
+      }
+
+      cv.addEventListener("mousemove", (e) => { hoverPlant = pickPlant(e.clientX, e.clientY); });
+      cv.addEventListener("mouseleave", () => { hoverPlant = null; });
+      cv.addEventListener("click", (e) => {
+        const hit = pickPlant(e.clientX, e.clientY);
+        if (hit) { selectedPlant = hit; updateSideCard(); }
+      });
+
+      document.getElementById("btn-rot").addEventListener("click", () => { rot = (rot + 1) % 4; });
+      document.querySelectorAll(".tod-btn").forEach(b => {
+        b.addEventListener("click", () => {
+          tod = b.getAttribute("data-tod");
+          document.querySelectorAll(".tod-btn").forEach(x => x.classList.toggle("is-on", x === b));
+        });
+      });
+      document.getElementById("btn-mode").addEventListener("click", (e) => {
+        compactMode = !compactMode;
+        e.target.textContent = compactMode ? "Luống gọn (Gom Ra quả)" : "Hiện đủ 72 cây";
+      });
+      document.getElementById("btn-water-one").addEventListener("click", () => {
+        if (selectedPlant && selectedPlant.thirsty) {
+          selectedPlant.thirsty = false;
+          selectedPlant.stage = Math.min(4, selectedPlant.stage + 1);
+          updateSideCard();
+        }
+      });
+      document.getElementById("btn-water-all").addEventListener("click", () => {
+        const t = allPlants.find(p => p.thirsty);
+        if (t) {
+          t.thirsty = false;
+          t.stage = Math.min(4, t.stage + 1);
+          selectedPlant = t;
+          updateSideCard();
+        }
+      });
+
+      updateSideCard();
+      function loop(now) {
+        render(now);
+        requestAnimationFrame(loop);
+      }
+      requestAnimationFrame(loop);
+    })();
+  </script>
+</body>
+</html>
