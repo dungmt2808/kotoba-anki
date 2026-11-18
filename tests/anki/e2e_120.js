@@ -166,8 +166,10 @@ result = len(rows)`;
     await page.click('.kb-cal-day[data-d="' + old + '"]');
     await waitFor(page, W('return GardenCal._state().day && GardenCal._state().day.d === ' + JSON.stringify(old) + ';'));
     ok(await page.eval(W('return !!document.querySelector(".kb-cal-diary") && !document.querySelector(".kb-cal-write .kb-cal-ta:not([readonly])");')), 'ngày cũ: viết được nhật ký, luyện viết chỉ cho hôm nay');
-    await page.click('.kb-cal-stk-b[data-m="ban"]'); await sleep(500);
-    ok((await entry(old)).m === 'ban', 'sửa được ngày cũ (' + old + ')');
+    // 1.35.1: "om" — dữ liệu giả (SEED) gán vui / met / ban / thu_thai / hao_hung theo ngày; ngày cũ đầu tiên của tháng có
+    // thể đã là "ban" (18/11: 1/11 = hôm nay − 17 → "ban") → bấm lại là bỏ sticker, kịch bản trượt theo ngày chạy
+    await page.click('.kb-cal-stk-b[data-m="om"]'); await sleep(500);
+    ok((await entry(old)).m === 'om', 'sửa được ngày cũ (' + old + ')');
   }
   const fut = await page.eval(W('const c = document.querySelector(".kb-cal-day.is-future"); return c ? c.getAttribute("data-d") : null;'));
   if (fut) {

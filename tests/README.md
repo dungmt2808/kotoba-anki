@@ -195,7 +195,7 @@ ANKI_PY=~/.venv-anki/bin/python tests/anki/run_ui.sh /tmp/kb_src/kotoba_batake /
 Cần Node ≥ 22 (có sẵn `fetch` và `WebSocket`). Cổng: `KB_CDP_PORT` (9333), `KB_CTRL_PORT` (9444). `kill_anki.sh` tắt Anki đang chạy từ các script này.
 
 ## Kết quả lần chạy gần nhất (bản 1.35.1, 18/11/2026) — kiểm tra lại 1.35
-- `run_all.sh` trên gói đã đóng (`ANKI_PY` = aqt 26.9.4): **68 bộ, TẤT CẢ OK** (`test_1351` 33/33; trên mã 1.35.0 đỏ 21/31). `e2e_qa1351` 29/29 (bộ thẻ mẫu QA).
+- `run_all.sh` trên gói đã đóng (`ANKI_PY` = aqt 26.9.4): **68 bộ, TẤT CẢ OK** (`test_1351` 33/33; trên mã 1.35.0 đỏ 21/31). `e2e_qa1351` 39/39 (bộ thẻ mẫu QA + luyện viết 4 tiếng mới), `e2e_120` 103/103 (ca "sửa được ngày cũ" nay bấm sticker "Ốm" — dữ liệu giả có thể đã gán "Bận" cho ngày đó tuỳ ngày chạy). Gemini thật luyện viết: `tests/gemini/run_fix.py --lang zh|ko|de|fr`.
 - Anki 26.9.4 (thư mục mã nguồn + gói): `e2e_1351` 35/35, `e2e_135` 60/60, `e2e_134` 87/87; trên mã nguồn: `e2e_135_ngonngu` 5/5,
   `e2e_1333_ngonngu` 5/5, `e2e_132` 39/39, `e2e_133` 77/77; `run_capnhat.sh` 1.31.3 (gói đã phát hành `e64eb22`) → 1.35.1 19/19;
   `run_habanh.sh` 1.35.1 → 1.31.3 → 1.35.1 26/26. Chưa chạy Anki 23.10.1 (môi trường mới chưa có venv). Báo cáo:
