@@ -132,5 +132,29 @@ Xem bản chạy thử tương tác tại [`proto_hayday_25d_min.html`](proto_ha
 
 ![Nông trại Hay Day 2.5D Nét Mịn & Quy hoạch 5 Phân khu](vg_09_hayday_25d_min.png)
 
+---
+
+## 10. Kiến trúc Hybrid 2D + 3D: Giữ Nhà/Vườn ở 2D, mở rộng 3D cho “Làng Kotoba 3D (Bán hàng & Tin làng)” và “Các vùng ngắm cảnh 3D” — `proto_lang_kotoba_3d.html`
+
+Giải quyết bài toán **đồ trang trí 2D do người dùng đặt trong Nhà & Vườn rất khó tự động ánh xạ sang 3D**:
+- **Không gian tuỳ biến (`Nhà` & `Sân vườn`) giữ nguyên 2D trong Anki**: Bảo toàn 100% tương thích với toàn bộ vật phẩm trang trí tường/sàn, thú nuôi và xưởng vẽ pixel `16×16`.
+- **Không gian cố định mở bằng Trình duyệt 3D (`3D Web Companion`)**:
+  1. **🏘️ Đi vào Làng Kotoba 3D (`ことば村`) — Kết nối trực tiếp với Báo Làng (`畑新聞` / `story_core.py`) & Bán hàng**:
+     - Đưa các nhân vật và địa danh vốn chỉ xuất hiện bằng chữ trên mục *Tin làng* và *Truyện dài kỳ* bước ra đời thực dưới dạng một ngôi làng 3D xoay 360° (hoặc điều khiển **StackChan 3D** chạy bằng phím `WASD`):
+       - **🏮 Quán trọ Kotoba (`ことば屋`)**: Gặp **chị chủ quán Hana (`はなさん`)** và **cô bé Lin (`リンさん`)** cầm cuốn sổ tay nhỏ.
+       - **🛒 Sạp Chợ Phiên (`朝市`)**: Nơi người học đem **trái cây từ vựng thu hoạch từ các cây `Ra quả` ở vườn 2D** vào giao đơn cho dân làng (trả lời nhanh từ vựng theo yêu cầu của khách để bán quả nhận **+40 xu/đơn**).
+       - **📮 Trạm Bưu Điện & Bác Đưa Thư (`郵便屋さん`)**: Xem chuyện đang diễn ra trong *Tin làng* mỗi ngày.
+       - **👴 Nhà Ông Trưởng Làng (`村長さん`) & Con Mèo Hoang Trắng (`白いのらねこ`)**.
+  2. **⛩️ Các vùng 3D mới chỉ dùng để ngắm cảnh (3D Scenic Dioramas)**:
+     - Vì người dùng không đặt đồ trang trí 2D ở các vùng này, ta có thể thiết kế sẵn các **kỳ quan 3D cố định** làm phần thưởng mở khoá theo chuỗi ngày học (*streak*) hoặc số cây đạt *Ra quả*:
+       - **Đỉnh Đền & Cây Đại Thụ Anh Đào 3D**: Cổng Torii đỏ dẫn lên cây đại thụ toả sáng với mưa cánh hoa Sakura rơi trong không gian 3D.
+       - **Đèo Biển & Đoàn Tàu Hoả 3D**: Đoàn tàu 3 toa chạy qua cầu cạn trên vịnh biển xanh dưới ánh hoàng hôn hoặc đèn đêm.
+
+Xem bản chạy thử tương tác tại [`proto_lang_kotoba_3d.html`](proto_lang_kotoba_3d.html):
+
+| 🏘️ Làng Kotoba 3D (Quán Kotoba, Chợ phiên, Bán nông sản) | ⛩️ Đỉnh Đền & Đại Thụ Anh Đào 3D (Vùng ngắm cảnh 360°) |
+| :---: | :---: |
+| ![Làng Kotoba 3D](vg_10_lang_kotoba_3d.png) | ![Đỉnh Đền & Đại Thụ Anh Đào 3D](vg_10b_den_dai_thu_3d.png) |
+
 
 
