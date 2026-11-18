@@ -337,6 +337,40 @@ bad = [t for t, w in KO_POS if not K.match(t.split()[0], w)] + ["≠ " + t for t
 ok(not bad, "%d dạng nhận được + %d chữ không nhận nhầm%s" % (len(KO_POS), len(KO_NEG), (" — sai: %s" % bad) if bad else ""))
 
 # =========================================================================================================================
+print("== 6b. Điền vào câu của deck tiếng Trung / Hàn + tên trường câu ví dụ Đức / Pháp / Trung / Hàn")
+if HAVE_ANKI:
+    import garden_core as G  # noqa: E402
+    BL = '<span class="kb-blank">\u3000？\u3000</span>'
+    CL = [("주말에 집에서 쉬어요.", "쉬다", "ko", "주말에 집에서 _."), ("친구를 도와줘요.", "돕다", "ko", "친구를 _."),
+          ("밥을 먹었어요.", "먹다", "ko", "밥을 _."), ("학교에서 공부해요.", "학교", "ko", "_에서 공부해요."),
+          ("사과를 샀어요.", "사과", "ko", "_를 샀어요."), ("가방을 샀어요.", "가다", "ko", None),
+          ("我在家吃饭。", "家", "zh", "我在_吃饭。"), ("今天天气很好。", "天气", "zh", "今天_很好。"), ("我喝茶。", "喝", "zh", "我_茶。"),
+          ("I went home.", "go", "en", "I _ home."), ("который час", "кот", "xx", None)]
+    bad = []
+    for ex, w, lang, want in CL:
+        c = G.make_cloze(ex, w, lang=lang)
+        got = c["q"].replace(BL, "_") if c else None
+        if got != want:
+            bad.append("%s / %s → %r (cần %r)" % (w, ex, got, want))
+    ok(not bad, "Điền vào câu: %d câu (1.35.0: tiếng Trung / Hàn không câu nào có ô trống — \\w gồm cả chữ Hán / Hangul)%s"
+       % (len(CL), (" — sai: " + "; ".join(bad[:3])) if bad else ""))
+    EXF = [(["Wort", "Bedeutung", "Beispiel", "Beispiel Übersetzung"], "de", ("Bedeutung", "Beispiel", "Beispiel Übersetzung")),
+           (["Mot", "Sens", "Exemple", "Traduction de l'exemple"], "fr", ("Sens", "Exemple", "Traduction de l'exemple")),
+           (["Hanzi", "Pinyin", "Nghĩa", "Hán Việt", "例句", "例句翻译"], "zh", ("Nghĩa", "例句", "例句翻译")),
+           (["Korean", "Romaja", "Nghĩa", "예문", "예문 번역"], "ko", ("Nghĩa", "예문", "예문 번역")),
+           (["Front", "Back", "Example", "Example meaning"], "en", ("Back", "Example", "Example meaning")),
+           (["Word", "Meaning", "Phrase"], "en", ("Meaning", None, None))]
+    bad = []
+    for keys, lang, want in EXF:
+        r = G.guess_roles_lang(keys, {}, lang)
+        if (r["meaning"], r["example"], r["ex_meaning"]) != want:
+            bad.append("%s → %s" % (keys, (r["meaning"], r["example"], r["ex_meaning"])))
+    ok(not bad, "tự nhận trường câu ví dụ / dịch câu: Beispiel, Exemple, 例句, 예문 (deck tiếng Anh như cũ)%s"
+       % ((" — sai: " + "; ".join(bad)) if bad else ""))
+else:
+    print("  – bỏ qua (cần ANKI_PY)")
+
+# =========================================================================================================================
 print("== 7. Trang trí thử: không mất bản thử")
 init_src = open(os.path.join(ADDON, "__init__.py"), encoding="utf-8").read()
 if HAVE_ANKI:

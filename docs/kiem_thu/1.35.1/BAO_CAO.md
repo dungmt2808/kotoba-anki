@@ -45,6 +45,15 @@ thêm khoá collection, không thêm mục config.json (test so với 1.35.0). *
 
 Không nhận nhầm (đã thử): 해가 ≠ 하다, 와인 ≠ 오다, 가게 ≠ 가다, 사과를 ≠ 사다, 주스 ≠ 주다.
 
+### 1.3b Điền vào câu của deck tiếng Trung / Hàn + trường câu ví dụ (tìm khi soạn QA, 18/11)
+
+| # | Lỗi | Sửa |
+|---|---|---|
+| Q1 | **Trò Điền vào câu không có câu nào cho deck tiếng Trung / Hàn** (có từ 1.32): hàm tìm từ coi chữ Hán / Hangul là "chữ" của regex `\w` nên đòi ranh giới từ — tiếng Trung không có dấu cách, tiếng Hàn có tiểu từ / đuôi dính liền (학교**에서**, 쉬**어요**) → không bao giờ thấy | tiếng Hàn tìm bằng `ko_core` (nhận tiểu từ / đuôi chia, ô trống che cả cụm động từ: 주말에 집에서 ＿.); chữ không dùng dấu cách (Hán, Thái…) tìm không cần ranh giới (`text_core.find_word`) |
+| Q2 | Tên trường câu ví dụ của deck Đức / Pháp / Trung / Hàn ("Beispiel", "Exemple", "例句", "예문") không được tự nhận → phải tự chọn ở Cấu hình trường mới có Điền vào câu / chép chính tả từ deck | thêm các tên đó (+ "Beispiel Übersetzung", "Traduction", "翻译", "번역" cho dịch câu) — deck Anh / Nhật không đổi |
+
+Bộ thẻ mẫu QA (mục 6) trên 1.35.0: **không thẻ Đức / Pháp / Trung / Hàn nào có câu Điền vào câu** (đỏ 9 / 21 ca); 1.35.1: 29 / 29.
+
 ### 1.4 Đoán ngôn ngữ deck (loại note chưa cấu hình)
 
 | Deck | 1.35.0 đoán | 1.35.1 |
@@ -143,9 +152,16 @@ bỏ mạo từ.
 - Gemini thật: 1.35.1 chỉ đổi phần máy nối tra từ / kiểm (không đổi lời nhắc, không thêm lượt gọi) — số báo mẫu và Gemini giả
   trong `test_135` / `test_133` vẫn 0 lỗi.
 
-## 5. Việc người dùng cần làm
+## 5. Quyết định (người dùng giao Claude, 18/11)
 
-1. Đọc mục 1.6 (câu chữ đã sửa) và mục 2 (tên báo) — giữ hay đổi.
-2. Xem trên máy thật: deck tiếng Đức / Pháp → báo (tra từ), Đuổi quạ, ⚙ Ngôn ngữ trong vườn → Tiếng Đức (Sổ sinh hoạt);
-   Nhà → Trang trí thử → "Như cảnh thật" (giờ có hộp hỏi).
-3. Gộp master khi thấy ổn (1.35.0 + 1.35.1 đều chưa gộp).
+Người dùng: "tớ không học các tiếng đó nên không đánh giá được đã ổn chưa. bạn tự quyết định" → **chốt** tên báo
+(词田晨报 · 말밭 신문 · Der Wortgarten · Le Jardin des Mots) và câu chữ sau khi sửa ở mục 1.6 (PHAT_TRIEN.md mục 7).
+
+## 6. QA trên máy thật
+
+Danh sách cho người dùng: **`QA_MAY_THAT.md`** (cùng thư mục) — không cần biết các tiếng đó, chỉ so màn hình với cột "Phải
+thấy". Bộ thẻ mẫu `qa/the_mau_QA_1351.apkg` (5 deck: Đức / Pháp / Trung / Hàn có các từ "bẫy" + câu ví dụ, Ý phải là Ngôn ngữ
+khác; sinh bằng `tests/tools/tao_the_mau_qa.py`). Claude tập dượt đúng danh sách đó trong Anki thật: `tests/anki/e2e_qa1351.js`
+(nhập .apkg như người dùng, kiểm ngôn ngữ, trường, từng câu Điền vào câu, mở thật trò Điền vào câu, dòng ⚙) — **29 / 29**.
+
+Việc còn lại: người dùng chạy QA → nhắn "gộp master".

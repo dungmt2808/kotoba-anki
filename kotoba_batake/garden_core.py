@@ -1503,10 +1503,15 @@ def note_audio(note: Any, cfg: dict[str, Any], roles: dict[str, Any] | None = No
 # Câu ví dụ → câu điền từ (game "Điền vào câu")
 # ---------------------------------------------------------------------------
 
-EXAMPLE_NAMES = ["example", "examples", "ví dụ", "câu ví dụ", "例文", "例", "sentence", "câu"]
-_EX_NOT = ("audio", "sound", "âm", "音", "meaning", "translation", "nghĩa", "dịch", "english", "訳", "furigana", "reading")
+# 1.35.1: + tên trường câu ví dụ của deck tiếng Đức / Pháp / Trung / Hàn (Beispiel, Exemple, 例句, 예문) — trước phải tự chọn
+# ở Cấu hình trường thì Điền vào câu / chép chính tả mới có câu
+EXAMPLE_NAMES = ["example", "examples", "ví dụ", "câu ví dụ", "例文", "例", "sentence", "câu", "beispiel", "beispielsatz",
+                 "exemple", "exemples", "例句", "例子", "예문", "예시"]
+_EX_NOT = ("audio", "sound", "âm", "音", "meaning", "translation", "nghĩa", "dịch", "english", "訳", "furigana", "reading",
+           "übersetzung", "traduction", "翻译", "번역", "해석")
 _EX_AUDIO_HINT = ("audio", "sound", "âm thanh", "音声")
-_EX_MEAN_HINT = ("meaning", "translation", "nghĩa", "dịch", "訳", "english", "vietnamese", "tiếng việt")
+_EX_MEAN_HINT = ("meaning", "translation", "nghĩa", "dịch", "訳", "english", "vietnamese", "tiếng việt", "übersetzung",
+                 "traduction", "翻译", "번역", "해석")
 _FURI_TOKEN = re.compile(r" ?([^ >\[\]]+?)\[([^\]]+)\]")
 _KANA_CHARS = re.compile(r"[\u3041-\u309f\u30a0-\u30ff]")
 BLANK = '<span class="kb-blank">\u3000？\u3000</span>'
@@ -1514,7 +1519,7 @@ BLANK = '<span class="kb-blank">\u3000？\u3000</span>'
 
 def _is_exampleish(name: str) -> bool:
     low = name.lower()
-    return any(x in low for x in ("example", "ví dụ", "例", "sentence", "câu"))
+    return any(x in low for x in ("example", "ví dụ", "例", "sentence", "câu", "beispiel", "exemple", "예문", "예시"))
 
 
 def example_fields(keys: list[str], cfg: dict[str, Any]) -> dict[str, str | None]:

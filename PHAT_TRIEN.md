@@ -441,7 +441,9 @@ mới). **Cách sửa Claude chọn, người dùng chưa xem.**
 - **Câu chữ** (`lang_core`): Đức Nanu? / Gut gekämpft! / Ah, tut das gut~; Pháp Courage ! / Ça rend bien ! / Ah, l'eau est bonne~;
   Hàn 창밖을 보다 / 눈 구경을 하다 / 이끼볼 / 따뜻해서 좋다~; khách Chợ sáng Đức / Pháp nói chữ của deck không kèm ", -e" / "(m)"
   (`games.js euFace`); Đuổi quạ nhận động từ phản thân không cần sich / se. `tests/fixtures/chu_135_ref.json` sinh lại.
-- Test: `core/test_1351.py` + `.js` (31 + 5), `anki/e2e_1351.js`; `e2e_134` đổi theo hành vi mới (bản thử lưu được lúc đồng bộ,
+- **Tìm khi soạn QA (18/11)**: Điền vào câu không có câu nào cho deck tiếng Trung / Hàn từ 1.32 (`text_core.find_word` đòi ranh giới chữ vì `\w` gồm chữ Hán / Hangul) → tiếng Hàn tìm bằng `ko_core`, chữ không dấu cách tìm không cần ranh giới; tên trường câu ví dụ Beispiel / Exemple / 例句 / 예문 (+ dịch câu) tự nhận (`garden_core.EXAMPLE_NAMES`, `_EX_MEAN_HINT`).
+- **QA cho người dùng**: `docs/kiem_thu/1.35.1/QA_MAY_THAT.md` + bộ thẻ mẫu `qa/the_mau_QA_1351.apkg` (`tests/tools/tao_the_mau_qa.py`), Claude tập dượt bằng `tests/anki/e2e_qa1351.js`.
+- Test: `core/test_1351.py` + `.js` (33 + 3), `anki/e2e_1351.js`, `anki/e2e_qa1351.js`; `e2e_134` đổi theo hành vi mới (bản thử lưu được lúc đồng bộ,
   "Như cảnh thật" hỏi trước); `test_135` thêm 2 thán từ.
 
 ### 2.6z18 Bản 1.35.0 — tiếng Đức / tiếng Pháp như Anh / Trung / Nhật / Hàn (17/11 đêm)
@@ -1191,6 +1193,7 @@ Add-on chỉ **ghi hai file** trong `bao_dir`: `tien_do.json` và (1.25.8) `truy
 
 ## 7. Quyết định đã chốt (đừng đảo ngược khi chưa hỏi người dùng)
 
+- **Ngôn ngữ Trung / Hàn / Đức / Pháp — người dùng giao Claude quyết (18/11: "tớ không học các tiếng đó nên không đánh giá được đã ổn chưa. bạn tự quyết định")**: **chốt** tên báo 词田晨报 (Trung), 말밭 신문 (Hàn), *Der Wortgarten* (Đức), *Le Jardin des Mots* (Pháp) và bảng chữ `lang_core` sau khi sửa ở 1.35.1 — không cần người dùng chọn nữa. Muốn chắc hơn thì nhờ người giỏi tiếng đó đọc lại (không bắt buộc). Kiểm tra trên máy thật theo `docs/kiem_thu/1.35.1/QA_MAY_THAT.md` (bộ thẻ mẫu `docs/kiem_thu/1.35.1/qa/the_mau_QA_1351.apkg`, sinh bằng `tests/tools/tao_the_mau_qa.py`, tập dượt bằng `tests/anki/e2e_qa1351.js`).
 - **1.35.1 (Claude chọn, người dùng chưa xem)**: nối tra từ "thà bỏ sót còn hơn nối nhầm" cả cho tiếng Đức / Pháp — xét hoa / thường (Đức) và chữ đứng trước (Pháp) thay vì từ điển; bản thử (Trang trí thử) lưu được cả lúc Anki đang đồng bộ (chỉ là file trên máy, đảo quyết định ngầm của 1.34 "lệnh lúc đồng bộ bị bỏ" riêng cho bản thử; "Dùng bản này" vẫn chặn); "Như cảnh thật" dùng hộp hỏi chung (tắt "Hỏi trước khi trả xu" ở ⚙ thì cũng không hỏi).
 - **1.34 (người dùng duyệt ảnh phác `docs/ke_hoach_1_34/`; chi tiết Claude chọn, người dùng chưa xem trên máy)**: Nghe lại = R / F5 như Anki; Phóng to = phím F, nhớ theo máy, **Esc lần 1 thu nhỏ, lần 2 dừng**; Ẩn vườn không đổi cỡ thẻ đã chọn ở ⚙ (vườn ẩn thì thẻ tự cao), Hiện vườn đưa "To hết chỗ" về "Vừa"; giữ phím không lặp lại lượt chấm; **phím của bộ gõ vẫn không chạy phím tắt (1.25.9)**; không làm "Auto Advance" (tự lật / tự chấm theo giây của tuỳ chọn deck) — mẫu thẻ tự lật thì chạy. Ô deck: một nút + cây như Anki, đóng / mở nhánh nhớ theo máy, không ghi cờ thu gọn của Anki. Trang trí thử: **3 bản mỗi cảnh**, lưu **theo hồ sơ trên máy** (không đồng bộ), "Dùng bản này" mua + bày một lần, món đang đặt ở cảnh khác không bị lấy sang (mua thêm), món bản thử không dùng → Kho đồ; thú / khách / StackChan không hiện lúc thử; ảnh chụp lúc thử là cảnh thật.
 - **1.33.3 (Claude chọn, người dùng chưa xem)**: (1) StackChan nói **đúng ngôn ngữ đang chọn** — ở Tiếng Nhật / Anh / Trung /
