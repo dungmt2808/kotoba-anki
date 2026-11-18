@@ -22,8 +22,11 @@ window.MKU = (function () {
 .mk-door.is-shut.star { background: repeating-linear-gradient(135deg, #e9b949 0 10px, #dcab3b 10px 20px); color: #5b3a00; }
 .mk-door.is-open { background: var(--kb-cream); }
 .mk-door.is-open canvas { image-rendering: pixelated; }
+.mk-door .mk-name { font-size: 12px; font-weight: 700; text-align: center; line-height: 1.15; }
+.mk-door .mk-kind { z-index: 1; position: absolute; right: 3px; top: 2px; font-size: 10px; padding: 0 4px; border: 1px solid var(--kb-ink-3); color: #fff; }
+.mk-kind.k-cay { background: #3f7d4f; } .mk-kind.k-nha { background: #a0603a; } .mk-kind.k-trong { background: #2f5fb0; }
 .mk-door .mk-w { font-weight: 700; font-size: 15px; } .mk-door .mk-r { font-size: 11px; color: var(--kb-ink-2); margin-top: -3px; }
-.mk-door .mk-own { white-space: nowrap; position: absolute; right: 3px; top: 2px; font-size: 10px; padding: 0 4px; border: 1px solid #b07a1a; background: #fff3c4; color: #7a4a00; }
+.mk-door .mk-own { z-index: 1; white-space: nowrap; position: absolute; right: 3px; top: 2px; font-size: 10px; padding: 0 4px; border: 1px solid #b07a1a; background: #fff3c4; color: #7a4a00; }
 .mk-door.is-today { background: #ffd23f; box-shadow: 0 0 0 3px #fff3c4, 0 0 0 6px #e9b949; z-index: 1; font-weight: 700; text-align: center; }
 .mk-door.is-today .mk-n { font-size: 15px; }
 .mk-door.is-miss { background: var(--kb-off-2); border-style: dashed; color: var(--kb-ink-2); text-align: center; font-size: 11px; padding: 12px 2px 0; gap: 1px; }
