@@ -205,6 +205,9 @@ echo "== trang/test_trang.py (trang web: đăng / gỡ mã, biểu mẫu issue, 
 OUT=$(python3 "$HERE/trang/test_trang.py" "$ADDON" 2>&1); RC=$?
 echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
 if node -e "require('playwright')" 2>/dev/null; then
+  echo "== core/test_1353.js (1.35.3: cỡ cảnh Lớn ban đêm — đèn sáng của dây trang trí nằm trên dây, không thành dây thứ hai ngang trời)"
+  OUT=$(node "$HERE/core/test_1353.js" "$ADDON" 2>&1); RC=$?
+  echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
   echo "== trang/kiem_tra_trang.js (trang web trong Chromium: vùng vẽ khớp add-on từng điểm ảnh, giải mã = add-on, chạy cả trang)"
   OUT=$(node "$HERE/trang/kiem_tra_trang.js" "$ADDON" 2>&1); RC=$?
   echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1

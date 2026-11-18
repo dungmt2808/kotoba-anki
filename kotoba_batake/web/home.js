@@ -1593,6 +1593,9 @@ var GardenHome = (function () {
     }
   }
 
+  // 1.35.3: % dương cho toạ độ âm (màn chính rộng: nền kéo sang trái cảnh, bgFrom < 0) — % của JS giữ dấu → chấm đất lên trời,
+  // chỉ số màu âm → undefined → tone() ném lỗi, cả khung hình vẽ dở (vùng tự tạo "Đồi hoa")
+  const md = (k, n) => ((k % n) + n) % n;
   function tone(c, st, base) { const k = base === undefined ? 0.45 : base; return GardenSky.shade(c, k + (1 - k) * st.light); }
   function snowy(c, st, k) { return st.snow || st.cover ? GardenSky.mix(c, "#eaf1f7", k || 0.72) : c; }
   // 1.10: cây / đất riêng của từng vùng theo Mùa & Lễ hội (xem GardenSeason.foliage)
@@ -1635,7 +1638,7 @@ var GardenHome = (function () {
       ctx.globalAlpha = 0.85;
       for (let i = Math.floor(x0); i < x1; i += 2) { box(ctx, ox + i, oy + G0 - 1 + Math.round(1 + Math.sin(i / 9 + now / 700)), 2, 1, "#ffffff", S); }
       ctx.globalAlpha = 1;
-      for (let i = 3 + Math.floor(x0 / 13) * 13; i < x1; i += 13) { box(ctx, ox + i, oy + 34 + (i * 7) % 38, 1, 1, tone("#ffc4d6", st), S); }
+      for (let i = 3 + Math.floor(x0 / 13) * 13; i < x1; i += 13) { box(ctx, ox + i, oy + 34 + md(i * 7, 38), 1, 1, tone("#ffc4d6", st), S); }
     } else if (zid === "shrine") {
       const mtn = GardenSky.mix(tone("#7d8fb3", st, 0.35), st.bottom, 0.35), cap = tone("#f4f7ff", st, 0.4);
       const peaks = [[40, 24], [130, 20], [215, 26], [300, 21]];
@@ -2695,14 +2698,14 @@ var GardenHome = (function () {
       for (let i = Math.floor(x0); i < x1; i++) {
         const hh = 5 + Math.round(amp * Math.sin(i / (bg === "sand" ? 31 : 17)) + 2 * Math.sin(i / 7));
         box(ctx, ox + i, oy + G0 - hh, 1, hh, hill, S);
-        if (bg === "flower" && (i * 13) % 7 === 0) { box(ctx, ox + i, oy + G0 - hh, 1, 1, tone(["#ff7fa0", "#ffd23f", "#ffffff"][i % 3], st, 0.4), S); }
+        if (bg === "flower" && md(i * 13, 7) === 0) { box(ctx, ox + i, oy + G0 - hh, 1, 1, tone(["#ff7fa0", "#ffd23f", "#ffffff"][md(i, 3)], st, 0.4), S); }
       }
     }
     box(ctx, ox + x0, oy + G0, BW, YARD.H - G0, ground, S);
     box(ctx, ox + x0, oy + G0, BW, 1, dark, S);
     for (let i = 3 + Math.floor(x0 / 9) * 9; i < x1; i += 9) {
-      const y = oy + G0 + 4 + (i * 7) % 42;
-      if (bg === "flower") { box(ctx, ox + i, y, 1, 1, tone(["#ff7fa0", "#ffd23f", "#ffffff", "#c77dff"][(i / 9) % 4 | 0], st), S); }
+      const y = oy + G0 + 4 + md(i * 7, 42);
+      if (bg === "flower") { box(ctx, ox + i, y, 1, 1, tone(["#ff7fa0", "#ffd23f", "#ffffff", "#c77dff"][md(Math.floor(i / 9), 4)], st), S); }
       else if (bg === "sand") { box(ctx, ox + i, y, 3, 1, dark, S); }
       else if (bg === "snow") { if ((i + Math.floor(now / 500)) % 4 === 0) { box(ctx, ox + i, y, 1, 1, "#ffffff", S); } }
       else if (bg === "rock") { box(ctx, ox + i, y, 2, 1, GardenSky.shade(ground, 0.7), S); box(ctx, ox + i, y - 1, 1, 1, lite, S); }
@@ -2925,7 +2928,7 @@ var GardenHome = (function () {
     if (sea) { sea.decorHills(ctx, S, ox, oy, bx0, bx1, YARD.SKY, st); }
     // đất sân
     box(ctx, ox + bx0, oy + YARD.SKY, BW, YARD.H - YARD.SKY, st.ground, S);
-    for (let i = 3 + Math.floor(bx0 / 11) * 11; i < bx1; i += 11) { box(ctx, ox + i, oy + YARD.SKY + 4 + (i * 7) % 40, 1, 1, st.grass, S); }
+    for (let i = 3 + Math.floor(bx0 / 11) * 11; i < bx1; i += 11) { box(ctx, ox + i, oy + YARD.SKY + 4 + md(i * 7, 40), 1, 1, st.grass, S); }
     if (sea) { sea.decorGround(ctx, S, ox, oy, bx0, bx1, YARD.SKY, YARD.H, st); }
     box(ctx, ox + 28, oy + 74, 8, 2, "#d9ae72", S);
     if (typeof GardenSky !== "undefined") { drawPuddles(ctx, S, ox, oy, now, bx0, bx1, st); }
@@ -2949,9 +2952,9 @@ var GardenHome = (function () {
     });
     drawPetsBefore(ctx, S, ox, oy, pets, pst, null, now);
     drawParts(ctx, S, ox, oy, sceneName);
-    if (sea) { sea.ambient(ctx, S, ox, oy, now, bx0, bx1, YARD.H, st); }
+    if (sea) { sea.ambient(ctx, S, ox, oy, now, bx0, bx1, YARD.H, st, P0); }
     if (typeof GardenJoy !== "undefined" && !(opts && opts.noJoy) && (isOpen || UIget("joy") !== "off")) {
-      GardenJoy.drawYard(ctx, S, ox, oy, now, bx0, bx1, YARD.SKY, st);
+      GardenJoy.drawYard(ctx, S, ox, oy, now, bx0, bx1, YARD.SKY, st, P0);
     }
     if (typeof GardenSky !== "undefined" && (isOpen || UIget("weather") !== "off")) {
       drawWeather(ctx, S, ox, oy - P0, now, bx0, bx1, YARD.H + P0, st, YARD.SKY + P0);
@@ -2960,7 +2963,7 @@ var GardenHome = (function () {
         if (dark > 0.01) { ctx.globalAlpha = dark; box(ctx, ox + bx0, oy - P0, bx1 - bx0, P0, "#0b0b2a", S); ctx.globalAlpha = 1; }
       }
       drawNight(ctx, S, ox, oy, bx0, bx1, YARD.H, st);
-      if (sea) { sea.nightTop(ctx, S, ox, oy, now, bx0, bx1, YARD.H, st); }
+      if (sea) { sea.nightTop(ctx, S, ox, oy, now, bx0, bx1, YARD.H, st, oy - P0); }
     }
     guestsTop(ctx, S, ox, oy, sceneName, now, st, opts);
     // 1.28: gánh hàng rong + chỗ lấp lánh (không vẽ ở ảnh xem trước / ảnh chụp / bản vẽ của Xưởng)

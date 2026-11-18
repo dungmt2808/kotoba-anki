@@ -158,12 +158,15 @@ var GardenSeason = (function () {
   // pass 0 = vẽ thường · pass 1 = lớp sáng ban đêm (vẽ sau khi phủ tối)
   // ---------------------------------------------------------------------
   const LIGHT_COLS = [C.r, C.y, C.l, C.f, C.p];
+  // 1.35.3: k âm khi dây kéo sang trái cảnh (màn chính rộng, bgFrom < 0) — % của JS cho số âm → chỉ số màu âm → undefined
+  // (đèn Giáng sinh khi tắt hiệu ứng: ném lỗi, cả khung hình vẽ dở; các kiểu khác: màu lấy nhầm của lần vẽ trước)
+  const md = (k, n) => ((k % n) + n) % n;
   const GARLAND = {
     lights: { rope: "#1f5f2a", step: 5, orn: function (ctx, S, x, y, k, now, pass) {
-      const on = (Math.floor(now / 520) + k) % 3 !== 0, c = LIGHT_COLS[(k + Math.floor(now / 1560)) % LIGHT_COLS.length];
+      const on = md(Math.floor(now / 520) + k, 3) !== 0, c = LIGHT_COLS[md(k + Math.floor(now / 1560), LIGHT_COLS.length)];
       if (pass) { if (!on) { return; } ctx.globalAlpha = 0.35; bx(ctx, x - 1, y, 3, 3, c, S); ctx.globalAlpha = 1; bx(ctx, x, y + 1, 1, 1, c, S); return; }
       bx(ctx, x, y, 1, 1, "#1b1b2f", S); bx(ctx, x, y + 1, 1, 2, on ? c : shade(c, 0.45), S);
-      if (k % 4 === 2) { bx(ctx, x - 1, y - 1, 1, 1, C.R, S); bx(ctx, x + 1, y - 1, 1, 1, C.R, S); }
+      if (md(k, 4) === 2) { bx(ctx, x - 1, y - 1, 1, 1, C.R, S); bx(ctx, x + 1, y - 1, 1, 1, C.R, S); }
     } },
     chochin: { rope: "#3a3a55", step: 8, orn: function (ctx, S, x, y, k, now, pass) {
       const c = k % 2 ? C.w : C.r;
@@ -184,8 +187,8 @@ var GardenSeason = (function () {
     } },
     bunting: { rope: "#2b2140", step: 4, orn: function (ctx, S, x, y, k, now, pass) {
       if (pass) { return; }
-      const c = [C.o, "#6a2c9f", C.k][k % 3];
-      if (k % 7 === 3) {   // bí ngô nhỏ
+      const c = [C.o, "#6a2c9f", C.k][md(k, 3)];
+      if (md(k, 7) === 3) {   // bí ngô nhỏ
         bx(ctx, x - 1, y + 1, 3, 2, C.o, S); bx(ctx, x, y, 1, 1, C.G, S); bx(ctx, x, y + 1, 1, 1, "#c96a10", S);
         return;
       }
@@ -194,12 +197,12 @@ var GardenSeason = (function () {
     streamers: { rope: "#2e8b3a", step: 3, orn: function (ctx, S, x, y, k, now, pass) {
       if (pass) { if (k % 5 === 0) { ctx.globalAlpha = 0.4; bx(ctx, x - 1, y, 3, 3, C.Y, S); ctx.globalAlpha = 1; } return; }
       if (k % 5 === 0) { bx(ctx, x, y, 1, 1, C.y, S); bx(ctx, x - 1, y + 1, 3, 1, C.y, S); bx(ctx, x, y + 2, 1, 1, C.y, S); return; }
-      const c = [C.r, C.l, C.v, C.f, C.p, C.o][k % 6], len = 3 + (k * 7) % 3, sw = Math.round(Math.sin(now / 500 + k) * 0.7);
+      const c = [C.r, C.l, C.v, C.f, C.p, C.o][md(k, 6)], len = 3 + md(k * 7, 3), sw = Math.round(Math.sin(now / 500 + k) * 0.7);
       for (let j = 0; j < len; j++) { bx(ctx, x + (j > 1 ? sw : 0), y + j, 1, 1, c, S); }
     } },
     flowers: { rope: "#2e8b3a", step: 4, orn: function (ctx, S, x, y, k, now, pass) {
       if (pass) { return; }
-      const c = [C.P, C.w, "#ffe95c", C.p][k % 4];
+      const c = [C.P, C.w, "#ffe95c", C.p][md(k, 4)];
       bx(ctx, x, y + 1, 1, 1, C.o, S); bx(ctx, x - 1, y + 1, 1, 1, c, S); bx(ctx, x + 1, y + 1, 1, 1, c, S); bx(ctx, x, y, 1, 1, c, S); bx(ctx, x, y + 2, 1, 1, c, S);
       if (k % 2) { bx(ctx, x + 2, y, 1, 1, C.g, S); }
     } },
@@ -214,12 +217,12 @@ var GardenSeason = (function () {
     } },
     leaves: { rope: "#8a5a34", step: 3, orn: function (ctx, S, x, y, k, now, pass) {
       if (pass) { return; }
-      const c = [C.o, C.y, C.r, "#d98a3a"][k % 4];
+      const c = [C.o, C.y, C.r, "#d98a3a"][md(k, 4)];
       bx(ctx, x, y, 2, 1, c, S); bx(ctx, x, y + 1, 1, 1, c, S);
     } },
     momiji: { rope: "#6b3b1f", step: 3, orn: function (ctx, S, x, y, k, now, pass) {
       if (pass) { return; }
-      const c = [C.r, C.o, C.R, C.r, C.y][k % 5];
+      const c = [C.r, C.o, C.R, C.r, C.y][md(k, 5)];
       bx(ctx, x - 1, y, 3, 1, c, S); bx(ctx, x, y + 1, 1, 1, c, S); bx(ctx, x, y - 1, 1, 1, c, S);
     } },
     icicles: { rope: "#ffffff", thick: 2, step: 2, orn: function (ctx, S, x, y, k, now, pass) {
@@ -248,12 +251,12 @@ var GardenSeason = (function () {
     shimenawa: { rope: "#e2c27a", thick: 2, step: 7, orn: function (ctx, S, x, y, k, now, pass) {
       if (pass) { return; }
       bx(ctx, x, y + 1, 2, 1, C.w, S); bx(ctx, x + 1, y + 2, 2, 1, C.w, S); bx(ctx, x, y + 3, 2, 1, C.w, S); bx(ctx, x + 1, y + 4, 2, 1, C.w, S);
-      if (k % 3 === 1) { bx(ctx, x + 4, y + 1, 1, 3, C.r, S); bx(ctx, x + 5, y + 1, 1, 3, C.w, S); }
+      if (md(k, 3) === 1) { bx(ctx, x + 4, y + 1, 1, 3, C.r, S); bx(ctx, x + 5, y + 1, 1, 3, C.w, S); }
     } },
     furin: { rope: "#8a8fa8", step: 10, orn: function (ctx, S, x, y, k, now, pass) {
       if (pass) { return; }
       const sw = Math.round(Math.sin(now / 450 + k * 1.3) * 0.9);
-      bx(ctx, x - 1, y, 3, 1, "#bfe9ff", S); bx(ctx, x - 2, y + 1, 5, 2, "#bfe9ff", S); bx(ctx, x - 1, y + 1, 1, 1, [C.r, C.d, C.g][k % 3], S);
+      bx(ctx, x - 1, y, 3, 1, "#bfe9ff", S); bx(ctx, x - 2, y + 1, 5, 2, "#bfe9ff", S); bx(ctx, x - 1, y + 1, 1, 1, [C.r, C.d, C.g][md(k, 3)], S);
       bx(ctx, x, y + 3, 1, 1, C.S, S); bx(ctx, x + sw, y + 4, 1, 3, k % 2 ? C.r : C.w, S);
     } }
   };
@@ -447,26 +450,30 @@ var GardenSeason = (function () {
     if (pass && st.light >= 0.6) { return; }
     garland(ctx, S, ox, oy, x0, x1, 1, effects() ? now : 0, v.garland, pass);
   }
-  function ambient(ctx, S, ox, oy, now, x0, x1, H, st) {
+  // pad (1.35.3): cỡ cảnh Lớn — số hàng trời thêm phía trên oy; hạt rơi / dơi / ma trơi bay cả phần trời đó
+  // (trước: hạt chỉ có từ oy trở xuống → phần trời thêm trống, hạt hiện ra từ một đường ngang giữa trời)
+  function ambient(ctx, S, ox, oy, now, x0, x1, H, st, pad) {
     const v = V();
     if (!v || !effects()) { return; }
-    const W = x1 - x0;
+    const W = x1 - x0, P = Math.max(0, pad || 0);
     (v.ambient || []).forEach(([kind, per100], kk) => {
       if (!okNow(kind, st)) { return; }
       if ((kind === "petal" || kind === "leaf" || kind === "ypetal" || kind === "gleaf") && (st.rain || st.snow)) { return; }
-      const n = Math.max(1, Math.round(W / 100 * per100));
       const top = kind === "drop" ? 30 : kind === "firefly" || kind === "bfly" || kind === "tonbo" || kind === "tonboR" ? 26 : 0;
-      const h = kind === "bat" || kind === "wisp" ? 30 : H - top;
-      for (let i = 0; i < n; i++) { flyer(ctx, S, ox, oy, kind, i + kk * 101, now, x0, W, top, h); }
+      const h0 = kind === "bat" || kind === "wisp" ? 30 : H - top, up = top ? 0 : P;
+      // giữ mật độ như cỡ thường: phần trời thêm có thêm hạt theo tỉ lệ chiều cao (cỡ thường: up = 0, y hệt trước)
+      const n = Math.max(1, Math.round(W / 100 * per100 * (up ? (h0 + up) / h0 : 1)));
+      for (let i = 0; i < n; i++) { flyer(ctx, S, ox, oy, kind, i + kk * 101, now, x0, W, top - up, h0 + up); }
     });
   }
-  function nightTop(ctx, S, ox, oy, now, x0, x1, H, st) {
+  // gy: oy của dây trang trí (cỡ cảnh Lớn vẽ dây ở oy − padTop) — lớp đèn sáng phải trùng chỗ dây, không thì thành dây thứ hai ngang cảnh (1.35.3)
+  function nightTop(ctx, S, ox, oy, now, x0, x1, H, st, gy) {
     const v = V();
     if (!v) { return; }
     if ((v.sky || []).indexOf("fireworks") >= 0 && st.light < 0.5 && !st.rain && effects()) {
       fireworks(ctx, S, ox, oy, now, x0, x1 - x0, 26, v.fw || [C.r, C.y, C.l], Math.max(2, Math.round((x1 - x0) / 150)), 0);
     }
-    sceneGarland(ctx, S, ox, oy, now, x0, x1, 1, st);
+    sceneGarland(ctx, S, ox, gy === undefined ? oy : gy, now, x0, x1, 1, st);
   }
   // Trong phòng: dây trang trí dưới xà nhà
   function room(ctx, S, ox, oy, now, W, pass, st) {
