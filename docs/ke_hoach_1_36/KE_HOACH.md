@@ -1,4 +1,36 @@
-# Kế hoạch 1.36 — Giáng sinh: tủ lịch 24 ngăn, nhà khoác áo Noel, cây thông được tặng đầy dần, thiệp điều ước (18–19/11; **ảnh phác bản 3, chưa làm**)
+# Kế hoạch 1.36 — Giáng sinh: tủ lịch 24 ngăn, sân sáng đèn, cây thông được tặng đầy dần, thiệp điều ước (18–19/11; **ảnh phác bản 4, chưa làm**)
+
+## Bản 4 (19/11) — ngoài nhà = **sân sáng đèn**; sau Noel thì sao — **chờ người dùng duyệt**
+
+Người dùng sau bản 3: "ngoài nhà vẫn chưa ấn tượng lắm. với tủ lịch và mấy đồ trang trí hết noel thì sao".
+
+**Ngoài nhà** (`ban4/`, bước `v4den` của `mock_136.js`): chi tiết nhỏ trên ngôi nhà 64 × 76 khó gây ấn tượng → **cả sân sáng đèn ban
+đêm** kiểu イルミネーション, đèn trắng ấm / vàng / xanh băng (ít màu, sang hơn đèn 7 màu), lên dần mỗi tuần một lớp (thay 4 nấc áo
+nhà của bản 3 — áo nhà giữ phần mái tuyết + dây lá thông + vòng hoa):
+tuần 1 viền mái + đèn băng dưới mái · tuần 2 cây thông sáng + đèn lối đi · tuần 3 dây đèn võng qua sân (chạy đuổi nhau) · tuần 4
+tuần lộc đèn + thông sáng trên đồi. Đèn nhấp nháy, quầng sáng trên tuyết; ban ngày chỉ thấy dây đèn tắt.
+
+| Ảnh | Nội dung |
+|---|---|
+| `ban4/01_san_sang_den.png` | 4 tuần sáng dần (ban đêm) |
+| `ban4/02_san_sang_den.gif` | ảnh động tuần 4: đèn nhấp nháy, dây đèn chạy đuổi, tuyết rơi (14 khung) |
+| `ban4/03_tuan_4_lon.png` | tuần 4 cỡ lớn |
+
+**Hết Noel** (Claude đề xuất):
+- 25–31/12 giữ nguyên mọi thứ (giao diện mùa Giáng sinh chạy tới 31/12); ngăn lỡ còn mở bù được; hộp quà bí mật mở từ sáng 25.
+- **Lần đầu mở vườn từ 1/1**: cảnh ngắn StackChan **cất đồ Noel vào hộp** (kiểu Nhật dọn đồ Noel để đón お正月) → sân, nhà, trong nhà về
+  như cũ; giao diện お正月 (1–15/1, đã có) lên nếu đã mở. Không hỏi gì; muốn bày lại thì vào Kho đồ.
+- **Tủ lịch** → món kỷ niệm **"Tủ lịch 2026"** trong Kho đồ: treo tiếp được quanh năm, bấm vào xem lại 24 ngăn (món + ngày mở). Năm sau
+  có **tủ lịch 2027** mới (ngăn đóng, món mới); tủ cũ vẫn giữ — sưu tầm mỗi năm một tủ.
+- **Đồ trong nhà** (hộp nhạc, tất, đèn ngủ ngôi sao, quả cầu tuyết, quà trong hộp bí mật): thành đồ thường trong Kho đồ, bày quanh năm.
+  Bánh kem / bánh quy là đồ ăn: sáng 25 StackChan ăn (một việc sinh hoạt), chỉ còn trong Kỷ niệm.
+- **Đèn sân + áo nhà** = "Bộ Giáng sinh 2026": cất trong Kho đồ, **chỉ bày được trong mùa Giáng sinh** (15/11–31/12) để mỗi năm vẫn có
+  cảm giác mùa; 1/12 năm sau hỏi một lần "Bày lại bộ 2026 ngay, hay cho đèn sáng dần cùng tủ lịch mới?".
+- **Cây thông được tặng**: giữ như cũ (đã đầy đủ đồ trang trí, là đồ của giao diện mùa).
+- **Tường / sàn Noel**: giữ trong danh sách mẫu; gian đang dùng mẫu Noel tự về mẫu dùng trước đó (vườn nhớ), chọn lại lúc nào cũng được.
+- **Kỷ niệm Giáng sinh 2026** (tab Album): ảnh sân sáng đèn đêm 24, ảnh trong nhà, thiệp, thư của ông, tủ lịch.
+
+---
 
 ## Bản 3 (19/11) — đề xuất hiện tại, **chờ người dùng duyệt**
 

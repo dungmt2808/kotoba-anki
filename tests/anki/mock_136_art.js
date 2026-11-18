@@ -328,6 +328,70 @@ window.MK = (function () {
   const NOTE = pic(["wwwww", "wkkkw", "wwwww", "wkkww", "wwwww"]);
   const BOX_R = L.SPR.presents;
 
+  // ---------------------------------------------------------------- 1.36 bản 4: sân sáng đèn (イルミネーション), lên dần 4 tuần
+  const WARM = "#fff6d8", GOLD = "#ffd23f", ICE = "#bfe6ff";
+  const REIN = ["...k.k...........", "..kkkk...........", "...kk............", "..kkkk...........", "..kkkkk..........", "...kkkkkkkkkkkk..", "....kkkkkkkkkkkk.",
+    "....kkkkkkkkkkk..", "....kk.......kk..", "....k.k.....k.k..", "....k.k.....k.k..", "....k.k.....k.k.."];
+  const REIN_EDGE = (function () {
+    const pts = [];
+    REIN.forEach((r, y) => { for (let x = 0; x < r.length; x++) { if (r[x] === ".") { continue; }
+      const e = [[0, 1], [0, -1], [1, 0], [-1, 0]].some(([dx, dy]) => !REIN[y + dy] || REIN[y + dy][x + dx] !== "k");
+      if (e) { pts.push([x, y]); } } });
+    return pts;
+  })();
+  function hsh(n) { const s2 = Math.sin(n * 127.1 + 311.7) * 43758.5453; return s2 - Math.floor(s2); }
+  function bulb(v, x, y, c, on, glow) {
+    const { ctx, S } = v;
+    if (on && glow) { const cx = (v.ox + x + 0.5) * S, cy = (v.oy + y + 0.5) * S, r = glow * S, g = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+      g.addColorStop(0, c + "aa"); g.addColorStop(1, c + "00"); ctx.fillStyle = g; ctx.fillRect(cx - r, cy - r, r * 2, r * 2); }
+    L.box(ctx, v.ox + x, v.oy + y, 1, 1, on ? c : "#4a4a60", S);
+  }
+  function pool(v, x, y, rx, c, a) {      // quầng sáng trên tuyết
+    const { ctx, S } = v, cx = (v.ox + x) * S, cy = (v.oy + y) * S;
+    ctx.save(); ctx.translate(cx, cy); ctx.scale(1, 0.32); const g = ctx.createRadialGradient(0, 0, 0, 0, 0, rx * S);
+    g.addColorStop(0, c.replace("A", String(a))); g.addColorStop(1, c.replace("A", "0")); ctx.fillStyle = g; ctx.fillRect(-rx * S, -rx * S, rx * 2 * S, rx * 2 * S); ctx.restore();
+  }
+  // lv 1: viền mái + đèn băng · 2: + đèn lối đi + cây sáng · 3: + dây đèn võng qua sân · 4: + tuần lộc đèn + thông trên đồi
+  function xstar(v, x, y) {
+    const { ctx, S } = v, X = v.ox + x, Y = v.oy + y;
+    for (let y2 = 0; y2 < 8; y2++) { for (let x2 = 0; x2 < XT_W; x2++) { const c = XT[y2][x2]; if (c !== "." && "yik".indexOf(c) >= 0) { L.box(ctx, X + x2, Y + y2, 1, 1, P[c] || c, S); } } }
+  }
+  function drawIllum(v, t, lv, tree) {
+    const tw = (i) => hsh(i * 3.7 + Math.floor(t)) > 0.12;
+    let id = 0;
+    if (lv >= 1) {
+      for (let y = 14; y <= 33; y += 2) { const h = Math.round((y - 13) * 1.45) + 3; bulb(v, 32 - h - 1, y, WARM, tw(id++), 2.2); bulb(v, 32 + h, y, WARM, tw(id++), 2.2); }
+      for (let x = 29; x <= 35; x += 2) { bulb(v, x, 11, WARM, tw(id++), 2.2); }
+      for (let x = 1; x <= 63; x += 2) { bulb(v, x, 37, GOLD, tw(id++), 2); }
+      const LEN = [3, 5, 7, 4, 6, 8, 5, 3, 6, 4];
+      for (let x = 2, k = 0; x <= 62; x += 3, k++) { for (let j = 1; j <= LEN[k % LEN.length]; j += 1) { if (j % 2 === 0) { bulb(v, x, 37 + j, j % 4 === 0 ? ICE : WARM, tw(id++), 1.6); } } }
+    }
+    if (lv >= 2) {
+      for (let x = 72; x <= 142; x += 14) { L.box(v.ctx, v.ox + x, v.oy + 70, 1, 4, "#3a2a22", v.S); bulb(v, x, 69, GOLD, true, 4); L.box(v.ctx, v.ox + x - 0.5, v.oy + 68.5, 2, 1, GOLD, v.S); pool(v, x, 74, 9, "rgba(255,210,90,A)", 0.45); }
+      if (tree) {
+        const sp = tree;
+        for (let y = 6; y < 34; y++) { for (let x = 0; x < sp[y].length; x++) { if ("gGj".indexOf(sp[y][x]) >= 0 && (x * 7 + y * 5) % 11 === 0) { bulb(v, 150 + x, 30 + y, (x + y) % 3 ? WARM : GOLD, tw(id++), 1.8); } } }
+        pool(v, 166, 74, 22, "rgba(255,230,150,A)", 0.5);
+      }
+    }
+    if (lv >= 3) {
+      const swag = (x0, y0, x1, y1, sag, k0) => { const n = Math.round((x1 - x0) / 4); for (let k = 0; k <= n; k++) { const u = k / n, x = x0 + (x1 - x0) * u, y = y0 + (y1 - y0) * u + sag * 4 * u * (1 - u);
+        const c = [GOLD, ICE, WARM][(k + k0) % 3], on = (k + Math.floor(t)) % 3 !== 0; bulb(v, Math.round(x), Math.round(y), c, on, on ? 2.4 : 0); } };
+      L.box(v.ctx, v.ox + 245, v.oy + 40, 2, 34, "#3a2a22", v.S); L.box(v.ctx, v.ox + 244, v.oy + 39, 4, 1, "#3a2a22", v.S);
+      swag(63, 35, 158, 42, 9, 0); swag(182, 42, 245, 40, 7, 1); swag(52, 13, 164, 31, 8, 2);
+    }
+    if (lv >= 4) {
+      [[196, 61, GOLD], [220, 61, WARM]].forEach(([x0, y0, c], r) => {
+        pool(v, x0 + 9, 74, 14, "rgba(255,240,190,A)", 0.4);
+        REIN_EDGE.forEach(([x, y], k) => bulb(v, x0 + x, y0 + y, c, tw(k + r * 50) || k % 2 === 0, 1.6));
+      });
+      [[86, 21], [118, 19], [212, 20], [238, 22]].forEach(([x0, y0], k) => {
+        for (let j = 0; j < 7; j++) { const h = Math.floor(j / 2); L.box(v.ctx, v.ox + x0 - h, v.oy + y0 + j, h * 2 + 1, 1, "#1f3a2a", v.S); }
+        [[0, 1], [-1, 4], [1, 5], [-2, 6], [2, 6]].forEach(([dx, dy], q) => bulb(v, x0 + dx, y0 + dy, [GOLD, ICE, WARM][(q + k) % 3], tw(q + k * 9 + 300), 1.6));
+      });
+    }
+  }
+
   // ---------------------------------------------------------------- vẽ đè lên dải cảnh
   function cover(id) {
     const cv = document.getElementById("kb-yard"), r = cv.getBoundingClientRect();
@@ -409,5 +473,5 @@ window.MK = (function () {
     drawTree(fake, Object.assign({}, st, { tx: 0, ty: 0 }));
     return fake;
   }
-  return { XT, XT_BARE, xtree, drawXTree, drawHouseNoel, drawCabinet, drawCabinetMini, MUSIC_BOX, COOKIES, CRUMBS, MILK, GLASS, NOTE, BOW, ROOF_STAR, SPOTS2, WREATH, SNOWMAN_BIG, CANE_BIG, CANDLE, STICKER, STOCKING, MINI_TREE, CAKE, YUZU_BOWL, GIFTS, PAINT, drawHouseDeco, drawRoomDeco, coverHouse, L, P, ORN, ORN_NAME, DOORS, TREE, TREE_W, TREE_H, SPOTS, SANTA, SANTA_BAG, STACK, CAT, PRINT, SANTA_HAT, cover, drawTree, glow, spr, tint, icon, miniTree, pic };
+  return { xstar, drawIllum, XT, XT_BARE, xtree, drawXTree, drawHouseNoel, drawCabinet, drawCabinetMini, MUSIC_BOX, COOKIES, CRUMBS, MILK, GLASS, NOTE, BOW, ROOF_STAR, SPOTS2, WREATH, SNOWMAN_BIG, CANE_BIG, CANDLE, STICKER, STOCKING, MINI_TREE, CAKE, YUZU_BOWL, GIFTS, PAINT, drawHouseDeco, drawRoomDeco, coverHouse, L, P, ORN, ORN_NAME, DOORS, TREE, TREE_W, TREE_H, SPOTS, SANTA, SANTA_BAG, STACK, CAT, PRINT, SANTA_HAT, cover, drawTree, glow, spr, tint, icon, miniTree, pic };
 })();

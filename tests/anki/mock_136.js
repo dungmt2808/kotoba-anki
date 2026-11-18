@@ -556,6 +556,30 @@ STEPS.v3dem = async () => {
   await hideToast(); await shot('raw_v3_dem');
 };
 
+// ======================================================================= bản 4 (19/11): sân sáng đèn (イルミネーション) lên dần + ảnh động
+async function illum(lv, t, first) {
+  if (first) { await sky(21, 'snow'); await sleep(900); }
+  await clearMk(); await loadArt();
+  return js(`MKU.ensureCss(); const v = MK.cover("mk-ov"); const st = ${JSON.stringify(xtAt(24))}; st.night = false; st.lights = false; st.star = ${lv >= 2};
+    MK.drawHouseNoel(v, 2, true); MK.spr(v, MK.SNOWMAN_BIG, 64, 57); MK.drawXTree(v, 150, 30, st);
+    MK.spr(v, MK.STACK, 112, 64); MK.spr(v, MK.SANTA_HAT, 109, 59); MK.spr(v, MK.CAT, 125, 67);
+    MK.tint(v, 0.38);
+    MK.drawHouseNoel(v, 4, true, true);
+    MK.drawIllum(v, ${t}, ${lv}, MK.xtree(st));
+    if (${lv} >= 2) { const S = v.S, cx = (v.ox + 166) * S, cy = (v.oy + 33) * S, g = v.ctx.createRadialGradient(cx, cy, S, cx, cy, 13 * S); g.addColorStop(0, "rgba(255,240,160,.55)"); g.addColorStop(1, "rgba(255,240,160,0)"); v.ctx.fillStyle = g; v.ctx.fillRect(cx - 13 * S, cy - 13 * S, 26 * S, 26 * S); MK.xstar(v, 150, 30); }
+    return 1;`);
+}
+STEPS.v4den = async () => {
+  await collapseToday();
+  for (const lv of [1, 2, 3, 4]) { await illum(lv, 0, lv === 1); await hideToast(); await shot('raw_v4_lv' + lv); }
+  fs.mkdirSync(path.join(OUT, 'gif'), { recursive: true });
+  for (let f = 0; f < 14; f++) {
+    await illum(4, f, false); await sleep(60);
+    await page.shot(path.join(OUT, 'gif', 'f' + String(f).padStart(2, '0') + '.png'));
+  }
+  console.log('  gif 14 khung');
+};
+
 (async () => {
   await connect();
   await py(KB + `kb.finds.is_market = lambda day: False
