@@ -4,7 +4,8 @@
 //   2. ⚙ hiệu ứng tắt (như máy bật "giảm chuyển động"): khung hình vẽ đủ, không lỗi JS (1.35.2: đèn Giáng sinh ném lỗi
 //      ở phần cảnh bên trái → khung hình vẽ dở);
 //   3. vùng tự tạo nền "Đồi hoa" ở màn chính rộng: vẽ đủ (1.35.2: ném lỗi mỗi khung hình → chỉ còn trời);
-//   4. nhật ký lỗi add-on trống, không lỗi JS.
+//   4. Trò chơi → nút Ẩn vườn / Hiện vườn (như bảng ôn): vùng chơi cao kín cửa sổ, nhớ lựa chọn, Hiện vườn về như cũ;
+//   5. nhật ký lỗi add-on trống, không lỗi JS.
 // Chạy: KB_SCRIPTS=e2e_1353.js run_ui.sh ADDON SHOTS
 const { pages, Page, sleep } = require('./cdp');
 const SHOTS = process.argv[2] || '/tmp/kb_shots';
@@ -96,6 +97,47 @@ const SCAN = `
   ok(ground, 'vùng Đồi hoa: đất xanh vẽ tới tận mép trái cửa sổ (1.35.2: chỉ còn trời)');
   await js('GardenPrefs.set("kb-main-scene", "yard"); return 1;');
   await py(KB + 'kb.save_config(ui={}); result = 1');
+
+  // ---- Trò chơi → Ẩn vườn / Hiện vườn (người dùng: "cho lựa chọn giống bên thẻ học đi, chỉ ẩn vườn, hiện vườn thôi") ----
+  console.log('== Trò chơi: Ẩn vườn / Hiện vườn');
+  await py(KB + 'kb._dialog.resize(1850, 1130); d = kb._dialog; d.deck_id = mw.col.decks.id_for_name("A::Có câu ví dụ + audio"); d.refresh(); result = 1'); await sleep(2000);
+  await js('GardenSeason.preview("noel"); document.getElementById("kb-games").click(); return 1;'); await sleep(1500);
+  const geo = () => js(`const st = document.getElementById("kb-g-stage").getBoundingClientRect(), y = document.getElementById("kb-yard-wrap"), f = document.getElementById("kb-field"), b = document.getElementById("kb-g-garden");
+    return JSON.stringify({ stage: Math.round(st.height), bottom: Math.round(st.bottom), vh: innerHeight, yard: !!y.offsetParent, field: !!(f && f.offsetParent), btn: b ? b.textContent : null, pressed: b && b.getAttribute("aria-pressed"), docH: document.documentElement.scrollHeight });`).then(JSON.parse);
+  const g0 = await geo();
+  ok(g0.btn === 'Ẩn vườn' && g0.pressed === 'false', 'bảng Trò chơi có nút "Ẩn vườn" (như bảng ôn)');
+  ok(g0.yard && g0.stage <= 730, 'mặc định như cũ: vùng chơi tối đa ~720 px (' + g0.stage + '), vườn ở dưới');
+  await js('document.getElementById("kb-g-garden").click(); return 1;'); await sleep(900);
+  const g1 = await geo();
+  await page.shot(SHOTS + '/1353_04_tro_choi_an_vuon.png');
+  ok(g1.btn === 'Hiện vườn' && g1.pressed === 'true', 'bấm → nút thành "Hiện vườn"');
+  ok(!g1.yard && !g1.field, 'sân và ruộng ẩn');
+  ok(g1.stage > g0.stage + 100 && g1.bottom <= g1.vh && g1.vh - g1.bottom < 60, 'vùng chơi cao kín cửa sổ: ' + g0.stage + ' → ' + g1.stage + ' px, đáy ở ' + g1.bottom + ' / ' + g1.vh + ' (trang không phải cuộn: ' + g1.docH + ')');
+  const ui1 = await py(KB + 'c = kb.config()["ui"]; result = [c["panel"]["yard"], c["panel"]["field"], c["review"]["yard"], c["main"]["yard"]]');
+  ok(JSON.stringify(ui1) === JSON.stringify(['hide', 'hide', 'full', 'full']), 'lưu vào config: chế độ "Trò chơi & báo" Sân / Ruộng = Ẩn, bảng ôn / màn chính giữ nguyên (' + ui1.join(', ') + ')');
+  // vào một trò (Đuổi quạ, vẽ bằng canvas) — khung vẽ theo vùng chơi mới
+  await js('document.dispatchEvent(new KeyboardEvent("keydown", { key: "3", bubbles: true })); return 1;'); await sleep(1500);
+  const cvh = await js('const cs = [...document.querySelectorAll("#kb-g-stage canvas")].filter((c) => !c.classList.contains("kb-g-season") && !c.classList.contains("kb-g-fx")); return cs.length && GardenGames.playing() ? Math.max(...cs.map((c) => Math.round(c.getBoundingClientRect().height))) : 0;');
+  await page.shot(SHOTS + '/1353_05_duoi_qua_an_vuon.png');
+  ok(cvh > g0.stage, 'Đuổi quạ: khung vẽ cao theo vùng chơi mới (' + cvh + ' px + ô gõ, vùng chơi ' + g1.stage + ' px; trước khi ẩn vườn cả vùng chỉ ' + g0.stage + ')');
+  await js('document.getElementById("kb-g-exit").click(); return 1;'); await sleep(600);
+  // đóng rồi mở lại Trò chơi: vẫn ẩn; màn chính vẫn có vườn
+  await js('document.getElementById("kb-g-exit").click(); return 1;'); await sleep(800);
+  const mainYard = await js('return !!document.getElementById("kb-yard-wrap").offsetParent;');
+  ok(mainYard, 'đóng Trò chơi: màn chính vẫn hiện vườn');
+  await js('document.getElementById("kb-games").click(); return 1;'); await sleep(1200);
+  const g2 = await geo();
+  ok(g2.btn === 'Hiện vườn' && !g2.yard, 'mở lại Trò chơi: vẫn ẩn vườn (nhớ lựa chọn)');
+  await js('document.getElementById("kb-g-garden").click(); return 1;'); await sleep(900);
+  const g3 = await geo();
+  ok(g3.btn === 'Ẩn vườn' && g3.yard && g3.field && g3.stage === g0.stage, 'bấm "Hiện vườn" → về như cũ (vùng chơi ' + g3.stage + ' px, sân + ruộng hiện)');
+  // cửa sổ nhỏ 1024 × 640: nút không làm vỡ hàng trên cùng
+  await py(KB + 'kb._dialog.resize(1024, 640); result = 1'); await sleep(1200);
+  const row = await js(`const top = document.querySelector("#kb-game .kb-game-top").getBoundingClientRect(), b = document.getElementById("kb-g-garden").getBoundingClientRect(), x = document.getElementById("kb-g-exit").getBoundingClientRect();
+    return JSON.stringify({ h: Math.round(top.height), sameRow: Math.abs(b.top - x.top) < 4, inside: b.right <= top.right + 1 });`).then(JSON.parse);
+  await page.shot(SHOTS + '/1353_06_tro_choi_1024.png');
+  ok(row.sameRow && row.inside, 'cửa sổ 1024 × 640: nút Ẩn vườn cùng hàng với nút Thoát (hàng cao ' + row.h + ' px)');
+  await js('document.getElementById("kb-g-exit").click(); return 1;'); await sleep(500);
 
   const errs = await py(KB + 'result = [e.get("where") + ": " + str(e.get("msg"))[:100] for e in kb.ERRORS.entries()]');
   ok(errs.length === 0, 'nhật ký lỗi add-on trống' + (errs.length ? ': ' + errs.join(' | ') : ''));

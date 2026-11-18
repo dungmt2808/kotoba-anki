@@ -108,14 +108,18 @@ var GardenUI = (function () {
   }
 
   // nút nhanh trên bảng ôn: ẩn / hiện sân + ruộng khi ôn thẻ; 1.34: Phóng to (chỉ còn thẻ + nút chấm)
+  // 1.35.3 (người dùng: "cho lựa chọn giống bên thẻ học đi, chỉ ẩn vườn, hiện vườn thôi"): nút y hệt trên bảng Trò chơi —
+  // đổi Sân + Ruộng của chế độ "Trò chơi & báo" (⚙ → Giao diện), vườn ẩn thì vùng chơi cao kín cửa sổ (garden.css)
+  const QUICK = [["kb-rv-garden", "review"], ["kb-g-garden", "panel"]];
+  function quickHidden(m) { return get("yard", m) === "hide" && get("field", m) === "hide"; }
   function syncQuick() {
-    const b = $("kb-rv-garden");
-    if (b) {
-      const hidden = get("yard", "review") === "hide" && get("field", "review") === "hide";
-      const t = hidden ? "Hiện vườn" : "Ẩn vườn";
+    QUICK.forEach(([id, m]) => {
+      const b = $(id);
+      if (!b) { return; }
+      const hidden = quickHidden(m), t = hidden ? "Hiện vườn" : "Ẩn vườn";
       if (b.textContent !== t) { b.textContent = t; }
       b.setAttribute("aria-pressed", hidden ? "true" : "false");
-    }
+    });
     const z = $("kb-rv-zoom");
     if (z) {
       const on = glob("zoom") === "on", t = on ? "Thu nhỏ" : "Phóng to";
@@ -131,6 +135,13 @@ var GardenUI = (function () {
   // 1.34 (góp ý: "ấn Ẩn vườn … ấn lại Hiện vườn thì vùng học lại không được lùi lên, vườn … chỉ có 1 chút xíu"): trước đây
   // Ẩn vườn đổi luôn cỡ khung thẻ sang "To hết chỗ" và lưu lại, Hiện vườn không trả về. Nay Ẩn vườn chỉ ẩn sân + ruộng (khung
   // thẻ tự cao ra khi vườn ẩn — garden.css), Hiện vườn trả khung thẻ về "Vừa" (cả người đã lỡ bấm ở bản cũ).
+  function togglePanel() {
+    const c = full(), hidden = quickHidden("panel");
+    c.panel.yard = hidden ? "full" : "hide";
+    c.panel.field = hidden ? "full" : "hide";
+    save(c);
+    window.scrollTo(0, 0);
+  }
   function toggleQuick() {
     const c = full();
     const hidden = c.review.yard === "hide" && c.review.field === "hide";
@@ -372,6 +383,8 @@ var GardenUI = (function () {
       if (op) { op.addEventListener("click", () => { const pop = $("kb-sound-pop"); if (pop) { pop.hidden = true; } open(); }); }
       const q = $("kb-rv-garden");
       if (q) { q.addEventListener("mousedown", (e) => e.preventDefault()); q.addEventListener("click", toggleQuick); }
+      const qg = $("kb-g-garden");
+      if (qg) { qg.addEventListener("mousedown", (e) => e.preventDefault()); qg.addEventListener("click", togglePanel); }
       const z = $("kb-rv-zoom");
       if (z) { z.addEventListener("mousedown", (e) => e.preventDefault()); z.addEventListener("click", () => toggleZoom()); }
       document.addEventListener("keydown", (e) => {
