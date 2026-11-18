@@ -177,3 +177,21 @@ Bản duyệt tương tác hỗ trợ xoay 360° từng mẫu, chuyển **Voxel 
 | :---: | :---: | :---: |
 | ![Asset Quán Trọ Kotoba 3D](vg_11a_asset_quan_kotoba.png) | ![Asset Bộ 3 Nhân Vật Chibi 3D](vg_11b_asset_nhan_vat.png) | ![Sảnh Trưng Bày 6 Asset 3D](vg_11c_asset_tat_ca_6.png) |
 
+---
+
+## 12. So sánh gu Play Together Smooth Low-Poly (Bo tròn mềm + Bóng đổ thật) — `proto_duyet_asset_play_together.html`
+
+Bản đối chiếu trực tiếp gu **Play Together / Animal Crossing** (khối bo tròn mượt `RoundedBox` & `Sphere`, bóng đổ mềm **2D PCF Shadow Map 1024×1024**, ánh sáng bán cầu pastel và độ bóng *Specular/Rim*) đặt cạnh bản **MagicaVoxel AO** ở Mục 11:
+
+- **🤖 Bộ 3 Nhân Vật Chibi Bo Tròn**: Đầu tròn mũm mĩm, mắt long lanh có đốm sáng, má hồng, Chị Hana cầm khay trà, StackChan đeo balo, Lin cầm sổ tay vàng.
+- **🏮 Quán Trọ Kotoba Mái Cong**: Cột gỗ trụ tròn, mái ngói Nhật 2 tầng uốn cong mềm mại, đèn lồng đỏ tròn phát sáng.
+- **🛒 Sạp Chợ Nông Sản Bo Tròn**: Mái bạt sọc đỏ-kem bo cạnh mềm, trái táo bóng loáng và 3 khay đựng đầy táo, cam, lê tròn xoe.
+- **⛩️ Đồi Đền Sakura & Mèo Trắng**: Cổng Torii thanh thoát, tán anh đào tròn bồng bềnh và chú mèo trắng ngồi bên đèn đá.
+- **🏘️ Ghép Góc Phố Plaza (`36.416` tam giác mượt)**: Ghép 4 asset quanh đài phun nước tròn giữa sân gạch kem.
+
+Xem bản chạy thử tương tác tại [`proto_duyet_asset_play_together.html`](proto_duyet_asset_play_together.html):
+
+| 🤖 Nhân vật Chibi Bo Tròn | 🏮 Quán Trọ Kotoba Mái Cong | 🏘️ Góc Phố Plaza Play Together |
+| :---: | :---: | :---: |
+| ![Nhân vật Play Together 3D](vg_12a_pt_nhan_vat.png) | ![Quán Trọ Kotoba Play Together 3D](vg_12b_pt_quan_kotoba.png) | ![Góc phố Plaza Play Together 3D](vg_12c_pt_plaza_4_asset.png) |
+

@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>So Sánh Gu Play Together 3D — Smooth Low-Poly Bo Tròn &amp; Đổ Bóng Mềm</title>
+<style>
+  :root {
+    --ink: #1b1c30;
+    --cream: #fffaf0;
+    --cream-2: #f6ecd6;
+    --gold: #ffd43b;
+    --pink: #ff8fab;
+    --green: #2fb344;
+  }
+  * { box-sizing: border-box; user-select: none; }
+  body {
+    margin: 0;
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    background: #141829;
+    color: var(--ink);
+  }
+  .shell {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 10px 14px 16px;
+  }
+
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+    background: var(--cream);
+    border: 3px solid var(--ink);
+    border-radius: 15px;
+    box-shadow: 0 4px 0 #0a0c14;
+    padding: 8px 12px;
+    margin-bottom: 10px;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .badge-pt {
+    background: linear-gradient(135deg, #ff6b6b, #ff922b);
+    color: #fff;
+    border: 2px solid var(--ink);
+    border-radius: 9px;
+    padding: 3px 10px;
+    font-size: 11.5px;
+    font-weight: 900;
+    box-shadow: 0 2px 0 var(--ink);
+  }
+  .btn-group {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    border: 2px solid var(--ink);
+    background: var(--cream-2);
+    color: var(--ink);
+    border-radius: 10px;
+    padding: 5px 10px;
+    font-size: 11.8px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 2px 0 var(--ink);
+    transition: transform 0.08s, background 0.12s;
+  }
+  .btn:hover { background: #ffe8a3; }
+  .btn:active { transform: translateY(2px); box-shadow: 0 0 0 var(--ink); }
+  .btn.active { background: var(--gold); }
+  .btn.approve { background: #b2f2bb; color: #165924; }
+  .btn.approve.active { background: #40c057; color: #fff; }
+
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 12px;
+    align-items: start;
+  }
+  @media (max-width: 940px) {
+    .main-grid { grid-template-columns: 1fr; }
+  }
+
+  .stage-wrap {
+    position: relative;
+    height: 575px;
+    border: 3px solid var(--ink);
+    border-radius: 16px;
+    box-shadow: 0 6px 0 #0a0c14;
+    overflow: hidden;
+    background: #bde4ff;
+  }
+  #glCanvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    cursor: grab;
+  }
+  #glCanvas:active { cursor: grabbing; }
+
+  .stage-hud-tl {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+    pointer-events: none;
+  }
+  .pill {
+    pointer-events: auto;
+    background: rgba(255, 250, 240, 0.94);
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    box-shadow: 0 2px 0 var(--ink);
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .stage-hud-bottom {
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    pointer-events: none;
+  }
+  .help-bar {
+    pointer-events: auto;
+    background: rgba(27, 28, 48, 0.86);
+    color: #fffaf0;
+    border: 2px solid rgba(255, 212, 59, 0.75);
+    border-radius: 10px;
+    padding: 6px 12px;
+    font-size: 11.5px;
+    font-weight: 700;
+  }
+
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .card {
+    background: var(--cream);
+    border: 3px solid var(--ink);
+    border-radius: 14px;
+    box-shadow: 0 4px 0 #0a0c14;
+    padding: 11px;
+  }
+  .card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 6px;
+    margin-bottom: 8px;
+    border-bottom: 2px dashed #cbbd9e;
+  }
+  .card-title { margin: 0; font-size: 13.5px; font-weight: 900; }
+  .tag {
+    background: #ffe066;
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    padding: 2px 8px;
+    font-size: 10.5px;
+    font-weight: 900;
+  }
+
+  .asset-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 7px;
+  }
+  .asset-item {
+    position: relative;
+    background: #fff;
+    border: 2px solid var(--ink);
+    border-radius: 11px;
+    padding: 8px;
+    cursor: pointer;
+    box-shadow: 0 2px 0 var(--ink);
+    text-align: left;
+    transition: transform 0.08s, background 0.12s;
+  }
+  .asset-item:hover { background: #fff3bf; }
+  .asset-item.active { background: var(--gold); transform: translateY(-1px); }
+  .asset-icon { font-size: 20px; line-height: 1; margin-bottom: 4px; display: block; }
+  .asset-name { font-size: 11.8px; font-weight: 900; line-height: 1.2; }
+  .asset-sub { font-size: 10px; color: #555770; font-weight: 700; margin-top: 2px; }
+  .status-dot { position: absolute; top: 6px; right: 6px; font-size: 11px; font-weight: 900; }
+
+  .detail-desc {
+    background: var(--cream-2);
+    border: 2px solid #d4c49e;
+    border-radius: 10px;
+    padding: 8px 10px;
+    font-size: 11.8px;
+    line-height: 1.48;
+    margin-bottom: 9px;
+  }
+  .review-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 7px;
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="topbar">
+    <div class="brand">
+      <span class="badge-pt">🎈 PHONG CÁCH PLAY TOGETHER (SMOOTH LOW-POLY)</span>
+      <div class="btn-group">
+        <button class="btn active" id="btnModeSingle">🔍 Soi từng Asset (360°)</button>
+        <button class="btn" id="btnModePlaza">🏘️ Ghép Góc Phố Plaza (4 Asset)</button>
+      </div>
+    </div>
+    <div class="btn-group">
+      <button class="btn active" data-tod="day">☀ Nắng Pastel</button>
+      <button class="btn" data-tod="dusk">🌇 Hoàng Hôn</button>
+      <button class="btn" data-tod="night">🏮 Đêm Lễ Hội</button>
+    </div>
+  </div>
+
+  <div class="main-grid">
+    <div class="stage-wrap">
+      <canvas id="glCanvas"></canvas>
+
+      <div class="stage-hud-tl">
+        <div class="pill">
+          <span id="stageIcon">🤖</span>
+          <b id="stageTitle">Bộ 3 Nhân Vật Chibi (Play Together)</b>
+          <span style="color:#666; font-weight:700;" id="polyStats">· 0 tam giác mượt</span>
+        </div>
+        <button class="btn active" id="btnSpin" style="pointer-events:auto;">🔄 Tự xoay: BẬT</button>
+      </div>
+
+      <div class="stage-hud-bottom">
+        <div class="help-bar">
+          🖱️ <b>Kéo chuột:</b> Xoay 360° mọi góc · <b>Cuộn:</b> Zoom soi độ mịn bo tròn &amp; bóng đổ thật · Bấm thẻ bên phải để xem 4 mẫu + Ghép góc phố
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar">
+      <div class="card">
+        <div class="card-head">
+          <h3 class="card-title">4 Asset Mẫu Play Together</h3>
+          <span class="tag" id="approvedCount">Đã duyệt: 0/4</span>
+        </div>
+        <div class="asset-list" id="assetList"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h3 class="card-title" id="detailName">Chi tiết Asset</h3>
+          <span class="tag">Smooth + Shadow</span>
+        </div>
+        <div class="detail-desc" id="detailDesc"></div>
+        <div class="review-actions">
+          <button class="btn approve" id="btnApprove">✅ Chọn gu này!</button>
+          <button class="btn" id="btnNext">➡️ Xem mẫu tiếp</button>
+        </div>
+      </div>
+
+      <div class="card" style="padding:10px 12px;">
+        <div style="font-size:11.6px; line-height:1.45; color:#2b2b44;">
+          ✨ <b>So sánh với bản MagicaVoxel:</b> Ở bản này toàn bộ nhân vật, mái nhà cong, đèn lồng, cây anh đào và trái cây đều <b>bo tròn mềm (Low-Poly mượt)</b> kèm <b>bóng đổ thật (Soft Shadow Map)</b> và ánh sáng màu pastel đúng chất <i>Play Together / Animal Crossing</i>!
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  // =========================================================================
+  // 1. BỘ DỰNG HÌNH SMOOTH LOW-POLY 3D (BO TRÒN MỀM + NORMALS MƯỢT + GLOSS)
+  // =========================================================================
+  function createMesh() {
+    const pos = [], norm = [], col = [], mat = []; // mat: [gloss, emissive]
+    return { pos, norm, col, mat };
+  }
+
+  function hexToRgb(hex) {
+    const n = parseInt(hex.slice(1), 16);
+    return [((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255];
+  }
+
+  function pushVert(m, p, n, rgb, gloss, emissive) {
+    m.pos.push(p[0], p[1], p[2]);
+    const len = Math.hypot(n[0], n[1], n[2]) || 1;
+    m.norm.push(n[0] / len, n[1] / len, n[2] / len);
+    m.col.push(rgb[0], rgb[1], rgb[2]);
+    m.mat.push(gloss || 0.0, emissive || 0.0);
+  }
+
+  function pushTri(m, p0, p1, p2, n0, n1, n2, rgb, gloss, emissive) {
+    pushVert(m, p0, n0, rgb, gloss, emissive);
+    pushVert(m, p1, n1, rgb, gloss, emissive);
+    pushVert(m, p2, n2, rgb, gloss, emissive);
+  }
+
+  // Khối bo tròn mềm (Rounded Box / Squircle) — linh hồn của Play Together!
+  function addRoundedBox(m, cx, cy, cz, sx, sy, sz, rad, segs, hex, opts) {
+    const o = opts || {};
+    const rgb = hexToRgb(hex);
+    const gls = o.gloss || 0.15;
+    const em = o.emissive || 0.0;
+    const r = Math.min(rad, sx * 0.45, sy * 0.45, sz * 0.45);
+    const ix = sx * 0.5 - r, iy = sy * 0.5 - r, iz = sz * 0.5 - r;
+    const n = Math.max(4, segs || 8);
+
+    // Tạo bằng lưới cầu biến dạng thành hình hộp bo góc (Spherified Cube -> Rounded Box)
+    const faces = [
+      { u: [1,0,0], v: [0,1,0], w: [0,0,1] },   // +Z
+      { u: [-1,0,0], v: [0,1,0], w: [0,0,-1] }, // -Z
+      { u: [0,0,-1], v: [0,1,0], w: [1,0,0] },  // +X
+      { u: [0,0,1], v: [0,1,0], w: [-1,0,0] },  // -X
+      { u: [1,0,0], v: [0,0,-1], w: [0,1,0] },  // +Y
+      { u: [1,0,0], v: [0,0,1], w: [0,-1,0] }   // -Y
+    ];
+
+    function sample(face, a, b) {
+      const px = face.u[0] * a + face.v[0] * b + face.w[0];
+      const py = face.u[1] * a + face.v[1] * b + face.w[1];
+      const pz = face.u[2] * a + face.v[2] * b + face.w[2];
+      // Spherize
+      const x2 = px * px, y2 = py * py, z2 = pz * pz;
+      const nx = px * Math.sqrt(Math.max(0, 1 - y2 * 0.5 - z2 * 0.5 + (y2 * z2) / 3));
+      const ny = py * Math.sqrt(Math.max(0, 1 - z2 * 0.5 - x2 * 0.5 + (z2 * x2) / 3));
+      const nz = pz * Math.sqrt(Math.max(0, 1 - x2 * 0.5 - y2 * 0.5 + (x2 * y2) / 3));
+      return {
+        p: [
+          cx + (nx >= 0 ? 1 : -1) * ix + nx * r,
+          cy + (ny >= 0 ? 1 : -1) * iy + ny * r,
+          cz + (nz >= 0 ? 1 : -1) * iz + nz * r
+        ],
+        n: [nx, ny, nz]
+      };
+    }
+
+    faces.forEach(face => {
+      for (let i = 0; i < n; i++) {
+        for (let j = 0; j < n; j++) {
+          const a0 = -1 + (2 * i) / n, a1 = -1 + (2 * (i + 1)) / n;
+          const b0 = -1 + (2 * j) / n, b1 = -1 + (2 * (j + 1)) / n;
+          const v00 = sample(face, a0, b0);
+          const v10 = sample(face, a1, b0);
+          const v11 = sample(face, a1, b1);
+          const v01 = sample(face, a0, b1);
+          pushTri(m, v00.p, v10.p, v11.p, v00.n, v10.n, v11.n, rgb, gls, em);
+          pushTri(m, v00.p, v11.p, v01.p, v00.n, v11.n, v01.n, rgb, gls, em);
+        }
+      }
+    });
+  }
+
+  // Hình cầu / Ellipsoid mượt (Đầu chibi, trái cây, tán cây sakura tròn mũm mĩm, đèn lồng)
+  function addSphere(m, cx, cy, cz, rx, ry, rz, latS, lonS, hex, opts) {
+    const o = opts || {};
+    const rgb = hexToRgb(hex);
+    const gls = o.gloss !== undefined ? o.gloss : 0.25;
+    const em = o.emissive || 0.0;
+    const la = latS || 12, lo = lonS || 16;
+
+    function pt(i, j) {
+      const th = (i / la) * Math.PI;
+      const ph = (j / lo) * Math.PI * 2;
+      const nx = Math.sin(th) * Math.cos(ph);
+      const ny = Math.cos(th);
+      const nz = Math.sin(th) * Math.sin(ph);
+      return {
+        p: [cx + nx * rx, cy + ny * ry, cz + nz * rz],
+        n: [nx / (rx || 1), ny / (ry || 1), nz / (rz || 1)]
+      };
+    }
+
+    for (let i = 0; i < la; i++) {
+      for (let j = 0; j < lo; j++) {
+        const v00 = pt(i, j), v10 = pt(i + 1, j), v11 = pt(i + 1, j + 1), v01 = pt(i, j + 1);
+        pushTri(m, v00.p, v01.p, v11.p, v00.n, v01.n, v11.n, rgb, gls, em);
+        pushTri(m, v00.p, v11.p, v10.n ? v10.p : v10.p, v00.n, v11.n, v10.n, rgb, gls, em);
+      }
+    }
+  }
+
+  // Hình trụ / Nón cụt mượt (Cột gỗ tròn, thân cây, tay chân tròn, tách trà, chóp mái)
+  function addCylinder(m, cx, y0, cz, rTop, rBot, h, segs, hex, opts) {
+    const o = opts || {};
+    const rgb = hexToRgb(hex);
+    const gls = o.gloss || 0.15;
+    const em = o.emissive || 0.0;
+    const s = segs || 16;
+    const y1 = y0 + h;
+    const slope = (rBot - rTop) / (h || 1);
+
+    for (let i = 0; i < s; i++) {
+      const a0 = (i / s) * Math.PI * 2;
+      const a1 = ((i + 1) / s) * Math.PI * 2;
+      const c0 = Math.cos(a0), s0 = Math.sin(a0);
+      const c1 = Math.cos(a1), s1 = Math.sin(a1);
+
+      const pB0 = [cx + c0 * rBot, y0, cz + s0 * rBot];
+      const pB1 = [cx + c1 * rBot, y0, cz + s1 * rBot];
+      const pT0 = [cx + c0 * rTop, y1, cz + s0 * rTop];
+      const pT1 = [cx + c1 * rTop, y1, cz + s1 * rTop];
+      const n0 = [c0, slope, s0], n1 = [c1, slope, s1];
+
+      pushTri(m, pB0, pT1, pB1, n0, n1, n1, rgb, gls, em);
+      pushTri(m, pB0, pT0, pT1, n0, n0, n1, rgb, gls, em);
+
+      if (rTop > 0.001) {
+        pushTri(m, [cx, y1, cz], pT1, pT0, [0,1,0], [0,1,0], [0,1,0], rgb, gls, em);
+      }
+      if (rBot > 0.001) {
+        pushTri(m, [cx, y0, cz], pB0, pB1, [0,-1,0], [0,-1,0], [0,-1,0], rgb, gls, em);
+      }
+    }
+  }
+
+  // Mái Nhật cong mềm (Curved Pagoda / Ryokan Roof) — điểm nhấn sang hẳn so với mái bậc thang!
+  function addCurvedRoof(m, cx, y0, cz, wx, hy, wz, ridgeW, hex, trimHex) {
+    const layers = 8;
+    for (let i = 0; i < layers; i++) {
+      const t = i / (layers - 1);
+      const ease = t * t * 0.3 + t * 0.7; // Độ võng cong mái Nhật
+      const curW = wx * (1 - ease) + ridgeW * ease;
+      const curD = wz * (1 - ease) + 0.45 * ease;
+      const curY = y0 + Math.pow(t, 1.35) * hy;
+      const col = (i === layers - 1 && trimHex) ? trimHex : hex;
+      addRoundedBox(m, cx, curY, cz, curW, hy / layers + 0.16, curD, 0.14, 4, col, { gloss: 0.28 });
+    }
+  }
+
+  // =========================================================================
+  // 2. XÂY DỰNG 4 ASSET PHONG CÁCH PLAY TOGETHER + CẢNH GHÉP PLAZA
+  // =========================================================================
+  function addChibiPerson(m, x, y, z, cfg) {
+    const bounce = cfg.bounce || 0;
+    const by = y + bounce;
+    // Giày tròn
+    addRoundedBox(m, x - 0.34, by + 0.22, z + 0.05, 0.44, 0.44, 0.56, 0.18, 5, cfg.shoes || "#3b2313", { gloss: 0.3 });
+    addRoundedBox(m, x + 0.34, by + 0.22, z + 0.05, 0.44, 0.44, 0.56, 0.18, 5, cfg.shoes || "#3b2313", { gloss: 0.3 });
+    // Thân tròn mũm mĩm kiểu Play Together
+    addCylinder(m, x, by + 0.38, z, 0.62, 0.78, 1.35, 18, cfg.body, { gloss: 0.2 });
+    if (cfg.apron) {
+      addRoundedBox(m, x, by + 0.92, z + 0.36, 0.85, 0.92, 0.32, 0.12, 5, cfg.apron, { gloss: 0.15 });
+    }
+    if (cfg.backpack) {
+      addRoundedBox(m, x, by + 1.05, z - 0.68, 0.95, 0.95, 0.46, 0.20, 5, cfg.backpack, { gloss: 0.2 });
+    }
+    // Tay tròn giơ nhẹ dễ thương
+    addSphere(m, x - 0.86, by + 1.18, z + 0.12, 0.26, 0.44, 0.26, 10, 14, cfg.arm || cfg.body, { gloss: 0.2 });
+    addSphere(m, x + 0.86, by + 1.18, z + 0.12, 0.26, 0.44, 0.26, 10, 14, cfg.arm || cfg.body, { gloss: 0.2 });
+    addSphere(m, x - 0.88, by + 0.84, z + 0.20, 0.20, 0.20, 0.20, 8, 12, cfg.skin, { gloss: 0.2 });
+    addSphere(m, x + 0.88, by + 0.84, z + 0.20, 0.20, 0.20, 0.20, 8, 12, cfg.skin, { gloss: 0.2 });
+
+    // Đầu tròn to Chibi (tỉ lệ Play Together 1:1.3)
+    const hy = by + 2.48;
+    addSphere(m, x, hy, z, 1.02, 0.94, 0.96, 16, 22, cfg.skin, { gloss: 0.18 });
+
+    // Mắt đen long lanh + điểm sáng trắng + má hồng
+    [-0.36, 0.36].forEach(ex => {
+      addSphere(m, x + ex, hy - 0.04, z + 0.88, 0.12, 0.15, 0.08, 8, 10, "#1a1b2e", { gloss: 0.9 });
+      addSphere(m, x + ex + 0.04, hy + 0.02, z + 0.94, 0.04, 0.04, 0.04, 6, 8, "#ffffff", { emissive: 0.8 });
+    });
+    [-0.60, 0.60].forEach(bx => {
+      addSphere(m, x + bx, hy - 0.22, z + 0.76, 0.18, 0.10, 0.08, 8, 10, "#ff9ebb", { gloss: 0.1 });
+    });
+
+    // Tóc / Mũ riêng từng nhân vật
+    if (cfg.style === "stackchan") {
+      // Màn hình trắng bo tròn trước mặt StackChan
+      addRoundedBox(m, x, hy, z + 0.12, 1.72, 1.48, 1.56, 0.42, 7, "#ffffff", { gloss: 0.35 });
+      // Vẽ lại mắt trên mặt màn hình trắng
+      [-0.34, 0.34].forEach(ex => {
+        addSphere(m, x + ex, hy + 0.02, z + 0.88, 0.11, 0.14, 0.07, 8, 10, "#1a1b2e", { gloss: 0.9 });
+        addSphere(m, x + ex + 0.03, hy + 0.07, z + 0.94, 0.04, 0.04, 0.04, 6, 8, "#74c0fc", { emissive: 0.9 });
+      });
+      // Mũ thám hiểm vàng bo tròn có lưỡi trai
+      addSphere(m, x, hy + 0.72, z, 0.95, 0.45, 0.95, 10, 16, "#ffd43b", { gloss: 0.35 });
+      addRoundedBox(m, x, hy + 0.56, z + 0.55, 1.45, 0.16, 0.85, 0.07, 4, "#fcc419", { gloss: 0.35 });
+    } else if (cfg.style === "hana") {
+      // Tóc Nhật + búi tóc tròn + trâm hoa đỏ
+      addSphere(m, x, hy + 0.16, z - 0.14, 1.06, 0.96, 0.98, 14, 18, "#232538", { gloss: 0.25 });
+      addSphere(m, x, hy + 1.05, z - 0.32, 0.44, 0.42, 0.42, 10, 14, "#232538", { gloss: 0.25 });
+      addSphere(m, x + 0.34, hy + 1.02, z - 0.18, 0.16, 0.16, 0.16, 8, 10, "#ff4d6d", { gloss: 0.4 });
+      // Khay trà xanh trên tay
+      addCylinder(m, x, by + 0.92, z + 0.98, 0.48, 0.44, 0.10, 14, "#8c562c", { gloss: 0.25 });
+      addCylinder(m, x, by + 1.02, z + 0.98, 0.18, 0.14, 0.24, 12, "#51cf66", { gloss: 0.6 });
+    } else if (cfg.style === "lin") {
+      // Tóc nâu + đuôi tóc + mũ nồi kem
+      addSphere(m, x, hy + 0.15, z - 0.14, 1.06, 0.94, 0.98, 14, 18, "#5c371b", { gloss: 0.2 });
+      addSphere(m, x, hy + 0.82, z - 0.08, 0.84, 0.38, 0.84, 10, 14, "#fff3d6", { gloss: 0.15 });
+      addSphere(m, x + 0.10, hy - 0.10, z - 1.02, 0.34, 0.55, 0.32, 8, 12, "#5c371b", { gloss: 0.2 });
+      // Sổ tay vàng nhỏ cầm trên tay
+      addRoundedBox(m, x + 0.62, by + 1.02, z + 0.55, 0.48, 0.58, 0.14, 0.05, 4, "#ffd43b", { gloss: 0.3 });
+    }
+  }
+
+  function addSakuraTreeSmooth(m, x, y, z, s) {
+    const sc = s || 1.0;
+    addCylinder(m, x, y, z, 0.45 * sc, 0.78 * sc, 3.2 * sc, 12, "#6b4226", { gloss: 0.1 });
+    addCylinder(m, x - 0.5 * sc, y + 2.4 * sc, z, 0.25 * sc, 0.36 * sc, 1.4 * sc, 8, "#6b4226", { gloss: 0.1 });
+    // Cụm tán anh đào mũm mĩm kiểu Play Together
+    addSphere(m, x, y + 4.4 * sc, z, 2.3 * sc, 1.75 * sc, 2.3 * sc, 14, 18, "#ff9ebb", { gloss: 0.1 });
+    addSphere(m, x - 1.5 * sc, y + 3.8 * sc, z + 0.6 * sc, 1.5 * sc, 1.2 * sc, 1.5 * sc, 12, 16, "#ffb3c9", { gloss: 0.1 });
+    addSphere(m, x + 1.6 * sc, y + 3.9 * sc, z - 0.4 * sc, 1.45 * sc, 1.2 * sc, 1.45 * sc, 12, 16, "#ff85a8", { gloss: 0.1 });
+    addSphere(m, x + 0.2 * sc, y + 5.4 * sc, z + 0.2 * sc, 1.35 * sc, 1.05 * sc, 1.35 * sc, 12, 16, "#ffd6e5", { gloss: 0.1 });
+  }
+
+  function addPaperLantern(m, x, y, z, col) {
+    addCylinder(m, x, y + 0.52, z, 0.14, 0.14, 0.10, 10, "#252638", { gloss: 0.4 });
+    addSphere(m, x, y + 0.26, z, 0.32, 0.38, 0.32, 12, 14, col || "#ff5252", { emissive: 0.65, gloss: 0.2 });
+    addCylinder(m, x, y - 0.10, z, 0.14, 0.14, 0.08, 10, "#252638", { gloss: 0.4 });
+  }
+
+  // --- ASSET 1: BỘ 3 NHÂN VẬT PLAY TOGETHER (BO TRÒN MỀM) ---
+  function buildCharsPT(m, ox, oz) {
+    const x = ox || 0, z = oz || 0;
+    addRoundedBox(m, x, 0.35, z, 9.5, 0.7, 5.2, 0.25, 5, "#fff4d9", { gloss: 0.15 });
+    addRoundedBox(m, x, 0.08, z, 10.0, 0.4, 5.7, 0.18, 5, "#9aa5b1", { gloss: 0.15 });
+    addChibiPerson(m, x - 2.9, 0.7, z, { style: "hana", skin: "#ffe0c4", body: "#2b59c3", apron: "#fff8eb", bounce: 0.0 });
+    addChibiPerson(m, x, 0.7, z + 0.2, { style: "stackchan", skin: "#ffe0c4", body: "#339af0", backpack: "#c4844a", bounce: 0.12 });
+    addChibiPerson(m, x + 2.9, 0.7, z, { style: "lin", skin: "#ffe0c4", body: "#fff9eb", apron: "#f76707", bounce: 0.05 });
+  }
+
+  // --- ASSET 2: QUÁN TRỌ KOTOBA MÁI CONG (ことば屋) ---
+  function buildInnPT(m, ox, oz) {
+    const x = ox || 0, z = oz || 0;
+    // Bệ cỏ & bậc đá bo tròn
+    addRoundedBox(m, x, 0.35, z, 11.4, 0.7, 9.8, 0.28, 6, "#67cc56", { gloss: 0.08 });
+    addRoundedBox(m, x, 0.85, z - 0.4, 8.6, 0.7, 6.8, 0.18, 5, "#cbd2d9", { gloss: 0.12 });
+    addRoundedBox(m, x, 0.72, z + 3.4, 3.0, 0.45, 1.4, 0.12, 4, "#e2e6ea", { gloss: 0.15 });
+
+    // Tầng 1 tường kem bo nhẹ + cột gỗ tròn Nhật Bản
+    addRoundedBox(m, x, 2.6, z - 0.5, 7.6, 3.0, 5.4, 0.16, 5, "#fff6e5", { gloss: 0.1 });
+    [[-3.7, 2.1], [3.7, 2.1], [-3.7, -3.1], [3.7, -3.1]].forEach(([px, pz]) => {
+      addCylinder(m, x + px, 1.1, z + pz, 0.22, 0.22, 3.0, 10, "#5c371b", { gloss: 0.15 });
+    });
+    // Cửa lùa Shoji phát sáng + rèm Noren xanh
+    addRoundedBox(m, x, 2.4, z + 2.22, 2.8, 2.2, 0.18, 0.05, 4, "#ffe58f", { emissive: 0.55 });
+    [-0.95, 0, 0.95].forEach(nx => {
+      addRoundedBox(m, x + nx, 3.15, z + 2.42, 0.82, 0.92, 0.12, 0.04, 4, "#2b59c3", { gloss: 0.2 });
+    });
+    // Cửa sổ Shoji 2 bên
+    [-2.5, 2.5].forEach(wx => {
+      addRoundedBox(m, x + wx, 2.6, z + 2.22, 1.2, 1.3, 0.18, 0.05, 4, "#ffe58f", { emissive: 0.55 });
+    });
+    // Đôi đèn lồng đỏ tròn treo trước cửa
+    addPaperLantern(m, x - 2.1, 2.9, z + 2.55, "#ff5252");
+    addPaperLantern(m, x + 2.1, 2.9, z + 2.55, "#ff5252");
+
+    // Mái ngói Nhật tầng 1 cong mềm
+    addCurvedRoof(m, x, 4.1, z - 0.4, 9.6, 1.4, 7.2, 5.4, "#364463", "#495a80");
+
+    // Tầng 2 + Mái đỉnh cong Nhật
+    addRoundedBox(m, x, 6.2, z - 0.6, 5.2, 2.2, 3.8, 0.16, 5, "#fff6e5", { gloss: 0.1 });
+    addRoundedBox(m, x, 6.2, z + 1.32, 2.2, 1.3, 0.16, 0.05, 4, "#ffe58f", { emissive: 0.55 });
+    addCurvedRoof(m, x, 7.25, z - 0.6, 6.8, 1.6, 5.4, 2.6, "#2c3752", "#f8f9fa");
+    // Chóp vàng trang trí mái
+    addSphere(m, x - 1.2, 8.95, z - 0.6, 0.24, 0.28, 0.24, 8, 10, "#ffd43b", { gloss: 0.7, emissive: 0.2 });
+    addSphere(m, x + 1.2, 8.95, z - 0.6, 0.24, 0.28, 0.24, 8, 10, "#ffd43b", { gloss: 0.7, emissive: 0.2 });
+  }
+
+  // --- ASSET 3: SẠP CHỢ NÔNG SẢN & HOA TRÒN ---
+  function buildMarketPT(m, ox, oz) {
+    const x = ox || 0, z = oz || 0;
+    addRoundedBox(m, x, 0.35, z, 9.8, 0.7, 8.4, 0.25, 5, "#f2e2c4", { gloss: 0.12 });
+    // Quầy gỗ bo tròn
+    addRoundedBox(m, x, 1.45, z - 0.4, 6.4, 1.5, 2.4, 0.16, 5, "#c4844a", { gloss: 0.2 });
+    addRoundedBox(m, x, 2.25, z - 0.2, 6.8, 0.26, 2.8, 0.10, 4, "#e09f62", { gloss: 0.25 });
+
+    // 4 Cột tròn chống mái
+    [[-3.0, -1.4], [3.0, -1.4], [-3.0, 0.7], [3.0, 0.7]].forEach(([px, pz]) => {
+      addCylinder(m, x + px, 2.1, z + pz, 0.16, 0.16, 2.9, 10, "#6b3e1f", { gloss: 0.15 });
+    });
+
+    // Mái bạt sọc Đỏ - Kem bo tròn kiểu Play Together
+    for (let i = -3; i <= 3; i++) {
+      const col = Math.abs(i) % 2 === 0 ? "#e03131" : "#fff9eb";
+      addRoundedBox(m, x + i * 1.0, 5.1, z - 0.1, 1.04, 0.52, 4.2, 0.20, 5, col, { gloss: 0.25 });
+    }
+    // Biển hiệu Trái Táo 3D bóng bẩy trên mái
+    addRoundedBox(m, x, 6.0, z + 0.6, 2.4, 1.5, 0.35, 0.14, 4, "#fff3d6", { gloss: 0.2 });
+    addSphere(m, x, 6.05, z + 0.85, 0.56, 0.54, 0.45, 12, 16, "#ff3b30", { gloss: 0.7 });
+    addSphere(m, x + 0.16, 6.62, z + 0.85, 0.22, 0.12, 0.10, 8, 10, "#40c057", { gloss: 0.3 });
+
+    // 3 Khay gỗ đựng trái cây tròn bóng bẩy phía trước sạp
+    const fruits = [
+      { fx: -2.0, col: "#ff3b30" }, // Táo đỏ
+      { fx: 0.0,  col: "#ff922b" }, // Cam vàng
+      { fx: 2.0,  col: "#94d82d" }  // Lê xanh
+    ];
+    fruits.forEach(f => {
+      addRoundedBox(m, x + f.fx, 1.25, z + 2.0, 1.7, 0.8, 1.5, 0.10, 4, "#a86b38", { gloss: 0.15 });
+      [[-0.4, -0.25], [0.4, -0.25], [0, 0.28], [-0.4, 0.28], [0.4, 0.28]].forEach(([dx, dz]) => {
+        addSphere(m, x + f.fx + dx, 1.80, z + 2.0 + dz, 0.28, 0.27, 0.28, 10, 12, f.col, { gloss: 0.75 });
+      });
+    });
+
+    // Thùng gỗ & Đèn lồng vàng
+    addCylinder(m, x - 4.0, 0.7, z + 1.5, 0.62, 0.56, 1.35, 14, "#9c6234", { gloss: 0.18 });
+    addPaperLantern(m, x + 3.4, 4.2, z + 1.3, "#ffd43b");
+  }
+
+  // --- ASSET 4: ĐỒI ĐỀN SAKURA, CỔNG TORII & MÈO HOANG TRẮNG ---
+  function buildShrinePT(m, ox, oz) {
+    const x = ox || 0, z = oz || 0;
+    // Đồi cỏ xanh 2 tầng bo tròn mềm
+    addRoundedBox(m, x, 0.4, z, 10.6, 0.8, 10.6, 0.35, 6, "#58bf48", { gloss: 0.08 });
+    addRoundedBox(m, x, 1.2, z - 0.6, 7.6, 1.0, 6.8, 0.35, 6, "#67cc56", { gloss: 0.08 });
+    // Bậc thang đá tròn cạnh
+    addRoundedBox(m, x, 0.95, z + 3.4, 2.6, 0.42, 1.1, 0.14, 4, "#dee2e6", { gloss: 0.15 });
+    addRoundedBox(m, x, 1.45, z + 2.3, 2.6, 0.42, 1.1, 0.14, 4, "#e9ecef", { gloss: 0.15 });
+
+    // Cổng Torii đỏ bo tròn thanh thoát
+    addCylinder(m, x - 1.35, 1.5, z + 1.2, 0.20, 0.23, 3.2, 12, "#e03131", { gloss: 0.3 });
+    addCylinder(m, x + 1.35, 1.5, z + 1.2, 0.20, 0.23, 3.2, 12, "#e03131", { gloss: 0.3 });
+    addRoundedBox(m, x, 4.15, z + 1.2, 3.8, 0.30, 0.42, 0.12, 4, "#e03131", { gloss: 0.3 });
+    addRoundedBox(m, x, 4.78, z + 1.2, 4.5, 0.38, 0.62, 0.14, 4, "#2c3752", { gloss: 0.35 });
+
+    // Cây Đại Thụ Sakura tán tròn mũm mĩm
+    addSakuraTreeSmooth(m, x - 0.3, 1.6, z - 1.8, 1.15);
+
+    // Đôi đèn đá phát sáng + Chú Mèo Hoang Trắng tròn xoe ngồi ngắm hoa!
+    [-2.5, 2.5].forEach(lx => {
+      addCylinder(m, x + lx, 1.6, z + 0.2, 0.24, 0.34, 0.95, 10, "#adb5bd", { gloss: 0.12 });
+      addSphere(m, x + lx, 2.75, z + 0.2, 0.28, 0.28, 0.28, 10, 12, "#ffe066", { emissive: 0.7 });
+      addCylinder(m, x + lx, 2.95, z + 0.2, 0.08, 0.55, 0.42, 8, "#868e96", { gloss: 0.12 });
+    });
+
+    // Mèo hoang trắng dễ thương ngồi bên phải cổng đền
+    const mx = x + 2.4, mz = z + 2.6;
+    addSphere(m, mx, 1.25, mz, 0.44, 0.42, 0.50, 10, 14, "#ffffff", { gloss: 0.25 });
+    addSphere(m, mx, 1.82, mz + 0.14, 0.38, 0.34, 0.36, 10, 14, "#ffffff", { gloss: 0.25 });
+    addCylinder(m, mx - 0.20, 2.02, mz + 0.14, 0.02, 0.14, 0.26, 8, "#ffffff", { gloss: 0.2 });
+    addCylinder(m, mx + 0.20, 2.02, mz + 0.14, 0.02, 0.14, 0.26, 8, "#ffffff", { gloss: 0.2 });
+    addSphere(m, mx, 1.78, mz + 0.48, 0.07, 0.05, 0.05, 6, 8, "#ff8fab", { gloss: 0.3 });
+  }
+
+  // --- CẢNH GHÉP GÓC PHỐ PLAZA (4 ASSET ĐẶT QUANH SÂN GẠCH CARO) ---
+  function buildPlazaCombinedPT() {
+    const m = createMesh();
+    // Mặt sân Plaza Play Together rộng + đường gạch caro
+    addRoundedBox(m, 0, -0.35, 0, 27.5, 0.7, 25.5, 0.45, 6, "#67cc56", { gloss: 0.06 });
+    addRoundedBox(m, 0, 0.05, 0, 14.5, 0.25, 14.5, 0.2, 4, "#fff3d6", { gloss: 0.12 });
+    // Đài phun nước tròn nhỏ ở giữa sân
+    addCylinder(m, 0, 0.1, 0, 2.4, 2.6, 0.65, 22, "#cbd2d9", { gloss: 0.25 });
+    addCylinder(m, 0, 0.55, 0, 2.0, 2.0, 0.25, 22, "#4dabf7", { gloss: 0.8 });
+    addCylinder(m, 0, 0.6, 0, 0.4, 0.6, 1.6, 14, "#dee2e6", { gloss: 0.25 });
+    addSphere(m, 0, 2.3, 0, 0.65, 0.55, 0.65, 10, 14, "#e7f5ff", { gloss: 0.6, emissive: 0.2 });
+
+    buildInnPT(m, -6.8, -6.4);
+    buildMarketPT(m, 6.8, -6.0);
+    buildShrinePT(m, 6.6, 6.2);
+    buildCharsPT(m, -5.8, 6.8);
+    return m;
+  }
+
+  const ASSETS = [
+    {
+      id: "chars", icon: "🤖", name: "Bộ 3 Nhân Vật Chibi",
+      sub: "Đầu tròn · Biểu cảm mịn",
+      desc: "<b>Tạo hình bo tròn đúng chuẩn Play Together:</b> Đầu tròn mũm mĩm, mắt long lanh, má hồng, Chị Hana bưng khay trà xanh, StackChan đội mũ vàng đeo balo, Lin cầm sổ tay vàng.",
+      build: () => { const m = createMesh(); buildCharsPT(m, 0, 0); return m; }
+    },
+    {
+      id: "inn", icon: "🏮", name: "Quán Trọ Kotoba Mái Cong",
+      sub: "Mái lượn · Đèn lồng tròn",
+      desc: "<b>Kiến trúc mềm mại & ấm áp:</b> Cột gỗ tròn, mái ngói 2 tầng vuốt cong lên ở góc, rèm Noren xanh chàm, cửa Shoji và đèn lồng giấy tròn phát sáng.",
+      build: () => { const m = createMesh(); buildInnPT(m, 0, 0); return m; }
+    },
+    {
+      id: "market", icon: "🛒", name: "Sạp Chợ Nông Sản Bo Tròn",
+      sub: "Trái cây tròn bóng bẩy",
+      desc: "<b>Sạp chợ Play Together:</b> Mái bạt sọc đỏ-kem bo cạnh mềm, trái táo bóng loáng trên biển hiệu và 3 khay đầy táo đỏ, cam, lê tròn xoe.",
+      build: () => { const m = createMesh(); buildMarketPT(m, 0, 0); return m; }
+    },
+    {
+      id: "shrine", icon: "⛩️", name: "Đồi Đền Sakura & Mèo Trắng",
+      sub: "Tán hoa tròn · Torii mềm",
+      desc: "<b>Vùng ngắm cảnh thư giãn:</b> Đồi cỏ bo góc, cổng Torii thanh thoát, tán hoa Sakura ghép từ các khối cầu tròn bồng bềnh và chú mèo trắng ngồi bên đèn đá.",
+      build: () => { const m = createMesh(); buildShrinePT(m, 0, 0); return m; }
+    }
+  ];
+
+  // =========================================================================
+  // 3. WEBGL RENDERER VỚI SOFT SHADOW MAP THẬT (2D PCF SHADOW + SPECULAR + RIM)
+  // =========================================================================
+  const canvas = document.getElementById("glCanvas");
+  const gl = canvas.getContext("webgl", { antialias: true, alpha: false });
+
+  function resize() {
+    const r = canvas.parentElement.getBoundingClientRect();
+    canvas.width = Math.round(r.width);
+    canvas.height = Math.round(r.height);
+  }
+  window.addEventListener("resize", resize);
+  resize();
+
+  const shadowVS = `
+    attribute vec3 aPos;
+    uniform mat4 uLightMVP;
+    void main() {
+      gl_Position = uLightMVP * vec4(aPos, 1.0);
+    }
+  `;
+  const shadowFS = `
+    precision mediump float;
+    vec4 packDepth(float depth) {
+      const vec4 bitShift = vec4(1.0, 256.0, 65536.0, 16777216.0);
+      const vec4 bitMask = vec4(1.0/256.0, 1.0/256.0, 1.0/256.0, 0.0);
+      vec4 res = fract(depth * bitShift);
+      res -= res.gbaa * bitMask;
+      return res;
+    }
+    void main() {
+      gl_FragColor = packDepth(gl_FragCoord.z);
+    }
+  `;
+
+  const mainVS = `
+    attribute vec3 aPos;
+    attribute vec3 aNorm;
+    attribute vec3 aCol;
+    attribute vec2 aMat;
+    uniform mat4 uProj;
+    uniform mat4 uView;
+    uniform mat4 uLightMVP;
+    varying vec3 vPos;
+    varying vec3 vNorm;
+    varying vec3 vCol;
+    varying vec2 vMat;
+    varying vec4 vLightSpacePos;
+    void main() {
+      vPos = aPos;
+      vNorm = normalize(aNorm);
+      vCol = aCol;
+      vMat = aMat;
+      vLightSpacePos = uLightMVP * vec4(aPos, 1.0);
+      gl_Position = uProj * uView * vec4(aPos, 1.0);
+    }
+  `;
+  const mainFS = `
+    precision mediump float;
+    varying vec3 vPos;
+    varying vec3 vNorm;
+    varying vec3 vCol;
+    varying vec2 vMat;
+    varying vec4 vLightSpacePos;
+    uniform sampler2D uShadowMap;
+    uniform vec3 uEyePos;
+    uniform vec3 uSunDir;
+    uniform vec3 uSunCol;
+    uniform vec3 uSkyCol;
+    uniform vec3 uGroundCol;
+    uniform float uNight;
+
+    float unpackDepth(vec4 rgba) {
+      const vec4 bitShift = vec4(1.0, 1.0/256.0, 1.0/65536.0, 1.0/16777216.0);
+      return dot(rgba, bitShift);
+    }
+
+    float calcShadow(vec4 lsPos, float ndotl) {
+      vec3 proj = lsPos.xyz / lsPos.w;
+      proj = proj * 0.5 + 0.5;
+      if (proj.x < 0.0 || proj.x > 1.0 || proj.y < 0.0 || proj.y > 1.0 || proj.z > 1.0) return 1.0;
+      float bias = max(0.0028 * (1.0 - ndotl), 0.0012);
+      float texel = 1.0 / 1024.0;
+      float sum = 0.0;
+      for (int dx = -1; dx <= 1; dx++) {
+        for (int dy = -1; dy <= 1; dy++) {
+          float d = unpackDepth(texture2D(uShadowMap, proj.xy + vec2(float(dx), float(dy)) * texel));
+          sum += (proj.z - bias <= d) ? 1.0 : 0.0;
+        }
+      }
+      return sum / 9.0;
+    }
+
+    void main() {
+      vec3 N = normalize(vNorm);
+      vec3 L = normalize(uSunDir);
+      vec3 V = normalize(uEyePos - vPos);
+      vec3 H = normalize(L + V);
+
+      float ndotl = max(dot(N, L), 0.0);
+      float shadow = calcShadow(vLightSpacePos, ndotl);
+
+      // Hemisphere soft sky-ground light (Play Together pastel bounce)
+      float hemi = N.y * 0.5 + 0.5;
+      vec3 ambient = mix(uGroundCol, uSkyCol, hemi) * 0.58;
+
+      // Direct Sun + Soft shadow tint
+      vec3 direct = uSunCol * ndotl * mix(0.28, 1.0, shadow) * 0.65;
+
+      // Toy-like Specular & Rim Light
+      float spec = pow(max(dot(N, H), 0.0), 28.0) * vMat.x * shadow * 0.42;
+      float rim = pow(1.0 - max(dot(N, V), 0.0), 3.0) * 0.16;
+
+      vec3 lit = vCol * (ambient + direct) + vec3(spec) + uSkyCol * rim;
+      vec3 glow = vCol * (1.05 + uNight * 0.45);
+      gl_FragColor = vec4(mix(lit, glow, vMat.y), 1.0);
+    }
+  `;
+
+  function makeProg(vs, fs) {
+    const p = gl.createProgram();
+    const s1 = gl.createShader(gl.VERTEX_SHADER); gl.shaderSource(s1, vs); gl.compileShader(s1);
+    const s2 = gl.createShader(gl.FRAGMENT_SHADER); gl.shaderSource(s2, fs); gl.compileShader(s2);
+    gl.attachShader(p, s1); gl.attachShader(p, s2); gl.linkProgram(p);
+    return p;
+  }
+  const shProg = makeProg(shadowVS, shadowFS);
+  const mnProg = makeProg(mainVS, mainFS);
+
+  // Shadow Framebuffer 1024x1024
+  const SH_SIZE = 1024;
+  const shTex = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, shTex);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, SH_SIZE, SH_SIZE, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+  const shFB = gl.createFramebuffer();
+  gl.bindFramebuffer(gl.FRAMEBUFFER, shFB);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, shTex, 0);
+  const shRB = gl.createRenderbuffer();
+  gl.bindRenderbuffer(gl.RENDERBUFFER, shRB);
+  gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, SH_SIZE, SH_SIZE);
+  gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, shRB);
+  gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
+  function uploadMesh(m) {
+    const bufPos = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, bufPos); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(m.pos), gl.STATIC_DRAW);
+    const bufNorm = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, bufNorm); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(m.norm), gl.STATIC_DRAW);
+    const bufCol = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, bufCol); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(m.col), gl.STATIC_DRAW);
+    const bufMat = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, bufMat); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(m.mat), gl.STATIC_DRAW);
+    return { bufPos, bufNorm, bufCol, bufMat, count: m.pos.length / 3 };
+  }
+
+  const gpuMeshes = {};
+  ASSETS.forEach(a => { gpuMeshes[a.id] = uploadMesh(a.build()); });
+  const plazaMesh = uploadMesh(buildPlazaCombinedPT());
+
+  // Ma trận
+  function matMul(a, b) {
+    const out = new Float32Array(16);
+    for (let c = 0; c < 4; c++) {
+      for (let r = 0; r < 4; r++) {
+        out[c * 4 + r] = a[r] * b[c * 4] + a[4 + r] * b[c * 4 + 1] + a[8 + r] * b[c * 4 + 2] + a[12 + r] * b[c * 4 + 3];
+      }
+    }
+    return out;
+  }
+  function ortho(l, r, b, t, n, f) {
+    return new Float32Array([
+      2/(r-l), 0, 0, 0,
+      0, 2/(t-b), 0, 0,
+      0, 0, -2/(f-n), 0,
+      -(r+l)/(r-l), -(t+b)/(t-b), -(f+n)/(f-n), 1
+    ]);
+  }
+  function perspective(fovY, aspect, near, far) {
+    const f = 1.0 / Math.tan(fovY * 0.5), nf = 1.0 / (near - far);
+    return new Float32Array([
+      f / aspect, 0, 0, 0, 0, f, 0, 0, 0, 0, (far + near) * nf, -1, 0, 0, (2 * far * near) * nf, 0
+    ]);
+  }
+  function lookAt(eye, target, up) {
+    let zx = eye[0]-target[0], zy = eye[1]-target[1], zz = eye[2]-target[2];
+    const zl = Math.hypot(zx, zy, zz) || 1; zx/=zl; zy/=zl; zz/=zl;
+    let xx = up[1]*zz - up[2]*zy, xy = up[2]*zx - up[0]*zz, xz = up[0]*zy - up[1]*zx;
+    const xl = Math.hypot(xx, xy, xz) || 1; xx/=xl; xy/=xl; xz/=xl;
+    const yx = zy*xz - zz*xy, yy = zz*xx - zx*xz, yz = zx*xy - zy*xx;
+    return new Float32Array([
+      xx, yx, zx, 0, xy, yy, zy, 0, xz, yz, zz, 0,
+      -(xx*eye[0]+xy*eye[1]+xz*eye[2]), -(yx*eye[0]+yy*eye[1]+yz*eye[2]), -(zx*eye[0]+zy*eye[1]+zz*eye[2]), 1
+    ]);
+  }
+
+  // =========================================================================
+  // 4. UI & TƯƠNG TÁC XOAY 360°
+  // =========================================================================
+  let activeId = "chars";
+  let viewMode = "single"; // single | plaza
+  let tod = "day";
+  let autoSpin = true;
+  const approved = new Set();
+  let cam = { yaw: 0.48, pitch: 0.36, dist: 14.5 };
+
+  function syncUI() {
+    const a = ASSETS.find(x => x.id === activeId);
+    const mesh = viewMode === "single" ? gpuMeshes[activeId] : plazaMesh;
+    if (viewMode === "single") {
+      document.getElementById("stageIcon").textContent = a.icon;
+      document.getElementById("stageTitle").textContent = a.name + " (Play Together Style)";
+    } else {
+      document.getElementById("stageIcon").textContent = "🏘️";
+      document.getElementById("stageTitle").textContent = "Góc Phố Plaza Ghép 4 Asset Play Together";
+    }
+    document.getElementById("polyStats").textContent = "· " + Math.round(mesh.count / 3).toLocaleString("vi-VN") + " tam giác mượt";
+    document.getElementById("detailName").textContent = a.icon + " " + a.name;
+    document.getElementById("detailDesc").innerHTML = a.desc;
+
+    const btnApp = document.getElementById("btnApprove");
+    const isOk = approved.has(activeId);
+    btnApp.classList.toggle("active", isOk);
+    btnApp.textContent = isOk ? "💚 Đã chọn gu này" : "✅ Chọn gu này!";
+    document.getElementById("approvedCount").textContent = "Đã duyệt: " + approved.size + "/4";
+
+    const listEl = document.getElementById("assetList");
+    listEl.innerHTML = "";
+    ASSETS.forEach((item, idx) => {
+      const b = document.createElement("button");
+      b.className = "asset-item" + (item.id === activeId && viewMode === "single" ? " active" : "");
+      b.innerHTML = `
+        <span class="status-dot">${approved.has(item.id) ? "✅" : "#" + (idx + 1)}</span>
+        <span class="asset-icon">${item.icon}</span>
+        <div class="asset-name">${item.name}</div>
+        <div class="asset-sub">${item.sub}</div>
+      `;
+      b.addEventListener("click", () => {
+        activeId = item.id;
+        viewMode = "single";
+        document.getElementById("btnModeSingle").classList.add("active");
+        document.getElementById("btnModePlaza").classList.remove("active");
+        cam.dist = item.id === "chars" ? 13.5 : 17.5;
+        syncUI();
+      });
+      listEl.appendChild(b);
+    });
+  }
+  syncUI();
+
+  let dragging = false, lastM = { x: 0, y: 0 };
+  canvas.addEventListener("mousedown", e => {
+    dragging = true; lastM = { x: e.clientX, y: e.clientY };
+    autoSpin = false;
+    document.getElementById("btnSpin").classList.remove("active");
+    document.getElementById("btnSpin").textContent = "🔄 Tự xoay: TẮT";
+  });
+  window.addEventListener("mousemove", e => {
+    if (!dragging) return;
+    const dx = e.clientX - lastM.x, dy = e.clientY - lastM.y;
+    lastM = { x: e.clientX, y: e.clientY };
+    cam.yaw -= dx * 0.008;
+    cam.pitch = Math.max(0.12, Math.min(1.22, cam.pitch + dy * 0.006));
+  });
+  window.addEventListener("mouseup", () => { dragging = false; });
+  canvas.addEventListener("wheel", e => {
+    e.preventDefault();
+    cam.dist = Math.max(8, Math.min(55, cam.dist + e.deltaY * 0.025));
+  }, { passive: false });
+
+  document.getElementById("btnSpin").addEventListener("click", function () {
+    autoSpin = !autoSpin;
+    this.classList.toggle("active", autoSpin);
+    this.textContent = autoSpin ? "🔄 Tự xoay: BẬT" : "🔄 Tự xoay: TẮT";
+  });
+  document.getElementById("btnModeSingle").addEventListener("click", function () {
+    viewMode = "single";
+    this.classList.add("active");
+    document.getElementById("btnModePlaza").classList.remove("active");
+    cam.dist = activeId === "chars" ? 13.5 : 17.5;
+    syncUI();
+  });
+  document.getElementById("btnModePlaza").addEventListener("click", function () {
+    viewMode = "plaza";
+    this.classList.add("active");
+    document.getElementById("btnModeSingle").classList.remove("active");
+    cam.dist = 32.0;
+    cam.pitch = 0.48;
+    syncUI();
+  });
+  document.querySelectorAll("[data-tod]").forEach(b => {
+    b.addEventListener("click", () => {
+      tod = b.getAttribute("data-tod");
+      document.querySelectorAll("[data-tod]").forEach(x => x.classList.toggle("active", x === b));
+    });
+  });
+  document.getElementById("btnApprove").addEventListener("click", () => {
+    if (approved.has(activeId)) approved.delete(activeId); else approved.add(activeId);
+    syncUI();
+  });
+  document.getElementById("btnNext").addEventListener("click", () => {
+    const idx = ASSETS.findIndex(x => x.id === activeId);
+    activeId = ASSETS[(idx + 1) % ASSETS.length].id;
+    viewMode = "single";
+    document.getElementById("btnModeSingle").classList.add("active");
+    document.getElementById("btnModePlaza").classList.remove("active");
+    cam.dist = activeId === "chars" ? 13.5 : 17.5;
+    syncUI();
+  });
+
+  // =========================================================================
+  // 5. RENDER LOOP (2 PASS: SHADOW MAP PASS + SMOOTH COLOR PASS)
+  // =========================================================================
+  let last = performance.now();
+  function frame(now) {
+    const dt = Math.min(0.05, (now - last) / 1000);
+    last = now;
+    if (autoSpin) cam.yaw += 0.34 * dt;
+
+    const env = {
+      day:   { bg: [0.76, 0.90, 0.99], sunCol: [1.05, 1.00, 0.92], skyCol: [0.85, 0.94, 1.0], grdCol: [0.72, 0.78, 0.68], night: 0.0 },
+      dusk:  { bg: [0.98, 0.71, 0.56], sunCol: [1.15, 0.76, 0.54], skyCol: [0.98, 0.74, 0.68], grdCol: [0.58, 0.50, 0.62], night: 0.45 },
+      night: { bg: [0.10, 0.13, 0.24], sunCol: [0.52, 0.62, 0.92], skyCol: [0.30, 0.38, 0.68], grdCol: [0.22, 0.25, 0.38], night: 1.0 }
+    }[tod];
+
+    const mesh = viewMode === "single" ? gpuMeshes[activeId] : plazaMesh;
+    const sunDir = [14, 22, 16];
+    const shRange = viewMode === "single" ? 10.5 : 22.0;
+    const lightView = lookAt(sunDir, [0, 1.5, 0], [0, 1, 0]);
+    const lightProj = ortho(-shRange, shRange, -shRange, shRange, 2.0, 58.0);
+    const lightMVP = matMul(lightProj, lightView);
+
+    gl.enable(gl.DEPTH_TEST);
+    gl.enable(gl.CULL_FACE);
+
+    // PASS 1: Render Depth into Shadow Map
+    gl.bindFramebuffer(gl.FRAMEBUFFER, shFB);
+    gl.viewport(0, 0, SH_SIZE, SH_SIZE);
+    gl.clearColor(1, 1, 1, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    gl.useProgram(shProg);
+    gl.uniformMatrix4fv(gl.getUniformLocation(shProg, "uLightMVP"), false, lightMVP);
+    const shPos = gl.getAttribLocation(shProg, "aPos");
+    gl.bindBuffer(gl.ARRAY_BUFFER, mesh.bufPos);
+    gl.enableVertexAttribArray(shPos);
+    gl.vertexAttribPointer(shPos, 3, gl.FLOAT, false, 0, 0);
+    gl.drawArrays(gl.TRIANGLES, 0, mesh.count);
+
+    // PASS 2: Render Scene with Soft Shadows & Pastel Lighting
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    gl.clearColor(env.bg[0], env.bg[1], env.bg[2], 1.0);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    gl.useProgram(mnProg);
+
+    const targetY = viewMode === "single" ? (activeId === "chars" ? 2.1 : 3.4) : 2.6;
+    const eye = [
+      Math.sin(cam.yaw) * Math.cos(cam.pitch) * cam.dist,
+      targetY + Math.sin(cam.pitch) * cam.dist,
+      Math.cos(cam.yaw) * Math.cos(cam.pitch) * cam.dist
+    ];
+    const proj = perspective(Math.PI / 4.0, canvas.width / canvas.height, 0.5, 160.0);
+    const view = lookAt(eye, [0, targetY, 0], [0, 1, 0]);
+
+    gl.uniformMatrix4fv(gl.getUniformLocation(mnProg, "uProj"), false, proj);
+    gl.uniformMatrix4fv(gl.getUniformLocation(mnProg, "uView"), false, view);
+    gl.uniformMatrix4fv(gl.getUniformLocation(mnProg, "uLightMVP"), false, lightMVP);
+    gl.uniform3fv(gl.getUniformLocation(mnProg, "uEyePos"), eye);
+    gl.uniform3fv(gl.getUniformLocation(mnProg, "uSunDir"), sunDir);
+    gl.uniform3fv(gl.getUniformLocation(mnProg, "uSunCol"), env.sunCol);
+    gl.uniform3fv(gl.getUniformLocation(mnProg, "uSkyCol"), env.skyCol);
+    gl.uniform3fv(gl.getUniformLocation(mnProg, "uGroundCol"), env.grdCol);
+    gl.uniform1f(gl.getUniformLocation(mnProg, "uNight"), env.night);
+
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, shTex);
+    gl.uniform1i(gl.getUniformLocation(mnProg, "uShadowMap"), 0);
+
+    const bindAttr = (name, buf, size) => {
+      const loc = gl.getAttribLocation(mnProg, name);
+      gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+      gl.enableVertexAttribArray(loc);
+      gl.vertexAttribPointer(loc, size, gl.FLOAT, false, 0, 0);
+    };
+    bindAttr("aPos", mesh.bufPos, 3);
+    bindAttr("aNorm", mesh.bufNorm, 3);
+    bindAttr("aCol", mesh.bufCol, 3);
+    bindAttr("aMat", mesh.bufMat, 2);
+
+    gl.drawArrays(gl.TRIANGLES, 0, mesh.count);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
