@@ -85,7 +85,27 @@ kỳ), `hoi_truyen_moi.png` (hộp hỏi), `da_bat_dau_lai.png` (sau khi bấm),
 
 ## 4. Kết quả gói cuối
 
-(điền sau khi chạy — mục 4 ở cuối file)
+Chạy trên gói `kotoba_batake.ankiaddon` 1.35.2 đã giải nén (đúng thứ người dùng cài), Anki 26.9.4:
+
+| Bộ | Kết quả |
+|---|---|
+| `tests/run_all.sh` (offline + collection thật + máy chủ đồng bộ thật + trang web) | **69 bộ — TẤT CẢ OK** (gồm `test_1352` 68/68, `test_1351` 47/47, đồng bộ 172/172…) |
+| `e2e_1352` (mới) | 33/33 |
+| `e2e_qa1351` (tập dượt QA 4 tiếng + luyện viết) | 39/39 |
+| `e2e_120` (Lịch hoa, nhật ký, luyện viết Nhật / Anh, Gemini giả) | 103/103 |
+| `e2e_1351` (Trang trí thử lúc đồng bộ, Như cảnh thật hỏi trước) | 35/35 |
+| `e2e_135` (tiếng Đức / Pháp, báo) | 60/60 |
+| `e2e_134` (Trang trí thử, bảng ôn, cây deck) | 87/87 |
+| `e2e_1332` (khoá lựa chọn báo khi đang viết) | 36/36 |
+| `e2e_1331` (Import .colpkg khi vườn mở) | 43/43 |
+| `e2e_133` (báo Trung / Hàn) | 77/77 |
+| `e2e_123` | 66/66 |
+| `e2e_1303` (bấm bừa 500 phím / 300 chuột, đổi cỡ cửa sổ, tương phản) | 49/49 |
+
+Trước khi sửa, 3 test cũ chỉ soát chữ trong mã phải chỉnh theo mã mới: `test_1303` (thứ tự hai dòng trong `_check_day` — giữ
+nguyên thứ tự, việc mới đặt sau), `test_1332` (`AI_LOCKED` thêm 2 lệnh), `test_1351` (manifest ≥ 1.35.1); trang web xuất lại
+hình theo bản 1.35.2 (`node site/tools/xuat_hinh.js`). `e2e_1312` (đồng bộ qua giao diện Anki): audit ghi trượt 1 ca vì đọc
+thông báo ở 500 ms trong khi thông báo xếp hàng tới sau ~1,2 giây → kịch bản nay chờ tối đa 5 giây.
 
 ## 5. Cần thử trên máy thật
 
