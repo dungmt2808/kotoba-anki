@@ -219,7 +219,8 @@ KHONG_DOI = {
 # games.js: bảng chuyển romaji → kana (trước mục "Chọn từ"; 1.32.1: tìm dòng thay cho số cố định 700 — thêm mã phía trên
 # đẩy bảng xuống) và chữ gốc đã đổi qua GardenLang.game / ask / tag (bảng GAMES / ASK / TAGS)
 GAMES_GOC = {g["ja"] for g in L.GAMES.values()} | set(L.ASK["ja"]) | set(L.TAGS["ja"].values()) | {"する"}
-KHONG_DOI_CHU = {"ことば畑", "ことば畑 · ", "お正月", "一、二文を書いてみよう…"}     # tên add-on, tên lễ, ô luyện viết tiếng Nhật
+KHONG_DOI_CHU = {"ことば畑", "ことば畑 · ", "お正月", "一、二文を書いてみよう…",     # tên add-on, tên lễ, ô luyện viết tiếng Nhật
+                 "写一两句话吧…"}     # 1.35.1: chữ mờ ô luyện viết tiếng Trung — theo tiếng đang viết, không theo Ngôn ngữ trong vườn
 _g = open(os.path.join(ADDON, "web", "games.js"), encoding="utf-8").read().split("\n")
 KANA_END = next((i for i, x in enumerate(_g, 1) if x.strip() == "// Chọn từ"), 700)
 lits: list[tuple[str, int, str]] = []

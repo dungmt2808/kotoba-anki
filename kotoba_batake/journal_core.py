@@ -896,8 +896,12 @@ LANG_VI = {"ja": "tiếng Nhật", "en": "tiếng Anh", "zh": "tiếng Trung", "
 LANG_RULE = {
     "zh": " Giữ kiểu chữ của người học (giản thể hay phồn thể); không viết pinyin.",
     "ko": " Viết bằng Hangul, giữ cách xưng hô / đuôi câu (요, 다…) người học chọn nếu không sai.",
-    "de": " Viết hoa danh từ đúng chính tả tiếng Đức; dùng ä ö ü ß (không viết ae / oe / ue / ss thay).",
-    "fr": " Dùng đúng dấu của tiếng Pháp (é è ê à ç…).",
+    "de": " Viết hoa danh từ đúng chính tả tiếng Đức; dùng ä ö ü ß (không viết ae / oe / ue / ss thay). Phần tiếng Việt "
+          "(giai_thich, nhan_xet, con_lai, quy_tac) bắt buộc viết tiếng Việt có dấu đầy đủ.",
+    # Gemini thật 18/11 (Flash-Lite): câu cũ "Dùng đúng dấu của tiếng Pháp" → 3 / 4 lần bỏ hết dấu, cả tiếng Việt ("passe
+    # compose avec etre", giải thích không dấu → máy bỏ); dặn tách hai phần như dưới → 4 / 4 lần đúng
+    "fr": " Chữ tiếng Pháp giữ đủ dấu (passé composé, être, à). Phần tiếng Việt (giai_thich, nhan_xet, con_lai, quy_tac) "
+          "bắt buộc viết tiếng Việt có dấu đầy đủ.",
 }
 
 

@@ -71,6 +71,13 @@ Bộ thẻ mẫu QA (mục 6) trên 1.35.0: **không thẻ Đức / Pháp / Trun
   vẫn đúng tiếng. Nếu lưu thẳng `lang: "de"` thì 1.31.3 coi là tiếng Nhật và **cắt bài còn 60 ký tự** (test giữ ca này làm
   minh chứng). Giới hạn: máy còn 1.31.3 tự bấm "Gemini sửa" cho bài tiếng Đức thì nó gửi như bài tiếng Anh.
 
+**Gemini thật** (khoá tài khoản test, Flash-Lite như add-on, `tests/gemini/run_fix.py --lang de|fr|zh|ko [--long]`): bài Đức /
+Trung / Hàn sửa đúng ngay (vd. "Gestern ich habe … gehe in Park" → "Gestern habe ich … bin in den Park gegangen", 3 lỗi có giải
+thích tiếng Việt; 영화을 봐요 → 영화를 봤어요; 不很甜 → 不太甜). **Tiếng Pháp lúc đầu 3 / 4 lần Gemini bỏ hết dấu** — cả chữ Pháp
+("passe compose avec etre") lẫn giải thích tiếng Việt → máy bỏ giải thích + nhận xét (không hiện chữ không dấu). Dặn tách hai
+phần ("chữ tiếng Pháp giữ đủ dấu …; phần tiếng Việt bắt buộc có dấu") → 4 / 4 rồi 3 / 3 lần đúng; Đức / Trung / Hàn chạy lại vẫn
+đúng; bài dài tối đa (26–27 từ / 49–52 ký tự) cả 4 tiếng đều trong giới hạn, máy không phải cắt gì.
+
 ### 1.4 Đoán ngôn ngữ deck (loại note chưa cấu hình)
 
 | Deck | 1.35.0 đoán | 1.35.1 |
