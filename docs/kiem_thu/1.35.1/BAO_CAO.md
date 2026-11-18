@@ -110,4 +110,42 @@ bỏ mạo từ.
 
 ## 4. Kiểm thử
 
-(điền ở mục kết quả bên dưới)
+### 4.1 Kịch bản mới (ngoài bộ có sẵn)
+
+- `tests/core/test_1351.py` (31 kiểm tra) + `tests/core/test_1351.js` (Đuổi quạ / Chợ sáng, hàm thật của `games.js` trong node):
+  từng lỗi ở mục 1 (Đức 50 câu, Pháp 51 câu, nháy cong, 3.000 câu ngẫu nhiên không chồng / không cắt giữa chữ / đúng ngữ
+  cảnh, 12 kiểu deck đoán ngôn ngữ, 10 ca tiếng Trung, 21 ca tiếng Hàn, Trang trí thử với collection Anki thật — file hỏng,
+  file không đọc được, **chạy đúng mã `_on_bridge` của add-on** với Anki giả đang đồng bộ —, soát mã giao diện, câu chữ,
+  hợp đồng dữ liệu so với 1.35.0). **Trên mã 1.35.0: đỏ 21 / 31** — test bắt đúng các lỗi; mã 1.35.1: 31 / 31.
+- `tests/anki/e2e_1351.js` (Anki 26.9.4 thật, chuột / phím thật): đo chữ của Sổ sinh hoạt / Hộp sưu tầm / Album khách / thẻ
+  trò chơi ở Đức / Pháp / Trung / Hàn (không tràn ô, không từ nào rộng hơn ô, trang không cuộn ngang) — **1.35.0 bẻ giữa 4
+  từ Đức** ("Morgengymnas / tik machen", ảnh `so_sinh_hoat_de_truoc_sau.png`: trên là 1.35.0, dưới là 1.35.1); Trang trí thử
+  lúc giả "Anki đang đồng bộ": đặt thử vẫn lưu, đóng vườn mở lại còn, "Dùng bản này" bị chặn + câu báo, đồng bộ xong dùng
+  được (−220 xu đúng); "Như cảnh thật" hỏi trước, Huỷ giữ bản thử; file bản thử thành thư mục → đúng 3 lệnh rồi dừng (không
+  lặp); không lỗi JS / nhật ký lỗi.
+
+### 4.2 Kết quả
+
+| Bộ | Kết quả |
+|---|---|
+| `tests/run_all.sh` (thư mục mã nguồn, `ANKI_PY` = aqt 26.9.4) | 68 bộ — một lần đỏ: `test_1314` quét thấy chính dòng báo cáo này có chữ kana cạnh chữ Trung → sửa câu trong báo cáo, chạy lại 32 / 32 |
+| `tests/run_all.sh` trên **gói đã đóng** (giải nén, khớp thư mục mã nguồn từng file) | **68 bộ, TẤT CẢ OK** |
+| `core/test_1351.py` | 31 / 31 (mã 1.35.0: 10 / 31) |
+| Anki 26.9.4: `e2e_1351` (thư mục mã nguồn + gói đã đóng; tên trò chơi đo với deck Đức / Pháp) | 35 / 35 · 35 / 35 |
+| Anki 26.9.4: `e2e_135` 60 / 60, `e2e_134` 87 / 87 (đổi theo hành vi mới: bản thử lưu được lúc đồng bộ, "Như cảnh thật" hỏi trước), `e2e_135_ngonngu` 5 / 5, `e2e_1333_ngonngu` 5 / 5, `e2e_132` 39 / 39, `e2e_133` 77 / 77 | đạt hết |
+| `run_capnhat.sh` gói **1.31.3 đã phát hành** (`e64eb22`) → 1.35.1, cài đè bằng trình quản lý add-on | 19 / 19 |
+| `run_habanh.sh` 1.35.1 → 1.31.3 → 1.35.1 (có deck tiếng Đức) | 26 / 26 |
+
+### 4.3 Chưa chạy lần này
+
+- Anki 23.10.1 (Python 3.9) — môi trường làm việc mới chưa có venv bản cũ; phần đổi ở 1.35.1 không dùng cú pháp mới
+  (`run_all.sh` biên dịch mọi file bằng Python hiện có; nên chạy `PY39` ở lần sau).
+- Gemini thật: 1.35.1 chỉ đổi phần máy nối tra từ / kiểm (không đổi lời nhắc, không thêm lượt gọi) — số báo mẫu và Gemini giả
+  trong `test_135` / `test_133` vẫn 0 lỗi.
+
+## 5. Việc người dùng cần làm
+
+1. Đọc mục 1.6 (câu chữ đã sửa) và mục 2 (tên báo) — giữ hay đổi.
+2. Xem trên máy thật: deck tiếng Đức / Pháp → báo (tra từ), Đuổi quạ, ⚙ Ngôn ngữ trong vườn → Tiếng Đức (Sổ sinh hoạt);
+   Nhà → Trang trí thử → "Như cảnh thật" (giờ có hộp hỏi).
+3. Gộp master khi thấy ổn (1.35.0 + 1.35.1 đều chưa gộp).
