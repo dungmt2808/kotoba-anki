@@ -35,6 +35,22 @@ Noel cho StackChan — **chỉ để ngắm, không có việc gì để mong ch
 | `136_07_dem_24.png` | **Đêm 24/12**: ngôi sao lên đỉnh, cây + nhà sáng đèn (đèn mái, nến cửa sổ) = thành phẩm; ông già Noel đáp xe tuần lộc xuống sân lấy thiệp; StackChan đội mũ Noel + thú nuôi ra xem |
 | `136_08_sang_25.png` | **Sáng 25/12**: hộp quà dưới gốc, dấu chân + vết xe trên tuyết; **quả cầu tuyết có cây của bạn bên trong** + **thư trả lời** nhắc điều ước + đồ đã bày; **Kỷ niệm Giáng sinh 2026** ở tab Album |
 
+## 0. Góp ý bản 2 (18/11) — **đang nghĩ thêm, chưa chốt**
+
+> trang trí bên ngoài nhà thì tớ thấy chưa đẹp lắm, à có thể sẽ có sàn hoặc tường có vibe giáng sinh cũng được luôn. tớ thấy hiện
+> tại mở mùa giáng sinh cũng tặng 1 cây giáng sinh rồi á. tớ thấy hiện tại cũng ổn, nhưng có vẻ cần nghĩ thêm
+
+Claude ghi nhận + hướng đề xuất (chưa vẽ):
+- **Ngoài nhà chưa đẹp**: các món nhỏ dán lên nhà 64 × 76 bị vụn. Hướng: thay 7 món rời bằng **một bộ "nhà khoác áo Noel"** vẽ
+  liền một khối (mái tuyết dày, đèn viền mái, vòng hoa cửa, nến cửa sổ) **lên dần 3–4 nấc** trong tháng; hoặc bớt còn 2–3 món to.
+- **Tường / sàn Noel**: `decor_core` có 12 tường + 9 sàn, chưa mẫu nào Giáng sinh → thêm 2–3 tường (sọc kẹo gậy, gỗ thông bông
+  tuyết, đỏ mận hoạ tiết nhỏ) + 1–2 sàn (thảm đỏ caro, gỗ có thảm tuyết) làm phần thưởng của ô "Trong nhà" — đồng bộ với hệ
+  tường & sàn sẵn có, nhìn liền mạch hơn đồ nhỏ.
+- **Đã có cây thông**: mở giao diện mùa Giáng sinh được tặng `xmastree` (32 × 44, trang trí sẵn). Hướng: lịch **trang trí chính
+  cây đó** (bản "cây trơn" đầy dần, xong mùa giữ bản bạn trang trí), hoặc bỏ phần cây, dồn ô cho nhà / phòng / thiệp / ông già Noel.
+- **Thời gian**: lịch 24 ô cần phát hành trước ~28/11; nghĩ thêm lâu hơn thì có thể làm **lịch ngắn 13–24/12 (12 ô)** hoặc để khung
+  này cho **Tết** (mùng 1 = 6/2/2027).
+
 ## 1. 24 ô cửa (Chủ nhật 6 / 13 / 20 tự vẽ)
 
 | Cây (10) | Ngoài nhà (7) | Trong nhà (7) |
