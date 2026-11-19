@@ -124,6 +124,17 @@ Sau khi trả lời có hiện cách đọc, Hán Việt, nghĩa (và cách dùn
 - **Hiệu ứng thành tích** (`web/joy.js`, Python tính `data.joy` = `more_core.joy_view`): **xong hết thẻ hôm nay** trong deck đang xem (`deck_due_tree` = 0 và hôm nay đã ôn ≥ 1 lượt) → cầu vồng trên ruộng và trên trời sân, giọt sương lấp lánh; **đạt mục tiêu ngày**; **cả vườn xanh tốt / ra hoa / trĩu quả** (≥ 5 cây, không cây nào héo, mọi cây từ Cây non / Ra hoa / Ra quả) → lá lấp lánh / cánh hoa anh đào bay / đốm sáng vàng bay lên; **mốc chuỗi ngày** (7, 14, 21, 30, 50, 75, 100, 150, 200, 250, 300, 365, 500, 730, 1000) → pháo hoa trên trời sân; **xong 3 nhiệm vụ** → đèn trời bay lên. Huy hiệu cạnh chú thích ruộng; dải chúc mừng + linh vật chúc mỗi thành tích **một lần mỗi ngày** (nhớ ở `localStorage kb-joy-<ngày>-<loại>`), đang ôn thẻ thì để dành tới khi đóng bảng ôn.
 - **Lưu trữ**: khoá collection mới `kotoba_batake_more` (`more_core.MORE_KEY`) — mục 4. Bản ≤ 1.13 ở máy khác không đọc khoá này nên không xoá được gì.
 
+### Mới ở 1.35.4: chuyển cảnh Tưới ↔ vườn mượt, cây deck trong tab Nguồn báo
+- **Tưới ngay ↔ vườn (Esc) không còn giựt**: bố cục đổi cùng lúc với bảng ôn (trước đây trễ tới 0,2 giây — đang Phóng to / Tập
+  trung khi ôn thì Esc thấy trang trống một nhịp), vườn không co / nở theo thanh cuộn, ruộng đang ẩn không còn hiện 4 cột một
+  nhịp; bảng ôn bật nhẹ khi mở, vườn trồi lên nhẹ khi đóng (⚙ → Giao diện → Chuyển cảnh: Tắt để bỏ; kiểu Dịu mắt chỉ mờ dần).
+  Mở bảng (R, Tưới ngay, Trò chơi, Nhà, Báo, Lịch hoa) lúc đang cuộn xuống ruộng thì về đầu trang, không còn nằm ngoài màn hình.
+- **Báo → Nguồn báo → Lấy từ**: chọn qua lại Mọi deck / Chọn deck… / Không dùng deck thì danh sách deck đóng / mở đúng. Danh
+  sách deck **dạng cây như ô deck ở thanh trên** (deck con thụt vào, ▸ / ▾ nhớ chung, tìm deck có đường dẫn); tick deck cha là
+  lấy cả deck con ("đã gồm").
+- Bảng nổi (⚙, chọn deck, Nhiệm vụ, Tin làng, Chụp ảnh): mỗi lúc một bảng, mở bảng lớn thì bảng nổi tự đóng.
+- Không đổi dữ liệu đã lưu.
+
 ### Mới ở 1.35.1: kiểm tra lại tiếng Đức / Pháp / Trung / Hàn, Trang trí thử không mất bản thử
 - **Tra từ của báo, Điền vào câu nhận đúng hơn**: tiếng Đức phân biệt chữ hoa / thường (der Morgen "buổi sáng" không nối
   "morgen" = ngày mai), nhận ký hiệu "der Hund, -(e)s, -e", động từ tách / có tiền tố (aufgestanden, bekam, kennengelernt), so

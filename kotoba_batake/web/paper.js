@@ -606,23 +606,52 @@ var GardenPaper = (function () {
     opts.push(["pick", picked.length ? "Deck đã chọn (" + picked.length + ")" : "Chọn deck…", noDeck || "Tối đa " + (v.max_decks || 5) + " deck", none]);
     // 1.25.1: không cần deck — Gemini viết theo trình độ (báo tiếng Việt: kiến thức chung)
     opts.push(["level", "Không dùng deck", vi ? "Tin làng, truyện và kiến thức chung" : "Gemini viết theo trình độ, tự chọn từ đáng học"]);
-    const cur = mode === "level" ? "level" : (picked.length || deckOpen[lang]) ? "pick" : "all";
+    // 1.35.4 (người dùng 19/11: chọn "Chọn deck" thì hiện danh sách deck, "chuyển qua Không chọn deck thì cái dropdown đó vẫn
+    // giữ"): đang mở danh sách deck thì ô luôn ghi "Chọn deck…" — trước đây đang "Không dùng deck" mà bấm "Chọn deck…" thì
+    // danh sách mở nhưng ô vẫn ghi "Không dùng deck", chọn lại mục đó không có sự kiện change → danh sách không đóng được
+    const cur = deckOpen[lang] ? "pick" : mode === "level" ? "level" : picked.length ? "pick" : "all";
     return pick(opts, cur, (x) => {
       aiFlash = null;
-      if (x === "all") { deckOpen[lang] = false; H.send("ai:decks:" + JSON.stringify({ lang: lang, decks: [] })); }
-      else if (x === "level") { deckOpen[lang] = false; H.send("ai:decks:" + JSON.stringify({ lang: lang, decks: [], mode: "level" })); }
-      else { deckOpen[lang] = true; drawSource(); }
+      if (x === "pick") { deckOpen[lang] = true; drawSource(); return; }
+      deckOpen[lang] = false; deckQuery[lang] = ""; deckScroll[lang] = 0; delete deckAuto[lang];
+      // vẽ lại ngay theo lựa chọn mới (không đợi Python trả lời — danh sách deck đóng liền tay); Python trả lời thì vẽ lại đúng
+      if (v.picked) { v.picked[lang] = []; }
+      if (v.modes) { v.modes[lang] = x === "level" ? "level" : "deck"; }
+      H.send("ai:decks:" + JSON.stringify(x === "level" ? { lang: lang, decks: [], mode: "level" } : { lang: lang, decks: [] }));
+      drawSource();
     }, "Lấy từ cho " + (PAPER_NAME[lang] || "báo"));
   }
   function deckHas(name, q) {
     if (typeof Garden !== "undefined" && Garden.deckMatch) { return Garden.deckMatch(name, q); }
     return String(name).toLowerCase().indexOf(String(q || "").trim().toLowerCase()) >= 0;
   }
+  // 1.35.4 (người dùng 19/11: danh sách deck của báo "chưa có gộp deck giống bên anki, giống phần chọn deck ở góc trên bên
+  // trái"): cây deck — deck con thụt vào dưới deck cha, ▸ / ▾ thu gọn (nhớ chung với ô deck ở thanh trên, lúc đầu theo Anki;
+  // nhánh có deck đã chọn tự mở), gõ chữ là lọc (danh sách phẳng có đường dẫn). Tick deck cha = lấy cả deck con (như words_core
+  // .pick): deck con hiện "đã gồm", tick deck cha thì bỏ các deck con đã tick riêng (đỡ tốn chỗ trong 5 deck).
+  const deckAuto = {};        // nhánh tự mở vì có deck đã chọn bên trong (không lưu) — {lang: {id: true}}
+  function treeOf(decks) {
+    if (typeof Garden !== "undefined" && Garden.deckTreeOf) { return Garden.deckTreeOf(decks); }
+    return decks.map((d) => ({ id: d.id, name: d.name, full: d.name, depth: 0, kids: false, col: false, parent: null, src: d }));
+  }
+  function foldOpen(r, lang) {
+    if (!r.kids) { return false; }
+    if ((deckAuto[lang] || {})[r.id]) { return true; }
+    return typeof Garden !== "undefined" && Garden.deckFoldOpen ? Garden.deckFoldOpen(r.id, r.col) : !r.col;
+  }
   function deckList(v, lang) {
     const picked = (v.picked || {})[lang] || [], max = v.max_decks || 5;
     const box = el("div", "kb-ai-decks");
     const decks = (v.decks || {})[lang] || [];
     if (!decks.length) { box.appendChild(el("div", "kb-ai-hint", "Chưa có deck " + LANG_NAME[lang] + ".")); }
+    const rows = treeOf(decks), byId = {};
+    rows.forEach((r) => { byId[r.id] = r; });
+    const isPicked = (r) => picked.indexOf(r.id) >= 0;
+    const coveredBy = (r) => { for (let p = r.parent; p; p = p.parent) { if (isPicked(p)) { return p; } } return null; };
+    if (!deckAuto[lang]) {           // lần mở đầu: mở sẵn nhánh chứa deck đã chọn
+      deckAuto[lang] = {};
+      rows.forEach((r) => { if (isPicked(r)) { for (let p = r.parent; p; p = p.parent) { deckAuto[lang][p.id] = true; } } });
+    }
     const find = el("div", "kb-ai-line kb-ai-dfind");
     const q = el("input", "kb-p-in kb-ai-dq");
     q.type = "text"; q.placeholder = "Tìm deck…"; q.spellcheck = false; q.autocomplete = "off";
@@ -635,42 +664,124 @@ var GardenPaper = (function () {
     if (decks.length > 6) { box.appendChild(find); }
     const list = el("div", "kb-ai-decks-list");
     list.setAttribute("data-lang", lang);
-    const none = el("div", "kb-ai-hint", "Không có deck nào khớp.");
-    const labs = [];
-    const filter = () => {
-      deckQuery[lang] = q.value;
-      let n = 0;
-      labs.forEach(([lab, d]) => { const on = deckHas(d.name, q.value); lab.hidden = !on; if (on) { n++; } });
-      none.hidden = n > 0 || !decks.length;
-      cnt.textContent = q.value.trim() ? n + " / " + decks.length + " deck" : decks.length + " deck";
+    list.setAttribute("role", "tree");
+    list.setAttribute("aria-label", "Deck " + LANG_NAME[lang]);
+    const send = (next) => {
+      v.picked = v.picked || {};
+      v.picked[lang] = next;               // tick liền tay (Python trả lời thì vẽ lại đúng)
+      if (v.modes) { v.modes[lang] = "deck"; }
+      H.send("ai:decks:" + JSON.stringify({ lang: lang, decks: next, mode: "deck" }));
+      draw();
     };
-    q.addEventListener("input", () => { filter(); list.scrollTop = 0; });
-    q.addEventListener("keydown", (e) => {
-      e.stopPropagation();                       // gõ chữ không chạy phím tắt của bảng Báo
-      if (e.key === "Escape" && q.value) { e.preventDefault(); q.value = ""; filter(); }
-    });
-    decks.forEach((d) => {
+    const tick = (r, on) => {
+      let next;
+      if (on) {
+        const sub = (x) => { for (let p = byId[x] && byId[x].parent; p; p = p.parent) { if (p.id === r.id) { return true; } } return false; };
+        next = picked.filter((x) => x !== r.id && !sub(x)).concat([r.id]);
+        if (next.length > max) { draw(); return; }
+      } else { next = picked.filter((x) => x !== r.id); }
+      send(next);
+    };
+    const toggle = (r) => {
+      const open = !foldOpen(r, lang);
+      if (!open && deckAuto[lang]) { delete deckAuto[lang][r.id]; }
+      if (typeof Garden !== "undefined" && Garden.deckFoldSave) { Garden.deckFoldSave(r.id, open); }
+      else { r.col = !open; }
+      if (toggleDraw) { toggleDraw(); }
+    };
+    let toggleDraw = null;
+    function draw() { drawSource(); }      // tick: vẽ lại cả tab (dòng "Lấy từ", số deck đã chọn…); drawSource giữ focus + cuộn
+    const labs = [];
+    rows.forEach((r) => {
       const lab = el("label", "kb-ai-deck");
+      lab.setAttribute("role", "treeitem");
+      lab.setAttribute("data-id", String(r.id));
+      lab.setAttribute("aria-level", String(r.depth + 1));
+      lab.style.setProperty("--kb-dd", String(r.depth));
+      lab.title = r.full;
+      const tg = el("button", "kb-ai-dtog" + (r.kids ? " has-kids" : ""));
+      tg.type = "button";
+      if (r.kids) {
+        tg.setAttribute("data-tog", String(r.id));
+        tg.addEventListener("click", (e) => { e.preventDefault(); e.stopPropagation(); toggle(r); });
+      } else { tg.tabIndex = -1; tg.setAttribute("aria-hidden", "true"); tg.disabled = true; }
+      lab.appendChild(tg);
       const cb = el("input");
       cb.type = "checkbox";
-      cb.checked = picked.indexOf(d.id) >= 0;
-      cb.disabled = !cb.checked && picked.length >= max;
-      cb.addEventListener("change", () => {
-        const next = cb.checked ? picked.concat([d.id]) : picked.filter((x) => x !== d.id);
-        H.send("ai:decks:" + JSON.stringify({ lang: lang, decks: next, mode: "deck" }));
-      });
+      cb.setAttribute("data-id", String(r.id));
+      const cov = coveredBy(r);
+      cb.checked = isPicked(r) || !!cov;
+      cb.disabled = (!!cov && !isPicked(r)) || (!cb.checked && picked.length >= max);
+      if (cov && !isPicked(r)) { lab.classList.add("is-in"); lab.title = r.full + " · đã gồm trong “" + cov.full + "”"; }
+      else if (cb.disabled) { lab.title = r.full + " · đã chọn đủ " + max + " deck"; }
+      cb.addEventListener("change", () => tick(r, cb.checked));
       lab.appendChild(cb);
-      lab.appendChild(document.createTextNode(" " + d.name));
-      lab.appendChild(el("span", "kb-ai-hint", d.notes + " note"));
+      const nm = el("span", "kb-ai-dname");
+      const pp = String(r.full).split("::");
+      if (pp.length > 1) { nm.appendChild(el("span", "kb-ai-dpath", pp.slice(0, -1).join(" › ") + " › ")); }      // chỉ hiện khi đang tìm
+      nm.appendChild(el("span", "kb-ai-dleaf", r.name));
+      lab.appendChild(nm);
+      lab.appendChild(el("span", "kb-ai-hint", cov && !isPicked(r) ? "đã gồm" : r.src.notes + " note"));
       list.appendChild(lab);
-      labs.push([lab, d]);
+      labs.push([lab, r, tg]);
     });
+    const none = el("div", "kb-ai-hint", "Không có deck nào khớp.");
     list.appendChild(none);
+    // lọc / thu gọn ngay trên danh sách (không vẽ lại: gõ bằng bộ gõ tiếng Việt / Nhật đang ghép chữ không bị cắt ngang)
+    function apply() {
+      const query = String(q.value || "").trim();
+      deckQuery[lang] = q.value;
+      list.classList.toggle("is-flat", !!query);
+      let n = 0, hideBelow = -1;
+      labs.forEach(([lab, r, tg]) => {
+        let on;
+        // đang tìm: khớp nguyên cụm lên trước, khớp rời từng từ sau (như ô deck ở thanh trên); danh sách là flex → dùng order
+        lab.style.order = query && !(typeof Garden !== "undefined" && Garden.deckPhrase && Garden.deckPhrase(r.full, query)) ? "1" : "";
+        if (query) { on = deckHas(r.full, query); }
+        else {
+          if (hideBelow >= 0 && r.depth > hideBelow) { on = false; }
+          else { hideBelow = -1; on = true; if (r.kids && !foldOpen(r, lang)) { hideBelow = r.depth; } }
+        }
+        lab.hidden = !on;
+        if (on) { n++; }
+        if (r.kids) {
+          const open = foldOpen(r, lang);
+          tg.textContent = query ? "" : open ? "▾" : "▸";
+          tg.title = open ? "Thu gọn" : "Mở deck con";
+          tg.setAttribute("aria-label", (open ? "Thu gọn " : "Mở deck con của ") + r.full);
+          tg.setAttribute("aria-expanded", open ? "true" : "false");
+          tg.hidden = !!query;
+          lab.setAttribute("aria-expanded", open ? "true" : "false");
+        }
+      });
+      none.hidden = n > 0 || !decks.length;
+      cnt.textContent = query ? n + " / " + decks.length + " deck" : decks.length + " deck";
+    }
+    toggleDraw = apply;
+    apply();
+    q.addEventListener("input", () => { apply(); list.scrollTop = 0; });
+    q.addEventListener("keydown", (e) => {
+      e.stopPropagation();                       // gõ chữ không chạy phím tắt của bảng Báo
+      if (e.key === "Escape" && q.value) { e.preventDefault(); q.value = ""; apply(); }
+    });
+    // ← / → trên một deck như cây của Anki: → mở nhánh, ← thu nhánh (đã thu / không có con thì lên deck cha)
+    list.addEventListener("keydown", (e) => {
+      if ((e.key !== "ArrowRight" && e.key !== "ArrowLeft") || String(q.value || "").trim()) { return; }
+      const lab = e.target.closest && e.target.closest(".kb-ai-deck");
+      const r = lab && byId[Number(lab.getAttribute("data-id"))];
+      if (!r) { return; }
+      e.preventDefault(); e.stopPropagation();
+      if (e.key === "ArrowRight" && r.kids && !foldOpen(r, lang)) { toggle(r); }
+      else if (e.key === "ArrowLeft" && r.kids && foldOpen(r, lang)) { toggle(r); }
+      else if (e.key === "ArrowLeft" && r.parent) {
+        const pe = list.querySelector('.kb-ai-deck[data-id="' + r.parent.id + '"] input');
+        if (pe && !pe.disabled) { pe.focus(); } else { const t = list.querySelector('[data-tog="' + r.parent.id + '"]'); if (t) { t.focus(); } }
+      }
+    });
     box.appendChild(list);
-    filter();
     const foot = el("div", "kb-ai-line");
-    foot.appendChild(el("span", "kb-ai-hint", "Đã chọn " + picked.length + " / " + max));
-    foot.appendChild(btn("", "Xong", () => { deckOpen[lang] = false; deckQuery[lang] = ""; deckScroll[lang] = 0; drawSource(); }));
+    foot.appendChild(el("span", "kb-ai-hint", "Đã chọn " + picked.length + " / " + max + (rows.some((r) => r.kids) ? " · tick deck cha là lấy cả deck con" : "")));
+    foot.appendChild(btn("", "Xong", () => { deckOpen[lang] = false; deckQuery[lang] = ""; deckScroll[lang] = 0; delete deckAuto[lang]; drawSource(); }));
     box.appendChild(foot);
     return box;
   }
@@ -727,7 +838,7 @@ var GardenPaper = (function () {
       if (L.thieu && ((v.modes || {})[lang] || "deck") !== "level") { aiRow(rows, "", L.thieu, null, "kb-ai-sub-row"); }
     } else { aiRow(rows, "Nội dung", "truyện dài kỳ + tin làng"); }
     if (picked.length && !deckOpen[lang]) {
-      const names = ((v.decks || {})[lang] || []).filter((d) => picked.indexOf(d.id) >= 0).map((d) => d.name);
+      const names = ((v.decks || {})[lang] || []).filter((d) => picked.indexOf(d.id) >= 0).map((d) => String(d.name).split("::").join(" › "));
       aiRow(rows, "", names.join(", "), [lock(btn("", "Đổi", () => { deckOpen[lang] = true; drawSource(); }), busy)], "kb-ai-sub-row");
     }
     box.appendChild(rows);
@@ -978,6 +1089,14 @@ var GardenPaper = (function () {
     Array.prototype.forEach.call(st.querySelectorAll(".kb-ai-decks-list"), (e) => { deckScroll[e.getAttribute("data-lang")] = e.scrollTop; });
     const ae = document.activeElement;
     const typing = ae && ae.classList && ae.classList.contains("kb-ai-dq") ? { lang: ae.getAttribute("data-lang"), a: ae.selectionStart, b: ae.selectionEnd } : null;
+    // 1.35.4: tick deck / ▸ / đổi ô thả xuống bằng bàn phím → vẽ lại xong vẫn đứng đúng chỗ (trước đây focus về đầu trang)
+    let refocus = null;
+    if (ae && ae !== document.body && st.contains(ae) && !typing) {
+      const dl = ae.closest && ae.closest(".kb-ai-decks-list");
+      if (dl && ae.getAttribute("data-id")) { refocus = '.kb-ai-decks-list[data-lang="' + dl.getAttribute("data-lang") + '"] input[data-id="' + ae.getAttribute("data-id") + '"]'; }
+      else if (dl && ae.getAttribute("data-tog")) { refocus = '.kb-ai-decks-list[data-lang="' + dl.getAttribute("data-lang") + '"] [data-tog="' + ae.getAttribute("data-tog") + '"]'; }
+      else if (ae.tagName === "SELECT" && ae.getAttribute("aria-label")) { refocus = 'select[aria-label="' + ae.getAttribute("aria-label").replace(/"/g, '\\"') + '"]'; }
+    }
     st.textContent = "";
     const v = aiView;
     if (!v) { st.appendChild(el("div", "kb-p-empty", "Đang mở…")); return; }
@@ -1002,6 +1121,10 @@ var GardenPaper = (function () {
     if (typing) {
       const q = st.querySelector('.kb-ai-dq[data-lang="' + typing.lang + '"]');
       if (q) { q.focus(); try { q.setSelectionRange(typing.a, typing.b); } catch (e) { /* bỏ qua */ } }
+    } else if (refocus) {
+      let f = null;
+      try { f = st.querySelector(refocus); } catch (e) { f = null; }
+      if (f && !f.disabled) { try { f.focus({ preventScroll: true }); } catch (e) { /* bỏ qua */ } }
     }
   }
   function onAiStatus(v) {

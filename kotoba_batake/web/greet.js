@@ -256,18 +256,45 @@ var GardenGreet = (function () {
   }
 
   // ---------------------------------------------------------------- bật nhẹ khi mở bảng
-  const POP_IDS = ["kb-home", "kb-game", "kb-paper", "kb-cal"];
+  // 1.35.4 (người dùng 19/11: "chuyển cảnh từ tưới sang vườn (Esc) hay ngược lại thì nó bị giựt"): bảng ôn (Tưới ngay) cũng
+  // bật nhẹ như Nhà / Trò chơi / Báo / Lịch hoa; đóng bảng mà không mở bảng khác (Esc, Dừng, Đóng…) thì vườn trồi lên nhẹ
+  // thay vì nhảy lên một phát. Kiểu Dịu mắt / Tắt hạt bay ("fade"): chỉ mờ dần, không nhún. Tắt: không có.
+  const POP_IDS = ["kb-home", "kb-game", "kb-paper", "kb-cal", "kb-panel"];
+  const OPEN_IDS = ["kb-panel", "kb-game", "kb-home", "kb-paper", "kb-cal", "kb-ui", "kb-fields"];
+  const GARDEN_SEL = ["#kb-yard-wrap", ".kb-legend-row", "#kb-field"];
+  const ANIMS = ["kb-panel-in", "kb-panel-fade", "kb-garden-in", "kb-garden-fade"];
+  function play(t, cls) {
+    ANIMS.forEach((c) => t.classList.remove(c));
+    void t.offsetWidth;
+    t.classList.add(cls);
+  }
   function watchPanels() {
     if (typeof MutationObserver === "undefined") { return; }
     const mo = new MutationObserver((list) => {
+      // đổi chế độ giao diện trước (ui.js cũng làm việc này — thứ tự hai bộ theo dõi không chắc): Phóng to / Tập trung khi ôn
+      // ẩn sân + ruộng, phải bỏ lớp đó rồi mới biết phần vườn nào đang hiện
+      if (typeof GardenUI !== "undefined" && GardenUI._apply) { try { GardenUI._apply(); } catch (e) { /* bỏ qua */ } }
+      // bảng vừa ẩn giữa lúc đang bật nhẹ: trình duyệt huỷ hoạt ảnh (không có animationend) → gỡ lớp ở đây, kẻo lần hiện sau
+      // (kể cả khi đã tắt Chuyển cảnh) lớp cũ còn đó và bảng nhún lại
+      list.forEach((r) => { if (r.target.hidden) { ANIMS.forEach((c) => r.target.classList.remove(c)); } });
+      const m = mode();
+      if (m === "none") { return; }
+      let closed = false;
       list.forEach((r) => {
         const t = r.target;
-        if (t.hidden || r.oldValue === null) { return; }       // vừa hiện (trước đó có thuộc tính hidden)
-        if (mode() !== "full") { return; }
-        t.classList.remove("kb-panel-in"); void t.offsetWidth; t.classList.add("kb-panel-in");
+        if (t.hidden) { if (r.oldValue === null) { closed = true; } return; }     // vừa ẩn (trước đó không có thuộc tính hidden)
+        if (r.oldValue === null || POP_IDS.indexOf(t.id) < 0) { return; }        // vẫn đang hiện / bảng không bật nhẹ
+        play(t, m === "full" ? "kb-panel-in" : "kb-panel-fade");                  // vừa hiện
       });
+      // đóng bảng và không còn bảng nào mở (chuyển thẳng sang bảng khác thì bảng mới bật nhẹ, vườn đứng yên)
+      if (closed && !OPEN_IDS.some((id) => { const e = $(id); return e && !e.hidden; })) {
+        GARDEN_SEL.forEach((sel) => { const e = document.querySelector(sel); if (e && e.offsetParent !== null) { play(e, m === "full" ? "kb-garden-in" : "kb-garden-fade"); } });
+      }
     });
-    POP_IDS.forEach((id) => { const e = $(id); if (e) { mo.observe(e, { attributes: true, attributeFilter: ["hidden"], attributeOldValue: true }); e.addEventListener("animationend", (ev) => { if (ev.target === e) { e.classList.remove("kb-panel-in"); } }); } });
+    const end = (e) => ["animationend", "animationcancel"].forEach((n) => e.addEventListener(n, (ev) => { if (ev.target === e) { ANIMS.forEach((c) => e.classList.remove(c)); } }));
+    POP_IDS.forEach((id) => { const e = $(id); if (e) { end(e); } });
+    OPEN_IDS.forEach((id) => { const e = $(id); if (e) { mo.observe(e, { attributes: true, attributeFilter: ["hidden"], attributeOldValue: true }); } });
+    GARDEN_SEL.forEach((sel) => { const e = document.querySelector(sel); if (e) { end(e); } });
   }
 
   // ---------------------------------------------------------------- đổi cảnh trên dải cảnh (home.js gọi khi vẽ)

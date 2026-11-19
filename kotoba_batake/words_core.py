@@ -205,7 +205,8 @@ def _deck_rows(col: Any) -> list[dict[str, Any]]:
         except Exception:
             continue
         if deck and not deck.get("dyn"):
-            out.append({"id": int(d.id), "name": d.name})
+            # 1.35.4: "col" = deck đang thu gọn ở màn Decks của Anki — danh sách deck của báo dựng cây như ô deck ở thanh trên
+            out.append({"id": int(d.id), "name": d.name, "col": bool(deck.get("collapsed"))})
     out.sort(key=lambda x: x["name"].lower())
     return out
 
@@ -219,9 +220,9 @@ def lang_mids(infos: dict[str, dict[str, Any]], lang: str, chosen: bool = False)
 
 
 def lang_decks(col: Any, cfg: dict[str, Any], infos: dict[str, dict[str, Any]] | None = None) -> dict[str, list[dict[str, Any]]]:
-    """{"ja": [{id, name, notes}], "en": […], "vi": […]}: deck (kể cả deck con) có note của ngôn ngữ đó, kèm số note.
+    """{"ja": [{id, name, notes, col}], "en": […], "vi": […]}: deck (kể cả deck con) có note của ngôn ngữ đó, kèm số note.
     1.25.1: "vi" liệt kê mọi deck có note (báo tiếng Việt chọn được deck bất kỳ); "vi_other" = số note không phải
-    tiếng Nhật / tiếng Anh của deck đó."""
+    tiếng Nhật / tiếng Anh của deck đó. 1.35.4: `col` = đang thu gọn ở Anki (paper.js dựng cây deck)."""
     infos = infos if infos is not None else model_infos(col, cfg)
     out: dict[str, list[dict[str, Any]]] = {lang: [] for lang in LANGS}
     decks = _deck_rows(col)
@@ -242,7 +243,7 @@ def lang_decks(col: Any, cfg: dict[str, Any], infos: dict[str, dict[str, Any]] |
             for x in ids:
                 nids |= home.get(x, set())
             if nids:
-                out[lang].append({"id": d["id"], "name": d["name"], "notes": len(nids)})
+                out[lang].append({"id": d["id"], "name": d["name"], "notes": len(nids), "col": d.get("col", False)})
     return out
 
 
