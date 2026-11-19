@@ -204,7 +204,18 @@ ANKI_PY=~/.venv-anki/bin/python tests/anki/run_ui.sh /tmp/kb_src/kotoba_batake /
 ```
 Cần Node ≥ 22 (có sẵn `fetch` và `WebSocket`). Cổng: `KB_CDP_PORT` (9333), `KB_CTRL_PORT` (9444). `kill_anki.sh` tắt Anki đang chạy từ các script này.
 
-## Kết quả lần chạy gần nhất (bản 1.35.4, 19/11/2026) — chuyển cảnh Tưới ↔ vườn, cây deck của báo, bảng nổi, Esc
+## Kết quả lần chạy gần nhất (bản 1.35.5, 19/11/2026 tối) — sửa lỗi audit 19/11, kiểm tra lần cuối
+- `run_all.sh` (`ANKI_PY` = aqt 26.9.4, `KB_OLD_1354` = mã 1.35.4) trên mã cuối: **TẤT CẢ OK** (`core/test_1355.py` 66/66).
+- Anki 26.9.4, 57 kịch bản, 3 luồng `run_versions.sh`: 2.391 / 2.392 (ca trượt: `e2e_1253` "localStorage trống sau khi mở lại"
+  — điều kiện môi trường, như 1.35.4). `e2e_1355` 25/25; `e2e_1355z` (`ANKI_WEBSCALE=1.25`) 10/10; `dong_bo/run_e2e.sh` 47/47;
+  `audit_20261114/run_ui_audit.sh` 26 + 191 + 18 + 7 đạt hết; Anki 23.10.1: `e2e_1355` 25/25, `e2e_1354` 75/75, `e2e_1354b` 35/35,
+  `e2e_1322` 40/40, `e2e_1352` 33/33; `run_capnhat.sh` 1.31.3 → 1.35.5: 19/19.
+- **Lưu ý khi viết kịch bản giả lập đồng bộ** (1.35.5): khoá ghi giữ từ `_on_sync_start()` tới `_on_sync_finished()` (không còn
+  theo thanh tiến độ) — gọi đủ cả hai; "dữ liệu mang về" phải ghi ngoài khoá (`mw.col.set_config`, hoặc tạm `kb._sync_running =
+  False`) như Anki tự ghi. Muốn thấy hộp hỏi `GardenUI.ask` thật thì đặt `kb.ASK_TEST_OFF = False` (add-on test `zz_kbtest` tắt nó).
+- `run_versions.sh` đếm theo từng `slot<N>.log`: đừng gộp log của bản Anki khác (23.10.1) khi chờ "SLOT DONE".
+
+## Kết quả lần chạy trước (bản 1.35.4, 19/11/2026) — chuyển cảnh Tưới ↔ vườn, cây deck của báo, bảng nổi, Esc
 - `run_all.sh` (`ANKI_PY` = aqt 26.9.4, môi trường mới; thêm `core/test_1354.py` 39/39) trên gói cuối đã giải nén: **TẤT CẢ OK**.
 - Anki 26.9.4, **55 kịch bản** (mọi `e2e*.js` / `audit*.js` của `anki/` trừ những cái cần trình chạy riêng), 3 luồng `run_versions.sh`
   `KB_SLOT=1,2,3`: 2.352 / 2.357 trên gói trước phần sửa Esc — 5 ca trượt đều đã xử lý (chi tiết `docs/kiem_thu/1.35.4/BAO_CAO.md`

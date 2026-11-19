@@ -62,7 +62,19 @@ Cách kiểm: đọc mã + đối chiếu mã nguồn `aqt` thật (26.9.4), vi�
 
 ## 2. Kiểm tra lần cuối — thấy thêm
 
-- (đang chờ kết quả đợt chạy đầy đủ — mục 4)
+- **Đồng bộ lần nữa khi lần trước chưa báo xong** (cùng nhóm lỗi 01): bản chụp lần mới có thể chính là bản cũ lần trước vừa
+  mang về → nay `_on_sync_start` thấy khoá còn bật thì so lần trước trước khi chụp lần mới.
+- **Tên báo Đức / Pháp** (*Der Wortgarten*, *Le Jardin des Mots* — chữ Latin) dùng kiểu chữ của 畑新聞 (44 px, giãn chữ 3 px),
+  lệch với *The Garden Gazette* / *Báo Làng Kotoba* (kiểu chữ Latin có chân) → cùng kiểu chữ Latin (`kb-p-name-en`). Cùng gốc
+  với lỗi 06: chỗ chỉ tính "Anh / Việt là chữ Latin" có từ trước khi thêm Đức / Pháp.
+- Tiếng Hàn: dấu đóng ngoặc giữa danh từ và tiểu từ (`《친구》를`, `'학교'에`) cũng làm mất chỗ tra từ (audit chỉ nêu ngoặc mở) → sửa
+  cùng lúc với 15.
+- Hai kịch bản cũ (`anki/e2e_1352.js` 12b, `anki/e2e_1253.js`) giả lập "dữ liệu mang về" bằng cách ghi qua add-on giữa lúc đồng
+  bộ, hoặc bắt đầu đồng bộ mà không bao giờ báo xong — trước đây lọt qua đúng vì lỗi 01. Sửa kịch bản theo vòng đời thật (Anki
+  ghi dữ liệu mang về ngoài khoá của vườn; đồng bộ bắt đầu thì có báo xong). `core/test_1312.py`, `anki/e2e_1312.js` (5b),
+  `core/test_1352.py` sửa theo hành vi mới; `trang/ma_thu.py` thêm ca mã có chữ có dấu (trang web và add-on báo cùng câu).
+- Không thấy gì thêm ở: đường lưu nhật ký khi khoá ghi (chữ vẫn chép ra file sao lưu của hồ sơ), cửa sổ vườn đóng trước khi Anki
+  tải / đẩy toàn bộ (lưu nốt bị từ chối → file sao lưu giữ chữ), Python 3.9 (Anki 23.10: biên dịch + `test_1355.py` 62/62).
 
 ## 3. Đổi gì trong dữ liệu / hành vi người dùng thấy
 
@@ -74,10 +86,23 @@ Cách kiểm: đọc mã + đối chiếu mã nguồn `aqt` thật (26.9.4), vi�
 
 ## 4. Kết quả test
 
-- `tests/run_all.sh` (aqt 26.9.4) trên gói đã giải nén: (đang chạy)
-- Anki 26.9.4, mọi kịch bản `anki/e2e*.js` + `audit*.js` (trừ kịch bản cần trình chạy riêng), 3 luồng: (đang chạy)
-- Anki 23.10.1: (đang chạy)
-- `run_capnhat.sh` 1.31.3 → 1.35.5: (đang chạy)
+- `tests/run_all.sh` (aqt 26.9.4, `KB_OLD_1354` = mã 1.35.4) trên mã cuối: **TẤT CẢ OK** (`core/test_1355.py` 66/66 — gồm
+  so khoá collection / mục config với 1.35.4). Lần chạy đầu trên gói đỏ 1 ca: dữ liệu hình của trang web còn ghi 1.35.4 → chạy
+  lại `node site/tools/xuat_hinh.js` (chỉ đổi số bản), `trang/test_trang.py` 35/35.
+- Anki 26.9.4, **57 kịch bản** (mọi `anki/e2e*.js` + `audit*.js`, trừ `e2e_capnhat` / `e2e_habanh` / `e2e_1312` / `e2e_1355z`
+  chạy bằng trình riêng), 3 luồng `run_versions.sh`: **2.391 / 2.392** kiểm tra. Ca trượt duy nhất: `e2e_1253` "localStorage
+  trống sau khi mở lại" — điều kiện của môi trường test, trượt y hệt trên 1.35.3 / 1.35.4 (báo cáo 1.35.4 mục 5).
+  `e2e_1355` 25/25, `e2e_1354` 75/75, `e2e_1354b` 35/35, `e2e_135` 60/60, `e2e_134` 87/87, `e2e_1352` 33/33 (sau khi sửa
+  kịch bản — mục 2), `e2e_1253` 38/39 (như trên).
+- `e2e_1355z.js` với `ANKI_WEBSCALE=1.25`: 10/10 (mã 1.35.4: 2/10, cắt 342 px).
+- Máy chủ đồng bộ thật của Anki (`tests/dong_bo/run_e2e.sh` → `e2e_1312.js`): **47/47**.
+- `audit_20261114/run_ui_audit.sh` (`KB_AUDIT_BASELINE=1`): `e2e_128_fix` 26/26, `ui_audit` 191/191, `deep_ui_audit` 18/18,
+  `lifecycle_audit` 7/7.
+- Anki 23.10.1 (Python 3.9, PyQt6 6.6.0): `e2e_1355` 25/25, `e2e_1354` 75/75, `e2e_1354b` 35/35, `e2e_1322` 40/40,
+  `e2e_1352` 33/33, `e2e_1253` 38/39 (như trên); `core/test_1355.py` 62/62.
+- `run_capnhat.sh` 1.31.3 (dựng lại từ `fixtures/ban_cu/e64eb22.tar.gz`) → 1.35.5: **19/19** (cài đè bằng trình quản lý
+  add-on của Anki, mọi khoá `kotoba_batake_*` + file `user_files/` + cấu hình giữ nguyên).
+- Gói `kotoba_batake.ankiaddon` 1.35.5: 82 mục, khớp từng tệp với thư mục `kotoba_batake/`, cùng danh sách tệp với gói 1.35.4.
 
 ## 5. Câu hỏi cho người dùng
 
