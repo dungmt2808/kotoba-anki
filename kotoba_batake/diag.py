@@ -51,12 +51,20 @@ class ErrorLog:
         except (OSError, ValueError):
             return []
         out = []
+
+        def num(v: Any, d: int) -> int:
+            # 1.35.5 (audit 19/11 #27): file nhật ký sửa tay / hỏng ("count": "abc", 1e999) → giá trị mặc định, không ValueError
+            try:
+                return int(v) if v is not None and not isinstance(v, bool) else d
+            except (TypeError, ValueError, OverflowError):
+                return d
+
         for e in raw if isinstance(raw, list) else []:
             if isinstance(e, dict) and isinstance(e.get("msg"), str):
                 out.append({"kind": str(e.get("kind") or "?")[:10], "where": str(e.get("where") or "")[:80],
                             "msg": e["msg"][:MSG_MAX], "detail": str(e.get("detail") or "")[:DETAIL_MAX],
-                            "first": int(e.get("first") or 0), "last": int(e.get("last") or 0),
-                            "count": max(1, int(e.get("count") or 1)), "ver": str(e.get("ver") or "")[:20]})
+                            "first": num(e.get("first"), 0), "last": num(e.get("last"), 0),
+                            "count": max(1, num(e.get("count"), 1)), "ver": str(e.get("ver") or "")[:20]})
         return out[-LOG_MAX:]
 
     def _write(self, items: list[dict[str, Any]]) -> None:

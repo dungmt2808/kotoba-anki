@@ -259,7 +259,14 @@ var GardenGames = (function () {
     if (p._forms) { return p._forms; }
     const w = String(p.word || "");
     const out = [];
-    const add = (x) => { const k = normKana(String(x).replace(/[～〜~]/g, "")); if (k && out.indexOf(k) < 0) { out.push(k); } };
+    // 1.35.5 (audit 19/11 #13): phần số nhiều của deck tiếng Đức ("der Hund, -e", "der Baum, ¨-e") không phải một cách viết
+    // của từ — trước đây "-e" thành một dạng → Điền vào câu coi mọi danh từ "-en" / "-er" là "lồng nhau", bỏ hết đáp án nhiễu
+    const add = (x) => {
+      const s = String(x).trim();
+      if (/^[¨\u0308]?\s*-/.test(s)) { return; }
+      const k = normKana(s.replace(/[～〜~]/g, ""));
+      if (k && out.indexOf(k) < 0) { out.push(k); }
+    };
     add(w);
     add(w.replace(/[（(][^）)]*[）)]/g, ""));
     add(w.replace(/[（()）]/g, ""));
@@ -303,6 +310,13 @@ var GardenGames = (function () {
     String(p.word || "").replace(/\[[^\]]*\]|\/[^/\s][^/]*\//g, " ").split(/[;/|]|,(?!\s*[¨\u0308]?\s*-)/).forEach((part) => {
       if (/^\s*[¨\u0308]?\s*-/.test(part)) { return; }
       const core = part.replace(/,\s*[¨\u0308]?\s*-[^\s,]*/g, " ").replace(/\([^)]*\)/g, " ").trim();
+      // 1.35.5 (audit 19/11 #23): "(sich) freuen" — gõ cả "sich freuen" cũng đúng (trước đây ngoặc bị bỏ cả chữ bên trong)
+      const kept = part.replace(/,\s*[¨\u0308]?\s*-[^\s,]*/g, " ").replace(/[()]/g, " ").replace(/\s+/g, " ").trim();
+      if (kept && kept !== core) {
+        add(kept); const kb = euStrip(kept, lang); add(kb);
+        const kr = lang === "de" ? kb.match(/^sich\s+(.+)$/i) : kb.match(/^(?:se\s+|s['’])(.+)$/i);
+        if (kr) { add(kr[1]); }
+      }
       if (core) {
         add(core);
         const base = euStrip(core, lang);
@@ -624,6 +638,8 @@ var GardenGames = (function () {
     return false;
   }
   function okAlt(p, alt) { return alt.every((f) => has(p, f)); }
+  // 1.35.5: mặt dùng được ở Lật cặp (cách đọc của tiếng Nhật chỉ khi chữ có kanji — chữ kana thì cách đọc trùng chữ)
+  function memFace(p, f) { return has(p, f) && (f !== "reading" || latin(p) || HAS_KANJI.test(String(p.word || ""))); }
   function fits(p, mode) { return !!mode && mode.alt.some((a) => okAlt(p, a)); }
   // Chữ hiện ra cho một mặt của note
   function faceText(p, f, kind) {
@@ -814,7 +830,10 @@ var GardenGames = (function () {
     if (!mode) { return { items: [], targets: [], learnedOnly: false, kind: kind, group: group, mode: null, base: base }; }
     let items = base;
     if (def.id === "market" || def.id === "memory" || def.id === "crow") { items = base.filter((p) => fits(p, mode)); }
-    if (def.id === "crow" && (group === "xx" || ((group === "zh" || group === "ko" || EU[group]) && mode.type !== "pinyin"))) { items = items.filter((p) => typeable(p, mode)); }   // 1.25.1 · 1.35
+    // 1.35.5 (audit 19/11 #14): Lật cặp chỉ ghép "cách đọc" khi chữ có kanji (コーヒー / こーひー không thành cặp) — trước đây
+    // deck toàn katakana vẫn được vào chơi rồi mở bàn trống 0/0, đồng hồ chạy mãi
+    if (def.id === "memory") { items = items.filter((p) => mode.alt.some((a) => a.every((f) => memFace(p, f)))); }
+    if (def.id === "crow" && crowTyped(group, mode)) { items = items.filter((p) => typeable(p, mode)); }   // 1.25.1 · 1.35
     else if (def.id === "listen") { items = base.filter((p) => has(p, mode.ans)); }
     let targets = def.id === "listen" || def.id === "cloze" ? items.filter((p) => fits(p, mode)) : items.slice();
     const learned = targets.filter((p) => p.stage >= 1);
@@ -822,6 +841,8 @@ var GardenGames = (function () {
     if (learnedOnly) { targets = learned; }
     return { items: items, targets: targets, learnedOnly: learnedOnly, kind: kind, group: group, mode: mode, base: base };
   }
+  // 1.25.1 · 1.35: Đuổi quạ của ngôn ngữ này gõ cả đáp án (không phải pinyin / kana) → chỉ nhận đáp án gõ được (≤ 24 ký tự)
+  function crowTyped(group, mode) { return group === "xx" || ((group === "zh" || group === "ko" || !!EU[group]) && !!mode && mode.type !== "pinyin"); }
   function playableOk(def, pool) { return !!pool.mode && pool.targets.length >= def.min && pool.items.length >= def.min; }
   // Vì sao trò này chưa chơi được với loại note / chế độ đang chọn
   function lackText(def, pool) {
@@ -832,6 +853,11 @@ var GardenGames = (function () {
           : "Trò này không dùng cho loại note này.";
     }
     if (pool.base.length < def.min) { return "Cần ít nhất " + def.min + " " + unit + " (" + (GROUPS[group] || "") + ") trong deck này."; }
+    // 1.35.5 (audit 19/11 #23): đủ từ nhưng đáp án dài quá không gõ được (> 24 ký tự) — trước đây vẫn báo "hiện có N" như đủ
+    if (def.id === "crow" && crowTyped(group, mode) && pool.items.length < def.min &&
+        pool.base.filter((p) => fits(p, mode)).length >= def.min) {
+      return "Cần ít nhất " + def.min + " " + unit + " có đáp án gõ được (tối đa 24 ký tự) — hiện có " + pool.items.length + ".";
+    }
     let best = mode.alt[0], bestN = -1;
     mode.alt.forEach((a) => { const n = pool.base.filter((p) => okAlt(p, a)).length; if (n > bestN) { bestN = n; best = a; } });
     const miss = best.filter((f) => pool.base.filter((p) => has(p, f)).length < def.min);
@@ -1176,7 +1202,7 @@ var GardenGames = (function () {
       const list = modeList(def.id, kind);
       if (list.length > 1) {
         const items = list.map((m) => {
-          const n = pool.base.filter((p) => fits(p, m)).length;
+          const n = pool.base.filter((p) => fits(p, m) && (def.id !== "crow" || !crowTyped(kind, m) || typeable(p, m))).length;     // 1.35.5
           return [m.id, m.label + (n < def.min ? " (chưa đủ " + (UNIT[kind] || "từ") + ")" : "")];
         });
         const ms = selectBox("kb-gmode-sel", "Kiểu chơi", items, pool.mode ? pool.mode.id : list[0].id,
@@ -1326,6 +1352,7 @@ var GardenGames = (function () {
   function onKey(e) {
     if (!isOpen) { return; }
     if (e.key === "Escape") {
+      if (e.defaultPrevented) { return; }        // 1.35.5 (audit #08): lớp trên đã dùng Esc này
       e.preventDefault();
       if (screen === "menu") { close(); } else { showMenu(); }
       return;
@@ -1933,7 +1960,7 @@ var GardenGames = (function () {
       reveal.appendChild(el("b", null, cm.type === "spell_m" ? p.meaning : p.word));
       reveal.appendChild(el("span", null, cm.type === "spell_m" ? "  (" + p.word + ")"
         : spell ? (p.reading ? " " + p.reading : "") + (p.meaning ? "  (" + p.meaning + ")" : "")
-        : " → " + readingsOf(p)[0] + (p.meaning ? "  (" + p.meaning + ")" : "")));
+        : (readingsOf(p)[0] || p.reading ? " → " + (readingsOf(p)[0] || p.reading) : "") + (p.meaning ? "  (" + p.meaning + ")" : "")));     // 1.35.5 (#23): không "→ undefined"
       reveal.hidden = false;
       later(g, () => { reveal.hidden = true; }, 2600);
     }
@@ -2157,7 +2184,7 @@ var GardenGames = (function () {
       const p = next();
       if (!p || chosen.some((c) => c.p === p)) { if (chosen.length >= pool.targets.length) { break; } continue; }
       // Trộn: thử các mặt theo thứ tự ngẫu nhiên (cách đọc chỉ khi chữ có kanji)
-      const avail = shuffle(faces.filter((f) => has(p, f) && (f !== "reading" || latin(p) || HAS_KANJI.test(p.word))));
+      const avail = shuffle(faces.filter((f) => memFace(p, f)));
       let pick = null;
       for (let k = 0; k < avail.length && !pick; k++) {
         const t = memText(p, avail[k]);
@@ -2177,6 +2204,10 @@ var GardenGames = (function () {
     });
     shuffle(cards);
     const pairs = chosen.length;
+    if (!pairs) {        // 1.35.5 (audit #14): không ghép được cặp nào → báo, không mở bàn trống với đồng hồ chạy mãi
+      st.appendChild(el("div", "kb-gz-hint kb-gz-hint-show", "Chưa đủ từ để ghép cặp (cần nghĩa / cách đọc khác với chữ). Đổi chế độ hoặc deck nhé."));
+      return g;
+    }
     let open = [], moves = 0, found = 0, time = 0, lock = false, combo = 0, score = 0;
     const mistakes = chosen.map(() => 0);
 

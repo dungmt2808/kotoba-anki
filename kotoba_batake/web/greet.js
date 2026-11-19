@@ -435,7 +435,7 @@ var GardenGreet = (function () {
     const p = $("kb-news-pop");
     if (p) { p.addEventListener("click", (e) => e.stopPropagation()); }
     document.addEventListener("click", () => { if (newsOpen) { closeNews(); } });
-    document.addEventListener("keydown", (e) => { if (newsOpen && e.key === "Escape") { e.preventDefault(); closeNews(); } });
+    document.addEventListener("keydown", (e) => { if (newsOpen && e.key === "Escape" && !e.defaultPrevented) { e.preventDefault(); closeNews(); } });
     let raf = 0;
     const again = () => { if (newsOpen && !raf) { raf = requestAnimationFrame(() => { raf = 0; placeNews(); }); } };
     window.addEventListener("resize", again);

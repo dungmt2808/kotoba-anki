@@ -113,7 +113,7 @@ Sau khi trả lời có hiện cách đọc, Hán Việt, nghĩa (và cách dùn
 - **Tra từ**: `autofix` nối `[漢字|よみ]` → `{漢字|よみ|từ gốc}` khi khớp `link_index(scope)` (chỉ chữ Hán / danh từ + する / chữ Hán + okurigana, so cách đọc), `LINK_MAX` 20, `LINK_PER_WORD` 1. Bản soát làm rơi > ½ chỗ tra từ (khi trước có ≥ 6) → dùng bản trước soát (`soat_mat_tra_tu`).
 - **Kiểm tra thêm**: số thường cần 3–5 bài; cảnh báo cho bước soát: `hard_kanji` (N5/N4: chữ Hán ngoài từ đã học ∪ `BASIC_KANJI`), chưa dùng mẫu trọng tâm, câu chép không trọn câu (vắt qua 「」), < 5 chỗ tra từ.
 - **Chép chính tả mọi deck** (`paper_core.Voice`, `note_word_item`, id `w:<nid>`): file audio → giọng Gemini trong kho `user_files/bao_gemini/giong/<sha1>.wav` (+ `_cham`) → giọng máy (`TTSTag(lang="ja_JP", speed)`, chỉ Windows / macOS) → nhờ Gemini tạo (`voice_start` → `ai.make_voices`, luồng nền, `daily_pending` / `issue_pending`). `build_daily` trong ngày bỏ câu chưa làm mà không còn nghe được rồi lấp chỗ. Thứ tự lấy: ôn lại → báo → câu ví dụ (héo / khát, audio thật trước) → từ của deck. `dict_voice` = auto / may / tat. Phát chậm file media bằng `mpvManager.set_property("speed", 0.75)`, trả về 1 ở `av_player_did_end_playing`.
-- **Esc**: Anki 26.x chèn `keydown Escape → pycmd("close")` vào mọi `AnkiWebView`; `GardenDialog._on_esc` chỉ đóng cửa sổ khi trang không dùng phím Esc đó: 1.35.4 lấy từ hàng đợi `window.__kbEscQ` (mỗi Esc đã dùng — `defaultPrevented` ở bộ nghe `window` trong garden.js — một mục, giữ 10 giây), hết mục thì theo cờ `window.__kbEscUsed` như trước (bấm Esc hai lần nhanh, lần hỏi thứ hai không còn đọc phải cờ đã xoá). Esc ngay sau R / Tưới ngay (thẻ chưa hiện) = huỷ mở bảng ôn.
+- **Esc**: Anki 26.x chèn `keydown Escape → pycmd("close")` vào mọi `AnkiWebView`; `GardenDialog._on_esc` chỉ đóng cửa sổ khi trang không dùng phím Esc đó: 1.35.4 lấy từ hàng đợi `window.__kbEscQ` (mỗi Esc đã dùng — `defaultPrevented` ở bộ nghe `window` trong garden.js — một mục, giữ 10 giây), hết mục thì theo cờ `window.__kbEscUsed` như trước (bấm Esc hai lần nhanh, lần hỏi thứ hai không còn đọc phải cờ đã xoá). Esc ngay sau R / Tưới ngay (thẻ chưa hiện) = huỷ mở bảng ôn. 1.35.5: một Esc chỉ đóng một lớp — lớp trên (thẻ / bảng nổi / hộp hỏi) dùng Esc thì `preventDefault` (+ chặn hẳn nếu nằm trên bảng lớn), bảng lớn (Nhà, Trò chơi, Báo, Lịch hoa, ⚙ Giao diện) bỏ qua Esc đã `defaultPrevented`; Esc trong ô nhập = rời ô.
 
 ### Mới ở 1.14: giao diện tự chỉnh, sửa nhà, thú nuôi, giống cây, vùng tự tạo, hiệu ứng thành tích
 - **Giao diện & chế độ học** (⚙ → *Giao diện & chế độ học…*, `web/ui.js` → `GardenUI`): mỗi chế độ một kiểu — **Màn chính**, **Khi ôn thẻ**, **Trò chơi & báo** (đang mở Trò chơi / Báo / Cấu hình trường; Nhà & Cửa hàng luôn đầy đủ). Mỗi chế độ chọn: cảnh sân (chuyển động / đứng yên / mờ, đứng yên / ẩn), ruộng (như sân), hạt bay theo mùa, mưa tuyết, thú nuôi trên sân, linh vật nói chuyện, hiệu ứng thành tích. Chung: màu bảng ôn (vàng vườn / trắng giấy / tối — thẻ trong iframe được thêm lớp `nightMode night_mode` như Anki) và khung thẻ (vừa / to hết chỗ). 4 kiểu có sẵn: Đầy đủ (mặc định = như cũ), Tập trung khi ôn, Dịu mắt, Ôn buổi tối. Nút **Ẩn vườn / Hiện vườn** trên bảng ôn bật tắt nhanh sân + ruộng khi ôn. Lưu ở `config.json` → `ui` (chỉ máy này, `more_core.clean_ui`). Cách chạy: `ui.js` mỗi 200 ms xác định chế độ đang xem và đặt lớp `kb-ui-*` lên `#kb-app`; home.js (sân), fx.js (ruộng), season.js (hạt nền) đọc `GardenUI.get(k)` — "đứng yên" chỉ vẽ lại khi có thay đổi hoặc mỗi 30 giây, "ẩn" thì không vẽ (đỡ tốn máy).
@@ -123,6 +123,25 @@ Sau khi trả lời có hiện cách đọc, Hán Việt, nghĩa (và cách dùn
 - **Vùng tự tạo** (cuối tab Vùng mới): 5.000 xu / vùng, tối đa 6. Tên, kiểu nền (Đồng cỏ, Đồi hoa, Bãi cát, Đồng tuyết, Núi đá, Bờ hồ, Phố lát đá, Rừng thông), màu đất / đồi (16 màu mỗi loại), công trình **64×76** vẽ bằng Xưởng (chế độ vùng của craft.js: lưới chữ nhật, vạch xanh = chân trời, xem trước cả cảnh; chuyển ảnh cũng được), từ 1.16 thêm **cảnh nền 256×76** phủ cả vùng (xem "Mới ở 1.16"). Đổi tên / nền / màu miễn phí, vẽ lại công trình hoặc cảnh nền 50 xu. Đồ ngoài trời đặt được như vùng có sẵn, thú nuôi ở được, có trong nút ◂ ▸ của màn chính. Xoá vùng: đồ ở đó về kho, thú về sân, không hoàn xu. Id vùng `u1`…`u99` (không dùng lại).
 - **Hiệu ứng thành tích** (`web/joy.js`, Python tính `data.joy` = `more_core.joy_view`): **xong hết thẻ hôm nay** trong deck đang xem (`deck_due_tree` = 0 và hôm nay đã ôn ≥ 1 lượt) → cầu vồng trên ruộng và trên trời sân, giọt sương lấp lánh; **đạt mục tiêu ngày**; **cả vườn xanh tốt / ra hoa / trĩu quả** (≥ 5 cây, không cây nào héo, mọi cây từ Cây non / Ra hoa / Ra quả) → lá lấp lánh / cánh hoa anh đào bay / đốm sáng vàng bay lên; **mốc chuỗi ngày** (7, 14, 21, 30, 50, 75, 100, 150, 200, 250, 300, 365, 500, 730, 1000) → pháo hoa trên trời sân; **xong 3 nhiệm vụ** → đèn trời bay lên. Huy hiệu cạnh chú thích ruộng; dải chúc mừng + linh vật chúc mỗi thành tích **một lần mỗi ngày** (nhớ ở `localStorage kb-joy-<ngày>-<loại>`), đang ôn thẻ thì để dành tới khi đóng bảng ôn.
 - **Lưu trữ**: khoá collection mới `kotoba_batake_more` (`more_core.MORE_KEY`) — mục 4. Bản ≤ 1.13 ở máy khác không đọc khoá này nên không xoá được gì.
+
+### Mới ở 1.35.5: sửa lỗi của đợt kiểm tra trước phát hành (19/11)
+- **Đồng bộ AnkiWeb giữ dữ liệu vườn chắc hơn**: khoá ghi giữ tới lúc lớp giữ dữ liệu so xong (trước đây hết thanh tiến độ là
+  mở khoá — lúc hộp thoại cuối của Anki còn mở, việc nền / tự lưu ghi vào bản cũ vừa tải về và đóng dấu "mới nhất" → mất phần
+  mới của máy này); Anki không bao giờ báo xong thì sau 2 phút yên lặng tự so rồi mở khoá. Lỗi thoáng qua lúc so / ghi file bản
+  chụp lỗi không còn làm mất bản chờ trả lại; mốc chuỗi ngày không bị đặt lại khi bản chờ vừa trả lại.
+- Anki đặt hệ số phóng to trang (`ANKI_WEBSCALE`): vườn phóng to bằng zoom của webview, không còn bị cắt mép phải.
+- Báo: tiếng Nhật dùng Claude Code thì báo Trung / Hàn / Đức / Pháp / Việt (Gemini) vẫn đủ nút; "Bắt đầu truyện mới" rồi
+  viết báo lỗi vẫn "Lấy lại truyện cũ" được; "Bạn chưa đọc kỳ trước" chỉ trong cùng bộ truyện; bộ chọn deck: đủ 5 deck con vẫn
+  tick được deck cha, deck hết note của tiếng đó không chiếm chỗ.
+- Lịch hoa: đổi tiếng / gợi ý lúc Anki đang đồng bộ báo một dòng (không hộp lỗi); Nhờ Gemini sửa không ghi đè bài máy khác vừa
+  sửa; bài vừa về đã khoá thì chữ gõ dở báo lại + nút "Chép chữ gõ dở"; nhật ký gõ bằng bộ gõ tự lưu.
+- Esc: mỗi lần chỉ đóng một lớp (thẻ lấp lánh / gánh hàng trên bảng Nhà); Esc trong ô nhập là rời ô. Bảng ôn: lật thẻ lúc đang
+  đồng bộ không còn kẹt; Tưới ngay rồi mở bảng khác không chồng hai bảng; đổi deck thì Ctrl+Z không hoàn tác lượt ở deck cũ;
+  cửa sổ Sửa thẻ còn mở mà lật thẻ thì thấy mặt sau mới.
+- Trò chơi / ngôn ngữ: Điền vào câu tiếng Đức ("der Hund, -e") đủ đáp án nhiễu; Lật cặp không mở bàn trống với deck katakana;
+  Đuổi quạ "(sich) freuen"; tiếng Đức Äpfel / Ärzte / Öfen; tiếng Hàn từ trong ngoặc; câu kiểu Cloze của Anki ({{c1::…}}); chữ
+  tách dấu (NFD) tiếng Nhật / Hàn; mã chia sẻ dán có chữ có dấu báo một câu.
+- Trang trí thử: thú / khách đã ẩn không bấm trúng; mẫu tường / sàn vừa vẽ dán vào bản thử. Không đổi dữ liệu đã lưu.
 
 ### Mới ở 1.35.4: chuyển cảnh Tưới ↔ vườn mượt, cây deck trong tab Nguồn báo
 - **Tưới ngay ↔ vườn (Esc) không còn giựt**: bố cục đổi cùng lúc với bảng ôn (trước đây trễ tới 0,2 giây — đang Phóng to / Tập
@@ -634,7 +653,7 @@ Nguyên tắc chính:
 |---|---|
 | `ready`, `refresh` | `refresh()` |
 | `deck:<id>` | đổi deck, dừng ôn, `refresh()` |
-| `rv:start` / `rv:show:<typed>` / `rv:ans:<1-4>` / `rv:stop` | ôn thẻ trong vườn |
+| `rv:start` / `rv:show:<typed>` / `rv:ans:<1-4>` / `rv:stop` | ôn thẻ trong vườn (1.35.5: `rv:show` bị bỏ lúc đang đồng bộ / dựng mặt sau lỗi → `Garden.flipRetry({cid})` mở khoá lật lại) |
 | `play:<q\|a>:<n>` | phát lại audio của thẻ (`play_clicked_audio`) |
 | `game:open` / `game:stop` | dừng ôn / dừng audio |
 | `game:audio:<nid>` / `game:exaudio:<nid>` | phát audio từ / audio câu ví dụ |
@@ -682,6 +701,7 @@ Nguyên tắc chính:
 | `cal:month:<yyyy-mm>` / `cal:year:<yyyy>` / `cal:day:<yyyy-mm-dd>` / `cal:book:<yyyy-mm\|yyyy\|>` | 1.20: dữ liệu Lịch hoa → `Garden.calView({kind: month\|year\|day\|book, …})` |
 | `cal:mood:{d, m}` / `cal:note:{d, t}` / `cal:draft:{d, lang, t}` | 1.20: lưu sticker / nhật ký / bản nháp luyện viết (Python làm sạch, chặn ngày tương lai, luyện viết chỉ hôm nay, bài đã gửi thì khoá) → `Garden.calSaved` |
 | `cal:lang:<ja\|en>` / `cal:hint:<ngày>` / `cal:fix:<ngày>` / `cal:seen:<ngày>` | 1.20: đổi ngôn ngữ luyện viết, đổi gợi ý, nhờ Gemini sửa (luồng nền → `Garden.calFix`), đánh dấu đã xem bản sửa |
+| `cal:fix:{d, t, lang, b}` / `cal:copy:{t}` | 1.35.2 / 1.35.5: Nhờ Gemini sửa kèm chữ đang thấy + `b` (bài trang tin là đã lưu — máy khác vừa sửa thì không ghi đè, trả `Garden.calSaved({conflict})`); chép chữ gõ dở vào bộ nhớ tạm. lang / hint / fix / seen lỗi lưu (đang đồng bộ…) → một dòng trong Lịch hoa |
 | `cal:pdf:{name, html}` / `cal:photo:<data URL PNG>` | 1.20: xuất PDF cuốn nhật ký (A5) → `Garden.calPdf`; lưu ảnh vườn tự chụp (mỗi tuần một tấm, chặn dữ liệu lạ) |
 | `guest:met:<id>:<cảnh>` | 1.21: khách vừa hiện ≥ 1,5 giây trên cảnh đang xem → Python xét lại (cảnh có trong ví, đồ / vùng / tháng hợp) rồi ghi album (một lần mỗi ngày) → `Garden.guests({…view, new})` |
 | `ai:forget` / `ai:keypage` / `ai:dir` | 1.12: xoá khoá / mở trang lấy khoá (địa chỉ cố định) / chọn thư mục kotoba_daily (`QFileDialog`, phải có `lo_trinh.json`, `pham_vi.json` hoặc `bao/`) |

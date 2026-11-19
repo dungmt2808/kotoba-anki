@@ -1682,15 +1682,24 @@ def last_ky(base: str) -> int:
 
 
 def _new_started(base: str, r: dict[str, Any]) -> bool:
-    """Truyện mới đã có kỳ nào chưa (đã có thì không lấy lại truyện cũ được — tránh lẫn hai truyện)."""
-    if last_ky(base):
-        return True
-    folder = os.path.join(base, MASTER_DIR)
-    try:
-        names = os.listdir(folder)
-    except OSError:
-        names = []
-    return any(n.endswith(".json") and n[:10] >= r["tu_ngay"] for n in names)
+    """Truyện mới đã có kỳ nào chưa (đã có thì không lấy lại truyện cũ được — tránh lẫn hai truyện).
+    1.35.5 (audit 19/11 #09): chỉ tính kỳ đã ĐĂNG (truyen.json). Bản gốc / bản nháp của truyện mới mà số báo chưa viết xong
+    (Gemini lỗi, hết lượt) thì chưa tính — trước đây file bản gốc mồ côi đó làm ẩn cả "Lấy lại truyện cũ" lẫn "Bắt đầu truyện
+    mới", bấm bắt đầu lại lần nữa thì truyện cũ thật nằm ở lần cất trước, không lấy lại được nữa."""
+    return bool(last_ky(base))
+
+
+def _orphans(base: str, r: dict[str, Any]) -> list[str]:
+    """Bản gốc / bản nháp của truyện mới (ngày ≥ ngày truyện mới bắt đầu) khi truyện mới chưa có kỳ nào đã đăng."""
+    out = []
+    for item in (MASTER_DIR, DRAFT_DIR):
+        folder = os.path.join(base, item)
+        try:
+            names = sorted(os.listdir(folder))
+        except OSError:
+            continue
+        out += [os.path.join(folder, n) for n in names if n.endswith(".json") and n[:10] >= r["tu_ngay"]]
+    return out
 
 
 def story_state(base: str, today: str) -> dict[str, Any]:
@@ -1760,6 +1769,15 @@ def undo_restart(base: str) -> bool:
     src_root = os.path.join(base, ARCHIVE_DIR, last["thu_muc"])
     if not os.path.isdir(src_root):
         return False
+    # 1.35.5 (audit #09): bản gốc / bản nháp truyện mới chưa đăng → cất sang <thư mục cất>_bo/ (không xoá), để số báo viết lại
+    # hôm nay kể tiếp truyện cũ chứ không đọc lại kỳ 1 của truyện mới
+    junk = _orphans(base, last)
+    if junk:
+        bin_root = os.path.join(base, ARCHIVE_DIR, last["thu_muc"] + "_bo")
+        for f in junk:
+            sub_dir = os.path.join(bin_root, os.path.basename(os.path.dirname(f)))
+            os.makedirs(sub_dir, exist_ok=True)
+            os.replace(f, os.path.join(sub_dir, os.path.basename(f)))
     for item in RESET_ITEMS:
         src = os.path.join(src_root, item)
         if not os.path.exists(src):

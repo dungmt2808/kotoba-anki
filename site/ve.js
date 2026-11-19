@@ -201,6 +201,8 @@ var KB = (function () {
     const m = /^KB(\d+):/.exec(code);
     if (!m) { throw new Error("Đây không phải mã thiết kế (mã đúng bắt đầu bằng “KB1:”)."); }
     if (m[0] !== S.ver + ":") { throw new Error("Mã này của bản ことば畑 mới hơn — trang này sẽ cập nhật sau nhé."); }
+    // add-on 1.35.5 (share_core.NON_ASCII): chữ có dấu / biểu tượng trong mã
+    if (/[^\x00-\x7f]/.test(code)) { throw new Error("Mã có ký tự lạ (chữ có dấu / biểu tượng) — chép lại đúng đoạn mã bắt đầu bằng “KB1:” nhé."); }
     const parts = code.split(":");
     if (parts.length !== 6) { throw new Error("Mã bị thiếu một đoạn — chép lại cả đoạn nhé."); }
     const [, kind, size, name64, data64, crc] = parts;

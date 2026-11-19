@@ -288,6 +288,9 @@ def code_seed(name: str, stages: list[str]) -> str:
     return make_code("g", str(SEED_W), name, list(stages))
 
 
+NON_ASCII = "Mã có ký tự lạ (chữ có dấu / biểu tượng) — chép lại đúng đoạn mã bắt đầu bằng “KB1:” nhé."
+
+
 def parse_code(text: Any, palette: dict[str, str], craft_prices: dict[int, int], craft_kinds: Any,
                craft_fx: Any) -> dict[str, Any]:
     """Đọc mã dán vào → bản xem trước {t, name, …, price}. Lỗi → ShareError (câu cho người dùng)."""
@@ -305,6 +308,8 @@ def parse_code(text: Any, palette: dict[str, str], craft_prices: dict[int, int],
         raise ShareError("Đây không phải mã thiết kế (mã đúng bắt đầu bằng “KB1:”).")
     if m.group(0) != SHARE_VER + ":":
         raise ShareError("Mã này của bản ことば畑 mới hơn — cập nhật rồi dán lại nhé.")
+    if not code.isascii():                # 1.35.5 (audit 19/11 #19): chữ có dấu / emoji → câu báo, không UnicodeEncodeError
+        raise ShareError(NON_ASCII)       # (site/ve.js báo đúng câu này)
     parts = code.split(":")
     if len(parts) != 6:
         raise ShareError("Mã bị thiếu một đoạn — chép lại cả đoạn nhé.")

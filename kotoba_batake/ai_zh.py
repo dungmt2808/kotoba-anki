@@ -475,6 +475,7 @@ def autofix(raw: Any, scope: dict[str, Any], opts: dict[str, Any]) -> tuple[Any,
             holder[key] = s
         else:
             holder[key] = s
+    ai.drop_unlinked_new(raw, notes)       # 1.35.5 (audit #16)
     return raw, list(dict.fromkeys(notes))
 
 

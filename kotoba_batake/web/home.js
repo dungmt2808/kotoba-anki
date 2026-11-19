@@ -1695,19 +1695,22 @@ var GardenHome = (function () {
         box(ctx, ox + i, oy + ly + 1, 3, 4, col, S); box(ctx, ox + i, oy + ly + 2, 3, 1, lit ? P.y : P.o, S);
       }
     } else if (zid === "bamboo") {
+      // 1.35.5 (audit 19/11 #26): cỡ cảnh Lớn (skyPad = hàng trời thêm phía trên) — thân tre + tán lá vẽ từ mép trên của trời
+      // thêm (trước đây từ mép trên của cảnh thường → rừng tre bị cắt ngang giữa trời, phía trên là trời trống)
+      const T = oy - skyPad, sp7 = Math.ceil(skyPad / 7) * 7, sp8 = Math.ceil(skyPad / 8) * 8;
       const far = GardenSky.mix(tone("#86bd7c", st, 0.35), st.bottom, 0.45), farN = GardenSky.mix(far, "#1b3b22", 0.18);
       for (let bxx = Math.floor(x0 / 6) * 6 - 6; bxx < x1; bxx += 6) {
         const k = (((bxx / 6) % 7) + 7) % 7, xx = bxx + (k * 3) % 5;
-        box(ctx, ox + xx, oy, 2, G0, far, S);
-        for (let y = 2 + k; y < G0; y += 7) { box(ctx, ox + xx, oy + y, 2, 1, farN, S); }
+        box(ctx, ox + xx, T, 2, G0 + skyPad, far, S);
+        for (let y = 2 + k - sp7; y < G0; y += 7) { box(ctx, ox + xx, oy + y, 2, 1, farN, S); }
       }
       const leafFar = GardenSky.mix(tone("#5f9a55", st, 0.35), st.bottom, 0.3);
-      for (let i = Math.floor(x0); i < x1; i++) { box(ctx, ox + i, oy, 1, 3 + Math.round(2 * Math.sin(i / 5) + Math.sin(i / 2.3)), leafFar, S); }
+      for (let i = Math.floor(x0); i < x1; i++) { box(ctx, ox + i, T, 1, 3 + Math.round(2 * Math.sin(i / 5) + Math.sin(i / 2.3)), leafFar, S); }
       const near = tone("#3f9a4a", st, 0.3), hi = tone("#8fdc72", st, 0.3), node = tone("#24622f", st, 0.3);
       for (let bxx = Math.floor(x0 / 17) * 17 - 17; bxx < x1; bxx += 17) {
         const k = (((bxx / 17) % 5) + 5) % 5, xx = bxx + (k * 7) % 11;
-        box(ctx, ox + xx, oy, 3, G0 + 1, near, S); box(ctx, ox + xx, oy, 1, G0 + 1, hi, S);
-        for (let y = 4 + k; y < G0; y += 8) {
+        box(ctx, ox + xx, T, 3, G0 + skyPad + 1, near, S); box(ctx, ox + xx, T, 1, G0 + skyPad + 1, hi, S);
+        for (let y = 4 + k - sp8; y < G0; y += 8) {
           box(ctx, ox + xx, oy + y, 3, 1, node, S);
           box(ctx, ox + xx + 3, oy + y - 2, 3, 1, near, S); box(ctx, ox + xx + 5, oy + y - 3, 2, 1, hi, S);
         }
@@ -4029,19 +4032,27 @@ var GardenHome = (function () {
   }
 
   function onCanvasMove(ev) { hover = canvasCell(ev); }
+  // 1.35.5 (audit 19/11 #22): phím trong ô nhập không chạy phím tắt của bảng; riêng Esc (không đang ghép chữ) thì rời ô —
+  // trước đây Esc trong ô bị nuốt hẳn (không đóng bảng, không rời ô: phím "chết"). Esc lần sau mới đóng bảng.
+  function escBlur(e) {
+    e.stopPropagation();
+    if (e.key === "Escape" && !e.isComposing && e.keyCode !== 229) { e.preventDefault(); e.target.blur(); }
+  }
   function onCanvasClick(ev) {
     const cell = canvasCell(ev);
-    if (!placing && typeof GardenFinds !== "undefined" && view && isOut(scene)) {      // 1.28: chỗ lấp lánh / gánh hàng
+    // 1.35.5 (audit 19/11 #21): đang Trang trí thử thì thú / khách / chỗ lấp lánh không vẽ (noPets) → cũng không bấm trúng
+    // (trước đây bấm vào chỗ trống mà ở cảnh thật có thú / khách là nhảy sang tab Thú nuôi / Album khách)
+    if (!placing && !trying && typeof GardenFinds !== "undefined" && view && isOut(scene)) {      // 1.28: chỗ lấp lánh / gánh hàng
       const cv = $("kb-home-canvas"), r = cv.getBoundingClientRect();
       const fh = GardenFinds.at(scene, (ev.clientX - r.left) / view.S, (ev.clientY - r.top) / view.S);
       if (fh) { GardenFinds.hit(fh, scene, ev); return; }
     }
-    if (!placing && typeof GardenPets !== "undefined" && view) {
+    if (!placing && !trying && typeof GardenPets !== "undefined" && view) {
       const cv = $("kb-home-canvas"), r = cv.getBoundingClientRect();
       const pid = GardenPets.at(scene, (ev.clientX - r.left) / view.S, (ev.clientY - r.top) / view.S);
       if (pid) { GardenPets.cheer(pid); sfx("boop"); petFocus = pid; tab = "pet"; renderList(); return; }
     }
-    if (!placing && typeof GardenGuests !== "undefined" && view) {      // 1.21: bấm khách → Album khách
+    if (!placing && !trying && typeof GardenGuests !== "undefined" && view) {      // 1.21: bấm khách → Album khách
       const cv = $("kb-home-canvas"), r = cv.getBoundingClientRect();
       const gid = GardenGuests.at(scene, (ev.clientX - r.left) / view.S, (ev.clientY - r.top) / view.S);
       if (gid) { GardenGuests.react(scene); sfx("boop"); guestFocus = gid; tab = "guest"; albumView = "guest"; renderList(); return; }
@@ -5028,7 +5039,7 @@ var GardenHome = (function () {
         const nrow = el("div", "kb-h-btns");
         const inp = document.createElement("input"); inp.type = "text"; inp.maxLength = 12; inp.value = p.name; inp.className = "kb-h-input";
         inp.placeholder = "Đặt tên"; inp.spellcheck = false;
-        inp.addEventListener("keydown", (e) => { e.stopPropagation(); if (e.key === "Enter") { e.preventDefault(); save(); } });
+        inp.addEventListener("keydown", (e) => { escBlur(e); if (e.key === "Enter") { e.preventDefault(); save(); } });
         const save = () => { const v2 = inp.value.trim(); if (v2 && v2 !== p.name) { H.send("home:pet:name:" + JSON.stringify({ id: p.id, name: v2 })); } };
         nrow.appendChild(inp);
         nrow.appendChild(btn("Đặt tên", "kb-btn-small", save));
@@ -5272,7 +5283,7 @@ var GardenHome = (function () {
       });
       const r3 = el("div", "kb-h-rule kb-h-rule-sel");
       const tin = document.createElement("input"); tin.type = "text"; tin.className = "kb-h-input"; tin.placeholder = "tag (vd. N5, bai29)"; tin.maxLength = 60; tin.spellcheck = false;
-      tin.addEventListener("keydown", (e) => e.stopPropagation());
+      tin.addEventListener("keydown", escBlur);
       const tsel = seedSelect(owned[0], opts("—").slice(1), () => {});
       r3.appendChild(tin); r3.appendChild(tsel);
       r3.appendChild(btn("Thêm luật tag", "kb-btn-small", () => { const t = tin.value.trim(); if (t) { rule("tag", t, tsel.value); } }));
@@ -5377,7 +5388,7 @@ var GardenHome = (function () {
     const ta = document.createElement("textarea");
     ta.className = "kb-h-sharecode"; ta.readOnly = true; ta.rows = 2; ta.spellcheck = false; ta.value = shareBox.code;
     ta.addEventListener("focus", () => ta.select());
-    ta.addEventListener("keydown", (e) => e.stopPropagation());
+    ta.addEventListener("keydown", escBlur);
     inf.appendChild(ta);
     const row = el("div", "kb-h-btns");
     row.appendChild(btn("Chép lại", "kb-btn-small", () => { shareFrom = shareBox.tab; H.send("share:code:" + shareBox.id); }));
@@ -5406,7 +5417,7 @@ var GardenHome = (function () {
         if (old) { old.remove(); }
       }
     });
-    ta.addEventListener("keydown", (e) => e.stopPropagation());
+    ta.addEventListener("keydown", escBlur);
     inf.appendChild(ta);
     const row = el("div", "kb-h-btns");
     row.appendChild(btn("Xem trước", "kb-btn-small", () => {
@@ -5630,10 +5641,13 @@ var GardenHome = (function () {
     window.dispatchEvent(new Event("kb-today-fit"));
   }
 
+  // 1.35.5 (audit 19/11 #08): Esc lớp trên đã dùng (thẻ lấp lánh / gánh hàng mở từ cảnh của bảng, hộp hỏi…) → không đóng
+  // thêm bảng này. Trước đây một Esc đóng hai lớp, Esc thứ hai không còn gì để đóng → đóng luôn cửa sổ vườn.
   function onKey(e) {
     if (!isOpen) { return; }
     if (typeof GardenCraft !== "undefined" && GardenCraft.isOpen()) { return; }
     if (e.key === "Escape") {
+      if (e.defaultPrevented) { return; }
       e.preventDefault();
       if (placing) { placing = null; defaultTip(); }
       else if (selected) { selected = null; hidePop(); }
@@ -5763,7 +5777,7 @@ var GardenHome = (function () {
       if (sub === "buy") {
         sfx("coin"); mood("happy", 1200, "いい感じ！");
         const pd = pendingDecor; pendingDecor = null;
-        if (pd && (decorState().own || []).indexOf(pd.id) >= 0) { H.send("home:decor:use:" + pd.room + ":" + pd.slot + ":" + pd.id); }
+        if (pd && !trying && (decorState().own || []).indexOf(pd.id) >= 0) { H.send("home:decor:use:" + pd.room + ":" + pd.slot + ":" + pd.id); }
       } else { sfx("good"); mood("happy", 900, "模様替え！ Đổi không khí ♪"); }
     } else if (a === "tile") {
       decoTry = null;
@@ -5773,7 +5787,13 @@ var GardenHome = (function () {
         mood("star", 2000, isNew ? "できた！ Mẫu mới xong rồi" : "Đã sửa mẫu ♪");
         tab = "room"; roomView = "decor";
         const t = ((catalog() || {}).tiles || []).find((x) => x.id === payload.id);
-        if (isNew && t) { H.send("home:decor:use:" + decoRoom() + ":" + t.kind + ":" + t.id); }
+        // 1.35.5 (audit 19/11 #21): đang Trang trí thử → mẫu mới dán vào BẢN THỬ của gian đang xem, không dán lên nhà thật
+        if (isNew && t && trying) {
+          const room = decoRoom(), s2 = room === scene ? draftSlot(room) : null;
+          if (s2 && (t.kind === "wall" || t.kind === "floor")) {
+            s2.decor = Object.assign({}, s2.decor || {}); s2.decor[t.kind] = t.id; putDraft(room); renderTry();
+          }
+        } else if (isNew && t) { H.send("home:decor:use:" + decoRoom() + ":" + t.kind + ":" + t.id); }
       } else { sfx("flip"); }
     } else if (a === "craft") {
       if (sub === "save") {

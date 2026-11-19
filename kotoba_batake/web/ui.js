@@ -388,7 +388,7 @@ var GardenUI = (function () {
       const z = $("kb-rv-zoom");
       if (z) { z.addEventListener("mousedown", (e) => e.preventDefault()); z.addEventListener("click", () => toggleZoom()); }
       document.addEventListener("keydown", (e) => {
-        if (isOpen && e.key === "Escape") { e.preventDefault(); close(); }
+        if (isOpen && e.key === "Escape" && !e.defaultPrevented) { e.preventDefault(); close(); }     // 1.35.5 (audit #08)
       });
       setInterval(apply, 200);
       // 1.35.4 (người dùng 19/11: "chuyển cảnh từ tưới sang vườn (Esc) hay ngược lại thì nó bị giựt"): trước đây chế độ

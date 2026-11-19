@@ -624,8 +624,11 @@ ok("backup_core.GATE = _sync_hold" in I and "_sync_running = True" in body("_on_
    "sync_will_start: chụp xong thì khoá ghi (backup_core.GATE)")
 ga = body("_sync_guard_after")
 ok("_sync_running = False" in ga and ga.index("_sync_running = False") < ga.index("after_sync"), "so xong mới mở khoá — cùng một lượt xử lý, không việc nào chen vào")
-ok("mw.progress.busy()" in body("_sync_hold") and "if not _sync_running" in body("_sync_hold"),
-   "chỉ khoá khi thanh tiến độ đồng bộ còn đó (cờ kẹt không khoá ghi mãi)")
+# 1.35.5 (audit 19/11 #01): khoá giữ tới lúc so xong (Anki tắt thanh tiến độ TRƯỚC khi mở hộp thoại cuối + gọi
+# sync_did_finish); cờ kẹt thì chốt an toàn _sync_watch tự so rồi mở khoá (trước đây: hết thanh tiến độ là hết khoá)
+ok("return bool(_sync_running)" in body("_sync_hold") and "_on_sync_finished()" in body("_sync_watch")
+   and "_sync_busy_now()" in body("_sync_watch") and "_sync_watch" in body("_on_sync_start"),
+   "khoá tới lúc so xong; cờ kẹt (Anki không báo xong) → chốt an toàn tự so rồi mở khoá (không khoá ghi mãi)")
 ok("_sync_hold()" in br and "_sync_hold()" in method("refresh"), "cầu nối + refresh: không chạy lúc đang đồng bộ")
 ok(re.search(r"@_after_sync\ndef _ai_done\(", I) and re.search(r"@_after_sync\ndef _fix_done\(", I) and "_sync_flush()" in fin,
    "Gemini viết báo / sửa bài xong đúng lúc đồng bộ → đợi so xong mới ghi (kết quả không mất)")
