@@ -179,6 +179,12 @@ def ruby_pairs(word: str, reading: str) -> list[list[str]] | None:
 def bracket_pairs(tokens: list[tuple[str, str | None]]) -> tuple[str, str, list[list[str]] | None] | None:
     """Trường Từ ghi kiểu Anki 中[zhōng]文[wén] (text_core.tokens) → (chữ, pinyin cả từ, cặp chữ / âm tiết | None).
     Không có chỗ nào ghi pinyin trong ngoặc → None."""
+    # 1.35.5 (audit 19/11 #27): ngoặc vuông không phải pinyin (做[sth], 给[sb.] — ghi chú tiếng Anh) giữ nguyên là chữ, không
+    # thành cách đọc; không ngoặc nào là pinyin → None (giữ trường như người dùng ghi)
+    def pinyin(w: str, r: str) -> bool:
+        n = sum(1 for c in w if is_han(c))
+        return n > 0 and split_syllables(unicodedata.normalize("NFC", tone_marks(r.strip())), n) is not None
+    tokens = [(w, r) if r and pinyin(w, r) else (w + ("[%s]" % r if r else ""), None) for w, r in tokens]
     if not any(r for _w, r in tokens):
         return None
     word = "".join(w for w, _r in tokens)

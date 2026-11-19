@@ -185,16 +185,20 @@ def find_links(text: str, words: list[str]) -> list[tuple[int, int, str]]:
     out: list[tuple[int, int, str]] = []
     for m in re.finditer(r"[^\s]+", text or ""):
         tok = m.group(0)
-        core = tok.strip(".,!?;:…\"'“”‘’()「」『』~")
+        # 1.35.5 (audit 19/11 #15): cả ngoặc vuông / nhọn / dấu câu toàn khổ sát chữ ("[학교]에서") — trước đây giữ "[" trong
+        # cụm nên vị trí lệch một chữ: gạch chân "[학" thay vì "학교"
+        core = tok.strip(".,!?;:…\"'“”‘’()[]{}<>「」『』《》〈〉【】~·")
         if not core or not HANGUL_RE.search(core):
             continue
         start = m.start() + tok.index(core)
+        # dấu đóng ngoặc / nháy giữa danh từ và tiểu từ ("《친구》를", "'학교'에") → so trên chữ đã bỏ dấu; danh từ vẫn ở đầu cụm
+        bare = re.sub(r"[\]\)}>」』》〉】\"'”’]", "", core)
         for w in ordered:
             if is_predicate(w):
-                if predicate_match(core, w):
+                if predicate_match(bare, w):
                     out.append((start, start + len(core), w))
                     break
-            elif noun_match(core, w):
+            elif noun_match(bare, w) and core.startswith(w):
                 out.append((start, start + len(w), w))
                 break
     return out

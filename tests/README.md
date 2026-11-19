@@ -22,7 +22,10 @@ Nhớ tăng `human_version` trong `manifest.json` và ghi lịch sử phiên b�
 
 | File | Nội dung |
 |---|---|
+| `core/test_1355.py ADDON` | 1.35.5 (64, offline; phần collection cần `ANKI_PY`): lỗi audit 19/11 tái hiện rồi kiểm cách sửa — khoá ghi lúc đồng bộ tới khi so xong (soát mã) + chốt an toàn, mốc chuỗi không bị đè khi collection mất hết dữ liệu vườn + bản chờ, `after_sync` lỗi thoáng qua / `settle` ghi file lỗi không mất bản chờ, khôi phục bản sao lưu sạch giữ quyết định 1.33.1, Bắt đầu truyện mới + bản gốc mồ côi, `story_prev`, hàm thật của games.js bằng node (der Hund, -e / (sich) freuen), Äpfel / Ärzte / Ämter / Öfen, `[학교]에서` / `《친구》를`, từ mới trong từ dài, `{食べる|タベ|食べる}`, mã chia sẻ có dấu (= trang web), Cloze của Anki, NFC Nhật / Hàn, errors.json hỏng, `[sth]`; `KB_OLD_1354=<1.35.4>` so khoá collection / config. Mã 1.35.4: đỏ 57 / 62 |
 | `core/test_1354.py ADDON` | 1.35.4 (35, offline; phần collection cần `ANKI_PY`): cây deck của báo chạy đúng hàm `garden.js` bằng node — thứ tự theo cấp ("JA B" không chen giữa "JA" và "JA::N4"), thiếu deck cha giữa chừng, **2.000 danh sách deck ngẫu nhiên** (dấu, CJK, "x y", "X-Y") cha / cấp đúng + nhánh con liền khối; nhớ đóng / mở (300 lần bấm: lưu ≤ 400 ký tự, trong phiên vẫn nhớ lần đầu); khớp nguyên cụm; `lang_decks` gửi kèm `col`; soát mã (ô Lấy từ, CSS bề ngang vườn, hiệu ứng tắt khi giảm chuyển động, MutationObserver); hợp đồng dữ liệu = 1.35.3 |
+| `anki/e2e_1355.js` | 1.35.5 (25, Anki thật): đồng bộ — hết thanh tiến độ mà Anki chưa báo xong vẫn khoá, ghi chen vào bị từ chối, bản cũ mang về (−1.000 xu) được trả lại (mã 1.35.4: mất 993 xu), chốt an toàn tự mở khoá; tiếng Nhật dùng Claude Code → báo tiếng Trung đủ nút; Lịch hoa lúc đồng bộ / Nhờ Gemini sửa khi máy khác vừa sửa / bài vừa về đã khoá + Chép chữ gõ dở; Esc Esc với gánh hàng / thẻ lấp lánh / hộp hỏi trên bảng Nhà (bật lại hộp hỏi: `ASK_TEST_OFF = False`); Tưới ngay + Nhà; lật thẻ lúc đồng bộ; đổi deck bỏ sổ Hoàn tác; cửa sổ Sửa thẻ còn mở + lật; 5 deck con → tick deck cha; Esc trong ô tìm deck; chip mùa đóng ⚙ Giao diện. Mã 1.35.4: đỏ 19 / 24 |
+| `anki/e2e_1355z.js` | 1.35.5 (10, chạy với `ANKI_WEBSCALE=1.25`): webview phóng to đúng hệ số, không CSS zoom, màn chính / Nhà / Trò chơi / Báo / Lịch hoa / bảng ôn nằm trọn bề ngang. Mã 1.35.4: cắt 342 px bên phải, đỏ 8 / 10 |
 | `anki/e2e_1354.js` | 1.35.4 (75, Anki thật): **ghi từng khung hình** (`requestAnimationFrame`) lúc mở / đóng bảng ôn ở 3 cỡ cửa sổ, vườn 300 cây — chế độ đổi cùng khung hình, không khung trống, cảnh + ruộng giữ bề ngang; Phóng to → Dừng / Esc; Ẩn vườn + chấm thẻ → Esc; hiệu ứng (bật nhẹ / trồi lên / Dịu mắt / giảm chuyển động qua CDP `Emulation.setEmulatedMedia` / Tắt / ôn → Trò chơi); cuộn xuống rồi R / Tưới ngay / T / N / B / L; bảng nổi từng cặp; ô "Lấy từ" 13 lần đổi + đúng ca người dùng; cây deck (thứ tự, ▸ / ▾ nhớ chung với thanh trên, tick cha / con, tối đa 5, tìm, bàn phím, Xong / Đổi, báo tiếng Anh). Mã 1.35.3: đỏ 22 |
 | `anki/e2e_1354b.js` | 1.35.4 (31, Anki thật) — **kịch bản ngoài bộ test**: bấm vội R / Esc 40 lần, Esc khi bảng đang bật nhẹ dở, đổi cỡ cửa sổ / đổi deck lúc đang ôn, cỡ cảnh Lớn + Giáng sinh, 800 × 600, Anki chế độ tối, báo đang viết (khoá) → viết xong, xoá / đổi tên deck lúc danh sách mở, tên deck có "…" `<b>` &, 204 deck lồng 3 cấp (thời gian mở / gõ), đổi "Lấy từ" liên tục, Esc ở ⚙ |
 | `core/test_1353.js ADDON` (Playwright) | 1.35.3 (15, ~1 phút): dây trang trí ở cỡ cảnh Lớn — dựng cảnh thật trong Chromium; lớp đèn sáng sát dây (9 chủ đề × 7 nơi × 2 cỡ × đêm / ngày) + móc hàm `garland` nội bộ ở mọi đường vẽ (sân, vùng, vùng tự tạo, 3 gian, cả nhà); quét 48.000 lần vẽ không ném lỗi (15 nơi gồm 8 nền vùng tự tạo × 16 chủ đề × giờ × thời tiết × hiệu ứng bật / tắt × hẹp / rộng / Lớn / ảnh); đất ở cỡ Lớn = cỡ thường từng điểm ảnh (1.800 tổ hợp); hạt bay / đèn trời tới mép trên; màn rộng không có chấm đất trên trời (mã 1.35.2: đỏ 10) |
@@ -201,7 +204,18 @@ ANKI_PY=~/.venv-anki/bin/python tests/anki/run_ui.sh /tmp/kb_src/kotoba_batake /
 ```
 Cần Node ≥ 22 (có sẵn `fetch` và `WebSocket`). Cổng: `KB_CDP_PORT` (9333), `KB_CTRL_PORT` (9444). `kill_anki.sh` tắt Anki đang chạy từ các script này.
 
-## Kết quả lần chạy gần nhất (bản 1.35.4, 19/11/2026) — chuyển cảnh Tưới ↔ vườn, cây deck của báo, bảng nổi, Esc
+## Kết quả lần chạy gần nhất (bản 1.35.5, 19/11/2026 tối) — sửa lỗi audit 19/11, kiểm tra lần cuối
+- `run_all.sh` (`ANKI_PY` = aqt 26.9.4, `KB_OLD_1354` = mã 1.35.4) trên mã cuối: **TẤT CẢ OK** (`core/test_1355.py` 66/66).
+- Anki 26.9.4, 57 kịch bản, 3 luồng `run_versions.sh`: 2.391 / 2.392 (ca trượt: `e2e_1253` "localStorage trống sau khi mở lại"
+  — điều kiện môi trường, như 1.35.4). `e2e_1355` 25/25; `e2e_1355z` (`ANKI_WEBSCALE=1.25`) 10/10; `dong_bo/run_e2e.sh` 47/47;
+  `audit_20261114/run_ui_audit.sh` 26 + 191 + 18 + 7 đạt hết; Anki 23.10.1: `e2e_1355` 25/25, `e2e_1354` 75/75, `e2e_1354b` 35/35,
+  `e2e_1322` 40/40, `e2e_1352` 33/33; `run_capnhat.sh` 1.31.3 → 1.35.5: 19/19.
+- **Lưu ý khi viết kịch bản giả lập đồng bộ** (1.35.5): khoá ghi giữ từ `_on_sync_start()` tới `_on_sync_finished()` (không còn
+  theo thanh tiến độ) — gọi đủ cả hai; "dữ liệu mang về" phải ghi ngoài khoá (`mw.col.set_config`, hoặc tạm `kb._sync_running =
+  False`) như Anki tự ghi. Muốn thấy hộp hỏi `GardenUI.ask` thật thì đặt `kb.ASK_TEST_OFF = False` (add-on test `zz_kbtest` tắt nó).
+- `run_versions.sh` đếm theo từng `slot<N>.log`: đừng gộp log của bản Anki khác (23.10.1) khi chờ "SLOT DONE".
+
+## Kết quả lần chạy trước (bản 1.35.4, 19/11/2026) — chuyển cảnh Tưới ↔ vườn, cây deck của báo, bảng nổi, Esc
 - `run_all.sh` (`ANKI_PY` = aqt 26.9.4, môi trường mới; thêm `core/test_1354.py` 39/39) trên gói cuối đã giải nén: **TẤT CẢ OK**.
 - Anki 26.9.4, **55 kịch bản** (mọi `e2e*.js` / `audit*.js` của `anki/` trừ những cái cần trình chạy riêng), 3 luồng `run_versions.sh`
   `KB_SLOT=1,2,3`: 2.352 / 2.357 trên gói trước phần sửa Esc — 5 ca trượt đều đã xử lý (chi tiết `docs/kiem_thu/1.35.4/BAO_CAO.md`

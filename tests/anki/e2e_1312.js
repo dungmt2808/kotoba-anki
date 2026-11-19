@@ -310,7 +310,7 @@ job("kết quả Gemini")
 out["queued"]=(len(kb._sync_wait), list(ran))
 out["same"]=(st.load()["coins"]==c0 and mw.col.get_config("kotoba_batake_rev", None)==rev0)
 mw.progress.busy=real
-out["stuck_flag_no_progress"]=kb._sync_hold()      # cờ còn bật nhưng hết thanh tiến độ → không khoá nữa
+out["stuck_flag_no_progress"]=kb._sync_hold()      # 1.35.5 (audit #01): hết thanh tiến độ mà chưa so xong → VẪN khoá
 kb._on_sync_finished()
 out["after"]=(kb._sync_running, len(kb._sync_wait), list(ran))
 st.add_coins(5)
@@ -321,7 +321,8 @@ result=out`);
   ok(h1.note.ok === false && h1.note.store_error === true, 'nhật ký: báo "chưa lưu được", chữ vẫn trong ô');
   ok(h1.queued[0] === 1 && h1.queued[1].length === 0 && h1.after[0] === false && h1.after[1] === 0 && h1.after[2][0] === 'kết quả Gemini',
     'việc nền gọi về giữa lúc đồng bộ → xếp hàng, đồng bộ xong mới chạy');
-  ok(h1.stuck_flag_no_progress === false && h1.coins === 5, 'hết thanh tiến độ là hết khoá; đồng bộ xong ghi lại bình thường');
+  ok(h1.stuck_flag_no_progress === true && h1.after[0] === false && h1.coins === 5,
+    'hết thanh tiến độ nhưng Anki chưa báo xong → vẫn khoá (1.35.5, audit #01); đồng bộ xong ghi lại bình thường');
   ok((await seen()).length === 0, 'không hộp thoại nào bật lên');
 
   console.log('== 6. Việc lúc mở hồ sơ đợi lần tự đồng bộ; mở lại Anki không sửa collection');

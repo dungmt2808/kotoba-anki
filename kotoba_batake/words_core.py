@@ -161,6 +161,8 @@ def _model_info(col: Any, mid: str, cfg: dict[str, Any], first: tuple[int, str] 
         kind = fields.guess_kind(name, keys, core._sample_words(col, mid, idx))
     else:
         kind = "vocab"
+    # 1.35.5 (audit 19/11 #27 — xem lại, giữ như cũ): ở đây (báo) chữ Hán đơn tiếng Trung tính là từ vựng để tra nghĩa khi
+    # đọc báo; item_ok vẫn bỏ chữ Hán đơn khỏi kho 100 từ. Loại "kanji" của tiếng Trung chỉ đổi ở vườn / trò chơi.
     if lang != "ja" and kind in ("kanji", "grammar"):
         kind = "vocab"
     return {"mid": mid, "name": name, "keys": keys, "roles": roles, "lang": lang, "kind": kind}

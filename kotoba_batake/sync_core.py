@@ -197,23 +197,25 @@ def _write(path: str, payload: dict[str, Any]) -> None:
     os.replace(tmp, path)
 
 
-def write_record(user_dir: str, col: Any, state: dict[str, Any]) -> None:
+def write_record(user_dir: str, col: Any, state: dict[str, Any]) -> bool:
     """Ghi bản chụp ra file của hồ sơ (qua file tạm rồi đổi tên); nội dung + dấu như file đang có thì thôi. Không biết hồ
-    sơ (collection giả trong test) → không ghi. Lỗi ghi file chỉ in ra (không chặn đồng bộ)."""
+    sơ (collection giả trong test) → không ghi. Lỗi ghi file chỉ in ra (không chặn đồng bộ). 1.35.5: trả False khi ghi lỗi."""
     if not backup.profile_key(col) or not state.get("h"):
-        return
+        return True
     pending = state.get("pending") is True
     try:
         old = read_record(user_dir, col)
         if (old and old["h"] == state["h"] and old["rev"] == state["rev"] and old["crt"] == state.get("crt", 0)
                 and old.get("pending") == pending):
-            return
+            return True
         payload = {"v": 1, "crt": state.get("crt", 0), "scm": state.get("scm", 0), "at": int(time.time()), "keys": state["keys"]}
         if pending:
             payload["pending"] = True
         _write(record_path(user_dir, col), payload)
+        return True
     except OSError as err:
         print(f"[kotoba_batake] bản chụp đồng bộ: {err}")
+        return False
 
 
 def _save_lost(user_dir: str, col: Any, after: dict[str, Any], why: str) -> None:
@@ -238,9 +240,35 @@ def _pending(user_dir: str, col: Any) -> dict[str, Any] | None:
 def _hold(user_dir: str, col: Any, mine: dict[str, Any]) -> None:
     """1.33.3 (audit 17/11 F06): trả lại lỗi → giữ bản chụp tốt kèm dấu "đang chờ" (file) + móc `backup.PENDING`: lần đọc /
     ghi dữ liệu vườn kế tiếp, lần đồng bộ sau, lần mở hồ sơ sau đều trả lại bản này trước. Trước đây đồng bộ lại chụp đè
-    bản cũ vừa mang về lên file, còn cộng xu / viết nhật ký đóng dấu mới lên bản cũ → không còn tự phục hồi được."""
-    write_record(user_dir, col, dict(mine, pending=True))
-    backup.PENDING = lambda c, _d=user_dir: settle(c, _d)
+    bản cũ vừa mang về lên file, còn cộng xu / viết nhật ký đóng dấu mới lên bản cũ → không còn tự phục hồi được.
+    1.35.5: ghi file lỗi (ổ đầy, thư mục bị khoá) → giữ bản chụp trong bộ nhớ (`hold_later`) thay vì mất móc."""
+    wrote = write_record(user_dir, col, dict(mine, pending=True))
+    if wrote and backup.profile_key(col) and _pending(user_dir, col) is not None:
+        backup.PENDING = lambda c, _d=user_dir: settle(c, _d)
+    else:
+        hold_later(user_dir, mine)
+
+
+def hold_later(user_dir: str, mine: dict[str, Any] | None) -> None:
+    """1.35.5 (audit 19/11 #04): bản chụp `mine` chờ so / trả lại nhưng chưa ghi được ra file (hoặc chưa có collection):
+    giữ trong bộ nhớ — lần đọc / ghi dữ liệu vườn kế tiếp (backup.settle) so trước như sau đồng bộ."""
+    if not mine or not mine.get("h"):
+        return
+
+    def run(col: Any, _d: str = user_dir, _m: dict[str, Any] = mine) -> bool:
+        cur = state_of(col)
+        if _other_collection(_m, cur):
+            if backup.PENDING is run:
+                backup.PENDING = None
+            return False
+        out = _apply(col, _d, _m, cur)
+        if out["action"] == FAILED:
+            raise backup.StoreFailed(out["why"])
+        if backup.PENDING is run:
+            backup.PENDING = None
+        return out["action"] == RESTORE
+
+    backup.PENDING = run
 
 
 def settle(col: Any, user_dir: str) -> bool:
@@ -257,7 +285,11 @@ def settle(col: Any, user_dir: str) -> bool:
     out = _apply(col, user_dir, rec, cur)
     if out["action"] == FAILED:
         raise backup.StoreFailed(out["why"])
-    backup.PENDING = None
+    # 1.35.5 (audit 19/11 #04B): chỉ gỡ móc khi file thật sự hết "đang chờ" — ghi file lỗi (đã trả lại vào collection) thì
+    # còn móc: lần sau so lại (collection đã mới hơn → giữ, thử ghi file lần nữa). Trước đây gỡ luôn → lần đồng bộ sau
+    # before_sync đọc lại bản chờ cũ trên file thay vì chụp dữ liệu mới, lúc so có thể trả bản cũ đó đè phần vừa làm.
+    if _pending(user_dir, col) is None:
+        backup.PENDING = None
     return out["action"] == RESTORE
 
 
@@ -269,10 +301,15 @@ def before_sync(col: Any, user_dir: str) -> dict[str, Any] | None:
         rec = _pending(user_dir, col)
         if rec is not None:
             try:
-                other = _other_collection(rec, state_of(col))
+                now = state_of(col)
+                other = _other_collection(rec, now)
+                # 1.35.5 (audit 19/11 #04B): bản chờ đã trả lại xong mà file chưa ghi được dấu "xong" → collection mang dấu
+                # MỚI hơn bản chờ (lần trả lại + các lần ghi sau đó) → chụp collection, không dùng bản chờ cũ
+                stale = bool(now.get("h") and now.get("rev") and rec.get("rev") and _older(rec["rev"], now["rev"])
+                             and lineage(now["keys"]) == lineage(rec["keys"]))
             except Exception:
-                other = False
-            if not other:
+                other = stale = False
+            if not other and not stale:
                 return rec
         state = state_of(col)
         write_record(user_dir, col, state)
@@ -312,6 +349,14 @@ def after_sync(col: Any, user_dir: str, before: dict[str, Any] | None) -> dict[s
         return _apply(col, user_dir, before, state_of(col))
     except Exception as err:
         print(f"[kotoba_batake] sau đồng bộ: {type(err).__name__}: {err}")
+        # 1.35.5 (audit 19/11 #04A): lỗi thoáng qua (đọc collection lỗi…) → giữ bản chụp chờ so lại ở lần đọc / ghi kế
+        # tiếp (trước đây bỏ luôn: lần ghi sau đóng dấu mới lên bản có thể cũ vừa mang về)
+        if before is not None and before.get("h"):
+            try:
+                _hold(user_dir, col, before)
+            except Exception as err2:      # noqa: BLE001
+                print(f"[kotoba_batake] giữ bản chụp sau đồng bộ: {type(err2).__name__}: {err2}")
+                hold_later(user_dir, before)
         return {"action": FAILED, "why": f"{type(err).__name__}: {err}", "keys": []}
 
 

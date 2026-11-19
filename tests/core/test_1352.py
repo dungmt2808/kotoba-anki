@@ -267,8 +267,9 @@ ok('if cut and force != "cut":' in init_src and '(cut ? ":cut" : "")' in cal_src
    "03: đổi tiếng mà bài dài hơn giới hạn → hỏi trước; Python không cắt nếu không kèm \":cut\"")
 ok('self._js("calStale")' in init_src and init_src.count("_dialog.cal_stale()") == 2 and "function mergeTyping()" in cal_src,
    "12: sau đồng bộ / nhập collection → bỏ chữ đang giữ, Lịch hoa đọc lại + so ba bên")
-ok("err = self._fix_text(ds, p.get(\"t\"), p.get(\"lang\"))" in init_src and
-   'H.send("cal:fix:" + JSON.stringify({ d: v.d, t: ta.value, lang: w.lang }));' in cal_src,
+# 1.35.5 (audit 19/11 #07): kèm thêm b (bài trang tin là đã lưu) để không ghi đè bài máy khác vừa sửa
+ok("err = self._fix_text(ds, p.get(\"t\"), p.get(\"lang\"), p.get(\"b\"))" in init_src and
+   'H.send("cal:fix:" + JSON.stringify({ d: v.d, t: ta.value, lang: w.lang, b: base0 }));' in cal_src,
    "13: Nhờ Gemini sửa gửi kèm chữ đang thấy; lưu không được thì không gửi")
 ok("self.cal_rollover(" in init_src and "d == today - datetime.timedelta(days=1)" in init_src,
    "14: sang ngày mới → lưu nốt chữ vào ngày cũ, Lịch hoa đọc lại (ô ngày cũ khoá)")

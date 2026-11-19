@@ -384,22 +384,34 @@ var GardenCal = (function () {
     const m = merge, R = $("kb-cal-right");
     merge = null;
     if (!m || !R || !day) { return; }
-    const lost = [];
+    const lost = [], full = [];
     Array.prototype.forEach.call(R.querySelectorAll("textarea"), (ta) => {
       const k = ta.classList.contains("kb-cal-note") ? "note" : ta.classList.contains("kb-cal-ta") ? "write" : "";
       const s = m[k];
-      if (!s || ta.readOnly || s.cur === s.saved || ta.value === s.cur) { return; }
+      if (!s || s.cur === s.saved || ta.value === s.cur) { return; }
       const fresh = ta.value;
-      if (fresh === s.saved && (k === "note" || (day.w && day.w.lang === s.lang))) {
+      // 1.35.5 (audit 19/11 #07): bài vừa về đã khoá (máy khác gửi / Gemini đã sửa) → ô chỉ đọc, chữ gõ dở báo lại một dòng
+      // (trước đây bỏ qua ô chỉ đọc → chữ chưa lưu mất hẳn, không báo gì)
+      if (!ta.readOnly && fresh === s.saved && (k === "note" || (day.w && day.w.lang === s.lang))) {
         ta.value = s.cur;                   // collection không đổi ô này → chữ đang gõ dở là của người dùng, lưu tiếp
         ta.dispatchEvent(new Event("kb-sync"));
         if (ta._kbSave) { ta._kbSave(); }
       } else {
         lost.push((k === "note" ? "Nhật ký" : "Luyện viết") + ": «" + (s.cur.length > 60 ? s.cur.slice(0, 60) + "…" : s.cur) + "»");
+        full.push(s.cur);
       }
     });
     if (lost.length) {
       setInfo("Ngày này vừa đổi ở máy khác / bản khôi phục — đang hiện bản mới. Chữ bạn gõ dở chưa lưu: " + lost.join(" · "), true);
+      // 1.35.5: chép lại được cả đoạn gõ dở (dòng báo chỉ hiện 60 chữ đầu)
+      const i = $("kb-c-info");
+      if (i) {
+        const cp = el("button", "kb-btn kb-btn-small kb-cal-copy", "Chép chữ gõ dở");
+        cp.type = "button";
+        cp.addEventListener("click", () => { H.send("cal:copy:" + JSON.stringify({ t: full.join("\n\n") })); });
+        i.appendChild(document.createTextNode(" "));
+        i.appendChild(cp);
+      }
     }
   }
   function drawDay() {
@@ -506,6 +518,9 @@ var GardenCal = (function () {
       keep("note", { d: v.d, t: ta.value, b: known() });
       if (!composing) { clearTimeout(timers.note); timers.note = setTimeout(save, 1500); }
     });
+    // 1.35.5 (audit 19/11 #27): gõ bằng bộ gõ (Telex / IME Nhật / Trung / Hàn) — chữ chốt lúc compositionend, sau đó có thể
+    // không còn lần "input" nào → hẹn lưu lại như ô luyện viết (trước đây chỉ lưu khi rời ô)
+    ta.addEventListener("compositionend", () => { setTimeout(() => { clearTimeout(timers.note); timers.note = setTimeout(save, 1500); }, 0); });
     ta.addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey && !e.isComposing) { e.preventDefault(); ta.blur(); } });
     ta.addEventListener("blur", save);
     ta.addEventListener("kb-sync", () => { cnt.textContent = ta.value.length + " / " + ta.maxLength + " ký tự"; grow(ta); });
@@ -719,7 +734,10 @@ var GardenCal = (function () {
         // ô cũ không tự lưu nữa (bài sắp khoá), lưu lỗi thì ô mới vẫn giữ chữ này và "chưa lưu"
         ta._kbSave = null;
         b.disabled = true; b.textContent = "Đang gửi…";
-        H.send("cal:fix:" + JSON.stringify({ d: v.d, t: ta.value, lang: w.lang }));
+        // 1.35.5 (audit 19/11 #07): kèm b = bài trang tin là đã lưu (như lần tự lưu) — máy khác vừa sửa bài thì Python không
+        // ghi đè, trang đọc lại và báo chữ gõ dở
+        const base0 = w.goc === null || w.goc === undefined ? null : w.goc;
+        H.send("cal:fix:" + JSON.stringify({ d: v.d, t: ta.value, lang: w.lang, b: base0 }));
       }, "Gemini sửa 1 lần mỗi ngày (câu đã sửa · lỗi · nhận xét)");
       b.disabled = !has;
       acts.appendChild(b);

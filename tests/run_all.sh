@@ -204,6 +204,9 @@ echo "$OUT" | grep -E "✗|KẾT QUẢ|Traceback"; [ $RC = 0 ] || FAIL=1
 echo "== core/test_1354.py (1.35.4: cây deck của báo như ô deck ở thanh trên (2.000 cây ngẫu nhiên), Lấy từ không kẹt \"Không dùng deck\", chuyển cảnh Tưới ↔ vườn: bề ngang vườn không đổi theo thanh cuộn, đổi chế độ cùng khung hình, mỗi lúc một bảng nổi; không thêm khoá / mục config)"
 OUT=$("${ANKI_PY:-python3}" -W ignore "$HERE/core/test_1354.py" "$ADDON" 2>&1); RC=$?
 echo "$OUT" | grep -E "✗|KẾT QUẢ|Traceback"; [ $RC = 0 ] || FAIL=1
+echo "== core/test_1355.py (1.35.5: lỗi audit 19/11 — khoá ghi lúc đồng bộ tới khi so xong, bản chờ trả lại không mất, mốc chuỗi, báo Gemini khi tiếng Nhật dùng Claude Code, Lịch hoa, Esc một lớp, truyện mới / kỳ trước, trò chơi Đức / katakana, Ä Ö Ü, tiếng Hàn, từ mới, mã chia sẻ có dấu, Cloze của Anki; không thêm khoá / mục config)"
+OUT=$("${ANKI_PY:-python3}" -W ignore "$HERE/core/test_1355.py" "$ADDON" 2>&1); RC=$?
+echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
 echo "== trang/test_trang.py (trang web: đăng / gỡ mã, biểu mẫu issue, GitHub Actions, dữ liệu khớp add-on)"
 OUT=$(python3 "$HERE/trang/test_trang.py" "$ADDON" 2>&1); RC=$?
 echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1

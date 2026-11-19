@@ -711,14 +711,19 @@ var GardenPaper = (function () {
       cb.setAttribute("data-id", String(r.id));
       const cov = coveredBy(r);
       cb.checked = isPicked(r) || !!cov;
-      cb.disabled = (!!cov && !isPicked(r)) || (!cb.checked && picked.length >= max);
+      // 1.35.5 (audit 19/11 #17): đã đủ 5 deck mà tick deck cha thì các deck con đã chọn của nó tự bỏ → tổng không tăng; trước
+      // đây vẫn khoá ô deck cha (chỉ đếm đủ 5), không gom được 5 deck con thành 1
+      const inside = picked.filter((x) => { for (let p = byId[x] && byId[x].parent; p; p = p.parent) { if (p.id === r.id) { return true; } } return false; }).length;
+      cb.disabled = (!!cov && !isPicked(r)) || (!cb.checked && picked.length - inside + 1 > max);
       if (cov && !isPicked(r)) { lab.classList.add("is-in"); lab.title = r.full + " · đã gồm trong “" + cov.full + "”"; }
       else if (cb.disabled) { lab.title = r.full + " · đã chọn đủ " + max + " deck"; }
       cb.addEventListener("change", () => tick(r, cb.checked));
       lab.appendChild(cb);
       const nm = el("span", "kb-ai-dname");
-      const pp = String(r.full).split("::");
-      if (pp.length > 1) { nm.appendChild(el("span", "kb-ai-dpath", pp.slice(0, -1).join(" › ") + " › ")); }      // chỉ hiện khi đang tìm
+      // 1.35.5 (audit 19/11 #27): thiếu deck cha giữa chừng thì tên dòng là "B::C" (A::B::C dưới A) → đường dẫn chỉ phần còn
+      // lại ("A ›"), không lặp "A › B › B::C"
+      const pp = String(r.full).split("::"), nLeaf = Math.max(1, String(r.name).split("::").length);
+      if (pp.length > nLeaf) { nm.appendChild(el("span", "kb-ai-dpath", pp.slice(0, -nLeaf).join(" › ") + " › ")); }      // chỉ hiện khi đang tìm
       nm.appendChild(el("span", "kb-ai-dleaf", r.name));
       lab.appendChild(nm);
       lab.appendChild(el("span", "kb-ai-hint", cov && !isPicked(r) ? "đã gồm" : r.src.notes + " note"));
@@ -762,7 +767,8 @@ var GardenPaper = (function () {
     q.addEventListener("input", () => { apply(); list.scrollTop = 0; });
     q.addEventListener("keydown", (e) => {
       e.stopPropagation();                       // gõ chữ không chạy phím tắt của bảng Báo
-      if (e.key === "Escape" && q.value) { e.preventDefault(); q.value = ""; apply(); }
+      // 1.35.5 (audit 19/11 #22): Esc có chữ → xoá chữ; ô trống → rời ô (trước đây Esc ở ô trống không làm gì cả)
+      if (e.key === "Escape" && !e.isComposing) { e.preventDefault(); if (q.value) { q.value = ""; apply(); } else { q.blur(); } }
     });
     // ← / → trên một deck như cây của Anki: → mở nhánh, ← thu nhánh (đã thu / không có con thì lên deck cha)
     list.addEventListener("keydown", (e) => {
@@ -795,7 +801,9 @@ var GardenPaper = (function () {
     h.appendChild(nm);
     box.appendChild(h);
     const rows = el("div", "kb-ai-rows");
-    if (!en && v.source === "claude") {
+    // 1.35.5 (audit 19/11 #06): Claude Code chỉ viết báo tiếng Nhật — trước đây `!en` (từ khi chỉ có Nhật / Anh) làm báo
+    // Trung / Hàn / Đức / Pháp / Việt (Gemini) chỉ còn một dòng "Nguồn: Claude Code", mất nút Viết / Đọc / Trình độ / deck
+    if (lang === "ja" && v.source === "claude") {
       aiRow(rows, "Nguồn", "Claude Code (thẻ bên dưới)");
       box.appendChild(rows);
       return box;
@@ -1209,7 +1217,9 @@ var GardenPaper = (function () {
     st.textContent = "";
     furiButton();
     const mast = el("div", "kb-p-mast");
-    const name = el("div", "kb-p-name" + (en || vi ? " kb-p-name-en" : ""), MAST[lg]);
+    // 1.35.5: tên báo chữ Latin (Anh / Việt / Đức / Pháp) cùng một kiểu chữ — trước đây Der Wortgarten / Le Jardin des Mots
+    // dùng kiểu của 畑新聞 (44 px giãn chữ), lệch với The Garden Gazette / Báo Làng Kotoba
+    const name = el("div", "kb-p-name" + (en || vi || lg === "de" || lg === "fr" ? " kb-p-name-en" : ""), MAST[lg]);
     name.lang = HTML_LANG[lg];
     mast.appendChild(name);
     const meta = el("div", "kb-p-meta");
@@ -1320,6 +1330,7 @@ var GardenPaper = (function () {
     note.addEventListener("keydown", (e) => {
       e.stopPropagation();
       if (e.key === "Enter" && !e.isComposing) { e.preventDefault(); send(cur.y || "hay"); }
+      if (e.key === "Escape" && !e.isComposing) { e.preventDefault(); note.blur(); }     // 1.35.5 (audit #22)
     });
     box.appendChild(note);
     return box;
@@ -1614,7 +1625,7 @@ var GardenPaper = (function () {
 
   function onKey(e) {
     if (!isOpen) { return; }
-    if (e.key === "Escape") { e.preventDefault(); close(); return; }
+    if (e.key === "Escape") { if (e.defaultPrevented) { return; } e.preventDefault(); close(); return; }     // 1.35.5 (audit #08)
     const tag = (e.target && e.target.tagName) || "";
     if (tag === "INPUT" || tag === "SELECT" || tag === "TEXTAREA") { return; }
     if ((e.key === "Enter" || e.key === " ") && e.target && e.target.classList && e.target.classList.contains("kb-p-w")) {

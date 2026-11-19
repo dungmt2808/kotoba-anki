@@ -798,7 +798,7 @@ var GardenLife = (function () {
     document.addEventListener("keydown", (e) => {
       if (e.key !== "Escape") { return; }
       const c = $("kb-life-card");
-      if (c && !c.hidden) { e.preventDefault(); window.__kbEscUsed = true; closeCard(); }
+      if (c && !c.hidden) { e.preventDefault(); e.stopImmediatePropagation(); window.__kbEscUsed = true; closeCard(); }     // 1.35.5 (#08)
     }, true);
     document.addEventListener("click", () => closeCard());
     setInterval(syncChip, 1000);

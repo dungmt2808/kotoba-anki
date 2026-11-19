@@ -183,11 +183,12 @@ _UMLAUT = {"a": "ä", "o": "ö", "u": "ü", "A": "Ä", "O": "Ö", "U": "Ü"}
 
 def _de_umlaut(w: str) -> str:
     """Hand → Hände, Apfel → Äpfel, Haus → Häuser: đổi nguyên âm cuối a / o / u / au sang umlaut."""
-    m = re.search(r"(au|a|o|u)(?=[^aeiouäöüAEIOUÄÖÜ]*(?:e[lnr])?$)", w)
+    # 1.35.5 (audit 19/11 #15): cả nguyên âm viết hoa đầu danh từ (Apfel → Äpfel, Arzt → Ärzte, Ofen → Öfen, Amt → Ämter)
+    m = re.search(r"([Aa]u|[aouAOU])(?=[^aeiouäöüAEIOUÄÖÜ]*(?:e[lnr])?$)", w)
     if not m:
         return ""
     v = m.group(1)
-    rep = "äu" if v == "au" else _UMLAUT[v]
+    rep = ("Äu" if v[0] == "A" else "äu") if v in ("au", "Au") else _UMLAUT[v]
     return w[:m.start()] + rep + w[m.end():]
 
 

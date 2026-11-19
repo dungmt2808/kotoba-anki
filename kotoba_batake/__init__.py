@@ -1061,14 +1061,57 @@ _sync_wait: list[tuple[Any, tuple[Any, ...], dict[str, Any]]] = []
 
 
 def _sync_hold() -> bool:
-    """Anki đang đồng bộ (thanh tiến độ còn đó). Cờ kẹt vì lần đồng bộ không bao giờ báo xong thì hết thanh tiến độ là
-    hết giữ — không bao giờ khoá ghi mãi."""
-    if not _sync_running:
-        return False
+    """Anki đang đồng bộ: từ sync_will_start tới lúc lớp giữ dữ liệu so xong (sync_did_finish).
+    1.35.5 (audit 19/11 #01): trước đây hết thanh tiến độ là hết giữ — nhưng Anki tắt thanh tiến độ TRƯỚC khi gọi phần kết
+    của lần đồng bộ, phần đó còn mở hộp thoại (lời nhắn của máy chủ, chọn Tải lên / Tải về khi phải đồng bộ toàn bộ, báo
+    lỗi) rồi mới tới sync_did_finish. Trong lúc hộp thoại đó mở: việc nền xong (Gemini viết báo / sửa bài), hẹn giờ tự lưu
+    ghi thẳng vào bản cũ vừa mang về và đóng dấu "mới nhất" → lúc so, bản cũ thắng, dữ liệu mới của máy này mất. Nay giữ trọn
+    tới lúc so xong; cờ kẹt (Anki không bao giờ báo xong) thì `_sync_watch` tự so rồi mở khoá — không bao giờ khoá ghi mãi."""
+    return bool(_sync_running)
+
+
+SYNC_STUCK_S = 120.0      # 1.35.5: hết thanh tiến độ + không còn hộp thoại nào chừng ấy giây mà Anki chưa báo xong → coi như xong
+_sync_idle: dict[str, float] = {"since": 0.0}
+
+
+def _sync_busy_now() -> bool:
+    """Anki còn đang làm phần nào của lần đồng bộ: thanh tiến độ, hoặc một hộp thoại chặn (lời nhắn của máy chủ, chọn
+    chiều đồng bộ toàn bộ, báo lỗi)."""
     try:
-        return bool(mw.progress.busy())
+        if mw.progress.busy():
+            return True
+    except Exception:
+        pass
+    try:
+        from aqt.qt import QApplication
+        return QApplication.activeModalWidget() is not None
     except Exception:
         return False
+
+
+def _sync_watch() -> None:
+    """1.35.5: chốt an toàn của khoá đồng bộ — Anki không gọi sync_did_finish (lỗi giữa chừng, cửa sổ không chịu đóng khi
+    đồng bộ toàn bộ…) thì sau SYNC_STUCK_S giây yên lặng tự so (như lúc đồng bộ xong) rồi mở khoá."""
+    if not _sync_running:
+        _sync_idle["since"] = 0.0
+        return
+    now = time.monotonic()
+    if _sync_busy_now():
+        _sync_idle["since"] = 0.0
+    elif not _sync_idle["since"]:
+        _sync_idle["since"] = now
+    elif now - _sync_idle["since"] >= SYNC_STUCK_S:
+        _sync_idle["since"] = 0.0
+        print("[kotoba_batake] đồng bộ: Anki chưa báo xong sau %d giây — so dữ liệu vườn rồi mở khoá ghi" % SYNC_STUCK_S)
+        try:
+            _on_sync_finished()
+        except Exception as err:
+            _warn("đồng bộ không báo xong", err)
+        return
+    try:
+        mw.progress.single_shot(2000, _sync_watch, False)
+    except Exception as err:
+        _warn("theo dõi đồng bộ", err)
 
 
 backup_core.GATE = _sync_hold
@@ -1117,6 +1160,10 @@ def _sync_guard_note(res: dict[str, Any], when: str) -> None:
 
 def _on_sync_start(*_args: Any) -> None:
     global _sync_before, _sync_running
+    if _sync_running:
+        # 1.35.5: lần đồng bộ trước chưa báo xong (chưa so) mà lại đồng bộ tiếp → so lần trước trước khi chụp lần này
+        # (không thì bản chụp mới có thể chính là bản cũ lần trước vừa mang về)
+        _sync_guard_after()
     try:
         _flush_undo(force=True)
     except Exception as err:
@@ -1128,6 +1175,11 @@ def _on_sync_start(*_args: Any) -> None:
     except Exception as err:
         _warn("chụp dữ liệu vườn trước đồng bộ", err)
     _sync_running = True          # từ đây tới lúc so xong: không lần ghi nào của vườn được chen vào (xem _sync_hold)
+    _sync_idle["since"] = 0.0
+    try:
+        mw.progress.single_shot(2000, _sync_watch, False)      # 1.35.5: chốt an toàn khi Anki không báo xong
+    except Exception as err:
+        _warn("theo dõi đồng bộ", err)
 
 
 def _sync_guard_after() -> None:
@@ -1135,11 +1187,23 @@ def _sync_guard_after() -> None:
     global _sync_before, _sync_running
     before, _sync_before = _sync_before, None
     _sync_running = False         # cùng một lượt xử lý với phần so bên dưới: không việc nào chen vào giữa
+    _sync_idle["since"] = 0.0
     try:
-        if mw.col and _sync_guard_on():
+        if not _sync_guard_on():
+            return
+        if mw.col:
             _sync_guard_note(sync_core.after_sync(mw.col, USER_DIR, before), "sau đồng bộ")
+        elif before is not None:
+            # 1.35.5 (audit 19/11 #04A): collection chưa mở lại kịp → giữ bản chụp trong bộ nhớ, lần đọc / ghi dữ liệu
+            # vườn kế tiếp so trước (trước đây bản chụp bị bỏ — lần ghi sau đóng dấu mới lên bản cũ vừa mang về)
+            sync_core.hold_later(USER_DIR, before)
     except Exception as err:
         _warn("giữ dữ liệu vườn sau đồng bộ", err)
+        if before is not None:
+            try:
+                sync_core.hold_later(USER_DIR, before)
+            except Exception as err2:
+                _warn("giữ dữ liệu vườn sau đồng bộ (chờ)", err2)
 
 
 def _record_answer(nid: int, old: int | None, ease: int, deck: str | None,
@@ -1407,11 +1471,21 @@ def story_restart() -> dict[str, Any]:
     except (OSError, ValueError) as err:
         _warn("bắt đầu truyện mới", err)
         return {"flash": "✗ Chưa cất được truyện cũ (lỗi file trên máy) — truyện giữ nguyên.", "ok": False}
+    _story_export()
     if res["tu_ngay"] > today:
         msg = "✓ Đã cất truyện cũ. Hôm nay đã có báo kể kỳ %d nên truyện mới bắt đầu từ số ngày mai (kỳ 1)." % res["ky_cu"]
     else:
         msg = "✓ Đã cất truyện cũ. Số báo tiếp theo bắt đầu truyện mới (kỳ 1)."
     return {"flash": msg, "ok": True}
+
+
+def _story_export() -> None:
+    """1.35.5 (audit 19/11 #27): truyện chung vừa bắt đầu lại / lấy lại → kotoba_daily/truyen_chung.json theo ngay (báo Claude
+    Code viết nối đúng truyện đang dùng; trước đây file còn các kỳ của truyện vừa cất cho tới số Gemini kế tiếp)."""
+    try:
+        ai.export_story_for_claude(AI_DIR_SHARED, _claude_story_dir(config()))
+    except Exception as err:      # noqa: BLE001
+        _warn("truyện chung (Claude Code)", err)
 
 
 def story_restart_undo() -> dict[str, Any]:
@@ -1425,6 +1499,7 @@ def story_restart_undo() -> dict[str, Any]:
     if not ok:
         return {"flash": "✗ Không lấy lại được: truyện mới đã có kỳ đầu (truyện cũ vẫn cất ở thư mục bao_chung/truyen_cu).",
                 "ok": False}
+    _story_export()
     return {"flash": "✓ Đã lấy lại truyện cũ — báo viết tiếp từ kỳ %d." % (story_core.last_ky(AI_DIR_SHARED) + 1), "ok": True}
 
 def ai_view(extra: dict[str, Any] | None = None, lang: str | None = None) -> dict[str, Any]:
@@ -1446,7 +1521,10 @@ def ai_view(extra: dict[str, Any] | None = None, lang: str | None = None) -> dic
         try:
             decks = words.lang_decks(mw.col, cfg)
             src = words.load_src(mw.col)
-            picked = {x: src[x]["decks"] for x in PAPER_LANGS}
+            # 1.35.5 (audit 19/11 #17): deck đã chọn nhưng không còn note của tiếng đó (đổi loại note / xoá hết note) thì không
+            # có dòng trong danh sách → trước đây vẫn chiếm 1 / 5 chỗ mà không có ô nào để bỏ tick; nay không tính (lần lưu
+            # kế tiếp tự bỏ). Deck có note lại thì hiện lại như cũ.
+            picked = {x: [d for d in src[x]["decks"] if d in {r["id"] for r in decks.get(x, [])}] for x in PAPER_LANGS}
             modes = {x: src[x]["mode"] for x in PAPER_LANGS}
         except Exception as err:
             _warn("danh sách deck cho báo", err)
@@ -1673,7 +1751,7 @@ def paper_sub_view() -> dict[str, Any]:
         return {"active": True, "left": 0, "plans": [], "coins": 0, "auto": True}
 
 
-def paper_sub_ensure(date: str, commit: bool = True) -> tuple[str, int]:
+def paper_sub_ensure(date: str, commit: bool = True, strict: bool = False) -> tuple[str, int]:
     """Gói báo cho số Gemini mới. Báo Claude Code (bộ kotoba_daily của người dùng) không cần gói.
 
     1.26.1: ai_start chỉ xem (`commit=False`: hết hạn thì không viết); tặng thử / gia hạn (trừ xu) ở _ai_done khi số báo đã
@@ -1681,6 +1759,8 @@ def paper_sub_ensure(date: str, commit: bool = True) -> tuple[str, int]:
     try:
         res, price = STATE.paper_sub_ensure(date, commit)
     except Exception as err:
+        if strict:                # 1.35.5: sub_pending_settle giữ lại ngày này để tính lần sau
+            raise
         _warn("gói báo", err)
         return "ok", 0
     if not commit:
@@ -1920,14 +2000,25 @@ def sub_pending_settle() -> int:
     if not owner:
         return 0
     data = _sub_pending_load()
-    days = data.pop(owner, None)
+    days = data.get(owner)
     if not days:
         return 0
-    _sub_pending_save(data)
+    # 1.35.5 (audit 19/11 #19): chỉ bỏ khỏi file những ngày đã tính xong — trước đây xoá cả danh sách TRƯỚC khi tính, lần
+    # tính lỗi (Anki đang đồng bộ, ghi lỗi) là mất hẳn lượt gia hạn / tặng thử của số báo đã viết
+    left: list[Any] = []
     n = 0
     for d in days:
-        paper_sub_ensure(d)
-        n += 1
+        try:
+            paper_sub_ensure(d, strict=True)
+            n += 1
+        except Exception as err:      # noqa: BLE001
+            _warn("gói báo (chờ hồ sơ)", err)
+            left.append(d)
+    if left:
+        data[owner] = left
+    else:
+        data.pop(owner, None)
+    _sub_pending_save(data)
     return n
 
 
@@ -2372,6 +2463,14 @@ def _paper_day(ds: str) -> str:
         read[lang] = r
         lib = _library(lang)
         iss = lib.try_issue(ds) if lib is not None else None
+        if not iss and lang == "ja":      # 1.35.5 (audit 19/11 #27): số đã đọc của nguồn không dùng nữa (Claude Code ↔ Gemini)
+            try:
+                for _src, other in _ja_sources():
+                    iss = other.try_issue(ds)
+                    if iss:
+                        break
+            except Exception as err:      # noqa: BLE001
+                _warn("Lịch hoa (báo)", err)
         if iss:
             issues[lang] = {ds: {"so": iss.get("so"), "ct": len(iss.get("chinh_ta") or [])}}
     return journal.paper_line(read, issues, ds)
@@ -2932,12 +3031,19 @@ class GardenDialog(QDialog):
             _warn("autoplay", err)
         # Không dùng CSS mặc định của Anki (nút bo tròn, nền xám khi rê chuột…) để giữ kiểu pixel.
         head = ""
+        # 1.35.5 (audit 19/11 #05): phóng to cả trang bằng zoom của webview, không dùng CSS `body { zoom }` — với CSS zoom
+        # các đơn vị 100vw / 100vh (khung vườn, bảng ôn, Trò chơi…) không co theo → trang rộng hơn cửa sổ, mép phải (nút
+        # đóng, phần cuối các bảng) bị cắt mất, không cuộn ngang được. Chỉ khi Anki đặt hệ số khác 1 (biến ANKI_WEBSCALE,
+        # Qt5 trên Linux màn hình dpi cao); cỡ chữ giao diện của Anki (Preferences) đổi QT_SCALE_FACTOR nên không qua đây.
+        self._zoom = 1.0
         try:
             zoom = float(self.web.app_zoom_factor())
-            if zoom != 1:
-                head = f"<style>body {{ zoom: {zoom}; }}</style>"
-        except Exception:
-            pass
+            if zoom != 1 and 0.25 <= zoom <= 5:
+                self._zoom = zoom
+                self.web.setZoomFactor(zoom)
+                qconnect(self.web.loadFinished, self._keep_zoom)
+        except Exception as err:
+            _warn("phóng to trang vườn", err)
         head += prefs_script()      # 1.25.3: cài đặt riêng máy (trời & giờ, nhạc…) — có trước khi sky.js / music.js chạy
         head += fix_script()        # 1.25.5: bản sửa hình gốc
         self.web.stdHtml(
@@ -3128,6 +3234,14 @@ class GardenDialog(QDialog):
         except Exception:
             return None
 
+    def _keep_zoom(self, *_args: Any) -> None:
+        """1.35.5: QtWebEngine có thể trả hệ số zoom về 1 khi nạp trang → đặt lại sau mỗi lần nạp."""
+        try:
+            if abs(float(self.web.zoomFactor()) - self._zoom) > 0.001:
+                self.web.setZoomFactor(self._zoom)
+        except Exception:
+            pass
+
     def _on_esc(self) -> None:
         def done(used: Any) -> None:
             if not used:
@@ -3247,12 +3361,24 @@ class GardenDialog(QDialog):
         card = self._card
         if card is None:
             return
+        # 1.35.5 (audit 19/11 #25): cửa sổ Sửa thẻ còn mở mà note đã đổi (trình sửa lưu theo từng lần gõ; vườn chỉ dựng lại thẻ
+        # khi cửa sổ đóng) → nạp lại note trước khi dựng mặt sau (trước đây lật thẻ hiện mặt sau CŨ)
+        try:
+            mod = _note_mod(card.nid)
+            if mod is not None and mod != self._note_mod:
+                card.load()
+                self._type_info = core.type_question(
+                    mw.col, card, mw.prepare_card_text_for_display(card.question()))[1]
+                self._note_mod = mod
+        except Exception as err:
+            _warn("nạp lại thẻ vừa sửa", err)
         try:
             answer = core.type_answer(
                 mw.col, mw.prepare_card_text_for_display(card.answer()), self._type_info, typed
             )
             answer = _card_will_show(answer, card, "reviewAnswer")
         except Exception as err:
+            self._js("flipRetry", {"cid": card.id})       # 1.35.5 (audit #11): bảng ôn không kẹt ở "đang lật"
             showWarning(f"ことば畑: không hiện được mặt sau.\n\n{err!r}", parent=self)
             return
         self._side, self._typed = "a", typed
@@ -3484,6 +3610,7 @@ class GardenDialog(QDialog):
         lấy thẻ kế tiếp của collection mới (bảng ôn vẫn mở); deck đang xem không còn → deck hiện tại của Anki; dựng lại."""
         reviewing = self._card is not None
         self._busy = False
+        self._undo_stack.clear()              # 1.35.5: lượt chấm của collection cũ
         try:
             if not self.deck_id or not mw.col.decks.get(self.deck_id, default=False):
                 self.deck_id = mw.col.decks.get_current_id()
@@ -3515,6 +3642,8 @@ class GardenDialog(QDialog):
             # lượt chấm để chấm lại được sau khi đồng bộ xong.
             if cmd.startswith("rv:ans:") and self._card is not None:
                 self._js("reviewRetry", {"cid": self._card.id})
+            if cmd.startswith("rv:show:") and self._card is not None:      # 1.35.5 (audit #11): lật lại được sau đồng bộ
+                self._js("flipRetry", {"cid": self._card.id})
             if not cmd.startswith(self.AUTO_CMDS) and time.time() - self._sync_note > 3:
                 self._sync_note = time.time()
                 self._js("toast", SYNC_MSG)
@@ -3551,6 +3680,7 @@ class GardenDialog(QDialog):
             except Exception as err:
                 _warn("chọn deck", err)
             self._stop_review()
+            self._undo_stack.clear()          # 1.35.5 (audit 19/11 #18): Ctrl+Z ở deck mới không hoàn tác lượt chấm ở deck cũ
             self.refresh()
         elif cmd == "rv:start":
             self._start_review()
@@ -4731,6 +4861,15 @@ class GardenDialog(QDialog):
                 elif name in ("note", "draft") and isinstance(p.get("t"), str):
                     self._cal_keep[self._keep_key(name, p)] = (name, {k: p.get(k) for k in ("d", "lang", "t", "b")})
                 self._js("calSaved", r)
+        elif name == "copy":            # 1.35.5: chép chữ gõ dở (bài vừa đổi ở máy khác nên không ghi đè) ra bộ nhớ tạm
+            try:
+                t = _json_obj(arg).get("t")
+                if isinstance(t, str) and t:
+                    from aqt import qt as _qt
+                    _qt.QApplication.clipboard().setText(t[:20000])
+                    self._js("toast", "Đã chép chữ gõ dở — dán vào ô để viết tiếp nhé.")
+            except Exception as err:      # noqa: BLE001
+                _warn("chép chữ gõ dở", err)
         elif name == "keep":            # 1.23 (KB-01): chữ đang gõ, chưa tới lần tự lưu
             try:
                 p = json.loads(arg or "{}")
@@ -4738,7 +4877,48 @@ class GardenDialog(QDialog):
                 return
             if isinstance(p, dict) and p.get("k") in ("note", "draft") and isinstance(p.get("t"), str):
                 self._cal_keep[self._keep_key(p["k"], p)] = (p["k"], {k: p.get(k) for k in ("d", "lang", "t", "b")})
-        elif name == "lang":
+        elif name in ("lang", "hint", "fix", "seen"):
+            # 1.35.5 (audit 19/11 #07): Anki đang đồng bộ / ghi lỗi → báo một dòng trong Lịch hoa (chữ đang gõ vẫn trong ô).
+            # Trước đây lỗi lưu bay ra ngoài thành hộp lỗi của Anki; đổi tiếng còn kịp ghi config.json trước khi nhật ký
+            # lỗi → tiếng của config và của bài lệch nhau.
+            try:
+                self._on_cal_write(name, arg)
+            except backup_core.StoreFailed as err:
+                if not backup_core.held():      # đang đồng bộ là chuyện bình thường — không ghi vào Báo lỗi
+                    _warn("Lịch hoa (%s)" % name, err)
+                if name == "seen":
+                    return
+                try:
+                    today = cal_today()
+                    d = journal.parse_date(arg if name == "fix" and not arg.startswith("{") else "") or today
+                    v = dict(cal_day(d.isoformat()), kind="day")
+                except Exception:      # noqa: BLE001 — đọc cũng lỗi: chỉ báo
+                    v = {"kind": "info"}
+                v["flash"] = (SYNC_MSG if backup_core.held() else
+                              "Chưa lưu được (Anki báo lỗi khi ghi) — chưa đổi gì, thử lại sau nhé.")
+                v["flash_bad"] = True
+                self._js("calView", v) if v.get("kind") == "day" else self._js("toast", v["flash"])
+        elif name == "pdf":
+            try:
+                p = json.loads(arg or "{}")
+            except ValueError:
+                return
+            if isinstance(p, dict) and isinstance(p.get("html"), str):
+                export_pdf(self, p["html"], str(p.get("name") or ""))
+        elif name == "photo":
+            today = cal_today()
+            folder = _photo_dir()
+            if journal.photo_due(folder, today):
+                try:
+                    journal.save_photo(folder, today, arg)
+                except (journal.JournalError, ValueError, OSError) as err:
+                    _warn("ảnh vườn", err)
+                _push_journal()
+
+    def _on_cal_write(self, name: str, arg: str) -> None:
+        """Các lệnh Lịch hoa có ghi nhật ký (đổi tiếng luyện viết, đổi gợi ý, Nhờ Gemini sửa, đã xem bài sửa). Ghi lỗi →
+        backup_core.StoreFailed (người gọi báo trong Lịch hoa)."""
+        if name == "lang":
             # 1.35.2 (audit 18/11 #03): đổi tiếng mà bài đang viết dài hơn giới hạn của tiếng mới → không cắt, trừ khi
             # trang đã hỏi và người dùng chọn "Đổi và cắt bớt" (lệnh kèm ":cut") — trước đây cắt ngay rồi lưu đè, đổi lại
             # tiếng cũ cũng không lấy lại được phần đã cắt
@@ -4753,10 +4933,10 @@ class GardenDialog(QDialog):
                         flash = "Bài đang viết dài hơn giới hạn của %s — chưa đổi tiếng (bài giữ nguyên)." % \
                             journal.LANG_VI.get(lang, lang)
                     else:
-                        save_config(journal_lang=lang)
                         cfg = config()
                         w2 = dict(w, lang=lang, goi_y=_hints(today.isoformat(), lang, int(w.get("gr") or 0), cfg), goc=goc)
-                        JOURNAL.update(today, {"w": w2})
+                        JOURNAL.update(today, {"w": w2})      # 1.35.5: nhật ký trước — ghi lỗi thì config cũng chưa đổi
+                        save_config(journal_lang=lang)
                 else:
                     save_config(journal_lang=lang)
                 v = dict(cal_day(today.isoformat()), kind="day")
@@ -4784,12 +4964,14 @@ class GardenDialog(QDialog):
                 if not isinstance(p, dict):
                     return
                 ds = str(p.get("d") or "")[:10]
-                err = self._fix_text(ds, p.get("t"), p.get("lang"))
+                err = self._fix_text(ds, p.get("t"), p.get("lang"), p.get("b"))
+                if isinstance(err, dict):      # 1.35.5 (audit 19/11 #07): bài vừa đổi ở máy khác → không gửi, không ghi đè
+                    self._js("calSaved", err)
+                    return
             else:
                 err = ""
             err = err or fix_start(ds)
-            arg = ds
-            v = dict(cal_day(arg), kind="day")
+            v = dict(cal_day(ds), kind="day")
             if err:
                 v["flash"] = err
             self._js("calView", v)
@@ -4799,25 +4981,11 @@ class GardenDialog(QDialog):
             if d and w.get("st") == "done" and not w.get("seen"):
                 JOURNAL.update(d, {"w": dict(w, seen=True)})
                 _push_journal()
-        elif name == "pdf":
-            try:
-                p = json.loads(arg or "{}")
-            except ValueError:
-                return
-            if isinstance(p, dict) and isinstance(p.get("html"), str):
-                export_pdf(self, p["html"], str(p.get("name") or ""))
-        elif name == "photo":
-            today = cal_today()
-            folder = _photo_dir()
-            if journal.photo_due(folder, today):
-                try:
-                    journal.save_photo(folder, today, arg)
-                except (journal.JournalError, ValueError, OSError) as err:
-                    _warn("ảnh vườn", err)
-                _push_journal()
 
-    def _fix_text(self, ds: str, t: Any, lang: Any) -> str:
-        """Chữ trang gửi kèm nút "Nhờ Gemini sửa": khác bản đã lưu → lưu trước. Trả lý do không gửi ("" = gửi được)."""
+    def _fix_text(self, ds: str, t: Any, lang: Any, b: Any = None) -> Any:
+        """Chữ trang gửi kèm nút "Nhờ Gemini sửa": khác bản đã lưu → lưu trước. Trả lý do không gửi ("" = gửi được).
+        1.35.5 (audit 19/11 #07): kèm `b` = chữ của ô lúc bắt đầu sửa (như lần tự lưu) — bài trong collection đã khác cả
+        `b` lẫn chữ mới (máy khác vừa đồng bộ về) → trả dict xung đột của _cal_save (trang đọc lại, báo chữ gõ dở), không gửi."""
         if not isinstance(t, str):
             return ""
         d = journal.parse_date(ds)
@@ -4832,7 +5000,12 @@ class GardenDialog(QDialog):
         if want == cur.get("goc", "") and lg == cur.get("lang"):
             return ""
         p = {"d": ds, "lang": lg, "t": t}
+        if isinstance(b, str):
+            p["b"] = b
         r = self._cal_save("draft", p)
+        if r.get("conflict"):
+            self._cal_keep.pop(self._keep_key("draft", p), None)
+            return r
         if not r.get("ok"):
             if r.get("store_error"):
                 self._cal_keep[self._keep_key("draft", p)] = ("draft", p)

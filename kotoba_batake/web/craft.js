@@ -917,7 +917,8 @@ var GardenCraft = (function () {
       const b = document.createElement("button");
       b.type = "button"; b.className = "kb-cf-sw kb-cf-sw-mini" + (zoneDraft[key] === c ? " is-on" : ""); b.style.background = c; b.title = c;
       b.addEventListener("mousedown", (e) => e.preventDefault());
-      b.addEventListener("click", () => { zoneDraft[key] = c; swatches(boxId, list, key); drawPreview(); });
+      // 1.35.5 (audit 19/11 #26): lưới vẽ dùng nền thật của vùng (zoneBg) → vẽ lại cả lưới, không chỉ ô xem trước
+      b.addEventListener("click", () => { zoneDraft[key] = c; swatches(boxId, list, key); draw(); drawPreview(); });
       box.appendChild(b);
     });
   }
@@ -1313,7 +1314,7 @@ var GardenCraft = (function () {
       $("kb-cf-pick").addEventListener("click", () => { tip("Đang mở hộp chọn ảnh…"); H.send("craft:pick"); });
       $("kb-cf-save").addEventListener("click", save);
       const bgsel = $("kb-cf-bgsel");
-      if (bgsel) { bgsel.addEventListener("change", () => { if (zoneDraft) { zoneDraft.bg = bgsel.value; drawPreview(); } }); }
+      if (bgsel) { bgsel.addEventListener("change", () => { if (zoneDraft) { zoneDraft.bg = bgsel.value; draw(); drawPreview(); } }); }     // 1.35.5
       $("kb-cf-name").addEventListener("input", () => { if (zoneMode && zoneDraft) { zoneDraft.name = $("kb-cf-name").value; } });
       $("kb-cf-cancel").addEventListener("click", close);
       window.addEventListener("resize", () => { if (isOpen) { layout(); draw(); } });

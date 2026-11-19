@@ -1616,6 +1616,7 @@ def _cloze_latin(sentence: str, word: str, lang: str) -> dict[str, str] | None:
     # 1.35.2 (audit #06): câu nhập bằng mã HTML / dấu tách (Apre&#x300;s = e + dấu huyền) — bộ tìm trả vị trí trong chữ
     # dựng sẵn (NFC) nên cắt cũng phải trên chữ NFC (trước đây che ", le ch" thay vì "le chat")
     sentence = unicodedata.normalize("NFC", sentence)
+    word = unicodedata.normalize("NFC", word or "")      # 1.35.5 (audit #20): Hangul tách nét (NFD, macOS) ở trường từ
     span = text.find_word(sentence, word, lang)
     if span is None:
         return None
@@ -1631,7 +1632,10 @@ def make_cloze(example_raw: str, word: str, reading: str = "", grammar: bool = F
     """Che từ (hoặc mẫu ngữ pháp) trong câu ví dụ. Trả về {q: html có ô trống, a: html tô đậm đáp án, plain}."""
     if lang != "ja":
         return _cloze_latin(_clean_example(example_raw, lang), word, lang)
-    text_ = _clean_example(example_raw)
+    # 1.35.5 (audit 19/11 #20): chữ tách dấu (が = か + ゛ — gõ / chép từ macOS) ở từ hoặc câu → cùng dạng dựng sẵn (NFC)
+    text_ = unicodedata.normalize("NFC", _clean_example(example_raw))
+    word = unicodedata.normalize("NFC", word or "")
+    reading = unicodedata.normalize("NFC", reading or "")
     if not text_:
         return None
     toks = furigana_tokens(text_)
@@ -2515,7 +2519,8 @@ def build_garden(col: Collection, deck_id: int, cfg: dict[str, Any] | None = Non
         else:
             words = [p["word"] for p, m in zip(plants, plant_mid) if m == mid][:30]
             kind = fields.guess_kind(name, keys, words) if lang == "ja" else "vocab"
-        if lang != "ja" and kind in ("kanji", "grammar"):
+        # 1.35.5 (audit 19/11 #27): như note_roles — chỉ đổi khi tiếng đó không có loại này (tiếng Trung có "kanji" = 汉字)
+        if lang != "ja" and kind in ("kanji", "grammar") and kind not in fields.LANG_KINDS.get(lang, ()):
             kind = "vocab"
         types.append({"id": mid, "name": name, "count": count, "kind": kind, "configured": problem is None,
                       "problem": problem if (conf and problem) else "", "lang": lang})
@@ -4096,7 +4101,10 @@ class GardenState:
         if col is None:
             return None
         try:
-            v = clean_start(col.get_config(START_KEY, None))
+            # 1.35.5 (audit 19/11 #03): đọc qua backup.read_config — còn bản chờ trả lại sau đồng bộ thì trả lại TRƯỚC (bản
+            # chờ có mốc thật). Trước đây đọc thẳng → "chưa có mốc" → đặt mốc = bây giờ đè lên mốc vừa được trả lại: chuỗi
+            # ngày về 0 và mốc này còn là "dòng" dữ liệu của lớp giữ dữ liệu khi đồng bộ
+            v = clean_start(backup.read_config(col, START_KEY))
         except Exception:
             return None
         if v is not None or not create:
@@ -4111,6 +4119,9 @@ class GardenState:
             return None
         ms = m["start"] if m and 0 < m["start"] <= now else now
         try:
+            again = clean_start(backup.read_config(col, START_KEY))      # 1.35.5: lần đọc trên vừa trả lại bản chờ
+            if again is not None:
+                return again
             backup.put_config(col, START_KEY, {"v": 1, "ms": int(ms)})
         except Exception as err:
             print(f"[kotoba_batake] mốc chuỗi: {err}")

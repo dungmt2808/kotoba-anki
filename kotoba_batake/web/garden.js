@@ -193,7 +193,8 @@ var Garden = (function () {
   var fieldLayout = null;
   function panelsOpen() {
     return !$("kb-panel").hidden || !$("kb-game").hidden || !$("kb-home").hidden || !$("kb-paper").hidden ||
-      ($("kb-fields") && !$("kb-fields").hidden) || ($("kb-ui") && !$("kb-ui").hidden);
+      ($("kb-fields") && !$("kb-fields").hidden) || ($("kb-ui") && !$("kb-ui").hidden) ||
+      ($("kb-cal") && !$("kb-cal").hidden);      // 1.35.5 (audit #24): Lịch hoa đang mở thì ruộng cũng không đo lại
   }
   function measureField(field, n) {
     var width = Math.max(field.clientWidth, 300);
@@ -1054,17 +1055,27 @@ var Garden = (function () {
     fx("setActive", c.nid);
   }
 
+  var flipTimer = null;
   function flip() {
     if (!card || showingAnswer || waiting || flipping) { return; }
     flipping = true;
     fx("flip");
     // Python dựng mặt sau (chấm phần gõ đáp án giống Anki) rồi gọi showAnswer.
+    // 1.35.5 (audit 19/11 #11): lệnh bị bỏ (Anki đang đồng bộ) / dựng mặt sau lỗi → Python gọi flipRetry; phòng khi không có
+    // trả lời nào (trang vừa nạp lại, lỗi lạ) thì sau 8 giây cũng mở khoá — trước đây bảng ôn kẹt, không lật / chấm được nữa
+    var c0 = card;
+    clearTimeout(flipTimer);
+    flipTimer = setTimeout(function () { if (card === c0 && flipping && !showingAnswer) { flipping = false; } }, 8000);
     send("rv:show:" + typedAnswer());
+  }
+  function flipRetry(p) {
+    if (card && flipping && (!p || p.cid === card.cid)) { flipping = false; clearTimeout(flipTimer); }
   }
 
   function showAnswer(a) {
     if (!card || !flipping || (a && a.cid !== card.cid)) { return; }
     flipping = false;
+    clearTimeout(flipTimer);
     showingAnswer = true;
     setReplay(a.audio);
     showSide(a.answer, "a");
@@ -1744,7 +1755,12 @@ var Garden = (function () {
     "kb-deck-pop": function () { closeDeckFind(); },
     "kb-quest-pop": function () { toggleQuests(false); },
     "kb-news-pop": function () { if (typeof GardenGreet !== "undefined" && GardenGreet.closeNews) { GardenGreet.closeNews(); } else { $("kb-news-pop").hidden = true; } },
-    "kb-snap-pop": function () { $("kb-snap-pop").hidden = true; }
+    "kb-snap-pop": function () { $("kb-snap-pop").hidden = true; },
+    // 1.35.5 (audit 19/11 #24): các thẻ nổi tạo lúc cần (thẻ thú / khách, thẻ sinh hoạt StackChan, chỗ lấp lánh, gánh hàng)
+    "kb-scene-card": function () { if (typeof GardenHome !== "undefined" && GardenHome.closeSceneCard) { GardenHome.closeSceneCard(); } else { $("kb-scene-card").hidden = true; } },
+    "kb-life-card": function () { if (typeof GardenLife !== "undefined" && GardenLife.closeCard) { GardenLife.closeCard(); } else { $("kb-life-card").hidden = true; } },
+    "kb-find-card": function () { if (typeof GardenFinds !== "undefined" && GardenFinds.closeCard) { GardenFinds.closeCard(); } else { $("kb-find-card").hidden = true; } },
+    "kb-ped-pop": function () { if (typeof GardenFinds !== "undefined" && GardenFinds.closePed) { GardenFinds.closePed(); } else { $("kb-ped-pop").hidden = true; } }
   };
   var BIG_PANELS = ["kb-panel", "kb-game", "kb-home", "kb-paper", "kb-cal", "kb-fields", "kb-ui"];
   function closePops(except) {
@@ -1760,12 +1776,23 @@ var Garden = (function () {
         var t = r.target;
         if (t.hidden || r.oldValue === null) { return; }          // chỉ xét lúc vừa hiện
         closePops(POP_CLOSE[t.id] ? t.id : null);
+        // 1.35.5 (audit 19/11 #12): bấm Tưới ngay / R rồi mở ngay bảng lớn khác (N / T / B / L) trước khi thẻ đầu tiên tới →
+        // huỷ lần mở bảng ôn đó (thẻ tới muộn không bật bảng ôn đè lên bảng vừa mở)
+        if (t.id !== "kb-panel" && BIG_PANELS.indexOf(t.id) >= 0 && reviewAsk && $("kb-panel").hidden) {
+          reviewAsk = 0; reviewCancel = Date.now();
+        }
       });
     });
-    Object.keys(POP_CLOSE).concat(BIG_PANELS).forEach(function (id) {
-      var e = $(id);
-      if (e) { mo.observe(e, { attributes: true, attributeFilter: ["hidden"], attributeOldValue: true }); }
-    });
+    var seen = {};
+    function hook() {
+      Object.keys(POP_CLOSE).concat(BIG_PANELS).forEach(function (id) {
+        var e = $(id);
+        if (e && seen[id] !== e) { seen[id] = e; mo.observe(e, { attributes: true, attributeFilter: ["hidden"], attributeOldValue: true }); }
+      });
+    }
+    hook();
+    // thẻ nổi tạo muộn (lần bấm đầu tiên) → nối vào khi vừa xuất hiện trong trang
+    new MutationObserver(function () { hook(); }).observe($("kb-app") || document.body, { childList: true });
   }
 
   function init() {
@@ -1925,6 +1952,8 @@ var Garden = (function () {
           closePanel(true);
           if (typeof GardenGames !== "undefined") { GardenGames.close(); }
           if (typeof GardenPaper !== "undefined") { GardenPaper.close(); }
+          if (typeof GardenFields !== "undefined") { GardenFields.close(); }      // 1.35.5 (audit #24)
+          if (ui()) { ui().close(); }
           if (cal()) { cal().close(); }
           if (!GardenHome.isOpen()) { GardenHome.open(); }
           GardenHome.setTab("season");
@@ -2040,6 +2069,7 @@ var Garden = (function () {
     render: render,
     showCard: showCard,
     reviewRetry: reviewRetry,      // 1.31.1 (F08)
+    flipRetry: flipRetry,          // 1.35.5 (audit #11)
     reviewUndo: reviewUndo,        // 1.31.4: Ctrl+Z trong bảng ôn
     cardCmd: cardCmd,              // 1.34: mẫu thẻ gọi pycmd("ans") / ("ease1".."ease4")
     cardEdited: cardEdited,        // 1.32.2: note của thẻ đang ôn vừa được sửa

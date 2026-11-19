@@ -629,6 +629,7 @@ def autofix(raw: Any, scope: dict[str, Any], opts: dict[str, Any]) -> tuple[Any,
     for c in raw.get("chinh_ta", []) if isinstance(raw.get("chinh_ta"), list) else []:
         if isinstance(c, dict) and isinstance(c.get("cau"), str):
             c["cau"] = _apply(c["cau"], index.spans(c["cau"]))
+    ai.drop_unlinked_new(raw, notes)       # 1.35.5 (audit #16)
     return raw, list(dict.fromkeys(notes))
 
 

@@ -1589,6 +1589,9 @@ def _fix_jp(text: Any, scope_keys: set[str], new_keys: set[str], notes: list[str
             out.append(post)
         else:
             surf, read, key = t[1].strip(), t[2].strip(), t[3].strip()
+            # 1.35.5 (audit 19/11 #16): cách đọc viết katakana ({食べる|タベ|食べる}) → hiragana trước khi tách kana như nhánh
+            # [chữ|đọc] — trước đây so "ベ" với "べ" không khớp nên cắt nhầm: {食|タベ|食べる}べる (chữ hiện "食べるべる")
+            read = paper.to_hira(read) if KANA_ONLY_RE.match(read or "x") else read
             nk = paper.norm_key(key)
             after = toks[i + 1][1] if i + 1 < len(toks) and toks[i + 1][0] == "plain" else ""
             follow = after or (toks[i + 1][1] if i + 1 < len(toks) else "")
@@ -1617,6 +1620,35 @@ def _fix_jp(text: Any, scope_keys: set[str], new_keys: set[str], notes: list[str
                 else:
                     out.append(pre + "{%s|%s|%s}" % (surf2, read2, key) + add + post)
     return "".join(out)
+
+
+def drop_unlinked_new(raw: Any, notes: list[str]) -> None:
+    """1.35.5 (audit 19/11 #16): báo tiếng Trung / Hàn / Anh / Đức / Pháp — máy tự nối chỗ tra từ. Từ mới chỉ nằm bên trong
+    một từ dài hơn đã được nối (家 trong 大家) thì không có chỗ tra riêng → trước đây vẫn giữ trong `tu_moi` (lọc bằng "có
+    trong chữ") nên bước kiểm tra chắc chắn báo lỗi và bắt Gemini viết lại (tốn lượt). Nay bỏ khỏi `tu_moi` sau khi nối."""
+    tm = raw.get("tu_moi") if isinstance(raw, dict) else None
+    if not isinstance(tm, list) or not tm:
+        return
+    used: set[str] = set()
+
+    def walk(x: Any) -> None:
+        if isinstance(x, str):
+            for t in paper.tokenize(x):
+                if t[0] == "word":
+                    used.add(t[3])
+        elif isinstance(x, list):
+            for y in x:
+                walk(y)
+        elif isinstance(x, dict):
+            for k, y in x.items():
+                if k != "tu_moi":
+                    walk(y)
+
+    walk(raw)
+    keep = [w for w in tm if not (isinstance(w, dict) and isinstance(w.get("w"), str)) or w["w"] in used]
+    if len(keep) != len(tm):
+        notes.append("bỏ từ mới không có chỗ tra riêng trong bài (chỉ nằm trong từ dài hơn)")
+        raw["tu_moi"] = keep
 
 
 def _strip_marks(text: str) -> str:

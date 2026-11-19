@@ -602,6 +602,21 @@ class Library:
                     out.setdefault(b["ky"], d)
         return out
 
+    def story_prev(self, date: str, ky: int) -> str | None:
+        """1.35.5 (audit 19/11 #10): ngày của số báo chứa kỳ `ky - 1` CÙNG bộ truyện với kỳ `ky` của số ngày `date`.
+        Đi lùi từ số trước `date`: số có truyện đầu tiên gặp phải là kỳ `ky - 1` thì đúng; gặp kỳ khác (≥ ky: bộ truyện cũ
+        trước lúc "Bắt đầu truyện mới"; < ky - 1: báo này không có kỳ đó) thì không có. Trước đây tra theo số kỳ cho cả
+        thư viện → kỳ 4 của truyện cũ chỉ sang kỳ 3 của truyện mới (ngày còn sau số đang đọc)."""
+        for d in self.issues():           # mới → cũ
+            if d >= date:
+                continue
+            iss = self.try_issue(d)
+            kys = [b["ky"] for b in (iss or {}).get("bai", []) if b["loai"] == "truyen" and b["ky"]]
+            if not kys:
+                continue
+            return d if kys[0] == ky - 1 else None
+        return None
+
 
 # ---------------------------------------------------------------------------
 # Trạng thái: đã đọc, câu đã trả lời, hàng đợi câu chép sai
@@ -882,7 +897,6 @@ def issue_view(lib: Library, st: dict[str, Any], date: str, voice: Voice | None 
             mau.append({"mau": g["mau"], "nghia": g["nghia"], "bai": _lesson(g["bai"], books)})
     audio = lib.audio(date)
     r = st["read"].get(date, {"q": {}, "ct": {}, "coins": 0, "bonus": False})
-    stories = lib.story_index()
     arts = []
     fallback = False
     lang = iss["lang"]
@@ -897,7 +911,7 @@ def issue_view(lib: Library, st: dict[str, Any], date: str, voice: Voice | None 
             fallback = True
             a["audio"] = [True] * len(b["doan"])
         if b["loai"] == "truyen" and b["ky"] and b["ky"] > 1:
-            prev = stories.get(b["ky"] - 1)
+            prev = lib.story_prev(date, b["ky"])
             if prev and prev not in st["read"] and prev != date:
                 a["ky_truoc_ngay"] = prev
         arts.append(a)

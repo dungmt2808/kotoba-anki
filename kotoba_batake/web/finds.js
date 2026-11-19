@@ -430,12 +430,14 @@ var GardenFinds = (function () {
 
   function init(helpers) {
     H = helpers;
+    // 1.35.5 (audit 19/11 #08): bắt ở pha capture + chặn hẳn (thẻ / gánh hàng mở được từ cảnh của bảng Nhà): Esc chỉ đóng
+    // thẻ này — trước đây Esc đi tiếp tới bảng Nhà, đóng cả hai; Esc thứ hai đóng luôn cửa sổ vườn
     document.addEventListener("keydown", (e) => {
-      if (e.key !== "Escape") { return; }
+      if (e.key !== "Escape" || e.isComposing) { return; }
       const c = $("kb-find-card"), p = $("kb-ped-pop");
-      if (p && !p.hidden) { e.preventDefault(); closePed(); return; }
-      if (c && !c.hidden) { e.preventDefault(); closeCard(); }
-    });
+      if (p && !p.hidden) { e.preventDefault(); e.stopImmediatePropagation(); window.__kbEscUsed = true; closePed(); return; }
+      if (c && !c.hidden) { e.preventDefault(); e.stopImmediatePropagation(); window.__kbEscUsed = true; closeCard(); }
+    }, true);
     document.addEventListener("click", () => { if (pedOpen) { closePed(); } });
     let raf = 0;
     window.addEventListener("resize", () => { if (pedOpen && !raf) { raf = requestAnimationFrame(() => { raf = 0; placePed(); }); } });

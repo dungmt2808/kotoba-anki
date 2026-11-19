@@ -58,6 +58,18 @@ HAS_KANA = re.compile("[%s]" % KANA_CLASS)
 KANA_WORD = re.compile(r"^[%s・\s]+$" % KANA_CLASS)
 
 SOUND_RE = re.compile(r"\[sound:[^\]]*\]")
+# 1.35.5 (audit 19/11 #20): cú pháp Cloze của Anki trong trường ({{c1::apples::fruit}}) → chỉ giữ đáp án ("apples"); trước
+# đây "{{c1::" lọt nguyên văn vào câu ví dụ / Điền vào câu và làm hỏng việc tìm từ trong câu
+CLOZE_RE = re.compile(r"\{\{c\d+::(.*?)(?:::(?:(?!\}\}).)*)?\}\}", re.S)
+
+
+def strip_cloze(s: str) -> str:
+    for _ in range(3):                    # cloze lồng nhau ({{c1::a {{c2::b}}}}) — tối đa 3 lớp
+        t = CLOZE_RE.sub(lambda m: m.group(1), s)
+        if t == s:
+            break
+        s = t
+    return s
 TAG_RE = re.compile(r"<[^>]*>")
 BREAK_RE = re.compile(r"(?i)<br\s*/?>|</(?:div|p|li|tr)>")
 _RUBY_RE = re.compile(r"(?is)<ruby\b[^>]*>(.*?)</ruby>")
@@ -106,7 +118,7 @@ def _ruby_repl(m: re.Match) -> str:
 
 def ja_text(raw: str) -> str:
     """HTML của một trường → chữ thuần có furigana kiểu Anki 「漢字[かんじ]」, giữ xuống dòng bằng "\\n"."""
-    s = SOUND_RE.sub("", raw or "")
+    s = strip_cloze(SOUND_RE.sub("", raw or ""))
     s = _RUBY_RE.sub(_ruby_repl, s)
     s = _MIGAKU_RE.sub(lambda m: "[%s]" % m.group(1) if m.group(1).strip() else "", s)
     s = BREAK_RE.sub("\n", s)
@@ -200,7 +212,7 @@ _IPA_BRACKET = re.compile(r"^(.*?\S)\s*[\[(]([^\[\]()]{1,60})[\])]\s*$")
 
 def plain_text(raw: str) -> str:
     """HTML → chữ thuần một dòng (xuống dòng thành " / "), bỏ [sound:…]."""
-    s = SOUND_RE.sub("", raw or "")
+    s = strip_cloze(SOUND_RE.sub("", raw or ""))
     s = BREAK_RE.sub("\n", s)
     s = html.unescape(TAG_RE.sub("", s)).replace(" ", " ")
     parts = [" ".join(line.split()) for line in s.split("\n")]

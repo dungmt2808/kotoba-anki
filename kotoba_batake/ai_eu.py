@@ -417,6 +417,7 @@ def autofix(lang: str, raw: Any, scope: dict[str, Any], opts: dict[str, Any]) ->
     for c in raw.get("chinh_ta", []) if isinstance(raw.get("chinh_ta"), list) else []:
         if isinstance(c, dict) and isinstance(c.get("cau"), str):
             c["cau"] = _link_one(paper.surface(c["cau"]), words_, set(), [0], lang, first_only=False)
+    ai.drop_unlinked_new(raw, notes)       # 1.35.5 (audit #16)
     return raw, list(dict.fromkeys(notes))
 
 

@@ -172,7 +172,7 @@ kb.save_config(ui={"scene": "large"}); kb._dialog.resize(1920, 1080); kb._dialog
   ok(await py(KB + 'result = st.load()["coins"]') === c3[0], 'lần bù xu điện thoại sau đó không trả lại xu cho lượt đã Undo');
   // Undo rồi đồng bộ AnkiWeb ngay: phần trả lại phải ghi vào collection trước khi đồng bộ (không thì máy khác nhận ví cũ)
   await py(KB + 'from aqt.operations.collection import undo; undo(parent=mw); result = 1'); await sleep(1500);
-  const sy = await py(KB + 'a = [st.load()["coins"], ' + raw + ']\nkb._on_sync_start()\nresult = a + [' + raw + ']');
+  const sy = await py(KB + 'a = [st.load()["coins"], ' + raw + ']\nkb._on_sync_start()\nb = ' + raw + '\nkb._on_sync_finished()\nresult = a + [b]');      // 1.35.5: đồng bộ bắt đầu thì cũng phải xong (khoá ghi giữ tới lúc so xong)
   ok(sy[0] < sy[1] && sy[2] === sy[0], 'Undo rồi đồng bộ: trước đồng bộ ví ghi đúng ' + sy[0] + ' xu (collection ' + sy[1] + ' → ' + sy[2] + ')');
   // Undo rồi đóng hồ sơ (đổi hồ sơ / tắt Anki) ngay: phần trả lại ghi trước khi đóng, sổ phần thưởng xoá
   await answer();

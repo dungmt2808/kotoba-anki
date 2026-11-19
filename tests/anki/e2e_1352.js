@@ -148,7 +148,9 @@ result = 1`);
   await py(KB + `kb._on_sync_start()
 d = kb.cal_today()
 w = kb.JOURNAL.entry(d).get("w") or {}
-kb.JOURNAL.update(d, {"w": dict(w, goc="Ich bin in Leipzig.")})        # máy B sửa bài rồi đồng bộ lên; máy này nhận về
+kb._sync_running = False      # 1.35.5: dữ liệu mang về do Anki ghi (không qua khoá ghi của vườn)
+kb.JOURNAL.update(d, {"w": dict(w, goc="Ich bin in Leipzig.")})
+kb._sync_running = True        # máy B sửa bài rồi đồng bộ lên; máy này nhận về
 kb._on_sync_finished()
 result = 1`);
   await sleep(2200);
@@ -165,7 +167,9 @@ result = 1`);
   await py(KB + `kb._on_sync_start()
 d = kb.cal_today()
 w = kb.JOURNAL.entry(d).get("w") or {}
+kb._sync_running = False      # 1.35.5: dữ liệu mang về do Anki ghi (không qua khoá ghi của vườn)
 kb.JOURNAL.update(d, {"w": dict(w, goc="Ich bin in Hamburg.")})
+kb._sync_running = True
 kb._on_sync_finished()
 result = 1`);
   await sleep(2200);

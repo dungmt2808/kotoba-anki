@@ -524,7 +524,8 @@ var GardenSeason = (function () {
     ctx.clearRect(0, 0, cv.width, cv.height);
     garland(ctx, BAND_S, 0, 0, 0, w / BAND_S + 2, 0, effects() ? now : 0, v.band, 0, { L: 40, sag: 2 });
     const sk = typeof GardenSky !== "undefined" ? GardenSky.state() : null;
-    if (sk && sk.light < 0.6) { garland(ctx, BAND_S, 0, 0, 0, w / BAND_S + 2, 0, now, v.band, 1, { L: 40, sag: 2 }); }
+    // 1.35.5 (audit 19/11 #26): tắt hiệu ứng → đèn ban đêm đứng yên như lớp ngày (trước đây vẫn nhấp nháy theo `now`)
+    if (sk && sk.light < 0.6) { garland(ctx, BAND_S, 0, 0, 0, w / BAND_S + 2, 0, effects() ? now : 0, v.band, 1, { L: 40, sag: 2 }); }
   }
   function drawBg(now) {
     const cv = $("kb-theme-bg"), v = V();

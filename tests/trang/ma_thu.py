@@ -103,6 +103,7 @@ def main() -> None:
     add("xin chào", "không phải mã")
     add("", "rỗng")
     add("KB1:m:16:@@:@@:00000000", "ký tự lạ")
+    add("KB1:m:16:ằ😀:abc:00000000", "chữ có dấu / biểu tượng")     # 1.35.5 (audit 19/11 #19)
     flat16 = "k" * 256
     add(raw("m", "20", "x", "ground,none," + more.px_encode(flat16)), "cỡ lạ")
     add(raw("m", "16", "x", "sky,none," + more.px_encode(flat16)), "loại đặt lạ")
