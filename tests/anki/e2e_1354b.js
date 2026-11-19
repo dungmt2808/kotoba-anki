@@ -1,5 +1,7 @@
 // 1.35.4 — kịch bản NGOÀI bộ test có sẵn (người dùng 19/11: "kiểm tra lại thật kỹ, test thêm các kịch bản mà ngoài bộ test,
 // testcase. vì tớ nghĩ thứ 7 tớ sẽ release bản tiếp theo"). Mỗi mục là một cách dùng "lệch" so với kịch bản chính e2e_1354:
+//   0. R rồi Esc ngay (thẻ chưa kịp hiện, 6 lần) → cửa sổ vườn còn, bảng ôn không bật lên muộn;
+//   0b. Phóng to → Esc Esc thật nhanh (4 lần) → cửa sổ vườn còn (hàng đợi __kbEscQ);
 //   1. bấm vội: R / Esc xen kẽ 40 lần không chờ (có lúc Esc khi bảng ôn đang bật nhẹ dở) → trạng thái cuối khớp nhau, không
 //      kẹt lớp hiệu ứng / transform, vườn đủ, không lỗi;
 //   2. đổi cỡ cửa sổ lúc đang ôn rồi Esc → bề ngang vườn = bề ngang lúc mở thẳng ở cỡ mới;
@@ -60,6 +62,31 @@ const st = async () => JSON.parse(await js(STATE));
   await js('if (window.GardenGreet && GardenGreet.close) GardenGreet.close(); if (window.GardenTour && GardenTour.close) GardenTour.close(); const t = document.getElementById("kb-toast"); if (t) t.hidden = true; return 1;');
   await py(KB + 'kb._dialog.resize(1366, 768); result = 1');
   await setDeck('B::Có câu ví dụ, không audio');
+
+  console.log('== 0. R rồi Esc ngay (thẻ chưa kịp hiện)');
+  let alive0 = 0, opened0 = 0;
+  for (let i = 0; i < 6; i++) {
+    await page.key('r', 'KeyR', 82); await page.key('Escape', 'Escape', 27);
+    await sleep(1500);
+    if (await py(KB + 'result = bool(kb._dialog) and kb._dialog.isVisible()')) { alive0++; }
+    if (await js('return !document.getElementById("kb-panel").hidden;')) { opened0++; await page.key('Escape', 'Escape', 27); await sleep(500); }
+  }
+  ok(alive0 === 6, 'R rồi Esc ngay, 6 lần: cửa sổ vườn còn cả 6 lần (1.35.3: Esc lúc thẻ chưa hiện đóng luôn cửa sổ vườn) — ' + alive0 + '/6');
+  ok(opened0 === 0, 'Esc huỷ mở bảng ôn: thẻ tới muộn không bật bảng lên (' + opened0 + ' lần bật)');
+  if (alive0 < 6) { await py(KB + 'kb.open_garden(); result = 1'); await sleep(2500); page = await gardenPage(); }
+
+  console.log('== 0b. Phóng to → Esc Esc thật nhanh (thu nhỏ rồi Dừng)');
+  let alive0b = 0;
+  for (let i = 0; i < 4; i++) {
+    await page.key('r', 'KeyR', 82); await waitFor('!document.getElementById("kb-panel").hidden'); await sleep(300);
+    if (await js('return GardenUI.glob("zoom") !== "on";')) { await page.key('f', 'KeyF', 70); await sleep(300); }
+    await page.key('Escape', 'Escape', 27); await page.key('Escape', 'Escape', 27);
+    await sleep(1500);
+    if (await py(KB + 'result = bool(kb._dialog) and kb._dialog.isVisible()')) { alive0b++; }
+    else { await py(KB + 'kb.open_garden(); result = 1'); await sleep(2500); page = await gardenPage(); }
+  }
+  ok(alive0b === 4, 'Esc Esc thật nhanh khi đang Phóng to: cửa sổ vườn còn ' + alive0b + '/4 (1.35.3: lần Esc thứ hai có thể đóng cả cửa sổ)');
+  ok(await js('return document.getElementById("kb-panel").hidden && GardenUI.glob("zoom") === "off";'), 'đã thu nhỏ và đóng bảng ôn');
 
   console.log('== 1. bấm vội R / Esc 40 lần');
   for (let i = 0; i < 40; i++) {

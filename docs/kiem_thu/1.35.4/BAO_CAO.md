@@ -53,6 +53,16 @@ ngay / Esc, ở 4 cỡ cửa sổ, vườn 8 cây và 300 cây, có / không Ph�
 
 - **Bấm vội R / Esc**: đóng bảng ôn giữa lúc đang bật nhẹ → trình duyệt huỷ hoạt ảnh (không có `animationend`) → lớp hiệu ứng
   kẹt lại; nếu sau đó tắt Chuyển cảnh thì lần mở sau bảng vẫn nhún một lần. Sửa: bảng ẩn là gỡ lớp, nghe cả `animationcancel`.
+- **R rồi Esc ngay** (đổi ý trước khi thẻ kịp hiện): Esc lúc đó ở màn chính → **đóng luôn cả cửa sổ vườn**. Sửa: Esc trong 3 giây
+  sau R / Tưới ngay mà thẻ chưa hiện = huỷ mở bảng ôn (thẻ Python gửi tới muộn bị bỏ qua, gửi `rv:stop`).
+- **Esc hai lần nhanh** (có từ 1.13; thấy khi bấm vội ở Anki 23.10.1 lúc máy bận): Anki gửi "close" cho mỗi lần Esc, add-on hỏi
+  lại trang "Esc này trang đã dùng chưa" qua **một cờ** đọc-rồi-xoá; hai Esc liền nhau (vd. đang Phóng to: Esc thu nhỏ rồi Esc
+  đóng bảng ôn) mà Python hỏi sau cả hai thì lần hỏi thứ hai đọc phải cờ đã xoá → **đóng cả cửa sổ vườn**. Máy bận thì mỗi lần
+  hỏi trễ tới 2,7 giây (đo được). Sửa: hàng đợi `window.__kbEscQ` — mỗi Esc trang đã dùng một mục (giữ 10 giây), mỗi lần hỏi
+  lấy một mục; hết mục thì theo cờ như cũ (Esc ở màn chính vẫn đóng cửa sổ như thiết kế).
+- **Khung vườn rộng bằng cửa sổ** làm `scrollWidth` lớn hơn phần nhìn thấy 14 px (lề nằm dưới thanh cuộn) — không cuộn ngang
+  được, nhưng kịch bản cũ `e2e_1322` đo "không tràn ngang" bằng số này. Thêm `body { overflow-x: clip }`: trang không còn
+  "rộng hơn phần nhìn thấy", cảnh vẫn giữ bề ngang.
 - **Mở nhiều nhánh deck** (có từ 1.34, cả ô deck ở thanh trên): bộ nhớ đóng / mở chỉ lưu được ~26 lần bấm (prefs ≤ 400 ký tự)
   và **xoá luôn trong bộ nhớ đang dùng** → mở tới nhánh thứ ~27 thì nhánh mở đầu tiên tự thu lại. Sửa: trong lúc vườn đang mở
   thì nhớ hết; chỉ phần **lưu** giữ những lần bấm sau cùng.
@@ -71,11 +81,15 @@ Mọi số dưới đây chạy trên **gói đã đóng** (`kotoba_batake.ankia
   xuống rồi R / Tưới ngay / T / N / B / L. B. bảng nổi từng cặp + mở bảng lớn. C. ô "Lấy từ" (13 lần đổi + đúng ca người dùng),
   cây deck (thứ tự, ▸ / ▾, nhớ chung với thanh trên, tick cha / con, tối đa 5, tìm, bàn phím, Xong / Đổi, báo tiếng Anh).
   **Mã 1.35.3: đỏ 22 rồi dừng ở phần cây** (không có cây).
-- **Mới** `tests/anki/e2e_1354b.js` (31, Anki thật) — **kịch bản ngoài bộ test**: bấm vội R / Esc 40 lần + Esc khi bảng đang bật
+- **Mới** `tests/anki/e2e_1354b.js` (Anki thật) — **kịch bản ngoài bộ test**: R rồi Esc ngay (6 lần); Phóng to → Esc Esc thật
+  nhanh (4 lần); bấm vội R / Esc 40 lần + Esc khi bảng đang bật
   nhẹ dở; đổi cỡ cửa sổ lúc đang ôn; đổi deck lúc đang ôn; cỡ cảnh Lớn + Giáng sinh; cửa sổ 800 × 600 (bảng + nút nằm trọn,
   thanh cuộn không đè); Anki chế độ tối; báo đang viết (khoá) rồi viết xong; xoá / đổi tên deck lúc danh sách đang mở; tên deck
   có "…" `<b>` & khoảng trắng đôi, 60 ký tự; 204 deck lồng 3 cấp (mở danh sách 14 ms, mỗi phím tìm < 30 ms, mở hết / thu hết);
-  đổi "Lấy từ" 12 lần liên tục không chờ; Esc ở ⚙. Lần đầu tìm ra 2 lỗi ở mục 4 (đỏ 4 / 31) → sửa → 31 / 31.
+  đổi "Lấy từ" 12 lần liên tục không chờ; Esc ở ⚙. Tìm ra các lỗi ở mục 4 (lần đầu đỏ 4 / 31; trên Anki 23.10.1 cửa sổ vườn
+  đóng khi bấm vội) → sửa.
+- `core/test_1354.py` mục C2: giả lập hàng đợi Esc bằng chính mã của `garden.js` + câu hỏi của `_on_esc` — hai Esc đã dùng, Python
+  hỏi trễ 2,7 giây → cả hai "đã dùng"; Esc đã dùng rồi Esc ở màn chính → lần sau đóng cửa sổ; mục cũ quá 10 giây không giữ cửa sổ.
 - Kịch bản cũ đổi theo cây deck: `e2e_119` (tìm deck theo tên đầy đủ; phần "tối đa 5" đổi thành "tick hết deck cha → deck con
   khoá" vì bộ deck tiếng Anh chỉ có 4 nhánh — tối đa 5 ở `e2e_1354`), `e2e_1223` (mở nhánh N4 trước khi cuộn, Esc về đúng số
   dòng của cây), `core/test_1261.py` (luật "giảm chuyển động" gộp thêm lớp mới).

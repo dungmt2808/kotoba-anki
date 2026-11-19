@@ -38,8 +38,10 @@ html, html body, body.nightMode {
 /* 1.35.4 (người dùng 19/11: Tưới ↔ vườn "bị giựt"): mở bảng ôn / trò chơi thì trang cao hơn cửa sổ → thanh cuộn dọc hiện ra,
    cả trang hẹp lại 14 px → cảnh sân + ruộng co lại, vẽ lại, ruộng còn xếp lại cây 0,1 giây sau (đóng bảng thì ngược lại).
    Nay khung vườn luôn rộng bằng cả cửa sổ: thanh cuộn (khi có) chỉ nằm đè lên lề phải 16 px vốn trống, không gì đổi chỗ.
-   (Không dùng scrollbar-gutter: chừa sẵn 14 px thì màn chính có một dải không có nền mùa ở mép phải.) */
+   (Không dùng scrollbar-gutter: chừa sẵn 14 px thì màn chính có một dải không có nền mùa ở mép phải.)
+   body cắt phần lề nằm dưới thanh cuộn (overflow-x: clip — không tạo khung cuộn): trang không "rộng hơn phần nhìn thấy". */
 html { overflow-x: hidden; }
+body { overflow-x: clip; }
 #kb-app { width: 100vw; }
 
 .kb-bar {

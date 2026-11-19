@@ -270,7 +270,7 @@ ok(q_handler is not None and "drawSource" not in q_handler.group(1) and "apply()
 ok("Garden.deckTreeOf" in PAPER and "Garden.deckFoldOpen" in PAPER and "Garden.deckFoldSave" in PAPER,
    "danh sách deck của báo dùng chung cây + trí nhớ đóng / mở với ô deck ở thanh trên")
 ok("coveredBy" in dl and "đã gồm" in dl and "!sub(x)" in dl, "tick deck cha: deck con \"đã gồm\" (khoá), deck con tick riêng được bỏ")
-ok("html { overflow-x: hidden; }" in CSS and "#kb-app { width: 100vw; }" in CSS,
+ok("html { overflow-x: hidden; }" in CSS and "body { overflow-x: clip; }" in CSS and "#kb-app { width: 100vw; }" in CSS,
    "khung vườn rộng bằng cửa sổ: thanh cuộn hiện / ẩn không làm co cảnh sân + ruộng")
 ok(re.search(r"#kb-app\.kb-ui-m-review\.kb-ui-zoom-on \{[^}]*width: auto", CSS) is not None,
    "Phóng to: bề ngang tự nhiên (lề 8 px, thanh cuộn không đè lên thẻ)")
@@ -286,6 +286,38 @@ ok('"kb-panel"]' in GREET and "kb-garden-in" in GREET and "GardenUI._apply" in G
    "greet.js: bảng ôn bật nhẹ, đóng bảng → vườn trồi lên (sau khi đổi chế độ)")
 ok("function closePops(" in GARDEN and "watchPops();" in GARDEN, "garden.js: mỗi lúc một bảng nổi")
 ok("function fieldWidth(" in GARDEN and "fieldSame()" in GARDEN, "garden.js: ruộng ẩn vẽ theo bề ngang cũ; đổi chế độ mà ruộng không đổi cỡ thì không vẽ lại")
+
+# ---------------------------------------------------------------------------------------------------------------------
+print("== C2. Esc hai lần nhanh không đóng nhầm cửa sổ vườn (hàng đợi __kbEscQ)")
+with open(os.path.join(ADDON, "__init__.py"), encoding="utf-8") as fh:
+    INIT = fh.read()
+m_eval = re.search(r'self\.web\.evalWithCallback\(\s*((?:"[^"\n]*"\s*)+), done\)', INIT)
+m_list = re.search(r'window\.addEventListener\("keydown", function \(e\) \{\s*if \(e\.key !== "Escape"\) \{ return; \}.*?\n    \}\);', GARDEN, re.S)
+ok(m_eval is not None and m_list is not None, "tìm thấy câu hỏi của GardenDialog._on_esc và bộ nghe Esc của garden.js")
+if m_eval and m_list:
+    ev_js = "".join(json.loads(x) for x in re.findall(r'"[^"\n]*"', m_eval.group(1)))
+    SIM = """
+var window = { addEventListener: function (n, f) { window._f = f; } }, clock = 1000000;
+Date.now = function () { return clock; };
+%s
+function esc(used) { window._f({ key: "Escape", defaultPrevented: used }); }
+function ask() { return %s; }
+var out = {};
+// hai Esc trang đã dùng (Phóng to: thu nhỏ rồi Dừng), Python hỏi sau cả hai — 1.35.3: lần hỏi thứ hai = false → đóng cửa sổ
+esc(true); esc(true); clock += 2700; out.twoUsed = [ask(), ask()];
+// Esc đã dùng rồi Esc ở màn chính (không bảng nào dùng): lần sau vẫn đóng cửa sổ như thiết kế
+esc(true); esc(false); clock += 50; out.usedFree = [ask(), ask()];
+// một Esc đơn ở màn chính → đóng
+esc(false); clock += 20; out.free = [ask()];
+// mục cũ quá 10 giây (Esc không kèm lần hỏi nào) không làm Esc sau mất tác dụng đóng
+esc(true); clock += 11000; esc(false); clock += 20; out.stale = [ask()];
+console.log(JSON.stringify(out));
+""" % (m_list.group(0), ev_js)
+    r = subprocess.run(["node", "-e", SIM], capture_output=True, text=True, timeout=60)
+    o = json.loads(r.stdout) if r.returncode == 0 else {}
+    ok(o.get("twoUsed") == [True, True], "hai Esc đã dùng, Python hỏi trễ 2,7 giây: cả hai lần đều \"đã dùng\" → cửa sổ vườn còn (1.35.3: lần hai đóng cửa sổ) %s" % o.get("twoUsed"))
+    ok(o.get("usedFree") == [True, False], "Esc đã dùng rồi Esc ở màn chính: lần sau vẫn đóng cửa sổ như thiết kế %s" % o.get("usedFree"))
+    ok(o.get("free") == [False] and o.get("stale") == [False], "Esc ở màn chính đóng cửa sổ; mục cũ quá 10 giây không giữ cửa sổ lại %s %s" % (o.get("free"), o.get("stale")))
 
 # ---------------------------------------------------------------------------------------------------------------------
 print("== D. hợp đồng dữ liệu")

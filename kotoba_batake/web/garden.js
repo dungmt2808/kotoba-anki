@@ -446,6 +446,9 @@ var Garden = (function () {
     var tag = (e.target && e.target.tagName) || "";
     if (tag === "SELECT" || tag === "INPUT" || tag === "TEXTAREA" || e.ctrlKey || e.metaKey || e.altKey) { return; }
     var k = (e.key || "").toLowerCase();
+    // 1.35.4: vừa bấm R / Tưới ngay, thẻ chưa kịp hiện mà Esc (đổi ý, bấm vội) → huỷ mở bảng ôn; trước đây Esc ở màn chính
+    // đóng luôn cả cửa sổ vườn (GardenDialog._on_esc — không bảng nào dùng phím Esc)
+    if (k === "escape" && reviewAsk && Date.now() - reviewAsk < 3000) { e.preventDefault(); reviewAsk = 0; reviewCancel = Date.now(); send("rv:stop"); return; }
     if (k === "escape" && pinned) { e.preventDefault(); hidePin(); }
     else if (k === "r") { e.preventDefault(); $("kb-review").click(); }
     else if (k === "t") { e.preventDefault(); $("kb-games").click(); }
@@ -1019,7 +1022,16 @@ var Garden = (function () {
     if (p.note) { rvNote(p.note); }
   }
 
+  // 1.35.4: Esc lúc đang chờ thẻ đầu tiên → bỏ qua thẻ / màn "Hết thẻ" Python gửi tới muộn (bảng ôn không bật lên nữa)
+  var reviewAsk = 0, reviewCancel = 0;
+  function reviewCancelled() {
+    var late = reviewCancel && $("kb-panel").hidden && Date.now() - reviewCancel < 5000;
+    reviewAsk = 0; reviewCancel = 0;
+    if (late) { send("rv:stop"); }
+    return late;
+  }
   function showCard(c) {
+    if (reviewCancelled()) { return; }
     if ($("kb-panel").hidden) { fx("startReview"); }
     card = c;
     showingAnswer = false;
@@ -1095,6 +1107,7 @@ var Garden = (function () {
   }
 
   function reviewDone(info) {
+    if (reviewCancelled()) { return; }
     card = null;
     showingAnswer = false;
     waiting = false;
@@ -1772,6 +1785,7 @@ var Garden = (function () {
       if (typeof GardenPaper !== "undefined") { GardenPaper.close(); }
       if (ui()) { ui().close(); }
       if (cal()) { cal().close(); }
+      reviewAsk = Date.now(); reviewCancel = 0;
       send("rv:start");
     });
     $("kb-games").addEventListener("click", function () {
@@ -1825,7 +1839,16 @@ var Garden = (function () {
     document.addEventListener("keydown", mainKey);
     // 1.13: Esc đã được một bảng dùng (preventDefault) thì Python không đóng cửa sổ (xem GardenDialog._on_esc).
     // Nghe ở window (sau mọi bộ nghe ở document) để biết kết quả cuối cùng.
-    window.addEventListener("keydown", function (e) { if (e.key === "Escape") { window.__kbEscUsed = e.defaultPrevented; } });
+    // 1.35.4: thêm hàng đợi các lần Esc đã dùng (10 giây — máy bận thì Python hỏi lại tới 2–3 giây sau) — Python hỏi một lần cho mỗi Esc, hỏi lúc trang đã xử lý xong; bấm Esc
+    // hai lần nhanh (Phóng to: Esc thu nhỏ rồi Esc đóng bảng ôn) thì lần hỏi đầu đọc cờ rồi xoá, lần hỏi sau đọc phải cờ đã xoá
+    // → đóng luôn cả cửa sổ vườn (thấy khi bấm vội R / Esc ở Anki 23.10). GardenDialog._on_esc lấy từ hàng đợi trước.
+    window.addEventListener("keydown", function (e) {
+      if (e.key !== "Escape") { return; }
+      window.__kbEscUsed = e.defaultPrevented;
+      var now = Date.now();
+      window.__kbEscQ = (window.__kbEscQ || []).filter(function (t) { return now - t < 10000; });
+      if (e.defaultPrevented) { window.__kbEscQ.push(now); }
+    });
     $("kb-canvas").addEventListener("click", function (ev) {
       var idx = plantAt(ev);
       if (idx >= 0) { showPin(idx); } else { hidePin(); }
