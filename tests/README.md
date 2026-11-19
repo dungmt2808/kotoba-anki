@@ -210,6 +210,10 @@ Cần Node ≥ 22 (có sẵn `fetch` và `WebSocket`). Cổng: `KB_CDP_PORT` (93
   **Lưu ý khi chạy song song**: đợt chạy trước chưa xong mà khởi chạy đợt mới trên cùng `KB_SLOT` là hai bên dùng chung cổng +
   thư mục Anki ("Already running; reusing existing instance") → lỗi giả hàng loạt; đợi `run_versions.sh` cũ thoát hẳn.
 - Anki 23.10.1 (`uv venv --python 3.9` + `aqt[qt6]==23.10.1` + PyQt6 6.6.0): `e2e_1354` 75/75, `e2e_1354b` 35/35.
+- `audit_20261114/run_ui_audit.sh` (`KB_AUDIT_BASELINE=1`): `e2e_128_fix` 26/26, `ui_audit` 191/191, `deep_ui_audit` 18/18,
+  `lifecycle_audit` 7/7. **Không chạy cùng `run_capnhat.sh` / `run_ui.sh`**: các script này gọi `kill_anki.sh` (tắt mọi
+  `aqt.run()`, gồm cả Anki của audit) — lần đầu chạy chồng ra lỗi giả "fetch failed".
+- `run_capnhat.sh` 1.31.3 (dựng lại từ `fixtures/ban_cu/e64eb22.tar.gz`) → 1.35.4: 19/19.
 - Venv aqt 26.9.4 cho `run_versions.sh`: `ln -s ~/.venv-anki ~/venvs/aqt-26.9.4`.
 
 ## Kết quả lần chạy trước (bản 1.35.3, 18/11/2026 khuya) — dây trang trí ở cỡ cảnh Lớn
