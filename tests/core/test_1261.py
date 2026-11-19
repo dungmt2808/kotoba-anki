@@ -242,9 +242,11 @@ ok(m2 is not None and int(m2.group(1)) >= 550 and int(m2.group(2)) >= int(m2.gro
 css = src("web", "garden.css")
 ok(len(re.findall(r"@keyframes kb-pop\b", css)) == 1 and len(re.findall(r"^\.kb-pop \{", css, re.M)) == 1,
    "chỉ một @keyframes kb-pop (bong bóng linh vật / Combo / nút Nhiệm vụ giữ kiểu nảy cũ)")
-ok(".kb-panel-in { animation: kb-panel-in" in css and "prefers-reduced-motion: reduce) { .kb-panel-in { animation: none; } }" in css,
+# 1.35.4: luật "giảm chuyển động" gộp thêm kb-panel-fade / kb-garden-in / kb-garden-fade; greet.js gắn lớp qua play(t, cls)
+_rm = re.search(r"prefers-reduced-motion: reduce\) \{ ([^{}]*)\{ animation: none; \} \}", css[css.find(".kb-panel-in { animation"):] if ".kb-panel-in { animation" in css else "")
+ok(".kb-panel-in { animation: kb-panel-in" in css and bool(_rm) and ".kb-panel-in" in _rm.group(1),
    "bảng bật nhẹ: lớp kb-panel-in, tắt khi giảm chuyển động")
-ok('classList.add("kb-panel-in")' in gr and 'classList.add("kb-pop")' not in gr, "greet.js dùng kb-panel-in")
+ok(('classList.add("kb-panel-in")' in gr or '"kb-panel-in" : "kb-panel-fade"' in gr) and 'classList.add("kb-pop")' not in gr, "greet.js dùng kb-panel-in")
 ok(re.search(r"\.kb-greet-out \{ animation: kb-greet-out \.4\d?s", css) is not None, "màn chào mờ dần (Dịu mắt) chậm hơn")
 
 print("== tour.js bằng node (DOM giả)")

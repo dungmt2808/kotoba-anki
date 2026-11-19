@@ -178,10 +178,11 @@ console.log('== tab Nguồn báo');
   console.log('== chọn deck cho báo tiếng Anh');
   await page.eval(W(SEL + 'sel(document.querySelectorAll(".kb-ai-lang")[1], "Lấy từ", "pick"); return 1;'));
   ok(await waitFor(page, 'document.querySelector(".kb-ai-decks")'), 'bấm “Chọn deck” → danh sách deck');
-  const dl = await page.eval(W('return Array.from(document.querySelectorAll(".kb-ai-deck")).map(l => l.textContent);'));
-  ok(dl.some(x => /^ M::Tiếng Anh A2/.test(x) && /40 note/.test(x)) && !dl.some(x => /Tiếng Hàn|Có câu ví dụ/.test(x)),
+  // 1.35.4: danh sách dạng cây — tên đầy đủ ở title, dòng chỉ ghi tên của chính deck
+  const dl = await page.eval(W('return Array.from(document.querySelectorAll(".kb-ai-deck")).map(l => l.title.split(" · ")[0] + " " + l.querySelector(".kb-ai-hint").textContent);'));
+  ok(dl.some(x => /^M::Tiếng Anh A2 40 note/.test(x)) && !dl.some(x => /Tiếng Hàn|Có câu ví dụ/.test(x)),
     'chỉ deck có note tiếng Anh, kèm số note: ' + dl.slice(0, 4).join(' | '));
-  await page.eval(W('Array.from(document.querySelectorAll(".kb-ai-deck")).find(l => /F::Tiếng Anh Basic/.test(l.textContent)).querySelector("input").click(); return 1;'));
+  await page.eval(W('Array.from(document.querySelectorAll(".kb-ai-deck")).find(l => /^F::Tiếng Anh Basic/.test(l.title)).querySelector("input").click(); return 1;'));
   ok(await waitFor(page, 'Array.from(document.querySelectorAll(".kb-ai-deck input")).filter(i => i.checked).length === 1'), 'tick một deck');
   const src1 = await py(KB + 'result = mw.col.get_config("kotoba_batake_paper_src", None)');
   const fid = await py(KB + 'result = mw.col.decks.id_for_name("F::Tiếng Anh Basic")');
@@ -199,8 +200,11 @@ console.log('== tab Nguồn báo');
       await sleep(300);
     }
   }
-  const lim = await page.eval(W('const i = Array.from(document.querySelectorAll(".kb-ai-deck input")); return [i.filter(x => x.checked).length, i.filter(x => !x.checked && !x.disabled).length];'));
-  ok(lim[0] === 5 && lim[1] === 0, 'tối đa 5 deck: các ô còn lại bị khoá ' + JSON.stringify(lim));
+  // 1.35.4: tick deck cha = lấy cả deck con (deck con khoá, ghi "đã gồm"; deck con đã tick riêng được bỏ) — 4 nhánh tiếng Anh
+  // F / G / H / M → tick hết deck cha là không còn ô nào tick được (tối đa 5 deck: e2e_1354 với cây deck tiếng Nhật)
+  const lim = await page.eval(W('const i = Array.from(document.querySelectorAll(".kb-ai-deck input")); return [i.filter(x => x.checked).length, i.filter(x => !x.checked && !x.disabled).length, Array.from(document.querySelectorAll(".kb-ai-deck.is-in")).length];'));
+  const enPick = await py(KB + 'result = sorted(mw.col.decks.name(d) for d in mw.col.get_config("kotoba_batake_paper_src")["en"]["decks"])');
+  ok(lim[1] === 0 && lim[2] === 4 && JSON.stringify(enPick) === JSON.stringify(['F', 'G', 'H', 'M']), 'tick hết deck cha: lưu F, G, H, M; 4 deck con "đã gồm", không còn ô nào tick được ' + JSON.stringify(lim) + ' ' + enPick.join());
   await page.shot(SHOTS + '/64_chon_deck.png');
   await page.eval(W(SEL + 'sel(document.querySelectorAll(".kb-ai-lang")[1], "Lấy từ", "all"); return 1;')); await sleep(800);
   ok((await py(KB + 'result = mw.col.get_config("kotoba_batake_paper_src")["en"]["decks"]')).length === 0, 'bấm “Mọi deck” → bỏ chọn deck');

@@ -101,9 +101,13 @@ result = 1`);
   ok(await waitFor('document.querySelector(".kb-ai-decks-list")'), 'mở danh sách deck của báo tiếng Nhật');
   const n0 = await js('return document.querySelectorAll(".kb-ai-decks-list .kb-ai-deck").length;');
   ok(n0 >= 24, 'danh sách có ' + n0 + ' deck, có ô "Tìm deck…"' + (await js('return !!document.querySelector(".kb-ai-dq");') ? '' : ' — THIẾU Ô TÌM'));
+  // 1.35.4: danh sách là cây (deck con thu gọn như Anki) → mở nhánh N4 trước khi cuộn
+  await js('const l = Array.from(document.querySelectorAll(".kb-ai-decks-list .kb-ai-deck")).find((x) => x.title === "N4"); const t = l && l.querySelector(".kb-ai-dtog.has-kids"); if (t && t.textContent === "▸") { t.click(); } return 1;'); await sleep(250);
+  const nTree = await js('return Array.from(document.querySelectorAll(".kb-ai-decks-list .kb-ai-deck")).filter((l) => !l.hidden).length;');
+  ok(nTree >= 25, 'mở nhánh N4: ' + nTree + ' dòng đang hiện');
   await js('const l = document.querySelector(".kb-ai-decks-list"); l.scrollTop = l.scrollHeight; return 1;'); await sleep(200);
   const sc0 = await js('return document.querySelector(".kb-ai-decks-list").scrollTop;');
-  await js('const labs = Array.from(document.querySelectorAll(".kb-ai-decks-list .kb-ai-deck")); labs[labs.length - 2].querySelector("input").click(); return 1;');
+  await js('const labs = Array.from(document.querySelectorAll(".kb-ai-decks-list .kb-ai-deck")).filter((l) => !l.hidden && /^N4::/.test(l.title)); labs[labs.length - 2].querySelector("input").click(); return 1;');
   await waitFor('document.querySelectorAll(".kb-ai-decks-list input:checked").length === 1');
   await sleep(600);
   const sc1 = await js('return document.querySelector(".kb-ai-decks-list").scrollTop;');
@@ -114,7 +118,7 @@ result = 1`);
   await js('const q = document.querySelector(".kb-ai-dq"); q.focus(); return 1;');
   await page.send('Input.insertText', { text: 'bai 2' });
   await sleep(300);
-  const vis = await js('return Array.from(document.querySelectorAll(".kb-ai-decks-list .kb-ai-deck")).filter((l) => !l.hidden).map((l) => l.textContent.trim().split(" ").slice(0, 3).join(" "));');
+  const vis = await js('return Array.from(document.querySelectorAll(".kb-ai-decks-list .kb-ai-deck")).filter((l) => !l.hidden).map((l) => l.title.split(" · ")[0]);');
   // mọi từ gõ vào phải có trong tên (không cần đúng thứ tự): "bai 2" → Bài 20–29 và Bài 32
   ok(vis.length === 11 && vis.every((t) => /N4::Bài (2\d|32)/.test(t)), 'gõ "bai 2" (không dấu) → ' + vis.length + ' deck: Bài 20–29, Bài 32');
   const cnt = await js('return document.querySelector(".kb-ai-dfind .kb-ai-hint").textContent;');
@@ -128,7 +132,7 @@ result = 1`);
   await js('const q = document.querySelector(".kb-ai-dq"); q.focus(); return 1;');
   await page.key('Escape', 'Escape', 27); await sleep(300);
   const esc = await js('return { q: document.querySelector(".kb-ai-dq").value, open: !document.getElementById("kb-paper").hidden, vis: Array.from(document.querySelectorAll(".kb-ai-decks-list .kb-ai-deck")).filter((l) => !l.hidden).length };');
-  ok(esc.q === '' && esc.open && esc.vis === n0, 'Esc trong ô tìm: xoá chữ tìm, bảng Báo vẫn mở');
+  ok(esc.q === '' && esc.open && esc.vis === nTree, 'Esc trong ô tìm: xoá chữ tìm, bảng Báo vẫn mở, về cây như trước (' + esc.vis + ' dòng)');
   await js('Array.from(document.querySelectorAll(".kb-ai-decks button")).find((b) => b.textContent === "Xong").click(); return 1;'); await sleep(500);
 
   console.log('== bấm "Bắt đầu viết"');

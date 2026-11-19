@@ -391,6 +391,24 @@ var GardenUI = (function () {
         if (isOpen && e.key === "Escape") { e.preventDefault(); close(); }
       });
       setInterval(apply, 200);
+      // 1.35.4 (người dùng 19/11: "chuyển cảnh từ tưới sang vườn (Esc) hay ngược lại thì nó bị giựt"): trước đây chế độ
+      // (Màn chính / Khi ôn thẻ / Trò chơi & báo) chỉ đổi theo vòng 200 ms → bảng ôn hiện / ẩn trước, tới 0,2 giây sau bố cục
+      // mới đổi lần nữa (Phóng to / Tập trung khi ôn: Esc → trang trống một nhịp rồi vườn mới hiện). Nay bảng nào hiện / ẩn là
+      // đổi chế độ ngay trong cùng khung hình (MutationObserver chạy trước khi trình duyệt vẽ)
+      // Cùng lúc: bảng vừa mở mà đầu bảng nằm trên mép cửa sổ → về đầu trang. Trình duyệt "neo cuộn" giữ ruộng đứng yên khi bảng
+      // chèn vào phía trên, nên đang cuộn xuống ruộng (vườn nhiều cây) mà bấm R / Tưới ngay / Trò chơi… thì bảng mở ra nằm hẳn
+      // ngoài màn hình phía trên (chỉ thấy vườn nhảy, không thấy thẻ)
+      if (typeof MutationObserver !== "undefined") {
+        const mo = new MutationObserver((list) => {
+          apply();
+          const shown = list.map((r) => r.target).filter((t) => !t.hidden && (list.some((r) => r.target === t && r.oldValue !== null)));
+          if (shown.some((t) => t.getBoundingClientRect().top < 0)) { window.scrollTo(0, 0); }
+        });
+        ["kb-panel", "kb-game", "kb-home", "kb-paper", "kb-fields", "kb-ui", "kb-cal"].forEach((id) => {
+          const e = $(id);
+          if (e) { mo.observe(e, { attributes: true, attributeFilter: ["hidden"], attributeOldValue: true }); }
+        });
+      }
       apply();
     },
     get: get,

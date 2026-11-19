@@ -35,6 +35,14 @@ html, html body, body.nightMode {
   box-sizing: border-box;
   min-height: 100vh;
 }
+/* 1.35.4 (người dùng 19/11: Tưới ↔ vườn "bị giựt"): mở bảng ôn / trò chơi thì trang cao hơn cửa sổ → thanh cuộn dọc hiện ra,
+   cả trang hẹp lại 14 px → cảnh sân + ruộng co lại, vẽ lại, ruộng còn xếp lại cây 0,1 giây sau (đóng bảng thì ngược lại).
+   Nay khung vườn luôn rộng bằng cả cửa sổ: thanh cuộn (khi có) chỉ nằm đè lên lề phải 16 px vốn trống, không gì đổi chỗ.
+   (Không dùng scrollbar-gutter: chừa sẵn 14 px thì màn chính có một dải không có nền mùa ở mép phải.)
+   body cắt phần lề nằm dưới thanh cuộn (overflow-x: clip — không tạo khung cuộn): trang không "rộng hơn phần nhìn thấy". */
+html { overflow-x: hidden; }
+body { overflow-x: clip; }
+#kb-app { width: 100vw; }
 
 .kb-bar {
   display: flex;
@@ -1481,6 +1489,19 @@ button { cursor: pointer; }
 .kb-ai-start-t { flex: 1 1 100%; }
 .kb-ai-startbtn { font-size: 15px; padding: 5px 18px; }
 .kb-ai-deck .kb-ai-hint { margin-left: 6px; color: var(--kb-ink-2); }
+/* 1.35.4: danh sách deck của báo dạng cây như ô deck ở thanh trên — deck con thụt vào, ▸ / ▾ thu gọn; đang tìm thì phẳng + đường dẫn */
+.kb-ai-decks-list .kb-ai-deck { padding-left: calc(var(--kb-dd, 0) * 18px); min-width: 0; }
+.kb-ai-decks-list.is-flat .kb-ai-deck { padding-left: 0; }
+.kb-ai-dtog { flex: none; width: 18px; height: 18px; padding: 0; margin: 0; border: 0; background: none; box-shadow: none; font: inherit;
+  font-size: 11px; line-height: 18px; color: var(--kb-ink-2); display: inline-flex; align-items: center; justify-content: center; cursor: default; }
+.kb-ai-dtog.has-kids { cursor: pointer; }
+.kb-ai-dtog.has-kids:hover, .kb-ai-dtog.has-kids:focus-visible { background: var(--kb-ink); color: var(--kb-paper, #ffffff); }
+.kb-ai-dtog[hidden] { display: none; }
+.kb-ai-dtog:disabled { opacity: 1; }
+.kb-ai-dname { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.kb-ai-dpath { display: none; color: var(--kb-ink-2); }
+.kb-ai-decks-list.is-flat .kb-ai-dpath { display: inline; }
+.kb-ai-deck.is-in { color: var(--kb-ink-2); cursor: default; }
 .kb-ai-more summary { cursor: pointer; }
 .kb-ai-more[open] summary { margin-bottom: 2px; }
 @media (max-width: 720px) { .kb-ai-decks { margin-left: 0; } }
@@ -1543,7 +1564,7 @@ button { cursor: pointer; }
 .kb-ui-m-review.kb-ui-yard-hide.kb-ui-field-hide.kb-themed .kb-card { height: max(240px, calc(100vh - 320px)); }
 .kb-ui-m-review.kb-ui-yard-hide.kb-ui-field-hide.kb-themed .kb-done { min-height: max(240px, calc(100vh - 320px)); }
 /* 1.34: Phóng to (nút / phím F) — chỉ còn bảng ôn: ẩn thanh trên, dải trang trí, sân, ruộng; đầu bảng ôn một dòng mỏng */
-#kb-app.kb-ui-m-review.kb-ui-zoom-on { padding: 6px 8px 8px; gap: 0; }
+#kb-app.kb-ui-m-review.kb-ui-zoom-on { padding: 6px 8px 8px; gap: 0; width: auto; }      /* lề 8 px: thanh cuộn (nếu có) không đè lên thẻ */
 .kb-ui-m-review.kb-ui-zoom-on .kb-bar, .kb-ui-m-review.kb-ui-zoom-on #kb-theme-band, .kb-ui-m-review.kb-ui-zoom-on #kb-yard-wrap,
 .kb-ui-m-review.kb-ui-zoom-on .kb-legend-row, .kb-ui-m-review.kb-ui-zoom-on #kb-field, .kb-ui-m-review.kb-ui-zoom-on #kb-legend,
 .kb-ui-m-review.kb-ui-zoom-on #kb-joy, .kb-ui-m-review.kb-ui-zoom-on #kb-note, .kb-ui-m-review.kb-ui-zoom-on #kb-rv-garden,
@@ -2136,7 +2157,15 @@ button { cursor: pointer; }
 /* 1.26.1: tên riêng — 1.26.0 dùng lại tên kb-pop nên bong bóng linh vật / Combo / nút Nhiệm vụ mất kiểu nảy cũ */
 .kb-panel-in { animation: kb-panel-in .24s ease-out; }
 @keyframes kb-panel-in { from { transform: scale(.96); opacity: .4; } to { transform: none; opacity: 1; } }
-@media (prefers-reduced-motion: reduce) { .kb-panel-in { animation: none; } }
+/* 1.35.4: bảng ôn (Tưới ngay) bật nhẹ như các bảng khác; đóng bảng → vườn trồi lên nhẹ (greet.js watchPanels).
+   Kiểu Dịu mắt / Tắt hạt bay: chỉ mờ dần, không nhún. */
+.kb-panel-fade { animation: kb-panel-fade .24s ease-out; }
+@keyframes kb-panel-fade { from { opacity: .4; } }
+.kb-garden-in { animation: kb-garden-in .28s ease-out; }
+/* không ghi "to": về đúng độ mờ đang có (ruộng để "Mờ, đứng yên" không sáng lên rồi tối lại) */
+@keyframes kb-garden-in { from { transform: translateY(14px); opacity: .35; } }
+.kb-garden-fade { animation: kb-panel-fade .28s ease-out; }
+@media (prefers-reduced-motion: reduce) { .kb-panel-in, .kb-panel-fade, .kb-garden-in, .kb-garden-fade { animation: none; } }
 .kb-news-btn { background: var(--kb-cream-2); }
 .kb-today-list .kb-news-btn.kb-squeezed { display: none; }
 .kb-news-pop { width: 380px; max-width: calc(100vw - 16px); box-sizing: border-box; position: fixed; z-index: 60;

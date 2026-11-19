@@ -3133,8 +3133,12 @@ class GardenDialog(QDialog):
             if not used:
                 self.close()
         try:
+            # 1.35.4: mỗi lần Esc lấy một mục của hàng đợi __kbEscQ (Esc trang đã dùng trong 10 giây) — bấm Esc hai lần nhanh
+            # không còn đọc phải cờ lần trước đã xoá (đóng nhầm cả cửa sổ vườn); không có mục nào thì theo cờ như cũ
             self.web.evalWithCallback(
-                "(function(){var u=!!window.__kbEscUsed;window.__kbEscUsed=false;return u;})()", done)
+                "(function(){var n=Date.now(),q=(window.__kbEscQ||[]).filter(function(t){return n-t<10000;}),"
+                "u=q.length>0;if(u){q.shift();}window.__kbEscQ=q;u=u||!!window.__kbEscUsed;"
+                "window.__kbEscUsed=false;return u;})()", done)
         except Exception:
             self.close()
 

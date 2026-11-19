@@ -22,6 +22,9 @@ Nhớ tăng `human_version` trong `manifest.json` và ghi lịch sử phiên b�
 
 | File | Nội dung |
 |---|---|
+| `core/test_1354.py ADDON` | 1.35.4 (35, offline; phần collection cần `ANKI_PY`): cây deck của báo chạy đúng hàm `garden.js` bằng node — thứ tự theo cấp ("JA B" không chen giữa "JA" và "JA::N4"), thiếu deck cha giữa chừng, **2.000 danh sách deck ngẫu nhiên** (dấu, CJK, "x y", "X-Y") cha / cấp đúng + nhánh con liền khối; nhớ đóng / mở (300 lần bấm: lưu ≤ 400 ký tự, trong phiên vẫn nhớ lần đầu); khớp nguyên cụm; `lang_decks` gửi kèm `col`; soát mã (ô Lấy từ, CSS bề ngang vườn, hiệu ứng tắt khi giảm chuyển động, MutationObserver); hợp đồng dữ liệu = 1.35.3 |
+| `anki/e2e_1354.js` | 1.35.4 (75, Anki thật): **ghi từng khung hình** (`requestAnimationFrame`) lúc mở / đóng bảng ôn ở 3 cỡ cửa sổ, vườn 300 cây — chế độ đổi cùng khung hình, không khung trống, cảnh + ruộng giữ bề ngang; Phóng to → Dừng / Esc; Ẩn vườn + chấm thẻ → Esc; hiệu ứng (bật nhẹ / trồi lên / Dịu mắt / giảm chuyển động qua CDP `Emulation.setEmulatedMedia` / Tắt / ôn → Trò chơi); cuộn xuống rồi R / Tưới ngay / T / N / B / L; bảng nổi từng cặp; ô "Lấy từ" 13 lần đổi + đúng ca người dùng; cây deck (thứ tự, ▸ / ▾ nhớ chung với thanh trên, tick cha / con, tối đa 5, tìm, bàn phím, Xong / Đổi, báo tiếng Anh). Mã 1.35.3: đỏ 22 |
+| `anki/e2e_1354b.js` | 1.35.4 (31, Anki thật) — **kịch bản ngoài bộ test**: bấm vội R / Esc 40 lần, Esc khi bảng đang bật nhẹ dở, đổi cỡ cửa sổ / đổi deck lúc đang ôn, cỡ cảnh Lớn + Giáng sinh, 800 × 600, Anki chế độ tối, báo đang viết (khoá) → viết xong, xoá / đổi tên deck lúc danh sách mở, tên deck có "…" `<b>` &, 204 deck lồng 3 cấp (thời gian mở / gõ), đổi "Lấy từ" liên tục, Esc ở ⚙ |
 | `core/test_1353.js ADDON` (Playwright) | 1.35.3 (15, ~1 phút): dây trang trí ở cỡ cảnh Lớn — dựng cảnh thật trong Chromium; lớp đèn sáng sát dây (9 chủ đề × 7 nơi × 2 cỡ × đêm / ngày) + móc hàm `garland` nội bộ ở mọi đường vẽ (sân, vùng, vùng tự tạo, 3 gian, cả nhà); quét 48.000 lần vẽ không ném lỗi (15 nơi gồm 8 nền vùng tự tạo × 16 chủ đề × giờ × thời tiết × hiệu ứng bật / tắt × hẹp / rộng / Lớn / ảnh); đất ở cỡ Lớn = cỡ thường từng điểm ảnh (1.800 tổ hợp); hạt bay / đèn trời tới mép trên; màn rộng không có chấm đất trên trời (mã 1.35.2: đỏ 10) |
 | `anki/e2e_1353.js` | 1.35.3 (23, Anki thật): cửa sổ 1920 × 1080, cỡ Lớn, Giáng sinh, 22 giờ — đọc điểm ảnh dải cảnh: đèn chỉ ở mép trên, không có hàng đèn giữa trời; tắt hiệu ứng vẫn vẽ đủ; vùng tự tạo Đồi hoa vẽ đủ; **Trò chơi → Ẩn vườn / Hiện vườn** (vùng chơi 726 → 926 px ở cửa sổ 1850 × 1130, sân + ruộng ẩn, lưu `ui.panel`, Đuổi quạ vẽ theo vùng mới, mở lại vẫn nhớ, Hiện vườn về như cũ, cửa sổ 1024 × 640 nút cùng hàng Thoát); nhật ký lỗi trống |
 | `core/test_1352.py ADDON` (`ANKI_PY`) | 1.35.2 (68): lỗi nhánh audit 18/11 — Trang trí thử một lần đọc lỗi (đúng đoạn tái hiện của audit), chữ NFD (Python + trang), deck có trường nghĩa Chinese / 한국어, Điền vào câu mã HTML dấu tách, kệ nhật ký, bộ đệm tra từ 20.001 mục, viết hoa tiếng Đức, hai báo cùng ngày, README, soát mã 02 / 03 / 12–15; **Bắt đầu truyện mới** với Gemini giả (ensure_master thật): cất / lấy lại / bấm hai lần / hôm nay đã có bản gốc / nhận xét số cũ / báo Claude Code / lỗi ghi giữa chừng; hợp đồng dữ liệu = 1.35.1, mã 1.31.3 chạy trên thư mục đã bắt đầu lại. Trên mã 1.35.1: đỏ |
@@ -198,7 +201,22 @@ ANKI_PY=~/.venv-anki/bin/python tests/anki/run_ui.sh /tmp/kb_src/kotoba_batake /
 ```
 Cần Node ≥ 22 (có sẵn `fetch` và `WebSocket`). Cổng: `KB_CDP_PORT` (9333), `KB_CTRL_PORT` (9444). `kill_anki.sh` tắt Anki đang chạy từ các script này.
 
-## Kết quả lần chạy gần nhất (bản 1.35.3, 18/11/2026 khuya) — dây trang trí ở cỡ cảnh Lớn
+## Kết quả lần chạy gần nhất (bản 1.35.4, 19/11/2026) — chuyển cảnh Tưới ↔ vườn, cây deck của báo, bảng nổi, Esc
+- `run_all.sh` (`ANKI_PY` = aqt 26.9.4, môi trường mới; thêm `core/test_1354.py` 39/39) trên gói cuối đã giải nén: **TẤT CẢ OK**.
+- Anki 26.9.4, **55 kịch bản** (mọi `e2e*.js` / `audit*.js` của `anki/` trừ những cái cần trình chạy riêng), 3 luồng `run_versions.sh`
+  `KB_SLOT=1,2,3`: 2.352 / 2.357 trên gói trước phần sửa Esc — 5 ca trượt đều đã xử lý (chi tiết `docs/kiem_thu/1.35.4/BAO_CAO.md`
+  mục 5). Gói cuối: `e2e_1354` 75/75, `e2e_1354b` 35/35, `e2e_1322` 40/40, `e2e_1332` 36/36, `e2e_134` 87/87, `e2e_1303` 49/49,
+  `e2e_1253` 38/39 (ca "localStorage trống sau khi tắt hẳn Anki" là điều kiện của môi trường, trượt y hệt trên mã 1.35.3).
+  **Lưu ý khi chạy song song**: đợt chạy trước chưa xong mà khởi chạy đợt mới trên cùng `KB_SLOT` là hai bên dùng chung cổng +
+  thư mục Anki ("Already running; reusing existing instance") → lỗi giả hàng loạt; đợi `run_versions.sh` cũ thoát hẳn.
+- Anki 23.10.1 (`uv venv --python 3.9` + `aqt[qt6]==23.10.1` + PyQt6 6.6.0): `e2e_1354` 75/75, `e2e_1354b` 35/35.
+- `audit_20261114/run_ui_audit.sh` (`KB_AUDIT_BASELINE=1`): `e2e_128_fix` 26/26, `ui_audit` 191/191, `deep_ui_audit` 18/18,
+  `lifecycle_audit` 7/7. **Không chạy cùng `run_capnhat.sh` / `run_ui.sh`**: các script này gọi `kill_anki.sh` (tắt mọi
+  `aqt.run()`, gồm cả Anki của audit) — lần đầu chạy chồng ra lỗi giả "fetch failed".
+- `run_capnhat.sh` 1.31.3 (dựng lại từ `fixtures/ban_cu/e64eb22.tar.gz`) → 1.35.4: 19/19.
+- Venv aqt 26.9.4 cho `run_versions.sh`: `ln -s ~/.venv-anki ~/venvs/aqt-26.9.4`.
+
+## Kết quả lần chạy trước (bản 1.35.3, 18/11/2026 khuya) — dây trang trí ở cỡ cảnh Lớn
 
 - Gói cuối 1.35.3: `run_all.sh` (`ANKI_PY` = aqt 26.9.3, môi trường mới) **TẤT CẢ OK**; `core/test_1353.js` 15/15 (mã 1.35.2:
   đỏ 10); Anki 26.9.3 trên gói đã giải nén: `e2e_1353` 23/23 (mã 1.35.2: đỏ 4 ở phần dây / vùng), `e2e_126` 39/39, `e2e_1303` 49/49, `e2e_123` 66/66; sau nút Ẩn vườn của Trò chơi: `e2e_117` 55/55, `e2e_1251` 49/49, `e2e_132c` 23/23, `e2e_135` 60/60, `e2e_1351` 35/35;
