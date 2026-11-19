@@ -104,7 +104,10 @@ Mọi số dưới đây chạy trên **gói đã đóng** (`kotoba_batake.ankia
 - Gói cuối (sau phần sửa Esc), Anki 26.9.4: `e2e_1354` 75/75, `e2e_1354b` 35/35, `e2e_1322` 40/40, `e2e_1332` 36/36, `e2e_134`
   87/87, `e2e_1303` 49/49, `e2e_1253` 38/39 (ca môi trường như trên). **Anki 23.10.1** (bản thấp nhất hỗ trợ): `e2e_1354` 75/75,
   `e2e_1354b` 35/35.
-- Cập nhật đè bản đã phát hành 1.31.3 → 1.35.4 (`run_capnhat.sh`): KẾT_QUẢ_CAPNHAT
+- Cập nhật đè bản đã phát hành 1.31.3 → 1.35.4 bằng trình quản lý add-on của Anki (`run_capnhat.sh`, gói 1.31.3 dựng lại từ
+  `tests/fixtures/ban_cu/e64eb22.tar.gz`): **19/19** — không mất khoá collection (12), file `user_files/` (48), xu, đồ, nhật ký,
+  sổ sinh hoạt, cài đặt ⚙; mở vườn bằng bản mới đúng số xu, Ctrl+Z trên dữ liệu cũ đúng.
+- Bộ audit giao diện (`audit_20261114/run_ui_audit.sh`, hồ sơ tạm): `e2e_128_fix` 26/26; KẾT_QUẢ_AUDIT
 
 ## 6. Việc của người dùng trước khi phát hành thứ 7
 
