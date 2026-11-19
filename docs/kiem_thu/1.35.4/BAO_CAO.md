@@ -93,8 +93,17 @@ Mọi số dưới đây chạy trên **gói đã đóng** (`kotoba_batake.ankia
 - Kịch bản cũ đổi theo cây deck: `e2e_119` (tìm deck theo tên đầy đủ; phần "tối đa 5" đổi thành "tick hết deck cha → deck con
   khoá" vì bộ deck tiếng Anh chỉ có 4 nhánh — tối đa 5 ở `e2e_1354`), `e2e_1223` (mở nhánh N4 trước khi cuộn, Esc về đúng số
   dòng của cây), `core/test_1261.py` (luật "giảm chuyển động" gộp thêm lớp mới).
-- `run_all.sh` (thêm `core/test_1354.py`): KẾT_QUẢ_RUN_ALL
-- Toàn bộ kịch bản Anki thật (3 luồng song song, mỗi kịch bản một hồ sơ mới): KẾT_QUẢ_E2E
+- `run_all.sh` (`ANKI_PY` = aqt 26.9.4; thêm `core/test_1354.py` 39/39) trên gói cuối đã giải nén: **TỔNG: TẤT CẢ OK**.
+- Toàn bộ kịch bản Anki thật, Anki 26.9.4, 3 luồng song song, mỗi kịch bản một hồ sơ mới (55 kịch bản, gói trước phần sửa Esc):
+  **2.352 / 2.357**. 5 ca trượt, đều đã xử lý: `e2e_1322` 2 ca "không tràn ngang" (khung vườn rộng bằng cửa sổ làm `scrollWidth`
+  tính cả lề dưới thanh cuộn → thêm `body { overflow-x: clip }`; gói cuối **40/40**), `e2e_1354b` 1 ca "Esc Esc thật nhanh" (gói
+  đó chưa có hàng đợi Esc — chính là bằng chứng lỗi có cả ở 26.9.4: 2/4 lần đóng nhầm cửa sổ; gói cuối **35/35**), `e2e_1332` 1 ca
+  đợi chữ "đang viết báo" 4 giây lúc máy chạy 4 Anki (gói cuối chạy riêng **36/36**), `e2e_1253` 1 ca điều kiện của môi trường test
+  ("localStorage trống sau khi tắt hẳn Anki" — để tái hiện máy người dùng; trượt y hệt trên mã 1.35.3, đã ghi là hay trượt khi
+  chạy song song).
+- Gói cuối (sau phần sửa Esc), Anki 26.9.4: `e2e_1354` 75/75, `e2e_1354b` 35/35, `e2e_1322` 40/40, `e2e_1332` 36/36, `e2e_134`
+  87/87, `e2e_1303` 49/49, `e2e_1253` 38/39 (ca môi trường như trên). **Anki 23.10.1** (bản thấp nhất hỗ trợ): `e2e_1354` 75/75,
+  `e2e_1354b` 35/35.
 - Cập nhật đè bản đã phát hành 1.31.3 → 1.35.4 (`run_capnhat.sh`): KẾT_QUẢ_CAPNHAT
 
 ## 6. Việc của người dùng trước khi phát hành thứ 7

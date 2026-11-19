@@ -201,7 +201,18 @@ ANKI_PY=~/.venv-anki/bin/python tests/anki/run_ui.sh /tmp/kb_src/kotoba_batake /
 ```
 Cần Node ≥ 22 (có sẵn `fetch` và `WebSocket`). Cổng: `KB_CDP_PORT` (9333), `KB_CTRL_PORT` (9444). `kill_anki.sh` tắt Anki đang chạy từ các script này.
 
-## Kết quả lần chạy gần nhất (bản 1.35.3, 18/11/2026 khuya) — dây trang trí ở cỡ cảnh Lớn
+## Kết quả lần chạy gần nhất (bản 1.35.4, 19/11/2026) — chuyển cảnh Tưới ↔ vườn, cây deck của báo, bảng nổi, Esc
+- `run_all.sh` (`ANKI_PY` = aqt 26.9.4, môi trường mới; thêm `core/test_1354.py` 39/39) trên gói cuối đã giải nén: **TẤT CẢ OK**.
+- Anki 26.9.4, **55 kịch bản** (mọi `e2e*.js` / `audit*.js` của `anki/` trừ những cái cần trình chạy riêng), 3 luồng `run_versions.sh`
+  `KB_SLOT=1,2,3`: 2.352 / 2.357 trên gói trước phần sửa Esc — 5 ca trượt đều đã xử lý (chi tiết `docs/kiem_thu/1.35.4/BAO_CAO.md`
+  mục 5). Gói cuối: `e2e_1354` 75/75, `e2e_1354b` 35/35, `e2e_1322` 40/40, `e2e_1332` 36/36, `e2e_134` 87/87, `e2e_1303` 49/49,
+  `e2e_1253` 38/39 (ca "localStorage trống sau khi tắt hẳn Anki" là điều kiện của môi trường, trượt y hệt trên mã 1.35.3).
+  **Lưu ý khi chạy song song**: đợt chạy trước chưa xong mà khởi chạy đợt mới trên cùng `KB_SLOT` là hai bên dùng chung cổng +
+  thư mục Anki ("Already running; reusing existing instance") → lỗi giả hàng loạt; đợi `run_versions.sh` cũ thoát hẳn.
+- Anki 23.10.1 (`uv venv --python 3.9` + `aqt[qt6]==23.10.1` + PyQt6 6.6.0): `e2e_1354` 75/75, `e2e_1354b` 35/35.
+- Venv aqt 26.9.4 cho `run_versions.sh`: `ln -s ~/.venv-anki ~/venvs/aqt-26.9.4`.
+
+## Kết quả lần chạy trước (bản 1.35.3, 18/11/2026 khuya) — dây trang trí ở cỡ cảnh Lớn
 
 - Gói cuối 1.35.3: `run_all.sh` (`ANKI_PY` = aqt 26.9.3, môi trường mới) **TẤT CẢ OK**; `core/test_1353.js` 15/15 (mã 1.35.2:
   đỏ 10); Anki 26.9.3 trên gói đã giải nén: `e2e_1353` 23/23 (mã 1.35.2: đỏ 4 ở phần dây / vùng), `e2e_126` 39/39, `e2e_1303` 49/49, `e2e_123` 66/66; sau nút Ẩn vườn của Trò chơi: `e2e_117` 55/55, `e2e_1251` 49/49, `e2e_132c` 23/23, `e2e_135` 60/60, `e2e_1351` 35/35;
