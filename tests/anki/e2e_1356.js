@@ -92,8 +92,9 @@ const uiCfg = () => py(KB + 'c = kb.config()["ui"]; result = [c["panel"]["yard"]
   await page.shot(SHOTS + '/1356_02_bao_an_vuon.png');
   ok(a1.btn === 'Hiện vườn' && a1.pressed === 'true', 'bấm → nút thành "Hiện vườn"');
   ok(!a1.yard && !a1.field, 'sân và ruộng ẩn (' + a1.mode + ')');
-  ok(a1.stage > a0.stage + 100 && a1.bottom <= a1.vh && a1.vh - a1.bottom <= 64,
-    'khung báo cao kín cửa sổ: ' + a0.stage + ' → ' + a1.stage + ' px, đáy ở ' + a1.bottom + ' / ' + a1.vh);
+  // cỡ trang (px CSS) — với ANKI_WEBSCALE = 1,25 trang nhỏ hơn cửa sổ; trang cao ≤ 1.010 px thì khung báo vốn đã kín cửa sổ
+  ok(a1.stage === Math.max(320, a1.vh - 250) && (a1.vh - 250 <= 760 || a1.stage > a0.stage + 100) && a1.bottom <= a1.vh && a1.vh - a1.bottom <= 64,
+    'khung báo cao kín cửa sổ: ' + a0.stage + ' → ' + a1.stage + ' px, đáy ở ' + a1.bottom + ' / ' + a1.vh + ' (trang ' + a1.vw + ' × ' + a1.vh + ')');
   ok(a1.docH <= a1.vh + 1, 'trang không phải cuộn (cao ' + a1.docH + ' / cửa sổ ' + a1.vh + ')');
   const kept = await js('const s = document.getElementById("kb-p-stage"), a = s.querySelector(".kb-p-art"); return JSON.stringify({ mark: !!(a && a.__kbMark), top: s.scrollTop, tab: document.querySelector(".kb-p-tab.is-on").getAttribute("data-ptab") });').then(JSON.parse);
   ok(kept.mark && kept.tab === 'issue' && Math.abs(kept.top - sc0) <= 2, 'bài đang đọc giữ nguyên: không vẽ lại, vẫn tab Báo, chỗ đang cuộn ' + sc0 + ' → ' + kept.top);
@@ -225,11 +226,12 @@ const uiCfg = () => py(KB + 'c = kb.config()["ui"]; result = [c["panel"]["yard"]
         const fullH = await js('const p = document.getElementById("kb-paper"), had = p.classList.contains("kb-p-tight"); p.classList.remove("kb-p-tight"); const h = Math.round(document.querySelector("#kb-paper .kb-game-top").getBoundingClientRect().height); p.classList.toggle("kb-p-tight", had); return h;');
         if (!s.vi && fullH <= s.topH + 1) { bad.push(tag + ': bỏ tiêu đề mà không cần (' + fullH + ' / ' + s.topH + ')'); }
         if (s.vi && s.title !== '新聞 · Báo & chép chính tả') { bad.push(tag + ': tiêu đề khác 1.35.5 ("' + s.title + '")'); }
-        if (w >= 1366 && !s.vi) { bad.push(tag + ': cửa sổ rộng mà tiêu đề bị bỏ'); }
-        if (w >= 1024 && s.topH > 40) { bad.push(tag + ': hàng trên cùng xuống dòng ở cửa sổ ' + w + ' px (' + s.topH + ')'); }
+        if (s.vw >= 1300 && !s.vi) { bad.push(tag + ': trang rộng mà tiêu đề bị bỏ'); }
+        if (s.vw >= 1000 && s.topH > 40) { bad.push(tag + ': hàng trên cùng xuống dòng ở trang ' + s.vw + ' px (' + s.topH + ')'); }
         shortT += s.vi ? 0 : 1;
-        if (w >= 1024 && s.topH > noBtn + 1) { bad.push(tag + ': nút làm hàng trên cùng cao thêm ' + noBtn + ' → ' + s.topH); }
-        if (s.topH > oldH + 1) { bad.push(tag + ': hàng trên cùng cao hơn 1.35.5 ' + oldH + ' → ' + s.topH); }
+        if (s.vw >= 1000 && s.topH > noBtn + 1) { bad.push(tag + ': nút làm hàng trên cùng cao thêm ' + noBtn + ' → ' + s.topH); }
+        // không thêm hàng (một hàng ~ 36 px; hai hàng có thể chênh vài px tuỳ hàng nào chứa các tab)
+        if (s.topH > oldH + 8) { bad.push(tag + ': hàng trên cùng cao hơn 1.35.5 ' + oldH + ' → ' + s.topH); }
         rowsCmp.push(s.topH - oldH);
         if (s.topH <= 40 && !s.sameRow) { bad.push(tag + ': hàng một dòng mà nút không cùng hàng Thoát'); }
         if (s.docW > s.vw) { bad.push(tag + ': tràn ngang ' + s.docW + ' / ' + s.vw); }
@@ -238,7 +240,8 @@ const uiCfg = () => py(KB + 'c = kb.config()["ui"]; result = [c["panel"]["yard"]
         if (!hidden && !s.yard) { bad.push(tag + ': vườn chưa hiện'); }
         if (hidden && byTab[t] && s.stage < byTab[t].stage) { bad.push(tag + ': khung báo thấp hơn khi hiện vườn ' + byTab[t].stage + ' → ' + s.stage); }
         // vườn ẩn: trang không phải cuộn, trừ phần hàng trên cùng xuống dòng (cửa sổ hẹp — như 1.35.5 khi hiện vườn)
-        if (hidden && s.docH - s.vh > Math.max(0, s.topH - 36) + 2) { bad.push(tag + ': vườn ẩn mà trang phải cuộn (' + s.docH + ' / ' + s.vh + ', hàng trên ' + s.topH + ')'); }
+        // (trang rất thấp: khung báo dừng ở mức tối thiểu 320 px — như 1.35.5)
+        if (hidden && s.docH - s.vh > Math.max(0, s.topH - 36) + Math.max(0, 320 - (s.vh - 250)) + 2) { bad.push(tag + ': vườn ẩn mà trang phải cuộn (' + s.docH + ' / ' + s.vh + ', hàng trên ' + s.topH + ')'); }
         if (!hidden) { byTab[t] = s; }
         if (t === 'issue' || (t === 'src' && w === 800)) { console.log('      ' + tag + ': hàng trên ' + s.topH + ' px (bỏ nút: ' + noBtn + ', 1.35.5: ' + oldH + '), khung ' + s.stage + ' px, đáy ' + s.bottom + ' / ' + s.vh + ', trang ' + s.docH + (s.vi ? '' : ', bỏ tiêu đề') + (s.sameRow ? '' : ', nút xuống dòng')); }
       }
@@ -246,7 +249,7 @@ const uiCfg = () => py(KB + 'c = kb.config()["ui"]; result = [c["panel"]["yard"]
     }
     await js('GardenPaper.close(); return 1;'); await sleep(300);
   }
-  console.log('      hàng trên cùng so với 1.35.5: thấp hơn ở ' + rowsCmp.filter((d) => d < -1).length + ' tổ hợp, bằng ở ' + rowsCmp.filter((d) => Math.abs(d) <= 1).length + ', cao hơn ở ' + rowsCmp.filter((d) => d > 1).length + '; bỏ tiêu đề ở ' + shortT + ' tổ hợp');
+  console.log('      hàng trên cùng so với 1.35.5: thấp hơn ở ' + rowsCmp.filter((d) => d < -1).length + ' tổ hợp, bằng ở ' + rowsCmp.filter((d) => Math.abs(d) <= 1).length + ', cao hơn ở ' + rowsCmp.filter((d) => d > 8).length + '; bỏ tiêu đề ở ' + shortT + ' tổ hợp; cùng số hàng nhưng cao hơn vài px ở ' + rowsCmp.filter((d) => d > 1 && d <= 8).length);
   ok(bad.length === 0, cnt + ' tổ hợp cỡ cửa sổ × ẩn / hiện × tab: nút trong hàng trên, không thêm hàng, không tràn ngang' + (bad.length ? ' — ' + bad.slice(0, 6).join(' | ') : ''));
 
   // ---------------- F. dòng chú thích của ruộng ("Đang hiện N/M từ") ----------------

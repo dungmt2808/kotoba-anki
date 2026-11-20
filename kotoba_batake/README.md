@@ -130,8 +130,9 @@ Sau khi trả lời có hiện cách đọc, Hán Việt, nghĩa (và cách dùn
   cũng ẩn và ngược lại (`ui.js` `QUICK`, `togglePanel`). Vườn ẩn thì khung báo cao kín cửa sổ (`garden.css`: `.kb-p-stage`
   `max(320px, 100vh − 250px)`, bình thường tối đa 760 px); bài đang đọc không vẽ lại, giữ chỗ đang cuộn; bấm nút không lấy
   con trỏ khỏi ô gõ chép chính tả.
-- Hàng trên cùng của tab Báo vừa khít ở cửa sổ 1024 px (thừa 2 px) → thêm nút là xuống dòng: nay hàng sắp xuống dòng thì
-  tiêu đề chỉ còn 新聞 (`paper.js fitTop` đo thật — font giao diện là font của máy; rút gọn mà vẫn không vừa thì giữ tiêu đề đủ).
+- Hàng trên cùng của tab Báo vừa khít ở cửa sổ 1024 px (thừa 2 px) → thêm nút là xuống dòng: nay bỏ tiêu đề bảng (lớp
+  `kb-p-tight`) khi nhờ đó hàng bớt được một hàng — các tab đã ghi "Báo / Chép chính tả / Kệ báo / Nguồn báo" (`paper.js fitTop`
+  đo thật — font giao diện là font của máy; không tách chữ tiêu đề vì `glang.js` dịch nguyên cụm "新聞 · …").
 - Dòng "Đang hiện N/M từ…" / "Deck này chưa có thẻ…" (chú thích của ruộng, `#kb-note`) ẩn theo ruộng: trước đây còn nằm
   dưới bảng Báo / Trò chơi / bảng ôn lúc Ẩn vườn → trang dài hơn cửa sổ 22–40 px.
 - Không đổi lưu trữ / config (giá trị `ui.panel.yard / field = "hide"` đã có từ 1.14).

@@ -208,7 +208,18 @@ ANKI_PY=~/.venv-anki/bin/python tests/anki/run_ui.sh /tmp/kb_src/kotoba_batake /
 ```
 Cần Node ≥ 22 (có sẵn `fetch` và `WebSocket`). Cổng: `KB_CDP_PORT` (9333), `KB_CTRL_PORT` (9444). `kill_anki.sh` tắt Anki đang chạy từ các script này.
 
-## Kết quả lần chạy gần nhất (bản 1.35.5, 19/11/2026 tối) — sửa lỗi audit 19/11, kiểm tra lần cuối
+## Kết quả lần chạy gần nhất (bản 1.35.6, 20/11/2026) — nút Ẩn vườn trên bảng Báo
+- `run_all.sh` (`ANKI_PY` = aqt 26.9.4) trên gói đã giải nén: **74 bộ, TẤT CẢ OK** (`core/test_1356.py` 23/23, `core/test_1356.js`
+  15/15). Lần chạy đầu đỏ `core/test_132.py` (glang): tiêu đề Báo bị tách thành "新聞" + phần chữ Việt → Ngôn ngữ trong vườn
+  không dịch được → đổi cách (bỏ cả tiêu đề, không tách chữ).
+- Anki 26.9.4, **58 kịch bản**, 3 luồng `run_versions.sh`: **2.427 / 2.428** (ca trượt `e2e_1253` localStorage — điều kiện môi
+  trường, như 1.35.5). `e2e_1356` 36/36, `e2e_1356b` 16/16; `ANKI_WEBSCALE=1.25`: `e2e_1355z` 10/10, `e2e_1356` 36/36,
+  `e2e_1356b` 16/16 (kiểm theo cỡ trang `innerWidth / innerHeight`, không theo cỡ cửa sổ); `audit.js` 91 màn hình giống hệt
+  1.35.5; `audit_20261114/run_ui_audit.sh` 26 + 191 + 18 + 7 đạt hết; Anki 23.10.1: `e2e_1356` 36/36, `e2e_1356b` 16/16,
+  `e2e_1353` 23/23, `e2e_1354` 75/75, `e2e_1354b` 35/35, `e2e_1355` 25/25; `dong_bo/run_e2e.sh` 47/47; `run_capnhat.sh`
+  1.31.3 → 1.35.6: 19/19.
+
+## Kết quả lần chạy trước (bản 1.35.5, 19/11/2026 tối) — sửa lỗi audit 19/11, kiểm tra lần cuối
 - `run_all.sh` (`ANKI_PY` = aqt 26.9.4, `KB_OLD_1354` = mã 1.35.4) trên mã cuối: **TẤT CẢ OK** (`core/test_1355.py` 66/66).
 - Anki 26.9.4, 57 kịch bản, 3 luồng `run_versions.sh`: 2.391 / 2.392 (ca trượt: `e2e_1253` "localStorage trống sau khi mở lại"
   — điều kiện môi trường, như 1.35.4). `e2e_1355` 25/25; `e2e_1355z` (`ANKI_WEBSCALE=1.25`) 10/10; `dong_bo/run_e2e.sh` 47/47;
