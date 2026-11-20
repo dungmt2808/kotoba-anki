@@ -318,9 +318,27 @@ var GardenPaper = (function () {
     }
   }
 
+  // 1.35.6: thêm nút Ẩn vườn → hàng trên cùng của tab Báo cần ~1.044 px (đo bằng font của máy test; font giao diện là font
+  // của máy người dùng nên đo thật, không đặt ngưỡng cố định). Bỏ tiêu đề mà hàng thấp đi (bớt được một hàng) thì bỏ — các
+  // tab ngay cạnh đã ghi "Báo", "Chép chính tả"; không thấp đi (vừa một hàng, hoặc cửa sổ rất hẹp) thì giữ như 1.35.5.
+  // Không tách chữ tiêu đề (glang.js dịch nguyên cụm "新聞 · Báo & chép chính tả")
+  function fitTop() {
+    const p = $("kb-paper");
+    if (!p || p.hidden) { return; }
+    const top = p.querySelector(".kb-game-top");
+    if (!top) { return; }
+    p.classList.remove("kb-p-tight");
+    const full = top.getBoundingClientRect().height;
+    p.classList.add("kb-p-tight");
+    if (top.getBoundingClientRect().height > full - 4) { p.classList.remove("kb-p-tight"); }
+  }
+
   function furiButton() {
     const fb = $("kb-p-furi");       // chỉ có nghĩa ở bài báo và câu chép tiếng Nhật
     if (!fb) { return; }
+    try { furiSet(fb); } finally { fitTop(); }
+  }
+  function furiSet(fb) {
     const issueLang = issue && tab === "issue" ? issue.lang || "ja" : paperLang();
     const lg = tab === "issue" ? issueLang : dictLang();
     fb.hidden = !((tab === "issue" || tab === "dict") && (lg === "ja" || lg === "zh"));
@@ -1341,6 +1359,9 @@ var GardenPaper = (function () {
   function dichButton() {
     const b = $("kb-p-dich");
     if (!b) { return; }
+    try { dichSet(b); } finally { fitTop(); }
+  }
+  function dichSet(b) {
     const v = tab === "issue" ? issue : null;
     $("kb-paper").classList.toggle("kb-p-showdich", showDich);
     if (!v || (!v.has_dich && !v.can_dich)) { b.hidden = true; return; }
@@ -1648,7 +1669,11 @@ var GardenPaper = (function () {
         p.classList.toggle("kb-p-nofuri");
         const word = /pinyin/.test(e.currentTarget.textContent) ? "pinyin" : "furigana";
         e.currentTarget.textContent = (p.classList.contains("kb-p-nofuri") ? "Hiện " : "Ẩn ") + word;
+        fitTop();
       });
+      window.addEventListener("resize", fitTop);
+      window.addEventListener("kb-ui-change", fitTop);       // nút Ẩn vườn ↔ Hiện vườn đổi bề rộng
+      if (typeof GardenLang !== "undefined" && GardenLang.onChange) { GardenLang.onChange(fitTop); }   // tiêu đề đổi tiếng
       stage().addEventListener("click", (e) => {
         const w = e.target.closest ? e.target.closest(".kb-p-w") : null;
         if (w) { showWord(w.getAttribute("data-k")); }
