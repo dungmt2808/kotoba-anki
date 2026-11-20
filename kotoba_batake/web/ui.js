@@ -110,7 +110,9 @@ var GardenUI = (function () {
   // nút nhanh trên bảng ôn: ẩn / hiện sân + ruộng khi ôn thẻ; 1.34: Phóng to (chỉ còn thẻ + nút chấm)
   // 1.35.3 (người dùng: "cho lựa chọn giống bên thẻ học đi, chỉ ẩn vườn, hiện vườn thôi"): nút y hệt trên bảng Trò chơi —
   // đổi Sân + Ruộng của chế độ "Trò chơi & báo" (⚙ → Giao diện), vườn ẩn thì vùng chơi cao kín cửa sổ (garden.css)
-  const QUICK = [["kb-rv-garden", "review"], ["kb-g-garden", "panel"]];
+  // 1.35.6 (người dùng 19/11: "thêm phần báo có mục ẩn vườn, hiện vườn"): nút thứ ba trên bảng Báo, cùng chế độ "Trò chơi & báo"
+  // nên ẩn ở Báo thì Trò chơi cũng ẩn (và ngược lại) — hai nút luôn cùng chữ
+  const QUICK = [["kb-rv-garden", "review"], ["kb-g-garden", "panel"], ["kb-p-garden", "panel"]];
   function quickHidden(m) { return get("yard", m) === "hide" && get("field", m) === "hide"; }
   function syncQuick() {
     QUICK.forEach(([id, m]) => {
@@ -383,8 +385,10 @@ var GardenUI = (function () {
       if (op) { op.addEventListener("click", () => { const pop = $("kb-sound-pop"); if (pop) { pop.hidden = true; } open(); }); }
       const q = $("kb-rv-garden");
       if (q) { q.addEventListener("mousedown", (e) => e.preventDefault()); q.addEventListener("click", toggleQuick); }
-      const qg = $("kb-g-garden");
-      if (qg) { qg.addEventListener("mousedown", (e) => e.preventDefault()); qg.addEventListener("click", togglePanel); }
+      ["kb-g-garden", "kb-p-garden"].forEach((id) => {
+        const qg = $(id);       // mousedown không lấy focus: đang gõ chép chính tả thì ô gõ vẫn giữ con trỏ
+        if (qg) { qg.addEventListener("mousedown", (e) => e.preventDefault()); qg.addEventListener("click", togglePanel); }
+      });
       const z = $("kb-rv-zoom");
       if (z) { z.addEventListener("mousedown", (e) => e.preventDefault()); z.addEventListener("click", () => toggleZoom()); }
       document.addEventListener("keydown", (e) => {

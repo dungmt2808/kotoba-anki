@@ -1071,6 +1071,9 @@ button { cursor: pointer; }
 .kb-paper { gap: 8px; }
 .kb-p-tabs { display: flex; gap: 6px; align-self: flex-end; }
 .kb-p-tab { border-bottom-width: 3px; }
+/* 1.35.6: hàng trên cùng xuống dòng mà bỏ tiêu đề thì bớt được một hàng (paper.js fitTop) → bỏ tiêu đề; các tab ngay cạnh đã
+   ghi "Báo", "Chép chính tả", "Kệ báo", "Nguồn báo". Không tách chữ tiêu đề: glang.js dịch nguyên cụm "新聞 · …" */
+.kb-paper.kb-p-tight > .kb-game-top > .kb-g-title { display: none; }
 .kb-paper .kb-g-hud .kb-btn-small { margin-left: 0; }
 .kb-paper-btn { background: var(--kb-paper, #ffffff); }
 .kb-paper-new { background: #ff7fa0; color: #ffffff; }
@@ -1544,6 +1547,9 @@ button { cursor: pointer; }
 .kb-ui-yard-dim #kb-yard { opacity: 0.38; filter: grayscale(0.55); }
 .kb-ui-field-dim #kb-field, .kb-ui-field-dim #kb-legend { opacity: 0.38; filter: grayscale(0.55); }
 .kb-ui-field-hide #kb-field, .kb-ui-field-hide #kb-legend, .kb-ui-field-hide #kb-joy { display: none !important; }
+/* 1.35.6: dòng "Đang hiện N/M từ…" / "Deck này chưa có thẻ…" là chú thích của ruộng — ruộng ẩn thì ẩn theo. Trước đây dòng này
+   còn nằm dưới bảng Báo / Trò chơi / bảng ôn lúc "Ẩn vườn" (deck nhiều từ hơn số cây) → trang dài hơn cửa sổ 22–40 px, phải cuộn */
+.kb-ui-field-hide #kb-note { display: none !important; }
 .kb-ui-field-hide.kb-ui-yard-hide .kb-legend-row { display: none !important; }
 /* khi ôn thẻ / mở trò chơi, báo: "ẩn" là ẩn cả khung sân */
 .kb-ui-m-review.kb-ui-yard-hide #kb-yard-wrap, .kb-ui-m-panel.kb-ui-yard-hide #kb-yard-wrap { display: none !important; }
@@ -1594,6 +1600,8 @@ button { cursor: pointer; }
 .kb-rv-garden[aria-pressed="true"] { background: #c8f7d2; }
 /* 1.35.3: Trò chơi → Ẩn vườn: vùng chơi cao kín cửa sổ (bình thường tối đa 720 px để còn thấy vườn bên dưới) */
 .kb-ui-m-panel.kb-ui-yard-hide.kb-ui-field-hide #kb-game .kb-g-stage { height: max(320px, calc(100vh - 210px)); }
+/* 1.35.6: Báo → Ẩn vườn: khung báo cao kín cửa sổ (bình thường tối đa 760 px) */
+.kb-ui-m-panel.kb-ui-yard-hide.kb-ui-field-hide #kb-paper .kb-p-stage { height: max(320px, calc(100vh - 250px)); }
 
 /* bảng Giao diện */
 .kb-ui-stage { overflow-y: auto; padding: 10px 14px; background: var(--kb-paper); }
