@@ -1,6 +1,72 @@
-# Kế hoạch 1.36 — Giáng sinh: tủ lịch 24 ngăn, sân sáng đèn, cây thông được tặng đầy dần, thiệp điều ước (18–19/11; **bản chốt 19/11 — kế hoạch mã ở `KE_HOACH_MA.md`, chưa làm**)
+# Kế hoạch 1.36 — Giáng sinh: tủ lịch 24 ngăn, cây thông đầy dần, sân sáng đèn, thiệp, nhạc Giáng sinh (18–23/11; **bản gộp chốt 23/11 — đang làm**)
 
-## BẢN CHỐT (19/11) — người dùng: "tớ thấy cũng ổn rồi á" sau bản 5
+## BẢN GỘP CHỐT (23/11) — gộp bản chốt 19/11 + ảnh phác 21/11, người dùng duyệt
+
+Người dùng 23/11, sau khi xem trang đánh giá (https://claude.ai/artifact/P6NVHU5gYGdab6uKbNC78P — ảnh cả hai bản, nhận xét từng
+phần): "lấy cái hay của cả hai" → góp ý ("tủ lịch bắt buộc phải treo", "không thích phần tuyết của mái nhà lắm", "phải cần mua
+bàn hả", "nhạc giáng sinh … thêm option đổi nhạc … mấy bài không có bản quyền") → **"đồng ý hết, đối với các câu hỏi thì đề xuất
+nào tốt nhất bạn cứ tự chọn, ghi lại, dây treo thiệp có thể bỏ"**. Mục này thay mọi chỗ khác nhau ở phần dưới (bản chốt 19/11 và
+các bản trước giữ lại để biết vì sao đổi). Đánh dấu **(Claude chọn)** là câu người dùng giao cho Claude.
+
+### Luật
+- **Mở ngăn của ngày d** (1–24/12, ngày Anki qua 4h sáng): ngày d có **ít nhất 1 lượt ôn** (revlog — ôn trên điện thoại cũng tính)
+  **hoặc ngày d đã dùng vé giữ chuỗi** (Claude chọn). Không mở trước ngày. Ngăn của ngày đã qua mà đủ điều kiện = "chờ mở", mở lúc
+  nào cũng được tới hết 31/12 (ai cập nhật muộn sau 1/12 không mất ngăn).
+- **Lỡ ngày** (không ôn, không vé): mỗi 15 lượt ôn trong một ngày mở bù 1 ngăn, tối đa 2 ngăn bù / ngày, tới hết 31/12.
+- **Quà**: chỉ đồ trang trí, giữ làm kỷ niệm; **không có xu** (Claude chọn); không chuỗi, không đếm ngược. Món mở ra cũng thành
+  sticker cho thiệp (1.36.1).
+- **Tủ lịch không bắt buộc treo**: ngày 1/12 vườn tự treo ở tường phòng khách nếu còn chỗ, không thì nằm trong Kho đồ. Mở ngăn luôn
+  được từ **chip Giáng sinh (nhãn "Sự kiện")** hoặc **dòng trong thẻ Hôm nay** (lấy từ ảnh phác 21/11); cất tủ vào kho cũng được.
+- **Tắt được**: ⚙ → "Sự kiện mùa: Bật / Tắt" (config `season_event`); tắt thì không tặng, không vẽ, dữ liệu giữ nguyên.
+
+### 24 ngăn (bản gộp)
+| Ngày | Ngăn | | Ngày | Ngăn | | Ngày | Ngăn |
+|---|---|---|---|---|---|---|---|
+| 1 | Nhà · vòng hoa cửa + nơ đỏ hai đèn lồng | | 9 | Cây · quả châu xanh | | 17 | Sân · người tuyết |
+| 2 | Cây · quả châu đỏ | | 10 | Cây · dây đèn | | 18 | Trong nhà · đèn ngủ ngôi sao |
+| 3 | Trong nhà · cây thông nhỏ để bàn | | 11 | Trong nhà · bánh kem dâu クリスマスケーキ | | 19 | Cây · thêm quả châu đỏ |
+| 4 | Cây · quả châu vàng | | 12 | Cây · quả châu tím | | 20 | **Hộp quà bí mật** 3 (đèn lồng ngôi sao) |
+| 5 | Trong nhà · tất Noel | | 13 | **Hộp quà bí mật** 2 (gấu bông Noel) | | 21 | Sân · dây đèn võng qua sân, tuần lộc đèn, sao trên mái |
+| 6 | **Hộp quà bí mật** 1 (quả cầu tuyết) | | 14 | Sân · đèn lối đi, nến cửa sổ, cây + món cao quấn đèn | | 22 | Cây · kẹo gậy |
+| 7 | Nhà · dây lá thông + nơ đỏ dọc mép mái, đèn viền mái, đèn rủ dưới mái | | 15 | Trong nhà · bộ sàn Noel (2 mẫu) | | 23 | Trong nhà · **bàn nhỏ bánh quy + sữa** |
+| 8 | Trong nhà · bộ tường Noel (3 mẫu) | | 16 | Cây · dây kim tuyến | | 24 | Cây · **ngôi sao** |
+
+Đổi so với 19/11: ngăn 3 (hộp nhạc → cây thông nhỏ để bàn), 7 (bỏ mái tuyết + cột băng), 14 / 17 / 21 (người tuyết sang ngăn 17
+thay ô tự vẽ 8 × 8), 23 (bàn nhỏ có sẵn khay — **không cần mua bàn**; ảnh phác vẽ trên kotatsu 260 xu chỉ để minh hoạ).
+
+### Hình
+- **Nhà: bỏ mái tuyết dày** (người dùng "chưa thấy đẹp") và **cột băng trắng** → **đèn rủ dưới mái** (ban ngày tắt, ban đêm sáng).
+  Áo nhà = vòng hoa cửa, dây lá thông + nơ dọc mép mái, đèn viền mái, nến cửa sổ, sao trên mái. Minka / nhà trà / lâu đài: đèn viền
+  mái + vòng hoa cửa. **Giữ vạch trắng mảnh dọc mép mái** của giao diện Giáng sinh / Mùa đông đang có (Claude chọn; ảnh
+  `ban6/mai_1356_hien_tai.png` — vẽ bằng mã 1.35.6 thật, `tests/anki/mock_136_mai.js`).
+- **Sân sáng đèn, bản gọn**: chỉ quấn đèn cây thông + món cao (không quấn mọi món); dây võng, đèn lối đi, tuần lộc đèn. Đèn tính sẵn
+  khi đồ trên sân đổi, nhấp nháy chậm; Dịu mắt / tắt hiệu ứng → đứng yên (issue #7: vườn đã nặng CPU trên một số máy). Ban ngày chỉ
+  thấy dây đèn tắt.
+- Cây thông được tặng trơn → đầy dần bằng đúng các món vẽ sẵn của `xmastree`; 3 hộp quà dưới gốc, lắc nghe đoán, mở sáng 25.
+
+### Nhạc Giáng sinh (thay hộp nhạc học dần)
+⚙ → Âm thanh, khi giao diện Giáng sinh đang bật: **Nhạc vườn Noel** (đang có) · Jingle Bells · Silent Night (きよしこの夜) · We Wish
+You a Merry Christmas · Deck the Halls · O Tannenbaum · Joy to the World · The First Noel · **Đổi bài mỗi ngày**. Giai điệu hết bản
+quyền, tự phối 8-bit bằng `music.js`, không dùng bản thu của ai. Không dùng bài còn bản quyền (Rudolph / 赤鼻のトナカイ, Last
+Christmas, All I Want for Christmas Is You, Let It Snow, Santa Claus Is Comin' to Town, あわてんぼうのサンタクロース). Lưu ở
+cài đặt riêng máy (`prefs` khoá `kb-music-noel`, bản 1.35.6 giữ được) — không thêm mục config. Đêm 24 phát Silent Night (1.36.1).
+
+### Thiệp (1.36.1)
+Một xưởng thiệp (ảnh phác 21/11 `docs/ke_hoach_thiep_to_mau/t2_xuong_thiep.jpg`): thiệp ngang 120 × 80, 4 khung, sticker (6 có sẵn +
+món đã mở ở tủ lịch), lời chúc 2 dòng + câu chúc 6 tiếng; **mặt sau "Điều ước"** (19/11, tiếng Việt hoặc tiếng đang học, "Nhờ Gemini
+sửa" khi bấm); hai cách dùng: **Treo lên cây cho ông già Noel** (sửa tới 18:00 ngày 24) và **Lưu ảnh PNG** (có chữ ことば畑 nhỏ ở góc
+dưới — Claude chọn) / **Chép mã** gửi bạn. **Bỏ dây treo thiệp** (người dùng). Nhận thiệp bằng mã: nếu kịp, xem ở Album → Kỷ niệm.
+
+### Chia bản
+| Bản | Nội dung |
+|---|---|
+| **1.36** (~30/11 – 2/12) | tủ lịch + mở ngăn / mở bù / ngăn mai hé bóng, **đủ 24 ngăn** (mọi món, kể cả tường / sàn Noel ngăn 8 / 15 và bàn bánh quy ngăn 23 dạng thường), cây đầy dần, 3 hộp quà (lắc), áo nhà, sân sáng đèn gọn, chip "Sự kiện" + dòng Hôm nay + Tin làng, ⚙ Sự kiện mùa, **chọn nhạc Giáng sinh**, giả ngày cho admin xem trước, test giữ dữ liệu (cài đè 1.31.3, hạ bản, đồng bộ thật) |
+| **1.36.1** (trước ~15/12) | xưởng thiệp + điều ước + PNG / mã, đêm 24 (ông già Noel, Silent Night), sáng 25 (mở hộp quà, quả cầu tuyết, thư viết sẵn, bánh quy còn vụn), cất đồ 1/1, Kỷ niệm Giáng sinh 2026 ở Album; nếu kịp: nhận thiệp bằng mã |
+| Sau Noel | Tô tranh theo số (`docs/ke_hoach_thiep_to_mau/`), ảnh kỷ niệm tự chụp đêm 24 |
+
+---
+
+## BẢN CHỐT (19/11) — thay bằng bản gộp 23/11 ở trên — người dùng: "tớ thấy cũng ổn rồi á" sau bản 5
 
 Gom bản 3 (tủ lịch, cây thông được tặng, hộp quà, hộp nhạc, bánh + sữa, tường / sàn) + bản 4 (sân sáng đèn, hết Noel) + bản 5
 (sân đã có đồ) + thiệp / ông già Noel / sáng 25 của bản 2. Các điểm còn để ngỏ **Claude chọn** (ghi rõ dưới đây), người dùng
