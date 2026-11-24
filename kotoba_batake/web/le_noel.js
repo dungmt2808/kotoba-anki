@@ -319,7 +319,9 @@ var GardenLeNoel = (function () {
     if (document.hidden) { return false; }
     const g = $("kb-greet"), tr = $("kb-trans");
     if ((g && !g.hidden && g.offsetParent !== null) || (tr && tr.offsetParent !== null && getComputedStyle(tr).display !== "none" && tr.style.opacity !== "0")) { return false; }
-    const busy = ["kb-panel", "kb-game", "kb-home", "kb-paper", "kb-cal", "kb-ui", "kb-fields", "kb-le-pop", "kb-le-cardpop", "kb-le-letter", "kb-le-packpop", "kb-le-show"]
+    // 1.36.2 (audit #10b): + bảng nổi ở màn chính (⚙, cây deck, Tin làng, nhiệm vụ, gánh hàng, chụp ảnh) — không bật cảnh đè lên
+    const busy = ["kb-panel", "kb-game", "kb-home", "kb-paper", "kb-cal", "kb-ui", "kb-fields", "kb-le-pop", "kb-le-cardpop", "kb-le-letter", "kb-le-packpop", "kb-le-show",
+      "kb-sound-pop", "kb-deck-pop", "kb-news-pop", "kb-quest-pop", "kb-ped-pop", "kb-snap-pop"]
       .some((id) => { const e = $(id); return e && !e.hidden; });
     if (busy) { return false; }
     if (typeof GardenUI !== "undefined" && GardenUI.asking && GardenUI.asking()) { return false; }
@@ -354,7 +356,8 @@ var GardenLeNoel = (function () {
       ["kb-le-letter", "kb-le-packpop"].forEach((id) => { const p = $(id); if (p) { p.hidden = true; } });
       return;
     }
-    if (v.welcome && v.welcome.pack && packShown !== v.today) { packWait = v.welcome.pack; }
+    // 1.36.2 (audit #17a): không có gì để cất (chỉ nhận quà mở mùa) → không bật bảng danh sách trống (sổ vẫn ghi đã cất)
+    if (v.welcome && v.welcome.pack && packShown !== v.today && packLines(v.welcome.pack).length) { packWait = v.welcome.pack; }
     if (pending() && !autoTimer) { autoStart = Date.now(); autoTimer = setTimeout(tick, 1200); }
   }
 
@@ -498,6 +501,7 @@ var GardenLeNoel = (function () {
     } else if (res.act === "rcode" || (res.act === "code" && !(typeof GardenLeCard !== "undefined" && GardenLeCard.isOpen()))) {
       if (H && H.toast) { H.toast(res.ok ? (res.copied ? "Đã chép mã thiệp — dán gửi bạn nhé." : "Mã thiệp: " + res.code) : (res.msg || "Không chép được."), null, 5000); }
     } else if (res.act === "seen" || res.act === "read") {
+      if (res.act === "seen" && !res.ok) { seenSent = ""; }      // 1.36.2: chưa ghi được (đang đồng bộ) → lần xem sau gửi lại
       if (typeof GardenHome !== "undefined" && GardenHome.albumView && GardenHome.albumView() === "le") { refresh(); }
     }
   }

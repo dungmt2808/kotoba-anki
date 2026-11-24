@@ -352,7 +352,7 @@ input[type="radio"], input[type="checkbox"], input[type="range"] { accent-color:
   box-shadow: 4px 4px 0 var(--kb-ink);
   padding: 8px 16px;
   font-size: 17px;
-  z-index: 5;
+  z-index: 295;          /* 1.36.2 (audit #08): trên bảng nổi (thiệp, tủ lịch 65, cảnh đêm 24 280), dưới màn chào (300) / hộp hỏi */
 }
 
 /* =====================================================================

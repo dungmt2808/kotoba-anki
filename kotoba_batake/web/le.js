@@ -595,6 +595,10 @@ var GardenLe = (function () {
   }
   // 1.36.1: lệnh của thiệp / ông già Noel / Album (le_card.js, le_noel.js tự gửi — không tính vào chống bấm đúp của tủ lịch)
   const LATER = { card: 1, cdel: 1, hang: 1, fix: 1, fixed: 1, code: 1, seen: 1, read: 1, recv: 1, rdel: 1, rpeek: 1, rcode: 1 };
+  // 1.36.2 (audit #09): tủ lịch tự treo sang Bếp / Phòng ngủ khi tường phòng chính kín chỗ — báo đúng chỗ
+  function whereName(scene) {
+    return { room: "tường phòng khách", kitchen: "tường Bếp", bedroom: "tường Phòng ngủ", yard: "sân" }[scene] || "sân";
+  }
   function result(res) {
     if (res && LATER[res.act]) {
       const d0 = data();
@@ -624,7 +628,7 @@ var GardenLe = (function () {
       const x = res.door, v = le(), dv = v && v.doors ? v.doors[x.d - 1] : x;
       sfx("stage");
       if (typeof GardenFX !== "undefined" && GardenFX.mood) { GardenFX.mood("happy", 1800); }
-      const placed = (res.placed || []).map((p) => itemName(p.id) + (p.scene === "room" ? " (tường phòng khách)" : " (sân)"));
+      const placed = (res.placed || []).map((p) => itemName(p.id) + " (" + whereName(p.scene) + ")");
       let line = x.makeup ? "Mở bù · " : "";
       if (x.kind === "qua") { line += "Hộp quà đặt dưới gốc cây — lắc thử đoán xem, mở từ sáng 25/12."; }
       else if (placed.length) { line += "Đã bày: " + placed.join(", ") + "."; }
@@ -644,7 +648,7 @@ var GardenLe = (function () {
     } else if (res.act === "auto") {
       sfx("coin");
       const p = (res.placed || [])[0];
-      msg = p ? "Đã bày " + itemName(p.id) + (p.scene === "room" ? " lên tường phòng khách." : " ra sân.") : "";
+      msg = p ? "Đã bày " + itemName(p.id) + (p.scene === "yard" ? " ra sân." : " lên " + whereName(p.scene) + ".") : "";
     }
     render(); sync();
   }
@@ -742,8 +746,9 @@ var GardenLe = (function () {
     if (v && v.welcome && v.welcome.welcome && welcomed !== v.today) {
       welcomed = v.today;
       const pl = (v.welcome.placed || []).map((p) => p.id);
+      const tl = (v.welcome.placed || []).filter((p) => p.id === "le_tulich")[0];
       const where = [];
-      where.push(pl.indexOf("le_tulich") >= 0 ? "tủ lịch treo ở phòng khách" : "tủ lịch ở Kho đồ");
+      where.push(tl ? "tủ lịch treo ở " + whereName(tl.scene) : "tủ lịch ở Kho đồ");
       if ((v.welcome.give || {}).xmastree || pl.indexOf("xmastree") >= 0) { where.push(pl.indexOf("xmastree") >= 0 ? "cây thông ở sân" : "cây thông ở Kho đồ"); }
       if (H && H.toast) { H.toast("[i:gift] Lịch chờ Giáng sinh mở rồi! Quà tặng: " + where.join(", ") + " · bấm “Tủ lịch” để mở ngăn.", null, 7000); }
     }

@@ -164,7 +164,7 @@ def clean_ev(raw: Any) -> dict[str, Any]:
         if not (isinstance(k, str) and k.isdigit() and str(int(k)) == k and int(k) in DOORS and isinstance(v, dict)):
             continue
         d = _iso(v.get("d"))
-        if d is None or d < door_date(int(k)):
+        if d is None or d < door_date(int(k)) or d > END:      # 1.36.2 (audit #17d): ngăn chỉ mở được 1/12 – 31/12
             continue
         out["open"][k] = {"d": d.isoformat(), "b": 1 if v.get("b") in (1, True) else 0}
     bu = raw.get("bu") if isinstance(raw.get("bu"), dict) else {}
@@ -177,7 +177,7 @@ def clean_ev(raw: Any) -> dict[str, Any]:
             out["gift"][k] = gift[k]
     box = raw.get("box") if isinstance(raw.get("box"), dict) else {}
     for k, v in box.items():
-        if isinstance(k, str) and k.isdigit() and str(int(k)) == k and int(k) in BOX_DOORS and _iso(v):
+        if isinstance(k, str) and k.isdigit() and str(int(k)) == k and int(k) in BOX_DOORS and _iso(v) and _iso(v) >= BOX_DAY:
             out["box"][k] = v
     _clean_more(raw, out)
     return out
@@ -206,7 +206,20 @@ def merge_ev(a: dict[str, Any], b: dict[str, Any]) -> dict[str, Any]:
         if k not in out["box"] or v < out["box"][k]:
             out["box"][k] = v
     _merge_more(out, other)
+    # 1.36.2 (audit #15): gộp theo hợp làm sống lại ngày cũ vừa cắt (trim / fix_mark) → cắt lại sau khi gộp, tính từ ngày mới
+    # nhất của chính sổ (không cần biết hôm nay; gộp A + B = B + A)
+    out["bu"] = _keep_recent(out["bu"], KEEP_BU)
+    if out.get("fixn"):
+        out["fixn"] = _keep_recent(out["fixn"], FIX_KEEP)
     return out
+
+
+def _keep_recent(m: dict[str, Any], days: int) -> dict[str, Any]:
+    if not m:
+        return m
+    hi = _iso(max(m))
+    lo = (hi - _dt.timedelta(days=days)).isoformat() if hi else ""
+    return {d: n for d, n in m.items() if d >= lo}
 
 
 def trim(ev: dict[str, Any], today: _dt.date) -> None:
@@ -568,6 +581,7 @@ STICKERS_MAX = 12
 RECV_MAX = 12            # thiệp nhận (còn giữ) tối đa
 RECV_KEEP = 24           # kể cả dấu "đã xoá" (để máy khác không trả lại thiệp đã xoá)
 FIX_PER_DAY = 5          # "Nhờ Gemini sửa" điều ước: số lần / ngày
+FIX_KEEP = 3             # sổ lượt nhờ sửa giữ 3 ngày
 CODE_PREFIX = "KBC1:"
 CODE_MAX = 6000
 # 1/1: cất vào Kho đồ (đèn sân của bộ Giáng sinh + đồ ăn); tủ lịch, tất, đèn ngủ, quả cầu tuyết, gấu bông… bày quanh năm
@@ -758,6 +772,8 @@ def _clean_more(raw: dict[str, Any], out: dict[str, Any]) -> None:
             ent: dict[str, Any] = {"k": k, "at": e["at"]}
             if gone:
                 ent["x"] = 1
+            if _dtp(e.get("t")):          # 1.36.2: lúc giữ / xoá (tới giây) — gộp hai bản theo lần thao tác sau
+                ent["t"] = e["t"]
             lst.append(ent)
         if lst:
             out["recv"] = _trim_recv(lst)
@@ -787,6 +803,13 @@ def _newer(y: Any, x: Any) -> bool:
     if ay != ax:
         return ay > ax
     return json.dumps(y, sort_keys=True, ensure_ascii=False) > json.dumps(x, sort_keys=True, ensure_ascii=False)
+
+
+def _recv_newer(y: dict[str, Any], x: dict[str, Any]) -> bool:
+    ty, tx = y.get("t") or "", x.get("t") or ""
+    if ty != tx:
+        return ty > tx
+    return json.dumps(y, sort_keys=True) > json.dumps(x, sort_keys=True)
 
 
 def _first(sa: dict[str, Any]) -> str:
@@ -823,7 +846,12 @@ def _merge_more(out: dict[str, Any], other: dict[str, Any]) -> None:
         out["pack"] = pb
     prv = other.get("prev")
     if prv:
-        out["prev"] = dict(prv, **(out.get("prev") or {}))
+        # 1.36.2 (audit #15): hai máy nhớ khác nhau cùng một gian → chọn cố định (mẫu thật hơn "theo kiểu nhà", rồi theo tên)
+        pa = dict(out.get("prev") or {})
+        for k, v in prv.items():
+            if k not in pa or (not pa[k], pa[k]) > (not v, v):
+                pa[k] = v
+        out["prev"] = pa
     rb = other.get("recv")
     if rb:
         by = {e["k"]: dict(e) for e in rb}
@@ -831,7 +859,14 @@ def _merge_more(out: dict[str, Any], other: dict[str, Any]) -> None:
             cur = by.get(e["k"])
             if cur is None:
                 by[e["k"]] = dict(e)
-            else:
+            elif e.get("t") or cur.get("t"):
+                # 1.36.2 (audit #01): lần giữ / xoá sau thắng — xoá rồi dán lại mã thì giữ lại được (trước: dấu "đã xoá" của
+                # bản trong collection luôn thắng → thiệp vừa giữ lại mất ngay lúc lưu). Bản 1.36.1 không có "t" = cũ hơn.
+                w, lo = (dict(e), cur) if _recv_newer(e, cur) else (cur, e)
+                if w.get("x") or not lo.get("x"):     # ngày nhận: sớm nhất (trừ khi vừa giữ lại sau khi xoá — ngày giữ lại)
+                    w["at"] = min(w["at"], lo["at"])
+                by[e["k"]] = w
+            else:                         # cả hai từ 1.36.1: như cũ (xoá ở máy nào cũng xoá)
                 if e.get("x"):
                     cur["x"] = 1
                 cur["at"] = min(cur["at"], e["at"])
@@ -938,7 +973,7 @@ def fix_left(ev: dict[str, Any], today: _dt.date) -> int:
 
 
 def fix_mark(ev: dict[str, Any], today: _dt.date) -> None:
-    lo = (today - _dt.timedelta(days=3)).isoformat()
+    lo = (today - _dt.timedelta(days=FIX_KEEP)).isoformat()
     fx = {d: n for d, n in (ev.get("fixn") or {}).items() if d >= lo}
     fx[today.isoformat()] = fx.get(today.isoformat(), 0) + 1
     ev["fixn"] = fx
@@ -950,6 +985,8 @@ def fix_set(ev: dict[str, Any], i: int, text: str, res: dict[str, Any], now: _dt
     lst = cards(ev)
     c = lst[i] if 0 <= i < CARDS_MAX else None
     if not filled(c) or c.get("w") != text:
+        return False
+    if now is not None and taken_index(ev, now) == i:      # 1.36.2 (audit #17b): Gemini về sau 18:00 ngày 24 — thiệp đã khoá
         return False
     fx = _clean_fix(dict(res, **{"for": text}))
     if not fx:
@@ -1005,7 +1042,7 @@ def decode_card(code: Any) -> dict[str, Any] | None:
     return c
 
 
-def recv_add(ev: dict[str, Any], code: Any, today: _dt.date) -> dict[str, Any]:
+def recv_add(ev: dict[str, Any], code: Any, today: _dt.date, now: _dt.datetime | None = None) -> dict[str, Any]:
     c = decode_card(code)
     if c is None:
         raise LeError("Mã thiệp không đúng — chép lại đúng đoạn bắt đầu bằng “%s” nhé." % CODE_PREFIX)
@@ -1020,21 +1057,23 @@ def recv_add(ev: dict[str, Any], code: Any, today: _dt.date) -> dict[str, Any]:
                 break
             e.pop("x", None)
             e["at"] = today.isoformat()
+            e["t"] = _bump(e.get("t"), now or _dt.datetime.now())
             ev["recv"] = _trim_recv(lst)
             return c
     if len(live) >= RECV_MAX:
         raise LeError("Album giữ tối đa %d thiệp nhận — xoá bớt thiệp cũ nhé." % RECV_MAX)
     lst = [e for e in lst if e["k"] != k]
-    lst.insert(0, {"k": k, "at": today.isoformat()})
+    lst.insert(0, {"k": k, "at": today.isoformat(), "t": stamp(now or _dt.datetime.now())})
     ev["recv"] = _trim_recv(lst)
     return c
 
 
-def recv_del(ev: dict[str, Any], k: Any) -> None:
+def recv_del(ev: dict[str, Any], k: Any, now: _dt.datetime | None = None) -> None:
     lst = [dict(e) for e in ev.get("recv") or []]
     for e in lst:
         if e["k"] == k and not e.get("x"):
             e["x"] = 1
+            e["t"] = _bump(e.get("t"), now or _dt.datetime.now())
             ev["recv"] = _trim_recv(lst)
             return
     raise LeError("Không còn thiệp này.")
@@ -1057,8 +1096,9 @@ def facts(ev: dict[str, Any], placed: dict[str, int]) -> str:
     """Những thứ ông già Noel thấy trong vườn (chụp lại lúc ông ghé — thư sau này không đổi khi dọn đồ)."""
     f = [p for p in parts(ev) if p in ("star", "lights", "swag", "path", "wreath")]
     for iid, code in (("le_nguoituyet", "snowman"), ("le_tuanloc", "deer"), ("le_banhquy", "cookie"), (TREE, "tree")):
-        if int(placed.get(iid, 0) or 0) > 0:
-            f.append(code)
+        n = int(placed.get(iid, 0) or 0)
+        if n > 0:
+            f.append("deer1" if code == "deer" and n == 1 else code)     # 1.36.2 (audit #17c): một chú tuần lộc đèn
     return ",".join(f)
 
 
@@ -1067,8 +1107,10 @@ def santa_view(ev: dict[str, Any], today: _dt.date, now: _dt.datetime) -> dict[s
     thư + "Xem lại đêm qua"."""
     sa = ev.get("santa") or {}
     c = came(now)
+    eve_day = door_date(DOORS_N)
+    # 1.36.2 (audit #17e): giờ đổi ngày của Anki sau 18 giờ (hiếm) → tối 24 ngày Anki còn là 23: vẫn xem cảnh đêm theo ngày máy
     return {"came": c, "eve": EVE.isoformat(timespec="minutes"),
-            "due": bool(c and today == door_date(DOORS_N) and not sa.get("seen")),
+            "due": bool(c and (today == eve_day or (today < eve_day and now.date() == eve_day)) and not sa.get("seen")),
             "morning": bool(c and BOX_DAY <= today <= END and not sa.get("read")),
             "seen": sa.get("seen", ""), "read": sa.get("read", "")}
 
@@ -1119,6 +1161,8 @@ def letter(ev: dict[str, Any], today: _dt.date, now: _dt.datetime, placed: dict[
         p1 += " Từ trên trời ông đã thấy " + _join(seen[:3]) + " — đẹp lắm!"
     if "deer" in fs:
         p1 += " Mấy chú tuần lộc của ông cứ ngó mãi hai bạn tuần lộc đèn trong sân."
+    elif "deer1" in fs:
+        p1 += " Mấy chú tuần lộc của ông cứ ngó mãi bạn tuần lộc đèn trong sân."
     body.append(p1)
     if "cookie" in fs:
         body.append("Cảm ơn cháu đã để bánh quy với sữa — ông ăn hết rồi, chỉ còn ít vụn trên khay thôi.")

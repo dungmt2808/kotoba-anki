@@ -3871,7 +3871,7 @@ class GardenState:
             raise HomeError("Chưa lưu được bản thử (lỗi ghi file trên máy).") from None
         return out
 
-    def draft_apply(self, scene: str, slot: Any) -> tuple[dict[str, Any], dict[str, Any]]:
+    def draft_apply(self, scene: str, slot: Any, extra: list[tuple[Any, ...]] | None = None) -> tuple[dict[str, Any], dict[str, Any]]:
         """"Dùng bản này": mua món còn thiếu + mẫu tường / sàn chưa có, bày cảnh đúng như bản thử (món đang đặt mà bản thử
         không dùng → Kho đồ), tất cả trong MỘT lần lưu — lỗi giữa chừng thì không trừ xu, không đổi gì. Trả (ví, kế hoạch)."""
         data = self.load()
@@ -3889,7 +3889,7 @@ class GardenState:
                 self._decor(lambda: decor.buy(dec, did))
             for slot_name, did in plan["decor_use"].items():
                 self._decor(lambda: decor.use(dec, scene, slot_name, did, home.get("rooms") or []))
-        self.save(data)
+        self.save(data, extra=extra)      # 1.36.2: + sổ sự kiện (mẫu tường / sàn trước khi dùng mẫu Noel) cùng một lần
         return data, plan
 
     # -- vùng mới, kiểu nhà ----------------------------------------------------

@@ -24,8 +24,19 @@ var GardenLeCard = (function () {
   const WISH_LANGS = ["vi", "ja", "en", "zh", "ko", "de", "fr"];
   let H = null;
   let slot = 0, draft = null, side = "front", sel = -1, drag = null, tab = "base";
-  let dirty = false, timer = 0, rid = 0, waitRid = 0, ackRid = 0, retry = 0, msg = "", msgBad = false, S = 4, fixWait = false, codeShown = "";
-  let delArm = 0;
+  let dirty = false, timer = 0, rid = 0, retry = 0, msg = "", msgBad = false, S = 4, fixWait = false, codeShown = "";
+  let delArm = 0, kq = 0;
+  // 1.36.2 (audit #04, #13): thiệp đã gửi mà chưa lưu xong, theo từng ô ({rid, q, card, failed}) — Anki đang đồng bộ thì lệnh bị bỏ
+  // (Python trả lời sync: true) → gửi lại sau; đổi sang ô khác trong lúc đó không mất lần sửa (trước: chỉ gửi lại khi còn ở ô cũ)
+  const pend = {};
+  const CTRL = /[\u0000-\u0008\u000b-\u001f\u007f\u200b-\u200f\u202a-\u202e\u2066-\u2069\ufeff]/g;
+  // 1.36.2 (audit #03): chữ một dòng như le_core._line (NFC, xuống dòng → dấu cách, gộp khoảng trắng, bỏ khoảng trắng đầu / cuối)
+  // — điều ước Python lưu là chữ đã chuẩn hoá, trang so bản Gemini sửa với chữ trong ô theo cùng cách
+  function normW(t) {
+    let x = String(t || "");
+    try { x = x.normalize("NFC"); } catch (e) { /* bỏ qua */ }
+    return x.replace(/[\r\n\t]/g, " ").replace(CTRL, "").replace(/ {2,}/g, " ").trim();
+  }
 
   function el(tag, cls, text) { const e = document.createElement(tag); if (cls) { e.className = cls; } if (text !== undefined) { e.textContent = text; } return e; }
   function data() { const d = H && H.data && H.data(); return d || null; }
@@ -241,25 +252,43 @@ var GardenLeCard = (function () {
   function loadSlot(i) {
     flush();
     slot = i; sel = -1; drag = null; side = side === "back" ? "back" : "front"; codeShown = ""; delArm = 0;
-    draft = clone(cardsOf()[i]);
+    const p = pend[i];
+    draft = clone(p ? p.card : cardsOf()[i]);      // bản chưa lưu xong của ô này (đang đồng bộ / Anki ghi lỗi) thắng bản trong sổ
+    if (p && p.failed) { dirty = true; }
     msg = "";
   }
   function markDirty() {
     if (!editable()) { return; }
     dirty = true;
+    kq++;
+    // 1.36.2 (audit #05): Python giữ bản đang sửa (chỉ bộ nhớ) — đóng cửa sổ / hồ sơ trước lần tự lưu thì lưu nốt
+    if (H && draft) { H.send("le:keep:" + JSON.stringify({ i: slot, q: kq, card: draft })); }
     clearTimeout(timer);
     timer = setTimeout(flush, 800);
+  }
+  function sendPend(i) {
+    const p = pend[i];
+    if (!p || !H) { return; }
+    rid++; p.rid = rid; p.failed = false; p.sync = false;
+    H.send("le:card:" + JSON.stringify({ i: i, card: p.card, rid: rid, q: p.q }));
+  }
+  function armRetry(ms) {
+    clearTimeout(retry);
+    // không có trả lời / Anki đang đồng bộ → gửi lại mọi ô chưa lưu xong (Python lưu theo dấu thời gian — gửi lặp không hại)
+    retry = setTimeout(() => {
+      retry = 0;
+      let left = false;
+      Object.keys(pend).forEach((k) => { const p = pend[k]; if (p && !p.failed) { sendPend(+k); left = true; } });
+      if (left) { armRetry(6000); }
+    }, ms);
   }
   function flush() {
     clearTimeout(timer); timer = 0;
     if (!dirty || !draft || !H) { return; }
     dirty = false;
-    rid++; waitRid = rid;
-    H.send("le:card:" + JSON.stringify({ i: slot, card: draft, rid: rid }));
-    // không có trả lời (Anki đang đồng bộ → lệnh bị bỏ) → coi như chưa lưu, gửi lại sau
-    clearTimeout(retry);
-    const r0 = rid, s0 = slot;
-    retry = setTimeout(() => { if (ackRid < r0 && waitRid === r0 && slot === s0 && draft) { dirty = true; markDirty(); } }, 6000);
+    pend[slot] = { rid: 0, q: kq, card: clone(draft), failed: false };
+    sendPend(slot);
+    armRetry(6000);
   }
   function note(t, bad) {
     msg = t || ""; msgBad = !!bad;
@@ -390,8 +419,8 @@ var GardenLeCard = (function () {
       if (side !== "front" || !editable() || sel < 0 || !draft.st[sel]) { return; }
       const s = draft.st[sel], step = ev.shiftKey ? 4 : 1;
       const mv = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step] }[ev.key];
-      if (mv) { s.x = Math.max(-48, Math.min(W, s.x + mv[0])); s.y = Math.max(-48, Math.min(HH, s.y + mv[1])); ev.preventDefault(); paint(); markDirty(); return; }
-      if (ev.key === "Delete" || ev.key === "Backspace") { ev.preventDefault(); selAct("del"); }
+      if (mv) { s.x = Math.max(-48, Math.min(W, s.x + mv[0])); s.y = Math.max(-48, Math.min(HH, s.y + mv[1])); ev.preventDefault(); ev.stopPropagation(); paint(); markDirty(); return; }
+      if (ev.key === "Delete" || ev.key === "Backspace") { ev.preventDefault(); ev.stopPropagation(); selAct("del"); }
     });
     ($("kb-app") || document.body).appendChild(pop);
     return pop;
@@ -490,8 +519,8 @@ var GardenLeCard = (function () {
   function renderFix() {
     const v = le() || {}, fb = $("kb-le-fix"), hint = $("kb-le-fixhint"), res = $("kb-le-fixres");
     if (!fb) { return; }
-    const lang = draft ? draft.wl : "vi", w = draft ? (draft.w || "").trim() : "";
-    const fx = draft && draft.fx && draft.fx.for === (draft.w || "") ? draft.fx : null;
+    const lang = draft ? draft.wl : "vi", w = draft ? normW(draft.w) : "";
+    const fx = draft && draft.fx && draft.fx.for === w ? draft.fx : null;
     fb.hidden = !draft || lang === "vi";
     fb.disabled = !editable() || !w || fixWait || !!fx || (v.fix_left || 0) <= 0;
     fb.textContent = fixWait ? "Gemini đang sửa…" : "Nhờ Gemini sửa";
@@ -502,7 +531,7 @@ var GardenLeCard = (function () {
       res.appendChild(el("div", "kb-le-fixsua", fx.sua));
       (fx.loi || []).forEach((e) => { res.appendChild(el("div", "kb-le-fixloi", (e.goc ? e.goc + " → " : "") + e.sua + (e.gt ? " · " + e.gt : ""))); });
       if (fx.nx) { res.appendChild(el("div", "kb-le-hintt", fx.nx)); }
-      if (editable() && fx.sua !== draft.w) {
+      if (editable() && fx.sua !== normW(draft.w)) {
         const b = res.appendChild(el("button", "kb-btn kb-btn-small", "Dùng bản sửa")); b.type = "button";
         b.addEventListener("click", () => { draft.w = fx.sua.slice(0, limits().wish); $("kb-le-wish").value = draft.w; paint(); markDirty(); renderFix(); });
       }
@@ -522,7 +551,7 @@ var GardenLeCard = (function () {
   }
   function delCard() {
     if (!editable()) { return; }
-    const go = () => { clearTimeout(timer); dirty = false; if (H) { H.send("le:cdel:" + slot); } };
+    const go = () => { clearTimeout(timer); dirty = false; delete pend[slot]; if (H) { H.send("le:cdel:" + slot); } };
     if (typeof GardenUI !== "undefined" && GardenUI.ask) {
       GardenUI.ask({ title: "Xoá thiệp " + (slot + 1) + "?", note: "Thiệp xoá rồi không lấy lại được.", yes: "Xoá", always: true, then: go });
     } else if (Date.now() - delArm < 3000) { go(); } else { delArm = Date.now(); note("Bấm “Xoá thiệp” lần nữa để xoá.", true); }
@@ -593,10 +622,25 @@ var GardenLeCard = (function () {
     if (!res) { return; }
     const pop = $("kb-le-cardpop"), open1 = pop && !pop.hidden;
     if (res.act === "card") {
-      if (typeof res.rid === "number") { ackRid = Math.max(ackRid, res.rid); }
-      if (res.rid !== undefined && res.rid !== waitRid) { return; }
-      if (!res.ok) { dirty = true; note(res.msg || "Chưa lưu được thiệp.", true); sfx("again"); }
-      else if (open1 && draft && res.i === slot) { draft.at = res.at; }
+      const p = typeof res.i === "number" ? pend[res.i] : null;
+      if (!p || (res.rid !== undefined && res.rid !== p.rid)) { return; }     // trả lời của lần gửi cũ
+      if (res.ok) {
+        delete pend[res.i];
+        if (open1 && draft && res.i === slot) { draft.at = res.at; }
+      } else if (res.sync) {
+        // Anki đang đồng bộ: gửi lại khi vườn dựng lại sau đồng bộ (renderData), chậm nhất 8 giây — kể cả khi đã sang ô khác /
+        // đóng xưởng
+        p.sync = true;
+        armRetry(8000);
+        if (open1 && res.i === slot) { note(res.msg, true); }
+      } else if (res.retry) {
+        p.failed = true;                        // Anki ghi lỗi: giữ bản này, lần sửa sau của ô đó gửi lại
+        if (res.i === slot) { dirty = true; }
+        if (open1 && res.i === slot) { note(res.msg || "Chưa lưu được thiệp.", true); sfx("again"); }
+      } else {
+        delete pend[res.i];                     // luật không cho (ông già Noel đã mang đi…): không gửi lại
+        if (open1 && res.i === slot) { note(res.msg || "Chưa lưu được thiệp.", true); sfx("again"); }
+      }
       return;
     }
     if (res.act === "fix" || res.act === "fixed") {
@@ -605,7 +649,8 @@ var GardenLeCard = (function () {
       else if (res.act === "fixed") {
         const c = (le() && le().cards || [])[res.i];
         if (open1 && draft && res.i === slot && c && c.fx) { draft.fx = c.fx; }
-        note("Gemini đã sửa điều ước — xem bên dưới.", false); sfx("stage");
+        note(res.i === slot ? "Gemini đã sửa điều ước — xem bên dưới." : "Gemini đã sửa điều ước của thiệp " + (res.i + 1) + " — mở thiệp đó để xem.", false);
+        sfx("stage");
       }
       if (open1) { render(); }
       return;
@@ -615,8 +660,14 @@ var GardenLeCard = (function () {
       return;
     }
     if (res.act === "cdel") {
-      if (res.ok) { draft = null; dirty = false; sel = -1; note("Đã xoá thiệp " + (slot + 1) + ".", false); sfx("boop"); }
-      else { note(res.msg, true); sfx("again"); }
+      const mine = typeof res.i !== "number" || res.i === slot;        // 1.36.2 (audit #13): đã sang ô khác thì ô đó không bị xoá trắng
+      if (res.ok) {
+        if (mine) { draft = null; dirty = false; sel = -1; }
+        note("Đã xoá thiệp " + ((typeof res.i === "number" ? res.i : slot) + 1) + ".", false); sfx("boop");
+      } else {
+        if (mine && draft) { dirty = true; }    // chưa xoá được (đang đồng bộ…): thiệp vẫn còn — lần lưu sau giữ chữ đang thấy
+        note(res.msg, true); sfx("again");
+      }
     } else if (res.act === "hang") {
       if (res.ok) {
         const v = le();
@@ -628,16 +679,24 @@ var GardenLeCard = (function () {
     }
     render();
   }
+  let mode = null;
   function renderData() {
+    const v0 = le();
+    // 1.36.2: bật / tắt Xem thử sự kiện → bản chưa lưu xong thuộc chế độ cũ (sửa lúc xem thử không bao giờ sang sổ thật)
+    const m = v0 ? (v0.preview ? "pv:" + (v0.preview_key || "") : "real") : mode;
+    if (mode !== null && m !== mode) { Object.keys(pend).forEach((k) => { delete pend[k]; }); dirty = false; clearTimeout(timer); timer = 0; }
+    mode = m;
+    Object.keys(pend).forEach((k) => { if (pend[k] && pend[k].sync) { sendPend(+k); } });     // đồng bộ xong, vườn dựng lại
     const pop = $("kb-le-cardpop");
     if (!pop || pop.hidden) { return; }
     const v = le();
     if (!v || !v.cards) { close(); return; }
     if (!dirty && !timer && !drag) {          // sổ mới (lưu xong / máy khác): lấy lại thiệp nếu không đang sửa dở
-      const c = cardsOf()[slot];
+      const p = pend[slot];
+      const c = p ? p.card : cardsOf()[slot];
       const keepFx = draft && draft.fx;
       draft = clone(c);
-      if (draft && !draft.fx && keepFx && keepFx.for === draft.w) { draft.fx = keepFx; }
+      if (draft && !draft.fx && keepFx && keepFx.for === normW(draft.w)) { draft.fx = keepFx; }
     }
     render();
   }
@@ -663,6 +722,7 @@ var GardenLeCard = (function () {
     drawCard: drawCard, thumb: thumb, savePng: savePng, W: W, H: HH,
     // cho test
     _draft: () => draft, _slot: () => slot, _hit: hit, _stickerSize: stickerSize, _add: addSticker, _sel: (k) => { sel = k; render(); },
-    _selAct: selAct, _dirty: () => dirty, _png: pngOf, _side: (s) => { side = s; render(); }
+    _selAct: selAct, _dirty: () => dirty, _png: pngOf, _side: (s) => { side = s; render(); },
+    _pend: () => JSON.parse(JSON.stringify(pend)), _norm: normW
   };
 })();
