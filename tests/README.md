@@ -221,7 +221,7 @@ Cần Node ≥ 22 (có sẵn `fetch` và `WebSocket`). Cổng: `KB_CDP_PORT` (93
 - Lần chạy đầu trong Anki thật bắt được: bản sửa của Gemini lưu cùng giây với lần tự lưu → khi gộp với collection bản cùng dấu thắng,
   bản sửa mất (sửa: `_bump`, mỗi lần sửa luôn có dấu sau lần trước); cảnh "cất đồ" không hiện vì Python chỉ báo ở lần dựng đầu (sửa:
   trang giữ tới lúc hiện); "treo thiệp trước 18:00" bị dòng "ngăn chờ mở" che (sửa: hạn hôm nay lên trước).
-- Kết quả hạ bản / cài đè / bộ đầy đủ: xem `docs/kiem_thu/1.36.1/BAO_CAO.md` mục 3.
+- `run_all.sh` (`ANKI_PY` = aqt 26.9.4) trên gói đã giải nén: **78 mục, TẤT CẢ OK**; `anki/run_habanh.sh` 1.36.1 → 1.31.3 → 1.36.1 (thêm thiệp đã treo, thiệp nhận, ông đã ghé) 4/4 + 10/10 + 18/18; `anki/run_capnhat.sh` 1.31.3 → 1.36.1 5/5 + 18/18. Báo cáo: `docs/kiem_thu/1.36.1/BAO_CAO.md`.
 
 ## Kết quả lần chạy trước (bản 1.36.0, 24/11/2026) — sự kiện Giáng sinh
 - `run_all.sh` (`ANKI_PY` = aqt 26.9.4) trên gói đã giải nén: **76 mục, TẤT CẢ OK** (`core/test_136.py` 157/157, `core/test_136.js` 18/18;

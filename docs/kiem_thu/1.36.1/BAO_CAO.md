@@ -105,7 +105,7 @@ bạn); làm / treo thiệp khi xem thử chỉ ở bộ nhớ; cất đồ ch�
 | `anki/e2e_136.js` (1.36.0) | 66/66 |
 | `anki/run_habanh.sh` 1.36.1 → 1.31.3 → 1.36.1 (thêm thiệp đã treo, thiệp nhận, ông đã ghé) | 4/4 + 10/10 + 18/18 |
 | `anki/run_capnhat.sh` gói 1.31.3 đã phát hành → 1.36.1 | 5/5 + 18/18 |
-| `run_all.sh` trên gói đã giải nén | xem dòng cuối mục này |
+| `run_all.sh` (`ANKI_PY` = aqt 26.9.4) trên gói đã giải nén | **78 mục, TẤT CẢ OK** (lượt đầu bắt 4 chỗ lệch quy ước — màu `#1b1b2f` viết cứng, chữ "Thôi", dòng mã vừa chữ Nhật vừa chữ chỉ-tiếng-Trung, dòng `AUTO_CMDS` test 1.33.2 so từng chữ — đã sửa) |
 
 Lỗi tìm được khi chạy trong Anki thật (đã sửa, có test): (1) bản sửa của Gemini lưu cùng giây với lần tự lưu → khi gộp với bản
 trong collection, bản cùng dấu thời gian thắng → mất bản sửa; (2) cảnh "cất đồ" không hiện vì Python chỉ báo ở lần dựng vườn đầu,
