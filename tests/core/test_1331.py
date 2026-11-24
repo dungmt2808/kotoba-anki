@@ -220,9 +220,11 @@ keys = set()
 for f in glob.glob(os.path.join(ADDON, "*.py")):
     keys |= set(re.findall(r'"(kotoba_batake_[a-z0-9_]+)"', open(f, encoding="utf-8").read()))
 keys -= {"kotoba_batake_paper_de", "kotoba_batake_paper_fr"}     # 1.35: báo tiếng Đức / tiếng Pháp — khoá mới, test_135.py soát
+keys -= {"kotoba_batake_le"}     # 1.36: sự kiện Giáng sinh — khoá mới, test_136.py soát
 ok(sorted(keys) == KEYS_1330, "khoá collection trong mã = 1.33.0" + ("" if sorted(keys) == KEYS_1330 else ": " + str(sorted(set(keys) ^ set(KEYS_1330)))))
 cfg = json.load(open(os.path.join(ADDON, "config.json"), encoding="utf-8"))
 CFG_KEYS_1330 = 39
+cfg.pop("season_event", None)      # 1.36: ⚙ Sự kiện mùa — test_136.py soát
 ok(len(cfg) == CFG_KEYS_1330 and "gemini_level_zh" in cfg and "gemini_level_ko" in cfg,
    "config.json: %d mục như 1.33.0 (không thêm mục)" % len(cfg))
 

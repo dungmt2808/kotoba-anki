@@ -344,13 +344,13 @@ with tarfile.open(fileobj=io.BytesIO(ma_cu.archive(ROOT, "d5efb47")), mode="r:*"
         if m.isfile() and m.name.count("/") == 1 and m.name.endswith(".py"):
             old_keys |= set(re.findall(r'"(kotoba_batake_[a-z0-9_]+)"', tf.extractfile(m).read().decode("utf-8")))
 diff = sorted(new_keys - old_keys - {"kotoba_batake_edit"})       # kotoba_batake_edit: vị trí cửa sổ (1.32.2, hồ sơ máy)
-diff = [k for k in diff if k not in ("kotoba_batake_paper_de", "kotoba_batake_paper_fr")]   # 1.35: báo de / fr (test_135.py)
+diff = [k for k in diff if k not in ("kotoba_batake_paper_de", "kotoba_batake_paper_fr", "kotoba_batake_le")]   # 1.35: báo de / fr (test_135.py); 1.36: test_136.py
 ok(diff == ["kotoba_batake_paper_ko", "kotoba_batake_paper_zh"] and not (old_keys - new_keys),
    "khoá collection mới chỉ kotoba_batake_paper_zh / _ko, không bỏ khoá nào: %s" % diff)
 cfg = json.load(open(os.path.join(ADDON, "config.json"), encoding="utf-8"))
 with tarfile.open(fileobj=io.BytesIO(ma_cu.archive(ROOT, "d5efb47")), mode="r:*") as tf:
     old_cfg = json.load(tf.extractfile("kotoba_batake/config.json"))
-ok(sorted(set(cfg) - set(old_cfg)) == ["gemini_level_ko", "gemini_level_zh"] and not set(old_cfg) - set(cfg),
+ok(sorted(set(cfg) - set(old_cfg) - {"season_event"}) == ["gemini_level_ko", "gemini_level_zh"] and not set(old_cfg) - set(cfg),     # 1.36: season_event (test_136.py)
    "config.json chỉ thêm gemini_level_zh / gemini_level_ko")
 
 print("== 9. sửa sau khi soát (16/11)")

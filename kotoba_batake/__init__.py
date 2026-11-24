@@ -49,6 +49,7 @@ from . import lang_core
 from . import life_core
 from . import journal_core as journal
 from . import launcher
+from . import le_core      # 1.36: sự kiện mùa Giáng sinh
 from . import garden_core as core
 from . import more_core
 from . import mau_core as mau
@@ -2214,7 +2215,7 @@ def _news_and_greet(data: dict[str, Any], today: dict[str, Any], cfg: dict[str, 
            "reviewed_today": reviewed, "total_days": total, "freeze": (w.get("more") or {}).get("freeze") or {},
            "pets": mv.get("pets") or [], "wear": mv.get("wear") or {}, "season": w.get("season") or {}, "home": home,
            "scenes": _guest_scenes(w), "album": GUESTS.album(), "sub": (w.get("more") or {}).get("paper_sub") or {},
-           "finds": data.get("finds") or {}}
+           "finds": data.get("finds") or {}, "le": (data.get("le") or {}).get("news"), "le_soon": (data.get("le") or {}).get("soon")}
     nw = event_core.news(ctx)
     greet = None
     if not GREET_TEST_OFF and more_core.clean_ui(cfg.get("ui")).get("greet") != "off":
@@ -2753,6 +2754,113 @@ EVENTS = finds.EventStore(os.path.join(ADDON_DIR, "user_files", "events.json"), 
 # 1.30: sinh hoạt của StackChan (khoá collection kotoba_batake_life)
 LIFE = life_core.LifeStore(os.path.join(ADDON_DIR, "user_files", "life.json"), col_getter=lambda: mw.col)
 
+# 1.36: sự kiện mùa — Giáng sinh 2026, tủ lịch 24 ngăn (khoá collection kotoba_batake_le, le_core.py)
+LE = le_core.LeStore(os.path.join(ADDON_DIR, "user_files", "le.json"), col_getter=lambda: mw.col)
+LE_TEST: dict[str, Any] | None = None   # add-on test (zz_kbtest): {"today": "yyyy-mm-dd", "days": [ngày có ôn], "reviews": n}
+                                        # — ngày giả GHI THẬT (kịch bản Anki thật của 1.36); người dùng không đụng tới
+_le_preview: dict[str, Any] = {"day": None, "ev": None}     # admin (file user_files/admin): Xem thử sự kiện — không ghi gì
+
+
+def le_today() -> datetime.date:
+    """Ngày Anki của sự kiện (add-on test: ngày giả)."""
+    return datetime.date.fromisoformat(LE_TEST["today"]) if LE_TEST else cal_today()
+
+
+def le_on(cfg: dict[str, Any] | None = None) -> bool:
+    """⚙ → Sự kiện mùa (config season_event): tắt thì không tặng, không vẽ, không có lệnh; dữ liệu giữ nguyên."""
+    try:
+        return bool((cfg if cfg is not None else config()).get("season_event", True))
+    except Exception:
+        return True
+
+
+def _le_ctx(stats: dict[str, Any] | None = None) -> tuple[datetime.date, list[str], list[str], int]:
+    """(ngày Anki hôm nay, ngày 1–24/12 có lượt ôn — cả lượt ôn trên điện thoại / trước lúc cài, ngày đã dùng vé giữ chuỗi,
+    số lượt ôn hôm nay)."""
+    if LE_TEST:
+        t = LE_TEST
+        return (datetime.date.fromisoformat(t["today"]), list(t.get("days") or []), list(t.get("frozen") or []),
+                int(t.get("reviews") or 0))
+    today = cal_today()
+    hi = min(today, le_core.door_date(le_core.DOORS_N))
+    days: list[str] = []
+    if hi >= le_core.FIRST:
+        days = sorted(core.streak_iso_days(mw.col, None, le_core.FIRST, hi))
+    if stats is None:
+        stats = _daily_stats()
+    return today, days, STATE.frozen_days(), int(stats.get("reviews") or 0)
+
+
+def _le_names() -> dict[str, str]:
+    return {k: v["name"] for k, v in core.CATALOG.items() if k.startswith("le_") or k == le_core.TREE}
+
+
+def _le_settle(wallet: dict[str, Any], today: datetime.date) -> tuple[dict[str, Any], dict[str, Any] | None]:
+    """Mở vườn trong mùa: tặng Tủ lịch + cây thông (lần đầu), bù món sổ đã ghi mà kho thiếu — một lần lưu cùng sổ sự kiện.
+    Đang đồng bộ / sổ hay ví đọc lỗi / lưu lỗi → không làm gì (lần mở sau làm). Trả (ví, {"placed", "give"} | None)."""
+    if wallet.get("_damaged") or mw.col is None or _sync_hold():
+        return wallet, None
+    ph = le_core.phase(today)
+    if ph not in ("advent", "after", "done"):
+        return wallet, None
+    ev = LE.load()
+    if ev.get("_damaged"):
+        return wallet, None
+    home = wallet.get("home") or {}
+    placed: dict[str, int] = {}
+    for sc in core.scene_names(home):
+        for e in home.get(sc) or []:
+            if isinstance(e, dict) and isinstance(e.get("id"), str):
+                placed[e["id"]] = placed.get(e["id"], 0) + 1
+    dec = ((wallet.get("more") or {}).get("decor") or {}).get("own") or []
+    plan = le_core.plan_sync(ev, dict(home.get("owned") or {}), placed, dec, today)
+    if plan is None:
+        return wallet, None
+    try:
+        new, done = STATE.le_apply(plan["give"], plan["auto"], plan["tiles"], extra=[LE.write(ev)])
+    except (core.HomeError, backup_core.StoreFailed) as err:
+        _warn("sự kiện mùa (tặng quà)", err)
+        return wallet, None
+    return new, {"placed": done, "give": plan["give"], "welcome": plan["welcome"]}
+
+
+def le_view(wallet: dict[str, Any], stats: dict[str, Any] | None, cfg: dict[str, Any] | None = None) -> dict[str, Any] | None:
+    """data.le cho JS: tủ lịch, phần đã mở (cây / nhà / sân), hộp quà, dòng Tin làng. None = sự kiện tắt / ngoài mùa."""
+    if not le_on(cfg):
+        return None
+    pv = _le_preview.get("day")
+    if pv is not None and admin_on():
+        today = pv
+        ev = _le_preview["ev"]
+        days = [le_core.door_date(d).isoformat() for d in range(1, le_core.DOORS_N + 1) if le_core.door_date(d) <= today]
+        frozen: list[str] = []
+        reviews = 30
+    else:
+        today, days, frozen, reviews = _le_ctx(stats)
+        ev = None
+    ph = le_core.phase(today)
+    if ph is None:
+        return None
+    if ph == "pre":
+        return {"phase": "pre", "active": False, "today": today.isoformat(), "year": le_core.YEAR,
+                "news": le_core.news_line(None, today, [], []), "soon": le_core.soon_line(today), "preview": pv is not None}
+    if ev is None:
+        ev = LE.load()
+        if ph == "done" and not ev["open"] and not ev["gift"]:
+            return None          # hết mùa mà chưa từng mở: không có gì để xem lại
+    v = le_core.view(ev, today, days, frozen, reviews, _le_names())
+    v["news"] = le_core.news_line(ev, today, days, frozen, reviews)
+    v["soon"] = le_core.soon_line(today)
+    v["preview"] = pv is not None
+    v["damaged"] = bool(ev.get("_damaged"))
+    home = wallet.get("home") or {}
+    v["house"] = int(home.get("house") or 0)
+    v["room_unlock"] = core.ROOM_UNLOCK_LEVEL
+    # chip "Tủ lịch" ở hàng dưới dải cảnh: trong mùa, nửa tháng đầu năm mới, hoặc còn hộp quà chưa mở; sau đó xem lại bằng cách
+    # bấm tủ lịch trên tường
+    v["chip"] = bool(v["active"] or today <= le_core.END + datetime.timedelta(days=15) or any(b["can"] for b in v["boxes"]))
+    return v
+
 
 def _life_ctx(wallet: dict[str, Any]) -> tuple[dict[str, Any], list[str], bool]:
     """(nhà, các cảnh StackChan tới được, có thú nuôi đang ở trong nhà không)."""
@@ -3054,7 +3162,7 @@ class GardenDialog(QDialog):
             js=[
                 f"{WEB_BASE}/diag.js", f"{WEB_BASE}/prefs.js", f"{WEB_BASE}/fix.js", f"{WEB_BASE}/icons.js", f"{WEB_BASE}/glang.js", f"{WEB_BASE}/sky.js", f"{WEB_BASE}/season.js", f"{WEB_BASE}/fx.js", f"{WEB_BASE}/music.js",
                 f"{WEB_BASE}/games.js", f"{WEB_BASE}/fields.js", f"{WEB_BASE}/season_art.js", f"{WEB_BASE}/rare_art.js", f"{WEB_BASE}/nha_art.js", f"{WEB_BASE}/pets.js", f"{WEB_BASE}/guests.js",
-                f"{WEB_BASE}/finds_art.js", f"{WEB_BASE}/finds.js", f"{WEB_BASE}/life.js", f"{WEB_BASE}/home.js", f"{WEB_BASE}/craft.js", f"{WEB_BASE}/paper.js", f"{WEB_BASE}/seeds.js",
+                f"{WEB_BASE}/finds_art.js", f"{WEB_BASE}/finds.js", f"{WEB_BASE}/le_art.js", f"{WEB_BASE}/le.js", f"{WEB_BASE}/life.js", f"{WEB_BASE}/home.js", f"{WEB_BASE}/craft.js", f"{WEB_BASE}/paper.js", f"{WEB_BASE}/seeds.js",
                 f"{WEB_BASE}/joy.js", f"{WEB_BASE}/ui.js", f"{WEB_BASE}/calendar.js", f"{WEB_BASE}/greet.js", f"{WEB_BASE}/tour.js", f"{WEB_BASE}/garden.js",
             ],
             context=self,
@@ -3111,6 +3219,12 @@ class GardenDialog(QDialog):
             cfg = config()
             data = core.build_garden(mw.col, self.deck_id, cfg)
             data["wallet"] = STATE.load()
+            le_new = None
+            if le_on(cfg) and _le_preview.get("day") is None:
+                try:      # 1.36: mở vườn trong mùa Giáng sinh → tặng Tủ lịch + cây thông (lần đầu), bù quà sổ đã ghi mà kho thiếu
+                    data["wallet"], le_new = _le_settle(data["wallet"], le_today())
+                except Exception as err:
+                    _warn("sự kiện mùa", err)
             meta = data.pop("_meta", None)
             try:
                 more_core.apply_seeds(data["plants"], meta, share_core.combined(data["wallet"]["more"]["seeds"],
@@ -3120,6 +3234,7 @@ class GardenDialog(QDialog):
             data["ui"] = more_core.clean_ui(cfg.get("ui"))
             data["gl"] = lang_core.bundle()      # 1.32: Ngôn ngữ trong vườn (bảng chữ cho glang.js)
             data["admin"] = admin_on()       # 1.25.5: "Sửa hình" (admin) · 1.25.7: người dùng thường "Góp ý hình"
+            data["le_on"] = le_on(cfg)       # 1.36: ⚙ Sự kiện mùa
             data["fx"] = {
                 "effects": bool(cfg["effects"]),
                 "sound": bool(cfg["sound"]),
@@ -3160,6 +3275,13 @@ class GardenDialog(QDialog):
             except Exception as err:
                 _warn("sinh hoạt", err)
                 data["life"] = None
+            try:      # 1.36: sự kiện mùa Giáng sinh (tủ lịch 24 ngăn)
+                data["le"] = le_view(data["wallet"], today, cfg)
+                if data["le"] is not None and le_new:
+                    data["le"]["welcome"] = le_new
+            except Exception as err:
+                _warn("sự kiện mùa", err)
+                data["le"] = None
             self._plants = data["plants"]
             _dict_possible = bool(self._dict_candidates(_voice(cfg)) or self._word_candidates(_voice(cfg)))
             try:
@@ -3725,6 +3847,8 @@ class GardenDialog(QDialog):
             self._on_life(cmd[len("life:"):])
         elif cmd.startswith("find:") or cmd.startswith("ped:"):
             self._on_find(cmd)
+        elif cmd.startswith("le:"):           # 1.36: sự kiện mùa Giáng sinh
+            self._on_le(cmd[len("le:"):])
         elif cmd.startswith("share:"):
             self._on_share(cmd[len("share:"):])
         elif cmd.startswith("snap:save:"):
@@ -4620,6 +4744,89 @@ class GardenDialog(QDialog):
             except Exception as err:
                 _warn("nhặt đồ / gánh hàng", err)
         self._js("finds", out)
+
+    # -- 1.36: sự kiện mùa Giáng sinh (tủ lịch 24 ngăn) ----------------------------
+
+    def _on_le(self, cmd: str) -> None:
+        """le:open:<ngăn> — mở một ngăn · le:box:<hộp> — mở hộp quà (từ 25/12) · le:auto:<món> — bày món của sự kiện vào ô
+        trống · le:cfg:on|off — ⚙ Sự kiện mùa · le:preview:<yyyy-mm-dd>|off — admin xem thử theo ngày (không ghi gì).
+        Python xét lại mọi thứ (ngày Anki, lượt ôn, vé giữ chuỗi, ngăn đã mở, chỗ trống) rồi ghi sổ + kho CÙNG một lần."""
+        action, _, arg = cmd.partition(":")
+        if action == "cfg":
+            if arg in ("on", "off"):
+                save_config(season_event=arg == "on")
+                self.refresh()
+            return
+        if action == "preview":
+            if not admin_on():
+                return
+            if arg == "off":
+                _le_preview.update(day=None, ev=None)
+            else:
+                try:
+                    day = datetime.date.fromisoformat(arg)
+                except ValueError:
+                    return
+                _le_preview.update(day=day, ev=le_core.simulate(day, reviewed=False))
+            self.refresh()
+            return
+        if not le_on():
+            return
+        out: dict[str, Any] = {"ok": False, "act": action}
+        wallet = None
+        try:
+            stats = _daily_stats()
+            pv = _le_preview.get("day") if admin_on() else None
+            if pv is not None:            # xem thử: chỉ đổi sổ giả trong bộ nhớ, kho / collection không đụng tới
+                ev = _le_preview["ev"]
+                days = [le_core.door_date(d).isoformat() for d in range(1, le_core.DOORS_N + 1) if le_core.door_date(d) <= pv]
+                if action == "open":
+                    res = le_core.open_door(ev, arg, pv, days, [], 30)
+                    out = {"ok": True, "act": "open", "door": res, "placed": [], "preview": True}
+                elif action == "box":
+                    got = le_core.open_box(ev, arg, pv)
+                    out = {"ok": True, "act": "box", "n": int(arg), "item": got, "preview": True}
+                else:
+                    raise le_core.LeError("Đang xem thử — dừng xem thử để bày đồ thật.")
+            else:
+                today, days, frozen, reviews = _le_ctx(stats)
+                if action == "open":
+                    ev = LE.load()
+                    res = le_core.open_door(ev, arg, today, days, frozen, reviews)
+                    wallet, placed = STATE.le_apply(res["item"], le_core.auto_list(res["item"]), res["tiles"],
+                                                    extra=[LE.write(ev)])
+                    out = {"ok": True, "act": "open", "door": res, "placed": placed}
+                elif action == "box":
+                    ev = LE.load()
+                    got = le_core.open_box(ev, arg, today)
+                    wallet, placed = STATE.le_apply(got, [], [], extra=[LE.write(ev)])
+                    out = {"ok": True, "act": "box", "n": int(arg), "item": got, "placed": placed}
+                elif action == "auto":
+                    if not (arg.startswith("le_") or arg == le_core.TREE) or arg not in core.CATALOG:
+                        raise le_core.LeError("Không có món này.")
+                    wallet, placed = STATE.le_apply({}, [arg], [])
+                    if not placed:
+                        it = core.CATALOG[arg]
+                        if it["scene"] == "room" and int((wallet.get("home") or {}).get("house") or 0) < core.ROOM_UNLOCK_LEVEL:
+                            raise le_core.LeError("Xây nhà tới bước “Lắp cửa & cửa sổ” rồi mới bày đồ trong nhà được — món vẫn ở Kho đồ.")
+                        raise le_core.LeError("Hết chỗ trống — món vẫn ở Kho đồ, dời bớt đồ rồi đặt nhé.")
+                    out = {"ok": True, "act": "auto", "placed": placed}
+                else:
+                    return
+        except (le_core.LeError, core.HomeError, backup_core.StoreFailed) as err:
+            out = {"ok": False, "act": action, "msg": str(err)}
+            wallet = None
+        except Exception as err:
+            _warn("sự kiện mùa", err)
+            out = {"ok": False, "act": action, "msg": "Không làm được (%s)." % type(err).__name__}
+            wallet = None
+        if wallet is not None:
+            out["wallet"] = wallet
+        try:
+            out["le"] = le_view(wallet or STATE.load(), stats if "stats" in locals() else None)
+        except Exception as err:
+            _warn("sự kiện mùa", err)
+        self._js("le", out)
 
     # -- 1.21: khách ghé vườn ------------------------------------------------------
 

@@ -602,9 +602,10 @@ ok(not (rk - nk), "không bỏ khoá collection nào của bản đã phát hàn
 if "1.34.1" in OLD:
     prev = os.path.join(TMP, "fc9b1e5", "kotoba_batake")
     pk_ = coll_keys(prev)
-    ok(sorted(nk - pk_) == ["kotoba_batake_paper_de", "kotoba_batake_paper_fr"] and not (pk_ - nk),
+    ok(sorted(nk - pk_ - {"kotoba_batake_le"}) == ["kotoba_batake_paper_de", "kotoba_batake_paper_fr"] and not (pk_ - nk),     # 1.36: test_136.py
        "so với 1.34.1: chỉ thêm kotoba_batake_paper_de / _fr (%s)" % sorted(nk ^ pk_))
     c_new = json.load(open(os.path.join(ADDON, "config.json"), encoding="utf-8"))
+    c_new.pop("season_event", None)       # 1.36: ⚙ Sự kiện mùa — test_136.py soát
     c_old = json.load(open(os.path.join(prev, "config.json"), encoding="utf-8"))
     ok(c_new == c_old, "config.json giống hệt 1.34.1 (gemini_level_de / _fr chỉ ghi khi đổi trình độ)")
 cm = open(os.path.join(ADDON, "config.md"), encoding="utf-8").read()
@@ -615,7 +616,7 @@ ok('cfg.get("gemini_level_de") if cfg.get("gemini_level_de") in ai_de.LEVELS els
 ok("if p.get(\"level\") in ai_en.LEVELS and lv_lang in (None, \"en\"):" in init,
    "đổi trình độ báo Đức / Pháp không đổi trình độ báo tiếng Anh (cùng A1–C1)")
 man = json.load(open(os.path.join(ADDON, "manifest.json"), encoding="utf-8"))
-ok(str(man.get("human_version", "")).startswith("1.35"), "manifest: %s" % man.get("human_version"))
+ok(tuple(int(x) for x in re.findall(r"\d+", str(man.get("human_version", "")))[:2]) >= (1, 35), "manifest: %s (≥ 1.35)" % man.get("human_version"))
 
 print("KẾT QUẢ: %d/%d" % (sum(results), len(results)))
 sys.exit(0 if all(results) else 1)

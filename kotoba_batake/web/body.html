@@ -29,6 +29,8 @@
         <label><input type="checkbox" id="kb-sfx-on"> Hiệu ứng âm thanh</label>
         <label><input type="checkbox" id="kb-music-on"> Nhạc nền 8-bit</label>
         <label class="kb-vol">Âm lượng nhạc <input type="range" id="kb-music-vol" min="0" max="100" step="5"></label>
+        <!-- 1.36: chọn nhạc khi giao diện Giáng sinh đang dùng (giai điệu hết bản quyền, phối 8-bit) — lưu ở prefs kb-music-noel -->
+        <label class="kb-noel-music" id="kb-noel-music-row" hidden>Nhạc Giáng sinh <select id="kb-noel-music" aria-label="Nhạc Giáng sinh"></select></label>
         <div class="kb-set-h">Trời &amp; giờ trong vườn</div>
         <label><input type="radio" name="kb-sky-mode" value="real"> Theo giờ thật</label>
         <label><input type="radio" name="kb-sky-mode" value="game"> Giờ game: 1 ngày =
@@ -45,6 +47,10 @@
         <div class="kb-set-h">Ngôn ngữ trong vườn</div>
         <label class="kb-glang-row" title="Câu StackChan nói, sinh hoạt, đồ nhặt, khách ghé, tường / sàn, tên mùa"><select id="kb-glang" aria-label="Ngôn ngữ trong vườn"></select></label>
         <div class="kb-set-h">Cài đặt khác</div>
+        <!-- 1.36: sự kiện mùa (config season_event) — tắt thì không tặng, không vẽ; dữ liệu giữ nguyên -->
+        <label class="kb-le-on-row" title="Giáng sinh: tủ lịch 24 ngăn (1–24/12), cây thông đầy dần, áo Noel cho nhà, sân sáng đèn"><input type="checkbox" id="kb-le-on"> Sự kiện mùa (Giáng sinh)</label>
+        <label class="kb-le-pv-row" id="kb-le-pv-row" hidden title="Chỉ máy có file user_files/admin: xem trước sự kiện theo ngày, không lưu gì">Xem thử sự kiện
+          <select id="kb-le-pv-day"><option value="off">Tắt</option><option value="2026-11-25">25/11</option><option value="2026-12-01">1/12</option><option value="2026-12-07">7/12</option><option value="2026-12-14">14/12</option><option value="2026-12-21">21/12</option><option value="2026-12-24">24/12</option><option value="2026-12-25">25/12</option><option value="2026-12-31">31/12</option><option value="2027-01-01">1/1</option></select></label>
         <button type="button" id="kb-cal-open" class="kb-btn kb-btn-small kb-fields-open" title="Lịch ngày ôn, nhật ký một dòng, luyện viết và cuốn nhật ký (phím L)">Lịch hoa &amp; nhật ký…</button>
         <button type="button" id="kb-tour-open" class="kb-btn kb-btn-small kb-fields-open" title="Chọn deck → ôn thẻ → xem cây lớn">Hướng dẫn 3 bước</button>
         <button type="button" id="kb-ui-open" class="kb-btn kb-btn-small kb-fields-open" title="Ẩn / làm mờ / dừng chuyển động của sân và ruộng khi ôn thẻ, màu bảng ôn, hiệu ứng…">Giao diện &amp; chế độ học…</button>

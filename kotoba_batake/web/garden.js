@@ -1242,6 +1242,28 @@ var Garden = (function () {
     }
     syncSkyUi();
     drawMobileNote();
+    syncLeUi();
+  }
+  // 1.36: ⚙ → Sự kiện mùa (config season_event) · Nhạc Giáng sinh (khi giao diện Giáng sinh đang dùng) · Xem thử sự kiện (admin)
+  function syncLeUi() {
+    var on = $("kb-le-on");
+    if (on && data) { on.checked = data.le_on !== false; }
+    var row = $("kb-noel-music-row"), sel = $("kb-noel-music");
+    if (row && sel && typeof GardenMusic !== "undefined" && GardenMusic.noelChoices) {
+      var sea = typeof GardenSeason !== "undefined" ? GardenSeason : null;
+      var noel = !!(sea && sea.current && sea.current() === "noel");
+      row.hidden = !noel;
+      if (!sel.options.length) {
+        GardenMusic.noelChoices().forEach(function (c) { var o = document.createElement("option"); o.value = c.id; o.textContent = c.name; sel.appendChild(o); });
+      }
+      sel.value = GardenMusic.noelPick();
+    }
+    var pr = $("kb-le-pv-row");
+    if (pr) {
+      pr.hidden = !(data && data.admin);
+      var ps = $("kb-le-pv-day");
+      if (ps && data && data.le && data.le.preview) { ps.value = data.le.today; } else if (ps) { ps.value = "off"; }
+    }
   }
 
   // ---- 1.11: bù xu cho lượt ôn trên điện thoại ----
@@ -1385,6 +1407,15 @@ var Garden = (function () {
     $("kb-music-vol").addEventListener("input", function (e) {
       if (typeof GardenMusic !== "undefined") { GardenMusic.setVolume(Number(e.target.value) / 100); }
     });
+    if ($("kb-le-on")) {
+      $("kb-le-on").addEventListener("change", function (e) { send("le:cfg:" + (e.target.checked ? "on" : "off")); });
+    }
+    if ($("kb-noel-music")) {
+      $("kb-noel-music").addEventListener("change", function (e) { if (typeof GardenMusic !== "undefined" && GardenMusic.setNoel) { GardenMusic.setNoel(e.target.value); } });
+    }
+    if ($("kb-le-pv-day")) {
+      $("kb-le-pv-day").addEventListener("change", function (e) { send("le:preview:" + e.target.value); });
+    }
   }
 
   // Nhạc theo màn: ôn thẻ / "Nghe tìm cây" thì im, còn lại mỗi màn một bản.
@@ -1475,6 +1506,7 @@ var Garden = (function () {
     if (typeof GardenHome !== "undefined") { GardenHome.dataChanged(); }
     if (typeof GardenMusic !== "undefined") { GardenMusic.config(d.fx); }
     if (typeof GardenJoy !== "undefined") { GardenJoy.render(d.joy); }
+    if (typeof GardenLe !== "undefined") { GardenLe.render(d); fitTodayList(); }      // 1.36: tủ lịch Giáng sinh (chip, dòng Hôm nay)
     syncSoundUi();
     if (typeof GardenGreet !== "undefined") { GardenGreet.render(d); fitTodayList(); }      // 1.26: Tin làng, màn chào
     if (typeof GardenTour !== "undefined") { GardenTour.render(d); }      // 1.26.1: hướng dẫn 3 bước cho người mới
@@ -1760,7 +1792,8 @@ var Garden = (function () {
     "kb-scene-card": function () { if (typeof GardenHome !== "undefined" && GardenHome.closeSceneCard) { GardenHome.closeSceneCard(); } else { $("kb-scene-card").hidden = true; } },
     "kb-life-card": function () { if (typeof GardenLife !== "undefined" && GardenLife.closeCard) { GardenLife.closeCard(); } else { $("kb-life-card").hidden = true; } },
     "kb-find-card": function () { if (typeof GardenFinds !== "undefined" && GardenFinds.closeCard) { GardenFinds.closeCard(); } else { $("kb-find-card").hidden = true; } },
-    "kb-ped-pop": function () { if (typeof GardenFinds !== "undefined" && GardenFinds.closePed) { GardenFinds.closePed(); } else { $("kb-ped-pop").hidden = true; } }
+    "kb-ped-pop": function () { if (typeof GardenFinds !== "undefined" && GardenFinds.closePed) { GardenFinds.closePed(); } else { $("kb-ped-pop").hidden = true; } },
+    "kb-le-pop": function () { if (typeof GardenLe !== "undefined") { GardenLe.close(); } else { $("kb-le-pop").hidden = true; } }       // 1.36
   };
   var BIG_PANELS = ["kb-panel", "kb-game", "kb-home", "kb-paper", "kb-cal", "kb-fields", "kb-ui"];
   function closePops(except) {
@@ -2007,6 +2040,7 @@ var Garden = (function () {
     }
     if (typeof GardenGuests !== "undefined") { GardenGuests.init({ data: function () { return data; }, send: send }); }
     if (typeof GardenFinds !== "undefined") { GardenFinds.init({ data: function () { return data; }, send: send, toast: toast }); }
+    if (typeof GardenLe !== "undefined") { GardenLe.init({ data: function () { return data; }, send: send, toast: toast }); }      // 1.36
     if (typeof GardenLife !== "undefined") { GardenLife.init({ data: function () { return data; }, send: send }); }      // 1.30
     if (typeof GardenSeeds !== "undefined" && GardenSeeds.source) { GardenSeeds.source(function () { return data && data.catalog; }); }
     if (typeof GardenPaper !== "undefined") {
@@ -2116,6 +2150,7 @@ var Garden = (function () {
       if (typeof GardenHome !== "undefined") { GardenHome.update(res); }
     },
     finds: function (res) { if (typeof GardenFinds !== "undefined") { GardenFinds.result(res); } },      // 1.28
+    le: function (res) { if (typeof GardenLe !== "undefined") { GardenLe.result(res); } },      // 1.36: tủ lịch Giáng sinh
     uiSaved: function (c) { if (ui()) { ui().saved(c); } },
     homeError: function (msg) { if (typeof GardenHome !== "undefined") { GardenHome.error(msg); } },
     homeDrafts: function (d) { if (typeof GardenHome !== "undefined" && GardenHome.drafts) { GardenHome.drafts(d); } },      // 1.34

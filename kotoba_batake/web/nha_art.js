@@ -602,6 +602,65 @@ var GardenNhaArt = (function () {
         }
         c(x0, FL, x1 - x0, 1, "#5fb851");
       },
+      // ---- 1.36: quà tủ lịch Giáng sinh (ngăn 8: 3 mẫu tường · ngăn 15: 2 mẫu sàn) — decor_core.NOEL_TILES
+      w_noeltuyet: function (c, x0, x1) {          // bông tuyết trắng trên nền xanh lá thông
+        for (let y = WT; y < WB; y++) { c(x0, y, x1 - x0, 1, mixc("#2f6b4a", "#24573c", (y - WT) / (WB - WT))); }
+        for (let y = WT + 1; y < WB; y++) { for (let x = x0; x < x1; x++) { if (hs(x, y, 131) > 0.97) { c(x, y, 1, 1, "#3d7f5a"); } } }
+        const flake = [[2, 0, 1], [2, 1, 1], [2, 3, 1], [2, 4, 1], [0, 2, 1], [1, 2, 1], [3, 2, 1], [4, 2, 1], [2, 2, 2],
+          [1, 1, 3], [3, 1, 3], [1, 3, 3], [3, 3, 3]];
+        for (let y = WT + 2, r = 0; y < WB - 4; y += 10, r++) {
+          for (let x = Math.floor(x0 / 14) * 14 + (r % 2) * 7; x < x1; x += 14) {
+            flake.forEach(([dx, dy, k]) => {
+              const px = x + dx; if (px >= x0 && px < x1) { c(px, y + dy, 1, 1, k === 1 ? "#ffffff" : k === 2 ? "#dff3ff" : "#a9d8f0"); }
+            });
+          }
+        }
+      },
+      w_noelkeo: function (c, x0, x1) {             // sọc chéo đỏ trắng như kẹo gậy
+        for (let y = WT; y < WB; y++) {
+          for (let x = x0; x < x1; x++) {
+            const u = mod(x + y, 8);
+            c(x, y, 1, 1, u < 3 ? "#d23a3a" : u === 3 ? "#f2a0a0" : u === 7 ? "#ffe3e0" : "#fff7f2");
+          }
+        }
+        c(x0, WT, x1 - x0, 1, "#ffffff"); c(x0, WB - 1, x1 - x0, 1, "#e9d6d0");
+      },
+      w_noeldo: function (c, x0, x1) {              // nền đỏ mận lấm tấm cây thông vàng
+        speckle(c, x0, x1, WT, WB, "#7a1f2e", "#6c1a28", "#86283a", 133);
+        for (let y = WT + 3, r = 0; y < WB - 4; y += 9, r++) {
+          for (let x = Math.floor(x0 / 12) * 12 + (r % 2) * 6; x < x1; x += 12) {
+            [[1, 0, "#ffd23f"], [0, 1, "#e9b949"], [1, 1, "#ffd23f"], [2, 1, "#e9b949"], [0, 2, "#e9b949"], [1, 2, "#e9b949"], [2, 2, "#c9962e"],
+              [1, 3, "#a0603a"]].forEach(([dx, dy, col]) => { const px = x + dx; if (px >= x0 && px < x1) { c(px, y + dy, 1, 1, col); } });
+          }
+        }
+      },
+      f_noelcaro: function (c, x0, x1) {            // caro đỏ kẻ xanh lá kiểu tartan
+        for (let y = FL; y < HH; y++) {
+          for (let x = x0; x < x1; x++) {
+            const u = mod(x, 16), v = mod(y - FL, 16), bu = u >= 5 && u < 9, bv = v >= 5 && v < 9;
+            let col = bu && bv ? "#163d27" : bu || bv ? "#1f5a3a" : "#b3242f";
+            if (u === 12 || v === 12) { col = bu || bv ? "#5c7a2a" : "#e9b949"; }
+            else if (!bu && !bv && mod(x + y, 2) === 0) { col = "#a51f2a"; }
+            c(x, y, 1, 1, col);
+          }
+        }
+        c(x0, FL, x1 - x0, 1, "#7a1620");
+      },
+      f_noellen: function (c, x0, x1) {             // len trắng dệt hoa tuyết đỏ (kiểu Bắc Âu)
+        speckle(c, x0, x1, FL, HH, "#f4f1ea", "#e8e3d8", "#fbf9f4", 137);
+        for (let x = x0; x < x1; x++) {
+          const z = mod(x, 6), dy = z < 3 ? z : 6 - z;
+          c(x, FL + 3 + dy, 1, 1, "#c8323c"); c(x, HH - 6 + dy, 1, 1, "#c8323c");
+        }
+        c(x0, FL + 1, x1 - x0, 1, "#c8323c"); c(x0, HH - 2, x1 - x0, 1, "#c8323c");
+        for (let y = FL + 12, r = 0; y < HH - 12; y += 11, r++) {
+          for (let x = Math.floor(x0 / 12) * 12 + (r % 2) * 6; x < x1; x += 12) {
+            [[2, 0], [2, 1], [0, 2], [1, 2], [2, 2], [3, 2], [4, 2], [2, 3], [2, 4], [1, 1], [3, 1], [1, 3], [3, 3]].forEach(([dx, dy], i) => {
+              const px = x + dx; if (px >= x0 && px < x1) { c(px, y + dy, 1, 1, i >= 9 ? "#e07a80" : "#c8323c"); }
+            });
+          }
+        }
+      },
     };
     // ô 16×16 tự vẽ lặp lại (rows = 16 chuỗi 16 ký tự màu, "." = để nguyên nền theo kiểu nhà)
     function tilePaint(c, x0, x1, rowsArr, y0, y1) {

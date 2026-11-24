@@ -210,6 +210,9 @@ echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
 echo "== core/test_1356.py (1.35.6: nút Ẩn vườn / Hiện vườn trên bảng Báo — so với 1.35.5 chỉ đổi web/ + số bản, 1.31.3 đọc được ui.panel, soát mã)"
 OUT=$(python3 -W ignore "$HERE/core/test_1356.py" "$ADDON" 2>&1); RC=$?
 echo "$OUT" | grep -E "✗|KẾT QUẢ|Traceback"; [ $RC = 0 ] || FAIL=1
+echo "== core/test_136.py (1.36: sự kiện Giáng sinh — tủ lịch 24 ngăn: luật mở / mở bù / vé giữ chuỗi, 2.000 tháng ngẫu nhiên có đối chứng, hộp quà, tặng / bù quà cho từng kiểu người dùng, kho + sổ ghi cùng một lần, hai máy gộp, mã 1.31.3 thật, Tin làng)"
+OUT=$(python3 -W ignore "$HERE/core/test_136.py" "$ADDON" 2>&1); RC=$?
+echo "$OUT" | grep -E "✗|KẾT QUẢ|Traceback"; [ $RC = 0 ] || FAIL=1
 echo "== trang/test_trang.py (trang web: đăng / gỡ mã, biểu mẫu issue, GitHub Actions, dữ liệu khớp add-on)"
 OUT=$(python3 "$HERE/trang/test_trang.py" "$ADDON" 2>&1); RC=$?
 echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
@@ -220,6 +223,9 @@ if node -e "require('playwright')" 2>/dev/null; then
   echo "== core/test_1356.js (1.35.6: nút Ẩn vườn của bảng Báo trong Chromium — ui:set, khung báo cao kín cửa sổ, hàng trên cùng 4.716 bố cục × 6 kiểu font)"
   OUT=$(node "$HERE/core/test_1356.js" "$ADDON" 2>&1); RC=$?
   echo "$OUT" | grep -E "✗|KẾT QUẢ|LỖI"; [ $RC = 0 ] || FAIL=1
+  echo "== core/test_136.js (1.36: cây thông theo ngăn = cây gốc từng điểm ảnh, áo nhà 4 kiểu, đèn sân ≤ 400 bóng, quét ném lỗi, Dịu mắt đứng yên, tốc độ vẽ)"
+  OUT=$(node "$HERE/core/test_136.js" "$ADDON" 2>&1); RC=$?
+  echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
   echo "== trang/kiem_tra_trang.js (trang web trong Chromium: vùng vẽ khớp add-on từng điểm ảnh, giải mã = add-on, chạy cả trang)"
   OUT=$(node "$HERE/trang/kiem_tra_trang.js" "$ADDON" 2>&1); RC=$?
   echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
