@@ -148,7 +148,7 @@ cfg = json.load(open(os.path.join(ADDON, "config.json"), encoding="utf-8"))
 old_cfg = None
 with tarfile.open(fileobj=io.BytesIO(ma_cu.archive(ROOT, "d5efb47")), mode="r:*") as tf:
     old_cfg = json.load(tf.extractfile("kotoba_batake/config.json"))
-ok(set(cfg) - set(old_cfg) <= {"gemini_level_zh", "gemini_level_ko"} and not set(old_cfg) - set(cfg),
+ok(set(cfg) - set(old_cfg) <= {"gemini_level_zh", "gemini_level_ko", "season_event"} and not set(old_cfg) - set(cfg),     # 1.36: season_event (test_136.py)
    "config.json không bớt mục nào so với 1.31.5 (1.33 chỉ thêm trình độ báo tiếng Trung / tiếng Hàn)")
 
 print("== 7. nút ✎ Sửa / phím E (soát mã)")
@@ -200,7 +200,7 @@ ok(re.search(r'^GEOM = "kotoba_batake_edit"$', ew, re.M) is not None and ew.coun
    and "restoreGeom(self, GEOM)" in ew and "saveGeom(self, GEOM)" in ew, "kotoba_batake_edit chỉ là tên vị trí cửa sổ (saveGeom, hồ sơ trên máy)")
 new_src["edit_win.py"] = new_src["edit_win.py"].replace('"kotoba_batake_edit"', "")
 nk, okk = coll_keys(new_src) - {"kotoba_batake_paper_zh", "kotoba_batake_paper_ko", "kotoba_batake_paper_de",
-                                "kotoba_batake_paper_fr"}, coll_keys(old_src)   # 1.33: báo zh / ko; 1.35: báo de / fr
+                                "kotoba_batake_paper_fr", "kotoba_batake_le"}, coll_keys(old_src)   # 1.33: báo zh / ko; 1.35: báo de / fr; 1.36: sự kiện
 ok(nk == okk, "khoá kotoba_batake_* trong mã giống hệt 1.31.5 (%d khoá)%s" % (len(nk), (" — khác: %s" % sorted(nk ^ okk)) if nk != okk else ""))
 
 print("== 5. collection Anki thật")

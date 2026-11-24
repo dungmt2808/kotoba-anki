@@ -25,11 +25,29 @@ var GardenMusic = (function () {
     E: [40, [0, 4, 7]],
     // 1.18: thêm hợp âm cho các bản theo mùa
     D: [50, [0, 4, 7]], A: [45, [0, 4, 7]], Bb: [46, [0, 4, 7]], Eb: [39, [0, 4, 7]], Gm: [43, [0, 3, 7]], Cm: [48, [0, 3, 7]],
-    Bm: [47, [0, 3, 7]], "F#m": [42, [0, 3, 7]] };
+    Bm: [47, [0, 3, 7]], "F#m": [42, [0, 3, 7]],
+    // 1.36: nhạc Giáng sinh
+    B: [47, [0, 4, 7]] };
 
   // Dựng bè bass + rải hợp âm từ danh sách hợp âm (mỗi ô một ô nhịp; mảng = chia đôi ô nhịp).
-  function harmony(chords, bassStyle, arpOn) {
+  // 1.36: `B` = số bước mỗi ô nhịp (16 = 4/4; 12 = 3/4 — kiểu "waltz": bass phách 1, rải ba phách; mảng [a, b] = a hai phách đầu,
+  // b phách ba)
+  function harmony(chords, bassStyle, arpOn, B) {
     const bass = [], arp = [];
+    if (B && B !== 16) {
+      chords.forEach((c, bar) => {
+        const two = Array.isArray(c) ? c : [c, c];
+        for (let k = 0; k < 3; k++) {
+          const [root, tri] = CHORD[two[k < 2 ? 0 : 1]], s0 = bar * B + k * 4;
+          bass.push({ s: s0, m: k === 0 || (k === 2 && two[1] !== two[0]) ? root : root + 7, len: k === 0 ? 4 : 3 });
+          if (arpOn) {
+            let base = root; while (base < 57) { base += 12; }
+            arp.push({ s: s0, m: base + tri[k % 3], len: 2 }, { s: s0 + 2, m: base + tri[(k + 1) % 3], len: 2 });
+          }
+        }
+      });
+      return { bass: bass, arp: arp };
+    }
     chords.forEach((c, bar) => {
       const halves = Array.isArray(c) ? c : [c, c];
       halves.forEach((name, h) => {
@@ -52,26 +70,27 @@ var GardenMusic = (function () {
     return { bass: bass, arp: arp };
   }
 
-  function drums(pattern, bars) {
-    const out = [];
+  function drums(pattern, bars, B) {
+    const out = [], n = B || 16;
     for (let b = 0; b < bars; b++) {
-      for (let i = 0; i < 16; i++) { if (pattern.charAt(i) === "x") { out.push({ s: b * 16 + i }); } }
+      for (let i = 0; i < n; i++) { if (pattern.charAt(i) === "x") { out.push({ s: b * n + i }); } }
     }
     return out;
   }
 
   function track(def) {
     const lead = melody(def.lead);
-    const h = harmony(def.chords, def.bass, def.arp);
-    const bars = lead.len / 16;
+    const B = def.bar || 16;
+    const h = harmony(def.chords, def.bass, def.arp, B);
+    const bars = lead.len / B;
     return {
       bpm: def.bpm, len: lead.len, leadType: def.leadType, echo: def.echo,
-      vol: def.vol,
+      vol: def.vol, bar: B, noel: !!def.noel,
       pluck: !!def.pluck, bars: bars, chords: def.chords.length,
       voices: {
         lead: lead.notes, bass: h.bass, arp: h.arp,
-        kick: def.kick ? drums(def.kick, bars) : [], snare: def.snare ? drums(def.snare, bars) : [],
-        hat: def.hat ? drums(def.hat, bars) : [], wood: def.wood ? drums(def.wood, bars) : []
+        kick: def.kick ? drums(def.kick, bars, B) : [], snare: def.snare ? drums(def.snare, bars, B) : [],
+        hat: def.hat ? drums(def.hat, bars, B) : [], wood: def.wood ? drums(def.wood, bars, B) : []
       }
     };
   }
@@ -213,18 +232,104 @@ var GardenMusic = (function () {
       wood: "x...........x.x."
     })
   };
+  // ---- 1.36: nhạc Giáng sinh để chọn (⚙ → Âm thanh, khi giao diện Giáng sinh đang dùng). Giai điệu dân gian / cổ điển đã hết
+  // bản quyền, tự phối 8-bit (không dùng bản thu của ai). Không dùng bài còn bản quyền (Rudolph, Last Christmas…).
+  Object.assign(TRACKS, {
+    jingle: track({      // Jingle Bells (James Lord Pierpont, 1857) — điệp khúc, chuông xe tuần lộc
+      noel: true, bpm: 132, leadType: "square", bass: "quarter", arp: false, echo: false,
+      vol: { lead: 0.065, bass: 0.12, hat: 0.026 },
+      lead: "E5:4 E5:4 E5:8  E5:4 E5:4 E5:8  E5:4 G5:4 C5:6 D5:2  E5:16 " +
+            "F5:4 F5:4 F5:6 F5:2  F5:4 E5:4 E5:4 E5:2 E5:2  E5:4 D5:4 D5:4 E5:4  D5:8 G5:8 " +
+            "E5:4 E5:4 E5:8  E5:4 E5:4 E5:8  E5:4 G5:4 C5:6 D5:2  E5:16 " +
+            "F5:4 F5:4 F5:6 F5:2  F5:4 E5:4 E5:4 E5:2 E5:2  G5:4 G5:4 F5:4 D5:4  C5:16",
+      chords: ["C", "C", "C", "C", "F", "C", "D", "G", "C", "C", "C", "C", "F", "C", "G", "C"],
+      hat: "x.x.x.x.x.x.x.x."
+    }),
+    silent: track({      // Stille Nacht / Silent Night / きよしこの夜 (Franz Gruber, 1818) — hộp nhạc, nhịp 3/4
+      noel: true, bar: 12, bpm: 68, leadType: "triangle", bass: "waltz", arp: true, echo: true,
+      vol: { lead: 0.17, bass: 0.1, arp: 0.035 },
+      lead: "D5:6 E5:2 D5:4  B4:12  D5:6 E5:2 D5:4  B4:12  A5:8 A5:4  F#5:12  G5:8 G5:4  D5:12 " +
+            "E5:8 E5:4  G5:6 F#5:2 E5:4  D5:6 E5:2 D5:4  B4:12  E5:8 E5:4  G5:6 F#5:2 E5:4  D5:6 E5:2 D5:4  B4:12 " +
+            "A5:8 A5:4  C6:6 A5:2 F#5:4  G5:12  B5:12  G5:6 D5:2 B4:4  D5:6 C5:2 A4:4  G4:12  -:12",
+      chords: ["G", "G", "G", "G", "D", "D", "G", "G", "C", "C", "G", "G", "C", "C", "G", "G", "D", "D", "G", "G", "G", "D", "G", "G"]
+    }),
+    wish: track({        // We Wish You a Merry Christmas (dân ca Anh) — nhịp 3/4
+      noel: true, bar: 12, bpm: 120, leadType: "square", bass: "waltz", arp: false, echo: false,
+      vol: { lead: 0.065, bass: 0.12, hat: 0.018 },
+      lead: "-:8 D5:4  G5:4 G5:2 A5:2 G5:2 F#5:2  E5:4 E5:4 E5:4  A5:4 A5:2 B5:2 A5:2 G5:2  F#5:4 D5:4 D5:4 " +
+            "B5:4 B5:2 C6:2 B5:2 A5:2  G5:4 E5:4 D5:2 D5:2  E5:4 A5:4 F#5:4  G5:8 -:4",
+      chords: ["G", "G", "C", "A", "D", "B", "Em", ["C", "D"], "G"],
+      hat: "x...x...x..."
+    }),
+    deck: track({        // Deck the Halls (dân ca xứ Wales)
+      noel: true, bpm: 116, leadType: "square", bass: "quarter", arp: true, echo: false,
+      vol: { lead: 0.065, bass: 0.12, arp: 0.028, hat: 0.016 },
+      lead: "G5:6 F5:2 E5:4 D5:4  C5:4 D5:4 E5:4 C5:4  D5:2 E5:2 F5:2 D5:2 E5:6 D5:2  C5:4 B4:4 C5:8 " +
+            "G5:6 F5:2 E5:4 D5:4  C5:4 D5:4 E5:4 C5:4  D5:2 E5:2 F5:2 D5:2 E5:6 D5:2  C5:4 B4:4 C5:8 " +
+            "D5:6 E5:2 F5:4 D5:4  E5:6 F5:2 G5:4 D5:4  E5:2 F#5:2 G5:4 A5:2 B5:2 C6:4  B5:4 A5:4 G5:8 " +
+            "G5:6 F5:2 E5:4 D5:4  C5:4 D5:4 E5:4 C5:4  A5:2 A5:2 A5:2 A5:2 G5:6 F5:2  E5:4 D5:4 C5:8",
+      chords: ["C", "C", ["Dm", "C"], ["G", "C"], "C", "C", ["Dm", "C"], ["G", "C"], "G", ["C", "G"], ["Em", "D"], ["D", "G"],
+        "C", "C", ["F", "C"], ["G", "C"]],
+      hat: "..x...x...x...x."
+    }),
+    tanne: track({       // O Tannenbaum (dân ca Đức) — nhịp 3/4
+      noel: true, bar: 12, bpm: 92, leadType: "triangle", bass: "waltz", arp: true, echo: true,
+      vol: { lead: 0.16, bass: 0.1, arp: 0.032 },
+      lead: "-:8 C5:4  F5:3 F5:1 F5:6 G5:2  A5:3 A5:1 A5:6 A5:2  G5:2 A5:2 A#5:4 E5:4  G5:4 F5:4 C6:4 " +
+            "C6:2 A5:2 D6:6 C6:2  C6:2 A#5:2 A#5:6 A#5:2  A#5:2 G5:2 C6:6 A#5:2  A#5:2 A5:2 A5:4 C5:4 " +
+            "F5:3 F5:1 F5:6 G5:2  A5:3 A5:1 A5:6 A5:2  G5:2 A5:2 A#5:4 E5:4  G5:4 F5:8",
+      chords: ["C", "F", "F", "C", "F", "F", "C", "C", "F", "F", "F", "C", "F"]
+    }),
+    joy: track({         // Joy to the World (Lowell Mason theo Handel, 1839)
+      noel: true, bpm: 104, leadType: "square", bass: "quarter", arp: true, echo: false,
+      vol: { lead: 0.065, bass: 0.12, arp: 0.028 },
+      lead: "D6:4 C#6:3 B5:1 A5:6 G5:2  F#5:4 E5:4 D5:6 A5:2  B5:6 B5:2 C#6:6 C#6:2  D6:6 D6:2 D6:2 C#6:2 B5:2 A5:2 " +
+            "A5:3 G5:1 F#5:2 D6:2 D6:2 C#6:2 B5:2 A5:2  A5:3 G5:1 F#5:2 F#5:2 F#5:2 F#5:2 F#5:2 F#5:1 G5:1 " +
+            "A5:6 G5:1 F#5:1 E5:2 E5:2 E5:2 E5:1 F#5:1  G5:6 F#5:1 E5:1 D5:2 D6:4 B5:2  A5:3 G5:1 F#5:2 G5:2 F#5:4 E5:4  D5:16",
+      chords: ["D", ["D", "A"], ["G", "A"], "D", "D", "D", "A", ["G", "D"], "A", "D"]
+    })
+  });
+  const NOEL_LIST = [
+    { id: "noel", name: "Nhạc vườn Noel" }, { id: "jingle", name: "Jingle Bells" }, { id: "silent", name: "Silent Night · Đêm thánh vô cùng" },
+    { id: "wish", name: "We Wish You a Merry Christmas" }, { id: "deck", name: "Deck the Halls" }, { id: "tanne", name: "O Tannenbaum" },
+    { id: "joy", name: "Joy to the World" }, { id: "daily", name: "Đổi bài mỗi ngày" }
+  ];
+  let noelPref = null;
+  function noelPick() {
+    if (noelPref === null) { const v = pget("kb-music-noel"); noelPref = NOEL_LIST.some((c) => c.id === v) ? v : "noel"; }
+    return noelPref;
+  }
+  function noelTrack() {
+    const p = noelPick();
+    if (p !== "daily") { return TRACKS[p] ? p : "noel"; }
+    const songs = NOEL_LIST.filter((c) => c.id !== "daily"), d = new Date();
+    const n = Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000);
+    return songs[((n % songs.length) + songs.length) % songs.length].id;
+  }
+
   // Bản nhạc vườn của từng giao diện mùa (1.18: đủ 14 chủ đề; chủ đề không có trong bảng → bản vườn thường)
   const THEME_TRACK = { noel: "noel", tet: "tet", halloween: "halloween", spring: "spring", summer: "summer", autumn: "autumn",
     winter: "winter", hanami: "hanami", tsuyu: "tsuyu", tanabata: "tanabata", natsumatsuri: "natsumatsuri", tsukimi: "tsukimi",
     momiji: "momiji", shogatsu: "shogatsu" };
   function season() { return typeof GardenSeason !== "undefined" && GardenSeason ? GardenSeason : null; }
+  // 1.36.1: cảnh đêm 24 phát Silent Night (chỉ khi nhạc đang bật — không tự bật nhạc người dùng đã tắt)
+  let forced = null;
+  function eveNight() {          // tối 24/12 (18:00 tới nửa đêm, giờ máy)
+    const d = new Date();
+    return d.getMonth() === 11 && d.getDate() === 24 && d.getHours() >= 18;
+  }
   function trackFor(sc) {
     const base = SCENE_TRACK[sc], sea = season();
+    if (forced && TRACKS[forced] && (sc === "garden" || sc === "home")) { return forced; }
     // 1.18: bấm "Xem thử" một chủ đề trong Nhà → phát luôn nhạc của chủ đề đó (thôi xem thử → lại hộp nhạc của nhà)
     const pv = sea && sea.previewing ? sea.previewing() : null;
-    if (pv && THEME_TRACK[pv] && (sc === "home" || sc === "garden")) { return THEME_TRACK[pv]; }
+    if (pv && THEME_TRACK[pv] && (sc === "home" || sc === "garden")) { return pv === "noel" ? noelTrack() : THEME_TRACK[pv]; }
     if (base !== "garden") { return base; }
     const th = sea ? sea.current() : null;
+    if (th === "noel") {          // 1.36: bài Giáng sinh đã chọn · 1.36.1: tối 24 "Nhạc vườn Noel" / "Đổi bài mỗi ngày" → Silent Night
+      const p = noelPick();
+      return eveNight() && (p === "noel" || p === "daily") ? "silent" : noelTrack();
+    }
     return (th && THEME_TRACK[th]) || base;
   }
 
@@ -435,6 +540,15 @@ var GardenMusic = (function () {
     // đổi giao diện mùa / bấm "Xem thử" → đổi bản nhạc (1.18: không cần nhạc đã chạy trước đó)
     themeChanged: function () { loadPref(); if (enabled || playing) { apply(); } },
     trackFor: trackFor,
+    // 1.36: nhạc Giáng sinh (⚙ → Âm thanh → Nhạc Giáng sinh), lưu ở prefs kb-music-noel (riêng máy)
+    noelChoices: () => NOEL_LIST.slice(),
+    force: function (id) { forced = id && TRACKS[id] ? id : null; if (enabled || playing) { apply(); } },
+    noelPick: noelPick,
+    setNoel: function (id) {
+      if (!NOEL_LIST.some((c) => c.id === id)) { return; }
+      noelPref = id; pset("kb-music-noel", id);
+      loadPref(); if (enabled || playing) { apply(); }
+    },
     themeTrack: (id) => THEME_TRACK[id] || null,
     enabled: () => { loadPref(); return enabled; },
     volume: () => volume,

@@ -456,8 +456,10 @@ if old.returncode == 0:
         if fn.endswith(".py"):
             old_keys |= set(KEY_RE.findall(subprocess.run(["git", "-C", ROOT, "show", BASE_COMMIT + ":" + fn],
                                                           capture_output=True, text=True).stdout))
+    cur_keys -= {"kotoba_batake_le"}     # 1.36: sự kiện Giáng sinh — khoá mới, test_136.py soát
     ok(cur_keys == old_keys, "khoá collection kotoba_batake_* = 1.35.1 (%d khoá)" % len(cur_keys))
-    ok(json.loads(old.stdout) == json.load(open(os.path.join(ADDON, "config.json"), encoding="utf-8")),
+    ok(json.loads(old.stdout) == {k: v for k, v in json.load(open(os.path.join(ADDON, "config.json"), encoding="utf-8")).items()
+                                  if k != "season_event"},      # 1.36: ⚙ Sự kiện mùa — test_136.py soát
        "config.json giống hệt 1.35.1 (không thêm mục)")
 else:
     print("  – bỏ qua so với 1.35.1 (repo không có commit %s)" % BASE_COMMIT)

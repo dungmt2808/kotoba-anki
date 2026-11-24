@@ -74,8 +74,12 @@ function compare(want, got, label) {
   ok(!gone.length, label + ': ' + Object.keys(want.files).length + ' file user_files/ y nguyên' + (gone.length ? ' — KHÁC: ' + gone.join(', ') : ''));
   ok(canon(got.addon) === canon(want.addon), label + ': cấu hình add-on (⚙, Ngôn ngữ trong vườn…) giữ nguyên' +
     (canon(got.addon) === canon(want.addon) ? '' : ' — khác: ' + Object.keys(Object.assign({}, want.addon, got.addon)).filter((k) => canon(got.addon[k]) !== canon(want.addon[k])).join(', ')));
-  ok(got.coins === want.coins && JSON.stringify(got.owned) === JSON.stringify(want.owned) && JSON.stringify(got.yard) === JSON.stringify(want.yard)
-    && got.diary === want.diary, label + ': xu ' + got.coins + ', đồ, sân, nhật ký y nguyên');
+  // 1.36: bản cũ (≤ 1.35) không biết đồ sự kiện Giáng sinh (le_*) — không hiện trong ví của nó nhưng giữ hộ ở tầng NHA_KEY (khoá
+  // collection so ở trên: y nguyên); phép so này chỉ xét phần cả hai bản cùng hiểu, phần đồ sự kiện p3 soát riêng
+  const noLe = (o) => Object.keys(o || {}).filter((k) => !/^le_/.test(k)).sort().reduce((x, k) => { x[k] = o[k]; return x; }, {});
+  const yardNoLe = (y) => (y || []).filter((e) => !/^le_/.test(e[0]));
+  ok(got.coins === want.coins && JSON.stringify(noLe(got.owned)) === JSON.stringify(noLe(want.owned)) &&
+    JSON.stringify(yardNoLe(got.yard)) === JSON.stringify(yardNoLe(want.yard)) && got.diary === want.diary, label + ': xu ' + got.coins + ', đồ, sân, nhật ký y nguyên');
 }
 
 async function p1() {
@@ -111,6 +115,26 @@ if "de" in kb.fields_core.LANGS:          # 1.35: deck tiếng Đức — lưu �
 d = st.load(); d["coins"] += 100000; st.save(d)
 [st.build() for _ in range(7)]
 st.buy("bench"); st.place("yard", "bench", 6, 1)
+if hasattr(kb, "le_core"):          # 1.36: đã mở 21 ngăn tủ lịch Giáng sinh, dán tường Noel — rồi máy khác còn bản cũ chạy chen
+    import datetime as _dt
+    _today = _dt.date(2026, 12, 21); _days = ["2026-12-%02d" % k for k in range(1, 22)]
+    ev = kb.LE.load(); give = {}; tiles = []
+    for dd in range(1, 22):
+        r = kb.le_core.open_door(ev, dd, _today, _days, [], 3)
+        for k, v in r["item"].items():
+            give[k] = give.get(k, 0) + v
+        tiles += r["tiles"]
+    kb.le_core.mark_gifts(ev, ["tulich", "tree"], _today); give["le_tulich"] = 1; give["xmastree"] = 1
+    st.le_apply(give, kb.le_core.auto_list(give), tiles, extra=[kb.LE.write(ev)])
+    st.decor_use("room", "wall", "w_noelkeo")
+    if hasattr(kb.le_core, "save_card"):      # 1.36.1: thiệp đã treo, thiệp nhận của bạn, ông già Noel đã ghé
+        _now = _dt.datetime(2026, 12, 21, 20, 0)
+        ev = kb.LE.load()
+        kb.le_core.save_card(ev, 0, {"f": "qua", "st": [{"s": "xmastree", "x": 6, "y": 22}], "t1": "Giáng sinh an lành!", "t2": "— hạ bản", "c": "ja", "w": "Ước gì học giỏi", "wl": "vi"}, _today, _now)
+        kb.le_core.hang_card(ev, 0, _today, _now)
+        kb.le_core.recv_add(ev, kb.le_core.card_code({"f": "thong", "st": [], "t1": "Merry Christmas", "t2": "", "c": ""}), _today)
+        kb.le_core.mark_seen(ev, _dt.datetime(2026, 12, 24, 19, 0), "star,tree")
+        kb.LE.save(ev)
 kb.JOURNAL.update(kb.cal_today(), {"t": "viết bằng 1.32 trước khi hạ bản"})
 c = mw.addonManager.getConfig("kotoba_batake"); c.setdefault("prefs", {})["kb-glang"] = "zh"; mw.addonManager.writeConfig("kotoba_batake", c)
 result = did`);
@@ -183,6 +207,22 @@ async function p3() {
   ok(got.version === first.version, 'Anki chạy lại bản mới ' + got.version);
   compare(want, got, 'sau khi lên lại');
   ok(got.owned.bench && got.owned.sunflower && got.diary === 'bản cũ viết tiếp', 'đồ mua ở bản mới (ghế) + ở bản cũ (hướng dương), nhật ký bản cũ viết đều còn');
+  const leIds = Object.keys(first.owned).filter((k) => /^le_/.test(k));
+  if (leIds.length) {         // 1.36: đồ sự kiện + tường Noel qua tay bản cũ
+    const ex = await py(KB + 'd = st.load(); result = {"room": d["home"]["room"], "yard": d["home"]["yard"], "use": d["more"]["decor"]["use"]["room"], "own": d["more"]["decor"]["own"], "le": mw.col.get_config("kotoba_batake_le", None)}');
+    ok(leIds.every((k) => got.owned[k] === first.owned[k]), 'đồ sự kiện Giáng sinh còn đủ sau khi bản cũ chạy chen: ' + leIds.map((k) => k + '×' + got.owned[k]).join(', '));
+    ok(ex.room.some((e) => e.id === 'le_tulich') && ex.yard.some((e) => e.id === 'le_nguoituyet') && ex.yard.some((e) => e.id === 'xmastree'),
+      'tủ lịch trên tường, người tuyết + cây thông ngoài sân vẫn ở chỗ cũ');
+    ok(ex.use.wall === 'w_noelkeo' && ['w_noeltuyet', 'w_noelkeo', 'w_noeldo', 'f_noelcaro', 'f_noellen'].every((t) => ex.own.indexOf(t) >= 0),
+      'tường Noel đang dùng + 5 mẫu Noel còn (bản cũ vẽ theo kiểu nhà, không xoá)');
+    ok(ex.le && Object.keys(ex.le.noel2026.open).length === 21, 'sổ tủ lịch còn 21 ngăn đã mở');
+    const n26 = (ex.le && ex.le.noel2026) || {};
+    if (n26.cards) {
+      ok(n26.cards[0] && n26.cards[0].t1 === 'Giáng sinh an lành!' && n26.cards[0].w === 'Ước gì học giỏi' && n26.hang && n26.hang.i === 0,
+        '1.36.1: thiệp đã treo (cả điều ước) còn nguyên');
+      ok((n26.recv || []).length === 1 && n26.santa && n26.santa.seen && n26.santa.facts === 'star,tree', '1.36.1: thiệp nhận, ông già Noel đã ghé còn nguyên');
+    }
+  }
   await openGarden();
   const did = await py(KB + 'result = mw.col.decks.id_for_name("ZH::Hạ bản")');
   await py(KB + `kb._dialog.deck_id = ${did}; kb._dialog.refresh(); result = 1`); await sleep(1500);

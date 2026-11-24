@@ -24,6 +24,7 @@
     "toolbar_button": true,
     "mobile_coins": true,
     "sync_guard": true,
+    "season_event": true,
     "bao_dir": "",
     "bao_source": "auto",
     "gemini_key": "",

@@ -76,11 +76,27 @@ HOUSE: dict[str, dict[str, Any]] = {
     "f_hkitchen": {"name": "Sàn Bếp", "slot": "floor", "room": "kitchen"},
 }
 HOUSE_SAME = {("floor", "bedroom"): "f_hroom"}      # nền theo kiểu nhà của gian này = mẫu nhà nào (để khỏi hiện trùng)
+# 1.36: quà của tủ lịch Giáng sinh 2026 (le_core, ngăn 8: 3 mẫu tường · ngăn 15: 2 mẫu sàn) — không bán (price 0, "le").
+# Bản 1.30 – 1.35 ở máy khác giữ hộ id lạ trong "own" / "use" (đúng dạng id) và vẽ gian đó theo kiểu nhà.
+NOEL_TILES: dict[str, dict[str, Any]] = {
+    "w_noeltuyet": {"name": "Bông tuyết trên nền thông", "ja": "雪の結晶", "price": 0, "le": True, "slot": "wall",
+                    "desc": "Bông tuyết trắng trên nền xanh lá thông"},
+    "w_noelkeo": {"name": "Sọc kẹo gậy", "ja": "キャンディケイン", "price": 0, "le": True, "slot": "wall",
+                  "desc": "Sọc chéo đỏ trắng như kẹo gậy"},
+    "w_noeldo": {"name": "Đỏ mận cây thông nhỏ", "ja": "もみの木", "price": 0, "le": True, "slot": "wall",
+                 "desc": "Nền đỏ mận lấm tấm cây thông vàng"},
+    "f_noelcaro": {"name": "Thảm caro đỏ", "ja": "タータン", "price": 0, "le": True, "slot": "floor",
+                   "desc": "Caro đỏ kẻ xanh lá kiểu tartan"},
+    "f_noellen": {"name": "Thảm len tuyết", "ja": "ノルディック", "price": 0, "le": True, "slot": "floor",
+                  "desc": "Len trắng dệt hoa tuyết đỏ"},
+}
 PRESETS: dict[str, dict[str, Any]] = {}
 for _k, _v in WALLS.items():
     PRESETS[_k] = dict(_v, slot="wall")
 for _k, _v in FLOORS.items():
     PRESETS[_k] = dict(_v, slot="floor")
+for _k, _v in NOEL_TILES.items():
+    PRESETS[_k] = dict(_v)
 for _k in list(PRESETS) + list(HOUSE):
     assert ID_RE.match(_k) and _k[0] == (PRESETS.get(_k) or HOUSE.get(_k))["slot"][0], _k
 assert not set(PRESETS) & set(HOUSE)
@@ -160,6 +176,8 @@ def buy(dec: dict[str, Any], did: Any) -> int:
         raise DecorError("Không có mẫu này.")
     if did in dec["own"]:
         raise DecorError("Mẫu này đã có rồi.")
+    if did in NOEL_TILES:
+        raise DecorError("Mẫu này là quà của Lịch chờ Giáng sinh, không bán.")
     dec["own"].append(did)
     return int(PRESETS[did]["price"])
 
@@ -243,6 +261,7 @@ def tile_delete(dec: dict[str, Any], tid: Any) -> None:
 
 def catalog_view() -> dict[str, Any]:
     return {"walls": [dict(v, id=k) for k, v in WALLS.items()], "floors": [dict(v, id=k) for k, v in FLOORS.items()],
+            "noel": [dict(v, id=k) for k, v in NOEL_TILES.items()],         # 1.36: chỉ hiện khi đã có (quà tủ lịch)
             "house": [dict(v, id=k) for k, v in HOUSE.items()],
             "house_same": {slot + ":" + room: did for (slot, room), did in HOUSE_SAME.items()},
             "rooms": [{"id": r, "name": ROOM_NAMES[r]} for r in ROOMS],

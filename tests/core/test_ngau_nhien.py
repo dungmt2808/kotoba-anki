@@ -334,13 +334,14 @@ for iid, it in core.CATALOG.items():
         wrong.append(iid)
 ok(not wrong, "cửa hàng: mọi món trừ đúng giá" + (" — sai: " + ",".join(wrong) if wrong else ""))
 wrong = []
-for did, it in D.PRESETS.items():
+SHOP = {k: v for k, v in D.PRESETS.items() if not v.get("le")}      # 1.36: mẫu Noel là quà tủ lịch, không bán (test_136.py soát)
+for did, it in SHOP.items():
     c0 = st.load()["coins"]
     st.decor_buy(did)
     if c0 - st.load()["coins"] != it["price"]:
         wrong.append(did)
-ok(not wrong and len(st.load()["more"][D.DECOR_KEY]["own"]) == len(D.PRESETS), "tường / sàn: mọi mẫu trừ đúng giá")
-total = sum(v["price"] for v in D.PRESETS.values())
+ok(not wrong and len(st.load()["more"][D.DECOR_KEY]["own"]) == len(SHOP), "tường / sàn: mọi mẫu trừ đúng giá")
+total = sum(v["price"] for v in SHOP.values())
 ok(5000 <= total <= 8000, "mua hết 21 mẫu tường / sàn: %d xu" % total)
 
 shutil.rmtree(TMP, ignore_errors=True)

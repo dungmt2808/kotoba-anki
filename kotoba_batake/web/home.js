@@ -21,6 +21,8 @@ var GardenHome = (function () {
   let NHA = null;                 // 1.24: móc của nha_art.js (đồ Bếp / Phòng ngủ, nền hai gian bên)
   let ART = null;                 // móc của season_art.js (đồ theo mùa): motion, pal, emit, stepPart, drawPart, frameOf
   let FIND = null;                // 1.28: móc của finds_art.js (quà Hộp sưu tầm, món gánh hàng rong): frameOf, pal
+  // 1.36: sự kiện Giáng sinh (le.js) — chỉ khi đang chạy (trong mùa + ⚙ Sự kiện mùa = Bật): cây thông theo ngăn, áo nhà, đèn sân
+  function LE() { return typeof GardenLe !== "undefined" && GardenLe.active && GardenLe.active() ? GardenLe : null; }
   let lastTs = 0, frame = 0;
 
   const T = 16;                                   // 1 ô = 16 điểm ảnh nghệ thuật
@@ -2062,6 +2064,8 @@ var GardenHome = (function () {
   // Hình vẽ trong cảnh: khung hoạt hình / phần tĩnh / hình theo mùa – thời tiết
   function sceneSprite(e, it, spr, now, sceneName, st, ghost) {
     if (ghost && BASE[e.id]) { return spr; }      // bóng mờ khi đang đặt: hình đầy đủ (phần động không vẽ cho bóng mờ)
+    if (e.id === "xmastree" && LE()) { const t = LE().treeSprite(); if (t) { return t; } }   // 1.36: cây trơn → đầy dần theo ngăn
+    if (e.id === "le_banhquy" && typeof GardenLe !== "undefined" && GardenLe.eaten && GardenLe.eaten()) { return GardenLe.crumbs(); }   // 1.36.1: ông già Noel đã ăn
     if (e.id === "fountain" && st && (st.snow || st.cover)) { return ALT.fountain.bang; }
     if (e.id === "rice" && isAutumn()) { return ALT.rice.vang; }
     const fr = FRAMES[e.id];
@@ -2149,7 +2153,8 @@ var GardenHome = (function () {
     else if (RARE && RARE.pal(e, night)) { pal = RARE.pal(e, night); }
     else if (NHA && NHA.pal(e, night)) { pal = NHA.pal(e, night); }
     else if (ART) { pal = ART.pal(e, night, now) || P; }
-    const g = GLOW[e.id] || (it.custom && (it.fx === "glow" || it.fx === "pulse") ? [h / 2, Math.max(10, h * 0.7)] : null);
+    let g = GLOW[e.id] || (it.custom && (it.fx === "glow" || it.fx === "pulse") ? [h / 2, Math.max(10, h * 0.7)] : null);
+    if (e.id === "xmastree" && LE() && !LE().has("lights")) { g = null; }       // 1.36: chưa mở ngăn dây đèn → chưa sáng
     if (g && night) {
       ctx.globalAlpha = (0.13 + 0.05 * Math.sin(now / 400 + e.x)) * (alpha === undefined ? 1 : alpha) * (it.fx === "pulse" ? 0.6 + 0.6 * Math.abs(Math.sin(now / 600 + e.x)) : 1);
       ctx.fillStyle = P.y;
@@ -2255,6 +2260,7 @@ var GardenHome = (function () {
     } else if (EXTRA17[e.id]) {
       EXTRA17[e.id](ctx, S, X, Y, e, now, tod, sceneName);
     }
+    if (e.id === "xmastree" && LE()) { LE().drawTreeExtra(ctx, S, X, Y, e, now, tod); }      // 1.36: hộp quà bí mật dưới gốc
   }
 
   // ---- 1.7: phần vẽ động của đồ mới ----
@@ -2406,6 +2412,11 @@ var GardenHome = (function () {
   // 1.28: quà đủ bộ Hộp sưu tầm + món chỉ có ở gánh hàng rong (finds_art.js)
   if (typeof GardenFindArt !== "undefined") {
     FIND = GardenFindArt.install({ SPR, ALT, GLOW, EXTRA: EXTRA17, P, box });
+  }
+  // 1.36: món của sự kiện Giáng sinh (le_art.js): tủ lịch, cây thông nhỏ, tất Noel, quả cầu tuyết, bánh kem, gấu bông, người
+  // tuyết, đèn ngủ, đèn lồng ngôi sao, tuần lộc đèn, bàn bánh quy + sữa
+  if (typeof GardenLeArt !== "undefined") {
+    GardenLeArt.install({ SPR, GLOW, EXTRA: EXTRA17, P });
   }
   // 1.25.5: bản sửa hình gốc (fix.js) — khung "spr" (cửa hàng + cảnh), "f<i>" (FRAMES khác spr), "base" (phần tĩnh)
   if (typeof GardenFix !== "undefined") {
@@ -2938,6 +2949,7 @@ var GardenHome = (function () {
     if (sea) { sea.garland(ctx, S, ox, oy - P0, now, bx0, bx1, 0, st); }
     drawHouse(ctx, S, ox, oy, home.house, now, tod, home.style);
     drawWear(ctx, S, ox, oy, home, now, st, opts && opts.wear);
+    if (LE() && !(opts && opts.style)) { LE().drawHouse(ctx, S, ox, oy, home); }        // 1.36: áo Noel của nhà
     }
     snowRoof = false;
     if (opts && opts.grid) {
@@ -2967,6 +2979,14 @@ var GardenHome = (function () {
       }
       drawNight(ctx, S, ox, oy, bx0, bx1, YARD.H, st);
       if (sea) { sea.nightTop(ctx, S, ox, oy, now, bx0, bx1, YARD.H, st, oy - P0); }
+    }
+    if (typeof GardenLe !== "undefined" && !(opts && opts.uz)) {        // 1.36: đèn sân (sau lớp tối ban đêm; ban ngày là dây đèn tắt)
+      const tr = LE() ? LE().treeSprite() : null;
+      const bxs = (home[sceneName] || []).map((e) => {
+        const b = itemBox(e, sceneName);
+        return b ? { id: e.id, x: b.x, y: b.y, w: b.w, h: b.h, spr: e.id === "xmastree" && tr ? tr : b.spr } : null;
+      }).filter(Boolean);
+      GardenLe.drawLights(ctx, S, ox, oy, sceneName, home, now, st, bxs);
     }
     guestsTop(ctx, S, ox, oy, sceneName, now, st, opts);
     // 1.28: gánh hàng rong + chỗ lấp lánh (không vẽ ở ảnh xem trước / ảnh chụp / bản vẽ của Xưởng)
@@ -3391,6 +3411,17 @@ var GardenHome = (function () {
     if (!cv || !mainView || mainView.house || typeof GardenGuests === "undefined") { return null; }
     const r = cv.getBoundingClientRect();
     return GardenGuests.at(mainScene(), (ev.clientX - r.left) / mainView.S - mainView.ox, (ev.clientY - r.top) / mainView.S - (mainView.oy || 0));
+  }
+  // 1.36: món ở chỗ bấm trong cả nhà (Trong nhà ở màn chính: ba gian cạnh nhau) — chỉ để bấm tủ lịch Giáng sinh
+  function mainHouseItemAt(ev) {
+    const cv = $("kb-yard");
+    if (!cv || !mainView || !mainView.house) { return null; }
+    const r = cv.getBoundingClientRect();
+    const ax = (ev.clientX - r.left) / mainView.S - mainView.ox, ay = (ev.clientY - r.top) / mainView.S - (mainView.oy || 0);
+    const k = houseRoomAt(ax);
+    if (!canEnter(k)) { return null; }
+    const idx = itemAt(k, cellAt(k, ax - HOUSE3.X[k], ay));
+    return idx >= 0 ? (homeState()[k] || [])[idx] : null;
   }
   function mainItemAt(ev) {
     const cv = $("kb-yard");
@@ -4399,7 +4430,7 @@ var GardenHome = (function () {
     if (!opts.inv && !it.custom) {
       const SETN = { yard: "Sân vườn", beach: "Bãi biển", shrine: "Đền trên núi", festival: "Phố lễ hội", bamboo: "Rừng tre", onsen: "Suối nước nóng", station: "Ga làng quê" };
       const label = it.rare ? "Quà rương nhiệm vụ" : it.only === "set" ? "Quà đủ bộ " + (SETN[it.set] || "") + " (Hộp sưu tầm)" :
-        it.only === "ped" ? "Chỉ có ở gánh hàng rong · " + kbXu(it.price) + " xu" : kbXu(it.price) + " xu";
+        it.only === "ped" ? "Chỉ có ở gánh hàng rong · " + kbXu(it.price) + " xu" : it.only === "le" ? "Quà Lịch chờ Giáng sinh" : kbXu(it.price) + " xu";
       info.appendChild(el("div", "kb-h-price" + (it.rare ? " kb-h-rare" : it.only ? " kb-h-only" : ""), label +
         (it.w > 1 ? " · rộng " + it.w + " ô" : "") + (it.place === "wall" ? " · treo tường" : "")));
     }
@@ -4732,11 +4763,14 @@ var GardenHome = (function () {
     if (tab === "yard") { items = items.filter((i) => i.scene === "yard" && !i.season); }
     else if (tab === "room") { items = items.filter((i) => i.scene === "room" && !i.season); }
     else { items = cat.items.filter((i) => (home.owned[i.id] || 0) > 0); }
-    if (tab === "yard" || tab === "room") { extra = items.filter((i) => i.only); items = items.filter((i) => !i.only); }
+    if (tab === "yard" || tab === "room") {
+      // 1.36: quà Lịch chờ Giáng sinh chỉ hiện khi đã có (không bán)
+      extra = items.filter((i) => i.only && (i.only !== "le" || (home.owned[i.id] || 0) > 0)); items = items.filter((i) => !i.only);
+    }
     const extraSec = () => {
-      if (!extra.length) { return; }
-      sec("Hộp sưu tầm · gánh hàng rong");
-      extra.forEach((it) => itemCard(list, it, {}));
+      const a = extra.filter((i) => i.only !== "le"), b = extra.filter((i) => i.only === "le");
+      if (a.length) { sec("Hộp sưu tầm · gánh hàng rong"); a.forEach((it) => itemCard(list, it, {})); }
+      if (b.length) { sec("Quà Lịch chờ Giáng sinh"); b.forEach((it) => itemCard(list, it, {})); }
     };
     if (tab === "room") { roomChips(list); }       // 1.30: Đồ nội thất · Tường & sàn
     if (tab === "room" && home.house < unlock) {
@@ -4850,7 +4884,9 @@ var GardenHome = (function () {
       const on = decoTry && decoTry.room === room && decoTry.slot === slot && decoTry.id === id;
       return btn(on ? "Dừng xem thử" : "Xem thử", "kb-btn-small", () => { decoTry = on ? null : { room: room, slot: slot, id: id }; renderList(); });
     };
-    [["wall", "Giấy dán tường", dc.walls || []], ["floor", "Sàn", dc.floors || []]].forEach(([slot, title, presets]) => {
+    // 1.36: mẫu Noel (quà tủ lịch Giáng sinh) chỉ hiện khi đã có — không bán
+    const noel = (slot) => (dc.noel || []).filter((it) => it.slot === slot && (dec.own || []).indexOf(it.id) >= 0);
+    [["wall", "Giấy dán tường", (dc.walls || []).concat(noel("wall"))], ["floor", "Sàn", (dc.floors || []).concat(noel("floor"))]].forEach(([slot, title, presets]) => {
       list.appendChild(el("div", "kb-h-sec", title));
       const cur = use[slot] || "";
       {   // Theo kiểu nhà
@@ -5087,6 +5123,7 @@ var GardenHome = (function () {
     const chips = [["guest", "Khách ghé vườn" + (g ? " · " + g.met + "/" + g.total : "")],
       ["box", "Hộp sưu tầm" + (f && f.box ? " · " + f.box.found + "/" + f.box.total : "")]];
     if (typeof GardenLife !== "undefined") { chips.push(["life", "Sinh hoạt" + (lf ? " · " + lf.seen + "/" + lf.total : "")]); }   // 1.30
+    if (typeof GardenLeNoel !== "undefined" && GardenLeNoel.hasAlbum()) { chips.push(["le", "Kỷ niệm"]); }     // 1.36.1: Giáng sinh 2026
     chips.forEach(([k, label]) => {
       const b = btn(label, "kb-btn-small kb-album-chip" + (albumView === k ? " is-on" : ""), () => { albumView = k; renderList(); });
       b.setAttribute("data-album", k);
@@ -5102,6 +5139,7 @@ var GardenHome = (function () {
       return;
     }
     if (albumView === "life" && typeof GardenLife !== "undefined") { GardenLife.book(list); return; }
+    if (albumView === "le" && typeof GardenLeNoel !== "undefined" && GardenLeNoel.hasAlbum()) { GardenLeNoel.album(list); return; }
     renderGuests(list);
   }
   function renderGuests(list) {
@@ -5912,8 +5950,12 @@ var GardenHome = (function () {
           sceneCard("guest", gid, ev);
           return;
         }
-        const hit = mainItemAt(ev);
+        const hit = mainItemAt(ev) || mainHouseItemAt(ev);
         if (hit && hit.id === "mailbox" && H.openPaper) { H.openPaper(); return; }
+        // 1.36: bấm cây thông Noel / tủ lịch khi sự kiện đang chạy → bảng tủ lịch
+        if (hit && ((hit.id === "xmastree" && LE()) || (hit.id === "le_tulich" && typeof GardenLe !== "undefined" && GardenLe.canOpen()))) {
+          ev.stopPropagation(); GardenLe.show(); return;
+        }
         // 1.31 (người dùng: "chỉ vào cửa hàng, nhà khi bấm vào mục 'Nhà & Cửa hàng' thôi … ấn vào đâu có cũng vào thẳng
         // cửa hàng thì không tiện lắm"): bấm chỗ khác trên cảnh không mở bảng Nhà — chỉ nút "Nhà & Cửa hàng ▸", nút Nhà, phím N
       });
@@ -5931,6 +5973,9 @@ var GardenHome = (function () {
         else if (pv) { cv.title = pv.name + " · " + petStateText(pv); cv.style.cursor = "pointer"; }
         else if (gid) { cv.title = (guestName(gid) || "Khách") + " ghé vườn"; cv.style.cursor = "pointer"; }
         else if (hit && hit.id === "mailbox") { cv.title = "Hòm thư: mở Báo (phím B)"; cv.style.cursor = "pointer"; }
+        else if ((LE() && hit && hit.id === "xmastree") || (typeof GardenLe !== "undefined" && GardenLe.canOpen() && (mainHouseItemAt(ev) || {}).id === "le_tulich")) {
+          cv.title = "Lịch chờ Giáng sinh (bấm để mở)"; cv.style.cursor = "pointer";
+        }
         else if (mainFindAt(ev)) { cv.removeAttribute("title"); cv.style.cursor = "pointer"; }
         else if (mainView && mainView.house) {        // 1.31: chỉ chú thích gian chưa mở (bấm gian không mở bảng Nhà nữa)
           const r = cv.getBoundingClientRect(), k = houseRoomAt((ev.clientX - r.left) / mainView.S - mainView.ox);
@@ -5956,6 +6001,9 @@ var GardenHome = (function () {
     close: close,
     isOpen: () => isOpen,
     closeSceneCard: closeSceneCard,      // 1.31
+    // 1.36: từ bảng tủ lịch — mở Nhà ở Kho đồ rồi bật chế độ đặt món vừa nhận / mở Nội thất → Tường & sàn
+    placeNew: function (id) { if (!item(id)) { return; } if (openFromMain()) { tab = "inv"; renderList(); startPlacing(id); } },
+    openDecor: function () { if (openFromMain()) { if (canEnter("room")) { setScene("room"); } tab = "room"; roomView = "decor"; renderList(); } },
     _sceneCard: sceneCard,
     cycleMain: cycleMain,
     // 1.20: bìa cuốn nhật ký — ảnh xem trước của giao diện mùa, và ảnh vườn tự chụp mỗi tuần (cảnh đang xem, ×2)
@@ -6027,6 +6075,18 @@ var GardenHome = (function () {
     openBox: function (sc) { open(mainScene() === "house" ? "yard" : mainScene()); tab = "guest"; albumView = "box"; boxFocus = sc || null; renderList(); },
     // 1.30: mở Nhà ở tab Album → Sinh hoạt
     openLife: function () { open(mainScene() === "house" ? "room" : mainScene()); tab = "guest"; albumView = "life"; renderList(); },
+    // 1.36.1: mở Nhà ở tab Album → Kỷ niệm (Giáng sinh) · vẽ lại danh sách (Album đang mở) · sân vẽ vào canvas khác (cảnh đêm 24)
+    openMemories: function () { open(mainScene() === "house" ? "yard" : mainScene()); tab = "guest"; albumView = "le"; renderList(); },
+    refreshList: function () { if (isOpen) { renderList(); } },
+    albumView: () => (isOpen && tab === "guest" ? albumView : ""),
+    drawYardInto: function (ctx, S, ox, oy, now, opts) {
+      const t = trying;
+      trying = false;
+      try { drawOutdoor(ctx, S, ox, oy, now, "yard", Object.assign({ photo: true, noGuests: true }, opts || {})); } finally { trying = t; lights.length = 0; }
+    },
+    itemBoxes: function (sc) {
+      return (homeState()[sc] || []).map((e) => { const b = itemBox(e, sc); return b ? { id: e.id, x: b.x, y: b.y, w: b.w, h: b.h, cx: e.x, cy: e.y } : null; }).filter(Boolean);
+    },
     showMain: showMain,
     icon: function (id, size) { return SPR[id] ? iconCanvas(SPR[id], size || 40) : null; },
     _state: () => ({ scene: scene, tab: tab, placing: placing, selected: selected, payWait: payWait, peekCode: peekCode }),

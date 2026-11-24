@@ -77,7 +77,16 @@ def keys_of(root):
 print("== A. So với 1.35.5")
 OLD = unpack("ff7d45f")
 CHANGED_OK = {"web/body.html", "web/garden.css", "web/paper.js", "web/ui.js", "manifest.json", "README.md", "config.md"}
-if OLD and os.path.isdir(OLD):
+_hv_now = json.loads(read("manifest.json")).get("human_version", "")
+if OLD and os.path.isdir(OLD) and _hv_now != "1.35.6":
+    # 1.36 trở đi: phần "so với 1.35.5" là hợp đồng riêng của bản 1.35.6 — bản sau chỉ cần không bỏ file / khoá nào
+    # (khoá / file mới của 1.36: test_136.py soát)
+    fa, fb = files_of(OLD), files_of(ADDON)
+    ok(not (fa - fb), "bản %s: không bỏ file nào của 1.35.5" % _hv_now + ("" if not (fa - fb) else ": " + str(sorted(fa - fb))))
+    ok(not (keys_of(OLD) - keys_of(ADDON)), "bản %s: không bỏ khoá collection nào của 1.35.5" % _hv_now)
+    nb = read("web/body.html")
+    ok('id="kb-p-garden"' in nb, "nút #kb-p-garden (Ẩn vườn trên bảng Báo) vẫn còn")
+elif OLD and os.path.isdir(OLD):
     fa, fb = files_of(OLD), files_of(ADDON)
     ok(fa == fb, "cùng danh sách file với 1.35.5 (" + str(len(fb)) + " file)" + ("" if fa == fb else ": thêm " + str(sorted(fb - fa)) + ", bớt " + str(sorted(fa - fb))))
     changed = sorted(f for f in fa & fb if read(f, OLD, "rb") != read(f, ADDON, "rb"))

@@ -672,6 +672,12 @@ var GardenSeasonArt = (function () {
       },
       xmastree: function (ctx, S, X, Y, e, now, tod) {
         const night = tod !== "day", cols = [P.r, P.y, P.l, P.p, P.f];
+        // 1.36: sự kiện Giáng sinh đang chạy → đèn chỉ có từ ngăn 10 (dây đèn), lấp lánh đỉnh cây từ ngăn 24 (ngôi sao)
+        const lit = typeof GardenLe !== "undefined" && GardenLe.treeLit ? GardenLe.treeLit() : null;
+        if (lit && !lit.lights) {
+          if (lit.star && Math.floor(now / 300) % 4 === 0) { box(ctx, X + 15, Y - 1, 1, 1, P.w, S); box(ctx, X + 19, Y + 3, 1, 1, P.Y, S); }
+          return;
+        }
         TREE_LIGHTS.forEach(([x, y], k) => {
           const on = (Math.floor(now / 450) + k) % 3 !== 0;
           if (!on && !night) { return; }
@@ -679,7 +685,7 @@ var GardenSeasonArt = (function () {
           if (night && on) { ctx.globalAlpha = 0.35; box(ctx, X + x - 1, Y + y - 1, 3, 3, c, S); ctx.globalAlpha = 1; }
           box(ctx, X + x, Y + y, 1, 1, c, S);
         });
-        if (Math.floor(now / 300) % 4 === 0) { box(ctx, X + 15, Y - 1, 1, 1, P.w, S); box(ctx, X + 19, Y + 3, 1, 1, P.Y, S); }
+        if ((!lit || lit.star) && Math.floor(now / 300) % 4 === 0) { box(ctx, X + 15, Y - 1, 1, 1, P.w, S); box(ctx, X + 19, Y + 3, 1, 1, P.Y, S); }
       },
       sleigh: function (ctx, S, X, Y, e, now, tod) {
         const on = Math.floor(now / 500) % 2 === 0;
@@ -800,7 +806,7 @@ var GardenSeasonArt = (function () {
         case "ichou": if (r < dt * 1.2 * Math.max(1, wind * 0.8)) { add({ kind: "gleaf", x: bx.x + 5 + Math.random() * 22, y: bx.y + 4 + Math.random() * 20, vx: 2 + Math.random() * 3, vy: 5 + Math.random() * 3, life: 3.4 }); } break;
         case "nodate": if (r < dt * 1.3) { add({ kind: "steam", x: bx.x + 8 + Math.random() * 2, y: bx.y + 17, vx: 0.5 + Math.random(), vy: -4, life: 1.6 }); } break;
         case "ochiba": if (wind >= 1.2 && r < dt * 0.9 * wind) { add({ kind: "leaf", x: bx.x + 4 + Math.random() * 8, y: bx.y + 3, vx: 6 + wind * 3, vy: -5 - Math.random() * 3, life: 2.2, grav: 1 }); } break;
-        case "xmastree": if (r < dt * 0.6) { add({ kind: "spark", x: bx.x + 13 + Math.random() * 5, y: bx.y + 1 + Math.random() * 4, vx: 0, vy: -1.5, life: 0.7 }); } break;
+        case "xmastree": if (r < dt * 0.6 && !(typeof GardenLe !== "undefined" && GardenLe.treeLit && GardenLe.treeLit() && !GardenLe.treeLit().star)) { add({ kind: "spark", x: bx.x + 13 + Math.random() * 5, y: bx.y + 1 + Math.random() * 4, vx: 0, vy: -1.5, life: 0.7 }); } break;
         case "hoamai": if (r < dt * 0.9) { add({ kind: "ypetal", x: bx.x + 3 + Math.random() * 28, y: bx.y + 2 + Math.random() * 16, vx: 3 + Math.random() * 3, vy: 5 + Math.random() * 3, life: 3.2 }); } break;
         case "banhchung": if (r < dt * 2.8) { add({ kind: "steam2", x: bx.x + 4 + Math.random() * 8, y: bx.y + 3, vx: (Math.random() - 0.5) * 2, vy: -4 - Math.random() * 2, life: 2.2 }); } break;
         case "hoadao": if (r < dt * 0.45) { add({ kind: "petal", x: bx.x + 2 + Math.random() * 12, y: bx.y + 2 + Math.random() * 12, vx: 1 + Math.random() * 2, vy: 4 + Math.random() * 2, life: 3 }); } break;

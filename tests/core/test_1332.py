@@ -128,8 +128,10 @@ keys = set()
 for f in glob.glob(os.path.join(ADDON, "*.py")):
     keys |= set(re.findall(r'"(kotoba_batake_[a-z0-9_]+)"', open(f, encoding="utf-8").read()))
 keys -= {"kotoba_batake_paper_de", "kotoba_batake_paper_fr"}     # 1.35: báo tiếng Đức / tiếng Pháp — khoá mới, test_135.py soát
+keys -= {"kotoba_batake_le"}     # 1.36: sự kiện Giáng sinh — khoá mới, test_136.py soát
 ok(sorted(keys) == KEYS_1330, "khoá collection = 1.33.0")
 cfg = json.load(open(os.path.join(ADDON, "config.json"), encoding="utf-8"))
+cfg.pop("season_event", None)      # 1.36: ⚙ Sự kiện mùa — test_136.py soát
 ok(len(cfg) == 39 and "gemini_later" not in cfg, "config.json 39 mục, không thêm gemini_later (chỉ ghi khi dùng)")
 
 print("KẾT QUẢ: " + ("TẤT CẢ OK" if not FAIL else "%d LỖI" % len(FAIL)))

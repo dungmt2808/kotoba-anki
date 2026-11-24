@@ -152,6 +152,11 @@ def news(ctx: dict[str, Any]) -> dict[str, Any]:
         items.append({"id": "freeze_used", "icon": "snow", "dup": False,
                       "text": "Đã dùng %d vé giữ chuỗi · chuỗi %d ngày" % (len(used), int(ctx.get("streak") or 0)),
                       "short": "đã dùng vé giữ chuỗi"})
+    # 1b. 1.36: tủ lịch Giáng sinh (đã có dòng riêng trong thẻ Hôm nay — #kb-le-btn)
+    le = ctx.get("le")
+    if isinstance(le, dict) and le.get("text"):
+        items.append({"id": str(le.get("id") or "le"), "icon": "gift", "text": le["text"], "short": le.get("short") or le["text"],
+                      "dup": True, "low": bool(le.get("low"))})
     # 2. báo mới (đã có dòng Báo trong thẻ)
     paper = ctx.get("paper") or {}
     if paper.get("enabled") and int(paper.get("unread") or 0) > 0:
@@ -245,6 +250,13 @@ def news(ctx: dict[str, Any]) -> dict[str, Any]:
     if until and 0 <= (until - today).days < SOON_DAYS:
         soon.append({"id": "paper_sub", "icon": "book", "d": short_date(until, today), "at": until.isoformat(),
                      "text": "Gói báo hết hạn" + (" · tự gia hạn" if sub.get("auto") else "")})
+    ls = ctx.get("le_soon")
+    if isinstance(ls, dict) and ls.get("at") and ls.get("text"):          # 1.36: ngày mở tủ lịch / mở hộp quà
+        try:
+            ld = _dt.date.fromisoformat(ls["at"])
+            soon.append({"id": "le_soon", "icon": "gift", "d": short_date(ld, today), "at": ls["at"], "text": ls["text"]})
+        except (TypeError, ValueError):
+            pass
     soon.sort(key=lambda x: x["at"])
 
     greet_lines = [x["text"] for x in items if not x.get("low") and x["id"] not in ("pet_hungry", "pet_away", "repair")][:GREET_LINES]

@@ -19,7 +19,7 @@ const DATA = path.join(SITE, 'data', 'hinh.json');
 
 // thứ tự nạp như __init__.py (web/*.js)
 const FILES = ['diag', 'prefs', 'fix', 'icons', 'sky', 'season', 'fx', 'music', 'games', 'fields', 'season_art', 'rare_art',
-  'nha_art', 'pets', 'guests', 'finds_art', 'finds', 'life', 'home', 'craft', 'paper', 'seeds', 'joy', 'ui', 'calendar',
+  'nha_art', 'pets', 'guests', 'finds_art', 'finds', 'le_art', 'le', 'life', 'home', 'craft', 'paper', 'seeds', 'joy', 'ui', 'calendar',
   'greet', 'tour', 'garden'];
 // mở thêm vài hàm nội bộ cho công cụ này (chỉ trong trình duyệt của công cụ — file của add-on không đổi)
 const PATCH = {
@@ -100,7 +100,7 @@ function collect(meta) {
 
   // ---- đồ trang trí ----
   const season = take((it) => it.season), rare = take((it) => it.rare), set = take((it) => it.only === 'set'),
-    ped = take((it) => it.only === 'ped');
+    ped = take((it) => it.only === 'ped'), le = take((it) => it.only === 'le');      // 1.36: quà tủ lịch Giáng sinh
   const yard = take((it) => it.scene === 'yard'), room = take((it) => it.scene === 'room'), zone = take(() => true);
   add({ id: 'san', name: 'Sân vườn', ja: '庭', desc: 'Đồ trang trí mua ở tab Trang trí sân (đặt được ở sân và mọi vùng ngoài trời).',
     items: yard.map((it) => itemEntry(it, { tag: PLACE[it.place] })) });
@@ -111,6 +111,8 @@ function collect(meta) {
   add({ id: 'mua', name: 'Mùa & lễ hội', ja: '季節', desc: 'Đồ theo giao diện mùa — mở chủ đề là được tặng các món.',
     items: season.map((it) => itemEntry(it, { tag: (meta.themes[it.season] || {}).name || it.season })) });
   add({ id: 'hiem', name: 'Đồ hiếm', ja: 'レア', desc: 'Không bán — mở rương nhiệm vụ mới có.', items: rare.map((it) => itemEntry(it, { tag: 'Rương nhiệm vụ' })) });
+  add({ id: 'giang_sinh', name: 'Giáng sinh 2026', ja: 'クリスマス', desc: 'Không bán — quà của Lịch chờ Giáng sinh (1–24/12): mỗi ngày ôn mở một ngăn.',
+    items: le.map((it) => itemEntry(it, { tag: 'Tủ lịch · ' + PLACE[it.place] })) });
 
   // ---- Hộp sưu tầm + quà đủ bộ + gánh hàng rong ----
   const FA = GardenFindArt;
@@ -194,6 +196,9 @@ function collect(meta) {
   const room1 = (deco) => { const [c, x] = canvas(R.W, R.H); L.NHA.bg(x, 1, 0, 0, 'room', R.W, R.H, R.FLOOR, 'classic', deco); return c; };
   meta.decor.walls.forEach((w) => decor.push({ id: w.id, name: w.name, ja: w.ja, price: w.price, desc: w.desc, tag: 'Giấy dán tường', img: png('tuong_san/' + w.id, room1({ wall: w.id, floor: null, tiles: {} })) }));
   meta.decor.floors.forEach((f) => decor.push({ id: f.id, name: f.name, ja: f.ja, price: f.price, desc: f.desc, tag: 'Sàn nhà', img: png('tuong_san/' + f.id, room1({ wall: null, floor: f.id, tiles: {} })) }));
+  // 1.36: mẫu Noel — quà tủ lịch Giáng sinh (không bán)
+  (meta.decor.noel || []).forEach((t) => decor.push({ id: t.id, name: t.name, ja: t.ja, price: 0, desc: t.desc, tag: (t.slot === 'wall' ? 'Giấy dán tường' : 'Sàn nhà') + ' · quà Giáng sinh',
+    img: png('tuong_san/' + t.id, room1(t.slot === 'wall' ? { wall: t.id, floor: null, tiles: {} } : { wall: null, floor: t.id, tiles: {} })) }));
   add({ id: 'tuong_san', name: 'Tường & sàn', ja: '壁紙・床', desc: 'Mua một lần, dán cho gian nào cũng được.', items: decor });
 
   // ---- nhà: các bậc xây + kiểu nhà ----

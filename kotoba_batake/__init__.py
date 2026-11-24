@@ -49,6 +49,7 @@ from . import lang_core
 from . import life_core
 from . import journal_core as journal
 from . import launcher
+from . import le_core      # 1.36: sự kiện mùa Giáng sinh
 from . import garden_core as core
 from . import more_core
 from . import mau_core as mau
@@ -2214,7 +2215,7 @@ def _news_and_greet(data: dict[str, Any], today: dict[str, Any], cfg: dict[str, 
            "reviewed_today": reviewed, "total_days": total, "freeze": (w.get("more") or {}).get("freeze") or {},
            "pets": mv.get("pets") or [], "wear": mv.get("wear") or {}, "season": w.get("season") or {}, "home": home,
            "scenes": _guest_scenes(w), "album": GUESTS.album(), "sub": (w.get("more") or {}).get("paper_sub") or {},
-           "finds": data.get("finds") or {}}
+           "finds": data.get("finds") or {}, "le": (data.get("le") or {}).get("news"), "le_soon": (data.get("le") or {}).get("soon")}
     nw = event_core.news(ctx)
     greet = None
     if not GREET_TEST_OFF and more_core.clean_ui(cfg.get("ui")).get("greet") != "off":
@@ -2753,6 +2754,168 @@ EVENTS = finds.EventStore(os.path.join(ADDON_DIR, "user_files", "events.json"), 
 # 1.30: sinh hoạt của StackChan (khoá collection kotoba_batake_life)
 LIFE = life_core.LifeStore(os.path.join(ADDON_DIR, "user_files", "life.json"), col_getter=lambda: mw.col)
 
+# 1.36: sự kiện mùa — Giáng sinh 2026, tủ lịch 24 ngăn (khoá collection kotoba_batake_le, le_core.py)
+LE = le_core.LeStore(os.path.join(ADDON_DIR, "user_files", "le.json"), col_getter=lambda: mw.col)
+LE_TEST: dict[str, Any] | None = None   # add-on test (zz_kbtest): {"today": "yyyy-mm-dd", "days": [ngày có ôn], "reviews": n,
+                                        # "now": "yyyy-mm-ddThh:mm" (giờ máy, 1.36.1)} — ngày giả GHI THẬT (kịch bản Anki
+                                        # thật của 1.36); người dùng không đụng tới
+# admin (file user_files/admin): Xem thử sự kiện — không ghi gì (sổ giả trong bộ nhớ; "now": giờ máy giả cho đêm 24)
+_le_preview: dict[str, Any] = {"day": None, "ev": None, "now": None, "pack": False}
+_le_fix: dict[str, Any] = {"running": False}    # 1.36.1: "Nhờ Gemini sửa" điều ước (một việc một lúc)
+
+
+def le_today() -> datetime.date:
+    """Ngày Anki của sự kiện (add-on test: ngày giả)."""
+    return datetime.date.fromisoformat(LE_TEST["today"]) if LE_TEST else cal_today()
+
+
+def le_now() -> datetime.datetime:
+    """1.36.1: giờ máy cho phần ông già Noel (18:00 ngày 24) — add-on test: giờ giả."""
+    if LE_TEST and LE_TEST.get("now"):
+        try:
+            return datetime.datetime.fromisoformat(str(LE_TEST["now"]))
+        except ValueError:
+            pass
+    return datetime.datetime.now()
+
+
+def _le_placed(wallet: dict[str, Any]) -> dict[str, int]:
+    """Số món đang bày (mọi cảnh) — {id: số}."""
+    home = wallet.get("home") or {}
+    placed: dict[str, int] = {}
+    for sc in core.scene_names(home):
+        for e in home.get(sc) or []:
+            if isinstance(e, dict) and isinstance(e.get("id"), str):
+                placed[e["id"]] = placed.get(e["id"], 0) + 1
+    return placed
+
+
+def le_on(cfg: dict[str, Any] | None = None) -> bool:
+    """⚙ → Sự kiện mùa (config season_event): tắt thì không tặng, không vẽ, không có lệnh; dữ liệu giữ nguyên."""
+    try:
+        return bool((cfg if cfg is not None else config()).get("season_event", True))
+    except Exception:
+        return True
+
+
+def _le_ctx(stats: dict[str, Any] | None = None) -> tuple[datetime.date, list[str], list[str], int]:
+    """(ngày Anki hôm nay, ngày 1–24/12 có lượt ôn — cả lượt ôn trên điện thoại / trước lúc cài, ngày đã dùng vé giữ chuỗi,
+    số lượt ôn hôm nay)."""
+    if LE_TEST:
+        t = LE_TEST
+        return (datetime.date.fromisoformat(t["today"]), list(t.get("days") or []), list(t.get("frozen") or []),
+                int(t.get("reviews") or 0))
+    today = cal_today()
+    hi = min(today, le_core.door_date(le_core.DOORS_N))
+    days: list[str] = []
+    if hi >= le_core.FIRST:
+        days = sorted(core.streak_iso_days(mw.col, None, le_core.FIRST, hi))
+    if stats is None:
+        stats = _daily_stats()
+    return today, days, STATE.frozen_days(), int(stats.get("reviews") or 0)
+
+
+def _le_names() -> dict[str, str]:
+    return {k: v["name"] for k, v in core.CATALOG.items() if k.startswith("le_") or k == le_core.TREE}
+
+
+def _le_settle(wallet: dict[str, Any], today: datetime.date) -> tuple[dict[str, Any], dict[str, Any] | None]:
+    """Mở vườn trong mùa: tặng Tủ lịch + cây thông (lần đầu), bù món sổ đã ghi mà kho thiếu — một lần lưu cùng sổ sự kiện.
+    Đang đồng bộ / sổ hay ví đọc lỗi / lưu lỗi → không làm gì (lần mở sau làm). Trả (ví, {"placed", "give"} | None)."""
+    if wallet.get("_damaged") or mw.col is None or _sync_hold():
+        return wallet, None
+    ph = le_core.phase(today)
+    if ph not in ("advent", "after", "done"):
+        return wallet, None
+    ev = LE.load()
+    if ev.get("_damaged"):
+        return wallet, None
+    home = wallet.get("home") or {}
+    placed = _le_placed(wallet)
+    decor_w = (wallet.get("more") or {}).get("decor") or {}
+    plan = le_core.plan_sync(ev, dict(home.get("owned") or {}), placed, decor_w.get("own") or [], today)
+    pack = None
+    if le_core.pack_due(ev, today):      # 1.36.1: lần đầu mở vườn từ 1/1 — StackChan cất đồ Noel (một lần)
+        pack = le_core.pack_plan(ev, placed, decor_w.get("use") or {})
+        le_core.mark_pack(ev, today, pack)
+    if plan is None and pack is None:
+        return wallet, None
+    plan = plan or {"give": {}, "auto": [], "tiles": [], "welcome": False}
+    try:
+        new, done = STATE.le_apply(plan["give"], plan["auto"], plan["tiles"], extra=[LE.write(ev)],
+                                   unplace=pack["items"] if pack else None, tiles_set=pack["tiles"] if pack else None)
+    except (core.HomeError, backup_core.StoreFailed) as err:
+        _warn("sự kiện mùa (tặng quà / cất đồ)", err)
+        return wallet, None
+    return new, {"placed": done, "give": plan["give"], "welcome": plan["welcome"], "pack": pack}
+
+
+def _le_prev_write(room: str, slot: str, did: str) -> list[tuple[Any, ...]] | None:
+    """1.36.1: gian chuyển sang mẫu Noel → sổ sự kiện nhớ mẫu đang dùng (1/1 trả lại), ghi cùng lần với ví. Sổ đọc lỗi /
+    không phải mẫu Noel / đã cất đồ → None (dùng mẫu như thường)."""
+    if did not in le_core.NOEL_TILES:
+        return None
+    try:
+        dec = (STATE.load().get("more") or {}).get("decor") or {}
+        cur = ((dec.get("use") or {}).get(room) or {}).get(slot, "")
+        ev = LE.load()
+        if ev.get("_damaged") or ev.get("pack") or not le_core.remember_prev(ev, room, slot, cur):
+            return None
+        return [LE.write(ev)]
+    except Exception as err:
+        _warn("sự kiện mùa (nhớ mẫu tường / sàn)", err)
+        return None
+
+
+def le_view(wallet: dict[str, Any], stats: dict[str, Any] | None, cfg: dict[str, Any] | None = None) -> dict[str, Any] | None:
+    """data.le cho JS: tủ lịch, phần đã mở (cây / nhà / sân), hộp quà, dòng Tin làng. None = sự kiện tắt / ngoài mùa."""
+    if not le_on(cfg):
+        return None
+    pv = _le_preview.get("day")
+    if pv is not None and admin_on():
+        today = pv
+        now = _le_preview.get("now") or datetime.datetime.combine(pv, datetime.time(9, 0))
+        ev = _le_preview["ev"]
+        days = [le_core.door_date(d).isoformat() for d in range(1, le_core.DOORS_N + 1) if le_core.door_date(d) <= today]
+        frozen: list[str] = []
+        reviews = 30
+    else:
+        today, days, frozen, reviews = _le_ctx(stats)
+        now = le_now()
+        ev = None
+    ph = le_core.phase(today)
+    if ph is None:
+        return None
+    if ph == "pre":
+        return {"phase": "pre", "active": False, "today": today.isoformat(), "year": le_core.YEAR,
+                "news": le_core.news_line(None, today, [], []), "soon": le_core.soon_line(today), "preview": pv is not None}
+    if ev is None:
+        ev = LE.load()
+        if ph == "done" and not ev["open"] and not ev["gift"]:
+            return None          # hết mùa mà chưa từng mở: không có gì để xem lại
+    v = le_core.view(ev, today, days, frozen, reviews, _le_names())
+    v["news"] = le_core.news_line(ev, today, days, frozen, reviews, now)
+    v["soon"] = le_core.soon_line(today)
+    v["preview"] = pv is not None
+    if pv is not None:
+        v["preview_key"] = _le_preview.get("key") or today.isoformat()
+    v["damaged"] = bool(ev.get("_damaged"))
+    placed = _le_placed(wallet)
+    v.update(le_core.view_more(ev, today, now, placed))      # 1.36.1: thiệp, ông già Noel, thư, cất đồ, thiệp nhận
+    if pv is not None and le_core.pack_due(ev, today):         # xem thử 1/1: cất đồ gì (không cất thật)
+        plan = le_core.pack_plan(ev, placed, ((wallet.get("more") or {}).get("decor") or {}).get("use") or {})
+        v["pack"] = dict(plan, at=today.isoformat(), preview=True)
+        if not _le_preview.get("pack"):
+            _le_preview["pack"] = True
+            v["welcome"] = {"pack": v["pack"], "placed": [], "give": {}, "welcome": False}
+    home = wallet.get("home") or {}
+    v["house"] = int(home.get("house") or 0)
+    v["room_unlock"] = core.ROOM_UNLOCK_LEVEL
+    # chip "Tủ lịch" ở hàng dưới dải cảnh: trong mùa, nửa tháng đầu năm mới, hoặc còn hộp quà chưa mở; sau đó xem lại bằng cách
+    # bấm tủ lịch trên tường
+    v["chip"] = bool(v["active"] or today <= le_core.END + datetime.timedelta(days=15) or any(b["can"] for b in v["boxes"]))
+    return v
+
 
 def _life_ctx(wallet: dict[str, Any]) -> tuple[dict[str, Any], list[str], bool]:
     """(nhà, các cảnh StackChan tới được, có thú nuôi đang ở trong nhà không)."""
@@ -3054,7 +3217,7 @@ class GardenDialog(QDialog):
             js=[
                 f"{WEB_BASE}/diag.js", f"{WEB_BASE}/prefs.js", f"{WEB_BASE}/fix.js", f"{WEB_BASE}/icons.js", f"{WEB_BASE}/glang.js", f"{WEB_BASE}/sky.js", f"{WEB_BASE}/season.js", f"{WEB_BASE}/fx.js", f"{WEB_BASE}/music.js",
                 f"{WEB_BASE}/games.js", f"{WEB_BASE}/fields.js", f"{WEB_BASE}/season_art.js", f"{WEB_BASE}/rare_art.js", f"{WEB_BASE}/nha_art.js", f"{WEB_BASE}/pets.js", f"{WEB_BASE}/guests.js",
-                f"{WEB_BASE}/finds_art.js", f"{WEB_BASE}/finds.js", f"{WEB_BASE}/life.js", f"{WEB_BASE}/home.js", f"{WEB_BASE}/craft.js", f"{WEB_BASE}/paper.js", f"{WEB_BASE}/seeds.js",
+                f"{WEB_BASE}/finds_art.js", f"{WEB_BASE}/finds.js", f"{WEB_BASE}/le_art.js", f"{WEB_BASE}/le_card.js", f"{WEB_BASE}/le_noel.js", f"{WEB_BASE}/le.js", f"{WEB_BASE}/life.js", f"{WEB_BASE}/home.js", f"{WEB_BASE}/craft.js", f"{WEB_BASE}/paper.js", f"{WEB_BASE}/seeds.js",
                 f"{WEB_BASE}/joy.js", f"{WEB_BASE}/ui.js", f"{WEB_BASE}/calendar.js", f"{WEB_BASE}/greet.js", f"{WEB_BASE}/tour.js", f"{WEB_BASE}/garden.js",
             ],
             context=self,
@@ -3111,6 +3274,12 @@ class GardenDialog(QDialog):
             cfg = config()
             data = core.build_garden(mw.col, self.deck_id, cfg)
             data["wallet"] = STATE.load()
+            le_new = None
+            if le_on(cfg) and _le_preview.get("day") is None:
+                try:      # 1.36: mở vườn trong mùa Giáng sinh → tặng Tủ lịch + cây thông (lần đầu), bù quà sổ đã ghi mà kho thiếu
+                    data["wallet"], le_new = _le_settle(data["wallet"], le_today())
+                except Exception as err:
+                    _warn("sự kiện mùa", err)
             meta = data.pop("_meta", None)
             try:
                 more_core.apply_seeds(data["plants"], meta, share_core.combined(data["wallet"]["more"]["seeds"],
@@ -3120,6 +3289,7 @@ class GardenDialog(QDialog):
             data["ui"] = more_core.clean_ui(cfg.get("ui"))
             data["gl"] = lang_core.bundle()      # 1.32: Ngôn ngữ trong vườn (bảng chữ cho glang.js)
             data["admin"] = admin_on()       # 1.25.5: "Sửa hình" (admin) · 1.25.7: người dùng thường "Góp ý hình"
+            data["le_on"] = le_on(cfg)       # 1.36: ⚙ Sự kiện mùa
             data["fx"] = {
                 "effects": bool(cfg["effects"]),
                 "sound": bool(cfg["sound"]),
@@ -3160,6 +3330,13 @@ class GardenDialog(QDialog):
             except Exception as err:
                 _warn("sinh hoạt", err)
                 data["life"] = None
+            try:      # 1.36: sự kiện mùa Giáng sinh (tủ lịch 24 ngăn)
+                data["le"] = le_view(data["wallet"], today, cfg)
+                if data["le"] is not None and le_new:
+                    data["le"]["welcome"] = le_new
+            except Exception as err:
+                _warn("sự kiện mùa", err)
+                data["le"] = None
             self._plants = data["plants"]
             _dict_possible = bool(self._dict_candidates(_voice(cfg)) or self._word_candidates(_voice(cfg)))
             try:
@@ -3624,6 +3801,7 @@ class GardenDialog(QDialog):
 
     # 1.33.2: lệnh trang tự gửi (không phải người dùng bấm) — lúc đồng bộ thì bỏ qua mà không báo
     AUTO_CMDS = ("ready", "refresh", "life:", "guest:", "ai:status", "paper:index", "game:exaudio", "deck:tree")
+    AUTO_CMDS += ("le:seen", "le:read")     # 1.36.1: cảnh đêm 24 / thư tự gửi "đã xem / đã đọc" (lần mở sau gửi lại)
     DRAFT_LOCAL = ("home:draft:get", "home:draft:put:", "home:draft:pick:")     # 1.35.1: lệnh chỉ đụng file bản thử
     _sync_note = 0.0
 
@@ -3725,6 +3903,8 @@ class GardenDialog(QDialog):
             self._on_life(cmd[len("life:"):])
         elif cmd.startswith("find:") or cmd.startswith("ped:"):
             self._on_find(cmd)
+        elif cmd.startswith("le:"):           # 1.36: sự kiện mùa Giáng sinh
+            self._on_le(cmd[len("le:"):])
         elif cmd.startswith("share:"):
             self._on_share(cmd[len("share:"):])
         elif cmd.startswith("snap:save:"):
@@ -4452,7 +4632,7 @@ class GardenDialog(QDialog):
             elif parts[0] == "decor" and len(parts) == 3 and parts[1] == "buy":      # 1.30: giấy dán tường / sàn
                 data = STATE.decor_buy(parts[2])
             elif parts[0] == "decor" and len(parts) == 5 and parts[1] == "use":
-                data = STATE.decor_use(parts[2], parts[3], parts[4])
+                data = STATE.decor_use(parts[2], parts[3], parts[4], extra=_le_prev_write(parts[2], parts[3], parts[4]))
             elif parts[0] == "tile" and len(parts) == 3 and parts[1] == "del":
                 data = STATE.tile_delete(parts[2])
             elif len(parts) == 3 and (parts[0], parts[1]) in two:
@@ -4620,6 +4800,267 @@ class GardenDialog(QDialog):
             except Exception as err:
                 _warn("nhặt đồ / gánh hàng", err)
         self._js("finds", out)
+
+    # -- 1.36: sự kiện mùa Giáng sinh (tủ lịch 24 ngăn) ----------------------------
+
+    def _on_le(self, cmd: str) -> None:
+        """le:open:<ngăn> — mở một ngăn · le:box:<hộp> — mở hộp quà (từ 25/12) · le:auto:<món> — bày món của sự kiện vào ô
+        trống · le:cfg:on|off — ⚙ Sự kiện mùa · le:preview:<yyyy-mm-dd>|off — admin xem thử theo ngày (không ghi gì).
+        Python xét lại mọi thứ (ngày Anki, lượt ôn, vé giữ chuỗi, ngăn đã mở, chỗ trống) rồi ghi sổ + kho CÙNG một lần."""
+        action, _, arg = cmd.partition(":")
+        if action == "cfg":
+            if arg in ("on", "off"):
+                save_config(season_event=arg == "on")
+                self.refresh()
+            return
+        if action == "preview":
+            if not admin_on():
+                return
+            if arg == "off":
+                _le_preview.update(day=None, ev=None, now=None, pack=False)
+            else:
+                try:      # "yyyy-mm-dd" (9 giờ sáng) hoặc "yyyy-mm-ddThh:mm" (giờ máy — tối 24 xem ông già Noel)
+                    now = datetime.datetime.fromisoformat(arg) if "T" in arg else \
+                        datetime.datetime.combine(datetime.date.fromisoformat(arg), datetime.time(9, 0))
+                except ValueError:
+                    return
+                day = now.date()
+                ev = le_core.simulate(day, reviewed=False)
+                try:      # thiệp thật (chỉ đọc) để xem thư / treo thiệp — sửa trong lúc xem thử chỉ ở bộ nhớ
+                    real = LE.load()
+                    for k in ("cards", "hang", "recv"):
+                        if real.get(k):
+                            ev[k] = json.loads(json.dumps(real[k]))
+                except Exception as err:
+                    _warn("xem thử sự kiện", err)
+                _le_preview.update(day=day, ev=ev, now=now, pack=False, key=arg)
+            self.refresh()
+            return
+        if action in ("card", "cdel", "hang", "fix", "code", "seen", "read", "recv", "rdel", "rpeek", "rcode"):
+            if le_on():
+                self._on_le_card(action, arg)
+            return
+        if not le_on():
+            return
+        out: dict[str, Any] = {"ok": False, "act": action}
+        wallet = None
+        try:
+            stats = _daily_stats()
+            pv = _le_preview.get("day") if admin_on() else None
+            if pv is not None:            # xem thử: chỉ đổi sổ giả trong bộ nhớ, kho / collection không đụng tới
+                ev = _le_preview["ev"]
+                days = [le_core.door_date(d).isoformat() for d in range(1, le_core.DOORS_N + 1) if le_core.door_date(d) <= pv]
+                if action == "open":
+                    res = le_core.open_door(ev, arg, pv, days, [], 30)
+                    out = {"ok": True, "act": "open", "door": res, "placed": [], "preview": True}
+                elif action == "box":
+                    got = le_core.open_box(ev, arg, pv)
+                    out = {"ok": True, "act": "box", "n": int(arg), "item": got, "preview": True}
+                else:
+                    raise le_core.LeError("Đang xem thử — dừng xem thử để bày đồ thật.")
+            else:
+                today, days, frozen, reviews = _le_ctx(stats)
+                if action == "open":
+                    ev = LE.load()
+                    res = le_core.open_door(ev, arg, today, days, frozen, reviews)
+                    wallet, placed = STATE.le_apply(res["item"], le_core.auto_list(res["item"]), res["tiles"],
+                                                    extra=[LE.write(ev)])
+                    out = {"ok": True, "act": "open", "door": res, "placed": placed}
+                elif action == "box":
+                    ev = LE.load()
+                    got = le_core.open_box(ev, arg, today)
+                    wallet, placed = STATE.le_apply(got, [], [], extra=[LE.write(ev)])
+                    out = {"ok": True, "act": "box", "n": int(arg), "item": got, "placed": placed}
+                elif action == "auto":
+                    if not (arg.startswith("le_") or arg == le_core.TREE) or arg not in core.CATALOG:
+                        raise le_core.LeError("Không có món này.")
+                    wallet, placed = STATE.le_apply({}, [arg], [])
+                    if not placed:
+                        it = core.CATALOG[arg]
+                        if it["scene"] == "room" and int((wallet.get("home") or {}).get("house") or 0) < core.ROOM_UNLOCK_LEVEL:
+                            raise le_core.LeError("Xây nhà tới bước “Lắp cửa & cửa sổ” rồi mới bày đồ trong nhà được — món vẫn ở Kho đồ.")
+                        raise le_core.LeError("Hết chỗ trống — món vẫn ở Kho đồ, dời bớt đồ rồi đặt nhé.")
+                    out = {"ok": True, "act": "auto", "placed": placed}
+                else:
+                    return
+        except (le_core.LeError, core.HomeError, backup_core.StoreFailed) as err:
+            out = {"ok": False, "act": action, "msg": str(err)}
+            wallet = None
+        except Exception as err:
+            _warn("sự kiện mùa", err)
+            out = {"ok": False, "act": action, "msg": "Không làm được (%s)." % type(err).__name__}
+            wallet = None
+        if wallet is not None:
+            out["wallet"] = wallet
+        try:
+            out["le"] = le_view(wallet or STATE.load(), stats if "stats" in locals() else None)
+        except Exception as err:
+            _warn("sự kiện mùa", err)
+        self._js("le", out)
+
+    def _on_le_card(self, action: str, arg: str) -> None:
+        """1.36.1: le:card:{i, card, rid} lưu thiệp · le:cdel:<i> xoá · le:hang:<i|-1> treo lên cây / gỡ · le:fix:<i> Nhờ
+        Gemini sửa điều ước · le:code:<i> chép mã thiệp · le:seen (đã xem cảnh đêm 24) · le:read (đã đọc thư) ·
+        le:rpeek:<mã> xem trước thiệp của bạn · le:recv:<mã> giữ vào Album · le:rdel:<mã> xoá · le:rcode:<mã> chép lại mã.
+        Python xét lại mọi thứ (ngày Anki, giờ máy, thiệp ông già Noel đã mang đi) rồi ghi sổ."""
+        out: dict[str, Any] = {"ok": False, "act": action}
+        wallet = None
+        try:
+            pv = _le_preview.get("day") if admin_on() else None
+            if pv is not None:
+                ev, today = _le_preview["ev"], pv
+                now = _le_preview.get("now") or datetime.datetime.combine(pv, datetime.time(9, 0))
+            else:
+                ev, today, now = LE.load(), le_today(), le_now()
+            write = True
+            if action == "card":
+                p = _json_obj(arg)
+                c = le_core.save_card(ev, p.get("i"), p.get("card"), today, now)
+                out.update(i=int(p.get("i")), rid=p.get("rid"), at=c["at"])
+            elif action == "cdel":
+                le_core.delete_card(ev, arg, today, now)
+                out["i"] = int(arg)
+            elif action == "hang":
+                le_core.hang_card(ev, arg, today, now)
+            elif action in ("seen", "read"):
+                wallet = STATE.load()
+                fx = le_core.facts(ev, _le_placed(wallet))
+                if action == "seen":
+                    le_core.mark_seen(ev, now, fx)
+                else:
+                    le_core.mark_read(ev, today, fx)
+                wallet = None
+            elif action in ("code", "rcode"):
+                write = False
+                if action == "code":
+                    code = le_core.card_code(le_core.cards(ev)[le_core._slot(arg)])
+                else:
+                    c = le_core.decode_card(arg)
+                    if c is None:
+                        raise le_core.LeError("Mã thiệp hỏng.")
+                    code = le_core.card_code(c)
+                try:
+                    from aqt import qt as _qt
+                    _qt.QApplication.clipboard().setText(code)
+                    copied = True
+                except Exception:
+                    copied = False
+                out.update(code=code, copied=copied)
+            elif action == "rpeek":
+                write = False
+                c = le_core.decode_card(arg)
+                if c is None:
+                    raise le_core.LeError("Mã thiệp không đúng — chép lại đúng đoạn bắt đầu bằng “%s” nhé." % le_core.CODE_PREFIX)
+                out.update(card=c, code=le_core.card_code(c),
+                           have=any(e["k"] == le_core.card_code(c) for e in le_core.recv_list(ev)))
+            elif action == "recv":
+                le_core.recv_add(ev, arg, today)
+            elif action == "rdel":
+                le_core.recv_del(ev, arg)
+            elif action == "fix":
+                write = False
+                out.update(self._le_fix_start(ev, arg, today, pv is not None))
+            if write and pv is None:
+                LE.save(ev)
+            out["ok"] = True
+        except (le_core.LeError, core.HomeError) as err:
+            out = {"ok": False, "act": action, "msg": str(err)}
+        except backup_core.ReadFailed:
+            out = {"ok": False, "act": action, "msg": "Chưa đọc được dữ liệu sự kiện (collection lỗi) — chưa lưu gì."}
+        except backup_core.StoreFailed:
+            out = {"ok": False, "act": action, "msg": "Chưa lưu được (Anki báo lỗi khi ghi) — thử lại sau nhé."}
+        except Exception as err:
+            _warn("thiệp Giáng sinh", err)
+            out = {"ok": False, "act": action, "msg": "Không làm được (%s)." % type(err).__name__}
+        if action == "card" and not out.get("ok"):
+            try:
+                out["i"] = int(_json_obj(arg).get("i"))
+                out["rid"] = _json_obj(arg).get("rid")
+            except Exception:
+                pass
+        try:
+            out["le"] = le_view(STATE.load(), None)
+        except Exception as err:
+            _warn("sự kiện mùa", err)
+        self._js("le", out)
+
+    def _le_fix_start(self, ev: dict[str, Any], arg: str, today: datetime.date, preview: bool) -> dict[str, Any]:
+        """Nhờ Gemini sửa điều ước tiếng nước ngoài của thiệp ô i (một lượt Flash-Lite như Luyện viết, chỉ khi bấm).
+        Kết quả về sau qua _le_fix_done (gắn vào thiệp nếu điều ước chưa đổi)."""
+        i = le_core._slot(arg)
+        c = le_core.cards(ev)[i]
+        if not le_core.filled(c) or not (c.get("w") or "").strip():
+            raise le_core.LeError("Viết điều ước trước đã.")
+        lang = c.get("wl")
+        if lang not in journal.WRITE_LANGS:
+            raise le_core.LeError("Điều ước tiếng Việt không cần nhờ sửa — chọn tiếng đang học để nhờ Gemini.")
+        if (c.get("fx") or {}).get("for") == c["w"]:
+            raise le_core.LeError("Gemini đã sửa điều ước này rồi.")
+        if preview:
+            raise le_core.LeError("Đang xem thử — không gọi Gemini.")
+        if le_core.fix_left(ev, today) <= 0:
+            raise le_core.LeError("Hôm nay đã nhờ sửa đủ %d lần — mai nhé." % le_core.FIX_PER_DAY)
+        n, mx = journal.count_units(c["w"], lang), journal.WRITE_MAX[lang]
+        if n > mx:
+            raise le_core.LeError("Điều ước dài quá để nhờ sửa (tối đa %d %s)." % (mx, journal.WRITE_UNIT[lang]))
+        if _le_fix["running"]:
+            raise le_core.LeError("Gemini đang sửa, chờ chút nhé.")
+        cfg = config()
+        key = ai.clean_key(cfg.get("gemini_key"))
+        if not key:
+            raise le_core.LeError("Dán khoá Gemini ở tab Nguồn báo để được sửa.")
+        goc, level = c["w"], _write_level(cfg, lang)
+        client = ai.Gemini(key, exhausted=dict(_shared_exhausted()))
+        models: list[str] = []
+        for base in (AI_DIR, AI_DIR_EN, AI_DIR_VI, AI_DIR_ZH, AI_DIR_KO, AI_DIR_DE, AI_DIR_FR):
+            st = ai.load_status(base) if os.path.isdir(base) else {}
+            for name in st.get("models") or [] if isinstance(st.get("models"), list) else []:
+                if isinstance(name, str) and name not in models:
+                    models.append(name)
+
+        def task() -> dict[str, Any]:
+            return journal.run_fix(client, models or ai.text_models(client.models()), goc, lang, level, [])
+
+        _le_fix["running"] = True
+        owner = _owner_now()
+        _bg(task, lambda fut: self._le_fix_done(fut, i, goc, lang, client, owner))
+        return {"i": i, "fixing": True}
+
+    @_after_sync
+    def _le_fix_done(self, fut: Any, i: int, goc: str, lang: str, client: Any, owner: str | None) -> None:
+        _le_fix["running"] = False
+        try:
+            _save_quota(client.exhausted_state())
+        except Exception as err:
+            _warn("hạn mức Gemini (sửa điều ước)", err)
+        out: dict[str, Any] = {"ok": False, "act": "fixed", "i": i}
+        try:
+            if not mw.col or (owner is not None and owner != _owner_now()):
+                return
+            res = fut.result()
+            clean, _notes = journal.check_fix(res.get("raw"), goc, lang)
+            if not (clean.get("sua") or "").strip():
+                raise journal.JournalError("Gemini trả về bản sửa rỗng.")
+            loi = [{"goc": e.get("goc", ""), "sua": e.get("sua", ""), "gt": e.get("giai_thich", "")}
+                   for e in clean.get("loi") or [] if isinstance(e, dict)]
+            ev = LE.load()
+            today = le_today()
+            le_core.fix_mark(ev, today)
+            if le_core.fix_set(ev, i, goc, {"sua": clean["sua"], "nx": clean.get("nhan_xet", ""), "loi": loi}, le_now()):
+                out["ok"] = True
+            else:
+                out["msg"] = "Điều ước vừa đổi trong lúc chờ — bấm “Nhờ Gemini sửa” lại nhé."
+            LE.save(ev)
+        except Exception as err:      # noqa: BLE001 — mọi lỗi (mạng, hạn mức, khoá, JSON) thành một câu ngắn
+            out["msg"] = "Chưa sửa được: %s." % journal.short_reason(err)
+            if not isinstance(err, (ai.AIError, journal.JournalError)):
+                _warn("sửa điều ước", err)
+        try:
+            out["le"] = le_view(STATE.load(), None)
+        except Exception as err:
+            _warn("sự kiện mùa", err)
+        if self.isVisible():
+            self._js("le", out)
 
     # -- 1.21: khách ghé vườn ------------------------------------------------------
 
@@ -4809,8 +5250,10 @@ class GardenDialog(QDialog):
             _warn("chụp ảnh vườn", err)
             self._js("toast", "Không chụp được ảnh này.")
             return
+        card = payload.get("what") == "card"        # 1.36.1: ảnh thiệp Giáng sinh
         from aqt.utils import getSaveFile
-        path = os.environ.get("KB_TEST_PHOTO") or getSaveFile(self, "Lưu ảnh vườn", "kotoba_batake_photo", "Ảnh PNG", ".png", name)
+        path = os.environ.get("KB_TEST_PHOTO") or getSaveFile(self, "Lưu ảnh thiệp" if card else "Lưu ảnh vườn",
+                                                               "kotoba_batake_photo", "Ảnh PNG", ".png", name)
         if not path:
             return
         try:
@@ -4819,7 +5262,7 @@ class GardenDialog(QDialog):
         except OSError as err:
             showWarning(f"Không lưu được ảnh:\n{err}", parent=self)
             return
-        self._js("toast", "[i:camera] Đã lưu ảnh vườn: " + os.path.basename(path))
+        self._js("toast", ("[i:gift] Đã lưu ảnh thiệp: " if card else "[i:camera] Đã lưu ảnh vườn: ") + os.path.basename(path))
 
     # -- 1.14: giao diện tự chỉnh -------------------------------------------------
 

@@ -674,9 +674,11 @@ if old.returncode == 0:
         if fn.endswith(".py"):
             old_keys |= keys_of(subprocess.run(["git", "-C", ROOT, "show", "b5fc017:" + fn], capture_output=True,
                                                text=True).stdout)
+    cur_keys -= {"kotoba_batake_le"}     # 1.36: sự kiện Giáng sinh — khoá mới, test_136.py soát
     ok(cur_keys == old_keys, "khoá collection kotoba_batake_* trong mã = 1.35.0 (%d khoá)%s" % (
         len(cur_keys), "" if cur_keys == old_keys else " — mới %s, bỏ %s" % (sorted(cur_keys - old_keys), sorted(old_keys - cur_keys))))
-    ok(json.loads(old.stdout) == json.load(open(os.path.join(ADDON, "config.json"), encoding="utf-8")),
+    ok(json.loads(old.stdout) == {k: v for k, v in json.load(open(os.path.join(ADDON, "config.json"), encoding="utf-8")).items()
+                                  if k != "season_event"},      # 1.36: ⚙ Sự kiện mùa — test_136.py soát
        "config.json giống hệt 1.35.0 (không thêm mục)")
 else:
     print("  – bỏ qua so với 1.35.0 (repo không có commit b5fc017)")
