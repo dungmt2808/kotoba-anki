@@ -68,7 +68,7 @@ DOORS: dict[int, dict[str, Any]] = {
         "desc": "3 mẫu giấy dán tường: Bông tuyết trên nền thông, Sọc kẹo gậy, Đỏ mận cây thông nhỏ"},
     9: {"kind": "cay", "part": "blue", "name": "Quả châu xanh", "desc": "Hai quả châu xanh dương"},
     10: {"kind": "cay", "part": "lights", "name": "Dây đèn cây thông", "desc": "Đèn nhấp nháy quanh cây"},
-    11: {"kind": "trong", "item": {"le_banhkem": 1}, "name": "Bánh kem dâu", "desc": "クリスマスケーキ — bánh kem dâu kiểu Nhật"},
+    11: {"kind": "trong", "item": {"le_banhkem": 1}, "name": "Bánh kem dâu", "desc": "Bánh kem dâu kem tươi kiểu Nhật cho đêm Giáng sinh"},
     12: {"kind": "cay", "part": "purple", "name": "Quả châu tím", "desc": "Hai quả châu tím"},
     13: {"kind": "qua", "box": 2, "item": {"le_gaubong": 1}, "name": "Hộp quà bí mật", "desc": "Đặt dưới gốc cây · mở từ sáng 25/12"},
     14: {"kind": "san", "part": "path", "name": "Đèn lối đi & nến cửa sổ",
@@ -412,7 +412,7 @@ def boxes(ev: dict[str, Any], today: _dt.date) -> list[dict[str, Any]]:
 
 def simulate(day: _dt.date, reviewed: bool = True) -> dict[str, Any]:
     """Sổ giả cho "Xem thử sự kiện" (admin, không ghi gì): mọi ngăn tới ngày `day` đã mở (reviewed=False: ngăn hôm nay chưa
-    mở), hộp quà đã mở nếu `day` ≥ 25/12."""
+    mở), hộp quà đã mở nếu `day` sau 25/12 (ngày 25 để bấm thử mở hộp)."""
     ev = empty()
     last = min(DOORS_N, (day - FIRST).days + 1) if day >= FIRST else 0
     if not reviewed and last and door_date(last) == day:
@@ -421,7 +421,7 @@ def simulate(day: _dt.date, reviewed: bool = True) -> dict[str, Any]:
         ev["open"][str(d)] = {"d": door_date(d).isoformat(), "b": 0}
     if day >= FIRST:
         ev["gift"] = {"tulich": FIRST.isoformat(), "tree": FIRST.isoformat()}
-    if day >= BOX_DAY:
+    if day > BOX_DAY:
         ev["box"] = {str(n): BOX_DAY.isoformat() for n, d in BOX_DOORS.items() if str(d) in ev["open"]}
     return ev
 

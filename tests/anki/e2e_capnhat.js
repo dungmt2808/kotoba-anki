@@ -193,6 +193,25 @@ result = json.load(open(os.path.join(mw.addonManager.addonsFolder("kotoba_batake
     const raw2 = await py(KB + 'result = mw.col.get_config("kotoba_batake_fields", None)');
     ok(JSON.stringify(raw2) === JSON.stringify(want.cfg.kotoba_batake_fields), 'Cấu hình trường trong collection không bị đổi khi chỉ mở vườn');
   }
+  // 1.36: người dùng cập nhật rồi tới tháng 12 (ngày giả 3/12, đã ôn 1–3/12 ở điện thoại) — quà sự kiện trên dữ liệu cũ, không đụng
+  // khoá / xu / đồ có sẵn
+  if (await py(KB + 'result = hasattr(kb, "le_core")')) {
+    console.log('== 1.36: tới tháng 12 trên dữ liệu của bản cũ');
+    const c0 = await py(KB + 'd = st.load(); result = {"coins": d["coins"], "yard": d["home"]["yard"], "owned": d["home"]["owned"]}');
+    await py(KB + 'kb.LE_TEST = {"today": "2026-12-03", "days": ["2026-12-01", "2026-12-02", "2026-12-03"], "reviews": 2}\nkb._dialog.refresh()\nresult = 1');
+    await sleep(800);
+    const c1 = await py(KB + 'd = st.load(); result = {"coins": d["coins"], "yard": d["home"]["yard"], "owned": d["home"]["owned"], "room": d["home"]["room"], "le": mw.col.get_config("kotoba_batake_le", None)}');
+    const lv = await js('return Garden._data().le;');
+    ok(c1.coins === c0.coins && c0.yard.every((e) => c1.yard.some((x) => x.id === e.id && x.x === e.x && x.y === e.y)) &&
+      Object.keys(c0.owned).every((k) => (c1.owned[k] || 0) >= c0.owned[k]), 'xu / đồ / chỗ đặt cũ giữ nguyên');
+    ok(c1.owned.le_tulich === 1 && c1.le && c1.le.noel2026 && c1.le.noel2026.gift.tulich === '2026-12-03', 'tặng tủ lịch, ghi khoá kotoba_batake_le');
+    ok(lv && lv.ready && lv.ready.join() === '1,2,3', 'ôn 1–3/12 trước khi mở vườn → 3 ngăn chờ mở (' + JSON.stringify(lv && lv.ready) + ')');
+    const after = await py(SNAPSHOT);
+    const changed2 = Object.keys(want.cfg).filter((k) => k !== 'kotoba_batake_rev' && k !== 'kotoba_batake_state' && k !== 'kotoba_batake_season' && k !== 'kotoba_batake_nha' && k !== 'kotoba_batake_mobile' &&
+      JSON.stringify(after.cfg[k]) !== JSON.stringify(want.cfg[k]));
+    ok(!changed2.length, 'các khoá khác không đổi (chỉ ví + sổ bù xu ghi cùng ví / tầng đồ nhận quà + khoá mới kotoba_batake_le)' + (changed2.length ? ': ' + changed2.join(', ') : ''));
+    await py(KB + 'kb.LE_TEST = None\nresult = 1');
+  }
   const errs = await py(KB + 'result = [e.get("where") for e in kb.ERRORS.entries() if e.get("ver") == kb.VERSION]');
   ok(!errs.length, 'nhật ký Báo lỗi không có lỗi của bản mới' + (errs.length ? ': ' + errs.join(', ') : ''));
 }

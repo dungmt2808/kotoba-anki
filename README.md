@@ -32,6 +32,10 @@ Vườn thay áo theo mùa: Tết, hoa anh đào, mùa mưa cẩm tú cầu, l�
 
 Trời còn đổi theo giờ thật (sáng, hoàng hôn, đêm có đèn lồng và đom đóm), có mưa và tuyết.
 
+### Sự kiện Giáng sinh: Lịch chờ Giáng sinh (mới ở 1.36)
+
+Từ 1/12 tới 24/12, mỗi ngày có ôn thẻ (ôn trên điện thoại cũng tính) là mở được một ngăn của **tủ lịch gỗ 24 ngăn**. Lần đầu mở vườn trong tháng 12, vườn tặng tủ lịch (treo ở tường phòng khách) và một cây thông Noel nếu bạn chưa có. Mỗi ngăn là một món trang trí để giữ làm kỷ niệm: cây thông trơn đầy dần quả châu, dây đèn, kim tuyến, kẹo gậy và ngôi sao; nhà khoác vòng hoa, dây lá thông và đèn viền mái; sân sáng đèn ban đêm với người tuyết, tuần lộc đèn, dây đèn võng; trong nhà có tất Noel, bánh kem dâu, đèn ngủ ngôi sao, bàn bánh quy + sữa, giấy dán tường và sàn Noel. Ba hộp quà bí mật dưới gốc cây — lắc thử đoán xem, mở từ sáng 25/12. Lỡ ngày thì ôn 15 lượt trong một ngày để mở bù một ngăn (tối đa 2 ngăn bù mỗi ngày, tới hết 31/12). Không có xu, không chuỗi — chỉ để vườn đẹp lên cùng bạn. Có thêm 7 bài nhạc Giáng sinh 8-bit để chọn. Không thích thì tắt ở ⚙ → Sự kiện mùa.
+
 ### Nhà & Cửa hàng
 
 Xây nhà từng bước, từ bãi đất trống tới gác mái có đèn lồng, rồi đổi kiểu nhà (nhà mái tranh minka, nhà trà chashitsu, lâu đài mini). Xây xong thì **mở rộng nhà** một lần (2.000 xu) được cả **Bếp** và **Phòng ngủ** hai bên phòng chính, với 12 món đồ riêng như tủ lạnh, nồi cơm, giường, đèn ngủ, dây đèn sao. Ba gian theo kiểu nhà đang dùng (nhà gỗ: giấy dán tường hoa, sàn gỗ; minka: tường đất, chiếu tatami, cửa lùa vẽ sóng; nhà trà: cửa sổ tròn, hốc tokonoma; lâu đài: vách lá vàng vẽ tùng, cửa sổ hình chuông), đổi kiểu nhà là đổi cả ba gian. Ở màn chính bấm ◂ ▸ sang cảnh **Trong nhà** để thấy cả ngôi nhà đứng giữa vườn, mèo đi lại khắp nhà. Trang trí sân, bày nội thất, nuôi thú, mở thêm 6 vùng mới như bãi biển hay đền thần. Thỉnh thoảng có **khách ghé vườn**, như chim sẻ, cáo hay hươu Nara, tuỳ đồ bạn đặt và tuỳ mùa. Khách đã gặp được ghi vào Album khách.

@@ -399,7 +399,7 @@ LE_ITEMS: dict[str, dict[str, Any]] = {
     "le_cautuyet": {"name": "Quả cầu tuyết", "price": 0, "scene": "room", "w": 1, "place": "floor", "only": "le",
                     "desc": "Lắc lên là tuyết bay quanh cây thông nhỏ"},
     "le_banhkem": {"name": "Bánh kem dâu", "price": 0, "scene": "room", "w": 1, "place": "floor", "only": "le",
-                   "desc": "クリスマスケーキ — bánh kem dâu kiểu Nhật"},
+                   "desc": "Bánh kem dâu kem tươi kiểu Nhật cho đêm Giáng sinh"},
     "le_gaubong": {"name": "Gấu bông Noel", "price": 0, "scene": "room", "w": 1, "place": "floor", "only": "le",
                    "desc": "Gấu nâu đội mũ Noel"},
     "le_nguoituyet": {"name": "Người tuyết", "price": 0, "scene": "yard", "w": 1, "place": "ground", "only": "le",

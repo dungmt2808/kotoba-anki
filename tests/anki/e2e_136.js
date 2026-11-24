@@ -134,6 +134,14 @@ result = 1`);
   await page.shot(SHOTS + '/136_02_bang.png');
   const inWin = await js('const r = document.getElementById("kb-le-pop").getBoundingClientRect(); return r.left >= 0 && r.top >= 0 && r.right <= innerWidth && r.bottom <= innerHeight;');
   ok(inWin, 'bảng nằm gọn trong cửa sổ 1366 × 860');
+  for (const [w, h] of [[1024, 700], [800, 600]]) {
+    await py(KB + `kb._dialog.resize(${w}, ${h}); result = 1`); await sleep(700);
+    const fit = await js('const p = document.getElementById("kb-le-pop"), r = p.getBoundingClientRect(), c = document.getElementById("kb-le-cab").getBoundingClientRect();' +
+      'return { inX: r.left >= 0 && r.right <= innerWidth, top: r.top >= 0, scroll: p.scrollHeight <= p.clientHeight + 1 || getComputedStyle(p).overflowY === "auto", cab: c.width, vw: innerWidth };');
+    ok(fit.inX && fit.top && fit.scroll && fit.cab <= fit.vw - 20, `cửa sổ ${w} × ${h}: bảng không tràn ngang, tủ ${fit.cab} px (trang ${fit.vw} px)`);
+    await page.shot(SHOTS + `/136_02_bang_${w}.png`);
+  }
+  await py(KB + 'kb._dialog.resize(1366, 860); result = 1'); await sleep(500);
   ok(await clickDoor(1), 'bấm ngăn 1');
   ok(await waitFor('Garden._data().le.opened === 1', 5000), 'Python mở ngăn 1');
   ok(await waitFor('!document.getElementById("kb-le-card").hidden && /Vòng hoa cửa/.test(document.getElementById("kb-le-card").textContent)', 3000), 'thẻ kết quả: Vòng hoa cửa');

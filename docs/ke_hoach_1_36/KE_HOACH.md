@@ -64,7 +64,9 @@ dưới — Claude chọn) / **Chép mã** gửi bạn. **Bỏ dây treo thiệp
 | **1.36.1** (trước ~15/12) | xưởng thiệp + điều ước + PNG / mã, đêm 24 (ông già Noel, Silent Night), sáng 25 (mở hộp quà, quả cầu tuyết, thư viết sẵn, bánh quy còn vụn), cất đồ 1/1, Kỷ niệm Giáng sinh 2026 ở Album; nếu kịp: nhận thiệp bằng mã |
 | Sau Noel | Tô tranh theo số (`docs/ke_hoach_thiep_to_mau/`), ảnh kỷ niệm tự chụp đêm 24 |
 
-**Tiến độ (23/11, dừng theo lời người dùng — sắp hết hạn mức tuần):** chưa có mã trong `kotoba_batake/`. Bản nháp phần lõi (chưa test) ở `ma_nhap/1_36_loi_nhap.patch`: `le_core.py` (24 ngăn, luật mở / mở bù / vé giữ chuỗi, hộp quà, gộp hai máy, `LeStore`), `garden_core.LE_ITEMS` + `le_auto_spot` + `GardenState.le_apply`, `decor_core.NOEL_TILES`. Áp lại: `git apply docs/ke_hoach_1_36/ma_nhap/1_36_loi_nhap.patch`. Việc tiếp: test lõi (`tests/core/test_136.py`) → cầu nối + bảng tủ lịch → hình → nhạc → test Anki thật (môi trường: `uv venv ~/venvs/aqt-26.9.4` + `aqt==26.9.4` + thư viện Qt qua apt).
+**Tiến độ (24/11): 1.36.0 đã làm + test** — PHAT_TRIEN.md mục 2.6z25, báo cáo + bảng các kiểu người dùng `docs/kiem_thu/1.36/BAO_CAO.md`;
+bản nháp `ma_nhap/1_36_loi_nhap.patch` đã áp rồi sửa tiếp (giữ lại để biết lịch sử). Còn 1.36.1.
+**Tiến độ cũ (23/11, dừng theo lời người dùng — sắp hết hạn mức tuần):** chưa có mã trong `kotoba_batake/`. Bản nháp phần lõi (chưa test) ở `ma_nhap/1_36_loi_nhap.patch`: `le_core.py` (24 ngăn, luật mở / mở bù / vé giữ chuỗi, hộp quà, gộp hai máy, `LeStore`), `garden_core.LE_ITEMS` + `le_auto_spot` + `GardenState.le_apply`, `decor_core.NOEL_TILES`. Áp lại: `git apply docs/ke_hoach_1_36/ma_nhap/1_36_loi_nhap.patch`. Việc tiếp: test lõi (`tests/core/test_136.py`) → cầu nối + bảng tủ lịch → hình → nhạc → test Anki thật (môi trường: `uv venv ~/venvs/aqt-26.9.4` + `aqt==26.9.4` + thư viện Qt qua apt).
 
 ---
 
