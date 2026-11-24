@@ -217,7 +217,7 @@ Cần Node ≥ 22 (có sẵn `fetch` và `WebSocket`). Cổng: `KB_CDP_PORT` (93
 
 ## Kết quả lần chạy gần nhất (bản 1.36.1, 24/11/2026 tối) — thiệp, ông già Noel, thư, cất đồ, Kỷ niệm
 - `core/test_1361.py` **120/120** (cũng 120/120 trên Python 3.9; 400 lượt hai máy ngẫu nhiên với 6 hạt giống), `core/test_1361.js` **33/33**.
-- `anki/e2e_1361.js`: **81/81** trên Anki 26.9.4 và **81/81** trên Anki 23.10.1; `anki/e2e_136.js` (1.36.0) vẫn 66/66.
+- `anki/e2e_1361.js`: **81/81** trên Anki 26.9.4 (cả trên gói đã giải nén) và **81/81** trên Anki 23.10.1; `anki/e2e_136.js` (1.36.0) vẫn 66/66.
 - Lần chạy đầu trong Anki thật bắt được: bản sửa của Gemini lưu cùng giây với lần tự lưu → khi gộp với collection bản cùng dấu thắng,
   bản sửa mất (sửa: `_bump`, mỗi lần sửa luôn có dấu sau lần trước); cảnh "cất đồ" không hiện vì Python chỉ báo ở lần dựng đầu (sửa:
   trang giữ tới lúc hiện); "treo thiệp trước 18:00" bị dòng "ngăn chờ mở" che (sửa: hạn hôm nay lên trước).

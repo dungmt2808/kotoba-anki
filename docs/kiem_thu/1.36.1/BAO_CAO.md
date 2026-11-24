@@ -101,7 +101,7 @@ bạn); làm / treo thiệp khi xem thử chỉ ở bộ nhớ; cất đồ ch�
 |---|---|
 | `core/test_1361.py` (mới, offline) | **120/120** (Python 3.13 và 3.9; 400 lượt hai máy ngẫu nhiên × 6 hạt giống) |
 | `core/test_1361.js` (mới, Chromium) | **33/33** |
-| `anki/e2e_1361.js` (mới, Anki thật, ngày + giờ giả, Gemini giả) | **81/81** Anki 26.9.4 · **81/81** Anki 23.10.1 |
+| `anki/e2e_1361.js` (mới, Anki thật, ngày + giờ giả, Gemini giả) | **81/81** Anki 26.9.4 (cả trên gói đã giải nén) · **81/81** Anki 23.10.1 |
 | `anki/e2e_136.js` (1.36.0) | 66/66 |
 | `anki/run_habanh.sh` 1.36.1 → 1.31.3 → 1.36.1 (thêm thiệp đã treo, thiệp nhận, ông đã ghé) | 4/4 + 10/10 + 18/18 |
 | `anki/run_capnhat.sh` gói 1.31.3 đã phát hành → 1.36.1 | 5/5 + 18/18 |
