@@ -2065,6 +2065,7 @@ var GardenHome = (function () {
   function sceneSprite(e, it, spr, now, sceneName, st, ghost) {
     if (ghost && BASE[e.id]) { return spr; }      // bóng mờ khi đang đặt: hình đầy đủ (phần động không vẽ cho bóng mờ)
     if (e.id === "xmastree" && LE()) { const t = LE().treeSprite(); if (t) { return t; } }   // 1.36: cây trơn → đầy dần theo ngăn
+    if (e.id === "le_banhquy" && typeof GardenLe !== "undefined" && GardenLe.eaten && GardenLe.eaten()) { return GardenLe.crumbs(); }   // 1.36.1: ông già Noel đã ăn
     if (e.id === "fountain" && st && (st.snow || st.cover)) { return ALT.fountain.bang; }
     if (e.id === "rice" && isAutumn()) { return ALT.rice.vang; }
     const fr = FRAMES[e.id];
@@ -5122,6 +5123,7 @@ var GardenHome = (function () {
     const chips = [["guest", "Khách ghé vườn" + (g ? " · " + g.met + "/" + g.total : "")],
       ["box", "Hộp sưu tầm" + (f && f.box ? " · " + f.box.found + "/" + f.box.total : "")]];
     if (typeof GardenLife !== "undefined") { chips.push(["life", "Sinh hoạt" + (lf ? " · " + lf.seen + "/" + lf.total : "")]); }   // 1.30
+    if (typeof GardenLeNoel !== "undefined" && GardenLeNoel.hasAlbum()) { chips.push(["le", "Kỷ niệm"]); }     // 1.36.1: Giáng sinh 2026
     chips.forEach(([k, label]) => {
       const b = btn(label, "kb-btn-small kb-album-chip" + (albumView === k ? " is-on" : ""), () => { albumView = k; renderList(); });
       b.setAttribute("data-album", k);
@@ -5137,6 +5139,7 @@ var GardenHome = (function () {
       return;
     }
     if (albumView === "life" && typeof GardenLife !== "undefined") { GardenLife.book(list); return; }
+    if (albumView === "le" && typeof GardenLeNoel !== "undefined" && GardenLeNoel.hasAlbum()) { GardenLeNoel.album(list); return; }
     renderGuests(list);
   }
   function renderGuests(list) {
@@ -6072,6 +6075,18 @@ var GardenHome = (function () {
     openBox: function (sc) { open(mainScene() === "house" ? "yard" : mainScene()); tab = "guest"; albumView = "box"; boxFocus = sc || null; renderList(); },
     // 1.30: mở Nhà ở tab Album → Sinh hoạt
     openLife: function () { open(mainScene() === "house" ? "room" : mainScene()); tab = "guest"; albumView = "life"; renderList(); },
+    // 1.36.1: mở Nhà ở tab Album → Kỷ niệm (Giáng sinh) · vẽ lại danh sách (Album đang mở) · sân vẽ vào canvas khác (cảnh đêm 24)
+    openMemories: function () { open(mainScene() === "house" ? "yard" : mainScene()); tab = "guest"; albumView = "le"; renderList(); },
+    refreshList: function () { if (isOpen) { renderList(); } },
+    albumView: () => (isOpen && tab === "guest" ? albumView : ""),
+    drawYardInto: function (ctx, S, ox, oy, now, opts) {
+      const t = trying;
+      trying = false;
+      try { drawOutdoor(ctx, S, ox, oy, now, "yard", Object.assign({ photo: true, noGuests: true }, opts || {})); } finally { trying = t; lights.length = 0; }
+    },
+    itemBoxes: function (sc) {
+      return (homeState()[sc] || []).map((e) => { const b = itemBox(e, sc); return b ? { id: e.id, x: b.x, y: b.y, w: b.w, h: b.h, cx: e.x, cy: e.y } : null; }).filter(Boolean);
+    },
     showMain: showMain,
     icon: function (id, size) { return SPR[id] ? iconCanvas(SPR[id], size || 40) : null; },
     _state: () => ({ scene: scene, tab: tab, placing: placing, selected: selected, payWait: payWait, peekCode: peekCode }),

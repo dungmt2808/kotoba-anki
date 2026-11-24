@@ -1262,7 +1262,7 @@ var Garden = (function () {
     if (pr) {
       pr.hidden = !(data && data.admin);
       var ps = $("kb-le-pv-day");
-      if (ps && data && data.le && data.le.preview) { ps.value = data.le.today; } else if (ps) { ps.value = "off"; }
+      if (ps && data && data.le && data.le.preview) { ps.value = data.le.preview_key || data.le.today; } else if (ps) { ps.value = "off"; }
     }
   }
 
@@ -1793,7 +1793,11 @@ var Garden = (function () {
     "kb-life-card": function () { if (typeof GardenLife !== "undefined" && GardenLife.closeCard) { GardenLife.closeCard(); } else { $("kb-life-card").hidden = true; } },
     "kb-find-card": function () { if (typeof GardenFinds !== "undefined" && GardenFinds.closeCard) { GardenFinds.closeCard(); } else { $("kb-find-card").hidden = true; } },
     "kb-ped-pop": function () { if (typeof GardenFinds !== "undefined" && GardenFinds.closePed) { GardenFinds.closePed(); } else { $("kb-ped-pop").hidden = true; } },
-    "kb-le-pop": function () { if (typeof GardenLe !== "undefined") { GardenLe.close(); } else { $("kb-le-pop").hidden = true; } }       // 1.36
+    "kb-le-pop": function () { if (typeof GardenLe !== "undefined") { GardenLe.close(); } else { $("kb-le-pop").hidden = true; } },       // 1.36
+    // 1.36.1: xưởng thiệp (đóng là lưu nốt), thư của ông già Noel, cất đồ 1/1
+    "kb-le-cardpop": function () { if (typeof GardenLeCard !== "undefined") { GardenLeCard.close(); } else { $("kb-le-cardpop").hidden = true; } },
+    "kb-le-letter": function () { $("kb-le-letter").hidden = true; },
+    "kb-le-packpop": function () { $("kb-le-packpop").hidden = true; }
   };
   var BIG_PANELS = ["kb-panel", "kb-game", "kb-home", "kb-paper", "kb-cal", "kb-fields", "kb-ui"];
   function closePops(except) {

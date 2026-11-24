@@ -32,9 +32,11 @@ Vườn thay áo theo mùa: Tết, hoa anh đào, mùa mưa cẩm tú cầu, l�
 
 Trời còn đổi theo giờ thật (sáng, hoàng hôn, đêm có đèn lồng và đom đóm), có mưa và tuyết.
 
-### Sự kiện Giáng sinh: Lịch chờ Giáng sinh (mới ở 1.36)
+### Sự kiện Giáng sinh: Lịch chờ Giáng sinh, thiệp, ông già Noel (mới ở 1.36)
 
 Từ 1/12 tới 24/12, mỗi ngày có ôn thẻ (ôn trên điện thoại cũng tính) là mở được một ngăn của **tủ lịch gỗ 24 ngăn**. Lần đầu mở vườn trong tháng 12, vườn tặng tủ lịch (treo ở tường phòng khách) và một cây thông Noel nếu bạn chưa có. Mỗi ngăn là một món trang trí để giữ làm kỷ niệm: cây thông trơn đầy dần quả châu, dây đèn, kim tuyến, kẹo gậy và ngôi sao; nhà khoác vòng hoa, dây lá thông và đèn viền mái; sân sáng đèn ban đêm với người tuyết, tuần lộc đèn, dây đèn võng; trong nhà có tất Noel, bánh kem dâu, đèn ngủ ngôi sao, bàn bánh quy + sữa, giấy dán tường và sàn Noel. Ba hộp quà bí mật dưới gốc cây — lắc thử đoán xem, mở từ sáng 25/12. Lỡ ngày thì ôn 15 lượt trong một ngày để mở bù một ngăn (tối đa 2 ngăn bù mỗi ngày, tới hết 31/12). Không có xu, không chuỗi — chỉ để vườn đẹp lên cùng bạn. Có thêm 7 bài nhạc Giáng sinh 8-bit để chọn. Không thích thì tắt ở ⚙ → Sự kiện mùa.
+
+Từ 1.36.1: **làm thiệp Giáng sinh** — chọn khung, dán sticker là hình trong vườn (cây thông, quà, StackChan đội mũ Noel, các món đã mở ở tủ lịch…), viết lời chúc, thêm câu chúc bằng 7 thứ tiếng; mặt sau viết **điều ước** bằng tiếng Việt hoặc tiếng bạn đang học (bấm "Nhờ Gemini sửa" để Gemini sửa lỗi). Treo thiệp lên cây thông trước 18:00 ngày 24 — **tối 24 ông già Noel đáp xe tuần lộc xuống chính sân vườn của bạn** lấy thiệp (nhạc Silent Night), **sáng 25 có thư của ông** dưới gốc cây, bánh quy chỉ còn vụn. Lưu thiệp thành ảnh PNG hoặc chép mã gửi bạn bè; dán mã của bạn ở Album → Kỷ niệm để giữ thiệp. Sang năm mới StackChan cất đồ Noel vào kho; tủ lịch, thiệp và thư ở lại trong Album → Kỷ niệm.
 
 ### Nhà & Cửa hàng
 

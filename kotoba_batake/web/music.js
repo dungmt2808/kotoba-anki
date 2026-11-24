@@ -312,14 +312,24 @@ var GardenMusic = (function () {
     winter: "winter", hanami: "hanami", tsuyu: "tsuyu", tanabata: "tanabata", natsumatsuri: "natsumatsuri", tsukimi: "tsukimi",
     momiji: "momiji", shogatsu: "shogatsu" };
   function season() { return typeof GardenSeason !== "undefined" && GardenSeason ? GardenSeason : null; }
+  // 1.36.1: cảnh đêm 24 phát Silent Night (chỉ khi nhạc đang bật — không tự bật nhạc người dùng đã tắt)
+  let forced = null;
+  function eveNight() {          // tối 24/12 (18:00 tới nửa đêm, giờ máy)
+    const d = new Date();
+    return d.getMonth() === 11 && d.getDate() === 24 && d.getHours() >= 18;
+  }
   function trackFor(sc) {
     const base = SCENE_TRACK[sc], sea = season();
+    if (forced && TRACKS[forced] && (sc === "garden" || sc === "home")) { return forced; }
     // 1.18: bấm "Xem thử" một chủ đề trong Nhà → phát luôn nhạc của chủ đề đó (thôi xem thử → lại hộp nhạc của nhà)
     const pv = sea && sea.previewing ? sea.previewing() : null;
     if (pv && THEME_TRACK[pv] && (sc === "home" || sc === "garden")) { return pv === "noel" ? noelTrack() : THEME_TRACK[pv]; }
     if (base !== "garden") { return base; }
     const th = sea ? sea.current() : null;
-    if (th === "noel") { return noelTrack(); }          // 1.36: bài Giáng sinh đã chọn
+    if (th === "noel") {          // 1.36: bài Giáng sinh đã chọn · 1.36.1: tối 24 "Nhạc vườn Noel" / "Đổi bài mỗi ngày" → Silent Night
+      const p = noelPick();
+      return eveNight() && (p === "noel" || p === "daily") ? "silent" : noelTrack();
+    }
     return (th && THEME_TRACK[th]) || base;
   }
 
@@ -532,6 +542,7 @@ var GardenMusic = (function () {
     trackFor: trackFor,
     // 1.36: nhạc Giáng sinh (⚙ → Âm thanh → Nhạc Giáng sinh), lưu ở prefs kb-music-noel (riêng máy)
     noelChoices: () => NOEL_LIST.slice(),
+    force: function (id) { forced = id && TRACKS[id] ? id : null; if (enabled || playing) { apply(); } },
     noelPick: noelPick,
     setNoel: function (id) {
       if (!NOEL_LIST.some((c) => c.id === id)) { return; }

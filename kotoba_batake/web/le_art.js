@@ -236,6 +236,79 @@ var GardenLeArt = (function () {
     return ol(g);
   })();
 
+  // 1.36.1: bánh quy đã ăn (từ tối 24 — ông già Noel ghé): khay còn vụn, cốc sữa cạn, tờ giấy cảm ơn
+  const EATEN = (function () {
+    const g = grid(16, 13);
+    rect(g, 0, 7, 16, 2, "b"); rect(g, 0, 7, 16, 1, "t"); rect(g, 1, 9, 2, 4, "B"); rect(g, 13, 9, 2, 4, "B");
+    rect(g, 1, 5, 9, 2, "s"); rect(g, 2, 6, 7, 1, "m");
+    [[2, 4], [6, 4], [8, 4]].forEach(([x, y]) => dot(g, x, y, "h")); dot(g, 4, 4, "B");
+    rect(g, 3, 1, 5, 3, "w"); rect(g, 4, 2, 3, 1, "S");
+    rect(g, 11, 1, 3, 6, "W"); rect(g, 11, 1, 3, 1, "s"); dot(g, 14, 3, "s"); dot(g, 14, 4, "s"); rect(g, 11, 6, 3, 1, "w");
+    return ol(g);
+  })();
+
+  // =====================================================================================================
+  // 1.36.1: ông già Noel (16 × 21, quay sang phải) — đứng / đi (2 khung) / vẫy tay / cầm thiệp; ngồi trên xe (nửa trên)
+  // =====================================================================================================
+  function santaGrid(pose) {
+    const g = grid(16, 21);
+    // mũ + quả bông
+    rect(g, 7, 1, 5, 1, "r"); rect(g, 5, 2, 7, 1, "r"); rect(g, 4, 3, 7, 1, "r"); dot(g, 4, 3, "R"); dot(g, 5, 2, "R");
+    rect(g, 12, 0, 2, 2, "w"); dot(g, 12, 2, "r");
+    rect(g, 3, 4, 9, 1, "w");
+    // mặt, râu
+    rect(g, 5, 5, 6, 2, "e"); dot(g, 9, 5, "k"); dot(g, 10, 6, "p"); dot(g, 11, 6, "E"); dot(g, 5, 5, "E");
+    ellipseFill(g, 7.5, 9, 4.2, 2.6, "w"); rect(g, 7, 7, 4, 1, "w"); dot(g, 4, 9, "s"); dot(g, 5, 10, "s"); dot(g, 10, 11, "s");
+    // áo
+    rect(g, 3, 11, 10, 4, "r"); dot(g, 3, 11, "R"); rect(g, 3, 12, 1, 3, "R"); rect(g, 8, 11, 1, 4, "w");
+    rect(g, 3, 13, 10, 1, "k"); rect(g, 8, 13, 2, 1, "y");
+    rect(g, 3, 15, 10, 1, "w");
+    // tay sau
+    rect(g, 2, 11, 1, 3, "R"); dot(g, 2, 14, "k");
+    // tay trước
+    if (pose === "wave") { rect(g, 12, 8, 2, 4, "r"); rect(g, 13, 6, 2, 2, "r"); rect(g, 13, 4, 2, 2, "w"); }
+    else if (pose === "hold") { rect(g, 12, 11, 3, 2, "r"); dot(g, 15, 11, "k"); dot(g, 15, 12, "k"); }
+    else { rect(g, 12, 11, 2, 3, "r"); dot(g, 13, 14, "k"); }
+    // chân + ủng
+    if (pose === "walk2") {
+      rect(g, 5, 16, 3, 3, "R"); rect(g, 8, 16, 3, 2, "r"); rect(g, 4, 19, 4, 2, "k"); rect(g, 8, 18, 4, 2, "k");
+    } else {
+      rect(g, 4, 16, 3, 3, "R"); rect(g, 9, 16, 3, 3, "r"); rect(g, 3, 19, 4, 2, "k"); rect(g, 9, 19, 4, 2, "k");
+      if (pose === "walk1") { rect(g, 9, 19, 4, 2, "."); rect(g, 10, 18, 4, 2, "k"); }
+    }
+    return g;
+  }
+  const SANTA = {};
+  ["stand", "walk1", "walk2", "wave", "hold"].forEach((k) => { SANTA[k] = ol(santaGrid(k)); });
+  SANTA.sit = ol(santaGrid("stand").slice(0, 13));
+  // thiệp nhỏ treo trên cây thông (7 × 7: dây vàng + thiệp)
+  const CARD_MINI = (function () {
+    const g = grid(7, 7);
+    dot(g, 3, 0, "y"); dot(g, 3, 1, "y");
+    rect(g, 0, 2, 7, 5, "c"); rect(g, 0, 2, 7, 1, "r"); dot(g, 2, 4, "g"); dot(g, 4, 5, "r"); dot(g, 5, 4, "y");
+    return rows(g);
+  })();
+  // thư của ông già Noel (16 × 12: phong bì + dấu sáp đỏ)
+  const LETTER = (function () {
+    const g = grid(16, 12);
+    rect(g, 0, 0, 16, 12, "c"); gline(g, 0, 0, 7, 6, "E"); gline(g, 15, 0, 8, 6, "E");
+    disc(g, 7.5, 6.5, 1.8, "R"); dot(g, 7, 6, "r");
+    return ol(g);
+  })();
+  // hộp cất đồ Noel (24 × 18): thùng các-tông, dải ruy băng đỏ, nhãn vòng hoa
+  const PACKBOX = (function () {
+    const g = grid(24, 18);
+    rect(g, 1, 6, 22, 12, "t"); rect(g, 1, 6, 22, 1, "h"); rect(g, 1, 7, 1, 11, "E");
+    rect(g, 0, 3, 11, 3, "h"); rect(g, 13, 3, 11, 3, "h"); rect(g, 0, 5, 11, 1, "E"); rect(g, 13, 5, 11, 1, "E");
+    rect(g, 11, 6, 2, 12, "r"); rect(g, 1, 11, 22, 2, "r");
+    rect(g, 9, 1, 2, 3, "R"); rect(g, 13, 1, 2, 3, "R"); rect(g, 11, 2, 2, 2, "r");
+    for (let a = 0; a < 14; a++) { const t = a / 14 * Math.PI * 2; dot(g, Math.round(5 + Math.cos(t) * 2.6), Math.round(14.5 + Math.sin(t) * 2), a % 3 ? "G" : "g"); }
+    dot(g, 5, 16, "r");
+    // ló ra: ngôi sao + quả châu
+    star(g, 18, 2, 2.4, 1.1, "y"); dot(g, 6, 2, "r"); dot(g, 7, 2, "R");
+    return ol(g);
+  })();
+
   // =====================================================================================================
   // Bảng tủ lịch: số 3×5, biểu tượng trong ngăn
   // =====================================================================================================
@@ -415,6 +488,7 @@ var GardenLeArt = (function () {
     PAL: PAL, ITEMS: ITEMS, ICON: ICON, BALLS: BALLS, CANES: CANES, CANE: CANE, TREE_LIGHTS: TREE_LIGHTS, TREE_ALL: TREE_ALL,
     tree: tree, paint: paint, shadowRows: shadowRows, digit: digit, boxIcon: boxIcon, houseGeo: houseGeo, houseLights: houseLights,
     WARM: WARM, DEER_BULBS: DEER_BULBS, grid: grid, rect: rect, dot: dot, disc: disc, ol: ol, rows: rows, star: star,
+    EATEN: EATEN, SANTA: SANTA, CARD_MINI: CARD_MINI, LETTER: LETTER, PACKBOX: PACKBOX,       // 1.36.1
     install: function (L) {
       const { SPR, GLOW, EXTRA, P } = L;
       ["Q", "q", "X", "x", "H", "W", "O", "Y"].forEach((k) => { if (!P[k]) { P[k] = PAL[k]; } });

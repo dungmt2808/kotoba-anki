@@ -194,8 +194,20 @@ var GardenSky = (function () {
     };
   }
 
+  // 1.36.1: cảnh đêm 24 (le_noel.js) — trời đêm tạm thời trong vài giây, không lưu vào cài đặt, không báo đổi buổi
+  let hold = null, holdCache = null, holdAt = 0;
   function state() {
     const t = Date.now();
+    if (hold && t > hold.until) { hold = null; cache = null; }
+    if (hold) {
+      if (!holdCache || t - holdAt > 200) {
+        const keep = cfg;
+        cfg = Object.assign({}, cfg, { mode: "fixed", fixedHour: hold.h, weather: hold.w });
+        try { holdCache = compute(t); } finally { cfg = keep; }
+        holdAt = t;
+      }
+      return holdCache;
+    }
     if (!cache || t - cacheAt > 200) {
       cache = compute(t); cacheAt = t;
       const key = cache.phase + "|" + cache.weather;
@@ -220,6 +232,13 @@ var GardenSky = (function () {
     settings: () => Object.assign({}, cfg),
     set: function (k, v) { const next = Object.assign({}, cfg); next[k] = v; cfg = clean(next); save(); cache = null; return state(); },
     onChange: function (fn) { listeners.push(fn); },
+    // 1.36.1: giữ trời ở giờ h, thời tiết w trong ms mili giây (tối đa 60 giây) — release() trả lại trời thật
+    hold: function (h, w, ms) {
+      hold = { h: Number(h) || 0, w: WEATHER[w] ? w : "sunny", until: Date.now() + Math.min(60000, Math.max(1000, ms || 15000)) };
+      holdCache = null; return state();
+    },
+    release: function () { if (hold) { hold = null; holdCache = null; cache = null; } },
+    holding: () => !!(hold && Date.now() <= hold.until),
     mix: mix, shade: shade,
     WEATHER: WEATHER, PHASE_LABEL: PHASE_LABEL,
     // cho test

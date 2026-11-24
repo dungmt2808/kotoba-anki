@@ -3672,13 +3672,43 @@ class GardenState:
     # -- 1.28: Hộp sưu tầm, gánh hàng rong -----------------------------------------------
 
     def le_apply(self, give: dict[str, int] | None = None, auto: list[str] | None = None, tiles: list[str] | None = None,
-                 extra: list[tuple[Any, ...]] | None = None) -> tuple[dict[str, Any], list[dict[str, Any]]]:
+                 extra: list[tuple[Any, ...]] | None = None, unplace: dict[str, int] | None = None,
+                 tiles_set: list[list[str]] | None = None) -> tuple[dict[str, Any], list[dict[str, Any]]]:
         """1.36: quà của tủ lịch Giáng sinh, ghi CÙNG một lần với sổ sự kiện (`extra` = le_core.LeStore.write): thêm món vào
         kho (`give` {id: số}), tự bày từng món trong `auto` vào ô trống đầu tiên (le_auto_spot — hết ô thì để trong kho),
-        thêm mẫu tường / sàn Noel (`tiles`). Không có xu. Trả (ví, [{"id", "scene", "x", "y"}] món đã bày)."""
+        thêm mẫu tường / sàn Noel (`tiles`). Không có xu. Trả (ví, [{"id", "scene", "x", "y"}] món đã bày).
+        1.36.1 (cất đồ 1/1): `unplace` {id: số} cất món đang bày vào Kho đồ (vẫn sở hữu); `tiles_set` [[gian, wall|floor,
+        mẫu Noel, mẫu trả lại]] — gian còn dùng đúng mẫu Noel đó thì trả mẫu cũ (không còn dùng được → theo kiểu nhà)."""
         data = self.load()
         home = data["home"]
         own = home["owned"]
+        for iid, n in (unplace or {}).items():
+            left = int(n)
+            for sc in scene_names(home):
+                if left <= 0:
+                    break
+                lst = home.get(sc)
+                if not isinstance(lst, list):
+                    continue
+                keep = []
+                for e in lst:
+                    if left > 0 and isinstance(e, dict) and e.get("id") == iid:
+                        left -= 1
+                        continue
+                    keep.append(e)
+                home[sc] = keep
+        if tiles_set:
+            dec = data["more"][decor.DECOR_KEY]
+            for t in tiles_set:
+                room, slot, cur, back = t
+                use = dec["use"].get(room)
+                if not isinstance(use, dict) or use.get(slot) != cur:
+                    continue
+                if back and decor.usable(dec, back, slot) and (back in decor.PRESETS or back in decor.HOUSE
+                                                                or decor.TILE_RE.match(back)):
+                    use[slot] = back
+                else:
+                    use.pop(slot, None)
         for iid, n in (give or {}).items():
             if iid not in CATALOG or not isinstance(n, int) or n <= 0:
                 raise HomeError("Không có món này.")
@@ -4430,14 +4460,15 @@ class GardenState:
         self.save(data)
         return data
 
-    def decor_use(self, room: str, slot: str, did: Any) -> dict[str, Any]:
-        """Dùng mẫu cho một gian (did trống / "none" = Theo kiểu nhà). Miễn phí."""
+    def decor_use(self, room: str, slot: str, did: Any, extra: list[tuple[Any, ...]] | None = None) -> dict[str, Any]:
+        """Dùng mẫu cho một gian (did trống / "none" = Theo kiểu nhà). Miễn phí. `extra` (1.36.1): sổ sự kiện nhớ mẫu cũ
+        khi gian chuyển sang mẫu Noel (1/1 trả lại) — ghi cùng lần."""
         data = self.load()
         if data["home"]["house"] < ROOM_UNLOCK_LEVEL:
             raise HomeError("Xây nhà tới bước “Lắp cửa & cửa sổ” đã nhé.")
         dec = data["more"][decor.DECOR_KEY]
         self._decor(lambda: decor.use(dec, room, slot, did, data["home"].get("rooms") or []))
-        self.save(data)
+        self.save(data, extra=extra)
         return data
 
     def tile_save(self, payload: Any) -> dict[str, Any]:

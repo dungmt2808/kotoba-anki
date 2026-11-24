@@ -127,6 +127,14 @@ if hasattr(kb, "le_core"):          # 1.36: đã mở 21 ngăn tủ lịch Gián
     kb.le_core.mark_gifts(ev, ["tulich", "tree"], _today); give["le_tulich"] = 1; give["xmastree"] = 1
     st.le_apply(give, kb.le_core.auto_list(give), tiles, extra=[kb.LE.write(ev)])
     st.decor_use("room", "wall", "w_noelkeo")
+    if hasattr(kb.le_core, "save_card"):      # 1.36.1: thiệp đã treo, thiệp nhận của bạn, ông già Noel đã ghé
+        _now = _dt.datetime(2026, 12, 21, 20, 0)
+        ev = kb.LE.load()
+        kb.le_core.save_card(ev, 0, {"f": "qua", "st": [{"s": "xmastree", "x": 6, "y": 22}], "t1": "Giáng sinh an lành!", "t2": "— hạ bản", "c": "ja", "w": "Ước gì học giỏi", "wl": "vi"}, _today, _now)
+        kb.le_core.hang_card(ev, 0, _today, _now)
+        kb.le_core.recv_add(ev, kb.le_core.card_code({"f": "thong", "st": [], "t1": "Merry Christmas", "t2": "", "c": ""}), _today)
+        kb.le_core.mark_seen(ev, _dt.datetime(2026, 12, 24, 19, 0), "star,tree")
+        kb.LE.save(ev)
 kb.JOURNAL.update(kb.cal_today(), {"t": "viết bằng 1.32 trước khi hạ bản"})
 c = mw.addonManager.getConfig("kotoba_batake"); c.setdefault("prefs", {})["kb-glang"] = "zh"; mw.addonManager.writeConfig("kotoba_batake", c)
 result = did`);
@@ -208,6 +216,12 @@ async function p3() {
     ok(ex.use.wall === 'w_noelkeo' && ['w_noeltuyet', 'w_noelkeo', 'w_noeldo', 'f_noelcaro', 'f_noellen'].every((t) => ex.own.indexOf(t) >= 0),
       'tường Noel đang dùng + 5 mẫu Noel còn (bản cũ vẽ theo kiểu nhà, không xoá)');
     ok(ex.le && Object.keys(ex.le.noel2026.open).length === 21, 'sổ tủ lịch còn 21 ngăn đã mở');
+    const n26 = (ex.le && ex.le.noel2026) || {};
+    if (n26.cards) {
+      ok(n26.cards[0] && n26.cards[0].t1 === 'Giáng sinh an lành!' && n26.cards[0].w === 'Ước gì học giỏi' && n26.hang && n26.hang.i === 0,
+        '1.36.1: thiệp đã treo (cả điều ước) còn nguyên');
+      ok((n26.recv || []).length === 1 && n26.santa && n26.santa.seen && n26.santa.facts === 'star,tree', '1.36.1: thiệp nhận, ông già Noel đã ghé còn nguyên');
+    }
   }
   await openGarden();
   const did = await py(KB + 'result = mw.col.decks.id_for_name("ZH::Hạ bản")');

@@ -124,6 +124,24 @@ Sau khi trả lời có hiện cách đọc, Hán Việt, nghĩa (và cách dùn
 - **Hiệu ứng thành tích** (`web/joy.js`, Python tính `data.joy` = `more_core.joy_view`): **xong hết thẻ hôm nay** trong deck đang xem (`deck_due_tree` = 0 và hôm nay đã ôn ≥ 1 lượt) → cầu vồng trên ruộng và trên trời sân, giọt sương lấp lánh; **đạt mục tiêu ngày**; **cả vườn xanh tốt / ra hoa / trĩu quả** (≥ 5 cây, không cây nào héo, mọi cây từ Cây non / Ra hoa / Ra quả) → lá lấp lánh / cánh hoa anh đào bay / đốm sáng vàng bay lên; **mốc chuỗi ngày** (7, 14, 21, 30, 50, 75, 100, 150, 200, 250, 300, 365, 500, 730, 1000) → pháo hoa trên trời sân; **xong 3 nhiệm vụ** → đèn trời bay lên. Huy hiệu cạnh chú thích ruộng; dải chúc mừng + linh vật chúc mỗi thành tích **một lần mỗi ngày** (nhớ ở `localStorage kb-joy-<ngày>-<loại>`), đang ôn thẻ thì để dành tới khi đóng bảng ôn.
 - **Lưu trữ**: khoá collection mới `kotoba_batake_more` (`more_core.MORE_KEY`) — mục 4. Bản ≤ 1.13 ở máy khác không đọc khoá này nên không xoá được gì.
 
+### Mới ở 1.36.1: thiệp + điều ước, ông già Noel tối 24, thư sáng 25, cất đồ 1/1, Kỷ niệm (24/11)
+- **Thiệp Giáng sinh** (bảng tủ lịch → "Làm thiệp điều ước ▸", Album → Kỷ niệm; `web/le_card.js`): 3 thiệp 120 × 80 điểm, 4 khung
+  (Đèn nháy, Tuyết trắng, Cành thông, Giấy quà), ≤ 12 sticker là hình có sẵn của vườn (6 hình + món đã mở ở tủ lịch + đồ trong vườn
+  của bạn) — bấm để thêm, kéo để dời, Lật / To – nhỏ / Lên trên / Bỏ, phím mũi tên dời từng điểm; lời chúc 2 dòng + câu chúc 7 tiếng;
+  mặt sau **điều ước** (tiếng Việt hoặc tiếng đang học — "Nhờ Gemini sửa" một lượt khi bấm, ≤ 5 lượt / ngày). Tự lưu. **Treo lên cây**
+  cho ông già Noel tới 18:00 ngày 24 (giờ máy); **Lưu ảnh PNG** (chữ ことば畑 nhỏ ở góc); **Chép mã** `KBC1:…` (chỉ mặt trước, không
+  có điều ước). Không tốn xu.
+- **Tối 24** (lần đầu mở vườn từ 18:00 ngày 24): cảnh ông già Noel ~13 giây trên **sân thật của bạn** (trời đêm có tuyết tạm thời,
+  Silent Night nếu nhạc đang bật) — xe tuần lộc đáp cạnh cây thông, ông lấy thiệp, để thư dưới gốc, vẫy StackChan đội mũ Noel rồi
+  bay đi; Bỏ qua / Xem lại. **Sáng 25** (lần đầu mở vườn 25–31/12): **thư của ông** (viết sẵn, không gọi Gemini — lời chào + ký tên
+  theo Ngôn ngữ trong vườn, nhắc thứ ông thấy trong vườn, trích điều ước) + "Xem lại đêm qua ▸"; bàn bánh quy chỉ còn vụn.
+- **Năm mới** (lần đầu mở vườn từ 1/1): StackChan cất đồ Noel — tuần lộc đèn, bánh quy, bánh kem về Kho đồ; gian đang dùng tường /
+  sàn Noel về mẫu dùng trước đó. Tủ lịch, tất, đèn ngủ, quả cầu tuyết… ở lại.
+- **Album → Kỷ niệm**: tủ lịch 24 ngăn (ngày mở), thư, xem lại đêm 24, thiệp của bạn, **thiệp bạn bè gửi** (dán mã → xem trước →
+  Giữ vào Album, tối đa 12).
+- Dữ liệu: thêm trường trong khoá `kotoba_batake_le` (thiệp, thiệp treo, đã xem / đọc, đã cất, thiệp nhận); bản 1.36.0 ở máy khác
+  ghi sổ vẫn giữ nguyên các trường này. Không thêm khoá / mục config.
+
 ### Mới ở 1.36.0: sự kiện Giáng sinh 2026 — Lịch chờ Giáng sinh (tủ lịch 24 ngăn) (24/11)
 - Bản người dùng chốt 23/11 (`docs/ke_hoach_1_36/KE_HOACH.md`, mục BẢN GỘP CHỐT). **Luật** (`le_core.py`, thuần Python): ngăn d
   (1–24/12, ngày Anki) mở được khi ngày d có ≥ 1 lượt ôn (revlog — ôn trên điện thoại / trước lúc cài cũng tính) hoặc đã dùng vé
@@ -150,7 +168,7 @@ Sau khi trả lời có hiện cách đọc, Hán Việt, nghĩa (và cách dùn
 - **⚙ → Sự kiện mùa (Giáng sinh)** (config `season_event`, mặc định Bật): Tắt → không tặng, không vẽ, không chip; dữ liệu giữ nguyên.
   Admin (file `user_files/admin`): ⚙ → **Xem thử sự kiện** theo ngày (25/11 … 1/1) — sổ giả trong bộ nhớ, không ghi gì.
 - Hết mùa (ngày Anki ≥ 1/1/2027): không mở ngăn, cây / nhà / sân về như cũ, tủ lịch là kỷ niệm (chip tới 15/1, sau đó bấm tủ lịch
-  trên tường); đồ đã nhận vẫn ở chỗ. Thiệp, đêm 24, sáng 25, cất đồ 1/1, Kỷ niệm ở Album: bản 1.36.1.
+  trên tường); đồ đã nhận vẫn ở chỗ. Thiệp, đêm 24, sáng 25, cất đồ 1/1, Kỷ niệm ở Album: bản 1.36.1 (mục trên).
 
 ### Mới ở 1.35.6: nút "Ẩn vườn / Hiện vườn" trên bảng Báo (19/11)
 - Người dùng: "thêm phần báo có mục ẩn vườn, hiện vườn". Nút `#kb-p-garden` cạnh nút Thoát của bảng 新聞, như nút của bảng
@@ -745,6 +763,7 @@ Nguyên tắc chính:
 | `cal:fix:{d, t, lang, b}` / `cal:copy:{t}` | 1.35.2 / 1.35.5: Nhờ Gemini sửa kèm chữ đang thấy + `b` (bài trang tin là đã lưu — máy khác vừa sửa thì không ghi đè, trả `Garden.calSaved({conflict})`); chép chữ gõ dở vào bộ nhớ tạm. lang / hint / fix / seen lỗi lưu (đang đồng bộ…) → một dòng trong Lịch hoa |
 | `cal:pdf:{name, html}` / `cal:photo:<data URL PNG>` | 1.20: xuất PDF cuốn nhật ký (A5) → `Garden.calPdf`; lưu ảnh vườn tự chụp (mỗi tuần một tấm, chặn dữ liệu lạ) |
 | `guest:met:<id>:<cảnh>` | 1.21: khách vừa hiện ≥ 1,5 giây trên cảnh đang xem → Python xét lại (cảnh có trong ví, đồ / vùng / tháng hợp) rồi ghi album (một lần mỗi ngày) → `Garden.guests({…view, new})` |
+| `le:card:{i, card, rid}` / `le:cdel:<i>` / `le:hang:<i \| -1>` / `le:fix:<i>` / `le:code:<i>` · `le:seen` / `le:read` · `le:rpeek:<mã>` / `le:recv:<mã>` / `le:rdel:<mã>` / `le:rcode:<mã>` | 1.36.1: lưu / xoá / treo thiệp, Nhờ Gemini sửa điều ước (kết quả về sau: `act: "fixed"`), chép mã thiệp; đã xem cảnh đêm 24 / đã đọc thư; xem trước / giữ / xoá / chép thiệp nhận — Python xét ngày Anki + giờ máy → `Garden.le({ok, act, i?, code?, card?, le, msg?})` |
 | `le:open:<ngăn>` / `le:box:<hộp>` / `le:auto:<món>` | 1.36: mở ngăn tủ lịch (Python xét ngày Anki, lượt ôn, vé giữ chuỗi, mở bù) / mở hộp quà bí mật (từ 25/12) / bày món sự kiện vào ô trống — sổ + kho ghi CÙNG một lần (`STATE.le_apply(…, extra=[LE.write(ev)])`) → `Garden.le({ok, act, door?, placed?, wallet?, le, msg?})` |
 | `le:cfg:<on\|off>` / `le:preview:<yyyy-mm-dd\|off>` | 1.36: ⚙ Sự kiện mùa (config `season_event`) → `refresh()`; admin xem thử theo ngày (không ghi) |
 | `ai:forget` / `ai:keypage` / `ai:dir` | 1.12: xoá khoá / mở trang lấy khoá (địa chỉ cố định) / chọn thư mục kotoba_daily (`QFileDialog`, phải có `lo_trinh.json`, `pham_vi.json` hoặc `bao/`) |

@@ -68,6 +68,11 @@ var GardenLe = (function () {
   function drawTreeExtra(ctx, S, X, Y, e, now) {
     const v = le();
     if (!active() || !v || !A()) { return; }
+    // 1.36.1: thiệp điều ước treo trên cây (tới lúc ông già Noel ghé) · thư của ông dưới gốc cây (chưa đọc) — lúc đang chiếu cảnh
+    // đêm 24 thì cảnh tự vẽ hai thứ này theo thời gian
+    const showing = typeof GardenLeNoel !== "undefined" && GardenLeNoel.isShowing();
+    if (!showing && typeof v.hang === "number" && v.hang >= 0 && v.santa && !v.santa.came && A().CARD_MINI) { A().paint(ctx, A().CARD_MINI, X + 19, Y + 20, S); }
+    if (!showing && v.letter && v.santa && !v.santa.read && A().LETTER) { const k = 0.6; A().paint(ctx, A().LETTER, (X + 11) / k, (Y + 37) / k, S * k); }
     const bx = (v.boxes || []).filter((b) => !b.opened);
     const spots = [[-2, 33], [24, 34], [28, 36]];
     bx.forEach((b, i) => {
@@ -388,6 +393,7 @@ var GardenLe = (function () {
         (mk.left > 0 ? " · bấm ngăn xám để mở bù." : mk.next ? " · hôm nay còn " + mk.next + " lượt nữa." : " · hôm nay đã bù đủ."));
     }
     if (!lines.length && v.opened >= 24) { lines.push("Đã mở đủ 24 ngăn!"); }
+    if (v.santa && !v.santa.came && v.day === 24 && !(typeof v.hang === "number" && v.hang >= 0)) { lines.push("Tối nay ông già Noel ghé — treo thiệp điều ước lên cây trước 18:00."); }
     return lines.join(" ");
   }
   function hints() {
@@ -432,9 +438,23 @@ var GardenLe = (function () {
       }
     });
     hb.hidden = !hb.childNodes.length;
+    renderActs();
     renderBoxes();
     renderCard();
     drawCabinet(Date.now());
+  }
+  function renderActs() {
+    const wrap = $("kb-le-acts"), v = le();
+    wrap.textContent = "";
+    if (!v) { wrap.hidden = true; return; }
+    const add = (t, id, fn) => { const b = wrap.appendChild(el("button", "kb-btn kb-btn-small", t)); b.type = "button"; b.id = id; b.addEventListener("click", (ev) => { ev.stopPropagation(); fn(); }); };
+    if (v.cards && typeof GardenLeCard !== "undefined" && (v.card_edit || v.cards.some(Boolean))) {
+      const hung = (typeof v.hang === "number" && v.hang >= 0);
+      add(v.card_edit && !v.santa.came ? (hung ? "Thiệp điều ước (đang treo trên cây) ▸" : "Làm thiệp điều ước ▸") : "Thiệp Giáng sinh ▸", "kb-le-to-card", () => GardenLeCard.open());
+    }
+    if (v.letter && typeof GardenLeNoel !== "undefined") { add("Thư của ông già Noel ▸", "kb-le-to-letter", () => GardenLeNoel.openLetter()); }
+    if (v.santa && v.santa.came && typeof GardenLeNoel !== "undefined") { add("Xem lại đêm 24 ▸", "kb-le-to-show", () => GardenLeNoel.play("replay")); }
+    wrap.hidden = !wrap.childNodes.length;
   }
   function renderBoxes() {
     const wrap = $("kb-le-boxes"), v = le();
@@ -515,6 +535,7 @@ var GardenLe = (function () {
     cv.setAttribute("role", "img"); cv.setAttribute("aria-label", "Tủ lịch 24 ngăn");
     const note = pop.appendChild(el("div", "kb-le-note")); note.id = "kb-le-note"; note.setAttribute("aria-live", "polite");
     const hb = pop.appendChild(el("div", "kb-le-hints")); hb.id = "kb-le-hints";
+    const acts = pop.appendChild(el("div", "kb-h-btns kb-le-acts")); acts.id = "kb-le-acts";      // 1.36.1
     const bx = pop.appendChild(el("div", "kb-le-boxes")); bx.id = "kb-le-boxes";
     const cd = pop.appendChild(el("div", "kb-le-card")); cd.id = "kb-le-card"; cd.hidden = true;
     pop.addEventListener("click", (ev) => ev.stopPropagation());
@@ -572,7 +593,20 @@ var GardenLe = (function () {
     pending++; pendingAt = Date.now();
     H.send("le:" + cmd);
   }
+  // 1.36.1: lệnh của thiệp / ông già Noel / Album (le_card.js, le_noel.js tự gửi — không tính vào chống bấm đúp của tủ lịch)
+  const LATER = { card: 1, cdel: 1, hang: 1, fix: 1, fixed: 1, code: 1, seen: 1, read: 1, recv: 1, rdel: 1, rpeek: 1, rcode: 1 };
   function result(res) {
+    if (res && LATER[res.act]) {
+      const d0 = data();
+      if (d0 && res.le !== undefined) { d0.le = res.le; }
+      lightKey = "";
+      if (typeof GardenLeCard !== "undefined") { GardenLeCard.result(res); }
+      if (typeof GardenLeNoel !== "undefined") { GardenLeNoel.result(res); }
+      const pop = $("kb-le-pop");
+      if (pop && !pop.hidden) { render(); }
+      sync();
+      return;
+    }
     pending = Math.max(0, pending - 1);
     if (!res) { return; }
     const d = data();
@@ -636,7 +670,14 @@ var GardenLe = (function () {
       if (list) {
         const b = el("button", "kb-quest-btn kb-le-btn"); b.type = "button"; b.id = "kb-le-btn"; b.hidden = true;
         b.title = "Lịch chờ Giáng sinh: mỗi ngày ôn mở một ngăn";
-        b.addEventListener("click", (ev) => { ev.stopPropagation(); open(); });
+        b.addEventListener("click", (ev) => {
+          ev.stopPropagation();
+          // 1.36.1: dòng "treo thiệp trước 18:00" / "làm thiệp" → xưởng thiệp; "thư của ông già Noel" → thư
+          const n = (le() || {}).news, id = n && n.id;
+          if ((id === "le_eve_card" || id === "le_card") && typeof GardenLeCard !== "undefined") { GardenLeCard.open(); return; }
+          if (id === "le_letter" && typeof GardenLeNoel !== "undefined") { GardenLeNoel.openLetter(); return; }
+          open();
+        });
         if (nb) { list.insertBefore(b, nb); } else { list.appendChild(b); }
       }
     }
@@ -695,6 +736,8 @@ var GardenLe = (function () {
     sync();
     const pop = $("kb-le-pop");
     if (pop && !pop.hidden) { render(); }
+    if (typeof GardenLeCard !== "undefined") { GardenLeCard.render(); }      // 1.36.1
+    if (typeof GardenLeNoel !== "undefined") { GardenLeNoel.render(); }
     // lần đầu mở vườn trong mùa: tặng tủ lịch + cây thông
     if (v && v.welcome && v.welcome.welcome && welcomed !== v.today) {
       welcomed = v.today;
@@ -710,6 +753,8 @@ var GardenLe = (function () {
     init: function (helpers) {
       H = helpers;
       ensureUi();
+      if (typeof GardenLeCard !== "undefined") { GardenLeCard.init(helpers); }      // 1.36.1
+      if (typeof GardenLeNoel !== "undefined") { GardenLeNoel.init(helpers); }
       document.addEventListener("keydown", (ev) => {
         const pop = $("kb-le-pop");
         if (ev.key === "Escape" && pop && !pop.hidden) {
@@ -726,6 +771,9 @@ var GardenLe = (function () {
     isOpen: () => { const p = $("kb-le-pop"); return !!(p && !p.hidden); },
     canOpen: () => { const v = le(); return !!(v && v.doors); },      // có tủ lịch để xem (cả sau mùa — tủ lịch kỷ niệm)
     active: active, still: still, parts: parts, has: has,
+    // 1.36.1: bánh quy đã ăn (từ 18:00 ngày 24 tới lúc cất đồ 1/1)
+    eaten: () => { const v = le(); return !!(v && v.eaten && v.phase !== "done"); },
+    crumbs: () => (A() ? A().EATEN : null),
     treeSprite: treeSprite, treeLit: treeLit, openedSet: openedSet, drawTreeExtra: drawTreeExtra,
     drawHouse: drawHouse, drawLights: drawLights,
     // cho test

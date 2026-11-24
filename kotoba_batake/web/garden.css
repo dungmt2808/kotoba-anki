@@ -2419,3 +2419,79 @@ ruby.kb-ruby rt { font-size: 0.45em; color: var(--kb-ink-2); font-weight: normal
 .kb-le-card-btns { margin-top: 8px; display: flex; gap: 6px; flex-wrap: wrap; }
 .kb-le-card-btns .kb-btn { margin: 0; }
 .kb-noel-music[hidden], .kb-le-pv-row[hidden] { display: none; }
+
+/* 1.36.1: xưởng thiệp, thư của ông già Noel, cất đồ 1/1, cảnh đêm 24, Album → Kỷ niệm */
+.kb-le-acts { margin-top: 8px; max-width: 510px; }
+.kb-le-acts[hidden] { display: none; }
+.kb-le-acts .kb-btn { margin: 0; }
+.kb-le-cardpop { width: 980px; }
+.kb-le-slots { display: flex; gap: 4px; flex-wrap: wrap; }
+.kb-le-slots .kb-album-chip { margin: 0; }
+.kb-le-slots .kb-album-chip.is-on, .kb-le-tabs .kb-album-chip.is-on, .kb-le-chucs .kb-album-chip.is-on, .kb-le-sides .kb-btn.is-on { background: #ffd23f; }
+.kb-le-cw { display: flex; gap: 14px; flex-wrap: wrap; align-items: flex-start; }
+.kb-le-cl { flex: 0 1 auto; display: flex; flex-direction: column; gap: 6px; max-width: 100%; }
+.kb-le-cr { flex: 1 1 300px; min-width: 250px; display: flex; flex-direction: column; gap: 6px; }
+.kb-le-cardcv { display: block; image-rendering: pixelated; border: 3px solid var(--kb-ink); box-shadow: 3px 3px 0 var(--kb-ink); cursor: grab; max-width: 100%; height: auto; }
+.kb-le-cardcv:focus-visible { outline: 3px solid #ffd23f; outline-offset: 2px; }
+.kb-le-cempty, .kb-le-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.kb-le-cempty[hidden], .kb-le-form[hidden], .kb-le-selbar[hidden], .kb-le-sides[hidden], .kb-le-codebox[hidden], .kb-le-done [hidden],
+.kb-le-cr [hidden], .kb-le-fixres:empty { display: none; }
+.kb-le-form { display: flex; flex-direction: column; gap: 5px; }
+.kb-le-in { font: inherit; font-size: 14px; padding: 5px 7px; border: 2px solid var(--kb-ink); background: #fff; color: var(--kb-ink); box-sizing: border-box; width: 100%; }
+.kb-le-in[readonly] { background: var(--kb-cream); }
+.kb-le-wish { resize: vertical; min-height: 58px; line-height: 1.4; }
+.kb-le-chucs { display: flex; flex-wrap: wrap; gap: 4px; }
+.kb-le-chucs .kb-album-chip { margin: 0; }
+.kb-le-sel { font: inherit; padding: 3px 6px; border: 2px solid var(--kb-ink); background: #fff; color: var(--kb-ink); }
+.kb-le-lab { font-weight: 700; }
+.kb-le-hintt { font-size: 12.5px; color: var(--kb-ink-2); line-height: 1.35; }
+.kb-le-fixres { display: flex; flex-direction: column; gap: 3px; }
+.kb-le-fixsua { font-weight: 700; padding: 4px 8px; background: #eaffea; border: 2px solid #2e8b3a; }
+.kb-le-fixloi { font-size: 13px; }
+.kb-le-selbar { align-items: center; }
+.kb-le-selbar .kb-btn, .kb-le-done .kb-btn, .kb-le-sides .kb-btn, .kb-le-row .kb-btn, .kb-le-mini-btns .kb-btn, .kb-le-mem .kb-btn { margin: 0; }
+.kb-le-frames { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.kb-le-frameb { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 3px; font: inherit; font-size: 12px; color: var(--kb-ink);
+  background: var(--kb-cream-2); border: 2px solid var(--kb-ink); cursor: pointer; }
+.kb-le-frameb canvas { width: 100%; height: auto; image-rendering: pixelated; border: 0; }
+.kb-le-frameb.is-on { background: #ffd23f; box-shadow: 2px 2px 0 var(--kb-ink); }
+.kb-le-tabs .kb-album-chip { margin: 0; }
+.kb-le-stk { display: grid; grid-template-columns: repeat(auto-fill, minmax(52px, 1fr)); gap: 5px; max-height: 196px; overflow-y: auto; }
+.kb-le-stkb { aspect-ratio: 1; padding: 2px; background: #fffdf5; border: 2px solid var(--kb-ink); cursor: pointer; }
+.kb-le-stkb:hover { background: #fff3c4; }
+.kb-le-stkb canvas { width: 100%; height: 100%; image-rendering: pixelated; display: block; }
+.kb-le-done { display: flex; flex-wrap: wrap; gap: 6px; }
+.kb-le-hangb { background: #c8f7d2; }
+.kb-le-delb { background: #ffe8e2; }
+.kb-le-codebox { font-family: monospace; font-size: 12px; }
+.kb-le-cr.is-ro .kb-le-frameb { cursor: default; opacity: 0.65; }
+.kb-le-mini { width: 470px; }
+.kb-le-paper { background: #fffdf4; border: 2px solid #c9b48a; padding: 12px 14px; line-height: 1.5; box-shadow: inset 0 0 0 3px #fff3dc; }
+.kb-le-paper-top { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+.kb-le-env { width: 48px; height: 36px; image-rendering: pixelated; flex: none; }
+.kb-le-greet { font-weight: 700; font-size: 17px; color: #7a1f2a; }
+.kb-le-ptext { margin: 6px 0; }
+.kb-le-quote { margin: 8px 0; padding: 6px 10px; border-left: 4px solid #c21f3a; background: #fff3f0; font-style: italic; }
+.kb-le-letter-card { display: block; margin: 8px auto; width: 240px; max-width: 100%; height: auto; image-rendering: pixelated; border: 2px solid var(--kb-ink); }
+.kb-le-sign { display: flex; flex-direction: column; align-items: flex-end; margin-top: 6px; }
+.kb-le-sign span { font-size: 12.5px; color: var(--kb-ink-2); }
+.kb-le-mini-btns { margin-top: 10px; display: flex; gap: 6px; flex-wrap: wrap; }
+.kb-le-pack-cv { display: block; margin: 0 auto 6px; width: 256px; max-width: 100%; height: auto; image-rendering: pixelated; border: 2px solid var(--kb-ink); }
+.kb-le-packlist { margin: 4px 0 6px 18px; padding: 0; }
+.kb-le-show { position: fixed; inset: 0; z-index: 280; display: flex; align-items: center; justify-content: center; background: rgba(5, 5, 15, 0.74); }
+.kb-le-show[hidden] { display: none; }
+.kb-le-show-box { display: flex; flex-direction: column; align-items: center; gap: 8px; max-width: calc(100vw - 16px); }
+.kb-le-show-cv { image-rendering: pixelated; border: 3px solid var(--kb-ink); box-shadow: 0 0 0 3px #fff6a8, 6px 6px 0 #000; max-width: 100%; height: auto; }
+.kb-le-show-cap { color: #fff8e6; font-size: 16px; font-weight: 700; text-shadow: 2px 2px 0 #000; min-height: 1.4em; text-align: center; padding: 0 8px; }
+.kb-le-show-btns .kb-btn { margin: 0; }
+.kb-le-show-btns [hidden] { display: none; }
+.kb-le-mem { display: flex; flex-direction: column; gap: 6px; grid-column: 1 / -1; width: 100%; box-sizing: border-box; }
+.kb-le-mem-head b { font-size: 16px; }
+.kb-le-mem-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-start; }
+.kb-le-memcab { image-rendering: pixelated; border: 2px solid var(--kb-ink); max-width: 100%; height: auto; }
+.kb-le-mem-side { display: flex; flex-direction: column; gap: 5px; align-items: flex-start; }
+.kb-le-mem-cards { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
+.kb-le-mem-card { display: flex; flex-direction: column; gap: 3px; align-items: flex-start; }
+.kb-le-mem-card .kb-h-btns { gap: 4px; }
+.kb-le-cthumb { image-rendering: pixelated; border: 2px solid var(--kb-ink); max-width: 100%; height: auto; }
+.kb-le-recv .kb-le-in { flex: 1 1 220px; width: auto; }

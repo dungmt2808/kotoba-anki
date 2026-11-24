@@ -213,6 +213,9 @@ echo "$OUT" | grep -E "✗|KẾT QUẢ|Traceback"; [ $RC = 0 ] || FAIL=1
 echo "== core/test_136.py (1.36: sự kiện Giáng sinh — tủ lịch 24 ngăn: luật mở / mở bù / vé giữ chuỗi, 2.000 tháng ngẫu nhiên có đối chứng, hộp quà, tặng / bù quà cho từng kiểu người dùng, kho + sổ ghi cùng một lần, hai máy gộp, mã 1.31.3 thật, Tin làng)"
 OUT=$(python3 -W ignore "$HERE/core/test_136.py" "$ADDON" 2>&1); RC=$?
 echo "$OUT" | grep -E "✗|KẾT QUẢ|Traceback"; [ $RC = 0 ] || FAIL=1
+echo "== core/test_1361.py (1.36.1: thiệp + điều ước + mã thiệp, ông già Noel / thư theo ngày Anki + giờ máy, cất đồ 1/1, gộp hai máy 400 lượt ngẫu nhiên, mã 1.36.0 thật chạy chen, Tin làng)"
+OUT=$(python3 -W ignore "$HERE/core/test_1361.py" "$ADDON" 2>&1); RC=$?
+echo "$OUT" | grep -E "✗|KẾT QUẢ|Traceback"; [ $RC = 0 ] || FAIL=1
 echo "== trang/test_trang.py (trang web: đăng / gỡ mã, biểu mẫu issue, GitHub Actions, dữ liệu khớp add-on)"
 OUT=$(python3 "$HERE/trang/test_trang.py" "$ADDON" 2>&1); RC=$?
 echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
@@ -225,6 +228,9 @@ if node -e "require('playwright')" 2>/dev/null; then
   echo "$OUT" | grep -E "✗|KẾT QUẢ|LỖI"; [ $RC = 0 ] || FAIL=1
   echo "== core/test_136.js (1.36: cây thông theo ngăn = cây gốc từng điểm ảnh, áo nhà 4 kiểu, đèn sân ≤ 400 bóng, quét ném lỗi, Dịu mắt đứng yên, tốc độ vẽ)"
   OUT=$(node "$HERE/core/test_136.js" "$ADDON" 2>&1); RC=$?
+  echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
+  echo "== core/test_1361.js (1.36.1: vẽ thiệp mọi khung / sticker, xưởng thiệp 4 cỡ cửa sổ, tự lưu, Esc từng lớp, cảnh đêm 24 × 7 kiểu sân, thư 7 tiếng, cất đồ, tự mở, Kỷ niệm)"
+  OUT=$(node "$HERE/core/test_1361.js" "$ADDON" 2>&1); RC=$?
   echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
   echo "== trang/kiem_tra_trang.js (trang web trong Chromium: vùng vẽ khớp add-on từng điểm ảnh, giải mã = add-on, chạy cả trang)"
   OUT=$(node "$HERE/trang/kiem_tra_trang.js" "$ADDON" 2>&1); RC=$?
