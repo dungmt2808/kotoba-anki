@@ -551,8 +551,13 @@ CARDS_MAX = 3
 FRAMES = ("den", "tuyet", "thong", "qua")
 FRAME_NAMES = {"den": "Đèn nháy", "tuyet": "Tuyết trắng", "thong": "Cành thông", "qua": "Giấy quà"}
 # câu chúc bấm là thêm (tiếng Việt + 6 tiếng của vườn)
-CHUC = {"vi": "Giáng sinh an lành", "ja": "メリークリスマス", "en": "Merry Christmas", "zh": "圣诞快乐",
-        "ko": "메리 크리스마스", "de": "Frohe Weihnachten", "fr": "Joyeux Noël"}
+CHUC = {"vi": "Giáng sinh an lành",
+        "ja": "メリークリスマス",
+        "en": "Merry Christmas",
+        "zh": "圣诞快乐",
+        "ko": "메리 크리스마스",
+        "de": "Frohe Weihnachten",
+        "fr": "Joyeux Noël"}
 WISH_LANGS = ("vi", "ja", "en", "zh", "ko", "de", "fr")
 LANG_VI = {"vi": "tiếng Việt", "ja": "tiếng Nhật", "en": "tiếng Anh", "zh": "tiếng Trung", "ko": "tiếng Hàn",
            "de": "tiếng Đức", "fr": "tiếng Pháp"}
@@ -574,10 +579,20 @@ PREV_RE = re.compile(r"^(room|kitchen|bedroom):(wall|floor)$")
 TILE_ID_RE = re.compile(r"^[a-z0-9_]{1,40}$")
 _CTRL = re.compile("[\x00-\x08\x0b-\x1f\x7f​-‏‪-‮⁦-⁩﻿]")
 # Thư của ông già Noel: lời chào + ký tên theo Ngôn ngữ trong vườn (thân thư tiếng Việt)
-LETTER_GREET = {"vi": "Gửi cháu yêu,", "ja": "メリークリスマス！", "en": "Merry Christmas!", "zh": "圣诞快乐！",
-                "ko": "메리 크리스마스!", "de": "Frohe Weihnachten!", "fr": "Joyeux Noël !"}
-LETTER_SIGN = {"vi": "Ông già Noel", "ja": "サンタクロースより", "en": "Love, Santa", "zh": "圣诞老人",
-               "ko": "산타 할아버지가", "de": "Dein Weihnachtsmann", "fr": "Le Père Noël"}
+LETTER_GREET = {"vi": "Gửi cháu yêu,",
+                "ja": "メリークリスマス！",
+                "en": "Merry Christmas!",
+                "zh": "圣诞快乐！",
+                "ko": "메리 크리스마스!",
+                "de": "Frohe Weihnachten!",
+                "fr": "Joyeux Noël !"}
+LETTER_SIGN = {"vi": "Ông già Noel",
+               "ja": "サンタクロースより",
+               "en": "Love, Santa",
+               "zh": "圣诞老人",
+               "ko": "산타 할아버지가",
+               "de": "Dein Weihnachtsmann",
+               "fr": "Le Père Noël"}
 
 
 def _dtp(s: Any) -> _dt.datetime | None:

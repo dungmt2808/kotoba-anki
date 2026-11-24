@@ -3800,8 +3800,8 @@ class GardenDialog(QDialog):
     # -- cầu nối JS -> Python -------------------------------------------------
 
     # 1.33.2: lệnh trang tự gửi (không phải người dùng bấm) — lúc đồng bộ thì bỏ qua mà không báo
-    AUTO_CMDS = ("ready", "refresh", "life:", "guest:", "ai:status", "paper:index", "game:exaudio", "deck:tree",
-                 "le:seen", "le:read")
+    AUTO_CMDS = ("ready", "refresh", "life:", "guest:", "ai:status", "paper:index", "game:exaudio", "deck:tree")
+    AUTO_CMDS += ("le:seen", "le:read")     # 1.36.1: cảnh đêm 24 / thư tự gửi "đã xem / đã đọc" (lần mở sau gửi lại)
     DRAFT_LOCAL = ("home:draft:get", "home:draft:put:", "home:draft:pick:")     # 1.35.1: lệnh chỉ đụng file bản thử
     _sync_note = 0.0
 
