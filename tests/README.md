@@ -219,7 +219,17 @@ ANKI_PY=~/.venv-anki/bin/python tests/anki/run_ui.sh /tmp/kb_src/kotoba_batake /
 ```
 Cần Node ≥ 22 (có sẵn `fetch` và `WebSocket`). Cổng: `KB_CDP_PORT` (9333), `KB_CTRL_PORT` (9444). `kill_anki.sh` tắt Anki đang chạy từ các script này.
 
-## Kết quả lần chạy gần nhất (bản 1.36.1, 24/11/2026 tối) — thiệp, ông già Noel, thư, cất đồ, Kỷ niệm
+## Kết quả lần chạy gần nhất (bản 1.36.2, 24/11/2026 khuya) — sửa lỗi audit 24/11 của sự kiện Giáng sinh
+- `core/test_1362.py` **47/47** (cũng 47/47 trên Python 3.9), `core/test_1362.js` **24/24**.
+- `anki/e2e_1362.js`: **40/40** trên Anki 26.9.4 (thư mục + gói đã giải nén) và **40/40** trên Anki 23.10.1; trên gói **1.36.1**
+  (đối chứng, `KB_FROM=C` cho phần sau): **đỏ 20** — riêng 4 kiểu Esc Esc nhanh xanh cả trên bản cũ (Esc tới Python 0 lần:
+  audit #02 không xảy ra trong Anki thật, `anki/tham_do_esc.js`). `e2e_1361.js` 81/81, `e2e_136.js` 66/66.
+- `run_all.sh` (`ANKI_PY` = aqt 26.9.4) trên gói đã giải nén: **80 mục, TẤT CẢ OK**; `anki/run_capnhat.sh` 1.31.3 → 1.36.2
+  5/5 + 18/18; `anki/run_habanh.sh` 1.36.2 → 1.31.3 → 1.36.2 4/4 + 10/10 + 18/18.
+- Lần thử sửa đầu cho audit #02 (đếm cả Esc đã chặn vào hàng đợi) bị chính test Anki thật bắt: Esc ở màn chính sau đó không đóng
+  cửa sổ → hoàn tác, giữ test khoá.
+
+## Kết quả lần chạy trước (bản 1.36.1, 24/11/2026 tối) — thiệp, ông già Noel, thư, cất đồ, Kỷ niệm
 - `core/test_1361.py` **120/120** (cũng 120/120 trên Python 3.9; 400 lượt hai máy ngẫu nhiên với 6 hạt giống), `core/test_1361.js` **33/33**.
 - `anki/e2e_1361.js`: **81/81** trên Anki 26.9.4 (cả trên gói đã giải nén) và **81/81** trên Anki 23.10.1; `anki/e2e_136.js` (1.36.0) vẫn 66/66.
 - Lần chạy đầu trong Anki thật bắt được: bản sửa của Gemini lưu cùng giây với lần tự lưu → khi gộp với collection bản cùng dấu thắng,

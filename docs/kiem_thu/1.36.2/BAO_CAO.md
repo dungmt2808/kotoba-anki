@@ -11,7 +11,7 @@ chọn, người dùng chưa xem.**
 ## 1. Lỗi của nhánh audit — có đúng không?
 
 Cách kiểm: đọc mã, viết test tái hiện đúng thao tác của báo cáo, chạy trên mã 1.36.1 (commit `af1a72f`) → đỏ, trên 1.36.2 →
-xanh. Kịch bản Anki thật `tests/anki/e2e_1362.js` chạy trên gói 1.36.1: **đỏ ĐỎ_CŨ** (xem mục 4); trên 1.36.2: xanh hết.
+xanh. Kịch bản Anki thật `tests/anki/e2e_1362.js` chạy trên gói 1.36.1: **đỏ 20 kiểm tra** ở phần A–F (xem mục 4); trên 1.36.2: xanh hết.
 
 **Kết luận: 16 / 17 mục đúng và đã sửa (mục 16 là ngưỡng đo tốc độ phụ thuộc máy — đổi cách đo); mục 02 không xảy ra trong
 Anki thật — giữ nguyên mã, thêm test khoá hành vi** (xem dòng 02).
@@ -78,13 +78,13 @@ Anki thật — giữ nguyên mã, thêm test khoá hành vi** (xem dòng 02).
 
 | Test | Kết quả |
 |---|---|
-| `tests/core/test_1362.py` (mới) | **KQ_PY** |
-| `tests/core/test_1362.js` (mới, Chromium) | **KQ_JS** |
-| `tests/anki/e2e_1362.js` (mới, Anki 26.9.4 thật) | **KQ_E2E_26** · Anki 23.10.1: **KQ_E2E_23** · gói đã giải nén: **KQ_E2E_PKG** |
-| `e2e_1362.js` trên gói **1.36.1** (đối chứng) | **ĐỎ_CŨ** |
-| `tests/anki/e2e_1361.js`, `e2e_136.js` (không sửa) | **KQ_OLD_E2E** |
-| `tests/run_all.sh` (bộ đầy đủ) | **KQ_ALL** |
-| `tests/anki/run_capnhat.sh` (cài đè 1.31.3 → 1.36.2) · `run_habanh.sh` (hạ bản 1.31.3 rồi lên lại) | **KQ_CAPNHAT** · **KQ_HABANH** |
+| `tests/core/test_1362.py` (mới) | **47/47** (cũng 47/47 trên Python 3.9) |
+| `tests/core/test_1362.js` (mới, Chromium) | **24/24** |
+| `tests/anki/e2e_1362.js` (mới, Anki 26.9.4 thật) | **40/40** · Anki 23.10.1: **40/40** · gói đã giải nén: **40/40** |
+| `e2e_1362.js` trên gói **1.36.1** (đối chứng) | **đỏ 20**: phím tắt rò (R / N trong cảnh đêm, mũi tên đổi cảnh, N trong xưởng), gõ rồi đóng ngay mất chữ, lưu thiệp lúc đồng bộ + đổi ô mất chữ, nút Gemini kẹt, mở ngăn không trả lời, đóng cửa sổ lúc đồng bộ mất chữ, thiệp nhận giữ lại mất (Anki thật), Trang trí thử không nhớ mẫu cũ → 1/1 về theo kiểu nhà, cất đồ ghi mẫu đã xoá, bảng cất đồ trống, qua 18:00 không tự sang tối 24. **Xanh trên cả bản cũ**: 4 kiểu Esc Esc nhanh (Esc tới Python 0 lần — mục 02) |
+| `tests/anki/e2e_1361.js`, `e2e_136.js` (không sửa) | `e2e_1361.js` **81/81**, `e2e_136.js` **66/66** |
+| `tests/run_all.sh` (bộ đầy đủ) | trên gói đã giải nén: **80 mục, TẤT CẢ OK** (8 phút 34 giây) |
+| `tests/anki/run_capnhat.sh` (cài đè 1.31.3 → 1.36.2) · `run_habanh.sh` (hạ bản 1.31.3 rồi lên lại) | **5/5 + 18/18** · **4/4 + 10/10 + 18/18** |
 
 Test cũ đổi: `core/test_136.js` mục G (đo phần sự kiện thêm vào thay vì tổng — #16).
 
