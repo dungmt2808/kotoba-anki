@@ -212,7 +212,16 @@ ANKI_PY=~/.venv-anki/bin/python tests/anki/run_ui.sh /tmp/kb_src/kotoba_batake /
 ```
 Cần Node ≥ 22 (có sẵn `fetch` và `WebSocket`). Cổng: `KB_CDP_PORT` (9333), `KB_CTRL_PORT` (9444). `kill_anki.sh` tắt Anki đang chạy từ các script này.
 
-## Kết quả lần chạy gần nhất (bản 1.35.6, 20/11/2026) — nút Ẩn vườn trên bảng Báo
+## Kết quả lần chạy gần nhất (bản 1.36.0, 24/11/2026) — sự kiện Giáng sinh
+- `run_all.sh` (`ANKI_PY` = aqt 26.9.4) trên gói đã giải nén: **76 mục, TẤT CẢ OK** (`core/test_136.py` 157/157, `core/test_136.js` 18/18;
+  `core/test_136.py` cũng 157/157 trên Python 3.9).
+- `anki/e2e_136.js`: **66/66** trên Anki 26.9.4 (cả trên gói đã giải nén) và **66/66** trên Anki 23.10.1.
+- `anki/run_capnhat.sh` gói 1.31.3 đã phát hành → 1.36.0: 5/5 + 18/18 (thêm bước "tới 3/12 trên dữ liệu cũ");
+  `anki/run_habanh.sh` 1.36 → 1.31.3 → 1.36 có đồ sự kiện + tường Noel: 4/4 + 10/10 + 16/16.
+- Test cũ khoá cứng danh sách khoá / config (1.32.2 → 1.35.6) trừ `kotoba_batake_le` + `season_event`; `test_1356.py` phần "so với
+  1.35.5" chỉ chạy ở bản 1.35.6. Báo cáo: `docs/kiem_thu/1.36/BAO_CAO.md`.
+
+## Kết quả lần chạy trước (bản 1.35.6, 20/11/2026) — nút Ẩn vườn trên bảng Báo
 - `run_all.sh` (`ANKI_PY` = aqt 26.9.4) trên gói đã giải nén: **74 bộ, TẤT CẢ OK** (`core/test_1356.py` 23/23, `core/test_1356.js`
   15/15). Lần chạy đầu đỏ `core/test_132.py` (glang): tiêu đề Báo bị tách thành "新聞" + phần chữ Việt → Ngôn ngữ trong vườn
   không dịch được → đổi cách (bỏ cả tiêu đề, không tách chữ).

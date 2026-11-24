@@ -66,7 +66,11 @@ này tự đủ nếu 1.36.1 ra muộn.
 - `anki/run_capnhat.sh` cài đè gói **1.31.3 đã phát hành** → 1.36.0: **5/5 + 18/18** (không mất khoá / file / cấu hình; thêm bước
   "tới 3/12 trên dữ liệu của bản cũ": tặng đúng, xu / đồ / chỗ đặt cũ y nguyên, 3 ngăn chờ mở).
 - `anki/run_habanh.sh` 1.36 → 1.31.3 → 1.36 (đã mở 21 ngăn, dán tường Noel): **4/4 + 10/10 + 16/16**.
-- `run_all.sh` (`ANKI_PY` = aqt 26.9.4) trên gói đã giải nén: xem mục 3b.
+- `run_all.sh` (`ANKI_PY` = aqt 26.9.4) trên gói đã giải nén: **76 mục, TẤT CẢ OK** (gồm `dong_bo/test_dong_bo.py` — máy chủ đồng bộ
+  thật của Anki, `audit_20261114` 2.047 + 172 ca, `test_ngau_nhien.py`). Lần chạy đầu đỏ: `test_ngau_nhien.py` mua thử mọi mẫu
+  tường / sàn (nay có 5 mẫu Noel không bán → bỏ qua mẫu Noel), `test_132.py` (tên bài "きよしこの夜" là chữ Nhật trong chuỗi giao
+  diện → "Silent Night · Đêm thánh vô cùng"), `test_131.py` (bấm cảnh không được gọi `open(` → `GardenLe.show()`), `test_1253.py`
+  (thêm một chỗ tính độ lệch dọc khi bấm tủ lịch trong "Trong nhà"), các test hợp đồng cũ (mục dưới), Kho hình trang web chưa xuất lại.
 - Test cũ khoá cứng danh sách khoá collection / mục config (1.32.2 → 1.35.6) đã trừ `kotoba_batake_le` + `season_event` (như 1.35
   với `paper_de` / `_fr`); `test_1356.py` phần "so với 1.35.5" chỉ chạy đúng ở bản 1.35.6, bản sau chỉ cần không bỏ file / khoá.
 
