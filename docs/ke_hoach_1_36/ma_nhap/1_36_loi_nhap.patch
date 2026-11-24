@@ -1,0 +1,658 @@
+diff --git a/kotoba_batake/decor_core.py b/kotoba_batake/decor_core.py
+index 5b9e3d5..5a2575b 100644
+--- a/kotoba_batake/decor_core.py
++++ b/kotoba_batake/decor_core.py
+@@ -76,11 +76,27 @@ HOUSE: dict[str, dict[str, Any]] = {
+     "f_hkitchen": {"name": "Sàn Bếp", "slot": "floor", "room": "kitchen"},
+ }
+ HOUSE_SAME = {("floor", "bedroom"): "f_hroom"}      # nền theo kiểu nhà của gian này = mẫu nhà nào (để khỏi hiện trùng)
++# 1.36: quà của tủ lịch Giáng sinh 2026 (le_core, ngăn 8: 3 mẫu tường · ngăn 15: 2 mẫu sàn) — không bán (price 0, "le").
++# Bản 1.30 – 1.35 ở máy khác giữ hộ id lạ trong "own" / "use" (đúng dạng id) và vẽ gian đó theo kiểu nhà.
++NOEL_TILES: dict[str, dict[str, Any]] = {
++    "w_noeltuyet": {"name": "Bông tuyết trên nền thông", "ja": "雪の結晶", "price": 0, "le": True, "slot": "wall",
++                    "desc": "Bông tuyết trắng trên nền xanh lá thông"},
++    "w_noelkeo": {"name": "Sọc kẹo gậy", "ja": "キャンディケイン", "price": 0, "le": True, "slot": "wall",
++                  "desc": "Sọc chéo đỏ trắng như kẹo gậy"},
++    "w_noeldo": {"name": "Đỏ mận cây thông nhỏ", "ja": "もみの木", "price": 0, "le": True, "slot": "wall",
++                 "desc": "Nền đỏ mận lấm tấm cây thông vàng"},
++    "f_noelcaro": {"name": "Thảm caro đỏ", "ja": "タータン", "price": 0, "le": True, "slot": "floor",
++                   "desc": "Caro đỏ kẻ xanh lá kiểu tartan"},
++    "f_noellen": {"name": "Thảm len tuyết", "ja": "ノルディック", "price": 0, "le": True, "slot": "floor",
++                  "desc": "Len trắng dệt hoa tuyết đỏ"},
++}
+ PRESETS: dict[str, dict[str, Any]] = {}
+ for _k, _v in WALLS.items():
+     PRESETS[_k] = dict(_v, slot="wall")
+ for _k, _v in FLOORS.items():
+     PRESETS[_k] = dict(_v, slot="floor")
++for _k, _v in NOEL_TILES.items():
++    PRESETS[_k] = dict(_v)
+ for _k in list(PRESETS) + list(HOUSE):
+     assert ID_RE.match(_k) and _k[0] == (PRESETS.get(_k) or HOUSE.get(_k))["slot"][0], _k
+ assert not set(PRESETS) & set(HOUSE)
+@@ -160,6 +176,8 @@ def buy(dec: dict[str, Any], did: Any) -> int:
+         raise DecorError("Không có mẫu này.")
+     if did in dec["own"]:
+         raise DecorError("Mẫu này đã có rồi.")
++    if did in NOEL_TILES:
++        raise DecorError("Mẫu này là quà của Lịch chờ Giáng sinh, không bán.")
+     dec["own"].append(did)
+     return int(PRESETS[did]["price"])
+ 
+@@ -243,6 +261,7 @@ def tile_delete(dec: dict[str, Any], tid: Any) -> None:
+ 
+ def catalog_view() -> dict[str, Any]:
+     return {"walls": [dict(v, id=k) for k, v in WALLS.items()], "floors": [dict(v, id=k) for k, v in FLOORS.items()],
++            "noel": [dict(v, id=k) for k, v in NOEL_TILES.items()],         # 1.36: chỉ hiện khi đã có (quà tủ lịch)
+             "house": [dict(v, id=k) for k, v in HOUSE.items()],
+             "house_same": {slot + ":" + room: did for (slot, room), did in HOUSE_SAME.items()},
+             "rooms": [{"id": r, "name": ROOM_NAMES[r]} for r in ROOMS],
+diff --git a/kotoba_batake/garden_core.py b/kotoba_batake/garden_core.py
+index e18bb2c..f52775a 100644
+--- a/kotoba_batake/garden_core.py
++++ b/kotoba_batake/garden_core.py
+@@ -386,7 +386,36 @@ FIND_ITEMS: dict[str, dict[str, Any]] = {
+ for _k, _v in FIND_ITEMS.items():
+     assert _k not in CATALOG, _k
+     CATALOG[_k] = _v
+-TIER3_ITEMS = frozenset(NHA_ITEMS) | frozenset(FIND_ITEMS)    # đồ lưu ở NHA_KEY (sở hữu + mọi chỗ đặt)
++# 1.36: đồ của sự kiện Giáng sinh 2026 (le_core: tủ lịch 24 ngăn) — quà, không bán (only = "le"). Lưu cùng tầng NHA_KEY như
++# quà 1.28: bản 1.24 – 1.35 ở máy khác giữ hộ món lạ ở tầng này (keep_foreign_nha), bản ≤ 1.23 không đọc tầng này.
++LE_ITEMS: dict[str, dict[str, Any]] = {
++    "le_tulich": {"name": "Tủ lịch Giáng sinh 2026", "price": 0, "scene": "room", "w": 1, "place": "wall", "only": "le",
++                  "desc": "24 ngăn gỗ — mỗi ngày ôn mở một ngăn"},
++    "le_caynho": {"name": "Cây thông nhỏ để bàn", "price": 0, "scene": "room", "w": 1, "place": "floor", "only": "le",
++                  "desc": "Cây thông bé xíu trong chậu gốm"},
++    "le_tat": {"name": "Tất Noel", "price": 0, "scene": "room", "w": 1, "place": "wall", "only": "le",
++               "desc": "Đôi tất đỏ treo tường chờ quà"},
++    "le_cautuyet": {"name": "Quả cầu tuyết", "price": 0, "scene": "room", "w": 1, "place": "floor", "only": "le",
++                    "desc": "Lắc lên là tuyết bay quanh cây thông nhỏ"},
++    "le_banhkem": {"name": "Bánh kem dâu", "price": 0, "scene": "room", "w": 1, "place": "floor", "only": "le",
++                   "desc": "クリスマスケーキ — bánh kem dâu kiểu Nhật"},
++    "le_gaubong": {"name": "Gấu bông Noel", "price": 0, "scene": "room", "w": 1, "place": "floor", "only": "le",
++                   "desc": "Gấu nâu đội mũ Noel"},
++    "le_nguoituyet": {"name": "Người tuyết", "price": 0, "scene": "yard", "w": 1, "place": "ground", "only": "le",
++                      "desc": "Mũ đen, khăn đỏ, mũi cà rốt"},
++    "le_denngu": {"name": "Đèn ngủ ngôi sao", "price": 0, "scene": "room", "w": 1, "place": "floor", "only": "le",
++                  "desc": "Toả ánh vàng dịu ban đêm"},
++    "le_longden": {"name": "Đèn lồng ngôi sao", "price": 0, "scene": "room", "w": 1, "place": "wall", "only": "le",
++                   "desc": "Ngôi sao giấy sáng đèn"},
++    "le_tuanloc": {"name": "Tuần lộc đèn", "price": 0, "scene": "yard", "w": 1, "place": "ground", "only": "le",
++                   "desc": "Tuần lộc kết bằng dây đèn, tối sáng lấp lánh", "max": 4},
++    "le_banhquy": {"name": "Bàn nhỏ bánh quy + sữa", "price": 0, "scene": "room", "w": 1, "place": "floor", "only": "le",
++                   "desc": "Bàn gỗ thấp có sẵn khay bánh quy và cốc sữa"},
++}
++for _k, _v in LE_ITEMS.items():
++    assert _k not in CATALOG, _k
++    CATALOG[_k] = _v
++TIER3_ITEMS = frozenset(NHA_ITEMS) | frozenset(FIND_ITEMS) | frozenset(LE_ITEMS)    # đồ lưu ở NHA_KEY (sở hữu + mọi chỗ đặt)
+ 
+ # Các cảnh: sân nhà + các vùng mới là ngoài trời (đồ ngoài trời đặt được ở mọi cảnh ngoài trời).
+ OUTDOOR_SCENES = ("yard", "beach", "shrine", "festival", "bamboo", "onsen", "station")
+@@ -1209,6 +1238,45 @@ def placed_count(home: dict[str, Any], item_id: str) -> int:
+     return sum(1 for scene in scene_names(home) for e in home.get(scene, []) if e["id"] == item_id)
+ 
+ 
++# 1.36: quà của tủ lịch Giáng sinh tự bày vào ô trống (hết ô → nằm trong Kho đồ). Thứ tự ô thử theo từng món:
++#   cây thông (rộng 2 ô): gần nhà nhất, hàng giữa trước · người tuyết: gần nhà, hàng trước · tuần lộc đèn: hàng trước, từ mép
++#   phải sân vào · tủ lịch: tường phòng chính, gần cửa sổ trước.
++LE_AUTO_ROOM_WALL = (3, 6, 2, 7, 1, 8, 0, 9)
++
++
++def le_auto_spot(home: dict[str, Any], item_id: str, cat: dict[str, dict[str, Any]] | None = None) -> tuple[str, int, int] | None:
++    """Ô trống đầu tiên cho món quà của sự kiện (theo thứ tự ở trên) hoặc None."""
++    cat = cat or CATALOG
++    info = cat.get(item_id)
++    if info is None:
++        return None
++    if info["scene"] == "room":
++        if home.get("house", 0) < ROOM_UNLOCK_LEVEL:
++            return None
++        if info["place"] == "wall":
++            cands = [(x, 0) for x in LE_AUTO_ROOM_WALL]
++        else:
++            cands = [(x, y) for y in (3, 2, 1) for x in range(ROOM_COLS)]
++        scene = "room"
++    else:
++        w = info["w"]
++        xs = list(range(HOUSE_COLS, YARD_COLS - w + 1))
++        if item_id == "le_tuanloc":
++            cands = [(x, y) for y in (2, 1, 0) for x in reversed(xs)]
++        elif item_id == "le_nguoituyet":
++            cands = [(x, y) for y in (2, 1, 0) for x in xs]
++        else:
++            cands = [(x, y) for x in xs for y in (1, 0, 2)]
++        scene = "yard"
++    for x, y in cands:
++        try:
++            check_spot(home, scene, item_id, x, y, cat=cat)
++        except HomeError:
++            continue
++        return scene, x, y
++    return None
++
++
+ # 1.22.6: giới hạn của các số trong config (người dùng sửa tay ở Tools → Add-ons → Config)
+ CONFIG_RANGES: dict[str, tuple[float, float]] = {
+     "wilt_retrievability": (0.0, 1.0),
+@@ -3561,6 +3629,8 @@ class GardenState:
+             raise HomeError("Món này không bán, chỉ có trong rương nhiệm vụ hằng ngày.")
+         if item.get("only") == "ped":
+             raise HomeError("Món này chỉ có ở gánh hàng rong (thứ Tư, Chủ nhật).")
++        if item.get("only") == "le":
++            raise HomeError("Món này là quà của Lịch chờ Giáng sinh, không bán.")
+         if item.get("only"):
+             raise HomeError("Món này là quà khi đủ một bộ trong Hộp sưu tầm.")
+         self._buy_checks(data, item_id)
+@@ -3587,6 +3657,38 @@ class GardenState:
+ 
+     # -- 1.28: Hộp sưu tầm, gánh hàng rong -----------------------------------------------
+ 
++    def le_apply(self, give: dict[str, int] | None = None, auto: list[str] | None = None, tiles: list[str] | None = None,
++                 extra: list[tuple[Any, ...]] | None = None) -> tuple[dict[str, Any], list[dict[str, Any]]]:
++        """1.36: quà của tủ lịch Giáng sinh, ghi CÙNG một lần với sổ sự kiện (`extra` = le_core.LeStore.write): thêm món vào
++        kho (`give` {id: số}), tự bày từng món trong `auto` vào ô trống đầu tiên (le_auto_spot — hết ô thì để trong kho),
++        thêm mẫu tường / sàn Noel (`tiles`). Không có xu. Trả (ví, [{"id", "scene", "x", "y"}] món đã bày)."""
++        data = self.load()
++        home = data["home"]
++        own = home["owned"]
++        for iid, n in (give or {}).items():
++            if iid not in CATALOG or not isinstance(n, int) or n <= 0:
++                raise HomeError("Không có món này.")
++            mx = CATALOG[iid].get("max", 99)
++            own[iid] = min(mx, own.get(iid, 0) + n)
++        placed: list[dict[str, Any]] = []
++        cat = full_catalog(data)
++        for iid in auto or []:
++            if own.get(iid, 0) - placed_count(home, iid) <= 0:
++                continue
++            spot = le_auto_spot(home, iid, cat)
++            if spot is None:
++                continue
++            scene, x, y = spot
++            home[scene].append({"id": iid, "x": x, "y": y})
++            placed.append({"id": iid, "scene": scene, "x": x, "y": y})
++        if tiles:
++            dec = data["more"][decor.DECOR_KEY]
++            for did in tiles:
++                if did in decor.NOEL_TILES and did not in dec["own"] and len(dec["own"]) < decor.OWN_MAX:
++                    dec["own"].append(did)
++        self.save(data, extra=extra)
++        return data, placed
++
+     def find_reward(self, coins: int = 0, gift: str | None = None, extra: list[tuple[Any, ...]] | None = None) -> dict[str, Any]:
+         """Nhặt trùng → cộng xu; đủ một bộ sưu tầm → tặng món trang trí (vào Kho đồ). `extra` (1.33.3): sổ "đã nhặt" ghi
+         cùng lần với xu / quà."""
+@@ -3605,7 +3707,7 @@ class GardenState:
+         if item_id not in CATALOG:
+             raise HomeError("Không có món này.")
+         item = CATALOG[item_id]
+-        if item.get("rare") or item.get("only") == "set" or item.get("season"):
++        if item.get("rare") or item.get("only") in ("set", "le") or item.get("season"):
+             raise HomeError("Món này không bán ở gánh hàng.")
+         data = self.load()
+         self._buy_checks(data, item_id)
+diff --git a/kotoba_batake/le_core.py b/kotoba_batake/le_core.py
+new file mode 100644
+index 0000000..fc0ea35
+--- /dev/null
++++ b/kotoba_batake/le_core.py
+@@ -0,0 +1,458 @@
++"""ことば畑 1.36 — sự kiện mùa: Giáng sinh 2026 (tủ lịch 24 ngăn).
++
++Bản gộp người dùng chốt 23/11 (`docs/ke_hoach_1_36/KE_HOACH.md`, mục BẢN GỘP CHỐT). Thuần Python (không import anki / aqt)
++để test offline bằng ngày giả.
++
++Luật
++- Tủ lịch 24 ngăn, ngăn d ứng với ngày Anki d/12 (qua giờ đổi ngày của Anki như mọi phần khác). Ngăn d mở được từ ngày d nếu
++  ngày d có ít nhất 1 lượt ôn (revlog: ôn trên điện thoại cũng tính) hoặc ngày d đã dùng vé giữ chuỗi. Ngăn đủ điều kiện mà
++  chưa mở thì chờ đó, mở lúc nào cũng được tới hết 31/12 (cập nhật muộn không mất ngăn).
++- Lỡ ngày (không ôn, không vé): mỗi 15 lượt ôn trong một ngày mở bù 1 ngăn, tối đa 2 ngăn bù mỗi ngày, tới hết 31/12.
++- Quà chỉ là đồ trang trí, không có xu. Ngăn "Cây" treo thêm đồ lên cây thông, ngăn "Nhà" / "Sân" khoác áo Noel cho nhà và
++  thắp đèn sân, ngăn "Trong nhà" là món đồ (vào Kho đồ) hoặc mẫu tường / sàn, ngăn "Hộp quà bí mật" đặt một hộp dưới gốc cây
++  (mở được từ 25/12).
++- Ngày 1/12 (lần đầu mở vườn trong mùa sự kiện): tặng Tủ lịch 2026 và — nếu chưa có — một cây thông Noel.
++
++Dữ liệu ở khoá collection `kotoba_batake_le` (đồng bộ AnkiWeb; bản cũ không đọc khoá này nên không xoá):
++  {"v": 1, "noel2026": {"open": {"<ngăn>": {"d": ngày mở, "b": 0 | 1 (mở bù)}}, "bu": {ngày: số ngăn bù đã mở},
++                        "gift": {"tulich" | "tree": ngày tặng}, "box": {"<ngăn>": ngày mở hộp}}}
++Khoá lạ (của bản sau) giữ nguyên. Hai máy cùng ghi: gộp theo hợp (ngăn / quà / hộp đã mở ở máy nào cũng tính).
++Món của sự kiện lưu ở tầng NHA_KEY của ví (garden_core.LE_ITEMS) như quà 1.28 — bản ≥ 1.24 giữ hộ món lạ.
++Mẫu tường / sàn Noel là mẫu có sẵn của decor_core (id w_noel… / f_noel…) — bản ≥ 1.30 giữ hộ id lạ.
++"""
++from __future__ import annotations
++
++import datetime as _dt
++import json
++import re
++from typing import Any, Callable
++
++try:
++    from . import backup_core as backup
++except ImportError:  # chạy test: thư mục add-on nằm trong sys.path
++    import backup_core as backup  # type: ignore[no-redef]
++
++LE_KEY = "kotoba_batake_le"
++EV_ID = "noel2026"
++YEAR = 2026
++PRE_FROM = _dt.date(YEAR, 11, 15)        # giao diện mùa Giáng sinh đã chạy: Tin làng báo trước ngày mở tủ lịch
++FIRST = _dt.date(YEAR, 12, 1)
++DOORS_N = 24
++END = _dt.date(YEAR, 12, 31)             # ngăn còn mở / mở bù được tới hết ngày này
++BOX_DAY = _dt.date(YEAR, 12, 25)         # hộp quà bí mật mở được từ sáng 25
++MAKEUP_PER = 15
++MAKEUP_MAX = 2
++KEEP_BU = 40                             # sổ mở bù giữ 40 ngày
++DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
++
++# Món của sự kiện (id ở garden_core.LE_ITEMS) và mẫu tường / sàn (decor_core.NOEL_TILES)
++TULICH = "le_tulich"
++TREE = "xmastree"
++WALLS = ("w_noeltuyet", "w_noelkeo", "w_noeldo")
++FLOORS = ("f_noelcaro", "f_noellen")
++
++# 24 ngăn. kind: cay (treo lên cây) · nha (áo nhà) · san (đèn / đồ ngoài sân) · trong (đồ trong nhà / mẫu tường sàn) ·
++# qua (hộp quà bí mật). part: phần vẽ (cây / nhà / sân). item: món vào kho ({id: số}). tiles: mẫu tường / sàn. box: hộp số mấy.
++DOORS: dict[int, dict[str, Any]] = {
++    1: {"kind": "nha", "part": "wreath", "name": "Vòng hoa cửa", "desc": "Vòng hoa lá thông trên cửa, nơ đỏ trên hai đèn lồng"},
++    2: {"kind": "cay", "part": "red", "name": "Quả châu đỏ", "desc": "Hai quả châu đỏ đầu tiên cho cây thông"},
++    3: {"kind": "trong", "item": {"le_caynho": 1}, "name": "Cây thông nhỏ để bàn", "desc": "Cây thông bé xíu trong chậu gốm"},
++    4: {"kind": "cay", "part": "yellow", "name": "Quả châu vàng", "desc": "Hai quả châu vàng óng"},
++    5: {"kind": "trong", "item": {"le_tat": 1}, "name": "Tất Noel", "desc": "Đôi tất đỏ treo tường chờ quà"},
++    6: {"kind": "qua", "box": 1, "item": {"le_cautuyet": 1}, "name": "Hộp quà bí mật", "desc": "Đặt dưới gốc cây · mở sáng 25/12"},
++    7: {"kind": "nha", "part": "garland", "name": "Dây lá thông & đèn viền mái",
++        "desc": "Dây lá thông thắt nơ dọc mép mái, đèn viền mái và đèn rủ — tối là sáng"},
++    8: {"kind": "trong", "tiles": list(WALLS), "name": "Bộ tường Noel",
++        "desc": "3 mẫu giấy dán tường: Bông tuyết trên nền thông, Sọc kẹo gậy, Đỏ mận cây thông nhỏ"},
++    9: {"kind": "cay", "part": "blue", "name": "Quả châu xanh", "desc": "Hai quả châu xanh dương"},
++    10: {"kind": "cay", "part": "lights", "name": "Dây đèn cây thông", "desc": "Đèn nhấp nháy quanh cây"},
++    11: {"kind": "trong", "item": {"le_banhkem": 1}, "name": "Bánh kem dâu", "desc": "クリスマスケーキ — bánh kem dâu kiểu Nhật"},
++    12: {"kind": "cay", "part": "purple", "name": "Quả châu tím", "desc": "Hai quả châu tím"},
++    13: {"kind": "qua", "box": 2, "item": {"le_gaubong": 1}, "name": "Hộp quà bí mật", "desc": "Đặt dưới gốc cây · mở sáng 25/12"},
++    14: {"kind": "san", "part": "path", "name": "Đèn lối đi & nến cửa sổ",
++         "desc": "Đèn lối đi trước sân, nến ở cửa sổ, cây thông và đồ cao quấn đèn"},
++    15: {"kind": "trong", "tiles": list(FLOORS), "name": "Bộ sàn Noel", "desc": "2 mẫu sàn: Thảm caro đỏ, Thảm len tuyết"},
++    16: {"kind": "cay", "part": "tinsel", "name": "Dây kim tuyến", "desc": "Hai dải kim tuyến vàng quấn quanh cây"},
++    17: {"kind": "san", "item": {"le_nguoituyet": 1}, "name": "Người tuyết", "desc": "Mũ đen, khăn đỏ, mũi cà rốt"},
++    18: {"kind": "trong", "item": {"le_denngu": 1}, "name": "Đèn ngủ ngôi sao", "desc": "Toả ánh vàng dịu ban đêm"},
++    19: {"kind": "cay", "part": "red2", "name": "Thêm quả châu đỏ", "desc": "Hai quả châu đỏ nữa"},
++    20: {"kind": "qua", "box": 3, "item": {"le_longden": 1}, "name": "Hộp quà bí mật", "desc": "Đặt dưới gốc cây · mở sáng 25/12"},
++    21: {"kind": "san", "part": "swag", "item": {"le_tuanloc": 2}, "name": "Dây đèn võng & tuần lộc đèn",
++         "desc": "Dây đèn võng qua sân, đôi tuần lộc đèn, ngôi sao trên mái"},
++    22: {"kind": "cay", "part": "candy", "name": "Kẹo gậy", "desc": "Hai cây kẹo gậy sọc đỏ trắng"},
++    23: {"kind": "trong", "item": {"le_banhquy": 1}, "name": "Bàn nhỏ bánh quy + sữa",
++         "desc": "Bàn gỗ thấp có sẵn khay — tối 24 để dành cho ông già Noel"},
++    24: {"kind": "cay", "part": "star", "name": "Ngôi sao", "desc": "Ngôi sao trên đỉnh cây thông"},
++}
++assert sorted(DOORS) == list(range(1, DOORS_N + 1))
++KIND_NAMES = {"cay": "Cây", "nha": "Nhà", "san": "Sân", "trong": "Trong nhà", "qua": "Hộp quà"}
++TREE_PARTS = tuple(DOORS[d]["part"] for d in sorted(DOORS) if DOORS[d]["kind"] == "cay")
++HOUSE_PARTS = ("wreath", "garland", "path", "swag")
++BOX_DOORS = {DOORS[d]["box"]: d for d in DOORS if DOORS[d]["kind"] == "qua"}
++# Câu khi lắc hộp (đoán món bên trong) — theo hộp
++SHAKE = {1: ("Lắc lắc… óc ách!", "Nghe như có nước bên trong, tròn tròn."),
++         2: ("Lắc lắc… êm ru.", "Mềm mềm, không kêu gì cả."),
++         3: ("Lắc lắc… lách cách.", "Nghe như giấy với một thứ gì cứng cứng.")}
++
++
++class LeError(Exception):
++    """Lỗi có câu tiếng Việt hiện cho người dùng."""
++
++
++def _iso(s: Any) -> _dt.date | None:
++    if not isinstance(s, str) or not DATE_RE.match(s):
++        return None
++    try:
++        return _dt.date.fromisoformat(s)
++    except ValueError:
++        return None
++
++
++def door_date(d: int) -> _dt.date:
++    return _dt.date(YEAR, 12, d)
++
++
++def phase(today: _dt.date) -> str | None:
++    """"pre" (15–30/11: báo trước) · "advent" (1–24/12) · "after" (25–31/12) · None (ngoài mùa)."""
++    if PRE_FROM <= today < FIRST:
++        return "pre"
++    if FIRST <= today <= door_date(DOORS_N):
++        return "advent"
++    if door_date(DOORS_N) < today <= END:
++        return "after"
++    return None
++
++
++def active(today: _dt.date) -> bool:
++    """Trong mùa sự kiện: tủ lịch, áo nhà, đèn sân, cây theo ngăn."""
++    return FIRST <= today <= END
++
++
++# ---------------------------------------------------------------------------
++# Làm sạch (dữ liệu từ collection / máy khác là không tin cậy)
++# ---------------------------------------------------------------------------
++
++def empty() -> dict[str, Any]:
++    return {"open": {}, "bu": {}, "gift": {}, "box": {}}
++
++
++def clean_ev(raw: Any) -> dict[str, Any]:
++    out = empty()
++    if not isinstance(raw, dict):
++        return out
++    op = raw.get("open") if isinstance(raw.get("open"), dict) else {}
++    for k, v in op.items():
++        if not (isinstance(k, str) and k.isdigit() and str(int(k)) == k and int(k) in DOORS and isinstance(v, dict)):
++            continue
++        d = _iso(v.get("d"))
++        if d is None or d < door_date(int(k)) or d > END + _dt.timedelta(days=366):
++            continue
++        out["open"][k] = {"d": d.isoformat(), "b": 1 if v.get("b") in (1, True) else 0}
++    bu = raw.get("bu") if isinstance(raw.get("bu"), dict) else {}
++    for ds, n in bu.items():
++        if _iso(ds) and isinstance(n, int) and not isinstance(n, bool) and n > 0:
++            out["bu"][ds] = min(MAKEUP_MAX, n)
++    gift = raw.get("gift") if isinstance(raw.get("gift"), dict) else {}
++    for k in ("tulich", "tree"):
++        if _iso(gift.get(k)):
++            out["gift"][k] = gift[k]
++    box = raw.get("box") if isinstance(raw.get("box"), dict) else {}
++    for k, v in box.items():
++        if isinstance(k, str) and k.isdigit() and int(k) in BOX_DOORS and str(int(k)) == k and _iso(v):
++            out["box"][k] = v
++    return out
++
++
++def clean(raw: Any) -> dict[str, Any]:
++    """Cả khoá: {"noel2026": ...}."""
++    ev = raw.get(EV_ID) if isinstance(raw, dict) else None
++    return {EV_ID: clean_ev(ev)}
++
++
++def merge_ev(a: dict[str, Any], b: dict[str, Any]) -> dict[str, Any]:
++    """Gộp hai bản (hai máy): ngăn / quà / hộp đã mở ở máy nào cũng tính (ngày sớm hơn thắng), số bù lấy lớn hơn."""
++    out = clean_ev(a)
++    other = clean_ev(b)
++    for k, v in other["open"].items():
++        cur = out["open"].get(k)
++        if cur is None or v["d"] < cur["d"]:
++            out["open"][k] = v
++    for ds, n in other["bu"].items():
++        out["bu"][ds] = max(out["bu"].get(ds, 0), n)
++    for k, v in other["gift"].items():
++        if k not in out["gift"] or v < out["gift"][k]:
++            out["gift"][k] = v
++    for k, v in other["box"].items():
++        if k not in out["box"] or v < out["box"][k]:
++            out["box"][k] = v
++    return out
++
++
++def trim(ev: dict[str, Any], today: _dt.date) -> None:
++    lo = (today - _dt.timedelta(days=KEEP_BU)).isoformat()
++    ev["bu"] = {d: n for d, n in ev["bu"].items() if d >= lo}
++
++
++# ---------------------------------------------------------------------------
++# Ngăn
++# ---------------------------------------------------------------------------
++
++def _days(x: Any) -> set[str]:
++    return {s for s in (x or []) if isinstance(s, str) and _iso(s)}
++
++
++def makeup_left(ev: dict[str, Any], today: _dt.date, reviews_today: int) -> int:
++    """Số ngăn còn mở bù được hôm nay (mỗi 15 lượt ôn hôm nay một ngăn, tối đa 2 / ngày)."""
++    try:
++        r = max(0, int(reviews_today))
++    except (TypeError, ValueError):
++        r = 0
++    return max(0, min(MAKEUP_MAX, r // MAKEUP_PER) - int(ev["bu"].get(today.isoformat(), 0)))
++
++
++def makeup_next(ev: dict[str, Any], today: _dt.date, reviews_today: int) -> int | None:
++    """Còn bao nhiêu lượt ôn nữa thì mở bù thêm được 1 ngăn (None khi hôm nay đã đủ 2 ngăn bù)."""
++    used = int(ev["bu"].get(today.isoformat(), 0))
++    try:
++        r = max(0, int(reviews_today))
++    except (TypeError, ValueError):
++        r = 0
++    earned = min(MAKEUP_MAX, r // MAKEUP_PER)
++    if earned > used:
++        return 0
++    if earned >= MAKEUP_MAX:
++        return None
++    return (earned + 1) * MAKEUP_PER - r
++
++
++def door_state(ev: dict[str, Any], d: int, today: _dt.date, reviewed: set[str], frozen: set[str]) -> str:
++    """open · ready (đủ điều kiện, mở được) · wait (hôm nay, chưa ôn lượt nào) · miss (lỡ ngày — mở bù) · future · closed
++    (hết mùa, chưa mở)."""
++    if str(d) in ev["open"]:
++        return "open"
++    dd = door_date(d)
++    if today < dd:
++        return "future"
++    if today > END:
++        return "closed"
++    iso = dd.isoformat()
++    if iso in reviewed or iso in frozen:
++        return "ready"
++    if dd == today:
++        return "wait"
++    return "miss"
++
++
++def open_door(ev: dict[str, Any], d: Any, today: _dt.date, reviewed: Any, frozen: Any, reviews_today: int) -> dict[str, Any]:
++    """Mở ngăn d (sửa `ev` tại chỗ). Trả {"d", "makeup": bool, "item": {id: n}, "tiles": [...], "part", "box"}.
++    Sai luật → LeError (câu cho người dùng)."""
++    try:
++        d = int(d)
++    except (TypeError, ValueError):
++        raise LeError("Không có ngăn này.") from None
++    if d not in DOORS:
++        raise LeError("Không có ngăn này.")
++    if not active(today):
++        raise LeError("Tủ lịch mở từ 1/12 tới hết 31/12." if today < FIRST else "Mùa Giáng sinh đã qua — ngăn không mở thêm được.")
++    st = door_state(ev, d, today, _days(reviewed), _days(frozen))
++    if st == "open":
++        raise LeError("Ngăn này mở rồi.")
++    if st == "future":
++        raise LeError("Ngăn này mở từ %d/12 nhé." % d)
++    if st == "wait":
++        raise LeError("Ôn ít nhất 1 thẻ hôm nay là mở được ngăn này.")
++    makeup = st == "miss"
++    if makeup:
++        if makeup_left(ev, today, reviews_today) <= 0:
++            nxt = makeup_next(ev, today, reviews_today)
++            if nxt is None:
++                raise LeError("Hôm nay đã mở bù đủ %d ngăn — mai mở bù tiếp nhé." % MAKEUP_MAX)
++            raise LeError("Ngày %d/12 lỡ rồi — ôn thêm %d lượt nữa hôm nay để mở bù." % (d, nxt))
++        ds = today.isoformat()
++        ev["bu"][ds] = int(ev["bu"].get(ds, 0)) + 1
++        trim(ev, today)
++    ev["open"][str(d)] = {"d": today.isoformat(), "b": 1 if makeup else 0}
++    info = DOORS[d]
++    give = {} if info["kind"] == "qua" else dict(info.get("item") or {})
++    return {"d": d, "makeup": makeup, "item": give, "tiles": list(info.get("tiles") or []), "part": info.get("part", ""),
++            "box": info.get("box", 0), "kind": info["kind"], "name": info["name"]}
++
++
++def gifts_due(ev: dict[str, Any], today: _dt.date) -> list[str]:
++    """Quà mở mùa chưa tặng: "tulich" (Tủ lịch 2026), "tree" (cây thông — garden_core chỉ tặng khi chưa có cây)."""
++    if not active(today):
++        return []
++    return [k for k in ("tulich", "tree") if k not in ev["gift"]]
++
++
++def mark_gifts(ev: dict[str, Any], keys: list[str], today: _dt.date) -> None:
++    for k in keys:
++        ev["gift"].setdefault(k, today.isoformat())
++
++
++# ---------------------------------------------------------------------------
++# Hộp quà bí mật
++# ---------------------------------------------------------------------------
++
++def open_box(ev: dict[str, Any], n: Any, today: _dt.date) -> dict[str, int]:
++    """Mở hộp quà số n (từ 25/12) → món vào kho. Sửa `ev` tại chỗ."""
++    try:
++        n = int(n)
++    except (TypeError, ValueError):
++        raise LeError("Không có hộp quà này.") from None
++    if n not in BOX_DOORS:
++        raise LeError("Không có hộp quà này.")
++    d = BOX_DOORS[n]
++    if str(d) not in ev["open"]:
++        raise LeError("Mở ngăn %d/12 của tủ lịch để có hộp quà này đã nhé." % d)
++    if str(n) in ev["box"]:
++        raise LeError("Hộp quà này mở rồi.")
++    if today < BOX_DAY:
++        raise LeError("Hộp quà bí mật mở được từ sáng 25/12 — lắc thử đoán xem nhé!")
++    ev["box"][str(n)] = today.isoformat()
++    return dict(DOORS[d]["item"])
++
++
++# ---------------------------------------------------------------------------
++# Trạng thái để vẽ
++# ---------------------------------------------------------------------------
++
++def parts(ev: dict[str, Any]) -> list[str]:
++    """Phần đã mở (cây + nhà + sân), theo thứ tự ngăn."""
++    return [DOORS[d]["part"] for d in sorted(DOORS) if str(d) in ev["open"] and DOORS[d].get("part")]
++
++
++def boxes(ev: dict[str, Any], today: _dt.date) -> list[dict[str, Any]]:
++    out = []
++    for n, d in sorted(BOX_DOORS.items()):
++        if str(d) not in ev["open"]:
++            continue
++        opened = str(n) in ev["box"]
++        it = next(iter(DOORS[d]["item"]))
++        out.append({"n": n, "d": d, "opened": opened, "can": not opened and BOX_DAY <= today <= END,
++                    "shake": list(SHAKE[n]), "item": it if opened else ""})
++    return out
++
++
++def view(ev: dict[str, Any], today: _dt.date, reviewed: Any, frozen: Any, reviews_today: int,
++         names: dict[str, str] | None = None) -> dict[str, Any]:
++    """Cho JS (data.le). names: tên món ({id: tên}) để ghi trên ngăn đã mở."""
++    rv, fz = _days(reviewed), _days(frozen)
++    names = names or {}
++    doors = []
++    tomorrow = today + _dt.timedelta(days=1)
++    for d in sorted(DOORS):
++        info = DOORS[d]
++        st = door_state(ev, d, today, rv, fz)
++        op = ev["open"].get(str(d))
++        doors.append({"d": d, "state": st, "kind": info["kind"], "kname": KIND_NAMES[info["kind"]],
++                      "name": info["name"] if st == "open" or door_date(d) == tomorrow else "",
++                      "desc": info["desc"] if st == "open" else "", "at": op["d"] if op else "", "bu": bool(op and op["b"]),
++                      "peek": st == "future" and door_date(d) == tomorrow,
++                      "item": next(iter(info.get("item") or {}), "") if st == "open" or door_date(d) == tomorrow else "",
++                      "part": info.get("part", "") if st == "open" or door_date(d) == tomorrow else "",
++                      "tiles": list(info.get("tiles") or []) if st == "open" else [],
++                      "frozen": door_date(d).isoformat() in fz and door_date(d).isoformat() not in rv})
++    ready = [x["d"] for x in doors if x["state"] == "ready"]
++    miss = [x["d"] for x in doors if x["state"] == "miss"]
++    return {
++        "id": EV_ID, "year": YEAR, "phase": phase(today), "active": active(today), "today": today.isoformat(),
++        "day": today.day if today.month == 12 and today.year == YEAR else 0,
++        "doors": doors, "opened": len(ev["open"]), "total": DOORS_N, "ready": ready, "miss": miss,
++        "makeup": {"left": makeup_left(ev, today, reviews_today), "next": makeup_next(ev, today, reviews_today),
++                   "per": MAKEUP_PER, "max": MAKEUP_MAX, "reviews": int(reviews_today or 0)},
++        "parts": parts(ev), "boxes": boxes(ev, today), "box_day": BOX_DAY.isoformat(),
++        "names": {k: v for k, v in names.items() if k.startswith("le_") or k == TREE},
++    }
++
++
++def news_line(ev: dict[str, Any] | None, today: _dt.date, reviewed: Any, frozen: Any) -> dict[str, Any] | None:
++    """Dòng cho thẻ Hôm nay / Tin làng. None = không có gì để nói."""
++    ph = phase(today)
++    if ph == "pre":
++        return {"id": "le_pre", "text": "1/12 mở Lịch chờ Giáng sinh — 24 ngăn quà trang trí", "short": "1/12 mở Lịch chờ Giáng sinh"}
++    if ev is None or not active(today):
++        return None
++    rv, fz = _days(reviewed), _days(frozen)
++    sts = {d: door_state(ev, d, today, rv, fz) for d in DOORS}
++    ready = sorted(d for d, s in sts.items() if s == "ready")
++    if ready:
++        if len(ready) == 1:
++            return {"id": "le_ready", "text": "Tủ lịch Giáng sinh: ngăn %d/12 chờ mở" % ready[0],
++                    "short": "ngăn %d/12 của tủ lịch chờ mở" % ready[0]}
++        return {"id": "le_ready", "text": "Tủ lịch Giáng sinh: %d ngăn chờ mở" % len(ready),
++                "short": "%d ngăn tủ lịch chờ mở" % len(ready)}
++    if today <= door_date(DOORS_N) and sts.get(today.day) == "wait":
++        return {"id": "le_wait", "text": "Tủ lịch Giáng sinh: ôn 1 thẻ là mở ngăn %d/12" % today.day,
++                "short": "ôn 1 thẻ mở ngăn %d/12" % today.day}
++    if today >= BOX_DAY and any(not b["opened"] for b in boxes(ev, today)):
++        return {"id": "le_box", "text": "Hộp quà bí mật dưới gốc cây mở được rồi!", "short": "mở hộp quà bí mật"}
++    return None
++
++
++# ---------------------------------------------------------------------------
++# Lưu trữ (khoá collection + sao lưu file, như finds_core.EventStore)
++# ---------------------------------------------------------------------------
++
++class LeStore:
++    def __init__(self, path: str, col_getter: Callable[[], Any] | None = None) -> None:
++        self.path = path
++        self.col_getter = col_getter
++
++    def _col(self) -> Any:
++        try:
++            return self.col_getter() if self.col_getter else None
++        except Exception:
++            return None
++
++    def raw(self, strict: bool = True) -> dict[str, Any]:
++        col = self._col()
++        if col is not None:
++            try:
++                raw = backup.read_config(col, LE_KEY)
++            except backup.ReadFailed:
++                if strict:          # đọc lỗi không phải "trống" — đọc để ghi thì dừng (không ghi sổ trống đè sổ thật)
++                    raise
++                raw = None
++            return dict(raw) if isinstance(raw, dict) else {}
++        try:
++            with open(self.path, encoding="utf-8") as f:
++                raw = json.load(f)
++        except (OSError, ValueError):
++            raw = None
++        return dict(raw) if isinstance(raw, dict) else {}
++
++    def load(self) -> dict[str, Any]:
++        """Sự kiện năm nay (đã làm sạch). Đọc lỗi → bản trống có dấu `_damaged` (vẫn vẽ được); ghi bản đó bị từ chối."""
++        try:
++            return clean_ev(self.raw().get(EV_ID))
++        except backup.ReadFailed:
++            out = empty()
++            out["_damaged"] = True
++            return out
++
++    def payload(self, ev: dict[str, Any]) -> dict[str, Any]:
++        if ev.get("_damaged"):
++            raise backup.ReadFailed(LE_KEY)
++        raw = self.raw()                       # giữ khoá lạ của bản sau (đọc lỗi → ReadFailed, không ghi)
++        cur = raw.get(EV_ID) if isinstance(raw.get(EV_ID), dict) else {}
++        merged = merge_ev(ev, cur)             # máy khác vừa mở thêm ngăn (đồng bộ) → không mất
++        out_ev = dict(cur)
++        out_ev.update(merged)
++        raw["v"] = 1
++        raw[EV_ID] = out_ev
++        return raw
++
++    def write(self, ev: dict[str, Any]) -> tuple[str, str, dict[str, Any], bool]:
++        """Phần ghi để GardenState.save(extra=…) ghi cùng một lần với ví."""
++        return (LE_KEY, self.path, self.payload(ev), False)
++
++    def save(self, ev: dict[str, Any]) -> None:
++        raw = self.payload(ev)
++        col = self._col()
++        if col is not None:
++            backup.put_config(col, LE_KEY, raw)
++        try:
++            backup.write_backup(self.path, raw, self._col())
++        except OSError:
++            pass
