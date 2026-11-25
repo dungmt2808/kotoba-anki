@@ -462,7 +462,7 @@ var GardenLeCard = (function () {
       try { cv.focus({ preventScroll: true }); } catch (e) { /* bỏ qua */ }
     });
     window.addEventListener("mousemove", (ev) => {
-      if (stroke) { strokeTo(pt(ev)); return; }
+      if (stroke) { if (!(ev.buttons & 1)) { strokeEnd(); return; } strokeTo(pt(ev)); return; }     // thả chuột ngoài cửa sổ: hết nét
       if (!drag || !draft) { return; }
       const p = pt(ev), s = draft.st[drag.k];
       if (!s) { drag = null; return; }

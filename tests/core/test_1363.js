@@ -50,10 +50,18 @@ const PAL = JSON.parse(execFileSync('python3', ['-c', 'import sys, json; sys.pat
     // kéo chuột trên một canvas theo toạ độ điểm ảnh của nó (thiệp 120 × 80 / lưới 8 × 8)
     window.__drag = (id, pts, w, h) => {
       const cv = document.getElementById(id), r = cv.getBoundingClientRect();
-      const at = (p) => ({ clientX: r.left + (p[0] + 0.5) * r.width / w, clientY: r.top + (p[1] + 0.5) * r.height / h, bubbles: true, button: 0 });
-      cv.dispatchEvent(new MouseEvent('mousedown', at(pts[0])));
-      pts.slice(1).forEach((p) => window.dispatchEvent(new MouseEvent('mousemove', at(p))));
-      window.dispatchEvent(new MouseEvent('mouseup', at(pts[pts.length - 1])));
+      const at = (p, b) => ({ clientX: r.left + (p[0] + 0.5) * r.width / w, clientY: r.top + (p[1] + 0.5) * r.height / h, bubbles: true, button: 0, buttons: b });
+      cv.dispatchEvent(new MouseEvent('mousedown', at(pts[0], 1)));
+      pts.slice(1).forEach((p) => window.dispatchEvent(new MouseEvent('mousemove', at(p, 1))));
+      window.dispatchEvent(new MouseEvent('mouseup', at(pts[pts.length - 1], 0)));
+    };
+    // nhấn trong canvas, kéo ra ngoài cửa sổ rồi thả ở đó (trang không nhận mouseup) → đưa chuột vào lại không giữ nút
+    window.__dragOut = (id, pts, back, w, h) => {
+      const cv = document.getElementById(id), r = cv.getBoundingClientRect();
+      const at = (p, b) => ({ clientX: r.left + (p[0] + 0.5) * r.width / w, clientY: r.top + (p[1] + 0.5) * r.height / h, bubbles: true, button: 0, buttons: b });
+      cv.dispatchEvent(new MouseEvent('mousedown', at(pts[0], 1)));
+      pts.slice(1).forEach((p) => window.dispatchEvent(new MouseEvent('mousemove', at(p, 1))));
+      back.forEach((p) => window.dispatchEvent(new MouseEvent('mousemove', at(p, 0))));
     };
   }, PAL);
   const pyFlat = (code) => execFileSync('python3', ['-c', 'import sys, json; sys.path.insert(0, sys.argv[1]); import le_core as le; print(json.dumps(le._px_decode(sys.argv[2], 9600)))', ADDON, code], { encoding: 'utf8' });
@@ -237,6 +245,56 @@ const PAL = JSON.parse(execFileSync('python3', ['-c', 'import sys, json; sys.pat
     return { closed: !GardenLeOrn.isOpen() };
   });
   ok(D.closed, 'Esc đóng bảng quả châu');
+  const E = await pg.evaluate(() => {
+    const R = {};
+    GardenLeCard.open(0); GardenLeCard._tab('draw'); GardenLeCard._tool('pen', 1, 'r');
+    const flat = () => { const d = GardenLeCard._draft(); return d && d.d ? GardenLeCard._px.decode(d.d, 9600) : '.'.repeat(9600); };
+    const u0 = GardenLeCard._undoN();
+    window.__dragOut('kb-le-cardcv', [[5, 75], [12, 75]], [[12, 30], [60, 30]], 120, 80);
+    const f = flat();
+    R.card = f.slice(75 * 120 + 5, 75 * 120 + 13) === 'rrrrrrrr' && !/r/.test(f.slice(30 * 120, 31 * 120)) && GardenLeCard._undoN() === u0 + 1;
+    GardenLeCard.close();
+    GardenLeOrn.open(1); GardenLeOrn._tool('pen', 'r');
+    window.__dragOut('kb-le-orn-grid', [[0, 7], [2, 7]], [[5, 3], [6, 3]], 8, 8);
+    const c = GardenLeOrn._cur();
+    R.orn = c.p.slice(56, 59) === 'rrr' && c.p[3 * 8 + 5] === '.' && c.p[3 * 8 + 6] === '.' && GardenLeOrn._undoN() === 1;
+    GardenLeOrn.close();
+    return R;
+  });
+  // bảng Nhà dựng lại danh sách (khách ghé, tự lưu…) khi đang gõ mã thiệp ở Album → con trỏ + vị trí gõ còn (1.36.1: mất con trỏ).
+  // Trang riêng dựng từ web/body.html thật (bảng Nhà cần khung của nó)
+  const pg2 = await b.newPage({ viewport: { width: 1366, height: 860 } });
+  pg2.on('pageerror', (e) => errs.push('trang 2: ' + e.message));
+  await pg2.setContent('<html><head><style>' + css + '</style></head><body>' + fs.readFileSync(path.join(ADDON, 'web', 'body.html'), 'utf8') + '</body></html>');
+  for (const f of FILES) {
+    let src = fs.readFileSync(path.join(ADDON, 'web', f + '.js'), 'utf8');
+    if (f === 'home') { src = src.replace('_lib: () => ({ SPR,', '_lib: () => ({ drawOutdoor, YARD, setH: (h) => { H = h; }, SPR,'); }
+    await pg2.addScriptTag({ content: src });
+  }
+  const CAT = execFileSync('python3', ['-c', 'import sys, json; sys.path.insert(0, sys.argv[1]); sys.path.insert(0, sys.argv[2]); import garden_core as c; print(json.dumps(c.home_catalog(None)))',
+    ADDON, path.join(__dirname, '..', 'stubs')], { encoding: 'utf8' });
+  const DATA = await pg.evaluate((cat) => JSON.stringify(Object.assign({}, window.__data, { catalog: JSON.parse(cat) })), CAT);
+  const F = await pg2.evaluate((dj) => {
+    const R = {};
+    window.__data = JSON.parse(dj);
+    const H = { data: () => window.__data, send: () => {}, toast: () => {}, closeOthers: () => {} };
+    GardenHome._lib().setH(H); GardenLe.init(H);
+    try { GardenHome.openMemories(); } catch (e) { R.err = String(e && e.stack || e).slice(0, 300); return R; }
+    const inp = document.getElementById('kb-le-recv-in');
+    R.has = !!inp;
+    if (!inp) { R.err = 'không có ô mã thiệp: ' + document.getElementById('kb-h-list').textContent.slice(0, 120); return R; }
+    inp.focus(); inp.value = 'KBC1:abcdef'; inp.dispatchEvent(new Event('input', { bubbles: true })); inp.setSelectionRange(7, 7);
+    GardenHome.refreshList();
+    const b2 = document.activeElement;
+    R.focus = !!b2 && b2.id === 'kb-le-recv-in' && b2 !== inp && b2.value === 'KBC1:abcdef' && b2.selectionStart === 7;
+    b2.blur();
+    GardenHome.refreshList();
+    R.noSteal = document.activeElement !== document.getElementById('kb-le-recv-in');
+    return R;
+  }, DATA);
+  await pg2.close();
+  ok(F.has && F.focus && F.noSteal, 'Album → Kỷ niệm: đang gõ mã thiệp mà bảng Nhà dựng lại → ô vẫn giữ con trỏ, đúng vị trí gõ; không gõ thì không giành con trỏ' + (F.err ? ' — ' + F.err : ''));
+  ok(E.card && E.orn, 'kéo ra ngoài cửa sổ rồi thả ở đó: đưa chuột vào lại (không giữ nút) không vẽ tiếp, nét đã vẽ thành một bước Hoàn tác (thiệp ' + E.card + ', quả châu ' + E.orn + ')');
   ok(!errs.length, 'không lỗi JS' + (errs.length ? ': ' + errs.slice(0, 3).join(' | ') : ''));
   await b.close();
   const n = results.filter(Boolean).length;

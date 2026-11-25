@@ -23,7 +23,10 @@ import le_core as le  # noqa: E402
 
 rnd = random.Random(20261125)
 IDS = ["xmastree", "presents", "yukidaruma", "stackchan", "wreath", "sleigh", "le_tat", "le_tuanloc", "fence", "khong_co_hinh"]
-TEXTS = ["Giáng sinh an lành!", "— Lan gửi Hoa", "メリークリスマス", "圣诞快乐 🎄", "Frohe  Weihnachten ", " a\tb\nc\r\n",
+TEXTS = ["Giáng sinh an lành!", "— Lan gửi Hoa",
+         "メリークリスマス",
+         "圣诞快乐 🎄",      # chữ Nhật / chữ Trung mỗi thứ một dòng (soát chữ test_1314.py)
+         "Frohe  Weihnachten ", " a\tb\nc\r\n",
          unicodedata.normalize("NFD", "Tiếng Việt có dấu"), "​ẩn‮﻿chữ", "x" * 40, "　khoảng trắng Nhật　", "\x85nel\x85", ""]
 
 

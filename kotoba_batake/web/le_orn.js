@@ -122,7 +122,7 @@ var GardenLeOrn = (function () {
       paintCell(cell(ev));
       try { gc.focus({ preventScroll: true }); } catch (e) { /* bỏ qua */ }
     });
-    window.addEventListener("mousemove", (ev) => { if (painting) { paintCell(cell(ev)); } });
+    window.addEventListener("mousemove", (ev) => { if (painting) { if (!(ev.buttons & 1)) { endPaint(); return; } paintCell(cell(ev)); } });     // thả chuột ngoài cửa sổ: hết nét
     window.addEventListener("mouseup", () => { if (painting) { endPaint(); } });
     gc.addEventListener("keydown", (ev) => {
       if ((ev.ctrlKey || ev.metaKey) && !ev.shiftKey && (ev.key === "z" || ev.key === "Z")) { ev.preventDefault(); ev.stopPropagation(); undoOne(); }

@@ -54,15 +54,23 @@ Làm đúng như ảnh phác đã duyệt. Nhánh `claude/dazzling-davinci-k0rrz
 | Test | Kết quả |
 |---|---|
 | `tests/core/test_1363.py` (mới) | **63/63** (4 hạt giống) — giải mã chặt 13 kiểu hỏng, 300 hình ngẫu nhiên, `code_len` = mã thật, quả châu luật ngày, 400 lần hai máy + đồng bộ chen ngang có đối chứng, LeStore, **mã 1.36.2 thật** chạy chen, hợp đồng dữ liệu |
-| `tests/core/test_1363.js` (mới, Chromium) | **21/21** |
+| `tests/core/test_1363.js` (mới, Chromium) | **23/23** (ca "thả chuột ngoài cửa sổ" và "bảng Nhà dựng lại khi đang gõ mã thiệp" đỏ trên mã trước khi sửa) |
 | `tests/anki/e2e_1363.js` (mới, Anki thật, chuột thật) | 26.9.4: **SO_2694** · 23.10.1: **43/43** · gói đã giải nén: **SO_GOI** |
 | `tests/trang/kiem_tra_trang.js` · `test_trang.py` | **119/119** · **44/44** (thêm hình vẽ: 720 lần vẽ, mã sửa tay / hỏng có hình vẽ) |
 | test cũ: `e2e_1361.js`, `e2e_1362.js`, `e2e_136.js` | 26.9.4: **81/81**, **40/40**, **SO_136** · 23.10.1: **SO_V_OLD** |
 | `tests/run_all.sh` (bộ đầy đủ, gói đã giải nén) | **SO_RUNALL** |
 | `run_capnhat.sh` (1.31.3 → 1.36.3) · `run_habanh.sh` (1.36.3 → 1.31.3 → 1.36.3, có hình vẽ + quả châu) | **SO_CN** · **SO_HB** |
 
-Lần chạy đầu bắt được: dòng "Mã thiệp" dùng `toLocaleString` (dự án đã bỏ từ 1.30.3 vì cách nhóm số tuỳ máy — `test_1303.py`) → đổi
-sang `kbXu`; kéo chuột nhanh trên lưới quả châu nhảy cóc ô (Chromium) → nối ô.
+Lần chạy đầu / rà lại mã bắt được (đã sửa, có test đỏ trên mã trước khi sửa):
+- dòng "Mã thiệp" dùng `toLocaleString` (dự án bỏ từ 1.30.3 vì cách nhóm số tuỳ máy — `test_1303.py`) → `kbXu`;
+- kéo chuột nhanh trên lưới quả châu nhảy cóc ô → nối ô;
+- nhấn chuột trên thiệp / lưới, kéo ra ngoài cửa sổ vườn rồi thả ở đó (trang không nhận "mouseup") → đưa chuột vào lại vẫn đang vẽ →
+  di chuột mà nút trái không còn giữ thì kết thúc nét;
+- **có từ trước (1.36.1)**: bảng Nhà dựng lại danh sách mỗi khi dữ liệu vườn đổi (khách ghé vườn, tự lưu…) → ô đang gõ (mã thiệp ở
+  Album → Kỷ niệm, tên thú…) mất con trỏ. Anki 23.10.1 chạy chậm bắt được (gõ mã giữa lúc "Khách mới ghé vườn") → dựng lại thì giữ
+  con trỏ + vị trí gõ ở ô đang gõ;
+- phần trang web làm sáng 25/11: mục "giang-sinh" chưa có trong `diag.SITE_PARTS` (`test_1313.py`) → thêm; một dòng test có chữ Nhật +
+  chữ Trung cùng dòng (`test_1314.py` soát chữ) → tách dòng.
 
 ## 4. Claude chọn (ngoài ảnh phác)
 

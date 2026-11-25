@@ -132,6 +132,8 @@ Sau khi trả lời có hiện cách đọc, Hán Việt, nghĩa (và cách dùn
 - **Quả châu tự vẽ** (`web/le_orn.js`, `GardenLeOrn`): tủ lịch → "Vẽ quả châu ▸" (1/12 – 31/12), 3 quả lưới 8 × 8, treo / gỡ từng quả,
   Lưu ảnh PNG; treo ở 3 chỗ cố định (`le_core.ORN_SPOTS`) trên mọi cây thông ngoài sân trong mùa; ông già Noel thấy (`facts` `"orn"`)
   → thư sáng 25 nhắc; từ 1/1 xem ở Album → Kỷ niệm. Sổ: `"orn": [{p, on, at} | {at} | null] × 3`, gộp hai máy từng quả theo lần sửa sau.
+- Bảng Nhà dựng lại danh sách (khách ghé, tự lưu…) giữ con trỏ + vị trí gõ ở ô đang gõ (`home.js renderList` → `renderListBody`);
+  `diag.SITE_PARTS` thêm `giang-sinh`.
 - Không thêm khoá collection / mục config.
 
 ### Mới ở 1.36.2: sửa lỗi audit 24/11 của sự kiện Giáng sinh (24/11)

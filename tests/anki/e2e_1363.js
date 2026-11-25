@@ -284,6 +284,21 @@ kb.LE.save(ev)
   const pinfo2 = await py(KB + `b = open(${JSON.stringify(png2)}, "rb").read() if os.path.exists(${JSON.stringify(png2)}) else b""\nresult = [len(b), b[:4] == b"\\x89PNG"]`);
   ok(pinfo2[0] > 200 && pinfo2[1], 'Lưu ảnh PNG quả châu (' + pinfo2[0] + ' byte)');
   await js('GardenLeOrn.close(); return 1;');
+  // cửa sổ nhỏ: bảng quả châu + xưởng thiệp (thẻ Vẽ) nằm gọn, không tràn
+  await py(KB + 'kb._dialog.resize(1024, 680); result = 1'); await sleep(800);
+  const fit = async (id) => js(`const p = document.getElementById(${JSON.stringify(id)}), r = p.getBoundingClientRect(); return [Math.round(r.left), Math.round(r.top), Math.round(r.right), Math.round(r.bottom), innerWidth, innerHeight, p.scrollHeight <= p.clientHeight + 1 || getComputedStyle(p).overflowY !== 'visible'];`);
+  await js('GardenLeOrn.open(0); return 1;'); await sleep(400);
+  const f1 = await fit('kb-le-ornpop');
+  await page.shot(SHOTS + '/1363_05_qua_chau_1024.png');
+  await js('GardenLeOrn.close(); GardenLeCard.open(0); return 1;'); await sleep(300);
+  await page.click('#kb-le-stk-tabs [data-tab="draw"]'); await sleep(300);
+  const f2 = await fit('kb-le-cardpop');
+  const dr = await js('const r = document.getElementById("kb-le-dclear").getBoundingClientRect(); return [Math.round(r.bottom), innerHeight];');
+  await page.shot(SHOTS + '/1363_06_ve_thiep_1024.png');
+  ok([f1, f2].every((f) => f[0] >= 0 && f[1] >= 0 && f[2] <= f[4] && f[6]) && dr[0] > 0,
+    'cửa sổ 1024 × 680: bảng quả châu ' + JSON.stringify(f1.slice(0, 4)) + ', xưởng thiệp thẻ Vẽ ' + JSON.stringify(f2.slice(0, 4)) + ' nằm trong cửa sổ (cuộn được nếu thấp)');
+  await js('GardenLeCard.close(); return 1;');
+  await py(KB + 'kb._dialog.resize(1366, 860); result = 1'); await sleep(500);
 
   // ======================================================================================================
   console.log('== E. ông già Noel thấy quả châu');

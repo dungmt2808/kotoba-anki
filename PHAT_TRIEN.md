@@ -463,6 +463,11 @@ người chơi" → "1 và 2 luôn nhé. duyệt trước rồi làm" → ảnh 
 - **Dữ liệu**: thiệp thêm `"d"`; sổ thêm `"orn": [{p: 64 ký tự, on: 0 | 1, at} | {at} (đã xoá) | null] × 3` (gộp hai máy từng quả theo
   lần sửa sau — `_newer`, dấu `_bump`); không thêm khoá collection / mục config. Bản 1.36.2 ghi sổ 1.36.3: quả châu giữ (khoá lạ của
   sổ được giữ) nhưng **hình vẽ trên thiệp mất** (1.36.2 làm sạch thiệp) — 1.36.0–1.36.2 chưa phát hành: **phát hành thẳng 1.36.3**.
+- **Tìm thêm khi test**: thả chuột ngoài cửa sổ vườn (trang không nhận mouseup) → đưa chuột vào lại vẫn vẽ → hết nét khi nút trái
+  không còn giữ (`ev.buttons`); **bảng Nhà dựng lại danh sách** (dữ liệu vườn đổi: khách ghé, tự lưu…) làm ô đang gõ (vd. mã thiệp ở
+  Album → Kỷ niệm) mất con trỏ — có từ trước, Anki 23.10.1 chậm bắt được → `home.js renderList` giữ con trỏ + vị trí gõ ở ô có `id`
+  (`renderListBody` là phần dựng cũ); trang web có mục "giang-sinh" mà `diag.SITE_PARTS` chưa có (`test_1313.py`) → thêm; dòng test có
+  chữ Nhật + chữ Trung cùng dòng (`test_1314.py`) → tách dòng; dòng "Mã thiệp" dùng `kbXu` (không `toLocaleString` — `test_1303.py`).
 - **Trang web**: `site/thiep.js` đọc / vẽ `"d"` (giống hệt add-on — `kiem_tra_trang.js` 720 lần vẽ có hình vẽ ngẫu nhiên),
   `site/data/su_kien.json` thêm `draw_pal`, `d_max`, thiệp mẫu có hình vẽ.
 - Test: `core/test_1363.py` (63: giải mã chặt 13 kiểu hỏng, 300 hình ngẫu nhiên, code_len = mã thật, quả châu luật ngày, 400 lần hai máy
