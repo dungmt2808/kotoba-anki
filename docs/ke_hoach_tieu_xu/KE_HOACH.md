@@ -28,6 +28,38 @@ cầu đá, bến thuyền, món ăn, hoa ép, hũ ủ, bình tưới vẽ mới
 Nhà văn hoá cả 6 phòng ≈ 60–80 nghìn xu + đồ sưu tầm + mốc học; nâng nhà ≈ 41 nghìn; lò rèn 42 nghìn; tượng vàng 500 nghìn;
 sổ ép hoa ~20 xu × số từ thuộc (người ôn nhiều ~100–200 xu / ngày); bếp / hũ ủ / quà tặng tiêu đều mỗi tuần.
 
+## Đối chiếu với vườn hiện tại (người dùng 25/11: "những cái trên có đồng bộ với những cái hiện tại của mình không")
+
+Khớp sẵn: hình pixel + bảng màu + khung bảng của vườn; «Làng» là một cảnh nữa trong ◂ cảnh ▸ như các vùng; món của Gói bờ biển là món
+thật ở Hộp sưu tầm (`finds_core`: vỏ sò, sao biển, ốc xoắn, thuỷ tinh biển); khách (mèo, tanuki, cáo, hươu, sếu…) là khách ghé vườn có
+sẵn (`guests.js`); "ngày có ôn" như tủ lịch Giáng sinh (ôn điện thoại cũng tính); mốc học đếm từ lúc mở (như chuỗi ngày từ 1.31);
+StackChan nấu / ăn là việc sinh hoạt có sẵn (`life_core` `ryouri` cần bồn rửa + bếp lò, `taberu` cần bàn ăn); bình tưới đã có trong
+chậu cây lúc ôn thẻ (`fx.js` `CAN`) — chỉ đổi màu; nông sản / ép hoa móc vào lúc cây lên giai đoạn (chỗ đang cộng `2 × giai đoạn` xu);
+gánh hàng rong bán công thức; Tin làng báo việc mới; dữ liệu mới đi qua `backup_core` + đồng bộ như mọi khoá.
+
+**Lệch — khi làm thật phải chỉnh:**
+1. **Cỡ cảnh**: ảnh làng vẽ 320 × 96, cảnh của vườn là **256 × 76** → bớt công trình mỗi cảnh hoặc tách 2 cảnh (Làng · bờ ao, Làng ·
+   quảng trường).
+2. **Nhà đã có gian Bếp** (`kitchen`, đồ bồn rửa / bếp lò / nồi cơm / tủ lạnh / bàn ăn) → **bỏ "Bếp lớn 8.000 xu"**; nấu ăn dùng gian
+   Bếp + đồ bếp người chơi đã đặt; ảnh bếp thật vẽ đúng gian Bếp của người chơi (không phải tranh vẽ riêng).
+3. **Hộp sưu tầm là bộ sưu tập, không phải kho** (mỗi món một lần, nhặt trùng +3 xu) → gói **chỉ cần "đã nhặt"** (không lấy khỏi hộp),
+   hoặc góp món nhặt trùng thay cho +3 xu. Món ở vùng chưa mua (vd. Bãi biển) → gói cho chọn món ở cảnh người chơi đã có.
+4. **Sổ ép hoa dùng hoa của chính cây đó** (giống cây của từ: anh đào, hướng dương, phong, lúa…, cây gốc, giống tự vẽ) — ảnh phác vẽ
+   cẩm tú cầu / bìm bìm / bồ công anh là hoa không có trong vườn. Nông sản cũng theo giống: cần thêm nông sản cho cây gốc, bonsai, phong,
+   hướng dương và giống tự vẽ.
+5. **Ngôn ngữ**: vườn có 7 tiếng (Ngôn ngữ trong vườn + deck Anh / Trung / Hàn / Đức / Pháp). Thư tim, tên món phải theo tiếng của
+   người chơi như thư ông già Noel (`le_core.letter`), không chỉ tiếng Nhật. Thư viết sẵn cho ~15 khách × 5 thư × 6 tiếng là nhiều chữ.
+6. **"Thêm vào deck"**: add-on **chưa bao giờ tự thêm thẻ** vào collection của người dùng → bỏ, hoặc chỉ "chép từ".
+7. **Bảng việc làng trùng Nhiệm vụ hằng ngày** (3 nhiệm vụ + rương) → gộp thành phần "Tuần này" trong bảng Nhiệm vụ; yêu cầu kiểu "ôn
+   150 lượt" có thể khiến ôn trước hạn (trái luật "không đụng FSRS") → đổi thành "ôn hết thẻ đến hạn 5 ngày trong tuần".
+8. **Thú nuôi đã có độ thân** (Mới về / Quen hơi / Thân thiết / Tri kỷ theo ngày cho ăn) → tim của khách nên cùng cách gọi / cùng thang,
+   tránh hai kiểu thân thiết khác nhau; "Mèo" vừa là thú nuôi vừa là khách — đặt tên khách khác (mèo hoang).
+9. **Xây có thời gian chờ** chỉ cho công trình làng + gian mới; xây nhà / mua đồ hiện có vẫn ngay lập tức (không đổi cái cũ).
+10. **Bảng Nhà đã 11 tab** (đang chờ người dùng chọn giữ / gộp) → đồ của Làng mở bằng nút riêng ở cảnh Làng; Sổ ép hoa, Sổ món ăn, Bạn
+    bè vào Album (cạnh Khách, Sổ sinh hoạt, Hộp sưu tầm, Kỷ niệm) — không thêm tab.
+11. Chị Hana là nhân vật trong truyện báo (chỉ có chữ); quyết định 1.30: không thêm nhân vật người có hình → chỉ ghi tên trên giấy dán.
+12. Hầm ủ / gác mái là gian mới: phải vẽ cho cả 4 kiểu nhà (classic, minka, teahouse, castle) như hai gian hiện có.
+
 ## Câu hỏi cho người dùng
 1. Thích phần nào, làm phần nào trước? Claude đề xuất bản đầu: **Làng + Nhà văn hoá (2–3 phòng đầu) + Sổ ép hoa + nông sản / Bếp**.
 2. Bạn trong làng là **khách ghé vườn** (mèo, tanuki, cáo…) như ảnh, hay thêm cả nhân vật trong truyện báo (chị Hana…)?
