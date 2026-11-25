@@ -1725,6 +1725,28 @@ không gacha, không nhân đôi xu, không phạt / mất đồ, không đổi 
 9. **Bìa / giấy / mực cho cuốn nhật ký** (Lịch hoa) — 200–600 xu mỗi mẫu.
 Claude đề xuất làm trước: 1 + 2 (vừa sức, gắn với học / hệ thống có sẵn), rồi 4 (nhỏ, tiêu đều mỗi tuần), 3 để dài hạn.
 
+**Người dùng 25/11 tối: "tham khảo thêm Stardew Valley"** → đối chiếu (chưa làm, **chờ người dùng chọn**). Stardew giữ người chơi tiêu
+tiền nhờ: (a) **gói góp ở Trung tâm cộng đồng** (mỗi phòng xong sửa được một thứ có ích: nhà kính, cầu, xe buýt; phòng Kho bạc
+2.500 / 5.000 / 10.000 / 25.000 vàng), (b) **thợ mộc xây có thời gian chờ** + nâng nhà (bếp, phòng, hầm), (c) **thợ rèn nâng dụng cụ**
+đồng → sắt → vàng → iridi, (d) **tặng quà dân làng → tim → cảnh tim**, (e) **nấu ăn + công thức**, (f) **thùng ủ / hầm** (đồ để lâu lên
+hạng), (g) **bảng việc làng** hằng tuần, (h) **hội chợ / chợ đêm** (bày 9 món chấm điểm đổi vé sao; tàu ngầm ngắm cá), (i) **bảo
+tàng** nhận đồ sưu tầm, (j) **mục tiêu tối thượng**: Đồng hồ vàng 10 triệu, chỉ số Hoàn hảo + tượng. Bản cho vườn:
+- **Nhà văn hoá làng (gói góp)** — 6 phòng, mỗi gói = món sưu tầm / gánh hàng / nông sản + xu + mốc học (vd. "thuộc 100 từ"); xong
+  phòng thì sửa một công trình (ga tàu → khách mới, cầu → vùng mới, bến → StackChan câu cá, nhà kính, đền + omikuji); phòng Kho bạc
+  chỉ góp xu. Thay cho ý "Công trình của làng" (cùng mục đích, có cấu trúc).
+- **Thợ mộc**: xây công trình / nâng nhà (bếp lớn, gác mái, hầm ủ) mất 1–3 ngày Anki, giàn giáo hiện trên cảnh.
+- **Lò rèn**: bình tưới đồng / bạc / vàng / iridi 2k / 5k / 10k / 25k — chỉ đổi hình bình + hiệu ứng tưới, **không thêm xu**.
+- **Tặng quà khách ghé vườn** (mèo, tanuki, cáo, hươu, sếu…): mỗi khách thích món khác nhau (tự khám phá), đủ tim thì có cảnh /
+  thư ngắn **bằng tiếng đang học** (kèm nghĩa) — **không giảm tim** khi vắng.
+- **Bếp + công thức**: cây lên Ra quả cho nông sản theo giống (lúa → gạo, daikon, bí ngô…); mua công thức (300–1.500 xu) + gia vị,
+  nấu món Nhật (onigiri, miso, takoyaki…) → Sổ món ăn, StackChan ăn trong sinh hoạt; tên món là từ vựng.
+- **Hũ ủ** (umeshu, takuan, miso): mua hũ + nguyên liệu, chín sau N ngày có ôn, lên hạng bạc / vàng / iridi.
+- **Bảng việc làng** mỗi tuần (góp món / xu / ôn đủ lượt) → đồ riêng không bán ở đâu. **Hội chợ mùa thu** (bày 9 món, chấm điểm, đổi
+  vé sao) + **chợ đêm mùa đông** (thuyền hàng lạ, ngắm cá 100 xu / lượt) — năm sau có lại.
+- **Bảo tàng làng** bày Hộp sưu tầm + Sổ ép hoa, quà theo mốc. **Đồng hồ vàng / tượng StackChan vàng** (~500.000 xu, chỉ để ngắm,
+  không che cây héo) + **% Vườn hoàn hảo**.
+- Không lấy: sòng bạc / máy quay (cờ bạc), tim giảm khi vắng, hội chỉ có một ngày lỡ là mất, kỹ năng làm giàu thêm (lạm phát xu).
+
 ### 10.0f Sự kiện mùa — Giáng sinh 1.36 (**1.36.0 + 1.36.1 đã làm 24/11, 1.36.2 sửa lỗi audit, 1.36.3 vẽ lên thiệp + quả châu tự vẽ 25/11** — mục 2.6z25, 2.6z26, 2.6z27, 2.6z28; còn: gửi quả châu qua mã (nếu cần); còn: StackChan ăn bánh kem, ảnh kỷ niệm tự chụp, năm sau bày lại bộ 2026, Tô tranh — trang web xem mã thiệp đã làm 25/11 — đầu `docs/ke_hoach_1_36/KE_HOACH.md`)
 Kế hoạch + ảnh (bản 3 ở `ban3/`, bản 2 ở `ban2/`): **`docs/ke_hoach_1_36/KE_HOACH.md`** (mục 0 ở trên). Khung dùng lại cho Tết (cây mai / đào + lì xì; mùng 1 = 6/2/2027). Phần đã đề xuất trước (StackChan sinh hoạt tháng 12, khách tuần lộc, gánh hàng bán đồ Noel, một dòng "đêm Giáng sinh" trong lời nhắc báo) để sau cùng, không kịp thì bỏ.
 
