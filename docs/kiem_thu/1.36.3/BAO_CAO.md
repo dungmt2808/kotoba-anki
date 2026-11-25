@@ -58,7 +58,7 @@ Làm đúng như ảnh phác đã duyệt. Nhánh `claude/dazzling-davinci-k0rrz
 | `tests/anki/e2e_1363.js` (mới, Anki thật, chuột thật) | 26.9.4: **43/43** (thư mục) · gói đã giải nén: **44/44** (thêm cửa sổ 1024 × 680) · 23.10.1: **44/44** (gói) |
 | `tests/trang/kiem_tra_trang.js` · `test_trang.py` | **119/119** · **44/44** (thêm hình vẽ: 720 lần vẽ, mã sửa tay / hỏng có hình vẽ) |
 | test cũ: `e2e_1361.js`, `e2e_1362.js`, `e2e_136.js` | 26.9.4: **81/81**, **40/40**, **66/66** · 23.10.1: **81/81**, **40/40**, **66/66** |
-| `tests/run_all.sh` (bộ đầy đủ, gói đã giải nén) | **SO_RUNALL** |
+| `tests/run_all.sh` (bộ đầy đủ, gói đã giải nén) | **82 mục, TẤT CẢ OK** (gói cuối, có đủ bản sửa; lượt trước trên gói chưa sửa đỏ đúng 4 mục — xem ngay dưới bảng) |
 | `run_capnhat.sh` (1.31.3 → 1.36.3) · `run_habanh.sh` (1.36.3 → 1.31.3 → 1.36.3, có hình vẽ + quả châu) | **5/5 + 18/18** · **4/4 + 10/10 + 19/19** (thêm: hình vẽ + quả châu đang treo còn nguyên sau khi 1.31.3 chạy chen) |
 
 Lần chạy đầu / rà lại mã bắt được (đã sửa, có test đỏ trên mã trước khi sửa):

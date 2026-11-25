@@ -472,7 +472,9 @@ người chơi" → "1 và 2 luôn nhé. duyệt trước rồi làm" → ảnh 
   `site/data/su_kien.json` thêm `draw_pal`, `d_max`, thiệp mẫu có hình vẽ.
 - Test: `core/test_1363.py` (63: giải mã chặt 13 kiểu hỏng, 300 hình ngẫu nhiên, code_len = mã thật, quả châu luật ngày, 400 lần hai máy
   có đối chứng, LeStore, mã 1.36.2 thật chạy chen — fixture `tests/fixtures/le_1362/le_core.py`, hợp đồng dữ liệu), `core/test_1363.js`
-  (Chromium), `anki/e2e_1363.js` (Anki thật, chuột thật qua CDP), `trang/thiep_thu.py` thêm hình vẽ hỏng / sửa tay.
+  (Chromium, 23), `anki/e2e_1363.js` (Anki thật, chuột thật qua CDP, 44 — 26.9.4 + 23.10.1), `trang/thiep_thu.py` thêm hình vẽ hỏng /
+  sửa tay; `anki/e2e_136.js` đóng bảng "Cất đồ Noel" ngày 1/1 trước khi bấm Tủ lịch (23.10.1 bật bảng sớm hơn); `run_habanh` thêm
+  hình vẽ + quả châu. `run_all.sh` trên gói: 82 mục OK.
 
 ### 2.6z27 Bản 1.36.2 — sửa lỗi audit 24/11 của sự kiện Giáng sinh (24/11 khuya)
 Người dùng: "sửa các lỗi đã được tìm ra ở nhánh audit/release-review-1.36.1-2026-11-24. và tìm thêm còn lỗi nào nữa không, test
