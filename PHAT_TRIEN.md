@@ -8,6 +8,8 @@ Cập nhật: 2026-11-17. Add-on **1.34.1** (1.34.1: Đuổi quạ so đáp án 
 
 ## 0. Đọc nhanh (cho phiên chat mới)
 
+> 25/11 (khuya): **ảnh phác chỗ tiêu xu kiểu Stardew Valley — chờ người dùng duyệt** (`docs/ke_hoach_tieu_xu/KE_HOACH.md`, mục 10.0g). Người dùng: "nghĩ các việc thêm để tiêu xu đi bạn" → "tham khảo thêm Stardew Valley" → "làm ảnh phác đi, tớ chưa hình dung được. làm sao mà ấn tượng và thú vị" → 8 ảnh trong Anki thật: vùng Làng hoang → sống lại, Nhà văn hoá (gói góp), Bác Tanuki thợ mộc, bạn bè + thư tim, Bếp, Sổ ép hoa, Hầm ủ + Lò rèn, tượng vàng. Chưa viết mã add-on.
+>
 > 25/11 (tối): **1.36.3 — vẽ tay cho Giáng sinh: vẽ lên thiệp + quả châu tự vẽ** (mục 2.6z28). Người dùng: "giáng sinh hiện tại có nên thêm tự vẽ cái nào không, thiệp/đồ trang trí. để người đó có thể có 1 cái gì đó riêng với mỗi người chơi" → Claude đề xuất (1) vẽ lên thiệp, (2) quả châu tự vẽ → "1 và 2 luôn nhé. duyệt trước rồi làm" → ảnh phác `docs/ke_hoach_ve_tay/` → **"duyệt"** → đã làm đúng ảnh phác: xưởng thiệp thẻ **✎ Vẽ** (bút / tẩy / cỡ 1–3 / Hoàn tác / Xoá hình vẽ / 32 màu của Xưởng, hình vẽ trên sticker dưới chữ, đồng hồ "Mã thiệp: N / 6.000"), mã thiệp `KBC1:` mang hình vẽ (trang web vẽ được), **quả châu tự vẽ** 3 quả 8 × 8 (tủ lịch → Vẽ quả châu ▸, treo trên mọi cây thông ngoài sân, ông già Noel thấy → thư sáng 25 nhắc, Album → Kỷ niệm). Dữ liệu chỉ thêm `"d"` trong thiệp + `"orn"` trong sổ `kotoba_batake_le`. Test `core/test_1363.py` + `.js`, `anki/e2e_1363.js` (26.9.4 + 23.10.1), trang web vẽ thiệp có hình vẽ giống hệt add-on. Báo cáo `docs/kiem_thu/1.36.3/BAO_CAO.md`. **Chi tiết Claude chọn theo ảnh phác người dùng đã duyệt.**
 >
 > 25/11: **trang web có mục "Giáng sinh 2026"** (mục 2.6z27, cuối). Người dùng: "làm luôn, giữ bí mật như bạn đề xuất" → lịch, luật, quà theo nhóm (không nói ngăn nào ra gì, không lộ quà trong 3 hộp, không tả cảnh tối 24), cách làm thiệp, **Xem thiệp bằng mã `KBC1:` / đường dẫn `#thiep/<mã>`** (`site/thiep.js` vẽ giống hệt add-on), nhạc, hỏi đáp; Kho hình che 3 món trong hộp tới 25/12. Trang lên mạng khi gộp `site/` vào `master`. Người dùng kể: có người chơi nhắn "sắp phá đảo hết rồi", chính người dùng học gần 1 tháng đã mua nhà thứ 2 → cần nội dung dài hạn (đề xuất ở câu trả lời 25/11, chưa làm).
@@ -1746,6 +1748,10 @@ tàng** nhận đồ sưu tầm, (j) **mục tiêu tối thượng**: Đồng h�
 - **Bảo tàng làng** bày Hộp sưu tầm + Sổ ép hoa, quà theo mốc. **Đồng hồ vàng / tượng StackChan vàng** (~500.000 xu, chỉ để ngắm,
   không che cây héo) + **% Vườn hoàn hảo**.
 - Không lấy: sòng bạc / máy quay (cờ bạc), tim giảm khi vắng, hội chỉ có một ngày lỡ là mất, kỹ năng làm giàu thêm (lạm phát xu).
+- **Ảnh phác 25/11 tối** (người dùng: "làm ảnh phác đi, tớ chưa hình dung được. làm sao mà ấn tượng và thú vị"): **`docs/ke_hoach_tieu_xu/KE_HOACH.md`**
+  + 8 ảnh vẽ trong Anki 26.9.4 (`tests/anki/mock_tieu_xu.js`, `tests/anki/mock_tieu_xu_page.js`): làng trước / sau, Nhà văn hoá (gói góp
+  + Kho bạc + bảng việc), Bác Tanuki thợ mộc, bạn bè (quà → tim → thư tiếng đang học + cảnh ngắm trăng), Bếp (nông sản → 12 món Nhật),
+  Sổ ép hoa, Hầm ủ + Lò rèn, tượng StackChan vàng + % Vườn hoàn hảo. **Chờ người dùng duyệt / chọn phần làm trước** (4 câu hỏi cuối file).
 
 ### 10.0f Sự kiện mùa — Giáng sinh 1.36 (**1.36.0 + 1.36.1 đã làm 24/11, 1.36.2 sửa lỗi audit, 1.36.3 vẽ lên thiệp + quả châu tự vẽ 25/11** — mục 2.6z25, 2.6z26, 2.6z27, 2.6z28; còn: gửi quả châu qua mã (nếu cần); còn: StackChan ăn bánh kem, ảnh kỷ niệm tự chụp, năm sau bày lại bộ 2026, Tô tranh — trang web xem mã thiệp đã làm 25/11 — đầu `docs/ke_hoach_1_36/KE_HOACH.md`)
 Kế hoạch + ảnh (bản 3 ở `ban3/`, bản 2 ở `ban2/`): **`docs/ke_hoach_1_36/KE_HOACH.md`** (mục 0 ở trên). Khung dùng lại cho Tết (cây mai / đào + lì xì; mùng 1 = 6/2/2027). Phần đã đề xuất trước (StackChan sinh hoạt tháng 12, khách tuần lộc, gánh hàng bán đồ Noel, một dòng "đêm Giáng sinh" trong lời nhắc báo) để sau cùng, không kịp thì bỏ.
