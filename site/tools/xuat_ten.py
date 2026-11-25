@@ -54,9 +54,19 @@ def _le() -> dict:
             continue
         doors.append({"kind": info["kind"], "name": info["name"], "desc": info["desc"],
                       "items": sorted((info.get("item") or {}).keys()), "tiles": list(info.get("tiles") or [])})
+    # thiệp mẫu: có cả hình vẽ tay (bông tuyết, trái tim) như ảnh phác 1.36.3
+    W = le_core.CARD_W
+    cells = ["."] * (W * le_core.CARD_H)
+    for x0, y0 in ((14, 36), (64, 31), (110, 40), (52, 48)):
+        for dx, dy in ((0, 0), (-1, 0), (1, 0), (0, -1), (0, 1)):
+            cells[(y0 + dy) * W + x0 + dx] = "w"
+    for j, row in enumerate(["..pp.pp..", ".ppppppp.", "ppppppppp", ".ppppppp.", "..ppppp..", "...ppp...", "....p...."]):
+        for i, ch in enumerate(row):
+            if ch != ".":
+                cells[(30 + j) * W + 76 + i] = ch
     sample = {"f": "thong", "st": [{"s": "xmastree", "x": 4, "y": 22}, {"s": "presents", "x": 34, "y": 52},
                                     {"s": "stackchan", "x": 88, "y": 43}, {"s": "le_tat", "x": 70, "y": 50, "m": 1}],
-              "t1": "Giáng sinh an lành!", "t2": "— ことば畑", "c": "ja"}
+              "t1": "Giáng sinh an lành!", "t2": "— ことば畑", "c": "ja", "d": le_core._px_encode("".join(cells))}
     return {
         "id": le_core.EV_ID, "year": le_core.YEAR, "pre_from": le_core.PRE_FROM.isoformat(), "first": le_core.FIRST.isoformat(),
         "doors_n": le_core.DOORS_N, "end": le_core.END.isoformat(), "box_day": le_core.BOX_DAY.isoformat(),
@@ -68,6 +78,8 @@ def _le() -> dict:
         "limits": {"t1": le_core.T1_MAX, "t2": le_core.T2_MAX, "stickers": le_core.STICKERS_MAX, "w": le_core.CARD_W,
                    "h": le_core.CARD_H, "recv": le_core.RECV_MAX},
         "sample": le_core.card_code(sample),
+        # 1.36.3: hình vẽ trên thiệp — 32 màu của Xưởng, giới hạn (đã nén)
+        "draw_pal": {k: core.CRAFT_PALETTE[k] for k in le_core.DRAW_CHARS}, "d_max": le_core.D_MAX,
     }
 
 

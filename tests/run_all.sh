@@ -219,6 +219,9 @@ echo "$OUT" | grep -E "✗|KẾT QUẢ|Traceback"; [ $RC = 0 ] || FAIL=1
 echo "== core/test_1362.py (1.36.2: sửa lỗi audit 24/11 — thiệp nhận xoá rồi giữ lại qua collection + 400 lượt hai máy, cắt sổ sau khi gộp, ca biên ngày giờ, mã 1.36.1 thật chạy chen, soát cầu nối)"
 OUT=$(python3 -W ignore "$HERE/core/test_1362.py" "$ADDON" 2>&1); RC=$?
 echo "$OUT" | grep -E "✗|KẾT QUẢ|Traceback"; [ $RC = 0 ] || FAIL=1
+echo "== core/test_1363.py (1.36.3: vẽ tay cho Giáng sinh — hình vẽ trên thiệp: giải mã chặt, mã thiệp + giới hạn, quả châu tự vẽ: luật ngày, gộp hai máy 400 lượt có đối chứng, ông già Noel thấy, mã 1.36.2 thật chạy chen, hợp đồng dữ liệu)"
+OUT=$(python3 -W ignore "$HERE/core/test_1363.py" "$ADDON" 2>&1); RC=$?
+echo "$OUT" | grep -E "✗|KẾT QUẢ|Traceback"; [ $RC = 0 ] || FAIL=1
 echo "== trang/test_trang.py (trang web: đăng / gỡ mã, biểu mẫu issue, GitHub Actions, dữ liệu khớp add-on)"
 OUT=$(python3 "$HERE/trang/test_trang.py" "$ADDON" 2>&1); RC=$?
 echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
@@ -237,6 +240,9 @@ if node -e "require('playwright')" 2>/dev/null; then
   echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
   echo "== core/test_1362.js (1.36.2: Esc Esc nhanh trên bảng Giáng sinh, bản Gemini sửa với điều ước xuống dòng, lưu thiệp lúc đồng bộ / đổi ô, trả lời đúng ô, tự mở khi ⚙ mở, cất đồ trống, thông báo nổi)"
   OUT=$(node "$HERE/core/test_1362.js" "$ADDON" 2>&1); RC=$?
+  echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
+  echo "== core/test_1363.js (1.36.3: thẻ ✎ Vẽ của xưởng thiệp — bút / tẩy / cỡ / hoàn tác / đồng hồ mã, bảng quả châu, cây ngoài sân, Kỷ niệm, lưu lúc đồng bộ)"
+  OUT=$(node "$HERE/core/test_1363.js" "$ADDON" 2>&1); RC=$?
   echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
   echo "== trang/kiem_tra_trang.js (trang web trong Chromium: vùng vẽ khớp add-on từng điểm ảnh, giải mã = add-on, chạy cả trang)"
   OUT=$(node "$HERE/trang/kiem_tra_trang.js" "$ADDON" 2>&1); RC=$?

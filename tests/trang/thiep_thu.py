@@ -34,6 +34,17 @@ def pack(obj, raw_bytes: bytes | None = None) -> str:
     return le.CODE_PREFIX + base64.urlsafe_b64encode(z).decode("ascii").rstrip("=") + ":" + ("%08x" % (zlib.crc32(z) & 0xFFFFFFFF))[:6]
 
 
+def rdraw() -> str:
+    """Hình vẽ tay ngẫu nhiên (vài nét) — dạng gọn như le_core._px_encode."""
+    cells = ["."] * 9600
+    for _ in range(rnd.randint(1, 12)):
+        x, y, c = rnd.randrange(120), rnd.randrange(80), rnd.choice(le.DRAW_CHARS)
+        for _ in range(rnd.randint(1, 40)):
+            x = max(0, min(119, x + rnd.choice((-1, 0, 1)))); y = max(0, min(79, y + rnd.choice((-1, 0, 1))))
+            cells[y * 120 + x] = c
+    return le._px_encode("".join(cells))
+
+
 def rcard() -> dict:
     st = []
     for _ in range(rnd.randint(0, 16)):
@@ -44,8 +55,11 @@ def rcard() -> dict:
         if rnd.random() < 0.3:
             s["z"] = rnd.choice([2, 2.0, 1, "2", True])
         st.append(s)
-    return {"f": rnd.choice(["den", "tuyet", "thong", "qua"]), "st": st, "t1": rnd.choice(TEXTS), "t2": rnd.choice(TEXTS),
-            "c": rnd.choice(["", "ja", "vi", "en", "zh", "ko", "de", "fr", "xx"]), "w": "điều ước không được vào mã", "wl": "ja"}
+    out = {"f": rnd.choice(["den", "tuyet", "thong", "qua"]), "st": st, "t1": rnd.choice(TEXTS), "t2": rnd.choice(TEXTS),
+           "c": rnd.choice(["", "ja", "vi", "en", "zh", "ko", "de", "fr", "xx"]), "w": "điều ước không được vào mã", "wl": "ja"}
+    if rnd.random() < 0.6:
+        out["d"] = rdraw()          # 1.36.3: hình vẽ tay
+    return out
 
 
 cases = []
@@ -86,6 +100,14 @@ add(pack(None, b"{not json"), "JSON hỏng")
 add(pack(None, b'{"f": "den", "t1": "\xff\xfe"}'), "UTF-8 hỏng")
 add(pack(None, json.dumps({"f": "den", "st": [], "t1": "a" * 20000}).encode()), "giải nén > 16.000 byte")
 add(pack(None, json.dumps({"f": "den", "st": [], "t1": "b" * 15900}).encode()), "giải nén gần 16.000 byte")
+# 1.36.3: hình vẽ tay sửa tay / hỏng
+D = rdraw()
+for bad, nhan in ((D.replace("2", "²", 1) if "2" in D else "²k" + D, "hình vẽ: chữ số Unicode"), ("0k" + D, "hình vẽ: lặp 0 lần"),
+                  (D + "5", "hình vẽ: số đứng cuối"), ("9601k", "hình vẽ: thừa ô"), ("9599k", "hình vẽ: thiếu ô"),
+                  ("9600X", "hình vẽ: màu lạ"), ("9600.", "hình vẽ: trống"), ("k" * 9600, "hình vẽ: chưa gọn (k × 9600)"),
+                  ("".join(rnd.choice(le.DRAW_CHARS) for _ in range(9600)), "hình vẽ: nhiễu (quá giới hạn)"), (123, "hình vẽ: số"),
+                  ("05k9595.", "hình vẽ: số 0 đứng đầu")):
+    add(pack({"f": "den", "st": [], "d": bad}), bad if isinstance(bad, str) and len(bad) < 20 else nhan)
 add(le.CODE_PREFIX + base64.urlsafe_b64encode(b"khong phai zlib").decode().rstrip("=") + ":" +
     ("%08x" % (zlib.crc32(b"khong phai zlib") & 0xFFFFFFFF))[:6], "không phải zlib (đúng mã kiểm tra)")
 json.dump(cases, sys.stdout, ensure_ascii=False)

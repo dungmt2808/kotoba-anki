@@ -1,4 +1,4 @@
-# Kế hoạch: vẽ tay cho Giáng sinh — vẽ lên thiệp + quả châu tự vẽ (25/11, **chờ người dùng duyệt ảnh phác**)
+# Kế hoạch: vẽ tay cho Giáng sinh — vẽ lên thiệp + quả châu tự vẽ (25/11 — **người dùng "duyệt", đã làm ở 1.36.3**: mục 2.6z28 của PHAT_TRIEN.md, báo cáo `docs/kiem_thu/1.36.3/BAO_CAO.md`)
 
 Người dùng 25/11: "giáng sinh hiện tại có nên thêm tự vẽ cái nào không, thiệp/đồ trang trí. để người đó có thể có 1 cái gì đó
 riêng với mỗi người chơi" → Claude đề xuất (1) vẽ lên thiệp, (2) quả châu tự vẽ treo lên cây → **"1 và 2 luôn nhé. duyệt trước

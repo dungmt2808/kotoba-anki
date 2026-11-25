@@ -263,7 +263,7 @@ ok('H.send("le:keep:"' in LEC and "const pend = {}" in LEC and "armRetry(8000)" 
 ok("STATE.draft_apply(scene, sc[\"slots\"][n], extra=extra)" in INIT and "def draft_apply(self, scene: str, slot: Any, extra" in
    open(os.path.join(ADDON, "garden_core.py"), encoding="utf-8").read(), "#07 Trang trí thử nhớ mẫu tường / sàn cũ cùng một lần lưu")
 ok("self._eve_seen = self._le_eve()" in INIT and "def _le_eve()" in INIT, "#11 qua 18:00 ngày 24 lúc vườn đang mở → dựng lại")
-ok("any(le_core.filled(c) for c in le_core.cards(ev))" in INIT and "le_core.recv_list(ev)):" in INIT, "#12 từ 1/1 còn Kỷ niệm khi chỉ có thiệp / thiệp nhận")
+ok("any(le_core.filled(c) for c in le_core.cards(ev))" in INIT and "or le_core.recv_list(ev)" in INIT, "#12 từ 1/1 còn Kỷ niệm khi chỉ có thiệp / thiệp nhận")
 ok(INIT.count("_le_preview.update(day=None, ev=None, now=None, pack=False, key=None)") >= 2, "#14 đổi hồ sơ / nhập .colpkg → bỏ xem thử")
 ok("core.decor.usable(decor_w, t[3], t[1])" in INIT, "#17f cất đồ: mẫu cũ không còn → sổ ghi \"theo kiểu nhà\"")
 # #02: Anki chỉ báo Esc cho Python qua bộ nghe ở document, pha bubble (aqt/webview.py) — bảng Giáng sinh chặn hẳn ở pha capture
@@ -325,7 +325,7 @@ if old_cfg is not None:
 e = le.empty(); le.recv_add(e, CODES[3], D10, T(2026, 12, 10, 9))
 ok(set(e["recv"][0]) == {"k", "at", "t"}, "thiệp nhận chỉ thêm trường \"t\": %s" % sorted(e["recv"][0]))
 man = json.load(open(os.path.join(ADDON, "manifest.json"), encoding="utf-8"))
-ok(man.get("human_version") == "1.36.2", "manifest: 1.36.2")
+ok(tuple(int(x) for x in man.get("human_version", "0").split(".")) >= (1, 36, 2), "manifest: từ 1.36.2 (" + man.get("human_version", "") + ")")
 
 print()
 print("KẾT QUẢ: %d/%d" % (PASS[0], PASS[0] + len(FAIL)))

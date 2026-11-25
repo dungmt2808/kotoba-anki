@@ -97,7 +97,7 @@ function serve() {
   console.log('== thiệp Giáng sinh: trang vẽ giống add-on từng điểm ảnh');
   await game.addScriptTag({ path: path.join(SITE, 'thiep.js') });
   const draw = await game.evaluate((ev) => {
-    GardenLeCard.init({ data: () => ({ le: { chuc: ev.chuc } }), send: () => {} });
+    GardenLeCard.init({ data: () => ({ le: { chuc: ev.chuc, draw_pal: ev.draw_pal } }), send: () => {} });
     let seed = 1225; const R = () => { seed = (seed * 1103515245 + 12345) % 2147483648; return seed / 2147483648; };
     const ids = Object.keys(ev.stickers).concat(['stackchan', 'stackchan', 'stackchan', 'khong_co_hinh']);
     const bad = []; let n = 0;
@@ -105,6 +105,11 @@ function serve() {
       const card = { f: ['den', 'tuyet', 'thong', 'qua'][t % 4], st: [], t1: t % 3 ? 'Giáng sinh an lành ' + t : '', t2: t % 2 ? '— Lan ' + t : '', c: ['', 'ja', 'vi', 'ko', 'de', 'zh', 'fr', 'en'][t % 8] };
       const k = Math.floor(R() * 13);
       for (let i = 0; i < k; i++) { const s = { s: ids[Math.floor(R() * ids.length)], x: Math.floor(R() * 168) - 48, y: Math.floor(R() * 128) - 48 }; if (R() < 0.4) { s.m = 1; } if (R() < 0.3) { s.z = 2; } card.st.push(s); }
+      if (t % 3 !== 1) {                // 1.36.3: hình vẽ tay ngẫu nhiên
+        const cells = Array(9600).fill('.'), chars = Object.keys(ev.draw_pal);
+        for (let q = 0; q < 1 + Math.floor(R() * 8); q++) { let x = Math.floor(R() * 120), y = Math.floor(R() * 80); const c = chars[Math.floor(R() * chars.length)]; for (let z = 0; z < 30; z++) { x = Math.max(0, Math.min(119, x + Math.floor(R() * 3) - 1)); y = Math.max(0, Math.min(79, y + Math.floor(R() * 3) - 1)); cells[y * 120 + x] = c; } }
+        card.d = KBC.pxEncode(cells.join(''));
+      }
       for (const S of [1, 2, 4]) {
         for (const mark of [false, true]) {
           const a = document.createElement('canvas'); a.width = 120 * S; a.height = 80 * S;

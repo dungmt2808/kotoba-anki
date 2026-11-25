@@ -4,6 +4,8 @@
      câu chúc 7 tiếng). Mã thiệp không có điều ước.
    - Vẽ y như web/le_card.js drawCard (mặt trước): hình sticker + bảng màu xuất từ add-on (data/su_kien.json — site/tools/
      xuat_hinh.js); tests/trang/kiem_tra_trang.js so từng điểm ảnh với hàm của add-on.
+   1.36.3: hình vẽ tay "d" (120 × 80, 32 màu của Xưởng, nén "5.3kky" như le_core._px_encode) — đọc chặt như le_core.clean_drawing,
+   vẽ trên sticker, dưới viền + chữ.
    Không phụ thuộc giao diện trang (dùng lại được trong test). */
 var KBC = (function () {
   "use strict";
@@ -47,6 +49,31 @@ var KBC = (function () {
     if (typeof v !== "number" || !isFinite(v)) { return null; }
     return Math.max(lo, Math.min(hi, pyRound(v)));
   }
+  // le_core._px_decode: chữ số ASCII, lặp ≥ 1, không số đứng cuối, màu của Xưởng / ".", đủ đúng n ô
+  function pxDecode(code, n, chars) {
+    if (typeof code !== "string" || !code || code.length > n * 3) { return null; }
+    const out = []; let total = 0, num = "";
+    for (const ch of code) {
+      if (ch >= "0" && ch <= "9") { num += ch; if (num.length > 5) { return null; } continue; }
+      if (ch !== "." && chars.indexOf(ch) < 0) { return null; }
+      const k = num ? Number(num) : 1; num = "";
+      if (k < 1 || total + k > n) { return null; }
+      out.push(ch.repeat(k)); total += k;
+    }
+    return num || total !== n ? null : out.join("");
+  }
+  function pxEncode(flat) {
+    let out = "", i = 0;
+    while (i < flat.length) { let j = i; while (j < flat.length && flat[j] === flat[i]) { j++; } out += (j - i > 1 ? String(j - i) : "") + flat[i]; i = j; }
+    return out;
+  }
+  // le_core.clean_drawing: dạng gọn hoặc "" (không có / hỏng / trống / quá giới hạn)
+  function cleanDrawing(raw, ev) {
+    const flat = pxDecode(raw, W * HH, Object.keys(ev.draw_pal || {}).join(""));
+    if (flat === null || !/[^.]/.test(flat)) { return ""; }
+    const code = pxEncode(flat);
+    return code.length <= (ev.d_max || 12000) ? code : "";
+  }
   function cleanCard(raw, ev) {
     if (!raw || typeof raw !== "object" || Array.isArray(raw)) { return null; }
     const frames = (ev.frames || []).map((f) => f.id);
@@ -67,8 +94,11 @@ var KBC = (function () {
       if (st.length >= max) { break; }
     }
     const c = raw.c;
-    return { f: raw.f, st: st, t1: line(raw.t1, L.t1), t2: line(raw.t2, L.t2),
+    const out = { f: raw.f, st: st, t1: line(raw.t1, L.t1), t2: line(raw.t2, L.t2),
       c: typeof c === "string" && Object.prototype.hasOwnProperty.call(ev.chuc || {}, c) ? c : "" };
+    const d = cleanDrawing(raw.d, ev);
+    if (d) { out.d = d; }
+    return out;
   }
   let CRC = null;
   function crc32(bytes) {
@@ -202,6 +232,15 @@ var KBC = (function () {
     box(0, 64, W, 16, "#eef3f8");
     for (let i = 0; i < W; i += 7) { box(i, 63, 4, 1, "#eef3f8"); box(i + 2, 66, 3, 1, "#d5e2ee"); }
     (c.st || []).forEach((s) => { drawSticker(ctx, S0, s, ev); });
+    if (c.d) {                         // hình vẽ tay (như le_card.js drawLayer)
+      const flat = pxDecode(c.d, W * HH, Object.keys(ev.draw_pal || {}).join("")), P = ev.draw_pal || {};
+      if (flat) {
+        for (let k = 0; k < W * HH; k++) {
+          const ch = flat.charAt(k);
+          if (ch !== "." && P[ch]) { ctx.fillStyle = P[ch]; ctx.fillRect(Math.round((k % W) * S0), Math.round(Math.floor(k / W) * S0), Math.ceil(S0), Math.ceil(S0)); }
+        }
+      }
+    }
     frameBorder(c.f, box);
     ctx.textAlign = "center"; ctx.textBaseline = "middle";
     if (c.t1) { fitFont(ctx, c.t1, 9 * S0, (W - 14) * S0, true); shadowText(ctx, c.t1, W / 2 * S0, 13 * S0, fr.ink); }
@@ -236,5 +275,6 @@ var KBC = (function () {
     drawSticker(g, 1, s, ev);
     return cv;
   }
-  return { W: W, H: HH, decode: decode, cleanCard: cleanCard, draw: draw, canvas: canvas, stickerCanvas: stickerCanvas, line: line, pyRound: pyRound };
+  return { W: W, H: HH, decode: decode, cleanCard: cleanCard, draw: draw, canvas: canvas, stickerCanvas: stickerCanvas, line: line, pyRound: pyRound,
+    pxDecode: pxDecode, pxEncode: pxEncode };
 })();

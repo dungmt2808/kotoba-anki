@@ -124,6 +124,16 @@ Sau khi trả lời có hiện cách đọc, Hán Việt, nghĩa (và cách dùn
 - **Hiệu ứng thành tích** (`web/joy.js`, Python tính `data.joy` = `more_core.joy_view`): **xong hết thẻ hôm nay** trong deck đang xem (`deck_due_tree` = 0 và hôm nay đã ôn ≥ 1 lượt) → cầu vồng trên ruộng và trên trời sân, giọt sương lấp lánh; **đạt mục tiêu ngày**; **cả vườn xanh tốt / ra hoa / trĩu quả** (≥ 5 cây, không cây nào héo, mọi cây từ Cây non / Ra hoa / Ra quả) → lá lấp lánh / cánh hoa anh đào bay / đốm sáng vàng bay lên; **mốc chuỗi ngày** (7, 14, 21, 30, 50, 75, 100, 150, 200, 250, 300, 365, 500, 730, 1000) → pháo hoa trên trời sân; **xong 3 nhiệm vụ** → đèn trời bay lên. Huy hiệu cạnh chú thích ruộng; dải chúc mừng + linh vật chúc mỗi thành tích **một lần mỗi ngày** (nhớ ở `localStorage kb-joy-<ngày>-<loại>`), đang ôn thẻ thì để dành tới khi đóng bảng ôn.
 - **Lưu trữ**: khoá collection mới `kotoba_batake_more` (`more_core.MORE_KEY`) — mục 4. Bản ≤ 1.13 ở máy khác không đọc khoá này nên không xoá được gì.
 
+### Mới ở 1.36.3: vẽ lên thiệp + quả châu tự vẽ (25/11)
+- **Xưởng thiệp → thẻ "✎ Vẽ"** (`web/le_card.js`): kéo chuột vẽ thẳng lên mặt trước thiệp — bút / tẩy, cỡ 1 · 2 · 3, Hoàn tác (nút +
+  Ctrl+Z, 30 bước), Xoá hình vẽ (hỏi trước), 32 màu của Xưởng. Hình vẽ nằm trên sticker, dưới viền + chữ. Lưu trong thiệp ở trường
+  `"d"` (120 × 80 ô nén theo hàng, `le_core._px_encode` / `_px_decode` / `clean_drawing`); đi theo ảnh PNG, mã `KBC1:`, Album, trang web.
+  Dòng "Mã thiệp: N / 6.000 ký tự" (Python trả `code_len` mỗi lần lưu); quá 6.000 thì Chép mã báo "lưu ảnh PNG gửi bạn".
+- **Quả châu tự vẽ** (`web/le_orn.js`, `GardenLeOrn`): tủ lịch → "Vẽ quả châu ▸" (1/12 – 31/12), 3 quả lưới 8 × 8, treo / gỡ từng quả,
+  Lưu ảnh PNG; treo ở 3 chỗ cố định (`le_core.ORN_SPOTS`) trên mọi cây thông ngoài sân trong mùa; ông già Noel thấy (`facts` `"orn"`)
+  → thư sáng 25 nhắc; từ 1/1 xem ở Album → Kỷ niệm. Sổ: `"orn": [{p, on, at} | {at} | null] × 3`, gộp hai máy từng quả theo lần sửa sau.
+- Không thêm khoá collection / mục config.
+
 ### Mới ở 1.36.2: sửa lỗi audit 24/11 của sự kiện Giáng sinh (24/11)
 - Thiệp nhận xoá rồi dán lại mã → giữ lại được (mỗi thiệp nhận có dấu `"t"` lúc giữ / xoá; hai máy: lần sau thắng).
 - Lệnh `le:*` rơi vào lúc Anki đồng bộ: Python trả lời `{ok: false, sync: true}` (nút "Nhờ Gemini sửa" không kẹt, ngăn tủ lịch
@@ -776,6 +786,8 @@ Nguyên tắc chính:
 | `cal:pdf:{name, html}` / `cal:photo:<data URL PNG>` | 1.20: xuất PDF cuốn nhật ký (A5) → `Garden.calPdf`; lưu ảnh vườn tự chụp (mỗi tuần một tấm, chặn dữ liệu lạ) |
 | `guest:met:<id>:<cảnh>` | 1.21: khách vừa hiện ≥ 1,5 giây trên cảnh đang xem → Python xét lại (cảnh có trong ví, đồ / vùng / tháng hợp) rồi ghi album (một lần mỗi ngày) → `Garden.guests({…view, new})` |
 | `le:card:{i, card, rid}` / `le:cdel:<i>` / `le:hang:<i \| -1>` / `le:fix:<i>` / `le:code:<i>` · `le:seen` / `le:read` · `le:rpeek:<mã>` / `le:recv:<mã>` / `le:rdel:<mã>` / `le:rcode:<mã>` | 1.36.1: lưu / xoá / treo thiệp, Nhờ Gemini sửa điều ước (kết quả về sau: `act: "fixed"`), chép mã thiệp; đã xem cảnh đêm 24 / đã đọc thư; xem trước / giữ / xoá / chép thiệp nhận — Python xét ngày Anki + giờ máy → `Garden.le({ok, act, i?, code?, card?, le, msg?})` |
+| `le:orn:{i, p, on, rid, q}` | 1.36.3: lưu quả châu tự vẽ ô `i` (`p` 64 ký tự màu Xưởng / `.`, hình trống = xoá; `on` = treo trên cây) → `Garden.le({ok, act: "orn", i, rid, le})`; lưu thiệp (`le:card`) trả thêm `code_len` |
+| `le:keep:{o, q, orn: {p, on}}` | 1.36.3: quả châu đang vẽ — như `le:keep` của thiệp (khoá bộ nhớ `"o<i>"`), đóng cửa sổ / hồ sơ thì lưu nốt |
 | `le:keep:{i, q, card}` | 1.36.2: thiệp đang sửa (mỗi lần sửa, số thứ tự `q` tăng) — Python chỉ giữ trong bộ nhớ, đóng cửa sổ / hồ sơ thì lưu nốt; đi được cả lúc đồng bộ; xem thử thì bỏ. Lệnh `le:*` bị bỏ lúc đồng bộ → `Garden.le({ok: false, sync: true, act, i?, rid?})` |
 | `le:open:<ngăn>` / `le:box:<hộp>` / `le:auto:<món>` | 1.36: mở ngăn tủ lịch (Python xét ngày Anki, lượt ôn, vé giữ chuỗi, mở bù) / mở hộp quà bí mật (từ 25/12) / bày món sự kiện vào ô trống — sổ + kho ghi CÙNG một lần (`STATE.le_apply(…, extra=[LE.write(ev)])`) → `Garden.le({ok, act, door?, placed?, wallet?, le, msg?})` |
 | `le:cfg:<on\|off>` / `le:preview:<yyyy-mm-dd\|off>` | 1.36: ⚙ Sự kiện mùa (config `season_event`) → `refresh()`; admin xem thử theo ngày (không ghi) |

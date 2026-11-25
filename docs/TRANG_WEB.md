@@ -74,7 +74,7 @@ rồi commit `site/data/` + `site/hinh/`. Lệnh này nạp `kotoba_batake/web/*
 |---|---|
 | `site/index.html`, `style.css`, `app.js` | Giao diện (không cần build, chỉ HTML + JS) |
 | `site/ve.js` | Vẽ hình pixel, giải mã `KB1:` trên trình duyệt, vẽ vùng tự tạo y như add-on |
-| `site/thiep.js` (1.36.2) | Đọc mã thiệp `KBC1:` như `le_core.decode_card`, vẽ mặt trước thiệp y như `web/le_card.js` `drawCard` (test so từng điểm ảnh) |
+| `site/thiep.js` (1.36.2) | Đọc mã thiệp `KBC1:` như `le_core.decode_card`, vẽ mặt trước thiệp y như `web/le_card.js` `drawCard` (test so từng điểm ảnh); 1.36.3: cả hình vẽ tay `"d"` (bảng màu `draw_pal` trong `su_kien.json`) |
 | `site/data/su_kien.json` | Mục Giáng sinh 2026 (sinh bằng `xuat_hinh.js` — không có món trong hộp quà bí mật) |
 | `site/data/hinh.json`, `site/hinh/` | Kho hình (sinh bằng `xuat_hinh.js`) |
 | `site/data/thong_tin.json` | Bản add-on, email liên hệ, bảng màu + giá của Xưởng (sinh bằng `xuat_hinh.js`) |

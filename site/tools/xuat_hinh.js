@@ -19,7 +19,7 @@ const DATA = path.join(SITE, 'data', 'hinh.json');
 
 // thứ tự nạp như __init__.py (web/*.js)
 const FILES = ['diag', 'prefs', 'fix', 'icons', 'sky', 'season', 'fx', 'music', 'games', 'fields', 'season_art', 'rare_art',
-  'nha_art', 'pets', 'guests', 'finds_art', 'finds', 'le_art', 'le_card', 'le_noel', 'le', 'life', 'home', 'craft', 'paper', 'seeds', 'joy',
+  'nha_art', 'pets', 'guests', 'finds_art', 'finds', 'le_art', 'le_card', 'le_orn', 'le_noel', 'le', 'life', 'home', 'craft', 'paper', 'seeds', 'joy',
   'ui', 'calendar', 'greet', 'tour', 'garden'];
 // mở thêm vài hàm nội bộ cho công cụ này (chỉ trong trình duyệt của công cụ — file của add-on không đổi)
 const PATCH = {

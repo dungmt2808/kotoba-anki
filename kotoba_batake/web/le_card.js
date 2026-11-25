@@ -5,7 +5,9 @@
    - Treo lên cây cho ông già Noel (tới 18:00 ngày 24, giờ máy) · Lưu ảnh PNG (chữ ことば畑 nhỏ ở góc) · Chép mã gửi bạn (chỉ mặt
      trước, không có điều ước).
    - drawCard(): vẽ thiệp (dùng chung cho Album → Kỷ niệm, thư, ảnh PNG).
-   Tự lưu sau khi thôi sửa ~0,8 giây ("le:card:{i, card, rid}"); đóng bảng là lưu nốt. Không dùng emoji. */
+   Tự lưu sau khi thôi sửa ~0,8 giây ("le:card:{i, card, rid}"); đóng bảng là lưu nốt. Không dùng emoji.
+   1.36.3: thẻ "✎ Vẽ" — vẽ tay lên thiệp (bút / tẩy / cỡ 1–3 / hoàn tác / xoá, 32 màu của Xưởng); hình vẽ là "d" của thiệp (nén
+   theo hàng như le_core._px_encode), vẽ trên sticker, dưới viền + chữ. */
 var GardenLeCard = (function () {
   "use strict";
   const $ = (id) => document.getElementById(id);
@@ -24,6 +26,9 @@ var GardenLeCard = (function () {
   const WISH_LANGS = ["vi", "ja", "en", "zh", "ko", "de", "fr"];
   let H = null;
   let slot = 0, draft = null, side = "front", sel = -1, drag = null, tab = "base";
+  // 1.36.3: vẽ tay
+  const DRAW_N = 120 * 80;
+  let tool = "pen", pen = 1, ink = "U", stroke = null, undo = [], codeLen = {};
   let dirty = false, timer = 0, rid = 0, retry = 0, msg = "", msgBad = false, S = 4, fixWait = false, codeShown = "";
   let delArm = 0, kq = 0;
   // 1.36.2 (audit #04, #13): thiệp đã gửi mà chưa lưu xong, theo từng ô ({rid, q, card, failed}) — Anki đang đồng bộ thì lệnh bị bỏ
@@ -47,6 +52,33 @@ var GardenLeCard = (function () {
   function sfx(n) { if (typeof GardenFX !== "undefined" && GardenFX.sound) { GardenFX.sound(n); } }
   function clone(x) { return x ? JSON.parse(JSON.stringify(x)) : null; }
   function limits() { const v = le(); return (v && v.limits) || { t1: 28, t2: 28, wish: 160, stickers: 12, cards: 3 }; }
+  // 1.36.3: hình vẽ — "5.3kky" (như le_core._px_decode / _px_encode, chỉ chữ số ASCII)
+  function drawPal() { const v = le(); return (v && v.draw_pal) || (lib() && lib().P) || {}; }
+  function pxDecode(code, n) {
+    if (typeof code !== "string" || !code || code.length > n * 3) { return null; }
+    const out = []; let total = 0, num = "";
+    for (const ch of code) {
+      if (ch >= "0" && ch <= "9") { num += ch; if (num.length > 5) { return null; } continue; }
+      const k = num ? Number(num) : 1; num = "";
+      if (k < 1 || total + k > n) { return null; }
+      out.push(ch.repeat(k)); total += k;
+    }
+    return num || total !== n ? null : out.join("");
+  }
+  function pxEncode(flat) {
+    let out = "", i = 0;
+    while (i < flat.length) { let j = i; while (j < flat.length && flat[j] === flat[i]) { j++; } out += (j - i > 1 ? String(j - i) : "") + flat[i]; i = j; }
+    return out;
+  }
+  function drawLayer(ctx, S0, d) {
+    const flat = pxDecode(d, DRAW_N);
+    if (!flat) { return; }
+    const P = drawPal();
+    for (let k = 0; k < DRAW_N; k++) {
+      const c = flat.charAt(k);
+      if (c !== "." && P[c]) { ctx.fillStyle = P[c]; ctx.fillRect(Math.round((k % W) * S0), Math.round(Math.floor(k / W) * S0), Math.ceil(S0), Math.ceil(S0)); }
+    }
+  }
   function deckLang() {
     try { const g = typeof GardenLang !== "undefined" && GardenLang.auto ? GardenLang.auto() : ""; return WISH_LANGS.indexOf(g) >= 0 ? g : "vi"; } catch (e) { return "vi"; }
   }
@@ -135,6 +167,7 @@ var GardenLeCard = (function () {
     for (let i = 0; i < W; i += 7) { box(i, 63, 4, 1, "#eef3f8"); box(i + 2, 66, 3, 1, "#d5e2ee"); }
     const boxes = [];
     (c.st || []).forEach((s) => { boxes.push(drawSticker(ctx, S0, s)); });
+    if (c.d) { drawLayer(ctx, S0, c.d); }          // 1.36.3: hình vẽ tay — trên sticker, dưới viền + chữ
     frameBorder(ctx, S0, c.f, box);
     ctx.textAlign = "center"; ctx.textBaseline = "middle";
     if (c.t1) { fitFont(ctx, c.t1, 9 * S0, (W - 14) * S0, true); shadowText(ctx, c.t1, W / 2 * S0, 13 * S0, fr.ink); }
@@ -251,7 +284,7 @@ var GardenLeCard = (function () {
   }
   function loadSlot(i) {
     flush();
-    slot = i; sel = -1; drag = null; side = side === "back" ? "back" : "front"; codeShown = ""; delArm = 0;
+    slot = i; sel = -1; drag = null; side = side === "back" ? "back" : "front"; codeShown = ""; delArm = 0; undo = []; stroke = null;
     const p = pend[i];
     draft = clone(p ? p.card : cardsOf()[i]);      // bản chưa lưu xong của ô này (đang đồng bộ / Anki ghi lỗi) thắng bản trong sổ
     if (p && p.failed) { dirty = true; }
@@ -378,11 +411,31 @@ var GardenLeCard = (function () {
     right.appendChild(el("div", "kb-le-frames")).id = "kb-le-frames";
     right.appendChild(el("div", "kb-le-sec", "Sticker · bấm để thêm vào thiệp")).id = "kb-le-stk-t";
     const tabs = right.appendChild(el("div", "kb-h-btns kb-le-tabs")); tabs.id = "kb-le-stk-tabs";
-    [["base", "Có sẵn"], ["le", "Tủ lịch"], ["own", "Đồ của bạn"]].forEach(([k, t]) => {
+    [["base", "Có sẵn"], ["le", "Tủ lịch"], ["own", "Đồ của bạn"], ["draw", "✎ Vẽ"]].forEach(([k, t]) => {
       const b = tabs.appendChild(el("button", "kb-btn-small kb-album-chip", t)); b.type = "button"; b.setAttribute("data-tab", k);
-      b.addEventListener("click", () => { tab = k; renderStickers(); });
+      b.addEventListener("click", () => { tab = k; if (k === "draw") { sel = -1; } render(); });
     });
     right.appendChild(el("div", "kb-le-stk")).id = "kb-le-stk";
+    // 1.36.3: thẻ Vẽ
+    const dbox = right.appendChild(el("div", "kb-le-drawbox")); dbox.id = "kb-le-drawbox"; dbox.hidden = true;
+    const dt = dbox.appendChild(el("div", "kb-h-btns kb-le-drawtools"));
+    [["pen", "✎ Bút"], ["eraser", "◻ Tẩy"]].forEach(([k, t]) => {
+      const b = dt.appendChild(el("button", "kb-btn kb-btn-small", t)); b.type = "button"; b.setAttribute("data-tool", k);
+      b.addEventListener("click", () => { tool = k; renderDraw(); });
+    });
+    dt.appendChild(el("span", "kb-le-hintt", "Cỡ"));
+    [1, 2, 3].forEach((n) => {
+      const b = dt.appendChild(el("button", "kb-btn kb-btn-small", String(n))); b.type = "button"; b.setAttribute("data-pen", n);
+      b.title = "Bút " + n + " điểm";
+      b.addEventListener("click", () => { pen = n; renderDraw(); });
+    });
+    const ub = dt.appendChild(el("button", "kb-btn kb-btn-small", "↶ Hoàn tác")); ub.type = "button"; ub.id = "kb-le-dundo";
+    ub.addEventListener("click", undoDraw);
+    const dp = dbox.appendChild(el("div", "kb-le-drawpal")); dp.id = "kb-le-drawpal";
+    const dr = dbox.appendChild(el("div", "kb-h-btns"));
+    const xb = dr.appendChild(el("button", "kb-btn kb-btn-small", "Xoá hình vẽ")); xb.type = "button"; xb.id = "kb-le-dclear";
+    xb.addEventListener("click", clearDraw);
+    dr.appendChild(el("span", "kb-le-hintt", "")).id = "kb-le-dmeter";
     right.appendChild(el("div", "kb-le-sec", "Xong thiệp"));
     const done = right.appendChild(el("div", "kb-h-btns kb-le-done")); done.id = "kb-le-done";
     const hb = done.appendChild(el("button", "kb-btn kb-btn-small kb-le-hangb", "")); hb.type = "button"; hb.id = "kb-le-hang";
@@ -401,6 +454,7 @@ var GardenLeCard = (function () {
     // kéo sticker
     cv.addEventListener("mousedown", (ev) => {
       if (side !== "front" || !editable()) { return; }
+      if (tab === "draw") { if (ev.button === 0 && draft) { ev.preventDefault(); strokeStart(pt(ev)); } try { cv.focus({ preventScroll: true }); } catch (e) { /* bỏ qua */ } return; }
       const p = pt(ev), k = hit(p.x, p.y);
       sel = k;
       if (k >= 0) { const s = draft.st[k]; drag = { k: k, dx: p.x - s.x, dy: p.y - s.y, moved: false }; ev.preventDefault(); }
@@ -408,14 +462,16 @@ var GardenLeCard = (function () {
       try { cv.focus({ preventScroll: true }); } catch (e) { /* bỏ qua */ }
     });
     window.addEventListener("mousemove", (ev) => {
+      if (stroke) { strokeTo(pt(ev)); return; }
       if (!drag || !draft) { return; }
       const p = pt(ev), s = draft.st[drag.k];
       if (!s) { drag = null; return; }
       const nx = Math.round(p.x - drag.dx), ny = Math.round(p.y - drag.dy);
       if (nx !== s.x || ny !== s.y) { s.x = Math.max(-48, Math.min(W, nx)); s.y = Math.max(-48, Math.min(HH, ny)); drag.moved = true; paint(); }
     });
-    window.addEventListener("mouseup", () => { if (drag) { if (drag.moved) { markDirty(); } drag = null; } });
+    window.addEventListener("mouseup", () => { if (stroke) { strokeEnd(); } if (drag) { if (drag.moved) { markDirty(); } drag = null; } });
     cv.addEventListener("keydown", (ev) => {
+      if (tab === "draw" && (ev.ctrlKey || ev.metaKey) && !ev.shiftKey && (ev.key === "z" || ev.key === "Z")) { ev.preventDefault(); ev.stopPropagation(); undoDraw(); return; }
       if (side !== "front" || !editable() || sel < 0 || !draft.st[sel]) { return; }
       const s = draft.st[sel], step = ev.shiftKey ? 4 : 1;
       const mv = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step] }[ev.key];
@@ -424,6 +480,81 @@ var GardenLeCard = (function () {
     });
     ($("kb-app") || document.body).appendChild(pop);
     return pop;
+  }
+  // ---- 1.36.3: vẽ tay ----
+  function flatOf(c) { return (c && c.d && pxDecode(c.d, DRAW_N)) || ".".repeat(DRAW_N); }
+  function strokeStart(p) {
+    if (!draft || !editable()) { return; }
+    const flat = flatOf(draft);
+    stroke = { cells: flat.split(""), before: flat, last: null };
+    strokeTo(p);
+  }
+  function dotAt(x, y) {
+    const c = tool === "eraser" ? "." : ink, o = Math.floor((pen - 1) / 2);
+    for (let j = 0; j < pen; j++) {
+      for (let i = 0; i < pen; i++) {
+        const X = x - o + i, Y = y - o + j;
+        if (X >= 0 && X < W && Y >= 0 && Y < HH) { stroke.cells[Y * W + X] = c; }
+      }
+    }
+  }
+  function strokeTo(p) {
+    if (!stroke) { return; }
+    const x = Math.floor(p.x), y = Math.floor(p.y), a = stroke.last || { x: x, y: y };
+    const n = Math.max(Math.abs(x - a.x), Math.abs(y - a.y), 1);
+    for (let k = 0; k <= n; k++) { dotAt(Math.round(a.x + (x - a.x) * k / n), Math.round(a.y + (y - a.y) * k / n)); }
+    stroke.last = { x: x, y: y };
+    setDrawing(stroke.cells.join(""));
+    paint();
+  }
+  function setDrawing(flat) {
+    if (/[^.]/.test(flat)) { draft.d = pxEncode(flat); } else { delete draft.d; }
+  }
+  function strokeEnd() {
+    const st = stroke; stroke = null;
+    if (!st || !draft) { return; }
+    const now = flatOf(draft);
+    if (now === st.before) { return; }
+    const lim = (le() || {}).d_max || 12000;
+    if (draft.d && draft.d.length > lim) {        // quá chi tiết (sổ / mã không chứa nổi): trả lại nét vừa vẽ
+      setDrawing(st.before); paint();
+      note("Hình vẽ chi tiết quá — nét vừa vẽ chưa thêm được. Bớt vài nét rồi vẽ tiếp nhé.", true); sfx("again");
+      return;
+    }
+    undo.push(st.before); if (undo.length > 30) { undo.shift(); }
+    renderDraw(); markDirty();
+  }
+  function undoDraw() {
+    if (!draft || !editable() || !undo.length) { return; }
+    setDrawing(undo.pop()); sfx("boop"); render(); markDirty();
+  }
+  function clearDraw() {
+    if (!draft || !editable() || !draft.d) { return; }
+    const go = () => { undo.push(flatOf(draft)); if (undo.length > 30) { undo.shift(); } delete draft.d; sfx("boop"); render(); markDirty(); };
+    if (typeof GardenUI !== "undefined" && GardenUI.ask) { GardenUI.ask({ title: "Xoá hết hình vẽ trên thiệp " + (slot + 1) + "?", note: "Bấm Hoàn tác để lấy lại.", yes: "Xoá", always: true, then: go }); }
+    else { go(); }
+  }
+  function renderDraw() {
+    const box = $("kb-le-drawbox");
+    if (!box) { return; }
+    Array.prototype.forEach.call(box.querySelectorAll("[data-tool]"), (b) => b.classList.toggle("is-on", b.getAttribute("data-tool") === tool));
+    Array.prototype.forEach.call(box.querySelectorAll("[data-pen]"), (b) => b.classList.toggle("is-on", Number(b.getAttribute("data-pen")) === pen));
+    $("kb-le-dundo").disabled = !undo.length;
+    $("kb-le-dclear").disabled = !(draft && draft.d);
+    const pal = $("kb-le-drawpal"), P = drawPal();
+    if (!pal.childNodes.length || pal.getAttribute("data-n") !== String(Object.keys(P).length)) {
+      pal.textContent = ""; pal.setAttribute("data-n", String(Object.keys(P).length));
+      Object.keys(P).forEach((k) => {
+        const b = pal.appendChild(el("button", "kb-le-sw")); b.type = "button"; b.style.background = P[k]; b.setAttribute("data-ink", k); b.title = P[k];
+        b.addEventListener("click", () => { ink = k; tool = "pen"; renderDraw(); });
+      });
+    }
+    Array.prototype.forEach.call(pal.childNodes, (b) => b.classList.toggle("is-on", b.getAttribute("data-ink") === ink && tool === "pen"));
+    const v = le() || {}, n = codeLen[slot], mx = v.code_max || 6000;
+    const m = $("kb-le-dmeter");
+    m.textContent = typeof n === "number" ? "Mã thiệp: " + kbXu(n) + " / " + kbXu(mx) + " ký tự" +
+      (n > mx ? " — dài quá để gửi bằng mã, lưu ảnh PNG gửi bạn nhé" : "") : "Vẽ dày quá thì mã thiệp dài — khi đó gửi ảnh PNG";
+    m.classList.toggle("is-bad", typeof n === "number" && n > mx);
   }
   function pt(ev) {
     const cv = $("kb-le-cardcv"), r = cv.getBoundingClientRect();
@@ -477,6 +608,13 @@ var GardenLeCard = (function () {
     Array.prototype.forEach.call(tabs.querySelectorAll("[data-tab]"), (b) => {
       const on = b.getAttribute("data-tab") === tab; b.classList.toggle("is-on", on); b.setAttribute("aria-pressed", on ? "true" : "false");
     });
+    const drawing = tab === "draw";
+    const vis = !tabs.hidden;
+    $("kb-le-drawbox").hidden = !drawing || !vis;
+    $("kb-le-stk-t").textContent = drawing ? "Vẽ lên thiệp · nét vẽ nằm trên sticker, dưới chữ" : "Sticker · bấm để thêm vào thiệp";
+    $("kb-le-cardcv").classList.toggle("is-draw", drawing && vis);
+    wrap.hidden = wrap.hidden || drawing;
+    if (drawing) { renderDraw(); return; }
     wrap.textContent = "";
     const ids = stickerList();
     if (!ids.length) {
@@ -587,6 +725,7 @@ var GardenLeCard = (function () {
     $("kb-le-selbar").hidden = !(ed && side === "front" && sel >= 0 && draft.st[sel]);
     $("kb-le-cr").classList.toggle("is-ro", !ed);
     $("kb-le-stk-t").hidden = $("kb-le-stk-tabs").hidden = $("kb-le-stk").hidden = !ed || side !== "front";
+    if (!draft || !ed || side !== "front") { $("kb-le-drawbox").hidden = true; }
     const hb = $("kb-le-hang");
     hb.hidden = !has || !v.hang_edit;
     hb.textContent = v.hang === slot ? "Gỡ khỏi cây" : v.hang >= 0 ? "Treo thiệp này lên cây (thay thiệp " + (v.hang + 1) + ")" : "Treo lên cây cho ông già Noel";
@@ -615,6 +754,7 @@ var GardenLeCard = (function () {
   function close() {
     const pop = $("kb-le-cardpop");
     if (!pop || pop.hidden) { return; }
+    if (stroke) { strokeEnd(); }
     flush();
     pop.hidden = true; drag = null; sel = -1; codeShown = "";
   }
@@ -626,7 +766,8 @@ var GardenLeCard = (function () {
       if (!p || (res.rid !== undefined && res.rid !== p.rid)) { return; }     // trả lời của lần gửi cũ
       if (res.ok) {
         delete pend[res.i];
-        if (open1 && draft && res.i === slot) { draft.at = res.at; }
+        if (typeof res.code_len === "number") { codeLen[res.i] = res.code_len; }
+        if (open1 && draft && res.i === slot) { draft.at = res.at; if (tab === "draw") { renderDraw(); } }
       } else if (res.sync) {
         // Anki đang đồng bộ: gửi lại khi vườn dựng lại sau đồng bộ (renderData), chậm nhất 8 giây — kể cả khi đã sang ô khác /
         // đóng xưởng
@@ -723,6 +864,8 @@ var GardenLeCard = (function () {
     // cho test
     _draft: () => draft, _slot: () => slot, _hit: hit, _stickerSize: stickerSize, _add: addSticker, _sel: (k) => { sel = k; render(); },
     _selAct: selAct, _dirty: () => dirty, _png: pngOf, _side: (s) => { side = s; render(); },
-    _pend: () => JSON.parse(JSON.stringify(pend)), _norm: normW
+    _pend: () => JSON.parse(JSON.stringify(pend)), _norm: normW,
+    _px: { decode: pxDecode, encode: pxEncode }, _tab: (t) => { tab = t; render(); }, _tool: (t, n, c) => { tool = t || tool; pen = n || pen; ink = c || ink; renderDraw(); },
+    _undoN: () => undo.length
   };
 })();

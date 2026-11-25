@@ -538,6 +538,8 @@
       "Chọn khung (" + EV.frames.map((f) => f.name).join(", ") + "). Bấm sticker để thêm, kéo để dời, Lật / To – nhỏ — tối đa " + EV.limits.stickers +
         " sticker: cây thông, quà, StackChan đội mũ Noel… cùng các món đã mở ở tủ lịch và đồ trong vườn của bạn.",
       "Viết lời chúc (2 dòng) và chọn câu chúc: " + Object.keys(EV.chuc).map((k) => EV.chuc[k]).join(" · ") + ".",
+      "Muốn tự vẽ? Thẻ “✎ Vẽ” cạnh sticker (từ bản 1.36.3): kéo chuột vẽ thẳng lên thiệp — bút, tẩy, 3 cỡ, Hoàn tác, " + Object.keys(EV.draw_pal || {}).length +
+        " màu. Nét vẽ nằm dưới chữ, đi theo ảnh PNG và mã thiệp (vẽ dày quá thì mã dài hơn " + String(EV.code.max).replace(/\B(?=(\d{3})+(?!\d))/g, ".") + " ký tự — khi đó gửi ảnh PNG).",
       "Mặt sau: viết điều ước gửi ông già Noel, bằng tiếng Việt hoặc tiếng đang học. Viết tiếng đang học thì bấm “Nhờ Gemini sửa” (tối đa " + EV.fix_per_day +
         " lần / ngày, cần khoá Gemini ở tab Nguồn báo).",
       "“Treo lên cây cho ông già Noel” trước " + EV.eve.slice(11) + " ngày " + n24 + "/12 (giờ trên máy) — mỗi lúc treo một thiệp.",
@@ -553,6 +555,7 @@
       ["Cài / cập nhật add-on muộn thì sao?", "Không mất ngăn: ngày nào bạn đã ôn (kể cả trước lúc cài) thì ngăn ngày đó vẫn chờ mở. Ngày không ôn thì mở bù."],
       ["Sân hết chỗ, chưa xây nhà?", "Quà vẫn vào Kho đồ, đặt sau cũng được. Đồ trong nhà cần nhà xây tới bước “Lắp cửa & cửa sổ”; áo Noel hiện khi nhà có mái."],
       ["Có tốn xu không?", "Không. Sự kiện không có xu — quà chỉ để trang trí, làm thiệp cũng miễn phí."],
+      ["Quả châu tự vẽ là gì?", "Từ bản 1.36.3: tủ lịch → “Vẽ quả châu ▸”, vẽ tới 3 quả 8 × 8 điểm rồi treo lên cây thông ngoài sân (từ 1/12 tới " + ddmm(EV.end) + "). Không vườn nào có quả giống của bạn. Hết mùa, quả châu ở Album → Kỷ niệm."],
       ["Không muốn có sự kiện?", "⚙ → bỏ chọn “Sự kiện mùa (Giáng sinh)”. Đồ đã tặng vẫn giữ; bật lại lúc nào cũng được."],
       ["Qua " + ddmm(EV.end) + " thì sao?", "Không mở ngăn nữa. Lần đầu mở vườn từ 1/1, StackChan cất đồ Noel; tủ lịch, thiệp và thiệp bạn gửi ở Album → Kỷ niệm."]
     ];

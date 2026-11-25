@@ -2425,6 +2425,31 @@ ruby.kb-ruby rt { font-size: 0.45em; color: var(--kb-ink-2); font-weight: normal
 .kb-le-acts[hidden] { display: none; }
 .kb-le-acts .kb-btn { margin: 0; }
 .kb-le-cardpop { width: 980px; }
+/* 1.36.3: vẽ tay — thẻ Vẽ của xưởng thiệp + bảng quả châu tự vẽ */
+.kb-le-drawbox { display: flex; flex-direction: column; gap: 6px; padding: 8px; border: 2px solid var(--kb-ink); background: var(--kb-paper, #fffaf0); }
+.kb-le-drawbox[hidden] { display: none; }
+.kb-le-drawtools { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.kb-le-drawtools .kb-btn.is-on { background: #ffd23f; }
+.kb-le-drawpal { display: grid; grid-template-columns: repeat(16, 20px); gap: 3px; }
+.kb-le-drawpal[hidden] { display: none; }
+.kb-le-orn-pal { grid-template-columns: repeat(11, 20px); }
+.kb-le-sw { width: 20px; height: 20px; padding: 0; border: 2px solid var(--kb-ink); cursor: pointer; }
+.kb-le-sw.is-on { outline: 3px solid #ffd23f; outline-offset: 1px; position: relative; z-index: 1; }
+.kb-le-sw:disabled { cursor: default; opacity: .6; }
+#kb-le-dmeter.is-bad { color: #c21f3a; font-weight: 700; }
+.kb-le-cardcv.is-draw { cursor: crosshair; }
+.kb-le-ornpop { width: 760px; }
+.kb-le-orn-slots { display: flex; gap: 8px; flex-wrap: wrap; }
+.kb-le-orn-slot { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 3px; font: inherit; font-size: 12px; color: var(--kb-ink);
+  background: var(--kb-paper, #fffaf0); border: 2px solid var(--kb-ink); cursor: pointer; }
+.kb-le-orn-slot.is-on { background: #fff3c4; outline: 3px solid #ffd23f; }
+.kb-le-orn-slot canvas { width: 50px; height: 50px; background: #eaf3ea; image-rendering: pixelated; }
+.kb-le-orn-grid { width: 240px; height: 240px; border: 3px solid var(--kb-ink); cursor: crosshair; image-rendering: pixelated; display: block; }
+.kb-le-orn-grid.is-ro { cursor: default; }
+.kb-le-orn-right { align-items: center; }
+.kb-le-orn-tree { width: 240px; height: 288px; border: 3px solid var(--kb-ink); image-rendering: pixelated; }
+.kb-le-mem-orns { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.kb-le-mem-orn { width: 50px; height: 50px; background: #eaf3ea; border: 2px solid var(--kb-ink); image-rendering: pixelated; }
 .kb-le-slots { display: flex; gap: 4px; flex-wrap: wrap; }
 .kb-le-slots .kb-album-chip { margin: 0; }
 .kb-le-slots .kb-album-chip.is-on, .kb-le-tabs .kb-album-chip.is-on, .kb-le-chucs .kb-album-chip.is-on, .kb-le-sides .kb-btn.is-on { background: #ffd23f; }
