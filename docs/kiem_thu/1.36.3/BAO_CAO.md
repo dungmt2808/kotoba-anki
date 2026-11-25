@@ -55,7 +55,7 @@ Làm đúng như ảnh phác đã duyệt. Nhánh `claude/dazzling-davinci-k0rrz
 |---|---|
 | `tests/core/test_1363.py` (mới) | **63/63** (4 hạt giống) — giải mã chặt 13 kiểu hỏng, 300 hình ngẫu nhiên, `code_len` = mã thật, quả châu luật ngày, 400 lần hai máy + đồng bộ chen ngang có đối chứng, LeStore, **mã 1.36.2 thật** chạy chen, hợp đồng dữ liệu |
 | `tests/core/test_1363.js` (mới, Chromium) | **23/23** (ca "thả chuột ngoài cửa sổ" và "bảng Nhà dựng lại khi đang gõ mã thiệp" đỏ trên mã trước khi sửa) |
-| `tests/anki/e2e_1363.js` (mới, Anki thật, chuột thật) | 26.9.4: **SO_2694** · 23.10.1: **43/43** · gói đã giải nén: **SO_GOI** |
+| `tests/anki/e2e_1363.js` (mới, Anki thật, chuột thật) | 26.9.4: **43/43** (thư mục) · gói đã giải nén: **44/44** (thêm cửa sổ 1024 × 680) · 23.10.1: **SO_V2** |
 | `tests/trang/kiem_tra_trang.js` · `test_trang.py` | **119/119** · **44/44** (thêm hình vẽ: 720 lần vẽ, mã sửa tay / hỏng có hình vẽ) |
 | test cũ: `e2e_1361.js`, `e2e_1362.js`, `e2e_136.js` | 26.9.4: **81/81**, **40/40**, **SO_136** · 23.10.1: **SO_V_OLD** |
 | `tests/run_all.sh` (bộ đầy đủ, gói đã giải nén) | **SO_RUNALL** |
