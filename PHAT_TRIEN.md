@@ -8,6 +8,8 @@ Cập nhật: 2026-11-17. Add-on **1.34.1** (1.34.1: Đuổi quạ so đáp án 
 
 ## 0. Đọc nhanh (cho phiên chat mới)
 
+> 25/11: **trang web có mục "Giáng sinh 2026"** (mục 2.6z27, cuối). Người dùng: "làm luôn, giữ bí mật như bạn đề xuất" → lịch, luật, quà theo nhóm (không nói ngăn nào ra gì, không lộ quà trong 3 hộp, không tả cảnh tối 24), cách làm thiệp, **Xem thiệp bằng mã `KBC1:` / đường dẫn `#thiep/<mã>`** (`site/thiep.js` vẽ giống hệt add-on), nhạc, hỏi đáp; Kho hình che 3 món trong hộp tới 25/12. Trang lên mạng khi gộp `site/` vào `master`. Người dùng kể: có người chơi nhắn "sắp phá đảo hết rồi", chính người dùng học gần 1 tháng đã mua nhà thứ 2 → cần nội dung dài hạn (đề xuất ở câu trả lời 25/11, chưa làm).
+>
 > 24/11 (khuya): **1.36.2 — sửa 17 lỗi audit 24/11 của sự kiện Giáng sinh + tìm thêm** (mục 2.6z27). Người dùng: "sửa các lỗi đã được tìm ra ở nhánh audit/release-review-1.36.1-2026-11-24. và tìm thêm còn lỗi nào nữa không, test kỹ. còn việc gì chưa làm nữa không" → 16 / 17 mục đúng, đã sửa (thiệp nhận xoá rồi giữ lại, bản Gemini sửa không hiện, lệnh bị bỏ lúc đồng bộ, đóng cửa sổ ngay mất chữ, phím tắt rò, Trang trí thử + tường Noel, toast bị che, 18:00 ngày 24 khi vườn đang mở, Kỷ niệm từ 1/1…); mục 02 (Esc Esc nhanh đóng cửa sổ) không xảy ra trong Anki thật — đo được Esc không tới Python, giữ mã + thêm test; + lỗi tìm thêm (xem thử không bao giờ sang sổ thật…). Báo cáo `docs/kiem_thu/1.36.2/BAO_CAO.md`. Test: `core/test_1362.py`, `core/test_1362.js`, `anki/e2e_1362.js` (đối chứng trên gói 1.36.1 → đỏ). **Cách sửa Claude chọn, người dùng chưa xem.**
 >
 > 24/11 (tối): **1.36.1 — làm nốt sự kiện Giáng sinh** (mục 2.6z26). Người dùng: "triển khai nốt 1.36 đi" → phần 1.36.1 của bản gộp chốt 23/11: **xưởng thiệp** (3 thiệp 120 × 80, 4 khung, sticker có sẵn + món tủ lịch + đồ của bạn, lời chúc + câu chúc 7 tiếng, mặt sau điều ước + "Nhờ Gemini sửa", treo lên cây tới 18:00 ngày 24, lưu ảnh PNG, mã thiệp `KBC1:`), **đêm 24** (cảnh ông già Noel trên sân thật của người dùng, Silent Night), **sáng 25** (thư viết sẵn trích điều ước, bánh quy còn vụn), **cất đồ 1/1**, **Album → Kỷ niệm** (tủ lịch, thiệp, thư, nhận thiệp của bạn bằng mã). Báo cáo `docs/kiem_thu/1.36.1/BAO_CAO.md`. Test: `core/test_1361.py` 120, `core/test_1361.js` 33, `anki/e2e_1361.js` 81 (26.9.4 + 23.10.1). **Mọi chi tiết Claude chọn, người dùng chưa xem.**
@@ -463,6 +465,16 @@ kỹ. còn việc gì chưa làm nữa không". Đã gộp nhánh audit (chỉ t
 - Dữ liệu: chỉ thêm `"t"` trong mục `recv`; không thêm khoá collection / mục config. Test: `core/test_1362.py`, `core/test_1362.js`,
   `anki/e2e_1362.js` (`KB_FROM=C` chạy từ phần C — đối chứng trên gói cũ), fixture `tests/fixtures/le_1361/le_core.py` (mã 1.36.1
   thật).
+
+- **Trang web — mục "Giáng sinh 2026"** (25/11, người dùng "làm luôn, giữ bí mật như bạn đề xuất"): `site/index.html` tab đầu
+  `#giang-sinh` (từ 15/11 tới hết 31/12 trang mở thẳng mục này — theo ngày trên máy người xem); dữ liệu `site/data/su_kien.json` do
+  `site/tools/xuat_hinh.js` sinh (`xuat_ten.py` `_le()` đọc `le_core`: ngày, luật mở bù, 24 ngăn — ngăn hộp quà chỉ ghi `{"kind":
+  "qua"}`, câu chúc, khung, giới hạn, thiệp mẫu; `collectLe()` lấy 171 hình SPR + bảng màu + StackChan đội mũ Noel vẽ ra hàng điểm
+  ảnh); `site/thiep.js` (`KBC.decode` = `le_core.decode_card`: round kiểu Python, khoảng trắng kiểu Python, `$` của `re.match`;
+  `KBC.draw` = `le_card.js drawCard` mặt trước); Kho hình: món có `secret` (3 món trong hộp) → hình bóng "Quà bí mật", tìm / đường
+  dẫn dùng mã ẩn `bi_mat_N` tới ngày mở hộp. Test: `tests/trang/kiem_tra_trang.js` (720 lần vẽ giống hệt add-on, `thiep_thu.py`
+  ~180 mã đúng / sửa tay / hỏng đọc ra như add-on, 5 ngày giả, điện thoại), `tests/trang/test_trang.py` (su_kien.json = le_core, không
+  lộ quà). Tìm thêm khi làm: mã thiệp sửa tay có `"c": []` → `clean_card` ném TypeError (add-on báo "Không làm được") — sửa.
 
 ### 2.6z26 Bản 1.36.1 — thiệp + điều ước, ông già Noel, thư sáng 25, cất đồ 1/1, Kỷ niệm (24/11 tối)
 Người dùng: "triển khai nốt 1.36 đi". Phần 1.36.1 của bản gộp chốt 23/11. Báo cáo + ảnh: `docs/kiem_thu/1.36.1/BAO_CAO.md`.

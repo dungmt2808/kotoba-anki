@@ -6,6 +6,8 @@
     hình là báo), email liên hệ = CONTACT_EMAIL, mọi file PNG được dùng đều có và không thừa, mọi mã trong cong_dong.json
     vẫn qua được kiểm tra của add-on và phần "xem" đúng như add-on đọc.
   - Hai workflow: nhãn duyệt khớp them_ma.LABEL, không chèn nội dung người gửi vào lệnh shell.
+  - (1.36.2) su_kien.json = le_core (ngày, luật, 24 ngăn, câu chúc, khung, mã thiệp), không ghi món trong hộp quà bí mật; Kho hình
+    đánh dấu đúng các món đó; đủ hình sticker để vẽ thiệp; thiệp mẫu đọc được bằng add-on.
 Chạy: python3 tests/trang/test_trang.py [ADDON]
 """
 from __future__ import annotations
@@ -183,6 +185,40 @@ for e in cd["ma"]:
         pass
 ok(okc == len(cd["ma"]), f"mọi mã đã đăng vẫn hợp lệ và phần xem đúng ({okc}/{len(cd['ma'])})")
 ok(len({e["id"] for e in cd["ma"]}) == len(cd["ma"]), "id không trùng")
+
+print("== Giáng sinh 2026 (su_kien.json) khớp add-on")
+sys.path.insert(0, ADDON)
+import le_core  # noqa: E402
+with open(os.path.join(SITE, "data", "su_kien.json"), encoding="utf-8") as fh:
+    ev = json.load(fh)
+ok(ev["version"] == ver and ev["first"] == le_core.FIRST.isoformat() and ev["end"] == le_core.END.isoformat()
+   and ev["box_day"] == le_core.BOX_DAY.isoformat() and ev["eve"] == le_core.EVE.isoformat(timespec="minutes")
+   and ev["pre_from"] == le_core.PRE_FROM.isoformat(), "ngày của sự kiện = le_core (" + ev["first"] + " → " + ev["end"] + ", hộp quà " + ev["box_day"] + ")")
+ok(ev["makeup_per"] == le_core.MAKEUP_PER and ev["makeup_max"] == le_core.MAKEUP_MAX and ev["fix_per_day"] == le_core.FIX_PER_DAY
+   and ev["cards"] == le_core.CARDS_MAX and ev["code"]["prefix"] == le_core.CODE_PREFIX and ev["code"]["max"] == le_core.CODE_MAX,
+   "luật mở bù / nhờ sửa / số thiệp / mã thiệp = le_core")
+ok(len(ev["doors"]) == le_core.DOORS_N and all(ev["doors"][d - 1]["kind"] == le_core.DOORS[d]["kind"] for d in le_core.DOORS)
+   and all(ev["doors"][d - 1].get("name") == le_core.DOORS[d]["name"] for d in le_core.DOORS if le_core.DOORS[d]["kind"] != "qua"),
+   "24 ngăn đúng nhóm, đúng tên (trừ hộp quà bí mật)")
+secret = [i for d in le_core.DOORS.values() if d["kind"] == "qua" for i in (d.get("item") or {})]
+names = {it["id"]: it["name"] for g in hinh["groups"] for it in g["items"]}
+blob = json.dumps({k: v for k, v in ev.items() if k not in ("stickers",)}, ensure_ascii=False)
+ok(secret and not any(i in blob or names.get(i, "@") in blob for i in secret) and all(set(x) == {"kind"} for x in ev["doors"] if x["kind"] == "qua"),
+   "su_kien.json không ghi món trong hộp quà bí mật (chỉ có hình trong bộ sticker để vẽ thiệp)")
+gs = next(g for g in hinh["groups"] if g["id"] == "giang_sinh")
+ok(sorted(it["id"] for it in gs["items"] if it.get("secret") == le_core.BOX_DAY.isoformat()) == sorted(secret),
+   "Kho hình đánh dấu đúng " + str(len(secret)) + " món trong hộp quà (che tới " + le_core.BOX_DAY.isoformat() + ")")
+ok(ev["chuc"] == le_core.CHUC and [f["id"] for f in ev["frames"]] == list(le_core.FRAMES), "câu chúc 7 tiếng + 4 khung = le_core")
+need = {"xmastree", "presents", "yukidaruma", "wreath", "sleigh", le_core.TULICH} | {i for d in le_core.DOORS.values() for i in (d.get("item") or {})}
+chars = {ch for rows in ev["stickers"].values() for r in rows for ch in r if ch != "."}
+ok(need <= set(ev["stickers"]) and chars <= set(ev["pal"]) and ev["stackchan"]["rows"], f"hình sticker: {len(ev['stickers'])} hình, đủ màu, có StackChan đội mũ Noel")
+ok(le_core.decode_card(ev["sample"]) is not None, "thiệp mẫu đọc được bằng add-on")
+with open(os.path.join(SITE, "index.html"), encoding="utf-8") as fh:
+    html = fh.read()
+with open(os.path.join(SITE, "app.js"), encoding="utf-8") as fh:
+    app_src = fh.read()
+ok('<script src="thiep.js"></script>' in html and 'data-tab="giang-sinh"' in html and "data/su_kien.json" in app_src,
+   "trang nạp thiep.js, có mục Giáng sinh 2026")
 
 print("== workflow")
 wf = os.path.join(ROOT, ".github", "workflows")

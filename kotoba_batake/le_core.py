@@ -702,8 +702,9 @@ def clean_card(raw: Any, wish: bool = True) -> dict[str, Any] | None:
             st.append(c)
         if len(st) >= STICKERS_MAX:
             break
+    ch = raw.get("c")          # 1.36.2: mã thiệp sửa tay có "c": [] → `[] in CHUC` ném TypeError (không phải "mã hỏng")
     out: dict[str, Any] = {"f": raw["f"], "st": st, "t1": _line(raw.get("t1"), T1_MAX), "t2": _line(raw.get("t2"), T2_MAX),
-                           "c": raw.get("c") if raw.get("c") in CHUC else ""}
+                           "c": ch if isinstance(ch, str) and ch in CHUC else ""}
     if wish:
         out["w"] = _line(raw.get("w"), WISH_MAX)
         out["wl"] = raw.get("wl") if raw.get("wl") in WISH_LANGS else "vi"

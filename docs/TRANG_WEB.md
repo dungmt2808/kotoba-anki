@@ -2,10 +2,11 @@
 
 Địa chỉ (sau khi bật ở mục 1): **https://dungmt2808.github.io/kotoba-anki/**
 
-Trang có 5 mục:
+Trang có 6 mục:
 
 | Mục | Có gì |
 |---|---|
+| **Giáng sinh 2026** (1.36.2) | Sự kiện mùa: lịch (15/11 → 1/1), luật mở ngăn / mở bù, quà kể theo nhóm (Cây · Nhà · Sân · Trong nhà · Hộp quà) — **không nói ngăn nào ra quà gì, không lộ món trong 3 hộp quà bí mật, không tả cảnh tối 24**, cách làm thiệp, **Xem thiệp bạn gửi** (dán mã `KBC1:…` hoặc mở đường dẫn `#thiep/<mã>` → thiệp vẽ ngay trên trình duyệt, tải PNG), nhạc Giáng sinh, hỏi đáp. Từ 15/11 tới hết 31/12 trang mở thẳng mục này (theo ngày trên máy người xem). |
 | **Kho hình** | Mọi hình pixel của vườn (343 hình, 16 nhóm: đồ sân, nội thất, đồ vùng, đồ mùa, đồ hiếm, Hộp sưu tầm, quà đủ bộ, gánh hàng rong, thú nuôi, khách, cây & giống cây, StackChan, tường & sàn, nhà, cảnh các vùng, biểu tượng). Tìm được bằng tiếng Việt không dấu / tiếng Nhật. Bấm vào hình: xem lớn, xem từng khung (đi, ngồi, ngủ…), bảng màu, tải PNG ×1 / ×8 / dải khung. |
 | **Mã cộng đồng** | Thiết kế người chơi gửi, đã duyệt: món tự làm, vùng tự tạo, giống cây tự vẽ. Nút **Chép mã** → dán vào ô "Dán mã thiết kế" ở tab Xưởng. |
 | **Xem mã** | Dán một mã `KB1:…` để xem hình ngay trên trình duyệt (không gửi đi đâu). Có nút "Gửi mã này lên trang". |
@@ -65,7 +66,7 @@ Hoặc sửa thẳng `site/data/cong_dong.json` trên GitHub: xoá cả khối `
 node site/tools/xuat_hinh.js
 ```
 
-rồi commit `site/data/` + `site/hinh/`. Lệnh này nạp `kotoba_batake/web/*.js` trong Chromium, đọc tên / giá từ Python của add-on, áp cả bản sửa hình gốc `kotoba_batake/mau_sua.json` (nếu có). Quên chạy thì `tests/trang/test_trang.py` báo (bản trong `hinh.json` khác bản trong `manifest.json`).
+rồi commit `site/data/` + `site/hinh/`. Lệnh này nạp `kotoba_batake/web/*.js` trong Chromium, đọc tên / giá từ Python của add-on, áp cả bản sửa hình gốc `kotoba_batake/mau_sua.json` (nếu có). Từ 1.36.2 cũng sinh `site/data/su_kien.json` (mục Giáng sinh: ngày / luật / 24 ngăn / câu chúc từ `le_core.py`, hình sticker + StackChan đội mũ Noel để vẽ thiệp) và đánh dấu `secret` cho các món trong hộp quà bí mật ở Kho hình (trang hiện hình bóng "Quà bí mật", đường dẫn mã ẩn `bi_mat_N`, tới ngày mở hộp theo ngày trên máy người xem). Quên chạy thì `tests/trang/test_trang.py` báo (bản trong `hinh.json` khác bản trong `manifest.json`).
 
 ## 5. Cấu trúc
 
@@ -73,6 +74,8 @@ rồi commit `site/data/` + `site/hinh/`. Lệnh này nạp `kotoba_batake/web/*
 |---|---|
 | `site/index.html`, `style.css`, `app.js` | Giao diện (không cần build, chỉ HTML + JS) |
 | `site/ve.js` | Vẽ hình pixel, giải mã `KB1:` trên trình duyệt, vẽ vùng tự tạo y như add-on |
+| `site/thiep.js` (1.36.2) | Đọc mã thiệp `KBC1:` như `le_core.decode_card`, vẽ mặt trước thiệp y như `web/le_card.js` `drawCard` (test so từng điểm ảnh) |
+| `site/data/su_kien.json` | Mục Giáng sinh 2026 (sinh bằng `xuat_hinh.js` — không có món trong hộp quà bí mật) |
 | `site/data/hinh.json`, `site/hinh/` | Kho hình (sinh bằng `xuat_hinh.js`) |
 | `site/data/thong_tin.json` | Bản add-on, email liên hệ, bảng màu + giá của Xưởng (sinh bằng `xuat_hinh.js`) |
 | `site/data/cong_dong.json` | Mã cộng đồng đã duyệt (sửa bằng `them_ma.py` hoặc tay) |

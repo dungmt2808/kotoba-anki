@@ -19,8 +19,8 @@ const DATA = path.join(SITE, 'data', 'hinh.json');
 
 // thứ tự nạp như __init__.py (web/*.js)
 const FILES = ['diag', 'prefs', 'fix', 'icons', 'sky', 'season', 'fx', 'music', 'games', 'fields', 'season_art', 'rare_art',
-  'nha_art', 'pets', 'guests', 'finds_art', 'finds', 'le_art', 'le', 'life', 'home', 'craft', 'paper', 'seeds', 'joy', 'ui', 'calendar',
-  'greet', 'tour', 'garden'];
+  'nha_art', 'pets', 'guests', 'finds_art', 'finds', 'le_art', 'le_card', 'le_noel', 'le', 'life', 'home', 'craft', 'paper', 'seeds', 'joy',
+  'ui', 'calendar', 'greet', 'tour', 'garden'];
 // mở thêm vài hàm nội bộ cho công cụ này (chỉ trong trình duyệt của công cụ — file của add-on không đổi)
 const PATCH = {
   home: [['_lib: () => ({ SPR,', '_lib: () => ({ NHA, mascotCanvas, drawZoneBg, DAY_SKY, YARD, FRAMES, BASE, SPR,']],
@@ -111,8 +111,10 @@ function collect(meta) {
   add({ id: 'mua', name: 'Mùa & lễ hội', ja: '季節', desc: 'Đồ theo giao diện mùa — mở chủ đề là được tặng các món.',
     items: season.map((it) => itemEntry(it, { tag: (meta.themes[it.season] || {}).name || it.season })) });
   add({ id: 'hiem', name: 'Đồ hiếm', ja: 'レア', desc: 'Không bán — mở rương nhiệm vụ mới có.', items: rare.map((it) => itemEntry(it, { tag: 'Rương nhiệm vụ' })) });
+  // 1.36.2: món trong hộp quà bí mật — trang che (hình bóng, không tên) tới sáng mở hộp (`secret` = ngày)
+  const boxItems = (meta.le && meta.le.box_items) || [];
   add({ id: 'giang_sinh', name: 'Giáng sinh 2026', ja: 'クリスマス', desc: 'Không bán — quà của Lịch chờ Giáng sinh (1–24/12): mỗi ngày ôn mở một ngăn.',
-    items: le.map((it) => itemEntry(it, { tag: 'Tủ lịch · ' + PLACE[it.place] })) });
+    items: le.map((it) => itemEntry(it, Object.assign({ tag: 'Tủ lịch · ' + PLACE[it.place] }, boxItems.indexOf(it.id) >= 0 ? { secret: meta.le.box_day } : {}))) });
 
   // ---- Hộp sưu tầm + quà đủ bộ + gánh hàng rong ----
   const FA = GardenFindArt;
@@ -230,6 +232,40 @@ function collect(meta) {
   return out;
 }
 
+// ---- chạy trong trang: dữ liệu vẽ thiệp Giáng sinh cho mục "Giáng sinh 2026" (site/thiep.js vẽ y như web/le_card.js drawCard) ----
+function collectLe() {
+  const L = GardenHome._lib(), SPR = L.SPR, P = L.P;
+  const ok = (k) => /^[a-z][a-z0-9_]{0,39}$/.test(k) && Array.isArray(SPR[k]) && SPR[k].length && typeof SPR[k][0] === 'string';
+  const stickers = {}, used = {};
+  Object.keys(SPR).filter(ok).sort().forEach((k) => { stickers[k] = SPR[k].slice(); SPR[k].forEach((r) => { for (const c of r) { if (c !== '.') { used[c] = 1; } } }); });
+  const pal = {}, missing = [];
+  Object.keys(used).sort().forEach((c) => { if (typeof P[c] === 'string') { pal[c] = P[c].toLowerCase(); } else { missing.push(c); } });
+  // StackChan đội mũ Noel: hàm vẽ (GardenFX.lib.paintFace) → hàng điểm ảnh ở cỡ 1 (đo cả phần vượt khung 20 × 21)
+  const PAD = 24, cv = document.createElement('canvas'); cv.width = 20 + PAD * 2; cv.height = 21 + PAD * 2;
+  const g = cv.getContext('2d'); g.imageSmoothingEnabled = false; g.translate(PAD, PAD);
+  GardenFX.lib.paintFace(g, 1, 'happy', 0, 0, { head: 'santa' });
+  const d = g.getImageData(0, 0, cv.width, cv.height).data;
+  let x0 = cv.width, y0 = cv.height, x1 = -1, y1 = -1;
+  for (let y = 0; y < cv.height; y++) { for (let x = 0; x < cv.width; x++) { if (d[(y * cv.width + x) * 4 + 3]) { x0 = Math.min(x0, x); y0 = Math.min(y0, y); x1 = Math.max(x1, x); y1 = Math.max(y1, y); } } }
+  const keys = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const spal = {}, back = {}, rows = [];
+  for (let y = y0; y <= y1; y++) {
+    let r = '';
+    for (let x = x0; x <= x1; x++) {
+      const i = (y * cv.width + x) * 4;
+      if (!d[i + 3]) { r += '.'; continue; }
+      if (d[i + 3] !== 255) { missing.push('stackchan alpha'); }
+      const hx = '#' + [d[i], d[i + 1], d[i + 2]].map((v) => v.toString(16).padStart(2, '0')).join('');
+      if (!back[hx]) { const k = keys[Object.keys(back).length]; back[hx] = k; spal[k] = hx; }
+      r += back[hx];
+    }
+    rows.push(r);
+  }
+  const music = typeof GardenMusic !== 'undefined' && GardenMusic.noelChoices ? GardenMusic.noelChoices() : [];
+  return { pal: pal, stickers: stickers, stackchan: { rows: rows, pal: spal, dx: x0 - PAD, dy: y0 - PAD, w: 20, h: 21 }, music: music,
+    base: ['xmastree', 'presents', 'yukidaruma', 'stackchan', 'wreath', 'sleigh'], missing: missing };
+}
+
 // mở một trang Chromium đã nạp toàn bộ web/*.js của add-on (dùng chung với tests/trang/kiem_tra_trang.js)
 async function openGame(browser, addon) {
   addon = addon || ADDON;
@@ -257,6 +293,7 @@ async function main() {
   const browser = await chromium.launch();
   const page = await openGame(browser);
   const res = await page.evaluate(collect, meta);
+  const leArt = await page.evaluate(collectLe);
   res.groups.forEach((g) => g.items.forEach((it) => { if (!it.img && !it.w) { res.missing.push('không hình: ' + g.id + '/' + it.id); } }));
   await browser.close();
 
@@ -274,6 +311,12 @@ async function main() {
   // thông tin chung cho trang (bản add-on, email liên hệ, giá khi dán mã, bảng màu Xưởng)
   const info = { version: meta.version, contact: meta.contact, share: meta.share, craft: meta.craft, uzone: meta.uzone };
   fs.writeFileSync(path.join(SITE, 'data', 'thong_tin.json'), JSON.stringify(info, null, 1));
+  // 1.36.2: mục "Giáng sinh 2026" — lịch / luật / ngăn theo nhóm (không có món trong hộp quà bí mật) + hình để vẽ thiệp
+  const ev = Object.assign({}, meta.le);
+  delete ev.box_items;
+  Object.assign(ev, { version: meta.version, pal: leArt.pal, stickers: leArt.stickers, stackchan: leArt.stackchan, music: leArt.music, base: leArt.base });
+  fs.writeFileSync(path.join(SITE, 'data', 'su_kien.json'), JSON.stringify(ev));
+  if (leArt.missing.length) { res.missing.push('thiệp: ' + leArt.missing.join(',')); }
   const total = res.groups.reduce((s, g) => s + g.items.length, 0);
   console.log('Bản ' + meta.version + ': ' + res.groups.length + ' nhóm, ' + total + ' hình, ' + n + ' file PNG → site/');
   res.groups.forEach((g) => console.log('  ' + g.name + ': ' + g.items.length));

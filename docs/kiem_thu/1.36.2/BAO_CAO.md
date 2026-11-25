@@ -58,6 +58,7 @@ Anki thật — giữ nguyên mã, thêm test khoá hành vi** (xem dòng 02).
 | Lỗi | Sửa |
 |---|---|
 | Bản giữ để lưu nốt (#05) / bản chờ gửi lại (#04) lấy từ lúc **Xem thử** có thể lưu thiệp sửa lúc xem thử vào sổ thật khi tắt xem thử rồi đóng cửa sổ | Xem thử: không giữ; bật / tắt Xem thử → bỏ bản giữ (Python) và bản chờ (trang) |
+| Mã thiệp sửa tay có câu chúc là mảng / đối tượng (`"c": []`) → `clean_card` ném TypeError, add-on báo "Không làm được (TypeError)" thay vì đọc thiệp | Chỉ nhận câu chúc là chữ có trong danh sách (25/11, thấy khi làm mục Giáng sinh của trang web) |
 | (khi thử sửa #02) Đếm cả Esc đã chặn vào hàng đợi → Esc hợp lệ ở màn chính ngay sau đó bị coi là "đã dùng" | Không đưa vào; test khoá (Esc ở màn chính sau các lớp Giáng sinh vẫn đóng cửa sổ) |
 | Gửi lại thiệp tự động lúc đồng bộ dài → "Anki đang đồng bộ" bật lặp mỗi lần gửi | `le:card:` là lệnh tự động (không báo); xưởng thiệp ghi một dòng; gửi lại khi vườn dựng lại sau đồng bộ |
 | Xoá thiệp bị bỏ lúc đồng bộ → chữ đang sửa trên thiệp đó không còn được lưu | Chưa xoá được thì đánh dấu chưa lưu (lần lưu sau giữ chữ đang thấy) |

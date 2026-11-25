@@ -210,6 +210,24 @@ ok(v23["due"] and v24["due"] and not v23b["due"] and not v23["morning"],
 ev_e["santa"] = {"seen": "2026-12-24T19:00:00"}
 ok(not le.santa_view(ev_e, D(2026, 12, 23), T(2026, 12, 24, 19, 30))["due"], "(e) đã xem rồi thì không chiếu lại")
 
+import base64 as _b64, zlib as _zlib  # noqa: E402
+
+
+def _pack(obj):
+    z = _zlib.compress(json.dumps(obj, ensure_ascii=False).encode("utf-8"), 9)
+    return le.CODE_PREFIX + _b64.urlsafe_b64encode(z).decode().rstrip("=") + ":" + ("%08x" % (_zlib.crc32(z) & 0xFFFFFFFF))[:6]
+
+
+bad_c = []
+for cc in ([], {}, [["ja"]], {"ja": 1}):
+    try:
+        r = le.decode_card(_pack({"f": "den", "st": [], "c": cc}))
+        if not r or r["c"] != "":
+            bad_c.append(repr(cc))
+    except Exception as e:          # noqa: BLE001
+        bad_c.append("%r → %s" % (cc, type(e).__name__))
+ok(not bad_c, "(tìm thêm) mã thiệp sửa tay có câu chúc là mảng / đối tượng → đọc được, bỏ câu chúc (1.36.1: TypeError)" + (" — " + "; ".join(bad_c) if bad_c else ""))
+
 # =========================================================================================================
 print("== D. bản 1.36.1 (mã thật) chạy chen")
 spec = importlib.util.spec_from_file_location("le_core_1361", os.path.join(HERE, "..", "fixtures", "le_1361", "le_core.py"))

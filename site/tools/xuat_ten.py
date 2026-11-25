@@ -19,6 +19,7 @@ sys.path.insert(0, os.path.join(ROOT, "tests", "stubs"))
 import finds_core  # noqa: E402
 import garden_core as core  # noqa: E402
 import guest_core  # noqa: E402
+import le_core  # noqa: E402
 
 # garden_core nạp bản riêng của các *_core (khi chạy ngoài Anki) và nối chúng với nhau — dùng đúng các bản đó
 decor_core, more_core, season_core, share_core = core.decor, core.more, core.season, core.share
@@ -37,6 +38,37 @@ def _contact() -> str:
     with open(os.path.join(ADDON, "__init__.py"), encoding="utf-8") as f:
         m = re.search(r'^CONTACT_EMAIL\s*=\s*"([^"]+)"', f.read(), re.M)
     return m.group(1) if m else ""
+
+
+def _le() -> dict:
+    """1.36: sự kiện Giáng sinh (le_core) cho mục "Giáng sinh 2026" của trang — lịch, luật, ngăn theo nhóm, câu chúc, mã thiệp.
+    Hộp quà bí mật: chỉ ghi số hộp (món bên trong để `box_items` — xuat_hinh.js dùng để che ở Kho hình tới 25/12, không ghi ra
+    su_kien.json)."""
+    doors = []
+    box_items: list[str] = []
+    for d in sorted(le_core.DOORS):
+        info = le_core.DOORS[d]
+        if info["kind"] == "qua":
+            box_items += list((info.get("item") or {}).keys())
+            doors.append({"kind": "qua"})
+            continue
+        doors.append({"kind": info["kind"], "name": info["name"], "desc": info["desc"],
+                      "items": sorted((info.get("item") or {}).keys()), "tiles": list(info.get("tiles") or [])})
+    sample = {"f": "thong", "st": [{"s": "xmastree", "x": 4, "y": 22}, {"s": "presents", "x": 34, "y": 52},
+                                    {"s": "stackchan", "x": 88, "y": 43}, {"s": "le_tat", "x": 70, "y": 50, "m": 1}],
+              "t1": "Giáng sinh an lành!", "t2": "— ことば畑", "c": "ja"}
+    return {
+        "id": le_core.EV_ID, "year": le_core.YEAR, "pre_from": le_core.PRE_FROM.isoformat(), "first": le_core.FIRST.isoformat(),
+        "doors_n": le_core.DOORS_N, "end": le_core.END.isoformat(), "box_day": le_core.BOX_DAY.isoformat(),
+        "eve": le_core.EVE.isoformat(timespec="minutes"), "makeup_per": le_core.MAKEUP_PER, "makeup_max": le_core.MAKEUP_MAX,
+        "kinds": le_core.KIND_NAMES, "doors": doors, "boxes": len(le_core.BOX_DOORS), "box_items": box_items,
+        "chuc": le_core.CHUC, "frames": [{"id": f, "name": le_core.FRAME_NAMES[f]} for f in le_core.FRAMES],
+        "langs": le_core.LANG_VI, "fix_per_day": le_core.FIX_PER_DAY, "cards": le_core.CARDS_MAX,
+        "code": {"prefix": le_core.CODE_PREFIX, "max": le_core.CODE_MAX, "unzip_max": 16000},
+        "limits": {"t1": le_core.T1_MAX, "t2": le_core.T2_MAX, "stickers": le_core.STICKERS_MAX, "w": le_core.CARD_W,
+                   "h": le_core.CARD_H, "recv": le_core.RECV_MAX},
+        "sample": le_core.card_code(sample),
+    }
 
 
 def main() -> None:
@@ -66,6 +98,7 @@ def main() -> None:
         "seeds": more["seeds"],
         "cal_flowers": CAL_FLOWERS,
         "uzone": more["uzone"],
+        "le": _le(),
         "guests": [dict({"id": k}, **{f: v.get(f) for f in ("name", "ja", "hint", "where")}) for k, v in guest_core.GUESTS.items()],
         "finds": [dict({"id": k}, **v) for k, v in finds_core.FINDS.items()],
         "find_scenes": finds_core.SCENE_NAMES,
