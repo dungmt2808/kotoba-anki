@@ -1666,7 +1666,7 @@ A. **Công trình của làng** — vài công trình lớn nhiều bước như
    thuộc / chuỗi ngày / số ngày có ôn, không mua bằng xu; C. **sự kiện theo mùa nối tiếp Giáng sinh** (dùng lại khung `le_core`:
    Tết 2027, Hanami tháng 3–4…); D. biến thể màu cho đồ đã có; E. Khoe vườn bằng mã trên trang web (ý 1.35.7).
 
-### 10.0f Sự kiện mùa — Giáng sinh 1.36 (**1.36.0 + 1.36.1 đã làm 24/11, 1.36.2 sửa lỗi audit** — mục 2.6z25, 2.6z26, 2.6z27; còn: StackChan ăn bánh kem, ảnh kỷ niệm tự chụp, trang web mở mã thiệp, năm sau bày lại bộ 2026, Tô tranh — đầu `docs/ke_hoach_1_36/KE_HOACH.md`)
+### 10.0f Sự kiện mùa — Giáng sinh 1.36 (**1.36.0 + 1.36.1 đã làm 24/11, 1.36.2 sửa lỗi audit** — mục 2.6z25, 2.6z26, 2.6z27; còn: StackChan ăn bánh kem, ảnh kỷ niệm tự chụp, năm sau bày lại bộ 2026, Tô tranh — trang web xem mã thiệp đã làm 25/11 — đầu `docs/ke_hoach_1_36/KE_HOACH.md`)
 Kế hoạch + ảnh (bản 3 ở `ban3/`, bản 2 ở `ban2/`): **`docs/ke_hoach_1_36/KE_HOACH.md`** (mục 0 ở trên). Khung dùng lại cho Tết (cây mai / đào + lì xì; mùng 1 = 6/2/2027). Phần đã đề xuất trước (StackChan sinh hoạt tháng 12, khách tuần lộc, gánh hàng bán đồ Noel, một dòng "đêm Giáng sinh" trong lời nhắc báo) để sau cùng, không kịp thì bỏ.
 
 ### 10.0a Trang web chung — việc có thể làm tiếp (chưa hỏi người dùng)
