@@ -1708,6 +1708,23 @@ A. **Công trình của làng** — vài công trình lớn nhiều bước như
    thuộc / chuỗi ngày / số ngày có ôn, không mua bằng xu; C. **sự kiện theo mùa nối tiếp Giáng sinh** (dùng lại khung `le_core`:
    Tết 2027, Hanami tháng 3–4…); D. biến thể màu cho đồ đã có; E. Khoe vườn bằng mã trên trang web (ý 1.35.7).
 
+**Người dùng 25/11 tối: "nghĩ các việc thêm để tiêu xu đi bạn"** → Claude đề xuất (chưa làm, **chờ người dùng chọn**; giữ luật cũ:
+không gacha, không nhân đôi xu, không phạt / mất đồ, không đổi FSRS, không đồ "chỉ một lần"):
+1. **Sổ ép hoa** — cây lên "Ra hoa / Ra quả" (thẻ đã thuộc) thì ép được hoa của từ đó vào sổ (~20 xu / bông; trang sổ ghi từ +
+   nghĩa + ngày ép, xếp theo deck / giống cây). Chỗ tiêu xu **lớn dần theo số từ đã thuộc** — người ôn nhiều tiêu nhiều.
+2. **Đồ dùng cho StackChan sinh hoạt** — cần câu, kính thiên văn, bộ trà đạo, bếp nướng, giá vẽ, đàn koto, xe đạp… (500–2.000 xu):
+   mỗi món mở việc mới trong Sổ sinh hoạt + câu tiếng Nhật (`life_core` đã xét việc theo đồ đã đặt — `need`).
+3. **Công trình của làng** (ý A ở trên, cụ thể hơn) — đền nhỏ + cổng torii (rút quẻ omikuji 10 xu / lần — ý 1.27), suối nước nóng,
+   ga tàu (khách đến bằng tàu), cầu đá, cối xay gió, nhà kính; mỗi cái 4–6 bước như xây nhà, 8–25 nghìn xu, cả bộ ~100 nghìn.
+4. **Đồ dùng hết** — hoa tươi trong bình theo mùa (~60 xu, tươi 7 ngày, héo thì thôi — không phạt), pháo hoa tự bắn ban đêm (100–300
+   xu, chọn màu / hình; mẫu tự vẽ ở Xưởng), bánh / đồ ăn sáng cho StackChan, quà vặt cho thú (chỉ thêm cảnh, không tăng độ thân).
+5. **Tiệc trong vườn** — 500–2.000 xu: một ngày mọi khách cùng ghé, bàn tiệc + đèn lồng, ảnh kỷ niệm ở Album.
+6. **Sơn lại đồ** (ý D) — đổi màu một món đã có theo bảng màu (~100 xu / lần, bảng màu mở dần).
+7. **Quà gửi bạn bằng mã** — mua một món tặng → mã `KBG…` (như mã thiệp); bạn dán mã nhận món (mỗi mã một lần mỗi hồ sơ).
+8. **Đĩa nhạc + máy hát** — bài 8-bit mới (300–800 xu / bài), máy hát đặt trong nhà.
+9. **Bìa / giấy / mực cho cuốn nhật ký** (Lịch hoa) — 200–600 xu mỗi mẫu.
+Claude đề xuất làm trước: 1 + 2 (vừa sức, gắn với học / hệ thống có sẵn), rồi 4 (nhỏ, tiêu đều mỗi tuần), 3 để dài hạn.
+
 ### 10.0f Sự kiện mùa — Giáng sinh 1.36 (**1.36.0 + 1.36.1 đã làm 24/11, 1.36.2 sửa lỗi audit, 1.36.3 vẽ lên thiệp + quả châu tự vẽ 25/11** — mục 2.6z25, 2.6z26, 2.6z27, 2.6z28; còn: gửi quả châu qua mã (nếu cần); còn: StackChan ăn bánh kem, ảnh kỷ niệm tự chụp, năm sau bày lại bộ 2026, Tô tranh — trang web xem mã thiệp đã làm 25/11 — đầu `docs/ke_hoach_1_36/KE_HOACH.md`)
 Kế hoạch + ảnh (bản 3 ở `ban3/`, bản 2 ở `ban2/`): **`docs/ke_hoach_1_36/KE_HOACH.md`** (mục 0 ở trên). Khung dùng lại cho Tết (cây mai / đào + lì xì; mùng 1 = 6/2/2027). Phần đã đề xuất trước (StackChan sinh hoạt tháng 12, khách tuần lộc, gánh hàng bán đồ Noel, một dòng "đêm Giáng sinh" trong lời nhắc báo) để sau cùng, không kịp thì bỏ.
 
