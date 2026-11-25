@@ -1656,6 +1656,16 @@ cần tưới lên đầu, 03 bấm chú thích để lọc, 04 vườn quả (c
 "không đẹp" → **người dùng chọn kiểu 01b: chỉ biển gỗ nhỏ ở đầu luống**, "hiện tại chắc chưa triển khai, bạn ghi lại trước đi
 nhé". Khi làm: hỏi lại cách xếp (01 / 02 / 03 / 04, kết hợp được); chỉ đổi hiển thị, mặc định giữ như cũ.
 
+### 10.0g Nội dung dài hạn cho người chơi đã mua gần hết (25/11 — **chờ người dùng chọn**)
+Người dùng 25/11: có người chơi nhắn "sắp phá đảo hết rồi", chính người dùng học gần 1 tháng đã mua nhà thứ 2. Ước tính (mã hiện
+tại): +1 xu mỗi lượt nhớ được + 2 × giai đoạn khi cây lớn, nhiệm vụ 3 × 20 + rương 30 / ngày → người ôn 200–500 lượt / ngày được
+~300–700 xu / ngày; mua mỗi thứ một lần ~65–75 nghìn xu (đồ bán 23.610, nhà 3.430, kiểu nhà 6.500, vùng 27.000, mở rộng nhà 2.000,
+giống cây / thú / tường sàn…) → 3–6 tháng là hết thứ để mua. Đề xuất (Claude, chưa làm — không giảm xu kiếm được của người cũ):
+A. **Công trình của làng** — vài công trình lớn nhiều bước như xây nhà (cầu đá, tháp chuông, bến thuyền, ga tàu…), mỗi cái 5–30
+   nghìn xu, mở lần lượt, hiện trong vườn; B. **Mốc học** (đã có trong lộ trình 1.27) — huy hiệu + đồ trang trí riêng theo số thẻ đã
+   thuộc / chuỗi ngày / số ngày có ôn, không mua bằng xu; C. **sự kiện theo mùa nối tiếp Giáng sinh** (dùng lại khung `le_core`:
+   Tết 2027, Hanami tháng 3–4…); D. biến thể màu cho đồ đã có; E. Khoe vườn bằng mã trên trang web (ý 1.35.7).
+
 ### 10.0f Sự kiện mùa — Giáng sinh 1.36 (**1.36.0 + 1.36.1 đã làm 24/11, 1.36.2 sửa lỗi audit** — mục 2.6z25, 2.6z26, 2.6z27; còn: StackChan ăn bánh kem, ảnh kỷ niệm tự chụp, trang web mở mã thiệp, năm sau bày lại bộ 2026, Tô tranh — đầu `docs/ke_hoach_1_36/KE_HOACH.md`)
 Kế hoạch + ảnh (bản 3 ở `ban3/`, bản 2 ở `ban2/`): **`docs/ke_hoach_1_36/KE_HOACH.md`** (mục 0 ở trên). Khung dùng lại cho Tết (cây mai / đào + lì xì; mùng 1 = 6/2/2027). Phần đã đề xuất trước (StackChan sinh hoạt tháng 12, khách tuần lộc, gánh hàng bán đồ Noel, một dòng "đêm Giáng sinh" trong lời nhắc báo) để sau cùng, không kịp thì bỏ.
 
