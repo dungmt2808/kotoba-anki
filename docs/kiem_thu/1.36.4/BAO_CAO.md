@@ -58,14 +58,15 @@ Trước đây `run_capnhat.sh` / `run_habanh.sh` chỉ chạy với **1.31.3**.
 - `tests/core/test_1364.py` (**28/28**; mã 1.36.3: **đỏ 9**): `is_new_player` 14 ca; **hàm `idle()` thật chạy bằng node với DOM giả**
   (phần tử fixed có `offsetParent` = null như trình duyệt); `tour.js busy`; hợp đồng dữ liệu = 1.36.3 (khoá collection, `config.json`,
   danh sách file đổi). Đã thêm vào `run_all.sh`.
-- `tests/anki/e2e_nguoimoi_noel.js` (Anki thật): 1.36.4 **22/22** … (kết quả đầy đủ ở mục 4).
+- `tests/anki/e2e_nguoimoi_noel.js` (Anki thật): 1.36.3 **đỏ 6/16** → 1.36.4 **22/22** trên 26.9.4, **24/24** trên 23.10.1 (thêm ca người mới tối
+  24 bấm "Bỏ qua" hướng dẫn → cảnh ông già Noel tự chạy).
 
 ## 4. Kịch bản mới ngoài bộ test có sẵn
 
 | # | Kịch bản | Cái mới so với bộ cũ | Kết quả |
 |---|---|---|---|
-| K1 | **Đồng hồ máy giả** — `tests/anki/run_dongho.sh` + `e2e_dongho.js` | Bộ cũ dùng ngày giả `kb.LE_TEST` (chỉ add-on thấy). Lần này chạy Anki thật dưới **libfaketime** (bản đa luồng), **múi giờ Việt Nam**: lịch ôn của Anki, revlog, giờ đổi ngày 4:00, `datetime.now()` của Python và `Date` của trang cùng một đồng hồ. Đi từ 30/11 21:00 tới 2/1, **để vườn mở qua giờ đổi ngày** (đồng hồ 60 giây thật của vườn tự dựng lại) | 26.9.4 trên 1.36.3: **56/58** — 2 ca đỏ là kỳ vọng sai của test (đếm revlog trước khi lượt chấm chạy nền xong; ngày 1/1 không có món phải cất nên đúng ra không bật bảng trống), đã sửa test. 23.10.1: … |
-| K2 | Quét giao diện mọi bảng Giáng sinh — `e2e_giaodien_noel.js` | Tủ lịch (12/12, 25/12), xưởng thiệp (4 thẻ + mặt sau), quả châu, cảnh tối 24 (đang chạy + khung cuối), thư, cất đồ, Album → Kỷ niệm × cửa sổ 1366 / 1024 / 800 (+ 720 × 540), Anki giao diện tối, vườn tiếng Nhật, **chữ 150%** (`ANKI_WEBSCALE=1.5`). Đo: bảng trong cửa sổ hoặc cuộn được, mọi nút / ô với tới được, chữ không tràn nút, nút không đè nhau, độ tương phản chữ | 1.36.3: **97/97** (chữ 100%); chữ 150%: 95/97 — 2 ca là bảng Nhà → Kỷ niệm ở khung 683 × 427 phải **cuộn trang** (bố cục chung của bảng Nhà có từ trước, không phải lỗi; test tính cả cuộn trang). 1.36.4: … |
+| K1 | **Đồng hồ máy giả** — `tests/anki/run_dongho.sh` + `e2e_dongho.js` | Bộ cũ dùng ngày giả `kb.LE_TEST` (chỉ add-on thấy). Lần này chạy Anki thật dưới **libfaketime** (bản đa luồng), **múi giờ Việt Nam**: lịch ôn của Anki, revlog, giờ đổi ngày 4:00, `datetime.now()` của Python và `Date` của trang cùng một đồng hồ. Đi từ 30/11 21:00 tới 2/1, **để vườn mở qua giờ đổi ngày** (đồng hồ 60 giây thật của vườn tự dựng lại) | 26.9.4 trên 1.36.3: **56/58** — 2 ca đỏ là kỳ vọng sai của test (đếm revlog trước khi lượt chấm chạy nền xong; ngày 1/1 không có món phải cất nên đúng ra không bật bảng trống), đã sửa test. 23.10.1 trên 1.36.3: lượt đầu dừng ở bước 25/12 04:05 (thư chưa mở sau 80 giây — máy đang chạy 4 việc; đồng hồ của vườn 60 giây + dựng lại) → nâng ngưỡng chờ lên 150 giây. Kết quả trên 1.36.4: mục 4.1 |
+| K2 | Quét giao diện mọi bảng Giáng sinh — `e2e_giaodien_noel.js` | Tủ lịch (12/12, 25/12), xưởng thiệp (4 thẻ + mặt sau), quả châu, cảnh tối 24 (đang chạy + khung cuối), thư, cất đồ, Album → Kỷ niệm × cửa sổ 1366 / 1024 / 800 (+ 720 × 540), Anki giao diện tối, vườn tiếng Nhật, **chữ 150%** (`ANKI_WEBSCALE=1.5`). Đo: bảng trong cửa sổ hoặc cuộn được, mọi nút / ô với tới được, chữ không tràn nút, nút không đè nhau, độ tương phản chữ | 1.36.3: **97/97** (chữ 100%); chữ 150%: 95/97 — 2 ca là bảng Nhà → Kỷ niệm ở khung 683 × 427 phải **cuộn trang** (bố cục chung của bảng Nhà có từ trước, không phải lỗi; test tính cả cuộn trang). 1.36.4: **97/97** cả chữ 100% lẫn 150% |
 | K3 | Bấm bừa lệnh `le:*` — `e2e_fuzz_noel.js` | Bộ bấm bừa cũ (1.30) chưa có lệnh Giáng sinh. 1.290 lệnh đúng / sai (ngăn / hộp / ô lạ, JSON hỏng, thiệp sai kiểu, chuỗi 5.000 ký tự, mã thiệp sửa hỏng, quả châu sai cỡ, `le:keep` rác, bật / tắt sự kiện, xem thử khi không phải admin) qua 34 ngày (1/12 → 3/1, giờ ngẫu nhiên cả 17:59 / 18:00 ngày 24) | **Bất biến giữ hết**: xu không đổi (7.777), món sự kiện = đúng sổ, đặt ≤ có, sổ luôn sạch, ngăn chỉ mở đúng ngày / ≤ 31/12, mở bù ≤ 2 / ngày, hộp từ 25/12, thiệp ông già Noel đã mang đi không đổi; không lỗi JS. Nhật ký lỗi chỉ có dòng của lệnh **JSON hỏng** — trang không bao giờ gửi kiểu này (luôn `JSON.stringify`), cầu nối đã bắt và trả lời "không làm được" → để nguyên (nới `except` sẽ nuốt lỗi thật) |
 | K4 | Người mới cài trong mùa — `e2e_nguoimoi_noel.js` | Màn chào + hướng dẫn **bật** (kịch bản cũ tắt cả hai) | Tìm ra **B1 + B2**. 1.36.3: đỏ 6/16. 1.36.4: **22/22** (+ người mới tối 24 bấm "Bỏ qua" hướng dẫn → cảnh tự chạy) |
 | K5 | Dữ liệu Giáng sinh tối đa (Python, `le_core`) | 3 thiệp vẽ kín + 24 thiệp nhận có hình vẽ (mã ~5.300 ký tự) | Khoá `kotoba_batake_le` **115 KB**; làm sạch 15 ms, gộp hai máy 31 ms, `view_more` 7 ms → mỗi lần dựng vườn thêm ≤ ~50 ms ở mức tối đa (bình thường < 5 ms). Chấp nhận được |
@@ -75,10 +76,22 @@ Trước đây `run_capnhat.sh` / `run_habanh.sh` chỉ chạy với **1.31.3**.
 - Ôn lúc 01:00 ngày 1/12 vẫn tính cho ngày 30/11 (giờ đổi ngày 4:00), nên ngăn 1 vẫn chờ ôn. Ôn lúc 02:30 ngày 3/12 tính cho ngăn 2,
   là mở thường chứ không phải mở bù. Mở bù tính theo ngày Anki: 03:00 ngày 7/12 vẫn là "hôm nay đủ 2 ngăn", 04:10 thì mở bù tiếp được.
 - Vườn để mở qua 4:00 ngày 1/12 tự tặng tủ lịch + cây thông. Qua 18:00 ngày 24 thì ông già Noel tự ghé và thiệp khoá. Qua 4:00 ngày
-  25/12 thì thư tự mở. Qua 4:00 ngày 1/1 thì tự cất đồ. Mỗi lần cần ≤ 75 giây (đồng hồ 60 giây của vườn), không phải đóng / mở vườn.
+  25/12 thì thư tự mở. Qua 4:00 ngày 1/1 thì tự cất đồ. Mỗi lần mất 22–119 giây (đồng hồ 60 giây của vườn, bỏ qua một nhịp khi Anki đang bận), không phải đóng / mở vườn.
 - 00:40 ngày 25/12 (ngày Anki còn là 24) thì hộp quà chưa mở được và chưa có thư.
 - Đồng hồ máy lùi về 20/12 sau khi đã cất đồ: không lỗi, sổ / kho không đổi, không tặng lại. Anki giữ ngày đã tính tới khi đồng hồ
   vượt lại mốc.
+
+### 4.1 Chạy lại trên gói 1.36.4
+
+| Bộ | 26.9.4 | 23.10.1 |
+|---|---|---|
+| `tests/run_all.sh` (gói đã giải nén, 83 mục) | **TẤT CẢ OK** (sau khi xuất lại dữ liệu trang web cho số bản 1.36.4 — `node site/tools/xuat_hinh.js`, chỉ đổi dòng `version`) | — |
+| Mới: `e2e_nguoimoi_noel` · `e2e_giaodien_noel` · `e2e_fuzz_noel` | **22/22 · 97/97 · 5/5** | **24/24** · — · **5/5** |
+| Mới: `e2e_dongho` (đồng hồ máy giả) | **59/59** (tự dựng lại sau 45 / 66 / 72 / 70 giây) | **59/59** (22 / 119 / 59 / 50 giây — 119: một nhịp 60 giây của vườn bỏ qua lúc Anki bận, đúng thiết kế) |
+| Hồi quy hướng dẫn / màn chào: `e2e_1261` · `e2e_126` | **41/41 · 39/39** | **41/41** · — |
+| Hồi quy Giáng sinh: `e2e_136` · `e2e_1361` · `e2e_1362` · `e2e_1363` | **66/66 · 81/81 · 40/40 · 44/44** | **66/66 · 81/81 · 40/40 · 44/44** |
+| Cập nhật đè 1.35.6 → 1.36.4 · hạ bản 1.36.4 → 1.35.6 → 1.36.4 · cập nhật đè 1.31.3 → 1.36.4 | **23/23 · 33/33 · 23/23** | — |
+| Chữ 150% (`ANKI_WEBSCALE=1.5`) `e2e_giaodien_noel` | **97/97** | — |
 
 ## 5. Đánh giá mức độ hoàn thiện
 

@@ -96,11 +96,11 @@ async function clickDoor(d) {
   for (const type of ['mousePressed', 'mouseReleased']) await page.send('Input.dispatchMouseEvent', { type, x: pt[0], y: pt[1], button: 'left', clickCount: 1 });
   return true;
 }
-// chờ đồng hồ 60 giây của vườn (GardenDialog._day_timer) tự dựng lại — không gọi tay
+// chờ đồng hồ 60 giây của vườn (GardenDialog._day_timer) tự dựng lại — không gọi tay (≤ 150 giây)
 async function waitTimer(expr, label) {
   const t0 = Date.now();
-  const got = await waitFor(expr, 80000);
-  ok(got, label + (got ? ' (sau ' + Math.round((Date.now() - t0) / 1000) + ' giây)' : ' — quá 80 giây'));
+  const got = await waitFor(expr, 150000);      // đồng hồ của vườn 60 giây + dựng lại vườn (máy chậm / đang chạy nhiều việc)
+  ok(got, label + (got ? ' (sau ' + Math.round((Date.now() - t0) / 1000) + ' giây)' : ' — quá 150 giây'));
   return got;
 }
 const stateOf = async (d) => (await lev()).doors[d - 1].state;
@@ -247,7 +247,7 @@ result = did`);
   ok(r && !r.ok && /25\/12/.test(r.msg || ''), 'hộp quà 1 chưa mở được: "' + (r && r.msg) + '"');
   await setTime('2026-12-25 04:05:00');
   await waitTimer('(() => { const l = document.getElementById("kb-le-letter"); return !!l && !l.hidden; })()', '04:05 → vườn tự dựng lại, thư của ông già Noel tự mở');
-  const lt = await js('return document.getElementById("kb-le-letter").textContent;');
+  const lt = await js('const l = document.getElementById("kb-le-letter"); return l ? l.textContent : "";');
   ok(/Con muốn học giỏi tiếng Nhật/.test(lt), 'thư nhắc điều ước trên thiệp đã treo');
   await page.shot(SHOTS + '/dongho_03_2504.png');
   await page.key('Escape', 'Escape', 27); await sleep(400);
