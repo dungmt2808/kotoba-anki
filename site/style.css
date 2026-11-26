@@ -162,6 +162,53 @@ input:focus-visible, textarea:focus-visible, .btn:focus-visible, .chip:focus-vis
 .steps p, .steps ul { margin: 0 0 8px; }
 .steps ul { padding-left: 20px; }
 
+/* ---------------------------------------------------------------- Giáng sinh 2026 (1.36.2) */
+.tabs a.tab-ev { background: #fbe1e4; }
+.tabs a.tab-ev:hover { background: #f8ccd2; }
+.tabs a.tab-ev[aria-current="page"] { background: #f2a3ae; }
+.ev .card h3 { margin: 0 0 8px; font-size: 18px; }
+.ev-hero { display: flex; gap: 18px; align-items: center; margin-bottom: 18px; background: #fff6e6; }
+.ev-hero-art { flex: none; background: #1f2b52; border: 3px solid var(--ink); padding: 6px; line-height: 0; }
+#ev-art { width: 240px; max-width: 100%; height: auto; }
+.ev-hero-text { min-width: 0; }
+.ev-hero-text h2 { margin: 2px 0 6px; font-size: 23px; }
+.ev-hero-text p { margin: 0 0 8px; }
+.ev-hero .kicker { color: var(--ink-2); opacity: 1; }
+.ev-now { display: inline-block; background: var(--sun); border: 2px solid var(--ink); padding: 3px 10px; font-weight: 600; }
+.ev-h { margin: 4px 0 10px; font-size: 21px; }
+:root[data-theme="dark"] .ev-h { color: #fff3dc; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .ev-h { color: #fff3dc; } }
+.ev-time { list-style: none; margin: 0 0 18px; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 10px; }
+.ev-time li { background: var(--paper); border: 3px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); padding: 8px 10px; display: flex; flex-direction: column; gap: 2px; font-size: 14px; }
+.ev-time li .when { font-size: 15px; color: #7a1f2a; }
+.ev-time li.is-now { background: #fff1b8; box-shadow: 3px 3px 0 #c21f3a; border-color: #7a1f2a; }
+.ev-cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-bottom: 16px; align-items: start; }
+.ev-sec { margin-bottom: 16px; }
+.ev-list { margin: 0; padding-left: 20px; }
+.ev-list li { margin: 0 0 6px; }
+.ev-steps li::marker { font-weight: 700; color: #7a1f2a; }
+.ev-sub { margin: 14px 0 4px; font-size: 16px; }
+.ev-gifts { display: flex; flex-direction: column; gap: 10px; }
+.ev-gift { display: flex; gap: 12px; align-items: center; border-top: 2px dashed var(--line); padding-top: 10px; }
+.ev-gift:first-child { border-top: 0; padding-top: 0; }
+.ev-gift-art { flex: none; width: 112px; min-height: 40px; display: flex; flex-wrap: wrap; gap: 4px; align-items: flex-end; justify-content: center;
+  background: var(--mist); border: 2px solid var(--ink); padding: 4px; }
+.ev-gift-art canvas, .ev-gift-art img { display: block; max-width: 100%; height: auto; }
+.ev-gift[data-kind="trong"] .ev-gift-art { width: 150px; }
+.ev-gift-art img.ev-tile { width: 32px; height: 24px; object-fit: none; object-position: 30% 12px; border: 2px solid var(--ink); }
+.ev-gift-art img.ev-tile.is-floor { object-position: 30% 100%; }
+.ev-gift-text { min-width: 0; }
+.ev-gift-text h4 { margin: 0 0 2px; font-size: 15px; }
+.ev-gift-text p { margin: 0 0 2px; font-size: 14px; }
+.ev-out { margin-top: 12px; }
+.ev-out .ev-card { display: block; width: 480px; max-width: 100%; height: auto; border: 3px solid var(--ink); box-shadow: 4px 4px 0 var(--ink); }
+.ev-faq details { border-top: 2px dashed var(--line); padding: 6px 0; }
+.ev-faq details:first-child { border-top: 0; }
+.ev-faq summary { cursor: pointer; font-weight: 600; }
+.ev-faq p { margin: 6px 0 2px; font-size: 15px; }
+.item.secret .art { background: #efe6d8; }
+.item.secret .name { font-style: italic; }
+
 /* ---------------------------------------------------------------- hộp chi tiết */
 dialog { border: 0; padding: 0; background: transparent; max-width: min(980px, calc(100vw - 24px)); width: 100%; color: var(--ink); }
 dialog::backdrop { background: rgba(36, 28, 24, .55); }
@@ -198,6 +245,11 @@ dialog::backdrop { background: rgba(36, 28, 24, .55); }
   .grid { grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 10px; }
   .item.wide { grid-column: 1 / -1; }
   .result { grid-template-columns: 1fr; }
+  .ev-hero { flex-direction: column; align-items: stretch; }
+  .ev-hero-art { align-self: center; }
+  .ev-cols { grid-template-columns: 1fr; }
+  .ev-gift { flex-direction: column; align-items: flex-start; }
+  .ev-gift-art, .ev-gift[data-kind="trong"] .ev-gift-art { width: 100%; justify-content: flex-start; }
   .dlg-in { grid-template-columns: 1fr; }
   .dlg-view { border-right: 0; border-bottom: 3px solid var(--ink); min-height: 200px; }
   .tabs a { font-size: 14px; padding: 4px 9px; }

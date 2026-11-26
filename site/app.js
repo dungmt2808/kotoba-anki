@@ -1,5 +1,6 @@
-/* ことば畑 · trang web chung — giao diện: Kho hình · Mã cộng đồng · Xem mã · Gửi thiết kế.
-   Dữ liệu: data/hinh.json (site/tools/xuat_hinh.js), data/thong_tin.json, data/cong_dong.json (site/tools/them_ma.py).
+/* ことば畑 · trang web chung — giao diện: Giáng sinh 2026 · Kho hình · Mã cộng đồng · Xem mã · Gửi thiết kế · Báo lỗi.
+   Dữ liệu: data/hinh.json (site/tools/xuat_hinh.js), data/thong_tin.json, data/cong_dong.json (site/tools/them_ma.py),
+   data/su_kien.json (1.36.2: sự kiện Giáng sinh — xuat_hinh.js từ le_core.py; thiệp vẽ bằng thiep.js).
    Mọi chữ từ dữ liệu đưa vào trang bằng textContent (không innerHTML). */
 (function () {
   "use strict";
@@ -20,7 +21,7 @@
   const FXN = { none: "Không", sway: "Đung đưa", bounce: "Nhún nhảy", float: "Bay lơ lửng", sparkle: "Lấp lánh", glow: "Phát sáng ban đêm",
     hearts: "Tim bay", notes: "Nốt nhạc", bubbles: "Bong bóng", pulse: "Nhấp nháy sáng", spin: "Xoay tròn" };
   const TNAME = { m: "Món đồ", z: "Vùng", g: "Giống cây" };
-  let HINH = { groups: [] }, INFO = null, CD = { ma: [] };
+  let HINH = { groups: [] }, INFO = null, CD = { ma: [] }, EV = null;
   let seedBase = null, seedPal = null;
 
   // ---------------------------------------------------------------- tiện ích
@@ -78,10 +79,29 @@
     return c;
   }
 
+  // ---------------------------------------------------------------- quà bí mật (1.36.2)
+  // món trong hộp quà bí mật của tủ lịch Giáng sinh: tới sáng mở hộp (ngày ở `secret`, theo ngày trên máy người xem) chỉ hiện
+  // hình bóng, không tên — để người chơi tự mở hộp
+  function today() { const d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
+  const ddmm = (iso) => { const p = String(iso || "").split("-"); return p.length === 3 ? Number(p[2]) + "/" + Number(p[1]) : ""; };
+  // món bí mật: mã ẩn (bi_mat_1…) cho đường dẫn / chữ để tìm — mã món (le_…) đọc ra được tên món
+  function aliasSecrets() {
+    HINH.groups.forEach((g) => { let k = 0; g.items.forEach((it) => { if (it.secret) { k++; it.alias = "bi_mat_" + k; } }); });
+  }
+  function masked(it) {
+    if (!it.secret || today() >= it.secret) { return it; }
+    const fr = {};
+    Object.keys(it.frames || {}).forEach((k) => { fr[k] = it.frames[k].map((r) => r.replace(/[^.]/g, "s")); });
+    return { id: it.alias || "bi_mat", name: "Quà bí mật", tag: "Hộp quà bí mật · mở từ sáng " + ddmm(it.secret), desc: "Bên trong là gì thì… bí mật! Mở hộp quà dưới gốc cây thông từ sáng " + ddmm(it.secret) + " nhé.",
+      frames: fr, labels: {}, pal: { s: "#7a6554" }, w: it.w, h: it.h, secret: it.secret, hidden: true };
+  }
+
   // ---------------------------------------------------------------- Kho hình
   let khoGroup = "", khoQ = "";
   function itemCard(g, it) {
+    it = masked(it);
     const b = el("button", "item"); b.type = "button";
+    if (it.hidden) { b.classList.add("secret"); }
     b.setAttribute("data-id", g.id + "/" + it.id);
     const w = it.img ? it.img.w : it.w, h = it.img ? it.img.h : it.h;
     const wide = w > 110;
@@ -122,7 +142,8 @@
   }
   function matches(g, it, q) {
     if (!q) { return true; }
-    const hay = fold([it.name, it.ja, it.kana, it.tag, it.id, it.desc, g.name].join(" "));
+    it = masked(it);
+    const hay = fold([it.name, it.ja, it.kana, it.tag, it.hidden ? "" : it.id, it.desc, g.name].join(" "));
     return q.split(/\s+/).every((w) => hay.indexOf(w) >= 0);
   }
   function renderKhoChips() {
@@ -196,8 +217,9 @@
     $("dlg-dl").appendChild(b);
   }
   function openItem(gid, id) {
-    const g = HINH.groups.find((x) => x.id === gid), it = g && g.items.find((x) => x.id === id);
-    if (!it) { return false; }
+    const g = HINH.groups.find((x) => x.id === gid), it0 = g && (g.items.find((x) => x.alias === id) || g.items.find((x) => x.id === id && !masked(x).hidden));
+    if (!it0) { return false; }
+    const it = masked(it0);
     dlgReset();
     $("dlg-title").textContent = it.name;
     setText("dlg-tag", g.name + (it.tag ? " · " + it.tag : ""));
@@ -423,12 +445,168 @@
     if (bot && bot.img) { loadImg(bot.img.src).then(go, () => go(null)); } else { go(null); }
   }
 
+  // ---------------------------------------------------------------- Giáng sinh 2026 (1.36.2)
+  function evPhase() {
+    const t = today();
+    if (t < EV.pre_from) { return "xa"; }
+    if (t < EV.first) { return "pre"; }
+    if (t <= EV.year + "-12-" + String(EV.doors_n).padStart(2, "0")) { return "advent"; }
+    if (t <= EV.end) { return "after"; }
+    return "done";
+  }
+  function evDaysTo(iso) { return Math.round((new Date(iso + "T00:00:00") - new Date(today() + "T00:00:00")) / 86400000); }
+  function stickerImg(id, scale, title) {
+    const c = KBC.stickerCanvas(id, EV);
+    if (!c) { return null; }
+    const cv = KB.scaled(c, scale); cv.className = "px"; if (title) { cv.title = title; cv.setAttribute("aria-label", title); cv.setAttribute("role", "img"); }
+    return cv;
+  }
+  function tileImg(id) {
+    const g = HINH.groups.find((x) => x.id === "tuong_san"), it = g && g.items.find((x) => x.id === id);
+    if (!it || !it.img) { return null; }
+    // ô mẫu nhỏ (cắt một góc ảnh gian phòng: tường ở trên, sàn ở dưới)
+    const im = el("img", "px ev-tile" + (id.indexOf("f_") === 0 ? " is-floor" : "")); im.src = it.img.src; im.alt = it.name; im.title = it.name; im.loading = "lazy";
+    return im;
+  }
+  function renderEvent() {
+    if (!EV) { $("tab-giang-sinh").textContent = ""; $("tab-giang-sinh").appendChild(el("p", "err", "Không tải được dữ liệu sự kiện. Thử tải lại nhé.")); return; }
+    const ph = evPhase(), n24 = EV.doors_n, y = EV.year;
+    // trạng thái hôm nay
+    const now = $("ev-now"), d = Number(today().slice(8, 10));
+    now.textContent = ph === "xa" ? "Còn " + evDaysTo(EV.first) + " ngày nữa là tới mùa tủ lịch." :
+      ph === "pre" ? "Còn " + evDaysTo(EV.first) + " ngày nữa là mở ngăn đầu tiên (" + ddmm(EV.first) + ")." :
+      ph === "advent" ? "Hôm nay " + d + "/12: ngăn " + d + " đang chờ — ôn một thẻ là mở được." :
+      ph === "after" ? "Hộp quà dưới gốc cây đã mở được. Ngăn còn sót thì mở bù tới hết " + ddmm(EV.end) + "." :
+      "Mùa Giáng sinh " + y + " đã qua — tủ lịch, thiệp giữ ở Album → Kỷ niệm trong vườn.";
+    now.hidden = false;
+    // lịch
+    const T = [
+      ["pre", ddmm(EV.pre_from) + " – 30/11", "Tin làng báo trước: sắp tới mùa tủ lịch."],
+      ["first", ddmm(EV.first), "Lần đầu mở vườn trong mùa: tặng Tủ lịch Giáng sinh " + y + " (treo ở tường phòng khách) và một cây thông Noel (đặt ra sân) nếu bạn chưa có."],
+      ["advent", ddmm(EV.first) + " – " + n24 + "/12", "Mỗi ngày một ngăn — ngăn số mấy mở từ ngày đó."],
+      ["eve", n24 + "/12 · trước " + EV.eve.slice(11) , "Treo một tấm thiệp lên cây thông — tối đó ông già Noel ghé lấy thiệp. Chuyện gì xảy ra thì… mở vườn xem nhé."],
+      ["box", ddmm(EV.box_day), EV.boxes + " hộp quà bí mật dưới gốc cây mở được."],
+      ["end", ddmm(EV.end), "Hạn cuối mở ngăn và mở bù."],
+      ["done", "1/1/" + (y + 1), "StackChan cất đồ Noel: đèn sân, bánh về Kho đồ; tường / sàn Noel về mẫu bạn dùng trước đó. Tủ lịch, thiệp ở Album → Kỷ niệm."]
+    ];
+    const cur = { xa: "", pre: "pre", advent: "advent", after: today() >= EV.box_day ? "box" : "advent", done: "done" }[ph];
+    const tl = $("ev-time"); tl.textContent = "";
+    T.forEach(([k, when, what]) => {
+      const li = el("li", k === cur ? "is-now" : null); li.setAttribute("data-k", k);
+      li.appendChild(el("b", "when", when)); li.appendChild(el("span", null, what));
+      tl.appendChild(li);
+    });
+    // luật
+    const R = [
+      "Ngày nào có ít nhất 1 lượt ôn là mở được ngăn của ngày đó. Ôn trên điện thoại (AnkiDroid, AnkiMobile, AnkiWeb) cũng tính, sau khi đồng bộ về máy tính.",
+      "Đã dùng vé giữ chuỗi cho ngày đó cũng tính.",
+      "Ngăn đủ điều kiện mà chưa mở thì cứ chờ đó — mở lúc nào cũng được tới hết " + ddmm(EV.end) + ".",
+      "Lỡ ngày (không ôn, không vé): mỗi " + EV.makeup_per + " lượt ôn trong một ngày mở bù 1 ngăn, tối đa " + EV.makeup_max + " ngăn bù mỗi ngày.",
+      "Quà chỉ là đồ trang trí — không có xu, không đụng tới thẻ ôn.",
+      "Dùng hai máy (đồng bộ AnkiWeb): ngăn mở ở máy nào cũng tính."
+    ];
+    const ru = $("ev-rules"); ru.textContent = ""; R.forEach((t) => ru.appendChild(el("li", null, t)));
+    // quà theo nhóm
+    const box = $("ev-gifts"); box.textContent = "";
+    const by = {};
+    EV.doors.forEach((x) => { (by[x.kind] = by[x.kind] || []).push(x); });
+    const ART = { cay: ["xmastree"], nha: ["wreath"], san: ["le_nguoituyet", "le_tuanloc"], qua: ["presents"] };
+    const NOTE = { cay: "Cây thông trơn treo đầy dần.", nha: "Áo Noel hiện khi nhà đã có mái.", san: "Tối là sáng đèn.",
+      qua: "Đặt dưới gốc cây — lắc thử để đoán, mở từ sáng " + ddmm(EV.box_day) + ". Bên trong là gì thì… bí mật." };
+    ["cay", "nha", "san", "trong", "qua"].forEach((k) => {
+      const lst = by[k] || [];
+      if (!lst.length) { return; }
+      const row = el("div", "ev-gift"); row.setAttribute("data-kind", k);
+      const art = el("div", "ev-gift-art");
+      let ids = ART[k] || [];
+      if (k === "trong") { ids = []; lst.forEach((x) => (x.items || []).forEach((i) => ids.push(i))); }
+      ids.forEach((id) => { const c = stickerImg(id, 2, (EV.doors.find((x) => (x.items || []).indexOf(id) >= 0) || {}).name); if (c) { art.appendChild(c); } });
+      if (k === "trong") { lst.forEach((x) => (x.tiles || []).forEach((t) => { const im = tileImg(t); if (im) { art.appendChild(im); } })); }
+      row.appendChild(art);
+      const txt = el("div", "ev-gift-text");
+      txt.appendChild(el("h4", null, EV.kinds[k] + " · " + lst.length + " ngăn"));
+      if (k !== "qua") { txt.appendChild(el("p", null, lst.map((x) => x.name).join(" · "))); }
+      if (NOTE[k]) { txt.appendChild(el("p", "muted", NOTE[k])); }
+      row.appendChild(txt);
+      box.appendChild(row);
+    });
+    const gift = el("p", "muted", "Thêm: lần đầu mở vườn trong mùa được tặng Tủ lịch " + y + " và cây thông Noel.");
+    box.appendChild(gift);
+    // thiệp
+    const S = [
+      "Mở tủ lịch (nút “Tủ lịch” ngay dưới cảnh vườn) → “Làm thiệp điều ước ▸” → “Làm thiệp mới ▸”. Lưu được " + EV.cards + " thiệp, không tốn xu.",
+      "Chọn khung (" + EV.frames.map((f) => f.name).join(", ") + "). Bấm sticker để thêm, kéo để dời, Lật / To – nhỏ — tối đa " + EV.limits.stickers +
+        " sticker: cây thông, quà, StackChan đội mũ Noel… cùng các món đã mở ở tủ lịch và đồ trong vườn của bạn.",
+      "Viết lời chúc (2 dòng) và chọn câu chúc: " + Object.keys(EV.chuc).map((k) => EV.chuc[k]).join(" · ") + ".",
+      "Muốn tự vẽ? Thẻ “✎ Vẽ” cạnh sticker (từ bản 1.36.3): kéo chuột vẽ thẳng lên thiệp — bút, tẩy, 3 cỡ, Hoàn tác, " + Object.keys(EV.draw_pal || {}).length +
+        " màu. Nét vẽ nằm dưới chữ, đi theo ảnh PNG và mã thiệp (vẽ dày quá thì mã dài hơn " + String(EV.code.max).replace(/\B(?=(\d{3})+(?!\d))/g, ".") + " ký tự — khi đó gửi ảnh PNG).",
+      "Mặt sau: viết điều ước gửi ông già Noel, bằng tiếng Việt hoặc tiếng đang học. Viết tiếng đang học thì bấm “Nhờ Gemini sửa” (tối đa " + EV.fix_per_day +
+        " lần / ngày, cần khoá Gemini ở tab Nguồn báo).",
+      "“Treo lên cây cho ông già Noel” trước " + EV.eve.slice(11) + " ngày " + n24 + "/12 (giờ trên máy) — mỗi lúc treo một thiệp.",
+      "“Lưu ảnh PNG” hoặc “Chép mã thiệp” để gửi bạn. Mã chỉ có mặt trước — điều ước là chuyện riêng của bạn với ông già Noel."
+    ];
+    const cs = $("ev-card-steps"); cs.textContent = ""; S.forEach((t) => cs.appendChild(el("li", null, t)));
+    // nhạc
+    const mu = $("ev-music"); mu.textContent = "";
+    (EV.music || []).forEach((m) => mu.appendChild(el("li", null, m.name)));
+    // hỏi đáp
+    const Q = [
+      ["Ôn trên điện thoại có tính không?", "Có. Ngày nào lịch sử ôn của Anki có lượt ôn là mở được ngăn ngày đó — đồng bộ AnkiWeb về máy tính rồi mở vườn là thấy."],
+      ["Cài / cập nhật add-on muộn thì sao?", "Không mất ngăn: ngày nào bạn đã ôn (kể cả trước lúc cài) thì ngăn ngày đó vẫn chờ mở. Ngày không ôn thì mở bù."],
+      ["Sân hết chỗ, chưa xây nhà?", "Quà vẫn vào Kho đồ, đặt sau cũng được. Đồ trong nhà cần nhà xây tới bước “Lắp cửa & cửa sổ”; áo Noel hiện khi nhà có mái."],
+      ["Có tốn xu không?", "Không. Sự kiện không có xu — quà chỉ để trang trí, làm thiệp cũng miễn phí."],
+      ["Quả châu tự vẽ là gì?", "Từ bản 1.36.3: tủ lịch → “Vẽ quả châu ▸”, vẽ tới 3 quả 8 × 8 điểm rồi treo lên cây thông ngoài sân (từ 1/12 tới " + ddmm(EV.end) + "). Không vườn nào có quả giống của bạn. Hết mùa, quả châu ở Album → Kỷ niệm."],
+      ["Không muốn có sự kiện?", "⚙ → bỏ chọn “Sự kiện mùa (Giáng sinh)”. Đồ đã tặng vẫn giữ; bật lại lúc nào cũng được."],
+      ["Qua " + ddmm(EV.end) + " thì sao?", "Không mở ngăn nữa. Lần đầu mở vườn từ 1/1, StackChan cất đồ Noel; tủ lịch, thiệp và thiệp bạn gửi ở Album → Kỷ niệm."]
+    ];
+    const fq = $("ev-faq"); fq.textContent = "";
+    Q.forEach(([q, a]) => { const d2 = el("details"); d2.appendChild(el("summary", null, q)); d2.appendChild(el("p", null, a)); fq.appendChild(d2); });
+    // thiệp mẫu ở đầu mục
+    KBC.decode(EV.sample, EV).then((c) => {
+      const art = $("ev-art"), cv = KBC.canvas(c, EV, 2, { mark: true });
+      art.width = cv.width; art.height = cv.height; art.getContext("2d").drawImage(cv, 0, 0);
+    }, () => { $("ev-art").hidden = true; });
+  }
+  let evCode = "";
+  async function xemThiep() {
+    const raw = $("ev-code").value, out = $("ev-out"), err = $("ev-err");
+    out.textContent = ""; err.hidden = true;
+    let c;
+    try { c = await KBC.decode(raw, EV); } catch (e) { err.textContent = e.message; err.hidden = false; return; }
+    evCode = raw.replace(/\s+/g, "");
+    const cv = KBC.canvas(c, EV, 4, {}); cv.className = "px ev-card"; cv.setAttribute("role", "img");
+    cv.setAttribute("aria-label", "Thiệp" + (c.t1 ? ": " + c.t1 : "") + (c.t2 ? " " + c.t2 : ""));
+    out.appendChild(cv);
+    const row = el("div", "row");
+    const dl = el("button", "btn", "Tải ảnh PNG"); dl.type = "button";
+    dl.addEventListener("click", () => download(KBC.canvas(c, EV, 4, { mark: true }), "kotoba_batake_thiep.png"));
+    const cp = el("button", "btn btn-soft", "Chép mã"); cp.type = "button";
+    cp.addEventListener("click", () => copyText(evCode, "Đã chép mã thiệp — dán vào Album → Kỷ niệm → Thiệp bạn gửi trong vườn."));
+    const ln = el("button", "btn btn-soft", "Chép đường dẫn"); ln.type = "button";
+    ln.addEventListener("click", () => copyText(location.origin + location.pathname + "#thiep/" + evCode, "Đã chép đường dẫn — ai mở cũng thấy thiệp này."));
+    row.appendChild(dl); row.appendChild(cp); row.appendChild(ln);
+    out.appendChild(row);
+  }
+  async function copyText(text, okMsg) {
+    let ok = false;
+    try { await navigator.clipboard.writeText(text); ok = true; } catch (e) {
+      const ta = el("textarea"); ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+      document.body.appendChild(ta); ta.select();
+      try { ok = document.execCommand("copy"); } catch (e2) { ok = false; }
+      ta.remove();
+    }
+    toast(ok ? okMsg : "Không chép được — chọn cả đoạn rồi chép tay nhé.");
+  }
+
   // ---------------------------------------------------------------- điều hướng
-  const TABS = ["kho", "cong-dong", "xem-ma", "gui", "bao-loi"];
+  const TABS = ["giang-sinh", "kho", "cong-dong", "xem-ma", "gui", "bao-loi"];
+  // trong mùa sự kiện (Tin làng báo trước → hết 31/12) trang mở thẳng mục Giáng sinh
+  const homeTab = () => (EV && today() >= EV.pre_from && today() <= EV.end ? "giang-sinh" : "kho");
   function route() {
     const h = decodeURIComponent(location.hash.replace(/^#/, ""));
     const [a, b, c] = h.split("/");
-    let tab = TABS.indexOf(a) >= 0 ? a : (a === "hinh" ? "kho" : a === "ma" ? "cong-dong" : "kho");
+    let tab = TABS.indexOf(a) >= 0 ? a : (a === "hinh" ? "kho" : a === "ma" ? "cong-dong" : a === "thiep" ? "giang-sinh" : !a ? homeTab() : "kho");
+    if (a === "thiep" && b && EV) { $("ev-code").value = h.slice(a.length + 1); xemThiep(); }
     const d = $("dlg");
     if (a === "hinh") {
       if (khoGroup && khoGroup !== b) { khoGroup = ""; renderKho(); }
@@ -442,7 +620,8 @@
     }
     TABS.forEach((t) => { $("tab-" + t).hidden = t !== tab; });
     document.querySelectorAll(".tabs a").forEach((x) => { if (x.getAttribute("data-tab") === tab) { x.setAttribute("aria-current", "page"); } else { x.removeAttribute("aria-current"); } });
-    if (a !== "hinh" && a !== "ma") { window.scrollTo(0, 0); }
+    if (a === "thiep") { const t = $("thiep"); if (t && t.scrollIntoView) { setTimeout(() => t.scrollIntoView({ block: "start" }), 0); } }
+    else if (a !== "hinh" && a !== "ma") { window.scrollTo(0, 0); }
   }
   let lastTab = "#kho";
   function closeDlg() {
@@ -459,11 +638,13 @@
     try { const r = await fetch(url, { cache: "no-cache" }); if (!r.ok) { throw new Error(r.status); } return await r.json(); } catch (e) { return fallback; }
   }
   async function start() {
-    [HINH, INFO, CD] = await Promise.all([getJSON("data/hinh.json", { groups: [] }), getJSON("data/thong_tin.json", null), getJSON("data/cong_dong.json", { ma: [] })]);
+    [HINH, INFO, CD, EV] = await Promise.all([getJSON("data/hinh.json", { groups: [] }), getJSON("data/thong_tin.json", null), getJSON("data/cong_dong.json", { ma: [] }),
+      getJSON("data/su_kien.json", null)]);
     if (!INFO) { document.body.appendChild(el("p", "err", "Không tải được dữ liệu của trang. Thử tải lại nhé.")); return; }
     if (!Array.isArray(CD.ma)) { CD.ma = []; }
     const cay = HINH.groups.find((x) => x.id === "cay"), goc = cay && cay.items.find((x) => x.id === "goc");
     if (goc) { seedBase = goc.frames["0"]; seedPal = goc.pal; }
+    aliasSecrets();
     $("n-kho").textContent = String(HINH.groups.reduce((s, g) => s + g.items.length, 0));
     $("n-cd").textContent = String(CD.ma.length);
     $("ver").textContent = "ことば畑 " + (HINH.version || INFO.version);
@@ -476,7 +657,16 @@
       $("bl-mail").href = "mailto:" + INFO.contact + "?subject=" + encodeURIComponent("ことば畑 · Báo lỗi") + "&body=" +
         encodeURIComponent("Mô tả lỗi:\n\n\nCác bước làm lại lỗi:\n\n\nBáo cáo (Tools → ことば畑 · Báo lỗi → Chép):\n");
     } else { $("bl-mail").hidden = true; }
-    renderKho(); renderCD(); updateGui(); heroArt();
+    renderKho(); renderCD(); updateGui(); heroArt(); renderEvent();
+    if (EV) {
+      $("ev-go").addEventListener("click", xemThiep);
+      $("ev-code").addEventListener("paste", () => setTimeout(xemThiep, 0));
+      $("ev-code").addEventListener("keydown", (e) => { if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { xemThiep(); } });
+      $("ev-sample").addEventListener("click", () => { $("ev-code").value = EV.sample; xemThiep(); });
+      $("ev-paste").addEventListener("click", async () => {
+        try { $("ev-code").value = await navigator.clipboard.readText(); xemThiep(); } catch (e) { toast("Trình duyệt không cho đọc bộ nhớ tạm — bấm vào ô rồi Ctrl+V nhé."); $("ev-code").focus(); }
+      });
+    }
     $("kho-q").addEventListener("input", (e) => { khoQ = e.target.value; renderKho(); });
     $("cd-q").addEventListener("input", (e) => { cdQ = e.target.value; renderCD(); });
     $("xm-go").addEventListener("click", xemMa);

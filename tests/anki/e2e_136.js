@@ -248,6 +248,10 @@ result = 1`);
   ok(v && v.phase === 'done' && !v.active && v.opened === 24, '1/1: hết mùa, tủ lịch kỷ niệm 24/24');
   ok(await js('return GardenLe.treeSprite() === null;'), 'cây thông về đủ đồ (không theo ngăn)');
   r = await sendLe('le:open:3'); ok(!r.ok && /đã qua/.test(r.msg), 'mở ngăn sau mùa → ' + r.msg);
+  // 1.36.1: lần đầu mở vườn từ 1/1 bảng "Cất đồ Noel" tự bật, che nút Tủ lịch — đóng như người dùng (Anki 23.10.1 bật sớm hơn 26.9.4)
+  if (await waitFor('!!document.getElementById("kb-le-packpop") && !document.getElementById("kb-le-packpop").hidden', 5000)) {
+    await page.click('#kb-le-packpop .kb-le-mini-btns button:last-child'); await sleep(300);
+  }
   ok(await openPanel(), 'chip → bảng xem lại');
   ok(/đã qua/.test(await js('return document.getElementById("kb-le-note").textContent;')), 'ghi "Mùa Giáng sinh 2026 đã qua"');
   await page.key('Escape', 'Escape', 27); await sleep(500);

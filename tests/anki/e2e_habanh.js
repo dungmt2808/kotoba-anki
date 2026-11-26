@@ -134,6 +134,10 @@ if hasattr(kb, "le_core"):          # 1.36: đã mở 21 ngăn tủ lịch Gián
         kb.le_core.hang_card(ev, 0, _today, _now)
         kb.le_core.recv_add(ev, kb.le_core.card_code({"f": "thong", "st": [], "t1": "Merry Christmas", "t2": "", "c": ""}), _today)
         kb.le_core.mark_seen(ev, _dt.datetime(2026, 12, 24, 19, 0), "star,tree")
+        if hasattr(kb.le_core, "save_orn"):       # 1.36.3: hình vẽ trên thiệp + quả châu tự vẽ
+            _c = kb.le_core.cards(ev)[0]
+            kb.le_core.save_card(ev, 1, dict(_c, t1="Thiệp vẽ tay", d="5U9595."), _today, _now)
+            kb.le_core.save_orn(ev, 0, "..kkkk.." * 2 + ".kUUUUk." * 4 + "..kkkk.." * 2, 1, _today, _now)
         kb.LE.save(ev)
 kb.JOURNAL.update(kb.cal_today(), {"t": "viết bằng 1.32 trước khi hạ bản"})
 c = mw.addonManager.getConfig("kotoba_batake"); c.setdefault("prefs", {})["kb-glang"] = "zh"; mw.addonManager.writeConfig("kotoba_batake", c)
@@ -221,6 +225,10 @@ async function p3() {
       ok(n26.cards[0] && n26.cards[0].t1 === 'Giáng sinh an lành!' && n26.cards[0].w === 'Ước gì học giỏi' && n26.hang && n26.hang.i === 0,
         '1.36.1: thiệp đã treo (cả điều ước) còn nguyên');
       ok((n26.recv || []).length === 1 && n26.santa && n26.santa.seen && n26.santa.facts === 'star,tree', '1.36.1: thiệp nhận, ông già Noel đã ghé còn nguyên');
+      if (n26.orn) {
+        ok(n26.cards[1] && n26.cards[1].d === '5U9595.' && n26.orn[0] && n26.orn[0].p === '..kkkk..'.repeat(2) + '.kUUUUk.'.repeat(4) + '..kkkk..'.repeat(2) && n26.orn[0].on === 1,
+          '1.36.3: hình vẽ trên thiệp + quả châu tự vẽ (đang treo) còn nguyên');
+      }
     }
   }
   await openGarden();

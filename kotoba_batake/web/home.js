@@ -4465,7 +4465,20 @@ var GardenHome = (function () {
     return card;
   }
 
+  // 1.36.3: dựng lại danh sách (dữ liệu vườn đổi — khách ghé, tự lưu…) không làm mất con trỏ ở ô đang gõ (vd. mã thiệp ở Album)
   function renderList() {
+    const list = $("kb-h-list"), a = document.activeElement;
+    const kf = list && a && a.id && list.contains(a) && (a.tagName === "INPUT" || a.tagName === "TEXTAREA") ? { id: a.id, s: a.selectionStart, e: a.selectionEnd } : null;
+    renderListBody();
+    if (!kf) { return; }
+    const b = document.getElementById(kf.id);
+    if (!b || b === document.activeElement || !list.contains(b) || b.disabled) { return; }
+    try {
+      b.focus({ preventScroll: true });
+      if (typeof kf.s === "number" && b.setSelectionRange) { b.setSelectionRange(Math.min(kf.s, b.value.length), Math.min(kf.e, b.value.length)); }
+    } catch (e) { /* ô không có vùng chọn (number, color…) */ }
+  }
+  function renderListBody() {
     const list = $("kb-h-list");
     if (!list) { return; }
     const cat = catalog();

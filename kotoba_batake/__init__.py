@@ -2837,6 +2837,12 @@ def _le_settle(wallet: dict[str, Any], today: datetime.date) -> tuple[dict[str, 
     pack = None
     if le_core.pack_due(ev, today):      # 1.36.1: lần đầu mở vườn từ 1/1 — StackChan cất đồ Noel (một lần)
         pack = le_core.pack_plan(ev, placed, decor_w.get("use") or {})
+        for t in pack["tiles"]:       # 1.36.2 (audit #17f): mẫu cũ không còn (mẫu tự vẽ đã xoá) → theo kiểu nhà, ghi đúng vào sổ
+            try:
+                if t[3] and not core.decor.usable(decor_w, t[3], t[1]):
+                    t[3] = ""
+            except Exception:
+                t[3] = ""
         le_core.mark_pack(ev, today, pack)
     if plan is None and pack is None:
         return wallet, None
@@ -2850,16 +2856,51 @@ def _le_settle(wallet: dict[str, Any], today: datetime.date) -> tuple[dict[str, 
     return new, {"placed": done, "give": plan["give"], "welcome": plan["welcome"], "pack": pack}
 
 
-def _le_prev_write(room: str, slot: str, did: str) -> list[tuple[Any, ...]] | None:
+def _le_save_kept(keep: dict[Any, dict[str, Any]], owner: str) -> int:
+    """1.36.2: lưu các thiệp sửa dở (GardenDialog._le_flush_keep) — chỉ vào đúng hồ sơ lúc giữ; luật như lần tự lưu (ông già Noel
+    đã mang đi / hết mùa → bỏ thiệp đó)."""
+    if not keep or not _col_ready() or owner != _owner_now() or _sync_hold():
+        return 0
+    try:
+        ev = LE.load()
+        today, now = le_today(), le_now()
+        n = 0
+        for k in sorted(keep, key=str):
+            try:
+                if isinstance(k, int):
+                    le_core.save_card(ev, k, keep[k]["card"], today, now)
+                else:                  # "o<ô>": quả châu (1.36.3)
+                    o = keep[k].get("orn") or {}
+                    le_core.save_orn(ev, int(k[1:]), o.get("p"), o.get("on"), today, now)
+                n += 1
+            except le_core.LeError:
+                pass
+        if n:
+            LE.save(ev)
+        return n
+    except Exception as err:
+        _warn("lưu nốt thiệp Giáng sinh", err)
+        return 0
+
+
+def _le_prev_write(room: str, slot: str, did: str, more: list[tuple[str, str, str]] | None = None) -> list[tuple[Any, ...]] | None:
     """1.36.1: gian chuyển sang mẫu Noel → sổ sự kiện nhớ mẫu đang dùng (1/1 trả lại), ghi cùng lần với ví. Sổ đọc lỗi /
-    không phải mẫu Noel / đã cất đồ → None (dùng mẫu như thường)."""
-    if did not in le_core.NOEL_TILES:
+    không phải mẫu Noel / đã cất đồ → None (dùng mẫu như thường). 1.36.2 (audit #07): `more` — thêm (gian, chỗ, mẫu) cùng
+    một lần ghi (Trang trí thử đổi cả tường lẫn sàn)."""
+    todo = [(room, slot, did)] + list(more or [])
+    todo = [t for t in todo if t[2] in le_core.NOEL_TILES]
+    if not todo:
         return None
     try:
         dec = (STATE.load().get("more") or {}).get("decor") or {}
-        cur = ((dec.get("use") or {}).get(room) or {}).get(slot, "")
         ev = LE.load()
-        if ev.get("_damaged") or ev.get("pack") or not le_core.remember_prev(ev, room, slot, cur):
+        if ev.get("_damaged") or ev.get("pack"):
+            return None
+        changed = False
+        for r, sl, _did in todo:
+            cur = ((dec.get("use") or {}).get(r) or {}).get(sl, "")
+            changed = le_core.remember_prev(ev, r, sl, cur) or changed
+        if not changed:
             return None
         return [LE.write(ev)]
     except Exception as err:
@@ -2891,8 +2932,9 @@ def le_view(wallet: dict[str, Any], stats: dict[str, Any] | None, cfg: dict[str,
                 "news": le_core.news_line(None, today, [], []), "soon": le_core.soon_line(today), "preview": pv is not None}
     if ev is None:
         ev = LE.load()
-        if ph == "done" and not ev["open"] and not ev["gift"]:
-            return None          # hết mùa mà chưa từng mở: không có gì để xem lại
+        if ph == "done" and not (ev["open"] or ev["gift"] or any(le_core.filled(c) for c in le_core.cards(ev))
+                                 or le_core.recv_list(ev) or any(le_core.orn_filled(o) for o in le_core.orns(ev))):
+            return None          # hết mùa mà chưa từng mở / chưa có thiệp nào: không có gì để xem lại (1.36.2 — audit #12)
     v = le_core.view(ev, today, days, frozen, reviews, _le_names())
     v["news"] = le_core.news_line(ev, today, days, frozen, reviews, now)
     v["soon"] = le_core.soon_line(today)
@@ -2902,6 +2944,7 @@ def le_view(wallet: dict[str, Any], stats: dict[str, Any] | None, cfg: dict[str,
     v["damaged"] = bool(ev.get("_damaged"))
     placed = _le_placed(wallet)
     v.update(le_core.view_more(ev, today, now, placed))      # 1.36.1: thiệp, ông già Noel, thư, cất đồ, thiệp nhận
+    v["draw_pal"] = core.CRAFT_PALETTE                         # 1.36.3: 32 màu để vẽ (như Xưởng)
     if pv is not None and le_core.pack_due(ev, today):         # xem thử 1/1: cất đồ gì (không cất thật)
         plan = le_core.pack_plan(ev, placed, ((wallet.get("more") or {}).get("decor") or {}).get("use") or {})
         v["pack"] = dict(plan, at=today.isoformat(), preview=True)
@@ -3162,6 +3205,8 @@ class GardenDialog(QDialog):
             self.resize(1100, 820)
         self._was_maximized = True
         self._cal_keep: dict[str, tuple[str, dict[str, Any]]] = {}   # 1.23 (KB-01): chữ đang gõ dở trong Lịch hoa
+        self._le_keep: dict[Any, dict[str, Any]] = {}   # 1.36.2 (audit #05): thiệp đang sửa dở (ô → {"q", "card"}) · 1.36.3: "o<ô>" quả châu
+        self._eve_seen: bool | None = None             # 1.36.2 (audit #11): đã qua 18:00 ngày 24 lúc dựng vườn lần trước
         self.deck_id: int = mw.col.decks.current()["id"]
         self._card: Any = None          # thẻ đang chờ trả lời
         self._states: Any = None
@@ -3217,7 +3262,7 @@ class GardenDialog(QDialog):
             js=[
                 f"{WEB_BASE}/diag.js", f"{WEB_BASE}/prefs.js", f"{WEB_BASE}/fix.js", f"{WEB_BASE}/icons.js", f"{WEB_BASE}/glang.js", f"{WEB_BASE}/sky.js", f"{WEB_BASE}/season.js", f"{WEB_BASE}/fx.js", f"{WEB_BASE}/music.js",
                 f"{WEB_BASE}/games.js", f"{WEB_BASE}/fields.js", f"{WEB_BASE}/season_art.js", f"{WEB_BASE}/rare_art.js", f"{WEB_BASE}/nha_art.js", f"{WEB_BASE}/pets.js", f"{WEB_BASE}/guests.js",
-                f"{WEB_BASE}/finds_art.js", f"{WEB_BASE}/finds.js", f"{WEB_BASE}/le_art.js", f"{WEB_BASE}/le_card.js", f"{WEB_BASE}/le_noel.js", f"{WEB_BASE}/le.js", f"{WEB_BASE}/life.js", f"{WEB_BASE}/home.js", f"{WEB_BASE}/craft.js", f"{WEB_BASE}/paper.js", f"{WEB_BASE}/seeds.js",
+                f"{WEB_BASE}/finds_art.js", f"{WEB_BASE}/finds.js", f"{WEB_BASE}/le_art.js", f"{WEB_BASE}/le_card.js", f"{WEB_BASE}/le_orn.js", f"{WEB_BASE}/le_noel.js", f"{WEB_BASE}/le.js", f"{WEB_BASE}/life.js", f"{WEB_BASE}/home.js", f"{WEB_BASE}/craft.js", f"{WEB_BASE}/paper.js", f"{WEB_BASE}/seeds.js",
                 f"{WEB_BASE}/joy.js", f"{WEB_BASE}/ui.js", f"{WEB_BASE}/calendar.js", f"{WEB_BASE}/greet.js", f"{WEB_BASE}/tour.js", f"{WEB_BASE}/garden.js",
             ],
             context=self,
@@ -3231,6 +3276,16 @@ class GardenDialog(QDialog):
         qconnect(self._day_timer.timeout, self._check_day)
         self._day_timer.start(60_000)
 
+    @staticmethod
+    def _le_eve() -> bool:
+        """Đã qua 18:00 ngày 24/12 (giờ máy) — chỉ trong mùa, sự kiện bật, không xem thử."""
+        try:
+            if not le_on() or (_le_preview.get("day") is not None and admin_on()):
+                return False
+            return le_core.phase(le_today()) in ("advent", "after") and le_core.came(le_now())
+        except Exception:
+            return False
+
     def _check_day(self) -> None:
         if not _col_ready() or self._day_seen is None or self._busy:
             return
@@ -3242,6 +3297,13 @@ class GardenDialog(QDialog):
         try:
             day = _today()
             old = self._day_seen
+            # 1.36.2 (audit #11): để vườn mở qua 18:00 ngày 24 (giờ máy) → dựng lại như sang ngày mới: cảnh ông già Noel,
+            # thiệp trên cây khoá, bánh quy còn vụn (trước: phải đóng / mở lại vườn)
+            eve = self._le_eve()
+            if day == self._day_seen and eve and self._eve_seen is False:
+                self._eve_seen = True
+                self.refresh()
+                return
             if day != self._day_seen:
                 self._day_seen = day        # ghi trước: dựng vườn lỗi thì không thử lại (và báo lỗi) mỗi phút
                 self.refresh()
@@ -3378,6 +3440,7 @@ class GardenDialog(QDialog):
             self._day_seen = _today()
         except Exception:
             self._day_seen = None
+        self._eve_seen = self._le_eve()
         if data["wallet"].get("_damaged"):      # 1.31.2: có khoá đọc hỏng → vườn tạm chỉ xem (STATE.save từ chối ghi)
             # 1.33.3: dòng cảnh báo cố định trên ruộng (garden.js drawDamaged, câu theo lý do) thay cho thông báo nổi
             _damage_warn(data["wallet"]["_damaged"])
@@ -3802,6 +3865,7 @@ class GardenDialog(QDialog):
     # 1.33.2: lệnh trang tự gửi (không phải người dùng bấm) — lúc đồng bộ thì bỏ qua mà không báo
     AUTO_CMDS = ("ready", "refresh", "life:", "guest:", "ai:status", "paper:index", "game:exaudio", "deck:tree")
     AUTO_CMDS += ("le:seen", "le:read")     # 1.36.1: cảnh đêm 24 / thư tự gửi "đã xem / đã đọc" (lần mở sau gửi lại)
+    AUTO_CMDS += ("le:card:",)              # 1.36.2: thiệp tự lưu — xưởng thiệp tự báo + gửi lại sau đồng bộ (không báo lặp)
     DRAFT_LOCAL = ("home:draft:get", "home:draft:put:", "home:draft:pick:")     # 1.35.1: lệnh chỉ đụng file bản thử
     _sync_note = 0.0
 
@@ -3814,7 +3878,7 @@ class GardenDialog(QDialog):
         # bị bỏ, trang vẫn hiện món vừa dời — đóng vườn là mất lần sửa đó). Cần biết hồ sơ (mw.col) để ghi đúng file.
         draft_ok = cmd.startswith(self.DRAFT_LOCAL) and mw.col is not None
         if (not _col_ready() or _sync_hold()) and not draft_ok and \
-                not cmd.startswith(("cal:", "prefs:set:", "app:jserr:", "app:report:", "app:mail", "win:")):
+                not cmd.startswith(("cal:", "prefs:set:", "app:jserr:", "app:report:", "app:mail", "win:", "le:keep:")):
             # 1.33.2: trước đây bỏ qua lặng lẽ — bấm Mua / Tưới ngay / chấm thẻ lúc đồng bộ thì không có gì xảy ra (tưởng
             # hỏng), lượt chấm còn làm bảng ôn kẹt chờ. Nay báo một câu (lệnh người dùng bấm, ≤ 1 lần / 3 giây) và trả lại
             # lượt chấm để chấm lại được sau khi đồng bộ xong.
@@ -3822,6 +3886,8 @@ class GardenDialog(QDialog):
                 self._js("reviewRetry", {"cid": self._card.id})
             if cmd.startswith("rv:show:") and self._card is not None:      # 1.35.5 (audit #11): lật lại được sau đồng bộ
                 self._js("flipRetry", {"cid": self._card.id})
+            if cmd.startswith("le:"):      # 1.36.2 (audit #04): trang biết lệnh bị bỏ (gỡ "Gemini đang sửa…", ngăn đang mở, gửi lại thiệp)
+                self._le_dropped(cmd)
             if not cmd.startswith(self.AUTO_CMDS) and time.time() - self._sync_note > 3:
                 self._sync_note = time.time()
                 self._js("toast", SYNC_MSG)
@@ -3836,6 +3902,30 @@ class GardenDialog(QDialog):
             except Exception:
                 pass
             raise
+
+    def _le_dropped(self, cmd: str) -> None:
+        """1.36.2 (audit #04): lệnh `le:*` rơi vào lúc Anki đang đồng bộ → trả lời "chưa làm" (sync: True) như reviewRetry:
+        trước đây không trả lời gì — nút "Gemini đang sửa…" kẹt tới lúc đóng vườn, ngăn tủ lịch vẽ như đã mở, thiệp đổi ô trong
+        lúc đó mất lần sửa. Lệnh trang tự gửi (đã xem / đã đọc) cũng trả lời để trang gửi lại lần sau, nhưng không báo câu nào."""
+        action, _, arg = cmd[len("le:"):].partition(":")
+        out: dict[str, Any] = {"ok": False, "act": action, "sync": True, "msg": SYNC_MSG}
+        if action in ("card", "orn"):
+            try:
+                p = _json_obj(arg)
+            except ValueError:
+                p = {}
+            if isinstance(p.get("i"), int) and not isinstance(p.get("i"), bool):
+                out["i"] = p["i"]
+            out["rid"] = p.get("rid")
+        elif action in ("cdel", "hang", "fix"):
+            try:
+                out["i"] = int(arg)
+            except ValueError:
+                pass
+        try:
+            self._js("le", out)
+        except Exception as err:
+            _warn("sự kiện mùa (lúc đồng bộ)", err)
 
     def _dispatch(self, cmd: str) -> Any:
         if cmd in ("ready", "refresh"):
@@ -4715,7 +4805,15 @@ class GardenDialog(QDialog):
                 n = slot if isinstance(slot, int) and not isinstance(slot, bool) else -1
                 if not sc or not 0 <= n < draft_core.SLOTS or not sc["slots"][n]:
                     raise core.HomeError("Bản thử này đang trống.")
-                data, plan = STATE.draft_apply(scene, sc["slots"][n])
+                extra = None
+                try:      # 1.36.2 (audit #07): bản thử dùng tường / sàn Noel → nhớ mẫu đang dùng (1/1 trả lại), cùng lần lưu
+                    pl = core.draft_plan(STATE.load(), scene, sc["slots"][n])
+                    todo = [(scene, k, v) for k, v in sorted((pl.get("decor_use") or {}).items())]
+                    if todo:
+                        extra = _le_prev_write(todo[0][0], todo[0][1], todo[0][2], todo[1:])
+                except Exception as err:
+                    _warn("sự kiện mùa (Trang trí thử)", err)
+                data, plan = STATE.draft_apply(scene, sc["slots"][n], extra=extra)
                 out: dict[str, Any] = {"wallet": data, "action": "draft", "sub": "use", "scene": scene,
                                        "bought": sum(plan["buy"].values()) + len(plan["decor_buy"]), "cost": plan["cost"]}
                 try:
@@ -4816,6 +4914,7 @@ class GardenDialog(QDialog):
         if action == "preview":
             if not admin_on():
                 return
+            self._le_keep = {}     # 1.36.2: bản giữ để lưu nốt thuộc chế độ cũ (thật / xem thử)
             if arg == "off":
                 _le_preview.update(day=None, ev=None, now=None, pack=False)
             else:
@@ -4828,7 +4927,7 @@ class GardenDialog(QDialog):
                 ev = le_core.simulate(day, reviewed=False)
                 try:      # thiệp thật (chỉ đọc) để xem thư / treo thiệp — sửa trong lúc xem thử chỉ ở bộ nhớ
                     real = LE.load()
-                    for k in ("cards", "hang", "recv"):
+                    for k in ("cards", "hang", "recv", "orn"):
                         if real.get(k):
                             ev[k] = json.loads(json.dumps(real[k]))
                 except Exception as err:
@@ -4836,7 +4935,23 @@ class GardenDialog(QDialog):
                 _le_preview.update(day=day, ev=ev, now=now, pack=False, key=arg)
             self.refresh()
             return
-        if action in ("card", "cdel", "hang", "fix", "code", "seen", "read", "recv", "rdel", "rpeek", "rcode"):
+        if action == "keep":       # 1.36.2 (audit #05): thiệp đang sửa, chưa tới lần tự lưu — đóng cửa sổ ngay thì lưu nốt
+            if _le_preview.get("day") is not None and admin_on():
+                return             # xem thử: sửa chỉ trong bộ nhớ, không bao giờ lưu nốt vào sổ thật
+            try:
+                p = _json_obj(arg)
+                i, q = p.get("i"), p.get("q")
+                if isinstance(i, int) and not isinstance(i, bool) and 0 <= i < le_core.CARDS_MAX and isinstance(q, int) \
+                        and isinstance(p.get("card"), dict) and q >= (self._le_keep.get(i) or {}).get("q", -1):
+                    self._le_keep[i] = {"q": q, "card": p["card"]}
+                o = p.get("o")         # 1.36.3: quả châu đang vẽ — khoá "o<ô>"
+                if isinstance(o, int) and not isinstance(o, bool) and 0 <= o < le_core.ORN_N and isinstance(q, int) \
+                        and isinstance(p.get("orn"), dict) and q >= (self._le_keep.get("o%d" % o) or {}).get("q", -1):
+                    self._le_keep["o%d" % o] = {"q": q, "orn": p["orn"]}
+            except ValueError:
+                pass
+            return
+        if action in ("card", "cdel", "hang", "fix", "code", "seen", "read", "recv", "rdel", "rpeek", "rcode", "orn"):
             if le_on():
                 self._on_le_card(action, arg)
             return
@@ -4905,6 +5020,7 @@ class GardenDialog(QDialog):
         Python xét lại mọi thứ (ngày Anki, giờ máy, thiệp ông già Noel đã mang đi) rồi ghi sổ."""
         out: dict[str, Any] = {"ok": False, "act": action}
         wallet = None
+        keep_done: Any = None
         try:
             pv = _le_preview.get("day") if admin_on() else None
             if pv is not None:
@@ -4916,12 +5032,23 @@ class GardenDialog(QDialog):
             if action == "card":
                 p = _json_obj(arg)
                 c = le_core.save_card(ev, p.get("i"), p.get("card"), today, now)
-                out.update(i=int(p.get("i")), rid=p.get("rid"), at=c["at"])
+                out.update(i=int(p.get("i")), rid=p.get("rid"), at=c["at"], code_len=le_core.code_len(c))
+                kq = (self._le_keep.get(out["i"]) or {}).get("q")
+                if kq is not None and isinstance(p.get("q"), int) and p["q"] >= kq:
+                    keep_done = out["i"]             # bản giữ để lưu nốt đã lưu (bỏ sau khi ghi xong)
             elif action == "cdel":
                 le_core.delete_card(ev, arg, today, now)
                 out["i"] = int(arg)
+                keep_done = out["i"]
             elif action == "hang":
                 le_core.hang_card(ev, arg, today, now)
+            elif action == "orn":          # 1.36.3: quả châu tự vẽ {i, p, on, rid, q}
+                p = _json_obj(arg)
+                le_core.save_orn(ev, p.get("i"), p.get("p"), p.get("on"), today, now)
+                out.update(i=int(p.get("i")), rid=p.get("rid"))
+                kq = (self._le_keep.get("o%d" % out["i"]) or {}).get("q")
+                if kq is not None and isinstance(p.get("q"), int) and p["q"] >= kq:
+                    keep_done = "o%d" % out["i"]
             elif action in ("seen", "read"):
                 wallet = STATE.load()
                 fx = le_core.facts(ev, _le_placed(wallet))
@@ -4954,25 +5081,28 @@ class GardenDialog(QDialog):
                 out.update(card=c, code=le_core.card_code(c),
                            have=any(e["k"] == le_core.card_code(c) for e in le_core.recv_list(ev)))
             elif action == "recv":
-                le_core.recv_add(ev, arg, today)
+                le_core.recv_add(ev, arg, today, now)
             elif action == "rdel":
-                le_core.recv_del(ev, arg)
+                le_core.recv_del(ev, arg, now)
             elif action == "fix":
                 write = False
                 out.update(self._le_fix_start(ev, arg, today, pv is not None))
             if write and pv is None:
                 LE.save(ev)
+            if keep_done is not None:
+                self._le_keep.pop(keep_done, None)
             out["ok"] = True
         except (le_core.LeError, core.HomeError) as err:
             out = {"ok": False, "act": action, "msg": str(err)}
         except backup_core.ReadFailed:
-            out = {"ok": False, "act": action, "msg": "Chưa đọc được dữ liệu sự kiện (collection lỗi) — chưa lưu gì."}
+            out = {"ok": False, "act": action, "retry": True,
+                   "msg": "Chưa đọc được dữ liệu sự kiện (collection lỗi) — chưa lưu gì."}
         except backup_core.StoreFailed:
-            out = {"ok": False, "act": action, "msg": "Chưa lưu được (Anki báo lỗi khi ghi) — thử lại sau nhé."}
+            out = {"ok": False, "act": action, "retry": True, "msg": "Chưa lưu được (Anki báo lỗi khi ghi) — thử lại sau nhé."}
         except Exception as err:
             _warn("thiệp Giáng sinh", err)
             out = {"ok": False, "act": action, "msg": "Không làm được (%s)." % type(err).__name__}
-        if action == "card" and not out.get("ok"):
+        if action in ("card", "orn") and not out.get("ok"):
             try:
                 out["i"] = int(_json_obj(arg).get("i"))
                 out["rid"] = _json_obj(arg).get("rid")
@@ -5046,8 +5176,11 @@ class GardenDialog(QDialog):
             ev = LE.load()
             today = le_today()
             le_core.fix_mark(ev, today)
-            if le_core.fix_set(ev, i, goc, {"sua": clean["sua"], "nx": clean.get("nhan_xet", ""), "loi": loi}, le_now()):
+            now = le_now()
+            if le_core.fix_set(ev, i, goc, {"sua": clean["sua"], "nx": clean.get("nhan_xet", ""), "loi": loi}, now):
                 out["ok"] = True
+            elif le_core.taken_index(ev, now) == i:
+                out["msg"] = "Ông già Noel đã mang thiệp này đi lúc 18:00 — bản sửa không gắn thêm được nữa."
             else:
                 out["msg"] = "Điều ước vừa đổi trong lúc chờ — bấm “Nhờ Gemini sửa” lại nhé."
             LE.save(ev)
@@ -5251,8 +5384,9 @@ class GardenDialog(QDialog):
             self._js("toast", "Không chụp được ảnh này.")
             return
         card = payload.get("what") == "card"        # 1.36.1: ảnh thiệp Giáng sinh
+        orn = payload.get("what") == "orn"          # 1.36.3: ảnh quả châu tự vẽ
         from aqt.utils import getSaveFile
-        path = os.environ.get("KB_TEST_PHOTO") or getSaveFile(self, "Lưu ảnh thiệp" if card else "Lưu ảnh vườn",
+        path = os.environ.get("KB_TEST_PHOTO") or getSaveFile(self, "Lưu ảnh thiệp" if card else "Lưu ảnh quả châu" if orn else "Lưu ảnh vườn",
                                                                "kotoba_batake_photo", "Ảnh PNG", ".png", name)
         if not path:
             return
@@ -5262,7 +5396,8 @@ class GardenDialog(QDialog):
         except OSError as err:
             showWarning(f"Không lưu được ảnh:\n{err}", parent=self)
             return
-        self._js("toast", ("[i:gift] Đã lưu ảnh thiệp: " if card else "[i:camera] Đã lưu ảnh vườn: ") + os.path.basename(path))
+        self._js("toast", ("[i:gift] Đã lưu ảnh thiệp: " if card else "[i:gift] Đã lưu ảnh quả châu: " if orn else "[i:camera] Đã lưu ảnh vườn: ")
+                 + os.path.basename(path))
 
     # -- 1.14: giao diện tự chỉnh -------------------------------------------------
 
@@ -5493,7 +5628,20 @@ class GardenDialog(QDialog):
             if r.get("conflict"):       # 1.35.2: ngày đó vừa đổi ở máy khác — không ghi đè lúc đóng cửa sổ (ghi lại để cứu tay)
                 _warn("lưu nốt nhật ký", Exception("bỏ chữ đang gõ (%s %s) vì ngày đó vừa đổi ở chỗ khác: %s"
                                                    % (name, p.get("d"), str(p.get("t"))[:200])))
+        n += self._le_flush_keep()
         return n
+
+    def _le_flush_keep(self) -> int:
+        """1.36.2 (audit #05): thiệp sửa dở (chưa tới lần tự lưu 0,8 giây) khi đóng cửa sổ / hồ sơ → lưu nốt. Anki đang đồng bộ
+        → xếp hàng, đồng bộ + so xong mới lưu (đúng hồ sơ đó). Xem thử / sự kiện tắt → bỏ (sửa lúc xem thử chỉ ở bộ nhớ)."""
+        keep = dict(getattr(self, "_le_keep", {}) or {})
+        self._le_keep = {}
+        if not keep or not le_on() or (_le_preview.get("day") is not None and admin_on()):
+            return 0
+        if _sync_hold():
+            _sync_wait.append((_le_save_kept, (keep, _owner_now()), {}))
+            return 0
+        return _le_save_kept(keep, _owner_now())
 
     def _cal_save(self, name: str, p: dict[str, Any]) -> dict[str, Any]:
         """Lưu sticker / nhật ký / bản nháp luyện viết (lưu ngay khi rời ô). Trả về phần cần vẽ lại.
@@ -6247,6 +6395,8 @@ def _on_profile_close() -> None:
             _dialog.close()
         except Exception as err:
             _warn("đóng vườn khi đóng hồ sơ", err)
+    # 1.36.2 (audit #14): xem thử sự kiện (admin) chép thiệp thật của hồ sơ này vào bộ nhớ — không sang hồ sơ khác
+    _le_preview.update(day=None, ev=None, now=None, pack=False, key=None)
     if _report_dialog is not None:
         try:
             _report_dialog.close()
@@ -6274,6 +6424,9 @@ def _on_collection_load(*_args: Any) -> None:
     _presence.update(t=0.0, v={}, col="")
     _auto_cache.update(t=0.0, k=None, v=None)
     _started_cache.update(t=0.0, k=None)
+    _le_preview.update(day=None, ev=None, now=None, pack=False, key=None)     # 1.36.2 (audit #14)
+    if _dialog is not None:
+        _dialog._le_keep = {}             # 1.36.2: thiệp sửa dở là của collection cũ — không lưu nốt vào bản vừa nhập
     try:
         if _col_ready() and _sync_guard_on():
             _sync_guard_note(sync_core.on_open(mw.col, USER_DIR, True), "nhập collection")

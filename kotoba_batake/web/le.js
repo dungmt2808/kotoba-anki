@@ -71,6 +71,8 @@ var GardenLe = (function () {
     // 1.36.1: thiệp điều ước treo trên cây (tới lúc ông già Noel ghé) · thư của ông dưới gốc cây (chưa đọc) — lúc đang chiếu cảnh
     // đêm 24 thì cảnh tự vẽ hai thứ này theo thời gian
     const showing = typeof GardenLeNoel !== "undefined" && GardenLeNoel.isShowing();
+    // 1.36.3: quả châu tự vẽ (trước thiệp nhỏ — thiệp treo đè lên)
+    if (typeof GardenLeOrn !== "undefined") { GardenLeOrn.hung().forEach(([dx, dy, p]) => GardenLeOrn.paintOrn(ctx, p, X + dx, Y + dy, S, v.draw_pal)); }
     if (!showing && typeof v.hang === "number" && v.hang >= 0 && v.santa && !v.santa.came && A().CARD_MINI) { A().paint(ctx, A().CARD_MINI, X + 19, Y + 20, S); }
     if (!showing && v.letter && v.santa && !v.santa.read && A().LETTER) { const k = 0.6; A().paint(ctx, A().LETTER, (X + 11) / k, (Y + 37) / k, S * k); }
     const bx = (v.boxes || []).filter((b) => !b.opened);
@@ -452,6 +454,8 @@ var GardenLe = (function () {
       const hung = (typeof v.hang === "number" && v.hang >= 0);
       add(v.card_edit && !v.santa.came ? (hung ? "Thiệp điều ước (đang treo trên cây) ▸" : "Làm thiệp điều ước ▸") : "Thiệp Giáng sinh ▸", "kb-le-to-card", () => GardenLeCard.open());
     }
+    // 1.36.3: quả châu tự vẽ (vẽ được 1/12 – 31/12; sau mùa xem ở Album → Kỷ niệm)
+    if (v.orn && v.orn_edit && typeof GardenLeOrn !== "undefined") { add("Vẽ quả châu ▸", "kb-le-to-orn", () => GardenLeOrn.open()); }
     if (v.letter && typeof GardenLeNoel !== "undefined") { add("Thư của ông già Noel ▸", "kb-le-to-letter", () => GardenLeNoel.openLetter()); }
     if (v.santa && v.santa.came && typeof GardenLeNoel !== "undefined") { add("Xem lại đêm 24 ▸", "kb-le-to-show", () => GardenLeNoel.play("replay")); }
     wrap.hidden = !wrap.childNodes.length;
@@ -594,13 +598,18 @@ var GardenLe = (function () {
     H.send("le:" + cmd);
   }
   // 1.36.1: lệnh của thiệp / ông già Noel / Album (le_card.js, le_noel.js tự gửi — không tính vào chống bấm đúp của tủ lịch)
-  const LATER = { card: 1, cdel: 1, hang: 1, fix: 1, fixed: 1, code: 1, seen: 1, read: 1, recv: 1, rdel: 1, rpeek: 1, rcode: 1 };
+  const LATER = { card: 1, cdel: 1, hang: 1, fix: 1, fixed: 1, code: 1, seen: 1, read: 1, recv: 1, rdel: 1, rpeek: 1, rcode: 1, orn: 1 };
+  // 1.36.2 (audit #09): tủ lịch tự treo sang Bếp / Phòng ngủ khi tường phòng chính kín chỗ — báo đúng chỗ
+  function whereName(scene) {
+    return { room: "tường phòng khách", kitchen: "tường Bếp", bedroom: "tường Phòng ngủ", yard: "sân" }[scene] || "sân";
+  }
   function result(res) {
     if (res && LATER[res.act]) {
       const d0 = data();
       if (d0 && res.le !== undefined) { d0.le = res.le; }
       lightKey = "";
       if (typeof GardenLeCard !== "undefined") { GardenLeCard.result(res); }
+      if (typeof GardenLeOrn !== "undefined") { GardenLeOrn.result(res); }          // 1.36.3
       if (typeof GardenLeNoel !== "undefined") { GardenLeNoel.result(res); }
       const pop = $("kb-le-pop");
       if (pop && !pop.hidden) { render(); }
@@ -624,7 +633,7 @@ var GardenLe = (function () {
       const x = res.door, v = le(), dv = v && v.doors ? v.doors[x.d - 1] : x;
       sfx("stage");
       if (typeof GardenFX !== "undefined" && GardenFX.mood) { GardenFX.mood("happy", 1800); }
-      const placed = (res.placed || []).map((p) => itemName(p.id) + (p.scene === "room" ? " (tường phòng khách)" : " (sân)"));
+      const placed = (res.placed || []).map((p) => itemName(p.id) + " (" + whereName(p.scene) + ")");
       let line = x.makeup ? "Mở bù · " : "";
       if (x.kind === "qua") { line += "Hộp quà đặt dưới gốc cây — lắc thử đoán xem, mở từ sáng 25/12."; }
       else if (placed.length) { line += "Đã bày: " + placed.join(", ") + "."; }
@@ -644,7 +653,7 @@ var GardenLe = (function () {
     } else if (res.act === "auto") {
       sfx("coin");
       const p = (res.placed || [])[0];
-      msg = p ? "Đã bày " + itemName(p.id) + (p.scene === "room" ? " lên tường phòng khách." : " ra sân.") : "";
+      msg = p ? "Đã bày " + itemName(p.id) + (p.scene === "yard" ? " ra sân." : " lên " + whereName(p.scene) + ".") : "";
     }
     render(); sync();
   }
@@ -737,13 +746,15 @@ var GardenLe = (function () {
     const pop = $("kb-le-pop");
     if (pop && !pop.hidden) { render(); }
     if (typeof GardenLeCard !== "undefined") { GardenLeCard.render(); }      // 1.36.1
+    if (typeof GardenLeOrn !== "undefined") { GardenLeOrn.render(); }        // 1.36.3
     if (typeof GardenLeNoel !== "undefined") { GardenLeNoel.render(); }
     // lần đầu mở vườn trong mùa: tặng tủ lịch + cây thông
     if (v && v.welcome && v.welcome.welcome && welcomed !== v.today) {
       welcomed = v.today;
       const pl = (v.welcome.placed || []).map((p) => p.id);
+      const tl = (v.welcome.placed || []).filter((p) => p.id === "le_tulich")[0];
       const where = [];
-      where.push(pl.indexOf("le_tulich") >= 0 ? "tủ lịch treo ở phòng khách" : "tủ lịch ở Kho đồ");
+      where.push(tl ? "tủ lịch treo ở " + whereName(tl.scene) : "tủ lịch ở Kho đồ");
       if ((v.welcome.give || {}).xmastree || pl.indexOf("xmastree") >= 0) { where.push(pl.indexOf("xmastree") >= 0 ? "cây thông ở sân" : "cây thông ở Kho đồ"); }
       if (H && H.toast) { H.toast("[i:gift] Lịch chờ Giáng sinh mở rồi! Quà tặng: " + where.join(", ") + " · bấm “Tủ lịch” để mở ngăn.", null, 7000); }
     }
@@ -754,6 +765,7 @@ var GardenLe = (function () {
       H = helpers;
       ensureUi();
       if (typeof GardenLeCard !== "undefined") { GardenLeCard.init(helpers); }      // 1.36.1
+      if (typeof GardenLeOrn !== "undefined") { GardenLeOrn.init(helpers); }        // 1.36.3
       if (typeof GardenLeNoel !== "undefined") { GardenLeNoel.init(helpers); }
       document.addEventListener("keydown", (ev) => {
         const pop = $("kb-le-pop");

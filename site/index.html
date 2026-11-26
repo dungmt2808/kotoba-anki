@@ -26,6 +26,7 @@
     </div>
   </div>
   <nav class="tabs" aria-label="Các mục">
+    <a href="#giang-sinh" data-tab="giang-sinh" class="tab-ev">Giáng sinh 2026</a>
     <a href="#kho" data-tab="kho">Kho hình <span class="n" id="n-kho"></span></a>
     <a href="#cong-dong" data-tab="cong-dong">Mã cộng đồng <span class="n" id="n-cd"></span></a>
     <a href="#xem-ma" data-tab="xem-ma">Xem mã</a>
@@ -35,6 +36,66 @@
 </header>
 
 <main id="main">
+  <!-- ============ Giáng sinh 2026 (dữ liệu: data/su_kien.json — xuất từ le_core.py của add-on) ============ -->
+  <section id="tab-giang-sinh" class="tab ev" hidden>
+    <div class="card ev-hero">
+      <div class="ev-hero-art"><canvas id="ev-art" class="px" width="1" height="1" role="img" aria-label="Thiệp Giáng sinh mẫu"></canvas></div>
+      <div class="ev-hero-text">
+        <p class="kicker">Sự kiện mùa · 1/12 – 31/12/2026</p>
+        <h2>Lịch chờ Giáng sinh trong vườn</h2>
+        <p>Từ 1/12, ngày nào ôn bài là mở được một ngăn của tủ lịch 24 ngăn: cây thông đầy dần, nhà khoác áo Noel, sân sáng đèn,
+          thêm đồ trang trí mới. Có xưởng làm thiệp, nhạc Giáng sinh — và vài bất ngờ cho tối 24.</p>
+        <p class="ev-now" id="ev-now" hidden></p>
+        <p class="muted">Cần ことば畑 bản 1.36 trở lên (Anki → <b>Tools → Add-ons → Check for Updates</b>). Không thích thì tắt ở
+          <b>⚙ → Sự kiện mùa</b> — đồ đã nhận vẫn giữ.</p>
+      </div>
+    </div>
+
+    <h2 class="ev-h">Lịch</h2>
+    <ol class="ev-time" id="ev-time"></ol>
+
+    <div class="ev-cols">
+      <div class="card">
+        <h3>Mở ngăn thế nào</h3>
+        <ul class="ev-list" id="ev-rules"></ul>
+      </div>
+      <div class="card">
+        <h3>Trong tủ lịch có gì</h3>
+        <p class="muted">Ngăn nào ra quà gì thì để bạn tự mở — dưới đây chỉ kể theo nhóm.</p>
+        <div id="ev-gifts" class="ev-gifts"></div>
+      </div>
+    </div>
+
+    <div class="card ev-sec" id="thiep">
+      <h3>Thiệp Giáng sinh</h3>
+      <ol class="ev-list ev-steps" id="ev-card-steps"></ol>
+      <h4 class="ev-sub">Xem thiệp bạn gửi</h4>
+      <p>Bạn bè gửi mã <code>KBC1:…</code>? Dán vào đây để xem thiệp, kể cả khi chưa cài add-on. Trang chỉ đọc mã ngay trên máy bạn,
+        không gửi đi đâu. Trong vườn thì dán ở <b>Album → Kỷ niệm → Thiệp bạn gửi</b> để giữ lại.</p>
+      <label for="ev-code" class="lbl">Mã thiệp</label>
+      <textarea id="ev-code" rows="3" spellcheck="false" placeholder="KBC1:…"></textarea>
+      <div class="row">
+        <button type="button" class="btn" id="ev-go">Xem thiệp</button>
+        <button type="button" class="btn btn-soft" id="ev-paste">Dán từ bộ nhớ tạm</button>
+        <button type="button" class="btn btn-soft" id="ev-sample">Thử thiệp mẫu</button>
+      </div>
+      <p class="err" id="ev-err" role="alert" hidden></p>
+      <div id="ev-out" class="ev-out"></div>
+    </div>
+
+    <div class="ev-cols">
+      <div class="card">
+        <h3>Nhạc Giáng sinh</h3>
+        <p>Khi vườn đang ở giao diện mùa Giáng sinh: <b>⚙ → Âm thanh → Nhạc Giáng sinh</b>. Giai điệu hết bản quyền, phối 8-bit.</p>
+        <ul class="ev-list" id="ev-music"></ul>
+      </div>
+      <div class="card">
+        <h3>Hỏi đáp</h3>
+        <div id="ev-faq" class="ev-faq"></div>
+      </div>
+    </div>
+  </section>
+
   <!-- ============ Kho hình ============ -->
   <section id="tab-kho" class="tab" hidden>
     <div class="toolbar">
@@ -177,6 +238,7 @@
   <p>Hình xuất thẳng từ mã nguồn add-on <span id="ver"></span>. <a id="repo-link" href="https://github.com/dungmt2808/kotoba-anki" rel="noopener">Mã nguồn trên GitHub</a> · <a id="mail-link" href="#">Liên hệ</a> · Giấy phép <a href="https://github.com/dungmt2808/kotoba-anki/blob/master/LICENSE" rel="noopener">AGPL-3.0</a></p>
 </footer>
 <script src="ve.js"></script>
+<script src="thiep.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

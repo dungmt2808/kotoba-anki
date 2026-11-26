@@ -310,6 +310,7 @@ var GardenLeNoel = (function () {
     ["kb-le-letter", "kb-le-packpop"].forEach((id) => { if (id !== except) { const p = $(id); if (p) { p.hidden = true; } } });
     if (typeof GardenLe !== "undefined" && GardenLe.close) { GardenLe.close(); }
     if (typeof GardenLeCard !== "undefined" && GardenLeCard.close) { GardenLeCard.close(); }
+    if (typeof GardenLeOrn !== "undefined" && GardenLeOrn.close) { GardenLeOrn.close(); }
   }
 
   // =====================================================================================================
@@ -319,7 +320,9 @@ var GardenLeNoel = (function () {
     if (document.hidden) { return false; }
     const g = $("kb-greet"), tr = $("kb-trans");
     if ((g && !g.hidden && g.offsetParent !== null) || (tr && tr.offsetParent !== null && getComputedStyle(tr).display !== "none" && tr.style.opacity !== "0")) { return false; }
-    const busy = ["kb-panel", "kb-game", "kb-home", "kb-paper", "kb-cal", "kb-ui", "kb-fields", "kb-le-pop", "kb-le-cardpop", "kb-le-letter", "kb-le-packpop", "kb-le-show"]
+    // 1.36.2 (audit #10b): + bảng nổi ở màn chính (⚙, cây deck, Tin làng, nhiệm vụ, gánh hàng, chụp ảnh) — không bật cảnh đè lên
+    const busy = ["kb-panel", "kb-game", "kb-home", "kb-paper", "kb-cal", "kb-ui", "kb-fields", "kb-le-pop", "kb-le-cardpop", "kb-le-ornpop", "kb-le-letter", "kb-le-packpop", "kb-le-show",
+      "kb-sound-pop", "kb-deck-pop", "kb-news-pop", "kb-quest-pop", "kb-ped-pop", "kb-snap-pop"]
       .some((id) => { const e = $(id); return e && !e.hidden; });
     if (busy) { return false; }
     if (typeof GardenUI !== "undefined" && GardenUI.asking && GardenUI.asking()) { return false; }
@@ -354,14 +357,15 @@ var GardenLeNoel = (function () {
       ["kb-le-letter", "kb-le-packpop"].forEach((id) => { const p = $(id); if (p) { p.hidden = true; } });
       return;
     }
-    if (v.welcome && v.welcome.pack && packShown !== v.today) { packWait = v.welcome.pack; }
+    // 1.36.2 (audit #17a): không có gì để cất (chỉ nhận quà mở mùa) → không bật bảng danh sách trống (sổ vẫn ghi đã cất)
+    if (v.welcome && v.welcome.pack && packShown !== v.today && packLines(v.welcome.pack).length) { packWait = v.welcome.pack; }
     if (pending() && !autoTimer) { autoStart = Date.now(); autoTimer = setTimeout(tick, 1200); }
   }
 
   // =====================================================================================================
   // Album → Kỷ niệm
   // =====================================================================================================
-  function hasAlbum() { const v = le(); return !!(v && v.doors && v.santa && ((v.opened || 0) > 0 || (v.cards || []).some(Boolean) || (v.recv || []).length || v.gift && v.gift.tulich)); }
+  function hasAlbum() { const v = le(); return !!(v && v.doors && v.santa && ((v.opened || 0) > 0 || (v.cards || []).some(Boolean) || (v.orn || []).some(Boolean) || (v.recv || []).length || v.gift && v.gift.tulich)); }
   function miniCabinet(v) {
     const cv = el("canvas", "kb-le-memcab");
     const CW = 22, CH = 18, G = 2, Sx = 2;
@@ -438,6 +442,21 @@ var GardenLeNoel = (function () {
       const nb = cs.appendChild(el("button", "kb-btn kb-btn-small", "Làm thiệp ▸")); nb.type = "button";
       nb.addEventListener("click", () => { if (typeof GardenLeCard !== "undefined") { GardenLeCard.open((v.cards || []).findIndex((c) => !c)); } });
     }
+    // 1.36.3: quả châu tự vẽ
+    const myOrn = (v.orn || []).map((o, i) => [o, i]).filter(([o]) => o);
+    if (typeof GardenLeOrn !== "undefined" && (myOrn.length || v.orn_edit)) {
+      card.appendChild(el("div", "kb-le-sec", "Quả châu tự vẽ"));
+      const os = card.appendChild(el("div", "kb-le-mem-orns"));
+      myOrn.forEach(([o, i]) => {
+        const c = os.appendChild(document.createElement("canvas")); c.width = 10 * 5; c.height = 10 * 5; c.className = "kb-le-mem-orn";
+        c.title = "Quả " + (i + 1) + (o.on ? " · trên cây" : ""); c.setAttribute("data-orn", i);
+        const g = c.getContext("2d"); g.imageSmoothingEnabled = false;
+        GardenLeOrn.paintOrn(g, o.p, 1, 1.4, 5, v.draw_pal);
+      });
+      if (!myOrn.length) { os.appendChild(el("div", "kb-le-hintt", "Chưa vẽ quả châu nào.")); }
+      const ob2 = os.appendChild(el("button", "kb-btn kb-btn-small", v.orn_edit ? "Vẽ quả châu ▸" : "Xem ▸")); ob2.type = "button";
+      ob2.addEventListener("click", () => GardenLeOrn.open());
+    }
     // thiệp bạn gửi
     card.appendChild(el("div", "kb-le-sec", "Thiệp bạn gửi"));
     const rs = card.appendChild(el("div", "kb-le-mem-cards"));
@@ -498,6 +517,7 @@ var GardenLeNoel = (function () {
     } else if (res.act === "rcode" || (res.act === "code" && !(typeof GardenLeCard !== "undefined" && GardenLeCard.isOpen()))) {
       if (H && H.toast) { H.toast(res.ok ? (res.copied ? "Đã chép mã thiệp — dán gửi bạn nhé." : "Mã thiệp: " + res.code) : (res.msg || "Không chép được."), null, 5000); }
     } else if (res.act === "seen" || res.act === "read") {
+      if (res.act === "seen" && !res.ok) { seenSent = ""; }      // 1.36.2: chưa ghi được (đang đồng bộ) → lần xem sau gửi lại
       if (typeof GardenHome !== "undefined" && GardenHome.albumView && GardenHome.albumView() === "le") { refresh(); }
     }
   }

@@ -428,8 +428,18 @@ var Garden = (function () {
   }
 
   // Phím tắt ở màn chính: R ôn, T trò chơi, N nhà, B báo, ← → đổi cảnh ngoài trời, Esc đóng thẻ thông tin.
+  // 1.36.2 (audit #06): bảng / cảnh Giáng sinh đang mở (tủ lịch, xưởng thiệp, cảnh đêm 24, thư, cất đồ) → phím tắt màn chính
+  // không chạy (mũi tên dời sticker không đổi cảnh phía sau, R / N / T / B / L không mở bảng khác sau lưng cảnh đêm)
+  function leOpen() {
+    if (typeof GardenLe !== "undefined" && GardenLe.isOpen && GardenLe.isOpen()) { return true; }
+    if (typeof GardenLeCard !== "undefined" && GardenLeCard.isOpen && GardenLeCard.isOpen()) { return true; }
+    if (typeof GardenLeOrn !== "undefined" && GardenLeOrn.isOpen && GardenLeOrn.isOpen()) { return true; }
+    if (typeof GardenLeNoel !== "undefined" && GardenLeNoel.isShowing && GardenLeNoel.isShowing()) { return true; }
+    return ["kb-le-letter", "kb-le-packpop"].some(function (id) { var p = $(id); return !!(p && !p.hidden); });
+  }
   function mainKey(e) {
     if (!$("kb-panel").hidden) { return; }
+    if (leOpen()) { return; }
     if (typeof GardenGames !== "undefined" && GardenGames.isOpen()) { return; }
     if (typeof GardenHome !== "undefined" && GardenHome.isOpen()) { return; }
     if (typeof GardenPaper !== "undefined" && GardenPaper.isOpen()) {
@@ -1797,6 +1807,7 @@ var Garden = (function () {
     // 1.36.1: xưởng thiệp (đóng là lưu nốt), thư của ông già Noel, cất đồ 1/1
     "kb-le-cardpop": function () { if (typeof GardenLeCard !== "undefined") { GardenLeCard.close(); } else { $("kb-le-cardpop").hidden = true; } },
     "kb-le-letter": function () { $("kb-le-letter").hidden = true; },
+    "kb-le-ornpop": function () { if (typeof GardenLeOrn !== "undefined") { GardenLeOrn.close(); } },
     "kb-le-packpop": function () { $("kb-le-packpop").hidden = true; }
   };
   var BIG_PANELS = ["kb-panel", "kb-game", "kb-home", "kb-paper", "kb-cal", "kb-fields", "kb-ui"];
@@ -1824,7 +1835,12 @@ var Garden = (function () {
     function hook() {
       Object.keys(POP_CLOSE).concat(BIG_PANELS).forEach(function (id) {
         var e = $(id);
-        if (e && seen[id] !== e) { seen[id] = e; mo.observe(e, { attributes: true, attributeFilter: ["hidden"], attributeOldValue: true }); }
+        if (e && seen[id] !== e) {
+          seen[id] = e; mo.observe(e, { attributes: true, attributeFilter: ["hidden"], attributeOldValue: true });
+          // 1.36.2 (audit #10a): bảng tạo muộn hiện ngay trong lần mở đầu (tạo + bỏ hidden cùng một lượt, trước khi được
+          // theo dõi) → đóng các bảng nổi khác như những lần sau
+          if (!e.hidden && POP_CLOSE[id]) { closePops(id); }
+        }
       });
     }
     hook();

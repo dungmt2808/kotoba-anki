@@ -16,7 +16,7 @@ from typing import Any
 # Cầu nối JS chỉ mở được các mục có tên dưới đây (không mở link tuỳ ý từ trang vườn).
 REPO_URL = "https://github.com/dungmt2808/kotoba-anki"
 SITE_URL = "https://dungmt2808.github.io/kotoba-anki/"
-SITE_PARTS = ("kho", "cong-dong", "xem-ma", "gui", "bao-loi")
+SITE_PARTS = ("kho", "cong-dong", "xem-ma", "gui", "bao-loi", "giang-sinh")     # 1.36.3: + mục Giáng sinh 2026 của trang
 ISSUE_BUG_URL = REPO_URL + "/issues/new?template=bao_loi.yml"
 
 

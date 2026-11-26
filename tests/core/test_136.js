@@ -182,12 +182,19 @@ const FILES = ['diag', 'prefs', 'fix', 'icons', 'sky', 'season', 'fx', 'music', 
     L.setH({ data: () => data, send: () => {} });
     GardenSky.set('fixedHour', 23);
     const cv = document.getElementById('c'); cv.width = 1024; cv.height = 304; const ctx = cv.getContext('2d');
-    for (let i = 0; i < 5; i++) { L.drawOutdoor(ctx, 4, 0, 0, i * 50, 'yard', { seen: true, noGuests: true, noPets: true, noJoy: true }); }
-    const t0 = performance.now();
-    for (let i = 0; i < 40; i++) { L.drawOutdoor(ctx, 4, 0, 0, 1000 + i * 50, 'yard', { seen: true, noGuests: true, noPets: true, noJoy: true }); }
-    return (performance.now() - t0) / 40;
+    // 1.36.2 (audit #16): máy ảo vẽ bằng phần mềm chậm hơn nhiều — đo cả cảnh không có sự kiện trên cùng máy, xét phần sự kiện
+    // thêm vào (đèn, áo nhà) chứ không chỉ tổng (tổng phụ thuộc máy chạy test)
+    function run(n, le) { data.le = le; const t0 = performance.now(); for (let i = 0; i < n; i++) { L.drawOutdoor(ctx, 4, 0, 0, 1000 + i * 50, 'yard', { seen: true, noGuests: true, noPets: true, noJoy: true }); } return (performance.now() - t0) / n; }
+    const LE = data.le;
+    run(5, LE); run(5, null);
+    let on = 0, off = 0;
+    for (let r = 0; r < 4; r++) { on += run(10, LE); off += run(10, null); }
+    data.le = LE;
+    return { on: on / 4, off: off / 4 };
   });
-  ok(ms < 12, 'sân kín đồ + đủ ngăn ban đêm: ' + ms.toFixed(1) + ' ms / khung (< 12)');
+  const extra = ms.on - ms.off;
+  ok(extra < 5 && ms.on < Math.max(12, ms.off * 1.6), 'sân kín đồ + đủ ngăn ban đêm: ' + ms.on.toFixed(1) + ' ms / khung, không sự kiện ' + ms.off.toFixed(1) +
+    ' ms → sự kiện thêm ' + extra.toFixed(1) + ' ms (< 5; tổng < 12 ms hoặc < 1,6 × cảnh thường)');
   await b.close();
   const pass = results.filter(Boolean).length;
   console.log('\nKẾT QUẢ: ' + pass + '/' + results.length + (pass === results.length ? ' — TẤT CẢ OK' : ' — CÓ LỖI'));

@@ -31,6 +31,12 @@ Mẫu tường / sàn Noel là mẫu có sẵn của decor_core (id w_noel… / 
   thư (viết sẵn — không gọi Gemini) + "Xem lại đêm qua"; bánh quy còn vụn.
 - Ngày Anki ≥ 1/1: lần đầu mở vườn StackChan cất đồ Noel (tuần lộc đèn, bánh) vào Kho đồ, gian đang dùng tường / sàn Noel về
   mẫu dùng trước đó. Tủ lịch, thiệp, thư ở Album → Kỷ niệm.
+
+1.36.3 (vẽ tay — người dùng duyệt ảnh phác 25/11, `docs/ke_hoach_ve_tay/`):
+- Thiệp thêm "d" = hình vẽ 120 × 80 (32 màu của Xưởng, nén theo hàng "5.3kky"), nằm trên sticker, dưới viền + chữ; đi theo mã
+  thiệp (mã quá 6.000 ký tự → báo gửi ảnh PNG).
+- "orn": [{"p": 64 ký tự (8 × 8), "on": treo trên cây, "at"} | {"at"} (đã xoá) | null × 3] — quả châu tự vẽ treo lên cây thông
+  (từ 1/12 tới 31/12), hai máy theo lần sửa sau.
 """
 from __future__ import annotations
 
@@ -164,7 +170,7 @@ def clean_ev(raw: Any) -> dict[str, Any]:
         if not (isinstance(k, str) and k.isdigit() and str(int(k)) == k and int(k) in DOORS and isinstance(v, dict)):
             continue
         d = _iso(v.get("d"))
-        if d is None or d < door_date(int(k)):
+        if d is None or d < door_date(int(k)) or d > END:      # 1.36.2 (audit #17d): ngăn chỉ mở được 1/12 – 31/12
             continue
         out["open"][k] = {"d": d.isoformat(), "b": 1 if v.get("b") in (1, True) else 0}
     bu = raw.get("bu") if isinstance(raw.get("bu"), dict) else {}
@@ -177,7 +183,7 @@ def clean_ev(raw: Any) -> dict[str, Any]:
             out["gift"][k] = gift[k]
     box = raw.get("box") if isinstance(raw.get("box"), dict) else {}
     for k, v in box.items():
-        if isinstance(k, str) and k.isdigit() and str(int(k)) == k and int(k) in BOX_DOORS and _iso(v):
+        if isinstance(k, str) and k.isdigit() and str(int(k)) == k and int(k) in BOX_DOORS and _iso(v) and _iso(v) >= BOX_DAY:
             out["box"][k] = v
     _clean_more(raw, out)
     return out
@@ -206,7 +212,20 @@ def merge_ev(a: dict[str, Any], b: dict[str, Any]) -> dict[str, Any]:
         if k not in out["box"] or v < out["box"][k]:
             out["box"][k] = v
     _merge_more(out, other)
+    # 1.36.2 (audit #15): gộp theo hợp làm sống lại ngày cũ vừa cắt (trim / fix_mark) → cắt lại sau khi gộp, tính từ ngày mới
+    # nhất của chính sổ (không cần biết hôm nay; gộp A + B = B + A)
+    out["bu"] = _keep_recent(out["bu"], KEEP_BU)
+    if out.get("fixn"):
+        out["fixn"] = _keep_recent(out["fixn"], FIX_KEEP)
     return out
+
+
+def _keep_recent(m: dict[str, Any], days: int) -> dict[str, Any]:
+    if not m:
+        return m
+    hi = _iso(max(m))
+    lo = (hi - _dt.timedelta(days=days)).isoformat() if hi else ""
+    return {d: n for d, n in m.items() if d >= lo}
 
 
 def trim(ev: dict[str, Any], today: _dt.date) -> None:
@@ -568,8 +587,14 @@ STICKERS_MAX = 12
 RECV_MAX = 12            # thiệp nhận (còn giữ) tối đa
 RECV_KEEP = 24           # kể cả dấu "đã xoá" (để máy khác không trả lại thiệp đã xoá)
 FIX_PER_DAY = 5          # "Nhờ Gemini sửa" điều ước: số lần / ngày
+FIX_KEEP = 3             # sổ lượt nhờ sửa giữ 3 ngày
 CODE_PREFIX = "KBC1:"
 CODE_MAX = 6000
+# 1.36.3: vẽ tay — 32 màu của Xưởng (garden_core.CRAFT_PALETTE, test so), "." = trong suốt
+DRAW_CHARS = "knSmswcyiohtbBeEPprRvzlduUaAfgGj"
+D_MAX = 12000            # hình vẽ trên thiệp (đã nén) tối đa — sổ không phình, mã thiệp không vượt giới hạn giải nén
+ORN_N, ORN_W = 3, 8      # 3 quả châu, mỗi quả 8 × 8
+ORN_SPOTS = ((4, 24), (20, 27), (12, 12))     # chỗ treo trên cây thông 32 × 44 (góc trên trái của quả, không đè thiệp nhỏ)
 # 1/1: cất vào Kho đồ (đèn sân của bộ Giáng sinh + đồ ăn); tủ lịch, tất, đèn ngủ, quả cầu tuyết, gấu bông… bày quanh năm
 PACK_ITEMS = ("le_tuanloc", "le_banhquy", "le_banhkem")
 NOEL_TILES = WALLS + FLOORS
@@ -669,6 +694,52 @@ def _clean_fix(raw: Any) -> dict[str, Any] | None:
     return out
 
 
+def _px_decode(code: Any, n: int) -> str | None:
+    """1.36.3: "5.3kky" → chuỗi n ký tự (màu của Xưởng / "."). Chặt hơn more_core.px_decode_wh: chỉ chữ số ASCII (chữ số khác
+    của Unicode làm int() lỗi), số lần lặp ≥ 1, không số đứng cuối, đủ đúng n ô."""
+    if not isinstance(code, str) or not code or len(code) > n * 3:
+        return None
+    out: list[str] = []
+    total, num = 0, ""
+    for ch in code:
+        if "0" <= ch <= "9":
+            num += ch
+            if len(num) > 5:
+                return None
+            continue
+        if ch != "." and ch not in DRAW_CHARS:
+            return None
+        k = int(num) if num else 1
+        num = ""
+        if k < 1 or total + k > n:
+            return None
+        out.append(ch * k)
+        total += k
+    if num or total != n:
+        return None
+    return "".join(out)
+
+
+def _px_encode(flat: str) -> str:
+    out, i = [], 0
+    while i < len(flat):
+        j = i
+        while j < len(flat) and flat[j] == flat[i]:
+            j += 1
+        out.append((str(j - i) if j - i > 1 else "") + flat[i])
+        i = j
+    return "".join(out)
+
+
+def clean_drawing(raw: Any) -> str:
+    """Hình vẽ trên thiệp: dạng gọn (nén lại) hoặc "" (không có / hỏng / trống / quá D_MAX)."""
+    flat = _px_decode(raw, CARD_W * CARD_H)
+    if flat is None or not flat.strip("."):
+        return ""
+    code = _px_encode(flat)
+    return code if len(code) <= D_MAX else ""
+
+
 def filled(c: Any) -> bool:
     return bool(isinstance(c, dict) and c.get("f") in FRAMES)
 
@@ -688,8 +759,12 @@ def clean_card(raw: Any, wish: bool = True) -> dict[str, Any] | None:
             st.append(c)
         if len(st) >= STICKERS_MAX:
             break
+    ch = raw.get("c")          # 1.36.2: mã thiệp sửa tay có "c": [] → `[] in CHUC` ném TypeError (không phải "mã hỏng")
     out: dict[str, Any] = {"f": raw["f"], "st": st, "t1": _line(raw.get("t1"), T1_MAX), "t2": _line(raw.get("t2"), T2_MAX),
-                           "c": raw.get("c") if raw.get("c") in CHUC else ""}
+                           "c": ch if isinstance(ch, str) and ch in CHUC else ""}
+    d = clean_drawing(raw.get("d"))
+    if d:
+        out["d"] = d
     if wish:
         out["w"] = _line(raw.get("w"), WISH_MAX)
         out["wl"] = raw.get("wl") if raw.get("wl") in WISH_LANGS else "vi"
@@ -758,9 +833,16 @@ def _clean_more(raw: dict[str, Any], out: dict[str, Any]) -> None:
             ent: dict[str, Any] = {"k": k, "at": e["at"]}
             if gone:
                 ent["x"] = 1
+            if _dtp(e.get("t")):          # 1.36.2: lúc giữ / xoá (tới giây) — gộp hai bản theo lần thao tác sau
+                ent["t"] = e["t"]
             lst.append(ent)
         if lst:
             out["recv"] = _trim_recv(lst)
+    orn_raw = raw.get("orn")
+    if isinstance(orn_raw, list):
+        ol = [clean_orn(o) for o in orn_raw[:ORN_N]]
+        if any(ol):
+            out["orn"] = ol + [None] * (ORN_N - len(ol))
     fx = raw.get("fixn")
     if isinstance(fx, dict):
         o2 = {d: min(99, n) for d, n in fx.items() if _iso(d) and isinstance(n, int) and not isinstance(n, bool) and n > 0}
@@ -789,6 +871,13 @@ def _newer(y: Any, x: Any) -> bool:
     return json.dumps(y, sort_keys=True, ensure_ascii=False) > json.dumps(x, sort_keys=True, ensure_ascii=False)
 
 
+def _recv_newer(y: dict[str, Any], x: dict[str, Any]) -> bool:
+    ty, tx = y.get("t") or "", x.get("t") or ""
+    if ty != tx:
+        return ty > tx
+    return json.dumps(y, sort_keys=True) > json.dumps(x, sort_keys=True)
+
+
 def _first(sa: dict[str, Any]) -> str:
     return min([v for k, v in sa.items() if k in ("seen", "read")] or ["~"])
 
@@ -803,6 +892,10 @@ def _merge_more(out: dict[str, Any], other: dict[str, Any]) -> None:
             out["cards"] = [dict(c) if c else None for c in cb]
         else:
             out["cards"] = [cb[i] if _newer(cb[i], ca[i]) else ca[i] for i in range(CARDS_MAX)]
+    ob = other.get("orn")
+    if ob:
+        oa = out.get("orn")
+        out["orn"] = [dict(o) if o else None for o in ob] if not oa else [ob[i] if _newer(ob[i], oa[i]) else oa[i] for i in range(ORN_N)]
     hb = other.get("hang")
     if hb and (not out.get("hang") or _newer(hb, out["hang"])):
         out["hang"] = dict(hb)
@@ -823,7 +916,12 @@ def _merge_more(out: dict[str, Any], other: dict[str, Any]) -> None:
         out["pack"] = pb
     prv = other.get("prev")
     if prv:
-        out["prev"] = dict(prv, **(out.get("prev") or {}))
+        # 1.36.2 (audit #15): hai máy nhớ khác nhau cùng một gian → chọn cố định (mẫu thật hơn "theo kiểu nhà", rồi theo tên)
+        pa = dict(out.get("prev") or {})
+        for k, v in prv.items():
+            if k not in pa or (not pa[k], pa[k]) > (not v, v):
+                pa[k] = v
+        out["prev"] = pa
     rb = other.get("recv")
     if rb:
         by = {e["k"]: dict(e) for e in rb}
@@ -831,7 +929,14 @@ def _merge_more(out: dict[str, Any], other: dict[str, Any]) -> None:
             cur = by.get(e["k"])
             if cur is None:
                 by[e["k"]] = dict(e)
-            else:
+            elif e.get("t") or cur.get("t"):
+                # 1.36.2 (audit #01): lần giữ / xoá sau thắng — xoá rồi dán lại mã thì giữ lại được (trước: dấu "đã xoá" của
+                # bản trong collection luôn thắng → thiệp vừa giữ lại mất ngay lúc lưu). Bản 1.36.1 không có "t" = cũ hơn.
+                w, lo = (dict(e), cur) if _recv_newer(e, cur) else (cur, e)
+                if w.get("x") or not lo.get("x"):     # ngày nhận: sớm nhất (trừ khi vừa giữ lại sau khi xoá — ngày giữ lại)
+                    w["at"] = min(w["at"], lo["at"])
+                by[e["k"]] = w
+            else:                         # cả hai từ 1.36.1: như cũ (xoá ở máy nào cũng xoá)
                 if e.get("x"):
                     cur["x"] = 1
                 cur["at"] = min(cur["at"], e["at"])
@@ -894,6 +999,10 @@ def save_card(ev: dict[str, Any], i: Any, raw: Any, today: _dt.date, now: _dt.da
     if not filled(c):
         raise LeError("Thiệp chưa có khung.")
     assert c is not None
+    if isinstance(raw, dict) and raw.get("d") and not c.get("d"):
+        flat = _px_decode(raw.get("d"), CARD_W * CARD_H)
+        if flat is not None and flat.strip("."):      # vẽ đúng mà quá chi tiết: báo, không lặng lẽ bỏ hình vẽ
+            raise LeError("Hình vẽ chi tiết quá — bớt vài nét (Hoàn tác) rồi thử lại nhé.")
     c.pop("fx", None)
     old = cards(ev)[i]
     if filled(old) and old.get("fx") and old["fx"]["for"] == c["w"]:
@@ -938,7 +1047,7 @@ def fix_left(ev: dict[str, Any], today: _dt.date) -> int:
 
 
 def fix_mark(ev: dict[str, Any], today: _dt.date) -> None:
-    lo = (today - _dt.timedelta(days=3)).isoformat()
+    lo = (today - _dt.timedelta(days=FIX_KEEP)).isoformat()
     fx = {d: n for d, n in (ev.get("fixn") or {}).items() if d >= lo}
     fx[today.isoformat()] = fx.get(today.isoformat(), 0) + 1
     ev["fixn"] = fx
@@ -951,6 +1060,8 @@ def fix_set(ev: dict[str, Any], i: int, text: str, res: dict[str, Any], now: _dt
     c = lst[i] if 0 <= i < CARDS_MAX else None
     if not filled(c) or c.get("w") != text:
         return False
+    if now is not None and taken_index(ev, now) == i:      # 1.36.2 (audit #17b): Gemini về sau 18:00 ngày 24 — thiệp đã khoá
+        return False
     fx = _clean_fix(dict(res, **{"for": text}))
     if not fx:
         return False
@@ -958,6 +1069,57 @@ def fix_set(ev: dict[str, Any], i: int, text: str, res: dict[str, Any], now: _dt
     lst[i] = c
     ev["cards"] = lst
     return True
+
+
+# ---- 1.36.3: quả châu tự vẽ ----
+
+def clean_orn(raw: Any) -> dict[str, Any] | None:
+    """Một quả châu: {"p": 64 ký tự, "on": 0 | 1, "at"} · ô đã xoá {"at"} · không có → None."""
+    if not isinstance(raw, dict):
+        return None
+    at = raw.get("at") if _dtp(raw.get("at")) else None
+    p = raw.get("p")
+    if not (isinstance(p, str) and len(p) == ORN_W * ORN_W and all(ch == "." or ch in DRAW_CHARS for ch in p) and p.strip(".")):
+        return {"at": at} if at else None
+    out: dict[str, Any] = {"p": p, "on": 1 if raw.get("on") in (1, True) else 0}
+    if at:
+        out["at"] = at
+    return out
+
+
+def orns(ev: dict[str, Any]) -> list[Any]:
+    o = list(ev.get("orn") or [])
+    return (o + [None] * ORN_N)[:ORN_N]
+
+
+def orn_filled(o: Any) -> bool:
+    return bool(isinstance(o, dict) and isinstance(o.get("p"), str))
+
+
+def hung_orns(ev: dict[str, Any]) -> list[tuple[int, str]]:
+    """Quả châu đang treo trên cây: [(chỗ, 64 ký tự)]."""
+    return [(i, o["p"]) for i, o in enumerate(orns(ev)) if orn_filled(o) and o.get("on")]
+
+
+def save_orn(ev: dict[str, Any], i: Any, p: Any, on: Any, today: _dt.date, now: _dt.datetime) -> dict[str, Any] | None:
+    """Lưu quả châu ô i (1/12 – 31/12): p 64 ký tự (hình trống = xoá ô). Trả quả châu đã lưu (None = đã xoá)."""
+    try:
+        i = int(i)
+    except (TypeError, ValueError):
+        raise LeError("Không có quả châu này.") from None
+    if not 0 <= i < ORN_N:
+        raise LeError("Không có quả châu này.")
+    if today < FIRST:
+        raise LeError("Vẽ quả châu từ 1/12 nhé.")
+    if today > END:
+        raise LeError("Mùa Giáng sinh đã qua — quả châu giữ ở Album → Kỷ niệm.")
+    if not (isinstance(p, str) and len(p) == ORN_W * ORN_W and all(ch == "." or ch in DRAW_CHARS for ch in p)):
+        raise LeError("Hình quả châu hỏng — vẽ lại nhé.")
+    lst = orns(ev)
+    at = _bump(lst[i], now)
+    lst[i] = {"p": p, "on": 1 if on in (1, True) else 0, "at": at} if p.strip(".") else {"at": at}
+    ev["orn"] = lst
+    return lst[i] if orn_filled(lst[i]) else None
 
 
 # ---- mã thiệp gửi bạn (chỉ mặt trước) ----
@@ -970,7 +1132,21 @@ def card_code(card: Any) -> str:
     c.pop("at", None)
     z = zlib.compress(json.dumps(c, ensure_ascii=False, separators=(",", ":")).encode("utf-8"), 9)
     body = base64.urlsafe_b64encode(z).decode("ascii").rstrip("=")
-    return CODE_PREFIX + body + ":" + ("%08x" % (zlib.crc32(z) & 0xFFFFFFFF))[:6]
+    code = CODE_PREFIX + body + ":" + ("%08x" % (zlib.crc32(z) & 0xFFFFFFFF))[:6]
+    if len(code) > CODE_MAX:          # 1.36.3: hình vẽ quá nhiều chi tiết
+        raise LeError("Hình vẽ nhiều quá để gửi bằng mã — lưu ảnh PNG gửi bạn nhé.")
+    return code
+
+
+def code_len(card: Any) -> int:
+    """Số ký tự của mã thiệp (0 = thiệp trống; > CODE_MAX = không gửi được bằng mã)."""
+    c = clean_card(card, wish=False)
+    if not filled(c):
+        return 0
+    assert c is not None
+    c.pop("at", None)
+    z = zlib.compress(json.dumps(c, ensure_ascii=False, separators=(",", ":")).encode("utf-8"), 9)
+    return len(CODE_PREFIX) + len(base64.urlsafe_b64encode(z).decode("ascii").rstrip("=")) + 7
 
 
 def decode_card(code: Any) -> dict[str, Any] | None:
@@ -1005,7 +1181,7 @@ def decode_card(code: Any) -> dict[str, Any] | None:
     return c
 
 
-def recv_add(ev: dict[str, Any], code: Any, today: _dt.date) -> dict[str, Any]:
+def recv_add(ev: dict[str, Any], code: Any, today: _dt.date, now: _dt.datetime | None = None) -> dict[str, Any]:
     c = decode_card(code)
     if c is None:
         raise LeError("Mã thiệp không đúng — chép lại đúng đoạn bắt đầu bằng “%s” nhé." % CODE_PREFIX)
@@ -1020,21 +1196,23 @@ def recv_add(ev: dict[str, Any], code: Any, today: _dt.date) -> dict[str, Any]:
                 break
             e.pop("x", None)
             e["at"] = today.isoformat()
+            e["t"] = _bump(e.get("t"), now or _dt.datetime.now())
             ev["recv"] = _trim_recv(lst)
             return c
     if len(live) >= RECV_MAX:
         raise LeError("Album giữ tối đa %d thiệp nhận — xoá bớt thiệp cũ nhé." % RECV_MAX)
     lst = [e for e in lst if e["k"] != k]
-    lst.insert(0, {"k": k, "at": today.isoformat()})
+    lst.insert(0, {"k": k, "at": today.isoformat(), "t": stamp(now or _dt.datetime.now())})
     ev["recv"] = _trim_recv(lst)
     return c
 
 
-def recv_del(ev: dict[str, Any], k: Any) -> None:
+def recv_del(ev: dict[str, Any], k: Any, now: _dt.datetime | None = None) -> None:
     lst = [dict(e) for e in ev.get("recv") or []]
     for e in lst:
         if e["k"] == k and not e.get("x"):
             e["x"] = 1
+            e["t"] = _bump(e.get("t"), now or _dt.datetime.now())
             ev["recv"] = _trim_recv(lst)
             return
     raise LeError("Không còn thiệp này.")
@@ -1057,8 +1235,11 @@ def facts(ev: dict[str, Any], placed: dict[str, int]) -> str:
     """Những thứ ông già Noel thấy trong vườn (chụp lại lúc ông ghé — thư sau này không đổi khi dọn đồ)."""
     f = [p for p in parts(ev) if p in ("star", "lights", "swag", "path", "wreath")]
     for iid, code in (("le_nguoituyet", "snowman"), ("le_tuanloc", "deer"), ("le_banhquy", "cookie"), (TREE, "tree")):
-        if int(placed.get(iid, 0) or 0) > 0:
-            f.append(code)
+        n = int(placed.get(iid, 0) or 0)
+        if n > 0:
+            f.append("deer1" if code == "deer" and n == 1 else code)     # 1.36.2 (audit #17c): một chú tuần lộc đèn
+    if hung_orns(ev) and int(placed.get(TREE, 0) or 0) > 0:
+        f.append("orn")                                                    # 1.36.3: quả châu tự vẽ trên cây
     return ",".join(f)
 
 
@@ -1067,8 +1248,10 @@ def santa_view(ev: dict[str, Any], today: _dt.date, now: _dt.datetime) -> dict[s
     thư + "Xem lại đêm qua"."""
     sa = ev.get("santa") or {}
     c = came(now)
+    eve_day = door_date(DOORS_N)
+    # 1.36.2 (audit #17e): giờ đổi ngày của Anki sau 18 giờ (hiếm) → tối 24 ngày Anki còn là 23: vẫn xem cảnh đêm theo ngày máy
     return {"came": c, "eve": EVE.isoformat(timespec="minutes"),
-            "due": bool(c and today == door_date(DOORS_N) and not sa.get("seen")),
+            "due": bool(c and (today == eve_day or (today < eve_day and now.date() == eve_day)) and not sa.get("seen")),
             "morning": bool(c and BOX_DAY <= today <= END and not sa.get("read")),
             "seen": sa.get("seen", ""), "read": sa.get("read", "")}
 
@@ -1117,8 +1300,12 @@ def letter(ev: dict[str, Any], today: _dt.date, now: _dt.datetime, placed: dict[
     p1 = "Đêm qua ông ghé vườn của cháu."
     if seen:
         p1 += " Từ trên trời ông đã thấy " + _join(seen[:3]) + " — đẹp lắm!"
+    if "orn" in fs:
+        p1 += " Quả châu cháu tự vẽ treo trên cây, ông nhìn là nhận ra ngay — chẳng nhà nào có quả giống thế."
     if "deer" in fs:
         p1 += " Mấy chú tuần lộc của ông cứ ngó mãi hai bạn tuần lộc đèn trong sân."
+    elif "deer1" in fs:
+        p1 += " Mấy chú tuần lộc của ông cứ ngó mãi bạn tuần lộc đèn trong sân."
     body.append(p1)
     if "cookie" in fs:
         body.append("Cảm ơn cháu đã để bánh quy với sữa — ông ăn hết rồi, chỉ còn ít vụn trên khay thôi.")
@@ -1213,6 +1400,8 @@ def view_more(ev: dict[str, Any], today: _dt.date, now: _dt.datetime, placed: di
         "pack": ev.get("pack"), "recv": recv_list(ev), "fix_left": fix_left(ev, today),
         "frames": [{"id": f, "name": FRAME_NAMES[f]} for f in FRAMES], "chuc": dict(CHUC),
         "stickers": stickers(ev), "now": stamp(now), "code_prefix": CODE_PREFIX,
+        "orn": [{"p": o["p"], "on": o.get("on", 0)} if orn_filled(o) else None for o in orns(ev)],
+        "orn_edit": FIRST <= today <= END, "orn_spots": [list(x) for x in ORN_SPOTS], "code_max": CODE_MAX, "d_max": D_MAX,
         "limits": {"t1": T1_MAX, "t2": T2_MAX, "wish": WISH_MAX, "stickers": STICKERS_MAX, "cards": CARDS_MAX,
                    "recv": RECV_MAX, "w": CARD_W, "h": CARD_H},
     }
