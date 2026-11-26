@@ -318,8 +318,12 @@ var GardenLeNoel = (function () {
   // =====================================================================================================
   function idle() {
     if (document.hidden) { return false; }
+    // 1.36.4: màn chào #kb-greet và lớp chuyển cảnh #kb-trans là position: fixed → offsetParent luôn null (trước: phép kiểm này
+    // không bao giờ chặn — mở vườn lần đầu tối 24 thì cảnh ông già Noel chạy DƯỚI màn chào, người dùng mất mấy giây đầu)
+    if (typeof GardenGreet !== "undefined" && GardenGreet.isGreeting && GardenGreet.isGreeting()) { return false; }
+    const shown = (e) => !!(e && !e.hidden && e.getClientRects().length && getComputedStyle(e).display !== "none" && getComputedStyle(e).visibility !== "hidden");
     const g = $("kb-greet"), tr = $("kb-trans");
-    if ((g && !g.hidden && g.offsetParent !== null) || (tr && tr.offsetParent !== null && getComputedStyle(tr).display !== "none" && tr.style.opacity !== "0")) { return false; }
+    if (shown(g) || (shown(tr) && tr.style.opacity !== "0")) { return false; }
     // 1.36.2 (audit #10b): + bảng nổi ở màn chính (⚙, cây deck, Tin làng, nhiệm vụ, gánh hàng, chụp ảnh) — không bật cảnh đè lên
     const busy = ["kb-panel", "kb-game", "kb-home", "kb-paper", "kb-cal", "kb-ui", "kb-fields", "kb-le-pop", "kb-le-cardpop", "kb-le-ornpop", "kb-le-letter", "kb-le-packpop", "kb-le-show",
       "kb-sound-pop", "kb-deck-pop", "kb-news-pop", "kb-quest-pop", "kb-ped-pop", "kb-snap-pop"]

@@ -15,7 +15,7 @@ Gửi mã đó cho Claude để điền vào `README.md` (mục Cài đặt), tr
 
 | Ô | Điền |
 |---|---|
-| **File** | `kotoba_batake.ankiaddon` ở gốc repo (bản **1.31.4**, đóng bằng `python3 tests/tools/pack.py`). **Không** tải `tests/tools/kotoba_batake_test.ankiaddon` (công cụ test cho nhiều xu). |
+| **File** | `kotoba_batake.ankiaddon` ở gốc repo (bản **1.36.4** — gồm 1.36.0–1.36.3, sự kiện Giáng sinh; đóng bằng `python3 tests/tools/pack.py`). **Không** tải `tests/tools/kotoba_batake_test.ankiaddon` (công cụ test cho nhiều xu). |
 | **Title** | `ことば畑 Kotoba Batake – pixel vocabulary garden (Vietnamese UI)` |
 | **Tags** | `japanese english vocabulary gamification garden pixel vietnamese fsrs` |
 | **Support page** | `https://github.com/dungmt2808/kotoba-anki/issues` (hoặc `https://dungmt2808.github.io/kotoba-anki/#bao-loi`) |
@@ -39,6 +39,7 @@ Mỗi lần ra bản mới: **Update** trên trang add-on của mình → tải 
 **Có gì trong vườn**
 
 - **Tưới ngay**: ôn thẻ ngay trong vườn. Đây là lượt ôn Anki bình thường — lịch ôn, FSRS và đồng bộ AnkiWeb không đổi. Mỗi thẻ nhớ được +1 xu.
+- **Mới: Lịch chờ Giáng sinh (1/12 – 31/12)** — tủ lịch 24 ngăn, mỗi ngày có ôn thẻ (ôn trên điện thoại cũng tính) mở một ngăn quà trang trí: cây thông đầy dần, nhà khoác áo Noel, sân sáng đèn ban đêm; lỡ ngày thì ôn thêm để mở bù. Làm thiệp, tự vẽ lên thiệp và vẽ quả châu treo cây, viết điều ước — tối 24 có bất ngờ. Không tốn xu, tắt được ở ⚙ → Sự kiện mùa.
 - **14 giao diện mùa** có nhạc riêng: Tết, hoa anh đào, mùa mưa, Thất Tịch, lễ hội mùa hè, Trung thu, lá đỏ, Halloween, Giáng sinh, năm mới Nhật… tự bật đúng dịp trong năm.
 - **Nhà 3 gian & 160 món đồ**: xây nhà từng bậc, 4 kiểu nhà, Bếp và Phòng ngủ, giấy dán tường và sàn cho từng gian, đồ sân vườn, nội thất, đồ hiếm trong rương nhiệm vụ.
 - **6 vùng mới** (bãi biển, đền trên núi, phố lễ hội, rừng tre, suối nước nóng, ga làng quê) và **vùng tự tạo**.

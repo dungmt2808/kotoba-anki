@@ -268,14 +268,24 @@ def news(ctx: dict[str, Any]) -> dict[str, Any]:
             "line": (line.get("short") or line["text"]) if line else None}
 
 
+def _event_gift(iid: Any) -> bool:
+    """1.36.4: món sự kiện mùa tặng / cho không (le_core: Tủ lịch 2026 + cây thông lúc mở vườn trong mùa, món của ngăn tủ lịch —
+    "le_…" và "xmastree") — người mới cài trong tháng 12 nhận ngay lần mở vườn đầu, chưa phải "đã có đồ"."""
+    return isinstance(iid, str) and (iid.startswith("le_") or iid == "xmastree")
+
+
 def is_new_player(w: Any) -> bool:
     """1.26.1: hồ sơ chưa làm gì trong vườn (chưa tưới lần nào, chưa thu hoạch, 0 xu, chưa xây nhà, chưa có đồ) → hiện
-    hướng dẫn 3 bước (tour.js). Người đang dùng cập nhật lên thì đã có lượt tưới / xu nên không thấy."""
+    hướng dẫn 3 bước (tour.js). Người đang dùng cập nhật lên thì đã có lượt tưới / xu nên không thấy.
+    1.36.4: quà của sự kiện mùa không tính là "đã có đồ" (trước: người mới cài 1/12 – 31/12 không bao giờ thấy hướng dẫn —
+    _le_settle tặng tủ lịch + cây thông trước khi xét người mới)."""
     if not isinstance(w, dict):
         return False
     home = w.get("home") if isinstance(w.get("home"), dict) else {}
+    owned = home.get("owned")
     try:
+        mine = [k for k in owned if not _event_gift(k)] if isinstance(owned, dict) else owned
         return (int(w.get("waters") or 0) == 0 and int(w.get("harvests") or 0) == 0 and int(w.get("coins") or 0) == 0
-                and not int(home.get("house") or 0) and not home.get("owned"))
+                and not int(home.get("house") or 0) and not mine)
     except (TypeError, ValueError):
         return False
