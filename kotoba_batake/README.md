@@ -124,6 +124,16 @@ Sau khi trả lời có hiện cách đọc, Hán Việt, nghĩa (và cách dùn
 - **Hiệu ứng thành tích** (`web/joy.js`, Python tính `data.joy` = `more_core.joy_view`): **xong hết thẻ hôm nay** trong deck đang xem (`deck_due_tree` = 0 và hôm nay đã ôn ≥ 1 lượt) → cầu vồng trên ruộng và trên trời sân, giọt sương lấp lánh; **đạt mục tiêu ngày**; **cả vườn xanh tốt / ra hoa / trĩu quả** (≥ 5 cây, không cây nào héo, mọi cây từ Cây non / Ra hoa / Ra quả) → lá lấp lánh / cánh hoa anh đào bay / đốm sáng vàng bay lên; **mốc chuỗi ngày** (7, 14, 21, 30, 50, 75, 100, 150, 200, 250, 300, 365, 500, 730, 1000) → pháo hoa trên trời sân; **xong 3 nhiệm vụ** → đèn trời bay lên. Huy hiệu cạnh chú thích ruộng; dải chúc mừng + linh vật chúc mỗi thành tích **một lần mỗi ngày** (nhớ ở `localStorage kb-joy-<ngày>-<loại>`), đang ôn thẻ thì để dành tới khi đóng bảng ôn.
 - **Lưu trữ**: khoá collection mới `kotoba_batake_more` (`more_core.MORE_KEY`) — mục 4. Bản ≤ 1.13 ở máy khác không đọc khoá này nên không xoá được gì.
 
+### Mới ở 1.36.4: kiểm tra lần cuối trước phát hành (26/11)
+- **Người mới cài trong mùa Giáng sinh có hướng dẫn 3 bước**: `event_core.is_new_player` không tính quà của sự kiện ("le_…",
+  "xmastree") là "đã có đồ" — trước đó vườn tặng tủ lịch + cây thông (`_le_settle`) trước khi xét người mới, nên ai cài từ 1/12 tới
+  31/12 không bao giờ thấy hướng dẫn.
+- **Cảnh ông già Noel tối 24 / thư sáng 25 / cất đồ 1/1 chờ màn chào xong**: `idle()` của `web/le_noel.js` hỏi
+  `GardenGreet.isGreeting()` + `getClientRects` (màn chào `#kb-greet` và lớp chuyển cảnh `#kb-trans` là `position: fixed` nên
+  `offsetParent` luôn null — phép kiểm cũ không bao giờ chặn, cảnh chạy dưới màn chào mấy giây đầu); hướng dẫn 3 bước (`tour.js busy`)
+  chờ các lớp Giáng sinh đóng rồi mới hiện.
+- Không đổi lưu trữ (khoá collection, config.json y như 1.36.3).
+
 ### Mới ở 1.36.3: vẽ lên thiệp + quả châu tự vẽ (25/11)
 - **Xưởng thiệp → thẻ "✎ Vẽ"** (`web/le_card.js`): kéo chuột vẽ thẳng lên mặt trước thiệp — bút / tẩy, cỡ 1 · 2 · 3, Hoàn tác (nút +
   Ctrl+Z, 30 bước), Xoá hình vẽ (hỏi trước), 32 màu của Xưởng. Hình vẽ nằm trên sticker, dưới viền + chữ. Lưu trong thiệp ở trường

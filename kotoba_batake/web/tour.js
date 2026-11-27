@@ -28,7 +28,10 @@ var GardenTour = (function () {
   function el(tag, cls, text) { const e = document.createElement(tag); if (cls) { e.className = cls; } if (text !== undefined) { e.textContent = text; } return e; }
   function busy() {
     if (typeof GardenGreet !== "undefined" && GardenGreet.isGreeting && GardenGreet.isGreeting()) { return true; }
-    return ["kb-panel", "kb-game", "kb-home", "kb-paper", "kb-cal", "kb-fields", "kb-ui", "kb-craft"].some((id) => $(id) && !$(id).hidden);
+    // 1.36.4: + các lớp của sự kiện Giáng sinh (cảnh tối 24, thư sáng 25, cất đồ 1/1, tủ lịch / thiệp / quả châu) — người mới cài
+    // trong mùa: hướng dẫn chờ lớp đó đóng rồi mới hiện (không đè lên nhau)
+    return ["kb-panel", "kb-game", "kb-home", "kb-paper", "kb-cal", "kb-fields", "kb-ui", "kb-craft",
+      "kb-le-show", "kb-le-letter", "kb-le-packpop", "kb-le-pop", "kb-le-cardpop", "kb-le-ornpop"].some((id) => $(id) && !$(id).hidden);
   }
   function deckNow() { const s = $("kb-deck"); return s ? s.value : null; }
 
