@@ -464,10 +464,13 @@ https://ankiweb.net/shared/info/1255432496". Báo cáo + đánh giá + so sánh 
   23 giờ** với đồng hồ máy giả (`e2e_giodoingay.js` qua `run_dongho.sh`), **ngày rất xa** (3/2027 lần đầu mở sau Giáng sinh, Giáng
   sinh 2027, 2030, đồng hồ lùi 2025), **phiên ôn dài** 300 lượt đo rò bộ nhớ / bộ nghe / vòng vẽ (`e2e_phiendai.js`), ổ đĩa đầy
   khi ghi sổ Giáng sinh, **cài chung với 6 add-on phổ biến** (Memory Forest, Onigiri, AnkiConnect, Review Heatmap, AJT Japanese,
-  FSRS Helper — đọc mã; chạy chung bị chặn trong phiên, cần người dùng cho phép), đọc lại mã 1.35.6 → 1.36.4.
-- Môi trường test: `mkbase.py` tắt "Check for updates" của Anki (mở `ankiweb.net` trong mạng + đồng hồ giả → Anki bật cảnh báo
-  "đồng hồ sai" chặn phím / trang); `run_dongho.sh` nhận `KB_DONGHO_SCRIPT` / `KB_DONGHO_START`; `run_versions.sh` nhận `KB_TIMEOUT`.
-- Test: `core/test_1365.py` (1.36.4: đỏ 4), `anki/e2e_dongvuon.js`, `anki/e2e_giodoingay.js`, `anki/e2e_phiendai.js`.
+  FSRS Helper — đọc mã + chạy chung thật khi người dùng cho phép: 28/28), đọc lại mã 1.35.6 → 1.36.4.
+- Môi trường test: `mkbase.py` tắt "Check for updates" của Anki + `zz_kbtest` tắt `aqt.update.check_for_update` (Anki ≤ 24.x không có
+  tuỳ chọn) — mở `ankiweb.net` trong mạng + đồng hồ giả → Anki bật cảnh báo "đồng hồ sai" chặn phím / trang; `run_dongho.sh` nhận
+  `KB_DONGHO_SCRIPT` / `KB_DONGHO_START`; `run_versions.sh` nhận `KB_TIMEOUT` / `KB_EXTRA_ADDONS`. `e2e_dongho.js` (1.36.4) sửa kỳ
+  vọng ngày 1/1: bảng "Cất đồ Noel" có dòng "Áo Noel của nhà…" phải hiện — 1.36.4 đạt "không hiện" chỉ vì cửa sổ ma cất đồ trước.
+- Test: `core/test_1365.py` (1.36.4: đỏ 4), `anki/e2e_dongvuon.js`, `anki/e2e_giodoingay.js`, `anki/e2e_phiendai.js`,
+  `anki/e2e_cungaddon.js` (6 add-on chạy chung thật — người dùng cho phép 27/11: 28/28, không traceback).
 - Không thêm khoá collection / mục config; chỉ đổi `__init__.py` (+ README, manifest). **Phát hành 1.36.5 thay cho 1.36.4.**
   **Cách sửa Claude chọn, người dùng chưa xem.**
 

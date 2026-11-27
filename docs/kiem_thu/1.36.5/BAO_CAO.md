@@ -34,8 +34,9 @@ Tìm được **1 lỗi thật** (có từ 1.30.3, nặng lên từ 1.36.0 vì s
      sinh mở rồi! Quà tặng: …"**. Tương tự **1/1**: StackChan **cất đồ Noel trong cửa sổ ma**, người dùng không thấy bảng "Cất đồ Noel"
      (tuần lộc / bánh tự biến khỏi sân);
   2. lỗi JS "Garden is not defined" (8 dòng trong log Anki mỗi lần);
-  3. dựng N lần cả vườn trên luồng chính → Anki khựng lại lúc đổi ngày (trong test với ~6 cửa sổ ma: trang **đứng hình > 30 giây** ở bước
-     "mở vườn lần đầu vào 1/3/2027").
+  3. dựng N lần cả vườn trên luồng chính → Anki khựng lại lúc đổi ngày (trong test đồng hồ giả trên 1.36.4, có ~6 cửa sổ ma: trang
+     **đứng hình > 30 giây** ở bước "mở vườn lần đầu vào 1/3/2027"; trên 1.36.5 bước đó chạy bình thường — rất có thể là lỗi này, chưa
+     chụp được ngăn xếp lúc đứng để chắc chắn).
 - **Tái hiện** (`tests/anki/e2e_dongvuon.js`, Anki 26.9.4): mở / đóng vườn 4 lần → **4 cửa sổ ma còn chạy đồng hồ**; vườn đang đóng,
   ngày Anki sang 1/12 → **kho có tủ lịch + cây thông, sổ đã ghi** trước khi người dùng mở vườn; mở vườn → **không có thông báo quà**.
   1.36.4: **đỏ 3/10**.
@@ -45,6 +46,11 @@ Tìm được **1 lỗi thật** (có từ 1.30.3, nặng lên từ 1.36.0 vì s
 - **Sau khi sửa**: `e2e_dongvuon` **10/10** (26.9.4) · **10/10** (23.10.1): 0 cửa sổ ma, vườn đóng thì không ai nhận quà, mở vườn
   thì có thông báo quà, cửa sổ đang mở vẫn tự sang ngày; không còn dòng "Garden is not defined". Kịch bản đồng hồ giả (giờ đổi ngày
   23:00) đi qua bước 1/3/2027: **bảng "Cất đồ Noel" hiện đúng một lần**.
+- **Test cũ bị lỗi này che**: `e2e_dongho.js` (1.36.4) kiểm "ngày 1/1 không có món phải cất → không bật bảng cất đồ" và đạt 59/59
+  trên 1.36.4 — nhưng người trong kịch bản đã mở ngăn 1 (vòng hoa cửa), nên theo thiết kế 1.36.2 bảng "Cất đồ Noel" **phải hiện** (có
+  dòng "Áo Noel của nhà và đèn sân… về như lúc chưa có tủ lịch"; chỉ bảng *trống* mới không bật). Nó đạt vì một cửa sổ ma đã cất đồ trước
+  trong trang đã dọn — đúng hệ quả của B1 (với ~4 cửa sổ ma, cửa sổ đang mở hiếm khi là cửa sổ cất đồ). Trên 1.36.5 bảng hiện trong
+  cửa sổ đang mở → kỳ vọng của test đã sửa theo thiết kế. Kết quả 1.36.5: **59/59** (26.9.4) · **59/59** (23.10.1).
 - Test offline: `tests/core/test_1365.py` (mã: `closeEvent` dừng đồng hồ trước mọi việc, `_check_day` chỉ cửa sổ đang dùng + đang hiện,
   `open_garden` hiện rồi mới xét ngày; hợp đồng dữ liệu = 1.36.4) — 1.36.4 **đỏ 4**, 1.36.5 **72/72**. Đã thêm vào `run_all.sh`.
 
@@ -54,15 +60,15 @@ Tìm được **1 lỗi thật** (có từ 1.30.3, nặng lên từ 1.36.0 vì s
 |---|---|
 | `tests/run_all.sh` trên gói **1.36.4** (`ANKI_PY` = aqt 26.9.4, `PY39` = aqt 23.10.1) | **83 mục, TỔNG: TẤT CẢ OK** (có `dong_bo/test_dong_bo.py` — máy chủ đồng bộ thật của Anki) |
 | `tests/run_all.sh` trên gói **1.36.5** (thêm `core/test_1365.py`) | **84 mục, TỔNG: TẤT CẢ OK** (`core/test_1365.py` 72/72) |
-| Anki thật trên gói 1.36.5, 26.9.4 — hồi quy hướng dẫn / màn chào / Giáng sinh / sang ngày / đồng bộ | **13 kịch bản đạt hết**: `e2e_1303` 49/49 (vườn để mở tự sang ngày — đúng chỗ đã sửa), `e2e_1362` 40/40, `e2e_136` 66/66, `e2e_1361` 81/81, `e2e_1363` 44/44, `e2e_tour` 12/12, `e2e_1352` 33/33, `e2e_nguoimoi_noel` 24/24, `e2e_126` 39/39 (chạy cùng 3 Anki khác: 38/39 — vòng tròn mở 0,4 giây bị lỡ khi máy quá tải; chạy riêng đạt), `e2e_1261` 41/41, `e2e_134` 87/87, `e2e_giaodien_noel` 97/97, `e2e_fuzz_noel` 5/5 · đồng bộ `e2e_1312` (qua `dong_bo/run_e2e.sh`): DONGBO_1312 |
-| Cập nhật đè **1.35.6 (AnkiWeb) → 1.36.5** · hạ bản 1.36.5 → 1.35.6 → 1.36.5 · đồng hồ máy giả 4:00 (`run_dongho.sh`) | **23/23** (5 + 18: 12 khoá collection, file `user_files/`, xu, nhật ký y nguyên; tháng 12 trên dữ liệu 1.35.6 tặng tủ lịch, 3 ngăn chờ mở) · **33/33** (4 + 10 + 19: 1.35.6 chơi tiếp mà đồ / thiệp / hình vẽ / quả châu Giáng sinh còn nguyên) · DONGHO4 |
+| Anki thật trên gói 1.36.5, 26.9.4 — hồi quy hướng dẫn / màn chào / Giáng sinh / sang ngày / đồng bộ | **13 kịch bản đạt hết**: `e2e_1303` 49/49 (vườn để mở tự sang ngày — đúng chỗ đã sửa), `e2e_1362` 40/40, `e2e_136` 66/66, `e2e_1361` 81/81, `e2e_1363` 44/44, `e2e_tour` 12/12, `e2e_1352` 33/33, `e2e_nguoimoi_noel` 24/24, `e2e_126` 39/39 (chạy cùng 3 Anki khác: 38/39 — vòng tròn mở 0,4 giây bị lỡ khi máy quá tải; chạy riêng đạt), `e2e_1261` 41/41, `e2e_134` 87/87, `e2e_giaodien_noel` 97/97, `e2e_fuzz_noel` 5/5 · đồng bộ `e2e_1312` (qua `dong_bo/run_e2e.sh`, máy chủ đồng bộ thật của Anki): **47/47** |
+| Cập nhật đè **1.35.6 (AnkiWeb) → 1.36.5** · hạ bản 1.36.5 → 1.35.6 → 1.36.5 · đồng hồ máy giả 4:00 (`run_dongho.sh`) | **23/23** (5 + 18: 12 khoá collection, file `user_files/`, xu, nhật ký y nguyên; tháng 12 trên dữ liệu 1.35.6 tặng tủ lịch, 3 ngăn chờ mở) · **33/33** (4 + 10 + 19: 1.35.6 chơi tiếp mà đồ / thiệp / hình vẽ / quả châu Giáng sinh còn nguyên) · đồng hồ giả 4:00 (`e2e_dongho`, kỳ vọng ngày 1/1 sửa theo thiết kế — mục 2): **59/59** (26.9.4) · **59/59** (23.10.1) |
 
 ## 4. Kịch bản mới (ngoài bộ có sẵn)
 
 | # | Kịch bản | Cái mới so với bộ cũ | Kết quả |
 |---|---|---|---|
 | K1 | **Anki 26.11 beta** (`aqt 26.11b1`, ra 11/2026 — có thể thành bản chính giữa mùa Giáng sinh) + 4 bản chưa thử từ 1.22.7: **24.06.3, 25.02.7** (Python 3.9), **25.09.5, 26.8.1** (Python 3.13) | Bộ cũ chỉ chạy 23.10.1 + 26.9.4 kể từ 1.23 | 26.11b1: 7 kịch bản **354/354** (`e2e_tour` 12, `e2e_136` 66, `e2e_1361` 81, `e2e_1362` 40, `e2e_1363` 44, `e2e_nguoimoi_noel` 24, `e2e_134` 87). 24.06.3 · 25.02.7 · 25.09.5 · 26.8.1: 5 kịch bản (`e2e_tour`, `e2e_136`, `e2e_1361`, `e2e_1363`, `e2e_nguoimoi_noel`) **227/227 mỗi bản** — 25.09.5 `e2e_1361` lần đầu trượt 1 kiểm tra chờ 4 giây khi máy chạy 4 Anki cùng lúc (tải 9,8), chạy riêng 81/81 |
-| K2 | **"Next day starts at" 0 giờ / 23 giờ** với đồng hồ máy giả — `e2e_giodoingay.js` (qua `run_dongho.sh`, `KB_ROLLOVER`) | 1.36.4 chỉ thử 4:00 (mặc định) | 1.36.5: **0 giờ 54/54 · 23 giờ 56/56**. 0 giờ: vườn để mở qua 00:00 tự tặng tủ lịch + cây thông, ôn 23:55 thuộc 30/11, ôn 00:10 mở ngăn 1, mở bù ngăn 6, 18:00 ngày 24 ông già Noel, 00:00 ngày 25 thư + hộp quà, 00:00 ngày 1/1 cất đồ. 23 giờ: trưa 1/12 vẫn là ngày Anki 30/11 (chưa tặng), 23:00 tặng; 18:00 ngày 24 giờ máy (ngày Anki 23) ông vẫn ghé, sang 23:00 không chạy lại, ngăn 24 mở được sau khi ông đã ghé; 10:00 ngày 25 chưa có thư / hộp quà, 23:00 ngày 25 thư tự mở. Mỗi bước: không hộp thoại Qt nào bật lên. (Trên 1.36.4 bước "1/3/2027" đứng hình > 30 giây — do các cửa sổ ma của lỗi B1 cùng dựng lại vườn) |
+| K2 | **"Next day starts at" 0 giờ / 23 giờ** với đồng hồ máy giả — `e2e_giodoingay.js` (qua `run_dongho.sh`, `KB_ROLLOVER`) | 1.36.4 chỉ thử 4:00 (mặc định) | 1.36.5: **0 giờ 54/54 · 23 giờ 56/56**. 0 giờ: vườn để mở qua 00:00 tự tặng tủ lịch + cây thông, ôn 23:55 thuộc 30/11, ôn 00:10 mở ngăn 1, mở bù ngăn 6, 18:00 ngày 24 ông già Noel, 00:00 ngày 25 thư + hộp quà, 00:00 ngày 1/1 cất đồ. 23 giờ: trưa 1/12 vẫn là ngày Anki 30/11 (chưa tặng), 23:00 tặng; 18:00 ngày 24 giờ máy (ngày Anki 23) ông vẫn ghé, sang 23:00 không chạy lại, ngăn 24 mở được sau khi ông đã ghé; 10:00 ngày 25 chưa có thư / hộp quà, 23:00 ngày 25 thư tự mở. Mỗi bước: không hộp thoại Qt nào bật lên. (Trên 1.36.4 bước "1/3/2027" đứng hình > 30 giây — rất có thể do các cửa sổ ma của lỗi B1 cùng dựng lại vườn; 1.36.5 không còn) |
 | K3 | **Ngày rất xa / đồng hồ lùi** (trong K2): mở vườn lần đầu 1/3/2027 sau khi bỏ từ 26/12, Giáng sinh 2027, 1/6/2030, đồng hồ lùi 24/12/2025 | 1.36.4 chỉ lùi về 20/12 | trong K2 (cả hai giờ đổi ngày): **mở vườn lần đầu 1/3/2027 → StackChan cất đồ một lần, bảng "Cất đồ Noel" hiện**, mở lại không cất nữa; 24/12/2027: không tủ lịch mới, không chạy lại cảnh / thư, mở ngăn / làm thiệp bị từ chối bằng câu dễ hiểu, sổ + kho không đổi, tủ lịch 2026 còn làm kỷ niệm; 1/6/2030 mở được; đồng hồ lùi về 24/12/2025: Anki giữ ngày đã tính (31/5 – 1/6/2030), không sự kiện mới, sổ / kho / xu không đổi, chỉnh giờ lại thì như cũ. Offline: `core/test_1365.py` C (6 ngày xa × 6 kiểm tra) |
 | K4 | **Phiên ôn dài** — `e2e_phiendai.js`: vườn Giáng sinh 20 ngăn, **310 lượt chấm** trong bảng ôn của vườn (mỗi lượt dựng lại cả vườn) + mở / đóng tủ lịch, bảng Nhà xen giữa | Chưa có test đo rò rỉ | **14/14** (895 giây): bộ nhớ JS sau dọn rác **3,9 → 4,6 MB**, phần tử DOM 595 → 631, bộ nghe window 30 → 30 / document 39 → 39, vòng vẽ 185 → 176 rAF/giây, setInterval mới 0, khung hình 16,7 → 16,7 ms; bấm chip Tủ lịch 6 lần đều mở đúng một lần; không lỗi JS / nhật ký |
 | K5 | **Đóng / mở vườn nhiều lần rồi sang ngày** — `e2e_dongvuon.js` | Chưa có | tìm ra **B1** (mục 2): 1.36.4 đỏ 3/10 → 1.36.5 10/10 (26.9.4 + 23.10.1) |
@@ -71,7 +77,9 @@ Tìm được **1 lỗi thật** (có từ 1.30.3, nặng lên từ 1.36.0 vì s
 
 Môi trường test: mở `ankiweb.net` trong mạng (để đọc trang Memory Forest) làm Anki tự hỏi AnkiWeb "có bản mới không" và so giờ máy chủ
 với đồng hồ giả → hộp cảnh báo "đồng hồ sai" (của Anki, chỉ ở máy test) chặn phím / trang ở kịch bản đồng hồ giả. `mkbase.py` nay tắt
-"Check for updates" trong hồ sơ test. Mỗi bước của `e2e_giodoingay.js` kiểm "không có hộp thoại Qt nào bật lên".
+"Check for updates" trong hồ sơ test; Anki ≤ 24.x không có tuỳ chọn đó (23.10.1 vẫn bật hộp → lượt `e2e_dongho` đầu trên 23.10.1 dừng ở bước
+J) → add-on test `zz_kbtest` tắt `aqt.update.check_for_update` cho mọi bản. Mỗi bước của `e2e_giodoingay.js` kiểm "không có hộp thoại
+Qt nào bật lên".
 
 ## 5. Đọc lại mã 1.35.6 → 1.36.4 (24 file, +5.939 dòng)
 
@@ -110,7 +118,7 @@ Tải 6 add-on từ AnkiWeb (27/11, bản cho Anki 26.09.4): **Memory Forest** 1
 đều nạp; Onigiri gom nút ことば畑 vào thanh bên và gọi đúng đường của nó → mở vườn; N / Esc; ôn 5 thẻ trong vườn (revlog +5);
 AnkiConnect trả lời lúc vườn mở (`version`, `deckNames`, `addNote` vào deck đang xem → vườn dựng lại); Giáng sinh 1/12 tặng tủ lịch +
 thông báo quà; đóng vườn → màn hình deck của Onigiri + Memory Forest dựng lại; 0 cửa sổ ma; nhật ký lỗi trống; **log Anki không có
-traceback nào** (của cả 7 add-on). Kịch bản có sẵn chạy với 6 add-on: CUNGADDON2. (Màn hình deck có lớp "Welcome" của Onigiri lần đầu —
+traceback nào** (của cả 7 add-on). Kịch bản có sẵn chạy với 6 add-on: `e2e_tour` 12/12, `e2e_136` 66/66, `e2e_1363` 44/44, log Anki 0 traceback. (Màn hình deck có lớp "Welcome" của Onigiri lần đầu —
 của Onigiri, không liên quan.)
 
 ## 7. Đánh giá mức độ hoàn thiện
