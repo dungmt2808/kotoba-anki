@@ -11,6 +11,7 @@
 # Các bản chạy lần lượt trên cùng một bộ cổng; muốn chạy song song thì gọi nhiều lần với KB_SLOT khác nhau (1, 2, 3…):
 # mỗi slot có cổng CDP / điều khiển riêng, khoá một phiên riêng (ANKI_SINGLE_INSTANCE_KEY, USER) và thư mục Anki riêng,
 # dòng lệnh "import aqt as A; A.run()" để kill_anki.sh của run_ui.sh không tắt nhầm.
+# KB_TIMEOUT (giây, mặc định 900): giới hạn mỗi kịch bản — e2e_phiendai.js (300 lượt chấm) cần ~1.800.
 # Kết quả: OUT/<bản>/<kịch bản>.out (+ ảnh chụp), mỗi kịch bản một dòng tóm tắt ra màn hình.
 HERE=$(cd "$(dirname "$0")" && pwd)
 ADDON=$(cd "$1" && pwd); OUT=$2; VERSIONS=$3
@@ -25,6 +26,8 @@ for v in $VERSIONS; do
   mkdir -p "$OUT/$v"
   for s in $SCRIPTS; do
     ANKI_PY=$PY "$HERE/setup_base.sh" "$BASE" "$ADDON" > "$OUT/$v/setup_${s%.js}.log" 2>&1 || { echo "$v $s: dựng thư mục Anki LỖI"; FAIL=1; continue; }
+    # 1.36.5: KB_EXTRA_ADDONS = thư mục chứa add-on khác (mỗi add-on một thư mục, đặt tên theo mã AnkiWeb) → cài chung (e2e_cungaddon.js)
+    if [ -n "$KB_EXTRA_ADDONS" ]; then cp -r "$KB_EXTRA_ADDONS"/. "$BASE/addons21/"; fi
     (
       export QT_QPA_PLATFORM=offscreen QTWEBENGINE_REMOTE_DEBUGGING=$KB_CDP_PORT QTWEBENGINE_DISABLE_SANDBOX=1 ANKI_NOHIGHDPI=1
       export QTWEBENGINE_CHROMIUM_FLAGS="--no-sandbox --disable-gpu --remote-allow-origins=*"
@@ -34,7 +37,7 @@ for v in $VERSIONS; do
     ready=0
     for i in $(seq 1 90); do curl -s -X POST "127.0.0.1:$KB_CTRL_PORT" -d 'result = bool(mw.col)' 2>/dev/null | grep -q true && { ready=1; break; }; sleep 1; done
     if [ $ready = 0 ]; then echo "$v $s: Anki không mở được"; kill -9 $APID 2>/dev/null; FAIL=1; continue; fi
-    (cd "$HERE" && timeout 900 node "$s" "$OUT/$v") > "$OUT/$v/${s%.js}.out" 2>&1 || FAIL=1
+    (cd "$HERE" && timeout ${KB_TIMEOUT:-900} node "$s" "$OUT/$v") > "$OUT/$v/${s%.js}.out" 2>&1 || FAIL=1
     echo "$v $s: $(grep -E 'KẾT QUẢ|LỖI' "$OUT/$v/${s%.js}.out" | tail -1)"
     kill $APID 2>/dev/null; sleep 3; kill -9 $APID 2>/dev/null; sleep 1
   done

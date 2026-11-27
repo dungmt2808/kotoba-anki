@@ -225,6 +225,9 @@ echo "$OUT" | grep -E "✗|KẾT QUẢ|Traceback"; [ $RC = 0 ] || FAIL=1
 echo "== core/test_1364.py (1.36.4: kiểm tra lần cuối — người mới cài trong mùa Giáng sinh vẫn có hướng dẫn 3 bước, cảnh tối 24 / thư 25 chờ màn chào xong (hàm thật bằng node), hợp đồng dữ liệu = 1.36.3)"
 OUT=$(python3 -W ignore "$HERE/core/test_1364.py" "$ADDON" 2>&1); RC=$?
 echo "$OUT" | grep -E "✗|KẾT QUẢ|Traceback"; [ $RC = 0 ] || FAIL=1
+echo "== core/test_1365.py (1.36.5: cửa sổ vườn đã đóng không chạy ngầm, hợp đồng dữ liệu = 1.36.4; kiểm tra 1.36.4 lần 2: ổ đĩa đầy khi ghi sổ Giáng sinh, giờ đổi ngày 0 / 4 / 23, ngày rất xa / đồng hồ lùi)"
+OUT=$(python3 -W ignore "$HERE/core/test_1365.py" "$ADDON" 2>&1); RC=$?
+echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
 echo "== trang/test_trang.py (trang web: đăng / gỡ mã, biểu mẫu issue, GitHub Actions, dữ liệu khớp add-on)"
 OUT=$(python3 "$HERE/trang/test_trang.py" "$ADDON" 2>&1); RC=$?
 echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1

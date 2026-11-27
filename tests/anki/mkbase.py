@@ -10,6 +10,8 @@ pm = ProfileManager(ProfileManager.get_created_base_folder(base)) if hasattr(Pro
 pm.setupMeta()
 pm.meta["firstRun"] = False
 pm.meta["defaultLang"] = "en_US"
+# 1.36.5: không hỏi AnkiWeb bản mới — khi ankiweb.net mở mạng, đồng hồ giả (run_dongho.sh) làm Anki bật cảnh báo "đồng hồ sai"
+pm.meta["check_for_updates"] = False
 pm.create("Test")
 pm.load("Test")
 pm.profile["syncKey"] = None

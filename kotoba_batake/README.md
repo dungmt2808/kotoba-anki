@@ -124,6 +124,14 @@ Sau khi trả lời có hiện cách đọc, Hán Việt, nghĩa (và cách dùn
 - **Hiệu ứng thành tích** (`web/joy.js`, Python tính `data.joy` = `more_core.joy_view`): **xong hết thẻ hôm nay** trong deck đang xem (`deck_due_tree` = 0 và hôm nay đã ôn ≥ 1 lượt) → cầu vồng trên ruộng và trên trời sân, giọt sương lấp lánh; **đạt mục tiêu ngày**; **cả vườn xanh tốt / ra hoa / trĩu quả** (≥ 5 cây, không cây nào héo, mọi cây từ Cây non / Ra hoa / Ra quả) → lá lấp lánh / cánh hoa anh đào bay / đốm sáng vàng bay lên; **mốc chuỗi ngày** (7, 14, 21, 30, 50, 75, 100, 150, 200, 250, 300, 365, 500, 730, 1000) → pháo hoa trên trời sân; **xong 3 nhiệm vụ** → đèn trời bay lên. Huy hiệu cạnh chú thích ruộng; dải chúc mừng + linh vật chúc mỗi thành tích **một lần mỗi ngày** (nhớ ở `localStorage kb-joy-<ngày>-<loại>`), đang ôn thẻ thì để dành tới khi đóng bảng ôn.
 - **Lưu trữ**: khoá collection mới `kotoba_batake_more` (`more_core.MORE_KEY`) — mục 4. Bản ≤ 1.13 ở máy khác không đọc khoá này nên không xoá được gì.
 
+### Mới ở 1.36.5: kiểm tra lần 2 trước phát hành (27/11)
+- **Cửa sổ vườn đã đóng không còn chạy ngầm**: `GardenDialog` có cha là cửa sổ chính nên đóng xong vẫn còn sống, và đồng hồ 60 giây
+  (`_day_timer`, 1.30.3) vẫn chạy → mỗi lần đóng / mở vườn để lại một "cửa sổ ma". Sang ngày mới (Anki để mở qua giờ đổi ngày) mỗi
+  cửa sổ ma dựng lại cả vườn trên trang đã dọn (lỗi JS "Garden is not defined", tốn thời gian ở luồng chính) và **nhận quà / cất đồ
+  Giáng sinh thay người dùng** — bảng "Quà tặng: tủ lịch…" / "Cất đồ Noel" hiện trong trang đã đóng nên người dùng không thấy. Sửa:
+  `closeEvent` dừng đồng hồ; `_check_day` chỉ chạy ở cửa sổ đang dùng và đang hiện (cửa sổ ẩn: `open_garden` gọi lại khi hiện).
+- Không đổi lưu trữ (khoá collection, config.json y như 1.36.4).
+
 ### Mới ở 1.36.4: kiểm tra lần cuối trước phát hành (26/11)
 - **Người mới cài trong mùa Giáng sinh có hướng dẫn 3 bước**: `event_core.is_new_player` không tính quà của sự kiện ("le_…",
   "xmastree") là "đã có đồ" — trước đó vườn tặng tủ lịch + cây thông (`_le_settle`) trước khi xét người mới, nên ai cài từ 1/12 tới
