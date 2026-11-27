@@ -225,10 +225,10 @@ if names:
     old_cfg = json.loads(subprocess.run(["git", "-C", ROOT, "show", REF + ":kotoba_batake/config.json"], capture_output=True,
                                         text=True, check=True).stdout)
     ok(json.load(open(os.path.join(ADDON, "config.json"), encoding="utf-8")) == old_cfg, "config.json y nguyên 1.36.4")
-    allowed = {"__init__.py", "manifest.json", "README.md"}
+    allowed = {"__init__.py", "manifest.json", "README.md", "web/garden.js"}      # 1.36.6: khung thẻ tải sẵn ảnh (test_1366.js)
     ok(set(changed) <= allowed, "chỉ đổi: %s (ngoài danh sách: %s)" % (sorted(changed), sorted(set(changed) - allowed)))
 man = json.load(open(os.path.join(ADDON, "manifest.json"), encoding="utf-8"))
-ok(tuple(int(x) for x in man.get("human_version", "0").split(".")) >= (1, 36, 5), "manifest: 1.36.5 (" + man.get("human_version", "") + ")")
+ok(tuple(int(x) for x in man.get("human_version", "0").split(".")) >= (1, 36, 5), "manifest: ≥ 1.36.5 (" + man.get("human_version", "") + ")")
 
 print("\nKẾT QUẢ: %d/%d%s" % (PASS[0], PASS[0] + len(FAIL), " — TẤT CẢ OK" if not FAIL else ""))
 sys.exit(1 if FAIL else 0)

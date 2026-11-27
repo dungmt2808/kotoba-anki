@@ -169,7 +169,8 @@ if names:
                                         text=True, check=True).stdout)
     ok(json.load(open(os.path.join(ADDON, "config.json"), encoding="utf-8")) == old_cfg, "config.json y nguyên 1.36.3")
     allowed = {"event_core.py", "web/le_noel.js", "web/tour.js", "manifest.json", "README.md",
-               "__init__.py"}      # 1.36.5: cửa sổ vườn đã đóng dừng đồng hồ (test_1365.py giữ hợp đồng = 1.36.4)
+               "__init__.py",      # 1.36.5: cửa sổ vườn đã đóng dừng đồng hồ (test_1365.py giữ hợp đồng = 1.36.4)
+               "web/garden.js"}    # 1.36.6: khung thẻ tải sẵn ảnh (test_1366.js)
     ok(set(changed) <= allowed, "chỉ đổi: %s (ngoài danh sách: %s)" % (sorted(changed), sorted(set(changed) - allowed)))
 man = json.load(open(os.path.join(ADDON, "manifest.json"), encoding="utf-8"))
 ok(tuple(int(x) for x in man.get("human_version", "0").split(".")) >= (1, 36, 4), "manifest: 1.36.4 (" + man.get("human_version", "") + ")")

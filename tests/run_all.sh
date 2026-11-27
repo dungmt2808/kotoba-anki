@@ -250,6 +250,9 @@ if node -e "require('playwright')" 2>/dev/null; then
   echo "== core/test_1363.js (1.36.3: thẻ ✎ Vẽ của xưởng thiệp — bút / tẩy / cỡ / hoàn tác / đồng hồ mã, bảng quả châu, cây ngoài sân, Kỷ niệm, lưu lúc đồng bộ)"
   OUT=$(node "$HERE/core/test_1363.js" "$ADDON" 2>&1); RC=$?
   echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
+  echo "== core/test_1366.js (1.36.6: khung thẻ của bảng ôn tải sẵn + giải mã ảnh trước khi thay — thẻ mới không hiện chữ trước rồi ảnh mới bật vào; giới hạn 200 ms, gọi liền nhau, script chạy một lần, ảnh lỗi, hẹn giờ cũ)"
+  OUT=$(node "$HERE/core/test_1366.js" "$ADDON" 2>&1); RC=$?
+  echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
   echo "== trang/kiem_tra_trang.js (trang web trong Chromium: vùng vẽ khớp add-on từng điểm ảnh, giải mã = add-on, chạy cả trang)"
   OUT=$(node "$HERE/trang/kiem_tra_trang.js" "$ADDON" 2>&1); RC=$?
   echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1

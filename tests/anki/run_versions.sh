@@ -20,6 +20,9 @@ VENVS=${KB_VENVS:-$HOME/venvs}; slot=${KB_SLOT:-1}
 export KB_CDP_PORT=$((9500 + slot)) KB_CTRL_PORT=$((9600 + slot)) ANKI_SINGLE_INSTANCE_KEY=kbv$slot USER=kbv$slot LOGNAME=kbv$slot
 BASE=/tmp/kb_anki_v$slot
 FAIL=0
+# 1.36.6: máy người dùng không có RUST_BACKTRACE; có biến này (máy test cloud đặt sẵn) thì mỗi lần Anki báo "không có khoá" ghi cả
+# ngăn xếp (~60 ms) → vườn dựng lại mất ~2 giây mỗi lượt chấm, thời gian đo trong test sai hẳn máy thật
+unset RUST_BACKTRACE
 for v in $VERSIONS; do
   PY=$VENVS/aqt-$v/bin/python
   [ -x "$PY" ] || { echo "$v: không có venv $VENVS/aqt-$v"; FAIL=1; continue; }
