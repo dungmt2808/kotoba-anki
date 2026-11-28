@@ -8,6 +8,10 @@ Cập nhật: 2026-11-17. Add-on **1.34.1** (1.34.1: Đuổi quạ so đáp án 
 
 ## 0. Đọc nhanh (cho phiên chat mới)
 
+> 27/11 (tối): **1.36.6 — ảnh trong thẻ "nháy" khi sang thẻ** (mục 2.6z31). Góp ý người chơi: "lúc t học lâu lâu nó giật giật kiểu mất ảnh cái hiện lại" → bảng ôn của vườn thay nội dung thẻ ngay nên chữ hiện trước, ảnh bật vào sau (Anki thật: 3 khung trống + 8 khung thiếu ảnh / 5 lần sang thẻ; màn ôn Anki 0). Sửa: tải sẵn + giải mã ảnh (≤ 200 ms) như Anki → 0 / 0. Không đổi lưu trữ. **Phát hành 1.36.6 thay 1.36.5.** Báo cáo + câu trả lời gợi ý cho người chơi: `docs/kiem_thu/1.36.6/BAO_CAO.md`.
+>
+> 27/11: **1.36.5 — kiểm tra 1.36.4 lần 2 trước phát hành cuối tuần** (mục 2.6z30). Người dùng: "review, kiểm tra kỹ addon lần cuối, cuối tuần này sẽ release. kiểm tra các kịch bản, test ngoài bộ test đã có sẵn. đánh giá mức độ hoàn thiện. về phần mỗi từ là 1 cây, tớ thấy addon này làm rất đẹp, ta có thể tham khảo không https://ankiweb.net/shared/info/1255432496" → bộ có sẵn đạt; kịch bản mới: **Anki 26.11 beta** + 4 bản ở giữa, giờ đổi ngày 0 / 23 giờ (đồng hồ máy giả), ngày rất xa / đồng hồ lùi, phiên ôn dài 310 lượt (không rò rỉ), ổ đĩa đầy, cài chung 6 add-on (đọc mã). **1 lỗi thật, đã sửa**: đóng cửa sổ vườn không dừng đồng hồ 60 giây → cửa sổ ma sang ngày mới nhận quà / cất đồ Giáng sinh thay người dùng. **Memory Forest** = một ngày học một cây (không phải mỗi từ), MIT — tham khảo ý tưởng, không chép (mục 10.0d). Báo cáo + đánh giá ~96%: `docs/kiem_thu/1.36.5/BAO_CAO.md`. **Phát hành 1.36.5 thay 1.36.4.**
+>
 > 26/11: **1.36.4 — kiểm tra lần cuối trước phát hành cuối tuần** (mục 2.6z29). Người dùng: "review, kiểm tra kỹ addon lần cuối, cuối tuần này sẽ release. kiểm tra các kịch bản, test ngoài bộ test đã có sẵn. đánh giá mức độ hoàn thiện" → bộ có sẵn trên gói 1.36.3 đều đạt (`run_all.sh` 82 mục; 4 kịch bản Giáng sinh trên Anki 23.10.1), **cập nhật đè từ bản đang trên AnkiWeb (1.35.6)** 23/23, hạ về 1.35.6 rồi lên lại 33/33; 6 kịch bản mới ngoài bộ có sẵn: **đồng hồ máy giả** (libfaketime, giờ Việt Nam, giờ đổi ngày 4:00 thật — `anki/run_dongho.sh`), quét giao diện mọi bảng Giáng sinh (4 cỡ cửa sổ, chữ 150%, Anki tối, vườn tiếng Nhật), bấm bừa 1.290 lệnh `le:*` có bất biến, **người mới cài trong mùa** (màn chào + hướng dẫn bật như thật), dữ liệu Giáng sinh tối đa (115 KB, ≤ 50 ms mỗi lần dựng vườn). **2 lỗi thật, đã sửa**: người mới cài 1/12 – 31/12 không bao giờ có hướng dẫn 3 bước (quà tủ lịch + cây thông làm hồ sơ "đã có đồ"); cảnh ông già Noel tối 24 / thư sáng 25 chạy dưới màn chào (phép kiểm `offsetParent` với lớp `position: fixed`). Không đổi lưu trữ. Báo cáo + **đánh giá mức độ hoàn thiện** `docs/kiem_thu/1.36.4/BAO_CAO.md`. **Phát hành 1.36.4 thay cho 1.36.3** (1.36.3 chưa phát hành). **Cách sửa Claude chọn, người dùng chưa xem.**
 >
 > 25/11 (khuya): **ảnh phác chỗ tiêu xu kiểu Stardew Valley — chờ người dùng duyệt** (`docs/ke_hoach_tieu_xu/KE_HOACH.md`, mục 10.0g). Người dùng: "nghĩ các việc thêm để tiêu xu đi bạn" → "tham khảo thêm Stardew Valley" → "làm ảnh phác đi, tớ chưa hình dung được. làm sao mà ấn tượng và thú vị" → 8 ảnh trong Anki thật: vùng Làng hoang → sống lại, Nhà văn hoá (gói góp), Bác Tanuki thợ mộc, bạn bè + thư tim, Bếp, Sổ ép hoa, Hầm ủ + Lò rèn, tượng vàng. Chưa viết mã add-on.
@@ -443,6 +447,51 @@ Giờ thật / giờ game / cố định, 6 buổi trong ngày, thời tiết đ
 - **Tên gọi** (thử thật 09/11: Gemini đặt tên "Soncho" — phiên âm 村長 — cho ông trưởng làng, gọi quán là "Kotobaya", rồi báo Anh in "Mayor Soncho", "Grandma Hana"): lời nhắc dặn ông trưởng làng không có tên riêng, quán là "Quán Kotoba"; bảng tên của bước kể lại ghi Hana khoảng 30 tuổi (không "Grandma" / おばあさん); `story_core.fix_names_vi` đưa "Soncho" / "Kotobaya" về đúng tên trong bản gốc (truyện, tóm tắt, tin, mục thứ ba) trước khi lưu và kể lại; `clean_episode` sửa luôn phần tiếng Việt của bộ nhớ cũ (tóm tắt "quán trọ Kotobaya" của kỳ trước chính là chỗ Gemini học theo).
 - **Nhận xét Hay / Nhạt** (`ai.feedback_bases`): số viết từ truyện chung mang `"truyen_chung": true` trong `bao.json` → nhận xét vào `bao_chung/truyen.json`; số cũ (trước 1.25.2) → thư mục của báo đó, và cả `bao_chung` nếu kỳ ấy đã được chép sang (cùng kỳ, ngày, tóm tắt). Không bao giờ tạo `bao_chung` từ một nhận xét — trước đây bấm Nhạt ở số cũ trước lần viết đầu của 1.25.2 tạo `truyen.json` chung chỉ có một dòng, `migrate_story` thấy đã có nên không chép truyện cũ sang → truyện bắt đầu lại (tìm thấy khi chạy lại `e2e_123`).
 - Test: `core/test_1251.py` (viết lại: bản gốc + 3 báo cùng ngày với Gemini giả, thời tiết khớp `sky.js` 80 khung, nối kỳ / nối tin hôm sau, dự phòng khi bận / kể lại hỏng, chép bộ nhớ), `anki/e2e_1251.js` (48 kiểm tra), Gemini thật một ngày (bản gốc → Nhật N4 + Anh A2 + Việt) — `docs/kiem_thu/1.25.2/BAO_CAO.md`.
+
+### 2.6z31 Bản 1.36.6 — ảnh trong thẻ không còn "nháy" khi sang thẻ ở bảng ôn của vườn (27/11)
+
+Người dùng chuyển góp ý của người chơi: "lúc t học lâu lâu nó giật giật kiểu mất ảnh cái hiện lại á là do máy hả bác". Báo cáo:
+`docs/kiem_thu/1.36.6/BAO_CAO.md`.
+
+- **Nguyên nhân** (không phải do máy): khung thẻ của bảng ôn (`FRAME_JS` trong `web/garden.js`) thay `#qa` ngay → thẻ mới hiện chữ trước,
+  ảnh tải xong mới "bật" vào. Đo trong Anki thật (`tests/anki/e2e_nhayanh.js`, quay màn hình từng khung + đầu dò trong trang): 1.36.5
+  sang thẻ mới 3 khung ảnh trống + 8 khung có chữ mà ảnh chưa tải / 5 lần; màn ôn của Anki 0 / 0 (Anki `preloadResources`: tải sẵn +
+  giải mã ảnh, chờ tối đa 200 ms).
+- **Sửa**: `__kbPre` — đọc HTML của mặt sắp hiện bằng `<template>`, `new Image()` + `decode()` từng ảnh, xong / lỗi / quá 200 ms thì mới
+  thay; giữ `__kbSeq` (chỉ mặt sau cùng hiện), dọn hẹn giờ của mẫu thẻ cũ ngay khi sang thẻ, script mẫu thẻ chạy một lần sau khi thay.
+  1.36.6: 0 / 0. Test `core/test_1366.js` (Chromium, 1.36.5 đỏ 6/12).
+- **Môi trường test**: máy cloud đặt sẵn `RUST_BACKTRACE=1` → mỗi lần Anki báo "không có khoá cấu hình" tốn ~60 ms (ghi ngăn xếp) → vườn
+  dựng lại ~2 giây mỗi lượt chấm trong test (máy người dùng ~45 ms). `run_versions.sh` / `run_anki.sh` nay `unset RUST_BACKTRACE`. Người
+  dùng tự đặt biến này sẽ thấy vườn chậm như vậy — hiếm, để sau (đọc khoá thiếu một lần mỗi lần dựng vườn).
+- Không đổi lưu trữ / file Python. **Phát hành 1.36.6 thay cho 1.36.5.** **Cách sửa Claude chọn, người dùng chưa xem.**
+
+### 2.6z30 Bản 1.36.5 — kiểm tra 1.36.4 lần 2: cửa sổ vườn đã đóng không còn chạy ngầm (27/11)
+
+Người dùng 27/11: "review, kiểm tra kỹ addon lần cuối, cuối tuần này sẽ release. kiểm tra các kịch bản, test ngoài bộ test đã có
+sẵn. đánh giá mức độ hoàn thiện. về phần mỗi từ là 1 cây, tớ thấy addon này làm rất đẹp, ta có thể tham khảo không
+https://ankiweb.net/shared/info/1255432496". Báo cáo + đánh giá + so sánh Memory Forest: `docs/kiem_thu/1.36.5/BAO_CAO.md`.
+
+- **Lỗi (có từ 1.30.3)**: `GardenDialog` có cha là cửa sổ chính (`super().__init__(mw, …)`, không `WA_DeleteOnClose`) nên đóng
+  xong vẫn sống, và `closeEvent` không dừng `_day_timer` (60 giây, 1.30.3) → mỗi lần đóng / mở vườn để lại một "cửa sổ ma". Sang
+  ngày mới (Anki để mở qua giờ đổi ngày) mỗi cửa sổ ma chạy `refresh()` trên trang đã dọn: lỗi JS "Garden is not defined", dựng cả
+  vườn trên luồng chính (N cửa sổ ma = N lần), và **`_le_settle` nhận quà / cất đồ Giáng sinh thay người dùng** — bảng "Quà tặng:
+  tủ lịch…" (1/12) / "Cất đồ Noel" (1/1) hiện trong trang đã đóng nên người dùng không bao giờ thấy. Tái hiện Anki thật
+  (`tests/anki/e2e_dongvuon.js`): 1.36.4 đỏ 3/10 (4 cửa sổ ma, quà nhận thay). Sửa: `closeEvent` dừng đồng hồ; `_check_day` chỉ
+  chạy ở cửa sổ đang dùng + đang hiện (`_dialog is self and isVisible()`; cửa sổ ẩn → `open_garden` gọi lại khi hiện). Không
+  xoá cửa sổ khi đóng (`deleteLater` / `WA_DeleteOnClose`) vì thao tác chấm thẻ chạy nền còn giữ cửa sổ làm cha — để sau phát hành.
+- Kịch bản mới ngoài bộ có sẵn: **Anki 26.11 beta** + 24.06.3 / 25.02.7 / 25.09.5 / 26.8.1 (kịch bản Giáng sinh), **giờ đổi ngày 0 /
+  23 giờ** với đồng hồ máy giả (`e2e_giodoingay.js` qua `run_dongho.sh`), **ngày rất xa** (3/2027 lần đầu mở sau Giáng sinh, Giáng
+  sinh 2027, 2030, đồng hồ lùi 2025), **phiên ôn dài** 300 lượt đo rò bộ nhớ / bộ nghe / vòng vẽ (`e2e_phiendai.js`), ổ đĩa đầy
+  khi ghi sổ Giáng sinh, **cài chung với 6 add-on phổ biến** (Memory Forest, Onigiri, AnkiConnect, Review Heatmap, AJT Japanese,
+  FSRS Helper — đọc mã + chạy chung thật khi người dùng cho phép: 28/28), đọc lại mã 1.35.6 → 1.36.4.
+- Môi trường test: `mkbase.py` tắt "Check for updates" của Anki + `zz_kbtest` tắt `aqt.update.check_for_update` (Anki ≤ 24.x không có
+  tuỳ chọn) — mở `ankiweb.net` trong mạng + đồng hồ giả → Anki bật cảnh báo "đồng hồ sai" chặn phím / trang; `run_dongho.sh` nhận
+  `KB_DONGHO_SCRIPT` / `KB_DONGHO_START`; `run_versions.sh` nhận `KB_TIMEOUT` / `KB_EXTRA_ADDONS`. `e2e_dongho.js` (1.36.4) sửa kỳ
+  vọng ngày 1/1: bảng "Cất đồ Noel" có dòng "Áo Noel của nhà…" phải hiện — 1.36.4 đạt "không hiện" chỉ vì cửa sổ ma cất đồ trước.
+- Test: `core/test_1365.py` (1.36.4: đỏ 4), `anki/e2e_dongvuon.js`, `anki/e2e_giodoingay.js`, `anki/e2e_phiendai.js`,
+  `anki/e2e_cungaddon.js` (6 add-on chạy chung thật — người dùng cho phép 27/11: 28/28, không traceback).
+- Không thêm khoá collection / mục config; chỉ đổi `__init__.py` (+ README, manifest). **Phát hành 1.36.5 thay cho 1.36.4.**
+  **Cách sửa Claude chọn, người dùng chưa xem.**
 
 ### 2.6z29 Bản 1.36.4 — kiểm tra lần cuối trước phát hành, 2 lỗi người mới / màn chào (26/11)
 
@@ -1711,6 +1760,14 @@ cần tưới lên đầu, 03 bấm chú thích để lọc, 04 vườn quả (c
 "không đẹp" → **người dùng chọn kiểu 01b: chỉ biển gỗ nhỏ ở đầu luống**, "hiện tại chắc chưa triển khai, bạn ghi lại trước đi
 nhé". Khi làm: hỏi lại cách xếp (01 / 02 / 03 / 04, kết hợp được); chỉ đổi hiển thị, mặc định giữ như cũ.
 
+**27/11 — tham khảo Memory Forest** (add-on AnkiWeb 1255432496, MIT; người dùng: "về phần mỗi từ là 1 cây, tớ thấy addon này làm rất
+đẹp, ta có thể tham khảo không"). So sánh + đề xuất ở `docs/kiem_thu/1.36.5/BAO_CAO.md` mục 6: Memory Forest là **một ngày học =
+một cây** (không phải mỗi từ), đẹp nhờ **chiều sâu** (hàng xa nhỏ + nhạt vào sương), **mỗi cây một dáng / sắc**, cây **lớn tiếp nhiều
+năm**, **màu thay biểu tượng** (lá vàng = sắp quên), ánh chiều tà + mặt hồ. Tham khảo **ý tưởng**, không chép mã / hình / phong cảnh
+(bản sắc + phần bán của tác giả). Đề xuất cho ruộng (ghép với 10.0d, ảnh phác trước): ⚙ "Ruộng: Phẳng / Có chiều sâu", mỗi cây một
+dáng theo mã note, cổ thụ khi độ bền ≥ 1 năm, lá ngả vàng khi R 0,8 → 0,7, ánh sáng theo giờ; chỉ đổi cách vẽ. **Chưa làm — chờ
+người dùng chọn** (sau phát hành 1.36.4).
+
 ### 10.0g Nội dung dài hạn cho người chơi đã mua gần hết (25/11 — **chờ người dùng chọn**)
 Người dùng 25/11: có người chơi nhắn "sắp phá đảo hết rồi", chính người dùng học gần 1 tháng đã mua nhà thứ 2. Ước tính (mã hiện
 tại): +1 xu mỗi lượt nhớ được + 2 × giai đoạn khi cây lớn, nhiệm vụ 3 × 20 + rương 30 / ngày → người ôn 200–500 lượt / ngày được
@@ -1848,6 +1905,8 @@ Kế hoạch + cách làm: **`KE_HOACH_VUON_3D.md`**. Phạm vi người dùng c
 ---
 
 ## 11. Lịch sử phiên bản
+- **1.36.6**: ảnh trong thẻ không còn "nháy" khi sang thẻ ở bảng ôn của vườn — tải sẵn + giải mã ảnh (tối đa 200 ms) rồi mới thay nội dung, như màn ôn của Anki (góp ý người chơi 27/11) — mục 2.6z31.
+- **1.36.5**: kiểm tra lần 2 trước phát hành — cửa sổ vườn đã đóng không còn chạy ngầm (sang ngày mới không nhận quà / cất đồ Giáng sinh thay người dùng, không lỗi "Garden is not defined"); kịch bản mới: Anki 26.11 beta + 4 bản ở giữa, giờ đổi ngày 0 / 23 giờ, ngày rất xa, phiên ôn dài, cài chung với add-on phổ biến — mục 2.6z30.
 - **1.36.4**: kiểm tra lần cuối trước phát hành — người mới cài trong mùa Giáng sinh có hướng dẫn 3 bước, cảnh ông già Noel tối 24 / thư sáng 25 chờ màn chào xong; 6 kịch bản test mới (đồng hồ máy giả, quét giao diện, bấm bừa, người mới, dữ liệu tối đa, cập nhật từ 1.35.6) — mục 2.6z29.
 - **1.36.3**: vẽ tay cho Giáng sinh — thẻ ✎ Vẽ trong xưởng thiệp (bút / tẩy / cỡ / Hoàn tác, hình vẽ đi theo ảnh PNG, mã thiệp, trang web), quả châu tự vẽ 3 quả 8 × 8 treo trên cây thông ngoài sân, ông già Noel nhắc trong thư — mục 2.6z28.
 - **1.36.2**: sửa lỗi audit 24/11 của sự kiện Giáng sinh — thiệp nhận xoá rồi giữ lại được, bản Gemini sửa điều ước luôn hiện, sửa thiệp lúc Anki đồng bộ / rồi đóng cửa sổ ngay không mất chữ, phím tắt không rò vào xưởng thiệp / cảnh đêm, Trang trí thử với tường Noel nhớ mẫu cũ, thông báo nổi không bị che, để vườn mở qua 18:00 ngày 24 thì ông già Noel tự ghé, Kỷ niệm từ 1/1 khi chỉ có thiệp, … — mục 2.6z27.

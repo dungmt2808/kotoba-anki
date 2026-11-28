@@ -225,6 +225,9 @@ echo "$OUT" | grep -E "✗|KẾT QUẢ|Traceback"; [ $RC = 0 ] || FAIL=1
 echo "== core/test_1364.py (1.36.4: kiểm tra lần cuối — người mới cài trong mùa Giáng sinh vẫn có hướng dẫn 3 bước, cảnh tối 24 / thư 25 chờ màn chào xong (hàm thật bằng node), hợp đồng dữ liệu = 1.36.3)"
 OUT=$(python3 -W ignore "$HERE/core/test_1364.py" "$ADDON" 2>&1); RC=$?
 echo "$OUT" | grep -E "✗|KẾT QUẢ|Traceback"; [ $RC = 0 ] || FAIL=1
+echo "== core/test_1365.py (1.36.5: cửa sổ vườn đã đóng không chạy ngầm, hợp đồng dữ liệu = 1.36.4; kiểm tra 1.36.4 lần 2: ổ đĩa đầy khi ghi sổ Giáng sinh, giờ đổi ngày 0 / 4 / 23, ngày rất xa / đồng hồ lùi)"
+OUT=$(python3 -W ignore "$HERE/core/test_1365.py" "$ADDON" 2>&1); RC=$?
+echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
 echo "== trang/test_trang.py (trang web: đăng / gỡ mã, biểu mẫu issue, GitHub Actions, dữ liệu khớp add-on)"
 OUT=$(python3 "$HERE/trang/test_trang.py" "$ADDON" 2>&1); RC=$?
 echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
@@ -246,6 +249,9 @@ if node -e "require('playwright')" 2>/dev/null; then
   echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
   echo "== core/test_1363.js (1.36.3: thẻ ✎ Vẽ của xưởng thiệp — bút / tẩy / cỡ / hoàn tác / đồng hồ mã, bảng quả châu, cây ngoài sân, Kỷ niệm, lưu lúc đồng bộ)"
   OUT=$(node "$HERE/core/test_1363.js" "$ADDON" 2>&1); RC=$?
+  echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
+  echo "== core/test_1366.js (1.36.6: khung thẻ của bảng ôn tải sẵn + giải mã ảnh trước khi thay — thẻ mới không hiện chữ trước rồi ảnh mới bật vào; giới hạn 200 ms, gọi liền nhau, script chạy một lần, ảnh lỗi, hẹn giờ cũ)"
+  OUT=$(node "$HERE/core/test_1366.js" "$ADDON" 2>&1); RC=$?
   echo "$OUT" | grep -E "✗|KẾT QUẢ"; [ $RC = 0 ] || FAIL=1
   echo "== trang/kiem_tra_trang.js (trang web trong Chromium: vùng vẽ khớp add-on từng điểm ảnh, giải mã = add-on, chạy cả trang)"
   OUT=$(node "$HERE/trang/kiem_tra_trang.js" "$ADDON" 2>&1); RC=$?

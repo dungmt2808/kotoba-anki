@@ -879,10 +879,23 @@ var Garden = (function () {
     "if(old.src){s.onload=next;s.onerror=next;old.parentNode.replaceChild(s,old);}" +
     "else{try{old.parentNode.replaceChild(s,old);}catch(e){}next();}}" +
     "var __kbSeq=0;" +
+    // 1.36.6: như màn ôn của Anki (preloadResources) — tải sẵn + giải mã ảnh của mặt sắp hiện, chờ tối đa 200 ms, rồi mới thay
+    // nội dung. Trước đây thay ngay: thẻ mới hiện chữ trước, ảnh "bật" vào sau (người dùng 27/11: "giật giật kiểu mất ảnh cái
+    // hiện lại"). <template> không tải ảnh / chạy script; ảnh đã có trong bộ nhớ đệm (mặt trước khi lật) xong gần như tức thì.
+    "function __kbPre(h,done){var t=document.createElement('template');t.innerHTML=h;" +
+    "var list=Array.prototype.slice.call(t.content.querySelectorAll('img[src]'));" +
+    "if(!list.length){done();return;}" +
+    "var left=list.length,fin=false,tm=0,end=function(){if(!fin){fin=true;clearTimeout(tm);done();}};" +
+    "tm=setTimeout(end,200);" +
+    "list.forEach(function(el){var im=new Image(),one=function(){if(--left<=0){end();}};" +
+    "im.onload=function(){if(im.decode){im.decode().then(one,one);}else{one();}};im.onerror=one;" +
+    "im.src=el.getAttribute('src');});}" +
     "window.__kbShow=function(html,css,bodyclass,side){" +
-    "var seq=++__kbSeq;onUpdateHook=[];onShownHook=[];" +
+    "var seq=++__kbSeq;" +
     // 1.34: sang thẻ mới (mặt trước) thì dọn hẹn giờ mẫu thẻ cũ đặt (đếm ngược rồi tự lật…) — không lật nhầm thẻ mới
     "if(side==='q'){var hi=setTimeout(function(){},0);for(var ti=0;ti<=hi;ti++){clearTimeout(ti);clearInterval(ti);}}" +
+    "__kbPre((css||'')+html,function(){if(seq!==__kbSeq){return;}" +
+    "onUpdateHook=[];onShownHook=[];" +
     "document.body.className=bodyclass||'card';document.body.setAttribute('data-side',side);" +
     "var qa=document.getElementById('qa');qa.innerHTML=(css||'')+html;" +
     "if(side==='q'){window.scrollTo(0,0);}" +
@@ -895,7 +908,7 @@ var Garden = (function () {
     "if(side==='a'){var a=document.getElementById('answer');" +
     "if(a&&a.offsetParent){var r=a.getBoundingClientRect();" +
     "if(r.top>window.innerHeight-40){window.scrollTo(0,window.scrollY+r.top-12);}}}" +
-    "});};" +
+    "});});};" +
     "document.addEventListener('DOMContentLoaded',function(){parent.Garden.frameReady();});" +
     "<\/script>";
   var activeNid = null;

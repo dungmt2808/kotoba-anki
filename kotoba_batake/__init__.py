@@ -3287,6 +3287,11 @@ class GardenDialog(QDialog):
             return False
 
     def _check_day(self) -> None:
+        # 1.36.5: chỉ cửa sổ vườn đang dùng + đang hiện. Cửa sổ đã đóng còn sống (cha là cửa sổ chính) mà vẫn chạy thì sang ngày
+        # mới nó dựng lại vườn trên trang đã dọn ("Garden is not defined") và nhận quà / cất đồ Giáng sinh thay người dùng (bảng
+        # "Quà tặng" / "Cất đồ Noel" hiện trong trang đã đóng). Cửa sổ ẩn: open_garden gọi lại hàm này ngay khi hiện.
+        if _dialog is not self or not self.isVisible():
+            return
         if not _col_ready() or self._day_seen is None or self._busy:
             return
         try:      # Anki đang đồng bộ / chạy thao tác có thanh tiến độ: để lần sau (không chạm collection lúc đó)
@@ -5824,6 +5829,7 @@ class GardenDialog(QDialog):
 
     def closeEvent(self, event: Any) -> None:
         global _dialog
+        self._day_timer.stop()          # 1.36.5: cửa sổ đã đóng không tự dựng lại vườn khi sang ngày (xem _check_day)
         self.flush_unsaved()            # 1.23 (KB-01): chữ vừa gõ trong Lịch hoa không mất khi bấm X ngay
         _dialog = None
         try:

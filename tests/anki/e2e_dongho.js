@@ -263,11 +263,14 @@ result = did`);
   ok(v.today === '2026-12-31' && v.active && !v.pack, '01:00: ngày Anki 31/12, chưa cất đồ');
   const before = await leKey();
   await setTime('2027-01-01 04:02:00');
-  // (người này chưa có món phải cất — tuần lộc / bánh — nên không có bảng cất đồ: 1.36.2 không bật bảng trống; sổ vẫn ghi đã cất)
+  // Người này chưa có món phải cất (tuần lộc / bánh) nhưng đã mở ngăn 1 (vòng hoa cửa) → bảng "Cất đồ Noel" có dòng "Áo Noel của nhà
+  // và đèn sân…" nên phải hiện (1.36.2 chỉ không bật bảng TRỐNG). 1.36.4 đạt "không bật bảng" chỉ vì cửa sổ vườn đã đóng (cửa sổ ma —
+  // lỗi sửa ở 1.36.5) cất đồ trước trong trang đã dọn: người dùng mất luôn bảng thông báo.
   await waitTimer('(() => { const v = Garden._data().le; return !!v && !!v.pack && v.pack.at === "2027-01-01"; })()', '04:02 → vườn tự dựng lại, StackChan cất đồ Noel (ghi sổ)');
   k = await leKey();
   ok(k.pack && k.pack.at === '2027-01-01', 'sổ: đã cất ngày 1/1');
-  ok(await js('const p = document.getElementById("kb-le-packpop"); return !p || p.hidden;'), 'không có món phải cất → không bật bảng cất đồ trống');
+  ok(await waitFor('(() => { const p = document.getElementById("kb-le-packpop"); return !!p && !p.hidden && /Áo Noel của nhà/.test(p.textContent) && !/→ Kho đồ/.test(p.textContent); })()', 8000),
+    'bảng "Cất đồ Noel" hiện trong cửa sổ đang mở: áo Noel của nhà + đèn sân về như cũ, không món nào phải cất (1.36.5)');
   ok(Object.keys(before.open).every((d) => k.open[d] && k.open[d].d === before.open[d].d), 'ngăn đã mở còn nguyên (' + Object.keys(k.open).length + ')');
   await page.shot(SHOTS + '/dongho_04_0101.png');
   await page.key('Escape', 'Escape', 27); await sleep(300);

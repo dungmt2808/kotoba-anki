@@ -28,6 +28,14 @@ try:
 except Exception:
     pass
 
+# 1.36.5: máy test mở được ankiweb.net → Anki hỏi "có bản mới không" lúc mở hồ sơ và so giờ máy chủ với đồng hồ máy giả (run_dongho.sh)
+# → hộp "đồng hồ sai" chặn phím / trang. Anki ≤ 24.x không có tuỳ chọn tắt (mkbase.py đặt check_for_updates = False cho bản mới) → tắt ở đây
+try:
+    import aqt.update as _upd
+    _upd.check_for_update = lambda *a, **k: None
+except Exception:
+    pass
+
 av_player.play_tags = _play_tags
 av_player.stop_and_clear_queue = lambda: LOG.append({"t": round(time.time(), 2), "tag": "STOP"})
 
